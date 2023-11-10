@@ -98,7 +98,6 @@ public class EnrichmentService {
                 amountDetail.setId(UUID.randomUUID().toString());
             }
         }
-
     }
 
     /**

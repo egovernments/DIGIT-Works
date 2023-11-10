@@ -134,7 +134,7 @@ public class EstimateServiceValidator {
         }
         else{
             String contractNumber = contractNumbers.get(0).toString();
-            Object measurementResponse = measurementUtils.getMeasurementDetails(estimateRequest, contractNumber);
+//            Object measurementResponse = measurementUtils.getMeasurementDetails(estimateRequest, contractNumber);
         }
     }
 
@@ -433,17 +433,11 @@ public class EstimateServiceValidator {
 
     private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForOverHead, Map<String, String> errorMap, boolean isCreate) {
         log.info("EstimateServiceValidator::validateMDMSData");
-        List<String> reqSorIds = new ArrayList<>();
         List<String> reqEstimateDetailCategories = new ArrayList<>();
         List<String> reqEstimateDetailNamesForOverHeads = new ArrayList<>();
-        // List<String> reqEstimateDetailNames = new ArrayList<>();
         Map<String, List<String>> reqEstimateDetailNameMap = new HashMap<>();
         Map<String, List<String>> overheadAmountTypeMap = new HashMap<>();
         if (estimate.getEstimateDetails() != null && !estimate.getEstimateDetails().isEmpty()) {
-            reqSorIds = estimate.getEstimateDetails().stream()
-                    .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getSorId()))
-                    .map(EstimateDetail::getSorId)
-                    .collect(Collectors.toList());
             reqEstimateDetailCategories = estimate.getEstimateDetails().stream()
                     .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getCategory()))
                     .map(EstimateDetail::getCategory)
@@ -453,12 +447,6 @@ public class EstimateServiceValidator {
                     .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getName()) && estimateDetail.getCategory().equalsIgnoreCase(OVERHEAD_CODE))
                     .map(EstimateDetail::getName)
                     .collect(Collectors.toList());
-
-
-//            reqEstimateDetailNames = estimate.getEstimateDetails().stream()
-//                    .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getName()))
-//                    .map(EstimateDetail::getName)
-//                    .collect(Collectors.toList());
 
             //name map for each category
             for (EstimateDetail estimateDetail : estimate.getEstimateDetails()) {
@@ -498,19 +486,16 @@ public class EstimateServiceValidator {
         }
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
-        final String jsonPathForSorIds  = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MDMS_SOR_MASTER_NAME + ".*";
         final String jsonPathForCategories = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_CATEGORY + ".*";
         final String jsonPathForOverHead = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVERHEAD + ".*";
 
         List<Object> deptRes = null;
         List<Object> tenantRes = null;
-        List<Object> sorIdRes = null;
         List<Object> categoryRes = null;
         List<Object> overHeadRes = null;
         try {
             deptRes = JsonPath.read(mdmsData, jsonPathForWorksDepartment);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
-            // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
             categoryRes = JsonPath.read(mdmsData, jsonPathForCategories);
             overHeadRes = JsonPath.read(mdmsDataForOverHead, jsonPathForOverHead);
         } catch (Exception e) {
@@ -646,6 +631,7 @@ public class EstimateServiceValidator {
         log.info("EstimateServiceValidator::validateEstimateOnUpdate");
         Map<String, String> errorMap = new HashMap<>();
         Estimate estimate = request.getEstimate();
+        Estimate estimateForRevision = null;
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
         List<EstimateDetail>estimateDetails=estimate.getEstimateDetails();
@@ -667,6 +653,12 @@ public class EstimateServiceValidator {
             }
             //check projectId is same or not, if project Id is not same throw validation error
             Estimate estimateFromDB = estimateList.get(0);
+            for(Estimate estimate1 : estimateList){
+                if(estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)){
+                    estimateForRevision = estimate1;
+                    break;
+                }
+            }
             if (!estimateFromDB.getProjectId().equals(estimate.getProjectId())) {
                 throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
             }
@@ -691,7 +683,7 @@ public class EstimateServiceValidator {
             }
         }
 
-        if (uniqueIdentifiers.size() != 0) {
+        if (!uniqueIdentifiers.isEmpty()) {
             Object mdmsDataV2ForSor = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, false);
             validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
 
@@ -700,6 +692,10 @@ public class EstimateServiceValidator {
         }
         validateProjectId(request, errorMap);
         validateNoOfUnit(estimateDetails);
+
+        if(Boolean.TRUE.equals(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus()) && estimateForRevision != null){
+            validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
+        }
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
