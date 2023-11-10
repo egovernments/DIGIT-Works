@@ -34,7 +34,7 @@ public class MBServiceConsumer {
 
 
     @KafkaListener(topics = {"${measurement-service.kafka.create.topic}","${measurement-service.kafka.update.topic}"})
-    public void listen(final HashMap<String, Object> record , @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) throws IOException {
+    public void listen(final HashMap<String, Object> record , @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         MeasurementRequest measurementRequest = mapper.convertValue(record,MeasurementRequest.class);
 
         List<HashMap<String, Object>> accumulatedDataList = new ArrayList<>();

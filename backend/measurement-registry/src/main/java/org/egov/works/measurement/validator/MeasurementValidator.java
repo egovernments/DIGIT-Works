@@ -20,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.*;
 
 import static org.egov.works.measurement.config.ErrorConfiguration.*;
@@ -129,7 +128,6 @@ public class MeasurementValidator {
     }
 
     public boolean checkDocumentIdsMatch(List<String> documentIds, String responseJson) {
-        ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             Map<String, String> fileStoreIds = objectMapper.readValue(responseJson, Map.class);

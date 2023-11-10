@@ -1,5 +1,6 @@
 package org.egov.works.measurement.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -22,9 +23,10 @@ import static org.egov.works.measurement.config.ErrorConfiguration.*;
 import static org.egov.works.measurement.config.ServiceConstants.*;
 
 @Component
+@Slf4j
 public class ContractUtil {
     private final RestTemplate restTemplate;
-    private final MBServiceConfiguration MBServiceConfiguration;
+    private final MBServiceConfiguration mbServiceConfiguration;
 
     private final MeasurementRegistryUtil measurementRegistryUtil;
 
@@ -33,11 +35,11 @@ public class ContractUtil {
     private final MeasurementServiceUtil measurementServiceUtil;
 
     @Autowired
-    public ContractUtil(RestTemplate restTemplate, MBServiceConfiguration MBServiceConfiguration,
+    public ContractUtil(RestTemplate restTemplate, MBServiceConfiguration mbServiceConfiguration,
                         MeasurementRegistryUtil measurementRegistryUtil, ServiceRequestRepository serviceRequestRepository,
                         JdbcTemplate jdbcTemplate, MeasurementServiceUtil measurementServiceUtil) {
         this.restTemplate = restTemplate;
-        this.MBServiceConfiguration = MBServiceConfiguration;
+        this.mbServiceConfiguration = mbServiceConfiguration;
         this.measurementRegistryUtil=measurementRegistryUtil;
         this.serviceRequestRepository = serviceRequestRepository;
         this.jdbcTemplate = jdbcTemplate;
@@ -56,7 +58,7 @@ public class ContractUtil {
     public ContractResponse getContracts(Measurement measurement, RequestInfo requestInfo) {
         ContractCriteria req = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurement.getTenantId())
                 .contractNumber(measurement.getReferenceId()).status(ACTIVE_STATUS).build();
-        String searchContractUrl = MBServiceConfiguration.getContractHost() + MBServiceConfiguration.getContractPath();
+        String searchContractUrl = mbServiceConfiguration.getContractHost() + mbServiceConfiguration.getContractPath();
         ContractResponse response = restTemplate.postForEntity(searchContractUrl, req, ContractResponse.class).getBody();
         return response;
     }
@@ -69,7 +71,7 @@ public class ContractUtil {
      * @return
      */
     public Boolean validContract(Measurement measurement, RequestInfo requestInfo, Boolean isUpdate) {
-        Map<String, ArrayList<String>> lineItemsToEstimateIdMap = new HashMap<>();
+        Map<String, ArrayList<String>> lineItemsToEstimateIdMap;
         List<String> lineItemIdsList = new ArrayList<>();
         List<String> estimateIdsList = new ArrayList<>();
         Set<String> estimateIdsSet = new HashSet<>();
@@ -84,18 +86,16 @@ public class ContractUtil {
         // return if no contract is present
         if (!isValidContract) return false;
 
-        if (contractResponse.getContracts().get(0).getBusinessService() == null ||
-                contractResponse.getContracts().get(0).getBusinessService().equalsIgnoreCase("CONTRACT")) {
+        if (contractResponse.getContracts().get(0).getBusinessService() != null &&
+                contractResponse.getContracts().get(0).getBusinessService().equalsIgnoreCase(BUSINESS_SERVICE_REVISION_CONTRACT)) {
+            if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(APPROVED_STATUS))
+                throw new CustomException(REVISED_CONTRACT_NOT_APPROVED_CODE, REVISED_CONTRACT_NOT_APPROVED_MSG);
+        } else {
             if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
                 throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
-        } else {
-            if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase("APPROVED")) {
-                throw new CustomException(REVISED_CONTRACT_NOT_APPROVED_CODE, REVISED_CONTRACT_NOT_APPROVED_MSG);
-            }
         }
 
         boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getEndDate()) <= 0));
-        boolean isTargetIdsPresent = true;
 
         lineItemsToEstimateIdMap = getValidLineItemsId(contractResponse); // get set of active line items
 
@@ -109,7 +109,6 @@ public class ContractUtil {
             boolean isTargetIdPresent = lineItemsToEstimateIdMap.containsKey(measure.getTargetId());  // checks id of line item
 
             if (!isTargetIdPresent) {
-                isTargetIdsPresent = false;
                 throw new CustomException(INVALID_TARGET_ID_FOR_CONTRACT_CODE, measure.getTargetId() + INVALID_TARGET_ID_FOR_CONTRACT_MSG + measure.getReferenceId());
             } else {
                 lineItemIdsList.add(measure.getTargetId());
@@ -131,12 +130,11 @@ public class ContractUtil {
         EstimateResponse estimateResponse = getEstimate(requestInfo, measurement.getTenantId(), estimateIdsList);  // assume a single estimate id for now
         ResponseEntity<MeasurementResponse> measurementResponse = measurementRegistryUtil.searchMeasurements(MeasurementSearchRequest.builder().requestInfo(requestInfo).criteria(MeasurementCriteria.builder().referenceId(Collections.singletonList(measurement.getReferenceId())).isActive(true).tenantId(measurement.getTenantId()).build()).build());
         Measurement measurementFromDB = null;
-        if (measurementResponse.getBody().getMeasurements().size() != 0) {
+        if (!measurementResponse.getBody().getMeasurements().isEmpty()) {
             measurementFromDB = measurementResponse.getBody().getMeasurements().get(0);
         }
         validateDimensions(estimateResponse, measurement, contractResponse, measurementFromDB, isUpdate);
-        boolean validDimensions = true;
-        System.out.println(estimateResponse.getEstimates().get(0).getId());
+        log.info(estimateResponse.getEstimates().get(0).getId());
 
         return isValidEntryDate;
     }
@@ -170,8 +168,6 @@ public class ContractUtil {
         Contract latestContract = contractResponse.getContracts().get(0);
         List<String> estimateIds = new ArrayList<>();
         List<String> idsList = new ArrayList<>();
-
-        Map<String,String> lineItemIdToCategory = new HashMap<>();
 
         // filter unique estimate Ids
         for(int i=0;i<latestContract.getLineItems().size();i++){
@@ -252,7 +248,7 @@ public class ContractUtil {
 
     public EstimateResponse getEstimate(RequestInfo requestInfo, String tenantId, List<String> estimateIdsList) {
 
-        String estimateSearchUrl = MBServiceConfiguration.getEstimateHost()+ MBServiceConfiguration.getEstimatePath();
+        String estimateSearchUrl = mbServiceConfiguration.getEstimateHost()+ mbServiceConfiguration.getEstimatePath();
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(estimateSearchUrl);
         builder.queryParam("tenantId",tenantId);
         builder.queryParam("ids",estimateIdsList);
@@ -301,7 +297,6 @@ public class ContractUtil {
             measurementServiceUtil.validateDimensions(measure);
             BigDecimal currValue = measure.getBreadth().multiply(measure.getHeight()).multiply(measure.getLength()).multiply(measure.getNumItems());
             BigDecimal totalValue = currValue.add(prevCumulativeValue);
-
 
             if (totalValue.compareTo(BigDecimal.valueOf(estimateDetail.getNoOfunit())) > 0) {
                 throw new CustomException(TOTAL_VALUE_GREATER_THAN_ESTIMATE_CODE, String.format(TOTAL_VALUE_GREATER_THAN_ESTIMATE_MSG, measure.getTargetId(), BigDecimal.valueOf(estimateDetail.getNoOfunit())));
