@@ -5,6 +5,7 @@ import * as locale from "./locale";
 import * as obps from "./obps";
 import * as pt from "./pt";
 import * as privacy from "./privacy";
+import { debouncing } from "./debouncing";
 import PDFUtil, { downloadReceipt, downloadPDFFromLink, downloadBill, getFileUrl, downloadEgovPDF, getDocumentName } from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
 import preProcessMDMSConfig from "./preProcessMDMSConfig";
@@ -366,5 +367,6 @@ export default {
   configUpdater,
   trimStringsInObject,
   statusBasedNavigation,
-  getThumbnails
+  getThumbnails,
+  debouncing
 };
