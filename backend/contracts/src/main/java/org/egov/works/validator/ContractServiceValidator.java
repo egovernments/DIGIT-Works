@@ -652,7 +652,7 @@ public class ContractServiceValidator {
                 .requestInfo(contractRequest.getRequestInfo())
                 .pagination(pagination)
                 .build();
-        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+        List<Contract> contractsFromDB = contractService.getContracts(contractCriteria);
 
         // Validate if contract is present in DB
         validateContractNumber(contractsFromDB);
@@ -689,7 +689,7 @@ public class ContractServiceValidator {
                 .requestInfo(contractRequest.getRequestInfo())
                 .pagination(pagination)
                 .build();
-        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+        List<Contract> contractsFromDB = contractService.getContracts(contractCriteria);
 
         // Validate if contract is present in DB
         validateContractNumber(contractsFromDB);
