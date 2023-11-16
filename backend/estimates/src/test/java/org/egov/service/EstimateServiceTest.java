@@ -45,10 +45,6 @@ public class EstimateServiceTest {
     @Mock
     private WorkflowService workflowService;
 
-    @Mock
-    private CalculationService calculationService;
-
-
     @Test
     void checkEstimateRequestCreate_IfValid() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();

@@ -17,7 +17,7 @@ public class EstimateServiceUtil {
      */
     public AuditDetails getAuditDetails(String by, Estimate estimate, Boolean isCreate) {
         Long time = System.currentTimeMillis();
-        if (isCreate)
+        if (Boolean.TRUE.equals(isCreate))
             return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
         else
             return AuditDetails.builder().createdBy(estimate.getAuditDetails().getCreatedBy()).lastModifiedBy(by)

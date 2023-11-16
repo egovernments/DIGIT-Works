@@ -17,14 +17,18 @@ import java.util.List;
 @Slf4j
 public class EstimateRepository {
 
-    @Autowired
-    private EstimateRowMapper rowMapper;
+    private final EstimateRowMapper rowMapper;
+
+    private final EstimateQueryBuilder queryBuilder;
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private EstimateQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public EstimateRepository(EstimateRowMapper rowMapper, EstimateQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+        this.rowMapper = rowMapper;
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
 
     /**
@@ -40,8 +44,7 @@ public class EstimateRepository {
             searchCriteria.setIsCountNeeded(Boolean.FALSE);
         }
         String query = queryBuilder.getEstimateQuery(searchCriteria, preparedStmtList);
-        List<Estimate> estimateList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        return estimateList;
+        return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
     }
 
     /**
@@ -58,8 +61,7 @@ public class EstimateRepository {
         if (query == null)
             return 0;
 
-        Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
-        return count;
+        return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
     }
 
 }

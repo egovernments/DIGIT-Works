@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.producer.Producer;
 import org.egov.repository.EstimateRepository;
+import org.egov.tracer.model.CustomException;
 import org.egov.validator.EstimateServiceValidator;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
@@ -31,19 +32,16 @@ public class EstimateService {
 
     private final WorkflowService workflowService;
 
-    private final CalculationService calculationService;
-
     private final NotificationService notificationService;
 
     @Autowired
-    public EstimateService(EstimateServiceConfiguration serviceConfiguration, Producer producer, EstimateServiceValidator serviceValidator, EnrichmentService enrichmentService, EstimateRepository estimateRepository, WorkflowService workflowService, CalculationService calculationService, NotificationService notificationService) {
+    public EstimateService(EstimateServiceConfiguration serviceConfiguration, Producer producer, EstimateServiceValidator serviceValidator, EnrichmentService enrichmentService, EstimateRepository estimateRepository, WorkflowService workflowService, NotificationService notificationService) {
         this.serviceConfiguration = serviceConfiguration;
         this.producer = producer;
         this.serviceValidator = serviceValidator;
         this.enrichmentService = enrichmentService;
         this.estimateRepository = estimateRepository;
         this.workflowService = workflowService;
-        this.calculationService = calculationService;
         this.notificationService = notificationService;
     }
 
@@ -56,12 +54,23 @@ public class EstimateService {
      */
     public EstimateRequest createEstimate(EstimateRequest estimateRequest) {
         log.info("EstimateService::createEstimate");
-        serviceValidator.validateEstimateOnCreate(estimateRequest);
-        enrichmentService.enrichEstimateOnCreate(estimateRequest);
+        List<Estimate> estimateList = fetchEstimateForRevision(estimateRequest);
+        serviceValidator.validateEstimateOnCreate(estimateRequest,estimateList);
+        enrichmentService.enrichEstimateOnCreate(estimateRequest,estimateList);
         workflowService.updateWorkflowStatus(estimateRequest);
-        // calculationService.calculateEstimate(estimateRequest);
         producer.push(serviceConfiguration.getSaveEstimateTopic(), estimateRequest);
         return estimateRequest;
+    }
+
+    private List<Estimate> fetchEstimateForRevision(EstimateRequest estimateRequest) {
+        Estimate estimate = estimateRequest.getEstimate();
+
+        if(estimate.getEstimateNumber() == null){
+            throw new CustomException("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
+        }
+        EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
+                EstimateSearchCriteria.SortBy.createdTime).build();
+        return estimateRepository.getEstimate(estimateSearchCriteria);
     }
 
     /**
@@ -108,7 +117,6 @@ public class EstimateService {
         serviceValidator.validateEstimateOnUpdate(estimateRequest);
         enrichmentService.enrichEstimateOnUpdate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);
-        //calculationService.calculateEstimate(estimateRequest);
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), estimateRequest);
         try{
             notificationService.sendNotification(estimateRequest);

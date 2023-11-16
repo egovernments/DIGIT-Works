@@ -32,26 +32,27 @@ import static org.egov.util.EstimateServiceConstant.*;
 @Slf4j
 public class NotificationService {
 
-    @Autowired
-    private Producer producer;
+    private final Producer producer;
+
+    private final ServiceRequestRepository repository;
+
+    private final EstimateServiceConfiguration config;
+
+    private final HRMSUtils hrmsUtils;
+
+    private final ProjectUtil projectServiceUtil;
+
+    private final LocationServiceUtil locationServiceUtil;
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private EstimateServiceConfiguration config;
-
-    @Autowired
-    private HRMSUtils hrmsUtils;
-
-    @Autowired
-    private ProjectUtil projectServiceUtil;
-
-    @Autowired
-    private LocationServiceUtil locationServiceUtil;
+    public NotificationService(Producer producer, ServiceRequestRepository repository, EstimateServiceConfiguration config, HRMSUtils hrmsUtils, ProjectUtil projectServiceUtil, LocationServiceUtil locationServiceUtil) {
+        this.producer = producer;
+        this.repository = repository;
+        this.config = config;
+        this.hrmsUtils = hrmsUtils;
+        this.projectServiceUtil = projectServiceUtil;
+        this.locationServiceUtil = locationServiceUtil;
+    }
 
 
     /**
@@ -110,7 +111,7 @@ public class NotificationService {
         Map<String, String> smsDetails = getDetailsForSMS(request, createdByUuid);
 
         log.info("build Message For Approve Action for Estimate Creator");
-        message = buildMessageForApproveAction_Creator(estimate, smsDetails, message);
+        message = buildMessageForApproveActionCreator(estimate, smsDetails, message);
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push Message For Approve Action for Estimate Creator");
@@ -221,7 +222,7 @@ public class NotificationService {
         return message;
     }
 
-    public String buildMessageForApproveAction_Creator(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
+    public String buildMessageForApproveActionCreator(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
         message = message.replace("{estimteno}", estimate.getEstimateNumber())
                 .replace("{projectid}", userDetailsForSMS.get("projectNumber"))
                 .replace("{project_name}", userDetailsForSMS.get("projectName"))

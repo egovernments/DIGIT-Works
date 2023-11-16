@@ -51,7 +51,7 @@ public class EnrichmentService {
      *
      * @param request
      */
-    public void enrichEstimateOnCreate(EstimateRequest request) {
+    public void enrichEstimateOnCreate(EstimateRequest request, List<Estimate> estimateList) {
         log.info("EnrichmentService::enrichEstimateOnCreate");
         RequestInfo requestInfo = request.getRequestInfo();
         Estimate estimate = request.getEstimate();
@@ -69,9 +69,6 @@ public class EnrichmentService {
         BigDecimal proposalDate = new BigDecimal(currentDT.getTime());
         estimate.setProposalDate(proposalDate);
         if(estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService()) && Boolean.TRUE.equals(config.getRevisionEstimateActiveStatus())){
-            EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
-                    EstimateSearchCriteria.SortBy.createdTime).build();
-            List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
             estimateForRevision = estimateList.get(0);
             for(Estimate estimate1: estimateList){
                 if(estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)){

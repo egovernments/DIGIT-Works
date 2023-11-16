@@ -60,7 +60,7 @@ public class EstimateServiceValidator {
      *
      * @param request
      */
-    public void validateEstimateOnCreate(EstimateRequest request) {
+    public void validateEstimateOnCreate(EstimateRequest request, List<Estimate> estimateList) {
         log.info("EstimateServiceValidator::validateEstimateOnCreate");
         Map<String, String> errorMap = new HashMap<>();
         Estimate estimate = request.getEstimate();
@@ -68,16 +68,10 @@ public class EstimateServiceValidator {
         Workflow workflow = request.getWorkflow();
         Estimate previousEstimate = null;
 
-        validateRequestInfo(requestInfo, errorMap);
+        validateRequestInfo(requestInfo);
         validateEstimate(estimate, errorMap);
-        validateWorkFlow(workflow, errorMap);
+        validateWorkFlow(workflow);
         if(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && Boolean.TRUE.equals(config.getRevisionEstimateActiveStatus())){
-            if(estimate.getEstimateNumber() == null){
-                errorMap.put("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
-            }
-            EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
-                    EstimateSearchCriteria.SortBy.createdTime).build();
-            List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
             for (Estimate estimate1 : estimateList) {
                 if (estimate1.getWfStatus().equalsIgnoreCase(ESTIMATE_APPROVED_STATUS)) {
                     previousEstimate = estimate1;
@@ -94,7 +88,7 @@ public class EstimateServiceValidator {
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
         validateMDMSDataForUOM(estimate, mdmsDataForUOM, errorMap);
-        validateProjectId(request, errorMap);
+        validateProjectId(request);
 
         List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();
         Set<String> uniqueIdentifiers = new HashSet<>();
@@ -226,15 +220,11 @@ public class EstimateServiceValidator {
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
 
-            if(estimateDetail.getCategory().equals(OVERHEAD_CODE)){
-                continue;
-            }
-            else{
+            if(!estimateDetail.getCategory().equals(OVERHEAD_CODE)){
                 if(estimateDetail.getNoOfunit()==null){
                     throw new CustomException("NO_OF_UNIT", "noOfUnit is mandatory");
                 }
                 BigDecimal total =new BigDecimal(1);
-                BigDecimal noOfUnit = new BigDecimal(estimateDetail.getNoOfunit());
                 boolean allNull =true;
                 if(estimateDetail.getLength()!=null && estimateDetail.getLength().signum() != 0){
                     total =total.multiply(estimateDetail.getLength());
@@ -261,7 +251,7 @@ public class EstimateServiceValidator {
     }
 
 
-    private void validateProjectId(EstimateRequest estimateRequest, Map<String, String> errorMap) {
+    private void validateProjectId(EstimateRequest estimateRequest) {
         log.info("EstimateServiceValidator::validateProjectId");
         final String projectJsonPath = "$.Project.*";
         List<Object> projects = null;
@@ -280,7 +270,7 @@ public class EstimateServiceValidator {
             throw new CustomException("PROJECT_ID", "The project id : " + estimateRequest.getEstimate().getProjectId() + " is invalid");
     }
 
-    private void validateWorkFlow(Workflow workflow, Map<String, String> errorMap) {
+    private void validateWorkFlow(Workflow workflow) {
         log.info("EstimateServiceValidator::validateWorkFlow");
         if (workflow == null) {
             throw new CustomException("WORK_FLOW", "Work flow is mandatory");
@@ -305,12 +295,6 @@ public class EstimateServiceValidator {
         if (StringUtils.isBlank(estimate.getName())) {
             errorMap.put("NAME", "Name is mandatory");
         }
-//        if (StringUtils.isBlank(estimate.getReferenceNumber())) {
-//            errorMap.put("REFERENCE_NUMBER", "Reference number is mandatory");
-//        }
-//        if (StringUtils.isBlank(estimate.getDescription())) {
-//            errorMap.put("DESCRIPTION", "Description is mandatory");
-//        }
         if (StringUtils.isBlank(estimate.getExecutingDepartment())) {
             errorMap.put("EXECUTING_DEPARTMENT", "Executing department is mandatory");
         }
@@ -350,7 +334,7 @@ public class EstimateServiceValidator {
         }
     }
 
-    private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
+    private void validateRequestInfo(RequestInfo requestInfo) {
         log.info("EstimateServiceValidator::validateRequestInfo");
         if (requestInfo == null) {
             throw new CustomException("REQUEST_INFO", "Request info is mandatory");
@@ -392,10 +376,9 @@ public class EstimateServiceValidator {
         }
 
         estimate.getEstimateDetails().forEach(estimateDetail -> {
-            if(estimateDetail.getCategory().equalsIgnoreCase(MDMS_SOR_MASTER_NAME)){
-                if(!estimateDetail.getUom().equals(sorIdUomMap.get(estimateDetail.getSorId()))){
+            if(estimateDetail.getCategory().equalsIgnoreCase(MDMS_SOR_MASTER_NAME) && (!estimateDetail.getUom().equals(sorIdUomMap.get(estimateDetail.getSorId())))){
                     errorMap.put("INVALID_UOM", "Invalid UOM");
-                }
+
             }
         });
     }
@@ -464,18 +447,14 @@ public class EstimateServiceValidator {
                 log.info("No end date for this object");
             }
 
-            if (validatingDate < validFrom) {
-                continue;
-            } else if (validTo != null && validatingDate > validTo) {
+            if ((validFrom != null && validatingDate < validFrom) || (validTo != null && validatingDate > validTo)) {
                 continue;
             }
-            if (sortedJsonArray.get(i).get("rate").asDouble() == estimateDetail.getUnitRate()) {
-                return;
-            } else {
+            if (sortedJsonArray.get(i).get("rate").asDouble() != estimateDetail.getUnitRate()) {
                 log.error("Rates provided in request do not match rates in mdms");
                 errorMap.put("RATES_MISMATCH", "Rates provided in request do not match rates in mdms");
-                return;
             }
+            return;
         }
         log.error("No Rates found for the given date and time");
         errorMap.put("DATES_MISMATCH", "No Rates found for the given date and time");
@@ -686,9 +665,9 @@ public class EstimateServiceValidator {
         Workflow workflow = request.getWorkflow();
         List<EstimateDetail>estimateDetails=estimate.getEstimateDetails();
 
-        validateRequestInfo(requestInfo, errorMap);
+        validateRequestInfo(requestInfo);
         validateEstimate(estimate, errorMap);
-        validateWorkFlow(workflow, errorMap);
+        validateWorkFlow(workflow);
 
         String id = estimate.getId();
         if (StringUtils.isBlank(id)) {
@@ -739,7 +718,7 @@ public class EstimateServiceValidator {
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
             validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap);
         }
-        validateProjectId(request, errorMap);
+        validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
         if(Boolean.TRUE.equals(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus()) && estimateForRevision != null){

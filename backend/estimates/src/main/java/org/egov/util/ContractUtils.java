@@ -18,16 +18,20 @@ import java.util.Collections;
 @Component
 @Slf4j
 public class ContractUtils {
-    @Autowired
-    private EstimateServiceConfiguration config;
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final EstimateServiceConfiguration config;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final ObjectMapper objectMapper;
 
     public static final String REQUEST_INFO = "RequestInfo";
     public static final String TENANT_ID = "tenantId";
     public static final String ESTIMATE_IDS = "estimateIds";
+
+    @Autowired
+    public ContractUtils(EstimateServiceConfiguration config, ServiceRequestRepository serviceRequestRepository, ObjectMapper objectMapper) {
+        this.config = config;
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * Get the Contract details using estimate number from contract service

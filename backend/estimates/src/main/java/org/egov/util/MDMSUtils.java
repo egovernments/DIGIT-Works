@@ -31,11 +31,15 @@ public class MDMSUtils {
     private static final String FILTER_END = ")]";
     private static final String RATES_FILTER_CODE = "@.sorId=='%s'";
 
-    @Autowired
-    private EstimateServiceConfiguration config;
+    private final EstimateServiceConfiguration config;
+
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    public MDMSUtils(EstimateServiceConfiguration config, ServiceRequestRepository serviceRequestRepository) {
+        this.config = config;
+        this.serviceRequestRepository = serviceRequestRepository;
+    }
 
     /**
      * Calls MDMS service to fetch works master data
@@ -48,8 +52,7 @@ public class MDMSUtils {
         log.info("MDMSUtils::mDMSCall");
         RequestInfo requestInfo = request.getRequestInfo();
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId, request);
-        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-        return result;
+        return serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
     }
 
     /**
@@ -62,9 +65,8 @@ public class MDMSUtils {
     public Object mdmsCallV2ForSor(EstimateRequest request, String tenantId, Set<String> sorIds, boolean isRate){
         log.info("MDMSUtils::mDMSCallV2");
         RequestInfo requestInfo =request.getRequestInfo();
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestV2(requestInfo,tenantId,request, sorIds, isRate);
-        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrlV2(), mdmsCriteriaReq);
-        return result;
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestV2(requestInfo,tenantId, sorIds, isRate);
+        return serviceRequestRepository.fetchResult(getMdmsSearchUrlV2(), mdmsCriteriaReq);
     }
 
     /**
@@ -83,8 +85,7 @@ public class MDMSUtils {
         ModuleDetail moduleDetail = ModuleDetail.builder().masterDetails(Collections.singletonList(masterDetail)).moduleName(moduleName).build();
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(moduleDetail)).tenantId(tenantId).build();
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
-        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrlV2(), mdmsCriteriaReq);
-        return result;
+        return serviceRequestRepository.fetchResult(getMdmsSearchUrlV2(), mdmsCriteriaReq);
     }
     /**
      * Calls MDMS service to fetch overhead category
@@ -97,7 +98,7 @@ public class MDMSUtils {
         log.info("MDMSUtils::mDMSCallForOverHeadCategory");
         RequestInfo requestInfo = request.getRequestInfo();
 
-        ModuleDetail estimateOverheadModuleDetail = getOverHeadModuleRequestData(request);
+        ModuleDetail estimateOverheadModuleDetail = getOverHeadModuleRequestData();
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(estimateOverheadModuleDetail);
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
@@ -108,8 +109,7 @@ public class MDMSUtils {
 
         log.info("MDMSUtils::search MDMS request for overhead -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
 
-        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-        return result;
+        return serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
     }
 
     /**
@@ -124,7 +124,7 @@ public class MDMSUtils {
         log.info("MDMSUtils::getMDMSRequest");
         ModuleDetail estimateDepartmentModuleDetail = getDepartmentModuleRequestData(request);
         ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
-        ModuleDetail estimateCategoryModuleDetail = getCategoryModuleRequestData(request);
+        ModuleDetail estimateCategoryModuleDetail = getCategoryModuleRequestData();
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(estimateTenantModuleDetail);
@@ -146,15 +146,14 @@ public class MDMSUtils {
      * @return
      */
 
-    public MdmsCriteriaReq getMDMSRequestV2(RequestInfo requestInfo , String  tenantId , EstimateRequest request,Set<String>sorIds, boolean isRate){
+    public MdmsCriteriaReq getMDMSRequestV2(RequestInfo requestInfo , String  tenantId ,Set<String>sorIds, boolean isRate){
         log.info("MDMSUtils::getMDMSRequestV2");
-        ModuleDetail estimateSorIdModuleDetail = getSorIdModuleRequestData(request, sorIds, isRate);
+        ModuleDetail estimateSorIdModuleDetail = getSorIdModuleRequestData(sorIds, isRate);
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(estimateSorIdModuleDetail)).tenantId(tenantId).build();
-        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
-        return mdmsCriteriaReq;
+        return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
     }
 
-    private ModuleDetail getOverHeadModuleRequestData(EstimateRequest request) {
+    private ModuleDetail getOverHeadModuleRequestData() {
         log.info("MDMSUtils::getOverHeadModuleRequestData");
 
         List<MasterDetail> estimateOverheadMasterDetails = new ArrayList<>();
@@ -164,13 +163,11 @@ public class MDMSUtils {
 
         estimateOverheadMasterDetails.add(overheadMasterDetails);
 
-        ModuleDetail estimateOverHeadModuleDetail = ModuleDetail.builder().masterDetails(estimateOverheadMasterDetails)
+        return ModuleDetail.builder().masterDetails(estimateOverheadMasterDetails)
                 .moduleName(MDMS_WORKS_MODULE_NAME).build();
-
-        return estimateOverHeadModuleDetail;
     }
 
-    private ModuleDetail getCategoryModuleRequestData(EstimateRequest request) {
+    private ModuleDetail getCategoryModuleRequestData() {
         log.info("MDMSUtils::getCategoryModuleRequestData");
 
         List<MasterDetail> estimateCategoryMasterDetails = new ArrayList<>();
@@ -180,42 +177,37 @@ public class MDMSUtils {
 
         estimateCategoryMasterDetails.add(categoryMasterDetails);
 
-        ModuleDetail estimateCategoryModuleDetail = ModuleDetail.builder().masterDetails(estimateCategoryMasterDetails)
+        return ModuleDetail.builder().masterDetails(estimateCategoryMasterDetails)
                 .moduleName(MDMS_WORKS_MODULE_NAME).build();
-
-        return estimateCategoryModuleDetail;
     }
 
     /**
      * Method to create SorId module with required filters for SOR and Rates for fetching master data
-     * @param request
      * @param sorIds
      * @param isRate
      * @return
      */
-    private ModuleDetail getSorIdModuleRequestData(EstimateRequest request, Set<String> sorIds, Boolean isRate) {
+    private ModuleDetail getSorIdModuleRequestData(Set<String> sorIds, Boolean isRate) {
         log.info("MDMSUtils::getSorIdModuleRequestData");
         List<MasterDetail> estimateSorIdMasterDetails = new ArrayList<>();
         MasterDetail departmentMasterDetails;
         StringBuilder ratesStringBuilder = new StringBuilder();
-        Iterator ratesIterator = sorIds.iterator();
+        Iterator<String> ratesIterator = sorIds.iterator();
         while (ratesIterator.hasNext()) {
-            String sorIdRateFilter = String.format(isRate? RATES_FILTER_CODE:SOR_FILTER_CODE, ratesIterator.next());
+            String sorIdRateFilter = String.format(Boolean.TRUE.equals(isRate)? RATES_FILTER_CODE:SOR_FILTER_CODE, ratesIterator.next());
             ratesStringBuilder.append(sorIdRateFilter);
             if(ratesIterator.hasNext()){
                 ratesStringBuilder.append(OR_ADDITIONAL_FILTER);
             }
         }
         String ratesFilter =  FILTER_START + ratesStringBuilder + FILTER_END;
-        departmentMasterDetails = MasterDetail.builder().name(isRate?MDMS_RATES_MASTER_NAME:MDMS_SOR_MASTER_NAME)
+        departmentMasterDetails = MasterDetail.builder().name(Boolean.TRUE.equals(isRate)?MDMS_RATES_MASTER_NAME:MDMS_SOR_MASTER_NAME)
                 .filter(ratesFilter).build();
 
         estimateSorIdMasterDetails.add(departmentMasterDetails);
 
-        ModuleDetail estimateSorIdModuleDetail = ModuleDetail.builder().masterDetails(estimateSorIdMasterDetails)
+        return ModuleDetail.builder().masterDetails(estimateSorIdMasterDetails)
                 .moduleName(config.getSorSearchModuleName()).build();
-
-        return estimateSorIdModuleDetail;
     }
 
     private ModuleDetail getDepartmentModuleRequestData(EstimateRequest request) {
@@ -228,10 +220,8 @@ public class MDMSUtils {
 
         estimateDepartmentMasterDetails.add(departmentMasterDetails);
 
-        ModuleDetail estimateDepartmentModuleDetail = ModuleDetail.builder().masterDetails(estimateDepartmentMasterDetails)
+        return ModuleDetail.builder().masterDetails(estimateDepartmentMasterDetails)
                 .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();
-
-        return estimateDepartmentModuleDetail;
     }
 
     private ModuleDetail getTenantModuleRequestData(EstimateRequest request) {
@@ -244,10 +234,8 @@ public class MDMSUtils {
 
         estimateTenantMasterDetails.add(tenantMasterDetails);
 
-        ModuleDetail estimateTenantModuleDetail = ModuleDetail.builder().masterDetails(estimateTenantMasterDetails)
+        return ModuleDetail.builder().masterDetails(estimateTenantMasterDetails)
                 .moduleName(MDMS_TENANT_MODULE_NAME).build();
-
-        return estimateTenantModuleDetail;
     }
 
     /**

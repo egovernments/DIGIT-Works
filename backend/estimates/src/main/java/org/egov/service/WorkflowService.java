@@ -23,14 +23,18 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WorkflowService {
 
-    @Autowired
-    private EstimateServiceConfiguration serviceConfiguration;
+    private final EstimateServiceConfiguration serviceConfiguration;
+
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public WorkflowService(EstimateServiceConfiguration serviceConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
 
     /*
@@ -113,9 +117,9 @@ public class WorkflowService {
 
             List<EstimateRequest> tenantSpecificWrappers = tenantIdToServiceWrapperMap.get(tenantId);
 
-            tenantSpecificWrappers.forEach(estimateWrapper -> {
-                estimateNumbers.add(estimateWrapper.getEstimate().getEstimateNumber());
-            });
+            tenantSpecificWrappers.forEach(estimateWrapper ->
+                estimateNumbers.add(estimateWrapper.getEstimate().getEstimateNumber())
+            );
 
             RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
@@ -135,9 +139,9 @@ public class WorkflowService {
 
             Map<String, org.egov.web.models.Workflow> businessIdToWorkflow = getWorkflow(processInstanceResponse.getProcessInstances());
 
-            tenantSpecificWrappers.forEach(estimateWrapper -> {
-                estimateWrapper.setWorkflow(businessIdToWorkflow.get(estimateWrapper.getEstimate().getEstimateNumber()));
-            });
+            tenantSpecificWrappers.forEach(estimateWrapper ->
+                estimateWrapper.setWorkflow(businessIdToWorkflow.get(estimateWrapper.getEstimate().getEstimateNumber()))
+            );
 
             enrichedServiceWrappers.addAll(tenantSpecificWrappers);
         }
@@ -173,7 +177,7 @@ public class WorkflowService {
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
         ProcessInstance processInstance = new ProcessInstance();
-        if(estimate.getBusinessService().equals(serviceConfiguration.getRevisionEstimateBusinessService()) && serviceConfiguration.getRevisionEstimateActiveStatus()){
+        if(estimate.getBusinessService().equals(serviceConfiguration.getRevisionEstimateBusinessService()) && Boolean.TRUE.equals(serviceConfiguration.getRevisionEstimateActiveStatus())){
             processInstance.setBusinessId(estimate.getRevisionNumber());
         }else{
             processInstance.setBusinessId(estimate.getEstimateNumber());
@@ -182,7 +186,6 @@ public class WorkflowService {
         processInstance.setModuleName(serviceConfiguration.getEstimateWFModuleName());
         processInstance.setTenantId(estimate.getTenantId());
         processInstance.setBusinessService(serviceConfiguration.getEstimateWFBusinessService());
-        /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
 
 

@@ -16,17 +16,21 @@ import java.util.Collections;
 @Slf4j
 public class MeasurementUtils {
 
-    @Autowired
-    private EstimateServiceConfiguration config;
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final EstimateServiceConfiguration config;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final ObjectMapper objectMapper;
 
     public static final String REQUEST_INFO = "RequestInfo";
     public static final String TENANT_ID = "tenantId";
     public static final String CRITERIA = "criteria";
     public static final String REFERENCE_ID = "referenceId";
+
+    @Autowired
+    public MeasurementUtils(EstimateServiceConfiguration config, ServiceRequestRepository serviceRequestRepository, ObjectMapper objectMapper) {
+        this.config = config;
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * Get the Measurement details using sor id from measurement book service
