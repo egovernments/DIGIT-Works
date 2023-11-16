@@ -47,6 +47,7 @@ export const transformEstimateObjects = (estimateData, type) => {
             sorCode : convertedObject[key]?.[0]?.sorId,
             sorType: estimateData?.additionalDetails?.sorSkillData?.filter((ob) => ob?.sorId === key)?.[0]?.sorType,
             sorSubType: estimateData?.additionalDetails?.sorSkillData?.filter((ob) => ob?.sorId === key)?.[0]?.sorSubType,
+            category: convertedObject[key]?.[0]?.category,
             measures,
         };
     });

@@ -16,56 +16,46 @@ const transformLineItems = (SorData = [], category, isEdit = false) => {
 };
 
 function transformMeasure(measure, parentData, isEdit, category) {
-  if(isEdit)
-    return {
+  let measureObject = {
+    sorId: parentData?.category == "SOR" ? parentData?.sorId : parentData?.sNo,
+    category: parentData?.category,
+    name: parentData?.description,
+    unitRate: parentData?.unitRate,
+    noOfunit: convertNumberFields(measure?.noOfunit),
+    uom: parentData?.uom,
+    height: convertNumberFields(measure?.height),
+    isDeduction: measure?.isDeduction,
+    length: convertNumberFields(measure?.length),
+    quantity: convertNumberFields(measure?.number),
+    uomValue: null,
+    width: convertNumberFields(measure?.width),
+    description: measure.description,
+    additionalDetails: parentData.additionalInfo, // Include data from parent object
+    amountDetail: [
+      {
+        type: "EstimatedAmount",
+        amount: parentData?.unitRate * measure?.noOfunit,
+        additionalDetails: {},
+      },
+    ],
+  };
+   if(isEdit)
+   {
+    measureObject = {
+      ...measureObject,
       sorId: parentData?.sorType ? parentData?.sorCode : parentData?.sNo,
       id: measure?.id,
       category: category,
-      name: parentData?.description,
-      unitRate: parentData?.unitRate,
-      noOfunit: convertNumberFields(measure?.noOfunit),
-      uom: parentData?.uom,
-      height: convertNumberFields(measure?.height),
-      isDeduction: measure?.isDeduction,
-      length: convertNumberFields(measure?.length),
-      quantity: convertNumberFields(measure?.number),
-      uomValue: null,
-      width: convertNumberFields(measure?.width),
-      description: measure.description,
-      additionalDetails: parentData.additionalInfo, // Include data from parent object
       amountDetail: [
-        {
-          type: "EstimatedAmount",
-          amount: parentData?.unitRate * measure?.noOfunit,
-          additionalDetails: {},
-          id: measure?.amountid,
-        },
-      ],
-    };
-  else
-    return {
-      sorId: parentData?.category == "SOR" ? parentData?.sorId : parentData?.sNo,
-      category: parentData?.category,
-      name: parentData?.description,
-      unitRate: parentData?.unitRate,
-      noOfunit: convertNumberFields(measure?.noOfunit),
-      uom: parentData?.uom,
-      height: convertNumberFields(measure?.height),
-      isDeduction: measure?.isDeduction,
-      length: convertNumberFields(measure?.length),
-      quantity: convertNumberFields(measure?.number),
-      uomValue: null,
-      width: convertNumberFields(measure?.width),
-      description: measure.description,
-      additionalDetails: parentData.additionalInfo, // Include data from parent object
-      amountDetail: [
-        {
-          type: "EstimatedAmount",
-          amount: parentData?.unitRate * measure?.noOfunit,
-          additionalDetails: {},
-        },
-      ],
-    };
+              {
+                type: "EstimatedAmount",
+                amount: parentData?.unitRate * measure?.noOfunit,
+                additionalDetails: {},
+                id: measure?.amountid,
+              },
+            ],
+    }
+   }   
 }
 
 const fetchEstimateDetails = (data) => {
