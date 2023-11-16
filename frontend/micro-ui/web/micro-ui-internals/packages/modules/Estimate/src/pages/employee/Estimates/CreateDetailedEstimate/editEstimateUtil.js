@@ -25,7 +25,7 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
     formData.accessors = {
         SOR : SORtable
     }
-
+    formData.isEdit = true;
     //uploaded docs
     const uploadedDocs = {}
     estimate?.additionalDetails?.documents.forEach(doc=>{
@@ -71,6 +71,7 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
     estimate?.estimateDetails?.filter(row=>row?.category==="OVERHEAD")?.forEach(row=>{
         let corresOverhead = overheads.filter(overheadRow=>overheadRow?.code === row?.amountDetail?.[0]?.type)?.[0]
         overHeadItems.push({
+            "id": row?.id || undefined,
             "percentage": corresOverhead?.type==="percentage" ? `${corresOverhead?.value}` : "Lumpsum",
             "amount": row?.amountDetail?.[0]?.amount,
             "name":{
@@ -80,6 +81,7 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
             "isActive":row?.isActive,
         })
     })
+    formData["editOverheadDetailes"] = overHeadItems
     formData["overheadDetails"] = overHeadItems
 
 

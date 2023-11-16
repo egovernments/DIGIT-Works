@@ -13,7 +13,7 @@ const getStyles = (index) => {
       obj = { width: "0.5rem" };
       break;
     case 3:
-      obj = { width: "23rem" };
+      obj = { width: "45rem" };
       break;
     case 4:
       obj = { width: "3rem" };
@@ -109,11 +109,11 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
 
   const renderBody = () => {
     return state?.map((value, index) => {
-      return <MeasureRow value={value} index={index} key={index} rowState={state?.[index]} dispatch={dispatch} mode={mode} />;
+      return <MeasureRow value={value} index={index} key={index} rowState={state?.[index]} dispatch={dispatch} mode={mode} fields={state}/>;
     });
   };
 
-  const total = state?.reduce?.((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit :  acc + curr?.noOfunit, 0) || 0;
+  const total = state?.reduce?.((acc, curr) => curr.isDeduction == true ? acc - parseFloat(curr?.noOfunit) :  acc + parseFloat(curr?.noOfunit), 0) || 0;
   return (
     <Fragment>
       <div>
@@ -174,8 +174,8 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                       label={t("MB_DONE")}
                       onButtonClick={() => {
                         // check for deduction and set accordingly
-                        const totalQuantity = tableData[tableIndex].measures.reduce((total, item) => item?.isDeduction == true ? total - parseFloat(item.noOfunit) :  total + parseFloat(item.noOfunit), 0);
                         tableData[tableIndex].measures = state;
+                        const totalQuantity = tableData[tableIndex].measures.reduce((total, item) => item?.isDeduction == true ? total - parseFloat(item.noOfunit) :  total + parseFloat(item.noOfunit), 0);
                         tableData[tableIndex].amount = parseFloat(totalQuantity * unitRate).toFixed(2);
                         tableData[tableIndex].showMeasure = false;
                         if(mode === "CREATE" && (totalQuantity < 0 || totalQuantity > tableData[tableIndex]?.approvedQuantity - tableData[tableIndex]?.consumedQ))

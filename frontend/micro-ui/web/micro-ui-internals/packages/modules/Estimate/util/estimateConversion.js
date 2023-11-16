@@ -24,7 +24,8 @@ export const transformEstimateObjects = (estimateData, type) => {
             sNo: index + 1,
             isDeduction: e?.isDeduction,
             description: e.description,
-            id: null,
+            amountid: e?.amountDetail?.[0]?.id || null,
+            id: e?.id || null,
             height: convertNumberFields(e?.height),
             width: convertNumberFields(e?.width),
             length: convertNumberFields(e?.length),
@@ -46,6 +47,7 @@ export const transformEstimateObjects = (estimateData, type) => {
             sorCode : convertedObject[key]?.[0]?.sorId,
             sorType: estimateData?.additionalDetails?.sorSkillData?.filter((ob) => ob?.sorId === key)?.[0]?.sorType,
             sorSubType: estimateData?.additionalDetails?.sorSkillData?.filter((ob) => ob?.sorId === key)?.[0]?.sorSubType,
+            category: convertedObject[key]?.[0]?.category,
             measures,
         };
     });

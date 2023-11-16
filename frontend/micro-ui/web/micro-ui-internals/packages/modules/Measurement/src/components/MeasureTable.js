@@ -118,6 +118,31 @@ const MeasureTable = (props) => {
     });
   };
 
+  const getMeasureCardColumns = () => {
+    if(mode === "CREATEALL" || mode === "VIEWES")
+      return ([
+        t("WORKS_SNO"),
+        t("WORKS_ESTIMATE_IS_DEDUCTION"),
+        t("WORKS_ESTIMATE_DESCRIPTION"),
+        t("WORKS_ESTIMATE_ONLY_NUMBER"),
+        t("WORKS_ESTIMATE_LENGTH"),
+        t("WORKS_ESTIMATE_WIDTH"),
+        t("WORKS_ESTIMATE_HEIGHT"),
+        t("WORKS_ESTIMATE_QUANTITY"),
+      ]);
+    else 
+      return ([
+        t("WORKS_SNO"),
+        t("MB_IS_DEDUCTION"),
+        t("MB_DESCRIPTION"),
+        t("MB_ONLY_NUMBER"),
+        t("MB_LENGTH"),
+        t("MB_WIDTH"),
+        t("MB_HEIGHT"),
+        t("MB_QUANTITY"),
+      ]);
+  }
+
   const renderBody = () => {
     // Update the state with the new data
     const handleInputChange = useCallback(
@@ -248,16 +273,7 @@ const MeasureTable = (props) => {
               <td colSpan={"1"}></td>
               <td colSpan={mode == "CREATEALL" && tableKey !== "SOR" ? 5 : 7}>
                 <MeasureCard
-                  columns={[
-                    t("WORKS_SNO"),
-                    t("MB_IS_DEDUCTION"),
-                    t("MB_DESCRIPTION"),
-                    t("MB_ONLY_NUMBER"),
-                    t("MB_LENGTH"),
-                    t("MB_WIDTH"),
-                    t("MB_HEIGHT"),
-                    t("MB_QUANTITY"),
-                  ]}
+                  columns={getMeasureCardColumns()}
                   unitRate={row.unitRate}
                   fields={row?.measures || []}
                   register={register}
@@ -293,7 +309,7 @@ const MeasureTable = (props) => {
                     amount: 0,
                     consumedQ: 0,
                     category:"NON-SOR",
-                    sNo: fields?.length + 1,
+                    sNo: fields?.length-1,
                     currentMBEntry: 0,
                     uom: null,
                     description: "",
@@ -317,7 +333,7 @@ const MeasureTable = (props) => {
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
         <div style={{ display: "flex", flexDirection: "row", fontSize: "1.2rem" }}>
           <span style={{ fontWeight: "bold" }}>
-            {t("MB_TOTAL")} {props.config.key} {t("MB_TOTAL_AMOUNT")} :
+            {t("WORKS_TOTAL")} {props.config.key} {t("WORKS_TOTAL_AMOUNT")} :
           </span>
           <span style={{ marginLeft: "3px" }}>
             <Amount customStyle={{ textAlign: "right" }} value={sum?.toFixed?.(2)} t={t} roundOff={false}></Amount>

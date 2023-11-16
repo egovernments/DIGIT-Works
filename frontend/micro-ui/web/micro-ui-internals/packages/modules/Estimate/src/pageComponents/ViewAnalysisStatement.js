@@ -45,7 +45,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     
   return (
         <Fragment>
-        <LinkButton className="view-Analysis-button" onClick={() => setIsPopupOpen(true)} label={"ESTIMATE_ANALYSIS_STM"}></LinkButton>
+        <LinkButton className="view-Analysis-button" onClick={() => setIsPopupOpen(true)} label={t("ESTIMATE_ANALYSIS_STM")}></LinkButton>
         {isPopupOpen && <PopUp>
             <div className="popup-view-alaysis">
             <Card>

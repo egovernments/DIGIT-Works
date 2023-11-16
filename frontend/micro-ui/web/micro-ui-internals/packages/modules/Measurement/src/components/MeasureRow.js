@@ -40,7 +40,7 @@ const MeasureInputAtom = ({ id, row, mode, disable = false, fieldKey, value, dis
   </td>
 );
 
-const MeasureRow = ({ value, index, rowState, dispatch, mode }) => {
+const MeasureRow = ({ value, index, rowState, dispatch, mode, fields }) => {
   const { t } = useTranslation();
   const options = [
     { label: t("MB_YES"), code: true },
@@ -97,7 +97,7 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode }) => {
             className="icon-wrapper"
             onClick={(newValue) => {
               //added this condition as user should not able to delete row if only one is present
-              if(index != 0)
+              if(fields?.length > 1)
               dispatch({
                 type: "REMOVE_ROW",
                 id: index + 1,
