@@ -4,41 +4,68 @@ const convertNumberFields=(text="")=>{
     return parseFloat(text)==0?null:parseFloat(text);
 
 }
-const transformLineItems = (SorData = []) => {
+const transformLineItems = (SorData = [], category, isEdit = false) => {
   const lineItems = [];
   SorData?.map((row) => {
     const measures = row?.measures?.map((measure) => {
-      return transformMeasure(measure, row);
+      return transformMeasure(measure, row, isEdit, category);
     });
     lineItems.push(...measures);
   });
   return lineItems;
 };
 
-function transformMeasure(measure, parentData) {
-  return {
-    sorId: parentData?.category == "SOR" ? parentData?.sorId : parentData?.sNo,
-    category: parentData?.category,
-    name: parentData?.description,
-    unitRate: parentData?.unitRate,
-    noOfunit: convertNumberFields(measure?.noOfunit),
-    uom: parentData?.uom,
-    height: convertNumberFields(measure?.height),
-    isDeduction: measure?.isDeduction,
-    length: convertNumberFields(measure?.length),
-    quantity: convertNumberFields(measure?.number),
-    uomValue: null,
-    width: convertNumberFields(measure?.width),
-    description: measure.description,
-    additionalDetails: parentData.additionalInfo, // Include data from parent object
-    amountDetail: [
-      {
-        type: "EstimatedAmount",
-        amount: parentData?.unitRate * measure?.noOfunit,
-        additionalDetails: {},
-      },
-    ],
-  };
+function transformMeasure(measure, parentData, isEdit, category) {
+  if(isEdit)
+    return {
+      sorId: parentData?.sorType ? parentData?.sorCode : parentData?.sNo,
+      id: measure?.id,
+      category: category,
+      name: parentData?.description,
+      unitRate: parentData?.unitRate,
+      noOfunit: convertNumberFields(measure?.noOfunit),
+      uom: parentData?.uom,
+      height: convertNumberFields(measure?.height),
+      isDeduction: measure?.isDeduction,
+      length: convertNumberFields(measure?.length),
+      quantity: convertNumberFields(measure?.number),
+      uomValue: null,
+      width: convertNumberFields(measure?.width),
+      description: measure.description,
+      additionalDetails: parentData.additionalInfo, // Include data from parent object
+      amountDetail: [
+        {
+          type: "EstimatedAmount",
+          amount: parentData?.unitRate * measure?.noOfunit,
+          additionalDetails: {},
+          id: measure?.amountid,
+        },
+      ],
+    };
+  else
+    return {
+      sorId: parentData?.category == "SOR" ? parentData?.sorId : parentData?.sNo,
+      category: parentData?.category,
+      name: parentData?.description,
+      unitRate: parentData?.unitRate,
+      noOfunit: convertNumberFields(measure?.noOfunit),
+      uom: parentData?.uom,
+      height: convertNumberFields(measure?.height),
+      isDeduction: measure?.isDeduction,
+      length: convertNumberFields(measure?.length),
+      quantity: convertNumberFields(measure?.number),
+      uomValue: null,
+      width: convertNumberFields(measure?.width),
+      description: measure.description,
+      additionalDetails: parentData.additionalInfo, // Include data from parent object
+      amountDetail: [
+        {
+          type: "EstimatedAmount",
+          amount: parentData?.unitRate * measure?.noOfunit,
+          additionalDetails: {},
+        },
+      ],
+    };
 }
 
 const fetchEstimateDetails = (data) => {
@@ -89,16 +116,17 @@ const fetchEstimateDetails = (data) => {
   return [...detailedEstimates, ...overHeadsData];
 };
 
-const fetchEstimateDetailsEdit = (data, estimate) => {
+const fetchEstimateDetailsEdit = (isEdit, data, estimate) => {
 
-  const Sors = (data?.SORtable && transformLineItems(data?.SORtable)) || [];
-  const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable)) || [];
+  const Sors = (data?.SORtable && transformLineItems(data?.SORtable,"SOR", isEdit)) || [];
+  const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable,"NON-SOR", isEdit)) || [];
   const detailedEstimates = [...Sors, ...NonSors];
 
   let overHeadsData = data?.overheadDetails
     ?.filter((row) => row && row.amount !== "0")
     ?.map((row) => {
       return {
+        id: estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.id || null,
         category: "OVERHEAD",
         name: row?.name?.code,
         description: row?.name?.description,
@@ -106,6 +134,7 @@ const fetchEstimateDetailsEdit = (data, estimate) => {
           {
             type: row?.name?.code,
             amount: row?.amount,
+            id: estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.amountDetail?.[0]?.id || null
           },
         ],
         additionalDetails: {
@@ -114,7 +143,12 @@ const fetchEstimateDetailsEdit = (data, estimate) => {
       };
     });
 
-    return [...detailedEstimates, ...overHeadsData];
+    //idetified and lineitems which has been deleted and then marked it as inactive
+    let deletedSorNonSor = estimate?.estimateDetails?.filter(item => !detailedEstimates.find(x => x.id === item.id) && item.category !== "OVERHEAD")
+                .map(item => ({ ...item, isActive: false })) || [];
+    let deletedOverheads = estimate?.estimateDetails?.filter(item => !overHeadsData.find(x => x.id === item.id) && item.category === "OVERHEAD")
+                .map(item => ({ ...item, isActive: false })) || [];
+    return [...detailedEstimates, ...overHeadsData, ...deletedSorNonSor, ...deletedOverheads];
 };
 
 const fetchDocuments = (docs) => {
@@ -163,7 +197,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
           ...projectData?.projectDetails?.searchedProject?.basicDetails?.address,
           tenantId, //here added because in address tenantId is mandatory from BE side
         }, //get from project search
-        estimateDetails: fetchEstimateDetailsEdit(filteredFormData, estimate),
+        estimateDetails: fetchEstimateDetailsEdit(isEdit, filteredFormData, estimate),
         additionalDetails: {
           documents: fetchDocuments(data?.uploadedDocs),
           labourMaterialAnalysis: { ...filteredFormData?.labourMaterialAnalysis },
