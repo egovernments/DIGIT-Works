@@ -54,23 +54,11 @@ public class EstimateService {
      */
     public EstimateRequest createEstimate(EstimateRequest estimateRequest) {
         log.info("EstimateService::createEstimate");
-        List<Estimate> estimateList = fetchEstimateForRevision(estimateRequest);
-        serviceValidator.validateEstimateOnCreate(estimateRequest,estimateList);
-        enrichmentService.enrichEstimateOnCreate(estimateRequest,estimateList);
+        serviceValidator.validateEstimateOnCreate(estimateRequest);
+        enrichmentService.enrichEstimateOnCreate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);
         producer.push(serviceConfiguration.getSaveEstimateTopic(), estimateRequest);
         return estimateRequest;
-    }
-
-    private List<Estimate> fetchEstimateForRevision(EstimateRequest estimateRequest) {
-        Estimate estimate = estimateRequest.getEstimate();
-
-        if(estimate.getEstimateNumber() == null){
-            throw new CustomException("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
-        }
-        EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
-                EstimateSearchCriteria.SortBy.createdTime).build();
-        return estimateRepository.getEstimate(estimateSearchCriteria);
     }
 
     /**

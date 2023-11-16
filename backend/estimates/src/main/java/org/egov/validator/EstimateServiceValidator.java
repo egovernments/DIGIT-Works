@@ -60,7 +60,7 @@ public class EstimateServiceValidator {
      *
      * @param request
      */
-    public void validateEstimateOnCreate(EstimateRequest request, List<Estimate> estimateList) {
+    public void validateEstimateOnCreate(EstimateRequest request) {
         log.info("EstimateServiceValidator::validateEstimateOnCreate");
         Map<String, String> errorMap = new HashMap<>();
         Estimate estimate = request.getEstimate();
@@ -72,6 +72,12 @@ public class EstimateServiceValidator {
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow);
         if(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && Boolean.TRUE.equals(config.getRevisionEstimateActiveStatus())){
+            if(estimate.getEstimateNumber() == null){
+                errorMap.put("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
+            }
+            EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
+                    EstimateSearchCriteria.SortBy.createdTime).build();
+            List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
             for (Estimate estimate1 : estimateList) {
                 if (estimate1.getWfStatus().equalsIgnoreCase(ESTIMATE_APPROVED_STATUS)) {
                     previousEstimate = estimate1;
