@@ -55,7 +55,9 @@ function transformMeasure(measure, parentData, isEdit, category) {
               },
             ],
     }
-   }   
+   }  
+   
+   return measureObject;
 }
 
 const fetchEstimateDetails = (data) => {
