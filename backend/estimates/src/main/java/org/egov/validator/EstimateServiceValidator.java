@@ -66,7 +66,7 @@ public class EstimateServiceValidator {
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
-        Estimate estimateForRevision = null;
+        Estimate previousEstimate = null;
 
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
@@ -80,13 +80,11 @@ public class EstimateServiceValidator {
             List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
             for (Estimate estimate1 : estimateList) {
                 if (estimate1.getWfStatus().equalsIgnoreCase(ESTIMATE_APPROVED_STATUS)) {
-                    estimateForRevision = estimate1;
+                    previousEstimate = estimate1;
                     break;
                 }
             }
-            if(estimateForRevision == null){
-                errorMap.put("INVALID_ESTIMATE", "Estimate number is invalid for revision estimate");
-            }
+            validatepreviousEstimate(estimate, errorMap, previousEstimate);
         }
 
         String rootTenantId = estimate.getTenantId();
@@ -115,12 +113,33 @@ public class EstimateServiceValidator {
 
         validateNoOfUnit(estimateDetails);
 
-        if(Boolean.TRUE.equals(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus()) && estimateForRevision != null){
-            validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
+        if(Boolean.TRUE.equals(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus()) && previousEstimate != null){
+            validateContractAndMeasurementBook(request, previousEstimate, errorMap);
         }
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
+    }
+
+    private void validatepreviousEstimate(Estimate estimate, Map<String, String> errorMap, Estimate previousEstimate) {
+        log.info("EstimateServiceValidator::validatepreviousEstimate");
+        if(previousEstimate == null){
+            errorMap.put("INVALID_ESTIMATE", "Estimate number is invalid for revision estimate");
+        }
+        else{
+            List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
+            List<EstimateDetail> prevEstimateDetails = previousEstimate.getEstimateDetails();
+            HashMap<String,EstimateDetail> prevEstimateDetailMap = new HashMap<>();
+            prevEstimateDetails.forEach(estimateDetail ->
+                    prevEstimateDetailMap.put(estimateDetail.getId(),estimateDetail)
+                    );
+
+            for(EstimateDetail estimateDetail: estimateDetails){
+                if(estimateDetail.getPreviousLineItemId() != null && (!prevEstimateDetailMap.containsKey(estimateDetail.getPreviousLineItemId()))){
+                        errorMap.put("INVALID_ESTIMATE_DETAIL", "Estimate Details id is not matched for revision estimate");
+                }
+            }
+        }
     }
 
     private void validateContractAndMeasurementBook(EstimateRequest estimateRequest, Estimate estimateForRevision, Map<String, String> errorMap) {
@@ -140,12 +159,36 @@ public class EstimateServiceValidator {
             log.info("Contract found for the given estimate");
             String contractNumber = contractNumbers.get(0).toString();
             Object measurementResponse = measurementUtils.getMeasurementDetails(estimateRequest, contractNumber);
-            validateMeasurement(measurementResponse, estimateRequest, errorMap);
+            validateMeasurement(measurementResponse, estimateRequest,contractResponse, errorMap);
         }
     }
 
-    private void validateMeasurement(Object measurementResponse, EstimateRequest estimateRequest, Map<String, String> errorMap) {
+    private void validateMeasurement(Object measurementResponse, EstimateRequest estimateRequest,Object contractResponse, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateMeasurement");
+        String jsonPathForContractLineItemRef = "$.contracts[*].lineItems[?(@.estimateLineItemId=='{{yourDynamicValue}}')].contractLineItemRef";
+        String jsonPathForMeasurementBook = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].cumulativeValue";
+        List<EstimateDetail> estimateDetail = estimateRequest.getEstimate().getEstimateDetails();
+        estimateDetail.forEach(estimateDetail1 ->
+        {
+            if(!estimateDetail1.getCategory().equals(OVERHEAD_CODE)){
+                List<String> contractLineItemRef = null;
+                try {
+                    contractLineItemRef = JsonPath.read(contractResponse, jsonPathForContractLineItemRef.replace("{{yourDynamicValue}}", estimateDetail1.getPreviousLineItemId()));
+                } catch (Exception e) {
+                    throw new CustomException("JSONPATH_ERROR", "Failed to parse contract search response");
+                }
+                String contractLineItemRefId = contractLineItemRef.get(0);
+                List<Integer> measurementBook = null;
+                try {
+                    measurementBook = JsonPath.read(measurementResponse, jsonPathForMeasurementBook.replace("{{yourDynamicValue}}", contractLineItemRefId));
+                } catch (Exception e) {
+                    throw new CustomException("JSONPATH_ERROR", "Failed to parse measurement search response");
+                }
+                if(estimateDetail1.getNoOfunit() > measurementBook.get(0)){
+                    errorMap.put("INVALID_ESTIMATE_DETAIL", "No of Unit should be less than or equal to measurement book cumulative value");
+                }
+            }
+        });
     }
 
     private void validateMDMSDataForUOM(Estimate estimate, Object mdmsDataForUOM, Map<String, String> errorMap) {
