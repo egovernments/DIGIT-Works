@@ -15,6 +15,7 @@ import MeasureCard from "./MeasureCard";
 */
 
 const MeasureTable = (props) => {
+  console.log("inside measure table")
   const { register, setValue, arrayProps = {}, config = {},watch } = props;
   const { key: tableKey, mode } = config;
   let { fields, append, remove } = arrayProps || {};

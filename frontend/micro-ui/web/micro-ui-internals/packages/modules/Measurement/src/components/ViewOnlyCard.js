@@ -9,6 +9,8 @@ const ViewOnlyCard = (props) => {
   // Extract the "SOR" and "NONSOR" arrays from the props
   const SOR = watch("SOR") || watch("SORtable");
   const NONSOR = watch("NONSOR") || watch("NONSORtable");
+  console.log("inside ViewOnlyCard")
+  console.log(SOR,NONSOR,"SOR,NONSOR")
 
   // Calculate the sum of "amount" values in both arrays
   const totalAmount = useMemo(
