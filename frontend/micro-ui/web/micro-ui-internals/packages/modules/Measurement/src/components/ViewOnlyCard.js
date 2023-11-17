@@ -11,6 +11,7 @@ const ViewOnlyCard = (props) => {
   const NONSOR = watch("NONSOR") || watch("NONSORtable");
   console.log("inside ViewOnlyCard")
   console.log(SOR,NONSOR,"SOR,NONSOR")
+  console.log(SOR?.reduce((acc, item) => acc + parseFloat(item?.amount), 0) + NONSOR?.reduce((acc, item) => acc + parseFloat(item?.amount), 0) || 0)
 
   // Calculate the sum of "amount" values in both arrays
   const totalAmount = useMemo(
@@ -21,7 +22,7 @@ const ViewOnlyCard = (props) => {
   return (
     <div className="view-only-card-container">
       <div className="view-only-card">
-        <span>{t("MB_AMOUNT_TOTAL")}:</span>
+        <span>{t("MB_AMOUNT_TOTA")}:</span>
         <Amount customStyle={{ textAlign: "right" }} value={totalAmount} t={t} roundOff={false}></Amount>
       </div>
     </div>
