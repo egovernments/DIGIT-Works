@@ -14,6 +14,34 @@ import MeasureCard from "./MeasureCard";
 
 */
 
+let defaultSOR = {
+      "amount": 0,
+      "consumedQ": 0,
+      "sNo": 1,
+      "uom": null,
+      "description": "",
+      "unitRate": 0,
+      "category": "NON-SOR",
+      "targetId": null,
+      "approvedQuantity": 0,
+      "measures": [
+          {
+              "sNo": 1,
+              "targetId": null,
+              "isDeduction": false,
+              "description": null,
+              "id": 0,
+              "height": 0,
+              "width": 0,
+              "length": 0,
+              "number": 0,
+              "noOfunit": 0,
+              "rowAmount": 0,
+              "consumedRowQuantity": 0
+          }
+      ]
+  };
+
 const MeasureTable = (props) => {
   const { register, setValue, arrayProps = {}, config = {},watch } = props;
   const { key: tableKey, mode } = config;
@@ -29,6 +57,12 @@ const MeasureTable = (props) => {
       setFormValue([...fields,val]);
     }
     remove = (index)=>{
+      if(fields?.length == 1)
+      {
+        fields = [{...defaultSOR}];
+        setFormValue([...fields]);
+      }
+      else
       setFormValue([...fields.filter((e,ind)=>ind!=index)]);
     }  
   }
@@ -262,7 +296,7 @@ const MeasureTable = (props) => {
             </td>
             {mode == "CREATEALL" && (
               <td>
-                <span className="icon-wrapper" onClick={() => fields?.length > 1 ? remove(index): {}}>
+                <span className="icon-wrapper" onClick={() => remove(index)}>
                   <DeleteIcon fill={"#B1B4B6"} />
                 </span>
               </td>
