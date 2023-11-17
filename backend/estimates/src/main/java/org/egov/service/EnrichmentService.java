@@ -193,28 +193,11 @@ public class EnrichmentService {
     }
 
     public void enrichNoOfUnit(List<EstimateDetail> estimateDetails){
-        for(int i =0;i<estimateDetails.size();i++){
-            EstimateDetail estimateDetail = estimateDetails.get(i);
-            if(estimateDetail.getNoOfunit()==null){
-                BigDecimal total =new BigDecimal(1);
-                boolean allNull =true;
-                if(estimateDetail.getLength()!=null){
-                    total =total.multiply(estimateDetail.getLength());
-                    allNull=false;
-                }
-                if(estimateDetail.getWidth()!=null){
-                    total =total.multiply(estimateDetail.getWidth());
-                    allNull=false;
-                }
-                if(estimateDetail.getHeight()!=null){
-                    total =total.multiply(estimateDetail.getHeight());
-                    allNull=false;
-                }
-                if(estimateDetail.getQuantity()!=null){
-                    total =total.multiply(estimateDetail.getQuantity());
-                    allNull=false;
-                }
-                if(allNull){
+        for (EstimateDetail estimateDetail : estimateDetails) {
+            if (estimateDetail.getNoOfunit() == null) {
+                BigDecimal total = estimateRepository.getTotal(estimateDetail);
+                boolean allNull = estimateRepository.isAllNull(estimateDetail);
+                if (allNull) {
                     continue;
                 }
                 double totalNew = total.doubleValue();

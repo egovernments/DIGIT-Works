@@ -42,6 +42,11 @@ public class EstimateServiceValidator {
     private final ContractUtils contractUtils;
     private final MeasurementUtils measurementUtils;
 
+    private static final String JSONPATH_ERROR = "JSONPATH_ERROR";
+    private static final String MDMS_RES = "$.MdmsRes.";
+    private static final String IS_NOT_PRESENT_IN_MDMS = " is not present in MDMS";
+    private static final String FAILED_TO_PARSE_MDMS_RESPONSE = "Failed to parse mdms response";
+
     @Autowired
     public EstimateServiceValidator(MDMSUtils mdmsUtils, EstimateRepository estimateRepository, ProjectUtil projectUtil, EstimateServiceConfiguration config, ObjectMapper mapper, ContractUtils contractUtils, MeasurementUtils measurementUtils) {
         this.mdmsUtils = mdmsUtils;
@@ -53,6 +58,11 @@ public class EstimateServiceValidator {
         this.measurementUtils = measurementUtils;
     }
 
+    public Boolean isRevisionEstimate(EstimateRequest request){
+        log.info("EstimateServiceValidator::isRevisionEstimate");
+        Estimate estimate = request.getEstimate();
+        return estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus();
+    }
     /**
      * validate the create estimate request for all the mandatory
      * and/or
@@ -71,13 +81,8 @@ public class EstimateServiceValidator {
         validateRequestInfo(requestInfo);
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow);
-        if(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && Boolean.TRUE.equals(config.getRevisionEstimateActiveStatus())){
-            if(estimate.getEstimateNumber() == null){
-                errorMap.put("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
-            }
-            EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
-                    EstimateSearchCriteria.SortBy.createdTime).build();
-            List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
+        if(Boolean.TRUE.equals(isRevisionEstimate(request))){
+            List<Estimate> estimateList = estimateRepository.searchEstimates(request,errorMap);
             for (Estimate estimate1 : estimateList) {
                 if (estimate1.getWfStatus().equalsIgnoreCase(ESTIMATE_APPROVED_STATUS)) {
                     previousEstimate = estimate1;
@@ -113,7 +118,7 @@ public class EstimateServiceValidator {
 
         validateNoOfUnit(estimateDetails);
 
-        if(Boolean.TRUE.equals(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus()) && previousEstimate != null){
+        if(Boolean.TRUE.equals(isRevisionEstimate(request)) && previousEstimate != null){
             validateContractAndMeasurementBook(request, previousEstimate, errorMap);
         }
 
@@ -132,11 +137,11 @@ public class EstimateServiceValidator {
             HashMap<String,EstimateDetail> prevEstimateDetailMap = new HashMap<>();
             prevEstimateDetails.forEach(estimateDetail ->
                     prevEstimateDetailMap.put(estimateDetail.getId(),estimateDetail)
-                    );
+            );
 
             for(EstimateDetail estimateDetail: estimateDetails){
                 if(estimateDetail.getPreviousLineItemId() != null && (!prevEstimateDetailMap.containsKey(estimateDetail.getPreviousLineItemId()))){
-                        errorMap.put("INVALID_ESTIMATE_DETAIL", "Estimate Details id is not matched for revision estimate");
+                        errorMap.put("INVALID_ESTIMATE_DETAIL", "Previous Line Id is invalid for revision estimate");
                 }
             }
         }
@@ -150,7 +155,7 @@ public class EstimateServiceValidator {
         try {
             contractNumbers = JsonPath.read(contractResponse, jsonPathForContractNumber);
         } catch (Exception e) {
-            throw new CustomException("JSONPATH_ERROR", "Failed to parse contract search response");
+            throw new CustomException(JSONPATH_ERROR, "Failed to parse contract search response");
         }
         if(contractNumbers == null || contractNumbers.isEmpty()){
             log.info("No contract found for the given estimate");
@@ -175,14 +180,14 @@ public class EstimateServiceValidator {
                 try {
                     contractLineItemRef = JsonPath.read(contractResponse, jsonPathForContractLineItemRef.replace("{{yourDynamicValue}}", estimateDetail1.getPreviousLineItemId()));
                 } catch (Exception e) {
-                    throw new CustomException("JSONPATH_ERROR", "Failed to parse contract search response");
+                    throw new CustomException(JSONPATH_ERROR, "Failed to parse contract search response");
                 }
                 String contractLineItemRefId = contractLineItemRef.get(0);
                 List<Integer> measurementBook = null;
                 try {
                     measurementBook = JsonPath.read(measurementResponse, jsonPathForMeasurementBook.replace("{{yourDynamicValue}}", contractLineItemRefId));
                 } catch (Exception e) {
-                    throw new CustomException("JSONPATH_ERROR", "Failed to parse measurement search response");
+                    throw new CustomException(JSONPATH_ERROR, "Failed to parse measurement search response");
                 }
                 if(estimateDetail1.getNoOfunit() > measurementBook.get(0)){
                     errorMap.put("INVALID_ESTIMATE_DETAIL", "No of Unit should be less than or equal to measurement book cumulative value");
@@ -201,12 +206,12 @@ public class EstimateServiceValidator {
                     .map(EstimateDetail::getUom)
                     .collect(Collectors.toList());
         }
-        final String jsonPathForUom = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_UOM + ".*.code";
+        final String jsonPathForUom = MDMS_RES + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_UOM + ".*.code";
         List<Object> uomRes = null;
         try {
             uomRes = JsonPath.read(mdmsDataForUOM, jsonPathForUom);
         } catch (Exception e) {
-            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
+            throw new CustomException(JSONPATH_ERROR, FAILED_TO_PARSE_MDMS_RESPONSE);
         }
 
         //estimate detail - uom
@@ -230,24 +235,8 @@ public class EstimateServiceValidator {
                 if(estimateDetail.getNoOfunit()==null){
                     throw new CustomException("NO_OF_UNIT", "noOfUnit is mandatory");
                 }
-                BigDecimal total =new BigDecimal(1);
-                boolean allNull =true;
-                if(estimateDetail.getLength()!=null && estimateDetail.getLength().signum() != 0){
-                    total =total.multiply(estimateDetail.getLength());
-                    allNull =false;
-                }
-                if(estimateDetail.getWidth()!=null && estimateDetail.getWidth().signum() != 0){
-                    total =total.multiply(estimateDetail.getWidth());
-                    allNull = false;
-                }
-                if(estimateDetail.getHeight()!=null && estimateDetail.getHeight().signum() != 0){
-                    total =total.multiply(estimateDetail.getHeight());
-                    allNull =false;
-                }
-                if(estimateDetail.getQuantity()!=null && estimateDetail.getQuantity().signum() != 0){
-                    total =total.multiply(estimateDetail.getQuantity());
-                    allNull = false;
-                }
+                BigDecimal total = estimateRepository.getTotal(estimateDetail);
+                boolean allNull = estimateRepository.isAllNull(estimateDetail);
                 double totalNew = total.doubleValue();
                 if (totalNew != estimateDetail.getNoOfunit() && !allNull) {
                     throw new CustomException("NO_OF_UNIT", "noOfUnit value is not correct");
@@ -268,7 +257,7 @@ public class EstimateServiceValidator {
             try {
                 projects = JsonPath.read(projectRes, projectJsonPath);
             } catch (Exception e) {
-                throw new CustomException("JSONPATH_ERROR", "Failed to parse project search response");
+                throw new CustomException(JSONPATH_ERROR, "Failed to parse project search response");
             }
         }
 
@@ -297,6 +286,9 @@ public class EstimateServiceValidator {
         }
         if (estimate.getStatus() == null || !EnumUtils.isValidEnum(Estimate.StatusEnum.class, estimate.getStatus().toString())) {
             errorMap.put("STATUS", "Status is mandatory");
+        }
+        if(StringUtils.isBlank(estimate.getBusinessService())){
+            errorMap.put("BUSINESS_SERVICE", "Business service is mandatory");
         }
         if (StringUtils.isBlank(estimate.getName())) {
             errorMap.put("NAME", "Name is mandatory");
@@ -369,7 +361,7 @@ public class EstimateServiceValidator {
             uomRes = JsonPath.read(mdmsData,jsonPathForUom);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
+            throw new CustomException(JSONPATH_ERROR, FAILED_TO_PARSE_MDMS_RESPONSE);
         }
         int uniqueIdentifiersSizeRes = sorIdRes.size();
         if(uniqueIdentifiersSizeInput!=uniqueIdentifiersSizeRes){
@@ -402,7 +394,7 @@ public class EstimateServiceValidator {
         try {
             mdmsRates = JsonPath.read(mdmsData, jsonPathForRates);
         }catch (Exception e) {
-            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
+            throw new CustomException(JSONPATH_ERROR, FAILED_TO_PARSE_MDMS_RESPONSE);
         }
         for (EstimateDetail estimateDetail : estimate.getEstimateDetails()) {
             if (!estimateDetail.getCategory().equalsIgnoreCase("SOR"))
@@ -413,7 +405,7 @@ public class EstimateServiceValidator {
                 jsonPathRatesForGivenSor = jsonPathRatesForGivenSor.replace("{sorId}", estimateDetail.getSorId());
                 ratesForGivenSor = JsonPath.read(mdmsRates, jsonPathRatesForGivenSor);
             }catch (Exception e) {
-                throw new CustomException("JSONPATH_ERROR", "Failed to parse MDMS response");
+                throw new CustomException(JSONPATH_ERROR, FAILED_TO_PARSE_MDMS_RESPONSE);
             }
             JsonNode filteredRates = mapper.convertValue(ratesForGivenSor, JsonNode.class);
             validateDate(filteredRates, estimateDetail, errorMap, validatingDate);
@@ -519,10 +511,10 @@ public class EstimateServiceValidator {
                 }
             }
         }
-        final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
-        final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
-        final String jsonPathForCategories = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_CATEGORY + ".*";
-        final String jsonPathForOverHead = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVERHEAD + ".*";
+        final String jsonPathForWorksDepartment = MDMS_RES + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
+        final String jsonPathForTenants = MDMS_RES + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
+        final String jsonPathForCategories = MDMS_RES + MDMS_WORKS_MODULE_NAME + "." + MASTER_CATEGORY + ".*";
+        final String jsonPathForOverHead = MDMS_RES + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVERHEAD + ".*";
 
         List<Object> deptRes = null;
         List<Object> tenantRes = null;
@@ -535,20 +527,20 @@ public class EstimateServiceValidator {
             overHeadRes = JsonPath.read(mdmsDataForOverHead, jsonPathForOverHead);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
+            throw new CustomException(JSONPATH_ERROR, FAILED_TO_PARSE_MDMS_RESPONSE);
         }
 
         if (CollectionUtils.isEmpty(deptRes))
-            errorMap.put("INVALID_EXECUTING_DEPARTMENT_CODE", "The executing department code: " + estimate.getExecutingDepartment() + " is not present in MDMS");
+            errorMap.put("INVALID_EXECUTING_DEPARTMENT_CODE", "The executing department code: " + estimate.getExecutingDepartment() + IS_NOT_PRESENT_IN_MDMS);
 
         if (CollectionUtils.isEmpty(tenantRes))
-            errorMap.put("INVALID_TENANT_ID", "The tenant: " + estimate.getTenantId() + " is not present in MDMS");
+            errorMap.put("INVALID_TENANT_ID", "The tenant: " + estimate.getTenantId() + IS_NOT_PRESENT_IN_MDMS);
 
         //estimate detail - category
         if (!CollectionUtils.isEmpty(categoryRes) && !CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
             reqEstimateDetailCategories.removeAll(categoryRes);
             if (!CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
-                errorMap.put("ESTIMATE_DETAIL.CATEGORY", "The categories : " + reqEstimateDetailCategories + " is not present in MDMS");
+                errorMap.put("ESTIMATE_DETAIL.CATEGORY", "The categories : " + reqEstimateDetailCategories + IS_NOT_PRESENT_IN_MDMS);
             }
         }
 
@@ -564,10 +556,10 @@ public class EstimateServiceValidator {
         //estimate detail - name
         if (!CollectionUtils.isEmpty(overHeadRes) && !CollectionUtils.isEmpty(reqEstimateDetailNameMap)) {
 
-            for (String category : reqEstimateDetailNameMap.keySet()) {
+            for (Map.Entry<String, List<String>> category : reqEstimateDetailNameMap.entrySet()) {
 
-                if (StringUtils.isNotBlank(category) && category.equalsIgnoreCase(OVERHEAD_CODE)) {
-                    List<String> reqEstimateDetailNames = reqEstimateDetailNameMap.get(category);
+                if (StringUtils.isNotBlank(category.getKey()) && category.getKey().equalsIgnoreCase(OVERHEAD_CODE)) {
+                    List<String> reqEstimateDetailNames = reqEstimateDetailNameMap.get(category.getKey());
 
                     Map<String, Integer> reqNameMap = new HashMap<>();
                     for (String reqName : reqEstimateDetailNames) {
@@ -579,18 +571,18 @@ public class EstimateServiceValidator {
                     }
 
                     List<String> invalidNames = new ArrayList<>();
-                    for (String reqName : reqNameMap.keySet()) {
-                        if (overHeadRes.contains(reqName)) {
-                            if (reqNameMap.get(reqName) > 1) {
-                                errorMap.put("ESTIMATE_DETAIL.DUPLICATE.NAME", "The name : " + reqName + " is added more than one time");
+                    for (Map.Entry<String, Integer> reqName : reqNameMap.entrySet()) {
+                        if (overHeadRes.contains(reqName.getKey())) {
+                            if (reqNameMap.get(reqName.getKey()) > 1) {
+                                errorMap.put("ESTIMATE_DETAIL.DUPLICATE.NAME", "The name : " + reqName.getKey() + " is added more than one time");
                                 break;
                             }
                         } else {
-                            invalidNames.add(reqName);
+                            invalidNames.add(reqName.getKey());
                         }
                     }
                     if (!CollectionUtils.isEmpty(invalidNames)) {
-                        errorMap.put("ESTIMATE_DETAIL.NAME", "The names : " + invalidNames + " is not present in MDMS");
+                        errorMap.put("ESTIMATE_DETAIL.NAME", "The names : " + invalidNames + IS_NOT_PRESENT_IN_MDMS);
                     }
                 }
             }
@@ -599,9 +591,9 @@ public class EstimateServiceValidator {
 
         //Overhead -amount type validation
         if (!CollectionUtils.isEmpty(overHeadRes) && !CollectionUtils.isEmpty(overheadAmountTypeMap)) {
-            for (String overheadCategoryKey : overheadAmountTypeMap.keySet()) {
-                if (StringUtils.isNotBlank(overheadCategoryKey) && overheadCategoryKey.equalsIgnoreCase(OVERHEAD_CODE)) {
-                    List<String> amountTypes = overheadAmountTypeMap.get(overheadCategoryKey);
+            for (Map.Entry<String, List<String>> overheadCategoryKey : overheadAmountTypeMap.entrySet()) {
+                if (StringUtils.isNotBlank(overheadCategoryKey.getKey()) && overheadCategoryKey.getKey().equalsIgnoreCase(OVERHEAD_CODE)) {
+                    List<String> amountTypes = overheadCategoryKey.getValue();
                     //frequency map
                     Map<String, Integer> reqTypeMap = new HashMap<>();
                     for (String type : amountTypes) {
@@ -613,18 +605,18 @@ public class EstimateServiceValidator {
                     }
 
                     List<String> invalidList = new ArrayList<>();
-                    for (String reqType : reqTypeMap.keySet()) {
-                        if (overHeadRes.contains(reqType)) {
-                            if (reqTypeMap.get(reqType) > 1) {
-                                errorMap.put("ESTIMATE_DETAIL.AMOUNT_DETAIL.DUPLICATE.TYPE", "The amount type : " + reqType + " is added more than one time");
+                    for (Map.Entry<String, Integer> reqType : reqTypeMap.entrySet()) {
+                        if (overHeadRes.contains(reqType.getKey())) {
+                            if (reqTypeMap.get(reqType.getKey()) > 1) {
+                                errorMap.put("ESTIMATE_DETAIL.AMOUNT_DETAIL.DUPLICATE.TYPE", "The amount type : " + reqType.getKey() + " is added more than one time");
                             }
                         } else {
-                            invalidList.add(reqType);
+                            invalidList.add(reqType.getKey());
                         }
                     }
 
                     if (!CollectionUtils.isEmpty(invalidList)) {
-                        errorMap.put("ESTIMATE_DETAIL.AMOUNT_DETAIL.TYPE", "The amount types : " + invalidList + " is not present in MDMS");
+                        errorMap.put("ESTIMATE_DETAIL.AMOUNT_DETAIL.TYPE", "The amount types : " + invalidList + IS_NOT_PRESENT_IN_MDMS);
                     }
                 }
             }
@@ -727,7 +719,7 @@ public class EstimateServiceValidator {
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
-        if(Boolean.TRUE.equals(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus()) && estimateForRevision != null){
+        if(Boolean.TRUE.equals(isRevisionEstimate(request)) && estimateForRevision != null){
             validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
         }
 

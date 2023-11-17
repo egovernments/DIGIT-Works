@@ -5,13 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.repository.rowmapper.EstimateQueryBuilder;
 import org.egov.repository.rowmapper.EstimateRowMapper;
 import org.egov.web.models.Estimate;
+import org.egov.web.models.EstimateDetail;
+import org.egov.web.models.EstimateRequest;
 import org.egov.web.models.EstimateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Slf4j
@@ -64,4 +68,43 @@ public class EstimateRepository {
         return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
     }
 
+    public List<Estimate> searchEstimates(EstimateRequest request, Map<String, String> errorMap) {
+        log.info("EstimateRepository::searchEstimates");
+        Estimate estimate = request.getEstimate();
+        if(estimate.getEstimateNumber() == null){
+            errorMap.put("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
+        }
+        EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
+                EstimateSearchCriteria.SortBy.createdTime).build();
+        return getEstimate(estimateSearchCriteria);
+    }
+    public BigDecimal getTotal(EstimateDetail estimateDetail){
+        BigDecimal total =new BigDecimal(1);
+        if(estimateDetail.getLength()!=null && estimateDetail.getLength().signum() != 0){
+            total =total.multiply(estimateDetail.getLength());
+        }
+        if(estimateDetail.getWidth()!=null && estimateDetail.getWidth().signum() != 0){
+            total =total.multiply(estimateDetail.getWidth());
+        }
+        if(estimateDetail.getHeight()!=null && estimateDetail.getHeight().signum() != 0){
+            total =total.multiply(estimateDetail.getHeight());
+        }
+        if(estimateDetail.getQuantity()!=null && estimateDetail.getQuantity().signum() != 0){
+            total =total.multiply(estimateDetail.getQuantity());
+        }
+        return total;
+    }
+    public boolean isAllNull(EstimateDetail estimateDetail){
+        boolean allNull = estimateDetail.getLength() == null || estimateDetail.getLength().signum() == 0;
+        if(estimateDetail.getWidth()!=null && estimateDetail.getWidth().signum() != 0){
+            allNull=false;
+        }
+        if(estimateDetail.getHeight()!=null && estimateDetail.getHeight().signum() != 0){
+            allNull=false;
+        }
+        if(estimateDetail.getQuantity()!=null && estimateDetail.getQuantity().signum() != 0){
+            allNull=false;
+        }
+        return allNull;
+    }
 }

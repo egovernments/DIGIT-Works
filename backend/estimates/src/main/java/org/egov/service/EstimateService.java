@@ -72,16 +72,7 @@ public class EstimateService {
         log.info("EstimateService::searchEstimate");
         serviceValidator.validateEstimateOnSearch(requestInfoWrapper, searchCriteria);
         enrichmentService.enrichEstimateOnSearch(searchCriteria);
-
-        List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
-
-        List<EstimateRequest> estimateRequestList = new LinkedList<>();
-        for (Estimate estimate : estimateList) {
-            EstimateRequest estimateRequest = EstimateRequest.builder().estimate(estimate).build();
-            estimateRequestList.add(estimateRequest);
-        }
-
-        return estimateList;
+        return estimateRepository.getEstimate(searchCriteria);
     }
 
     /**
