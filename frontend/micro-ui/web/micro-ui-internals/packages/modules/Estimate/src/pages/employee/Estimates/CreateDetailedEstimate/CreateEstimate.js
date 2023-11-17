@@ -244,6 +244,61 @@ const CreateEstimate = () => {
     }
   };
 
+  function validateNonSor(items) {
+    //this is to check is any one param is present for non other param should also be present or removed alltogether
+    for (const item of items) {
+      if (!item.description || !item.uom || item.unitRate === undefined || item.unitRate <= 0 || item.currentMBEntry === undefined || !item.currentMBEntry) {
+        setShowToast({ error: true, label: `${t("ERR_NONSOR_ITEM_IS_MISSING")} ${ item?.sNo}` });
+        setShowModal(false);
+        return false;
+      }
+
+      //this is to check if measures are there in NON sor it should have description
+      if (item.measures && item.measures.length > 0) {
+          for (const measure of item.measures) {
+              if (!measure.description) {
+                  setShowToast({ error: true, label: `${t("ERR_ENTER_DESCRIPTION_IN_NONSOR")} ${ item?.sNo}` });
+                  setShowModal(false);
+                  return false;
+              }
+          }
+      }
+  }
+  return true;
+  }
+
+  function validateData(data){
+
+    // To validate either SOR or NON SOR must be present
+    if((!data?.SORtable) && !(data?.NONSORtable))
+    {  
+      setShowToast({ error: true, label: "ERR_ATLEAST_SOR_OR_NON_SOR_PRESENT" });
+      setShowModal(false);
+      return false;
+    }
+    //To validate that if SOR is present it should have measures
+    if(data?.SORtable?.filter((ob) => !(ob?.currentMBEntry) || ob?.currentMBEntry <= 0)?.length > 0)
+    {
+      setShowToast({ error: true, label: "ERR_MB_AMOUNT_IS_NOT_RIGHT_FOR_SOR" });
+      setShowModal(false);
+      return false;
+    }
+    //To validate if the measures are present in SOR table it should have description param
+    let descriptionpresent = data?.SORtable?.find(item => item.measures.some(measure => measure?.description === "" || measure?.description === undefined || measure?.description === null));
+    if(descriptionpresent)
+    {
+      setShowToast({ error: true, label: `${t("ERR_ENTER_DESCRIPTION_IN_SOR")} ${descriptionpresent?.sorId || descriptionpresent?.sorCode}` });
+      setShowModal(false);
+      return false;
+    }
+    //To validate the data of NON Sor
+    if(data?.NONSORtable && !(validateNonSor(data?.NONSORtable)))
+      return false
+    
+    
+    return true;
+  }
+
   const onFormSubmit = async (_data) => {
     _data = Digit.Utils.trimStringsInObject(_data);
     //added this totalEst amount logic here because setValues in pageComponents don't work
@@ -277,6 +332,9 @@ const CreateEstimate = () => {
       // selectedDesignation
     };
 
+
+    let validated = validateData(completeFormData);
+    if(validated){
     const payload = createEstimatePayload(completeFormData, projectData, isEdit, estimate);
     console.log(payload, "payload");
     setShowModal(false);
@@ -344,6 +402,7 @@ const CreateEstimate = () => {
         },
       });
     }
+  }
   };
 
   // const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(

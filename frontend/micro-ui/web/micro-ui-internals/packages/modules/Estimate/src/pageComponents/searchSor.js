@@ -141,7 +141,7 @@ const searchSor = (props) => {
       </div>
       </div>
       {showToast?.show && (
-      <Toast error={showToast?.error} label={showToast?.label} isDleteBtn={true} onClose={() => setShowToast({show : false, label : "", error : false})} />
+      <Toast error={showToast?.error} label={t(showToast?.label)} isDleteBtn={true} onClose={() => setShowToast({show : false, label : "", error : false})} />
       )}
     </div>
   );
