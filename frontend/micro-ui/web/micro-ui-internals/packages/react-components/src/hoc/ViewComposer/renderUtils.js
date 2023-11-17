@@ -25,10 +25,10 @@ export const RenderDataSection = ({ section }) => {
               text={row?.isLink ? <div>
                 <Link to={row?.to}>
                   <span className="link" style={{ color: "#F47738" }}>
-                    {displayValue}
+                    {t(displayValue)}
                   </span>
                 </Link>
-              </div> : displayValue}
+              </div> : t(displayValue)}
               last={rowIdx === section.values?.length - 1}
               caption={row.caption}
               className="border-none"
@@ -77,7 +77,7 @@ export const RenderDocumentsSection = ({ section }) => {
     <div style={section?.inlineStyles}>
       {documents?.map((document, index) => (
         <React.Fragment key={index}>
-          {document?.title ? <CardSectionHeader>{t(document?.title)}</CardSectionHeader> : null}
+          {document?.title ? <CardSectionHeader style={section?.headerStyle}>{t(document?.title)}</CardSectionHeader> : null}
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
             {document?.values && document?.values.length > 0
               ? document?.values?.map((value, index) => (

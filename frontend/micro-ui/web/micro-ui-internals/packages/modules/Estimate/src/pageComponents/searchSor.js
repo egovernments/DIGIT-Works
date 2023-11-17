@@ -1,12 +1,16 @@
-import { Button } from "@egovernments/digit-ui-react-components";
+import { Button, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import EstimateDropdown from "./EstimateDropdown";
 import SearchBar from "./SearchBar";
 
-const fetchData = async (sorid, state, setState) => {
+const fetchData = async (sorid, state, setState, setShowToast) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-
+  if(sorid == null)
+  {
+    setShowToast({show: true, error: true, label:"WORKS_CANNOT_ADD_EMPTY_DATA"});
+    return true;
+  }
   const requestCriteria = {
     url: "/mdms-v2/v1/_search",
     body: {
@@ -30,13 +34,19 @@ const fetchData = async (sorid, state, setState) => {
     const data = await Digit.CustomService.getResponse(requestCriteria);
     if (data?.MdmsRes?.["WORKS-SOR"]?.Rates?.length > 0) {
       const Rates = data?.MdmsRes?.["WORKS-SOR"]?.Rates;
+      //if rates is not there then provide the error
       state?.forEach((element) => {
         if (element?.sorId == sorid) {
           element.unitRate = Rates?.[0]?.rate || 0;
           element.amountDetails = Rates?.[0]?.amountDetails;
         }
       });
-      setState(state);
+      return Rates;
+      //setState(state);
+    }
+    else
+    {
+      setShowToast({show: true, error: true, label:"WORKS_RATE_NOT_FOUND_ERROR"});
     }
   } catch (error) {
     // Handle any errors here
@@ -48,6 +58,7 @@ const searchSor = (props) => {
   const { t } = useTranslation();
   const [stateData, setStateData] = useState({});
   const [selectedSOR, setSelectedSOR] = useState(null);
+  const [showToast, setShowToast] = useState({show : false, label : "", error : false});
   const { register, setValue, watch } = props;
   let formData = watch("SOR");
   useEffect(() => {
@@ -67,17 +78,33 @@ const searchSor = (props) => {
     },
     [setValue]
   );
-  const buttonClick = () => {
+  const buttonClick = async () => {
     const sor = transformSOR(stateData?.selectedSor);
-    if (formData?.length == 0 || (formData?.length == 1 && !formData?.[0]?.description)) {
+  
+    if (formData?.length === 0 || (formData?.length === 1 && !formData?.[0]?.description) && stateData?.selectedSor?.id) {
       formData = [sor];
     } else {
-      formData?.push(sor);
+      sor?.sorId && formData?.push(sor);
     }
-    fetchData(stateData?.selectedSor?.id, formData, setFormValue);
-    setFormValue(formData);
+  
+    try {
+      const apiData = await fetchData(stateData?.selectedSor?.id, formData, setFormValue,setShowToast);
+  
+      // Check if rates are available
+      if (apiData !== undefined && stateData?.selectedSor?.id) {
+        setFormValue(formData);
+      } else {
+        // Rates are not available, handle it here (e.g., display an error message)
+        console.error('Rates not available in fetchData response');
+      }
+    } catch (error) {
+      // Handle the error from the API call
+      console.error('Error fetching data:', error);
+    }
+  
     setSelectedSOR(null);
   };
+
   const transformSOR = (sor) => {
     const transformedSOR = {
       sNo: 1,
@@ -113,6 +140,9 @@ const searchSor = (props) => {
       />
       </div>
       </div>
+      {showToast?.show && (
+      <Toast error={showToast?.error} label={showToast?.label} isDleteBtn={true} onClose={() => setShowToast({show : false, label : "", error : false})} />
+      )}
     </div>
   );
 };

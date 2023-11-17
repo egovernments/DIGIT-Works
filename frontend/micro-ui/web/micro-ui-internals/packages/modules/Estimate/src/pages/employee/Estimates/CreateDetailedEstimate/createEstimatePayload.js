@@ -206,7 +206,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
           locality: projectData?.projectDetails?.searchedProject?.basicDetails?.locality,
           sorSkillData : filteredFormData?.SORtable?.map((ob) => {
             return {
-              sorId : ob?.sorId,
+              sorId : ob?.sorId || ob?.sorCode,
               sorType : ob?.sorType,
               sorSubType : ob?.sorSubType
             }
