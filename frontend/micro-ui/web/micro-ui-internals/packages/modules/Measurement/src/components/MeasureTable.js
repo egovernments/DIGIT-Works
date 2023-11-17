@@ -199,8 +199,8 @@ const MeasureTable = (props) => {
             ) : (
               <>
                 {/*added this dummy line because project creation and search is failing will check this once it works */}
-                {((mode === "VIEWES") && tableKey === "SOR") &&<td>{`${t(`${"Works_D"}`)}/ ${t(`${"SC_D"}`)}`}</td>}
-                {((mode === "CREATEALL" || mode === "VIEWES") && (row?.sorType || row?.sorSubType) && tableKey === "SOR") &&<td>{`${t(`WORKS_SOR_TYPE_${row?.sorType}`)}/ ${t(`WORKS_SOR_SUBTYPE_${row?.sorSubType}`)}`}</td>}
+                {/*((mode === "VIEWES") && tableKey === "SOR") &&<td>{`${t(`${"Works_D"}`)}/ ${t(`${"SC_D"}`)}`}</td>*/}
+                {((mode === "CREATEALL" || mode === "VIEWES") && (row?.sorType || row?.sorSubType) && tableKey === "SOR") ?<td>{`${t(`WORKS_SOR_TYPE_${row?.sorType}`)}/ ${t(`WORKS_SOR_SUBTYPE_${row?.sorSubType}`)}`}</td> : <td>{t(" ")}</td>}
                 {((mode === "CREATEALL" || mode === "VIEWES") && tableKey === "SOR") && <td>{row?.sorCode}</td>}
                 <td>{row.description}</td>
                 <td>{row.uom}</td>

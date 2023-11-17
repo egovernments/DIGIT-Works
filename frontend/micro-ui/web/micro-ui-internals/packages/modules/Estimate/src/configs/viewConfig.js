@@ -13,6 +13,12 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
       fileStoreId: item.fileStoreId || "NA",
     }));
 
+    const Projectdocuments = projectDetails?.documents?.filter((item) => item?.fileStoreId)
+    .map((item) => ({
+      title: `PROJECT_${item.additionalDetails?.fileName}` || "NA",
+      ...item
+    }));
+
   const headerLocale = Digit.Utils.locale.getTransformedLocale(estimateDetails?.tenantId);
   const geoLocationValue = estimateDetails?.address?.latitude && estimateDetails?.address?.longitude ? `${latitude}, ${longitude}` : "NA";
 
@@ -185,7 +191,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
         sections: [
           {
             type: "DATA",
-            sectionHeader: { value: "WORKS_PROJECT_DETAILS", inlineStyles: {} },
+            sectionHeader: { value: "WORKS_PROJECT_DETAILS", inlineStyles: {marginBottom : "16px", marginTop:"32px", fontSize: "24px"} },
             values: [
               {
                 key: "PROJECT_LOR",
@@ -207,7 +213,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
           },
           {
             type: "DATA",
-            sectionHeader: { value: "WORKS_LOCATION_DETAILS", inlineStyles: {} },
+            sectionHeader: { value: "WORKS_LOCATION_DETAILS", inlineStyles: {marginBottom : "16px", marginTop:"32px", fontSize: "24px"} },
             values: [
               {
                 key: "WORKS_GEO_LOCATION",
@@ -226,6 +232,23 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
                 value: `${headerLocale}_ADMIN_${projectDetails?.additionalDetails?.locality}`,
               },
             ],
+          },
+          {
+            type: "DOCUMENTS",
+            documents: [
+              {
+                title: "WORKS_RELEVANT_DOCUMENTS",
+                BS: "Works",
+                values: Projectdocuments,
+              },
+            ],
+            inlineStyles: {
+              marginTop: "1rem",
+            },
+            headerStyle: {
+              marginTop: "32px",
+              marginBottom: "8px"
+            }
           },
         ],
       },
