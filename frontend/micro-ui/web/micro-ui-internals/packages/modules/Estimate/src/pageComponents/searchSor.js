@@ -96,7 +96,7 @@ const searchSor = (props) => {
       const apiData = await fetchData(stateData?.selectedSor?.id, formData, setFormValue,setShowToast);
   
       // Check if rates are available
-      if (apiData !== undefined && stateData?.selectedSor?.id) {
+      if (apiData !== undefined && apiData?.[0]?.sorId === stateData?.selectedSor?.id && stateData?.selectedSor?.id) {
         setFormValue(formData);
       } else {
         // Rates are not available, handle it here (e.g., display an error message)
@@ -146,7 +146,7 @@ const searchSor = (props) => {
       </div>
       </div>
       {showToast?.show && (
-      <Toast error={showToast?.error} label={t(showToast?.label)} isDleteBtn={true} onClose={() => setShowToast({show : false, label : "", error : false})} />
+      <Toast  labelstyle={{width:"100%"}} error={showToast?.error} label={t(showToast?.label)} isDleteBtn={true} onClose={() => setShowToast({show : false, label : "", error : false})} />
       )}
     </div>
   );
