@@ -65,7 +65,7 @@ const MeasurementServiceResponse = () => {
                     />
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}>
 
                 <div className="link">
                         <CreateLoiIcon style={{ width: '24px', height: '24px' }} />

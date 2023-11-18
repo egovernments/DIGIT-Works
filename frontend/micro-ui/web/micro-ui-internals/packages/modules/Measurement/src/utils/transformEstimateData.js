@@ -65,7 +65,7 @@ export const transformContractObject = (contract = {}) => {
       acc[curr?.estimateLineItemId] = {
         //accc targetid
         estimateLineItemId: curr?.estimateLineItemId,
-        contractLineItemId: curr?.id,
+        contractLineItemId: curr?.contractLineItemRef,
         unitRate: curr?.unitRate,
       };
 
