@@ -294,6 +294,15 @@ const CreateEstimate = () => {
     //To validate the data of NON Sor
     if(data?.NONSORtable && !(validateNonSor(data?.NONSORtable)))
       return false
+
+    //To validate SOR and NON SOR will not have negative values
+    let negativeValuedObject = data?.SORtable?.find(item => parseFloat(item.amount) < 0) || data?.NONSORtable?.find(item => parseFloat(item.amount) < 0)
+    if(negativeValuedObject)
+    {
+      setShowToast({ error: true, label: `${t("ERR_NEGATIVE_VALUE_IS_NOT_ALLOWED")} ${negativeValuedObject?.catgeory} ${negativeValuedObject?.sorId || negativeValuedObject?.sorCode}` });
+      setShowModal(false);
+      return false;
+    }
     
     
     return true;
