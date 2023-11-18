@@ -48,7 +48,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
             values: [
               {
                 key: "WORKS_ESTIMATE_TYPE",
-                value: "Original Estimate",
+                value: "ORIGINAL_ESTIMATE",
               },
               {
                 key: "ESTIMATE_ESTIMATE_NO",

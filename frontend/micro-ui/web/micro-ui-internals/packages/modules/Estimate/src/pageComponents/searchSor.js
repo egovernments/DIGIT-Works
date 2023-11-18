@@ -79,6 +79,11 @@ const searchSor = (props) => {
     [setValue]
   );
   const buttonClick = async () => {
+    if(formData?.length > 0 && formData?.find((ob) => ob?.sorCode && ob?.sorCode === stateData?.selectedSor?.id))
+    {
+      setShowToast({show: true, error: true, label:"WORKS_CANNOT_ADD_DUPLICATE_SOR"});
+      return;
+    }
     const sor = transformSOR(stateData?.selectedSor);
   
     if (formData?.length === 0 || (formData?.length === 1 && !formData?.[0]?.description) && stateData?.selectedSor?.id) {
