@@ -18,7 +18,7 @@ const transformLineItems = (SorData = [], category, isEdit = false) => {
 function transformMeasure(measure, parentData, isEdit, category) {
   let measureObject = {
     sorId: parentData?.category == "SOR" ? parentData?.sorId : parentData?.sNo,
-    category: parentData?.category,
+    category: parentData?.category || category,
     name: parentData?.description,
     unitRate: parentData?.unitRate,
     noOfunit: convertNumberFields(measure?.noOfunit),
@@ -82,8 +82,8 @@ const fetchEstimateDetails = (data) => {
 
   //     }
   // })
-  const Sors = (data?.SORtable && transformLineItems(data?.SORtable)) || [];
-  const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable)) || [];
+  const Sors = (data?.SORtable && transformLineItems(data?.SORtable,"SOR")) || [];
+  const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable,"NON-SOR")) || [];
   const detailedEstimates = [...Sors, ...NonSors];
 
   let overHeadsData = data?.overheadDetails
