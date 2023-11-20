@@ -19,7 +19,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
       }
       return acc;
     }, {});
-  const transformMeasurementData = isMeasurement ||  lastMeasuredObject ? transformMeasureObject(measurement) : transformMeasureObject(lastMeasuredObject);
+  const transformMeasurementData = isMeasurement ? transformMeasureObject(measurement) : transformMeasureObject(lastMeasuredObject);
   return Object.keys(transformedEstimateObject).map((key, index) => {
     const measures = transformedEstimateObject[key].map((estimate, index) =>{
      const measuredObject= transformMeasurementData?.lineItemsObject ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[estimate?.id]?.contractLineItemId] : {};
@@ -85,6 +85,7 @@ export const transformMeasureObject = (measurement = {}) => {
 
 export const getDefaultValues = (data, t) => {
   const { contract, estimate, allMeasurements, measurement, musterRollNumber, period } = data;
+  console.log(allMeasurements);
   const SOR = transformEstimateData(estimate?.estimateDetails, contract, "SOR", measurement, allMeasurements);
   const NONSOR = transformEstimateData(estimate?.estimateDetails, contract, "NON-SOR", measurement, allMeasurements);
 
