@@ -91,31 +91,10 @@ public class EstimateServiceValidator {
             }
             validatepreviousEstimate(estimate, errorMap, previousEstimate);
         }
-
-        String rootTenantId = estimate.getTenantId();
-
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
-        Object mdmsDataForUOM = mdmsUtils.mdmsCallV2(request, rootTenantId, MASTER_UOM,MDMS_COMMON_MASTERS_MODULE_NAME);
-        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
-        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
-        validateMDMSDataForUOM(estimate, mdmsDataForUOM, errorMap);
-        validateProjectId(request);
-
         List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();
-        Set<String> uniqueIdentifiers = new HashSet<>();
-        for (EstimateDetail estimateDetail : estimateDetails) {
-            if (estimateDetail.getCategory().equalsIgnoreCase(SOR_CODE) && estimateDetail.getSorId() != null) {
-                uniqueIdentifiers.add(estimateDetail.getSorId());
-            }
-        }
-        if (!uniqueIdentifiers.isEmpty()) {
-            Object mdmsDataV2ForSor = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, false);
 
-            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
-            Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
-            validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap);
-        }
-
+        validateRequestOnMDMSV1AndV2(request,errorMap, true);
+        validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
         if(Boolean.TRUE.equals(isRevisionEstimate(request)) && previousEstimate != null){
@@ -680,8 +659,8 @@ public class EstimateServiceValidator {
             }
             //check projectId is same or not, if project Id is not same throw validation error
             Estimate estimateFromDB = estimateList.get(0);
-            for(Estimate estimate1 : estimateList){
-                if(estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)){
+            for (Estimate estimate1 : estimateList) {
+                if (estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)) {
                     estimateForRevision = estimate1;
                     break;
                 }
@@ -693,18 +672,33 @@ public class EstimateServiceValidator {
                 estimate.setAuditDetails(estimateFromDB.getAuditDetails());
             }
         }
+        validateRequestOnMDMSV1AndV2(request,errorMap,false);
+        validateProjectId(request);
+        validateNoOfUnit(estimateDetails);
+
+        if(Boolean.TRUE.equals(isRevisionEstimate(request)) && estimateForRevision != null){
+            validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
+        }
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+
+    }
+    private void validateRequestOnMDMSV1AndV2(EstimateRequest request,Map<String, String> errorMap,Boolean isCreate){
+        log.info("EstimateServiceValidator::validateRequestOnMDMSV1AndV2");
+        Estimate estimate = request.getEstimate();
+        List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
         String rootTenantId = estimate.getTenantId();
-        //split the tenantId
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
         Object mdmsDataForUOM = mdmsUtils.mdmsCallV2(request, rootTenantId, MASTER_UOM,MDMS_COMMON_MASTERS_MODULE_NAME);
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
-        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
+        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, isCreate);
         validateMDMSDataForUOM(estimate, mdmsDataForUOM, errorMap);
 
         Set<String> uniqueIdentifiers = new HashSet<>();
         for (EstimateDetail estimateDetail : estimateDetails) {
-            if (estimateDetail.getCategory().equalsIgnoreCase("SOR") && estimateDetail.getSorId() != null) {
+            if (estimateDetail.getCategory().equalsIgnoreCase(SOR_CODE) && estimateDetail.getSorId() != null) {
                 uniqueIdentifiers.add(estimateDetail.getSorId());
             }
         }
@@ -716,15 +710,5 @@ public class EstimateServiceValidator {
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
             validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap);
         }
-        validateProjectId(request);
-        validateNoOfUnit(estimateDetails);
-
-        if(Boolean.TRUE.equals(isRevisionEstimate(request)) && estimateForRevision != null){
-            validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
-        }
-
-        if (!errorMap.isEmpty())
-            throw new CustomException(errorMap);
-
     }
 }
