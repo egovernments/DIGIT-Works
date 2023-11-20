@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
-import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +38,11 @@ public class RegisterQueryBuilder {
             "reg.servicecode " +
             "FROM eg_wms_attendance_register reg ";
 
-    private final String joinStaff = " JOIN eg_wms_attendance_staff staff ";
-    private final String joinStaffCondition = " reg.id = staff.register_id ";
+    private static final String JOIN_STAFF = " JOIN eg_wms_attendance_staff staff ";
+    private static final String JOIN_STAFF_CONDITION = " ON reg.id = staff.register_id ";
 
-    private final String joinAttendee = " JOIN eg_wms_attendance_attendee attendee ";
-    private final String joinAttendeeCondition = " reg.id = attendee.register_id ";
+    private static final String JOIN_ATTENDEE = " JOIN eg_wms_attendance_attendee attendee ";
+    private static final String JOIN_ATTENDEE_CONDITION = " ON reg.id = attendee.register_id ";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY lastmodifiedtime DESC , id) offset_ FROM " +
@@ -58,11 +57,13 @@ public class RegisterQueryBuilder {
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
 
         if(!ObjectUtils.isEmpty(searchCriteria.getStaffId())) {
-            query.append(joinStaff);
+            query.append(JOIN_STAFF);
+            query.append(JOIN_STAFF_CONDITION);
         }
 
         if(!ObjectUtils.isEmpty(searchCriteria.getAttendeeId())) {
-            query.append(joinAttendee);
+            query.append(JOIN_ATTENDEE);
+            query.append(JOIN_ATTENDEE_CONDITION);
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getTenantId())) {
@@ -137,8 +138,6 @@ public class RegisterQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" staff.individual_id = ? ");
             preparedStmtList.add(staffId);
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(joinStaffCondition);
         }
 
         if(!ObjectUtils.isEmpty(searchCriteria.getAttendeeId())) {
@@ -146,8 +145,6 @@ public class RegisterQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" attendee.individual_id = ? ");
             preparedStmtList.add(attendeeId);
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(joinAttendeeCondition);
         }
 
         addOrderByClause(query, searchCriteria);
