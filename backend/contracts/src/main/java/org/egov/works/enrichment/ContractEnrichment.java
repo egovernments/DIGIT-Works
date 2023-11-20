@@ -80,11 +80,11 @@ public class ContractEnrichment {
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.INWORKFLOW);
 
         } else {
-            // Enrich LineItems
-            enrichContractLineItems(contractRequest,mdmsForEnrichment);
             // Enrich Contract Number
             enrichContractNumber(contractRequest);
         }
+        // Enrich LineItems
+        enrichContractLineItems(contractRequest,mdmsForEnrichment);
         // Enrich UUID and AuditDetails
         enrichIdsAgreementDateAndAuditDetailsOnCreate(contractRequest);
 
@@ -363,6 +363,8 @@ public class ContractEnrichment {
                 versionNumber += 1;
             }
             contract.setVersionNumber(versionNumber);
+        } else {
+            contract.getLineItems().forEach(lineItems -> lineItems.setContractLineItemRef(UUID.randomUUID().toString()));
         }
         contract.setId(String.valueOf(UUID.randomUUID()));
         BigDecimal agreementDate = contract.getAgreementDate();
