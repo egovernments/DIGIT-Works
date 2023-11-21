@@ -70,6 +70,25 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
           html.window.sessionStorage[event.locale ?? ''] =
               jsonEncode(existingObject);
         } else {
+          if (event.locale != null && event.locale.isNotEmpty) {
+            // Condition: event.locale is set in the SHG app
+
+            // Delete session storage parameters with names containing "_IN"
+            final storage = html.window.sessionStorage;
+            List<String> keysToDelete = [];
+
+            for (var key in storage.keys) {
+              if (key.contains('_IN')) {
+                keysToDelete.add(key);
+              }
+            }
+
+            // Delete keys
+            for (var key in keysToDelete) {
+              storage.remove(key);
+            }
+          }
+
           html.window.sessionStorage[event.locale ?? ''] =
               jsonEncode(result.messages.map((e) => e.toJson()).toList());
         }
