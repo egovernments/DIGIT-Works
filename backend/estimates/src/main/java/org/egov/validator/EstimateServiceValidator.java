@@ -12,10 +12,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.EstimateRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.ContractUtils;
-import org.egov.util.MDMSUtils;
-import org.egov.util.MeasurementUtils;
-import org.egov.util.ProjectUtil;
+import org.egov.util.*;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,6 +38,7 @@ public class EstimateServiceValidator {
 
     private final ContractUtils contractUtils;
     private final MeasurementUtils measurementUtils;
+    private final EstimateServiceUtil estimateServiceUtil;
 
     private static final String JSONPATH_ERROR = "JSONPATH_ERROR";
     private static final String MDMS_RES = "$.MdmsRes.";
@@ -48,7 +46,7 @@ public class EstimateServiceValidator {
     private static final String FAILED_TO_PARSE_MDMS_RESPONSE = "Failed to parse mdms response";
 
     @Autowired
-    public EstimateServiceValidator(MDMSUtils mdmsUtils, EstimateRepository estimateRepository, ProjectUtil projectUtil, EstimateServiceConfiguration config, ObjectMapper mapper, ContractUtils contractUtils, MeasurementUtils measurementUtils) {
+    public EstimateServiceValidator(MDMSUtils mdmsUtils, EstimateRepository estimateRepository, ProjectUtil projectUtil, EstimateServiceConfiguration config, ObjectMapper mapper, ContractUtils contractUtils, MeasurementUtils measurementUtils, EstimateServiceUtil estimateServiceUtil) {
         this.mdmsUtils = mdmsUtils;
         this.estimateRepository = estimateRepository;
         this.projectUtil = projectUtil;
@@ -56,13 +54,10 @@ public class EstimateServiceValidator {
         this.mapper = mapper;
         this.contractUtils = contractUtils;
         this.measurementUtils = measurementUtils;
+        this.estimateServiceUtil = estimateServiceUtil;
     }
 
-    public Boolean isRevisionEstimate(EstimateRequest request){
-        log.info("EstimateServiceValidator::isRevisionEstimate");
-        Estimate estimate = request.getEstimate();
-        return estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus();
-    }
+
     /**
      * validate the create estimate request for all the mandatory
      * and/or
@@ -81,7 +76,7 @@ public class EstimateServiceValidator {
         validateRequestInfo(requestInfo);
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow);
-        if(Boolean.TRUE.equals(isRevisionEstimate(request))){
+        if(Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request))){
             List<Estimate> estimateList = estimateRepository.searchEstimates(request,errorMap);
             for (Estimate estimate1 : estimateList) {
                 if (estimate1.getWfStatus().equalsIgnoreCase(ESTIMATE_APPROVED_STATUS)) {
@@ -97,7 +92,7 @@ public class EstimateServiceValidator {
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
-        if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) &&Boolean.TRUE.equals(isRevisionEstimate(request)) && previousEstimate != null){
+        if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) &&Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request)) && previousEstimate != null){
             validateContractAndMeasurementBook(request, previousEstimate, errorMap);
         }
 
@@ -266,9 +261,6 @@ public class EstimateServiceValidator {
         }
         if (estimate.getStatus() == null || !EnumUtils.isValidEnum(Estimate.StatusEnum.class, estimate.getStatus().toString())) {
             errorMap.put("STATUS", "Status is mandatory");
-        }
-        if(StringUtils.isBlank(estimate.getBusinessService())){
-            errorMap.put("BUSINESS_SERVICE", "Business service is mandatory");
         }
         if (StringUtils.isBlank(estimate.getName())) {
             errorMap.put("NAME", "Name is mandatory");
@@ -659,7 +651,7 @@ public class EstimateServiceValidator {
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
-        if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) && Boolean.TRUE.equals(isRevisionEstimate(request)) && estimateForRevision != null){
+        if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) && Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request)) && estimateForRevision != null){
             validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
         }
 

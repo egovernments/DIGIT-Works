@@ -68,7 +68,7 @@ public class EnrichmentService {
         Date currentDT = new Date();
         BigDecimal proposalDate = new BigDecimal(currentDT.getTime());
         estimate.setProposalDate(proposalDate);
-        if(estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService()) && Boolean.TRUE.equals(config.getRevisionEstimateActiveStatus())){
+        if(Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request))){
             EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
                     EstimateSearchCriteria.SortBy.createdTime).build();
             List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
@@ -79,7 +79,11 @@ public class EnrichmentService {
                     break;
                 }
             }
-            estimate.setVersionNumber(estimateForRevision.getVersionNumber().add(BigDecimal.valueOf(1)));
+            if(estimateForRevision.getVersionNumber() == null){
+                estimate.setVersionNumber(BigDecimal.valueOf(1));
+            }else {
+                estimate.setVersionNumber(estimateForRevision.getVersionNumber().add(BigDecimal.valueOf(1)));
+            }
             estimate.setRevisionNumber(estimateForRevision.getEstimateNumber() + "/RE-" + (estimate.getVersionNumber().subtract(BigDecimal.valueOf(1))));
         }else{
             List<String> estimateNumbers = getIdList(requestInfo, tenantId
@@ -94,6 +98,9 @@ public class EnrichmentService {
 
         address.setId(UUID.randomUUID().toString());
         //enrich estimate detail & amount detail - id(s)
+        enrichEstimateDetailsAndAmountDetails(estimateDetails);
+    }
+    private void enrichEstimateDetailsAndAmountDetails(List<EstimateDetail> estimateDetails){
         for (EstimateDetail estimateDetail : estimateDetails) {
             estimateDetail.setId(UUID.randomUUID().toString());
             List<AmountDetail> amountDetails = estimateDetail.getAmountDetail();
@@ -102,7 +109,6 @@ public class EnrichmentService {
             }
         }
     }
-
     /**
      * Returns a list of numbers generated from idgen
      *
