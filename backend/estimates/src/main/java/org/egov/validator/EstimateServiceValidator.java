@@ -287,6 +287,13 @@ public class EstimateServiceValidator {
         if (estimateDetails == null || estimateDetails.isEmpty()) {
             errorMap.put("ESTIMATE_DETAILS", "Estimate detail is mandatory");
         } else {
+            validateEstimateDetails(estimateDetails, errorMap);
+        }
+        if (!errorMap.isEmpty()) {
+            throw new CustomException(errorMap);
+        }
+    }
+    private void validateEstimateDetails(List<EstimateDetail> estimateDetails,Map<String,String> errorMap){
             for (EstimateDetail estimateDetail : estimateDetails) {
                 if (StringUtils.isBlank(estimateDetail.getSorId()) && StringUtils.isBlank(estimateDetail.getName())) {
                     errorMap.put("ESTIMATE.DETAIL.NAME.OR.SOR.ID", "Estimate detail's name or sorId is mandatory");
@@ -305,11 +312,6 @@ public class EstimateServiceValidator {
                     }
                 }
             }
-        }
-
-        if (!errorMap.isEmpty()) {
-            throw new CustomException(errorMap);
-        }
     }
 
     private void validateRequestInfo(RequestInfo requestInfo) {
@@ -651,27 +653,7 @@ public class EstimateServiceValidator {
         if (StringUtils.isBlank(id)) {
             errorMap.put("ESTIMATE_ID", "Estimate id is mandatory");
         } else {
-            List<String> ids = new ArrayList<>();
-            ids.add(id);
-            EstimateSearchCriteria searchCriteria = EstimateSearchCriteria.builder().ids(ids).tenantId(estimate.getTenantId()).build();
-            List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
-            if (CollectionUtils.isEmpty(estimateList)) {
-                throw new CustomException("INVALID_ESTIMATE_MODIFY", "The record that you are trying to update does not exists in the system");
-            }
-            //check projectId is same or not, if project Id is not same throw validation error
-            Estimate estimateFromDB = estimateList.get(0);
-            for (Estimate estimate1 : estimateList) {
-                if (estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)) {
-                    estimateForRevision = estimate1;
-                    break;
-                }
-            }
-            if (!estimateFromDB.getProjectId().equals(estimate.getProjectId())) {
-                throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
-            }
-            if (ObjectUtils.isEmpty(estimate.getAuditDetails())) {
-                estimate.setAuditDetails(estimateFromDB.getAuditDetails());
-            }
+            estimateForRevision = validateEstimateFromDBAndFetchPreviousEstimate(request);
         }
         validateRequestOnMDMSV1AndV2(request,errorMap,false);
         validateProjectId(request);
@@ -684,6 +666,33 @@ public class EstimateServiceValidator {
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
 
+    }
+    private Estimate validateEstimateFromDBAndFetchPreviousEstimate(EstimateRequest request){
+        Estimate estimate = request.getEstimate();
+        Estimate estimateForRevision = null;
+        String id = estimate.getId();
+        List<String> ids = new ArrayList<>();
+        ids.add(id);
+        EstimateSearchCriteria searchCriteria = EstimateSearchCriteria.builder().ids(ids).tenantId(estimate.getTenantId()).build();
+        List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
+        if (CollectionUtils.isEmpty(estimateList)) {
+            throw new CustomException("INVALID_ESTIMATE_MODIFY", "The record that you are trying to update does not exists in the system");
+        }
+        //check projectId is same or not, if project Id is not same throw validation error
+        Estimate estimateFromDB = estimateList.get(0);
+        for (Estimate estimate1 : estimateList) {
+            if (estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)) {
+                estimateForRevision = estimate1;
+                break;
+            }
+        }
+        if (!estimateFromDB.getProjectId().equals(estimate.getProjectId())) {
+            throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
+        }
+        if (ObjectUtils.isEmpty(estimate.getAuditDetails())) {
+            estimate.setAuditDetails(estimateFromDB.getAuditDetails());
+        }
+        return estimateForRevision;
     }
     private void validateRequestOnMDMSV1AndV2(EstimateRequest request,Map<String, String> errorMap,Boolean isCreate){
         log.info("EstimateServiceValidator::validateRequestOnMDMSV1AndV2");
