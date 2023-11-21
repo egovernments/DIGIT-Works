@@ -89,7 +89,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
     private Address getEstimateAddress(String id, String tenantId, ResultSet rs) throws SQLException {
         log.debug("EstimateRowMapper::getEstimateAddress");
-        Address address = Address.builder()
+        return Address.builder()
                 .id(rs.getString("estAddId"))
                 .tenantId(tenantId).addressLine1(rs.getString("address_line_1"))
                 .addressLine2(rs.getString("address_line_2")).addressNumber(rs.getString("address_number"))
@@ -98,8 +98,6 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                 .landmark(rs.getString("landmark")).latitude(rs.getDouble("latitude"))
                 .longitude(rs.getDouble("longitude"))
                 .build();
-
-        return address;
     }
 
     private void addEstimateDetails(ResultSet rs, Map<String, EstimateDetail> estimateDetailMap, Estimate estimate) throws SQLException {
@@ -107,6 +105,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
         String estDetailsId = rs.getString("estDetailId");
         EstimateDetail estimateDetail = EstimateDetail.builder()
                 .id(estDetailsId)
+                .previousLineItemId(rs.getString("old_uuid"))
                 .sorId(rs.getString("sor_id"))
                 .category(rs.getString("category"))
                 .name(rs.getString("estDetailName"))

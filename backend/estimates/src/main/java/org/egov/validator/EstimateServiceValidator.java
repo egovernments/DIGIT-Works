@@ -97,7 +97,7 @@ public class EstimateServiceValidator {
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
-        if(Boolean.TRUE.equals(isRevisionEstimate(request)) && previousEstimate != null){
+        if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) &&Boolean.TRUE.equals(isRevisionEstimate(request)) && previousEstimate != null){
             validateContractAndMeasurementBook(request, previousEstimate, errorMap);
         }
 
@@ -108,9 +108,10 @@ public class EstimateServiceValidator {
     private void validatepreviousEstimate(Estimate estimate, Map<String, String> errorMap, Estimate previousEstimate) {
         log.info("EstimateServiceValidator::validatepreviousEstimate");
         if(previousEstimate == null){
-            errorMap.put("INVALID_ESTIMATE", "Estimate number is invalid for revision estimate");
+            errorMap.put("INVALID_ESTIMATE", "Approved Previous estimate not found for revision estimate");
         }
         else{
+            log.info("Previous estimate found for the given estimate -> "+ previousEstimate);
             List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
             List<EstimateDetail> prevEstimateDetails = previousEstimate.getEstimateDetails();
             HashMap<String,EstimateDetail> prevEstimateDetailMap = new HashMap<>();
@@ -676,7 +677,7 @@ public class EstimateServiceValidator {
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
-        if(Boolean.TRUE.equals(isRevisionEstimate(request)) && estimateForRevision != null){
+        if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) && Boolean.TRUE.equals(isRevisionEstimate(request)) && estimateForRevision != null){
             validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
         }
 

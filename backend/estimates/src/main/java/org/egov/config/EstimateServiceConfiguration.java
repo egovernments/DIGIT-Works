@@ -147,6 +147,9 @@ public class EstimateServiceConfiguration {
     @Value("${estimate.revisionEstimate.activeStatus}")
     private Boolean revisionEstimateActiveStatus;
 
+    @Value("${estimate.revisionEstimate.measurementValidation}")
+    private  Boolean revisionEstimateMeasurementValidation;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
