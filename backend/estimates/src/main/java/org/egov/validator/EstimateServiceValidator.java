@@ -164,7 +164,10 @@ public class EstimateServiceValidator {
                 } catch (Exception e) {
                     throw new CustomException(JSONPATH_ERROR, "Failed to parse measurement search response");
                 }
-                if(estimateDetail1.getNoOfunit() > measurementBook.get(0)){
+                if(measurementBook == null || measurementBook.isEmpty()){
+                    log.info("No measurement found for the given estimate");
+                }
+                else if(estimateDetail1.getNoOfunit() > measurementBook.get(0)){
                     errorMap.put("INVALID_ESTIMATE_DETAIL", "No of Unit should be less than or equal to measurement book cumulative value");
                 }
             }
