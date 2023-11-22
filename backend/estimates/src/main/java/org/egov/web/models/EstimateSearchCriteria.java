@@ -72,6 +72,9 @@ public class EstimateSearchCriteria {
     @JsonIgnore
     private Boolean isCountNeeded = false;
 
+    @JsonProperty("status")
+    private String status = null;
+
 
     public enum SortOrder {
         ASC,

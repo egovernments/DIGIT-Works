@@ -4,6 +4,7 @@ package org.egov.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.repository.rowmapper.EstimateQueryBuilder;
 import org.egov.repository.rowmapper.EstimateRowMapper;
+import org.egov.tracer.model.CustomException;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateDetail;
 import org.egov.web.models.EstimateRequest;
@@ -68,13 +69,13 @@ public class EstimateRepository {
         return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
     }
 
-    public List<Estimate> searchEstimates(EstimateRequest request, Map<String, String> errorMap) {
+    public List<Estimate> searchEstimates(EstimateRequest request) {
         log.info("EstimateRepository::searchEstimates");
         Estimate estimate = request.getEstimate();
         if(estimate.getEstimateNumber() == null){
-            errorMap.put("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
+            throw new CustomException("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
         }
-        EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
+        EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).status("ACTIVE").sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
                 EstimateSearchCriteria.SortBy.createdTime).build();
         return getEstimate(estimateSearchCriteria);
     }

@@ -139,6 +139,11 @@ public class EstimateQueryBuilder {
             queryBuilder.append(" est.old_uuid=? ");
             preparedStmtList.add(searchCriteria.getOldUuid());
         }
+        if(StringUtils.isNotBlank(searchCriteria.getStatus())){
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" est.status=? ");
+            preparedStmtList.add(searchCriteria.getStatus());
+        }
 
         //added the default as active line item and amount detail
         addClauseIfRequired(preparedStmtList, queryBuilder);

@@ -96,6 +96,15 @@ public class EstimateService {
         serviceValidator.validateEstimateOnUpdate(estimateRequest);
         enrichmentService.enrichEstimateOnUpdate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);
+        if(estimateRequest.getEstimate().getStatus() == Estimate.StatusEnum.ACTIVE){
+            List<Estimate> estimateList = estimateRepository.searchEstimates(estimateRequest);
+            if(!estimateList.isEmpty()){
+                Estimate oldEstimate = estimateList.get(0);
+                oldEstimate.setStatus(Estimate.StatusEnum.INACTIVE);
+                EstimateRequest oldEstimateRequest = EstimateRequest.builder().requestInfo(estimateRequest.getRequestInfo()).estimate(oldEstimate).build();
+                producer.push(serviceConfiguration.getUpdateEstimateTopic(), oldEstimateRequest);
+            }
+        }
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), estimateRequest);
         try{
             notificationService.sendNotification(estimateRequest);

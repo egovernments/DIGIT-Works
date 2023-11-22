@@ -77,13 +77,8 @@ public class EstimateServiceValidator {
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow);
         if(Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request))){
-            List<Estimate> estimateList = estimateRepository.searchEstimates(request,errorMap);
-            for (Estimate estimate1 : estimateList) {
-                if (estimate1.getWfStatus().equalsIgnoreCase(ESTIMATE_APPROVED_STATUS)) {
-                    previousEstimate = estimate1;
-                    break;
-                }
-            }
+            List<Estimate> estimateList = estimateRepository.searchEstimates(request);
+            previousEstimate = estimateList.get(0);
             validatepreviousEstimate(estimate, errorMap, previousEstimate);
         }
         List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();
@@ -92,7 +87,7 @@ public class EstimateServiceValidator {
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
-        if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) &&Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request)) && previousEstimate != null){
+        if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) && Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request)) && previousEstimate != null){
             validateContractAndMeasurementBook(request, previousEstimate, errorMap);
         }
 
@@ -694,12 +689,7 @@ public class EstimateServiceValidator {
         }
         //check projectId is same or not, if project Id is not same throw validation error
         Estimate estimateFromDB = estimateList.get(0);
-        for (Estimate estimate1 : estimateList) {
-            if (estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)) {
-                estimateForRevision = estimate1;
-                break;
-            }
-        }
+        estimateForRevision = estimateList.get(0);
         if (!estimateFromDB.getProjectId().equals(estimate.getProjectId())) {
             throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
         }
