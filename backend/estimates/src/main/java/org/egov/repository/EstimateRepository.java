@@ -78,33 +78,4 @@ public class EstimateRepository {
                 EstimateSearchCriteria.SortBy.createdTime).build();
         return getEstimate(estimateSearchCriteria);
     }
-    public BigDecimal getTotal(EstimateDetail estimateDetail){
-        BigDecimal total =new BigDecimal(1);
-        if(estimateDetail.getLength()!=null && estimateDetail.getLength().signum() != 0){
-            total =total.multiply(estimateDetail.getLength());
-        }
-        if(estimateDetail.getWidth()!=null && estimateDetail.getWidth().signum() != 0){
-            total =total.multiply(estimateDetail.getWidth());
-        }
-        if(estimateDetail.getHeight()!=null && estimateDetail.getHeight().signum() != 0){
-            total =total.multiply(estimateDetail.getHeight());
-        }
-        if(estimateDetail.getQuantity()!=null && estimateDetail.getQuantity().signum() != 0){
-            total =total.multiply(estimateDetail.getQuantity());
-        }
-        return total;
-    }
-    public boolean isAllNull(EstimateDetail estimateDetail){
-        boolean allNull = estimateDetail.getLength() == null || estimateDetail.getLength().signum() == 0;
-        if(estimateDetail.getWidth()!=null && estimateDetail.getWidth().signum() != 0){
-            allNull=false;
-        }
-        if(estimateDetail.getHeight()!=null && estimateDetail.getHeight().signum() != 0){
-            allNull=false;
-        }
-        if(estimateDetail.getQuantity()!=null && estimateDetail.getQuantity().signum() != 0){
-            allNull=false;
-        }
-        return allNull;
-    }
 }

@@ -210,10 +210,29 @@ public class EstimateServiceValidator {
                 if(estimateDetail.getNoOfunit()==null){
                     throw new CustomException("NO_OF_UNIT", "noOfUnit is mandatory");
                 }
-                BigDecimal total = estimateRepository.getTotal(estimateDetail);
-                boolean allNull = estimateRepository.isAllNull(estimateDetail);
+                BigDecimal total =new BigDecimal(1);
+                boolean allNull =true;
+                if(estimateDetail.getLength()!=null && estimateDetail.getLength().signum() != 0){
+                    total =total.multiply(estimateDetail.getLength());
+                    allNull =false;
+                }
+                if(estimateDetail.getWidth()!=null && estimateDetail.getWidth().signum() != 0){
+                    total =total.multiply(estimateDetail.getWidth());
+                    allNull = false;
+                }
+                if(estimateDetail.getHeight()!=null && estimateDetail.getHeight().signum() != 0){
+                    total =total.multiply(estimateDetail.getHeight());
+                    allNull =false;
+                }
+                if(estimateDetail.getQuantity()!=null && estimateDetail.getQuantity().signum() != 0){
+                    total =total.multiply(estimateDetail.getQuantity());
+                    allNull = false;
+                }
                 double totalNew = total.doubleValue();
-                if (totalNew != estimateDetail.getNoOfunit() && !allNull) {
+                if(totalNew==estimateDetail.getNoOfunit() || allNull){
+                    log.info("No of unit is valid");
+                }
+                else{
                     throw new CustomException("NO_OF_UNIT", "noOfUnit value is not correct");
                 }
             }
