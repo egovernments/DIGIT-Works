@@ -49,7 +49,7 @@ public class WageSeekerBillGeneratorService {
 	private IdgenUtil idgenUtil;
 
 	public Calculation calculateEstimates(RequestInfo requestInfo, String tenantId, List<MusterRoll> musterRolls,
-			List<LabourCharge> labourCharges) {
+										  List<LabourCharge> labourCharges) {
 		// Calculate estimate for each muster roll
 		List<CalcEstimate> calcEstimates = createEstimatesForMusterRolls(requestInfo, musterRolls, labourCharges);
 		// Create Calculation
@@ -58,7 +58,7 @@ public class WageSeekerBillGeneratorService {
 	}
 
 	public List<Bill> createWageSeekerBills(RequestInfo requestInfo, List<MusterRoll> musterRolls,
-			List<LabourCharge> labourCharges, Map<String, String> metaInfo) {
+											List<LabourCharge> labourCharges, Map<String, String> metaInfo) {
 		// Create bills for muster rolls
 		return createBillForMusterRolls(requestInfo, musterRolls, labourCharges, metaInfo);
 	}
@@ -74,7 +74,7 @@ public class WageSeekerBillGeneratorService {
 		}
 		return mdmsData;
 	}
-	
+
 	/**
 	 * Returns true if a wage bill has been created for a muster roll already.
 	 * @param requestInfo
@@ -86,14 +86,14 @@ public class WageSeekerBillGeneratorService {
 	}
 
 	private List<Bill> createBillForMusterRolls(RequestInfo requestInfo, List<MusterRoll> musterRolls,
-			List<LabourCharge> labourCharges, Map<String, String> metaInfo) {
-		
+												List<LabourCharge> labourCharges, Map<String, String> metaInfo) {
+
 		List<Bill> bills = new ArrayList<>();
 		List<String> musterRollNumbers = new ArrayList<>();
-		
+
 		//Returns works.wages. This is used everywhere in the masters in the service field
 		String wagesMasterCategory = configs.getWagesMasterCategory();
-		
+
 		// For each muster-roll create one wage bill
 		for (MusterRoll musterRoll : musterRolls) {
 			String musterRollNumber = musterRoll.getMusterRollNumber();
@@ -111,6 +111,7 @@ public class WageSeekerBillGeneratorService {
 							wagesMasterCategory);
 			//Fetch all master data. We should do away with previous two statements 
 			Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForCalculator(requestInfo, tenantId);
+			Long musterRollCreatedTime = musterRoll.getAuditDetails().getCreatedTime();
 
 			BigDecimal netPayableAmount = BigDecimal.ZERO;
 			// Muster roll reference id is contractNumber
@@ -130,7 +131,7 @@ public class WageSeekerBillGeneratorService {
 			for (IndividualEntry individualEntry : individualEntries) {
 				String individualId = individualEntry.getIndividualId();
 				// Calculate net amount to pay to wage seeker
-				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges);
+				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges,musterRollCreatedTime);
 				BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount)).setScale(0, RoundingMode.HALF_UP);
 				// BUGFIX PFM-4214 - If actual amount to pay is 0 then do not generate the payment for that individual
 				if (actualAmountToPay.compareTo(BigDecimal.ZERO) <= 0)
@@ -145,13 +146,13 @@ public class WageSeekerBillGeneratorService {
 				double cessRate = Double.valueOf((String) rates.get(0));
 				BigDecimal labourCessRate = new BigDecimal(cessRate);
 				BigDecimal labourCess = actualAmountToPay.multiply(labourCessRate.divide(new BigDecimal(100.0)));
-				
+
 				// Add to the wage amount
 				actualAmountToPay = actualAmountToPay.add(labourCess);
 
 				// Calculate net payable amount
 				//netPayableAmount = netPayableAmount.add(actualAmountToPay);
-				
+
 				// Build lineItem
 				List<LineItem> lineItems = new ArrayList<LineItem>();
 				LineItem wageLineItem = buildLineItem(tenantId, actualAmountToPay, configs.getWageHeadCode(), LineItem.TypeEnum.PAYABLE);
@@ -223,16 +224,6 @@ public class WageSeekerBillGeneratorService {
 		return orgId;
 	}
 
-	private String getContractId(MusterRoll musterRoll) {
-//        final Object additionalDetails = musterRoll.getAdditionalDetails();
-//        final Optional<String> contractId = commonUtil.findValue(additionalDetails, CONTRACT_ID_CONSTANT);
-//        if(contractId.isPresent())
-//            return contractId.get();
-//
-//        return null;
-		return musterRoll.getReferenceId();
-	}
-
 	private Calculation makeCalculation(List<CalcEstimate> calcEstimates, String tenantId) {
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		for (CalcEstimate estimate : calcEstimates) {
@@ -242,7 +233,7 @@ public class WageSeekerBillGeneratorService {
 	}
 
 	private List<CalcEstimate> createEstimatesForMusterRolls(RequestInfo requestInfo, List<MusterRoll> musterRolls,
-			List<LabourCharge> labourCharges) {
+															 List<LabourCharge> labourCharges) {
 		List<CalcEstimate> calcEstimates = new ArrayList<>();
 		for (MusterRoll musterRoll : musterRolls) {
 			String musterRollNumber = musterRoll.getMusterRollNumber();
@@ -251,6 +242,7 @@ public class WageSeekerBillGeneratorService {
 			List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
 			String tenantId = musterRoll.getTenantId();
 			BigDecimal netPayableAmount = BigDecimal.ZERO;
+			Long musterRollCreatedTime = musterRoll.getAuditDetails().getCreatedTime();
 			if (musterRoll.getReferenceId() == null) {
 				log.error("MUSTER_ROLL_REFERENCE_ID_MISSING",
 						"Reference Id is missing for muster roll [" + musterRollNumber + "]");
@@ -262,11 +254,11 @@ public class WageSeekerBillGeneratorService {
 			for (IndividualEntry individualEntry : individualEntries) {
 				String individualId = individualEntry.getIndividualId();
 				// Calculate net amount to pay to wage seeker
-				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges);
-				
+				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges,musterRollCreatedTime);
+
 				//Round off
 				BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount)).setScale(0, RoundingMode.HALF_UP);
-				
+
 				// Calculate net payable amount. We are not adding the LC deduction here. That happens only during bill generation
 				netPayableAmount = netPayableAmount.add(actualAmountToPay);
 				// Build lineItem
@@ -297,7 +289,7 @@ public class WageSeekerBillGeneratorService {
 	}
 
 	private List<LineItem> calculateAndSetPayableLineItems(String tenantId, List<LineItem> lineItems,
-			List<HeadCode> headCodes, List<ApplicableCharge> applicableCharges) {
+														   List<HeadCode> headCodes, List<ApplicableCharge> applicableCharges) {
 
 		List<LineItem> payables = new ArrayList<LineItem>();
 
@@ -371,8 +363,7 @@ public class WageSeekerBillGeneratorService {
 	}
 
 	private Party buildParty(RequestInfo requestInfo, String type, String tenantId) {
-		String rootTenantId = tenantId.split("\\.")[0];
-		Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, rootTenantId);
+		Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, tenantId);
 		List<Object> payerList = commonUtil.readJSONPathValue(mdmsResp, JSON_PATH_FOR_PAYER);
 		for (Object obj : payerList) {
 			Payer payer = mapper.convertValue(obj, Payer.class);
@@ -396,22 +387,25 @@ public class WageSeekerBillGeneratorService {
 		return totalAttendance.multiply(skillAmount);
 	}
 
-	private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
-
-		// return new Double(150);
+	private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges, Long musterRollCreatedTime) {
 		String skill = getWageSeekerSkill(individualEntry);
-		String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
+		boolean isSkillCodePresent = false;
 		for (LabourCharge labourCharge : labourCharges) {
-//            if(labourCharge.getCode().equalsIgnoreCase(skill)
-//                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
-			// TODO: Removing the unit check here.
 			if (labourCharge.getCode().equalsIgnoreCase(skill)) {
-				return labourCharge.getAmount();
+				isSkillCodePresent = true;
+				if((labourCharge.getEffectiveTo() != null && labourCharge.getEffectiveFrom().longValue() <= musterRollCreatedTime && labourCharge.getEffectiveTo().longValue() >= musterRollCreatedTime) ||
+						(labourCharge.getEffectiveTo() == null && labourCharge.getEffectiveFrom().longValue() <= musterRollCreatedTime && labourCharge.getActive())) {
+					return labourCharge.getAmount();
+				}
 			}
 		}
 
-		log.error("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
-		throw new CustomException("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+		if(!isSkillCodePresent){
+			log.error("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+			throw new CustomException("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+		}
+		log.error("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
+		throw new CustomException("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
 	}
 
 	private Integer getWageSeekerSkillCodeId(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
@@ -443,13 +437,12 @@ public class WageSeekerBillGeneratorService {
 	/**
 	 * Generates the referenceId to be set on the tanentId object. This referenceId
 	 * is a wage bill reference Example: WR_123
-	 * 
+	 *
 	 * @param tenantId
 	 * @return
 	 */
 	private String generateWBId(RequestInfo requestInfo, String tenantId) {
-		String rootTenantId = tenantId.split("\\.")[0];
-		List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, configs.getWageBillreferenceIdFormatKey(),
+		List<String> idList = idgenUtil.getIdList(requestInfo, tenantId, configs.getWageBillreferenceIdFormatKey(),
 				"", 1);
 		String generatedWBId = idList.get(0);
 		log.info("ReferenceId generated. Generated generatedUniqueId is [" + generatedWBId + "]");
