@@ -23,7 +23,7 @@ export const transformEstimateObjects = (estimateData, type) => {
         const measures = convertedObject[key].map((e, index) => ({
             sNo: index + 1,
             isDeduction: e?.isDeduction,
-            description: e.description,
+            description: e?.description?.trim(),
             amountid: e?.amountDetail?.[0]?.id || null,
             id: e?.id || null,
             height: convertNumberFields(e?.height),

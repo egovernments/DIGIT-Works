@@ -308,18 +308,18 @@ const CreateEstimate = () => {
     return true;
   }
 
-  const onFormSubmit = async (_data) => {
+  const onFormSubmit = async (_data, action) => {
     _data = Digit.Utils.trimStringsInObject(_data);
     //added this totalEst amount logic here because setValues in pageComponents don't work
     //after setting the value, in consequent renders value changes to undefined
     //check TotalEstAmount.js
     let totalLabourAndMaterial = parseInt(getLabourMaterialAnalysisCost(_data,"LH")) + parseInt(getLabourMaterialAnalysisCost(_data,"MA")) + parseInt(getLabourMaterialAnalysisCost(_data,"MH")) || (_data?.labourMaterialAnalysis?.labour + _data?.labourMaterialAnalysis?.material + _data?.labourMaterialAnalysis?.machinery);
     //here check totalEst amount should be less than material+labour
-    if (_data.totalEstimateAmount < totalLabourAndMaterial) {
+    if (_data.totalEstimateAmount < totalLabourAndMaterial && action !== "DRAFT") {
       setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" });
       closeToast();
       return;
-    } else if (totalLabourAndMaterial === 0) {
+    } else if (totalLabourAndMaterial === 0  && action !== "DRAFT") {
       setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_IMPROPER" });
       closeToast();
       return;
@@ -328,24 +328,27 @@ const CreateEstimate = () => {
     setInputFormData((prevState) => _data);
     //first do whatever processing you want on form data then pass it over to modal's onSubmit function
 
-    setShowModal(true);
+    if(action === "DRAFT")
+      onModalSubmit(_data,action);
+    else
+      setShowModal(true);
   };
-  const onModalSubmit = async (_data) => {
+
+  const onModalSubmit = async (_data, action) => {
     _data = Digit.Utils.trimStringsInObject(_data);
     const completeFormData = {
       ..._data,
       ...inputFormData,
       selectedApprover,
-      workflowAction : actionSelected,
+      workflowAction : actionSelected || action,
       // selectedDept,
       // selectedDesignation
     };
 
 
-    let validated = validateData(completeFormData);
+    let validated = action !== "DRAFT" ? validateData(completeFormData) : true;
     if(validated){
     const payload = createEstimatePayload(completeFormData, projectData, isEdit, estimate);
-    console.log(payload, "payload");
     setShowModal(false);
 
     //make a util for updateEstimatePayload since there are some deviations
@@ -376,7 +379,12 @@ const CreateEstimate = () => {
               },
             ],
           };
-
+          if(action === "DRAFT")
+          {
+            setShowToast({ label: "Application updated successfully" });
+            setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&estimateNumber=${responseData?.estimates[0]?.estimateNumber}&projectNumber=${projectNumber}&isEdit=true`, state)}, 5000);
+          }
+          else
           history.push(`/${window?.contextPath}/employee/estimate/response`, state);
         },
       });
@@ -406,8 +414,13 @@ const CreateEstimate = () => {
               },
             ],
           };
-
-          history.push(`/${window?.contextPath}/employee/estimate/response`, state);
+          if(action === "DRAFT")
+          {
+            setShowToast({ label: "Application updated successfully" });
+            setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&estimateNumber=${responseData?.estimates[0]?.estimateNumber}&projectNumber=${projectNumber}&isEdit=true`, state)}, 5000);
+          }
+          else
+          setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/response`, state)}, 5000);
         },
       });
     }
