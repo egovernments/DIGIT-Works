@@ -5,6 +5,7 @@ const convertNumberFields=(text="")=>{
 
 }
 const transformLineItems = (SorData = [], category, isEdit = false) => {
+  console.log(SorData,"sorData");
   const lineItems = [];
   SorData?.map((row) => {
     const measures = row?.measures?.map((measure) => {
@@ -16,12 +17,15 @@ const transformLineItems = (SorData = [], category, isEdit = false) => {
 };
 
 function transformMeasure(measure, parentData, isEdit, category) {
+  console.log(measure,"measure");
+  console.log(parentData,"parent data");
+  console.log(category,"category");
   let measureObject = {
     sorId: parentData?.category == "SOR" ? parentData?.sorId : parentData?.sNo,
     category: parentData?.category || category,
     name: parentData?.description,
     unitRate: parentData?.unitRate,
-    noOfunit: convertNumberFields(measure?.noOfunit),
+    noOfunit: convertNumberFields(measure?.noOfunit) || 0,
     uom: parentData?.uom,
     height: convertNumberFields(measure?.height),
     isDeduction: measure?.isDeduction,
@@ -29,7 +33,7 @@ function transformMeasure(measure, parentData, isEdit, category) {
     quantity: convertNumberFields(measure?.number),
     uomValue: null,
     width: convertNumberFields(measure?.width),
-    description: measure.description,
+    description: measure.description || "   ",
     additionalDetails: parentData.additionalInfo, // Include data from parent object
     amountDetail: [
       {
@@ -56,7 +60,7 @@ function transformMeasure(measure, parentData, isEdit, category) {
             ],
     }
    }  
-   
+   console.log(measureObject,"measureobject");
    return measureObject;
 }
 
@@ -87,7 +91,7 @@ const fetchEstimateDetails = (data) => {
   const detailedEstimates = [...Sors, ...NonSors];
 
   let overHeadsData = data?.overheadDetails
-    ?.filter((row) => row && row.amount !== "0")
+    ?.filter((row) => row && row.amount !== "0" && row?.amount !== undefined)
     ?.map((row) => {
       return {
         category: "OVERHEAD",

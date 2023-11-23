@@ -85,7 +85,9 @@ const searchSor = (props) => {
       return;
     }
     const sor = transformSOR(stateData?.selectedSor);
-  
+    console.log(sor,"sor")
+    console.log(formData,"formData");
+    console.log(stateData,"statedata");
     if (formData?.length === 0 || (formData?.length === 1 && !formData?.[0]?.description) && stateData?.selectedSor?.id) {
       formData = [sor];
     } else {
@@ -94,9 +96,10 @@ const searchSor = (props) => {
   
     try {
       const apiData = await fetchData(stateData?.selectedSor?.id, formData, setFormValue,setShowToast);
-  
+      console.log(apiData,"apidata")
       // Check if rates are available
       if (apiData !== undefined && apiData?.[0]?.sorId === stateData?.selectedSor?.id && stateData?.selectedSor?.id) {
+        console.log("going inside the condition");
         setFormValue(formData);
       } else {
         // Rates are not available, handle it here (e.g., display an error message)
