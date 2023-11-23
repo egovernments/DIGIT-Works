@@ -29,7 +29,7 @@ let defaultSOR = {
               "sNo": 1,
               "targetId": null,
               "isDeduction": false,
-              "description": null,
+              "description": null || "   ",
               "id": 0,
               "height": 0,
               "width": 0,
