@@ -29,7 +29,7 @@ let defaultSOR = {
               "sNo": 1,
               "targetId": null,
               "isDeduction": false,
-              "description": null,
+              "description": null || "   ",
               "id": 0,
               "height": 0,
               "width": 0,
@@ -47,7 +47,7 @@ const MeasureTable = (props) => {
   const { key: tableKey, mode } = config;
   let { fields, append, remove } = arrayProps || {};
   const options = {
-    masterName: "uom",
+    masterName: "UOM",
     moduleName: "common-masters",
     localePrefix: "ES_COMMON_UOM",
   };
@@ -73,18 +73,35 @@ const MeasureTable = (props) => {
     },
     [setValue, tableKey]
   );
-  const { isLoading, data: UOMData } = Digit.Hooks.useCustomMDMS(
-    Digit.ULBService.getStateId(),
-    options?.moduleName,
-    [{ name: options?.masterName }],
-    {
-      select: (data) => {
-        const optionsData = _.get(data, `${options?.moduleName}.${options?.masterName}`, []);
-        return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.localePrefix}_${opt.code}` }));
+
+  const requestCriteria = {
+    url: "/mdms-v2/v1/_search",
+    body: {
+      MdmsCriteria: {
+        moduleDetails : [
+
+          {
+            "moduleName": "common-masters",
+            "masterDetails": [
+                {
+                    "name": "UOM"
+                    
+                }  
+            ]
+        },
+        ],
+        "tenantId": "pg",
       },
-      enabled: mode == "CREATEALL",
-    }
-  );
+    },
+    config: {
+            select: (data) => {
+              const optionsData = _.get(data?.MdmsRes, `${options?.moduleName}.${options?.masterName}`, []);
+              return optionsData?.filter((opt) => opt?.active === undefined || opt?.active === true).map((opt) => ({ ...opt, name: `${options?.localePrefix}_${opt.code}` }));
+            },
+            enabled: mode == "CREATEALL",
+          },
+  };
+  const { isLoading, data : UOMData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
   const { t } = useTranslation();
   const sum = parseFloat(fields.reduce((acc, row) => acc + parseFloat(row?.amount), 0)?.toFixed?.(2)) || 0;
