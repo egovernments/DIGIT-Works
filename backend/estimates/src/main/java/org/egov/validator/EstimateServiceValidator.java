@@ -77,8 +77,21 @@ public class EstimateServiceValidator {
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow);
         if(Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request))){
-            List<Estimate> estimateList = estimateRepository.searchEstimates(request);
-            previousEstimate = estimateList.get(0);
+            if(estimate.getEstimateNumber() == null){
+                throw new CustomException("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
+            }
+            EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
+                    EstimateSearchCriteria.SortBy.createdTime).build();
+            List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
+            if(estimateList.get(0).getWfStatus().equals(ESTIMATE_INWORKFLOW_STATUS)){
+                throw new CustomException("INVALID_ESTIMATE", "Estimate is already in workflow");
+            }
+            for(Estimate estimate1: estimateList){
+                if(estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)){
+                    previousEstimate = estimate1;
+                    break;
+                }
+            }
             validatepreviousEstimate(estimate, errorMap, previousEstimate);
         }
         List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();

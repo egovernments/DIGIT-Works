@@ -6,6 +6,8 @@ import org.egov.config.EstimateServiceConfiguration;
 import org.egov.producer.Producer;
 import org.egov.repository.EstimateRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.EstimateServiceConstant;
+import org.egov.util.EstimateServiceUtil;
 import org.egov.validator.EstimateServiceValidator;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
@@ -33,9 +35,10 @@ public class EstimateService {
     private final WorkflowService workflowService;
 
     private final NotificationService notificationService;
+    private final EstimateServiceUtil estimateServiceUtil;
 
     @Autowired
-    public EstimateService(EstimateServiceConfiguration serviceConfiguration, Producer producer, EstimateServiceValidator serviceValidator, EnrichmentService enrichmentService, EstimateRepository estimateRepository, WorkflowService workflowService, NotificationService notificationService) {
+    public EstimateService(EstimateServiceConfiguration serviceConfiguration, Producer producer, EstimateServiceValidator serviceValidator, EnrichmentService enrichmentService, EstimateRepository estimateRepository, WorkflowService workflowService, NotificationService notificationService,EstimateServiceUtil estimateServiceUtil) {
         this.serviceConfiguration = serviceConfiguration;
         this.producer = producer;
         this.serviceValidator = serviceValidator;
@@ -43,6 +46,7 @@ public class EstimateService {
         this.estimateRepository = estimateRepository;
         this.workflowService = workflowService;
         this.notificationService = notificationService;
+        this.estimateServiceUtil = estimateServiceUtil;
     }
 
     /**
@@ -96,14 +100,8 @@ public class EstimateService {
         serviceValidator.validateEstimateOnUpdate(estimateRequest);
         enrichmentService.enrichEstimateOnUpdate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);
-        if(estimateRequest.getEstimate().getStatus() == Estimate.StatusEnum.ACTIVE){
-            List<Estimate> estimateList = estimateRepository.searchEstimates(estimateRequest);
-            if(!estimateList.isEmpty()){
-                Estimate oldEstimate = estimateList.get(0);
-                oldEstimate.setStatus(Estimate.StatusEnum.INACTIVE);
-                EstimateRequest oldEstimateRequest = EstimateRequest.builder().requestInfo(estimateRequest.getRequestInfo()).estimate(oldEstimate).build();
-                producer.push(serviceConfiguration.getUpdateEstimateTopic(), oldEstimateRequest);
-            }
+        if(Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(estimateRequest))){
+            updateWfStatusOfPreviousEstimate(estimateRequest);
         }
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), estimateRequest);
         try{
@@ -112,5 +110,18 @@ public class EstimateService {
             log.error("Exception while sending notification: " + e);
         }
         return estimateRequest;
+    }
+    private void updateWfStatusOfPreviousEstimate(EstimateRequest estimateRequest){
+        if(estimateRequest.getEstimate().getStatus() == Estimate.StatusEnum.ACTIVE){
+           EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimateRequest.getEstimate().getTenantId()).estimateNumber(estimateRequest.getEstimate().getEstimateNumber()).status(EstimateServiceConstant.ESTIMATE_ACTIVE_STATUS).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
+                    EstimateSearchCriteria.SortBy.createdTime).build();
+           List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
+            if(!estimateList.isEmpty()){
+                Estimate oldEstimate = estimateList.get(0);
+                oldEstimate.setStatus(Estimate.StatusEnum.INACTIVE);
+                EstimateRequest oldEstimateRequest = EstimateRequest.builder().requestInfo(estimateRequest.getRequestInfo()).estimate(oldEstimate).build();
+                producer.push(serviceConfiguration.getUpdateEstimateTopic(), oldEstimateRequest);
+            }
+        }
     }
 }

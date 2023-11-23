@@ -68,15 +68,4 @@ public class EstimateRepository {
 
         return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
     }
-
-    public List<Estimate> searchEstimates(EstimateRequest request) {
-        log.info("EstimateRepository::searchEstimates");
-        Estimate estimate = request.getEstimate();
-        if(estimate.getEstimateNumber() == null){
-            throw new CustomException("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
-        }
-        EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).status("ACTIVE").sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
-                EstimateSearchCriteria.SortBy.createdTime).build();
-        return getEstimate(estimateSearchCriteria);
-    }
 }

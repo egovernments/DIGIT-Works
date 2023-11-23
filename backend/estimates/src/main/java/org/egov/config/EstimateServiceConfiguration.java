@@ -141,11 +141,8 @@ public class EstimateServiceConfiguration {
     private Boolean isLocalizationStateLevel;
 
     // RevisionEstimate
-    @Value("${estimate.revision-estimate.buisnessService}")
+    @Value("${estimate.revisionEstimate.buisnessService}")
     private String revisionEstimateBusinessService;
-
-    @Value("${estimate.revisionEstimate.activeStatus}")
-    private Boolean revisionEstimateActiveStatus;
 
     @Value("${estimate.revisionEstimate.measurementValidation}")
     private  Boolean revisionEstimateMeasurementValidation;

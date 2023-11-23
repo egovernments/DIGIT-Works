@@ -36,6 +36,6 @@ public class EstimateServiceUtil {
     public Boolean isRevisionEstimate(EstimateRequest request){
         log.info("EstimateServiceValidator::isRevisionEstimate");
         Estimate estimate = request.getEstimate();
-        return estimate.getBusinessService() != null && estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus();
+        return estimate.getBusinessService() != null && estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService());
     }
 }

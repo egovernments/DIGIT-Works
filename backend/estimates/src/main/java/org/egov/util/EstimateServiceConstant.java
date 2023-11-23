@@ -79,5 +79,7 @@ public class EstimateServiceConstant {
     public static final String LOCATION_BOUNDARY_NAME_CODE ="$.*.*.boundary.*.name";
 
     public static final String ESTIMATE_APPROVED_STATUS = "APPROVED";
+    public static final String ESTIMATE_INWORKFLOW_STATUS = "INWORKFLOW";
+    public static final String ESTIMATE_ACTIVE_STATUS = "ACTIVE";
     public static final String VALID_FROM = "validFrom";
 }

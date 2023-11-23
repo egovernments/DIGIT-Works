@@ -177,7 +177,7 @@ public class WorkflowService {
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
         ProcessInstance processInstance = new ProcessInstance();
-        if(estimate.getBusinessService() != null && estimate.getBusinessService().equals(serviceConfiguration.getRevisionEstimateBusinessService()) && Boolean.TRUE.equals(serviceConfiguration.getRevisionEstimateActiveStatus())){
+        if(estimate.getBusinessService() != null && estimate.getBusinessService().equals(serviceConfiguration.getRevisionEstimateBusinessService())){
             processInstance.setBusinessId(estimate.getRevisionNumber());
         }else{
             processInstance.setBusinessId(estimate.getEstimateNumber());
