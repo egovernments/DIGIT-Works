@@ -35,12 +35,12 @@ const fetchData = async (sorid, state, setState, setShowToast) => {
     if (data?.MdmsRes?.["WORKS-SOR"]?.Rates?.length > 0) {
       const Rates = data?.MdmsRes?.["WORKS-SOR"]?.Rates;
       //if rates is not there then provide the error
-      state?.forEach((element) => {
-        if (element?.sorId == sorid) {
-          element.unitRate = Rates?.[0]?.rate || 0;
-          element.amountDetails = Rates?.[0]?.amountDetails;
-        }
-      });
+      // state?.forEach((element) => {
+      //   if (element?.sorId == sorid) {
+      //     element.unitRate = Rates?.[0]?.rate || 0;
+      //     element.amountDetails = Rates?.[0]?.amountDetails;
+      //   }
+      // });
       return Rates;
       //setState(state);
     }
@@ -78,28 +78,79 @@ const searchSor = (props) => {
     },
     [setValue]
   );
+  // const buttonClick = async () => {
+  //   if(formData?.length > 0 && formData?.find((ob) => ob?.sorCode && ob?.sorCode === stateData?.selectedSor?.id))
+  //   {
+  //     setShowToast({show: true, error: true, label:"WORKS_CANNOT_ADD_DUPLICATE_SOR"});
+  //     return;
+  //   }
+  //   const sor = transformSOR(stateData?.selectedSor);
+  //   console.log(sor,"sor")
+  //   console.log(formData,"formData");
+  //   console.log(stateData,"statedata");
+  //   if (formData?.length === 0 || (formData?.length === 1 && !formData?.[0]?.description) && stateData?.selectedSor?.id) {
+  //     formData = [sor];
+  //   } else {
+  //     sor?.sorId && formData?.push(sor);
+  //   }
+  
+  //   try {
+  //     const apiData = await fetchData(stateData?.selectedSor?.id, formData, setFormValue,setShowToast);
+  //     console.log(apiData,"apidata")
+  //     // Check if rates are available
+  //     if (apiData !== undefined && apiData?.[0]?.sorId === stateData?.selectedSor?.id && stateData?.selectedSor?.id) {
+  //       console.log("going inside the condition");
+  //       setFormValue(formData);
+  //     } else {
+  //       // Rates are not available, handle it here (e.g., display an error message)
+  //       console.error('Rates not available in fetchData response');
+  //     }
+  //   } catch (error) {
+  //     // Handle the error from the API call
+  //     console.error('Error fetching data:', error);
+  //   }
+  
+  //   setSelectedSOR(null);
+  // };
+
   const buttonClick = async () => {
-    if(formData?.length > 0 && formData?.find((ob) => ob?.sorCode && ob?.sorCode === stateData?.selectedSor?.id))
-    {
-      setShowToast({show: true, error: true, label:"WORKS_CANNOT_ADD_DUPLICATE_SOR"});
+    if (
+      formData?.length > 0 &&
+      formData?.find((ob) => ob?.sorCode && ob?.sorCode === stateData?.selectedSor?.id)
+    ) {
+      setShowToast({ show: true, error: true, label: "WORKS_CANNOT_ADD_DUPLICATE_SOR" });
       return;
     }
-    const sor = transformSOR(stateData?.selectedSor);
   
-    if (formData?.length === 0 || (formData?.length === 1 && !formData?.[0]?.description) && stateData?.selectedSor?.id) {
-      formData = [sor];
-    } else {
-      sor?.sorId && formData?.push(sor);
-    }
+    const sor = transformSOR(stateData?.selectedSor);
+    console.log(sor, "sor");
+    console.log(formData, "formData");
+    console.log(stateData, "statedata");
   
     try {
-      const apiData = await fetchData(stateData?.selectedSor?.id, formData, setFormValue,setShowToast);
+      const apiData = await fetchData(stateData?.selectedSor?.id, formData, setFormValue, setShowToast);
+      console.log(apiData, "apidata");
   
       // Check if rates are available
       if (apiData !== undefined && apiData?.[0]?.sorId === stateData?.selectedSor?.id && stateData?.selectedSor?.id) {
+        console.log("Rates are available for the selected SOR");
+        // Add sor to formData only if rates are available
+        if (formData?.length === 0 || (formData?.length === 1 && !formData?.[0]?.description) && stateData?.selectedSor?.id) {
+          formData = [sor];
+        } else {
+          sor?.sorId && formData?.push(sor);
+        }
+
+      formData?.forEach((element) => {
+        if (element?.sorId == stateData?.selectedSor?.id) {
+          element.unitRate = apiData?.[0]?.rate || 0;
+          element.amountDetails = apiData?.[0]?.amountDetails;
+        }
+      });
         setFormValue(formData);
       } else {
         // Rates are not available, handle it here (e.g., display an error message)
+        console.log(formData,"formdata final")
         console.error('Rates not available in fetchData response');
       }
     } catch (error) {
@@ -108,7 +159,7 @@ const searchSor = (props) => {
     }
   
     setSelectedSOR(null);
-  };
+  };  
 
   const transformSOR = (sor) => {
     const transformedSOR = {
