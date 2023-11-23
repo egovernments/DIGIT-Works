@@ -81,16 +81,16 @@ const MeasureTable = (props) => {
         moduleDetails : [
 
           {
-            "moduleName": "common-masters",
+            "moduleName": options?.moduleName,
             "masterDetails": [
                 {
-                    "name": "UOM"
+                    "name": options?.masterName
                     
                 }  
             ]
         },
         ],
-        "tenantId": "pg",
+        "tenantId": Digit.ULBService.getCurrentTenantId(),
       },
     },
     config: {
