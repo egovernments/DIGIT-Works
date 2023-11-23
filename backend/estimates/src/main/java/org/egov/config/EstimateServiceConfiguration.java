@@ -115,9 +115,9 @@ public class EstimateServiceConfiguration {
     private String contractSearchEndpoint;
 
     //Measurement Book
-    @Value("${egov.measurement.host}")
+    @Value("${egov.measurementService.host}")
     private String measurementBookHost;
-    @Value("${egov.measurement.search.endpoint}")
+    @Value("${egov.measurementService.search.endpoint}")
     private String measurementBookSearchEndpoint;
 
     //Notification
