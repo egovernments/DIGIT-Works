@@ -38,7 +38,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
         if(category === "MA" && SORAmount == 0 && formData?.labourMaterialAnalysis?.material) return formData?.labourMaterialAnalysis?.material;
         if(category === "MH" && SORAmount == 0 && formData?.labourMaterialAnalysis?.machinery) return formData?.labourMaterialAnalysis?.machinery;
         }
-        return (SORAmount).toFixed(2);        
+        return Digit.Utils.dss.formatterWithoutRound((SORAmount).toFixed(2),"number");        
     }
     
    

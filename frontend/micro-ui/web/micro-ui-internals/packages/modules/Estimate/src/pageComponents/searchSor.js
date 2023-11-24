@@ -140,15 +140,15 @@ const searchSor = (props) => {
   };
   return (
     <div>
-      <EstimateDropdown label="SOR Type*" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Type"} type="SORType" />
-      <EstimateDropdown label="SOR Sub Type" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.SubType"} type="SORSubType" />
-      <EstimateDropdown label="SOR Variant" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Variant"} type="SORVariant" />
+      <EstimateDropdown label={t("ESTIMATE_SOR_TYPE")} stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Type"} type="SORType" />
+      <EstimateDropdown label={t("ESTIMATE_SOR_SUB_TYPE")} stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.SubType"} type="SORSubType" />
+      <EstimateDropdown label={t("ESTIMATE_SOR_VARIANT")} stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Variant"} type="SORVariant" />
       <div className="search-sor-container">
-      <span className="search-sor-label">Search SOR</span>
+      <span className="search-sor-label">{t("ESTIMATE_SEARCH_SOR_LABEL")}</span>
       <div className="search-sor-button"> 
       <SearchBar stateData={stateData} selectedSOR={selectedSOR} setSelectedSOR={setSelectedSOR} />
       <Button
-        label="Add"
+        label={t("ESTIMATE_ADD_LABEL")}
         onButtonClick={buttonClick}
         className={"add-sor-button"}
       />
