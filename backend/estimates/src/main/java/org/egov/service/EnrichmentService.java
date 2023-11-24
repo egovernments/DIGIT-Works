@@ -69,22 +69,23 @@ public class EnrichmentService {
         BigDecimal proposalDate = new BigDecimal(currentDT.getTime());
         estimate.setProposalDate(proposalDate);
         if(Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request))){
-            EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
+            EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).status(ESTIMATE_ACTIVE_STATUS).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
                     EstimateSearchCriteria.SortBy.createdTime).build();
             List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
             estimateForRevision = estimateList.get(0);
-            for(Estimate estimate1: estimateList){
-                if(estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)){
-                    estimate.setOldUuid(estimate1.getId());
-                    break;
-                }
-            }
+            estimate.setOldUuid(estimateForRevision.getId());
             if(estimateForRevision.getVersionNumber() == null){
                 estimate.setVersionNumber(BigDecimal.valueOf(1));
             }else {
                 estimate.setVersionNumber(estimateForRevision.getVersionNumber().add(BigDecimal.valueOf(1)));
             }
-            estimate.setRevisionNumber(estimateForRevision.getEstimateNumber() + "/RE-" + (estimate.getVersionNumber().subtract(BigDecimal.valueOf(1))));
+//            estimate.setRevisionNumber(estimateForRevision.getEstimateNumber() + "/RE-" + (estimate.getVersionNumber().subtract(BigDecimal.valueOf(1))));
+            List<String> revisonEstimateNumber = getIdList(requestInfo, tenantId
+                    , config.getIdgenRevisionEstimateNumberName(), config.getIdgenRevisionEstimateNumberFormat(), 1);
+            if (revisonEstimateNumber != null && !revisonEstimateNumber.isEmpty()) {
+                String revisionNumber = revisonEstimateNumber.get(0);
+                estimate.setRevisionNumber(revisionNumber);
+            }
         }else{
             List<String> estimateNumbers = getIdList(requestInfo, tenantId
                     , config.getIdgenEstimateNumberName(), config.getIdgenEstimateNumberFormat(), 1);

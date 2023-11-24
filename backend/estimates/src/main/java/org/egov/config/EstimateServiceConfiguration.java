@@ -60,6 +60,10 @@ public class EstimateServiceConfiguration {
     private String idgenEstimateNumberName;
     @Value("${egov.idgen.estimate.number.format}")
     private String idgenEstimateNumberFormat;
+    @Value("${egov.idgen.revisionEstimate.number.name}")
+    private String idgenRevisionEstimateNumberName;
+    @Value("${egov.idgen.revisionEstimate.number.format}")
+    private String idgenRevisionEstimateNumberFormat;
 
     //search config
     @Value("${estimate.default.offset}")

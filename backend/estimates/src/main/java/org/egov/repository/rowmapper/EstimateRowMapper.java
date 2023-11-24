@@ -105,7 +105,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
         String estDetailsId = rs.getString("estDetailId");
         EstimateDetail estimateDetail = EstimateDetail.builder()
                 .id(estDetailsId)
-                .previousLineItemId(rs.getString("old_uuid"))
+                .previousLineItemId(rs.getString("estDetailOldUuid"))
                 .sorId(rs.getString("sor_id"))
                 .category(rs.getString("category"))
                 .name(rs.getString("estDetailName"))

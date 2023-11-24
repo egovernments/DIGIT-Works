@@ -44,6 +44,7 @@ public class EstimateServiceValidator {
     private static final String MDMS_RES = "$.MdmsRes.";
     private static final String IS_NOT_PRESENT_IN_MDMS = " is not present in MDMS";
     private static final String FAILED_TO_PARSE_MDMS_RESPONSE = "Failed to parse mdms response";
+    private static final String INVALID_ESTIMATE = "INVALID_ESTIMATE";
 
     @Autowired
     public EstimateServiceValidator(MDMSUtils mdmsUtils, EstimateRepository estimateRepository, ProjectUtil projectUtil, EstimateServiceConfiguration config, ObjectMapper mapper, ContractUtils contractUtils, MeasurementUtils measurementUtils, EstimateServiceUtil estimateServiceUtil) {
@@ -78,13 +79,13 @@ public class EstimateServiceValidator {
         validateWorkFlow(workflow);
         if(Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request))){
             if(estimate.getEstimateNumber() == null){
-                throw new CustomException("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
+                throw new CustomException(INVALID_ESTIMATE, "Estimate number is mandatory for revision estimate");
             }
             EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
                     EstimateSearchCriteria.SortBy.createdTime).build();
             List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
             if(estimateList.get(0).getWfStatus().equals(ESTIMATE_INWORKFLOW_STATUS)){
-                throw new CustomException("INVALID_ESTIMATE", "Estimate is already in workflow");
+                throw new CustomException(INVALID_ESTIMATE, "Estimate is already in workflow");
             }
             for(Estimate estimate1: estimateList){
                 if(estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)){
@@ -96,7 +97,7 @@ public class EstimateServiceValidator {
         }
         List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();
 
-        validateRequestOnMDMSV1AndV2(request,errorMap, true);
+        validateRequestOnMDMSV1AndV2(request,errorMap, true,previousEstimate);
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
@@ -111,7 +112,7 @@ public class EstimateServiceValidator {
     private void validatepreviousEstimate(Estimate estimate, Map<String, String> errorMap, Estimate previousEstimate) {
         log.info("EstimateServiceValidator::validatepreviousEstimate");
         if(previousEstimate == null){
-            errorMap.put("INVALID_ESTIMATE", "Approved Previous estimate not found for revision estimate");
+            errorMap.put(INVALID_ESTIMATE, "Approved Previous estimate not found for revision estimate");
         }
         else{
             log.info("Previous estimate found for the given estimate -> "+ previousEstimate);
@@ -385,10 +386,12 @@ public class EstimateServiceValidator {
         });
     }
 
-    private void validateDateAndRates (Estimate estimate, Object mdmsData, Map<String, String> errorMap) {
+    private void validateDateAndRates (Estimate estimate, Object mdmsData, Map<String, String> errorMap,Estimate previousEstimate) {
         log.info("Validating Date");
         List<Object> mdmsRates = null;
         Long validatingDate = null;
+        HashMap<String,EstimateDetail> previousEstimateDetailMap = new HashMap<>();
+
         if (estimate.getAuditDetails() == null) {
             validatingDate = System.currentTimeMillis();
         } else {
@@ -400,21 +403,44 @@ public class EstimateServiceValidator {
         }catch (Exception e) {
             throw new CustomException(JSONPATH_ERROR, FAILED_TO_PARSE_MDMS_RESPONSE);
         }
+        if(estimate.getBusinessService() != null && estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService()) && previousEstimate != null) {
+            List<EstimateDetail> previousEstimateDetails = previousEstimate.getEstimateDetails();
+            previousEstimateDetails.forEach(estimateDetail1 ->
+                    previousEstimateDetailMap.put(estimateDetail1.getId(),estimateDetail1)
+            );
+        }
         for (EstimateDetail estimateDetail : estimate.getEstimateDetails()) {
             if (!estimateDetail.getCategory().equalsIgnoreCase("SOR"))
                 continue;
-            List<Object> ratesForGivenSor;
-            String jsonPathRatesForGivenSor = "$.[?(@.sorId=='{sorId}')]";
-            try {
-                jsonPathRatesForGivenSor = jsonPathRatesForGivenSor.replace("{sorId}", estimateDetail.getSorId());
-                ratesForGivenSor = JsonPath.read(mdmsRates, jsonPathRatesForGivenSor);
-            }catch (Exception e) {
-                throw new CustomException(JSONPATH_ERROR, FAILED_TO_PARSE_MDMS_RESPONSE);
+            if(estimate.getBusinessService() != null && estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService()) && estimateDetail.getPreviousLineItemId() != null){
+                validateRateOnPreviousEstimate(estimateDetail, errorMap, previousEstimateDetailMap);
+            }else{
+                List<Object> ratesForGivenSor;
+                String jsonPathRatesForGivenSor = "$.[?(@.sorId=='{sorId}')]";
+                try {
+                    jsonPathRatesForGivenSor = jsonPathRatesForGivenSor.replace("{sorId}", estimateDetail.getSorId());
+                    ratesForGivenSor = JsonPath.read(mdmsRates, jsonPathRatesForGivenSor);
+                }catch (Exception e) {
+                    throw new CustomException(JSONPATH_ERROR, FAILED_TO_PARSE_MDMS_RESPONSE);
+                }
+                JsonNode filteredRates = mapper.convertValue(ratesForGivenSor, JsonNode.class);
+                validateDate(filteredRates, estimateDetail, errorMap, validatingDate);
             }
-            JsonNode filteredRates = mapper.convertValue(ratesForGivenSor, JsonNode.class);
-            validateDate(filteredRates, estimateDetail, errorMap, validatingDate);
         }
 
+    }
+
+    private void validateRateOnPreviousEstimate(EstimateDetail estimateDetail, Map<String, String> errorMap, HashMap<String,EstimateDetail> previousEstimateDetailMap) {
+        log.info("EstimateServiceValidator::validateRateOnPreviousEstimate");
+        if(previousEstimateDetailMap.containsKey(estimateDetail.getPreviousLineItemId())){
+            EstimateDetail previousEstimateDetail = previousEstimateDetailMap.get(estimateDetail.getPreviousLineItemId());
+            if(!Objects.equals(previousEstimateDetail.getUnitRate(), estimateDetail.getUnitRate())){
+                errorMap.put("INVALID_UNIT_RATE", "Unit rate is not matching with previous approved estimate");
+            }
+        }
+        else{
+            errorMap.put("INVALID_PREVIOUS_LINE_ITEM_ID", "Previous line item id is invalid");
+        }
     }
 
     private void validateDate (JsonNode filteredRates, EstimateDetail estimateDetail, Map<String, String> errorMap, Long validatingDate) {
@@ -677,7 +703,7 @@ public class EstimateServiceValidator {
         } else {
             estimateForRevision = validateEstimateFromDBAndFetchPreviousEstimate(request);
         }
-        validateRequestOnMDMSV1AndV2(request,errorMap,false);
+        validateRequestOnMDMSV1AndV2(request,errorMap,false,estimateForRevision);
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
@@ -711,7 +737,7 @@ public class EstimateServiceValidator {
         }
         return estimateForRevision;
     }
-    private void validateRequestOnMDMSV1AndV2(EstimateRequest request,Map<String, String> errorMap,Boolean isCreate){
+    private void validateRequestOnMDMSV1AndV2(EstimateRequest request,Map<String, String> errorMap,Boolean isCreate,Estimate previousEstimate){
         log.info("EstimateServiceValidator::validateRequestOnMDMSV1AndV2");
         Estimate estimate = request.getEstimate();
         List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
@@ -735,7 +761,7 @@ public class EstimateServiceValidator {
             validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
 
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
-            validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap);
+            validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap,previousEstimate);
         }
     }
 }
