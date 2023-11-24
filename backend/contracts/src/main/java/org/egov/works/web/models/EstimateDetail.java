@@ -25,6 +25,9 @@ public class EstimateDetail {
     @JsonProperty("id")
     private String id = null;
 
+    @JsonProperty("previousLineItemId")
+    private String previousLineItemId = null;
+
     @JsonProperty("unitRate")
     private Double unitRate = null;
 

@@ -2,6 +2,7 @@ package org.egov.works.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -62,6 +63,11 @@ public class ContractServiceValidator {
     @Autowired
     private ServiceRequestRepository restRepo;
 
+    @Autowired
+    private MeasurementUtil measurementUtil;
+
+    @Autowired
+    private ContractServiceUtil contractServiceUtil;
 
     public void validateCreateContractRequest(ContractRequest contractRequest) {
         log.info("Validate contract create request");
@@ -84,7 +90,7 @@ public class ContractServiceValidator {
 
         if (contractRequest.getContract().getBusinessService() != null &&
                 contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
-            log.info("Validating time extension request");
+            log.info("Validating contract revision request");
             // Validate if Time Extension Request
             validateContractRevisionRequestForCreate(contractRequest);
         } else {
@@ -119,7 +125,7 @@ public class ContractServiceValidator {
 
         if (contractRequest.getContract().getBusinessService() != null &&
                 contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
-            // Validate Time Extension Request for Update request
+            // Validate Contract Revision Request for Update request
             validateContractRevisionRequestForUpdate(contractRequest);
         } else {
             // Validate estimateIds against estimate service and DB
@@ -641,31 +647,18 @@ public class ContractServiceValidator {
         // Validate if contract number is present
         validateContractNumber(contractRequest);
 
-        Pagination pagination = Pagination.builder()
-                .limit(config.getContractMaxLimit())
-                .offSet(config.getContractDefaultOffset())
-                .build();
-        ContractCriteria contractCriteria = ContractCriteria.builder()
-                .contractNumber(contractRequest.getContract().getContractNumber())
-                .status("ACTIVE")
-                .tenantId(contractRequest.getContract().getTenantId())
-                .requestInfo(contractRequest.getRequestInfo())
-                .pagination(pagination)
-                .build();
-        List<Contract> contractsFromDB = contractService.getContracts(contractCriteria);
+        List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
 
         // Validate if contract is present in DB
         validateContractNumber(contractsFromDB);
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
         // Validate if at least one muster-roll is created and approved
-        //validateMusterRollForTimeExtension(contractRequest);
-        // Validate if previous time extension request is in workflow
-        validateDuplicateTimeExtensionRequest (contractRequest);
+//        validateMusterRollForTimeExtension(contractRequest);
+        // Validate if previous contract revision request is in workflow
+        validateContractRevisionRequest(contractRequest);
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
-        // Validate LineItemRef is same as previous contract
-        validateLineItemRef(contractRequest, contractsFromDB);
 
     }
 
@@ -678,18 +671,7 @@ public class ContractServiceValidator {
         // Validate if contract number is present
         validateContractNumber(contractRequest);
 
-        Pagination pagination = Pagination.builder()
-                .limit(config.getContractMaxLimit())
-                .offSet(config.getContractDefaultOffset())
-                .build();
-        ContractCriteria contractCriteria = ContractCriteria.builder()
-                .contractNumber(contractRequest.getContract().getContractNumber())
-                .status("ACTIVE")
-                .tenantId(contractRequest.getContract().getTenantId())
-                .requestInfo(contractRequest.getRequestInfo())
-                .pagination(pagination)
-                .build();
-        List<Contract> contractsFromDB = contractService.getContracts(contractCriteria);
+        List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
 
         // Validate if contract is present in DB
         validateContractNumber(contractsFromDB);
@@ -701,8 +683,6 @@ public class ContractServiceValidator {
         validateSupplementNumber (contractRequest);
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
-        // Validate LineItemRef is same as previous contract
-        validateLineItemRef(contractRequest, contractsFromDB);
 
     }
     private void validateContractNumber (ContractRequest contractRequest) {
@@ -737,7 +717,7 @@ public class ContractServiceValidator {
         }
         throw new CustomException("MUSTER_ROLL_NOT_APPROVED", "At least one muster roll must be in approved state");
     }
-    private void validateDuplicateTimeExtensionRequest (ContractRequest contractRequest ) {
+    private void validateContractRevisionRequest(ContractRequest contractRequest ) {
         Pagination pagination = Pagination.builder()
                 .limit(config.getContractMaxLimit())
                 .offSet(config.getContractDefaultOffset())
@@ -752,21 +732,22 @@ public class ContractServiceValidator {
         List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
 
         if (!contractsFromDB.isEmpty()) {
-            throw new CustomException("DUPLICATE_TIME_EXTENSION_REQUEST", "Duplicate time extension request");
+            throw new CustomException("DUPLICATE_CONTRACT_REVISION_REQUEST", "Duplicate contract revision request");
         }
     }
     private void validateEndDateExtension (ContractRequest contractRequest, List<Contract> contractsFromDB) {
         for (Contract contract : contractsFromDB) {
-            int comparisionResult = contractRequest.getContract().getEndDate().compareTo(contract.getEndDate());
-            if (comparisionResult < 0) {
+            int comparisonResult = contractRequest.getContract().getEndDate().compareTo(contract.getEndDate());
+            if (comparisonResult < 0) {
                 throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
             }
         }
     }
 
-    private void validateLineItemRef(ContractRequest contractRequest, List<Contract> contractsFromDB) {
-        Set<String> contractLineItemRef = contractsFromDB.get(0).getLineItems().stream().map(lineItems -> lineItems.getContractLineItemRef()).collect(Collectors.toSet());
-        for (LineItems lineItems : contractRequest.getContract().getLineItems()) {
+    public void validateLineItemRef(ContractRequest contractRequest) {
+        List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
+        Set<String> contractLineItemRef = contractRequest.getContract().getLineItems().stream().map(lineItems -> lineItems.getContractLineItemRef()).collect(Collectors.toSet());
+        for (LineItems lineItems : contractsFromDB.get(0).getLineItems()) {
             if (!contractLineItemRef.contains(lineItems.getContractLineItemRef())) {
                 throw new CustomException("LINE_ITEM_REF_MISMATCH", "Contract Line Item Ref not present in previous contract " + lineItems.getContractLineItemRef());
             }
@@ -809,6 +790,36 @@ public class ContractServiceValidator {
         if (contractsFromDB.isEmpty()) {
             throw new CustomException("SUPPLEMENT_NUMBER_NOT_PRESENT", "Supplement Number not present in DB");
         }
+    }
+    public void validateMeasurement(ContractRequest contractRequest, Estimate estimate) {
+        String jsonPathForMeasurementCumulativeValue = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].cumulativeValue";
+        Object measurementResponse = measurementUtil.getMeasurementDetails(contractRequest);
+
+        contractRequest.getContract().getLineItems().forEach(lineItems -> {
+            if (!lineItems.getCategory().equalsIgnoreCase(OVERHEAD_CODE)) {
+                List<Integer> measurementCumulativeValue = null;
+                try {
+                    measurementCumulativeValue = JsonPath.read(measurementResponse, jsonPathForMeasurementCumulativeValue.replace("{{yourDynamicValue}}", lineItems.getContractLineItemRef()));
+                } catch (Exception e) {
+                    throw new CustomException("JSONPATH_ERROR", "Failed to parse measurement search response");
+                }
+                if(measurementCumulativeValue == null || measurementCumulativeValue.isEmpty()){
+                    log.info("No measurement found for the given estimate");
+                }
+                else {
+                    if (lineItems.getNoOfunit() > measurementCumulativeValue.get(0))
+                        throw new CustomException("CUMULATIVE_VALUE_GREATER_THAN_CONTRACT_UNITS", "No of Unit of contract" +
+                                " should be less than or equal to measurement book cumulative value. Retry after changing this value : " + lineItems.getNoOfunit());
+
+                    Double noOfUnit = estimate.getEstimateDetails().stream().filter(estimateDetail -> estimateDetail.getId().equals(lineItems.getEstimateLineItemId())).map(EstimateDetail::getNoOfunit).findFirst().orElse(null);
+                    if (noOfUnit != null && noOfUnit > measurementCumulativeValue.get(0)){
+                        throw new CustomException("CUMULATIVE_VALUE_GREATER_THAN_ESTIMATE_DETAIL_UNITS", "No of Unit of estimate " +
+                                "should be less than or equal to measurement book cumulative value. Retry after changing this value : " + noOfUnit);
+                    }
+                }
+            }
+        });
+
     }
 
 }

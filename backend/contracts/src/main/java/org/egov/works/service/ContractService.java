@@ -69,6 +69,7 @@ public class ContractService {
         contractServiceValidator.validateUpdateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnUpdate(contractRequest);
         workflowService.updateWorkflowStatus(contractRequest);
+        contractEnrichment.enrichPreviousContractLineItems(contractRequest);
         producer.push(contractServiceConfiguration.getUpdateContractTopic(), contractRequest);
         try {
             notificationService.sendNotification(contractRequest);

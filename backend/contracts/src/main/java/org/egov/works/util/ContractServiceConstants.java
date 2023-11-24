@@ -92,4 +92,10 @@ public class ContractServiceConstants {
     public static final String CONTRACT_REVISION_APPROVE_LOCALIZATION_CODE = "TIME_EXTENSION_APPROVE";
     public static final String CONTRACT_REVISION_REJECT_LOCALIZATION_CODE = "TIME_EXTENSION_REJECT";
     public static final String CONTRACT_REVISION_SEND_BACK_LOCALIZATION_CODE = "TIME_EXTENSION_SEND_BACK_TO_CBO";
+
+    public static final String OVERHEAD_CODE = "OVERHEAD";
+    public static final String REQUEST_INFO = "RequestInfo";
+    public static final String TENANT_ID = "tenantId";
+    public static final String CRITERIA = "criteria";
+    public static final String REFERENCE_ID = "referenceId";
 }
