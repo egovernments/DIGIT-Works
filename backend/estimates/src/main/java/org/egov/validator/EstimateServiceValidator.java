@@ -84,7 +84,7 @@ public class EstimateServiceValidator {
             EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
                     EstimateSearchCriteria.SortBy.createdTime).build();
             List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
-            if(estimateList.get(0).getWfStatus().equals(ESTIMATE_INWORKFLOW_STATUS)){
+            if(Estimate.StatusEnum.INWORKFLOW.equals(estimateList.get(0).getStatus())){
                 throw new CustomException(INVALID_ESTIMATE, "Estimate is already in workflow");
             }
             for(Estimate estimate1: estimateList){
@@ -317,6 +317,8 @@ public class EstimateServiceValidator {
         }
     }
     private void validateEstimateDetails(List<EstimateDetail> estimateDetails,Map<String,String> errorMap){
+        log.info("EstimateServiceValidator::validateEstimateDetails");
+        Boolean isSOROrNonSORPresent = false;
             for (EstimateDetail estimateDetail : estimateDetails) {
                 if (StringUtils.isBlank(estimateDetail.getSorId()) && StringUtils.isBlank(estimateDetail.getName())) {
                     errorMap.put("ESTIMATE.DETAIL.NAME.OR.SOR.ID", "Estimate detail's name or sorId is mandatory");
@@ -334,6 +336,12 @@ public class EstimateServiceValidator {
                         }
                     }
                 }
+                if(estimateDetail.getCategory().equals(SOR_CODE) || estimateDetail.getCategory().equals(NON_SOR_CODE)){
+                    isSOROrNonSORPresent = true;
+                }
+            }
+            if(Boolean.FALSE.equals(isSOROrNonSORPresent)){
+                errorMap.put("ESTIMATE.DETAIL.CATEGORY", "Atleast one SOR or Non-SOR should be present");
             }
     }
 
@@ -386,7 +394,7 @@ public class EstimateServiceValidator {
         });
     }
 
-    private void validateDateAndRates (Estimate estimate, Object mdmsData, Map<String, String> errorMap,Estimate previousEstimate) {
+    private void validateDateAndRates (Estimate estimate, Object mdmsData, Map<String, String> errorMap,Estimate previousEstimate,Boolean isCreate) {
         log.info("Validating Date");
         List<Object> mdmsRates = null;
         Long validatingDate = null;
@@ -413,7 +421,7 @@ public class EstimateServiceValidator {
             if (!estimateDetail.getCategory().equalsIgnoreCase("SOR"))
                 continue;
             if(estimate.getBusinessService() != null && estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService()) && estimateDetail.getPreviousLineItemId() != null){
-                validateRateOnPreviousEstimate(estimateDetail, errorMap, previousEstimateDetailMap);
+                validateRateOnPreviousEstimate(estimateDetail, errorMap, previousEstimateDetailMap,isCreate);
             }else{
                 List<Object> ratesForGivenSor;
                 String jsonPathRatesForGivenSor = "$.[?(@.sorId=='{sorId}')]";
@@ -430,10 +438,10 @@ public class EstimateServiceValidator {
 
     }
 
-    private void validateRateOnPreviousEstimate(EstimateDetail estimateDetail, Map<String, String> errorMap, HashMap<String,EstimateDetail> previousEstimateDetailMap) {
+    private void validateRateOnPreviousEstimate(EstimateDetail estimateDetail, Map<String, String> errorMap, HashMap<String,EstimateDetail> previousEstimateDetailMap,Boolean isCreate) {
         log.info("EstimateServiceValidator::validateRateOnPreviousEstimate");
-        if(previousEstimateDetailMap.containsKey(estimateDetail.getPreviousLineItemId())){
-            EstimateDetail previousEstimateDetail = previousEstimateDetailMap.get(estimateDetail.getPreviousLineItemId());
+        if(previousEstimateDetailMap.containsKey(isCreate?estimateDetail.getPreviousLineItemId():estimateDetail.getId())){
+            EstimateDetail previousEstimateDetail = previousEstimateDetailMap.get(isCreate?estimateDetail.getPreviousLineItemId():estimateDetail.getId());
             if(!Objects.equals(previousEstimateDetail.getUnitRate(), estimateDetail.getUnitRate())){
                 errorMap.put("INVALID_UNIT_RATE", "Unit rate is not matching with previous approved estimate");
             }
@@ -717,7 +725,6 @@ public class EstimateServiceValidator {
     }
     private Estimate validateEstimateFromDBAndFetchPreviousEstimate(EstimateRequest request){
         Estimate estimate = request.getEstimate();
-        Estimate estimateForRevision = null;
         String id = estimate.getId();
         List<String> ids = new ArrayList<>();
         ids.add(id);
@@ -728,15 +735,47 @@ public class EstimateServiceValidator {
         }
         //check projectId is same or not, if project Id is not same throw validation error
         Estimate estimateFromDB = estimateList.get(0);
-        estimateForRevision = estimateList.get(0);
         if (!estimateFromDB.getProjectId().equals(estimate.getProjectId())) {
             throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
+        }
+        if(estimateServiceUtil.isRevisionEstimate(request)){
+            if(estimate.getRevisionNumber() == null){
+                throw new CustomException("INVALID_REVISION_NUMBER", "Revision number is mandatory for revision estimate");
+            }
+            if(!estimate.getRevisionNumber().equals(estimateFromDB.getRevisionNumber())){
+                throw new CustomException("INVALID_REVISION_NUMBER", "revisionNumber is not valid");
+            }
+            validatePreviousEstimateForUpdate(estimate, estimateFromDB);
         }
         if (ObjectUtils.isEmpty(estimate.getAuditDetails())) {
             estimate.setAuditDetails(estimateFromDB.getAuditDetails());
         }
-        return estimateForRevision;
+
+        return estimateFromDB;
     }
+
+    private void validatePreviousEstimateForUpdate(Estimate estimate, Estimate estimateFromDB) {
+        List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
+        List<EstimateDetail> estimateDetailsFromDB = estimateFromDB.getEstimateDetails();
+        HashMap<String,EstimateDetail> estimateDetailMap = new HashMap<>();
+        estimateDetailsFromDB.forEach(estimateDetail ->
+                estimateDetailMap.put(estimateDetail.getId(),estimateDetail)
+        );
+        estimateDetails.forEach(estimateDetail -> {
+            if(estimateDetail.getId() != null && (!estimateDetailMap.containsKey(estimateDetail.getId()))){
+                throw new CustomException("INVALID_ESTIMATE_DETAIL", "Line item id is invalid for revision estimate");
+            }
+            if(estimateDetail.getId() != null && estimateDetailMap.containsKey(estimateDetail.getId())){
+                if(estimateDetail.getPreviousLineItemId() == null){
+                    throw new CustomException("INVALID_PREVIOUS_LINE_ITEM_ID", "Previous line item id is mandatory for revision estimate");
+                }
+                if(!estimateDetail.getPreviousLineItemId().equals(estimateDetailMap.get(estimateDetail.getId()).getPreviousLineItemId())){
+                    throw new CustomException("INVALID_PREVIOUS_LINE_ITEM_ID", "Previous line item id is invalid for revision estimate");
+                }
+            }
+        });
+    }
+
     private void validateRequestOnMDMSV1AndV2(EstimateRequest request,Map<String, String> errorMap,Boolean isCreate,Estimate previousEstimate){
         log.info("EstimateServiceValidator::validateRequestOnMDMSV1AndV2");
         Estimate estimate = request.getEstimate();
@@ -761,7 +800,7 @@ public class EstimateServiceValidator {
             validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
 
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
-            validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap,previousEstimate);
+            validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap,previousEstimate,isCreate);
         }
     }
 }
