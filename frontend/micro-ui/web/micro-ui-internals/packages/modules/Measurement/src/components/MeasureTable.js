@@ -120,7 +120,7 @@ const MeasureTable = (props) => {
         obj = { width: "1rem" };
         break;
       case 2:
-        if (tableKey === "NONSOR") obj = { width: "53%"}
+        if (tableKey === "NONSOR") obj = { width: "52%"}
         break;
       case 4:
         (tableKey === "NONSOR")? obj = {width : "27rem"}  : obj = { width: "30%" };
@@ -256,24 +256,24 @@ const MeasureTable = (props) => {
                 <td>{row.description}</td>
                 <td>{row.uom}</td>
                 <td>
-                  <Amount customStyle={{ textAlign: "right" }} value={row?.unitRate?.toFixed?.(2)} t={t} roundOff={false}></Amount>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.unitRate?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
                 </td>
               </>
             )}
             {mode != "CREATEALL"  && mode != "VIEWES"  && (
               <>
                 <td>
-                  <Amount customStyle={{ textAlign: "right" }} value={row?.approvedQuantity?.toFixed?.(2)} t={t} roundOff={false}></Amount>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.approvedQuantity?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
                 </td>
                 <td>
-                  <Amount customStyle={{ textAlign: "right" }} value={row?.consumedQ?.toFixed?.(2)} t={t} roundOff={false}></Amount>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.consumedQ?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
                 </td>
               </>
             )}
             <td>
               <span className="measurement-table-input">
                 <TextInput
-                  style={{ width: "80%", marginTop: "12px" }}
+                  style={{ width: "90%", marginTop: "12px" }}
                   key={row?.id} // important to include key with field's id
                   // {...register(`${tableKey}.${index}.currentMBEntry`)}
                   value={consumedQty}
@@ -309,7 +309,7 @@ const MeasureTable = (props) => {
             </td>
 
             <td>
-              <Amount customStyle={{ textAlign: "right" }} value={row.amount} t={t} roundOff={false}></Amount>
+              <Amount customStyle={{ textAlign: "right" }} value={row?.amount || 0} t={t} roundOff={false}></Amount>
             </td>
             {mode == "CREATEALL" && (
               <td>
@@ -387,7 +387,7 @@ const MeasureTable = (props) => {
             {t("WORKS_TOTAL")} {props.config.key} {t("WORKS_TOTAL_AMOUNT")} :
           </span>
           <span style={{ marginLeft: "3px" }}>
-            <Amount customStyle={{ textAlign: "right" }} value={sum?.toFixed?.(2)} t={t} roundOff={false}></Amount>
+            <Amount customStyle={{ textAlign: "right" }} value={sum?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
           </span>
         </div>
       </div>

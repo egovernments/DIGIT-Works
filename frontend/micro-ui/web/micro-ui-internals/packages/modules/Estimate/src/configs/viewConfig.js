@@ -171,6 +171,11 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
             applicationNo: estimateDetails?.estimateNumber,
             tenantId: estimateDetails?.tenantId,
             timelineStatusPrefix: "WF_ESTIMATE_",
+            config : {
+              select: (data) => {
+                return {...data, timeline: data?.timeline.filter((ob) => ob?.performedAction !== "DRAFT")}
+              },
+            }
           },
           {
             type: "WFACTIONS",
