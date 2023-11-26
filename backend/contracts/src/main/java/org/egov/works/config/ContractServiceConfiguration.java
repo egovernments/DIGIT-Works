@@ -194,6 +194,13 @@ public class ContractServiceConfiguration {
     @Value("${contract.duedate.period}")
     private String contractDueDatePeriod;
 
+    // Contract Revision configuration
+    @Value("${contract.revision.max.limit}")
+    private Integer contractRevisionMaxLimit;
+
+    @Value("${contract.revision.measurement.validation}")
+    private Boolean isMeasurementValidationRequired;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));

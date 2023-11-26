@@ -98,4 +98,8 @@ public class ContractServiceConstants {
     public static final String TENANT_ID = "tenantId";
     public static final String CRITERIA = "criteria";
     public static final String REFERENCE_ID = "referenceId";
+
+    // Workflow actions
+    public static final String REJECT_ACTION = "REJECT";
+    public static final String ACCEPT_ACTION = "ACCEPT";
 }

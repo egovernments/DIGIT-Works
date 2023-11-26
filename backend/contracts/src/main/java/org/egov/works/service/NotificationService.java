@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.works.util.ContractServiceConstants.CONTRACT_REVISION_BUSINESS_SERVICE;
+import static org.egov.works.util.ContractServiceConstants.*;
 
 @Service
 @Slf4j
@@ -68,13 +68,13 @@ public class NotificationService {
             pushNotificationForRevisedContract (request);
 
         }else {
-            if ("REJECT".equalsIgnoreCase(workflow.getAction())) {
+            if (REJECT_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 pushNotificationToCreatorForRejectAction(request);
             } else if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
                 //No template present for Creator Approve Action
                 pushNotificationToCreatorForApproveAction(request);
                 pushNotificationToCBOForApproveAction(request);
-            } else if ("ACCEPT".equalsIgnoreCase(workflow.getAction())) {
+            } else if (ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 pushNotificationToCreatorForAcceptAction(request);
             } else if ("DECLINE".equalsIgnoreCase(workflow.getAction())) {
                 pushNotificationToCreatorForDeclineAction(request);
@@ -354,7 +354,7 @@ public class NotificationService {
         if (request.getContract().getBusinessService() != null
                 && !request.getContract().getBusinessService().isEmpty()
                 && request.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
-            if ("REJECT".equalsIgnoreCase(workflow.getAction())) {
+            if (REJECT_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 message = getMessage(request, ContractServiceConstants.CONTRACT_REVISION_REJECT_LOCALIZATION_CODE);
             } else if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
                 message = getMessage(request, ContractServiceConstants.CONTRACT_REVISION_APPROVE_LOCALIZATION_CODE);
@@ -363,13 +363,13 @@ public class NotificationService {
             }
         }else {
 
-            if ("REJECT".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
+            if (REJECT_ACTION.equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_REJECT_LOCALIZATION_CODE);
             } else if ("APPROVE".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_APPROVE_CREATOR_LOCALIZATION_CODE);
             } else if ("APPROVE".equalsIgnoreCase(workflow.getAction()) && isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_APPROVE_CBO_LOCALIZATION_CODE);
-            } else if ("ACCEPT".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
+            } else if (ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_ACCEPT_CREATOR_LOCALIZATION_CODE);
             } else if ("DECLINE".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_DECLINE_CREATOR_LOCALIZATION_CODE);

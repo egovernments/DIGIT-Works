@@ -651,6 +651,8 @@ public class ContractServiceValidator {
 
         // Validate if contract is present in DB
         validateContractNumber(contractsFromDB);
+        // Validate if contract revision limit is reached
+        validateRevisionLimit(contractsFromDB);
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
         // Validate if at least one muster-roll is created and approved
@@ -659,6 +661,9 @@ public class ContractServiceValidator {
         validateContractRevisionRequest(contractRequest);
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
+        // Validate if revised estimate in approved state
+        fetchActiveEstimates(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
+                Collections.singleton(contractRequest.getContract().getLineItems().get(0).getEstimateId()));
 
     }
 
@@ -675,6 +680,8 @@ public class ContractServiceValidator {
 
         // Validate if contract is present in DB
         validateContractNumber(contractsFromDB);
+        // Validate if contract revision limit is reached
+        validateRevisionLimit(contractsFromDB);
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
         // Validate if at least one muster-roll is created and approved
@@ -683,6 +690,9 @@ public class ContractServiceValidator {
         validateSupplementNumber (contractRequest);
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
+        // Validate if revised estimate in approved state
+        fetchActiveEstimates(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
+                Collections.singleton(contractRequest.getContract().getLineItems().get(0).getEstimateId()));
 
     }
     private void validateContractNumber (ContractRequest contractRequest) {
@@ -820,6 +830,13 @@ public class ContractServiceValidator {
             }
         });
 
+    }
+    private void validateRevisionLimit(List<Contract> contractFromDB) {
+        if (contractFromDB.get(0).getVersionNumber() != null &&
+                (contractFromDB.get(0).getVersionNumber() > config.getContractRevisionMaxLimit())) {
+            throw new CustomException("CONTRACT_REVISION_MAX_LIMIT_REACHED",
+                    "Contract cannot be revised more than max limit :: " + config.getContractRevisionMaxLimit());
+        }
     }
 
 }

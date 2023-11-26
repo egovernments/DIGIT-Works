@@ -128,7 +128,7 @@ public class ContractEnrichment {
         Contract contract = contractRequest.getContract();
         Workflow workflow=contractRequest.getWorkflow();
         if((contractRequest.getContract().getBusinessService() == null || contractRequest.getContract().getBusinessService().equalsIgnoreCase("CONTRACT"))
-                && "ACCEPT".equalsIgnoreCase(workflow.getAction())  && shouldCreateRegister(mdmsData)){
+                && ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction())  && shouldCreateRegister(mdmsData)){
             log.info("Create register for Contract ["+contract.getId()+"]");
             final String attendanceRegisterNumber = attendanceUtils.createAttendanceRegister(contractRequest);
             final Object additionalDetails = contractRequest.getContract().getAdditionalDetails();
@@ -155,14 +155,14 @@ public class ContractEnrichment {
     private void enrichContractComponents(ContractRequest contractRequest){
         Workflow workflow=contractRequest.getWorkflow();
         Contract contract = contractRequest.getContract();
-        if("REJECT".equalsIgnoreCase(workflow.getAction())){
+        if(REJECT_ACTION.equalsIgnoreCase(workflow.getAction())){
             log.info("Enriching contract components as INACTIVE on workflow 'REJECT' action. Contract Id ["+contract.getId()+"]");
             markContractAndDocumentsStatus(contractRequest, Status.INACTIVE);
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.INACTIVE);
             log.info("Contract components are marked as INACTIVE on workflow 'REJECT' action. Contract Id ["+contract.getId()+"]");
         }
         if(contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)
-                 && "ACCEPT".equalsIgnoreCase(workflow.getAction())) {
+                 && ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction())) {
             markContractAndDocumentsStatus(contractRequest, Status.ACTIVE);
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.ACTIVE);
         }
@@ -202,7 +202,7 @@ public class ContractEnrichment {
                 long currentTime = Instant.now().toEpochMilli();
                 contract.setIssueDate(new BigDecimal(currentTime));
             }
-            if ("ACCEPT".equalsIgnoreCase(workflow.getAction())) {
+            if (ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 log.info("Update :: Enriching contract startDate endDate on workflow 'ACCEPT' action. ContractId: [" + contract.getId() + "]");
                 LocalDate localDate = LocalDate.now();
                 // Contract start date will be MID time of today's date
@@ -427,14 +427,15 @@ public class ContractEnrichment {
             }
             log.info("Done setting contractLineItemRef");
             contractServiceValidator.validateLineItemRef(contractRequest);
-            contractServiceValidator.validateMeasurement(contractRequest, estimate);
+            if (config.getIsMeasurementValidationRequired() && !contractRequest.getWorkflow().getAction().equalsIgnoreCase(REJECT_ACTION))
+                contractServiceValidator.validateMeasurement(contractRequest, estimate);
 
         }
     }
 
     public void enrichPreviousContractLineItems(ContractRequest contractRequest) {
         if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)
-                && "ACCEPT".equalsIgnoreCase(contractRequest.getWorkflow().getAction())) {
+                && ACCEPT_ACTION.equalsIgnoreCase(contractRequest.getWorkflow().getAction())) {
             Contract previousActiveContract = contractServiceUtil.getActiveContractsFromDB(contractRequest).get(0);
 
             ContractRequest contractRequestFromDB = ContractRequest.builder()
