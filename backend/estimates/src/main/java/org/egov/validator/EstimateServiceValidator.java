@@ -766,10 +766,7 @@ public class EstimateServiceValidator {
                 throw new CustomException("INVALID_ESTIMATE_DETAIL", "Line item id is invalid for revision estimate");
             }
             if(estimateDetail.getId() != null && estimateDetailMap.containsKey(estimateDetail.getId())){
-                if(estimateDetail.getPreviousLineItemId() == null){
-                    throw new CustomException("INVALID_PREVIOUS_LINE_ITEM_ID", "Previous line item id is mandatory for revision estimate");
-                }
-                if(!estimateDetail.getPreviousLineItemId().equals(estimateDetailMap.get(estimateDetail.getId()).getPreviousLineItemId())){
+                if(estimateDetail.getPreviousLineItemId() != null && !estimateDetail.getPreviousLineItemId().equals(estimateDetailMap.get(estimateDetail.getId()).getPreviousLineItemId())){
                     throw new CustomException("INVALID_PREVIOUS_LINE_ITEM_ID", "Previous line item id is invalid for revision estimate");
                 }
             }
