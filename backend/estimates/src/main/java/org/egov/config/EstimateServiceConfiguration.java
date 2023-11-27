@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.TimeZone;
 
 @Component
@@ -150,6 +151,9 @@ public class EstimateServiceConfiguration {
 
     @Value("${estimate.revisionEstimate.measurementValidation}")
     private  Boolean revisionEstimateMeasurementValidation;
+
+    @Value("${estimate.revisionEstimate.maxLimit}")
+    private BigDecimal revisionEstimateMaxLimit;
 
     @PostConstruct
     public void initialize() {

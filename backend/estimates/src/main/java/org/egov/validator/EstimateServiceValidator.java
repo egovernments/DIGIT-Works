@@ -93,6 +93,7 @@ public class EstimateServiceValidator {
                     break;
                 }
             }
+            validateRevisionEstimateLimit(previousEstimate);
             validatepreviousEstimate(estimate, errorMap, previousEstimate);
         }
         List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();
@@ -107,6 +108,12 @@ public class EstimateServiceValidator {
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
+    }
+
+    private void validateRevisionEstimateLimit(Estimate previousEstimate) {
+        if(previousEstimate.getVersionNumber() != null && previousEstimate.getVersionNumber().compareTo(config.getRevisionEstimateMaxLimit()) >= 0){
+            throw new CustomException(INVALID_ESTIMATE, "Revision estimate limit exceeded");
+        }
     }
 
     private void validatepreviousEstimate(Estimate estimate, Map<String, String> errorMap, Estimate previousEstimate) {
