@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.kafka.Producer;
+import org.egov.works.kafka.ContractProducer;
 import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.works.util.*;
 import org.egov.works.web.models.*;
@@ -25,7 +25,7 @@ import static org.egov.works.util.ContractServiceConstants.*;
 public class NotificationService {
 
     @Autowired
-    private Producer producer;
+    private ContractProducer contractProducer;
 
     @Autowired
     private ServiceRequestRepository repository;
@@ -102,7 +102,7 @@ public class NotificationService {
 
         SMSRequest smsRequestCBO = SMSRequest.builder().mobileNumber(cboMobileNumber).message(message).build();
         log.info("Sending message to CBO");
-        producer.push(config.getSmsNotifTopic(), smsRequestCBO);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequestCBO);
 
         if (Boolean.FALSE.equals(isSendBack)) {
             pushNotificationToOriginator(request, message);
@@ -131,7 +131,7 @@ public class NotificationService {
 
         SMSRequest smsRequestOfficerInCharge = SMSRequest.builder().mobileNumber(officerInChargeMobileNumber).message(message).build();
         log.info("Sending message to Officer In charge");
-        producer.push(config.getSmsNotifTopic(), smsRequestOfficerInCharge);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequestOfficerInCharge);
 
     }
 
@@ -156,7 +156,7 @@ public class NotificationService {
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push message for REJECT Action");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequest);
     }
 
     private void pushNotificationToCreatorForApproveAction(ContractRequest request) {
@@ -180,7 +180,7 @@ public class NotificationService {
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push Message For Approve Action for WO Creator");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequest);
     }
 
     private void pushNotificationToCreatorForDeclineAction(ContractRequest request) {
@@ -204,7 +204,7 @@ public class NotificationService {
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push Message For decline Action for WO Creator");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequest);
     }
 
     private void pushNotificationToCreatorForAcceptAction(ContractRequest request) {
@@ -228,7 +228,7 @@ public class NotificationService {
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push Message For Accept Action for WO Creator");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequest);
     }
 
     private void pushNotificationToCBOForApproveAction(ContractRequest request) {
@@ -256,7 +256,7 @@ public class NotificationService {
 
             String customizedMessage = buildMessageForApproveAction_WO_CBO(contract, smsDetails, message);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
-            producer.push(config.getSmsNotifTopic(), smsRequest);
+            contractProducer.push(config.getSmsNotifTopic(), smsRequest);
         }
     }
 

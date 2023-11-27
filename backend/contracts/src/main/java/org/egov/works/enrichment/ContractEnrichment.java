@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.kafka.Producer;
+import org.egov.works.kafka.ContractProducer;
 import org.egov.works.service.ContractService;
 import org.egov.works.service.WorkflowService;
 import org.egov.works.util.*;
@@ -66,7 +66,7 @@ public class ContractEnrichment {
     private ContractService contractService;
 
     @Autowired
-    private Producer producer;
+    private ContractProducer contractProducer;
 
     @Autowired
     private WorkflowService workflowService;
@@ -447,7 +447,7 @@ public class ContractEnrichment {
             contractRequestFromDB.getContract().setProcessInstance(processInstance);
             markContractAndDocumentsStatus(contractRequestFromDB, Status.INACTIVE);
             markLineItemsAndAmountBreakupsStatus(contractRequestFromDB, Status.INACTIVE);
-            producer.push(config.getUpdateContractTopic(), contractRequestFromDB);
+            contractProducer.push(config.getUpdateContractTopic(), contractRequestFromDB);
 
             // Push updated end date to kafka topic to update attendance register end date
             JsonNode requestInfo = mapper.convertValue(contractRequest.getRequestInfo(), JsonNode.class);
@@ -458,7 +458,7 @@ public class ContractEnrichment {
                     .put("endDate", contractRequest.getContract().getEndDate());
 
             log.info("Pushing updated end date to attendance register end date update topic");
-            producer.push(config.getUpdateTimeExtensionTopic(), attendanceContractRevisionRequest);
+            contractProducer.push(config.getUpdateTimeExtensionTopic(), attendanceContractRevisionRequest);
         }
     }
 
