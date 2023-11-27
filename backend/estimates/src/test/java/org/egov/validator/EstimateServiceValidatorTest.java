@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,6 +49,8 @@ class EstimateServiceValidatorTest {
     void validateEstimateOnCreate_IfEstimateIsNull() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         estimateRequest.setEstimate(null);
+        CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
+        assertTrue(exception.getMessage().contentEquals("Estimate is mandatory"));
     }
 
     @Test
