@@ -774,12 +774,12 @@ public class ContractServiceValidator {
                 else {
                     if (lineItems.getNoOfunit() < measurementCumulativeValue.get(0))
                         throw new CustomException("CUMULATIVE_VALUE_GREATER_THAN_CONTRACT_UNITS", "No of Unit of contract" +
-                                " should be less than or equal to measurement book cumulative value. Retry after changing this value : " + lineItems.getNoOfunit());
+                                " should be greater than or equal to measurement book cumulative value. Retry after changing this value : " + lineItems.getNoOfunit());
 
                     Double noOfUnit = estimate.getEstimateDetails().stream().filter(estimateDetail -> estimateDetail.getId().equals(lineItems.getEstimateLineItemId())).map(EstimateDetail::getNoOfunit).findFirst().orElse(null);
                     if (noOfUnit != null && noOfUnit < measurementCumulativeValue.get(0)){
                         throw new CustomException("CUMULATIVE_VALUE_GREATER_THAN_ESTIMATE_DETAIL_UNITS", "No of Unit of estimate " +
-                                "should be less than or equal to measurement book cumulative value. Retry after changing this value : " + noOfUnit);
+                                "should be greater than or equal to measurement book cumulative value. Retry after changing this value : " + noOfUnit);
                     }
                 }
             }

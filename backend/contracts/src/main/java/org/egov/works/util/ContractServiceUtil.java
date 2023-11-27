@@ -76,7 +76,7 @@ public class ContractServiceUtil {
                 .build();
         ContractCriteria contractCriteria = ContractCriteria.builder()
                 .contractNumber(contractRequest.getContract().getContractNumber())
-                .status("ACTIVE")
+                .status(Status.ACTIVE.toString())
                 .tenantId(contractRequest.getContract().getTenantId())
                 .requestInfo(contractRequest.getRequestInfo())
                 .pagination(pagination)
