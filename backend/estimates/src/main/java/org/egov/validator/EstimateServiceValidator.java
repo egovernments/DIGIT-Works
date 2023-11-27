@@ -159,7 +159,7 @@ public class EstimateServiceValidator {
         List<EstimateDetail> estimateDetail = estimateRequest.getEstimate().getEstimateDetails();
         estimateDetail.forEach(estimateDetail1 ->
         {
-            if(!estimateDetail1.getCategory().equals(OVERHEAD_CODE)){
+            if(!estimateDetail1.getCategory().equals(OVERHEAD_CODE) && estimateDetail1.getPreviousLineItemId() != null){
                 List<String> contractLineItemRef = null;
                 try {
                     contractLineItemRef = JsonPath.read(contractResponse, jsonPathForContractLineItemRef.replace("{{yourDynamicValue}}", estimateDetail1.getPreviousLineItemId()));
