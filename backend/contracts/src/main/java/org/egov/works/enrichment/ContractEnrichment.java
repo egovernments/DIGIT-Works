@@ -416,7 +416,8 @@ public class ContractEnrichment {
                     .stream().collect(Collectors.toMap(LineItems::getEstimateLineItemId, LineItems::getContractLineItemRef));
             // Create map of estimateDetailId and prevEstimateDetailId
             Map<String, String> estimateDetailIdToPreviousEstimateDetailIdMap = estimate.getEstimateDetails()
-                    .stream().collect(Collectors.toMap(EstimateDetail::getId, EstimateDetail::getPreviousLineItemId));
+                    .stream().filter(estimateDetail -> estimateDetail.getPreviousLineItemId() != null)
+                    .collect(Collectors.toMap(EstimateDetail::getId, EstimateDetail::getPreviousLineItemId));
             // iterate through current contract line item estimate detail id and get the prev estimate detail id,
             // if it is not null then get the contractLineItemRef by querying the map.
             for (LineItems lineItems : contractRequest.getContract().getLineItems()) {
@@ -436,6 +437,7 @@ public class ContractEnrichment {
     public void enrichPreviousContractLineItems(ContractRequest contractRequest) {
         if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)
                 && ACCEPT_ACTION.equalsIgnoreCase(contractRequest.getWorkflow().getAction())) {
+            log.info("Setting previous contract statuses inactive");
             Contract previousActiveContract = contractServiceUtil.getActiveContractsFromDB(contractRequest).get(0);
 
             ContractRequest contractRequestFromDB = ContractRequest.builder()
@@ -455,6 +457,7 @@ public class ContractEnrichment {
                     .put("referenceId", contractRequest.getContract().getContractNumber())
                     .put("endDate", contractRequest.getContract().getEndDate());
 
+            log.info("Pushing updated end date to attendance register end date update topic");
             producer.push(config.getUpdateTimeExtensionTopic(), attendanceContractRevisionRequest);
         }
     }

@@ -665,6 +665,7 @@ public class ContractServiceValidator {
         fetchActiveEstimates(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
                 Collections.singleton(contractRequest.getContract().getLineItems().get(0).getEstimateId()));
 
+        log.info("Contract Revision Request Validated for contract number :: " + contractRequest.getContract().getContractNumber());
     }
 
     /**
@@ -694,6 +695,7 @@ public class ContractServiceValidator {
         fetchActiveEstimates(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
                 Collections.singleton(contractRequest.getContract().getLineItems().get(0).getEstimateId()));
 
+        log.info("Contract Revision Request Validated for contract number :: " + contractRequest.getContract().getContractNumber());
     }
     private void validateContractNumber (ContractRequest contractRequest) {
         if (contractRequest.getContract().getContractNumber() == null || contractRequest.getContract().getContractNumber().isEmpty()) {
@@ -762,6 +764,7 @@ public class ContractServiceValidator {
                 throw new CustomException("LINE_ITEM_REF_MISMATCH", "Contract Line Item Ref not present in previous contract " + lineItems.getContractLineItemRef());
             }
         }
+        log.info("Validated LineItemRef for revised contract");
     }
 
     private List<MusterRoll> getMusterRollsForContractNumber (ContractRequest contractRequest) {
@@ -806,7 +809,7 @@ public class ContractServiceValidator {
         Object measurementResponse = measurementUtil.getMeasurementDetails(contractRequest);
 
         contractRequest.getContract().getLineItems().forEach(lineItems -> {
-            if (!lineItems.getCategory().equalsIgnoreCase(OVERHEAD_CODE)) {
+            if (!lineItems.getCategory().equalsIgnoreCase(OVERHEAD_CODE) && lineItems.getContractLineItemRef() != null) {
                 List<Integer> measurementCumulativeValue = null;
                 try {
                     measurementCumulativeValue = JsonPath.read(measurementResponse, jsonPathForMeasurementCumulativeValue.replace("{{yourDynamicValue}}", lineItems.getContractLineItemRef()));
@@ -829,6 +832,7 @@ public class ContractServiceValidator {
                 }
             }
         });
+        log.info("Validated measurements");
 
     }
     private void validateRevisionLimit(List<Contract> contractFromDB) {
