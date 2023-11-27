@@ -45,6 +45,7 @@ public class EstimateServiceValidator {
     private static final String IS_NOT_PRESENT_IN_MDMS = " is not present in MDMS";
     private static final String FAILED_TO_PARSE_MDMS_RESPONSE = "Failed to parse mdms response";
     private static final String INVALID_ESTIMATE = "INVALID_ESTIMATE";
+    private static final String INVALID_ESTIMATE_DETAIL = "INVALID_ESTIMATE_DETAIL";
 
     @Autowired
     public EstimateServiceValidator(MDMSUtils mdmsUtils, EstimateRepository estimateRepository, ProjectUtil projectUtil, EstimateServiceConfiguration config, ObjectMapper mapper, ContractUtils contractUtils, MeasurementUtils measurementUtils, EstimateServiceUtil estimateServiceUtil) {
@@ -132,7 +133,7 @@ public class EstimateServiceValidator {
 
             for(EstimateDetail estimateDetail: estimateDetails){
                 if(estimateDetail.getPreviousLineItemId() != null && (!prevEstimateDetailMap.containsKey(estimateDetail.getPreviousLineItemId()))){
-                        errorMap.put("INVALID_ESTIMATE_DETAIL", "Previous Line Id is invalid for revision estimate");
+                        errorMap.put(INVALID_ESTIMATE_DETAIL, "Previous Line Id is invalid for revision estimate");
                 }
             }
         }
@@ -184,7 +185,7 @@ public class EstimateServiceValidator {
                     log.info("No measurement found for the given estimate");
                 }
                 else if(estimateDetail1.getNoOfunit() > measurementBook.get(0)){
-                    errorMap.put("INVALID_ESTIMATE_DETAIL", "No of Unit should be less than or equal to measurement book cumulative value");
+                    errorMap.put(INVALID_ESTIMATE_DETAIL, "No of Unit should be less than or equal to measurement book cumulative value");
                 }
             }
         });
@@ -447,8 +448,8 @@ public class EstimateServiceValidator {
 
     private void validateRateOnPreviousEstimate(EstimateDetail estimateDetail, Map<String, String> errorMap, HashMap<String,EstimateDetail> previousEstimateDetailMap,Boolean isCreate) {
         log.info("EstimateServiceValidator::validateRateOnPreviousEstimate");
-        if(previousEstimateDetailMap.containsKey(isCreate?estimateDetail.getPreviousLineItemId():estimateDetail.getId())){
-            EstimateDetail previousEstimateDetail = previousEstimateDetailMap.get(isCreate?estimateDetail.getPreviousLineItemId():estimateDetail.getId());
+        if(previousEstimateDetailMap.containsKey(Boolean.TRUE.equals(isCreate)?estimateDetail.getPreviousLineItemId():estimateDetail.getId())){
+            EstimateDetail previousEstimateDetail = previousEstimateDetailMap.get(Boolean.TRUE.equals(isCreate)?estimateDetail.getPreviousLineItemId():estimateDetail.getId());
             if(!Objects.equals(previousEstimateDetail.getUnitRate(), estimateDetail.getUnitRate())){
                 errorMap.put("INVALID_UNIT_RATE", "Unit rate is not matching with previous approved estimate");
             }
@@ -745,7 +746,7 @@ public class EstimateServiceValidator {
         if (!estimateFromDB.getProjectId().equals(estimate.getProjectId())) {
             throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
         }
-        if(estimateServiceUtil.isRevisionEstimate(request)){
+        if(Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request))){
             if(estimate.getRevisionNumber() == null){
                 throw new CustomException("INVALID_REVISION_NUMBER", "Revision number is mandatory for revision estimate");
             }
@@ -770,12 +771,11 @@ public class EstimateServiceValidator {
         );
         estimateDetails.forEach(estimateDetail -> {
             if(estimateDetail.getId() != null && (!estimateDetailMap.containsKey(estimateDetail.getId()))){
-                throw new CustomException("INVALID_ESTIMATE_DETAIL", "Line item id is invalid for revision estimate");
+                throw new CustomException(INVALID_ESTIMATE_DETAIL, "Line item id is invalid for revision estimate");
             }
-            if(estimateDetail.getId() != null && estimateDetailMap.containsKey(estimateDetail.getId())){
-                if(estimateDetail.getPreviousLineItemId() != null && !estimateDetail.getPreviousLineItemId().equals(estimateDetailMap.get(estimateDetail.getId()).getPreviousLineItemId())){
+            if(estimateDetail.getId() != null && estimateDetailMap.containsKey(estimateDetail.getId()) && (estimateDetail.getPreviousLineItemId() != null && !estimateDetail.getPreviousLineItemId().equals(estimateDetailMap.get(estimateDetail.getId()).getPreviousLineItemId()))){
                     throw new CustomException("INVALID_PREVIOUS_LINE_ITEM_ID", "Previous line item id is invalid for revision estimate");
-                }
+
             }
         });
     }

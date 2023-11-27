@@ -21,7 +21,7 @@ import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class EstimateServiceValidatorTest {
+class EstimateServiceValidatorTest {
 
     @InjectMocks
     private EstimateServiceValidator serviceValidator;

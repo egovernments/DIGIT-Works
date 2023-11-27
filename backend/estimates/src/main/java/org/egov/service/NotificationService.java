@@ -44,6 +44,9 @@ public class NotificationService {
 
     private final LocationServiceUtil locationServiceUtil;
 
+    private static final String PROJECT_NAME = "projectName";
+    private static final String PROJECT_NUMBER = "projectNumber";
+
     @Autowired
     public NotificationService(Producer producer, ServiceRequestRepository repository, EstimateServiceConfiguration config, HRMSUtils hrmsUtils, ProjectUtil projectServiceUtil, LocationServiceUtil locationServiceUtil) {
         this.producer = producer;
@@ -165,10 +168,10 @@ public class NotificationService {
             throw new CustomException("PARSING_ERROR", "Failed to parse HRMS response");
         }
 
-        projectDetails.put("projectName", projectNames.get(0));
+        projectDetails.put(PROJECT_NAME, projectNames.get(0));
         projectDetails.put("boundary", boundaries.get(0));
         projectDetails.put("boundaryType", boundaryTypes.get(0));
-        projectDetails.put("projectNumber", projectNumber.get(0));
+        projectDetails.put(PROJECT_NUMBER, projectNumber.get(0));
 
         return projectDetails;
     }
@@ -214,8 +217,8 @@ public class NotificationService {
      */
     public String buildMessageForRejectAction(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
         message = message.replace("{estimteno}", estimate.getEstimateNumber())
-                .replace("{projectid}",userDetailsForSMS.get("projectNumber"))
-                .replace("{project_name}", userDetailsForSMS.get("projectName"))
+                .replace("{projectid}",userDetailsForSMS.get(PROJECT_NUMBER))
+                .replace("{project_name}", userDetailsForSMS.get(PROJECT_NAME))
                 .replace("{location}", userDetailsForSMS.get("locationName"))
                 .replace("{username}", userDetailsForSMS.get("userName"))
                 .replace("{designation}", userDetailsForSMS.get("designation"));
@@ -224,8 +227,8 @@ public class NotificationService {
 
     public String buildMessageForApproveActionCreator(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
         message = message.replace("{estimteno}", estimate.getEstimateNumber())
-                .replace("{projectid}", userDetailsForSMS.get("projectNumber"))
-                .replace("{project_name}", userDetailsForSMS.get("projectName"))
+                .replace("{projectid}", userDetailsForSMS.get(PROJECT_NUMBER))
+                .replace("{project_name}", userDetailsForSMS.get(PROJECT_NAME))
                 .replace("{location}", userDetailsForSMS.get("locationName"));
         return message;
     }

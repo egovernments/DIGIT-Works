@@ -17,8 +17,7 @@ import java.util.List;
 @Slf4j
 public class EstimateQueryBuilder {
 
-    @Autowired
-    private EstimateServiceConfiguration config;
+    private final EstimateServiceConfiguration config;
 
 
     private static final String FETCH_ESTIMATE_QUERY = "SELECT est.*," +
@@ -49,13 +48,18 @@ public class EstimateQueryBuilder {
             "eg_wms_estimate_amount_detail AS estAmtDetail " +
             "ON (estDetail.id=estAmtDetail.estimate_detail_id) ";
 
-    private final String paginationWrapper = "SELECT * FROM " +
+    private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY estCreatedTime [] , estId) offset_ FROM " +
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
     private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+    @Autowired
+    public EstimateQueryBuilder(EstimateServiceConfiguration config) {
+        this.config = config;
+    }
 
     private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
         if (values.isEmpty())
@@ -68,7 +72,7 @@ public class EstimateQueryBuilder {
     public String getEstimateQuery(EstimateSearchCriteria searchCriteria, List<Object> preparedStmtList) {
         log.info("EstimateQueryBuilder::getEstimateQuery");
         StringBuilder queryBuilder = null;
-        if (!searchCriteria.getIsCountNeeded())
+        if (Boolean.FALSE.equals(searchCriteria.getIsCountNeeded()))
             queryBuilder = new StringBuilder(FETCH_ESTIMATE_QUERY);
         else
             queryBuilder = new StringBuilder(ESTIMATE_COUNT_QUERY);
@@ -173,7 +177,7 @@ public class EstimateQueryBuilder {
                 throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify toProposalDate without a fromProposalDate");
             }
         }
-        if (!searchCriteria.getIsCountNeeded()) {
+        if (Boolean.FALSE.equals(searchCriteria.getIsCountNeeded())) {
             addOrderByClause(queryBuilder, searchCriteria);
             return addPaginationWrapper(queryBuilder.toString(), preparedStmtList, searchCriteria);
         }
@@ -184,9 +188,10 @@ public class EstimateQueryBuilder {
     //TODO : check -> do we need to orderby estimate.totalEstimateAmount ?
     private void addOrderByClause(StringBuilder queryBuilder, EstimateSearchCriteria criteria) {
         log.info("EstimateQueryBuilder::getEstimateQuery");
+        String ORDER_BY_EST_CREATED_TIME = " ORDER BY est.created_time ";
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
-            queryBuilder.append(" ORDER BY est.created_time ");
+            queryBuilder.append(ORDER_BY_EST_CREATED_TIME);
         } else {
             switch (EstimateSearchCriteria.SortBy.valueOf(criteria.getSortBy().name())) {
                 case executingDepartment:
@@ -199,13 +204,13 @@ public class EstimateQueryBuilder {
                     queryBuilder.append(" ORDER BY est.proposal_date ");
                     break;
                 case createdTime:
-                    queryBuilder.append(" ORDER BY est.created_time ");
+                    queryBuilder.append(ORDER_BY_EST_CREATED_TIME);
                     break;
                 case totalAmount:
                     queryBuilder.append(" ORDER BY estDetail.total_amount ");
                     break;
                 default:
-                    queryBuilder.append(" ORDER BY est.created_time ");
+                    queryBuilder.append(ORDER_BY_EST_CREATED_TIME);
                     break;
             }
         }
@@ -227,9 +232,7 @@ public class EstimateQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+        preparedStmtList.addAll(ids);
     }
 
     private String addPaginationWrapper(String query, List<Object> preparedStmtList,
@@ -239,9 +242,9 @@ public class EstimateQueryBuilder {
         int offset = config.getDefaultOffset();
         String wrapperQuery;
         if (criteria.getSortOrder() == EstimateSearchCriteria.SortOrder.ASC)
-            wrapperQuery = paginationWrapper.replace("[]", "ASC");
+            wrapperQuery = PAGINATION_WRAPPER.replace("[]", "ASC");
         else
-            wrapperQuery = paginationWrapper.replace("[]", "DESC");
+            wrapperQuery = PAGINATION_WRAPPER.replace("[]", "DESC");
         String finalQuery = wrapperQuery.replace("{}", query);
 
         if (criteria.getLimit() != null) {

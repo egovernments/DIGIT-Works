@@ -22,7 +22,7 @@ import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class EstimateServiceTest {
+class EstimateServiceTest {
 
     @InjectMocks
     private EstimateService estimateService;

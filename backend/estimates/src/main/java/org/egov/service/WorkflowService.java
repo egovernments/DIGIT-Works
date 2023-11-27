@@ -28,6 +28,8 @@ public class WorkflowService {
     private final ServiceRequestRepository repository;
 
     private final ObjectMapper mapper;
+    private static final String PARSING_ERROR = "PARSING ERROR";
+    private static final String TENANT_ID = "?tenantId=";
 
     @Autowired
     public WorkflowService(EstimateServiceConfiguration serviceConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
@@ -51,7 +53,7 @@ public class WorkflowService {
         try {
             response = mapper.convertValue(result, BusinessServiceResponse.class);
         } catch (IllegalArgumentException e) {
-            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow business service search");
+            throw new CustomException(PARSING_ERROR, "Failed to parse response of workflow business service search");
         }
 
         if (CollectionUtils.isEmpty(response.getBusinessServices()))
@@ -98,7 +100,7 @@ public class WorkflowService {
         log.info("WorkflowService::getSearchURLWithParams");
         StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
         url.append(serviceConfiguration.getWfBusinessServiceSearchPath());
-        url.append("?tenantId=");
+        url.append(TENANT_ID);
         url.append(tenantId);
         url.append("&businessServices=");
         url.append(businessService);
@@ -111,7 +113,8 @@ public class WorkflowService {
 
         List<EstimateRequest> enrichedServiceWrappers = new ArrayList<>();
 
-        for (String tenantId : tenantIdToServiceWrapperMap.keySet()) {
+        for (Map.Entry<String, List<EstimateRequest>> entry : tenantIdToServiceWrapperMap.entrySet()) {
+            String tenantId = entry.getKey();
 
             List<String> estimateNumbers = new ArrayList<>();
 
@@ -131,7 +134,7 @@ public class WorkflowService {
             try {
                 processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
             } catch (IllegalArgumentException e) {
-                throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
+                throw new CustomException(PARSING_ERROR, "Failed to parse response of workflow processInstance search");
             }
 
             if (CollectionUtils.isEmpty(processInstanceResponse.getProcessInstances()) || processInstanceResponse.getProcessInstances().size() != estimateNumbers.size())
@@ -255,7 +258,7 @@ public class WorkflowService {
         log.info("WorkflowService::getprocessInstanceSearchURL");
         StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
         url.append(serviceConfiguration.getWfProcessInstanceSearchPath());
-        url.append("?tenantId=");
+        url.append(TENANT_ID);
         url.append(tenantId);
         url.append("&businessIds=");
         url.append(estimateNumber);
@@ -279,7 +282,7 @@ public class WorkflowService {
         try {
             processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
         } catch (IllegalArgumentException e) {
-            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
+            throw new CustomException(PARSING_ERROR, "Failed to parse response of workflow processInstance search");
         }
 
         if (CollectionUtils.isEmpty(processInstanceResponse.getProcessInstances()))
@@ -293,7 +296,7 @@ public class WorkflowService {
         StringBuilder url = new StringBuilder();
         url.append(serviceConfiguration.getWfHost())
                 .append(serviceConfiguration.getWfProcessInstanceSearchPath())
-                .append("?tenantId=").append(tenantId)
+                .append(TENANT_ID).append(tenantId)
                 .append("&businessIds=").append(estimateNumber)
                 .append("&history=").append(history);
         return url;

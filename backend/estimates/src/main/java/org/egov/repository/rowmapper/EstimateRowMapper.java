@@ -27,8 +27,12 @@ import java.util.*;
 @Slf4j
 public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public EstimateRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Estimate> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -54,7 +58,6 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             String executingDepartment = rs.getString("executing_department");
             String createdby = rs.getString("created_by");
             String lastmodifiedby = rs.getString("last_modified_by");
-            //BigDecimal totalAmount = rs.getBigDecimal("total_amount");
             Long createdtime = rs.getLong("created_time");
             Long lastmodifiedtime = rs.getLong("last_modified_time");
 
@@ -78,7 +81,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             addEstimateDetails(rs, estimateDetailMap, estimateMap.get(id));
 
             if (!isAddressAdded) {
-                Address address = getEstimateAddress(id, tenantId, rs);
+                Address address = getEstimateAddress(tenantId, rs);
                 //one-to-one mapping
                 estimate.setAddress(address);
                 isAddressAdded = true;
@@ -87,7 +90,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
         return new ArrayList<>(estimateMap.values());
     }
 
-    private Address getEstimateAddress(String id, String tenantId, ResultSet rs) throws SQLException {
+    private Address getEstimateAddress(String tenantId, ResultSet rs) throws SQLException {
         log.debug("EstimateRowMapper::getEstimateAddress");
         return Address.builder()
                 .id(rs.getString("estAddId"))
