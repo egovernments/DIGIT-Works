@@ -39,6 +39,21 @@ public class Estimate {
     @Size(min = 2,max = 64)
     private String estimateNumber = null;
 
+    @JsonProperty("revisionNumber")
+    @Size(min = 2,max = 64)
+    private String revisionNumber = null;
+
+    @JsonProperty("businessService")
+    @Size(min = 2,max = 64)
+    private String businessService = null;
+
+    @JsonProperty("versionNumber")
+    private BigDecimal versionNumber = null;
+
+    @JsonProperty("oldUuid")
+    @Size(min = 2,max = 64)
+    private String oldUuid = null;
+
     @JsonProperty("projectId")
     @Size(min = 2,max = 64)
     private String projectId = null;

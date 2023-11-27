@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.TimeZone;
 
 @Component
@@ -60,6 +61,10 @@ public class EstimateServiceConfiguration {
     private String idgenEstimateNumberName;
     @Value("${egov.idgen.estimate.number.format}")
     private String idgenEstimateNumberFormat;
+    @Value("${egov.idgen.revisionEstimate.number.name}")
+    private String idgenRevisionEstimateNumberName;
+    @Value("${egov.idgen.revisionEstimate.number.format}")
+    private String idgenRevisionEstimateNumberFormat;
 
     //search config
     @Value("${estimate.default.offset}")
@@ -107,6 +112,19 @@ public class EstimateServiceConfiguration {
     @Value("${egov.location.endpoint}")
     private String locationEndpoint;
 
+    // Contracts
+    @Value("${egov.contract.host}")
+    private String contractHost;
+
+    @Value("${egov.contract.search.endpoint}")
+    private String contractSearchEndpoint;
+
+    //Measurement Book
+    @Value("${egov.measurementService.host}")
+    private String measurementBookHost;
+    @Value("${egov.measurementService.search.endpoint}")
+    private String measurementBookSearchEndpoint;
+
     //Notification
     @Value("${notification.sms.enabled}")
     private Boolean isSMSEnabled;
@@ -127,6 +145,15 @@ public class EstimateServiceConfiguration {
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
+    // RevisionEstimate
+    @Value("${estimate.revisionEstimate.buisnessService}")
+    private String revisionEstimateBusinessService;
+
+    @Value("${estimate.revisionEstimate.measurementValidation}")
+    private  Boolean revisionEstimateMeasurementValidation;
+
+    @Value("${estimate.revisionEstimate.maxLimit}")
+    private BigDecimal revisionEstimateMaxLimit;
 
     @PostConstruct
     public void initialize() {

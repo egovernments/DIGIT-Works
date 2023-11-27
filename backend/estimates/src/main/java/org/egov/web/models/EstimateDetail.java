@@ -26,6 +26,9 @@ public class EstimateDetail {
     @JsonProperty("id")
     private String id = null;
 
+    @JsonProperty("previousLineItemId")
+    private String previousLineItemId = null;
+
     @Size(min = 1,max = 64)
     @JsonProperty("sorId")
     private String sorId = null;
