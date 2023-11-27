@@ -289,7 +289,7 @@ public class ContractUtil {
                 throw new CustomException(ESTIMATE_DETAILS_NOT_PRESENT_CODE, ESTIMATE_DETAILS_NOT_PRESENT_MSG + estimateLineItemId);
             // Get cumulative value corresponding to targetId
             BigDecimal prevCumulativeValue = null;
-            if (measurementFromDB != null && !measurementFromDB.getMeasures().isEmpty()) {
+            if (measurementFromDB != null && !measurementFromDB.getMeasures().isEmpty() && targetIdToCumulativeValue.containsKey(measure.getTargetId())) {
                 prevCumulativeValue = targetIdToCumulativeValue.get(measure.getTargetId());
             } else {
                 prevCumulativeValue = BigDecimal.ZERO;
