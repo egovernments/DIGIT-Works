@@ -3,9 +3,8 @@ package org.egov.service;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.EstimateServiceConfiguration;
-import org.egov.producer.Producer;
+import org.egov.producer.EstimateProducer;
 import org.egov.repository.EstimateRepository;
-import org.egov.tracer.model.CustomException;
 import org.egov.util.EstimateServiceConstant;
 import org.egov.util.EstimateServiceUtil;
 import org.egov.validator.EstimateServiceValidator;
@@ -15,7 +14,6 @@ import org.egov.web.models.EstimateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -24,7 +22,7 @@ public class EstimateService {
 
     private final EstimateServiceConfiguration serviceConfiguration;
 
-    private final Producer producer;
+    private final EstimateProducer producer;
 
     private final EstimateServiceValidator serviceValidator;
 
@@ -38,7 +36,7 @@ public class EstimateService {
     private final EstimateServiceUtil estimateServiceUtil;
 
     @Autowired
-    public EstimateService(EstimateServiceConfiguration serviceConfiguration, Producer producer, EstimateServiceValidator serviceValidator, EnrichmentService enrichmentService, EstimateRepository estimateRepository, WorkflowService workflowService, NotificationService notificationService,EstimateServiceUtil estimateServiceUtil) {
+    public EstimateService(EstimateServiceConfiguration serviceConfiguration, EstimateProducer producer, EstimateServiceValidator serviceValidator, EnrichmentService enrichmentService, EstimateRepository estimateRepository, WorkflowService workflowService, NotificationService notificationService, EstimateServiceUtil estimateServiceUtil) {
         this.serviceConfiguration = serviceConfiguration;
         this.producer = producer;
         this.serviceValidator = serviceValidator;

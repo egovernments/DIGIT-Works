@@ -3,7 +3,7 @@ package org.egov.consumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.EstimateServiceConfiguration;
-import org.egov.producer.Producer;
+import org.egov.producer.EstimateProducer;
 import org.egov.service.DenormalizeAndEnrichEstimateService;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.EstimateRequest;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class DenormalizeAndEnrichEstimateConsumer {
 
-    private final Producer producer;
+    private final EstimateProducer producer;
 
     private final ObjectMapper mapper;
 
@@ -26,7 +26,7 @@ public class DenormalizeAndEnrichEstimateConsumer {
     private final DenormalizeAndEnrichEstimateService denormalizeAndEnrichEstimateService;
 
     @Autowired
-    public DenormalizeAndEnrichEstimateConsumer(Producer producer, ObjectMapper mapper, EstimateServiceConfiguration serviceConfiguration, DenormalizeAndEnrichEstimateService denormalizeAndEnrichEstimateService) {
+    public DenormalizeAndEnrichEstimateConsumer(EstimateProducer producer, ObjectMapper mapper, EstimateServiceConfiguration serviceConfiguration, DenormalizeAndEnrichEstimateService denormalizeAndEnrichEstimateService) {
         this.producer = producer;
         this.mapper = mapper;
         this.serviceConfiguration = serviceConfiguration;

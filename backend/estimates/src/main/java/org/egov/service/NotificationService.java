@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.EstimateServiceConfiguration;
-import org.egov.producer.Producer;
+import org.egov.producer.EstimateProducer;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.EstimateServiceConstant;
@@ -19,7 +19,6 @@ import org.egov.web.models.EstimateRequest;
 import org.egov.web.models.Workflow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +31,7 @@ import static org.egov.util.EstimateServiceConstant.*;
 @Slf4j
 public class NotificationService {
 
-    private final Producer producer;
+    private final EstimateProducer producer;
 
     private final ServiceRequestRepository repository;
 
@@ -48,7 +47,7 @@ public class NotificationService {
     private static final String PROJECT_NUMBER = "projectNumber";
 
     @Autowired
-    public NotificationService(Producer producer, ServiceRequestRepository repository, EstimateServiceConfiguration config, HRMSUtils hrmsUtils, ProjectUtil projectServiceUtil, LocationServiceUtil locationServiceUtil) {
+    public NotificationService(EstimateProducer producer, ServiceRequestRepository repository, EstimateServiceConfiguration config, HRMSUtils hrmsUtils, ProjectUtil projectServiceUtil, LocationServiceUtil locationServiceUtil) {
         this.producer = producer;
         this.repository = repository;
         this.config = config;

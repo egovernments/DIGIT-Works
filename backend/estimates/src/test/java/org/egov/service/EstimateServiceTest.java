@@ -3,7 +3,7 @@ package org.egov.service;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.helper.EstimateRequestBuilderTest;
-import org.egov.producer.Producer;
+import org.egov.producer.EstimateProducer;
 import org.egov.repository.EstimateRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.validator.EstimateServiceValidator;
@@ -31,7 +31,7 @@ class EstimateServiceTest {
     private EstimateServiceConfiguration serviceConfiguration;
 
     @Mock
-    private Producer producer;
+    private EstimateProducer producer;
 
     @Mock
     private EstimateServiceValidator serviceValidator;
