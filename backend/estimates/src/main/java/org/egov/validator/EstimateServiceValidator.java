@@ -723,7 +723,8 @@ public class EstimateServiceValidator {
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
 
-        if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) && Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request)) && estimateForRevision != null){
+
+        if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) && Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request)) && estimateForRevision != null && !request.getWorkflow().getAction().equals(ESTIMATE_REJECT)){
             validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
         }
 
