@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 
 @Component
-public class Consumer {
+public class ContractConsumer {
 
     /*
      * Uncomment the below line to start consuming record from kafka.topics.consumer
@@ -14,7 +14,6 @@ public class Consumer {
     //@KafkaListener(topics = {"kafka.topics.consumer"})
     public void listen(final HashMap<String, Object> record) {
 
-        //TODO
 
     }
 }

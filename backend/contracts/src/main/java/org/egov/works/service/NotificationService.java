@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.kafka.Producer;
+import org.egov.works.kafka.ContractProducer;
 import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.works.util.*;
 import org.egov.works.web.models.*;
@@ -18,14 +18,14 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.works.util.ContractServiceConstants.CONTRACT_REVISION_BUSINESS_SERVICE;
+import static org.egov.works.util.ContractServiceConstants.*;
 
 @Service
 @Slf4j
 public class NotificationService {
 
     @Autowired
-    private Producer producer;
+    private ContractProducer contractProducer;
 
     @Autowired
     private ServiceRequestRepository repository;
@@ -68,13 +68,13 @@ public class NotificationService {
             pushNotificationForRevisedContract (request);
 
         }else {
-            if ("REJECT".equalsIgnoreCase(workflow.getAction())) {
+            if (REJECT_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 pushNotificationToCreatorForRejectAction(request);
-            } else if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
+            } else if (APPROVE_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 //No template present for Creator Approve Action
                 pushNotificationToCreatorForApproveAction(request);
                 pushNotificationToCBOForApproveAction(request);
-            } else if ("ACCEPT".equalsIgnoreCase(workflow.getAction())) {
+            } else if (ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 pushNotificationToCreatorForAcceptAction(request);
             } else if ("DECLINE".equalsIgnoreCase(workflow.getAction())) {
                 pushNotificationToCreatorForDeclineAction(request);
@@ -102,9 +102,9 @@ public class NotificationService {
 
         SMSRequest smsRequestCBO = SMSRequest.builder().mobileNumber(cboMobileNumber).message(message).build();
         log.info("Sending message to CBO");
-        producer.push(config.getSmsNotifTopic(), smsRequestCBO);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequestCBO);
 
-        if (!isSendBack) {
+        if (Boolean.FALSE.equals(isSendBack)) {
             pushNotificationToOriginator(request, message);
         }
 
@@ -131,7 +131,7 @@ public class NotificationService {
 
         SMSRequest smsRequestOfficerInCharge = SMSRequest.builder().mobileNumber(officerInChargeMobileNumber).message(message).build();
         log.info("Sending message to Officer In charge");
-        producer.push(config.getSmsNotifTopic(), smsRequestOfficerInCharge);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequestOfficerInCharge);
 
     }
 
@@ -156,7 +156,7 @@ public class NotificationService {
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push message for REJECT Action");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequest);
     }
 
     private void pushNotificationToCreatorForApproveAction(ContractRequest request) {
@@ -180,7 +180,7 @@ public class NotificationService {
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push Message For Approve Action for WO Creator");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequest);
     }
 
     private void pushNotificationToCreatorForDeclineAction(ContractRequest request) {
@@ -204,7 +204,7 @@ public class NotificationService {
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push Message For decline Action for WO Creator");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequest);
     }
 
     private void pushNotificationToCreatorForAcceptAction(ContractRequest request) {
@@ -228,7 +228,7 @@ public class NotificationService {
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push Message For Accept Action for WO Creator");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        contractProducer.push(config.getSmsNotifTopic(), smsRequest);
     }
 
     private void pushNotificationToCBOForApproveAction(ContractRequest request) {
@@ -256,7 +256,7 @@ public class NotificationService {
 
             String customizedMessage = buildMessageForApproveAction_WO_CBO(contract, smsDetails, message);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
-            producer.push(config.getSmsNotifTopic(), smsRequest);
+            contractProducer.push(config.getSmsNotifTopic(), smsRequest);
         }
     }
 
@@ -354,22 +354,22 @@ public class NotificationService {
         if (request.getContract().getBusinessService() != null
                 && !request.getContract().getBusinessService().isEmpty()
                 && request.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
-            if ("REJECT".equalsIgnoreCase(workflow.getAction())) {
+            if (REJECT_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 message = getMessage(request, ContractServiceConstants.CONTRACT_REVISION_REJECT_LOCALIZATION_CODE);
-            } else if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
+            } else if (APPROVE_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 message = getMessage(request, ContractServiceConstants.CONTRACT_REVISION_APPROVE_LOCALIZATION_CODE);
             } else if ("SEND_BACK_TO_ORIGINATOR".equalsIgnoreCase(workflow.getAction()) || "SEND_BACK".equalsIgnoreCase(workflow.getAction())) {
                 message = getMessage(request, ContractServiceConstants.CONTRACT_REVISION_SEND_BACK_LOCALIZATION_CODE);
             }
         }else {
 
-            if ("REJECT".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
+            if (REJECT_ACTION.equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_REJECT_LOCALIZATION_CODE);
-            } else if ("APPROVE".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
+            } else if (APPROVE_ACTION.equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_APPROVE_CREATOR_LOCALIZATION_CODE);
-            } else if ("APPROVE".equalsIgnoreCase(workflow.getAction()) && isCBORole) {
+            } else if (APPROVE_ACTION.equalsIgnoreCase(workflow.getAction()) && isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_APPROVE_CBO_LOCALIZATION_CODE);
-            } else if ("ACCEPT".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
+            } else if (ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_ACCEPT_CREATOR_LOCALIZATION_CODE);
             } else if ("DECLINE".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_DECLINE_CREATOR_LOCALIZATION_CODE);
@@ -396,7 +396,7 @@ public class NotificationService {
         return localizedMessageMap.get(locale + "|" + request.getContract().getTenantId()).get(msgCode);
     }
     private String buildMessageForRevisedContract(Map<String, String> userDetailsForSMS, String message, Boolean isSendBack) {
-        if (!isSendBack) {
+        if (Boolean.FALSE.equals(isSendBack)) {
             message = message.replace("{projectid}", userDetailsForSMS.get("projectNumber"));
         }
         message = message.replace("{timeextensionrequestid}", userDetailsForSMS.get("supplementNumber"));

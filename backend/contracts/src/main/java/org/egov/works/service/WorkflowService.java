@@ -117,11 +117,7 @@ public class WorkflowService {
      */
     public BusinessService getBusinessService(ContractRequest contractRequest) {
         String tenantId = contractRequest.getContract().getTenantId();
-        StringBuilder url;
-        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE))
-            url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractRevisionWFBusinessService());
-        else
-            url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractWFBusinessService());
+        StringBuilder url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractWFBusinessService());
         RequestInfo requestInfo = contractRequest.getRequestInfo();
         Object result = repository.fetchResult(url, requestInfo);
         BusinessServiceResponse response = null;
