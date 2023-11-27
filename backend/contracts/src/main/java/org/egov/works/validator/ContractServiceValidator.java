@@ -153,7 +153,6 @@ public class ContractServiceValidator {
                                             .requestInfo(contractRequest.getRequestInfo())
                                             .pagination(pagination)
                                             .build();
-        //List<Contract> fetchedContracts = contractService.searchContracts(contractCriteria);
         List<Contract> fetchedContracts = contractRepository.getContracts(contractCriteria);
         if(fetchedContracts.isEmpty()){
             log.error("Update:: Provided contract ["+contractId+"] not found");
@@ -260,17 +259,6 @@ public class ContractServiceValidator {
         }
         log.info("TenantId data validated against MDMS");
     }
-//    private void validateDocumentTypeAgainstMDMS(Object mdmsData, List<Document> documents) {
-//        List<Object> documentTypeAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_DOCUMENT_TYPE_VERIFICATION);
-//        for(Document document: documents){
-//            String documentType = document.getDocumentType();
-//            if (CollectionUtils.isEmpty(documentTypeAuthorityRes) || !documentTypeAuthorityRes.contains(documentType)){
-//                log.error("The Document Type [" + documentType + "] is not present in MDMS");
-//                throw new CustomException("INVALID_DOCUMENT_TYPE","The Document Type [" + documentType + "] is not present in MDMS");
-//            }
-//        }
-//        log.info("Document Type data validated against MDMS");
-//    }
 
     private void validateContractTypeAgainstMDMS(Object mdmsData, String contractType) {
         List<Object> contractTypeRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION);
@@ -331,7 +319,7 @@ public class ContractServiceValidator {
      */
     private void validateUpdateEstimateLineItemAssociationWithOtherContracts(ContractRequest contractRequest, Map<String, Set<String>> estimateIdWithEstimateDetailIds) {
         Contract contract = contractRequest.getContract();
-        List<String> estimatedLineItemIds =  new ArrayList<>();;
+        List<String> estimatedLineItemIds =  new ArrayList<>();
         List<LineItems> lineItems = contract.getLineItems();
 
         for(LineItems lineItem : lineItems){
@@ -511,42 +499,6 @@ public class ContractServiceValidator {
             log.error("Completion Period is mandatory and its min value is one day");
             errorMap.put("CONTRACT.COMPLETION_PERIOD", "Completion Period is mandatory and its min value is one day");
         }
-
-//        Object additionalDetails = contract.getAdditionalDetails();
-//        if(additionalDetails == null){
-//            log.error("Additional Details object is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS", "Additional Details object is mandatory");
-//        }
-//
-//        Optional<String> projectName = commonUtil.findValue(additionalDetails, PROJECT_NAME_CONSTANT);
-//        if (!projectName.isPresent()) {
-//            log.error("Project Name is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_NAME", "Project Name is mandatory");
-//        }
-//
-//        Optional<String> projectType = commonUtil.findValue(additionalDetails, PROJECT_TYPE_CONSTANT);
-//        if (!projectType.isPresent()) {
-//            log.error("Project Type is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_TYPE", "Project Type is mandatory");
-//        }
-//
-//        Optional<String> projectId = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT);
-//        if (!projectId.isPresent()) {
-//            log.error("Project Id is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_ID", "Project ID is mandatory");
-//        }
-//
-//        Optional<String> ward = commonUtil.findValue(additionalDetails, WARD_CONSTANT);
-//        if (!ward.isPresent()) {
-//            log.error("Ward is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.WARD", "Ward is mandatory");
-//        }
-//
-//        Optional<String> orgName = commonUtil.findValue(additionalDetails, ORG_NAME_CONSTANT);
-//        if (!orgName.isPresent()) {
-//            log.error("Org Name is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.ORG_NAME", "Org Name is mandatory");
-//        }
 
         List<LineItems> lineItems = contract.getLineItems();
 
@@ -758,7 +710,7 @@ public class ContractServiceValidator {
 
     public void validateLineItemRef(ContractRequest contractRequest) {
         List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
-        Set<String> contractLineItemRef = contractRequest.getContract().getLineItems().stream().map(lineItems -> lineItems.getContractLineItemRef()).collect(Collectors.toSet());
+        Set<String> contractLineItemRef = contractRequest.getContract().getLineItems().stream().map(LineItems::getContractLineItemRef).collect(Collectors.toSet());
         for (LineItems lineItems : contractsFromDB.get(0).getLineItems()) {
             if (!contractLineItemRef.contains(lineItems.getContractLineItemRef())) {
                 throw new CustomException("LINE_ITEM_REF_MISMATCH", "Contract Line Item Ref not present in previous contract " + lineItems.getContractLineItemRef());
@@ -820,12 +772,12 @@ public class ContractServiceValidator {
                     log.info("No measurement found for the given estimate");
                 }
                 else {
-                    if (lineItems.getNoOfunit() > measurementCumulativeValue.get(0))
+                    if (lineItems.getNoOfunit() < measurementCumulativeValue.get(0))
                         throw new CustomException("CUMULATIVE_VALUE_GREATER_THAN_CONTRACT_UNITS", "No of Unit of contract" +
                                 " should be less than or equal to measurement book cumulative value. Retry after changing this value : " + lineItems.getNoOfunit());
 
                     Double noOfUnit = estimate.getEstimateDetails().stream().filter(estimateDetail -> estimateDetail.getId().equals(lineItems.getEstimateLineItemId())).map(EstimateDetail::getNoOfunit).findFirst().orElse(null);
-                    if (noOfUnit != null && noOfUnit > measurementCumulativeValue.get(0)){
+                    if (noOfUnit != null && noOfUnit < measurementCumulativeValue.get(0)){
                         throw new CustomException("CUMULATIVE_VALUE_GREATER_THAN_ESTIMATE_DETAIL_UNITS", "No of Unit of estimate " +
                                 "should be less than or equal to measurement book cumulative value. Retry after changing this value : " + noOfUnit);
                     }

@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.kafka.Producer;
-import org.egov.works.repository.ContractRepository;
 import org.egov.works.service.ContractService;
 import org.egov.works.service.WorkflowService;
 import org.egov.works.util.*;
@@ -108,7 +107,7 @@ public class ContractEnrichment {
         enrichContractDates(contractRequest);
         //mark contract and its components as INACTIVE when workflow has REJECT action
         enrichContractComponents(contractRequest);
-        if (contract.getBusinessService() == null || contract.getBusinessService().equalsIgnoreCase("CONTRACT")) {
+        if (contract.getBusinessService() == null || contract.getBusinessService().equalsIgnoreCase(CONTRACT_BUSINESS_SERVICE)) {
             //Create register as soon as contract is accepted by contractor
             enrichRegister(contractRequest, mdmsForEnrichment);
         }
@@ -127,7 +126,7 @@ public class ContractEnrichment {
     private void enrichRegister(ContractRequest contractRequest,Object mdmsData) {
         Contract contract = contractRequest.getContract();
         Workflow workflow=contractRequest.getWorkflow();
-        if((contractRequest.getContract().getBusinessService() == null || contractRequest.getContract().getBusinessService().equalsIgnoreCase("CONTRACT"))
+        if((contractRequest.getContract().getBusinessService() == null || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_BUSINESS_SERVICE))
                 && ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction())  && shouldCreateRegister(mdmsData)){
             log.info("Create register for Contract ["+contract.getId()+"]");
             final String attendanceRegisterNumber = attendanceUtils.createAttendanceRegister(contractRequest);
@@ -147,9 +146,7 @@ public class ContractEnrichment {
 
     private boolean shouldCreateRegister(Object mdmsData) {
         List<Object> contractTypeRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION);
-        if(!contractTypeRes.isEmpty())
-            return true;
-        return false;
+        return !contractTypeRes.isEmpty();
     }
 
     private void enrichContractComponents(ContractRequest contractRequest){
@@ -196,8 +193,8 @@ public class ContractEnrichment {
     private void enrichContractDates(ContractRequest contractRequest){
         Workflow workflow=contractRequest.getWorkflow();
         Contract contract=contractRequest.getContract();
-        if (contract.getBusinessService() == null || contract.getBusinessService().equalsIgnoreCase("CONTRACT")) {
-            if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
+        if (contract.getBusinessService() == null || contract.getBusinessService().equalsIgnoreCase(CONTRACT_BUSINESS_SERVICE)) {
+            if (APPROVE_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 log.info("Update :: Enriching contract issueDate on workflow 'APPROVE' action. ContractId: [" + contract.getId() + "]");
                 long currentTime = Instant.now().toEpochMilli();
                 contract.setIssueDate(new BigDecimal(currentTime));
@@ -223,6 +220,9 @@ public class ContractEnrichment {
         for(LineItems lineItem : contract.getLineItems()){
             if(lineItem.getId() == null) {
                 lineItem.setId(String.valueOf(UUID.randomUUID()));
+            }
+            if(lineItem.getContractLineItemRef() == null) {
+                lineItem.setContractLineItemRef(String.valueOf(UUID.randomUUID()));
             }
             lineItem.setAuditDetails(auditDetails);
             for(AmountBreakup amountBreakup : lineItem.getAmountBreakups()){
@@ -428,7 +428,7 @@ public class ContractEnrichment {
             }
             log.info("Done setting contractLineItemRef");
             contractServiceValidator.validateLineItemRef(contractRequest);
-            if (config.getIsMeasurementValidationRequired() && !contractRequest.getWorkflow().getAction().equalsIgnoreCase(REJECT_ACTION))
+            if (Boolean.TRUE.equals(config.getIsMeasurementValidationRequired()) && !contractRequest.getWorkflow().getAction().equalsIgnoreCase(REJECT_ACTION))
                 contractServiceValidator.validateMeasurement(contractRequest, estimate);
 
         }

@@ -89,6 +89,7 @@ public class ContractServiceConstants {
     // Workflow constants
 
     public static final String CONTRACT_REVISION_BUSINESS_SERVICE = "CONTRACT-REVISION";
+    public static final String CONTRACT_BUSINESS_SERVICE = "CONTRACT";
     public static final String CONTRACT_REVISION_APPROVE_LOCALIZATION_CODE = "TIME_EXTENSION_APPROVE";
     public static final String CONTRACT_REVISION_REJECT_LOCALIZATION_CODE = "TIME_EXTENSION_REJECT";
     public static final String CONTRACT_REVISION_SEND_BACK_LOCALIZATION_CODE = "TIME_EXTENSION_SEND_BACK_TO_CBO";
@@ -102,4 +103,5 @@ public class ContractServiceConstants {
     // Workflow actions
     public static final String REJECT_ACTION = "REJECT";
     public static final String ACCEPT_ACTION = "ACCEPT";
+    public static final String APPROVE_ACTION = "APPROVE";
 }

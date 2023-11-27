@@ -70,7 +70,7 @@ public class NotificationService {
         }else {
             if (REJECT_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 pushNotificationToCreatorForRejectAction(request);
-            } else if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
+            } else if (APPROVE_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 //No template present for Creator Approve Action
                 pushNotificationToCreatorForApproveAction(request);
                 pushNotificationToCBOForApproveAction(request);
@@ -104,7 +104,7 @@ public class NotificationService {
         log.info("Sending message to CBO");
         producer.push(config.getSmsNotifTopic(), smsRequestCBO);
 
-        if (!isSendBack) {
+        if (Boolean.FALSE.equals(isSendBack)) {
             pushNotificationToOriginator(request, message);
         }
 
@@ -356,7 +356,7 @@ public class NotificationService {
                 && request.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
             if (REJECT_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 message = getMessage(request, ContractServiceConstants.CONTRACT_REVISION_REJECT_LOCALIZATION_CODE);
-            } else if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
+            } else if (APPROVE_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 message = getMessage(request, ContractServiceConstants.CONTRACT_REVISION_APPROVE_LOCALIZATION_CODE);
             } else if ("SEND_BACK_TO_ORIGINATOR".equalsIgnoreCase(workflow.getAction()) || "SEND_BACK".equalsIgnoreCase(workflow.getAction())) {
                 message = getMessage(request, ContractServiceConstants.CONTRACT_REVISION_SEND_BACK_LOCALIZATION_CODE);
@@ -365,9 +365,9 @@ public class NotificationService {
 
             if (REJECT_ACTION.equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_REJECT_LOCALIZATION_CODE);
-            } else if ("APPROVE".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
+            } else if (APPROVE_ACTION.equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_APPROVE_CREATOR_LOCALIZATION_CODE);
-            } else if ("APPROVE".equalsIgnoreCase(workflow.getAction()) && isCBORole) {
+            } else if (APPROVE_ACTION.equalsIgnoreCase(workflow.getAction()) && isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_APPROVE_CBO_LOCALIZATION_CODE);
             } else if (ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
                 message = getMessage(request, ContractServiceConstants.CONTRACTS_ACCEPT_CREATOR_LOCALIZATION_CODE);
@@ -396,7 +396,7 @@ public class NotificationService {
         return localizedMessageMap.get(locale + "|" + request.getContract().getTenantId()).get(msgCode);
     }
     private String buildMessageForRevisedContract(Map<String, String> userDetailsForSMS, String message, Boolean isSendBack) {
-        if (!isSendBack) {
+        if (Boolean.FALSE.equals(isSendBack)) {
             message = message.replace("{projectid}", userDetailsForSMS.get("projectNumber"));
         }
         message = message.replace("{timeextensionrequestid}", userDetailsForSMS.get("supplementNumber"));
