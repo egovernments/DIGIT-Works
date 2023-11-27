@@ -9,6 +9,7 @@ import org.egov.common.contract.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,21 @@ public class Estimate {
 
     @JsonProperty("estimateNumber")
     private String estimateNumber = null;
+
+    @JsonProperty("revisionNumber")
+    @Size(min = 2,max = 64)
+    private String revisionNumber = null;
+
+    @JsonProperty("businessService")
+    @Size(min = 2,max = 64)
+    private String businessService = null;
+
+    @JsonProperty("versionNumber")
+    private BigDecimal versionNumber = null;
+
+    @JsonProperty("oldUuid")
+    @Size(min = 2,max = 64)
+    private String oldUuid = null;
 
     @JsonProperty("projectId")
     private String projectId = null;
