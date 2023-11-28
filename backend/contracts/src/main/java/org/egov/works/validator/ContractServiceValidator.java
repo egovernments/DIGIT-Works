@@ -611,6 +611,8 @@ public class ContractServiceValidator {
 //        validateMusterRollForTimeExtension(contractRequest);
         // Validate if previous contract revision request is in workflow
         validateContractRevisionRequest(contractRequest);
+        // Validate start date
+        validateStartDate(contractRequest, contractsFromDB);
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
         // Validate if revised estimate in approved state
@@ -643,6 +645,8 @@ public class ContractServiceValidator {
         validateSupplementNumber (contractRequest);
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
+        // Validate start date
+        validateStartDate(contractRequest, contractsFromDB);
         // Validate if revised estimate in approved state
         fetchActiveEstimates(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
                 Collections.singleton(contractRequest.getContract().getLineItems().get(0).getEstimateId()));
@@ -704,6 +708,13 @@ public class ContractServiceValidator {
             int comparisonResult = contractRequest.getContract().getEndDate().compareTo(contract.getEndDate());
             if (comparisonResult < 0) {
                 throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
+            }
+        }
+    }
+    private void validateStartDate (ContractRequest contractRequest, List<Contract> contractsFromDB) {
+        for (Contract contract : contractsFromDB) {
+            if (!Objects.equals(contractRequest.getContract().getStartDate(), contract.getStartDate())) {
+                throw new CustomException("START_DATE_DIFFERENT", "Start date of contract revision cannot be different");
             }
         }
     }
