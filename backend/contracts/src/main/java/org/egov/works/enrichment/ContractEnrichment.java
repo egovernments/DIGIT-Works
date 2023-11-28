@@ -291,12 +291,10 @@ public class ContractEnrichment {
                             lineItem.addAmountBreakupsItem(amountBreakup);
                         }
 
-                        //refinedLineItems.add(lineItem);
                         addLineItem(refinedLineItems,lineItem,objects);
                     }
                 } else {
                     addLineItem(refinedLineItems,providedLineItem,objects);
-                    //refinedLineItems.add(providedLineItem);
                 }
             }
         }

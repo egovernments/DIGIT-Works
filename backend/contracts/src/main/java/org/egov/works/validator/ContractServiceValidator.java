@@ -200,9 +200,6 @@ public class ContractServiceValidator {
         // Validate executingAuthority against MDMS data
         validateContractTypeAgainstMDMS(mdmsData, contract.getContractType());
 
-        // Validate document type against MDMS date
-        //validateDocumentTypeAgainstMDMS(mdmsData, contract.getDocuments());
-
         // Validate Officer In Charge role against MDMS data
         
         validateOfficerInChargeRoleAgainstMDMS(mdmsData, contractRequest);
@@ -244,7 +241,9 @@ public class ContractServiceValidator {
             if( value.isPresent())
                 return value.get();
         }
-        catch (Exception ignore){ }
+        catch (Exception ignore){
+            log.error(ignore.toString());
+        }
         return null;
     }
 
@@ -421,8 +420,8 @@ public class ContractServiceValidator {
 
     private Map<String, Set<String>> getFetchedEstimateDetailIdWithAccountDetailIds(Map<String, List<Estimate>> fetchedEstimatesMap) {
         Map<String, Set<String>> fetchedEstimateDetailIdWithAccountDetailIds = new HashMap<>();
-        for(String fetchedEstimateId : fetchedEstimatesMap.keySet()){
-            for(Estimate estimate : fetchedEstimatesMap.get(fetchedEstimateId)){
+        for(Map.Entry<String, List<Estimate>> fetchedEstimatesMapEntry : fetchedEstimatesMap.entrySet()){
+            for(Estimate estimate : fetchedEstimatesMapEntry.getValue()){
                 for(EstimateDetail estimateDetail: estimate.getEstimateDetails()){
                     Set<String> collect = estimateDetail.getAmountDetail().stream().map(e -> e.getId()).collect(Collectors.toSet());
                     fetchedEstimateDetailIdWithAccountDetailIds.put(estimateDetail.getId(),collect);
@@ -434,8 +433,9 @@ public class ContractServiceValidator {
 
     private Map<String, Set<String>> getFetchedEstimateIdWithEstimateDetailIds(Map<String, List<Estimate>> fetchedEstimatesMap) {
         Map<String, Set<String>> fetchedEstimateIdWithEstimateDetailIds = new HashMap<>();
-        for(String fetchedEstimateId : fetchedEstimatesMap.keySet()){
-            for(Estimate estimate : fetchedEstimatesMap.get(fetchedEstimateId)){
+        for(Map.Entry<String, List<Estimate>> fetchedEstimatesMapEntry : fetchedEstimatesMap.entrySet()){
+            String fetchedEstimateId = fetchedEstimatesMapEntry.getKey();
+            for(Estimate estimate : fetchedEstimatesMapEntry.getValue()){
                 Set<String> estimateDetailsIds = estimate.getEstimateDetails().stream().map(e -> e.getId()).collect(Collectors.toSet());
                 fetchedEstimateIdWithEstimateDetailIds.put(fetchedEstimateId,estimateDetailsIds);
             }
@@ -607,8 +607,8 @@ public class ContractServiceValidator {
         validateRevisionLimit(contractsFromDB);
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
-        // Validate if at least one muster-roll is created and approved
-//        validateMusterRollForTimeExtension(contractRequest);
+        // Validate if at least one muster-roll is created and approved (Validator removed as per sonarLint
+        // Get from previous commits if required.
         // Validate if previous contract revision request is in workflow
         validateContractRevisionRequest(contractRequest);
         // Validate start date
@@ -639,8 +639,8 @@ public class ContractServiceValidator {
         validateRevisionLimit(contractsFromDB);
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
-        // Validate if at least one muster-roll is created and approved
-        //validateMusterRollForTimeExtension(contractRequest);
+        // Validate if at least one muster-roll is created and approved (Validator removed as per sonarLint
+        // Get from previous commits if required
         // Validate Supplement Number
         validateSupplementNumber (contractRequest);
         // Validate if extended end date is not before active contract end date
@@ -672,18 +672,6 @@ public class ContractServiceValidator {
                 throw new CustomException("ORG_ID_MISMATCH", "Org id must be same for time extension request");
             }
         }
-    }
-    private void validateMusterRollForTimeExtension (ContractRequest contractRequest) {
-        // Get all muster-rolls for given contractNumber
-        List<MusterRoll> musterRolls = getMusterRollsForContractNumber (contractRequest);
-        if (musterRolls == null || musterRolls.isEmpty()) {
-            throw new CustomException("MUSTER_ROLLS_NOT_PRESENT", "Muster rolls not present for given contract id");
-        }
-        for (MusterRoll musterRoll : musterRolls) {
-            if (musterRoll.getMusterRollStatus().equalsIgnoreCase("APPROVED"))
-                return;
-        }
-        throw new CustomException("MUSTER_ROLL_NOT_APPROVED", "At least one muster roll must be in approved state");
     }
     private void validateContractRevisionRequest(ContractRequest contractRequest ) {
         Pagination pagination = Pagination.builder()
@@ -730,22 +718,6 @@ public class ContractServiceValidator {
         log.info("Validated LineItemRef for revised contract");
     }
 
-    private List<MusterRoll> getMusterRollsForContractNumber (ContractRequest contractRequest) {
-        StringBuilder uri = new StringBuilder(config.getMusterRollSearchHost()).append(config.getMusterRollSearchEndpoint());
-        uri.append("?tenantId=").append(contractRequest.getContract().getTenantId())
-                .append("&referenceId=").append(contractRequest.getContract().getContractNumber());
-        ObjectNode requestInfoNode = mapper.createObjectNode();
-        requestInfoNode.putPOJO("RequestInfo", contractRequest.getRequestInfo());
-
-        Object musterRollRes = restRepo.fetchResult(uri, requestInfoNode);
-        MusterRollResponse musterRollResponse = null;
-        try {
-            musterRollResponse = mapper.convertValue(musterRollRes, MusterRollResponse.class);
-        }catch (Exception e){
-            log.error("Unable to map muster roll response");
-        }
-        return musterRollResponse.getMusterRolls();
-    }
     private void validateSupplementNumber (ContractRequest contractRequest) {
         if (contractRequest.getContract().getSupplementNumber() == null || contractRequest.getContract().getSupplementNumber().isEmpty()) {
             throw new CustomException("SUPPLEMENT_NUMBER_EMPTY", "Supplement number must not be empty");

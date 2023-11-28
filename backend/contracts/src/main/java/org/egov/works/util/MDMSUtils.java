@@ -50,12 +50,10 @@ public class MDMSUtils {
     private ModuleDetail getWorksModuleDetailValidate() {
         List<MasterDetail> masterDetails = new ArrayList<>();
 
-        //MasterDetail documentTypeMasterDetail = getMasterDetail(MASTER_DOCUMENT_TYPE, COMMON_ACTIVE_WITH_NAME_FILTER);
         MasterDetail executingAuthorityMasterDetail = getMasterDetailForSubModule(MASTER_CBO_ROLES, COMMON_ACTIVE_WITH_CODE_FILTER);
         MasterDetail contractTypeMasterDetail = getMasterDetailForSubModule(MASTER_CONTRACT_TYPE, COMMON_ACTIVE_WITH_CODE_FILTER);
         MasterDetail officerInChargeRolesMasterDetail = getMasterDetailForSubModule(MASTER_OIC_ROLES, COMMON_ACTIVE_WITH_CODE_FILTER);
 
-        //masterDetails.add(documentTypeMasterDetail);
         masterDetails.add(executingAuthorityMasterDetail);
         masterDetails.add(contractTypeMasterDetail);
         masterDetails.add(officerInChargeRolesMasterDetail);
