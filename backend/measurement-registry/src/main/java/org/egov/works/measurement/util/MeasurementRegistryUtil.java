@@ -34,7 +34,10 @@ public class MeasurementRegistryUtil {
             targetIdtoCumulativeMap.put(measure.getTargetId(),measure.getCumulativeValue());
         }
         for(Measure measure:currMeasurement.getMeasures()){
-            measure.setCumulativeValue( targetIdtoCumulativeMap.get(measure.getTargetId()).add(measure.getCurrentValue()));
+            if (targetIdtoCumulativeMap.containsKey(measure.getTargetId()))
+                measure.setCumulativeValue( targetIdtoCumulativeMap.get(measure.getTargetId()).add(measure.getCurrentValue()));
+            else
+                measure.setCumulativeValue(measure.getCurrentValue());
         }
     }
 
@@ -78,7 +81,10 @@ public class MeasurementRegistryUtil {
             targetIdtoCumulativeMap.put(measure.getTargetId(),measure.getCumulativeValue().subtract(measure.getCurrentValue()));
         }
         for(Measure measure:currMeasurement.getMeasures()){
-            measure.setCumulativeValue( targetIdtoCumulativeMap.get(measure.getTargetId()).add(measure.getCurrentValue()));
+            if (targetIdtoCumulativeMap.containsKey(measure.getTargetId()))
+                measure.setCumulativeValue( targetIdtoCumulativeMap.get(measure.getTargetId()).add(measure.getCurrentValue()));
+            else
+                measure.setCumulativeValue(measure.getCurrentValue());
         }
     }
 
