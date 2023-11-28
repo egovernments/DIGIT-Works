@@ -1,7 +1,6 @@
 package org.egov.works.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -741,7 +740,15 @@ public class ContractServiceValidator {
     }
     public void validateMeasurement(ContractRequest contractRequest, Estimate estimate) {
         String jsonPathForMeasurementCumulativeValue = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].cumulativeValue";
+        String jsonPathForMeasurementCurrentValue = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].currentValue";
+        String jsonPathForMeasurementWfStatus = "$.measurements[*].wfStatus";
         Object measurementResponse = measurementUtil.getMeasurementDetails(contractRequest);
+        String wfStatus;
+        try {
+            wfStatus = JsonPath.read(measurementResponse, jsonPathForMeasurementWfStatus);
+        } catch (Exception e) {
+            throw new CustomException("JSONPATH_ERROR", "Failed to parse measurement search response");
+        }
 
         contractRequest.getContract().getLineItems().forEach(lineItems -> {
             if (!lineItems.getCategory().equalsIgnoreCase(OVERHEAD_CODE) && lineItems.getContractLineItemRef() != null) {
@@ -755,12 +762,22 @@ public class ContractServiceValidator {
                     log.info("No measurement found for the given estimate");
                 }
                 else {
-                    if (lineItems.getNoOfunit() < measurementCumulativeValue.get(0))
+                    Integer cumulativeValue = measurementCumulativeValue.get(0);
+                    if (!wfStatus.equalsIgnoreCase("APPROVED")){
+                        List<Integer> measurementCurrentValue;
+                        try {
+                            measurementCurrentValue = JsonPath.read(measurementResponse, jsonPathForMeasurementCurrentValue.replace("{{yourDynamicValue}}", lineItems.getContractLineItemRef()));
+                        } catch (Exception e) {
+                            throw new CustomException("JSONPATH_ERROR", "Failed to parse measurement search response");
+                        }
+                        cumulativeValue = cumulativeValue - measurementCurrentValue.get(0);
+                    }
+                    if (lineItems.getNoOfunit() < cumulativeValue)
                         throw new CustomException("CUMULATIVE_VALUE_GREATER_THAN_CONTRACT_UNITS", "No of Unit of contract" +
                                 " should be greater than or equal to measurement book cumulative value. Retry after changing this value : " + lineItems.getNoOfunit());
 
                     Double noOfUnit = estimate.getEstimateDetails().stream().filter(estimateDetail -> estimateDetail.getId().equals(lineItems.getEstimateLineItemId())).map(EstimateDetail::getNoOfunit).findFirst().orElse(null);
-                    if (noOfUnit != null && noOfUnit < measurementCumulativeValue.get(0)){
+                    if (noOfUnit != null && noOfUnit < cumulativeValue){
                         throw new CustomException("CUMULATIVE_VALUE_GREATER_THAN_ESTIMATE_DETAIL_UNITS", "No of Unit of estimate " +
                                 "should be greater than or equal to measurement book cumulative value. Retry after changing this value : " + noOfUnit);
                     }

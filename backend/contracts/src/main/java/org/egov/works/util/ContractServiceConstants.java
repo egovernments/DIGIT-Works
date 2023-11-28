@@ -98,6 +98,7 @@ public class ContractServiceConstants {
     public static final String REQUEST_INFO = "RequestInfo";
     public static final String TENANT_ID = "tenantId";
     public static final String CRITERIA = "criteria";
+    public static final String IS_ACTIVE = "isActive";
     public static final String REFERENCE_ID = "referenceId";
 
     // Workflow actions
