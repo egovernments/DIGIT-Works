@@ -167,12 +167,7 @@ public class EstimateServiceValidator {
         String jsonPathForMeasurementCurrentValue = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].currentValue";
         String jsonPathForMeasurementWfStatus = "$.measurements[*].wfStatus";
         List<EstimateDetail> estimateDetail = estimateRequest.getEstimate().getEstimateDetails();
-        List<String> wfStatus;
-        try {
-            wfStatus = JsonPath.read(measurementResponse, jsonPathForMeasurementWfStatus);
-        } catch (Exception e) {
-            throw new CustomException(JSONPATH_ERROR, "Failed to parse measurement search response for workflow");
-        }
+
         estimateDetail.forEach(estimateDetail1 ->
         {
             if(!estimateDetail1.getCategory().equals(OVERHEAD_CODE) && estimateDetail1.getPreviousLineItemId() != null){
@@ -193,8 +188,14 @@ public class EstimateServiceValidator {
                     log.info("No measurement found for the given estimate");
                 }
                 else {
+                    List<String> wfStatus;
+                    try {
+                        wfStatus = JsonPath.read(measurementResponse, jsonPathForMeasurementWfStatus);
+                    } catch (Exception e) {
+                        throw new CustomException(JSONPATH_ERROR, "Failed to parse measurement search response for workflow");
+                    }
                     Integer cumulativeValue = measurementCumulativeValue.get(0);
-                    if (!wfStatus.get(0).equalsIgnoreCase(ESTIMATE_APPROVED_STATUS)){
+                    if (!wfStatus.isEmpty() && !wfStatus.get(0).equalsIgnoreCase(ESTIMATE_APPROVED_STATUS)){
                         List<Integer> measurementCurrentValue;
                         try {
                             measurementCurrentValue = JsonPath.read(measurementResponse, jsonPathForMeasurementCurrentValue.replace("{{yourDynamicValue}}", contractLineItemRefId));
