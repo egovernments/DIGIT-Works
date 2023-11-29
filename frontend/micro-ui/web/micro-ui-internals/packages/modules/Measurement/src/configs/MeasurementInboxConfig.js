@@ -100,14 +100,14 @@ const InboxMeasurementConfig = () => {
             },
             {
               text: "MB_CREATE_MB",
-              url: "/employee/measurement/create",
+              url: "/employee/contracts/search-contract?status=ACCEPTED",
               roles: ["MB_CREATOR"],
             },
           ],
           label: "ES_COMMON_ATTENDENCEMGMT",
           logoIcon: {
-            component: "MuktaIcon",
-            customClass: "search-icon--projects",
+            component: "MeasurementIcon",
+            customClass: "inbox-search-icon--projects",
           },
         },
         children: {},

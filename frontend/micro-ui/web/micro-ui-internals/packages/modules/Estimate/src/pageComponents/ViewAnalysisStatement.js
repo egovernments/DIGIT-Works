@@ -21,6 +21,30 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
         MachineryCost : "MH",
     }
 
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+
+    const requestCriteria = {
+        url: "/mdms-v2/v1/_search",
+        body: {
+        MdmsCriteria: {
+            tenantId: tenantId,
+            moduleDetails: [
+            {
+                moduleName: "WORKS-SOR",
+                masterDetails: [
+                {
+                    name: "Rates",
+                    //filter: `[?(@.sorId=='${sorid}')]`,
+                },
+                ],
+            },
+            ],
+        },
+        },
+    };
+
+    const { isLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
+
     //this method is used for calculating labour charges which rate * qty(current Mb entry)
     function getAnalysisCost(category){
         let SORAmount = formData?.SORtable?.reduce((tot,ob) => {
@@ -37,6 +61,15 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
         if(category === "LH" && SORAmount == 0 && formData?.labourMaterialAnalysis?.labour) return formData?.labourMaterialAnalysis?.labour;
         if(category === "MA" && SORAmount == 0 && formData?.labourMaterialAnalysis?.material) return formData?.labourMaterialAnalysis?.material;
         if(category === "MH" && SORAmount == 0 && formData?.labourMaterialAnalysis?.machinery) return formData?.labourMaterialAnalysis?.machinery;
+        }
+
+        if(SORAmount == 0)
+        {
+            SORAmount = formData?.SORtable?.reduce((tot,ob) => {
+                let amountDetails = RatesData?.MdmsRes?.["WORKS-SOR"]?.Rates?.filter((rate) => rate?.sorId === ob?.sorId)?.[0]?.amountDetails;
+                let amount = amountDetails?.reduce((total,item) => item?.heads?.includes(category) ? (item?.amount + total) : total,0);
+                return (tot + amount * ob?.currentMBEntry)
+            },0);
         }
         return Digit.Utils.dss.formatterWithoutRound((SORAmount).toFixed(2),"number");        
     }

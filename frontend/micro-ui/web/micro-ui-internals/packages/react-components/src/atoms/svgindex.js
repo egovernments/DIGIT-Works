@@ -580,6 +580,15 @@ function PropertyHouse({ className, styles }) {
   );
 }
 
+function MeasurementIcon({ className, styles }) {
+  return (
+    <svg className={className} fill="#FFFFFF" style={{ ...styles }} width="24" height="24" viewBox="0 0 28 29" xmlns="http://www.w3.org/2000/svg">
+      <path d="M26.8944 23.2268L19.8278 16.1602H18.5078L15.1211 19.5468V20.8668L22.1878 27.9335C22.7078 28.4535 23.5478 28.4535 24.0678 27.9335L26.8944 25.1068C27.4144 24.6002 27.4144 23.7468 26.8944 23.2268Z" fill="#F47738"/>
+      <path d="M21.1213 12.5854L23.0013 10.7054L25.828 13.532C27.388 11.972 27.388 9.4387 25.828 7.8787L21.108 3.1587L19.228 5.0387V1.2787L18.2946 0.332031L13.5746 5.05203L14.5213 5.9987H18.2946L16.4146 7.8787L17.828 9.29203L13.9746 13.1454L8.46797 7.6387V5.74536L4.4413 1.7187L0.667969 5.49203L4.70797 9.53203H6.58797L12.0946 15.0387L10.9613 16.172H8.13464L1.06797 23.2387C0.547969 23.7587 0.547969 24.5987 1.06797 25.1187L3.89464 27.9454C4.41464 28.4654 5.25464 28.4654 5.77464 27.9454L12.8413 20.8787V18.052L19.708 11.1854L21.1213 12.5854Z" fill="#F47738"/>
+    </svg>
+  );
+}
+
 const InfoBannerIcon = ({ fill = "#3498DB",styles }) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" style={{...styles}} viewBox="0 0 20 20" fill="none">
@@ -1759,6 +1768,7 @@ export {
   Details,
   PrintIcon,
   PropertyHouse,
+  MeasurementIcon,
   PrimaryDownlaodIcon,
   InfoBannerIcon,
   ShareIcon,

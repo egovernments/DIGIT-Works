@@ -10,7 +10,7 @@ import { useHistory } from "react-router-dom";
 const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback ,callback}) => {
   
   const history = useHistory()
-  const { estimateNumber } = Digit.Hooks.useQueryParams();
+  const { estimateNumber, mbNumber, workOrderNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber 
 
   const { mutate } = Digit.Hooks.works.useUpdateCustom(url)
@@ -88,6 +88,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")
     const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")
     const bsRevisedWO = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("revisedWO");
+    const bsMeasurement = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("measurement");
     
     
     setDisplayMenu(false)
@@ -112,6 +113,11 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
 
     if(bsPurchaseBill === businessService && action?.action==="RE-SUBMIT"){
       history.push(`/${window?.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&billNumber=${editApplicationNumber}`);
+      return 
+    }
+
+    if(bsMeasurement === businessService && action?.action?.includes("RE-SUBMIT")){
+      history.push(`/${window?.contextPath}/employee/measurement/update?tenantId=${tenantId}&workOrderNumber=${workOrderNumber}&mbNumber=${mbNumber}`);
       return 
     }
 

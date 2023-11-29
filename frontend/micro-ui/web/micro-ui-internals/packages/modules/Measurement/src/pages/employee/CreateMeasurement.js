@@ -21,7 +21,7 @@ const CreateMeasurement = ({ props }) => {
   // const [sessionFormData, setSessionFormData, clearSessionFormData] = MeasurementSession;
   const [createState, setState] = useState({ SOR: [], NONSOR: [], accessors: undefined, period: {} });
   const [defaultState, setDefaultState] = useState({ SOR: [], NONSOR: [] });
-  const [showErrorToast, setShowErrorToast] = useState(false);
+  const [showToast, setShowToast] = useState({display: false, error: false});
   const [errorMessage, setErrorMessage] = useState("");
   const [displayMenu, setDisplayMenu] = useState(false);
 
@@ -65,6 +65,8 @@ const CreateMeasurement = ({ props }) => {
         setState({
           SOR: defaultValues?.SOR,
           NONSOR: defaultValues?.NONSOR,
+          SORtable : defaultValues?.SOR,
+          NONSORtable: defaultValues?.NONSOR,
           ...defaultValues?.contractDetails,
           period: data?.period,
           musterRollNumber: data?.musterRollNumber,
@@ -72,6 +74,8 @@ const CreateMeasurement = ({ props }) => {
         setDefaultState({
           SOR: defaultValues?.SOR,
           NONSOR: defaultValues?.NONSOR,
+          SORtable : defaultValues?.SOR,
+          NONSORtable: defaultValues?.NONSOR,
           contract: data?.contract,
           estimate: data?.estimate,
           contractDetails: defaultValues?.contractDetails,
@@ -81,7 +85,7 @@ const CreateMeasurement = ({ props }) => {
         createState?.accessors?.setValue?.("contract", data?.contract);
         if (data?.period?.type == "error") {
           setErrorMessage(data?.period?.message);
-          setShowErrorToast(true);
+          setShowToast({display:true, error:true});
         }
       }
     };
@@ -101,24 +105,25 @@ const CreateMeasurement = ({ props }) => {
   function onActionSelect(action) {
     if (createState?.period?.type == "error") {
       setErrorMessage(createState?.period?.message);
-      setShowErrorToast(true);
+      setShowToast({display:true, error:true});
       return null;
     }
     if (action?.name === "SUBMIT") {
       createState.workflowAction = "SUBMIT";
-      handleCreateMeasurement(createState);
+      handleCreateMeasurement(createState, action);
     }
     if (action?.name === "SAVE_AS_DRAFT") {
       createState.workflowAction = "SAVE_AS_DRAFT";
-      handleCreateMeasurement(createState);
+      handleCreateMeasurement(createState, action);
     }
   }
 
   // Handle form submission
-  const handleCreateMeasurement = async (data) => {
+  const handleCreateMeasurement = async (data, action) => {
     if (props?.isUpdate) {
       data.id = props?.data?.[0].id;
       data.measurementNumber = props?.data?.[0].measurementNumber;
+      data.wfStatus = props?.data?.[0]?.wfStatus;
     }
 
     // Create the measurement payload with transformed data
@@ -126,10 +131,17 @@ const CreateMeasurement = ({ props }) => {
     //call the createMutation for MB and route to response page on onSuccess or show error
     const onError = (resp) => {
       setErrorMessage(resp?.response?.data?.Errors?.[0]?.message);
-      setShowErrorToast(true);
+      setShowToast({display:true, error:true});
     };
     const onSuccess = (resp) => {
-      history.push(`/${window.contextPath}/employee/measurement/response?mbreference=${resp.measurements[0].measurementNumber}`);
+      if(action?.name === "SAVE_AS_DRAFT")
+      {
+        setErrorMessage(t("MB_APPLICATION_IS_SUCCESSFULLY_DRAFTED"));
+        setShowToast({display:true, error:false});
+        setTimeout(() => {history.push(`/${window.contextPath}/employee/measurement/update?tenantId=${resp.measurements[0].tenantId}&workOrderNumber=${contractNumber}&mbNumber=${resp.measurements[0].measurementNumber}`)}, 3000);;
+      }
+      else
+        history.push(`/${window.contextPath}/employee/measurement/response?mbreference=${resp.measurements[0].measurementNumber}`);
     };
     mutation.mutate(
       {
@@ -147,16 +159,16 @@ const CreateMeasurement = ({ props }) => {
   };
 
   const closeToast = () => {
-    setShowErrorToast(false);
+    setShowToast({display:false, error:false});;
   };
   //remove Toast after 3s
   useEffect(() => {
-    if (showErrorToast) {
+    if (showToast) {
       setTimeout(() => {
         closeToast();
       }, 3000);
     }
-  }, [showErrorToast]);
+  }, [showToast]);
 
   // useEffect(() => {
   //   if (!_.isEqual(sessionFormData, createState)) {
@@ -197,7 +209,7 @@ const CreateMeasurement = ({ props }) => {
         onFormValueChange={onFormValueChange}
         noBreakLine={true}
       />
-      {showErrorToast && <Toast error={true} label={errorMessage} isDleteBtn={true} onClose={closeToast} />}
+      {showToast?.display && <Toast error={showToast?.error} label={errorMessage} isDleteBtn={true} onClose={closeToast} />}
       <ActionBar>
         {displayMenu ? <Menu localeKeyPrefix={"WF"} options={actionMB} optionKey={"name"} t={t} onSelect={onActionSelect} /> : null}
         <SubmitBar label={t("ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />

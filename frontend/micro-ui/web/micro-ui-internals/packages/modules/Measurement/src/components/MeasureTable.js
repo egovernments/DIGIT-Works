@@ -120,10 +120,10 @@ const MeasureTable = (props) => {
         obj = { width: "1rem" };
         break;
       case 2:
-        if (tableKey === "NONSOR") obj = { width: "52%"}
+        if (((mode === "CREATEALL" || mode === "VIEWES") && tableKey === "NONSOR") || mode !== "CREATEALL" || mode !== "VIEWES" ) obj = { width: "52%"}
         break;
       case 4:
-        (tableKey === "NONSOR")? obj = {width : "27rem"}  : obj = { width: "30%" };
+        (((mode === "CREATEALL" || mode === "VIEWES") && tableKey === "NONSOR") || mode !== "CREATEALL" || mode !== "VIEWES")? obj = {width : "27rem"}  : obj = { width: "30%" };
         break;
       default:
         obj = { width: "27rem" };

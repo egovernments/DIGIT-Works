@@ -11,6 +11,7 @@ var Digit = window.Digit || {};
 const businessServiceMap = {
   estimate: "ESTIMATE",
   contract: "CONTRACT",
+  measurement: "MB",
   "muster roll": "MR",
   "works.wages": "EXPENSE.WAGES",
   "works.purchase": "EXPENSE.PURCHASE",
@@ -2530,7 +2531,7 @@ export const UICustomizations = {
       moduleSearchCriteria = {
         ...(moduleSearchCriteria?.measurementNumber && { measurementNumber: moduleSearchCriteria?.measurementNumber?.trim() }),
         ...(moduleSearchCriteria?.projectType?.code && { projectType: moduleSearchCriteria?.projectType?.code }),
-        ...(moduleSearchCriteria?.projectId && { projectId: moduleSearchCriteria?.projectId?.trim() }),
+        ...(moduleSearchCriteria?.ProjectId && { projectId: moduleSearchCriteria?.ProjectId?.trim() }),
         ...(moduleSearchCriteria?.assignee?.code === "ASSIGNED TO ME" && { assignee: Digit.UserService.getUser().info.uuid }),
         ...(moduleSearchCriteria?.ward?.length > 0 && { ward: moduleSearchCriteria.ward?.map((e) => e?.code) }),
         ...(statusValues.length > 0 && { status: statusValues }),

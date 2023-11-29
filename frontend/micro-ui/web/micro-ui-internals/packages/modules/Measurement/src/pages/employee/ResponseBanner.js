@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { EditIcon, AddNewIcon, InboxIcon , ArrowRightInbox , CreateLoiIcon } from "@egovernments/digit-ui-react-components";
+import { EditIcon, AddNewIcon, InboxIcon , ArrowRightInbox , CreateLoiIcon, CardText } from "@egovernments/digit-ui-react-components";
 
 import { useHistory } from "react-router-dom";
 
@@ -65,22 +65,23 @@ const MeasurementServiceResponse = () => {
                     />
                 </div>
 
+                <CardText>{t("MB_SUCCESS_RESPONSE_TEXT")} {mbReference}</CardText>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}>
 
-                <div className="link">
+                <div className="link reponse-link">
                         <CreateLoiIcon style={{ width: '24px', height: '24px' }} />
                         <Link to={`/${window.contextPath}/employee/measurement/create`}>
                             {t("MB_GO_TO_CREATE")}
                         </Link>
                     </div>
-                    <div className="link " >
+                    <div className="link reponse-link" >
                         <ArrowRightInbox style={{ width: '24px', height: '24px' }} />
                         <Link to={`/${window.contextPath}/employee/measurement/inbox`}>
                             {t("MB_GO_INBOX")}
                         </Link>
                     </div>
 
-                    <div className="link">
+                    <div className="link reponse-link">
                         <AddNewIcon style={{ width: '24px', height: '24px' }} />
                         <Link to={`/${window.contextPath}/employee/measurement/inbox`}>
                             {t("MB_ADD_READING")}

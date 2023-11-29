@@ -6,7 +6,7 @@ output is array of object of type which is passed
 
 export const transformEstimateData = (lineItems, contract, type, measurement = {}, allMeasurements = []) => {
   /* logic to be updated according to business usecase*/
-  let isCreateorUpdate = window.location.href.includes("create") || window.location.href.includes("update");
+  //let isCreateorUpdate = window.location.href.includes("create") || window.location.href.includes("update");
   const lastMeasuredObject = allMeasurements?.filter?.((e) => e?.isActive)?.[0] || {};
   const transformedContract = transformContractObject(contract);
   const isMeasurement = measurement && Object.keys(measurement)?.length > 0;
@@ -23,7 +23,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
   const transformMeasurementData = isMeasurement ? transformMeasureObject(measurement) : transformMeasureObject(lastMeasuredObject);
   return Object.keys(transformedEstimateObject).map((key, index) => {
     const measures = transformedEstimateObject[key].map((estimate, index) =>{
-     const measuredObject= transformMeasurementData?.lineItemsObject && !isCreateorUpdate ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[estimate?.id]?.contractLineItemId] : {};
+     const measuredObject= transformMeasurementData?.lineItemsObject ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[estimate?.id]?.contractLineItemId] : {};
     return ({
       sNo: index + 1,
       targetId: transformedContract?.lineItemsObject[estimate.id]?.contractLineItemId,
@@ -41,7 +41,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
   });
     return {
       amount: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0) || 0,
-      consumedQ: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0) || 0,
+      consumedQ: isMeasurement ? measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0) : 0,
       sNo: index + 1,
       currentMBEntry: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0) || 0,
       uom: transformedEstimateObject[key]?.[0]?.uom,
@@ -51,6 +51,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
       targetId: transformedContract?.lineItemsObject[transformedEstimateObject[key][0].id]?.contractLineItemId,
       approvedQuantity: transformedEstimateObject[key].reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr.noOfunit, 0),
       showMeasure: false,
+      sorId: key,
       measures,
     };
   });
