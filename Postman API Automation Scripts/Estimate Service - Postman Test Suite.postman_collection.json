@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "2df5de23-8366-4e47-a638-5aba400caf35",
 		"name": "Estimate Service - Postman Test Suite",
+		"description": "## Prerequisites\n\nBefore running this collection, make sure to:\n\n- Set up your environment variables.\n    \n- Set up the base url\n    \n- Setup the auth token by logging in\n    \n- To fill the estimate details You can fetch the sor details from mdms v2 for appropriate sor and then fill the UOM and SorID for that sor.\n    \n- After filling the Appropriate SOR and estimate details Check that workflow is correct or not then You can run the collection.\n    \n- It will execute all the endpoints by checking all the scenarios.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "28174622"
 	},
