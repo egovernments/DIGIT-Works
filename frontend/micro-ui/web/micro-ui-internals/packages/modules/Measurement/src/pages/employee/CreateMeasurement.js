@@ -136,7 +136,7 @@ const CreateMeasurement = ({ props }) => {
     const onSuccess = (resp) => {
       if(action?.name === "SAVE_AS_DRAFT")
       {
-        setErrorMessage("Application is successfully drafted");
+        setErrorMessage(t("MB_APPLICATION_IS_SUCCESSFULLY_DRAFTED"));
         setShowToast({display:true, error:false});
         setTimeout(() => {history.push(`/${window.contextPath}/employee/measurement/update?tenantId=${resp.measurements[0].tenantId}&workOrderNumber=${contractNumber}&mbNumber=${resp.measurements[0].measurementNumber}`)}, 3000);;
       }
