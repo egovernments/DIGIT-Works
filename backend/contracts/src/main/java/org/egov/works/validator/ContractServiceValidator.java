@@ -743,7 +743,7 @@ public class ContractServiceValidator {
         String jsonPathForMeasurementCurrentValue = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].currentValue";
         String jsonPathForMeasurementWfStatus = "$.measurements[*].wfStatus";
         Object measurementResponse = measurementUtil.getMeasurementDetails(contractRequest);
-        String wfStatus;
+        List<String> wfStatus;
         try {
             wfStatus = JsonPath.read(measurementResponse, jsonPathForMeasurementWfStatus);
         } catch (Exception e) {
@@ -763,7 +763,7 @@ public class ContractServiceValidator {
                 }
                 else {
                     Integer cumulativeValue = measurementCumulativeValue.get(0);
-                    if (!wfStatus.equalsIgnoreCase("APPROVED")){
+                    if (!wfStatus.get(0).equalsIgnoreCase("APPROVED")){
                         List<Integer> measurementCurrentValue;
                         try {
                             measurementCurrentValue = JsonPath.read(measurementResponse, jsonPathForMeasurementCurrentValue.replace("{{yourDynamicValue}}", lineItems.getContractLineItemRef()));
