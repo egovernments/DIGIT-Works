@@ -86,7 +86,7 @@ const measurement= {
   },
   wfStatus: null,
   workflow: {
-    action: data?.workflowAction,
+    action: data?.wfStatus === "SENT_BACK" ? "EDIT/RE-SUBMIT" : data?.workflowAction,
   },
 }
   let sumSor = 0;

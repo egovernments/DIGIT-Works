@@ -37,6 +37,19 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
               },
               {
                 inline: true,
+                label: "MB_MUSTER_ROLL_NO",
+                isMandatory: false,
+                key: "musterRollNo",
+                type: "paragraph",
+                disable: true,
+                appendColon: false,
+                populators: {
+                  name: "musterRollNo",
+                  customClass: "",
+                },
+              },
+              {
+                inline: true,
                 label: "MB_PROJECT_DATE",
                 isMandatory: false,
                 key: "sanctionDate",
@@ -71,19 +84,6 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
                 appendColon: false,
                 populators: {
                   name: "projectDesc",
-                  customClass: "",
-                },
-              },
-              {
-                inline: true,
-                label: "MB_MUSTER_ROLL_NO",
-                isMandatory: false,
-                key: "musterRollNo",
-                type: "paragraph",
-                disable: true,
-                appendColon: false,
-                populators: {
-                  name: "musterRollNo",
                   customClass: "",
                 },
               },
@@ -170,6 +170,12 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
                 withoutLabel: true,
                 key: "viewAmount",
               },
+              {
+                "type": "component",
+                "component": "ViewAnalysisStatement",
+                "withoutLabel": true,
+                "key": "labourMaterialAnalysis"
+              }
             ],
           },
           {

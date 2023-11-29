@@ -29,9 +29,9 @@ const UpdateMeasurement = () => {
     const reqCriteriaUpdate = {
         url: `/measurement-service/v1/_search`,
         params: {},
-        body: {},
+        body: body,
         config: {
-            enabled: false,
+            enabled: true,
         },
     };
     const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCriteriaUpdate);

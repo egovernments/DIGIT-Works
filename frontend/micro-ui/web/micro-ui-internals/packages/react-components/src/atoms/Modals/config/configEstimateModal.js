@@ -424,7 +424,7 @@ const configEstimateModal = (
             },
             "REJECT" : {
                 comments:{
-                    isMandatory:false,
+                    isMandatory:true,
                     show:true,
                 },
                 assignee:{

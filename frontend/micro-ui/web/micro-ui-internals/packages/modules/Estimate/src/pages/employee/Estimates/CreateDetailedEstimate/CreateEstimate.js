@@ -402,7 +402,7 @@ const CreateEstimate = () => {
           if(action === "DRAFT")
           {
             setShowToast({ label: "Application updated successfully" });
-            setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&estimateNumber=${responseData?.estimates[0]?.estimateNumber}&projectNumber=${projectNumber}&isEdit=true`, state)}, 5000);
+            setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&estimateNumber=${responseData?.estimates[0]?.estimateNumber}&projectNumber=${projectNumber}&isEdit=true`, state)}, 3000);
           }
           else
           history.push(`/${window?.contextPath}/employee/estimate/response`, state);
@@ -437,7 +437,7 @@ const CreateEstimate = () => {
           if(action === "DRAFT")
           {
             setShowToast({ label: "Application updated successfully" });
-            setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&estimateNumber=${responseData?.estimates[0]?.estimateNumber}&projectNumber=${projectNumber}&isEdit=true`, state)}, 5000);
+            setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&estimateNumber=${responseData?.estimates[0]?.estimateNumber}&projectNumber=${projectNumber}&isEdit=true`, state)}, 3000);
           }
           else
           setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/response`, state)}, 5000);

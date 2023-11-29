@@ -100,7 +100,7 @@ const InboxMeasurementConfig = () => {
             },
             {
               text: "MB_CREATE_MB",
-              url: "/employee/measurement/create",
+              url: "/employee/contracts/search-contract?status=ACCEPTED",
               roles: ["MB_CREATOR"],
             },
           ],
