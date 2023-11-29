@@ -751,7 +751,7 @@ public class ContractServiceValidator {
         }
 
         contractRequest.getContract().getLineItems().forEach(lineItems -> {
-            if (!lineItems.getCategory().equalsIgnoreCase(OVERHEAD_CODE) && lineItems.getContractLineItemRef() != null) {
+            if (lineItems.getContractLineItemRef() != null && !lineItems.getCategory().equalsIgnoreCase(OVERHEAD_CODE)) {
                 List<Integer> measurementCumulativeValue = null;
                 try {
                     measurementCumulativeValue = JsonPath.read(measurementResponse, jsonPathForMeasurementCumulativeValue.replace("{{yourDynamicValue}}", lineItems.getContractLineItemRef()));
