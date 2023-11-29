@@ -29,6 +29,7 @@ const WorksCard = () => {
   const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
   const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
   const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
+  const bsMeasurement = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("measurement");
   
 
   const { t } = useTranslation();
@@ -79,6 +80,31 @@ const WorksCard = () => {
   };
 
   const { isLoading: isLoadingEstimate, data: dataEstimate } = Digit.Hooks.useCustomAPIHook(requestCriteriaEstimate);
+
+  const requestCriteriaMeasurement = {
+    url: "/inbox/v2/_search",
+    body: {
+      inbox: {
+        tenantId,
+        processSearchCriteria: {
+          businessService: [bsMeasurement],
+          moduleName: "measurement-service",
+        },
+        moduleSearchCriteria: {
+          tenantId,
+        },
+        limit: 10,
+        offset: 0,
+      },
+    },
+    config: {
+      enabled: Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.MEASUREMENT),
+    },
+    changeQueryName: "MeasurementInbox",
+  };
+
+  const { isLoading: isLoadingMeasurement, data: dataMeasurement } = Digit.Hooks.useCustomAPIHook(requestCriteriaMeasurement);
+  
 
   const requestCriteriaContract = {
     url: "/inbox/v2/_search",
@@ -187,6 +213,7 @@ const WorksCard = () => {
       label: t("ACTION_TEST_5MEASUREMENT"),
       link: `/${window?.contextPath}/employee/measurement/inbox`,
       roles: ROLES.MEASUREMENT,
+      count: isLoadingMeasurement? "-" : dataMeasurement?.totalCount,
     }
   ];
 
