@@ -72,7 +72,6 @@ public class WorkflowService {
         processInstance.setModuleName(serviceConfiguration.getContractWFModuleName());
         processInstance.setTenantId(contract.getTenantId());
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
-        /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
 
         if (!CollectionUtils.isEmpty(workflow.getAssignees())) {

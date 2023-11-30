@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.egov.works", "org.egov.works.web.controllers", "org.egov.works.config"})
 public class ContractServiceMain {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication.run(ContractServiceMain.class, args);
     }
 }
