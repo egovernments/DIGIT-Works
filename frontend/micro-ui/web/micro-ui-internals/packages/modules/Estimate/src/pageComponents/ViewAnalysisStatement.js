@@ -14,6 +14,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     const {t} = useTranslation();
     const { register, errors, setValue, getValues, formData } = props
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    let isCreate = window.location.href.includes("/measurement/create") || window.location.href.includes("/estimate/create-detailed-estimate");
     //Defined the codes for charges upserted in mdmsV2
     const ChargesCodeMapping = {
         LabourCost : "LH",
@@ -78,7 +79,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     
   return (
         <Fragment>
-        <LinkButton className="view-Analysis-button" onClick={() => setIsPopupOpen(true)} label={t("ESTIMATE_ANALYSIS_STM")}></LinkButton>
+        <LinkButton className="view-Analysis-button" style={isCreate ? {marginTop:"-3.5%"}: {}} onClick={() => setIsPopupOpen(true)} label={t("ESTIMATE_ANALYSIS_STM")}></LinkButton>
         {isPopupOpen && <PopUp>
             <div className="popup-view-alaysis">
             <Card>
