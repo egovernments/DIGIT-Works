@@ -14,6 +14,8 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const [isTableCollapsed, setIsTableCollapsed] = useState(false);
+  const searchparams = new URLSearchParams(location.search);
+  contractNumber = contractNumber ? contractNumber : searchparams.get("workOrderNumber");
 
   const toggleTableCollapse = () => {
     setIsTableCollapsed((prevState) => !prevState);

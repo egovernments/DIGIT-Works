@@ -63,6 +63,8 @@ const SearchBar = (props) => {
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
+    if(e.target.value === "")
+      setSelectedSOR(null);
   };
 
   const handleSelectOption = (option) => {
