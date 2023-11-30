@@ -35,6 +35,7 @@ public class MeasurementUtil {
         ObjectNode criteria = mapper.createObjectNode();
         criteria.putPOJO(REFERENCE_ID, Collections.singletonList(contractRequest.getContract().getContractNumber()));
         criteria.putPOJO(TENANT_ID,contractRequest.getContract().getTenantId());
+        criteria.putPOJO(IS_ACTIVE, true);
         measurementSearchRequestNode.putPOJO(REQUEST_INFO,contractRequest.getRequestInfo());
         measurementSearchRequestNode.putPOJO(CRITERIA,criteria);
 

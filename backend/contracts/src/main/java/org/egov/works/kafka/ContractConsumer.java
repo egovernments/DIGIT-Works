@@ -2,7 +2,7 @@ package org.egov.works.kafka;
 
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class ContractConsumer {
@@ -12,8 +12,8 @@ public class ContractConsumer {
      * Value of the variable kafka.topics.consumer should be overwritten in application.properties
      */
     //@KafkaListener(topics = {"kafka.topics.consumer"})
-    public void listen(final HashMap<String, Object> record) {
-
+    public void listen(final Map<String, Object> kafkaTopic) {
+    // write business logic after consuming from kafka topic
 
     }
 }
