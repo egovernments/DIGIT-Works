@@ -3,6 +3,7 @@ package org.egov.validator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import digit.models.coremodels.Document;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
@@ -14,10 +15,17 @@ import org.egov.repository.EstimateRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.*;
 import org.egov.web.models.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,6 +54,10 @@ public class EstimateServiceValidator {
     private static final String FAILED_TO_PARSE_MDMS_RESPONSE = "Failed to parse mdms response";
     private static final String INVALID_ESTIMATE = "INVALID_ESTIMATE";
     private static final String INVALID_ESTIMATE_DETAIL = "INVALID_ESTIMATE_DETAIL";
+    public static final String API_REQUEST_FAIL_CODE = "API_REQUEST_FAIL";
+    public static final String API_REQUEST_FAIL_MSG = "API request failed with status code: ";
+    public static final String INVALID_DOCUMENTS_CODE = "INVALID_DOCUMENTS";
+    public static final String INVALID_DOCUMENTS_MSG = "Document IDs are invalid";
 
     @Autowired
     public EstimateServiceValidator(MDMSUtils mdmsUtils, EstimateRepository estimateRepository, ProjectUtil projectUtil, EstimateServiceConfiguration config, ObjectMapper mapper, ContractUtils contractUtils, MeasurementUtils measurementUtils, EstimateServiceUtil estimateServiceUtil) {
@@ -102,7 +114,7 @@ public class EstimateServiceValidator {
         validateRequestOnMDMSV1AndV2(request,errorMap, true,previousEstimate);
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
-
+        validateDocumentIds(request);
         if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) && Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request)) && previousEstimate != null){
             validateContractAndMeasurementBook(request, previousEstimate, errorMap);
         }
@@ -744,7 +756,7 @@ public class EstimateServiceValidator {
         validateRequestOnMDMSV1AndV2(request,errorMap,false,estimateForRevision);
         validateProjectId(request);
         validateNoOfUnit(estimateDetails);
-
+        validateDocumentIds(request);
 
         if(Boolean.TRUE.equals(config.getRevisionEstimateMeasurementValidation()) && Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(request)) && estimateForRevision != null && !request.getWorkflow().getAction().equals(ESTIMATE_REJECT)){
             validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
@@ -828,6 +840,82 @@ public class EstimateServiceValidator {
 
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
             validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap,previousEstimate,isCreate);
+        }
+    }
+    public void validateDocumentIds(EstimateRequest request) {
+        List<String> documentIds = extractFileStoreIds(request.getEstimate().getAdditionalDetails());
+        Estimate estimate = request.getEstimate();
+        if(!documentIds.isEmpty()){
+            // Make an API request to validate document IDs
+            String responseJson = makeApiRequest(documentIds, estimate.getTenantId());
+
+            // Check if document IDs match the response
+            boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
+
+            if (!documentIdsMatch) {
+                throw new CustomException(INVALID_DOCUMENTS_CODE, INVALID_DOCUMENTS_MSG);
+            }
+        }
+    }
+    private static List<String> extractFileStoreIds(Object additionalDetails) {
+        LinkedHashMap<String,Object> additionalDetailsJson = (LinkedHashMap<String, Object>) additionalDetails;
+        List<String> fileStoreIds = new ArrayList<>();
+
+        if(additionalDetailsJson.containsKey("documents")){
+            List<Map<String,String>> documents = (List<Map<String,String>>) additionalDetailsJson.get("documents");
+            for (Map<String,String> document : documents) {
+                if(document.get("fileStoreId") != null){
+                    fileStoreIds.add(document.get("fileStoreId"));
+                }
+            }
+        }
+
+        return fileStoreIds;
+    }
+    public boolean checkDocumentIdsMatch(List<String> documentIds, String responseJson) {
+
+        try {
+            Map<String, String> fileStoreIds = mapper.readValue(responseJson, Map.class);
+
+            for (String documentId : documentIds) {
+                if (!fileStoreIds.containsKey(documentId)) {
+                    return false; // At least one document ID was not found
+                }
+            }
+
+            return true; // All document IDs were found
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false; // Error occurred while parsing the response
+        }
+    }
+
+    private String makeApiRequest(List<String> documentIds, String tenantId) {
+        String baseUrl = config.getBaseFilestoreUrl();
+        String endpoint = config.getBaseFilestoreEndpoint();
+
+        // Build the URL with query parameters
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + endpoint)
+                .queryParam("tenantId", tenantId);
+
+        for (String documentId : documentIds) {
+            builder.queryParam("fileStoreIds", documentId);
+        }
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                null,
+                String.class
+        );
+
+        if (responseEntity.getStatusCodeValue() == 200) {
+            // Read and return the response content as a string
+            return responseEntity.getBody();
+        } else {
+            // Handle non-200 status codes (e.g., by throwing an exception)
+            throw new CustomException(API_REQUEST_FAIL_CODE, API_REQUEST_FAIL_MSG + responseEntity);
         }
     }
 }

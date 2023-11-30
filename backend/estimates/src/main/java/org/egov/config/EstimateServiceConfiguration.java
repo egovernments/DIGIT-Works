@@ -154,6 +154,12 @@ public class EstimateServiceConfiguration {
 
     @Value("${estimate.revisionEstimate.maxLimit}")
     private BigDecimal revisionEstimateMaxLimit;
+    // filestore
+    @Value("${egov.filestore.host}")
+    private String baseFilestoreUrl;
+
+    @Value("${egov.filestore.endpoint}")
+    private String baseFilestoreEndpoint;
 
     @PostConstruct
     public void initialize() {
