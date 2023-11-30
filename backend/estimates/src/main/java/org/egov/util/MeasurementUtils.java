@@ -24,6 +24,8 @@ public class MeasurementUtils {
     public static final String TENANT_ID = "tenantId";
     public static final String CRITERIA = "criteria";
     public static final String REFERENCE_ID = "referenceId";
+    public static final String IS_ACTIVE = "isActive";
+
 
     @Autowired
     public MeasurementUtils(EstimateServiceConfiguration config, ServiceRequestRepository serviceRequestRepository, ObjectMapper objectMapper) {
@@ -49,6 +51,7 @@ public class MeasurementUtils {
         ObjectNode criteria = objectMapper.createObjectNode();
         criteria.putPOJO(REFERENCE_ID, Collections.singletonList(contractNumber));
         criteria.putPOJO(TENANT_ID,tenantId);
+        criteria.putPOJO(IS_ACTIVE, true);
         measurementSearchRequestNode.putPOJO(REQUEST_INFO,requestInfo);
         measurementSearchRequestNode.putPOJO(CRITERIA,criteria);
 

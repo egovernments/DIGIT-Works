@@ -163,8 +163,11 @@ public class EstimateServiceValidator {
     private void validateMeasurement(Object measurementResponse, EstimateRequest estimateRequest,Object contractResponse, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateMeasurement");
         String jsonPathForContractLineItemRef = "$.contracts[*].lineItems[?(@.estimateLineItemId=='{{yourDynamicValue}}')].contractLineItemRef";
-        String jsonPathForMeasurementBook = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].cumulativeValue";
+        String jsonPathForMeasurementCumulativeValue = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].cumulativeValue";
+        String jsonPathForMeasurementCurrentValue = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].currentValue";
+        String jsonPathForMeasurementWfStatus = "$.measurements[*].wfStatus";
         List<EstimateDetail> estimateDetail = estimateRequest.getEstimate().getEstimateDetails();
+
         estimateDetail.forEach(estimateDetail1 ->
         {
             if(!estimateDetail1.getCategory().equals(OVERHEAD_CODE) && estimateDetail1.getPreviousLineItemId() != null){
@@ -175,17 +178,36 @@ public class EstimateServiceValidator {
                     throw new CustomException(JSONPATH_ERROR, "Failed to parse contract search response");
                 }
                 String contractLineItemRefId = contractLineItemRef.get(0);
-                List<Integer> measurementBook = null;
+                List<Integer> measurementCumulativeValue = null;
                 try {
-                    measurementBook = JsonPath.read(measurementResponse, jsonPathForMeasurementBook.replace("{{yourDynamicValue}}", contractLineItemRefId));
+                    measurementCumulativeValue = JsonPath.read(measurementResponse, jsonPathForMeasurementCumulativeValue.replace("{{yourDynamicValue}}", contractLineItemRefId));
                 } catch (Exception e) {
                     throw new CustomException(JSONPATH_ERROR, "Failed to parse measurement search response");
                 }
-                if(measurementBook == null || measurementBook.isEmpty()){
+                if(measurementCumulativeValue == null || measurementCumulativeValue.isEmpty()){
                     log.info("No measurement found for the given estimate");
                 }
-                else if(estimateDetail1.getNoOfunit() < measurementBook.get(0)){
-                    errorMap.put(INVALID_ESTIMATE_DETAIL, "No of Unit should not be less than measurement book cumulative value");
+                else {
+                    List<String> wfStatus;
+                    try {
+                        wfStatus = JsonPath.read(measurementResponse, jsonPathForMeasurementWfStatus);
+                    } catch (Exception e) {
+                        throw new CustomException(JSONPATH_ERROR, "Failed to parse measurement search response for workflow");
+                    }
+                    Integer cumulativeValue = measurementCumulativeValue.get(0);
+                    if (!wfStatus.isEmpty() && !wfStatus.get(0).equalsIgnoreCase(ESTIMATE_APPROVED_STATUS)){
+                        List<Integer> measurementCurrentValue;
+                        try {
+                            measurementCurrentValue = JsonPath.read(measurementResponse, jsonPathForMeasurementCurrentValue.replace("{{yourDynamicValue}}", contractLineItemRefId));
+                        } catch (Exception e) {
+                            throw new CustomException(JSONPATH_ERROR, "Failed to parse measurement search response");
+                        }
+                        cumulativeValue = cumulativeValue - measurementCurrentValue.get(0);
+                    }
+
+                    if(estimateDetail1.getNoOfunit() < cumulativeValue){
+                        errorMap.put(INVALID_ESTIMATE_DETAIL, "No of Unit should not be less than measurement book cumulative value");
+                    }
                 }
             }
         });
