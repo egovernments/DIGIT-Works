@@ -295,26 +295,27 @@ public class ContractServiceValidator {
      */
 
     private void validateDocumentIdsAgainstDocumentService(ContractRequest contractRequest) {
+        if (CollectionUtils.isEmpty(contractRequest.getContract().getDocuments())) {
+            return;
+        }
         List<String> documentIds = contractRequest.getContract().getDocuments().stream().map(Document::getFileStore).collect(Collectors.toList());
 
-        if(!documentIds.isEmpty()){
-            // Make API request to file store service
-            String fileStoreResponse = getFileStoreResponse(documentIds, contractRequest.getContract().getTenantId());
+        // Make API request to file store service
+        String fileStoreResponse = getFileStoreResponse(documentIds, contractRequest.getContract().getTenantId());
 
-            // Match documentIds against fileStoreResponse
-            validateDocumentIdsAgainstFileStoreResponse(documentIds, fileStoreResponse);
+        // Match documentIds against fileStoreResponse
+        validateDocumentIdsAgainstFileStoreResponse(documentIds, fileStoreResponse);
 
-        }
     }
     /**
      * Api request to fileStore service
      */
     private String getFileStoreResponse(List<String> fileStoreIds, String tenantId) {
-        StringBuilder fileStoreUrl = new StringBuilder(config.getFileStoreHost()).append(config.getFileStoreContextPath());
+        StringBuilder fileStoreUrl = new StringBuilder(config.getFileStoreHost()).append(config.getFileStoreEndpoint());
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(fileStoreUrl.toString())
                 .queryParam("tenantId", tenantId);
         for (String fileStoreId : fileStoreIds) {
-            uriComponentsBuilder.queryParam("fileStoreId", fileStoreId);
+            uriComponentsBuilder.queryParam("fileStoreIds", fileStoreId);
         }
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.exchange(
