@@ -53,6 +53,15 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
             return (tot + amount * ob?.currentMBEntry)
         },0);
         SORAmount = SORAmount ? SORAmount : 0;
+        if(SORAmount == 0)
+        {
+            SORAmount = formData?.SORtable?.reduce((tot,ob) => {
+                let amountDetails = RatesData?.MdmsRes?.["WORKS-SOR"]?.Rates?.filter((rate) => rate?.sorId === ob?.sorId || rate?.sorId === ob?.sorCode)?.[0]?.amountDetails;
+                let amount = amountDetails?.reduce((total,item) => item?.heads?.includes(category) ? (item?.amount + total) : total,0);
+                return (tot + amount * ob?.currentMBEntry)
+            },0);
+        }
+
         //Conditions is used in the case of View details to capture the data from additional details
         if(category === "LH" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.labour) return formData?.additionalDetails?.labourMaterialAnalysis?.labour;
         if(category === "MA" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.material) return formData?.additionalDetails?.labourMaterialAnalysis?.material;
@@ -64,14 +73,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
         if(category === "MH" && SORAmount == 0 && formData?.labourMaterialAnalysis?.machinery) return formData?.labourMaterialAnalysis?.machinery;
         }
 
-        if(SORAmount == 0)
-        {
-            SORAmount = formData?.SORtable?.reduce((tot,ob) => {
-                let amountDetails = RatesData?.MdmsRes?.["WORKS-SOR"]?.Rates?.filter((rate) => rate?.sorId === ob?.sorId)?.[0]?.amountDetails;
-                let amount = amountDetails?.reduce((total,item) => item?.heads?.includes(category) ? (item?.amount + total) : total,0);
-                return (tot + amount * ob?.currentMBEntry)
-            },0);
-        }
+        SORAmount = SORAmount ? SORAmount : 0;
         return Digit.Utils.dss.formatterWithoutRound((SORAmount).toFixed(2),"number");        
     }
     

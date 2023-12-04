@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { transformEstimateData } from "../utils/transformEstimateData";
 
-export const data = (contract, estimateDetails, measurement, thumbnails) => {
+export const data = (contract, estimateDetails, measurement, allMeasurements, thumbnails) => {
   const [viewData, setViewData] = useState({ SOR: [], NONSOR: [] });
   
   useEffect(() => {
     const processArrays = () => {
       if (estimateDetails) {
         setViewData({
-          SOR: transformEstimateData(estimateDetails?.estimateDetails, contract, "SOR", measurement),
-          NONSOR: transformEstimateData(estimateDetails?.estimateDetails, contract, "NON-SOR", measurement),
+          SOR: transformEstimateData(estimateDetails?.estimateDetails, contract, "SOR", measurement, allMeasurements),
+          NONSOR: transformEstimateData(estimateDetails?.estimateDetails, contract, "NON-SOR", measurement, allMeasurements),
         });
       }
     };
