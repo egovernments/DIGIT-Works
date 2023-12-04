@@ -45,7 +45,7 @@ const ViewMeasurement = () => {
   }, [allData, tenantId, isMeasurementLoading]);
   let config = null;
 
-  config = data(allData?.contract, allData?.estimate, allData?.measurement, thumbnails);
+  config = data(allData?.contract, allData?.estimate, allData?.measurement, allData?.allMeasurements, thumbnails);
 
   if (isMeasurementLoading && config != null) {
     return <Loader />;
