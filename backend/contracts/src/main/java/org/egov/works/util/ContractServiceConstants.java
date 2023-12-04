@@ -105,4 +105,11 @@ public class ContractServiceConstants {
     public static final String REJECT_ACTION = "REJECT";
     public static final String ACCEPT_ACTION = "ACCEPT";
     public static final String APPROVE_ACTION = "APPROVE";
+
+    public static final String FILE_STORE_API_FAILURE = "FILE_STORE_API_FAILURE";
+    public static final String FILE_STORE_API_REQUEST_FAIL_MSG = "FileStore API request failed with status code: ";
+    public static final String INVALID_DOCUMENTS_CODE = "INVALID_DOCUMENTS";
+    public static final String INVALID_DOCUMENTS_MSG = "Document IDs are invalid";
+    public static final String PARSE_ERROR_CODE = "PARSE_ERROR";
+    public static final String PARSE_ERROR_MSG = "Error while parsing response from FileStore";
 }

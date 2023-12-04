@@ -14,9 +14,14 @@ import org.egov.works.util.*;
 import org.egov.works.repository.ContractRepository;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -83,6 +88,8 @@ public class ContractServiceValidator {
         // Validate request fields against MDMS data
         validateRequestFieldsAgainstMDMS(contractRequest);
 
+        // Validate documentIds against document service
+        validateDocumentIdsAgainstDocumentService(contractRequest);
 
         // Validate orgId against Organization service data
         validateOrganizationIdAgainstOrgService(contractRequest);
@@ -115,6 +122,9 @@ public class ContractServiceValidator {
 
         // Validate request fields against MDMS data
         validateRequestFieldsAgainstMDMS(contractRequest);
+
+        // Validate documentIds against document service
+        validateDocumentIdsAgainstDocumentService(contractRequest);
 
         // Validate provided contract for update should exist in DB
         validateContractAgainstDB(contractRequest);
@@ -276,6 +286,63 @@ public class ContractServiceValidator {
         }
 
         log.info("Executing Authority data validated against MDMS");
+    }
+
+    /**
+     * Get fileStore from documents and send call to filestore service and
+     * validate if all documents are present in response.
+     * @param contractRequest
+     */
+
+    private void validateDocumentIdsAgainstDocumentService(ContractRequest contractRequest) {
+        List<String> documentIds = contractRequest.getContract().getDocuments().stream().map(Document::getFileStore).collect(Collectors.toList());
+
+        if(!documentIds.isEmpty()){
+            // Make API request to file store service
+            String fileStoreResponse = getFileStoreResponse(documentIds, contractRequest.getContract().getTenantId());
+
+            // Match documentIds against fileStoreResponse
+            validateDocumentIdsAgainstFileStoreResponse(documentIds, fileStoreResponse);
+
+        }
+    }
+    /**
+     * Api request to fileStore service
+     */
+    private String getFileStoreResponse(List<String> fileStoreIds, String tenantId) {
+        StringBuilder fileStoreUrl = new StringBuilder(config.getFileStoreHost()).append(config.getFileStoreContextPath());
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(fileStoreUrl.toString())
+                .queryParam("tenantId", tenantId);
+        for (String fileStoreId : fileStoreIds) {
+            uriComponentsBuilder.queryParam("fileStoreId", fileStoreId);
+        }
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                uriComponentsBuilder.toUriString(),
+                HttpMethod.GET,
+                null,
+                String.class
+        );
+        if (responseEntity.getStatusCodeValue() == 200) {
+            // Read and return the response content as a string
+            return responseEntity.getBody();
+        } else {
+            // Handle non-200 status codes (e.g., by throwing an exception)
+            throw new CustomException(FILE_STORE_API_FAILURE, FILE_STORE_API_REQUEST_FAIL_MSG + responseEntity);
+        }
+    }
+    private void validateDocumentIdsAgainstFileStoreResponse(List<String> documentIds, String fileStoreResponse) {
+        Map<String, String> fileStoreResponseMap = new HashMap<>();
+        try{
+            fileStoreResponseMap = mapper.readValue(fileStoreResponse, Map.class);
+        } catch (IOException e) {
+            throw new CustomException(PARSE_ERROR_CODE, PARSE_ERROR_MSG);
+        }
+        for (String documentId : documentIds) {
+            if (!fileStoreResponseMap.containsKey(documentId)) {
+                throw new CustomException(INVALID_DOCUMENTS_CODE, INVALID_DOCUMENTS_MSG);
+            }
+        }
     }
 
     /**

@@ -153,7 +153,12 @@ public class ContractServiceConfiguration {
     @Value("${works.contract.search.endpoint}")
     private String contractEndpoint;
 
+    //Filestore service
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
 
+    @Value("${egov.filestore.context.path}")
+    private String fileStoreContextPath;
 
     //SMS notification
     @Value("${notification.sms.enabled}")
