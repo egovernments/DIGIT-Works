@@ -235,32 +235,36 @@ public class CalculationService {
     	 // Get all individuals who were originally registered to the register
         AttendanceRegisterResponse response = musterRollServiceUtil.fetchAttendanceRegister(musterRoll, requestInfo);
         List<AttendanceRegister> registers = response.getAttendanceRegister();
-        Set<String> allAttendees = null;
         if(registers!=null && !registers.isEmpty()) {
         	AttendanceRegister register = registers.get(0);
         	//Get all attendees of the register
-        	List<IndividualEntry> entries = register.getAttendees();
-        	if(entries!=null && !entries.isEmpty()) {
-        		allAttendees = entries.stream().map(IndividualEntry::getIndividualId).collect(Collectors.toSet());
-        		//Remove all attendees who have marked some sort of attendance. This leaves the once who registered but never marked a day's work
-                allAttendees.removeAll(attendeesWithLogs);
-                //Add these absentees to a list with zero as attendance days
-                for(String individual: allAttendees) {
-                	for(IndividualEntry entry: entries) {
-                		if(entry.getIndividualId().equals(individual)) {
-                			entry.setActualTotalAttendance(new BigDecimal(0));
-                			absentees.add(entry);            		}
-                	}
-                }//End of for
-        	}
-        	else {
-        		log.error("No attendees enrolled in register " + musterRoll.getRegisterId());
-        	}
+            getAllAttendees(musterRoll,register,attendeesWithLogs,absentees);
             
         }//End of if
         return absentees;
     }
 
+    private void getAllAttendees(MusterRoll musterRoll,AttendanceRegister register,Set<String> attendeesWithLogs,List<IndividualEntry> absentees) {
+        List<IndividualEntry> entries = register.getAttendees();
+        Set<String> allAttendees = null;
+
+        if(entries!=null && !entries.isEmpty()) {
+            allAttendees = entries.stream().map(IndividualEntry::getIndividualId).collect(Collectors.toSet());
+            //Remove all attendees who have marked some sort of attendance. This leaves the once who registered but never marked a day's work
+            allAttendees.removeAll(attendeesWithLogs);
+            //Add these absentees to a list with zero as attendance days
+            for(String individual: allAttendees) {
+                for(IndividualEntry entry: entries) {
+                    if(entry.getIndividualId().equals(individual)) {
+                        entry.setActualTotalAttendance(new BigDecimal(0));
+                        absentees.add(entry);            		}
+                }
+            }//End of for
+        }
+        else {
+            log.error("No attendees enrolled in register " + musterRoll.getRegisterId());
+        }
+    }
     /**
      * Calculate the total attendance for the individual
      * @param totalAttendance
