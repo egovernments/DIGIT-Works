@@ -37,10 +37,6 @@ class MusterRollValidatorTest {
     @Mock
     private MdmsUtil mdmsUtils;
     @Mock
-    private MusterRollRepository musterRollRepository;
-    @Mock
-    private MusterRollServiceConfiguration config;
-    @Mock
     private RestTemplate restTemplate;
 
 
@@ -150,8 +146,8 @@ class MusterRollValidatorTest {
 
     void getMockAttendanceRegisterSuccess() {
         //MOCK Attendance log search service response
-        lenient().when(config.getAttendanceLogHost()).thenReturn("http://localhost:8023");
-        lenient().when(config.getAttendanceRegisterEndpoint()).thenReturn("/attendance/v1/_search");
+        lenient().when(serviceConfiguration.getAttendanceLogHost()).thenReturn("http://localhost:8023");
+        lenient().when(serviceConfiguration.getAttendanceRegisterEndpoint()).thenReturn("/attendance/v1/_search");
         AttendanceRegisterResponse response = MusterRollRequestBuilderTest.getAttendanceRegisterResponse();
         lenient().when(restTemplate.postForObject(any(String.class),any(Object.class),any())).
                 thenReturn(response);

@@ -35,22 +35,23 @@ import static org.egov.util.MusterRollServiceConstants.*;
 @Slf4j
 public class MusterRollValidator {
 
-    @Autowired
-    private MusterRollServiceConfiguration serviceConfiguration;
+    private final MusterRollServiceConfiguration serviceConfiguration;
 
-    @Autowired
-    private MdmsUtil mdmsUtils;
+    private final MdmsUtil mdmsUtils;
 
-    @Autowired
-    private MusterRollServiceConfiguration config;
-
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     private static final String TENANT_ID = "TENANT_ID";
     private static final String MUSTER_ROLL = "MUSTER_ROLL";
     private static final String MUSTER_ROLL_IS_MANADATORY = "Muster roll is mandatory";
     private static final String TENANT_ID_IS_MANADATORY = "TenantId is mandatory";
+
+    @Autowired
+    public MusterRollValidator(MusterRollServiceConfiguration serviceConfiguration, MdmsUtil mdmsUtils, RestTemplate restTemplate) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.mdmsUtils = mdmsUtils;
+        this.restTemplate = restTemplate;
+    }
 
     /**
      * Validate muster roll in estimate service
@@ -269,7 +270,7 @@ public class MusterRollValidator {
         String id = requestInfo.getUserInfo().getUuid();
 
         StringBuilder uri = new StringBuilder();
-        uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
+        uri.append(serviceConfiguration.getAttendanceLogHost()).append(serviceConfiguration.getAttendanceRegisterEndpoint());
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("tenantId",musterRoll.getTenantId())
                 .queryParam("ids",musterRoll.getRegisterId())
