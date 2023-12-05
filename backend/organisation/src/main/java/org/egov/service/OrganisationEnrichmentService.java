@@ -275,22 +275,25 @@ public class OrganisationEnrichmentService {
             upsertFunctionList.addAll(updateFunctionList);
 
             //check any new function doc, if yes , set a new UUID
-            for (Function function : upsertFunctionList) {
-                List<Document> documents = function.getDocuments();
-                if (!CollectionUtils.isEmpty(documents)) {
-                    for (Document document : documents) {
-                        if (StringUtils.isBlank(document.getId())) {
-                            document.setId(UUID.randomUUID().toString());
-                            if (document.getIsActive() == null) {
-                                document.setIsActive(Boolean.TRUE);
-                            }
+            setUUID(upsertFunctionList);
+
+            organisation.setFunctions(upsertFunctionList);
+
+        }
+    }
+    private void setUUID(List<Function> upsertFunctionList){
+        for (Function function : upsertFunctionList) {
+            List<Document> documents = function.getDocuments();
+            if (!CollectionUtils.isEmpty(documents)) {
+                for (Document document : documents) {
+                    if (StringUtils.isBlank(document.getId())) {
+                        document.setId(UUID.randomUUID().toString());
+                        if (document.getIsActive() == null) {
+                            document.setIsActive(Boolean.TRUE);
                         }
                     }
                 }
             }
-
-            organisation.setFunctions(upsertFunctionList);
-
         }
     }
 }
