@@ -20,17 +20,21 @@ import static org.egov.util.MusterRollServiceConstants.*;
 @Slf4j
 public class NotificationService {
 
-    @Autowired
-    private Producer producer;
+    private final Producer producer;
+
+    private final NotificationUtil notificationUtil;
+
+    private final LocalizationUtil localizationUtil;
+
+    private final MusterRollServiceConfiguration config;
 
     @Autowired
-    private NotificationUtil notificationUtil;
-
-    @Autowired
-    private LocalizationUtil localizationUtil;
-
-    @Autowired
-    private MusterRollServiceConfiguration config;
+    public NotificationService(Producer producer, NotificationUtil notificationUtil, LocalizationUtil localizationUtil, MusterRollServiceConfiguration config) {
+        this.producer = producer;
+        this.notificationUtil = notificationUtil;
+        this.localizationUtil = localizationUtil;
+        this.config = config;
+    }
 
     /**
      * Sends sms notification to CBO based on action.
@@ -39,11 +43,11 @@ public class NotificationService {
     public void sendNotificationToCBO(MusterRollRequest musterRollRequest){
         String action = musterRollRequest.getWorkflow().getAction();
         if(action.equalsIgnoreCase(WF_SEND_BACK_TO_CBO_CODE) || action.equalsIgnoreCase(WF_APPROVE_CODE)) {
-                Map<String, String> CBODetails = notificationUtil.getCBOContactPersonDetails(musterRollRequest);
+                Map<String, String> cboDetails = notificationUtil.getCBOContactPersonDetails(musterRollRequest);
                 String amount = notificationUtil.getExpenseAmount(musterRollRequest);
 
                 String message = null;
-                String contactMobileNumber = CBODetails.get(CONTACT_MOBILE_NUMBER);
+                String contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
             if (musterRollRequest.getWorkflow().getAction().equalsIgnoreCase(WF_SEND_BACK_TO_CBO_CODE)) {
                 message = getMessage(musterRollRequest, CBO_NOTIFICATION_FOR_CORRECTION_LOCALIZATION_CODE);
             } else if (musterRollRequest.getWorkflow().getAction().equalsIgnoreCase(WF_APPROVE_CODE)) {

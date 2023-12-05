@@ -28,7 +28,7 @@ import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class MusterRollValidatorTest {
+class MusterRollValidatorTest {
 
     @InjectMocks
     private MusterRollValidator musterRollValidator;

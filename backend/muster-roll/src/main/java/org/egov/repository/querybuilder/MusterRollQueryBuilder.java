@@ -12,8 +12,7 @@ import java.util.List;
 @Component
 public class MusterRollQueryBuilder {
 
-    @Autowired
-    private MusterRollServiceUtil musterRollServiceUtil;
+    private final MusterRollServiceUtil musterRollServiceUtil;
 
     private static final String FETCH_MUSTER_ROLL_QUERY = "SELECT muster.id,muster.tenant_id,muster.musterroll_number,muster.attendance_register_id,muster.status,muster.musterroll_status,muster.start_date,muster.end_date,muster.createdby,muster.lastmodifiedby,muster.createdtime,muster.lastmodifiedtime,muster.additionaldetails,muster.reference_id,muster.service_code,"+
             "ind.id AS summaryId,ind.muster_roll_id AS indMusterId,ind.individual_id AS IndividualId,ind.actual_total_attendance AS actualTotalAttendance,ind.additionaldetails AS indAddlDetails,ind.createdby AS indCreatedBy,ind.lastmodifiedby AS indModifiedBy,ind.createdtime AS indCreatedTime,ind.lastmodifiedtime AS indModifiedTime,ind.modified_total_attendance AS modifiedTotalAttendance,"+
@@ -25,6 +24,11 @@ public class MusterRollQueryBuilder {
             "LEFT JOIN " +
             "eg_wms_attendance_entries AS attn " +
             "ON (attn.attendance_summary_id=ind.id) ";
+
+    @Autowired
+    public MusterRollQueryBuilder(MusterRollServiceUtil musterRollServiceUtil) {
+        this.musterRollServiceUtil = musterRollServiceUtil;
+    }
 
 
     public String getMusterSearchQuery(MusterRollSearchCriteria searchCriteria, List<Object> preparedStmtList, List<String> registerIds) {
@@ -124,9 +128,7 @@ public class MusterRollQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+        preparedStmtList.addAll(ids);
     }
 
     private void addLimitAndOffset(StringBuilder queryBuilder, MusterRollSearchCriteria criteria, List<Object> preparedStmtList) {

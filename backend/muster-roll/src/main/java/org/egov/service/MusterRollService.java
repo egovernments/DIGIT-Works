@@ -45,48 +45,53 @@ import static org.egov.util.MusterRollServiceConstants.STATUS_APPROVED;
 @Slf4j
 public class MusterRollService {
 
-    @Autowired
-    private MusterRollValidator musterRollValidator;
+    private final MusterRollValidator musterRollValidator;
+
+    private final EnrichmentService enrichmentService;
+
+    private final CalculationService calculationService;
+
+    private final WorkflowService workflowService;
+
+    private final NotificationService notificationService;
+
+    private final Producer producer;
+
+    private final MusterRollServiceConfiguration serviceConfiguration;
+
+    private final MusterRollRepository musterRollRepository;
+
+    private final ObjectMapper mapper;
+
+    private final MdmsUtil mdmsUtils;
+
+    private final MusterRollServiceUtil musterRollServiceUtil;
+
+    private final MusterRollServiceConfiguration config;
+
+    private final RestTemplate restTemplate;
+
+    private final ResponseInfoCreator responseInfoCreator;
+
+    private static final String COMPUTE_ATTENDENSE = "computeAttendance";
 
     @Autowired
-    private EnrichmentService enrichmentService;
-
-    @Autowired
-    private CalculationService calculationService;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private NotificationService notificationService;
-
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private MusterRollServiceConfiguration serviceConfiguration;
-
-    @Autowired
-    private MusterRollRepository musterRollRepository;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private MdmsUtil mdmsUtils;
-
-    @Autowired
-    private MusterRollServiceUtil musterRollServiceUtil;
-
-    @Autowired
-    private MusterRollServiceConfiguration config;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private ResponseInfoCreator responseInfoCreator;
-
+    public MusterRollService(CalculationService calculationService, MusterRollValidator musterRollValidator, EnrichmentService enrichmentService, WorkflowService workflowService, NotificationService notificationService, Producer producer, MusterRollServiceConfiguration serviceConfiguration, MusterRollRepository musterRollRepository, ObjectMapper mapper, RestTemplate restTemplate, MdmsUtil mdmsUtils, MusterRollServiceUtil musterRollServiceUtil, MusterRollServiceConfiguration config, ResponseInfoCreator responseInfoCreator) {
+        this.calculationService = calculationService;
+        this.musterRollValidator = musterRollValidator;
+        this.enrichmentService = enrichmentService;
+        this.workflowService = workflowService;
+        this.notificationService = notificationService;
+        this.producer = producer;
+        this.serviceConfiguration = serviceConfiguration;
+        this.musterRollRepository = musterRollRepository;
+        this.mapper = mapper;
+        this.restTemplate = restTemplate;
+        this.mdmsUtils = mdmsUtils;
+        this.musterRollServiceUtil = musterRollServiceUtil;
+        this.config = config;
+        this.responseInfoCreator = responseInfoCreator;
+    }
 
     /**
      * Calculates the per day attendance , attendance aggregate from startDate to endDate
@@ -166,10 +171,8 @@ public class MusterRollService {
 
         //populate response
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(filteredMusterRollList)
+        return MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(filteredMusterRollList)
                 .count(count).build();
-
-        return musterRollResponse;
     }
 
     /**
@@ -232,7 +235,7 @@ public class MusterRollService {
                 .toDate(musterRoll.getEndDate()).build();
         List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria,null);
         if (!CollectionUtils.isEmpty(musterRolls)) {
-            StringBuffer exceptionMessage = new StringBuffer();
+            StringBuilder exceptionMessage = new StringBuilder();
             exceptionMessage.append("Muster roll already exists for the register - ");
             exceptionMessage.append(musterRoll.getRegisterId());
             exceptionMessage.append(" with startDate - ");
@@ -256,8 +259,7 @@ public class MusterRollService {
         if (CollectionUtils.isEmpty(musterRolls)) {
             throw new CustomException("NO_MATCH_FOUND","Invalid Muster roll id - "+musterRoll.getId());
         }
-        MusterRoll existingMusterRoll = musterRolls.get(0);
-        return existingMusterRoll;
+        return musterRolls.get(0);
     }
 
     /**
@@ -269,8 +271,8 @@ public class MusterRollService {
        if (musterRoll.getAdditionalDetails() != null) {
            try {
                JsonNode node = mapper.readTree(mapper.writeValueAsString(musterRoll.getAdditionalDetails()));
-               if (node.findValue("computeAttendance") != null && StringUtils.isNotBlank(node.findValue("computeAttendance").textValue())) {
-                   String value = node.findValue("computeAttendance").textValue();
+               if (node.findValue(COMPUTE_ATTENDENSE) != null && StringUtils.isNotBlank(node.findValue(COMPUTE_ATTENDENSE).textValue())) {
+                   String value = node.findValue(COMPUTE_ATTENDENSE).textValue();
                    return BooleanUtils.toBoolean(value);
                }
            } catch (IOException e) {
@@ -313,11 +315,9 @@ public class MusterRollService {
         }
 
         List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
-        List<String> registerIds = attendanceRegisters.stream()
-                .map(register -> register.getId())
+        return attendanceRegisters.stream()
+                .map(AttendanceRegister::getId)
                 .collect(Collectors.toList());
-
-        return  registerIds;
     }
 
     /**
@@ -327,10 +327,9 @@ public class MusterRollService {
      * @return
      */
     private List<MusterRoll> applyLimitAndOffset(MusterRollSearchCriteria searchCriteria, List<MusterRoll> musterRollList) {
-        List<MusterRoll> musterRolls = musterRollList.stream()
+        return musterRollList.stream()
                         .skip(searchCriteria.getOffset())  // offset
                         .limit(searchCriteria.getLimit()) // limit
                         .collect(Collectors.toList());
-        return musterRolls;
     }
 }

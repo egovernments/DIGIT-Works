@@ -38,25 +38,29 @@ import static org.egov.util.MusterRollServiceConstants.*;
 @Slf4j
 public class CalculationService {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private MusterRollServiceConfiguration config;
+    private final MusterRollServiceConfiguration config;
 
-    @Autowired
-    private MdmsUtil mdmsUtils;
+    private final MdmsUtil mdmsUtils;
 
-    @Autowired
-    private MusterRollServiceUtil musterRollServiceUtil;
+    private final MusterRollServiceUtil musterRollServiceUtil;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     private int halfDayNumHours;
     private int fullDayNumHours;
     private boolean isRoundOffHours;
-    
+
+    @Autowired
+    public CalculationService(RestTemplate restTemplate, MusterRollServiceConfiguration config, MdmsUtil mdmsUtils, MusterRollServiceUtil musterRollServiceUtil, ObjectMapper mapper) {
+        this.restTemplate = restTemplate;
+        this.config = config;
+        this.mdmsUtils = mdmsUtils;
+        this.musterRollServiceUtil = musterRollServiceUtil;
+        this.mapper = mapper;
+    }
+
 
     /**
      * Calculate the per day attendance and attendance aggregate for each individual for create muster roll
@@ -89,7 +93,7 @@ public class CalculationService {
         List<IndividualEntry> individualEntriesFromRequest = musterRoll.getIndividualEntries();
         
         //Collect unique individuals from attendance logs
-        Set<String> attendeesWithLogs = new HashSet<String>();
+        Set<String> attendeesWithLogs = new HashSet<>();
         for(String individualId: individualExitAttendanceMap.keySet()) {
         	attendeesWithLogs.add(individualId);
         }
@@ -104,7 +108,7 @@ public class CalculationService {
         //Add all absentee individualIds as well
         individualIds.addAll(absenteesList.stream().map(entry-> entry.getIndividualId()).collect(Collectors.toSet()));
         List<Individual> individuals = fetchIndividualDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
-        List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
+        List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId());
 
         for (Map.Entry<String,List<LocalDateTime>> entry : individualExitAttendanceMap.entrySet()) {
             IndividualEntry individualEntry = new IndividualEntry();
@@ -237,7 +241,7 @@ public class CalculationService {
         	//Get all attendees of the register
         	List<IndividualEntry> entries = register.getAttendees();
         	if(entries!=null && !entries.isEmpty()) {
-        		allAttendees = entries.stream().map(entry -> entry.getIndividualId()).collect(Collectors.toSet());
+        		allAttendees = entries.stream().map(IndividualEntry::getIndividualId).collect(Collectors.toSet());
         		//Remove all attendees who have marked some sort of attendance. This leaves the once who registered but never marked a day's work
                 allAttendees.removeAll(attendeesWithLogs);
                 //Add these absentees to a list with zero as attendance days
@@ -372,15 +376,13 @@ public class CalculationService {
 
     private Map<String,List<LocalDateTime>> populateAttendanceLogEvents(List<AttendanceLog> attendanceLogList, String event) {
         //populate the map with key as individualId and value as the corresponding list of exit time
-        Map<String,List<LocalDateTime>> individualAttendanceMap = attendanceLogList.stream()
+        return attendanceLogList.stream()
                 .filter(attendanceLog -> attendanceLog.getType().equalsIgnoreCase(event))
                 .collect(Collectors.groupingBy(
-                        attendanceLog -> attendanceLog.getIndividualId(), //key
+                        AttendanceLog::getIndividualId, //key
                         LinkedHashMap::new, // populate the map
                         Collectors.mapping(attendanceLog -> Instant.ofEpochMilli(attendanceLog.getTime().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDateTime(),Collectors.toList()) //value is the list of timestamp
                 ));
-
-        return individualAttendanceMap;
     }
 
     /**
@@ -422,7 +424,7 @@ public class CalculationService {
         }
 
         if (attendanceLogResponse == null || attendanceLogResponse.getAttendance() == null) {
-            StringBuffer exceptionMessage = new StringBuffer();
+            StringBuilder exceptionMessage = new StringBuilder();
             exceptionMessage.append("No attendance log found for the register - ");
             exceptionMessage.append(musterRoll.getRegisterId());
             exceptionMessage.append(" with startDate - ");
@@ -455,8 +457,7 @@ public class CalculationService {
         }
 
         if (!CollectionUtils.isEmpty(musterRes)) {
-            for (Object object : musterRes) {
-                LinkedHashMap<String,String> codeValueMap = (LinkedHashMap<String, String>) object;
+            for (LinkedHashMap<String,String> codeValueMap : musterRes) {
                 String code = codeValueMap.get("code");
                 String value = codeValueMap.get("value");
                 switch (code) {
@@ -469,6 +470,7 @@ public class CalculationService {
                     case ROUND_OFF_HOURS :
                         isRoundOffHours = BooleanUtils.toBoolean(value);
                         break;
+                    default:
                 }
 
             }
@@ -534,7 +536,7 @@ public class CalculationService {
         }
 
         if (response == null || CollectionUtils.isEmpty(response.getIndividual())) {
-            StringBuffer exceptionMessage = new StringBuffer();
+            StringBuilder exceptionMessage = new StringBuilder();
             exceptionMessage.append("Indiviudal search returned empty response for registerId ");
             exceptionMessage.append(musterRoll.getRegisterId());
             exceptionMessage.append(" with startDate - ");
@@ -554,7 +556,7 @@ public class CalculationService {
      * @param ids
      *
      */
-    private List<BankAccount> fetchBankaccountDetails(List<String> ids,RequestInfo requestInfo, String tenantId, MusterRoll musterRoll){
+    private List<BankAccount> fetchBankaccountDetails(List<String> ids,RequestInfo requestInfo, String tenantId){
         // fetch the bank account details from bank account service
         StringBuilder uri = new StringBuilder();
         uri.append(config.getBankaccountsHost()).append(config.getBankaccountsSearchEndpoint());
@@ -578,14 +580,6 @@ public class CalculationService {
         }
 
         if (response == null || CollectionUtils.isEmpty(response.getBankAccounts())) {
-            /*StringBuffer exceptionMessage = new StringBuffer();
-            exceptionMessage.append("Bankaccounts search returned empty response for registerId ");
-            exceptionMessage.append(musterRoll.getRegisterId());
-            exceptionMessage.append(" with startDate - ");
-            exceptionMessage.append(musterRoll.getStartDate());
-            exceptionMessage.append(" and endDate - ");
-            exceptionMessage.append(musterRoll.getEndDate());
-            throw new CustomException("BANKACCOUNTS_SEARCH_SERVICE_EMPTY",exceptionMessage.toString());*/
             return new ArrayList<>();
         }
 

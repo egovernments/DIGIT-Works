@@ -42,14 +42,15 @@ public class MusterRollValidator {
     private MdmsUtil mdmsUtils;
 
     @Autowired
-    private MusterRollRepository musterRollRepository;
-
-    @Autowired
     private MusterRollServiceConfiguration config;
 
     @Autowired
     private RestTemplate restTemplate;
 
+    private static final String TENANT_ID = "TENANT_ID";
+    private static final String MUSTER_ROLL = "MUSTER_ROLL";
+    private static final String MUSTER_ROLL_IS_MANADATORY = "Muster roll is mandatory";
+    private static final String TENANT_ID_IS_MANADATORY = "TenantId is mandatory";
 
     /**
      * Validate muster roll in estimate service
@@ -62,8 +63,8 @@ public class MusterRollValidator {
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
 
-        validateRequestInfo(requestInfo, errorMap);
-        validateEstimateMusterRoll(musterRoll, errorMap);
+        validateRequestInfo(requestInfo);
+        validateEstimateMusterRollRequest(musterRoll);
 
         //split the tenantId and validate tenantId
         String tenantId = musterRoll.getTenantId();
@@ -88,8 +89,8 @@ public class MusterRollValidator {
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         Workflow workflow = musterRollRequest.getWorkflow();
 
-        validateRequestInfo(requestInfo, errorMap);
-        validateCreateMusterRoll(musterRoll, errorMap);
+        validateRequestInfo(requestInfo);
+        validateCreateMusterRollRequest(musterRoll);
         validateWorkFlow(workflow, errorMap);
 
         //split the tenantId and validate tenantId
@@ -118,9 +119,9 @@ public class MusterRollValidator {
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         Workflow workflow = musterRollRequest.getWorkflow();
 
-        validateRequestInfo(requestInfo, errorMap);
+        validateRequestInfo(requestInfo);
         validateWorkFlow(workflow, errorMap);
-        validateUpdateMusterRoll(musterRoll, requestInfo, workflow, errorMap);
+        validateUpdateMusterRollRequest(musterRoll);
 
         //split the tenantId and validate tenantId
         String tenantId = musterRoll.getTenantId();
@@ -145,12 +146,12 @@ public class MusterRollValidator {
             throw new CustomException("MUSTER_ROLL_SEARCH_CRITERIA_REQUEST", "Muster roll search criteria request is mandatory");
         }
         if (StringUtils.isBlank(searchCriteria.getTenantId())) {
-            throw new CustomException("TENANT_ID", "Tenant is mandatory");
+            throw new CustomException(TENANT_ID, "Tenant is mandatory");
         }
     }
 
 
-    private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
+    private void validateRequestInfo(RequestInfo requestInfo) {
         if (requestInfo == null) {
             throw new CustomException("REQUEST_INFO", "Request info is mandatory");
         }
@@ -162,12 +163,12 @@ public class MusterRollValidator {
         }
     }
 
-    private void validateCreateMusterRoll(MusterRoll musterRoll, Map<String, String> errorMap) {
+    private void validateCreateMusterRollRequest(MusterRoll musterRoll) {
         if (musterRoll == null) {
-            throw new CustomException("MUSTER_ROLL","Muster roll is mandatory");
+            throw new CustomException(MUSTER_ROLL,MUSTER_ROLL_IS_MANADATORY);
         }
         if (musterRoll.getTenantId() == null) {
-            throw new CustomException("TENANT_ID","TenantId is mandatory");
+            throw new CustomException(TENANT_ID,TENANT_ID_IS_MANADATORY);
         }
         if (musterRoll.getRegisterId() == null) {
             throw new CustomException("REGISTER_ID","RegisterId is mandatory");
@@ -194,12 +195,12 @@ public class MusterRollValidator {
 
     }
 
-    private void validateUpdateMusterRoll(MusterRoll musterRoll, RequestInfo requestInfo, Workflow workflow, Map<String, String> errorMap) {
+    private void validateUpdateMusterRollRequest(MusterRoll musterRoll) {
         if (musterRoll == null) {
-            throw new CustomException("MUSTER_ROLL","Muster roll is mandatory");
+            throw new CustomException(MUSTER_ROLL,MUSTER_ROLL_IS_MANADATORY);
         }
         if (musterRoll.getTenantId() == null) {
-            throw new CustomException("TENANT_ID","TenantId is mandatory");
+            throw new CustomException(TENANT_ID,TENANT_ID_IS_MANADATORY);
         }
         if (musterRoll.getId() == null) {
             throw new CustomException("MUSTER_ROLL_ID","MusterRollId is mandatory");
@@ -207,12 +208,12 @@ public class MusterRollValidator {
 
     }
 
-    private void validateEstimateMusterRoll(MusterRoll musterRoll, Map<String, String> errorMap) {
+    private void validateEstimateMusterRollRequest(MusterRoll musterRoll) {
         if (musterRoll == null) {
-            throw new CustomException("MUSTER_ROLL","Muster roll is mandatory");
+            throw new CustomException(MUSTER_ROLL,MUSTER_ROLL_IS_MANADATORY);
         }
         if (musterRoll.getTenantId() == null) {
-            throw new CustomException("TENANT_ID","TenantId is mandatory");
+            throw new CustomException(TENANT_ID,TENANT_ID_IS_MANADATORY);
         }
         if (musterRoll.getRegisterId() == null) {
             throw new CustomException("REGISTER_ID","RegisterId is mandatory");

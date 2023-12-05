@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class MusterRollServiceTest {
+class MusterRollServiceTest {
 
     @InjectMocks
     private MusterRollService musterRollService;
