@@ -19,14 +19,18 @@ import java.util.UUID;
 @Service
 public class OrganisationEnrichmentService {
 
-    @Autowired
-    private OrganisationUtil organisationUtil;
+    private final OrganisationUtil organisationUtil;
+
+    private final IdgenUtil idgenUtil;
+
+    private final Configuration config;
 
     @Autowired
-    private IdgenUtil idgenUtil;
-
-    @Autowired
-    private Configuration config;
+    public OrganisationEnrichmentService(OrganisationUtil organisationUtil, IdgenUtil idgenUtil, Configuration config) {
+        this.organisationUtil = organisationUtil;
+        this.idgenUtil = idgenUtil;
+        this.config = config;
+    }
 
 
     /**
@@ -253,7 +257,7 @@ public class OrganisationEnrichmentService {
 
             //get the application numbers for new function from Idgen service
             List<String> orgFunctionApplicationNumbers = new ArrayList<>();
-            if (createFunctionList.size() > 0) {
+            if (!createFunctionList.isEmpty()) {
                 orgFunctionApplicationNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getFunctionApplicationNumberName()
                         , config.getFunctionApplicationNumberFormat(), createFunctionList.size());
             }

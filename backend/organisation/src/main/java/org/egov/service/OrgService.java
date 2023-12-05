@@ -25,13 +25,4 @@ public class OrgService {
         return orgServiceRequest;
     }
 
-    public List<Organisation> searchOrganisation(RequestInfo requestInfo, OrgSearchCriteria searchCriteria) {
-
-        return Collections.emptyList();
-    }
-
-    public Integer countAllOrganisations(OrgSearchCriteria searchCriteria) {
-
-        return 0;
-    }
 }

@@ -18,29 +18,31 @@ import java.util.List;
 @Slf4j
 public class OrganisationService {
 
-    @Autowired
-    private OrganisationServiceValidator organisationServiceValidator;
+    private final OrganisationServiceValidator organisationServiceValidator;
+
+    private final OrganisationRepository organisationRepository;
+
+    private final OrganisationEnrichmentService organisationEnrichmentService;
+
+    private final Producer producer;
+
+    private final Configuration configuration;
+
+
+    private final IndividualService individualService;
+
+    private final NotificationService notificationService;
 
     @Autowired
-    private OrganisationRepository organisationRepository;
-
-    @Autowired
-    private OrganisationEnrichmentService organisationEnrichmentService;
-
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private Configuration configuration;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private IndividualService individualService;
-
-    @Autowired
-    private NotificationService notificationService;
+    public OrganisationService(OrganisationServiceValidator organisationServiceValidator, OrganisationRepository organisationRepository, OrganisationEnrichmentService organisationEnrichmentService, Producer producer, Configuration configuration, IndividualService individualService, NotificationService notificationService) {
+        this.organisationServiceValidator = organisationServiceValidator;
+        this.organisationRepository = organisationRepository;
+        this.organisationEnrichmentService = organisationEnrichmentService;
+        this.producer = producer;
+        this.configuration = configuration;
+        this.individualService = individualService;
+        this.notificationService = notificationService;
+    }
 
 
     /**
@@ -52,7 +54,6 @@ public class OrganisationService {
         log.info("OrganisationService::createOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateCreateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
-        //userService.createUser(orgRequest);
         individualService.createIndividual(orgRequest);
         producer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
         try {
@@ -72,7 +73,6 @@ public class OrganisationService {
         log.info("OrganisationService::updateOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichUpdateOrgRegistryWithoutWorkFlow(orgRequest);
-        //userService.updateUser(orgRequest);
         individualService.updateIndividual(orgRequest);
         try {
             notificationService.sendNotification(orgRequest,false);
@@ -91,8 +91,7 @@ public class OrganisationService {
     public List<Organisation> searchOrganisation(OrgSearchRequest orgSearchRequest) {
         log.info("OrganisationService::searchOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateSearchOrganisationRequest(orgSearchRequest);
-        List<Organisation> organisations = organisationRepository.getOrganisations(orgSearchRequest);
-        return organisations;
+        return organisationRepository.getOrganisations(orgSearchRequest);
     }
 
     /**

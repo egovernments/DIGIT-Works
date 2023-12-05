@@ -28,24 +28,28 @@ import java.util.stream.Collectors;
 @Slf4j
 public class IndividualService {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+    private final ServiceRequestRepository serviceRequestRepository;
+
+    private final Configuration config;
+
+    private final OrganisationRepository organisationRepository;
+
+    private final Producer producer;
+    private final MultiStateInstanceUtil multiStateInstanceUtil;
+    private static final String ILLEGAL_ARGUMENT_EXCEPTION = "IllegalArgumentException";
+    private static final String OBJECTMAPPER_CONVERSION_ERROR = "ObjectMapper not able to convertValue in individualCall";
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private Configuration config;
-
-    @Autowired
-    private OrganisationRepository organisationRepository;
-
-    @Autowired
-    private Producer producer;
-    @Autowired
-    private MultiStateInstanceUtil multiStateInstanceUtil;
-    @Autowired
-    private ObjectMapper objectMapper;
+    public IndividualService(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration config, OrganisationRepository organisationRepository, Producer producer, MultiStateInstanceUtil multiStateInstanceUtil) {
+        this.mapper = mapper;
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+        this.organisationRepository = organisationRepository;
+        this.producer = producer;
+        this.multiStateInstanceUtil = multiStateInstanceUtil;
+    }
 
     /**
      * Creates individual for the organisation - contact details, if it is not created already
@@ -55,7 +59,6 @@ public class IndividualService {
     public void createIndividual(OrgRequest request) {
         log.info("UserService::createIndividual");
         List<Organisation> organisationList = request.getOrganisations();
-        //String tenantId = organisationList.get(0).getTenantId();
         StringBuilder uri = new StringBuilder(config.getIndividualHost());
         String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
         RequestInfo requestInfo = request.getRequestInfo();
@@ -72,7 +75,7 @@ public class IndividualService {
 
             Individual newUser = Individual.builder().build();
             addIndividualDefaultFields(stateLevelTenantId, role, newUser, contactDetails, true, null);
-            IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, stateLevelTenantId);
+            IndividualBulkResponse response = individualExists(contactDetails, requestInfo, Boolean.TRUE, stateLevelTenantId);
             List<Individual> existingIndividualFromService = response.getIndividual();
             IndividualResponse individualResponse;
             List<String> existingRoleCode = new ArrayList<>();
@@ -100,7 +103,7 @@ public class IndividualService {
     }
 
     public void updateContactDetails(ContactDetails contactDetails, String tenantId, RequestInfo requestInfo, Role role) {
-        IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
+        IndividualBulkResponse response = individualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
         StringBuilder uri = new StringBuilder(config.getIndividualHost());
         if (!CollectionUtils.isEmpty(response.getIndividual())) {
             Individual existingIndividual = response.getIndividual().get(0);
@@ -188,7 +191,7 @@ public class IndividualService {
     }
 
     private void addContactAsOrgMember(ContactDetails contactDetails, String tenantId, RequestInfo requestInfo, Role role) {
-        IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
+        IndividualBulkResponse response = individualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
         StringBuilder uri = new StringBuilder(config.getIndividualHost());
 
         if (!CollectionUtils.isEmpty(response.getIndividual())) {
@@ -218,7 +221,6 @@ public class IndividualService {
 
     private IndividualResponse createIndividualFromIndividualService(RequestInfo requestInfo, Individual newIndividual, ContactDetails contactDetails) {
         log.info("IndividualService::createIndividualFromIndividualService");
-        IndividualResponse response;
         StringBuilder uri = new StringBuilder(config.getIndividualHost())
                 .append(config.getIndividualCreateEndpoint());
 
@@ -240,7 +242,7 @@ public class IndividualService {
      * @param requestInfo        RequestInfo from the propertyRequest
      * @return UserDetailResponse containing the user if present and the responseInfo
      */
-    private IndividualBulkResponse IndividualExists(ContactDetails contactDetails, RequestInfo requestInfo, boolean isCreate, String tenantId) {
+    private IndividualBulkResponse individualExists(ContactDetails contactDetails, RequestInfo requestInfo, boolean isCreate, String tenantId) {
         log.info("IndividualService::Individual Exists");
         IndividualSearchRequest searchRequest = getIndividualSearchRequest(requestInfo);
         if (isCreate) {
@@ -274,10 +276,7 @@ public class IndividualService {
         individual.setIsSystemUser(true);
         individual.setUserDetails(userDetails);
         individual.setIsSystemUserActive(true);
-        /*user.setType(UserType.CITIZEN);
-        user.setRoles(Collections.singleton(role));
-        user.setActive(Boolean.TRUE);
-        user.setUsername(contactDetails.getContactMobileNumber());*/
+
         if (!isCreate) {
             individual.setId(existingIndividual.getId());
             individual.setRowVersion(existingIndividual.getRowVersion());
@@ -349,14 +348,13 @@ public class IndividualService {
 
             if (response != null) {
                 LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response;
-                IndividualBulkResponse individualResponse = mapper.convertValue(responseMap, IndividualBulkResponse.class);
-                return individualResponse;
+                return mapper.convertValue(responseMap, IndividualBulkResponse.class);
             } else {
                 return new IndividualBulkResponse(ResponseInfo.builder().build(), new ArrayList<>());
             }
         }
         catch (Exception e) {
-            throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in individualCall");
+            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION, OBJECTMAPPER_CONVERSION_ERROR);
         }
     }
 
@@ -370,14 +368,13 @@ public class IndividualService {
 
             if (response != null) {
                 LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response;
-                IndividualResponse individualResponse = mapper.convertValue(responseMap, IndividualResponse.class);
-                return individualResponse;
+                return mapper.convertValue(responseMap, IndividualResponse.class);
             } else {
                 return new IndividualResponse(ResponseInfo.builder().build(), new Individual());
             }
         }
         catch (Exception e) {
-            throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in individualCall");
+            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION, OBJECTMAPPER_CONVERSION_ERROR);
         }
     }
 
@@ -389,14 +386,13 @@ public class IndividualService {
 
             if (response != null) {
                 LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response;
-                IndividualResponse individualResponse = mapper.convertValue(responseMap, IndividualResponse.class);
-                return individualResponse;
+                return mapper.convertValue(responseMap, IndividualResponse.class);
             } else {
                 return new IndividualResponse(ResponseInfo.builder().build(), new Individual());
             }
         }
         catch (Exception e) {
-            throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in individualCall");
+            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION, OBJECTMAPPER_CONVERSION_ERROR);
         }
     }
 
@@ -415,7 +411,6 @@ public class IndividualService {
             contactDetails.setCreatedDate(System.currentTimeMillis());
             contactDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
             contactDetails.setLastModifiedDate(System.currentTimeMillis());
-            //contactDetails.setActive(userDetailResponse.getUser().get(0).getActive());
         }
     }
 

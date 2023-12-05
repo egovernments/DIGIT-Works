@@ -62,7 +62,7 @@ import org.junit.jupiter.api.Test;
 @WebMvcTest(OrganisationApiController.class)
 @Import(TestConfiguration.class)
 @AutoConfigureMockMvc
-public class OrganisationApiControllerTest {
+class OrganisationApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -98,7 +98,7 @@ public class OrganisationApiControllerTest {
 
     @Test
     @DisplayName("Organisation request should pass with API Operation CREATE")
-    public void createProjectPostSuccess() throws Exception {
+    void createProjectPostSuccess() throws Exception {
         OrgRequest orgRequest = OrganisationRequestTestBuilder.builder().withRequestInfo().addGoodOrganisationForCreate().build();
         when(organisationService.createOrganisationWithoutWorkFlow(any(OrgRequest.class))).thenReturn(orgRequest);
 
