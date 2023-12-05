@@ -32,6 +32,17 @@ public class MusterRollQueryBuilder {
 
 
     public String getMusterSearchQuery(MusterRollSearchCriteria searchCriteria, List<Object> preparedStmtList, List<String> registerIds) {
+        StringBuilder queryBuilder = prepareSearchQuery(searchCriteria, preparedStmtList, registerIds);
+
+        //if the search is only based on tenantId and also registerIds is not part of search, add limit and offset at query level
+        //tenant id based search by JE or ME
+        if ((registerIds == null || registerIds.isEmpty()) && musterRollServiceUtil.isTenantBasedSearch(searchCriteria)) {
+            addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
+        }
+
+        return queryBuilder.toString();
+    }
+    private StringBuilder prepareSearchQuery(MusterRollSearchCriteria searchCriteria, List<Object> preparedStmtList, List<String> registerIds){
         StringBuilder queryBuilder = new StringBuilder(FETCH_MUSTER_ROLL_QUERY);
 
         List<String> ids = searchCriteria.getIds();
@@ -98,14 +109,7 @@ public class MusterRollQueryBuilder {
             queryBuilder.append(" muster.musterroll_status=? ");
             preparedStmtList.add(searchCriteria.getMusterRollStatus());
         }
-
-        //if the search is only based on tenantId and also registerIds is not part of search, add limit and offset at query level
-        //tenant id based search by JE or ME
-        if ((registerIds == null || registerIds.isEmpty()) && musterRollServiceUtil.isTenantBasedSearch(searchCriteria)) {
-            addLimitAndOffset(queryBuilder, searchCriteria, preparedStmtList);
-        }
-
-        return queryBuilder.toString();
+        return queryBuilder;
     }
 
 
