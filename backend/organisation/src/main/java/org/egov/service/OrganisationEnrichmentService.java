@@ -90,77 +90,104 @@ public class OrganisationEnrichmentService {
             List<Jurisdiction> jurisdictionList = organisation.getJurisdiction();
 
             //org address
-            if (!CollectionUtils.isEmpty(orgAddressList)) {
-                for (Address address : orgAddressList) {
-                    address.setId(UUID.randomUUID().toString());
-                    address.getGeoLocation().setId(UUID.randomUUID().toString());
-                }
-            }
+            enrichOrgAddress(orgAddressList);
 
             //contact detail
-            if (!CollectionUtils.isEmpty(contactDetailsList)) {
-                for (ContactDetails contactDetails : contactDetailsList) {
-                    contactDetails.setId(UUID.randomUUID().toString());
-                }
-            }
+            enrichContactDetails(contactDetailsList);
 
             //org document
-            if (!CollectionUtils.isEmpty(documentList)) {
-                for (Document document : documentList) {
-                    document.setId(UUID.randomUUID().toString());
-                    if (document.getIsActive() == null) {
-                        document.setIsActive(Boolean.TRUE);
-                    }
-                }
-            }
+            enrichOrgDocument(documentList);
 
             //org tax identifier
-            if (!CollectionUtils.isEmpty(identifierList)) {
-                for (Identifier identifier : identifierList) {
-                    identifier.setId(UUID.randomUUID().toString());
-                    if (identifier.getIsActive() == null) {
-                        identifier.setIsActive(Boolean.TRUE);
-                    }
-                }
-            }
+            enrichTaxIdentifier(identifierList);
 
             //set id, audit details, application number for function
-            if (!CollectionUtils.isEmpty(functionList)) {
-
-                organisationUtil.setAuditDetailsForFunction(requestInfo.getUserInfo().getUuid(), functionList, Boolean.TRUE);
-
-                for (Function function : functionList) {
-                    function.setId(UUID.randomUUID().toString());
-                    function.setApplicationNumber(orgFunctionApplicationNumbers.get(funcAppNumIdFormatIndex));
-                    if (function.getIsActive() == null) {
-                        function.setIsActive(Boolean.TRUE);
-                    }
-
-                    List<Document> documents = function.getDocuments();
-                    if (!CollectionUtils.isEmpty(documents)) {
-                        for (Document funcDocument : documents) {
-                            funcDocument.setId(UUID.randomUUID().toString());
-                            if (funcDocument.getIsActive() == null) {
-                                funcDocument.setIsActive(Boolean.TRUE);
-                            }
-                        }
-                    }
-                    funcAppNumIdFormatIndex++;
-
-                }
-            }
+            enrichFunction(requestInfo, functionList, orgFunctionApplicationNumbers, funcAppNumIdFormatIndex);
 
             //jurisdiction
-            if (!CollectionUtils.isEmpty(jurisdictionList)) {
-                for (Jurisdiction jurisdiction : jurisdictionList) {
-                    jurisdiction.setId(UUID.randomUUID().toString());
-                }
-            }
+            enrichJurisdiction(jurisdictionList);
 
             orgAppNumIdFormatIndex++;
         }
 
 
+    }
+
+    private void enrichJurisdiction(List<Jurisdiction> jurisdictionList) {
+        if (!CollectionUtils.isEmpty(jurisdictionList)) {
+            for (Jurisdiction jurisdiction : jurisdictionList) {
+                jurisdiction.setId(UUID.randomUUID().toString());
+            }
+        }
+    }
+
+    private void enrichFunction(RequestInfo requestInfo,List<Function> functionList, List<String> orgFunctionApplicationNumbers, int funcAppNumIdFormatIndex) {
+        if (!CollectionUtils.isEmpty(functionList)) {
+
+            organisationUtil.setAuditDetailsForFunction(requestInfo.getUserInfo().getUuid(), functionList, Boolean.TRUE);
+
+            for (Function function : functionList) {
+                function.setId(UUID.randomUUID().toString());
+                function.setApplicationNumber(orgFunctionApplicationNumbers.get(funcAppNumIdFormatIndex));
+                if (function.getIsActive() == null) {
+                    function.setIsActive(Boolean.TRUE);
+                }
+
+                List<Document> documents = function.getDocuments();
+                enrichDocuments(documents);
+                funcAppNumIdFormatIndex++;
+
+            }
+        }
+    }
+
+    private void enrichDocuments(List<Document> documents) {
+        if (!CollectionUtils.isEmpty(documents)) {
+            for (Document funcDocument : documents) {
+                funcDocument.setId(UUID.randomUUID().toString());
+                if (funcDocument.getIsActive() == null) {
+                    funcDocument.setIsActive(Boolean.TRUE);
+                }
+            }
+        }
+    }
+
+    private void enrichTaxIdentifier(List<Identifier> identifierList) {
+        if (!CollectionUtils.isEmpty(identifierList)) {
+            for (Identifier identifier : identifierList) {
+                identifier.setId(UUID.randomUUID().toString());
+                if (identifier.getIsActive() == null) {
+                    identifier.setIsActive(Boolean.TRUE);
+                }
+            }
+        }
+    }
+
+    private void enrichOrgDocument(List<Document> documentList) {
+        if (!CollectionUtils.isEmpty(documentList)) {
+            for (Document document : documentList) {
+                document.setId(UUID.randomUUID().toString());
+                if (document.getIsActive() == null) {
+                    document.setIsActive(Boolean.TRUE);
+                }
+            }
+        }
+    }
+
+    private void enrichOrgAddress(List<Address> orgAddressList){
+        if (!CollectionUtils.isEmpty(orgAddressList)) {
+            for (Address address : orgAddressList) {
+                address.setId(UUID.randomUUID().toString());
+                address.getGeoLocation().setId(UUID.randomUUID().toString());
+            }
+        }
+    }
+    private void enrichContactDetails(List<ContactDetails> contactDetailsList){
+        if (!CollectionUtils.isEmpty(contactDetailsList)) {
+            for (ContactDetails contactDetails : contactDetailsList) {
+                contactDetails.setId(UUID.randomUUID().toString());
+            }
+        }
     }
 
     /**
