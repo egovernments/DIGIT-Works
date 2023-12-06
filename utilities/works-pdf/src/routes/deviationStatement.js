@@ -62,7 +62,7 @@ router.post(
                     }
                     
                     catch (ex) {
-                        if (ex.response && ex.response.data) console.log(ex.response.data);
+                        if (ex.response && ex.response.data)
                         return renderError(res, "Failed to generate PDF for estimates", 500);
                     }
 
