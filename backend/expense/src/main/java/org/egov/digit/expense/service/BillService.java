@@ -32,29 +32,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BillService {
 	
-	@Autowired
-	private Producer producer;
+	private final Producer producer;
 	
-	@Autowired
-	private Configuration config;
+	private final Configuration config;
 	
-	@Autowired
-	private BillValidator validator;
+	private final BillValidator validator;
 	
-	@Autowired
-	private WorkflowUtil workflowUtil;
+	private final WorkflowUtil workflowUtil;
 	
-	@Autowired
-	private BillRepository billRepository;
+	private final BillRepository billRepository;
 	
-	@Autowired
-	private EnrichmentUtil enrichmentUtil;
+	private final EnrichmentUtil enrichmentUtil;
 	
-	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
+	private final ResponseInfoFactory responseInfoFactory;
+
+	private final NotificationService notificationService;
 
 	@Autowired
-	private NotificationService notificationService;
+	public BillService(Producer producer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService) {
+		this.producer = producer;
+		this.config = config;
+		this.validator = validator;
+		this.workflowUtil = workflowUtil;
+		this.billRepository = billRepository;
+		this.enrichmentUtil = enrichmentUtil;
+		this.responseInfoFactory = responseInfoFactory;
+		this.notificationService = notificationService;
+	}
 
 	/**
 	 * Validates the Bill Request and sends to repository for create
@@ -152,13 +156,12 @@ public class BillService {
 		
 		if (isWfEncrichRequired && bills != null && !bills.isEmpty())
 			enrichWfstatusForBills(bills, billCriteria.getTenantId(), billSearchRequest.getRequestInfo());
-		
-		BillResponse response = BillResponse.builder()
+
+		return BillResponse.builder()
 				.bills(bills)
 				.pagination(billSearchRequest.getPagination())
 				.responseInfo(responseInfo)
 				.build();
-		return response;
 	}
 
 	private void enrichWfstatusForBills(List<Bill> bills, String tenantId, RequestInfo requestInfo) {

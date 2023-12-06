@@ -41,26 +41,30 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PaymentService {
 
-    @Autowired
-    private PaymentValidator validator;
+    private final PaymentValidator validator;
+
+    private final Producer producer;
+
+    private final Configuration config;
+
+    private final BillService billService;
+
+    private final EnrichmentUtil enrichmentUtil;
+
+    private final ResponseInfoFactory responseInfoFactory;
+
+    private final PaymentRepository paymentRepository;
 
     @Autowired
-    private Producer producer;
-
-    @Autowired
-    private Configuration config;
-
-    @Autowired
-    private BillService billService;
-
-    @Autowired
-    private EnrichmentUtil enrichmentUtil;
-
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
-
-    @Autowired
-    private PaymentRepository paymentRepository;
+    public PaymentService(PaymentValidator validator, Producer producer, Configuration config, BillService billService, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, PaymentRepository paymentRepository) {
+        this.validator = validator;
+        this.producer = producer;
+        this.config = config;
+        this.billService = billService;
+        this.enrichmentUtil = enrichmentUtil;
+        this.responseInfoFactory = responseInfoFactory;
+        this.paymentRepository = paymentRepository;
+    }
 
     public PaymentResponse create(@Valid PaymentRequest paymentRequest) {
     	
@@ -119,7 +123,6 @@ public class PaymentService {
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, true);
         
-        Boolean isPaymentCancelled = payment.getStatus().equals(PaymentStatus.CANCELLED);
 
         Set<String> billIds = paymentRequest.getPayment().getBills()
                 .stream().map(PaymentBill::getBillId)
@@ -198,21 +201,11 @@ public class PaymentService {
      */
     private BigDecimal getLineItemPaidAmountByStatus(LineItem lineItem, PaymentStatus paymentStatus) {
         BigDecimal paidAmount = BigDecimal.ZERO;
-        if (lineItem != null && paymentStatus != null) {
-            if (paymentStatus.equals(PaymentStatus.SUCCESSFUL))
-                paidAmount = lineItem.getAmount();
+        if (lineItem != null && paymentStatus != null && (paymentStatus.equals(PaymentStatus.SUCCESSFUL)))
+                {paidAmount = lineItem.getAmount();
         }
         return paidAmount;
     }
-
-	private BigDecimal getResultantAmount(BigDecimal billPaidAmount, BigDecimal paymentPaidAmount,
-			Boolean isPaymentCancelled) {
-		
-		if(isPaymentCancelled)
-			return billPaidAmount.subtract(paymentPaidAmount);
-		
-		return billPaidAmount.add(paymentPaidAmount);
-	}
 
 
 }

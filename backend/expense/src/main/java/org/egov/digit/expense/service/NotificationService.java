@@ -19,16 +19,20 @@ import static org.egov.digit.expense.config.Constants.*;
 @Service
 @Slf4j
 public class NotificationService {
+    private final Producer producer;
+    private final NotificationUtil notificationUtil;
+    private final LocalizationUtil localizationUtil;
+    private final Configuration config;
+    private final HRMSUtils hrmsUtils;
+
     @Autowired
-    private Producer producer;
-    @Autowired
-    private NotificationUtil notificationUtil;
-    @Autowired
-    private LocalizationUtil localizationUtil;
-    @Autowired
-    private Configuration config;
-    @Autowired
-    private HRMSUtils hrmsUtils;
+    public NotificationService(Producer producer, NotificationUtil notificationUtil, LocalizationUtil localizationUtil, Configuration config, HRMSUtils hrmsUtils) {
+        this.producer = producer;
+        this.notificationUtil = notificationUtil;
+        this.localizationUtil = localizationUtil;
+        this.config = config;
+        this.hrmsUtils = hrmsUtils;
+    }
 
 
     public void sendNotificationForPurchaseBill(BillRequest billRequest){
@@ -40,11 +44,11 @@ public class NotificationService {
             String message = null;
             String contactMobileNumber = null;
             if (action.equalsIgnoreCase(APPROVE_CODE)) {
-                Map<String, String> CBODetails = notificationUtil.getVendorContactPersonDetails(billRequest.getRequestInfo(),
+                Map<String, String> cboDetails = notificationUtil.getVendorContactPersonDetails(billRequest.getRequestInfo(),
                         billRequest.getBill().getTenantId(),
                         billRequest.getBill().getBillDetails().get(0).getPayee().getIdentifier());
                 message = getMessage(billRequest.getRequestInfo(), billRequest.getBill().getTenantId(), PURCHASE_BILL_APPROVE_TO_VENDOR_LOCALIZATION_CODE);
-                contactMobileNumber = CBODetails.get(CONTACT_MOBILE_NUMBER);
+                contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
 
             } else if (action.equalsIgnoreCase(REJECT_CODE)) {
 

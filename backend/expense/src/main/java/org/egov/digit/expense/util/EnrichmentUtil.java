@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
-import org.egov.digit.expense.util.GenderUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillRequest;
@@ -34,16 +33,20 @@ import static org.egov.digit.expense.config.Constants.GENDER;
 @Component
 public class EnrichmentUtil {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
+
+    private final IdgenUtil idgenUtil;
+
+    private final GenderUtil genderUtil;
 
     @Autowired
-    private IdgenUtil idgenUtil;
+    public EnrichmentUtil(Configuration config, IdgenUtil idgenUtil, GenderUtil genderUtil) {
+        this.config = config;
+        this.idgenUtil = idgenUtil;
+        this.genderUtil = genderUtil;
+    }
 
-    @Autowired
-    private GenderUtil genderUtil;
-
-    public BillRequest encrichBillForCreate(BillRequest billRequest) {
+    public void encrichBillForCreate(BillRequest billRequest) {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
@@ -99,10 +102,9 @@ public class EnrichmentUtil {
 
             }
         }
-		return billRequest;
     }
 
-	public BillRequest encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest, List<Bill> billsFromSearch) {
+	public void encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest, List<Bill> billsFromSearch) {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
@@ -183,7 +185,6 @@ public class EnrichmentUtil {
                 }
             }
         }
-        return billRequest;
     }
 
 
@@ -256,7 +257,6 @@ public class EnrichmentUtil {
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         Long time = System.currentTimeMillis();
-//        payment.setAuditDetails(getAuditDetails(createdBy, false));
 
         // Update each payment status based on request status
         Map<String, PaymentBill> billMap = payment.getBills().stream()
@@ -315,7 +315,7 @@ public class EnrichmentUtil {
 
         Long time = System.currentTimeMillis();
 
-        if (isCreate)
+        if (Boolean.TRUE.equals(isCreate))
             return AuditDetails.builder()
                     .createdBy(by)
                     .createdTime(time)

@@ -31,8 +31,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 	
+	private final ObjectMapper mapper;
 	@Autowired
-	private ObjectMapper mapper;
+	public PaymentRowMapper(ObjectMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	@Override
 	public List<Payment> extractData(ResultSet rs) throws SQLException {
