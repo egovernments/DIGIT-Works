@@ -1,47 +1,84 @@
 const { logger } = require("../logger");
 
-const transformDeviationData = (estimate) => {
+const transformDeviationData = (data) => {
 
     //iterate over estimate make an array of object which contains estimateNumber, projectNumber, projectName and description and an array of estimateDetails
     var estimates = {};
-    estimates["estimateNumber"] = estimate.estimates[0].estimateNumber;
-    estimates["projectNumber"] = estimate.estimates[0].additionalDetails.projectNumber;
-    estimates["projectName"] = estimate.estimates[0].additionalDetails.projectName;
-    estimates["description"] = estimate.estimates[0].description;
-    //set revision number
-    estimates["revisionNumber"] = estimate.estimates[0].revisionNumber;
-    var estimateDetails = [];
-    for(let i=0;i<estimate.estimates[0].estimateDetails.length;i++){
-        if(estimate.estimates[0].estimateDetails[i].category=="OVERHEAD"){
+    estimates["estimateNumber"] = data.estimates[0].estimateNumber;
+    estimates["projectNumber"] = data.estimates[0].additionalDetails.projectNumber;
+    estimates["projectName"] = data.estimates[0].additionalDetails.projectName;
+    estimates["description"] = data.estimates[0].description;
+    estimates["revisionNumber"] = data.estimates[0].revisionNumber;
+    var sorIdMap = {};
+
+    for (const estimateDetail of data.estimates[0].estimateDetails) {
+        if (estimateDetail.category === "OVERHEAD") {
             continue;
         }
-        else{
-            estimateDetails.push(estimate.estimates[0].estimateDetails[i]);
+    
+        const { sorId, isDeduction, name, description, uom, unitRate, quantity, amountDetail } = estimateDetail;
+    
+        if (sorIdMap[sorId] === undefined) {
+            const amount = isDeduction ? -amountDetail[0].amount : amountDetail[0].amount;
+    
+            sorIdMap[sorId] = {
+                sorId,
+                name,
+                description,
+                uom,
+                unitRate,
+                quantity,
+                amount,
+                deviation: "NO",
+                originalQuantity: 0,
+                originalAmount: 0
+            };
+        } else {
+            const sorIdEntry = sorIdMap[sorId];
+            const amountChange = isDeduction ? -amountDetail[0].amount : amountDetail[0].amount;
+    
+            sorIdEntry.amount += amountChange;
+            sorIdEntry.quantity += isDeduction ? -quantity : quantity;
         }
+    }
+
+    // iterate over estimateDetails of last estimate and check if sorId is present in sorIdMap then check if isDeduction is true then subtract the amount from originalAmount and quantity from originalQuantity and if isDeduction is false then add the amount to originalAmount and quantity to originalQuantity
+
+    const lastIndex = data.estimates.length - 1;
+const originalEstimateDetails = data.estimates[lastIndex].estimateDetails;
+
+for (const estimateDetail of originalEstimateDetails) {
+    if (estimateDetail.category === "OVERHEAD") {
+        continue;
+    }
+
+    const { sorId, isDeduction, amountDetail, quantity } = estimateDetail;
+    const sorIdEntry = sorIdMap[sorId];
+
+    if (sorIdEntry !== undefined) {
+        const amountChange = isDeduction ? -amountDetail[0].amount : amountDetail[0].amount;
+
+        sorIdEntry.originalAmount += isDeduction ? -amountChange : amountChange;
+        sorIdEntry.originalQuantity += isDeduction ? -quantity : quantity;
+
+        // Set deviation based on originalAmount and amount
+        if (sorIdEntry.originalAmount === sorIdEntry.amount) {
+            sorIdEntry.deviation = "No";
+        } else if (sorIdEntry.originalAmount < sorIdEntry.amount) {
+            sorIdEntry.deviation = "Excess";
+        } else {
+            sorIdEntry.deviation = "Less";
+        }
+    }
+}
+
+    var estimateDetails = [];
+    for(var key in sorIdMap){
+        estimateDetails.push(sorIdMap[key]);
     }
     estimates["estimateDetails"] = estimateDetails;
 
-    var lastEstimateDetails= estimate.estimates[estimate.estimates.length-1].estimateDetails;
-    // now iterate over estimates["estimateDetails"] and match sorId with lastEstimateDetails and if it matches then take the quantity and amount from that lastEstimateDetails and add it to the object of estimates["estimateDetails"] corresponding to that sorId
-    for(let i=0;i<estimates["estimateDetails"].length;i++){
-        var sorId = estimates["estimateDetails"][i].sorId;
-        for(let j=0;j<lastEstimateDetails.length;j++){
-            if(sorId==lastEstimateDetails[j].sorId){
-                estimates["estimateDetails"][i].originalQuantity = lastEstimateDetails[j].quantity;
-                estimates["estimateDetails"][i].originalAmount = lastEstimateDetails[j].amountDetail[0].amount;
-                // create a new field named "deviation" and check if originalAmount is greater than amount then deviation is negative else positive
-                if(estimates["estimateDetails"][i].originalAmount>estimates["estimateDetails"][i].amountDetail[0].amount){
-                    estimates["estimateDetails"][i].deviation = "Less";
-                }
-                else if(estimates["estimateDetails"][i].originalAmount==estimates["estimateDetails"][i].amountDetail[0].amount){
-                    estimates["estimateDetails"][i].deviation = "No";
-                }
-                else{
-                    estimates["estimateDetails"][i].deviation = "Excess";
-                }
-            }
-        }
-    }
+
 
     return estimates;
 
