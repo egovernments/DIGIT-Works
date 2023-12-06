@@ -103,90 +103,87 @@ public class EnrichmentUtil {
             }
         }
     }
-
-	public void encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest, List<Bill> billsFromSearch) {
+    public void encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest, List<Bill> billsFromSearch) {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
         AuditDetails updateAudit = getAuditDetails(createdBy, false);
         AuditDetails createAudit = getAuditDetails(createdBy, true);
-        
+
         Bill billFromSearch = billsFromSearch.get(0);
 
         // Add createdBy and createdTime to updateAudit
         updateAudit.setCreatedBy(billFromSearch.getAuditDetails().getCreatedBy());
         updateAudit.setCreatedTime(billFromSearch.getAuditDetails().getCreatedTime());
 
-		bill.setAuditDetails(updateAudit);
+        bill.setAuditDetails(updateAudit);
 
-		Party payer = bill.getPayer();
-		if (payer.getId() == null)
-			payer.setId(billFromSearch.getPayer().getId());
-		payer.setAuditDetails(updateAudit);
-		
+        Party payer = bill.getPayer();
+        if (payer.getId() == null)
+            payer.setId(billFromSearch.getPayer().getId());
+        payer.setAuditDetails(updateAudit);
+
         Map<String, BillDetail> billDetailMap = billsFromSearch.stream()
                 .map(Bill::getBillDetails)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 
         for (BillDetail billDetail : bill.getBillDetails()) {
-
-            /*
-             * Enrich new bill detail
-             */
-            if (null == billDetail.getId()) {
-
-                billDetail.setId(UUID.randomUUID().toString());
-                billDetail.setAuditDetails(createAudit);
-                
-                Party payee = billDetail.getPayee();
-                payee.setId(UUID.randomUUID().toString());
-                payee.setAuditDetails(createAudit);
-                
-                for (LineItem lineItem : billDetail.getLineItems()) {
-                    lineItem.setId(UUID.randomUUID().toString());
-                    lineItem.setAuditDetails(createAudit);
-                }
-
-                for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
-                    payablelineItem.setId(UUID.randomUUID().toString());
-                    payablelineItem.setAuditDetails(createAudit);
-                }
-            }
-            /*
-             * Enrich update of bill detail
-             */
-            else {
-
-            	BillDetail detailFromSearch = billDetailMap.get(billDetail.getId());
-            	
-                billDetail.setAuditDetails(createAudit);
-                billDetail.getPayee().setId(detailFromSearch.getPayee().getId()); 
-                billDetail.getPayee().setAuditDetails(createAudit);
-
-                for (LineItem lineItem : billDetail.getLineItems()) {
-
-                    if (null == lineItem.getId()) { /* new line item */
-
-                        lineItem.setId(UUID.randomUUID().toString());
-                        lineItem.setAuditDetails(createAudit);
-                    } else { /* updating line item */
-                        lineItem.setAuditDetails(createAudit);
-                    }
-                }
-
-                for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
-
-                    if (null == payablelineItem.getId()) { /* new payable line item */
-                        payablelineItem.setId(UUID.randomUUID().toString());
-                        payablelineItem.setAuditDetails(createAudit);
-                    } else /* updating payable line item */
-                        payablelineItem.setAuditDetails(createAudit);
-                }
-            }
+            enrichBillDetail(billDetail, billDetailMap, createAudit);
         }
     }
 
+    private void enrichBillDetail(BillDetail billDetail, Map<String, BillDetail> billDetailMap, AuditDetails createAudit) {
+        if (null == billDetail.getId()) {
+            enrichNewBillDetail(billDetail, createAudit);
+        } else {
+            enrichExistingBillDetail(billDetail, billDetailMap, createAudit);
+        }
+    }
+
+    private void enrichNewBillDetail(BillDetail billDetail, AuditDetails createAudit) {
+        billDetail.setId(UUID.randomUUID().toString());
+        billDetail.setAuditDetails(createAudit);
+
+        Party payee = billDetail.getPayee();
+        payee.setId(UUID.randomUUID().toString());
+        payee.setAuditDetails(createAudit);
+
+        for (LineItem lineItem : billDetail.getLineItems()) {
+            lineItem.setId(UUID.randomUUID().toString());
+            lineItem.setAuditDetails(createAudit);
+        }
+
+        for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
+            payablelineItem.setId(UUID.randomUUID().toString());
+            payablelineItem.setAuditDetails(createAudit);
+        }
+    }
+
+    private void enrichExistingBillDetail(BillDetail billDetail, Map<String, BillDetail> billDetailMap, AuditDetails createAudit) {
+        BillDetail detailFromSearch = billDetailMap.get(billDetail.getId());
+
+        billDetail.setAuditDetails(createAudit);
+        billDetail.getPayee().setId(detailFromSearch.getPayee().getId());
+        billDetail.getPayee().setAuditDetails(createAudit);
+
+        for (LineItem lineItem : billDetail.getLineItems()) {
+            enrichLineItem(lineItem, createAudit);
+        }
+
+        for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
+            enrichLineItem(payablelineItem, createAudit);
+        }
+    }
+
+    private void enrichLineItem(LineItem lineItem, AuditDetails createAudit) {
+        if (null == lineItem.getId()) { /* new line item */
+            lineItem.setId(UUID.randomUUID().toString());
+            lineItem.setAuditDetails(createAudit);
+        } else { /* updating line item */
+            lineItem.setAuditDetails(createAudit);
+        }
+    }
 
     public void enrichSearchBillRequest(BillSearchRequest billSearchRequest) {
 
