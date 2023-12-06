@@ -14,7 +14,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     const {t} = useTranslation();
     const { register, errors, setValue, getValues, formData } = props
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    let isCreate = window.location.href.includes("/measurement/create") || window.location.href.includes("/estimate/create-detailed-estimate");
+    let isCreateOrUpdate = /(measurement\/create|estimate\/create-detailed-estimate|estimate\/update-detailed-estimate|measurement\/update)/.test(window.location.href);
     //Defined the codes for charges upserted in mdmsV2
     const ChargesCodeMapping = {
         LabourCost : "LH",
@@ -23,6 +23,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     }
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
+    let isEstimate = window.location.href.includes("/estimate/");
 
     const requestCriteria = {
         url: "/mdms-v2/v1/_search",
@@ -81,21 +82,21 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     
   return (
         <Fragment>
-        <LinkButton className="view-Analysis-button" style={isCreate ? {marginTop:"-3.5%"}: {}} onClick={() => setIsPopupOpen(true)} label={t("ESTIMATE_ANALYSIS_STM")}></LinkButton>
+        <LinkButton className="view-Analysis-button" style={isCreateOrUpdate ? {marginTop:"-3.5%",textAlign:"center"}: {textAlign:"center"}} onClick={() => setIsPopupOpen(true)} label={isEstimate ? t("ESTIMATE_ANALYSIS_STM") : t("MB_UTILIZATION_STM")}></LinkButton>
         {isPopupOpen && <PopUp>
             <div className="popup-view-alaysis">
             <Card>
-            <CardSectionHeader className="estimate-analysis-cardheader">{t(`ESTIMATE_COST_ANALYSIS_HEADER`)}</CardSectionHeader>
+            <CardSectionHeader className="estimate-analysis-cardheader">{isEstimate ? t(`ESTIMATE_COST_ANALYSIS_HEADER`): t(`MB_UTILIZATION_STM_HEADER`)}</CardSectionHeader>
             <LabelFieldPair style={{marginBottom:'1rem', marginTop:"5rem", justifyContent:"space-between"}}>
-                <CardLabel className="analysis-estimate-label">{`${t(`ESTIMATE_LABOUR_COST`)}`}</CardLabel>
+                <CardLabel className="analysis-estimate-label">{isEstimate ? `${t(`ESTIMATE_LABOUR_COST`)}`: t(`MB_LABOUR_UTILIZATION`)}</CardLabel>
                 <CardLabel>{getAnalysisCost(ChargesCodeMapping?.LabourCost)}</CardLabel>
             </LabelFieldPair >
             <LabelFieldPair style={{marginBottom:'1rem', justifyContent:"space-between"}}>
-                <CardLabel className="analysis-estimate-label">{`${t(`ESTIMATE_MATERIAL_COST`)}`}</CardLabel>
+                <CardLabel className="analysis-estimate-label">{isEstimate ? `${t(`ESTIMATE_MATERIAL_COST`)}` : t(`MB_MATERIAL_UTILIZATION`)}</CardLabel>
                 <CardLabel>{getAnalysisCost(ChargesCodeMapping?.MaterialCost)}</CardLabel>
             </LabelFieldPair>
             <LabelFieldPair style={{marginBottom:'3rem', justifyContent:"space-between"}}>
-                <CardLabel className="analysis-estimate-label">{`${t(`ESTIMATE_MACHINERY_COST`)}`}</CardLabel>
+                <CardLabel className="analysis-estimate-label">{isEstimate ? `${t(`ESTIMATE_MACHINERY_COST`)}` : t("MB_MACHINERY_UTILIZATION")}</CardLabel>
                 <CardLabel>{getAnalysisCost(ChargesCodeMapping?.MachineryCost)}</CardLabel>
             </LabelFieldPair>
             <Button

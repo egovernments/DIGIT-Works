@@ -70,6 +70,8 @@ const CreateMeasurement = ({ props }) => {
           ...defaultValues?.contractDetails,
           period: data?.period,
           musterRollNumber: data?.musterRollNumber,
+          uploadedDocs: defaultValues?.uploadedDocs,
+          documents : defaultValues?.documents,
         });
         setDefaultState({
           SOR: defaultValues?.SOR,
@@ -79,6 +81,8 @@ const CreateMeasurement = ({ props }) => {
           contract: data?.contract,
           estimate: data?.estimate,
           contractDetails: defaultValues?.contractDetails,
+          uploadedDocs: defaultValues?.uploadedDocs,
+          documents : defaultValues?.documents,
         });
         createState?.accessors?.setValue?.("SOR", defaultValues?.SOR);
         createState?.accessors?.setValue?.("NONSOR", defaultValues?.NONSOR);
@@ -178,8 +182,8 @@ const CreateMeasurement = ({ props }) => {
   // }, [createState]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (!_.isEqual(formData, createState)) {
-      // setState({ ...createState, ...formData })
+    if (!_.isEqual(formData?.uploadedDocs, createState?.uploadedDocs)) {
+      setState({ ...createState, ...formData })
     }
     // console.log(formData, "---formData-", createState);
   };

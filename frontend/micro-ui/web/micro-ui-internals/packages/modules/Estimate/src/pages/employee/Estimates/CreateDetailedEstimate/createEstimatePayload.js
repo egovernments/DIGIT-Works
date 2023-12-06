@@ -214,7 +214,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
         },
       },
       workflow: {
-        action:  (estimate?.wfStatus === "PENDINGFORCORRECTION") ? "RE-SUBMIT" : data?.workflowAction,
+        action:  (estimate?.wfStatus === "PENDINGFORCORRECTION" && data?.wfAction === "SUBMIT") ? "RE-SUBMIT" : data?.workflowAction,
         comment: filteredFormData?.comments,
         assignees: [filteredFormData?.selectedApprover?.uuid ? filteredFormData?.selectedApprover?.uuid : undefined],
       },
