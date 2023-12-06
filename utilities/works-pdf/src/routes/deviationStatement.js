@@ -35,7 +35,7 @@ router.post(
                 resEstimate = await search_estimateDetails(tenantId, requestinfo, estimateNumber);
             }
             catch (ex) {
-                if (ex.response && ex.response.data) console.log(ex.response.data);
+                if (ex.response && ex.response.data)
                 return renderError(res, "Failed to query details of the estimate", 500);
             }
             var estimate = resEstimate.data;
