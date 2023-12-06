@@ -34,6 +34,8 @@ module.exports = {
       process.env.WORK_ORDER_TEMPLATE_HINDI || "work-order-hindi",
     work_order_template_odiya:
       process.env.WORK_ORDER_TEMPLATE_ODIYA || "work-order-odiya",
+    deviationStatement_template: process.env.MEASUREMENT_TEMPLATE || "deviation-statement",
+
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
@@ -42,7 +44,7 @@ module.exports = {
   },
   host: {
     mdms: process.env.EGOV_MDMS_HOST || 'http://localhost:8083',
-    pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8082',
+    pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8091',
     user: process.env.EGOV_USER_HOST || HOST,
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
     projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081/',
@@ -72,7 +74,9 @@ module.exports = {
     bankaccount_search: "/bankaccount-service/bankaccount/v1/_search",
     expense_calculator_estimate: "/expense-calculator/v1/_estimate",
     expense_calculator_search: "/expense-calculator/v1/_search",
-    localization_search: "/localization/messages/v1/_search"
+    localization_search: "/localization/messages/v1/_search",
+    deviationStatement_search: "/estimate/v1/_search",
+
   },
   constraints: {
     "beneficiaryIdByHeadCode": "Deduction_{tanentId}_{headcode}"
