@@ -87,7 +87,7 @@ export const transformMeasureObject = (measurement = {}) => {
 
 export const getDefaultValues = (data, t) => {
   const { contract, estimate, allMeasurements, measurement, musterRollNumber, period } = data;
-  console.log(allMeasurements);
+
   const SOR = transformEstimateData(estimate?.estimateDetails, contract, "SOR", measurement, allMeasurements);
   const NONSOR = transformEstimateData(estimate?.estimateDetails, contract, "NON-SOR", measurement, allMeasurements);
 
@@ -105,6 +105,27 @@ export const getDefaultValues = (data, t) => {
   const projectLocation = `${Pward ? Pward + ", " : ""}${city}`;
   const measurementPeriod = `${Digit.DateUtils.ConvertEpochToDate(period?.startDate)} - ${Digit.DateUtils.ConvertEpochToDate(period?.endDate)}`;
   const musterRoll = typeof musterRollNumber == "string" ? musterRollNumber : "NA";
+
+  const uploadedDocs = {}
+  allMeasurements?.[0]?.documents.forEach(doc=>{
+        if(doc?.fileStore){
+            uploadedDocs[doc?.additionalDetails?.fileType==="Others" ? "ESTIMATE_DOC_OTHERS" :doc?.additionalDetails?.fileType] = [
+                [
+                    doc?.additionalDetails?.fileName,
+                    {
+                        file:{
+                          name: doc?.additionalDetails?.fileName,
+                        },
+                        fileStoreId:{
+                            fileStoreId:doc.fileStore,
+                            tenantId:doc?.additionalDetails?.tenantId
+                        }
+                    },
+                    doc?.id
+                ]
+            ]
+        }
+    })
   const contractDetails = {
     contractNumber,
     projectID,
@@ -116,5 +137,5 @@ export const getDefaultValues = (data, t) => {
     measurementPeriod: measurementPeriod,
   };
 
-  return { SOR, NONSOR, contractDetails };
+  return { SOR, NONSOR, contractDetails, uploadedDocs, documents:measurement?.documents || allMeasurements?.[0]?.documents };
 };

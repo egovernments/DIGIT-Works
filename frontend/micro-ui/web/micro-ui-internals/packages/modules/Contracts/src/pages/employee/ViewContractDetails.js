@@ -24,10 +24,7 @@ const ViewContractDetails = () => {
     const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
 
     const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
-    const [actionsMenu, setActionsMenu] = useState([{
-        name:"CREATE_MEASUREMENT_REQUEST",
-        action:"CREATE_MEASUREMENT"
-    }]);
+    const [actionsMenu, setActionsMenu] = useState([]);
 
     
 
@@ -76,6 +73,20 @@ const ViewContractDetails = () => {
         }
     })
 
+    //fetching measurement data
+    const requestCriteria = {
+        url : "/mukta-services/measurement/_search",
+    
+        body: {
+          "contractNumber" : contractId,
+          "tenantId" : tenantId
+        }
+    
+      }
+    
+    
+      const {isLoading, data:measurementData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
+      let isInWorkflowMeasurementPresent = measurementData?.allMeasurements?.filter((ob) => ob?.wfStatus === "SUBMITTED" || ob?.wfStatus === "VERIFIED" || ob?.wfStatus === "DRAFTED")?.length>0;
 
     
     useEffect(() => {
@@ -104,6 +115,12 @@ const ViewContractDetails = () => {
                 action:"TIME_EXTENSTION"
             }]))
         }
+
+        if(!isInWorkflowMeasurementPresent && measurementData)
+        setActionsMenu((prevState => [...prevState,{
+            name:"CREATE_MEASUREMENT_REQUEST",
+            action:"CREATE_MEASUREMENT"
+        }]))
 
     }, [data])
 
