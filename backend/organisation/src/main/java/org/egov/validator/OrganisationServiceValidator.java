@@ -117,17 +117,7 @@ public class OrganisationServiceValidator {
 
         for (Organisation organisation : organisationList) {
             if (!CollectionUtils.isEmpty(organisation.getFunctions())) {
-                for (Function function : organisation.getFunctions()) {
-                    if (StringUtils.isNotBlank(function.getType())) {
-                        orgTypeReqSet.add(function.getType());
-                    }
-                    if (StringUtils.isNotBlank(function.getCategory())) {
-                        orgFuncCategoryReqSet.add(function.getCategory());
-                    }
-                    if (StringUtils.isNotBlank(function.getPropertyClass())) {
-                        orgFuncClassReqSet.add(function.getPropertyClass());
-                    }
-                }
+                enrichOrgTypeAndFuncCategory(organisation, orgTypeReqSet, orgFuncCategoryReqSet, orgFuncClassReqSet);
             }
             if (!CollectionUtils.isEmpty(organisation.getIdentifiers())) {
                 for (Identifier identifier : organisation.getIdentifiers()) {
@@ -166,43 +156,35 @@ public class OrganisationServiceValidator {
             errorMap.put("INVALID_TENANT_ID", "The tenant: " + tenantId + NOT_PRESENT_IN_MDMS);
 
         //org type
-        if (CollectionUtils.isEmpty(orgTypeRes)) {
-            errorMap.put("INVALID_ORG_TYPE", "The org type is not configured in MDMS");
-        } else {
-            if (!CollectionUtils.isEmpty(orgTypeReqSet)) {
-                orgTypeReqSet.removeAll(orgTypeRes);
-                if (!CollectionUtils.isEmpty(orgTypeReqSet)) {
-                    errorMap.put("INVALID_ORG_TYPE", "The org types: " + orgTypeReqSet + NOT_PRESENT_IN_MDMS);
-                }
-            }
-        }
+        validateOrgType(orgTypeReqSet, orgTypeRes, errorMap);
 
         //org function category
-        if (CollectionUtils.isEmpty(orgFuncCategoryRes)) {
-            errorMap.put("INVALID_ORG.FUNCTION_CATEGORY", "The org function category is not configured in MDMS");
-        } else {
-            if (!CollectionUtils.isEmpty(orgFuncCategoryReqSet)) {
-                orgFuncCategoryReqSet.removeAll(orgFuncCategoryRes);
-                if (!CollectionUtils.isEmpty(orgFuncCategoryReqSet)) {
-                    errorMap.put("INVALID_ORG.FUNCTION_CATEGORY", "The org function category: " + orgFuncCategoryReqSet + NOT_PRESENT_IN_MDMS);
-                }
-            }
-        }
+        validateOrgFunctionCategory(orgFuncCategoryReqSet, orgFuncCategoryRes, errorMap);
 
         //org function class
-        if (CollectionUtils.isEmpty(orgFuncClassRes)) {
-            errorMap.put("INVALID_ORG.FUNCTION_CLASS", "The org function class is not configured in MDMS");
-        } else {
-            if (!CollectionUtils.isEmpty(orgFuncClassReqSet)) {
-                orgFuncClassReqSet.removeAll(orgFuncClassRes);
-                if (!CollectionUtils.isEmpty(orgFuncClassReqSet)) {
-                    errorMap.put("INVALID_ORG.FUNCTION_CLASS", "The org function class: " + orgFuncClassReqSet + NOT_PRESENT_IN_MDMS);
-                }
-            }
-        }
+        validateOrgFunctionClass(orgFuncClassReqSet, orgFuncClassRes, errorMap);
 
 
         //org identifier type
+        validateOrgIdentifierType(orgIdentifierReqSet, orgIdentifierRes, errorMap);
+
+    }
+
+    private void enrichOrgTypeAndFuncCategory(Organisation organisation, Set<String> orgTypeReqSet, Set<String> orgFuncCategoryReqSet, Set<String> orgFuncClassReqSet) {
+        for (Function function : organisation.getFunctions()) {
+            if (StringUtils.isNotBlank(function.getType())) {
+                orgTypeReqSet.add(function.getType());
+            }
+            if (StringUtils.isNotBlank(function.getCategory())) {
+                orgFuncCategoryReqSet.add(function.getCategory());
+            }
+            if (StringUtils.isNotBlank(function.getPropertyClass())) {
+                orgFuncClassReqSet.add(function.getPropertyClass());
+            }
+        }
+    }
+
+    private void validateOrgIdentifierType(Set<String> orgIdentifierReqSet, List<Object> orgIdentifierRes, Map<String, String> errorMap) {
         if (CollectionUtils.isEmpty(orgIdentifierRes)) {
             errorMap.put("INVALID_ORG.IDENTIFIER_TYPE", "The org identifier type is not configured in MDMS");
         } else {
@@ -213,7 +195,45 @@ public class OrganisationServiceValidator {
                 }
             }
         }
+    }
 
+    private void validateOrgFunctionClass(Set<String> orgFuncClassReqSet, List<Object> orgFuncClassRes, Map<String, String> errorMap) {
+        if (CollectionUtils.isEmpty(orgFuncClassRes)) {
+            errorMap.put("INVALID_ORG.FUNCTION_CLASS", "The org function class is not configured in MDMS");
+        } else {
+            if (!CollectionUtils.isEmpty(orgFuncClassReqSet)) {
+                orgFuncClassReqSet.removeAll(orgFuncClassRes);
+                if (!CollectionUtils.isEmpty(orgFuncClassReqSet)) {
+                    errorMap.put("INVALID_ORG.FUNCTION_CLASS", "The org function class: " + orgFuncClassReqSet + NOT_PRESENT_IN_MDMS);
+                }
+            }
+        }
+    }
+
+    private void validateOrgFunctionCategory(Set<String> orgFuncCategoryReqSet, List<Object> orgFuncCategoryRes, Map<String, String> errorMap) {
+        if (CollectionUtils.isEmpty(orgFuncCategoryRes)) {
+            errorMap.put("INVALID_ORG.FUNCTION_CATEGORY", "The org function category is not configured in MDMS");
+        } else {
+            if (!CollectionUtils.isEmpty(orgFuncCategoryReqSet)) {
+                orgFuncCategoryReqSet.removeAll(orgFuncCategoryRes);
+                if (!CollectionUtils.isEmpty(orgFuncCategoryReqSet)) {
+                    errorMap.put("INVALID_ORG.FUNCTION_CATEGORY", "The org function category: " + orgFuncCategoryReqSet + NOT_PRESENT_IN_MDMS);
+                }
+            }
+        }
+    }
+
+    private void validateOrgType(Set<String> orgTypeReqSet, List<Object> orgTypeRes, Map<String, String> errorMap) {
+        if (CollectionUtils.isEmpty(orgTypeRes)) {
+            errorMap.put("INVALID_ORG_TYPE", "The org type is not configured in MDMS");
+        } else {
+            if (!CollectionUtils.isEmpty(orgTypeReqSet)) {
+                orgTypeReqSet.removeAll(orgTypeRes);
+                if (!CollectionUtils.isEmpty(orgTypeReqSet)) {
+                    errorMap.put("INVALID_ORG_TYPE", "The org types: " + orgTypeReqSet + NOT_PRESENT_IN_MDMS);
+                }
+            }
+        }
     }
 
     private void validateOrganisationDetails(List<Organisation> organisationList) {
