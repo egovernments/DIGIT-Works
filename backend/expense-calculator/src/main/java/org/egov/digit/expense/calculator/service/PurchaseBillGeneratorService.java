@@ -27,28 +27,38 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 @Component
 public class PurchaseBillGeneratorService {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-    @Autowired
-    private CommonUtil commonUtil;
+    private final CommonUtil commonUtil;
 
-    @Autowired
-    private ExpenseCalculatorConfiguration configs;
+    private final ExpenseCalculatorConfiguration configs;
     
-    @Autowired
-    private IdgenUtil idgenUtil;
+    private final IdgenUtil idgenUtil;
     
-    @Autowired
-    private MdmsUtils mdmsUtil;
+    private final MdmsUtils mdmsUtil;
+
+    private final ContractUtils contractUtils;
+
+    private final ExpenseCalculatorConfiguration config;
+    private static final String SERVICE_PLACEHOLDER = "] and service [";
+    private static final String INVALID_HEAD_CODE = "INVALID_HEAD_CODE";
+    private static final String INVALID_HEAD_CODE_PLACEHOLDER = "Invalid head code [";
+    private static final String FOR_SERVICE_PLACEHOLDER = "] for service [";
+    private static final String CATEGORY_MISSING = "CATEGORY_MISSING";
+
 
     @Autowired
-    private ContractUtils contractUtils;
+    public PurchaseBillGeneratorService(ObjectMapper mapper, CommonUtil commonUtil, ExpenseCalculatorConfiguration configs, IdgenUtil idgenUtil, MdmsUtils mdmsUtil, ContractUtils contractUtils, ExpenseCalculatorConfiguration config) {
+        this.mapper = mapper;
+        this.commonUtil = commonUtil;
+        this.configs = configs;
+        this.idgenUtil = idgenUtil;
+        this.mdmsUtil = mdmsUtil;
+        this.contractUtils = contractUtils;
+        this.config = config;
+    }
 
-    @Autowired
-    private ExpenseCalculatorConfiguration config;
-
-    public Bill createPurchaseBill(RequestInfo requestInfo,PurchaseBill providedPurchaseBill,List<Payer> payers , List<HeadCode> headCodes , List<ApplicableCharge> applicableCharges,Map<String, String> metaInfo) {
+    public Bill createPurchaseBill(RequestInfo requestInfo,PurchaseBill providedPurchaseBill , List<HeadCode> headCodes , List<ApplicableCharge> applicableCharges,Map<String, String> metaInfo) {
         // Get TenantId
         String tenantId = providedPurchaseBill.getTenantId();
         // Get documents
@@ -102,7 +112,7 @@ public class PurchaseBillGeneratorService {
         return purchaseBill;
     }
 
-    public Bill updatePurchaseBill(RequestInfo requestInfo,PurchaseBill providedPurchaseBill,List<Payer> payers , List<HeadCode> headCodes , List<ApplicableCharge> applicableCharges,Map<String, String> metaInfo) {
+    public Bill updatePurchaseBill(RequestInfo requestInfo,PurchaseBill providedPurchaseBill , List<HeadCode> headCodes , List<ApplicableCharge> applicableCharges,Map<String, String> metaInfo) {
         // Get Id
         String id = providedPurchaseBill.getId();
         // Get TenantId
@@ -145,7 +155,8 @@ public class PurchaseBillGeneratorService {
         populateBillAdditionalDetails(providedPurchaseBill,DOCUMENTS_CONSTANT, documents);
         // Generate the bill
         log.info("Update purchase bill for referenceId ["+referenceId+"]");
-        Bill purchaseBill = Bill.builder()
+
+        return Bill.builder()
                 .tenantId(tenantId)
                 .id(id)
                 .billDate(providedPurchaseBill.getInvoiceDate())
@@ -162,8 +173,6 @@ public class PurchaseBillGeneratorService {
                 .billDetails(providedPurchaseBill.getBillDetails())
                 .additionalDetails(providedPurchaseBill.getAdditionalDetails())
                 .build();
-
-        return purchaseBill;
     }
 
     private void calculateAndSetNetLineItemAmount(BillDetail billDetail) {
@@ -185,7 +194,7 @@ public class PurchaseBillGeneratorService {
         String tenantId = billDetail.getTenantId();
         BigDecimal expense = BigDecimal.ZERO;
         BigDecimal deduction = BigDecimal.ZERO;
-        List<LineItem> lineItemWithZeroAmount=new ArrayList<LineItem>();
+        List<LineItem> lineItemWithZeroAmount=new ArrayList<>();
         // Calculate total expense
         for(LineItem lineItem :lineItems) {
             String headCode = lineItem.getHeadCode();
@@ -208,7 +217,7 @@ public class PurchaseBillGeneratorService {
         // If PayableLineItems is available in bill details then set each lineitem INACTIVE
         if (billDetail.getPayableLineItems() != null && !billDetail.getPayableLineItems().isEmpty()) {
             List<LineItem> payableLineItems = billDetail.getPayableLineItems();
-            payableLineItems.forEach((p) -> p.setStatus(LINEITEM_STATUS_INACTIVE));
+            payableLineItems.forEach(p -> p.setStatus(LINEITEM_STATUS_INACTIVE));
             billDetail.setPayableLineItems(payableLineItems);
         }
 
@@ -216,7 +225,7 @@ public class PurchaseBillGeneratorService {
         for(LineItem lineItem :lineItems) {
             String headCode = lineItem.getHeadCode();
             String category = getHeadCodeCategory(headCode,headCodes);
-            BigDecimal tempDeduction = BigDecimal.ZERO;
+            BigDecimal tempDeduction;
             // Generate PayableLineItem only if status is ACTIVE and headCode category type is deduction
             if(DEDUCTION_CONSTANT.equalsIgnoreCase(category) && LINEITEM_STATUS_ACTIVE.equalsIgnoreCase(lineItem.getStatus())) {
                 String calculationType = getCalculationType(headCode,applicableCharges);
@@ -276,8 +285,7 @@ public class PurchaseBillGeneratorService {
 
     private Contract getContract(RequestInfo requestInfo, String tenantId, String referenceId) {
         ContractResponse contractResponse = contractUtils.fetchContract(requestInfo, tenantId, referenceId);
-        Contract contract = contractResponse.getContracts().get(0);
-        return contract;
+        return contractResponse.getContracts().get(0);
     }
 
     private Party buildParty(RequestInfo requestInfo, String type, String tenantId) {
@@ -317,15 +325,15 @@ public class PurchaseBillGeneratorService {
             if(applicableCharge.getCode().equalsIgnoreCase(headCode)){
                 String calculationType = applicableCharge.getCalculationType();
                 if (StringUtils.isBlank(calculationType)) {
-                    log.error("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +"] and service ["+config.getPurchaseBusinessService()+"]");
-                    throw new CustomException("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +"] and service ["+config.getPurchaseBusinessService()+"]");
+                    log.error("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +SERVICE_PLACEHOLDER+config.getPurchaseBusinessService()+"]");
+                    throw new CustomException("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +SERVICE_PLACEHOLDER+config.getPurchaseBusinessService()+"]");
                 } else {
                     return calculationType;
                 }
             }
         }
-        log.error("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+config.getPurchaseBusinessService()+"]");
-        throw new CustomException("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+config.getPurchaseBusinessService()+"]");
+        log.error(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+config.getPurchaseBusinessService()+"]");
+        throw new CustomException(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+config.getPurchaseBusinessService()+"]");
     }
 
     private String getHeadCodeCategory(String headCode, List<HeadCode> headCodes) {
@@ -333,15 +341,15 @@ public class PurchaseBillGeneratorService {
             if(hCode.getCode().equalsIgnoreCase(headCode)){
                 String category = hCode.getCategory();
                 if (StringUtils.isBlank(category)) {
-                    log.error("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +"] and service ["+config.getPurchaseBusinessService()+"]");
-                    throw new CustomException("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +"] and service ["+config.getPurchaseBusinessService()+"]");
+                    log.error(CATEGORY_MISSING,"MDMS::category missing for head code [" + headCode +SERVICE_PLACEHOLDER+config.getPurchaseBusinessService()+"]");
+                    throw new CustomException(CATEGORY_MISSING,"MDMS::category missing for head code [" + headCode +SERVICE_PLACEHOLDER+config.getPurchaseBusinessService()+"]");
                 } else {
                     return category;
                 }
             }
         }
-        log.error("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+config.getPurchaseBusinessService()+"]");
-        throw new CustomException("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+config.getPurchaseBusinessService()+"]");
+        log.error(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+config.getPurchaseBusinessService()+"]");
+        throw new CustomException(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+config.getPurchaseBusinessService()+"]");
     }
 
     

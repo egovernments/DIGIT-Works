@@ -17,8 +17,12 @@ import java.util.Optional;
 @Slf4j
 public class CommonUtil {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public CommonUtil(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     public List<Object> readJSONPathValue(Object jsonObj, String path){
         try {

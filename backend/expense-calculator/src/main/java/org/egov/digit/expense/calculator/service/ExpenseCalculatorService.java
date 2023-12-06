@@ -57,40 +57,42 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 @Slf4j
 @Service
 public class ExpenseCalculatorService {
-    @Autowired
-    private ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator;
+    private final ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator;
+
+    private final WageSeekerBillGeneratorService wageSeekerBillGeneratorService;
+    private final SupervisionBillGeneratorService supervisionBillGeneratorService;
+    private final ExpenseCalculatorProducer expenseCalculatorProducer;
+    private final ExpenseCalculatorConfiguration config;
+    private final PurchaseBillGeneratorService purchaseBillGeneratorService;
+    private final MdmsUtils mdmsUtils;
+    private final BillUtils billUtils;
+    private final ProjectUtil projectUtils;
+    private final ObjectMapper mapper;
+    private final CommonUtil commonUtil;
+    private final ExpenseCalculatorUtil expenseCalculatorUtil;
+    private final BillToMetaMapper billToMetaMapper;
+    private final ExpenseCalculatorRepository expenseCalculatorRepository;
+
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    private WageSeekerBillGeneratorService wageSeekerBillGeneratorService;
-    @Autowired
-    private SupervisionBillGeneratorService supervisionBillGeneratorService;
-    @Autowired
-    private ExpenseCalculatorProducer expenseCalculatorProducer;
-    @Autowired
-    private ExpenseCalculatorConfiguration config;
-    @Autowired
-    private PurchaseBillGeneratorService purchaseBillGeneratorService;
-    @Autowired
-    private MdmsUtils mdmsUtils;
-    @Autowired
-    private BillUtils billUtils;
-    @Autowired
-    private ProjectUtil projectUtils;
-    @Autowired
-    private ObjectMapper mapper;
-    @Autowired
-    private CommonUtil commonUtil;
-    @Autowired
-    private ExpenseCalculatorUtil expenseCalculatorUtil;
-    @Autowired
-    private BillToMetaMapper billToMetaMapper;
-    @Autowired
-    private ExpenseCalculatorRepository expenseCalculatorRepository;
-    @Autowired
-    private NotificationService notificationService;
-    
-    @Autowired
-    private ObjectMapper objectMapper;
+    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil) {
+        this.expenseCalculatorProducer = expenseCalculatorProducer;
+        this.expenseCalculatorServiceValidator = expenseCalculatorServiceValidator;
+        this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
+        this.supervisionBillGeneratorService = supervisionBillGeneratorService;
+        this.billToMetaMapper = billToMetaMapper;
+        this.objectMapper = objectMapper;
+        this.config = config;
+        this.purchaseBillGeneratorService = purchaseBillGeneratorService;
+        this.mdmsUtils = mdmsUtils;
+        this.billUtils = billUtils;
+        this.projectUtils = projectUtils;
+        this.expenseCalculatorUtil = expenseCalculatorUtil;
+        this.expenseCalculatorRepository = expenseCalculatorRepository;
+        this.mapper = mapper;
+        this.commonUtil = commonUtil;
+    }
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
         expenseCalculatorServiceValidator.validateCalculatorEstimateRequest(calculationRequest);
@@ -143,13 +145,6 @@ public class ExpenseCalculatorService {
         {
             List<Bill> respBills = billResponse.getBills();
             if(respBills != null && !respBills.isEmpty()) {
-               // persistMeta(respBills,metaInfo);
-//                try {
-//                    notificationService.sendNotificationForPurchaseBill(purchaseBillRequest);
-//                }catch (Exception e){
-//                    log.error("Exception while sending notification: " + e);
-//                }
-
                 submittedBills.addAll(respBills);
             }
         }
@@ -165,14 +160,12 @@ public class ExpenseCalculatorService {
         String tenantId = providedPurchaseBill.getTenantId();
 
         String businessServiceName = fetchBusinessServiceName(requestInfo, tenantId, config.getPurchaseBusinessService());
-        // Fetch Payers from MDMS
-        List<Payer> payers = fetchMDMSDataForPayers(requestInfo, tenantId);
         // Fetch HeadCodes from MDMS
         List<HeadCode> headCodes = expenseCalculatorUtil.fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Fetch Applicable Charges from MDMS
         List<ApplicableCharge> applicableCharges = expenseCalculatorUtil.fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Create the bill
-        return purchaseBillGeneratorService.createPurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
+        return purchaseBillGeneratorService.createPurchaseBill(requestInfo,providedPurchaseBill,headCodes,applicableCharges,metaInfo);
     }
 
     private String fetchBusinessServiceName(RequestInfo requestInfo, String tenantId, String businessServiceCode) {
@@ -195,14 +188,12 @@ public class ExpenseCalculatorService {
         String tenantId = providedPurchaseBill.getTenantId();
 
         String businessServiceName = fetchBusinessServiceName(requestInfo, tenantId, config.getPurchaseBusinessService());
-        //Fetch Payers from MDMS
-        List<Payer> payers = fetchMDMSDataForPayers(requestInfo, tenantId);
         // Fetch HeadCodes from MDMS
         List<HeadCode> headCodes = expenseCalculatorUtil.fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Fetch Applicable Charges from MDMS
         List<ApplicableCharge> applicableCharges = expenseCalculatorUtil.fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Create the bill
-        return purchaseBillGeneratorService.updatePurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
+        return purchaseBillGeneratorService.updatePurchaseBill(requestInfo,providedPurchaseBill,headCodes,applicableCharges,metaInfo);
     }
 
     public List<Bill> createWageOrSupervisionBills(CalculationRequest calculationRequest){
@@ -245,13 +236,13 @@ public class ExpenseCalculatorService {
                 }
             }
             // If no calculation details are there then throw an exception
-            if (hasCalcDetail == false) {
+            if (!Boolean.TRUE.equals(hasCalcDetail)) {
                 log.info("ExpenseCalculatorService::createWageOrSupervisionBills::Supervision bill will not created because there are no calculation details in estimate.");
                 throw new CustomException("NO_CALCULATION_DETAIL",
                         String.format("No calculation details found for bills of contract %s and tenant %s. So Supervision bill cannot be generated.", criteria.getContractId(), criteria.getTenantId()));
             }
             //Create the supervision bill
-            bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation, expenseBills);
+            bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation);
     		
             //Construct meta object to persist in calculator db
             Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, criteria.getTenantId(),criteria.getContractId()).get(0);
@@ -378,10 +369,8 @@ public class ExpenseCalculatorService {
         
         //If we've got a project name or ward search, do this step first
         if(searchCriteria.getProjectName()!=null || searchCriteria.getBoundary()!=null) {
-        	//fetch all unique project numbers in the repo first
-        	List<String> projectNumbers = expenseCalculatorRepository.getUniqueProjectNumbers(tenantId);
         	//Add the other search criteria and fetch the project numbers that match the criteria
-        	Object projectResults = projectUtils.getProjectDetails(calculatorSearchRequest, projectNumbers);
+        	Object projectResults = projectUtils.getProjectDetails(calculatorSearchRequest);
         	
         	 //If project payload changes, this key needs to be modified!
             List<Project> projects = objectMapper.convertValue(((LinkedHashMap) projectResults).get("Project"), new TypeReference<List<Project>>() {
@@ -429,8 +418,7 @@ public class ExpenseCalculatorService {
      * @return
      */
     private List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
-        List<Bill> bills = expenseCalculatorUtil.fetchBills(requestInfo, tenantId, contractId);
-        return bills;
+        return expenseCalculatorUtil.fetchBills(requestInfo, tenantId, contractId);
     }
 
     private List<BusinessService> fetchMDMSDataForBusinessService(RequestInfo requestInfo, String tenantId){
@@ -445,19 +433,5 @@ public class ExpenseCalculatorService {
         log.info("Business Service fetched from MDMS");
         return businessServices;
     }
-
-    private List<Payer> fetchMDMSDataForPayers(RequestInfo requestInfo, String tenantId){
-        log.info("Fetch payer list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, tenantId, MDMS_PAYER_LIST);
-        List<Object> payerListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_PAYER);
-        List<Payer> payers = new ArrayList<>();
-        for(Object obj : payerListJson){
-            Payer payer = mapper.convertValue(obj, Payer.class);
-            payers.add(payer);
-        }
-        log.info("Payers fetched from MDMS");
-        return payers;
-    }
-
     
 }
