@@ -32,7 +32,7 @@ router.post(
         }
         try {
             try {
-                resEstimate = await search_estimateDetails(tenantId, requestinfo, estimateNumber);
+                var resEstimate = await search_estimateDetails(tenantId, requestinfo, estimateNumber);
             }
             catch (ex) {
                 return renderError(res, "Failed to query details of the estimate", 500);
