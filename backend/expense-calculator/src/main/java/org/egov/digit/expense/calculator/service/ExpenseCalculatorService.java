@@ -204,83 +204,94 @@ public class ExpenseCalculatorService {
         Map<String, String> metaInfo = new HashMap<>();
 
         if(criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) {
-            log.info("Create wage bill for musterRollIds :"+criteria.getMusterRollId() );
-            // Fetch wage seeker skills from MDMS
-            List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId());
-            // Fetch musterRolls for given muster roll IDs
-            List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo,criteria,true);
-            // Contract project mapping
-            Map<String, String> contractProjectMapping = getContractProjectMapping(musterRolls);
-            metaInfo.putAll(contractProjectMapping);
-            bills = wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,musterRolls,labourCharges,metaInfo);
-
+            bills = createWageBill(requestInfo, criteria, metaInfo);
         } else {
-            log.info("Create supervision bill for contractId :"+criteria.getContractId() );
-            List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId().trim());
-            if(expenseBills!=null && !expenseBills.isEmpty())
-            	log.info(String.format("Fetched %s bills from the repository", expenseBills.size()));
-            //No bills have been fetched for this contract. Therefore, throw an exception
-            else {
-            	log.info("SupervisionBillGeneratorService::calculateEstimate::Wage bill and purchase bill not created. "
-    					+ " So Supervision bill cannot be calculated.");
-    			throw new CustomException("NO_WAGE_PURCHASE_BILL",
-    					String.format("No wage or purchase bills are found for this contract %s and tenant %s. So Supervision bill cannot be calculated.", criteria.getContractId(), criteria.getTenantId()));
-            }
-            //Continue with doing the calculation for supervision bill
-            Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
-            // Check calculation have any calculation details or not
-            Boolean hasCalcDetail = false;
-            for (CalcEstimate estimate: calculation.getEstimates()) {
-                if (estimate.getCalcDetails() != null && !estimate.getCalcDetails().isEmpty()) {
-                    hasCalcDetail = true;
-                }
-            }
-            // If no calculation details are there then throw an exception
-            if (!Boolean.TRUE.equals(hasCalcDetail)) {
-                log.info("ExpenseCalculatorService::createWageOrSupervisionBills::Supervision bill will not created because there are no calculation details in estimate.");
-                throw new CustomException("NO_CALCULATION_DETAIL",
-                        String.format("No calculation details found for bills of contract %s and tenant %s. So Supervision bill cannot be generated.", criteria.getContractId(), criteria.getTenantId()));
-            }
-            //Create the supervision bill
-            bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation);
-    		
-            //Construct meta object to persist in calculator db
-            Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, criteria.getTenantId(),criteria.getContractId()).get(0);
-			Map<String, String> contractProjectMapping = new HashMap<>();
-			Object additionalDetails = contract.getAdditionalDetails();
-			Optional<String> projectIdOptional = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT);
-			if (contract.getContractNumber()!=null && projectIdOptional.isPresent()) {
-				contractProjectMapping.put(PROJECT_ID_OF_CONSTANT + contract.getContractNumber(), projectIdOptional.get());
-			}
-            // Put OrgId in meta
-            contractProjectMapping.put(ORG_ID_CONSTANT,contract.getOrgId());
-			metaInfo.putAll(contractProjectMapping);
-
-		}
-    		
+            bills = createSupervisionBill(requestInfo, criteria, metaInfo);
+        }
 
         BillResponse billResponse = null;
         List<Bill> submittedBills = new ArrayList<>();
         Workflow workflow = Workflow.builder()
-                                    .action(WF_SUBMIT_ACTION_CONSTANT)
-                                    .build();
+                .action(WF_SUBMIT_ACTION_CONSTANT)
+                .build();
         for(Bill bill : bills) {
             billResponse = postCreateBill(requestInfo, bill,workflow);
             if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
             {
-            	log.info("Bill successfully posted to expense service. Reference ID " + bill.getReferenceId());
-            	List<Bill> respBills = billResponse.getBills();
+                log.info("Bill successfully posted to expense service. Reference ID " + bill.getReferenceId());
+                List<Bill> respBills = billResponse.getBills();
                 if(respBills != null && !respBills.isEmpty()) {
-                	log.info("Persisting meta for bill reference ID: " + bill.getReferenceId());
-                	persistMeta(respBills,metaInfo);
+                    log.info("Persisting meta for bill reference ID: " + bill.getReferenceId());
+                    persistMeta(respBills,metaInfo);
                     submittedBills.addAll(respBills);
                 }
             }
             else {
-            	log.info("Bill posting failed for bill " + bill.getBusinessService() + " reference ID " + bill.getReferenceId());  
+                log.info("Bill posting failed for bill " + bill.getBusinessService() + " reference ID " + bill.getReferenceId());
             }
         }
         return submittedBills;
+    }
+
+    private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo) {
+        log.info("Create wage bill for musterRollIds :"+criteria.getMusterRollId() );
+        // Fetch wage seeker skills from MDMS
+        List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId());
+        // Fetch musterRolls for given muster roll IDs
+        List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo,criteria,true);
+        // Contract project mapping
+        Map<String, String> contractProjectMapping = getContractProjectMapping(musterRolls);
+        metaInfo.putAll(contractProjectMapping);
+        return wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,musterRolls,labourCharges,metaInfo);
+    }
+
+    private List<Bill> createSupervisionBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo) {
+        log.info("Create supervision bill for contractId :"+criteria.getContractId() );
+        List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId().trim());
+        validateExpenseBills(expenseBills, criteria);
+        Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
+        validateCalculationDetails(calculation,criteria);
+        //Construct meta object to persist in calculator db
+        Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, criteria.getTenantId(),criteria.getContractId()).get(0);
+        Map<String, String> contractProjectMapping = buildContractProjectMapping(contract);
+        metaInfo.putAll(contractProjectMapping);
+        return supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation);
+    }
+
+    private void validateExpenseBills(List<Bill> expenseBills, Criteria criteria) {
+        if(expenseBills == null || expenseBills.isEmpty()) {
+            log.info("SupervisionBillGeneratorService::calculateEstimate::Wage bill and purchase bill not created. "
+                    + " So Supervision bill cannot be calculated.");
+            throw new CustomException("NO_WAGE_PURCHASE_BILL",
+                    String.format("No wage or purchase bills are found for this contract %s and tenant %s. So Supervision bill cannot be calculated.", criteria.getContractId(), criteria.getTenantId()));
+        }
+    }
+
+    private void validateCalculationDetails(Calculation calculation, Criteria criteria) {
+
+        Boolean hasCalcDetail = false;
+        for (CalcEstimate estimate: calculation.getEstimates()) {
+            if (estimate.getCalcDetails() != null && !estimate.getCalcDetails().isEmpty()) {
+                hasCalcDetail = true;
+            }
+        }
+        if (!Boolean.TRUE.equals(hasCalcDetail)) {
+            log.info("ExpenseCalculatorService::createWageOrSupervisionBills::Supervision bill will not created because there are no calculation details in estimate.");
+            throw new CustomException("NO_CALCULATION_DETAIL",
+                    String.format("No calculation details found for bills of contract %s and tenant %s. So Supervision bill cannot be generated.", criteria.getContractId(), criteria.getTenantId()));
+        }
+    }
+
+    private Map<String, String> buildContractProjectMapping(Contract contract) {
+        Map<String, String> contractProjectMapping = new HashMap<>();
+        Object additionalDetails = contract.getAdditionalDetails();
+        Optional<String> projectIdOptional = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT);
+        if (contract.getContractNumber()!=null && projectIdOptional.isPresent()) {
+            contractProjectMapping.put(PROJECT_ID_OF_CONSTANT + contract.getContractNumber(), projectIdOptional.get());
+        }
+        // Put OrgId in meta
+        contractProjectMapping.put(ORG_ID_CONSTANT,contract.getOrgId());
+        return contractProjectMapping;
     }
 
     public void createAndPostWageSeekerBill(MusterRollRequest musterRollRequest){

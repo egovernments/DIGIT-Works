@@ -192,63 +192,11 @@ public class PurchaseBillGeneratorService {
     private void calculateAndSetPayableLineItems(BillDetail billDetail, List<HeadCode> headCodes, List<ApplicableCharge> applicableCharges) {
         List<LineItem> lineItems = billDetail.getLineItems();
         String tenantId = billDetail.getTenantId();
-        BigDecimal expense = BigDecimal.ZERO;
-        BigDecimal deduction = BigDecimal.ZERO;
-        List<LineItem> lineItemWithZeroAmount=new ArrayList<>();
-        // Calculate total expense
-        for(LineItem lineItem :lineItems) {
-            String headCode = lineItem.getHeadCode();
-            BigDecimal amount = lineItem.getAmount().setScale(0, RoundingMode.HALF_UP);
-            lineItem.setAmount(amount);
-            String category = getHeadCodeCategory(headCode,headCodes);
-            if(category != null && category.equalsIgnoreCase(EXPENSE_CONSTANT) && lineItem.getStatus().equals(LINEITEM_STATUS_ACTIVE)) {
-                expense = expense.add(amount);
-            }
-            if(amount.compareTo(BigDecimal.ZERO)<=0){
-                lineItemWithZeroAmount.add(lineItem);
-            }
-        }
 
-        //Removing the line items which have amount as 0
-        if(!lineItemWithZeroAmount.isEmpty()){
-            lineItems.removeAll(lineItemWithZeroAmount);
-        }
+        BigDecimal expense = calculateTotalExpense(lineItems, headCodes);
+        setLineItemsInactive(billDetail);
+        BigDecimal deduction = calculateTotalDeduction(lineItems, headCodes, applicableCharges, tenantId, expense,billDetail);
 
-        // If PayableLineItems is available in bill details then set each lineitem INACTIVE
-        if (billDetail.getPayableLineItems() != null && !billDetail.getPayableLineItems().isEmpty()) {
-            List<LineItem> payableLineItems = billDetail.getPayableLineItems();
-            payableLineItems.forEach(p -> p.setStatus(LINEITEM_STATUS_INACTIVE));
-            billDetail.setPayableLineItems(payableLineItems);
-        }
-
-        // Calculate total deduction on top of expense
-        for(LineItem lineItem :lineItems) {
-            String headCode = lineItem.getHeadCode();
-            String category = getHeadCodeCategory(headCode,headCodes);
-            BigDecimal tempDeduction;
-            // Generate PayableLineItem only if status is ACTIVE and headCode category type is deduction
-            if(DEDUCTION_CONSTANT.equalsIgnoreCase(category) && LINEITEM_STATUS_ACTIVE.equalsIgnoreCase(lineItem.getStatus())) {
-                String calculationType = getCalculationType(headCode,applicableCharges);
-                String value = getDeductionValue(headCode,applicableCharges);
-                if(PERCENTAGE_CONSTANT.equalsIgnoreCase(calculationType) && (value == null || "null".equalsIgnoreCase(value))) {
-                    log.error("INVALID_CALCULATION_TYPE_VALUE", "For calculationType [" + calculationType +"] value is null");
-                    throw new CustomException("INVALID_CALCULATION_TYPE_VALUE", "For calculationType [" + calculationType +"] field value is null");
-                } else if (PERCENTAGE_CONSTANT.equalsIgnoreCase(calculationType) && value != null && !"null".equalsIgnoreCase(value) ) {
-                    tempDeduction = expense.multiply(new BigDecimal(value)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP) ;
-                } else if (LUMPSUM_CONSTANT.equalsIgnoreCase(calculationType) && (value == null || "null".equalsIgnoreCase(value)))  {
-                    tempDeduction = lineItem.getAmount().setScale(0, RoundingMode.HALF_UP);
-                } else if (LUMPSUM_CONSTANT.equalsIgnoreCase(calculationType) && value != null && !"null".equalsIgnoreCase(value) ) {
-                    tempDeduction = new BigDecimal(value).setScale(0, RoundingMode.HALF_UP);
-                } else {
-                    log.error("INVALID_HEADCODE_CALCULATION_TYPE", "Head Code calculation type [" + calculationType +"] is not supported");
-                    throw new CustomException("INVALID_HEADCODE_CALCULATION_TYPE", "Head Code calculation type [" + calculationType +"] is not supported");
-                }
-                if (tempDeduction.compareTo(BigDecimal.ZERO) <= 0)
-                    continue;
-                deduction = deduction.add(tempDeduction);
-                billDetail.addPayableLineItems(buildPayableLineItem(tempDeduction,tenantId,headCode));
-            }
-        }
         // If bill amount is less then equal to zero then do not generate bill
         if (expense.subtract(deduction).compareTo(BigDecimal.ZERO) <= 0) {
             log.error("INVALID_PURCHASE_BILL_AMOUNT", "Purchase bill amount is not grater then ZERO.");
@@ -257,6 +205,74 @@ public class PurchaseBillGeneratorService {
         billDetail.addPayableLineItems(buildPayableLineItem(expense.subtract(deduction),tenantId,"PURCHASE"));
     }
 
+    private BigDecimal calculateTotalExpense(List<LineItem> lineItems, List<HeadCode> headCodes) {
+        BigDecimal expense = BigDecimal.ZERO;
+        List<LineItem> lineItemWithZeroAmount = new ArrayList<>();
+        for(LineItem lineItem : lineItems) {
+            String headCode = lineItem.getHeadCode();
+            BigDecimal amount = lineItem.getAmount().setScale(0, RoundingMode.HALF_UP);
+            lineItem.setAmount(amount);
+            String category = getHeadCodeCategory(headCode,headCodes);
+            if(category != null && category.equalsIgnoreCase(EXPENSE_CONSTANT) && lineItem.getStatus().equals(LINEITEM_STATUS_ACTIVE)) {
+                expense = expense.add(amount);
+            }
+            if(amount.compareTo(BigDecimal.ZERO) <= 0){
+                lineItemWithZeroAmount.add(lineItem);
+            }
+        }
+        //Removing the line items which have amount as 0
+        if(!lineItemWithZeroAmount.isEmpty()){
+            lineItems.removeAll(lineItemWithZeroAmount);
+        }
+        return expense;
+    }
+
+    private void setLineItemsInactive(BillDetail billDetail) {
+        // If PayableLineItems is available in bill details then set each line item as INACTIVE
+        if (billDetail.getPayableLineItems() != null && !billDetail.getPayableLineItems().isEmpty()) {
+            List<LineItem> payableLineItems = billDetail.getPayableLineItems();
+            payableLineItems.forEach(p -> p.setStatus(LINEITEM_STATUS_INACTIVE));
+            billDetail.setPayableLineItems(payableLineItems);
+        }
+    }
+
+    private BigDecimal calculateTotalDeduction(List<LineItem> lineItems, List<HeadCode> headCodes, List<ApplicableCharge> applicableCharges, String tenantId, BigDecimal expense,BillDetail billDetail) {
+        BigDecimal deduction = BigDecimal.ZERO;
+        for(LineItem lineItem : lineItems) {
+            String headCode = lineItem.getHeadCode();
+            String category = getHeadCodeCategory(headCode,headCodes);
+            BigDecimal tempDeduction;
+            // Generate PayableLineItem only if status is ACTIVE and headCode category type is deduction
+            if(DEDUCTION_CONSTANT.equalsIgnoreCase(category) && LINEITEM_STATUS_ACTIVE.equalsIgnoreCase(lineItem.getStatus())) {
+                String calculationType = getCalculationType(headCode,applicableCharges);
+                String value = getDeductionValue(headCode,applicableCharges);
+                tempDeduction = calculateDeduction(expense, lineItem, calculationType, value);
+                if (tempDeduction.compareTo(BigDecimal.ZERO) <= 0)
+                    continue;
+                deduction = deduction.add(tempDeduction);
+                billDetail.addPayableLineItems(buildPayableLineItem(tempDeduction,tenantId,headCode));
+            }
+        }
+        return deduction;
+    }
+
+    private BigDecimal calculateDeduction(BigDecimal expense, LineItem lineItem, String calculationType, String value) {
+        BigDecimal tempDeduction;
+        if(PERCENTAGE_CONSTANT.equalsIgnoreCase(calculationType) && (value == null || "null".equalsIgnoreCase(value))) {
+            log.error("INVALID_CALCULATION_TYPE_VALUE", "For calculationType [" + calculationType +"] value is null");
+            throw new CustomException("INVALID_CALCULATION_TYPE_VALUE", "For calculationType [" + calculationType +"] field value is null");
+        } else if (PERCENTAGE_CONSTANT.equalsIgnoreCase(calculationType) && value != null && !"null".equalsIgnoreCase(value) ) {
+            tempDeduction = expense.multiply(new BigDecimal(value)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP) ;
+        } else if (LUMPSUM_CONSTANT.equalsIgnoreCase(calculationType) && (value == null || "null".equalsIgnoreCase(value)))  {
+            tempDeduction = lineItem.getAmount().setScale(0, RoundingMode.HALF_UP);
+        } else if (LUMPSUM_CONSTANT.equalsIgnoreCase(calculationType) && value != null && !"null".equalsIgnoreCase(value) ) {
+            tempDeduction = new BigDecimal(value).setScale(0, RoundingMode.HALF_UP);
+        } else {
+            log.error("INVALID_HEADCODE_CALCULATION_TYPE", "Head Code calculation type [" + calculationType +"] is not supported");
+            throw new CustomException("INVALID_HEADCODE_CALCULATION_TYPE", "Head Code calculation type [" + calculationType +"] is not supported");
+        }
+        return tempDeduction;
+    }
     private LineItem buildPayableLineItem(BigDecimal amount, String tenantId, String headCode) {
        return LineItem.builder()
                 .amount(amount)
