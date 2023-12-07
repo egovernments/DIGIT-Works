@@ -89,6 +89,7 @@ public class ContractServiceConstants {
     // Workflow constants
 
     public static final String CONTRACT_REVISION_BUSINESS_SERVICE = "CONTRACT-REVISION";
+    public static final String CONTRACT_REVISION_ESTIMATE = "CONTRACT-REVISION-ESTIMATE";
     public static final String CONTRACT_BUSINESS_SERVICE = "CONTRACT";
     public static final String CONTRACT_REVISION_APPROVE_LOCALIZATION_CODE = "TIME_EXTENSION_APPROVE";
     public static final String CONTRACT_REVISION_REJECT_LOCALIZATION_CODE = "TIME_EXTENSION_REJECT";

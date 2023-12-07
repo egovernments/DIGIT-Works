@@ -20,7 +20,11 @@ public class ErrorConfiguration {
     public static final String INVALID_CONTRACT_MSG = "Invalid Contract Number.";
 
     public static final String CONTRACT_NOT_ACCEPTED_CODE = "CONTRACT_NOT_ACCEPTED";
+
+    public static final String CONTRACT_NOT_APPROVED_CODE = "CONTRACT_NOT_APPROVED";
     public static final String CONTRACT_NOT_ACCEPTED_MSG = "Contract not in accepted state";
+
+    public static final String CONTRACT_NOT_APPROVED_MSG = "Contract not in approved state";
 
     public static final String REVISED_CONTRACT_NOT_APPROVED_CODE = "REVISED_CONTRACT_NOT_APPROVED";
     public static final String REVISED_CONTRACT_NOT_APPROVED_MSG = "Revised Contract not in approved state";
