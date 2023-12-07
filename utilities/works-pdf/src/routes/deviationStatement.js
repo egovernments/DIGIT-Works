@@ -39,16 +39,13 @@ router.post(
             }
             const estimate = resEstimate.data;
 
-
             var estimates;
-            if (estimate) {
+            if (estimate && estimate.estimates.length > 1) {
                 estimates = transformDeviationData(estimate);
             }
             estimate.pdfData = estimates;
 
-
-
-            if (estimate) {
+            if (estimate && estimate.pdfData) {
                     var pdfResponse;
                     const pdfkey = config.pdf.deviationStatement_template;
                     try {
