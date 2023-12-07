@@ -120,7 +120,12 @@ config:
   - name: "builds/mukta_impl/utilities/egov-bff-service"
     build:
       - work-dir: "utilities/egov-bff-service"
-        image-name: "egov-bff-service"  
+        image-name: "egov-bff-service"
+
+  - name: "builds/mukta_impl/utilities/bulk-upload"
+    build:
+      - work-dir: "utilities/bulk-upload"
+        image-name: "bulk-upload"        
 
 # frontend
   - name: builds/mukta_impl/frontend/micro-ui/works-ui
