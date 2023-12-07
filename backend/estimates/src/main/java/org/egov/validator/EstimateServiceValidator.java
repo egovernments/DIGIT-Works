@@ -85,6 +85,9 @@ public class EstimateServiceValidator {
             EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
                     EstimateSearchCriteria.SortBy.createdTime).build();
             List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
+            if(estimateList.isEmpty()){
+                throw new CustomException(INVALID_ESTIMATE, "Active Estimate not found for the given estimate number");
+            }
             if(Estimate.StatusEnum.INWORKFLOW.equals(estimateList.get(0).getStatus())){
                 throw new CustomException(INVALID_ESTIMATE, "Estimate is already in workflow");
             }
@@ -773,8 +776,14 @@ public class EstimateServiceValidator {
             if(estimate.getRevisionNumber() == null){
                 throw new CustomException("INVALID_REVISION_NUMBER", "Revision number is mandatory for revision estimate");
             }
+            if(estimate.getEstimateNumber() == null){
+                throw new CustomException("INVALID_ESTIMATE_NUMBER", "Estimate number is mandatory for revision estimate");
+            }
             if(!estimate.getRevisionNumber().equals(estimateFromDB.getRevisionNumber())){
                 throw new CustomException("INVALID_REVISION_NUMBER", "revisionNumber is not valid");
+            }
+            if(!estimate.getEstimateNumber().equals(estimateFromDB.getEstimateNumber())){
+                throw new CustomException("INVALID_ESTIMATE_NUMBER", "estimateNumber is not valid");
             }
             validatePreviousEstimateForUpdate(estimate, estimateFromDB);
         }
