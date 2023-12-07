@@ -125,6 +125,10 @@ config:
     build:
       - work-dir: "utilities/mukta-services"
         image-name: "mukta-services"
+  - name: "builds/digit-works/utilities/bulk-upload"
+    build:
+      - work-dir: "utilities/bulk-upload"
+        image-name: "bulk-upload"      
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
