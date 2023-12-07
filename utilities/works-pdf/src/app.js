@@ -9,7 +9,7 @@ var estimateRouter=require("./routes/estimate");
 var musterRollRouter = require("./routes/musterRolls");
 var workOrderRouter = require("./routes/workOrder");
 var groupBills = require("./routes/groupBill");
-var deviationStatementRouter = require("./routes/deviationStatement");
+const deviationStatementRouter = require("./routes/deviationStatement");
 
 
 // var {listenConsumer} = require("./consumer")

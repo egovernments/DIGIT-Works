@@ -1,9 +1,9 @@
-var express = require("express");
-var router = express.Router();
-var url = require("url");
-var config = require("../config");
+const express = require("express");
+const router = express.Router();
+const url = require("url");
+const config = require("../config");
 
-var { search_estimateDetails, create_pdf } = require("../api");
+const { search_estimateDetails, create_pdf } = require("../api");
 
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 const { pdf } = require("../config");
@@ -18,9 +18,9 @@ function renderError(res, errorMessage, errorCode) {
 router.post(
     "/deviation-statement",
     asyncMiddleware(async function (req, res, next) {
-        var tenantId = req.query.tenantId;
-        var estimateNumber = req.query.estimateNumber;
-        var requestinfo = req.body;
+        const tenantId = req.query.tenantId;
+        const estimateNumber = req.query.estimateNumber;
+        const requestinfo = req.body;
         if (requestinfo == undefined) {
             return renderError(res, "requestinfo can not be null", 400)
         }
@@ -35,10 +35,9 @@ router.post(
                 resEstimate = await search_estimateDetails(tenantId, requestinfo, estimateNumber);
             }
             catch (ex) {
-                if (ex.response && ex.response.data)
                 return renderError(res, "Failed to query details of the estimate", 500);
             }
-            var estimate = resEstimate.data;
+            const estimate = resEstimate.data;
 
 
             var estimates;
@@ -62,13 +61,11 @@ router.post(
                     }
                     
                     catch (ex) {
-                        if (ex.response && ex.response.data)
                         return renderError(res, "Failed to generate PDF for estimates", 500);
                     }
 
-                    var filename = `${pdfkey}_${new Date().getTime()}`;
+                    const filename = `${pdfkey}_${new Date().getTime()}`;
 
-                    //pdfData = pdfResponse.data.read();
                     res.writeHead(200, {
                         "Content-Type": "application/pdf",
                         "Content-Disposition": `attachment; filename=${filename}.pdf`,
