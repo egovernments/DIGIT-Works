@@ -50,7 +50,7 @@ router.post(
 
             if (estimate) {
                     var pdfResponse;
-                    var pdfkey = config.pdf.deviationStatement_template;
+                    const pdfkey = config.pdf.deviationStatement_template;
                     try {
                         pdfResponse = await create_pdf(
                             tenantId,

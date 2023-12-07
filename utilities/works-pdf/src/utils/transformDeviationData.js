@@ -3,13 +3,13 @@ const { logger } = require("../logger");
 const transformDeviationData = (data) => {
 
     //iterate over estimate make an array of object which contains estimateNumber, projectNumber, projectName and description and an array of estimateDetails
-    var estimates = {};
+    const estimates = {};
     estimates["estimateNumber"] = data.estimates[0].estimateNumber;
     estimates["projectNumber"] = data.estimates[0].additionalDetails.projectNumber;
     estimates["projectName"] = data.estimates[0].additionalDetails.projectName;
     estimates["description"] = data.estimates[0].description;
     estimates["revisionNumber"] = data.estimates[0].revisionNumber;
-    var sorIdMap = {};
+    const sorIdMap = {};
 
     for (const estimateDetail of data.estimates[0].estimateDetails) {
         if (estimateDetail.category === "OVERHEAD") {
@@ -72,8 +72,8 @@ for (const estimateDetail of originalEstimateDetails) {
     }
 }
 
-    var estimateDetails = [];
-    for(var key in sorIdMap){
+    const estimateDetails = [];
+    for(const key in sorIdMap){
         estimateDetails.push(sorIdMap[key]);
     }
     estimates["estimateDetails"] = estimateDetails;
