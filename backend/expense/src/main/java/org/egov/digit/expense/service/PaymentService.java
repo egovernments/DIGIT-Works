@@ -41,30 +41,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PaymentService {
 
-    private final PaymentValidator validator;
-
-    private final Producer producer;
-
-    private final Configuration config;
-
-    private final BillService billService;
-
-    private final EnrichmentUtil enrichmentUtil;
-
-    private final ResponseInfoFactory responseInfoFactory;
-
-    private final PaymentRepository paymentRepository;
+    @Autowired
+    private PaymentValidator validator;
 
     @Autowired
-    public PaymentService(PaymentValidator validator, Producer producer, Configuration config, BillService billService, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, PaymentRepository paymentRepository) {
-        this.validator = validator;
-        this.producer = producer;
-        this.config = config;
-        this.billService = billService;
-        this.enrichmentUtil = enrichmentUtil;
-        this.responseInfoFactory = responseInfoFactory;
-        this.paymentRepository = paymentRepository;
-    }
+    private Producer producer;
+
+    @Autowired
+    private Configuration config;
+
+    @Autowired
+    private BillService billService;
+
+    @Autowired
+    private EnrichmentUtil enrichmentUtil;
+
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     public PaymentResponse create(@Valid PaymentRequest paymentRequest) {
     	

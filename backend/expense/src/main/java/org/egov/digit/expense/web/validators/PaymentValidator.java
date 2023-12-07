@@ -34,15 +34,11 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class PaymentValidator {
 
-	private final BillService billService;
-	
-	private final PaymentService paymentService;
+	@Autowired
+	private BillService billService;
 
 	@Autowired
-	public PaymentValidator(BillService billService, PaymentService paymentService) {
-		this.billService = billService;
-		this.paymentService = paymentService;
-	}
+	private PaymentService paymentService;
 
 	public List<Payment> validateUpdateRequest(PaymentRequest paymentRequest) {
 
