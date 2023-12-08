@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class Consumer {
+public class ExpenseConsumer {
 
     /*
     * Uncomment the below line to start consuming record from kafka.topics.consumer

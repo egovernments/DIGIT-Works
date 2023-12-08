@@ -4,7 +4,7 @@ import digit.models.coremodels.SMSRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.kafka.Producer;
+import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.util.HRMSUtils;
 import org.egov.digit.expense.util.LocalizationUtil;
 import org.egov.digit.expense.util.NotificationUtil;
@@ -19,15 +19,15 @@ import static org.egov.digit.expense.config.Constants.*;
 @Service
 @Slf4j
 public class NotificationService {
-    private final Producer producer;
+    private final ExpenseProducer expenseProducer;
     private final NotificationUtil notificationUtil;
     private final LocalizationUtil localizationUtil;
     private final Configuration config;
     private final HRMSUtils hrmsUtils;
 
     @Autowired
-    public NotificationService(Producer producer, NotificationUtil notificationUtil, LocalizationUtil localizationUtil, Configuration config, HRMSUtils hrmsUtils) {
-        this.producer = producer;
+    public NotificationService(ExpenseProducer expenseProducer, NotificationUtil notificationUtil, LocalizationUtil localizationUtil, Configuration config, HRMSUtils hrmsUtils) {
+        this.expenseProducer = expenseProducer;
         this.notificationUtil = notificationUtil;
         this.localizationUtil = localizationUtil;
         this.config = config;
@@ -60,7 +60,7 @@ public class NotificationService {
             }
             String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
-            producer.push(config.getSmsNotificationTopic(), smsRequest);
+            expenseProducer.push(config.getSmsNotificationTopic(), smsRequest);
         }
     }
 
@@ -72,7 +72,7 @@ public class NotificationService {
         String contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
         String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
-        producer.push(config.getSmsNotificationTopic(), smsRequest);
+        expenseProducer.push(config.getSmsNotificationTopic(), smsRequest);
     }
 
     public String getMessage(RequestInfo requestInfo, String tenantId, String msgCode){

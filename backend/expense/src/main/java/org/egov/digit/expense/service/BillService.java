@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.kafka.Producer;
+import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BillService {
 	
-	private final Producer producer;
+	private final ExpenseProducer expenseProducer;
 	
 	private final Configuration config;
 	
@@ -49,8 +49,8 @@ public class BillService {
 	private final NotificationService notificationService;
 
 	@Autowired
-	public BillService(Producer producer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService) {
-		this.producer = producer;
+	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService) {
+		this.expenseProducer = expenseProducer;
 		this.config = config;
 		this.validator = validator;
 		this.workflowUtil = workflowUtil;
@@ -89,7 +89,7 @@ public class BillService {
 			bill.setStatus(Status.ACTIVE);
 		}
 
-		producer.push(config.getBillCreateTopic(), billRequest);
+		expenseProducer.push(config.getBillCreateTopic(), billRequest);
 		
 		response = BillResponse.builder()
 				.bills(Arrays.asList(billRequest.getBill()))
@@ -124,7 +124,7 @@ public class BillService {
 			log.error("Exception while sending notification: " + e);
 		}
 		
-		producer.push(config.getBillUpdateTopic(), billRequest);
+		expenseProducer.push(config.getBillUpdateTopic(), billRequest);
 		response = BillResponse.builder()
 				.bills(Arrays.asList(billRequest.getBill()))
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo,true))

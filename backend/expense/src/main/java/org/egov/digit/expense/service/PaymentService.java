@@ -13,7 +13,7 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.kafka.Producer;
+import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.PaymentRepository;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
@@ -45,7 +45,7 @@ public class PaymentService {
     private PaymentValidator validator;
 
     @Autowired
-    private Producer producer;
+    private ExpenseProducer expenseProducer;
 
     @Autowired
     private Configuration config;
@@ -69,7 +69,7 @@ public class PaymentService {
         validator.validateCreateRequest(paymentRequest);
         enrichmentUtil.encrichCreatePayment(paymentRequest);
 
-        producer.push(config.getPaymentCreateTopic(), paymentRequest);
+        expenseProducer.push(config.getPaymentCreateTopic(), paymentRequest);
         backUpdateBillForPayment(paymentRequest);
 
         return PaymentResponse.builder()
@@ -89,7 +89,7 @@ public class PaymentService {
         backUpdateBillForPayment(paymentRequest);
 
         /* only status update should be allowed here */
-        producer.push(config.getPaymentUpdateTopic(), paymentRequest);
+        expenseProducer.push(config.getPaymentUpdateTopic(), paymentRequest);
         return PaymentResponse.builder()
                 .payments(Arrays.asList(payment))
                 .responseInfo(
@@ -184,7 +184,7 @@ public class PaymentService {
                     .bill(bill)
                     .requestInfo(requestInfo)
                     .build();
-            producer.push(config.getBillUpdateTopic(), billRequest);
+            expenseProducer.push(config.getBillUpdateTopic(), billRequest);
         }
     }
 

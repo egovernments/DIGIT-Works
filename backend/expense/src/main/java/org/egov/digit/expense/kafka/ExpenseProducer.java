@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 // NOTE: If tracer is disabled change CustomKafkaTemplate to KafkaTemplate in autowiring
 
 @Service
-public class Producer {
+public class ExpenseProducer {
 
     private final CustomKafkaTemplate<String, Object> kafkaTemplate;
 
     @Autowired
-    public Producer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
+    public ExpenseProducer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
