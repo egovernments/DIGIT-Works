@@ -10,7 +10,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.MusterRollServiceConfiguration;
-import org.egov.kafka.Producer;
+import org.egov.kafka.MusterRollProducer;
 import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
@@ -55,7 +55,7 @@ public class MusterRollService {
 
     private final NotificationService notificationService;
 
-    private final Producer producer;
+    private final MusterRollProducer musterRollProducer;
 
     private final MusterRollServiceConfiguration serviceConfiguration;
 
@@ -76,13 +76,13 @@ public class MusterRollService {
     private static final String COMPUTE_ATTENDENSE = "computeAttendance";
 
     @Autowired
-    public MusterRollService(CalculationService calculationService, MusterRollValidator musterRollValidator, EnrichmentService enrichmentService, WorkflowService workflowService, NotificationService notificationService, Producer producer, MusterRollServiceConfiguration serviceConfiguration, MusterRollRepository musterRollRepository, ObjectMapper mapper, RestTemplate restTemplate, MdmsUtil mdmsUtils, MusterRollServiceUtil musterRollServiceUtil, MusterRollServiceConfiguration config, ResponseInfoCreator responseInfoCreator) {
+    public MusterRollService(CalculationService calculationService, MusterRollValidator musterRollValidator, EnrichmentService enrichmentService, WorkflowService workflowService, NotificationService notificationService, MusterRollProducer musterRollProducer, MusterRollServiceConfiguration serviceConfiguration, MusterRollRepository musterRollRepository, ObjectMapper mapper, RestTemplate restTemplate, MdmsUtil mdmsUtils, MusterRollServiceUtil musterRollServiceUtil, MusterRollServiceConfiguration config, ResponseInfoCreator responseInfoCreator) {
         this.calculationService = calculationService;
         this.musterRollValidator = musterRollValidator;
         this.enrichmentService = enrichmentService;
         this.workflowService = workflowService;
         this.notificationService = notificationService;
-        this.producer = producer;
+        this.musterRollProducer = musterRollProducer;
         this.serviceConfiguration = serviceConfiguration;
         this.musterRollRepository = musterRollRepository;
         this.mapper = mapper;
@@ -128,7 +128,7 @@ public class MusterRollService {
         calculationService.createAttendance(musterRollRequest,true);
         workflowService.updateWorkflowStatus(musterRollRequest);
 
-        producer.push(serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
+        musterRollProducer.push(serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
     }
 
@@ -209,7 +209,7 @@ public class MusterRollService {
             calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
         workflowService.updateWorkflowStatus(musterRollRequest);
-        producer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
+        musterRollProducer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
 
         try {
             notificationService.sendNotificationToCBO(musterRollRequest);
@@ -219,7 +219,7 @@ public class MusterRollService {
 
         //If the musterroll is in 'APPROVED' status, push the musterRoll to calculate topic to be processed by expense-calculator service
         if (StringUtils.isNotBlank(musterRollRequest.getMusterRoll().getMusterRollStatus()) && STATUS_APPROVED.equalsIgnoreCase(musterRollRequest.getMusterRoll().getMusterRollStatus())) {
-            producer.push(serviceConfiguration.getCalculateMusterRollTopic(), musterRollRequest);
+            musterRollProducer.push(serviceConfiguration.getCalculateMusterRollTopic(), musterRollRequest);
         }
 
         return musterRollRequest;

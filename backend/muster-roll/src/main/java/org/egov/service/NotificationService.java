@@ -5,7 +5,7 @@ import digit.models.coremodels.SMSRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.MusterRollServiceConfiguration;
-import org.egov.kafka.Producer;
+import org.egov.kafka.MusterRollProducer;
 import org.egov.util.LocalizationUtil;
 import org.egov.util.NotificationUtil;
 import org.egov.web.models.MusterRollRequest;
@@ -20,7 +20,7 @@ import static org.egov.util.MusterRollServiceConstants.*;
 @Slf4j
 public class NotificationService {
 
-    private final Producer producer;
+    private final MusterRollProducer musterRollProducer;
 
     private final NotificationUtil notificationUtil;
 
@@ -29,8 +29,8 @@ public class NotificationService {
     private final MusterRollServiceConfiguration config;
 
     @Autowired
-    public NotificationService(Producer producer, NotificationUtil notificationUtil, LocalizationUtil localizationUtil, MusterRollServiceConfiguration config) {
-        this.producer = producer;
+    public NotificationService(MusterRollProducer musterRollProducer, NotificationUtil notificationUtil, LocalizationUtil localizationUtil, MusterRollServiceConfiguration config) {
+        this.musterRollProducer = musterRollProducer;
         this.notificationUtil = notificationUtil;
         this.localizationUtil = localizationUtil;
         this.config = config;
@@ -58,7 +58,7 @@ public class NotificationService {
             String customizedMessage = buildMessageReplaceVariables(message, musterRollRequest.getMusterRoll().getMusterRollNumber(), amount);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
 
-            producer.push(config.getSmsNotificationTopic(), smsRequest);
+            musterRollProducer.push(config.getSmsNotificationTopic(), smsRequest);
         }
     }
 

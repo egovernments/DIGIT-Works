@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class Producer {
+public class MusterRollProducer {
 
     private final CustomKafkaTemplate<String, Object> kafkaTemplate;
 
     @Autowired
-    public Producer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
+    public MusterRollProducer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

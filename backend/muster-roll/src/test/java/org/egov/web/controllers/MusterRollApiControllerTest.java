@@ -1,7 +1,7 @@
 package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.Main;
+import org.egov.MusterRollMain;
 import org.egov.TestConfiguration;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 */
 
 
-@ContextConfiguration(classes=Main.class)
+@ContextConfiguration(classes= MusterRollMain.class)
 @WebMvcTest(MusterRollApiController.class)
 @Import({TestConfiguration.class})
 @AutoConfigureMockMvc
