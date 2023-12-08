@@ -163,6 +163,7 @@ import useSearchBill from "./bills/useSearchBill";
 import useViewPaymentInstruction from "./payments/useViewPaymentInstruction";
 import useViewPayment from "./payments/useViewPayment";
 import useUpdatePI from "./expenditure/useUpdatePI";
+import useMBDataForPB from "./expenditure/useMBDataForPB";
 
 import useViewMeasurement from "./measurement/useViewMeasurement";
 
@@ -316,6 +317,7 @@ const bankAccount = {
 const paymentInstruction = {
   useViewPaymentInstruction,
   useUpdatePI,
+  useMBDataForPB,
   useViewPayment
 }
 
