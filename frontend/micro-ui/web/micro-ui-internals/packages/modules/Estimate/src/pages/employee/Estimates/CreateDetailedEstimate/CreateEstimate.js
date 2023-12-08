@@ -39,7 +39,7 @@ const CreateEstimate = () => {
   const [showToast, setShowToast] = useState(null);
   const [displayMenu, setDisplayMenu] = useState(false);
   const [actionSelected, setActionSelected] = useState(false);
-  let { tenantId, projectNumber, isEdit, estimateNumber } = Digit.Hooks.useQueryParams();
+  let { tenantId, projectNumber, isEdit,isCreateRevisionEstimate,isEditRevisionEstimate, estimateNumber, revisionNumber } = Digit.Hooks.useQueryParams();
   // const [ isFormReady,setIsFormReady ] = useState(isEdit ? false : true)
   const [isFormReady, setIsFormReady] = useState(true);
 
@@ -70,9 +70,9 @@ const CreateEstimate = () => {
   //fetching estimate data
   const { isLoading: isEstimateLoading, data: estimate } = Digit.Hooks.estimates.useEstimateSearch({
     tenantId,
-    filters: { estimateNumber },
+    filters: isEditRevisionEstimate ? { revisionNumber } : { estimateNumber },
     config: {
-      enabled: isEdit && estimateNumber ? true : false,
+      enabled: (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate) && (estimateNumber || revisionNumber) ? true : false,
     },
   });
 
@@ -123,7 +123,7 @@ const CreateEstimate = () => {
     },
   ];
 
-  if (isEdit) {
+  if (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate) {
     cardState[0].values = [
       {
         title: "WORKS_ESTIMATE_ID",
@@ -227,7 +227,7 @@ const CreateEstimate = () => {
   // }, [])
 
   useEffect(() => {
-    if (uom && estimate && overheads && isEdit) {
+    if (uom && estimate && overheads && (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate)) {
        setSessionFormData(initialDefaultValues)
     }
   }, [estimate, uom, overheads]);
@@ -368,12 +368,12 @@ const CreateEstimate = () => {
     removeNonsortableObjectWithoutRequiredParams(completeFormData);
     let validated = action !== "DRAFT" ? validateData(completeFormData) : true;
     if(validated){
-    const payload = createEstimatePayload(completeFormData, projectData, isEdit, estimate);
+    const payload = createEstimatePayload(completeFormData, projectData, isEdit, estimate, isCreateRevisionEstimate, isEditRevisionEstimate);
     setShowModal(false);
 
     //make a util for updateEstimatePayload since there are some deviations
 
-    if (isEdit && estimateNumber) {
+    if ((isEdit || isEditRevisionEstimate) && (estimateNumber  || revisionNumber)) {
       await EstimateUpdateMutation(payload, {
         onError: async (error, variables) => {
           setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
@@ -384,9 +384,9 @@ const CreateEstimate = () => {
         onSuccess: async (responseData, variables) => {
           clearSessionFormData();
           const state = {
-            header: t("WORKS_ESTIMATE_RESPONSE_UPDATED_HEADER"),
-            id: responseData?.estimates[0]?.estimateNumber,
-            info: t("ESTIMATE_ESTIMATE_NO"),
+            header: isCreateRevisionEstimate || isEditRevisionEstimate ? t("WORKS_REVISION_ESTIMATE_RESPONSE_UPDATED_HEADER") : t("WORKS_ESTIMATE_RESPONSE_UPDATED_HEADER"),
+            id: isCreateRevisionEstimate || isEditRevisionEstimate ? responseData?.estimates[0]?.revisionNumber : responseData?.estimates[0]?.estimateNumber,
+            info: isCreateRevisionEstimate || isEditRevisionEstimate ?  t("ESTIMATE_REVISION_ESTIMATE_NO") : t("ESTIMATE_ESTIMATE_NO"),
             // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
             links: [
               {
@@ -401,7 +401,10 @@ const CreateEstimate = () => {
           };
           if(action === "DRAFT")
           {
-            setShowToast({ label: "Application updated successfully" });
+            setShowToast({ label: "Application Drafted Successfully" });
+            if(isCreateRevisionEstimate || isEditRevisionEstimate)
+              setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-revision-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&revisionNumber=${responseData?.estimates[0]?.revisionNumber}&projectNumber=${projectNumber}&isEditRevisionEstimate=true`, state)}, 3000);
+            else
             setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&estimateNumber=${responseData?.estimates[0]?.estimateNumber}&projectNumber=${projectNumber}&isEdit=true`, state)}, 3000);
           }
           else
@@ -436,7 +439,10 @@ const CreateEstimate = () => {
           };
           if(action === "DRAFT")
           {
-            setShowToast({ label: "Application updated successfully" });
+            setShowToast({ label: "Application Drafted successfully" });
+            if(isCreateRevisionEstimate || isEditRevisionEstimate)
+              setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-revision-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&revisionNumber=${responseData?.estimates[0]?.revisionNumber}&projectNumber=${projectNumber}&isEditRevisionEstimate=true`, state)}, 3000);
+            else
             setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&estimateNumber=${responseData?.estimates[0]?.estimateNumber}&projectNumber=${projectNumber}&isEdit=true`, state)}, 3000);
           }
           else
@@ -508,12 +514,12 @@ const CreateEstimate = () => {
   if (isConfigLoading || isEstimateLoading || isUomLoading || isOverheadsLoading) {
     return <Loader />;
   }
-  if (isEdit && Object.keys(sessionFormData).length === 0) return <Loader />;
+  if ((isEdit || isCreateRevisionEstimate || isEditRevisionEstimate) && Object.keys(sessionFormData).length === 0) return <Loader />;
   return (
     <Fragment>
       {showModal && <WorkflowModal closeModal={() => setShowModal(false)} onSubmit={onModalSubmit} config={config} />}
       <Header className="works-header-create" styles={{ marginLeft: "14px" }}>
-        {isEdit ? t("ACTION_TEST_EDIT_ESTIMATE") : t("ACTION_TEST_CREATE_ESTIMATE")}
+        {isEdit ? (isCreateRevisionEstimate || isEditRevisionEstimate ? t("ACTION_TEST_EDIT_REVISION_ESTIMATE") : t("ACTION_TEST_EDIT_ESTIMATE")) : (isCreateRevisionEstimate || isEditRevisionEstimate ? t("ACTION_TEST_CREATE_REVISION_ESTIMATE") : t("ACTION_TEST_CREATE_ESTIMATE"))}
       </Header>
       {/* Will fetch projectId from url params and do a search for project to show the below data in card while integrating with the API  */}
       {isLoading ? <Loader /> : <ViewDetailsCard cardState={cardState} t={t} createScreen={true} />}
@@ -532,7 +538,7 @@ const CreateEstimate = () => {
           fieldStyle={{ marginRight: 0 }}
           inline={false}
           // className="card-no-margin"
-          defaultValues={(isEdit === "true" && estimateNumber) ? initialDefaultValues : sessionFormData}
+          defaultValues={((isEdit === "true" || isCreateRevisionEstimate === "true" || isEditRevisionEstimate === "true") && (estimateNumber || revisionNumber)) ? initialDefaultValues : sessionFormData}
           //defaultValues={{...sessionFormData}}
           showWrapperContainers={false}
           isDescriptionBold={false}

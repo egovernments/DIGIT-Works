@@ -44,6 +44,7 @@ let defaultSOR = {
 
 const MeasureTable = (props) => {
   const { register, setValue, arrayProps = {}, config = {},watch } = props;
+  let { isCreateRevisionEstimate, isEditRevisionEstimate, revisionNumber } = Digit.Hooks.useQueryParams();
   const { key: tableKey, mode } = config;
   let { fields, append, remove } = arrayProps || {};
   const options = {
@@ -134,12 +135,21 @@ const MeasureTable = (props) => {
 
   const getColumns = (mode, t) => {
     if (mode === "CREATEALL" && tableKey === "SOR") {
+      if(isCreateRevisionEstimate || isEditRevisionEstimate)
+        return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("original quantity"), t("original amount"), t("revised quantity"), t("Revised amount"), t("")];
       return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
     } else if (mode === "VIEWES" && tableKey === "SOR") {
+      //HERE ALSO NEED TO ADD ISCREATE CONDITION FOR REVISED ESTIMATE
+      if(revisionNumber)
+        return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"),t("original quantity"), t("original amount"), t("WORKS_REVISIED_ESTIMATED_QUANTITY"), t("WORKS_REVISED_ESTIMATED_AMOUNT")];
       return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
     } else if (mode === "CREATEALL") {
+      if(isCreateRevisionEstimate || isEditRevisionEstimate)
+        return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("Original Quantity"), t("Original Amount"), t("Revised Quantity"), t("Revised Amount"), t("")];
       return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
     } else if (mode === "VIEWES") {
+      if(revisionNumber)
+        return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("Original Quantity"), t("Original Amount"), t("WORKS_ESTIMATED_REVISED_QUANTITY"), t("WORKS_ESTIMATED_REVISED_AMOUNT")];
       return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
     } else {
       return [
@@ -260,6 +270,16 @@ const MeasureTable = (props) => {
                 </td>
               </>
             )}
+            {(isCreateRevisionEstimate === "true" || isEditRevisionEstimate==="true" || revisionNumber) && (mode === "CREATEALL" || mode === "VIEWES") && (
+              <>
+                <td>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.approvedQuantity?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
+                </td>
+                <td>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.originalAmount || 0} t={t} roundOff={false}></Amount>
+                </td>
+              </>
+            )}
             {mode != "CREATEALL"  && mode != "VIEWES"  && (
               <>
                 <td>
@@ -322,7 +342,7 @@ const MeasureTable = (props) => {
           {row?.showMeasure && !initialState.length > 0 && (
             <tr>
               <td colSpan={"1"}></td>
-              <td colSpan={mode == "CREATEALL" && tableKey !== "SOR" ? 5 : 7}>
+              <td colSpan={mode == "CREATEALL" && tableKey !== "SOR" ? ( isCreateRevisionEstimate || isEditRevisionEstimate ? 7 : 5) : (isCreateRevisionEstimate || isEditRevisionEstimate ? 9 : 7)}>
                 <MeasureCard
                   columns={getMeasureCardColumns()}
                   unitRate={row.unitRate}
@@ -353,7 +373,7 @@ const MeasureTable = (props) => {
           <tr>
             {mode == "CREATEALL" && tableKey == "NONSOR" && (
               <td
-                colSpan={6}
+                colSpan={isCreateRevisionEstimate || isEditRevisionEstimate ? 8 : 6}
                 style={{ textAlign: "center" }}
                 onClick={() => {
                   append({
