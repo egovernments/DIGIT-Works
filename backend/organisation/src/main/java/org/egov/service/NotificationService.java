@@ -7,10 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
-import org.egov.kafka.Producer;
+import org.egov.kafka.OrganizationProducer;
 import org.egov.repository.OrganisationRepository;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.util.HRMSUtils;
 import org.egov.util.OrganisationConstant;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ import static org.egov.util.OrganisationConstant.ORGANISATION_UPDATE_LOCALIZATIO
 @Slf4j
 public class NotificationService {
 
-    private final Producer producer;
+    private final OrganizationProducer organizationProducer;
 
     private final ServiceRequestRepository repository;
 
@@ -43,8 +42,8 @@ public class NotificationService {
     private static final String ORG_NAME = "orgName";
 
     @Autowired
-    public NotificationService(Producer producer, ServiceRequestRepository repository, RestTemplate restTemplate, Configuration config, OrganisationRepository organisationRepository) {
-        this.producer = producer;
+    public NotificationService(OrganizationProducer organizationProducer, ServiceRequestRepository repository, RestTemplate restTemplate, Configuration config, OrganisationRepository organisationRepository) {
+        this.organizationProducer = organizationProducer;
         this.repository = repository;
         this.restTemplate = restTemplate;
         this.config = config;
@@ -97,7 +96,7 @@ public class NotificationService {
                 SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
 
                 log.info("push message for create Action");
-                producer.push(config.getSmsNotifTopic(), smsRequest);
+                organizationProducer.push(config.getSmsNotifTopic(), smsRequest);
             }
         }
     }
@@ -127,10 +126,10 @@ public class NotificationService {
             SMSRequest smsRequestForOldMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("oldMobileNumber")).message(customizedMessage).build();
 
             log.info("push message for update Action");
-            producer.push(config.getSmsNotifTopic(), smsRequestForOldMobileNumber);
+            organizationProducer.push(config.getSmsNotifTopic(), smsRequestForOldMobileNumber);
             if(!organisation.getContactDetails().get(0).getContactMobileNumber().equalsIgnoreCase(oldContactDetails.getContactMobileNumber())){
                 SMSRequest smsRequestForNewMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("newMobileNumber")).message(customizedMessage).build();
-                producer.push(config.getSmsNotifTopic(), smsRequestForNewMobileNumber);
+                organizationProducer.push(config.getSmsNotifTopic(), smsRequestForNewMobileNumber);
             }
         }
     }

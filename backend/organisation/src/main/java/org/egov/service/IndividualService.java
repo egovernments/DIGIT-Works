@@ -9,7 +9,7 @@ import org.egov.common.models.core.Role;
 import org.egov.common.models.individual.*;
 import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.config.Configuration;
-import org.egov.kafka.Producer;
+import org.egov.kafka.OrganizationProducer;
 import org.egov.repository.OrganisationRepository;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
@@ -36,18 +36,18 @@ public class IndividualService {
 
     private final OrganisationRepository organisationRepository;
 
-    private final Producer producer;
+    private final OrganizationProducer organizationProducer;
     private final MultiStateInstanceUtil multiStateInstanceUtil;
     private static final String ILLEGAL_ARGUMENT_EXCEPTION = "IllegalArgumentException";
     private static final String OBJECTMAPPER_CONVERSION_ERROR = "ObjectMapper not able to convertValue in individualCall";
 
     @Autowired
-    public IndividualService(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration config, OrganisationRepository organisationRepository, Producer producer, MultiStateInstanceUtil multiStateInstanceUtil) {
+    public IndividualService(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration config, OrganisationRepository organisationRepository, OrganizationProducer organizationProducer, MultiStateInstanceUtil multiStateInstanceUtil) {
         this.mapper = mapper;
         this.serviceRequestRepository = serviceRequestRepository;
         this.config = config;
         this.organisationRepository = organisationRepository;
-        this.producer = producer;
+        this.organizationProducer = organizationProducer;
         this.multiStateInstanceUtil = multiStateInstanceUtil;
     }
 
@@ -180,7 +180,7 @@ public class IndividualService {
                 orgContactUpdateDiff.setOrganisationId(organisation.getId());
                 orgContactUpdateDiff.setOldContacts(toBeRemovedMembers);
                 orgContactUpdateDiff.setNewContacts(newMembers);
-                producer.push(config.getOrganisationContactDetailsUpdateTopic(), orgContactUpdateDiff);
+                organizationProducer.push(config.getOrganisationContactDetailsUpdateTopic(), orgContactUpdateDiff);
 
                 log.info("For Organisation Id: " + organisation.getId() + ": Number of members to be removed: " + toBeRemovedMembers.size()
                         + "\n" + "Number of members to be added: " + newMembers.size()

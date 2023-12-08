@@ -3,7 +3,7 @@ package org.egov.kafka;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Consumer {
+public class OrganizationConsumer {
 
 	/*
 	 * Uncomment the below line to start consuming record from kafka.topics.consumer

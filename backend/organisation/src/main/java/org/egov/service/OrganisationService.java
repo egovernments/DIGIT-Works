@@ -2,10 +2,9 @@ package org.egov.service;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
+import org.egov.kafka.OrganizationProducer;
 import org.egov.repository.OrganisationRepository;
 import org.egov.config.Configuration;
-import org.egov.kafka.Producer;
 import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class OrganisationService {
 
     private final OrganisationEnrichmentService organisationEnrichmentService;
 
-    private final Producer producer;
+    private final OrganizationProducer organizationProducer;
 
     private final Configuration configuration;
 
@@ -34,11 +33,11 @@ public class OrganisationService {
     private final NotificationService notificationService;
 
     @Autowired
-    public OrganisationService(OrganisationServiceValidator organisationServiceValidator, OrganisationRepository organisationRepository, OrganisationEnrichmentService organisationEnrichmentService, Producer producer, Configuration configuration, IndividualService individualService, NotificationService notificationService) {
+    public OrganisationService(OrganisationServiceValidator organisationServiceValidator, OrganisationRepository organisationRepository, OrganisationEnrichmentService organisationEnrichmentService, OrganizationProducer organizationProducer, Configuration configuration, IndividualService individualService, NotificationService notificationService) {
         this.organisationServiceValidator = organisationServiceValidator;
         this.organisationRepository = organisationRepository;
         this.organisationEnrichmentService = organisationEnrichmentService;
-        this.producer = producer;
+        this.organizationProducer = organizationProducer;
         this.configuration = configuration;
         this.individualService = individualService;
         this.notificationService = notificationService;
@@ -55,7 +54,7 @@ public class OrganisationService {
         organisationServiceValidator.validateCreateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
         individualService.createIndividual(orgRequest);
-        producer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
+        organizationProducer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
         try {
             notificationService.sendNotification(orgRequest, true);
         }catch (Exception e){
@@ -79,7 +78,7 @@ public class OrganisationService {
         }catch (Exception e){
             log.error("Exception while sending notification: " + e);
         }
-        producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
+        organizationProducer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
         return orgRequest;
     }
 

@@ -10,12 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class Producer {
+public class OrganizationProducer {
 
 	private final CustomKafkaTemplate<String, Object> kafkaTemplate;
 
 	@Autowired
-	public Producer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
+	public OrganizationProducer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
 		this.kafkaTemplate = kafkaTemplate;
 	}
 
