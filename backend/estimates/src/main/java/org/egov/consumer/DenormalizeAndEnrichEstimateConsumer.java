@@ -46,15 +46,15 @@ public class DenormalizeAndEnrichEstimateConsumer {
      * This is introduced to get the search - criteria & result of project and status of workflow in
      * estimate-inbox
      *
-     * @param record
+     * @param message
      * @param topic
      */
     @KafkaListener(topics = {"${estimate.kafka.create.topic}","${estimate.kafka.update.topic}"})
-    public void listen(final String record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    public void listen(final String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("DenormalizeAndEnrichEstimateConsumer::listen");
         try {
 
-            EstimateRequest estimateRequest = mapper.readValue(record, EstimateRequest.class);
+            EstimateRequest estimateRequest = mapper.readValue(message, EstimateRequest.class);
             if (estimateRequest != null && estimateRequest.getEstimate() != null && estimateRequest.getRequestInfo() != null) {
                 EstimateRequest enrichedEstimateRequest = denormalizeAndEnrichEstimateService.denormalizeAndEnrich(estimateRequest);
                 producer.push(serviceConfiguration.getEnrichEstimateTopic(), enrichedEstimateRequest);
