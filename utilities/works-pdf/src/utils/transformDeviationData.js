@@ -9,6 +9,7 @@ const transformDeviationData = (data) => {
     estimates["projectName"] = data.estimates[0].additionalDetails.projectName;
     estimates["description"] = data.estimates[0].description;
     estimates["revisionNumber"] = data.estimates[0].revisionNumber;
+    estimates["tenantId"] = data.estimates[0].tenantId;
     const sorIdMap = {};
 
     for (const estimateDetail of data.estimates[0].estimateDetails) {
