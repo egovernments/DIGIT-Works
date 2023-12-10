@@ -64,6 +64,18 @@ class _LanguageSelectionPage extends State<LanguageSelectionPage> {
                             cboAppVersion?.packageName,
                             cboAppVersion?.iOSId,
                             cboAppVersion?.version);
+                      },
+                      error: (String? error) {
+                        return const Center(
+                          child: Text(
+                            'Unable to load messages',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.red),
+                          ),
+                        );
                       });
                 },
                 child: Column(

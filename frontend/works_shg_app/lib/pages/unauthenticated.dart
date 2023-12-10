@@ -61,6 +61,18 @@ class UnauthenticatedPageWrapper extends StatelessWidget {
                         loading: () => Loaders.circularLoader(context),
                         loaded: (List<LocalizationMessageModel>? localization) {
                           return const AutoRouter();
+                        },
+                        error: (String? error) {
+                          return const Center(
+                            child: Text(
+                              'Unable to load messages',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.red),
+                            ),
+                          );
                         });
                   })
                 : Loaders.circularLoader(context));
