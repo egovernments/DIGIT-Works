@@ -76,6 +76,8 @@ public class ContractEnrichment {
 
     public void enrichContractOnCreate(ContractRequest contractRequest){
         Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
+        // Enrich Contract business service
+        enrichContractBusinessService(contractRequest);
         // Enrich LineItems
         enrichContractLineItems(contractRequest,mdmsForEnrichment);
         // Enrich UUID and AuditDetails
@@ -99,6 +101,8 @@ public class ContractEnrichment {
         String action = contractRequest.getWorkflow().getAction();
         log.info("Update:: Enrich contract create request. ContractId ["+contract.getId()+"], action ["+action+"]");
         Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
+        // Enrich Contract business service
+        enrichContractBusinessService(contractRequest);
         // Enrich LineItems
         enrichContractLineItems(contractRequest,mdmsForEnrichment);
         // Enrich UUID and AuditDetails
@@ -121,6 +125,13 @@ public class ContractEnrichment {
         Object mdmsData = mdmsUtils.fetchMDMSForEnrichment(requestInfo, tenantId, contractType);
         log.info("MDMS data fetched for enrichment. ContractId ["+contract.getId()+"]");
         return mdmsData;
+    }
+
+    private void enrichContractBusinessService(ContractRequest contractRequest){
+        Contract contract = contractRequest.getContract();
+        if(contract.getBusinessService() == null){
+            contract.setBusinessService(CONTRACT_BUSINESS_SERVICE);
+        }
     }
 
     private void enrichRegister(ContractRequest contractRequest,Object mdmsData) {
