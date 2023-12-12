@@ -16,6 +16,11 @@ const transformDeviationData = (data) => {
         if (estimateDetail.category === "OVERHEAD") {
             continue;
         }
+        // if in the end of name there is a square bracket then convert that square bracket into round bracket
+        if(estimateDetail.name.includes('[')){
+            estimateDetail.name = estimateDetail.name.replace('[', '(');
+            estimateDetail.name = estimateDetail.name.replace(']', ')');
+        }
     
         const { sorId, isDeduction, name, description, uom, unitRate, quantity, amountDetail } = estimateDetail;
     
