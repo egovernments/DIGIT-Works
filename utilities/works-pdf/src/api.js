@@ -137,7 +137,7 @@ async function search_estimateDetails(tenantId, requestinfo, estimateNumber) {
   var params = {
     tenantId: tenantId,
     estimateNumber: estimateNumber,
-    limit: 1,
+    limit: 100,
     _offset: 0,
     get offset() {
       return this._offset;
