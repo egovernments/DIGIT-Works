@@ -87,7 +87,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails, revisionN
           {
             type: "COMPONENT",
             cardHeader: { value: "MB_SORS", inlineStyles: {} },
-            component: "MeasureTable",
+            component: "EstimateMeasureTableWrapper",
             props: {
               config: {
                 key: "SOR",
@@ -108,7 +108,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails, revisionN
           {
             type: "COMPONENT",
             cardHeader: { value: "MB_NONSOR", inlineStyles: {} },
-            component: "MeasureTable",
+            component: "EstimateMeasureTableWrapper",
             props: {
               config: {
                 key: "NONSOR",

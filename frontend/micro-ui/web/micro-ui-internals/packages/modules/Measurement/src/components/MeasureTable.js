@@ -44,7 +44,7 @@ let defaultSOR = {
 
 const MeasureTable = (props) => {
   const { register, setValue, arrayProps = {}, config = {},watch } = props;
-  let { isCreateRevisionEstimate, isEditRevisionEstimate, revisionNumber } = Digit.Hooks.useQueryParams();
+  let { isCreateRevisionEstimate, isEditRevisionEstimate, revisionNumber } = props;
   const { key: tableKey, mode } = config;
   let { fields, append, remove } = arrayProps || {};
   const options = {
@@ -105,7 +105,7 @@ const MeasureTable = (props) => {
   const { isLoading, data : UOMData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
   const { t } = useTranslation();
-  const sum = parseFloat(fields.reduce((acc, row) => acc + parseFloat(row?.amount), 0)?.toFixed?.(2)) || 0;
+  const sum = parseFloat(fields?.reduce((acc, row) => acc + parseFloat(row?.amount), 0)?.toFixed?.(2)) || 0;
 
   // register(tableKey)
 
