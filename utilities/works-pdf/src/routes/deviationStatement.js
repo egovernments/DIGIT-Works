@@ -38,6 +38,9 @@ router.post(
                 return renderError(res, "Failed to query details of the estimate", 500);
             }
             const estimate = resEstimate.data;
+            if(estimate.estimates.length <2){
+                return renderError(res, "Revision is not done for this estimate", 404);
+            }
 
             var estimates;
             if (estimate && estimate.estimates.length > 1) {
