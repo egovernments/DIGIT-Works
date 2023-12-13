@@ -86,7 +86,7 @@ const ViewContractDetails = () => {
     
     
       const {isLoading, data:measurementData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
-      let isInWorkflowMeasurementPresent = measurementData?.allMeasurements?.length > 0 && measurementData?.allMeasurements?.filter((ob) => ob?.wfStatus === "SUBMITTED" || ob?.wfStatus === "VERIFIED" || ob?.wfStatus === "DRAFTED")?.length>0;
+      let isInWorkflowMeasurementPresent = measurementData?.allMeasurements?.code === "NO_MEASUREMENT_ROLL_FOUND"? false : (measurementData?.allMeasurements?.length > 0 && measurementData?.allMeasurements?.filter((ob) => ob?.wfStatus === "SUBMITTED" || ob?.wfStatus === "VERIFIED" || ob?.wfStatus === "DRAFTED")?.length>0);
 
     
     useEffect(() => {
