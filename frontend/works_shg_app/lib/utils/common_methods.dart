@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:root_checker_plus/root_checker_plus.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:works_shg_app/services/local_storage.dart';
@@ -44,7 +45,43 @@ class CommonMethods {
   void checkVersion(BuildContext context, String? packageName, String? iOSId,
       String? latestAppVersion) async {
     try {
-      if (latestAppVersion != null && !kIsWeb) {
+      var rootedCheck = (await RootCheckerPlus.isRootChecker()) ?? false;
+      var devMode = (await RootCheckerPlus.isDeveloperMode()) ?? false;
+      if (Platform.isAndroid && ((rootedCheck) || (devMode))) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return WillPopScope(
+                  child: AlertDialog(
+                    title: const Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.warning_rounded,
+                          color: Colors.red,
+                        ),
+                        Text(
+                          'UNSUPPORTED DEVICE!',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700),
+                        ),
+                      ],
+                    ),
+                    content: Text(
+                      '${(rootedCheck) ? 'Application can not be run on a rooted device' : 'Please disable developer mode of your device to run the application'} ',
+                    ),
+                  ),
+                  onWillPop: () async {
+                    if (Platform.isAndroid) {
+                      SystemNavigator.pop();
+                    } else if (Platform.isIOS) {
+                      exit(0);
+                    }
+                    return true;
+                  });
+            });
+      } else if (latestAppVersion != null && !kIsWeb) {
         if (int.parse(packageInfo!.version.split('.').join("").toString()) <
             int.parse(latestAppVersion.split('.').join("").toString())) {
           late Uri uri;
@@ -82,7 +119,10 @@ class CommonMethods {
               });
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Error');
+      print(e);
+    }
   }
 
   void launchPlayStore(Uri appLink, BuildContext context) async {

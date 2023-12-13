@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -29,105 +30,109 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
     OnLoadLocalizationEvent event,
     LocalizationEmitter emit,
   ) async {
-    if (await GlobalVariables.isLocaleSelect(event.locale, event.module)) {
-      dynamic localLabelResponse;
-      if (kIsWeb) {
-        localLabelResponse = html.window.sessionStorage[event.locale ?? ''];
-      } else {
-        localLabelResponse = await storage.read(key: event.locale ?? '');
-      }
-
-      if (localLabelResponse != null) {
-        localizationMessages = jsonDecode(localLabelResponse)
-            .map<LocalizationMessageModel>(
-                (e) => LocalizationMessageModel.fromJson(e))
-            .toList();
-      }
-      await AppLocalizations(
-        Locale(event.locale.split('_').first, event.locale.split('_').last),
-      ).load();
-      emit(LocalizationState.loaded(localizationMessages));
-      await AppLocalizations(
-        Locale(event.locale.split('_').first, event.locale.split('_').last),
-      ).load();
-    } else {
-      emit(const LocalizationState.loading());
-      LocalizationModel result = await localizationRepository.search(
-        url: Urls.initServices.localizationSearch,
-        queryParameters: {
-          "module": event.module,
-          "locale": event.locale,
-          "tenantId": event.tenantId,
-        },
-      );
-
-      if (kIsWeb) {
-        var existing = html.window.sessionStorage[event.locale ?? ''];
-        if (existing != null) {
-          var existingObject = json.decode(existing);
-          existingObject
-              .addAll(result.messages.map((e) => e.toJson()).toList());
-          html.window.sessionStorage[event.locale ?? ''] =
-              jsonEncode(existingObject);
+    try {
+      if (await GlobalVariables.isLocaleSelect(event.locale, event.module)) {
+        dynamic localLabelResponse;
+        if (kIsWeb) {
+          localLabelResponse = html.window.sessionStorage[event.locale ?? ''];
         } else {
-          if (event.locale != null && event.locale.isNotEmpty) {
-            // Condition: event.locale is set in the SHG app
+          localLabelResponse = await storage.read(key: event.locale ?? '');
+        }
 
-            // Delete session storage parameters with names containing "_IN"
-            final storage = html.window.sessionStorage;
-            List<String> keysToDelete = [];
+        if (localLabelResponse != null) {
+          localizationMessages = jsonDecode(localLabelResponse)
+              .map<LocalizationMessageModel>(
+                  (e) => LocalizationMessageModel.fromJson(e))
+              .toList();
+        }
+        await AppLocalizations(
+          Locale(event.locale.split('_').first, event.locale.split('_').last),
+        ).load();
+        emit(LocalizationState.loaded(localizationMessages));
+        await AppLocalizations(
+          Locale(event.locale.split('_').first, event.locale.split('_').last),
+        ).load();
+      } else {
+        emit(const LocalizationState.loading());
+        LocalizationModel result = await localizationRepository.search(
+          url: Urls.initServices.localizationSearch,
+          queryParameters: {
+            "module": event.module,
+            "locale": event.locale,
+            "tenantId": event.tenantId,
+          },
+        );
 
-            for (var key in storage.keys) {
-              if (key.contains('_IN')) {
-                keysToDelete.add(key);
+        if (kIsWeb) {
+          var existing = html.window.sessionStorage[event.locale ?? ''];
+          if (existing != null) {
+            var existingObject = json.decode(existing);
+            existingObject
+                .addAll(result.messages.map((e) => e.toJson()).toList());
+            html.window.sessionStorage[event.locale ?? ''] =
+                jsonEncode(existingObject);
+          } else {
+            if (event.locale != null && event.locale.isNotEmpty) {
+              // Condition: event.locale is set in the SHG app
+
+              // Delete session storage parameters with names containing "_IN"
+              final storage = html.window.sessionStorage;
+              List<String> keysToDelete = [];
+
+              for (var key in storage.keys) {
+                if (key.contains('_IN')) {
+                  keysToDelete.add(key);
+                }
+              }
+
+              // Delete keys
+              for (var key in keysToDelete) {
+                storage.remove(key);
               }
             }
 
-            // Delete keys
-            for (var key in keysToDelete) {
-              storage.remove(key);
-            }
+            html.window.sessionStorage[event.locale ?? ''] =
+                jsonEncode(result.messages.map((e) => e.toJson()).toList());
           }
-
-          html.window.sessionStorage[event.locale ?? ''] =
-              jsonEncode(result.messages.map((e) => e.toJson()).toList());
-        }
-      } else {
-        var existing = await storage.read(key: event.locale);
-        if (existing != null) {
-          var existingObject = json.decode(existing);
-          existingObject
-              .addAll(result.messages.map((e) => e.toJson()).toList());
-          await storage.write(
-              key: event.locale ?? '', value: jsonEncode(existingObject));
         } else {
-          await storage.write(
-              key: event.locale ?? '',
-              value:
-                  jsonEncode(result.messages.map((e) => e.toJson()).toList()));
+          var existing = await storage.read(key: event.locale);
+          if (existing != null) {
+            var existingObject = json.decode(existing);
+            existingObject
+                .addAll(result.messages.map((e) => e.toJson()).toList());
+            await storage.write(
+                key: event.locale ?? '', value: jsonEncode(existingObject));
+          } else {
+            await storage.write(
+                key: event.locale ?? '',
+                value: jsonEncode(
+                    result.messages.map((e) => e.toJson()).toList()));
+          }
         }
-      }
 
-      dynamic localLabelResponse;
-      if (kIsWeb) {
-        localLabelResponse = html.window.sessionStorage[event.locale ?? ''];
-      } else {
-        localLabelResponse = await storage.read(key: event.locale ?? '');
-      }
+        dynamic localLabelResponse;
+        if (kIsWeb) {
+          localLabelResponse = html.window.sessionStorage[event.locale ?? ''];
+        } else {
+          localLabelResponse = await storage.read(key: event.locale ?? '');
+        }
 
-      if (localLabelResponse != null) {
-        localizationMessages = jsonDecode(localLabelResponse)
-            .map<LocalizationMessageModel>(
-                (e) => LocalizationMessageModel.fromJson(e))
-            .toList();
+        if (localLabelResponse != null) {
+          localizationMessages = jsonDecode(localLabelResponse)
+              .map<LocalizationMessageModel>(
+                  (e) => LocalizationMessageModel.fromJson(e))
+              .toList();
+        }
+        await AppLocalizations(Locale(
+                event.locale.split('_').first, event.locale.split('_').last))
+            .load();
+        emit(LocalizationState.loaded(localizationMessages));
+        await AppLocalizations(
+          Locale(event.locale.split('_').first, event.locale.split('_').last),
+        ).load();
       }
-      await AppLocalizations(Locale(
-              event.locale.split('_').first, event.locale.split('_').last))
-          .load();
-      emit(LocalizationState.loaded(localizationMessages));
-      await AppLocalizations(
-        Locale(event.locale.split('_').first, event.locale.split('_').last),
-      ).load();
+    } on DioError catch (e) {
+      LocalizationState.error(e.response?.data['Errors'][0]['code']);
     }
   }
 }

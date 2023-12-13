@@ -1174,6 +1174,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0"
+  root_checker_plus:
+    dependency: "direct main"
+    description:
+      name: root_checker_plus
+      sha256: bee136830f303cdd5ce5c46c3d1c6733fa01a8a0220be9e07130d1644d8c2d7f
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   shelf:
     dependency: transitive
     description:
