@@ -17,9 +17,9 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     let isCreateOrUpdate = /(measurement\/create|estimate\/create-detailed-estimate|estimate\/update-detailed-estimate|measurement\/update)/.test(window.location.href);
     //Defined the codes for charges upserted in mdmsV2
     const ChargesCodeMapping = {
-        LabourCost : "LH",
+        LabourCost : "LA",
         MaterialCost : "MA",
-        MachineryCost : "MH",
+        MachineryCost : "MHA",
     }
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
