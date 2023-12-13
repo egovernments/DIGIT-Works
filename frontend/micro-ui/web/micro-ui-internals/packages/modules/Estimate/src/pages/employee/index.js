@@ -11,6 +11,8 @@ import ViewEstimate from "./ViewEstimate";
 import EstimateResponse from "./Estimates/CreateEstimate/EstimateResponse";
 import CreateDetailedEstimate from "./Estimates/CreateDetailedEstimate/CreateEstimate";
 import UpdateDetailedEstimate from "./Estimates/CreateDetailedEstimate/UpdateDetailedEstimate";
+import CreateRevisionDetailedEstimate from "./Estimates/CreateDetailedEstimate/CreateRevisionDetailedEstimate";
+import UpdateRevisionDetailedEstimate from "./Estimates/CreateDetailedEstimate/UpdateRevisionDetailedEstimate";
 
 import ViewDetailedEstimate from "./ViewDetailedEstimate";
 
@@ -48,6 +50,18 @@ const EstimateBreadCrumbs = ({ location }) => {
             path: `/${window.contextPath}/employee/estimate/update-detailed-estimate`,
             content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_UPDATE_DETAILED_ESTIMATE")}` : t("WORKS_UPDATE_DETAILED_ESTIMATE"),
             show: location.pathname.includes("/estimate/update-detailed-estimate") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/estimate/create-revision-detailed-estimate`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_REVISION_DETAILED_ESTIMATE")}` : t("WORKS_CREATE_REVISION_DETAILED_ESTIMATE"),
+            show: location.pathname.includes("/estimate/create-revision-detailed-estimate") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/estimate/update-revision-detailed-estimate`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_UPDATE_REVISION_DETAILED_ESTIMATE")}` : t("WORKS_UPDATE_REVISION_DETAILED_ESTIMATE"),
+            show: location.pathname.includes("/estimate/update-revision-detailed-estimate") ? true : false,
             isBack: fromScreen && true,
         },
         {
@@ -136,6 +150,8 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
                     <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewDetailedEstimate {...{ path }} />} />
                     <PrivateRoute path={`${path}/update-detailed-estimate`} component={() => <UpdateDetailedEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/create-revision-detailed-estimate`} component={() => <CreateRevisionDetailedEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/update-revision-detailed-estimate`} component={() => <UpdateRevisionDetailedEstimate {...{ path }} />} />
 
                     <PrivateRoute path={`${path}/response`} component={() => <EstimateResponse {...{ path }} />} />
 

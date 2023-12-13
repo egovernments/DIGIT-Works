@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom';
 const ViewDetailedEstimate = () => {
   const history = useHistory();
   const [showActions, setShowActions] = useState(false);
-  const { tenantId, estimateNumber } = Digit.Hooks.useQueryParams();
+  const { tenantId, estimateNumber, revisionNumber } = Digit.Hooks.useQueryParams();
   const { t } = useTranslation();
   const [actionsMenu, setActionsMenu] = useState([]);
   const [isStateChanged, setStateChanged] = useState(``);
@@ -23,7 +23,7 @@ const ViewDetailedEstimate = () => {
 
   const requestCriteria = {
     url: "/estimate/v1/_search",
-    params : {tenantId : tenantId , estimateNumber : estimateNumber}
+    params : revisionNumber ? {tenantId : tenantId , revisionNumber : revisionNumber} : {tenantId : tenantId , estimateNumber : estimateNumber}
   };
 
   //fetching estimate data
@@ -87,6 +87,19 @@ const ViewDetailedEstimate = () => {
         },
       ]);
     }
+
+    let isUserEstimateCreater = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
+    //Checking if REVSION ESTIMATE can be created or not.
+    if( detailedEstimate?.estimates[0]?.wfStatus === "APPROVED" && isUserEstimateCreater && !actionsMenu?.find((ob) => ob?.name === "CREATE_REVISION_ESTIMATE"))
+    {
+      setActionsMenu((prevState) => [
+        ...prevState,
+        {
+          name: "CREATE_REVISION_ESTIMATE",
+        },
+      ]);
+    }
+  
   }, [detailedEstimate, isStateChanged, contract]);
 
   const handleActionBar = (option) => {
@@ -96,6 +109,11 @@ const ViewDetailedEstimate = () => {
     if (option?.name === "VIEW_CONTRACT") {
       history.push(
         `/${window.contextPath}/employee/contracts/contract-details?tenantId=${tenantId}&workOrderNumber=${inWorkflowContract?.contractNumber}`
+      );
+    }
+    if (option?.name === "CREATE_REVISION_ESTIMATE") {
+      history.push(
+        `/${window.contextPath}/employee/estimate/create-revision-detailed-estimate?tenantId=${tenantId}&projectNumber=${project?.projectNumber}&estimateNumber=${estimateNumber}&isCreateRevisionEstimate=true`
       );
     }
   };
@@ -125,7 +143,7 @@ const ViewDetailedEstimate = () => {
     },
   };
 
-  const config = data(project, detailedEstimate?.estimates[0], overheadItems);
+  const config = data(project, detailedEstimate?.estimates[0], overheadItems, revisionNumber);
 
   if (isProjectLoading || isDetailedEstimateLoading) return <Loader />;
 
@@ -133,7 +151,7 @@ const ViewDetailedEstimate = () => {
     <div className={"employee-main-application-details"}>
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
         <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px" }}>
-          {t("ESTIMATE_VIEW_ESTIMATE")}
+          {revisionNumber ? t("ESTIMATE_VIEW_REVISED_ESTIMATE") : t("ESTIMATE_VIEW_ESTIMATE")}
         </Header>
         <MultiLink onHeadClick={() => HandleDownloadPdf()} downloadBtnClassName={"employee-download-btn-className"} label={t("CS_COMMON_DOWNLOAD")} />
       </div>

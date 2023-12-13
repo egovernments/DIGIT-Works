@@ -60,7 +60,7 @@ export const createEstimateConfig = () => {
                 "body": [
                     {
                         type: "component",
-                        component: "MeasureTable",
+                        component: "EstimateMeasureTableWrapper",
                         withoutLabel: true,
                         key: "SOR",
                         customProps: {
@@ -81,7 +81,7 @@ export const createEstimateConfig = () => {
                 "body": [
                     {
                         type: "component",
-                        component: "MeasureTable",
+                        component: "EstimateMeasureTableWrapper",
                         withoutLabel: true,
                         customProps: {
                             mode:"createall"

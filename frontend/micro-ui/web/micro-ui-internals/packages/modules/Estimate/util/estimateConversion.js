@@ -26,6 +26,7 @@ export const transformEstimateObjects = (estimateData, type) => {
             description: e?.description?.trim(),
             amountid: e?.amountDetail?.[0]?.id || null,
             id: e?.id || null,
+            previousLineItemId: e?.previousLineItemId || null,
             height: convertNumberFields(e?.height),
             width: convertNumberFields(e?.width),
             length: convertNumberFields(e?.length),
@@ -36,6 +37,7 @@ export const transformEstimateObjects = (estimateData, type) => {
         }));
         return {
             amount: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0),
+            originalAmount : measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0),
             consumedQ : measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0),
             sNo: index + 1,
             currentMBEntry:measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0),
