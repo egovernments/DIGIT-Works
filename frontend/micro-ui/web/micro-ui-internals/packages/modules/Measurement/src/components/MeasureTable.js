@@ -10,7 +10,8 @@ import MeasureCard from "./MeasureCard";
 2. VIEW -> view of measurement
 3. CREATEALL -> Detailed Estimate create
 4. VIEWES -> view of detailed estimate
-
+5. CREATERE -> revised estimate create and update
+6. VIEWRE -> view of revised estimate
 
 */
 
@@ -44,8 +45,8 @@ let defaultSOR = {
 
 const MeasureTable = (props) => {
   const { register, setValue, arrayProps = {}, config = {},watch } = props;
-  let { isCreateRevisionEstimate, isEditRevisionEstimate, revisionNumber } = props;
-  const { key: tableKey, mode } = config;
+  let { key: tableKey, mode } = config;
+  mode = props?.props?.mode ? props?.props?.mode : mode;
   let { fields, append, remove } = arrayProps || {};
   const options = {
     masterName: "UOM",
@@ -135,20 +136,19 @@ const MeasureTable = (props) => {
 
   const getColumns = (mode, t) => {
     if (mode === "CREATEALL" && tableKey === "SOR") {
-      if(isCreateRevisionEstimate || isEditRevisionEstimate)
+      if(mode === "CREATERE")
         return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_REVISED_QTY"), t("WORKS_REVISED_AMT"), t("")];
       return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
     } else if (mode === "VIEWES" && tableKey === "SOR") {
-      //HERE ALSO NEED TO ADD ISCREATE CONDITION FOR REVISED ESTIMATE
-      if(revisionNumber)
+      if(mode === "VIEWRE")
         return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"),t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_REVISIED_ESTIMATED_QUANTITY"), t("WORKS_REVISED_ESTIMATED_AMOUNT")];
       return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
     } else if (mode === "CREATEALL") {
-      if(isCreateRevisionEstimate || isEditRevisionEstimate)
+      if(mode === "CREATERE")
         return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_REVISED_QTY"), t("WORKS_REVISED_AMT"), t("")];
       return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
     } else if (mode === "VIEWES") {
-      if(revisionNumber)
+      if(mode === "VIEWRE")
         return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_ESTIMATED_REVISED_QUANTITY"), t("WORKS_ESTIMATED_REVISED_AMOUNT")];
       return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
     } else {
@@ -270,7 +270,7 @@ const MeasureTable = (props) => {
                 </td>
               </>
             )}
-            {(isCreateRevisionEstimate === "true" || isEditRevisionEstimate==="true" || revisionNumber) && (mode === "CREATEALL" || mode === "VIEWES") && (
+            {(mode === "CREATERE" || mode === "VIEWRE") && (mode === "CREATEALL" || mode === "VIEWES") && (
               <>
                 <td>
                   <Amount customStyle={{ textAlign: "right" }} value={row?.approvedQuantity?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
@@ -342,7 +342,7 @@ const MeasureTable = (props) => {
           {row?.showMeasure && !initialState.length > 0 && (
             <tr>
               <td colSpan={"1"}></td>
-              <td colSpan={mode == "CREATEALL" && tableKey !== "SOR" ? ( isCreateRevisionEstimate || isEditRevisionEstimate ? 7 : 5) : (isCreateRevisionEstimate || isEditRevisionEstimate ? 9 : 7)}>
+              <td colSpan={mode == "CREATEALL" && tableKey !== "SOR" ? ( mode === "CREATERE" ? 7 : 5) : (mode === "CREATERE" ? 9 : 7)}>
                 <MeasureCard
                   columns={getMeasureCardColumns()}
                   unitRate={row.unitRate}
@@ -373,7 +373,7 @@ const MeasureTable = (props) => {
           <tr>
             {mode == "CREATEALL" && tableKey == "NONSOR" && (
               <td
-                colSpan={isCreateRevisionEstimate || isEditRevisionEstimate ? 8 : 6}
+                colSpan={mode === "CREATERE" ? 8 : 6}
                 style={{ textAlign: "center" }}
                 onClick={() => {
                   append({
