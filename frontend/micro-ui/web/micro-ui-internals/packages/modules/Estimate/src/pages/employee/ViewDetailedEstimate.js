@@ -47,7 +47,7 @@ const ViewDetailedEstimate = () => {
   });
 
   //here make a contract search based on the estimateNumber
-  let { isLoading: isLoadingContracts, data: contract } = Digit.Hooks.contracts.useContractSearch({
+  let { isLoading: isLoadingContracts, data: contracts } = Digit.Hooks.contracts.useContractSearch({
     tenantId,
     filters: { tenantId, estimateIds: [detailedEstimate?.estimates[0]?.id] },
     config: {
@@ -57,17 +57,18 @@ const ViewDetailedEstimate = () => {
   });
 
   //fetching all work orders for a particular estimate
-  let allContract = contract;
-  contract = contract?.[0];
+  let allContract = contracts;
+  contract = contracts?.[0];
   //getting the object which will be in workflow, as 1:1:1 mapping is there, one one inworkflow workorder will be there for one estimate
   let inWorkflowContract = allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.[0];
+  let isCreateContractallowed = !(allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.length > 0);
 
   useEffect(() => {
     let isUserContractCreator = loggedInUserRoles?.includes("WORK_ORDER_CREATOR");
     if (
       detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" &&
       isUserContractCreator &&
-      !actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT") && isCreateContractallowed == false
+      !actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT") && (isCreateContractallowed == true || allContract?.length == 0)
     ) {
       setActionsMenu((prevState) => [
         ...prevState,
@@ -77,10 +78,9 @@ const ViewDetailedEstimate = () => {
       ]);
     }
     //checking if any work order is inworflow, if it is then view contract will be shown otherwise create contract
-    let isCreateContractallowed = allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.length > 0;
 
     //if contract is already there just remove the prevState and push View contract state
-    if (contract?.contractNumber && isCreateContractallowed) {
+    if (contracts?.[0]?.contractNumber && !isCreateContractallowed) {
       setActionsMenu((prevState) => [
         ...prevState,
         {
@@ -101,7 +101,7 @@ const ViewDetailedEstimate = () => {
       ]);
     }
   
-  }, [detailedEstimate, isStateChanged, contract]);
+  }, [detailedEstimate, isStateChanged, contracts]);
 
   const handleActionBar = (option) => {
     if (option?.name === "CREATE_CONTRACT") {
