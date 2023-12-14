@@ -434,9 +434,9 @@ const CreateEstimate = () => {
         onSuccess: async (responseData, variables) => {
           clearSessionFormData();
           const state = {
-            header: t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
-            id: responseData?.estimates[0]?.estimateNumber,
-            info: t("ESTIMATE_ESTIMATE_NO"),
+            header: isCreateRevisionEstimate || isEditRevisionEstimate ? t("WORKS_REVISION_ESTIMATE_RESPONSE_CREATED_HEADER") :t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
+            id: isCreateRevisionEstimate || isEditRevisionEstimate ? responseData?.estimates[0]?.revisionNumber : responseData?.estimates[0]?.estimateNumber,
+            info:isCreateRevisionEstimate || isEditRevisionEstimate ?  t("ESTIMATE_REVISION_ESTIMATE_NO") : t("ESTIMATE_ESTIMATE_NO"),
             // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
             links: [
               {

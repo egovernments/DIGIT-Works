@@ -51,14 +51,13 @@ const ViewDetailedEstimate = () => {
     tenantId,
     filters: { tenantId, estimateIds: [detailedEstimate?.estimates[0]?.id] },
     config: {
-      enabled: !isDetailedEstimateLoading && detailedEstimate?.estimates[0]?.wfStatus === "APPROVED" ? true : false,
+      enabled: !isDetailedEstimateLoading && detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" ? true : false,
       cacheTime: 0,
     },
   });
 
   //fetching all work orders for a particular estimate
   let allContract = contracts;
-  contract = contracts?.[0];
   //getting the object which will be in workflow, as 1:1:1 mapping is there, one one inworkflow workorder will be there for one estimate
   let inWorkflowContract = allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.[0];
   let isCreateContractallowed = !(allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.length > 0);
@@ -68,7 +67,7 @@ const ViewDetailedEstimate = () => {
     if (
       detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" &&
       isUserContractCreator &&
-      !actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT") && (isCreateContractallowed == true || allContract?.length == 0)
+      !actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT") && (isCreateContractallowed == true && allContract !== undefined || allContract?.length == 0)
     ) {
       setActionsMenu((prevState) => [
         ...prevState,

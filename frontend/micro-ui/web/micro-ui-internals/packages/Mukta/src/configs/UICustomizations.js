@@ -426,7 +426,7 @@ export const UICustomizations = {
               {/* <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link> */}
-              {Digit.Utils.statusBasedNavigation(row?.ProcessInstance?.action, row?.businessObject?.additionalDetails?.projectNumber, value, row.ProcessInstance.tenantId, value, "ESTIMATE")}
+              {Digit.Utils.statusBasedNavigation(row?.ProcessInstance?.action, row?.businessObject?.additionalDetails?.projectNumber, row?.ProcessInstance?.businessId, row.ProcessInstance.tenantId, row?.ProcessInstance?.businessId, row?.businessObject?.businessService === "REVISION-ESTIMATE" ? "REVISION-ESTIMATE" : "ESTIMATE", value)}
             </span>
         );
       }

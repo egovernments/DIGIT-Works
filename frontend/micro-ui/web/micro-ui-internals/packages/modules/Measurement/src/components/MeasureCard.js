@@ -138,7 +138,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
               <div style={{ display: "flex", flexDirection: "row" }}>
                 { (
                   <>
-                    {mode == "CREATEALL" && (
+                    {(mode == "CREATEALL" || mode == "CREATERE") && (
                       <Button
                         className={"outline-btn"}
                         label={t("MB_ADD_ROW")}
