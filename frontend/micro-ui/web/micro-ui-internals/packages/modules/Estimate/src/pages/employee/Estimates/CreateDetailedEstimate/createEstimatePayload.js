@@ -133,7 +133,7 @@ const fetchEstimateDetailsEdit = (isEdit, data, estimate, isCreateRevisionEstima
   const detailedEstimates = [...Sors, ...NonSors];
 
   let overHeadsData = data?.overheadDetails
-    ?.filter((row) => row && row.amount !== "0")
+    ?.filter((row) => row && row.amount !== "0" && row.amount !== undefined)
     ?.map((row) => {
       return {
         id: estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.id || null,
