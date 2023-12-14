@@ -66,7 +66,6 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
       currentQuantity,
       mbAmount,
       quantity,
-      // amountDetail: [{ amount: mbAmount }],
     } = estimateDetailsArray[0];
   
     var sorIdMeasuresMapKey = {
