@@ -4,7 +4,7 @@ const EstimateMeasureTableWrapper = (props) => {
     let { isCreateRevisionEstimate, isEditRevisionEstimate, revisionNumber } = Digit.Hooks.useQueryParams();
     let MeasureTable = Digit?.ComponentRegistryService?.getComponent("MeasureTable");
     if(isCreateRevisionEstimate || isEditRevisionEstimate && props.props["mode"]) props.props["mode"] = "CREATERE"
-    if(revisionNumber && props.props["mode"]) props.props["mode"] = "VIEWRE"
+    if(revisionNumber && props?.config["mode"]) props.config["mode"] = "VIEWRE"
 
   return (
     <MeasureTable 

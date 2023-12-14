@@ -65,9 +65,9 @@ const ViewDetailedEstimate = () => {
   useEffect(() => {
     let isUserContractCreator = loggedInUserRoles?.includes("WORK_ORDER_CREATOR");
     if (
-      detailedEstimate?.estimates[0]?.wfStatus === "APPROVED" &&
+      detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" &&
       isUserContractCreator &&
-      !actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT")
+      !actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT") && isCreateContractallowed == false
     ) {
       setActionsMenu((prevState) => [
         ...prevState,
@@ -82,6 +82,7 @@ const ViewDetailedEstimate = () => {
     //if contract is already there just remove the prevState and push View contract state
     if (contract?.contractNumber && isCreateContractallowed) {
       setActionsMenu((prevState) => [
+        ...prevState,
         {
           name: "VIEW_CONTRACT",
         },
@@ -90,7 +91,7 @@ const ViewDetailedEstimate = () => {
 
     let isUserEstimateCreater = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
     //Checking if REVSION ESTIMATE can be created or not.
-    if( detailedEstimate?.estimates[0]?.wfStatus === "APPROVED" && isUserEstimateCreater && !actionsMenu?.find((ob) => ob?.name === "CREATE_REVISION_ESTIMATE"))
+    if( detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" && isUserEstimateCreater && !actionsMenu?.find((ob) => ob?.name === "CREATE_REVISION_ESTIMATE"))
     {
       setActionsMenu((prevState) => [
         ...prevState,
@@ -157,7 +158,7 @@ const ViewDetailedEstimate = () => {
       </div>
       <ViewComposer data={config} isLoading={false} />
       <>
-        {detailedEstimate?.estimates[0]?.wfStatus === "APPROVED" && !isLoadingContracts && actionsMenu?.length > 0 ? (
+        {detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" && !isLoadingContracts && actionsMenu?.length > 0 ? (
           <ActionBar>
           {showActions ? <Menu
               localeKeyPrefix={`EST_VIEW_ACTIONS`}
