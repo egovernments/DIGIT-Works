@@ -271,10 +271,19 @@ public class WorkflowService {
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
 
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-        StringBuilder searchUrl = getProcessInstanceSearchURLWithHistory(
-                estimate.getTenantId()
-                , estimate.getEstimateNumber()
-                , Boolean.FALSE);
+        StringBuilder searchUrl;
+        if (estimate.getBusinessService() != null && estimate.getBusinessService().equals(serviceConfiguration.getRevisionEstimateBusinessService())) {
+            searchUrl = getProcessInstanceSearchURLWithHistory(
+                    estimate.getTenantId()
+                    , estimate.getRevisionNumber()
+                    , Boolean.FALSE);
+        }
+        else {
+            searchUrl = getProcessInstanceSearchURLWithHistory(
+                    estimate.getTenantId()
+                    , estimate.getEstimateNumber()
+                    , Boolean.FALSE);
+        }
 
         Object result = repository.fetchResult(searchUrl, requestInfoWrapper);
 

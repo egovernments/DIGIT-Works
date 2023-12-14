@@ -28,6 +28,7 @@ import static org.egov.util.EstimateServiceConstant.*;
 @Slf4j
 public class EstimateServiceValidator {
 
+    public static final String INVALID_PREVIOUS_LINE_ITEM_ID = "INVALID_PREVIOUS_LINE_ITEM_ID";
     private final MDMSUtils mdmsUtils;
 
     private final EstimateRepository estimateRepository;
@@ -136,7 +137,7 @@ public class EstimateServiceValidator {
 
             for(EstimateDetail estimateDetail: estimateDetails){
                 if(estimateDetail.getPreviousLineItemId() != null && (!prevEstimateDetailMap.containsKey(estimateDetail.getPreviousLineItemId()))){
-                        errorMap.put(INVALID_ESTIMATE_DETAIL, "Previous Line Id is invalid for revision estimate");
+                        errorMap.put(INVALID_PREVIOUS_LINE_ITEM_ID, "Previous Line Id is invalid for revision estimate");
                 }
             }
         }
@@ -535,7 +536,7 @@ public class EstimateServiceValidator {
             }
         }
         else{
-            errorMap.put("INVALID_PREVIOUS_LINE_ITEM_ID", "Previous line item id is invalid");
+            errorMap.put(INVALID_PREVIOUS_LINE_ITEM_ID, "Previous line item id is invalid");
         }
     }
 
@@ -875,7 +876,7 @@ private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDat
                 throw new CustomException(INVALID_ESTIMATE_DETAIL, "Line item id is invalid for revision estimate");
             }
             if(estimateDetail.getId() != null && estimateDetailMap.containsKey(estimateDetail.getId()) && (estimateDetail.getPreviousLineItemId() != null && !estimateDetail.getPreviousLineItemId().equals(estimateDetailMap.get(estimateDetail.getId()).getPreviousLineItemId()))){
-                    throw new CustomException("INVALID_PREVIOUS_LINE_ITEM_ID", "Previous line item id is invalid for revision estimate");
+                    throw new CustomException(INVALID_PREVIOUS_LINE_ITEM_ID, "Previous line item id is invalid for revision estimate");
 
             }
         });
