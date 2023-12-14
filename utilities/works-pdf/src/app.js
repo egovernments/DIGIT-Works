@@ -10,6 +10,7 @@ var musterRollRouter = require("./routes/musterRolls");
 var workOrderRouter = require("./routes/workOrder");
 var groupBills = require("./routes/groupBill");
 const deviationStatementRouter = require("./routes/deviationStatement");
+const measurementBookRouter = require("./routes/measurementBook");
 
 
 // var {listenConsumer} = require("./consumer")
@@ -35,6 +36,7 @@ app.use(config.app.contextPath + "/download/musterRoll", musterRollRouter);
 app.use(config.app.contextPath + "/download/workOrder", workOrderRouter);
 app.use(config.app.contextPath + "/bill", groupBills);
 app.use(config.app.contextPath + "/download/deviationStatement", deviationStatementRouter);
+app.use(config.app.contextPath + "/download/measurementBook", measurementBookRouter);
 
 
 
