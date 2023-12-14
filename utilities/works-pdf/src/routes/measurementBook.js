@@ -36,6 +36,8 @@ router.post(
         }
 
         console.log("tenantId", tenantId);
+        console.log("contractNumber", contractNumber);
+        console.log("measurementNumber", measurementNumber);
 
         try {
             try {
@@ -47,18 +49,13 @@ router.post(
             }
 
             // print all the values of resMeasurement
-            console.log("resMeasurement", resMeasurement);
+            console.log("resMeasurement", resMeasurement.data);
 
             var measurementBookDetails = resMeasurement.data;
-
-            var contract = resMeasurement.data?.contract;
-            var lineItems = resMeasurement.data?.contract?.lineItems;
-            var measurement = resMeasurement.data?.measurement;
-            var allMeasurements = resMeasurement.data?.allMeasurements;
             var estimateDetails = resMeasurement.data?.estimate?.estimateDetails;
 
             //print all the values of measurementBookDetails
-            // console.log("measurementBookDetails", measurementBookDetails);
+            console.log("measurementBookDetails", measurementBookDetails);
 
 
             var transformedData;
@@ -66,7 +63,7 @@ router.post(
                 
                 // transformedData = transformEstimateData(lineItems, contract, measurement, allMeasurements, estimateDetails);
                 try{
-                    transformedData = await transformEstimateData(lineItems, contract, measurement, allMeasurements, estimateDetails);
+                    transformedData = await transformEstimateData(estimateDetails);
                 }
                 catch (ex) {
                     if (ex.response && ex.response.data)

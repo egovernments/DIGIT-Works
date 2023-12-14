@@ -1,6 +1,6 @@
 const { pdf } = require("../config");
 
-const transformEstimateData = (lineItems, contract, measurement, allMeasurements, estimateDetails) => {
+const transformEstimateData = (estimateDetails) => {
 
   const idEstimateDetailsMap = {};
   for (let i = 0; i < estimateDetails.length; i++) {
