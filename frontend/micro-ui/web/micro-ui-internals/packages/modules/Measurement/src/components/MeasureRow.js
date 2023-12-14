@@ -91,7 +91,7 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode, fields }) => {
       <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"width"} id={index + 1} value={rowState?.["width"]} InputDecimalValidation={InputDecimalValidation} />
       <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"height"} id={index + 1} value={rowState?.["height"]} InputDecimalValidation={InputDecimalValidation} />
       <td>{rowState?.noOfunit}</td>
-      {mode == "CREATEALL" && (
+      {mode == "CREATEALL" && fields?.length > 1 && (
         <td>
           <span
             className="icon-wrapper"

@@ -25,6 +25,7 @@ let defaultSOR = {
       "category": "NON-SOR",
       "targetId": null,
       "approvedQuantity": 0,
+      "currentMBEntry" : 0,
       "measures": [
           {
               "sNo": 1,
