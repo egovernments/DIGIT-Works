@@ -47,7 +47,7 @@ let defaultSOR = {
 const MeasureTable = (props) => {
   const { register, setValue, arrayProps = {}, config = {},watch } = props;
   let { key: tableKey, mode } = config;
-  mode = props?.props?.mode ? props?.props?.mode : mode;
+  mode = props?.props?.mode || props?.config?.mode ? props?.props?.mode || props?.config?.mode : mode;
   let { fields, append, remove } = arrayProps || {};
   const options = {
     masterName: "UOM",

@@ -103,7 +103,7 @@ const CreateEstimate = () => {
       values: [
         {
           title: "WORKS_ESTIMATE_TYPE",
-          value: t("ORIGINAL_ESTIMATE"),
+          value: revisionNumber ? t("REVISION_ESTIMATE") : t("ORIGINAL_ESTIMATE"),
         },
         {
           title: "WORKS_PROJECT_ID",
@@ -129,7 +129,17 @@ const CreateEstimate = () => {
     cardState[0].values = [
       {
         title: "WORKS_ESTIMATE_ID",
-        value: estimateNumber,
+        value: estimateNumber || estimate?.estimateNumber,
+      },
+      ...cardState?.[0]?.values,
+    ];
+  }
+
+  if (isEditRevisionEstimate) {
+    cardState[0].values = [
+      {
+        title: "WORKS_REVISED_NO",
+        value: revisionNumber,
       },
       ...cardState?.[0]?.values,
     ];
