@@ -31,6 +31,9 @@ router.post(
         if (!measurementNumber) {
             return renderError(res, "measurementNumber is mandatory to generate the receipt", 400)
         }
+        if (!contractNumber) {
+            return renderError(res, "contractNumber is mandatory to generate the receipt", 400)
+        }
         try {
             try {
                 var resMeasurement = await search_measurementBookDetails(tenantId, requestinfo, contractNumber, measurementNumber);
