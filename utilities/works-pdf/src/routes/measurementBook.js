@@ -34,6 +34,9 @@ router.post(
         if (!contractNumber) {
             return renderError(res, "contractNumber is mandatory to generate the receipt", 400)
         }
+
+        console.log("tenantId", tenantId);
+
         try {
             try {
                 var resMeasurement = await search_measurementBookDetails(tenantId, requestinfo, contractNumber, measurementNumber);
@@ -42,6 +45,10 @@ router.post(
                 if (ex.response && ex.response.data)
                 return renderError(res, "Failed to query details of the measurement", 500);
             }
+
+            // print all the values of resMeasurement
+            console.log("resMeasurement", resMeasurement);
+
             var measurementBookDetails = resMeasurement.data;
 
             var contract = resMeasurement.data?.contract;
@@ -51,7 +58,7 @@ router.post(
             var estimateDetails = resMeasurement.data?.estimate?.estimateDetails;
 
             //print all the values of measurementBookDetails
-            console.log("measurementBookDetails", measurementBookDetails);
+            // console.log("measurementBookDetails", measurementBookDetails);
 
 
             var transformedData;
