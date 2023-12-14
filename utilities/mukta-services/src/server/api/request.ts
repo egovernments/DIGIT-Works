@@ -30,7 +30,7 @@ export const defaultheader = {
 };
 
 const getServiceName = (url = "") => url && url.slice && url.slice(url.lastIndexOf(url.split("/")[3]));
-const cacheEnabled = true;
+const cacheEnabled = false;
 /*
  
 Used to Make API call through axios library
