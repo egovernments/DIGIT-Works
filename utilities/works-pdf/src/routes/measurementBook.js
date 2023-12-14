@@ -41,7 +41,7 @@ router.post(
 
         try {
             try {
-                var resMeasurement = await search_measurementBookDetails(tenantId, requestinfo, contractNumber, measurementNumber);
+                resMeasurement = await search_measurementBookDetails(tenantId, requestinfo, contractNumber, measurementNumber);
             }
             catch (ex) {
                 if (ex.response && ex.response.data)
