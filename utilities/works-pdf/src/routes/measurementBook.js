@@ -42,17 +42,29 @@ router.post(
                 if (ex.response && ex.response.data)
                 return renderError(res, "Failed to query details of the measurement", 500);
             }
-            const measurementBookDetails = resMeasurement.data;
+            var measurementBookDetails = resMeasurement.data;
 
-            const contract = resMeasurement.data?.contract;
-            const lineItems = resMeasurement.data?.contract?.lineItems;
-            const measurement = resMeasurement.data?.measurement;
-            const allMeasurements = resMeasurement.data?.allMeasurements;
-            const estimateDetails = resMeasurement.data?.estimate?.estimateDetails;
+            var contract = resMeasurement.data?.contract;
+            var lineItems = resMeasurement.data?.contract?.lineItems;
+            var measurement = resMeasurement.data?.measurement;
+            var allMeasurements = resMeasurement.data?.allMeasurements;
+            var estimateDetails = resMeasurement.data?.estimate?.estimateDetails;
+
+            //print all the values of measurementBookDetails
+            console.log("measurementBookDetails", measurementBookDetails);
+
 
             var transformedData;
             if(measurementBookDetails){
-                transformedData = transformEstimateData(lineItems, contract, measurement, allMeasurements, estimateDetails);
+                
+                // transformedData = transformEstimateData(lineItems, contract, measurement, allMeasurements, estimateDetails);
+                try{
+                    transformedData = await transformEstimateData(lineItems, contract, measurement, allMeasurements, estimateDetails);
+                }
+                catch (ex) {
+                    if (ex.response && ex.response.data)
+                    return renderError(res, "Failed to transform data", 500);
+                }
             }
 
             // make an array of all the values from the transformedData without keys
@@ -69,8 +81,7 @@ router.post(
                             measurementBookDetails,
                             requestinfo
                         )
-                    }
-                    
+                    }   
                     catch (ex) {
                         if (ex.response && ex.response.data)
                         return renderError(res, "Failed to generate PDF for measurement", 500);
