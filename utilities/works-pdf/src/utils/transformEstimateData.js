@@ -5,7 +5,7 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
   const idEstimateDetailsMap = {};
   for (let i = 0; i < estimateDetails.length; i++) {
 
-    // make two new field in estimateDetails name as estimatedQuantity and mbAmount and assign them value 0
+    // make new field in estimateDetails 
     estimateDetails[i].mbAmount = 0;
     estimateDetails[i].estimatedQuantity = 0;
     estimateDetails[i].consumedQuantity = 0;
