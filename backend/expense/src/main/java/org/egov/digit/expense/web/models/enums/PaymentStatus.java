@@ -40,6 +40,6 @@ public enum PaymentStatus {
 				return b;
 			}
 		}
-		return FAILED;
+		return null;
 	}
 }

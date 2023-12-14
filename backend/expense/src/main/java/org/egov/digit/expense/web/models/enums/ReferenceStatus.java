@@ -47,6 +47,6 @@ public enum ReferenceStatus {
 				return b;
 			}
 		}
-		return PAYMENT_FAILED;
+		return null;
 	}
 }
