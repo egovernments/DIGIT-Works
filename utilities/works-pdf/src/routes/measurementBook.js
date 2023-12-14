@@ -1,9 +1,9 @@
-var express = require("express");
-var router = express.Router();
-var url = require("url");
-var config = require("../config");
+const express = require("express");
+const router = express.Router();
+const url = require("url");
+const config = require("../config");
 
-var { search_measurementBookDetails, create_pdf } = require("../api");
+const { search_measurementBookDetails, create_pdf } = require("../api");
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 const { pdf } = require("../config");
 const { logger } = require("../logger");
@@ -18,10 +18,10 @@ function renderError(res, errorMessage, errorCode) {
 router.post(
     "/measurement-book",
     asyncMiddleware(async function (req, res, next) {
-        var tenantId = req.query.tenantId;
-        var contractNumber = req.query.contractNumber;
-        var measurementNumber = req.query.measurementNumber;
-        var requestinfo = req.body;
+        const tenantId = req.query.tenantId;
+        const contractNumber = req.query.contractNumber;
+        const measurementNumber = req.query.measurementNumber;
+        const requestinfo = req.body;
         if (requestinfo == undefined) {
             return renderError(res, "requestinfo can not be null", 400)
         }
@@ -33,31 +33,27 @@ router.post(
         }
         try {
             try {
-                resMeasurement = await search_measurementBookDetails(tenantId, requestinfo, contractNumber, measurementNumber);
+                var resMeasurement = await search_measurementBookDetails(tenantId, requestinfo, contractNumber, measurementNumber);
             }
             catch (ex) {
-                if (ex.response && ex.response.data) console.log(ex.response.data);
+                if (ex.response && ex.response.data)
                 return renderError(res, "Failed to query details of the measurement", 500);
             }
-            var measurementBookDetails = resMeasurement.data;
-            logger.info("measurementBookDetails", measurementBookDetails);
+            const measurementBookDetails = resMeasurement.data;
 
-            var contract = resMeasurement.data?.contract;
-            var lineItems = resMeasurement.data?.contract?.lineItems;
-            var measurement = resMeasurement.data?.measurement;
-            var allMeasurements = resMeasurement.data?.allMeasurements;
-            var estimateDetails = resMeasurement.data?.estimate?.estimateDetails;
+            const contract = resMeasurement.data?.contract;
+            const lineItems = resMeasurement.data?.contract?.lineItems;
+            const measurement = resMeasurement.data?.measurement;
+            const allMeasurements = resMeasurement.data?.allMeasurements;
+            const estimateDetails = resMeasurement.data?.estimate?.estimateDetails;
 
             var transformedData;
             if(measurementBookDetails){
                 transformedData = transformEstimateData(lineItems, contract, measurement, allMeasurements, estimateDetails);
             }
 
-            logger.info("transformedData", transformedData);
-
             // make an array of all the values from the transformedData without keys
-            var transformedDataValues = Object.values(transformedData);
-            logger.info("transformedDataValues", transformedDataValues);
+            const transformedDataValues = Object.values(transformedData);
             measurementBookDetails.tableData = transformedDataValues;
 
             if(measurementBookDetails){
@@ -73,13 +69,11 @@ router.post(
                     }
                     
                     catch (ex) {
-                        logger.info(ex);
-                        logger.error(ex);
-                        if (ex.response && ex.response.data) console.log(ex.response.data);
+                        if (ex.response && ex.response.data)
                         return renderError(res, "Failed to generate PDF for measurement", 500);
                     }
 
-                    var filename = `${pdfkey}_${new Date().getTime()}`;
+                    const filename = `${pdfkey}_${new Date().getTime()}`;
 
                     //pdfData = pdfResponse.data.read();
                     res.writeHead(200, {
@@ -97,8 +91,6 @@ router.post(
                     );
                 }
             } catch (ex) {
-                logger.info(ex);
-                logger.error(ex);
                 return renderError(res, "Failed to query details of the estimate", 500);
             }
 

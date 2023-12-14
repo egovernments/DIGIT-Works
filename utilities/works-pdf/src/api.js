@@ -477,8 +477,8 @@ async function create_bulk_pdf_pt(kafkaData) {
 
 async function search_measurementBookDetails(tenantId, requestinfo,contractNumber, measurementBookNumber) {
 
-  var searchEndpoint = config.paths.measurement_book_search;
-  var data = {
+  const searchEndpoint = config.paths.measurement_book_search;
+  const data = {
     "contractNumber": contractNumber,
     "measurementNumber": measurementBookNumber,
     "tenantId": tenantId
