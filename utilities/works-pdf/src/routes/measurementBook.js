@@ -49,13 +49,13 @@ router.post(
             }
 
             // print all the values of resMeasurement
-            console.log("resMeasurement", resMeasurement.data);
+            console.log("ten", tenantId);
 
             var measurementBookDetails = resMeasurement.data;
             var estimateDetails = resMeasurement.data?.estimate?.estimateDetails;
 
             //print all the values of measurementBookDetails
-            console.log("measurementBookDetails", measurementBookDetails);
+            console.log("tena", tenantId);
 
 
             var transformedData;
