@@ -94,6 +94,7 @@ public class EnrichmentService {
                 estimate.setEstimateNumber(estimateNumber);
                 estimate.setVersionNumber(BigDecimal.valueOf(1));
             }
+            estimate.setBusinessService(config.getEstimateWFBusinessService());
         }
 
         address.setId(UUID.randomUUID().toString());
