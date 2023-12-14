@@ -43,6 +43,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
             ],
         },
         },
+        changeQueryName:"ratesQuery"
     };
 
     const { isLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(requestCriteria);

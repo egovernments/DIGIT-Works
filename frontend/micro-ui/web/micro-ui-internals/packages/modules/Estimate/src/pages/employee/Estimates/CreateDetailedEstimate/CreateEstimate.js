@@ -45,7 +45,7 @@ const CreateEstimate = () => {
 
   const history = useHistory();
 
-  const actionMB = [
+  let actionMB = [
     {
       name: "SUBMIT",
     },
@@ -75,6 +75,8 @@ const CreateEstimate = () => {
       enabled: (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate) && (estimateNumber || revisionNumber) ? true : false,
     },
   });
+
+  actionMB = actionMB && isEdit && estimate && estimate?.wfStatus==="PENDINGFORCORRECTION" ? actionMB?.filter((ob) => ob?.name !== "DRAFT") : actionMB;
 
   const searchParams = {
     Projects: [
