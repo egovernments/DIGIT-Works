@@ -17,7 +17,7 @@
     "@egovernments/digit-ui-module-attendencemgmt": "0.3.0",
     "@egovernments/digit-ui-module-contracts": "0.3.3",
     "@egovernments/digit-ui-module-measurement":"0.1.0",
-    "@egovernments/digit-ui-module-estimate": "0.3.16",
+    "@egovernments/digit-ui-module-estimate": "0.3.17",
     "@egovernments/digit-ui-module-masters": "0.3.0",
     "@egovernments/digit-ui-module-project": "0.3.1",
     "@egovernments/digit-ui-module-expenditure": "0.3.1",
