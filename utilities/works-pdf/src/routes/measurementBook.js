@@ -38,6 +38,7 @@ router.post(
         console.log("tenantId", tenantId);
         console.log("contractNumber", contractNumber);
         console.log("measurementNumber", measurementNumber);
+        var resMeasurement;
 
         try {
             try {
