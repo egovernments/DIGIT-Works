@@ -152,8 +152,8 @@ const errorResponder = (
 };
 
 // Convert the object to the format required for measurement
-const convertObjectForMeasurment = (obj: any, config: any) => {
-  const resultBody: Record<string, any> = {};
+const convertObjectForMeasurment = (obj: any, config: any, defaultValue?: any) => {
+  const resultBody: Record<string, any> = defaultValue || {};
 
   const assignValueAtPath = (obj: any, path: string, value: any) => {
     const pathSegments = path.split(".");

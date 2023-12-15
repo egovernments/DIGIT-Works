@@ -1,7 +1,14 @@
+import axios from "axios";
 import config, { getErrorCodes } from "../config";
+import { Blob } from 'buffer';
+import * as XLSX from 'xlsx';
+import { RowData, Config } from "../controllers/uploadSheet/Types";
+
+
 
 var url = require("url");
 import { httpRequest } from "./request";
+
 
 
 const search_user = async (uuid: string, tenantId: string, requestinfo: any) => {
@@ -106,7 +113,7 @@ const search_mdms = async (tenantId: string, module: string, master: string, req
     "post",
     "",
     { cachekey: `${tenantId}-${module}-${master}` }
-  ).then((response: { MdmsRes: any; })=>response.MdmsRes[module][master]);
+  ).then((response: { MdmsRes: any; }) => response.MdmsRes[module][master]);
 }
 
 const create_pdf = async (tenantId: string, key: string, data: string, requestinfo: any) => {
@@ -171,7 +178,7 @@ const search_estimate = async (params: any, requestinfo: any, cachekey: any) => 
     "",
     { cachekey }
   );
-  
+
   // Check if there are estimates in the response.
   if (estimateResponse?.estimates?.length > 0) {
     // If estimates are found, return the first one.
@@ -195,7 +202,7 @@ const search_measurement = async (requestinfo: any, cachekey: any, allResponse: 
     "",
     { cachekey }
   );
-  
+
   // Check if there are measurements in the response.
   if (musterResponse?.measurements?.length > 0) {
     // If measurements are found, return either all of them or just the first one based on the 'allResponse' parameter.
@@ -205,6 +212,75 @@ const search_measurement = async (requestinfo: any, cachekey: any, allResponse: 
   // If no measurements are found, return an error code.
   return getErrorCodes("WORKS", "NO_MEASUREMENT_ROLL_FOUND");
 }
+
+const getSheetData = async (
+  fileUrl: string,
+  startRow: number = 1,
+  endRow?: number,
+  config?: Config,
+  sheetName?: string
+) => {
+  const response = await axios.get(fileUrl);
+  const rowDatas: RowData[] = [];
+
+  for (const file of response.data.fileStoreIds) {
+    try {
+      const responseFile = await axios.get(file.url, {
+        responseType: 'arraybuffer',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/pdf',
+        },
+      });
+
+      const fileXlsx = new Blob([responseFile.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;',
+      });
+
+      const arrayBuffer = await fileXlsx.arrayBuffer();
+      const data = new Uint8Array(arrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+
+      let desiredSheet = workbook.Sheets[sheetName || workbook.SheetNames[0]];
+
+      if (!desiredSheet) {
+        console.log(`Sheet "${sheetName}" not found in the workbook. Using the first sheet...`);
+        return getErrorCodes("WORKS", "NO_SHEETNAME_FOUND");
+      }
+
+      if (!endRow) {
+        const sheetRef = desiredSheet['!ref'];
+        endRow = sheetRef ? XLSX.utils.decode_range(sheetRef).e.r + 1 : 1;
+      }
+
+      const sheetRef = desiredSheet['!ref'];
+      const lastColumn = sheetRef ? XLSX.utils.decode_range(sheetRef).e.c : 0;
+
+      const range = { s: { r: startRow - 1, c: 0 }, e: { r: endRow - 1, c: lastColumn } };
+
+      const rowDataArray = XLSX.utils.sheet_to_json(desiredSheet, { header: 1, range });
+
+      for (const row of rowDataArray) {
+        const rowData: RowData = {};
+
+        for (const fieldConfig of config || []) {
+          const columnIndex = XLSX.utils.decode_col(fieldConfig.column);
+          const fieldValue = (row as any[])[columnIndex] || fieldConfig.default;
+          rowData[fieldConfig.title] = fieldValue;
+          fieldConfig.default = fieldValue;
+        }
+
+        rowDatas.push(rowData);
+      }
+
+      // console.log(`Rows from startRow to endRow in "${sheetName || 'first sheet'}":`, rowDatas);
+    } catch (error) {
+      console.error('Error fetching or processing file:', error);
+    }
+  }
+  return rowDatas;
+};
+
 
 export {
   create_pdf,
@@ -217,5 +293,6 @@ export {
   search_localization,
   search_contract,
   search_estimate,
-  search_measurement
+  search_measurement,
+  getSheetData
 };
