@@ -108,7 +108,7 @@ const ViewContractDetails = () => {
     },[isProjectError]);
 
       useEffect(() => {
-        if(!(data?.additionalDetails?.isTimeExtAlreadyInWorkflow) && data) {
+        if(!(data?.additionalDetails?.isTimeExtAlreadyInWorkflow) && data && !actionsMenu?.find((ob) => ob?.name === "CREATE_TIME_EXTENSION_REQUEST")) {
             
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_TIME_EXTENSION_REQUEST",
@@ -116,13 +116,13 @@ const ViewContractDetails = () => {
             }]))
         }
 
-        if(!isInWorkflowMeasurementPresent && measurementData)
+        if(!isInWorkflowMeasurementPresent && measurementData && !actionsMenu?.find((ob) => ob?.name === "CREATE_MEASUREMENT_REQUEST"))
         setActionsMenu((prevState => [...prevState,{
             name:"CREATE_MEASUREMENT_REQUEST",
             action:"CREATE_MEASUREMENT"
         }]))
 
-    }, [data])
+    }, [data, measurementData])
 
 
     useEffect(() => {
@@ -194,7 +194,7 @@ const ViewContractDetails = () => {
         //setEditTimeExtension(true)
     }
 
-    if(isProjectLoading || isContractLoading) 
+    if(isProjectLoading || isContractLoading || isLoading) 
          return <Loader/>;
     return (
       <React.Fragment>
