@@ -28,7 +28,7 @@ export const handleModifyProjectFiles = (uploadedDocs, docConfigData) => {
         documentObject["noSubProject_doc_others_name"] = currentDoc?.additionalDetails?.otherCategoryName;
       }
       documentObject[fileKeyMapping?.key] = [
-        [currentDoc?.additionalDetails?.fileName, {file : { name : currentDoc?.additionalDetails?.fileName, id : currentDoc?.id}, fileStoreId : { fileStoreId : currentDoc?.fileStore || currentDoc?.fileStore}}]
+        [currentDoc?.additionalDetails?.fileName, {file : { name : currentDoc?.additionalDetails?.fileName, id : currentDoc?.id}, fileStoreId : { fileStoreId : currentDoc?.fileStoreId || currentDoc?.fileStore}}]
       ] 
     }
   });

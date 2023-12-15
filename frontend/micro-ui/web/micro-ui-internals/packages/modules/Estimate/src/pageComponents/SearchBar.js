@@ -80,7 +80,7 @@ const SearchBar = (props) => {
       <TextInput type="text" name={"Search"} placeholder="Type any SOR description..." value={inputValue} onChange={handleInputChange} customClass="search-sor-input"/>
       {suggestions?.length > 0 && (
       <ul
-        className="suggestions-sor"
+        className="suggestions-sor" style={{zIndex:"100"}}
       >
         {suggestions.map((option) => (
           <li
