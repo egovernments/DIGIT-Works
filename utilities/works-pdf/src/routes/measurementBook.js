@@ -49,14 +49,14 @@ router.post(
                 return renderError(res, "Failed to query details of the measurement", 500);
             }
 
-            // print all the values of resMeasurement
             console.log("ten", tenantId);
+            console.log("resMeasurement", resMeasurement);
 
             var measurementBookDetails = resMeasurement.data;
+            console.log("tena", tenantId);
             var estimateDetails = resMeasurement.data?.estimate?.estimateDetails;
 
-            //print all the values of measurementBookDetails
-            console.log("tena", tenantId);
+            console.log("tenan", tenantId);
 
 
             var transformedData;
