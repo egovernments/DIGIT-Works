@@ -45,7 +45,17 @@ const ViewMeasurement = () => {
   }, [allData, tenantId, isMeasurementLoading]);
   let config = null;
 
-  config = data(allData?.contract, allData?.estimate, allData?.measurement, allData?.allMeasurements, thumbnails);
+  //Getting project location for Measurement View Page
+  let projectLocation = "NA";
+  if(allData?.contract){  
+    const { additionalDetails: { locality: projectLoc, ward: projectWard }} = allData?.contract;
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId());
+    const Pward = projectWard ? t(`${headerLocale}_ADMIN_${projectWard}`) : "";
+    const city = projectLoc ? t(`${headerLocale}_ADMIN_${projectLoc}`) : "";
+    projectLocation = `${Pward ? Pward + ", " : ""}${city}`;
+  }
+
+  config = data(allData?.contract, allData?.estimate, allData?.measurement, allData?.allMeasurements, thumbnails, projectLocation , allData?.period);
 
   if (isMeasurementLoading && config != null) {
     return <Loader />;
