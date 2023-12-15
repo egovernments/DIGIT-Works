@@ -106,9 +106,8 @@ class MeasurementController {
         /* no measurements are present */
 
         //Under piece of code is used to get the same week monday epoch according to the contract startdate
-        const givenEpochTime: number = contractResponse?.startDate;
-        const givenDateTime: Date = new Date(givenEpochTime);
-        givenDateTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+        const givenEpochTime: number = 1701628200000;
+        const givenDateTime: Date = new Date(givenEpochTime); // Use the given epoch time directly
         const daysToMonday: number = (givenDateTime.getDay() + 6) % 7;
         const mondayDateTime: Date = new Date(givenDateTime);
         mondayDateTime.setDate(givenDateTime.getDate() - daysToMonday);
