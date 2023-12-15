@@ -105,13 +105,24 @@ class MeasurementController {
       } else if (measurementResponse?.length == 0) {
         /* no measurements are present */
 
+        //Under piece of code is used to get the same week monday epoch according to the contract startdate
+        const givenEpochTime: number = contractResponse?.startDate;
+        const givenDateTime: Date = new Date(givenEpochTime);
+        givenDateTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+        const daysToMonday: number = (givenDateTime.getDay() + 6) % 7;
+        const mondayDateTime: Date = new Date(givenDateTime);
+        mondayDateTime.setDate(givenDateTime.getDate() - daysToMonday);
+
+        // Get the Monday epoch datetime in milliseconds
+        const mondayEpochTimeMillis: number = mondayDateTime.getTime();
+
         const newEndDate = this.getEndDate(
-          contractResponse?.startDate,
+          mondayEpochTimeMillis,   
           periodResponse?.period
         );
 
         return {
-          startDate: contractResponse?.startDate,
+          startDate: mondayEpochTimeMillis, 
           endDate:
             newEndDate < contractResponse?.endDate
               ? newEndDate
