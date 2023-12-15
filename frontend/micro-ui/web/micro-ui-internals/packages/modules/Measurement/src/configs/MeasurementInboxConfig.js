@@ -122,11 +122,12 @@ const InboxMeasurementConfig = () => {
           minReqFields: 1,
           defaultValues: {
             state: "",
+            status: "",
             ward: [],
             locality: [],
             assignee: {
               code: "ASSIGNED_TO_ALL",
-              name: "ASSIGNED_TO_ALL",
+              name: "MB_ASSIGNED_TO_ALL",
             },
           },
           fields: [
