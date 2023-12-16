@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { logger } from "../logger";
 import { cacheResponse, getCachedResponse, throwError } from "../utils";
-import config from "server/config";
+import config from "../config";
 
 var Axios = require("axios").default;
 var get = require("lodash/get");
