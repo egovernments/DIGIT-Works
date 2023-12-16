@@ -129,7 +129,7 @@ const measurement= {
   }
 
   /* added as a temporary fix that sends entrydate */
-  measurement.entryDate=measurement.additionalDetails.startDate;
+  measurement.entryDate=new Date().getTime();
   const transformedData = {
     measurements: [
      measurement
