@@ -11,6 +11,7 @@ const transformDetailedData = (data) => {
     estimates["tenantId"] = data.estimates[0].tenantId;
     estimates["projectName"] = data.estimates[0].additionalDetails.projectName;
     estimates["projectLocation"] = data.estimates[0].additionalDetails.locality;
+    estimates["totalEstimatedAmount"] = data.estimates[0].additionalDetails.totalEstimatedAmount;
     const sorIdMap = {};
 
     for (const estimateDetail of data.estimates[0].estimateDetails) {
