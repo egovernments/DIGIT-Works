@@ -266,7 +266,6 @@ class MeasurementController {
           contractNumber,
           measurementNumber
         );
-        console.log(contract, measurement,periodResponse,allMeasurements,"infooo");
 
       if (contract !== null && !contract?.notFound) {
         // Calculate the period based on the responses
