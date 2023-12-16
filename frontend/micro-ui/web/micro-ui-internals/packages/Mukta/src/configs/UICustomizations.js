@@ -947,7 +947,7 @@ export const UICustomizations = {
             <span className="link">
               <Link
                 to={
-                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO
+                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO || row?.ProcessInstance?.businessId?.includes("RW")
                     ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}`
                     : `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}`
                 }
@@ -1043,7 +1043,7 @@ export const UICustomizations = {
             <span className="link">
               <Link
                 to={
-                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO
+                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO || row?.ProcessInstance?.businessId?.includes("RW")
                     ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance?.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}`
                     : `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance?.tenantId}&workOrderNumber=${value}`
                 }
