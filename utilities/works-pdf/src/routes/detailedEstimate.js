@@ -18,45 +18,58 @@ function renderError(res, errorMessage, errorCode) {
 router.post(
     "/detailed-estimate",
     asyncMiddleware(async function (req, res, next) {
-        const tenantId = req.query.tenantId;
         const estimateNumber = req.query.estimateNumber;
+        const tenantId = req.query.tenantId;
         const requestinfo = req.body;
-        if (requestinfo == undefined) {
-            return renderError(res, "requestinfo can not be null", 400)
+
+        if (!estimateNumber) {
+            return renderError(res, "estimateNumber is mandatory to generate the receipt", 400)
         }
         if (!tenantId) {
             return renderError(res, "tenantId is mandatory to generate the receipt", 400)
         }
-        if (!estimateNumber) {
-            return renderError(res, "estimateNumber is mandatory to generate the receipt", 400)
+        if (requestinfo == undefined) {
+            return renderError(res, "requestinfo can not be null", 400)
         }
+
         try {
             try {
+
                 var resEstimate = await search_estimateDetails(tenantId, requestinfo, estimateNumber);
+
             }
             catch (ex) {
+
                 return renderError(res, "Failed to query details of the estimate", 500);
+
             }
             const estimate = resEstimate.data;
-            
+
+
             var estimates = transformDetailedData(estimate);
             
             estimate.pdfData = estimates;
 
             if (estimate && estimate.pdfData) {
+
                     var pdfResponse;
+
                     const pdfkey = config.pdf.detailedEstimate_template;
+
                     try {
+
                         pdfResponse = await create_pdf(
                             tenantId,
                             pdfkey,
                             estimate,
                             requestinfo
                         )
+
                     }
                     
+
                     catch (ex) {
-                        return renderError(res, "Failed to generate PDF for estimates", 500);
+                        return renderError(res, "Failed to generate PDF for detailed estimate", 500);
                     }
 
                     const filename = `${pdfkey}_${new Date().getTime()}`;
@@ -65,7 +78,9 @@ router.post(
                         "Content-Type": "application/pdf",
                         "Content-Disposition": `attachment; filename=${filename}.pdf`,
                     });
+
                     pdfResponse.data.pipe(res);
+
                 }
                 else {
                     return renderError(
@@ -75,7 +90,7 @@ router.post(
                     );
                 }
             } catch (ex) {
-                return renderError(res, "Failed to query details of the estimate", 500);
+                return renderError(res, "Failed to query details of estimate", 500);
             }
 
         })
