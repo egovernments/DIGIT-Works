@@ -88,7 +88,7 @@ const httpRequest = async (
       responseStatus
     );
     if (responseStatus === 200 || responseStatus === 201 || responseStatus === 202) {
-      if (headers && headers.cachekey) {
+      if (headers && headers.cachekey && cacheEnabled) {
         cacheResponse(response.data, headers.cachekey)
       }
       return response.data;
