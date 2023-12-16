@@ -104,7 +104,7 @@ class MeasurementController {
         };
       } else if (measurementResponse?.length == 0) {
         /* no measurements are present */
-
+        console.log(contractResponse?.startDate,"startdate");
         //Under piece of code is used to get the same week monday epoch according to the contract startdate
         const givenEpochTime: number = contractResponse?.startDate;
         const givenDateTime: Date = new Date(givenEpochTime);
@@ -114,6 +114,7 @@ class MeasurementController {
 
         // Get the Monday epoch datetime in milliseconds
         const mondayEpochTimeMillis: number = mondayDateTime.getTime();
+        console.log(mondayEpochTimeMillis,"monday mills");
 
         const newEndDate = this.getEndDate(
           mondayEpochTimeMillis,   
