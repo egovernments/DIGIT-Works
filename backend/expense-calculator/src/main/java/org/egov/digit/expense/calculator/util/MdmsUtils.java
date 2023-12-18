@@ -213,12 +213,6 @@ public class MdmsUtils {
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestForLabourChanges(requestInfo, rootTenantId);
         return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
     }
-    
-    public Object fetchMDMSDataForPayerList(RequestInfo requestInfo, String rootTenantId) {
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestForPayerList(requestInfo, rootTenantId);
-        return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
-    }
-
 
     private MdmsCriteriaReq getMDMSRequestForLabourChanges(RequestInfo requestInfo, String tenantId) {
         ModuleDetail wageSeekerSkillsModuleDetail = getLabourChargesModuleDetails();
