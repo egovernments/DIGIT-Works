@@ -110,9 +110,8 @@ public class OrganisationRepository {
 
         log.info("Fetched organisation details for search request");
         //Construct Organisation Objects with fetched organisations, addresses, contactDetails, jurisdictions, identifiers and documents using Organisation id
-        return encryptionService
-                .decrypt(buildOrganisationSearchResult(organisations, addresses, contactDetails, documents, jurisdictions, identifiers),
-                        ORGANISATION_ENCRYPT_KEY,orgSearchRequest);
+        // Removing for migration
+        return buildOrganisationSearchResult(organisations, addresses, contactDetails, documents, jurisdictions, identifiers);
     }
 
     private Set<String> getOrgIdsForContactNumberBasedOnSearchCriteria(OrgSearchRequest orgSearchRequest) {
