@@ -3,6 +3,7 @@ import { transformEstimateData } from "../utils/transformEstimateData";
 
 export const data = (contract, estimateDetails, measurement, allMeasurements, thumbnails, projectLocation, period) => {
   const [viewData, setViewData] = useState({ SOR: [], NONSOR: [] });
+  console.log(thumbnails,"thumb")
   
   useEffect(() => {
     const processArrays = () => {
@@ -122,6 +123,7 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
         sections : [
             {
                 type: "IMAGE",
+                fullImage: true,
                 cardHeader: { value: "MB_WORKSITE_PHOTOS", inlineStyles: {} },
                 photo : { 
                     thumbnailsToShow : thumbnails

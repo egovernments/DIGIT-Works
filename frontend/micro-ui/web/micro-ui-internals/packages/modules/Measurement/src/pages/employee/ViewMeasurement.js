@@ -34,7 +34,7 @@ const ViewMeasurement = () => {
         const fileStoreIds = allData?.measurement?.documents.map((item) => item.fileStore);
 
         try {
-          let thumbnailsData = await Digit.Utils.getThumbnails(fileStoreIds, tenantId);
+          let thumbnailsData = await Digit.Utils.getThumbnails(fileStoreIds, tenantId, [], true);
           setThumbnails(thumbnailsData);
         } catch (error) {
           console.log(error);

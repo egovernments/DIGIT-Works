@@ -41,7 +41,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
   });
     return {
       amount: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0) || 0,
-      consumedQ: isMeasurement && (measurement?.wfStatus === "APPROVED" || allMeasurements?.filter((ob) => ob?.wfStatus === "APPROVED")?.length > 0) ? measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0) : 0,
+      consumedQ: (measurement?.wfStatus === "APPROVED" || allMeasurements?.filter((ob) => ob?.wfStatus === "APPROVED")?.length > 0) ? measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0) : 0,
       sNo: index + 1,
       currentMBEntry: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0) || 0,
       uom: transformedEstimateObject[key]?.[0]?.uom,
