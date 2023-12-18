@@ -2,12 +2,12 @@ import axios from "axios";
 import config, { getErrorCodes } from "../config";
 import { Blob } from 'buffer';
 import * as XLSX from 'xlsx';
-import { RowData, Config } from "../controllers/uploadSheet/Types";
 
 
 
 var url = require("url");
 import { httpRequest } from "./request";
+import { errorResponder } from "../utils";
 
 
 
@@ -217,11 +217,11 @@ const getSheetData = async (
   fileUrl: string,
   startRow: number = 1,
   endRow?: number,
-  config?: Config,
-  sheetName?: string
+  config?: any,
+  sheetName?: any
 ) => {
   const response = await axios.get(fileUrl);
-  const rowDatas: RowData[] = [];
+  const rowDatas: any[] = [];
 
   for (const file of response.data.fileStoreIds) {
     try {
@@ -244,7 +244,6 @@ const getSheetData = async (
       let desiredSheet = workbook.Sheets[sheetName || workbook.SheetNames[0]];
 
       if (!desiredSheet) {
-        console.log(`Sheet "${sheetName}" not found in the workbook. Using the first sheet...`);
         return getErrorCodes("WORKS", "NO_SHEETNAME_FOUND");
       }
 
@@ -261,7 +260,7 @@ const getSheetData = async (
       const rowDataArray = XLSX.utils.sheet_to_json(desiredSheet, { header: 1, range });
 
       for (const row of rowDataArray) {
-        const rowData: RowData = {};
+        const rowData: any = {};
 
         for (const fieldConfig of config || []) {
           const columnIndex = XLSX.utils.decode_col(fieldConfig.column);
@@ -281,6 +280,47 @@ const getSheetData = async (
   return rowDatas;
 };
 
+const getTemplate = async (templateName: any, requestinfo: any, response: any) => {
+  const apiUrl = 'https://unified-uat.digit.org/mdms-v2/v2/_search';
+
+  const data = {
+    "MdmsCriteria": {
+      "tenantId": "mz",
+      "uniqueIdentifiers": [templateName],
+      "schemaCode": "HCM.TransformTemplate"
+    },
+    "RequestInfo": requestinfo
+  }
+  try {
+    const result = await axios.post(apiUrl, data);
+    return result;
+  } catch (error: any) {
+    return errorResponder({ message: error?.response?.data?.Errors[0].message }, requestinfo, response);
+  }
+
+}
+
+const getParsingTemplate = async (templateName: any, requestinfo: any, response: any) => {
+  const apiUrl = 'https://unified-uat.digit.org/mdms-v2/v2/_search';
+
+  const data = {
+    "MdmsCriteria": {
+      "tenantId": "mz",
+      "uniqueIdentifiers": [templateName],
+      "schemaCode": "HCM.ParsingTemplate"
+    },
+    "RequestInfo": requestinfo
+  }
+  try {
+
+    const result = await axios.post(apiUrl, data);
+    return result;
+  } catch (error: any) {
+    return errorResponder({ message: error?.response?.data?.Errors[0].message }, requestinfo, response);
+  }
+
+}
+
 
 export {
   create_pdf,
@@ -294,5 +334,7 @@ export {
   search_contract,
   search_estimate,
   search_measurement,
-  getSheetData
+  getSheetData,
+  getTemplate,
+  getParsingTemplate
 };

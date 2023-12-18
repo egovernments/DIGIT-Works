@@ -177,7 +177,6 @@ const convertObjectForMeasurment = (obj: any, config: any, defaultValue?: any) =
     // Assign jsonPathValue to the corresponding property in resultBody
     assignValueAtPath(resultBody, path, jsonPathValue);
   });
-
   return resultBody;
 };
 
