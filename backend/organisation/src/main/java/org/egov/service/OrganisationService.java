@@ -1,16 +1,20 @@
 package org.egov.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.kafka.OrganizationProducer;
 import org.egov.repository.OrganisationRepository;
 import org.egov.config.Configuration;
+import org.egov.tracer.model.CustomException;
 import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static org.egov.util.OrganisationConstant.ORGANISATION_ENCRYPT_KEY;
 
 
 @Service
@@ -32,8 +36,12 @@ public class OrganisationService {
 
     private final NotificationService notificationService;
 
+    private final EncryptionService encryptionService;
+
+    private final ObjectMapper mapper;
+
     @Autowired
-    public OrganisationService(OrganisationServiceValidator organisationServiceValidator, OrganisationRepository organisationRepository, OrganisationEnrichmentService organisationEnrichmentService, OrganizationProducer organizationProducer, Configuration configuration, IndividualService individualService, NotificationService notificationService) {
+    public OrganisationService(OrganisationServiceValidator organisationServiceValidator, OrganisationRepository organisationRepository, OrganisationEnrichmentService organisationEnrichmentService, OrganizationProducer organizationProducer, Configuration configuration, IndividualService individualService, NotificationService notificationService, EncryptionService encryptionService, ObjectMapper mapper) {
         this.organisationServiceValidator = organisationServiceValidator;
         this.organisationRepository = organisationRepository;
         this.organisationEnrichmentService = organisationEnrichmentService;
@@ -41,6 +49,8 @@ public class OrganisationService {
         this.configuration = configuration;
         this.individualService = individualService;
         this.notificationService = notificationService;
+        this.encryptionService = encryptionService;
+        this.mapper = mapper;
     }
 
 
@@ -54,7 +64,14 @@ public class OrganisationService {
         organisationServiceValidator.validateCreateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
         individualService.createIndividual(orgRequest);
-        organizationProducer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
+        OrgRequest clone;
+        try {
+            clone = mapper.readValue(mapper.writeValueAsString(orgRequest), OrgRequest.class);
+        }catch (Exception e) {
+            throw new CustomException("CLONING_ERROR", "Error while cloning");
+        }
+        encryptionService.encryptDetails(clone,ORGANISATION_ENCRYPT_KEY);
+        organizationProducer.push(configuration.getOrgKafkaCreateTopic(), clone);
         try {
             notificationService.sendNotification(orgRequest, true);
         }catch (Exception e){
@@ -73,12 +90,19 @@ public class OrganisationService {
         organisationServiceValidator.validateUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         individualService.updateIndividual(orgRequest);
+        OrgRequest clone;
+        try {
+            clone = mapper.readValue(mapper.writeValueAsString(orgRequest), OrgRequest.class);
+        }catch (Exception e) {
+            throw new CustomException("CLONING_ERROR", "Error while cloning");
+        }
         try {
             notificationService.sendNotification(orgRequest,false);
         }catch (Exception e){
             log.error("Exception while sending notification: " + e);
         }
-        organizationProducer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
+        encryptionService.encryptDetails(clone,ORGANISATION_ENCRYPT_KEY);
+        organizationProducer.push(configuration.getOrgKafkaUpdateTopic(), clone);
         return orgRequest;
     }
 

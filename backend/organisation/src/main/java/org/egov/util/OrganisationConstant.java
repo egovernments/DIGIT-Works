@@ -45,7 +45,7 @@ public class OrganisationConstant {
 
     public static final String HRMS_USER_MOBILE_NO = "$.Employees.*.user.mobileNumber";
 
-
+    public static final String ORGANISATION_ENCRYPT_KEY = "Organisation";
 
 
 }
