@@ -6,7 +6,7 @@ const convertNumberFields=(text="")=>{
 }
 const transformLineItems = (SorData = [], category, isEdit = false, isCreateRevisionEstimate=false, isEditRevisionEstimate=false) => {
   const lineItems = [];
-  SorData?.map((row) => {
+  SorData?.filter((ob) => ob?.sorCode).map((row) => {
     const measures = row?.measures?.map((measure) => {
       return transformMeasure(measure, row, isEdit, category, isCreateRevisionEstimate, isEditRevisionEstimate);
     });
@@ -155,10 +155,10 @@ const fetchEstimateDetailsEdit = (isEdit, data, estimate, isCreateRevisionEstima
 
     //idetified and lineitems which has been deleted and then marked it as inactive
     
-    let deletedSorNonSor = !(isCreateRevisionEstimate || isEditRevisionEstimate) ? estimate?.estimateDetails?.filter(item => !detailedEstimates.find(x => x.id === item.id) && item.category !== "OVERHEAD")
-                .map(item => ({ ...item, isActive: false })) : [];
-    let deletedOverheads = !(isCreateRevisionEstimate || isEditRevisionEstimate) ? estimate?.estimateDetails?.filter(item => !overHeadsData.find(x => x.id === item.id) && item.category === "OVERHEAD")
-                .map(item => ({ ...item, isActive: false })) : [];
+    let deletedSorNonSor =  estimate?.estimateDetails?.filter(item => !detailedEstimates.find(x => x.id === item.id) && item.category !== "OVERHEAD")
+                .map(item => ({ ...item, isActive: false }));
+    let deletedOverheads = estimate?.estimateDetails?.filter(item => !overHeadsData.find(x => x.id === item.id) && item.category === "OVERHEAD")
+                .map(item => ({ ...item, isActive: false }));
     
     return [...detailedEstimates, ...overHeadsData, ...deletedSorNonSor, ...deletedOverheads];
 };
