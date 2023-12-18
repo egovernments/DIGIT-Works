@@ -75,7 +75,9 @@ public class MdmsUtils {
 			List<String> masterNames) {
 
 		List<MasterDetail> masterDetails = new ArrayList<>();
-		masterNames.forEach(name -> masterDetails.add(MasterDetail.builder().name(name).build()));
+		masterNames.forEach(name ->
+			masterDetails.add(MasterDetail.builder().name(name).build())
+		);
 
 		ModuleDetail moduleDetail = ModuleDetail.builder()
 				.moduleName(moduleName)
@@ -176,9 +178,9 @@ public class MdmsUtils {
                                                 .tenantId(tenantId)
                                                 .build();
         return MdmsCriteriaReq.builder()
-                                                         .mdmsCriteria(mdmsCriteria)
-                                                         .requestInfo(requestInfo)
-                                                         .build();
+                .mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo)
+                .build();
     }
     private MasterDetail getMasterDetailForSubModuleAndFilter(String masterDetailName, String filter){
       return MasterDetail.builder().name(masterDetailName)
@@ -191,10 +193,9 @@ public class MdmsUtils {
     }
 
 
-
     private ModuleDetail getLabourChargesModuleDetails() {
         List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail overHeadsMasterDetail = getMasterDetailForSubModuleAndFilter(MDMS_LABOUR_CHARGES, MDMS_COMMON_ACTIVE_FILTER);
+        MasterDetail overHeadsMasterDetail = getMasterDetailForSubModule(MDMS_LABOUR_CHARGES);
         masterDetails.add(overHeadsMasterDetail);
 
         return ModuleDetail.builder()
@@ -202,18 +203,7 @@ public class MdmsUtils {
                             .moduleName(MDMS_EXPENSE_MASTERS)
                             .build();
     }
-    
-    //TODO: This doesn't filter based on type. Need to add that in.
-    private ModuleDetail getPayerListModuleDetails() {
-        List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail payerListMasterDetail = getMasterDetailForSubModuleAndFilter(PAYER_MASTER, MDMS_COMMON_ACTIVE_FILTER);
-        masterDetails.add(payerListMasterDetail);
 
-        return ModuleDetail.builder()
-                            .masterDetails(masterDetails)
-                            .moduleName(EXPENSE_MODULE)
-                            .build();
-    }
 
     public StringBuilder getMDMSSearchUrl() {
         return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
@@ -223,11 +213,6 @@ public class MdmsUtils {
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestForLabourChanges(requestInfo, rootTenantId);
         return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
     }
-    
-    public Object fetchMDMSDataForPayerList(RequestInfo requestInfo, String rootTenantId) {
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestForPayerList(requestInfo, rootTenantId);
-        return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
-    }
 
     private MdmsCriteriaReq getMDMSRequestForLabourChanges(RequestInfo requestInfo, String tenantId) {
         ModuleDetail wageSeekerSkillsModuleDetail = getLabourChargesModuleDetails();
@@ -235,11 +220,5 @@ public class MdmsUtils {
         moduleDetails.add(wageSeekerSkillsModuleDetail);
         return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
     }
-    
-    private MdmsCriteriaReq getMDMSRequestForPayerList(RequestInfo requestInfo, String tenantId) {
-        ModuleDetail payerListModuleDetails = getPayerListModuleDetails();
-        List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.add(payerListModuleDetails);
-        return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
-    }
+
 }

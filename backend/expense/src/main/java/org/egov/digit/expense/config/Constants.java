@@ -53,6 +53,10 @@ public class Constants {
 	public static final String BILL_ID_FORMAT_SUFFIX = ".bill.number";
 	
 	public static final String PAYMENT_ID_FORMAT_NAME = "expense.payment.number";
+
+	public static final String EFFECTIVE_FROM_FIELD_MDMS = "effectiveFrom";
+	public static final String EFFECTIVE_TO_FIELD_MDMS = "effectiveTo";
+	public static final String ACTIVE_FIELD_MDMS = "active";
 	
 	public static final List<String> EXPENSE_MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME, BUSINESS_SERVICE_MASTERNAME));
