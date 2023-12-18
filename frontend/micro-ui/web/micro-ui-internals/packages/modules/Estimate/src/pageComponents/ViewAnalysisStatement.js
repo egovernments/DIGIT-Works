@@ -15,6 +15,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     const { register, errors, setValue, getValues, formData } = props
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     let isCreateOrUpdate = /(measurement\/create|estimate\/create-detailed-estimate|estimate\/update-detailed-estimate|measurement\/update)/.test(window.location.href);
+    let isEstimateCreateorUpdate = /(estimate\/create-detailed-estimate|estimate\/update-detailed-estimate|estimate\/create-revision-detailed-estimate|estimate\/update-revision-detailed-estimate)/.test(window.location.href);
     //Defined the codes for charges upserted in mdmsV2
     const ChargesCodeMapping = {
         LabourCost : "LA",
@@ -47,6 +48,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     };
 
     const { isLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
+    let currentDateInMillis = isEstimateCreateorUpdate ? new Date().getTime() : formData?.auditDetails?.createdTime; 
 
     //this method is used for calculating labour charges which rate * qty(current Mb entry)
     function getAnalysisCost(category){
@@ -58,7 +60,16 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
         if(SORAmount == 0)
         {
             SORAmount = formData?.SORtable?.reduce((tot,ob) => {
-                let amountDetails = RatesData?.MdmsRes?.["WORKS-SOR"]?.Rates?.filter((rate) => rate?.sorId === ob?.sorId || rate?.sorId === ob?.sorCode)?.[0]?.amountDetails;
+                //let amountDetails = RatesData?.MdmsRes?.["WORKS-SOR"]?.Rates?.filter((rate) => rate?.sorId === ob?.sorId || rate?.sorId === ob?.sorCode)?.[0]?.amountDetails;
+                let amountDetails = RatesData?.MdmsRes?.["WORKS-SOR"]?.Rates?.filter((rate) => {
+                    // Convert validFrom and validTo to milliseconds
+                    let validFromInMillis = new Date(parseInt(rate?.validFrom)).getTime();
+                    let validToInMillis = rate?.validTo ? new Date(parseInt(rate?.validTo)).getTime() : Infinity;
+                    // Check if the current date is within the valid date range
+                    return rate.sorId === ob?.sorId || rate.sorId === ob?.sorCode
+                      && validFromInMillis <= currentDateInMillis
+                      && currentDateInMillis < validToInMillis;
+                  })?.[0]?.amountDetails;
                 let amount = amountDetails?.reduce((total,item) => item?.heads?.includes(category) ? (item?.amount + total) : total,0);
                 return (tot + amount * ob?.currentMBEntry)
             },0);

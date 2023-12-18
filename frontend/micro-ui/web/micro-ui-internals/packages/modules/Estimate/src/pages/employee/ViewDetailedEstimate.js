@@ -90,7 +90,8 @@ const ViewDetailedEstimate = () => {
 
     let isUserEstimateCreater = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
     //Checking if REVSION ESTIMATE can be created or not.
-    if( detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" && isUserEstimateCreater && !actionsMenu?.find((ob) => ob?.name === "CREATE_REVISION_ESTIMATE"))
+    let isRevisionEstimateInWorkflow = detailedEstimate?.estimates.filter((ob) => ob?.status === "INWORKFLOW")?.length > 0;
+    if( detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" && !isRevisionEstimateInWorkflow && isUserEstimateCreater && !actionsMenu?.find((ob) => ob?.name === "CREATE_REVISION_ESTIMATE"))
     {
       setActionsMenu((prevState) => [
         ...prevState,

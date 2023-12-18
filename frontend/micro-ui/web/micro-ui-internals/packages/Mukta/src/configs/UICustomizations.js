@@ -135,7 +135,11 @@ export const UICustomizations = {
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
       const estimateNumber = data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.trim();
-      if (estimateNumber) data.body.inbox.moduleSearchCriteria.estimateNumber = estimateNumber;
+      if (!(data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.includes("RE")) && estimateNumber) data.body.inbox.moduleSearchCriteria.estimateNumber = estimateNumber;
+      if (data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.includes("RE") && estimateNumber) {
+        data.body.inbox.moduleSearchCriteria.revisionNumber = estimateNumber;
+        delete data?.body?.inbox?.moduleSearchCriteria?.estimateNumber;
+      }
 
       const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim();
       if (projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId;
@@ -387,9 +391,12 @@ export const UICustomizations = {
       const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code;
       delete data.body.inbox.moduleSearchCriteria.ward;
       if (ward) data.body.inbox.moduleSearchCriteria.ward = ward;
-
-      const estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim();
-      if (estimateId) data.body.inbox.moduleSearchCriteria.estimateId = estimateId;
+      estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim();
+      if (!(data?.body?.inbox?.moduleSearchCriteria?.estimateId?.includes("RE")) && estimateId) data.body.inbox.moduleSearchCriteria.estimateId = estimateId;
+      if (data?.body?.inbox?.moduleSearchCriteria?.estimateId?.includes("RE") && estimateId) {
+        data.body.inbox.moduleSearchCriteria.revisionNumber = estimateId;
+        delete data?.body?.inbox?.moduleSearchCriteria?.estimateId;
+      }
 
       const projectName = data?.body?.inbox?.moduleSearchCriteria?.projectName?.trim();
       if (projectName) data.body.inbox.moduleSearchCriteria.projectName = projectName;
