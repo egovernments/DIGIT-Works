@@ -61,8 +61,8 @@ function transformMeasure(measure, parentData, isEdit, category, isCreateRevisio
       measureObject = {
         ...measureObject,
         sorId: parentData?.sorType ? parentData?.sorCode : parentData?.sNo,
-        id: isEditRevisionEstimate ? measure?.id : null,
-        previousLineItemId: (isEditRevisionEstimate ? measure?.previousLineItemId : measure?.id) || null,
+        id: isEditRevisionEstimate ? (measure?.id && measure?.id !== "" ? measure?.id : null) : null,
+        previousLineItemId: (isEditRevisionEstimate ? measure?.previousLineItemId : (measure?.id && measure?.id !== "" ? measure?.id : null)) || null,
         category: category,
         amountDetail: [
                 {
