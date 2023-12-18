@@ -25,15 +25,16 @@ import java.util.List;
 public class EncryptionDecryptionUtil {
 
     private EncryptionService encryptionService;
-    @Autowired
+
     private AuditService auditService;
 
-    @Autowired
     private ObjectMapper objectMapper;
 
-
-    public EncryptionDecryptionUtil(EncryptionService encryptionService) {
+    @Autowired
+    public EncryptionDecryptionUtil(EncryptionService encryptionService, AuditService auditService, ObjectMapper objectMapper) {
         this.encryptionService = encryptionService;
+        this.auditService = auditService;
+        this.objectMapper = objectMapper;
     }
 
     public <T> T encryptObject(Object objectToEncrypt, String stateLevelTenantId, String key, Class<T> classType) {

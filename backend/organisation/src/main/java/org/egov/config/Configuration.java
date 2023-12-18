@@ -199,5 +199,6 @@ public class Configuration {
     @Value("${egov.enc.decrypt.endpoint}")
     private String decryptionEndpoint;
 
-
+    @Value("${state.level.tenant.id}")
+    private String stateLevelTenantId;
 }

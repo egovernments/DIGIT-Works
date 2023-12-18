@@ -13,11 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+import static org.egov.util.OrganisationConstant.ORGANISATION_ENCRYPT_KEY;
+
 
 @Service
 @Slf4j
 public class OrganisationService {
-    public static final String ORGANISATION_ENCRYPT_KEY = "Organisation";
     @Autowired
     private OrganisationServiceValidator organisationServiceValidator;
     @Autowired
@@ -96,7 +97,7 @@ public class OrganisationService {
         }catch (Exception e){
             log.error("Exception while sending notification: " + e);
         }
-        encryptionService.encryptDetails(orgRequest,ORGANISATION_ENCRYPT_KEY);
+        encryptionService.encryptDetails(clone,ORGANISATION_ENCRYPT_KEY);
         producer.push(configuration.getOrgKafkaUpdateTopic(), clone);
         return orgRequest;
     }

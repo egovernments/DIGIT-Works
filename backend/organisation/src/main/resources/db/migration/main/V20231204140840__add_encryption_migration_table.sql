@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS encryption_migration(uuid VARCHAR(100), is_migrated boolean);

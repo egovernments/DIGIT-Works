@@ -14,11 +14,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.egov.util.OrganisationConstant.ORGANISATION_ENCRYPT_KEY;
+
 @Repository
 @Slf4j
 public class OrganisationRepository {
-
-    public static final String ORGANISATION_ENCRYPT_KEY = "OrganisationEncrypt";
 
     @Autowired
     private OrganisationFunctionQueryBuilder organisationFunctionQueryBuilder;
@@ -104,9 +104,10 @@ public class OrganisationRepository {
 
         log.info("Fetched organisation details for search request");
 
-        encryptionService.decrypt(organisations,ORGANISATION_ENCRYPT_KEY,orgSearchRequest);
+
 
         //Construct Organisation Objects with fetched organisations, addresses, contactDetails, jurisdictions, identifiers and documents using Organisation id
+        // Removing for migration
         return buildOrganisationSearchResult(organisations, addresses, contactDetails, documents, jurisdictions, identifiers);
     }
 
