@@ -33,7 +33,7 @@ const configNavItems = [
     activeByDefault: true,
   },
 ];
-const CreateEstimate = () => {
+const CreateEstimate = ({props}) => {
   const tenant = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   const [showToast, setShowToast] = useState(null);
@@ -76,7 +76,7 @@ const CreateEstimate = () => {
     },
   });
 
-  actionMB = actionMB && isEdit && estimate && estimate?.wfStatus==="PENDINGFORCORRECTION" ? actionMB?.filter((ob) => ob?.name !== "DRAFT") : actionMB;
+  actionMB = actionMB && (isEdit || isEditRevisionEstimate) && estimate && estimate?.wfStatus==="PENDINGFORCORRECTION" ? actionMB?.filter((ob) => ob?.name !== "DRAFT") : actionMB;
 
   const searchParams = {
     Projects: [
@@ -232,7 +232,7 @@ const CreateEstimate = () => {
   const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", sorAndNonSorData);
   const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
 
-  const initialDefaultValues = editEstimateUtil(estimate, uom, overheads);
+  const initialDefaultValues = editEstimateUtil(estimate, uom, overheads, props?.RatesData);
 
   // useEffect(() => {
 

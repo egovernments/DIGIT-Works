@@ -97,7 +97,7 @@ const CreateMeasurement = ({ props }) => {
   }, [data]);
 
   // action to be performed....
-  const actionMB = [
+  let actionMB = [
     {
       name: "SUBMIT",
     },
@@ -187,6 +187,7 @@ const CreateMeasurement = ({ props }) => {
     }
     // console.log(formData, "---formData-", createState);
   };
+  actionMB = actionMB && (props?.isUpdate) && props?.data && props?.data?.[0]?.wfStatus==="SENT_BACK" ? actionMB?.filter((ob) => ob?.name !== "SAVE_AS_DRAFT") : actionMB;
 
   // if data is still loading return loader
   if (isLoading || !defaultState?.contract) {

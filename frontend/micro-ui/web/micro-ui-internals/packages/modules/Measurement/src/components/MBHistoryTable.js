@@ -78,8 +78,8 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
     .reverse()
     .map((item, index) => ({
       sno: index + 1,
-      mbref: item?.measurementNumber,
-      musterid: t("NA"),
+      mbref: {link:true, value:item?.measurementNumber, search:`?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${item?.measurementNumber}`, pathname:window.location.pathname},
+      musterid: {link:true, value:data?.musterRollNumber, search:`?tenantId=${tenantId}&musterRollNumber=${data?.musterRollNumber}`, pathname:`/${window.contextPath}/employee/attendencemgmt/view-attendance`},
       mbDate: Digit.Utils.pt.convertEpochToDate(item?.entryDate),
       period: t("NA"),
       status: formatStatus(item?.wfStatus),
@@ -107,16 +107,16 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
               <tr key={rowIndex}>
                 {columns.map((column, columnIndex) => (
                   <td key={columnIndex}>
-                    {column.key === "mbref" ? (
+                    {row?.[column.key]?.link == true ? (
                     <Link
                         to={{
-                          pathname: window.location.pathname,
+                          pathname: row?.[column.key]?.pathname,
 
-                          search: `?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${row.mbref}`,
+                          search: row?.[column.key]?.search,
                         }}
                         style={{ color: "#f37f12" }}
                       >
-                        {row[column.key]}
+                        {row?.[column.key]?.value}
                       </Link>
                     ) : (
                       row[column.key]

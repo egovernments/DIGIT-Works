@@ -44,7 +44,7 @@ function transformMeasure(measure, parentData, isEdit, category, isCreateRevisio
     measureObject = {
       ...measureObject,
       sorId: parentData?.sorType ? parentData?.sorCode : parentData?.sNo,
-      id: measure?.id,
+      id: measure?.id && measure?.id !== "" ? measure?.id : null,
       category: category,
       amountDetail: [
               {
