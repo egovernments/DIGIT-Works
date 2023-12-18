@@ -1,11 +1,9 @@
 package org.egov.kafka;
 
-import java.util.HashMap;
-
 import org.springframework.stereotype.Component;
 
 @Component
-public class Consumer {
+public class OrganizationConsumer {
 
 	/*
 	 * Uncomment the below line to start consuming record from kafka.topics.consumer
@@ -13,9 +11,7 @@ public class Consumer {
 	 * application.properties
 	 */
 	// @KafkaListener(topics = {"kafka.topics.consumer"})
-	public void listen(final HashMap<String, Object> record) {
-
-		// TODO
-
+	public void listen() {
+		// document why this method is empty
 	}
 }

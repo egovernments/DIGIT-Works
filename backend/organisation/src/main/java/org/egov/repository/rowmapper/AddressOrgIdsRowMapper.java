@@ -17,8 +17,8 @@ public class AddressOrgIdsRowMapper implements ResultSetExtractor<Set<String>> {
         Set<String> orgIds = new HashSet<>();
 
         while (resultSet.next()) {
-            String address_orgId = resultSet.getString("address_orgId");
-            orgIds.add(address_orgId);
+            String addressOrgId = resultSet.getString("address_orgId");
+            orgIds.add(addressOrgId);
         }
 
         return orgIds;
