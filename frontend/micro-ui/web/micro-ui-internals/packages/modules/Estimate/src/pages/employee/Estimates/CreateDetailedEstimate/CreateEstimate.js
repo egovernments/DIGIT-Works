@@ -289,14 +289,14 @@ const CreateEstimate = ({props}) => {
       return false;
     }
     //To validate that if SOR is present it should have measures
-    if(data?.SORtable?.filter((ob) => !(ob?.currentMBEntry) || ob?.currentMBEntry <= 0)?.length > 0)
+    if(data?.SORtable?.filter((ob) => ob?.sorCode && (!(ob?.currentMBEntry) || ob?.currentMBEntry <= 0))?.length > 0)
     {
       setShowToast({ error: true, label: "ERR_MB_AMOUNT_IS_NOT_RIGHT_FOR_SOR" });
       setShowModal(false);
       return false;
     }
     //To validate if the measures are present in SOR table it should have description param
-    let descriptionpresent = data?.SORtable?.find(item => item.measures.some(measure => measure?.description === "" || measure?.description === undefined || measure?.description === null));
+    let descriptionpresent = data?.SORtable?.find(item => item?.sorCode && item.measures.some(measure => measure?.description === "" || measure?.description === undefined || measure?.description === null));
     if(descriptionpresent)
     {
       setShowToast({ error: true, label: `${t("ERR_ENTER_DESCRIPTION_IN_SOR")} ${descriptionpresent?.sorId || descriptionpresent?.sorCode}` });
