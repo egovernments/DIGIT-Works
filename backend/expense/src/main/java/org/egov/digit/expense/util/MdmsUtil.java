@@ -24,16 +24,18 @@ import java.util.Map;
 @Component
 public class MdmsUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-    @Autowired
-    private Configuration configs;
+    private final Configuration configs;
 
-
+	@Autowired
+	public MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
+		this.restTemplate = restTemplate;
+		this.mapper = mapper;
+		this.configs = configs;
+	}
 
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, BillRequest billRequest) {
         StringBuilder uri = new StringBuilder();

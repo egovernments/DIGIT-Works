@@ -1,5 +1,6 @@
 package org.egov.util;
 
+
 public class EstimateServiceConstant {
 
     //Modules
@@ -9,13 +10,17 @@ public class EstimateServiceConstant {
 
     //Masters
     public static final String MASTER_DEPARTMENT = "Department";
+    public static final String MASTER_UOM = "UOM";
     public static final String MASTER_TENANTS = "tenants";
-    public static final String MASTER_SOR_ID = "SorId";
+    public static final String MDMS_RATES_MASTER_NAME = "Rates";
+    public static final String MDMS_SOR_MASTER_NAME = "SOR";
     public static final String MASTER_CATEGORY = "Category";
     public static final String MASTER_OVERHEAD = "Overheads";
 
 
     public static final String OVERHEAD_CODE = "OVERHEAD";
+    public static final String SOR_CODE = "SOR";
+    public static final String NON_SOR_CODE = "NON-SOR";
     //work flow
     public static final String ESTIMATE_MODULE_NAME = "estimate";
 
@@ -72,4 +77,11 @@ public class EstimateServiceConstant {
 
     //Location Service Constants
     public static final String LOCATION_BOUNDARY_NAME_CODE ="$.*.*.boundary.*.name";
+
+    public static final String ESTIMATE_APPROVED_STATUS = "APPROVED";
+    public static final String ESTIMATE_REJECT= "REJECT";
+    public static final String ESTIMATE_INWORKFLOW_STATUS = "INWORKFLOW";
+    public static final String ESTIMATE_ACTIVE_STATUS = "ACTIVE";
+    public static final String VALID_FROM = "validFrom";
+
 }

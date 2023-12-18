@@ -28,19 +28,23 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 @Component
 @Slf4j
 public class MdmsUtils {
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
     
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    private final ObjectMapper mapper;
+
+    private final ExpenseCalculatorConfiguration config;
 
     @Autowired
-    private ObjectMapper mapper;
+    public MdmsUtils(ServiceRequestRepository serviceRequestRepository, RestTemplate restTemplate, ObjectMapper mapper, ExpenseCalculatorConfiguration config) {
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.restTemplate = restTemplate;
+        this.mapper = mapper;
+        this.config = config;
+    }
 
-    @Autowired
-    private ExpenseCalculatorConfiguration config;
-    
-	public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId,
+    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId,
 			String moduleName, List<String> masterNameList) {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
@@ -207,6 +211,11 @@ public class MdmsUtils {
 
     public Object fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String rootTenantId) {
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestForLabourChanges(requestInfo, rootTenantId);
+        return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
+    }
+    
+    public Object fetchMDMSDataForPayerList(RequestInfo requestInfo, String rootTenantId) {
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestForPayerList(requestInfo, rootTenantId);
         return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
     }
 

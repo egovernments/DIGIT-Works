@@ -1,28 +1,20 @@
 package org.egov.service;
 
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.helper.MusterRollRequestBuilderTest;
-import org.egov.kafka.Producer;
-import org.egov.repository.IdGenRepository;
+import org.egov.kafka.MusterRollProducer;
 import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.MdmsUtil;
-import org.egov.util.MusterRollServiceUtil;
 import org.egov.validator.MusterRollValidator;
 import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollSearchCriteria;
-import org.egov.web.models.Status;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class MusterRollServiceTest {
+class MusterRollServiceTest {
 
     @InjectMocks
     private MusterRollService musterRollService;
@@ -48,7 +39,7 @@ public class MusterRollServiceTest {
     @Mock
     private WorkflowService workflowService;
     @Mock
-    private Producer producer;
+    private MusterRollProducer musterRollProducer;
     @Mock
     private MusterRollServiceConfiguration serviceConfiguration;
     @Mock

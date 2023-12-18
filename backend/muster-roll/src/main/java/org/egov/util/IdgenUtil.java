@@ -26,11 +26,15 @@ public class IdgenUtil {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+    private final ServiceRequestRepository restRepo;
 
     @Autowired
-    private ServiceRequestRepository restRepo;
+    public IdgenUtil(ObjectMapper mapper, ServiceRequestRepository restRepo) {
+        this.mapper = mapper;
+        this.restRepo = restRepo;
+    }
 
     public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
         List<IdRequest> reqList = new ArrayList<>();

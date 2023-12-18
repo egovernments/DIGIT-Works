@@ -3,7 +3,6 @@ package org.egov.works.repository.querybuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.web.models.Contract;
 import org.egov.works.web.models.ContractCriteria;
 import org.egov.works.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,14 +138,14 @@ public class ContractQueryBuilder {
             }
         }
 
-        addOrderByClause(query, criteria, preparedStmtList);
+        addOrderByClause(query, criteria);
 
         addLimitAndOffset(query, criteria, preparedStmtList);
 
         return query.toString();
     }
 
-    private void addOrderByClause(StringBuilder queryBuilder, ContractCriteria criteria, List<Object> preparedStmtList) {
+    private void addOrderByClause(StringBuilder queryBuilder, ContractCriteria criteria) {
 
         Pagination pagination = criteria.getPagination();
 

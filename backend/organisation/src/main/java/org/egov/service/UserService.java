@@ -24,14 +24,21 @@ import java.util.*;
 @Slf4j
 public class UserService {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+    private final ServiceRequestRepository serviceRequestRepository;
+
+    private final Configuration config;
+
+    private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+    private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private Configuration config;
+    public UserService(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration config) {
+        this.mapper = mapper;
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+    }
 
     /**
      * Creates user of the organisation - contact details, if it is not created already
@@ -179,8 +186,7 @@ public class UserService {
             if (response != null) {
                 LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response;
                 parseResponse(responseMap, dobFormat);
-                UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
-                return userDetailResponse;
+                return mapper.convertValue(responseMap, UserDetailResponse.class);
             } else {
                 return new UserDetailResponse(ResponseInfo.builder().build(), new ArrayList<>());
             }
@@ -209,12 +215,12 @@ public class UserService {
             users.forEach(map -> {
 
                         map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
-                        if ((String) map.get("lastModifiedDate") != null)
-                            map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
+                        if ((String) map.get(LAST_MODIFIED_DATE) != null)
+                            map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
                         if ((String) map.get("dob") != null)
                             map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
-                        if ((String) map.get("pwdExpiryDate") != null)
-                            map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
+                        if ((String) map.get(PWD_EXPIRY_DATE) != null)
+                            map.put(PWD_EXPIRY_DATE, dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
                     }
             );
         }
@@ -235,6 +241,9 @@ public class UserService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        if(d == null){
+            throw new CustomException("INVALID DATE FORMAT","The date format of the date "+date+" is invalid");
+        }
         return d.getTime();
     }
 
@@ -253,7 +262,6 @@ public class UserService {
             contactDetails.setCreatedDate(System.currentTimeMillis());
             contactDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
             contactDetails.setLastModifiedDate(System.currentTimeMillis());
-            //contactDetails.setActive(userDetailResponse.getUser().get(0).getActive());
         }
     }
 

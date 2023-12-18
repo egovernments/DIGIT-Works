@@ -1,6 +1,5 @@
 package org.egov.works.web.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.ProcessInstance;

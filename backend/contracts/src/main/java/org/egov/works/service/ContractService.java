@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.enrichment.ContractEnrichment;
-import org.egov.works.kafka.Producer;
+import org.egov.works.kafka.ContractProducer;
 import org.egov.works.repository.ContractRepository;
 import org.egov.works.repository.LineItemsRepository;
 import org.egov.works.util.ResponseInfoFactory;
@@ -36,7 +36,7 @@ public class ContractService {
     private ContractEnrichment contractEnrichment;
 
     @Autowired
-    private Producer producer;
+    private ContractProducer contractProducer;
 
     @Autowired
     private ContractRepository contractRepository;
@@ -55,7 +55,7 @@ public class ContractService {
         contractServiceValidator.validateCreateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnCreate(contractRequest);
         workflowService.updateWorkflowStatus(contractRequest);
-        producer.push(contractServiceConfiguration.getCreateContractTopic(), contractRequest);
+        contractProducer.push(contractServiceConfiguration.getCreateContractTopic(), contractRequest);
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);
         ContractResponse contractResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
@@ -69,7 +69,8 @@ public class ContractService {
         contractServiceValidator.validateUpdateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnUpdate(contractRequest);
         workflowService.updateWorkflowStatus(contractRequest);
-        producer.push(contractServiceConfiguration.getUpdateContractTopic(), contractRequest);
+        contractEnrichment.enrichPreviousContractLineItems(contractRequest);
+        contractProducer.push(contractServiceConfiguration.getUpdateContractTopic(), contractRequest);
         try {
             notificationService.sendNotification(contractRequest);
         }catch (Exception e){

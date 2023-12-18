@@ -1,7 +1,5 @@
 package org.egov.repository.rowmapper;
 
-import digit.models.coremodels.AuditDetails;
-import org.egov.web.models.Address;
 import org.egov.web.models.ContactDetails;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -22,27 +20,25 @@ public class ContactDetailsRowMapper implements ResultSetExtractor<List<ContactD
 
         while (rs.next()) {
 
-            String contactDetail_Id = rs.getString("contactDetail_Id");
-            String contactDetail_tenantId = rs.getString("contactDetail_tenantId");
-            String contactDetail_orgId = rs.getString("contactDetail_orgId");
-            String contactDetail_contactName = rs.getString("contactDetail_contactName");
-            String contactDetail_contactMobileNumber = rs.getString("contactDetail_contactMobileNumber");
-            String contactDetail_contactEmail = rs.getString("contactDetail_contactEmail");
-            String contactDetail_individualId = rs.getString("contactDetail_contactIndividualId");
+            String contactDetailId = rs.getString("contactDetail_Id");
+            String contactDetailTenantId = rs.getString("contactDetail_tenantId");
+            String contactDetailOrgId = rs.getString("contactDetail_orgId");
+            String contactDetailContactName = rs.getString("contactDetail_contactName");
+            String contactDetailContactMobileNumber = rs.getString("contactDetail_contactMobileNumber");
+            String contactDetailContactEmail = rs.getString("contactDetail_contactEmail");
+            String contactDetailIndividualId = rs.getString("contactDetail_contactIndividualId");
 
             ContactDetails contactDetails = ContactDetails.builder()
-                    .id(contactDetail_Id)
-                    .tenantId(contactDetail_tenantId)
-                    .orgId(contactDetail_orgId)
-                    .contactName(contactDetail_contactName)
-                    .contactMobileNumber(contactDetail_contactMobileNumber)
-                    .contactEmail(contactDetail_contactEmail)
-                    .individualId(contactDetail_individualId)
+                    .id(contactDetailId)
+                    .tenantId(contactDetailTenantId)
+                    .orgId(contactDetailOrgId)
+                    .contactName(contactDetailContactName)
+                    .contactMobileNumber(contactDetailContactMobileNumber)
+                    .contactEmail(contactDetailContactEmail)
+                    .individualId(contactDetailIndividualId)
                     .build();
 
-            if (!contactDetailsMap.containsKey(contactDetail_Id)) {
-                contactDetailsMap.put(contactDetail_Id, contactDetails);
-            }
+            contactDetailsMap.computeIfAbsent(contactDetailId, k -> contactDetails);
         }
 
         return new ArrayList<>(contactDetailsMap.values());

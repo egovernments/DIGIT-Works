@@ -2,7 +2,7 @@ package org.egov.service;
 
 import org.egov.config.Configuration;
 import org.egov.helper.OrganisationRequestTestBuilder;
-import org.egov.kafka.Producer;
+import org.egov.kafka.OrganizationProducer;
 import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.OrgRequest;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class OrganisationServiceTest {
     private Configuration configuration;
 
     @Mock
-    private Producer producer;
+    private OrganizationProducer organizationProducer;
 
     @Mock
     private IndividualService userService;
@@ -56,7 +56,7 @@ public class OrganisationServiceTest {
 
         verify(userService, times(1)).createIndividual(orgRequest);
 
-        verify(producer, times(1)).push(eq("save-organisation"), any(OrgRequest.class));
+        verify(organizationProducer, times(1)).push(eq("save-organisation"), any(OrgRequest.class));
 
         assertNotNull(orgRequest.getOrganisations());
 
