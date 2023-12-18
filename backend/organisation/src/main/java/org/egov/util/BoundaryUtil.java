@@ -21,13 +21,15 @@ import java.util.*;
 @Slf4j
 public class BoundaryUtil {
 
-    private String BOUNDARY_CODE_PATH = "$..boundary[?(@.code==\"{}\")]";
+    private final ServiceRequestRepository serviceRequestRepository;
+
+    private final Configuration config;
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private Configuration config;
+    public BoundaryUtil(ServiceRequestRepository serviceRequestRepository, Configuration config) {
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+    }
 
     /**
      * Takes map of locations with boundaryType as key and list of boundaries
@@ -58,7 +60,8 @@ public class BoundaryUtil {
                 String jsonString = new JSONObject(responseMap).toString();
 
                 for (String boundary : boundaries) {
-                    String jsonpath = BOUNDARY_CODE_PATH.replace("{}", boundary);
+                    String boundaryCodePath = "$..boundary[?(@.code==\"{}\")]";
+                    String jsonpath = boundaryCodePath.replace("{}", boundary);
                     DocumentContext context = JsonPath.parse(jsonString);
                     Object boundaryObject = context.read(jsonpath);
 

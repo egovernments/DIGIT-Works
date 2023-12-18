@@ -22,14 +22,18 @@ import java.util.List;
 @Service
 public class WorkflowService {
 
-    @Autowired
-    private MusterRollServiceConfiguration serviceConfiguration;
+    private final MusterRollServiceConfiguration serviceConfiguration;
+
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public WorkflowService(MusterRollServiceConfiguration serviceConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     /* Call the workflow service with the given action and update the status
      * return the updated status of the application
@@ -57,9 +61,7 @@ public class WorkflowService {
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(serviceConfiguration.getMusterRollWFModuleName());
         processInstance.setTenantId(musterRoll.getTenantId());
-        //processInstance.setBusinessService(getBusinessService(request).getBusinessService());
         processInstance.setBusinessService(serviceConfiguration.getMusterRollWFBusinessService());
-        /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
 
         if (!CollectionUtils.isEmpty(workflow.getAssignees())) {

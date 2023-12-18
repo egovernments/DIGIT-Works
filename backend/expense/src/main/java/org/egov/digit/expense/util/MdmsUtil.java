@@ -21,19 +21,21 @@ import java.util.Map;
 @Component
 public class MdmsUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-    @Autowired
-    private Configuration configs;
+    private final Configuration configs;
+
+	@Autowired
+	public MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
+		this.restTemplate = restTemplate;
+		this.mapper = mapper;
+		this.configs = configs;
+	}
 
 
-
-
-    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId) {
+	public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId) {
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId);
@@ -49,7 +51,6 @@ public class MdmsUtil {
 
 		log.info(mdmsResponse.toString());
         return mdmsResponse.getMdmsRes();
-        //log.info(ulbToCategoryListMap.toString());
     }
 
 	/**
@@ -63,9 +64,7 @@ public class MdmsUtil {
 
 		// Criteria for tenant module
 		List<MasterDetail> tenantMasterDetails = new ArrayList<>();
-		Constants.TENANT_MDMS_MASTER_NAMES.forEach(name -> {
-			tenantMasterDetails.add(MasterDetail.builder().name(name).build());
-		});
+		Constants.TENANT_MDMS_MASTER_NAMES.forEach(name -> tenantMasterDetails.add(MasterDetail.builder().name(name).build()));
 
 		ModuleDetail tenantModuleDetail = ModuleDetail.builder()
 				.moduleName(Constants.TENANT_MODULE_NAME)
@@ -74,9 +73,7 @@ public class MdmsUtil {
 
 		// Criteria for Expense module
 		List<MasterDetail> expenseMasterDetails = new ArrayList<>();
-		Constants.EXPENSE_MDMS_MASTER_NAMES.forEach(name -> {
-			expenseMasterDetails.add(MasterDetail.builder().name(name).build());
-		});
+		Constants.EXPENSE_MDMS_MASTER_NAMES.forEach(name -> expenseMasterDetails.add(MasterDetail.builder().name(name).build()));
 		ModuleDetail expenseModuleDetail = ModuleDetail.builder()
 				.moduleName(Constants.EXPENSE_MODULE_NAME)
 				.masterDetails(expenseMasterDetails)

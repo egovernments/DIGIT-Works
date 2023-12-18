@@ -19,32 +19,34 @@ public class EstimateQueryBuilder {
 
     private final EstimateServiceConfiguration config;
 
+    private static final String LEFT_JOIN = "LEFT JOIN ";
 
+    private static final String ORDER_BY_EST_CREATED_TIME = " ORDER BY est.created_time ";
     private static final String FETCH_ESTIMATE_QUERY = "SELECT est.*," +
             "estDetail.*,estAmtDetail.*,estAdd.*, est.id as estId,estDetail.description as estDetailDescription,est.last_modified_time as estLastModifiedTime, est.created_time as estCreatedTime, estDetail.id AS estDetailId,estDetail.old_uuid AS estDetailOldUuid," +
             "estDetail.additional_details AS estDetailAdditional,estAmtDetail.additional_details AS estAmtDetailAdditional," +
             "estAdd.id AS estAddId,estAmtDetail.id AS estAmtDetailId,estDetail.estimate_id AS estDetailEstId," +
             "estDetail.is_active AS estDetailActive,estAmtDetail.is_active AS estAmtDetailActive,estDetail.name AS estDetailName "+
             "FROM eg_wms_estimate AS est " +
-            "LEFT JOIN " +
+            LEFT_JOIN +
             "eg_wms_estimate_detail AS estDetail " +
             "ON (est.id=estDetail.estimate_id) " +
-            "LEFT JOIN " +
+            LEFT_JOIN +
             "eg_wms_estimate_address AS estAdd " +
             "ON (est.id=estAdd.estimate_id) " +
-            "LEFT JOIN " +
+            LEFT_JOIN +
             "eg_wms_estimate_amount_detail AS estAmtDetail " +
             "ON (estDetail.id=estAmtDetail.estimate_detail_id) ";
 
     private static final String ESTIMATE_COUNT_QUERY = "SELECT distinct(est.estimate_number) " +
             "FROM eg_wms_estimate AS est " +
-            "LEFT JOIN " +
+            LEFT_JOIN +
             "eg_wms_estimate_detail AS estDetail " +
             "ON (est.id=estDetail.estimate_id) " +
-            "LEFT JOIN " +
+            LEFT_JOIN+
             "eg_wms_estimate_address AS estAdd " +
             "ON (est.id=estAdd.estimate_id) " +
-            "LEFT JOIN " +
+            LEFT_JOIN +
             "eg_wms_estimate_amount_detail AS estAmtDetail " +
             "ON (estDetail.id=estAmtDetail.estimate_detail_id) ";
 
@@ -188,7 +190,6 @@ public class EstimateQueryBuilder {
     //TODO : check -> do we need to orderby estimate.totalEstimateAmount ?
     private void addOrderByClause(StringBuilder queryBuilder, EstimateSearchCriteria criteria) {
         log.info("EstimateQueryBuilder::getEstimateQuery");
-        String ORDER_BY_EST_CREATED_TIME = " ORDER BY est.created_time ";
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
             queryBuilder.append(ORDER_BY_EST_CREATED_TIME);

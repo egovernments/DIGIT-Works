@@ -32,14 +32,19 @@ import static org.egov.util.MusterRollServiceConstants.*;
 @Slf4j
 public class MusterRollServiceUtil {
 
-	@Autowired
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
+
+	private final RestTemplate restTemplate;
+
+	private final MusterRollServiceConfiguration config;
+	private static final String SKILL_CODE = "skillCode";
 
 	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private MusterRollServiceConfiguration config;
+	public MusterRollServiceUtil(ObjectMapper mapper, RestTemplate restTemplate, MusterRollServiceConfiguration config) {
+		this.mapper = mapper;
+		this.restTemplate = restTemplate;
+		this.config = config;
+	}
 
 	/**
 	 * Method to return auditDetails for create/update flows
@@ -50,7 +55,7 @@ public class MusterRollServiceUtil {
 	 */
 	public AuditDetails getAuditDetails(String by, MusterRoll musterRoll, Boolean isCreate) {
 		Long time = System.currentTimeMillis();
-		if (isCreate)
+		if (Boolean.TRUE.equals(isCreate))
 			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
 					.build();
 		else
@@ -83,8 +88,7 @@ public class MusterRollServiceUtil {
 
 		String skillValue = "";
 		if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
-			for (Object object : musterRes) {
-				LinkedHashMap<String, String> codeValueMap = (LinkedHashMap<String, String>) object;
+			for (LinkedHashMap<String, String> codeValueMap : musterRes) {
 				if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
 					skillValue = codeValueMap.get("name");
 					break;
@@ -110,18 +114,12 @@ public class MusterRollServiceUtil {
 		// populate individual's skill details in create and update (user selected skill
 		// will be set in additionalDetails)
 		if (isCreate) {
-			additionalDetails.put("skillCode", skillCode);
+			additionalDetails.put(SKILL_CODE, skillCode);
 			additionalDetails.put("skillValue", skillValue);
 		}
 
 		// populate list of skills of the individual in estimate additionalDetails
-		if (!isCreate && !CollectionUtils.isEmpty(matchedIndividual.getSkills())) {
-			List<String> skillList = new ArrayList<>();
-			for (Skill skill : matchedIndividual.getSkills()) {
-				skillList.add(skill.getLevel() + "." + skill.getType());
-			}
-			additionalDetails.put("skillCode", skillList);
-		}
+		populateSkillsInEstimateDetails(isCreate,matchedIndividual,additionalDetails);
 
 		if (bankAccount != null) {
 			List<BankAccountDetails> bankAccountDetails = bankAccount.getBankAccountDetails();
@@ -144,6 +142,15 @@ public class MusterRollServiceUtil {
 		}
 
 	}
+	private void populateSkillsInEstimateDetails(boolean isCreate,Individual matchedIndividual,JSONObject additionalDetails){
+		if (!isCreate && !CollectionUtils.isEmpty(matchedIndividual.getSkills())) {
+			List<String> skillList = new ArrayList<>();
+			for (Skill skill : matchedIndividual.getSkills()) {
+				skillList.add(skill.getLevel() + "." + skill.getType());
+			}
+			additionalDetails.put(SKILL_CODE, skillList);
+		}
+	}
 
 	public void updateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode) {
 		final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "."
@@ -161,8 +168,7 @@ public class MusterRollServiceUtil {
 
 		String skillValue = "";
 		if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
-			for (Object object : musterRes) {
-				LinkedHashMap<String, String> codeValueMap = (LinkedHashMap<String, String>) object;
+			for (LinkedHashMap<String, String> codeValueMap : musterRes) {
 				if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
 					skillValue = codeValueMap.get("name");
 					break;
@@ -172,7 +178,7 @@ public class MusterRollServiceUtil {
 
 		try {
 			JsonNode node = mapper.readTree(mapper.writeValueAsString(individualEntry.getAdditionalDetails()));
-			((ObjectNode) node).put("skillCode", skillCode);
+			((ObjectNode) node).put(SKILL_CODE, skillCode);
 			((ObjectNode) node).put("skillValue", skillValue);
 			individualEntry.setAdditionalDetails(mapper.readValue(node.toString(), Object.class));
 
@@ -213,16 +219,13 @@ public class MusterRollServiceUtil {
 	 * @return
 	 */
 	public boolean isTenantBasedSearch(MusterRollSearchCriteria searchCriteria) {
-		if ((searchCriteria.getIds() == null || searchCriteria.getIds().isEmpty())
-				&& StringUtils.isBlank(searchCriteria.getMusterRollNumber())
-				&& StringUtils.isBlank(searchCriteria.getRegisterId()) && searchCriteria.getFromDate() == null
-				&& searchCriteria.getToDate() == null && searchCriteria.getStatus() == null
-				&& StringUtils.isBlank(searchCriteria.getMusterRollStatus())
-				&& StringUtils.isNotBlank(searchCriteria.getTenantId())) {
-			return true;
-		}
-		return false;
-	}
+        return (searchCriteria.getIds() == null || searchCriteria.getIds().isEmpty())
+                && StringUtils.isBlank(searchCriteria.getMusterRollNumber())
+                && StringUtils.isBlank(searchCriteria.getRegisterId()) && searchCriteria.getFromDate() == null
+                && searchCriteria.getToDate() == null && searchCriteria.getStatus() == null
+                && StringUtils.isBlank(searchCriteria.getMusterRollStatus())
+                && StringUtils.isNotBlank(searchCriteria.getTenantId());
+    }
 
 	public AttendanceRegisterResponse fetchAttendanceRegister(MusterRoll musterRoll, RequestInfo requestInfo) {
 		log.info("MusterRollValidator::Fetching attendance register with tenantId::" + musterRoll.getTenantId()

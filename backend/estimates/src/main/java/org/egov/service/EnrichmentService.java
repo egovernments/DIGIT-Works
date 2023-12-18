@@ -79,7 +79,6 @@ public class EnrichmentService {
             }else {
                 estimate.setVersionNumber(estimateForRevision.getVersionNumber().add(BigDecimal.valueOf(1)));
             }
-//            estimate.setRevisionNumber(estimateForRevision.getEstimateNumber() + "/RE-" + (estimate.getVersionNumber().subtract(BigDecimal.valueOf(1))));
             List<String> revisonEstimateNumber = getIdList(requestInfo, tenantId
                     , config.getIdgenRevisionEstimateNumberName(), config.getIdgenRevisionEstimateNumberFormat(), 1);
             if (revisonEstimateNumber != null && !revisonEstimateNumber.isEmpty()) {
@@ -95,6 +94,7 @@ public class EnrichmentService {
                 estimate.setEstimateNumber(estimateNumber);
                 estimate.setVersionNumber(BigDecimal.valueOf(1));
             }
+            estimate.setBusinessService(config.getEstimateWFBusinessService());
         }
 
         address.setId(UUID.randomUUID().toString());
