@@ -331,11 +331,13 @@ const CreateEstimate = ({props}) => {
       setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" });
       closeToast();
       return;
-    } else if (totalLabourAndMaterial === 0  && action !== "DRAFT") {
-      setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_IMPROPER" });
-      closeToast();
-      return;
-    }
+    } 
+    // else if (totalLabourAndMaterial === 0  && action !== "DRAFT") {
+    //   debugger;
+    //   setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_IMPROPER" });
+    //   closeToast();
+    //   return;
+    // }
 
     setInputFormData((prevState) => _data);
     //first do whatever processing you want on form data then pass it over to modal's onSubmit function
