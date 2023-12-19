@@ -35,7 +35,7 @@ router.post(
         try {
             try {
 
-                var resEstimate = await search_estimateDetails(tenantId, requestinfo, estimateNumber);
+                resEstimate = await search_estimateDetails(tenantId, requestinfo, estimateNumber);
 
             }
             catch (ex) {
@@ -46,7 +46,7 @@ router.post(
             const estimate = resEstimate.data;
 
 
-            var estimates = transformDetailedData(estimate);
+            const estimates = transformDetailedData(estimate);
             
             estimate.pdfData = estimates;
 
@@ -69,12 +69,15 @@ router.post(
                     
 
                     catch (ex) {
+
                         return renderError(res, "Failed to generate PDF for detailed estimate", 500);
+
                     }
 
                     const filename = `${pdfkey}_${new Date().getTime()}`;
 
                     res.writeHead(200, {
+
                         "Content-Type": "application/pdf",
                         "Content-Disposition": `attachment; filename=${filename}.pdf`,
                     });
@@ -82,15 +85,22 @@ router.post(
                     pdfResponse.data.pipe(res);
 
                 }
+
                 else {
+
                     return renderError(
                         res,
                         "There is no estimate created using this estimate number",
                         404
                     );
+
                 }
-            } catch (ex) {
+
+            } 
+            catch (ex) {
+
                 return renderError(res, "Failed to query details of estimate", 500);
+                
             }
 
         })

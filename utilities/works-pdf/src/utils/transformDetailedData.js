@@ -1,3 +1,4 @@
+const e = require("express");
 const { logger } = require("../logger");
 
 const transformDetailedData = (data) => {
@@ -15,6 +16,10 @@ const transformDetailedData = (data) => {
     const sorIdMap = {};
 
     for (const estimateDetail of data.estimates[0].estimateDetails) {
+
+        if(estimateDetail.category === 'NON-SOR' && estimateDetail.sorId === null){
+            estimateDetail.sorId = '0';
+        }
         
         // if in the end of name there is a square bracket then convert that square bracket into round bracket
         if(estimateDetail.name.includes('[')){
