@@ -2,7 +2,6 @@ package org.egov.digit.expense.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,27 +15,25 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.UserDetailResponse;
-import digit.models.coremodels.user.Role;
-import digit.models.coremodels.user.User;
-import digit.models.coremodels.user.enums.UserType;
 
 @Component
 public class UserUtil {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+    private final ServiceRequestRepository serviceRequestRepository;
+
+    private final Configuration configs;
+
+    private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+    private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
+
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private Configuration configs;
-
-
-    @Autowired
-    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration configs) {
         this.mapper = mapper;
         this.serviceRequestRepository = serviceRequestRepository;
+        this.configs = configs;
     }
 
     /**
@@ -56,8 +53,7 @@ public class UserUtil {
         try{
             LinkedHashMap responseMap = (LinkedHashMap)serviceRequestRepository.fetchResult(uri, userRequest);
             parseResponse(responseMap,dobFormat);
-            UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
-            return userDetailResponse;
+            return mapper.convertValue(responseMap,UserDetailResponse.class);
         }
         catch(IllegalArgumentException  e)
         {
@@ -77,12 +73,12 @@ public class UserUtil {
         if(users!=null){
             users.forEach( map -> {
                         map.put("createdDate",dateTolong((String)map.get("createdDate"),format1));
-                        if((String)map.get("lastModifiedDate")!=null)
-                            map.put("lastModifiedDate",dateTolong((String)map.get("lastModifiedDate"),format1));
+                        if((String)map.get(LAST_MODIFIED_DATE)!=null)
+                            map.put(LAST_MODIFIED_DATE,dateTolong((String)map.get(LAST_MODIFIED_DATE),format1));
                         if((String)map.get("dob")!=null)
                             map.put("dob",dateTolong((String)map.get("dob"),dobFormat));
-                        if((String)map.get("pwdExpiryDate")!=null)
-                            map.put("pwdExpiryDate",dateTolong((String)map.get("pwdExpiryDate"),format1));
+                        if((String)map.get(PWD_EXPIRY_DATE)!=null)
+                            map.put(PWD_EXPIRY_DATE,dateTolong((String)map.get(PWD_EXPIRY_DATE),format1));
                     }
             );
         }

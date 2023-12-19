@@ -19,14 +19,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ProjectUtil {
 
-    @Autowired
-    private ExpenseCalculatorConfiguration serviceConfiguration;
+    private final ExpenseCalculatorConfiguration serviceConfiguration;
 
-    @Autowired
-    private ServiceRequestRepository requestRepository;
+    private final ServiceRequestRepository requestRepository;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public static final String TENANT_ID = "tenantId";
     public static final String LIMIT = "limit";
@@ -44,13 +41,20 @@ public class ProjectUtil {
 
     public static final String EQUAL_TO = "=";
 
+    @Autowired
+    public ProjectUtil(ExpenseCalculatorConfiguration serviceConfiguration, ServiceRequestRepository requestRepository, ObjectMapper mapper) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.requestRepository = requestRepository;
+        this.mapper = mapper;
+    }
+
     /**
      * Get the project details using project id from project service
      *
      * @param request
      * @return
      */
-    public Object getProjectDetails(CalculatorSearchRequest request, List<String> projectNumbers) {
+    public Object getProjectDetails(CalculatorSearchRequest request) {
         log.info("ProjectUtil::getProjectDetails");
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = request.getSearchCriteria().getTenantId();
@@ -71,8 +75,6 @@ public class ProjectUtil {
         ObjectNode projectSearchReqNode = mapper.createObjectNode();
         ArrayNode projectArrayNode = mapper.createArrayNode();
 
-//        for(String projectNumber: projectNumbers)
-//        {
 	        ObjectNode projectObjNode = mapper.createObjectNode();
 	        projectObjNode.put(TENANT_ID, tenantId);
 	        if(projectName!=null)
@@ -83,15 +85,12 @@ public class ProjectUtil {
 	        	projectObjNode.putPOJO("address", addressObjNode);
 	        }
 	        projectArrayNode.add(projectObjNode);
-        //}
 
         projectSearchReqNode.putPOJO(REQUEST_INFO, requestInfo);
         projectSearchReqNode.putPOJO(PROJECTS, projectArrayNode);
 
         log.info("ProjectUtil::search project request -> {}",projectSearchReqNode);
-        Object projectRes = requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
-
-        return projectRes;
+        return requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
     }
 
     private StringBuilder getProjectUrl() {

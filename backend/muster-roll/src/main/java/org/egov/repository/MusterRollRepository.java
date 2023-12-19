@@ -14,14 +14,18 @@ import java.util.List;
 @Repository
 public class MusterRollRepository {
 
-    @Autowired
-    private MusterRollRowMapper rowMapper;
+    private final MusterRollRowMapper rowMapper;
+
+    private final MusterRollQueryBuilder queryBuilder;
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private MusterRollQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public MusterRollRepository(MusterRollRowMapper rowMapper, MusterRollQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+        this.rowMapper = rowMapper;
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
 
     /**
@@ -32,7 +36,6 @@ public class MusterRollRepository {
     public List<MusterRoll> getMusterRoll(MusterRollSearchCriteria searchCriteria,List<String> registerIds) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getMusterSearchQuery(searchCriteria, preparedStmtList, registerIds);
-        List<MusterRoll> musterRollList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        return musterRollList;
+        return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
     }
 }

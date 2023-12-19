@@ -33,7 +33,7 @@ import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class OrganisationServiceValidatorTest {
+class OrganisationServiceValidatorTest {
 
     @InjectMocks
     private OrganisationServiceValidator organisationServiceValidator;

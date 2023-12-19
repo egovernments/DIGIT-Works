@@ -9,8 +9,6 @@ import digit.models.coremodels.user.enums.UserType;
 import lombok.*;
 import org.egov.common.models.core.Role;
 import org.egov.util.OrganisationConstant;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -28,11 +26,9 @@ public class UserRequest {
 
     private Long id;
 
-    @SafeHtml
     @Size(max = 64)
     private String userName;
 
-    @SafeHtml
     @Size(max = 5)
     private String salutation;
 
@@ -50,37 +46,29 @@ public class UserRequest {
     @Pattern(regexp = OrganisationConstant.PATTERN_MOBILE)
     private String alternatemobilenumber;
 
-    @Email
     @Size(max = 128)
     private String emailId;
 
-    @SafeHtml
     @Size(max = 50)
     private String altContactNumber;
 
-    @SafeHtml
     @Size(max = 10)
     private String pan;
 
-    @SafeHtml
     @Size(max = 20)
     private String aadhaarNumber;
 
-    @SafeHtml
     @Size(max = 300)
     private String permanentAddress;
 
-    @SafeHtml
     @Pattern(regexp = OrganisationConstant.PATTERN_CITY)
     @Size(max = 50)
     private String permanentCity;
 
-    @SafeHtml
     @Pattern(regexp = OrganisationConstant.PATTERN_PINCODE)
     @Size(max = 10)
     private String permanentPinCode;
 
-    @SafeHtml
     @Size(max = 300)
     private String correspondenceAddress;
 
@@ -93,7 +81,6 @@ public class UserRequest {
     private String correspondencePinCode;
     private Boolean active;
 
-    @SafeHtml
     @Size(max = 16)
     private String locale;
 
@@ -106,19 +93,15 @@ public class UserRequest {
     private String fatherOrHusbandName;
     private GuardianRelation relationship;
 
-    @SafeHtml
     @Size(max = 36)
     private String signature;
 
-    @SafeHtml
     @Size(max = 32)
     private String bloodGroup;
 
-    @SafeHtml
     @Size(max = 36)
     private String photo;
 
-    @SafeHtml
     @Size(max = 300)
     private String identificationMark;
     private Long createdBy;
@@ -126,7 +109,6 @@ public class UserRequest {
     @Size(max = 64)
     private String password;
 
-    @SafeHtml
     private String otpReference;
     private Long lastModifiedBy;
 
@@ -136,7 +118,6 @@ public class UserRequest {
 
     private Set<RoleRequest> roles;
 
-    @SafeHtml
     @Size(max = 36)
     private String uuid;
 
@@ -189,7 +170,6 @@ public class UserRequest {
 
     private void mapCorrespondenceAddress(User user) {
         if (user.getCorrespondenceAddress() != null) {
-            //this.correspondenceAddress = user.getCorrespondenceAddress().getA();
             this.correspondenceCity = user.getCorrespondenceAddress().getCity();
             this.correspondencePinCode = user.getCorrespondenceAddress().getPincode();
         }
@@ -197,7 +177,6 @@ public class UserRequest {
 
     private void mapPermanentAddress(User user) {
         if (user.getPermanentAddress() != null) {
-            //this.permanentAddress = user.getPermanentAddress().getAddress();
             this.permanentCity = user.getPermanentAddress().getCity();
             this.permanentPinCode = user.getPermanentAddress().getPincode();
         }
@@ -210,12 +189,12 @@ public class UserRequest {
 
     @JsonIgnore
     public User toDomain(Long loggedInUserId, String loggedInUserUuid, boolean isCreate) {
-        BloodGroup bloodGroup = null;
+        BloodGroup bloodGroups = null;
         try {
             if (this.bloodGroup != null)
-                bloodGroup = BloodGroup.valueOf(this.bloodGroup.toUpperCase());
+                bloodGroups = BloodGroup.valueOf(this.bloodGroup.toUpperCase());
         } catch (Exception e) {
-            bloodGroup = BloodGroup.fromValue(this.bloodGroup);
+            bloodGroups = BloodGroup.fromValue(this.bloodGroup);
         }
         return User.builder()
                 .uuid(this.uuid)
@@ -239,7 +218,7 @@ public class UserRequest {
                 .photo(this.photo)
                 .identificationMark(this.identificationMark)
                 .gender(this.gender != null ? Gender.valueOf(this.gender.toUpperCase()) : null)
-                .bloodGroup(bloodGroup)
+                .bloodGroup(bloodGroups)
                 .lastModifiedDate(new Date())
                 .createdDate(new Date())
                 .otpReference(this.otpReference)

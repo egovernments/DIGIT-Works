@@ -21,14 +21,18 @@ import static org.egov.digit.expense.config.Constants.*;
 @Component
 @Slf4j
 public class GenderUtil {
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
+
+    private final ServiceRequestRepository restRepo;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ServiceRequestRepository restRepo;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public GenderUtil(Configuration config, ServiceRequestRepository restRepo, ObjectMapper mapper) {
+        this.config = config;
+        this.restRepo = restRepo;
+        this.mapper = mapper;
+    }
 
     private String fetchGenderDetails(RequestInfo requestInfo, String tenantId, String identifier)  {
         String uri = getIndividualSearchURLWithParams(tenantId).toUriString();
@@ -58,22 +62,21 @@ public class GenderUtil {
     private UriComponentsBuilder getIndividualSearchURLWithParams(String tenantId) {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getIndividualServiceHost()).append(config.getIndividualServiceEndpoint());
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
+
+        return UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("limit", 100)
                 .queryParam("offset", 0)
                 .queryParam("tenantId", tenantId);
-
-        return uriBuilder;
     }
 
-    private Object getIndividualSearchRequest(RequestInfo requestInfo, String Identifier){
+    private Object getIndividualSearchRequest(RequestInfo requestInfo, String identifier){
         ObjectNode individualSearchRequestNode = mapper.createObjectNode();
         ObjectNode individualNode = mapper.createObjectNode();
 
-        ArrayNode Ids = mapper.createArrayNode();
+        ArrayNode ids = mapper.createArrayNode();
 
-        Ids.add(Identifier);
-        individualNode.putPOJO(ID,Ids);
+        ids.add(identifier);
+        individualNode.putPOJO(ID,ids);
 
         individualSearchRequestNode.putPOJO(REQUEST_INFO,requestInfo);
         individualSearchRequestNode.putPOJO(INDIVIDUAL,individualNode);
@@ -81,12 +84,12 @@ public class GenderUtil {
         return individualSearchRequestNode;
     }
     public  String getGenderDetails(RequestInfo requestInfo, String tenantId, String identifier){
-        String Gender = "";
+        String gender = "";
         try{
-            Gender = fetchGenderDetails(requestInfo, tenantId, identifier);
+            gender = fetchGenderDetails(requestInfo, tenantId, identifier);
         }catch (Exception e){
             log.info("The Exception occured in fetching gender of payee: ",e);
         }
-        return Gender;
+        return gender;
     }
 }

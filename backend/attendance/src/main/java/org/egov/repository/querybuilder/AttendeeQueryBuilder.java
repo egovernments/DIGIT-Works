@@ -68,8 +68,6 @@ public class AttendeeQueryBuilder {
             }
         }
 
-        addLimitAndOffset(query, criteria, preparedStmtList);
-
         return query.toString();
     }
     private void addLimitAndOffset(StringBuilder query, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
