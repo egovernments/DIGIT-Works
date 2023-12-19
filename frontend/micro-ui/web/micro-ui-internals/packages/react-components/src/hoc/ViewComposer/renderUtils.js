@@ -158,7 +158,7 @@ export const RenderPhotos = ({section}) => {
     {section?.cardHeader && section?.cardHeader?.value && (
       <CardSectionHeader style={section?.cardHeader?.inlineStyles}>{t(section.cardHeader.value)}</CardSectionHeader>
     )}
-    <Photos data = {section?.photo} OpenImage={OpenImage} />
+    <Photos data = {section?.photo} OpenImage={OpenImage} fullImage={section?.fullImage} />
     </>
   )
 }
