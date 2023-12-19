@@ -23,14 +23,18 @@ import static org.egov.util.OrganisationConstant.*;
 @Component
 public class MDMSUtil {
 
-    public static final String codeFilter = "$.*.code";
-    public static final String activeCodeFilter = "$.[?(@.active==true)].code";
+    public static final String CODE_FILTER = "$.*.code";
+    public static final String ACTIVE_CODE_FILTER = "$.[?(@.active==true)].code";
+
+    private final Configuration config;
+
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private Configuration config;
-
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    public MDMSUtil(Configuration config, ServiceRequestRepository serviceRequestRepository) {
+        this.config = config;
+        this.serviceRequestRepository = serviceRequestRepository;
+    }
 
     /**
      * Calls MDMS service to fetch works master data
@@ -42,8 +46,7 @@ public class MDMSUtil {
     public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
         log.info("MDMSUtil::mDMSCall");
         MdmsCriteriaReq mdmsCriteriaReq = prepareMDMSRequest(requestInfo, tenantId);
-        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-        return result;
+        return serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
     }
 
     /**
@@ -63,9 +66,8 @@ public class MDMSUtil {
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
-        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+        return MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo).build();
-        return mdmsCriteriaReq;
     }
 
     /**
@@ -77,20 +79,19 @@ public class MDMSUtil {
         log.info("MDMSUtil::prepareCommonMasterModuleDetails");
         List<MasterDetail> commonMasterModulesDetails = new ArrayList<>();
         MasterDetail orgFuncMaster = MasterDetail.builder().name(MASTER_ORG_FUNC_CLASS)
-                .filter(activeCodeFilter).build();
+                .filter(ACTIVE_CODE_FILTER).build();
         MasterDetail orgTaxIdentifierMaster = MasterDetail.builder().name(MASTER_ORG_TAX_IDENTIFIER)
-                .filter(activeCodeFilter).build();
+                .filter(ACTIVE_CODE_FILTER).build();
         MasterDetail orgFunCategoryMaster = MasterDetail.builder().name(MASTER_ORG_FUNC_CATEGORY)
-                .filter(activeCodeFilter).build();
+                .filter(ACTIVE_CODE_FILTER).build();
         MasterDetail orgTypeMaster = MasterDetail.builder().name(MASTER_ORG_TYPE)
-                .filter(activeCodeFilter).build();
+                .filter(ACTIVE_CODE_FILTER).build();
         commonMasterModulesDetails.add(orgFuncMaster);
         commonMasterModulesDetails.add(orgTaxIdentifierMaster);
         commonMasterModulesDetails.add(orgFunCategoryMaster);
         commonMasterModulesDetails.add(orgTypeMaster);
-        ModuleDetail commonMasterModuleDetail = ModuleDetail.builder().masterDetails(commonMasterModulesDetails)
+        return ModuleDetail.builder().masterDetails(commonMasterModulesDetails)
                 .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();
-        return commonMasterModuleDetail;
     }
 
     /**
@@ -103,14 +104,12 @@ public class MDMSUtil {
         List<MasterDetail> orgTenantMasterDetails = new ArrayList<>();
 
         MasterDetail tenantMasterDetails = MasterDetail.builder().name(MASTER_TENANTS)
-                .filter(codeFilter).build();
+                .filter(CODE_FILTER).build();
 
         orgTenantMasterDetails.add(tenantMasterDetails);
 
-        ModuleDetail orgTenantModuleDetail = ModuleDetail.builder().masterDetails(orgTenantMasterDetails)
+        return ModuleDetail.builder().masterDetails(orgTenantMasterDetails)
                 .moduleName(MDMS_TENANT_MODULE_NAME).build();
-
-        return orgTenantModuleDetail;
     }
 
     /**

@@ -25,19 +25,22 @@ import static org.egov.util.MusterRollServiceConstants.*;
 @Slf4j
 public class NotificationUtil {
 
-        @Autowired
-        private MusterRollServiceConfiguration config;
+        private final MusterRollServiceConfiguration config;
+
+        private final ServiceRequestRepository restRepo;
+
+        private final ObjectMapper mapper;
 
         @Autowired
-        private ServiceRequestRepository restRepo;
-
-        @Autowired
-        private ObjectMapper mapper;
+        public NotificationUtil(MusterRollServiceConfiguration config, ServiceRequestRepository restRepo, ObjectMapper mapper) {
+                this.config = config;
+                this.restRepo = restRepo;
+                this.mapper = mapper;
+        }
 
         public Map<String, String> getCBOContactPersonDetails(MusterRollRequest musterRollRequest){
                 String orgId = fetchOrgId(musterRollRequest);
-                Map<String, String> CBODetails = fetchCBODetails(musterRollRequest, orgId);
-                return CBODetails;
+            return fetchCBODetails(musterRollRequest, orgId);
         }
         public String fetchOrgId(MusterRollRequest musterRollRequest){
                 StringBuilder url = getOrgIdWithContractIdUrl();
@@ -136,13 +139,11 @@ public class NotificationUtil {
                 }catch (Exception e){
                         throw new CustomException("EXPENSE_PARSING_ERROR", "Error while parsing expense object");
                 }
-                String totalAmount = amount.toString();
-                return totalAmount;
+            return amount.toString();
         }
         public StringBuilder getExpenseUrl(){
-                StringBuilder url = new StringBuilder(config.getExpenseCalculatorServiceHost())
+                return new StringBuilder(config.getExpenseCalculatorServiceHost())
                         .append(config.getExpenseCalculatorServiceEndpoint());
-                return url;
         }
 
         public Object getExpenseRequest(MusterRollRequest musterRollRequest){

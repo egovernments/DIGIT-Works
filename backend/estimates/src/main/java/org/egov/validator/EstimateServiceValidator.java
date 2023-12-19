@@ -238,7 +238,7 @@ public class EstimateServiceValidator {
     private List<Integer> getMeasurementCurrentValue(Object measurementResponse, String jsonPath, String contractLineItemRefId) {
         List<Integer> measurementCurrentValue;
         try {
-            measurementCurrentValue = JsonPath.read(measurementResponse, jsonPath.replace("{{yourDynamicValue}}", contractLineItemRefId));
+            measurementCurrentValue = JsonPath.read(measurementResponse, jsonPath.replace("{{}}", contractLineItemRefId));
         } catch (Exception e) {
             throw new CustomException(JSONPATH_ERROR, "Failed to parse measurement search response");
         }

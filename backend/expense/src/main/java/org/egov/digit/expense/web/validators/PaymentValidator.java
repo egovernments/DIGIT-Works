@@ -36,10 +36,10 @@ public class PaymentValidator {
 
 	@Autowired
 	private BillService billService;
-	
+
 	@Autowired
 	private PaymentService paymentService;
-	
+
 	public List<Payment> validateUpdateRequest(PaymentRequest paymentRequest) {
 
 		Map<String, String> errorMap = new HashMap<>();
@@ -51,10 +51,6 @@ public class PaymentValidator {
 		if(null == paymentRequest.getPayment().getStatus()) {
 			throw new CustomException("EG_PAYMENT_UPDATE_STATUS_NOTNULL"," Payment status is mandatory in update request");
 		}
-		// Commenting because reference status will non-mandatory field, it's used for UI
-//		if (null == paymentRequest.getPayment().getReferenceStatus()) {
-//			throw new CustomException("EG_PAYMENT_UPDATE_REFERENCE_STATUS_NOTNULL","Payment reference status is mandatory in update request");
-//		}
 		
 		PaymentSearchRequest searchRequest = getPaymentSearchRequest(paymentRequest);
 		List<Payment> payments = paymentService.search(searchRequest).getPayments();
@@ -120,7 +116,7 @@ public class PaymentValidator {
 		if (isCreate) {
 			PaymentSearchRequest paymentSearchRequest = preparePaymentCriteriaFromPaymentRequest(paymentRequest, billIds);
 			List<Payment> payments = paymentService.search(paymentSearchRequest).getPayments();
-			if (payments.size() != 0)
+			if (!payments.isEmpty())
 				throw new CustomException("EG_PAYMENT_DUPLICATE_PAYMENT_ERROR",
 						"Payment can not be generated for the same bills");
 		}
@@ -256,7 +252,7 @@ public class PaymentValidator {
 			/*
 			 * Skip amount validation if id of bill detail is invalid
 			 */
-			if (isCreate && payableLineItem.getPaidAmount().compareTo(totalPendingAmount) != 0) {
+			if (Boolean.TRUE.equals(isCreate) && payableLineItem.getPaidAmount().compareTo(totalPendingAmount) != 0) {
 
 				errorMap.put("EG_EXPENSE_PAYMENT_LINEITEM_INVALID_AMOUNT[" + lineItemIndex + "]",
 						"The paid line item amount " + payableLineItem.getPaidAmount() + " for line item with id : "
@@ -278,13 +274,12 @@ public class PaymentValidator {
 				.offSet(0)
 				.limit(billIds.size())
 				.build();
-		
-		BillSearchRequest billSearchRequest = BillSearchRequest.builder()
+
+		return BillSearchRequest.builder()
 				.billCriteria(billCriteria)
 				.pagination(pagination)
 				.requestInfo(paymentRequest.getRequestInfo())
 				.build();
-		return billSearchRequest;
 	}
 
 	public PaymentSearchRequest preparePaymentCriteriaFromPaymentRequest (PaymentRequest paymentRequest, Set<String> billIds) {
@@ -299,12 +294,11 @@ public class PaymentValidator {
 				.limit(billIds.size())
 				.build();
 
-		PaymentSearchRequest paymentSearchRequest = PaymentSearchRequest.builder()
+		return PaymentSearchRequest.builder()
 				.paymentCriteria(paymentCriteria)
 				.pagination(pagination)
 				.requestInfo(paymentRequest.getRequestInfo())
 				.build();
-		return paymentSearchRequest;
 	}
 	
 	public PaymentSearchRequest getPaymentSearchRequest (PaymentRequest paymentRequest) {

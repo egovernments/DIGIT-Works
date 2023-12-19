@@ -17,13 +17,17 @@ import java.util.Map;
 @Slf4j
 public class LocalizationUtil {
 
-    @Autowired
-    private ExpenseCalculatorConfiguration config;
-    @Autowired
-    private ServiceRequestRepository restRepo;
+    private final ExpenseCalculatorConfiguration config;
+    private final ServiceRequestRepository restRepo;
 
     public static final String EXPENSE_CALCULATOR_LOCALIZATION_CODE_JSONPATH = "$.messages.*.code";
     public static final String EXPENSE_CALCULATOR_LOCALIZATION_MESSAGE_JSONPATH = "$.messages.*.message";
+
+    @Autowired
+    public LocalizationUtil(ExpenseCalculatorConfiguration config, ServiceRequestRepository restRepo) {
+        this.config = config;
+        this.restRepo = restRepo;
+    }
 
     /**
      * Creates a cache for localization that gets refreshed at every call.

@@ -21,7 +21,7 @@ public class OrganisationUtil {
     public void setAuditDetailsForOrganisation(String by, List<Organisation> organisationList, Boolean isCreate) {
         Long time = System.currentTimeMillis();
         for (Organisation organisation : organisationList) {
-            if (isCreate) {
+            if (Boolean.TRUE.equals(isCreate)) {
                 AuditDetails auditDetailsForCreate = AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
                 organisation.setAuditDetails(auditDetailsForCreate);
             } else {
@@ -41,7 +41,7 @@ public class OrganisationUtil {
     public void setAuditDetailsForFunction(String by, List<Function> functionList, Boolean isCreate) {
         Long time = System.currentTimeMillis();
         for (Function function : functionList) {
-            if (isCreate) {
+            if (Boolean.TRUE.equals(isCreate)) {
                 AuditDetails auditDetailsForCreate = AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
                 function.setAuditDetails(auditDetailsForCreate);
             } else {

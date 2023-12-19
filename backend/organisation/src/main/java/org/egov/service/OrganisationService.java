@@ -1,11 +1,12 @@
 package org.egov.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
+import org.egov.kafka.OrganizationProducer;
 import org.egov.repository.OrganisationRepository;
 import org.egov.config.Configuration;
-import org.egov.kafka.Producer;
+import org.egov.tracer.model.CustomException;
 import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,34 +14,44 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.egov.util.OrganisationConstant.ORGANISATION_ENCRYPT_KEY;
+
 
 @Service
 @Slf4j
 public class OrganisationService {
 
-    @Autowired
-    private OrganisationServiceValidator organisationServiceValidator;
+    private final OrganisationServiceValidator organisationServiceValidator;
+
+    private final OrganisationRepository organisationRepository;
+
+    private final OrganisationEnrichmentService organisationEnrichmentService;
+
+    private final OrganizationProducer organizationProducer;
+
+    private final Configuration configuration;
+
+
+    private final IndividualService individualService;
+
+    private final NotificationService notificationService;
+
+    private final EncryptionService encryptionService;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private OrganisationRepository organisationRepository;
-
-    @Autowired
-    private OrganisationEnrichmentService organisationEnrichmentService;
-
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private Configuration configuration;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private IndividualService individualService;
-
-    @Autowired
-    private NotificationService notificationService;
+    public OrganisationService(OrganisationServiceValidator organisationServiceValidator, OrganisationRepository organisationRepository, OrganisationEnrichmentService organisationEnrichmentService, OrganizationProducer organizationProducer, Configuration configuration, IndividualService individualService, NotificationService notificationService, EncryptionService encryptionService, ObjectMapper mapper) {
+        this.organisationServiceValidator = organisationServiceValidator;
+        this.organisationRepository = organisationRepository;
+        this.organisationEnrichmentService = organisationEnrichmentService;
+        this.organizationProducer = organizationProducer;
+        this.configuration = configuration;
+        this.individualService = individualService;
+        this.notificationService = notificationService;
+        this.encryptionService = encryptionService;
+        this.mapper = mapper;
+    }
 
 
     /**
@@ -52,9 +63,15 @@ public class OrganisationService {
         log.info("OrganisationService::createOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateCreateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
-        //userService.createUser(orgRequest);
         individualService.createIndividual(orgRequest);
-        producer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
+        OrgRequest clone;
+        try {
+            clone = mapper.readValue(mapper.writeValueAsString(orgRequest), OrgRequest.class);
+        }catch (Exception e) {
+            throw new CustomException("CLONING_ERROR", "Error while cloning");
+        }
+        encryptionService.encryptDetails(clone,ORGANISATION_ENCRYPT_KEY);
+        organizationProducer.push(configuration.getOrgKafkaCreateTopic(), clone);
         try {
             notificationService.sendNotification(orgRequest, true);
         }catch (Exception e){
@@ -72,14 +89,20 @@ public class OrganisationService {
         log.info("OrganisationService::updateOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichUpdateOrgRegistryWithoutWorkFlow(orgRequest);
-        //userService.updateUser(orgRequest);
         individualService.updateIndividual(orgRequest);
+        OrgRequest clone;
+        try {
+            clone = mapper.readValue(mapper.writeValueAsString(orgRequest), OrgRequest.class);
+        }catch (Exception e) {
+            throw new CustomException("CLONING_ERROR", "Error while cloning");
+        }
         try {
             notificationService.sendNotification(orgRequest,false);
         }catch (Exception e){
             log.error("Exception while sending notification: " + e);
         }
-        producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
+        encryptionService.encryptDetails(clone,ORGANISATION_ENCRYPT_KEY);
+        organizationProducer.push(configuration.getOrgKafkaUpdateTopic(), clone);
         return orgRequest;
     }
 
@@ -91,8 +114,7 @@ public class OrganisationService {
     public List<Organisation> searchOrganisation(OrgSearchRequest orgSearchRequest) {
         log.info("OrganisationService::searchOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateSearchOrganisationRequest(orgSearchRequest);
-        List<Organisation> organisations = organisationRepository.getOrganisations(orgSearchRequest);
-        return organisations;
+        return organisationRepository.getOrganisations(orgSearchRequest);
     }
 
     /**
