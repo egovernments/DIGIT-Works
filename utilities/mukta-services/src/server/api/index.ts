@@ -285,7 +285,7 @@ const getTemplate = async (templateName: any, requestinfo: any, response: any) =
 
   const data = {
     "MdmsCriteria": {
-      "tenantId": "mz",
+      "tenantId": requestinfo.userInfo.tenantId,
       "uniqueIdentifiers": [templateName],
       "schemaCode": "HCM.TransformTemplate"
     },
@@ -305,7 +305,7 @@ const getParsingTemplate = async (templateName: any, requestinfo: any, response:
 
   const data = {
     "MdmsCriteria": {
-      "tenantId": "mz",
+      "tenantId": requestinfo.userInfo.tenantId,
       "uniqueIdentifiers": [templateName],
       "schemaCode": "HCM.ParsingTemplate"
     },
