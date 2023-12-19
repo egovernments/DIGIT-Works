@@ -36,7 +36,7 @@ module.exports = {
       process.env.WORK_ORDER_TEMPLATE_ODIYA || "work-order-odiya",
     deviationStatement_template: process.env.MEASUREMENT_TEMPLATE || "deviation-statement",
     measurement_template: process.env.MEASUREMENT_TEMPLATE || "measurement-book",
-    detailedEstimate_template: process.env.ESTIMATE_TEMPLATE || "detailed-estimate",
+    detailedEstimate_template: process.env.DETAILED_ESTIMATE_TEMPLATE || "detailed-estimate",
 
   },
   app: {

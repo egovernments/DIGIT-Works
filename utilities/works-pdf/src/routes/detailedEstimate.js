@@ -43,7 +43,7 @@ router.post(
                 return renderError(res, "Failed to query details of the estimate", 500);
 
             }
-            const estimate = resEstimate.data;
+            var estimate = resEstimate.data;
 
 
             const estimates = transformDetailedData(estimate);
