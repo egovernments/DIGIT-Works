@@ -6,7 +6,7 @@ const convertNumberFields=(text="")=>{
 }
 const transformLineItems = (SorData = [], category, isEdit = false, isCreateRevisionEstimate=false, isEditRevisionEstimate=false) => {
   const lineItems = [];
-  SorData?.filter((ob) => ob?.sorCode).map((row) => {
+  SorData?.filter((ob) => ob?.category === "SOR" ? ob?.sorCode : true).map((row) => {
     const measures = row?.measures?.map((measure) => {
       return transformMeasure(measure, row, isEdit, category, isCreateRevisionEstimate, isEditRevisionEstimate);
     });
@@ -102,7 +102,7 @@ const fetchEstimateDetails = (data) => {
   // })
   const Sors = (data?.SORtable && transformLineItems(data?.SORtable,"SOR")) || [];
   const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable,"NON-SOR")) || [];
-  const detailedEstimates = [...Sors, ...NonSors];
+  const detailedEstimates = [...Sors?.filter((ob) => ob?.sorCode || ob?.sorId), ...NonSors];
 
   let overHeadsData = data?.overheadDetails
     ?.filter((row) => row && row.amount !== "0" && row?.amount !== undefined)
@@ -130,7 +130,8 @@ const fetchEstimateDetailsEdit = (isEdit, data, estimate, isCreateRevisionEstima
 
   const Sors = (data?.SORtable && transformLineItems(data?.SORtable,"SOR", isEdit, isCreateRevisionEstimate, isEditRevisionEstimate)) || [];
   const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable,"NON-SOR", isEdit, isCreateRevisionEstimate, isEditRevisionEstimate)) || [];
-  const detailedEstimates = [...Sors, ...NonSors];
+  console.log(Sors,NonSors);
+  const detailedEstimates = [...Sors?.filter((ob) => ob?.sorCode || ob?.sorId.toString()?.includes("SOR")), ...NonSors];
 
   let overHeadsData = data?.overheadDetails
     ?.filter((row) => row && row.amount !== "0" && row.amount !== undefined)

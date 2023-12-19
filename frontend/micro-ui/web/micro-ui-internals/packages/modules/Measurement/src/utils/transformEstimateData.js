@@ -10,6 +10,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
   const lastMeasuredObject = allMeasurements?.filter?.((e) => e?.isActive)?.[0] || {};
   const transformedContract = transformContractObject(contract);
   const isMeasurement = measurement && Object.keys(measurement)?.length > 0;
+  let isMeasurementCreate = window.location.href.includes("/create")
   const transformedEstimateObject = lineItems
     .filter((e) => e.category === type)
     .reduce((acc, curr) => {
@@ -30,20 +31,20 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
       isDeduction: estimate?.isDeduction,
       description: estimate?.description,
       id: measuredObject?.id || null,
-      height: measuredObject?.height || 0,
-      width: measuredObject?.breadth || 0,
-      length: measuredObject?.length || 0,
-      number: measuredObject?.numItems || 0,
-      noOfunit:  measuredObject?.currentValue || 0,
-      rowAmount: measuredObject?.additionalDetails?.mbAmount || 0,
+      height: isMeasurementCreate ? 0 : (measuredObject?.height || 0),
+      width: isMeasurementCreate ? 0 : (measuredObject?.breadth || 0),
+      length: isMeasurementCreate ? 0 : (measuredObject?.length || 0),
+      number: isMeasurementCreate ? 0 : (measuredObject?.numItems || 0),
+      noOfunit:  isMeasurementCreate ? 0 : (measuredObject?.currentValue || 0),
+      rowAmount: isMeasurementCreate ? 0 : (measuredObject?.additionalDetails?.mbAmount || 0),
       consumedRowQuantity: transformMeasurementData?.lineItemsObject?.[transformedContract?.lineItemsObject?.[estimate?.id]?.contractLineItemId]?.cumulativeValue || 0,
     })
   });
     return {
-      amount: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0) || 0,
+      amount:  window.location.href.includes("measurement/create") ? 0 : (measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0) || 0),
       consumedQ: (measurement?.wfStatus === "APPROVED" || allMeasurements?.filter((ob) => ob?.wfStatus === "APPROVED")?.length > 0) ? measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0) : 0,
       sNo: index + 1,
-      currentMBEntry: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0) || 0,
+      currentMBEntry: window.location.href.includes("measurement/create") ? 0 : ( measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0) || 0),
       uom: transformedEstimateObject[key]?.[0]?.uom,
       description: transformedEstimateObject[key]?.[0]?.name,
       unitRate: transformedEstimateObject[key]?.[0]?.unitRate,
