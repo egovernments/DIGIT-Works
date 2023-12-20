@@ -114,7 +114,7 @@ public class MeasurementService {
         MeasurementServiceResponse response = measurementServiceUtil.makeUpdateResponseService(measurementServiceRequest);
 
         // Push the response to the service update topic
-        MBServiceProducer.push(MBServiceConfiguration.getServiceUpdateTopic(), response);
+        MBServiceProducer.push(MBServiceConfiguration.getServiceUpdateTopic(), measurementServiceRequest);
 
         return response;
     }
