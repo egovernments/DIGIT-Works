@@ -193,7 +193,7 @@ class MusterRollController {
         const {expenseCalculator }=await this.getExpenseCalculation(tenantId,defaultRequestInfo,[musterRolls.id]);
         let musterRollValidationMapList = []; 
      var isMbPresent:boolean=false;
-     var labourCode=["US","SS","SD","HS"];
+     //var labourCode=["US","SS","SD","HS"];
 
       if (musterRolls !== null && !musterRolls?.notFound) {
         // Calculate the period based on the responses
@@ -215,8 +215,8 @@ class MusterRollController {
       musterRollValidationMap.set("type","error");
       musterRollValidationMapList.push(musterRollValidationMap)
      }else{
-      if(estimate.additionalDetails.sorSkillData?.[0].sorType=="L" 
-      || labourCode.includes(estimate.additionalDetails.sorSkillData?.[0].sorSubType)){
+      // if(estimate.additionalDetails.sorSkillData?.[0].sorType=="L" 
+      // || labourCode.includes(estimate.additionalDetails.sorSkillData?.[0].sorSubType)){
         
    
         if(estimate.additionalDetails.labourMaterialAnalysis.labour == 0){
@@ -240,7 +240,7 @@ class MusterRollController {
         
       }
 
-     }
+    // }
 
      
         
@@ -287,7 +287,7 @@ class MusterRollController {
     };
 
     // Execute promises in parallel
-    var [musterRolls] =
+    var musterRolls =
       await search_muster(params,defaultRequestInfo)
       console.log(JSON.stringify(musterRolls));
 

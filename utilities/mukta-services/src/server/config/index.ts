@@ -35,17 +35,17 @@ const config = {
   host: {
     serverHost: HOST,
     localization: process.env.EGOV_LOCALIZATION_HOST || HOST,
-    mdms: process.env.EGOV_PDF_HOST || HOST || "http://localhost:8094/",
+    mdms: process.env.EGOV_MDMS_HOST || HOST || "http://localhost:8094/",
     pdf: process.env.EGOV_PDF_HOST || HOST || "http://localhost:8087/",
     user: process.env.EGOV_USER_HOST || HOST || "http://localhost:8089/",
     workflow:
       process.env.EGOV_WORKFLOW_HOST || HOST || "http://localhost:8091/",
-    muster: process.env.EGOV_PDF_HOST || HOST || "http://localhost:8070/",
+    muster: process.env.EGOV_MUSTER_ROLL_HOST || HOST || "http://localhost:8070/",
     individual: process.env.EGOV_PROJECT_HOST || HOST|| "http://localhost:8071/",
-    contract:  process.env.EGOV_PDF_HOST || HOST || "http://localhost:8072/",
-    estimate:  process.env.EGOV_PDF_HOST || HOST || "http://localhost:8073/",
-    measurement: process.env.EGOV_PDF_HOST || HOST || "http://localhost:8074/",
-    expense: process.env.EGOV_PDF_HOST || HOST || "http://localhost:8075/",
+    contract:  process.env.EGOV_CONTRACT_HOST || HOST || "http://localhost:8072/",
+    estimate:  process.env.EGOV_ESTIMATE_HOST || HOST || "http://localhost:8073/",
+    measurement: process.env.EGOV_MEASUREMENT_HOST || HOST || "http://localhost:8074/",
+    expense: process.env.EGOV_EXPENSE_HOST || HOST || "http://localhost:8075/",
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
