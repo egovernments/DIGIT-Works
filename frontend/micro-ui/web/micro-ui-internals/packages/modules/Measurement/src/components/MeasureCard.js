@@ -81,7 +81,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
         const clearedTableState = state.map((item) => ({
           ...item,
           height: 0,
-          description : "",
+          description : mode === "CREATE" ? iten?.description : "",
           width: 0,
           length: 0,
           number: 0,
