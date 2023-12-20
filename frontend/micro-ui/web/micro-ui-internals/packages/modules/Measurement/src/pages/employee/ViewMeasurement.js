@@ -1,4 +1,4 @@
-import { Header, Card, Loader, ViewComposer } from "@egovernments/digit-ui-react-components";
+import { Header, Card, Loader, ViewComposer, MultiLink } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { data } from "../../configs/ViewMeasurementConfig";
@@ -57,6 +57,10 @@ const ViewMeasurement = () => {
     projectLocation = `${Pward ? Pward + ", " : ""}${city}`;
   }
 
+  const HandleDownloadPdf = () => {
+    Digit.Utils.downloadEgovPDF("measurementBook/measurement-book", { contractNumber : workOrderNumber, measurementNumber : mbNumber, tenantId }, `measurement-${mbNumber}.pdf`);
+  };
+
   config = data(allData?.contract, allData?.estimate, allData?.measurement, allData?.allMeasurements, thumbnails, projectLocation , allData?.period, allData?.musterRollNumber);
 
   if (isMeasurementLoading && config != null) {
@@ -64,7 +68,12 @@ const ViewMeasurement = () => {
   }
   return (
     <React.Fragment>
-      <Header className="works-header-view">{t("MB_VIEW_MEASUREMENT_BOOK")}</Header>
+      <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+        <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px" }}>
+          {t("MB_VIEW_MEASUREMENT_BOOK")}
+        </Header>
+        <MultiLink onHeadClick={() => HandleDownloadPdf()} downloadBtnClassName={"employee-download-btn-className"} label={t("CS_COMMON_DOWNLOAD")} />
+      </div>
       <ViewComposer data={config} isLoading={false} />
     </React.Fragment>
   );

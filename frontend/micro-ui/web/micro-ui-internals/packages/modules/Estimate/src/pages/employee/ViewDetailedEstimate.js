@@ -120,7 +120,9 @@ const ViewDetailedEstimate = () => {
   };
 
   const HandleDownloadPdf = () => {
-    Digit.Utils.downloadEgovPDF("estimate/estimates", { estimateNumber, tenantId }, `Estimate-${estimateNumber}.pdf`);
+    if(revisionNumber)
+      Digit.Utils.downloadEgovPDF("deviationStatement/deviation-statement", { estimateNumber, tenantId }, `RevisedEstimate-${estimateNumber}.pdf`);
+    Digit.Utils.downloadEgovPDF("detailedEstimate/detailed-estimate", { estimateNumber, tenantId }, `Estimate-${estimateNumber}.pdf`);
   };
 
   const overheads = detailedEstimate?.estimates[0]?.estimateDetails?.filter((row) => row?.category?.includes("OVERHEAD") && row?.isActive);
