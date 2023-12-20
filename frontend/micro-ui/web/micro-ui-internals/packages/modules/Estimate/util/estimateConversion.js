@@ -68,7 +68,7 @@ export const transformEstimateObjects = (estimateData, type, RatesData) => {
             length: convertNumberFields(e?.length),
             number: convertNumberFields(e?.quantity),
             noOfunit:convertNumberFields(e?.noOfunit),
-            rowAmount: convertNumberFields(e?.amountDetail[0]?.amount),
+            rowAmount: (isEstimateCreateorUpdate && type === "SOR") ? fetchUnitRate( RatesData, convertedObject[key]?.[0]?.sorId,convertedObject[key]?.[0]?.unitRate) * convertNumberFields(e?.noOfunit) : convertNumberFields(e?.amountDetail[0]?.amount),
             consumedRowQuantity: 0
         }));
         return {

@@ -60,7 +60,7 @@ const useMBDataForPB=({workOrderNumber, tenantId})=>{
 
     const { isLoading : billloading, data : BillData} = Digit.Hooks.useCustomAPIHook(requestCriteriaBill);
 
-    let ValidMeasurement = data?.allMeasurements?.filter((ob) => ob?.wfStatus !== "DRAFTED" && ob?.wfStatus !== "REJECTED");
+    let ValidMeasurement =  data?.allMeasurements?.length > 0 ? data?.allMeasurements?.filter((ob) => ob?.wfStatus !== "DRAFTED" && ob?.wfStatus !== "REJECTED") : [];
 
     const SOR = data && transformEstimateData(data?.estimate?.estimateDetails, data?.contract, "SOR", data?.measurement, ValidMeasurement);
 
