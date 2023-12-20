@@ -9,7 +9,7 @@ output is array of object of type which is passed
 
 */
 
-const fetchData = async (RatesData, sorid) => {
+const fetchData = (RatesData, sorid) => {
     let currentDateInMillis = new Date().getTime(); 
         const Rates = RatesData?.MdmsRes?.["WORKS-SOR"]?.Rates?.filter((rate) => {
           // Convert validFrom and validTo to milliseconds
