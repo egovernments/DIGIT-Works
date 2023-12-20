@@ -50,12 +50,9 @@ router.post(
             const allMeasurements = resMeasurement.data?.allMeasurements;
             const estimateDetails = resMeasurement.data?.estimate?.estimateDetails;
 
-            const startDateTime = measurement.additionalDetails.startDate;
-            const endDateTime = measurement.additionalDetails.endDate;
-
             // convert startDateTime and endDateTime into dd/mm/yyyy format and show only date in a variable named measurement period
-            const startDate = new Date(startDateTime);
-            const endDate = new Date(endDateTime);
+            const startDate = new Date(measurement.additionalDetails.startDate);
+            const endDate = new Date(measurement.additionalDetails.endDate);
             const measurementPeriod = startDate.getDate() + "/" + (startDate.getMonth() + 1) + "/" + startDate.getFullYear() + " - " + endDate.getDate() + "/" + (endDate.getMonth() + 1) + "/" + endDate.getFullYear();
 
             // make a new variable in measurement named measurementPeriod and assign measurementPeriod to it
