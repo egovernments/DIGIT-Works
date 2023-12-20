@@ -17,6 +17,7 @@ const ViewMeasurement = () => {
       tenantId: tenantId,
       measurementNumber: mbNumber,
     },
+    changeQueryName:mbNumber,
   };
 
 
@@ -56,7 +57,7 @@ const ViewMeasurement = () => {
     projectLocation = `${Pward ? Pward + ", " : ""}${city}`;
   }
 
-  config = data(allData?.contract, allData?.estimate, allData?.measurement, allData?.allMeasurements, thumbnails, projectLocation , allData?.period);
+  config = data(allData?.contract, allData?.estimate, allData?.measurement, allData?.allMeasurements, thumbnails, projectLocation , allData?.period, allData?.musterRollNumber);
 
   if (isMeasurementLoading && config != null) {
     return <Loader />;
