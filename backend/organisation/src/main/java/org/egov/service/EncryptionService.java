@@ -38,12 +38,10 @@ public class EncryptionService {
 
     public OrgSearchRequest encryptDetails(OrgSearchRequest orgSearchRequest,String key){
         OrgSearchCriteria searchCriteria = orgSearchRequest.getSearchCriteria();
-        if (StringUtils.isNotBlank(searchCriteria.getTenantId())){
-            OrgSearchCriteria encryptedSearchCriteria = encryptionDecryptionUtil
-                    .encryptObject(searchCriteria, config.getStateLevelTenantId(), key, OrgSearchCriteria.class);
+        OrgSearchCriteria encryptedSearchCriteria = encryptionDecryptionUtil
+                .encryptObject(searchCriteria, config.getStateLevelTenantId(), key, OrgSearchCriteria.class);
 
-            orgSearchRequest.setSearchCriteria(encryptedSearchCriteria);
-        }
+        orgSearchRequest.setSearchCriteria(encryptedSearchCriteria);
         return orgSearchRequest;
     }
 
