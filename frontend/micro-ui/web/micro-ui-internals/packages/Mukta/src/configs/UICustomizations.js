@@ -135,7 +135,11 @@ export const UICustomizations = {
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
       const estimateNumber = data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.trim();
-      if (estimateNumber) data.body.inbox.moduleSearchCriteria.estimateNumber = estimateNumber;
+      if (!(data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.includes("RE")) && estimateNumber) data.body.inbox.moduleSearchCriteria.estimateNumber = estimateNumber;
+      if (data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.includes("RE") && estimateNumber) {
+        data.body.inbox.moduleSearchCriteria.revisionNumber = estimateNumber;
+        delete data?.body?.inbox?.moduleSearchCriteria?.estimateNumber;
+      }
 
       const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim();
       if (projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId;
@@ -180,7 +184,8 @@ export const UICustomizations = {
               {/* <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link> */}
-              {Digit.Utils.statusBasedNavigation(row?.ProcessInstance?.action, row?.businessObject?.additionalDetails?.projectNumber, value, row.ProcessInstance.tenantId, value, "ESTIMATE")}
+              {/* here the end condition will be update as backend will add bussinessservice in inbox apo response in business object*/}
+              {Digit.Utils.statusBasedNavigation(row?.ProcessInstance?.action, row?.businessObject?.additionalDetails?.projectNumber, value, row.ProcessInstance.tenantId, value, value?.includes("RE") || row?.businessObject?.businessService === "REVISION-ESTIMATE" ? "REVISION-ESTIMATE" : "ESTIMATE", row?.ProcessInstance?.businessId)}
             </span>
           );
         case "COMMON_ASSIGNEE":
@@ -386,9 +391,12 @@ export const UICustomizations = {
       const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code;
       delete data.body.inbox.moduleSearchCriteria.ward;
       if (ward) data.body.inbox.moduleSearchCriteria.ward = ward;
-
-      const estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim();
-      if (estimateId) data.body.inbox.moduleSearchCriteria.estimateId = estimateId;
+      estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim();
+      if (!(data?.body?.inbox?.moduleSearchCriteria?.estimateId?.includes("RE")) && estimateId) data.body.inbox.moduleSearchCriteria.estimateId = estimateId;
+      if (data?.body?.inbox?.moduleSearchCriteria?.estimateId?.includes("RE") && estimateId) {
+        data.body.inbox.moduleSearchCriteria.revisionNumber = estimateId;
+        delete data?.body?.inbox?.moduleSearchCriteria?.estimateId;
+      }
 
       const projectName = data?.body?.inbox?.moduleSearchCriteria?.projectName?.trim();
       if (projectName) data.body.inbox.moduleSearchCriteria.projectName = projectName;
@@ -425,7 +433,7 @@ export const UICustomizations = {
               {/* <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link> */}
-              {Digit.Utils.statusBasedNavigation(row?.ProcessInstance?.action, row?.businessObject?.additionalDetails?.projectNumber, value, row.ProcessInstance.tenantId, value, "ESTIMATE")}
+              {Digit.Utils.statusBasedNavigation(row?.ProcessInstance?.action, row?.businessObject?.additionalDetails?.projectNumber, row?.ProcessInstance?.businessId, row.ProcessInstance.tenantId, row?.ProcessInstance?.businessId, row?.businessObject?.businessService === "REVISION-ESTIMATE" ? "REVISION-ESTIMATE" : "ESTIMATE", value)}
             </span>
         );
       }
@@ -946,7 +954,7 @@ export const UICustomizations = {
             <span className="link">
               <Link
                 to={
-                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO
+                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO || row?.ProcessInstance?.businessId?.includes("RW")
                     ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}`
                     : `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}`
                 }
@@ -1042,7 +1050,7 @@ export const UICustomizations = {
             <span className="link">
               <Link
                 to={
-                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO
+                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO || row?.ProcessInstance?.businessId?.includes("RW")
                     ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance?.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}`
                     : `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance?.tenantId}&workOrderNumber=${value}`
                 }

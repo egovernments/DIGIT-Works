@@ -7,6 +7,7 @@ const ViewMeasurement = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { workOrderNumber, mbNumber } = Digit.Hooks.useQueryParams();
+  const [thumbnails, setThumbnails] = useState("")
 
   const requestCriteria = {
     url: "/mukta-services/measurement/_search",
@@ -23,18 +24,18 @@ const ViewMeasurement = () => {
   let { isLoading: isMeasurementLoading, data: allData } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
 
-  let thumbnails = "";
   useEffect(() => {
-    if (!isMeasurementLoading) {
-      allData = null;
-      thumbnails = "";
-    }
-    const fetchData = () => {
+    // if (!isMeasurementLoading) {
+    //   allData = null;
+    //   thumbnails = "";
+    // }
+    const fetchData = async () => {
       if (allData?.measurement != undefined || allData?.measurement != null) {
         const fileStoreIds = allData?.measurement?.documents.map((item) => item.fileStore);
 
         try {
-          thumbnails = Digit.Utils.getThumbnails(fileStoreIds, tenantId);
+          let thumbnailsData = await Digit.Utils.getThumbnails(fileStoreIds, tenantId);
+          setThumbnails(thumbnailsData);
         } catch (error) {
           console.log(error);
         }
@@ -42,10 +43,20 @@ const ViewMeasurement = () => {
     };
 
     fetchData();
-  }, [allData, tenantId, isMeasurementLoading]);
+  }, [allData?.measurement, tenantId, isMeasurementLoading]);
   let config = null;
 
-  config = data(allData?.contract, allData?.estimate, allData?.measurement, allData?.allMeasurements, thumbnails);
+  //Getting project location for Measurement View Page
+  let projectLocation = "NA";
+  if(allData?.contract){  
+    const { additionalDetails: { locality: projectLoc, ward: projectWard }} = allData?.contract;
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId());
+    const Pward = projectWard ? t(`${headerLocale}_ADMIN_${projectWard}`) : "";
+    const city = projectLoc ? t(`${headerLocale}_ADMIN_${projectLoc}`) : "";
+    projectLocation = `${Pward ? Pward + ", " : ""}${city}`;
+  }
+
+  config = data(allData?.contract, allData?.estimate, allData?.measurement, allData?.allMeasurements, thumbnails, projectLocation , allData?.period);
 
   if (isMeasurementLoading && config != null) {
     return <Loader />;

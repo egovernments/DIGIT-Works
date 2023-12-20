@@ -30,7 +30,8 @@ const config = {
   },
   configs: {
     DATA_CONFIG_URLS: 'file:///Users/klrao/Documents/pdf-config/data-config/consolidatedreceipt.json',
-    FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS
+    FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS,
+    cacheEnabled:false
   },
   host: {
     serverHost: HOST,

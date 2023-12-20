@@ -4,18 +4,18 @@ const convertNumberFields=(text="")=>{
     return parseFloat(text)==0?null:parseFloat(text);
 
 }
-const transformLineItems = (SorData = [], category, isEdit = false) => {
+const transformLineItems = (SorData = [], category, isEdit = false, isCreateRevisionEstimate=false, isEditRevisionEstimate=false) => {
   const lineItems = [];
-  SorData?.map((row) => {
+  SorData?.filter((ob) => ob?.category === "SOR" ? ob?.sorCode : true).map((row) => {
     const measures = row?.measures?.map((measure) => {
-      return transformMeasure(measure, row, isEdit, category);
+      return transformMeasure(measure, row, isEdit, category, isCreateRevisionEstimate, isEditRevisionEstimate);
     });
     lineItems.push(...measures);
   });
   return lineItems;
 };
 
-function transformMeasure(measure, parentData, isEdit, category) {
+function transformMeasure(measure, parentData, isEdit, category, isCreateRevisionEstimate, isEditRevisionEstimate) {
   let measureObject = {
     sorId: parentData?.category == "SOR" ? parentData?.sorId : parentData?.sNo,
     category: parentData?.category || category,
@@ -44,7 +44,7 @@ function transformMeasure(measure, parentData, isEdit, category) {
     measureObject = {
       ...measureObject,
       sorId: parentData?.sorType ? parentData?.sorCode : parentData?.sNo,
-      id: measure?.id,
+      id: measure?.id && measure?.id !== "" ? measure?.id : null,
       category: category,
       amountDetail: [
               {
@@ -56,6 +56,24 @@ function transformMeasure(measure, parentData, isEdit, category) {
             ],
     }
    }  
+   if(isCreateRevisionEstimate || isEditRevisionEstimate)
+    {
+      measureObject = {
+        ...measureObject,
+        sorId: parentData?.sorType ? parentData?.sorCode : parentData?.sNo,
+        id: isEditRevisionEstimate ? (measure?.id && measure?.id !== "" ? measure?.id : null) : null,
+        previousLineItemId: (isEditRevisionEstimate ? measure?.previousLineItemId : (measure?.id && measure?.id !== "" ? measure?.id : null)) || null,
+        category: category,
+        amountDetail: [
+                {
+                  type: "EstimatedAmount",
+                  amount: parentData?.unitRate * measure?.noOfunit,
+                  additionalDetails: {},
+                  id: measure?.amountid,
+                },
+              ],
+      }
+    }
    
    return measureObject;
 }
@@ -84,7 +102,7 @@ const fetchEstimateDetails = (data) => {
   // })
   const Sors = (data?.SORtable && transformLineItems(data?.SORtable,"SOR")) || [];
   const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable,"NON-SOR")) || [];
-  const detailedEstimates = [...Sors, ...NonSors];
+  const detailedEstimates = [...Sors?.filter((ob) => ob?.sorCode || ob?.sorId), ...NonSors];
 
   let overHeadsData = data?.overheadDetails
     ?.filter((row) => row && row.amount !== "0" && row?.amount !== undefined)
@@ -108,14 +126,15 @@ const fetchEstimateDetails = (data) => {
   return [...detailedEstimates, ...overHeadsData];
 };
 
-const fetchEstimateDetailsEdit = (isEdit, data, estimate) => {
+const fetchEstimateDetailsEdit = (isEdit, data, estimate, isCreateRevisionEstimate, isEditRevisionEstimate) => {
 
-  const Sors = (data?.SORtable && transformLineItems(data?.SORtable,"SOR", isEdit)) || [];
-  const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable,"NON-SOR", isEdit)) || [];
-  const detailedEstimates = [...Sors, ...NonSors];
+  const Sors = (data?.SORtable && transformLineItems(data?.SORtable,"SOR", isEdit, isCreateRevisionEstimate, isEditRevisionEstimate)) || [];
+  const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable,"NON-SOR", isEdit, isCreateRevisionEstimate, isEditRevisionEstimate)) || [];
+  console.log(Sors,NonSors);
+  const detailedEstimates = [...Sors?.filter((ob) => ob?.sorCode || ob?.sorId.toString()?.includes("SOR")), ...NonSors];
 
   let overHeadsData = data?.overheadDetails
-    ?.filter((row) => row && row.amount !== "0")
+    ?.filter((row) => row && row.amount !== "0" && row.amount !== undefined)
     ?.map((row) => {
       return {
         id: estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.id || null,
@@ -136,10 +155,12 @@ const fetchEstimateDetailsEdit = (isEdit, data, estimate) => {
     });
 
     //idetified and lineitems which has been deleted and then marked it as inactive
-    let deletedSorNonSor = estimate?.estimateDetails?.filter(item => !detailedEstimates.find(x => x.id === item.id) && item.category !== "OVERHEAD")
-                .map(item => ({ ...item, isActive: false })) || [];
+    
+    let deletedSorNonSor =  estimate?.estimateDetails?.filter(item => !detailedEstimates.find(x => x.id === item.id) && item.category !== "OVERHEAD")
+                .map(item => ({ ...item, isActive: false }));
     let deletedOverheads = estimate?.estimateDetails?.filter(item => !overHeadsData.find(x => x.id === item.id) && item.category === "OVERHEAD")
-                .map(item => ({ ...item, isActive: false })) || [];
+                .map(item => ({ ...item, isActive: false }));
+    
     return [...detailedEstimates, ...overHeadsData, ...deletedSorNonSor, ...deletedOverheads];
 };
 
@@ -166,8 +187,8 @@ const getLabourMaterialAnalysis = (data) => {
   }
 }
 
-export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
-  if (isEdit) {
+export const createEstimatePayload = (data, projectData, isEdit, estimate, isCreateRevisionEstimate, isEditRevisionEstimate) => {
+  if (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate) {
     //here make the payload of edit estimate rather than create estimate
 
     let filteredFormData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
@@ -176,11 +197,13 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
       estimate: {
         id: estimate.id,
         estimateNumber: estimate.estimateNumber,
+        revisionNumber : estimate.revisionNumber || null,
         tenantId: tenantId,
         projectId: projectData?.projectDetails?.searchedProject?.basicDetails?.uuid,
         status: "ACTIVE",
         wfStatus: estimate?.wfStatus,
         name: projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
+        businessService : isCreateRevisionEstimate || isEditRevisionEstimate ? "REVISION-ESTIMATE" : null,
         description: projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc,
         executingDepartment: "WRK", //hardcoded since we are not capturing it anymore and it is required at BE side
         // "executingDepartment": filteredFormData?.selectedDept?.code,
@@ -189,7 +212,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
           ...projectData?.projectDetails?.searchedProject?.basicDetails?.address,
           tenantId, //here added because in address tenantId is mandatory from BE side
         }, //get from project search
-        estimateDetails: fetchEstimateDetailsEdit(isEdit, filteredFormData, estimate),
+        estimateDetails: fetchEstimateDetailsEdit(isEdit, filteredFormData, estimate, isCreateRevisionEstimate, isEditRevisionEstimate),
         additionalDetails: {
           documents: fetchDocuments(data?.uploadedDocs),
           labourMaterialAnalysis: { ...filteredFormData?.labourMaterialAnalysis },
@@ -214,7 +237,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
         },
       },
       workflow: {
-        action:  (estimate?.wfStatus === "PENDINGFORCORRECTION") ? "RE-SUBMIT" : data?.workflowAction,
+        action:  (estimate?.wfStatus === "PENDINGFORCORRECTION" && (data?.wfAction === "SUBMIT" || data?.workflowAction === "SUBMIT")) ? "RE-SUBMIT" : data?.workflowAction,
         comment: filteredFormData?.comments,
         assignees: [filteredFormData?.selectedApprover?.uuid ? filteredFormData?.selectedApprover?.uuid : undefined],
       },
@@ -233,7 +256,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
         status: "ACTIVE",
         wfStatus: "CREATED",
         name: "Testing",
-
+        businessService : isCreateRevisionEstimate || isEditRevisionEstimate ? "REVISION-ESTIMATE" : "ESTIMATE",
         // "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
         description: projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc,
         executingDepartment: "WRK", //hardcoded since we are not capturing it anymore and it is required at BE side

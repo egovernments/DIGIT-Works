@@ -33,19 +33,19 @@ const configNavItems = [
     activeByDefault: true,
   },
 ];
-const CreateEstimate = () => {
+const CreateEstimate = ({props}) => {
   const tenant = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   const [showToast, setShowToast] = useState(null);
   const [displayMenu, setDisplayMenu] = useState(false);
   const [actionSelected, setActionSelected] = useState(false);
-  let { tenantId, projectNumber, isEdit, estimateNumber } = Digit.Hooks.useQueryParams();
+  let { tenantId, projectNumber, isEdit,isCreateRevisionEstimate,isEditRevisionEstimate, estimateNumber, revisionNumber } = Digit.Hooks.useQueryParams();
   // const [ isFormReady,setIsFormReady ] = useState(isEdit ? false : true)
   const [isFormReady, setIsFormReady] = useState(true);
 
   const history = useHistory();
 
-  const actionMB = [
+  let actionMB = [
     {
       name: "SUBMIT",
     },
@@ -70,11 +70,13 @@ const CreateEstimate = () => {
   //fetching estimate data
   const { isLoading: isEstimateLoading, data: estimate } = Digit.Hooks.estimates.useEstimateSearch({
     tenantId,
-    filters: { estimateNumber },
+    filters: isEditRevisionEstimate ? { revisionNumber } : { estimateNumber },
     config: {
-      enabled: isEdit && estimateNumber ? true : false,
+      enabled: (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate) && (estimateNumber || revisionNumber) ? true : false,
     },
   });
+
+  actionMB = actionMB && (isEdit || isEditRevisionEstimate) && estimate && estimate?.wfStatus==="PENDINGFORCORRECTION" ? actionMB?.filter((ob) => ob?.name !== "DRAFT") : actionMB;
 
   const searchParams = {
     Projects: [
@@ -101,7 +103,7 @@ const CreateEstimate = () => {
       values: [
         {
           title: "WORKS_ESTIMATE_TYPE",
-          value: t("ORIGINAL_ESTIMATE"),
+          value: revisionNumber ? t("REVISION_ESTIMATE") : t("ORIGINAL_ESTIMATE"),
         },
         {
           title: "WORKS_PROJECT_ID",
@@ -123,11 +125,21 @@ const CreateEstimate = () => {
     },
   ];
 
-  if (isEdit) {
+  if (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate) {
     cardState[0].values = [
       {
         title: "WORKS_ESTIMATE_ID",
-        value: estimateNumber,
+        value: estimateNumber || estimate?.estimateNumber,
+      },
+      ...cardState?.[0]?.values,
+    ];
+  }
+
+  if (isEditRevisionEstimate) {
+    cardState[0].values = [
+      {
+        title: "WORKS_REVISED_NO",
+        value: revisionNumber,
       },
       ...cardState?.[0]?.values,
     ];
@@ -220,14 +232,14 @@ const CreateEstimate = () => {
   const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", sorAndNonSorData);
   const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
 
-  const initialDefaultValues = editEstimateUtil(estimate, uom, overheads);
+  const initialDefaultValues = editEstimateUtil(estimate, uom, overheads, props?.RatesData);
 
   // useEffect(() => {
 
   // }, [])
 
   useEffect(() => {
-    if (uom && estimate && overheads && isEdit) {
+    if (uom && estimate && overheads && (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate)) {
        setSessionFormData(initialDefaultValues)
     }
   }, [estimate, uom, overheads]);
@@ -277,14 +289,14 @@ const CreateEstimate = () => {
       return false;
     }
     //To validate that if SOR is present it should have measures
-    if(data?.SORtable?.filter((ob) => !(ob?.currentMBEntry) || ob?.currentMBEntry <= 0)?.length > 0)
+    if(data?.SORtable?.filter((ob) => ob?.sorCode && (!(ob?.currentMBEntry) || ob?.currentMBEntry <= 0))?.length > 0)
     {
       setShowToast({ error: true, label: "ERR_MB_AMOUNT_IS_NOT_RIGHT_FOR_SOR" });
       setShowModal(false);
       return false;
     }
     //To validate if the measures are present in SOR table it should have description param
-    let descriptionpresent = data?.SORtable?.find(item => item.measures.some(measure => measure?.description === "" || measure?.description === undefined || measure?.description === null));
+    let descriptionpresent = data?.SORtable?.find(item => item?.sorCode && item.measures.some(measure => measure?.description === "" || measure?.description === undefined || measure?.description === null));
     if(descriptionpresent)
     {
       setShowToast({ error: true, label: `${t("ERR_ENTER_DESCRIPTION_IN_SOR")} ${descriptionpresent?.sorId || descriptionpresent?.sorCode}` });
@@ -319,11 +331,13 @@ const CreateEstimate = () => {
       setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" });
       closeToast();
       return;
-    } else if (totalLabourAndMaterial === 0  && action !== "DRAFT") {
-      setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_IMPROPER" });
-      closeToast();
-      return;
-    }
+    } 
+    // else if (totalLabourAndMaterial === 0  && action !== "DRAFT") {
+    //   debugger;
+    //   setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_IMPROPER" });
+    //   closeToast();
+    //   return;
+    // }
 
     setInputFormData((prevState) => _data);
     //first do whatever processing you want on form data then pass it over to modal's onSubmit function
@@ -368,12 +382,12 @@ const CreateEstimate = () => {
     removeNonsortableObjectWithoutRequiredParams(completeFormData);
     let validated = action !== "DRAFT" ? validateData(completeFormData) : true;
     if(validated){
-    const payload = createEstimatePayload(completeFormData, projectData, isEdit, estimate);
+    const payload = createEstimatePayload(completeFormData, projectData, isEdit, estimate, isCreateRevisionEstimate, isEditRevisionEstimate);
     setShowModal(false);
 
     //make a util for updateEstimatePayload since there are some deviations
 
-    if (isEdit && estimateNumber) {
+    if ((isEdit || isEditRevisionEstimate) && (estimateNumber  || revisionNumber)) {
       await EstimateUpdateMutation(payload, {
         onError: async (error, variables) => {
           setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
@@ -384,9 +398,9 @@ const CreateEstimate = () => {
         onSuccess: async (responseData, variables) => {
           clearSessionFormData();
           const state = {
-            header: t("WORKS_ESTIMATE_RESPONSE_UPDATED_HEADER"),
-            id: responseData?.estimates[0]?.estimateNumber,
-            info: t("ESTIMATE_ESTIMATE_NO"),
+            header: isCreateRevisionEstimate || isEditRevisionEstimate ? t("WORKS_REVISION_ESTIMATE_RESPONSE_UPDATED_HEADER") : t("WORKS_ESTIMATE_RESPONSE_UPDATED_HEADER"),
+            id: isCreateRevisionEstimate || isEditRevisionEstimate ? responseData?.estimates[0]?.revisionNumber : responseData?.estimates[0]?.estimateNumber,
+            info: isCreateRevisionEstimate || isEditRevisionEstimate ?  t("ESTIMATE_REVISION_ESTIMATE_NO") : t("ESTIMATE_ESTIMATE_NO"),
             // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
             links: [
               {
@@ -401,7 +415,10 @@ const CreateEstimate = () => {
           };
           if(action === "DRAFT")
           {
-            setShowToast({ label: "Application updated successfully" });
+            setShowToast({ label: "Application Drafted Successfully" });
+            if(isCreateRevisionEstimate || isEditRevisionEstimate)
+              setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-revision-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&revisionNumber=${responseData?.estimates[0]?.revisionNumber}&projectNumber=${projectNumber}&isEditRevisionEstimate=true`, state)}, 3000);
+            else
             setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&estimateNumber=${responseData?.estimates[0]?.estimateNumber}&projectNumber=${projectNumber}&isEdit=true`, state)}, 3000);
           }
           else
@@ -419,9 +436,9 @@ const CreateEstimate = () => {
         onSuccess: async (responseData, variables) => {
           clearSessionFormData();
           const state = {
-            header: t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
-            id: responseData?.estimates[0]?.estimateNumber,
-            info: t("ESTIMATE_ESTIMATE_NO"),
+            header: isCreateRevisionEstimate || isEditRevisionEstimate ? t("WORKS_REVISION_ESTIMATE_RESPONSE_CREATED_HEADER") :t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
+            id: isCreateRevisionEstimate || isEditRevisionEstimate ? responseData?.estimates[0]?.revisionNumber : responseData?.estimates[0]?.estimateNumber,
+            info:isCreateRevisionEstimate || isEditRevisionEstimate ?  t("ESTIMATE_REVISION_ESTIMATE_NO") : t("ESTIMATE_ESTIMATE_NO"),
             // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
             links: [
               {
@@ -436,7 +453,10 @@ const CreateEstimate = () => {
           };
           if(action === "DRAFT")
           {
-            setShowToast({ label: "Application updated successfully" });
+            setShowToast({ label: "Application Drafted successfully" });
+            if(isCreateRevisionEstimate || isEditRevisionEstimate)
+              setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-revision-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&revisionNumber=${responseData?.estimates[0]?.revisionNumber}&projectNumber=${projectNumber}&isEditRevisionEstimate=true`, state)}, 3000);
+            else
             setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&estimateNumber=${responseData?.estimates[0]?.estimateNumber}&projectNumber=${projectNumber}&isEdit=true`, state)}, 3000);
           }
           else
@@ -508,12 +528,12 @@ const CreateEstimate = () => {
   if (isConfigLoading || isEstimateLoading || isUomLoading || isOverheadsLoading) {
     return <Loader />;
   }
-  if (isEdit && Object.keys(sessionFormData).length === 0) return <Loader />;
+  if ((isEdit || isCreateRevisionEstimate || isEditRevisionEstimate) && Object.keys(sessionFormData).length === 0) return <Loader />;
   return (
     <Fragment>
       {showModal && <WorkflowModal closeModal={() => setShowModal(false)} onSubmit={onModalSubmit} config={config} />}
       <Header className="works-header-create" styles={{ marginLeft: "14px" }}>
-        {isEdit ? t("ACTION_TEST_EDIT_ESTIMATE") : t("ACTION_TEST_CREATE_ESTIMATE")}
+        {isEdit ? (isCreateRevisionEstimate || isEditRevisionEstimate ? t("ACTION_TEST_EDIT_REVISION_ESTIMATE") : t("ACTION_TEST_EDIT_ESTIMATE")) : (isCreateRevisionEstimate || isEditRevisionEstimate ? t("ACTION_TEST_CREATE_REVISION_ESTIMATE") : t("ACTION_TEST_CREATE_ESTIMATE"))}
       </Header>
       {/* Will fetch projectId from url params and do a search for project to show the below data in card while integrating with the API  */}
       {isLoading ? <Loader /> : <ViewDetailsCard cardState={cardState} t={t} createScreen={true} />}
@@ -532,7 +552,7 @@ const CreateEstimate = () => {
           fieldStyle={{ marginRight: 0 }}
           inline={false}
           // className="card-no-margin"
-          defaultValues={(isEdit === "true" && estimateNumber) ? initialDefaultValues : sessionFormData}
+          defaultValues={((isEdit === "true" || isCreateRevisionEstimate === "true" || isEditRevisionEstimate === "true") && (estimateNumber || revisionNumber)) ? initialDefaultValues : sessionFormData}
           //defaultValues={{...sessionFormData}}
           showWrapperContainers={false}
           isDescriptionBold={false}

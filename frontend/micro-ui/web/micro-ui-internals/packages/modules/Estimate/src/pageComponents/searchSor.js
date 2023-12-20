@@ -11,6 +11,8 @@ const fetchData = async (sorid, state, setState, setShowToast) => {
     setShowToast({show: true, error: true, label:"WORKS_CANNOT_ADD_EMPTY_DATA"});
     return true;
   }
+  let currentDateInMillis = new Date().getTime(); 
+
   const requestCriteria = {
     url: "/mdms-v2/v1/_search",
     body: {
@@ -33,7 +35,15 @@ const fetchData = async (sorid, state, setState, setShowToast) => {
   try {
     const data = await Digit.CustomService.getResponse(requestCriteria);
     if (data?.MdmsRes?.["WORKS-SOR"]?.Rates?.length > 0) {
-      const Rates = data?.MdmsRes?.["WORKS-SOR"]?.Rates;
+      const Rates = data?.MdmsRes?.["WORKS-SOR"]?.Rates?.filter((rate) => {
+        // Convert validFrom and validTo to milliseconds
+        let validFromInMillis = new Date(parseInt(rate?.validFrom)).getTime();
+        let validToInMillis = rate?.validTo ? new Date(parseInt(rate?.validTo)).getTime() : Infinity;
+        // Check if the current date is within the valid date range
+        return validFromInMillis <= currentDateInMillis
+          && currentDateInMillis < validToInMillis;
+      });
+      console.log(Rates,"Rates");
       //if rates is not there then provide the error
       // state?.forEach((element) => {
       //   if (element?.sorId == sorid) {

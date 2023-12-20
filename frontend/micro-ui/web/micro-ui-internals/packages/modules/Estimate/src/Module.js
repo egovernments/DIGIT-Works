@@ -19,6 +19,9 @@ import SearchBar from "./pageComponents/SearchBar";
 import OverheadDetailsTable from "./components/OverheadDetailsTable";
 import ViewAnalysisStatement from "./pageComponents/ViewAnalysisStatement";
 import UpdateDetailedEstimate from "./pages/employee/Estimates/CreateDetailedEstimate/UpdateDetailedEstimate";
+import CreateRevisionDetailedEstimate from "./pages/employee/Estimates/CreateDetailedEstimate/CreateRevisionDetailedEstimate";
+import UpdateRevisionDetailedEstimate from "./pages/employee/Estimates/CreateDetailedEstimate/UpdateRevisionDetailedEstimate";
+import EstimateMeasureTableWrapper from "./pageComponents/EstimateMeasureTableWrapper";
 
 const EstimateModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
@@ -56,7 +59,11 @@ const componentsToRegister = {
     SearchBar,
     OverheadDetailsTable,
     ViewAnalysisStatement,
-    UpdateDetailedEstimate
+    UpdateDetailedEstimate,
+    CreateRevisionDetailedEstimate,
+    UpdateRevisionDetailedEstimate,
+    EstimateMeasureTableWrapper
+
 };
 
 export const initEstimateComponents = () => {

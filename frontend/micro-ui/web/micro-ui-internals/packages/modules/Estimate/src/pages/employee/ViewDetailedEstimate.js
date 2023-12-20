@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom';
 const ViewDetailedEstimate = () => {
   const history = useHistory();
   const [showActions, setShowActions] = useState(false);
-  const { tenantId, estimateNumber } = Digit.Hooks.useQueryParams();
+  const { tenantId, estimateNumber, revisionNumber } = Digit.Hooks.useQueryParams();
   const { t } = useTranslation();
   const [actionsMenu, setActionsMenu] = useState([]);
   const [isStateChanged, setStateChanged] = useState(``);
@@ -23,7 +23,7 @@ const ViewDetailedEstimate = () => {
 
   const requestCriteria = {
     url: "/estimate/v1/_search",
-    params : {tenantId : tenantId , estimateNumber : estimateNumber}
+    params : revisionNumber ? {tenantId : tenantId , revisionNumber : revisionNumber} : {tenantId : tenantId , estimateNumber : estimateNumber}
   };
 
   //fetching estimate data
@@ -47,27 +47,27 @@ const ViewDetailedEstimate = () => {
   });
 
   //here make a contract search based on the estimateNumber
-  let { isLoading: isLoadingContracts, data: contract } = Digit.Hooks.contracts.useContractSearch({
+  let { isLoading: isLoadingContracts, data: contracts } = Digit.Hooks.contracts.useContractSearch({
     tenantId,
     filters: { tenantId, estimateIds: [detailedEstimate?.estimates[0]?.id] },
     config: {
-      enabled: !isDetailedEstimateLoading && detailedEstimate?.estimates[0]?.wfStatus === "APPROVED" ? true : false,
+      enabled: !isDetailedEstimateLoading && detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" ? true : false,
       cacheTime: 0,
     },
   });
 
   //fetching all work orders for a particular estimate
-  let allContract = contract;
-  contract = contract?.[0];
+  let allContract = contracts;
   //getting the object which will be in workflow, as 1:1:1 mapping is there, one one inworkflow workorder will be there for one estimate
   let inWorkflowContract = allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.[0];
+  let isCreateContractallowed = !(allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.length > 0);
 
   useEffect(() => {
     let isUserContractCreator = loggedInUserRoles?.includes("WORK_ORDER_CREATOR");
     if (
-      detailedEstimate?.estimates[0]?.wfStatus === "APPROVED" &&
+      detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" &&
       isUserContractCreator &&
-      !actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT")
+      !actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT") && (isCreateContractallowed == true && allContract !== undefined || allContract?.length == 0)
     ) {
       setActionsMenu((prevState) => [
         ...prevState,
@@ -77,17 +77,31 @@ const ViewDetailedEstimate = () => {
       ]);
     }
     //checking if any work order is inworflow, if it is then view contract will be shown otherwise create contract
-    let isCreateContractallowed = allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.length > 0;
 
     //if contract is already there just remove the prevState and push View contract state
-    if (contract?.contractNumber && isCreateContractallowed) {
+    if (contracts?.[0]?.contractNumber && !isCreateContractallowed) {
       setActionsMenu((prevState) => [
+        ...prevState,
         {
           name: "VIEW_CONTRACT",
         },
       ]);
     }
-  }, [detailedEstimate, isStateChanged, contract]);
+
+    let isUserEstimateCreater = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
+    //Checking if REVSION ESTIMATE can be created or not.
+    let isRevisionEstimateInWorkflow = detailedEstimate?.estimates.filter((ob) => ob?.status === "INWORKFLOW")?.length > 0;
+    if( detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" && !isRevisionEstimateInWorkflow && isUserEstimateCreater && !actionsMenu?.find((ob) => ob?.name === "CREATE_REVISION_ESTIMATE"))
+    {
+      setActionsMenu((prevState) => [
+        ...prevState,
+        {
+          name: "CREATE_REVISION_ESTIMATE",
+        },
+      ]);
+    }
+  
+  }, [detailedEstimate, isStateChanged, contracts]);
 
   const handleActionBar = (option) => {
     if (option?.name === "CREATE_CONTRACT") {
@@ -96,6 +110,11 @@ const ViewDetailedEstimate = () => {
     if (option?.name === "VIEW_CONTRACT") {
       history.push(
         `/${window.contextPath}/employee/contracts/contract-details?tenantId=${tenantId}&workOrderNumber=${inWorkflowContract?.contractNumber}`
+      );
+    }
+    if (option?.name === "CREATE_REVISION_ESTIMATE") {
+      history.push(
+        `/${window.contextPath}/employee/estimate/create-revision-detailed-estimate?tenantId=${tenantId}&projectNumber=${project?.projectNumber}&estimateNumber=${estimateNumber}&isCreateRevisionEstimate=true`
       );
     }
   };
@@ -125,7 +144,7 @@ const ViewDetailedEstimate = () => {
     },
   };
 
-  const config = data(project, detailedEstimate?.estimates[0], overheadItems);
+  const config = data(project, detailedEstimate?.estimates[0], overheadItems, revisionNumber);
 
   if (isProjectLoading || isDetailedEstimateLoading) return <Loader />;
 
@@ -133,13 +152,13 @@ const ViewDetailedEstimate = () => {
     <div className={"employee-main-application-details"}>
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
         <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px" }}>
-          {t("ESTIMATE_VIEW_ESTIMATE")}
+          {revisionNumber ? t("ESTIMATE_VIEW_REVISED_ESTIMATE") : t("ESTIMATE_VIEW_ESTIMATE")}
         </Header>
         <MultiLink onHeadClick={() => HandleDownloadPdf()} downloadBtnClassName={"employee-download-btn-className"} label={t("CS_COMMON_DOWNLOAD")} />
       </div>
       <ViewComposer data={config} isLoading={false} />
       <>
-        {detailedEstimate?.estimates[0]?.wfStatus === "APPROVED" && !isLoadingContracts && actionsMenu?.length > 0 ? (
+        {detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" && !isLoadingContracts && actionsMenu?.length > 0 ? (
           <ActionBar>
           {showActions ? <Menu
               localeKeyPrefix={`EST_VIEW_ACTIONS`}

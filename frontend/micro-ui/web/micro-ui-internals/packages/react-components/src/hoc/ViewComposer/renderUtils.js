@@ -16,7 +16,7 @@ export const RenderDataSection = ({ section }) => {
       {section.cardHeader && <CardSubHeader style={section?.cardHeader?.inlineStyles}>{t(section.cardHeader.value)}</CardSubHeader>}
       <StatusTable style={section?.inlineStyles}>
         {section.sectionHeader && <CardSectionHeader style={section?.sectionHeader?.inlineStyles}>{t(section.sectionHeader.value)}</CardSectionHeader>}
-        {section.values.map((row, rowIdx) => {
+        {section?.values?.filter((ob) => ob !== null && Object?.keys(ob)?.length > 0).map((row, rowIdx) => {
           const displayValue = row?.value !== undefined && row?.value !== null ? row.value : 'NA';
           return (
             <Row
@@ -158,7 +158,7 @@ export const RenderPhotos = ({section}) => {
     {section?.cardHeader && section?.cardHeader?.value && (
       <CardSectionHeader style={section?.cardHeader?.inlineStyles}>{t(section.cardHeader.value)}</CardSectionHeader>
     )}
-    <Photos data = {section?.photo} OpenImage={OpenImage} />
+    <Photos data = {section?.photo} OpenImage={OpenImage} fullImage={section?.fullImage} />
     </>
   )
 }

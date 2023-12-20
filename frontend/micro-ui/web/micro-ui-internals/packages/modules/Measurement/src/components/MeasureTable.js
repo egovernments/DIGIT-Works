@@ -10,7 +10,8 @@ import MeasureCard from "./MeasureCard";
 2. VIEW -> view of measurement
 3. CREATEALL -> Detailed Estimate create
 4. VIEWES -> view of detailed estimate
-
+5. CREATERE -> revised estimate create and update
+6. VIEWRE -> view of revised estimate
 
 */
 
@@ -24,6 +25,7 @@ let defaultSOR = {
       "category": "NON-SOR",
       "targetId": null,
       "approvedQuantity": 0,
+      "currentMBEntry" : 0,
       "measures": [
           {
               "sNo": 1,
@@ -44,7 +46,8 @@ let defaultSOR = {
 
 const MeasureTable = (props) => {
   const { register, setValue, arrayProps = {}, config = {},watch } = props;
-  const { key: tableKey, mode } = config;
+  let { key: tableKey, mode } = config;
+  mode = props?.props?.mode || props?.config?.mode ? props?.props?.mode || props?.config?.mode : mode;
   let { fields, append, remove } = arrayProps || {};
   const options = {
     masterName: "UOM",
@@ -98,13 +101,13 @@ const MeasureTable = (props) => {
               const optionsData = _.get(data?.MdmsRes, `${options?.moduleName}.${options?.masterName}`, []);
               return optionsData?.filter((opt) => opt?.active === undefined || opt?.active === true).map((opt) => ({ ...opt, name: `${options?.localePrefix}_${opt.code}` }));
             },
-            enabled: mode == "CREATEALL",
+            enabled: mode == "CREATEALL" || mode === "CREATERE",
           },
   };
   const { isLoading, data : UOMData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
   const { t } = useTranslation();
-  const sum = parseFloat(fields.reduce((acc, row) => acc + parseFloat(row?.amount), 0)?.toFixed?.(2)) || 0;
+  const sum = parseFloat(fields?.reduce((acc, row) => acc + parseFloat(row?.amount), 0)?.toFixed?.(2)) || 0;
 
   // register(tableKey)
 
@@ -120,10 +123,10 @@ const MeasureTable = (props) => {
         obj = { width: "1rem" };
         break;
       case 2:
-        if (((mode === "CREATEALL" || mode === "VIEWES") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES") ) obj = { width: "52%"}
+        if (((mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES" && mode !== "CREATERE" && mode !== "VIEWRE") ) obj = { width: "52%"}
         break;
       case 4:
-        (((mode === "CREATEALL" || mode === "VIEWES") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES"))? obj = {width : "27rem"}  : obj = { width: "30%" };
+        (((mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES" && mode !== "CREATERE" && mode !== "VIEWRE"))? obj = {width : "27rem"}  : obj = { width: "30%" };
         break;
       default:
         obj = { width: "27rem" };
@@ -133,15 +136,25 @@ const MeasureTable = (props) => {
   };
 
   const getColumns = (mode, t) => {
+    if(mode === "CREATERE" && tableKey === "SOR")
+      return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_REVISED_QTY"), t("WORKS_REVISED_AMT"), t("")];
     if (mode === "CREATEALL" && tableKey === "SOR") {
       return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
     } else if (mode === "VIEWES" && tableKey === "SOR") {
       return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
-    } else if (mode === "CREATEALL") {
+    } else if(mode === "VIEWRE" & tableKey === "SOR")
+      return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"),t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_REVISIED_ESTIMATED_QUANTITY"), t("WORKS_REVISED_ESTIMATED_AMOUNT")];
+    else if (mode === "CREATEALL") {
       return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
-    } else if (mode === "VIEWES") {
+    } else if(mode === "CREATERE"){
+      return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_REVISED_QTY"), t("WORKS_REVISED_AMT"), t("")];
+    }
+    else if(mode === "VIEWRE")
+      return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_ESTIMATED_REVISED_QUANTITY"), t("WORKS_ESTIMATED_REVISED_AMOUNT")];
+    else if (mode === "VIEWES") {
       return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
-    } else {
+    } 
+    else {
       return [
         t("WORKS_SNO"),
         t("MB_DESCRIPTION"),
@@ -170,7 +183,7 @@ const MeasureTable = (props) => {
   };
 
   const getMeasureCardColumns = () => {
-    if(mode === "CREATEALL" || mode === "VIEWES")
+    if(mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE")
       return ([
         t("WORKS_SNO"),
         t("WORKS_ESTIMATE_IS_DEDUCTION"),
@@ -216,7 +229,7 @@ const MeasureTable = (props) => {
         <>
           <tr key={index}>
             <td>{index + 1}</td>
-            {mode == "CREATEALL" && tableKey!="SOR" ? (
+            {(mode == "CREATEALL" || mode == "CREATERE") && tableKey!="SOR" ? (
               <>
                 <td style={{margin:"0px",padding:"8px"}}>
                   <TextInput
@@ -251,8 +264,8 @@ const MeasureTable = (props) => {
               <>
                 {/*added this dummy line because project creation and search is failing will check this once it works */}
                 {/*((mode === "VIEWES") && tableKey === "SOR") &&<td>{`${t(`${"Works_D"}`)}/ ${t(`${"SC_D"}`)}`}</td>*/}
-                {tableKey === "SOR" && (mode === "CREATEALL" || mode === "VIEWES") && (((row?.sorType || row?.sorSubType)) ?<td>{`${t(`WORKS_SOR_TYPE_${row?.sorType}`)}/ ${t(`WORKS_SOR_SUBTYPE_${row?.sorSubType}`)}`}</td> : <td>{t(" ")}</td>)}
-                {((mode === "CREATEALL" || mode === "VIEWES") && tableKey === "SOR") && <td>{row?.sorCode}</td>}
+                {tableKey === "SOR" && (mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && (((row?.sorType || row?.sorSubType)) ?<td>{`${t(`WORKS_SOR_TYPE_${row?.sorType}`)}/ ${t(`WORKS_SOR_SUBTYPE_${row?.sorSubType}`)}`}</td> : <td>{t(" ")}</td>)}
+                {((mode === "CREATEALL" || mode === "VIEWES" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "SOR") && <td>{row?.sorCode}</td>}
                 <td>{row.description}</td>
                 <td>{row.uom}</td>
                 <td>
@@ -260,7 +273,17 @@ const MeasureTable = (props) => {
                 </td>
               </>
             )}
-            {mode != "CREATEALL"  && mode != "VIEWES"  && (
+            {(mode === "VIEWRE" || mode === "CREATERE") && (
+              <>
+                <td>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.approvedQuantity?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
+                </td>
+                <td>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.originalAmount || 0} t={t} roundOff={false}></Amount>
+                </td>
+              </>
+            )}
+            {(mode != "CREATEALL"  && mode != "VIEWES" && mode != "VIEWRE" && mode != "CREATERE")  && (
               <>
                 <td>
                   <Amount customStyle={{ textAlign: "right" }} value={row?.approvedQuantity?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
@@ -311,7 +334,7 @@ const MeasureTable = (props) => {
             <td>
               <Amount customStyle={{ textAlign: "right" }} value={row?.amount || 0} t={t} roundOff={false}></Amount>
             </td>
-            {mode == "CREATEALL" && (
+            {(mode == "CREATEALL" || mode == "CREATERE") && (
               <td>
                 <span className="icon-wrapper" onClick={() => remove(index)}>
                   <DeleteIcon fill={"#B1B4B6"} />
@@ -322,7 +345,7 @@ const MeasureTable = (props) => {
           {row?.showMeasure && !initialState.length > 0 && (
             <tr>
               <td colSpan={"1"}></td>
-              <td colSpan={mode == "CREATEALL" && tableKey !== "SOR" ? 5 : 7}>
+              <td colSpan={(mode == "CREATEALL"  || mode == "CREATERE") && tableKey !== "SOR" ? ( mode === "CREATERE" || mode === "VIEWRE" ? 7 : 5) : (mode === "CREATERE" || mode === "VIEWRE" ? 9 : 7)}>
                 <MeasureCard
                   columns={getMeasureCardColumns()}
                   unitRate={row.unitRate}
@@ -351,9 +374,9 @@ const MeasureTable = (props) => {
         <tbody>
           {renderBody()}
           <tr>
-            {mode == "CREATEALL" && tableKey == "NONSOR" && (
+            {(mode == "CREATEALL" || mode == "CREATERE") && tableKey == "NONSOR" && (
               <td
-                colSpan={6}
+                colSpan={mode === "CREATERE" ? 8 : 6}
                 style={{ textAlign: "center" }}
                 onClick={() => {
                   append({

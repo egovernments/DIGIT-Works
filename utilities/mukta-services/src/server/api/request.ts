@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { logger } from "../logger";
 import { cacheResponse, getCachedResponse, throwError } from "../utils";
+import config from "../config";
 
 var Axios = require("axios").default;
 var get = require("lodash/get");
@@ -30,7 +31,7 @@ export const defaultheader = {
 };
 
 const getServiceName = (url = "") => url && url.slice && url.slice(url.lastIndexOf(url.split("/")[3]));
-const cacheEnabled = true;
+const cacheEnabled = config.configs.cacheEnabled;
 /*
  
 Used to Make API call through axios library
@@ -88,7 +89,7 @@ const httpRequest = async (
       responseStatus
     );
     if (responseStatus === 200 || responseStatus === 201 || responseStatus === 202) {
-      if (headers && headers.cachekey) {
+      if (headers && headers.cachekey && cacheEnabled) {
         cacheResponse(response.data, headers.cachekey)
       }
       return response.data;

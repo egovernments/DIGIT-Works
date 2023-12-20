@@ -3,7 +3,7 @@ input is document array,
 output is document array containing object
 */
 
-const processDocuments = (uploadedDocs) => {
+const processDocuments = (uploadedDocs, data) => {
   const documents = [];
 
   for (const docType in uploadedDocs) {
@@ -14,7 +14,12 @@ const processDocuments = (uploadedDocs) => {
           documentType: fileInfo?.file?.type,
           fileStore: fileInfo?.fileStoreId?.fileStoreId,
           documentUid: fileInfo?.file?.name,
-          additionalDetails: {},
+          id: data?.documents?.length == 1 ? data?.documents?.[0]?.id : null,
+          additionalDetails: {
+            fileType: docType,
+            tenantId: fileInfo?.fileStoreId?.tenantId,
+            fileName: fileInfo?.file?.name,
+          },
         };
         documents.push(document);
       });
@@ -64,7 +69,6 @@ output is measurements[{
 */
 
 export const transformData = (data) => {
-  console.log(data, "formdata");
 
 const measurement= {
   id: data?.id ? data?.id : null,
@@ -73,7 +77,7 @@ const measurement= {
   physicalRefNumber: null,
   referenceId: data.SOR?.[0]?.contractNumber || data.NONSOR?.[0]?.contractNumber,
   entryDate: 0,
-  documents: processDocuments(data.uploadedDocs),
+  documents: processDocuments(data.uploadedDocs, data),
   measures: [],
   isActive: true,
   additionalDetails: {
@@ -125,7 +129,7 @@ const measurement= {
   }
 
   /* added as a temporary fix that sends entrydate */
-  measurement.entryDate=measurement.additionalDetails.startDate;
+  measurement.entryDate=new Date().getTime();
   const transformedData = {
     measurements: [
      measurement

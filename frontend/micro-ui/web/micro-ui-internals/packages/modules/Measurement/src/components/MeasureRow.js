@@ -53,7 +53,7 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode, fields }) => {
   return (
     <tr key={index}>
       <td>{index + 1}</td>
-      {mode != "CREATEALL" ? (
+      {mode != "CREATEALL" && mode != "CREATERE" ? (
         <>
           <td>{rowState?.isDeduction ? t("MB_YES") : t("MB_NO")}</td>
           <td>{rowState?.description}</td>
@@ -91,7 +91,7 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode, fields }) => {
       <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"width"} id={index + 1} value={rowState?.["width"]} InputDecimalValidation={InputDecimalValidation} />
       <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"height"} id={index + 1} value={rowState?.["height"]} InputDecimalValidation={InputDecimalValidation} />
       <td>{rowState?.noOfunit}</td>
-      {mode == "CREATEALL" && (
+      {(mode == "CREATEALL" || mode == "CREATERE") && fields?.length > 1 && (
         <td>
           <span
             className="icon-wrapper"

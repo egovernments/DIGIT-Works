@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-export const statusBasedNavigation = ( status, contractOrProjectNumber, measurementOrEstimateNumber, tenantId, value, mode = "MEASUREMENT" ) => {
+export const statusBasedNavigation = ( status, contractOrProjectNumber, measurementOrEstimateNumber, tenantId, value, mode = "MEASUREMENT", businessId ) => {
     const { t } = useTranslation();
     
     let linkTo = `/${window?.contextPath}/employee/measurement/update?tenantId=${tenantId}&workOrderNumber=${contractOrProjectNumber}&mbNumber=${measurementOrEstimateNumber}`;
@@ -10,6 +10,15 @@ export const statusBasedNavigation = ( status, contractOrProjectNumber, measurem
         if (status !== "DRAFTED") {
             linkTo = `/${window?.contextPath}/employee/measurement/view?tenantId=${tenantId}&workOrderNumber=${contractOrProjectNumber}&mbNumber=${measurementOrEstimateNumber}`;
         }
+        
+    if(mode === "REVISION-ESTIMATE")
+    {
+        linkTo = `/${window?.contextPath}/employee/estimate/update-revision-detailed-estimate?tenantId=${tenantId}&revisionNumber=${measurementOrEstimateNumber}&projectNumber=${contractOrProjectNumber}&isEditRevisionEstimate=${true}`;
+
+        if (status !== "DRAFT") {
+            linkTo = `/${window?.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&revisionNumber=${measurementOrEstimateNumber}&estimateNumber=${businessId}&projectNumber=${contractOrProjectNumber}`;
+        }
+    }
 
     if(mode === "ESTIMATE")
     {

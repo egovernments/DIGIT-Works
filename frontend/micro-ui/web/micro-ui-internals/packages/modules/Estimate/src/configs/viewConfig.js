@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { transformEstimateObjects } from "../../util/estimateConversion";
 
-export const data = (projectDetails, estimateDetails, overheadDetails) => {
+export const data = (projectDetails, estimateDetails, overheadDetails, revisionNumber) => {
   const [viewData, setViewData] = useState({ SOR: [], NONSOR: [] });
 
   const documents = estimateDetails?.additionalDetails?.documents
@@ -36,6 +36,9 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
   }, [estimateDetails]);
 
   const getRedirectionCallback = () => {
+    if(revisionNumber)
+    window.location.href = `/${window?.contextPath}/employee/estimate/update-revision-detailed-estimate?tenantId=${estimateDetails?.tenantId}&projectNumber=${estimateDetails?.additionalDetails?.projectNumber}&revisionNumber=${estimateDetails?.revisionNumber}&isEditRevisionEstimate=true`
+    else
     window.location.href = `/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${estimateDetails?.tenantId}&projectNumber=${estimateDetails?.additionalDetails?.projectNumber}&estimateNumber=${estimateDetails?.estimateNumber}&isEdit=true`
 }
 
@@ -48,8 +51,12 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
             values: [
               {
                 key: "WORKS_ESTIMATE_TYPE",
-                value: "ORIGINAL_ESTIMATE",
+                value: revisionNumber ? "REVISED_ESTIMATE" : "ORIGINAL_ESTIMATE",
               },
+              {...estimateDetails?.revisionNumber && {
+                key: "ESTIMATE_REVISED_ESTIMATE_NO",
+                value: estimateDetails?.revisionNumber,
+              }},
               {
                 key: "ESTIMATE_ESTIMATE_NO",
                 value: estimateDetails?.estimateNumber,
@@ -80,7 +87,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
           {
             type: "COMPONENT",
             cardHeader: { value: "MB_SORS", inlineStyles: {} },
-            component: "MeasureTable",
+            component: "EstimateMeasureTableWrapper",
             props: {
               config: {
                 key: "SOR",
@@ -101,7 +108,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
           {
             type: "COMPONENT",
             cardHeader: { value: "MB_NONSOR", inlineStyles: {} },
-            component: "MeasureTable",
+            component: "EstimateMeasureTableWrapper",
             props: {
               config: {
                 key: "NONSOR",
@@ -168,7 +175,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
           {
             type: "WFHISTORY",
             businessService: "ESTIMATE",
-            applicationNo: estimateDetails?.estimateNumber,
+            applicationNo: revisionNumber ? revisionNumber : estimateDetails?.estimateNumber,
             tenantId: estimateDetails?.tenantId,
             timelineStatusPrefix: "WF_ESTIMATE_",
             config : {
@@ -181,7 +188,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
             type: "WFACTIONS",
             forcedActionPrefix: "WF_ESTIMATE_ACTION",
             businessService: "ESTIMATE",
-            applicationNo: estimateDetails?.estimateNumber,
+            applicationNo: revisionNumber ? revisionNumber : estimateDetails?.estimateNumber,
             tenantId: estimateDetails?.tenantId,
             applicationDetails: estimateDetails,
             url: "/estimate/v1/_update",
