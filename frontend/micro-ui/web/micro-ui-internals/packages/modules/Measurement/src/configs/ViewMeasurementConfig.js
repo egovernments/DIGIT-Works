@@ -40,7 +40,7 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
               },
               {
                 key: "MB_MUSTER_ROLL_ID",
-                value: musterRollNumber || "NA",
+                value: measurement?.additionalDetails?.musterRollNumber || "NA",
               },
               {
                 key: "MB_PROJECT_DATE",
@@ -60,7 +60,7 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
               },
               {
                 key: "MB_MEASUREMENT_PERIOD",
-                value: `${Digit.DateUtils.ConvertEpochToDate(period?.startDate)} - ${Digit.DateUtils.ConvertEpochToDate(period?.endDate)}` || "NA",
+                value: `${Digit.DateUtils.ConvertEpochToDate(measurement?.additionalDetails?.startDate)} - ${Digit.DateUtils.ConvertEpochToDate(measurement?.additionalDetails?.endDate)}` || "NA",
               },
             ],
           },
