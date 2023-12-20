@@ -130,7 +130,6 @@ const fetchEstimateDetailsEdit = (isEdit, data, estimate, isCreateRevisionEstima
 
   const Sors = (data?.SORtable && transformLineItems(data?.SORtable,"SOR", isEdit, isCreateRevisionEstimate, isEditRevisionEstimate)) || [];
   const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable,"NON-SOR", isEdit, isCreateRevisionEstimate, isEditRevisionEstimate)) || [];
-  console.log(Sors,NonSors);
   const detailedEstimates = [...Sors?.filter((ob) => ob?.sorCode || ob?.sorId.toString()?.includes("SOR")), ...NonSors];
 
   let overHeadsData = data?.overheadDetails

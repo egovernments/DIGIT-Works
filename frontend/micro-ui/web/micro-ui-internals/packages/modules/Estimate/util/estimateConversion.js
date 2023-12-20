@@ -9,7 +9,7 @@ output is array of object of type which is passed
 
 */
 
-const fetchData = async (RatesData, sorid) => {
+const fetchData = (RatesData, sorid) => {
     let currentDateInMillis = new Date().getTime(); 
         const Rates = RatesData?.MdmsRes?.["WORKS-SOR"]?.Rates?.filter((rate) => {
           // Convert validFrom and validTo to milliseconds
@@ -68,7 +68,7 @@ export const transformEstimateObjects = (estimateData, type, RatesData) => {
             length: convertNumberFields(e?.length),
             number: convertNumberFields(e?.quantity),
             noOfunit:convertNumberFields(e?.noOfunit),
-            rowAmount: convertNumberFields(e?.amountDetail[0]?.amount),
+            rowAmount: (isEstimateCreateorUpdate && type === "SOR") ? fetchUnitRate( RatesData, convertedObject[key]?.[0]?.sorId,convertedObject[key]?.[0]?.unitRate) * convertNumberFields(e?.noOfunit) : convertNumberFields(e?.amountDetail[0]?.amount),
             consumedRowQuantity: 0
         }));
         return {

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { transformEstimateData } from "../utils/transformEstimateData";
 
-export const data = (contract, estimateDetails, measurement, allMeasurements, thumbnails, projectLocation, period) => {
+export const data = (contract, estimateDetails, measurement, allMeasurements, thumbnails, projectLocation, period, musterRollNumber) => {
   const [viewData, setViewData] = useState({ SOR: [], NONSOR: [] });
-  console.log(thumbnails,"thumb")
   
   useEffect(() => {
     const processArrays = () => {
@@ -41,7 +40,7 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
               },
               {
                 key: "MB_MUSTER_ROLL_ID",
-                value: "NA",
+                value: musterRollNumber || "NA",
               },
               {
                 key: "MB_PROJECT_DATE",
