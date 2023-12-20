@@ -46,7 +46,7 @@ const config = {
     contract:  process.env.EGOV_CONTRACT_HOST || HOST || "http://localhost:8072/",
     estimate:  process.env.EGOV_ESTIMATE_HOST || HOST || "http://localhost:8073/",
     measurement: process.env.EGOV_MEASUREMENT_HOST || HOST || "http://localhost:8074/",
-    expense: process.env.EGOV_EXPENSE_HOST || HOST || "http://localhost:8075/",
+    expense_calculator: process.env.EGOV_EXPENSE_CALCULATOR_HOST || HOST || "http://localhost:8075/",
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",

@@ -209,7 +209,7 @@ const search_measurement = async (requestinfo: any, cachekey: any, allResponse: 
 const calculate_expense = async (params: any, requestinfo: any, cachekey: any) => {
   // Send an HTTP request to the muster search endpoint using the provided parameters and request information.
   const expenseResponse = await httpRequest(
-    url.resolve(config.host.expense, config.paths.expense_caluclator),
+    url.resolve(config.host.expense_calculator, config.paths.expense_caluclator),
     requestinfo,
     params
   );
