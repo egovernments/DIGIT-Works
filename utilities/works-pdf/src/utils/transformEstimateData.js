@@ -22,6 +22,7 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
     idEstimateDetailsMap[sorId] = updatedArray;
     
   }
+
   const sorIdMeasuresMap = {};
   // iterate over idEstimateDetailsMap and from idEstimateDetailsMap[sorId] we will get array of estimateDetails and then get id of each estimateDetails and then match that id with estimateLineItemId of lineItems and get contractLineItemId and then match that contractLineItemId with targetId of measurement and get measures
   for (let i = 0; i < Object.keys(idEstimateDetailsMap).length; i++) {
@@ -43,11 +44,11 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
         estimateDetailsArray[0].estimatedQuantity += estimateDetailsArray[j].quantity;
       }
 
-      // if isDeduction is true then subtract noOfunit from consumedQuantity and if isDeduction is false then add noOfunit to consumedQuantity
+      // if isDeduction is true then subtract noOfunit from currentQuantity and if isDeduction is false then add noOfunit to currentQuantity
       if (estimateDetailsArray[j].isDeduction) {
-        estimateDetailsArray[0].consumedQuantity -= estimateDetailsArray[j].noOfunit;
+        estimateDetailsArray[0].currentQuantity -= estimateDetailsArray[j].noOfunit;
       } else {
-        estimateDetailsArray[0].consumedQuantity += estimateDetailsArray[j].noOfunit;
+        estimateDetailsArray[0].currentQuantity += estimateDetailsArray[j].noOfunit;
       }
     }
 
@@ -58,6 +59,7 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
     }
     
     const {
+      id,
       name: description,
       uom,
       unitRate,
@@ -66,10 +68,10 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
       currentQuantity,
       mbAmount,
       quantity,
-      // amountDetail: [{ amount: mbAmount }],
     } = estimateDetailsArray[0];
   
     var sorIdMeasuresMapKey = {
+      id,
       sorId,
       description,
       uom,
@@ -82,6 +84,27 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
     };
     sorIdMeasuresMap[sorId] = { ...sorIdMeasuresMapKey };
   }
+
+  // iterate over sorIdMeasuresMap
+  for (const sorId of Object.keys(sorIdMeasuresMap)) {
+    const id = sorIdMeasuresMap[sorId].id;
+
+    // Find the line item with matching estimateLineItemId
+    const matchingLineItem = lineItems.find(item => item.estimateLineItemId === id);
+
+    if (matchingLineItem) {
+        const contractLineItemId = matchingLineItem.contractLineItemRef;
+
+        // Find the measure with matching targetId
+        const matchingMeasure = measurement.measures.find(measure => measure.targetId === contractLineItemId);
+
+        if (matchingMeasure) {
+            // Update consumedQuantity in sorIdMeasuresMap
+            sorIdMeasuresMap[sorId].consumedQuantity = matchingMeasure.cumulativeValue;
+        }
+    }
+}
+
   return sorIdMeasuresMap;
 };
 
