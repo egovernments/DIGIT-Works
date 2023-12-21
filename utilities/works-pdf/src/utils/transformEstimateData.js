@@ -44,7 +44,7 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
         estimateDetailsArray[0].estimatedQuantity += estimateDetailsArray[j].quantity;
       }
 
-      // if isDeduction is true then subtract noOfunit from consumedQuantity and if isDeduction is false then add noOfunit to consumedQuantity
+      // if isDeduction is true then subtract noOfunit from currentQuantity and if isDeduction is false then add noOfunit to currentQuantity
       if (estimateDetailsArray[j].isDeduction) {
         estimateDetailsArray[0].currentQuantity -= estimateDetailsArray[j].noOfunit;
       } else {
@@ -68,7 +68,6 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
       currentQuantity,
       mbAmount,
       quantity,
-      // amountDetail: [{ amount: mbAmount }],
     } = estimateDetailsArray[0];
   
     var sorIdMeasuresMapKey = {
