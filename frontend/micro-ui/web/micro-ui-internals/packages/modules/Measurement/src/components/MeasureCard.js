@@ -175,7 +175,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                       label={t("MB_DONE")}
                       onButtonClick={() => {
                         // check for deduction and set accordingly
-                        const totalQuantity = tableData[tableIndex].measures.reduce((total, item) => item?.isDeduction == true ? total - parseFloat(item.noOfunit) :  total + parseFloat(item.noOfunit), 0);
+                        const totalQuantity = state?.reduce((total, item) => item?.isDeduction == true ? total - parseFloat(item.noOfunit) :  total + parseFloat(item.noOfunit), 0);
                         if(mode === "CREATE" && (totalQuantity < 0 || totalQuantity > tableData[tableIndex]?.approvedQuantity - tableData[tableIndex]?.consumedQ))
                         setError(true);
                         else

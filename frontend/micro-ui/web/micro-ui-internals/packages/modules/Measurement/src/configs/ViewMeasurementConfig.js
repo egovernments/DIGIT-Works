@@ -119,6 +119,22 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
         ],
       },
       {
+        sections: [
+          {
+            type: "COMPONENT",
+            cardHeader: { value: "", inlineStyles: {} },
+            component: "ViewAnalysisStatement",
+            props: {formData : {...estimateDetails, SORtable:  estimateDetails ? transformEstimateData(estimateDetails?.estimateDetails, contract, "SOR", measurement, allMeasurements) : []}}
+          },
+          {
+            type: "COMPONENT",
+            cardHeader: { value: "", inlineStyles: {} },
+            component: "ViewTotalEstAmount",
+            props: {mode: "VIEWES", detail : {...estimateDetails, value:estimateDetails?.additionalDetails?.totalEstimatedAmount} }
+          }
+        ],
+      },
+      {
         sections : [
             {
                 type: "IMAGE",

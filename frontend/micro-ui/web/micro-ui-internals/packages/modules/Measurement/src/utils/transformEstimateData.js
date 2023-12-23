@@ -108,9 +108,10 @@ export const getDefaultValues = (data, t) => {
   const musterRoll = typeof musterRollNumber == "string" ? musterRollNumber : "NA";
 
   const uploadedDocs = {}
-  allMeasurements?.[0]?.documents.forEach(doc=>{
+  allMeasurements?.[0]?.documents.forEach((doc,index)=>{
         if(doc?.fileStore){
-            uploadedDocs[doc?.additionalDetails?.fileType==="Others" ? "ESTIMATE_DOC_OTHERS" :doc?.additionalDetails?.fileType] = [
+            uploadedDocs[`${doc?.additionalDetails?.fileType}`] = [
+              ...(uploadedDocs[`${doc?.additionalDetails?.fileType}`] ? uploadedDocs[`${doc?.additionalDetails?.fileType}`] : []),
                 [
                     doc?.additionalDetails?.fileName,
                     {
