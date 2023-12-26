@@ -140,4 +140,15 @@ public class EnrichmentService {
             }
         }
     }
+
+    public void enrichDocumentsForUpdate(MeasurementRequest measurementRequest){
+        for(Measurement measurement:measurementRequest.getMeasurements()){
+            if(measurement.getDocuments()!=null){
+                for(Document document:measurement.getDocuments()){
+                    if (document.getId() == null)
+                        document.setId(UUID.randomUUID().toString());
+                }
+            }
+        }
+    }
 }

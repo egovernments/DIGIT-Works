@@ -73,6 +73,9 @@ public class MeasurementRegistry {
         // Validate existing data and set audit details
         measurementValidator.validateExistingDataAndEnrich(measurementRegistrationRequest);
 
+        // Enrich documents
+        enrichmentService.enrichDocumentsForUpdate(measurementRegistrationRequest);
+
         //Updating Cumulative Value
         enrichmentService.handleCumulativeUpdate(measurementRegistrationRequest);
 
