@@ -139,13 +139,18 @@
                 uiConfig: {
                     links: [
                         {
-                            text: "WORKS_CREATE_ESTIMATE",
+                            text: "WORKS_CREATE_ESTIMAT",
                             url: `/employee/project/search-project`,
                             roles: [],
                         },
                         {
                             text: "ACTION_TEST_SEARCH_ESTIMATE",
                             url: `/employee/estimate/search-estimate`,
+                            roles: [],
+                        },
+                        {
+                            text: "WORKS_CREATE_REVISED_ESTIMATE",
+                            url: `/employee/estimate/search-estimate?status=APPROVED`,
                             roles: [],
                         },
                     ],

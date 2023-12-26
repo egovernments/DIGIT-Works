@@ -173,6 +173,12 @@ const WorksCard = () => {
       count: isLoadingContract ? "-" : dataContract?.totalCount,
     },
     {
+      label: t("ACTION_TEST_5MEASUREMENT"),
+      link: `/${window?.contextPath}/employee/measurement/inbox`,
+      roles: ROLES.MEASUREMENT,
+      count: isLoadingMeasurement? "-" : dataMeasurement?.totalCount,
+    },
+    {
       label: t("ACTION_TEST_4ATTENDENCEMGMT"),
       link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
       roles: ROLES.MUSTERROLLS,
@@ -208,12 +214,6 @@ const WorksCard = () => {
       label: t("EXP_PAYMENT_INS"),
       link: `/${window?.contextPath}/employee/expenditure/search-payment-instruction`,
       roles: ROLES.PAYMENT,
-    },
-    {
-      label: t("ACTION_TEST_5MEASUREMENT"),
-      link: `/${window?.contextPath}/employee/measurement/inbox`,
-      roles: ROLES.MEASUREMENT,
-      count: isLoadingMeasurement? "-" : dataMeasurement?.totalCount,
     }
   ];
 

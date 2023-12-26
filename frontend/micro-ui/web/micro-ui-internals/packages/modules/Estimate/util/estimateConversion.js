@@ -73,7 +73,7 @@ export const transformEstimateObjects = (estimateData, type, RatesData) => {
         }));
         return {
             amount: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0),
-            originalAmount : measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0),
+            originalAmount : convertedObject[key]?.[0]?.amountDetail?.[0]?.amount,
             consumedQ : measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0),
             sNo: index + 1,
             currentMBEntry:measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0),

@@ -40,7 +40,7 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
               },
               {
                 key: "MB_MUSTER_ROLL_ID",
-                value: measurement?.additionalDetails?.musterRollNumber || "NA",
+                value: measurement?.additionalDetails?.musterRollNumber && Object.keys(measurement?.additionalDetails?.musterRollNumber)?.length ? measurement?.additionalDetails?.musterRollNumber : "NA",
               },
               {
                 key: "MB_PROJECT_DATE",
@@ -115,6 +115,22 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
               register: () => {},
               setValue: (key, value) => setViewData((old) => ({ ...old, NONSOR: value })),
             },
+          }
+        ],
+      },
+      {
+        sections: [
+          {
+            type: "COMPONENT",
+            cardHeader: { value: "", inlineStyles: {} },
+            component: "ViewAnalysisStatement",
+            props: {formData : {...estimateDetails, SORtable:  estimateDetails ? transformEstimateData(estimateDetails?.estimateDetails, contract, "SOR", measurement, allMeasurements) : []}}
+          },
+          {
+            type: "COMPONENT",
+            cardHeader: { value: "", inlineStyles: {} },
+            component: "ViewTotalEstAmount",
+            props: {mode: "VIEWES", detail : {...estimateDetails, value:estimateDetails?.additionalDetails?.totalEstimatedAmount} }
           }
         ],
       },
