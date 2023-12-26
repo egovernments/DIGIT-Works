@@ -194,7 +194,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                 )}
               </div>
             </td>
-            <td colSpan={"4"}>
+            <td colSpan={"4"} style={{textAlign:"end"}}>
               {t("MB_SUBTOTAL")}: {parseFloat(total)?.toFixed(4)}
             </td>
           </tr>

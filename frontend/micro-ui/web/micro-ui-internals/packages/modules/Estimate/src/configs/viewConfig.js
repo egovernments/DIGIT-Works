@@ -178,6 +178,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails, revisionN
             applicationNo: revisionNumber ? revisionNumber : estimateDetails?.estimateNumber,
             tenantId: estimateDetails?.tenantId,
             timelineStatusPrefix: "WF_ESTIMATE_",
+            breakLineRequired: false,
             config : {
               select: (data) => {
                 return {...data, timeline: data?.timeline.filter((ob) => ob?.performedAction !== "DRAFT")}

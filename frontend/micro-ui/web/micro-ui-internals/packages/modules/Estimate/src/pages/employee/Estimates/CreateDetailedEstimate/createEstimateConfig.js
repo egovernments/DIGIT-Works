@@ -116,14 +116,7 @@ export const createEstimateConfig = () => {
                         "component": "TotalEstAmount",
                         "withoutLabel": true,
                         "key": "totalEstimatedAmount"
-                    }
-                ]
-            },
-            {
-                "head": "",
-                "subHead": "",
-                "navLink": "Work Details",
-                "body": [
+                    },
                     {
                         "type": "component",
                         "component": "ViewAnalysisStatement",
@@ -132,6 +125,19 @@ export const createEstimateConfig = () => {
                     }
                 ]
             },
+            // {
+            //     "head": "",
+            //     "subHead": "",
+            //     "navLink": "Work Details",
+            //     "body": [
+            //         {
+            //             "type": "component",
+            //             "component": "ViewAnalysisStatement",
+            //             "withoutLabel": true,
+            //             "key": "labourMaterialAnalysis"
+            //         }
+            //     ]
+            // },
             {
                 "navLink": "Work Details",
                 "head": "",

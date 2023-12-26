@@ -106,7 +106,7 @@ export const RenderDocumentsSection = ({ section }) => {
 };
 
 export const RenderWfHistorySection = ({ section }) => {
-  const { businessService, applicationNo, tenantId, timelineStatusPrefix = undefined, statusAttribute = undefined, config={} } = section;
+  const { businessService, applicationNo, tenantId, timelineStatusPrefix = undefined, statusAttribute = undefined, config={}, breakLineRequired } = section;
   return (
     <WorkflowTimeline
       businessService={businessService}
@@ -115,6 +115,7 @@ export const RenderWfHistorySection = ({ section }) => {
       timelineStatusPrefix={timelineStatusPrefix}
       statusAttribute={statusAttribute}
       config = {config}
+      breakLineRequired={breakLineRequired}
     />
   );
 };

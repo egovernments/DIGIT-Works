@@ -67,7 +67,7 @@ const ViewDetailedEstimate = () => {
     if (
       detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" &&
       isUserContractCreator &&
-      !actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT") && (isCreateContractallowed == true && allContract !== undefined || allContract?.length == 0)
+      !actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT") && (isCreateContractallowed == true && (allContract !== undefined || allContract?.length == 0))
     ) {
       setActionsMenu((prevState) => [
         ...prevState,
@@ -122,6 +122,7 @@ const ViewDetailedEstimate = () => {
   const HandleDownloadPdf = () => {
     if(revisionNumber)
       Digit.Utils.downloadEgovPDF("deviationStatement/deviation-statement", { estimateNumber, tenantId }, `RevisedEstimate-${estimateNumber}.pdf`);
+    else
     Digit.Utils.downloadEgovPDF("detailedEstimate/detailed-estimate", { estimateNumber, tenantId }, `Estimate-${estimateNumber}.pdf`);
   };
 
