@@ -1,5 +1,3 @@
-
-
 @import "tailwindcss/base";
 
 @import "tailwindcss/components";
@@ -16,6 +14,7 @@
 @import "./components/button.scss";
 @import "./components/attendencetable.scss";
 @import "./components/dssTest.scss";
+@import "./components/searchSor.scss";
 
 @import "./pages/employee/index.scss";
 @import "./components/uploadcomponents.scss";
@@ -24,6 +23,9 @@
 @import "./pages/works/inboxSearch.scss";
 @import "./pages/works/horizontalNav.scss";
 @import "./pages//works/searchComponentTable.scss";
+@import "./components/measurement.scss";
+@import "./components/estimate.scss";
+
 
 
 
@@ -42,6 +44,7 @@
 .display-flex-gap-2 {
   @apply flex gap-3;
 }
+
 .rm-mb {
   margin-bottom: unset !important;
 }
@@ -150,6 +153,7 @@
     position: unset;
   }
 }
+
 .application-table-container {
   @apply mt-lg ml-lg flex-1;
 }
@@ -170,7 +174,7 @@
 }
 
 .resend-otp {
-  cursor: pointer; 
+  cursor: pointer;
 }
 
 .primaryColor {
@@ -208,14 +212,17 @@
 .react-time-picker {
   width: 194px;
   height: 2.5rem;
+
   &__wrapper {
     border: 2px solid #0b0c0c;
     padding-left: 16px;
   }
+
   &__inputGroup__input {
     @apply px-sm;
     line-height: 2.5rem;
     min-width: 16px;
+
     &:focus {
       outline: 2px solid black;
     }
@@ -232,6 +239,7 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 input[type="number"] {
   -moz-appearance: textfield;
 }
@@ -244,8 +252,10 @@ input[type="number"] {
     flex: 1;
     max-height: 75vh;
     overflow: scroll;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 
     &::-webkit-scrollbar {
       display: none;
@@ -348,6 +358,7 @@ input[type="number"] {
     text-indent: 5px;
     padding: 6px 0px;
   }
+
   button {
     @apply outline-none;
     border: 0px;
@@ -358,6 +369,7 @@ input[type="number"] {
 
 .text-input {
   @apply relative w-full;
+
   input {
     &:hover {
       @apply border-2 border-solid border-primary-main;
@@ -445,16 +457,19 @@ input[type="number"] {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+
   .error-container {
     display: flex;
     width: 400px;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+
     h1 {
       font-size: 32px;
       font-weight: bold;
     }
+
     button {
       height: 40px;
       width: 153px;
@@ -480,10 +495,12 @@ input[type="number"] {
 .full-width-card {
   width: 92vw !important;
 }
+
 .full-employee-card-link {
   width: 100% !important;
   margin: 7px 0px;
 }
+
 .full-employee-card-height {
   height: unset !important;
 }
@@ -492,15 +509,18 @@ input[type="number"] {
   .full-employee-card-height {
     height: 196px !important;
   }
+
   .full-employee-card-link {
     width: 30% !important;
   }
+
   .full-width-card {
     @apply w-full !important;
   }
 }
-.applications-list-container {
-}
+
+.applications-list-container {}
+
 .complaint-summary {
   @media (min-width: 780px) {
     flex: 1 0 auto;
@@ -519,6 +539,7 @@ input[type="number"] {
     padding-right: 16px;
   }
 }
+
 @media (min-width: 780px) {
   .citizen-card-container {
     padding-left: 15px;
@@ -528,6 +549,7 @@ input[type="number"] {
 }
 
 @media (min-width: 780px) {
+
   .citizen-obps-wrapper,
   .selection-card-wrapper,
   .fsm-citizen-wrapper,
@@ -547,12 +569,15 @@ input[type="number"] {
     margin-top: 1rem;
   }
 }
+
 @media only screen and (max-width: 768px) {
+
   /* For mobile phones: */
   .error-boundary {
     height: 75vh;
   }
 }
+
 .employee-app-wrapper {
   min-height: calc(100vh - 8em);
 }
@@ -563,9 +588,11 @@ input[type="number"] {
     flex-direction: row-reverse !important;
     width: 100% !important;
     align-items: center;
+
     button {
       width: 240px !important;
     }
+
     p {
       width: unset;
       margin-right: 1rem;
@@ -590,6 +617,7 @@ input[type="number"] {
     padding-bottom: 8px;
     margin-bottom: 8px;
   }
+
   .row {
     color: #b1b4b6;
     font-weight: 700;
@@ -608,11 +636,13 @@ input[type="number"] {
 .connection-details-old-value-wrapper,
 .plumber-details-old-value-wrapper {
   flex: 1 1 auto;
+
   .old-value-null-wrapper {
     visibility: hidden;
     padding-bottom: 8px;
     margin-bottom: 8px;
   }
+
   .row {
     color: #b1b4b6;
     font-weight: 700;
@@ -624,6 +654,7 @@ input[type="number"] {
   padding: 1rem;
   font-weight: 400;
 }
+
 .modal-body-ws {
   padding: 1rem;
   font-weight: 700;
@@ -631,9 +662,11 @@ input[type="number"] {
   font-size: 24px;
   margin-bottom: 1rem;
 }
+
 .privacy-icon {
   cursor: pointer;
 }
+
 .privacy-icon:hover {
   path {
     fill: rgba(244, 119, 56, 1);
@@ -643,6 +676,7 @@ input[type="number"] {
 .attendance-view-table {
   thead {
     background-color: #dbd3d3;
+
     th {
       font-size: 12px;
       padding: 8px 8px;
@@ -667,18 +701,23 @@ input[type="number"] {
   grid-template-columns: 1fr 1fr;
   padding-top: 8px;
   margin-top: 8px;
+
   .attendence-date-picker {
     width: 80%;
   }
+
   h2 {
     font-weight: bolder;
   }
+
   .disabled {
     border-color: #9E9E9E;
     pointer-events: none !important;
+
     input {
       color: #9E9E9E !important;
     }
+
     svg {
       fill: #9E9E9E;
     }
@@ -688,6 +727,7 @@ input[type="number"] {
 @screen sm {
   .date-range-pair {
     display: flex;
+
     .attendence-date-picker {
       width: 100%;
     }
@@ -713,7 +753,7 @@ input[type="number"] {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  padding: 12px ;
+  padding: 12px;
   position: relative;
   font-weight: bolder;
   border: 1px solid #828282;
@@ -724,16 +764,16 @@ input[type="number"] {
   position: absolute;
   right: 10px;
   top: 50%;
-  transform: translate(0%,-50%);
+  transform: translate(0%, -50%);
   cursor: pointer;
 }
 
-.expand-collapse-header .label{
+.expand-collapse-header .label {
   display: block;
   text-align: left;
 }
 
-.expand-collapse-header .value{
+.expand-collapse-header .value {
   display: block;
   text-align: right;
   margin-right: 2rem;
@@ -757,8 +797,9 @@ input[type="number"] {
   &:empty {
     padding: 0px !important;
   }
-  .card-label.bolder{
-     @apply font-medium !important;
+
+  .card-label.bolder {
+    @apply font-medium !important;
   }
 }
 
@@ -772,6 +813,7 @@ input[type="number"] {
     .card-section-header {
       @apply mb-md;
     }
+
     &:empty {
       padding: 0px !important;
     }
@@ -796,10 +838,12 @@ input[type="number"] {
   color: #F47738;
   display: flex;
   align-items: center;
+
   svg {
     margin: 0 15px;
   }
 }
+
 .bills-menu-options {
   cursor: pointer;
   margin: 1rem;
@@ -808,11 +852,12 @@ input[type="number"] {
 
 .no-data-found {
   height: 100%;
-  width : 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   .error-msg {
     margin-top: 2rem;
   }
@@ -825,27 +870,32 @@ input[type="number"] {
 
 .info-banner-wrap {
   margin: 0;
+
   &.project-banner {
     background: #FFE2B5;
-    p{
+
+    p {
       font-size: 16px;
       color: #CC7B2F;
-    } 
-    h2{
+    }
+
+    h2 {
       font-size: 18px;
       color: #CC7B2F;
     }
   }
 
   &.doc-banner {
-    max-width: 1286px;
+    max-width: 1350px;
     margin-bottom: 24px;
-    p{
+
+    p {
       font-size: 16px;
       font-weight: 400;
       color: #505A5F;
-    } 
-    h2{
+    }
+
+    h2 {
       font-size: 18px;
       color: #0B0C0C;
     }
@@ -855,18 +905,23 @@ input[type="number"] {
 .sub-project-table-wrapper {
   overflow-x: scroll;
   padding-bottom: 9rem;
+
   &.no-padding {
     padding: 0;
   }
+
   .project-details-table {
     position: relative;
+
     .sub-projects-details-field-mt {
       margin-top: 1.5rem;
-    }    
+    }
+
     .projects-subProject-details-error {
-      width : 100%;
-      position : absolute;
+      width: 100%;
+      position: absolute;
       margin-top: 3px;
+
       &.dropdown-field {
         margin-top: -21px;
       }
@@ -897,7 +952,7 @@ input[type="number"] {
 .text-input-customIcon {
   position: absolute;
   top: 10px;
-  right : 8px;
+  right: 8px;
 }
 
 .emp-error-wrap {
@@ -917,9 +972,9 @@ input[type="number"] {
   display: flex;
   justify-content: space-between;
 
-    .skill-details {
-      width: 50%;
-    }
+  .skill-details {
+    width: 50%;
+  }
 }
 
 @screen sm {
@@ -942,11 +997,11 @@ input[type="number"] {
 }
 
 .fc-paragraph {
-    text-align: justify;
-    padding-left: 9px;
-    margin-bottom: 4%;
-    display: block;
-    padding-top: 5px;
+  text-align: justify;
+  padding-left: 9px;
+  margin-bottom: 4%;
+  display: block;
+  padding-top: 5px;
 }
 
 .disabled-text-field {
@@ -978,31 +1033,32 @@ input[type="number"] {
   display: block;
   max-height: 7.2em;
   line-height: 1.8em;
-  width: max-content; 
+  width: max-content;
   max-width: 64ch;
 }
-.table{
+
+.table {
   tr:nth-child(1) {
-    td:nth-child(2){
+    td:nth-child(2) {
       .tooltip {
-          .tooltiptext {
-              top: 100% !important;
-              bottom: 0% !important;
-              height: max-content;
-          }
+        .tooltiptext {
+          top: 100% !important;
+          bottom: 0% !important;
+          height: max-content;
+        }
       }
     }
   }
-    
+
 }
 
-.employee-data-table  {
-.row {
-  .value {
-    white-space: break-spaces !important;
-    word-break: break-all;
+.employee-data-table {
+  .row {
+    .value {
+      white-space: break-spaces !important;
+      word-break: break-all;
+    }
   }
-}
 }
 
 .text-wrap-overflow {
@@ -1013,32 +1069,39 @@ input[type="number"] {
 .submenu-container:first-child {
   .sidebar-link {
 
-    padding: 18px!important;
-    padding-top: 20px!important;
+    padding: 18px !important;
+    padding-top: 20px !important;
+
     svg {
-      width: 21px!important;
-      height: 21px!important;
+      width: 21px !important;
+      height: 21px !important;
     }
-}
+  }
 
 
-  .employee-search-input{
-      margin-left:16px !important;
+  .employee-search-input {
+    margin-left: 16px !important;
   }
 }
-.h1 {&.works-header-search{
-font-size: 36px;
+
+.h1 {
+  &.works-header-search {
+    font-size: 36px;
+  }
+
+  &.works-header-create {
+    font-size: 36px;
+  }
+
+  &.works-header-view {
+    font-size: 36px;
+  }
 }
-&.works-header-create{
-  font-size: 36px;
-}
-&.works-header-view{
-  font-size: 36px;
-}
-}
-.submit-bar header{
+
+.submit-bar header {
   font-family: Roboto;
 }
+
 input[type=“date”]::-webkit-calendar-picker-indicator {
   width: 24px;
   height: 24px;
@@ -1054,6 +1117,7 @@ input[type=“date”]::-webkit-calendar-picker-indicator {
 .cursor-pointer {
   cursor: pointer;
 }
+
 .table-instruction-wrapper {
   display: flex;
   column-gap: 10px;

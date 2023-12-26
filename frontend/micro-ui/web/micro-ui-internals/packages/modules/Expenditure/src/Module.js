@@ -19,6 +19,7 @@ import ViewPurchaseBill from "./components/ViewBill/ViewPurchaseBill";
 import TotalBillAmountView from "./pageComponents/ViewTotalBillAmount";
 import ViewPaymentInstruction from "./pages/employee/Payments/viewPaymentInstruction";
 import ViewPayment from "./pages/employee/Payments/ViewPayment";
+import MBDetailes from "./components/CreateBill/MBDetailes";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     
@@ -61,7 +62,8 @@ const componentsToRegister = {
     TotalBillAmountView,
     //new
     ViewPaymentInstruction,
-    ViewPayment
+    ViewPayment,
+    MBDetailes
 };
 
 export const initExpenditureComponents = () => {

@@ -3,7 +3,7 @@ import { Switch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, AppContainer, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import WorkflowCompTest from "./WorkflowCompTest";
-
+import SampleComp from "./SampleComp";
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const search = useLocation().search;
@@ -81,6 +81,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/inbox`} component={() => <ProjectSearchAndInboxComponent parentRoute={path}/>} />
         <PrivateRoute path={`${path}/create-project-response`} component={() => <CreateProjectResponseComponent parentRoute={path}/>} />
         <PrivateRoute path={`${path}/workflow`} component={() => <WorkflowCompTest parentRoute={path} />} />
+        <PrivateRoute path={`${path}/sample`} component={() => <SampleComp parentRoute={path} />} />
       </AppContainer>
     </Switch>
   );

@@ -12,22 +12,24 @@
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/Estimate",
     "micro-ui-internals/packages/modules/Expenditure",
+    "micro-ui-internals/packages/modules/Measurement",
     "micro-ui-internals/packages/Mukta"
   ],
   "homepage": "/works-ui",
   "dependencies": {
-    "@egovernments/digit-ui-customisation-mukta": "0.2.0",
+    "@egovernments/digit-ui-react-components": "1.5.8",
     "@egovernments/digit-ui-libraries": "1.5.0",
-    "@egovernments/digit-ui-module-attendencemgmt": "0.2.5",
-    "@egovernments/digit-ui-module-contracts": "0.2.10",
     "@egovernments/digit-ui-module-core": "1.5.46",
-    "@egovernments/digit-ui-module-dss": "1.5.52",
-    "@egovernments/digit-ui-module-estimate": "0.2.1",
-    "@egovernments/digit-ui-module-expenditure": "0.2.25",
     "@egovernments/digit-ui-module-hrms": "1.5.26",
-    "@egovernments/digit-ui-module-masters": "0.2.24",
-    "@egovernments/digit-ui-module-project": "0.2.9",
-    "@egovernments/digit-ui-react-components": "^1.5.0",
+    "@egovernments/digit-ui-module-dss": "1.5.52",
+    "@egovernments/digit-ui-module-attendencemgmt": "0.3.1",
+    "@egovernments/digit-ui-module-contracts": "0.3.5",
+    "@egovernments/digit-ui-module-measurement":"0.1.0",
+    "@egovernments/digit-ui-module-estimate": "0.3.27",
+    "@egovernments/digit-ui-module-masters": "0.3.1",
+    "@egovernments/digit-ui-module-project": "0.3.4",
+    "@egovernments/digit-ui-module-expenditure": "0.3.2",
+    "@egovernments/digit-ui-customisation-mukta": "0.2.1",
     "babel-loader": "8.1.0",
     "clean-webpack-plugin": "4.0.0",
     "react": "17.0.2",
@@ -37,7 +39,8 @@
     "react-query": "3.6.1",
     "react-router-dom": "5.3.0",
     "web-vitals": "1.1.2",
-    "webpack-cli": "4.10.0"
+    "webpack-cli": "4.10.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "7.21.0",
@@ -50,7 +53,7 @@
     "build:prepare": "./build.sh",
     "clean": "rm -rf node_modules"
   },
-  "eslintConfig": {
+"eslintConfig": {
     "extends": [
       "react-app"
     ]
