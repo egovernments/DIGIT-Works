@@ -12,6 +12,7 @@ import {
   Toast,
   ViewDetailsCard,
   Menu,
+  FormComposerV2,
 } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -182,6 +183,17 @@ const CreateEstimate = ({props}) => {
     }
   );
 
+  const { isLoading : isDocLoading, data : docData } = Digit.Hooks.useCustomMDMS(
+      tenant,
+      "works",
+      [
+          {
+              "name": "DocumentConfig",
+              "filter": `[?(@.module=='Estimate')]`
+          }
+      ]
+  );
+
   let { isLoading: isOverheadsLoading, data: overheads } = Digit.Hooks.useCustomMDMS(
     tenant,
     "works",
@@ -315,7 +327,26 @@ const CreateEstimate = ({props}) => {
       setShowModal(false);
       return false;
     }
-    
+    let documentData = data?.uploadedDocs;
+    let documentValidated = true;
+    //To Validate the documents in estimate
+    docData?.works?.DocumentConfig?.[0]?.documents?.forEach((doc) => {
+      const documentName = doc?.name;
+      const isMandatory = doc?.isMandatory;
+      // Check if the document is mandatory
+      if (isMandatory) {
+        // Check if the corresponding data array is empty
+        if (documentData[documentName].length === 0) {
+          documentValidated = false;
+        }
+      }
+    });
+    if(!documentValidated)
+    {
+      setShowToast({ error: true, label: `${t("ERR_DOCUMENT_IS_MANDATORY")}` });
+      setShowModal(false);
+      return false;
+    }
     
     return true;
   }
@@ -525,7 +556,7 @@ const CreateEstimate = ({props}) => {
     );
   }, [approvers]);
 
-  if (isConfigLoading || isEstimateLoading || isUomLoading || isOverheadsLoading) {
+  if (isConfigLoading || isEstimateLoading || isUomLoading || isOverheadsLoading || isDocLoading) {
     return <Loader />;
   }
   if ((isEdit || isCreateRevisionEstimate || isEditRevisionEstimate) && Object.keys(sessionFormData).length === 0) return <Loader />;
@@ -539,7 +570,7 @@ const CreateEstimate = ({props}) => {
       {isLoading ? <Loader /> : <ViewDetailsCard cardState={cardState} t={t} createScreen={true} />}
       {/* {isLoading? <Loader/>: <ViewDetailsCard cardState={cardState} t={t} />} */}
       {isFormReady ? (
-        <FormComposer
+        <FormComposerV2
           label={isEdit ? "CORE_COMMON_SUBMIT" : "ACTION_TEST_CREATE_ESTIMATE"}
           config={estimateFormConfig?.form.map((config) => {
             return {
@@ -557,8 +588,8 @@ const CreateEstimate = ({props}) => {
           showWrapperContainers={false}
           isDescriptionBold={false}
           noBreakLine={true}
-          showMultipleCardsWithoutNavs={false}
-          showMultipleCardsInNavs={false}
+          //showMultipleCardsWithoutNavs={true}
+          showMultipleCardsInNavs={true}
           horizontalNavConfig={configNavItems}
           showFormInNav={true}
           showNavs={true}

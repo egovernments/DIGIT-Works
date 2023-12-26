@@ -375,7 +375,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
               <div style={cellContainerStyle}>
                 {
                   <span onClick={() => removeRow(row)} className="icon-wrapper">
-                    <DeleteIcon fill={"#B1B4B6"} />
+                    <DeleteIcon fill={"#FF9100"} />
                   </span>
                 }
               </div>

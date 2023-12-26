@@ -249,7 +249,7 @@ const MeasureTable = (props) => {
                     t={t}
                     select={(selectedOption) => handleInputChange("uom", selectedOption?.code, index)}
                     optionCardStyles={{ maxHeight: "15rem" }}
-                    style={{ marginBottom: "0px" }}
+                    style={{ marginBottom: "4px" }}
                   />
                 </td>
                 <td>
@@ -297,6 +297,7 @@ const MeasureTable = (props) => {
               <span className="measurement-table-input">
                 <TextInput
                   style={{ width: "90%", marginTop: "12px" }}
+                  textInputStyle={{marginTop:"7px"}}
                   key={row?.id} // important to include key with field's id
                   // {...register(`${tableKey}.${index}.currentMBEntry`)}
                   value={consumedQty}
@@ -337,7 +338,7 @@ const MeasureTable = (props) => {
             {(mode == "CREATEALL" || mode == "CREATERE") && (
               <td>
                 <span className="icon-wrapper" onClick={() => remove(index)}>
-                  <DeleteIcon fill={"#B1B4B6"} />
+                  <DeleteIcon fill={"#FF9100"} />
                 </span>
               </td>
             )}
@@ -405,12 +406,12 @@ const MeasureTable = (props) => {
         </tbody>
       </table>
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
-        <div style={{ display: "flex", flexDirection: "row", fontSize: "1.2rem" }}>
-          <span style={{ fontWeight: "bold" }}>
-            {t("WORKS_TOTAL")} {props.config.key} {t("WORKS_TOTAL_AMOUNT")} :
+        <div style={{ display: "flex", flexDirection: "row", fontSize: "16px" }}>
+          <span style={{ fontWeight: "bold", marginTop:"6px" }}>
+            {t("WORKS_TOTAL")} {t(props.config.key)} {t("WORKS_TOTAL_AMOUNT")} :
           </span>
-          <span style={{ marginLeft: "3px" }}>
-            <Amount customStyle={{ textAlign: "right" }} value={sum?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
+          <span style={{ marginLeft: "8px" }}>
+            <Amount customStyle={{ textAlign: "right", fontSize:"24px" }} value={sum?.toFixed?.(2) || 0} t={t} roundOff={false} rupeeSymbol={true}></Amount>
           </span>
         </div>
       </div>

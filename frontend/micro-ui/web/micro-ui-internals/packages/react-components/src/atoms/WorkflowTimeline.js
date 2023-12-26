@@ -83,7 +83,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
             {workflowDetails?.isLoading && <Loader />}
             { workflowDetails?.data?.timeline?.length > 0 && (
                 <React.Fragment>
-                    {workflowDetails?.breakLineRequired === undefined ? <BreakLine /> : workflowDetails?.breakLineRequired ? <BreakLine /> : null}
+                    {workflowDetails?.breakLineRequired === undefined && (props?.breakLineRequired || props?.breakLineRequired === undefined) ? <BreakLine /> : workflowDetails?.breakLineRequired ? <BreakLine /> : null}
                     {!workflowDetails?.isLoading && (
                         <Fragment>
                             <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>

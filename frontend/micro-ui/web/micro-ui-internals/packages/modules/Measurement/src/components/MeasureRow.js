@@ -16,7 +16,8 @@ function has4DecimalPlaces(number, decimalPlaces) {
 const MeasureInputAtom = ({ id, row, mode, disable = false, fieldKey, value, dispatch, InputDecimalValidation }) => (
   <td>
     <TextInput
-      value={value}
+      value={fieldKey === "description" ? value : (value > 0 && value)}
+      //value={value}
       type={fieldKey == "description" ? "text" : "number"}
       onChange={(newValue) => {
         if(InputDecimalValidation?.active){
@@ -52,7 +53,7 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode, fields }) => {
   }
   return (
     <tr key={index}>
-      <td>{index + 1}</td>
+      <td><div style={{marginBottom:"21px"}}>{index + 1}</div></td>
       {mode != "CREATEALL" && mode != "CREATERE" ? (
         <>
           <td>{rowState?.isDeduction ? t("MB_YES") : t("MB_NO")}</td>
@@ -90,7 +91,7 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode, fields }) => {
       <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"length"} id={index + 1} value={rowState?.["length"]} InputDecimalValidation={InputDecimalValidation} />
       <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"width"} id={index + 1} value={rowState?.["width"]} InputDecimalValidation={InputDecimalValidation} />
       <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"height"} id={index + 1} value={rowState?.["height"]} InputDecimalValidation={InputDecimalValidation} />
-      <td>{rowState?.noOfunit}</td>
+      <td><div style={{marginBottom:"21px"}}>{rowState?.noOfunit}</div></td>
       {(mode == "CREATEALL" || mode == "CREATERE") && fields?.length > 1 && (
         <td>
           <span
@@ -104,7 +105,7 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode, fields }) => {
               });
             }}
           >
-            <DeleteIcon fill={"#B1B4B6"} />
+            <DeleteIcon fill={"#FF9100"} />
           </span>
         </td>
       )}

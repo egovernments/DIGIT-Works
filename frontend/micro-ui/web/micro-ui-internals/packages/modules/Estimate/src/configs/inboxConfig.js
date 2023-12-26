@@ -139,7 +139,7 @@
                 uiConfig: {
                     links: [
                         {
-                            text: "WORKS_CREATE_ESTIMAT",
+                            text: "WORKS_CREATE_ESTIMATE",
                             url: `/employee/project/search-project`,
                             roles: [],
                         },
