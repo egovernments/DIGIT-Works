@@ -1,6 +1,8 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
+import { getErrorCodes } from "./constants";
+
 const HOST = process.env.EGOV_HOST || "https://unified-dev.digit.org/";
 
 if (!HOST) {
@@ -28,7 +30,8 @@ const config = {
   },
   configs: {
     DATA_CONFIG_URLS: 'file:///Users/klrao/Documents/pdf-config/data-config/consolidatedreceipt.json',
-    FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS
+    FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS,
+    cacheEnabled:false
   },
   host: {
     serverHost: HOST,
@@ -38,11 +41,11 @@ const config = {
     user: process.env.EGOV_USER_HOST || HOST || "http://localhost:8089/",
     workflow:
       process.env.EGOV_WORKFLOW_HOST || HOST || "http://localhost:8091/",
-    muster: process.env.EGOV_MUSTER_ROLL_HOST || "http://localhost:8070/",
-    individual: process.env.EGOV_PROJECT_HOST || "http://localhost:8071/",
-    contract: process.env.EGOV_CONTRACT_HOST || "http://localhost:8072/",
-    estimate: process.env.EGOV_ESTIMATE_HOST || "http://localhost:8073/",
-    measurement: process.env.EGOV_MEASUREMENT_HOST || "http://localhost:8074/",
+    muster: process.env.EGOV_MUSTER_ROLL_HOST || HOST || "http://localhost:8070/",
+    individual: process.env.EGOV_PROJECT_HOST || HOST|| "http://localhost:8071/",
+    contract: process.env.EGOV_CONTRACT_HOST|| HOST || "http://localhost:8072/",
+    estimate: process.env.EGOV_ESTIMATE_HOST || HOST|| "http://localhost:8073/",
+    measurement: process.env.EGOV_MEASUREMENT_HOST|| HOST || "http://localhost:8074/",
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -58,4 +61,5 @@ const config = {
   },
 };
 
+export { getErrorCodes };
 export default config;

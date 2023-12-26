@@ -6,15 +6,12 @@ import InboxMeasurementConfig from "../../configs/MeasurementInboxConfig";
 
 const InboxMeasurement = () => {
   const { t } = useTranslation();
-  const history = useHistory()
-  const location = useLocation()
   const configs = InboxMeasurementConfig();
-
-  if (isLoading) return <Loader />;
+  const location = useLocation()
   return (
     <React.Fragment>
       <div className="jk-header-btn-wrapper">
-        <Header className="works-header-search">{t(configs?.label)}</Header>
+        <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}{location?.state?.count ? <span className="inbox-count">{location?.state?.count}</span> : null}</Header>
       </div>
       <div className="inbox-search-wrapper">
         <InboxSearchComposer configs={configs}></InboxSearchComposer>

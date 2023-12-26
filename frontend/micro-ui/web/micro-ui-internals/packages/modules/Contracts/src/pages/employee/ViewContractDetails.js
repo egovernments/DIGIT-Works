@@ -24,10 +24,7 @@ const ViewContractDetails = () => {
     const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
 
     const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
-    const [actionsMenu, setActionsMenu] = useState([{
-        name:"CREATE_MEASUREMENT_REQUEST",
-        action:"CREATE_MEASUREMENT"
-    }]);
+    const [actionsMenu, setActionsMenu] = useState([]);
 
     
 
@@ -76,6 +73,20 @@ const ViewContractDetails = () => {
         }
     })
 
+    //fetching measurement data
+    const requestCriteria = {
+        url : "/mukta-services/measurement/_search",
+    
+        body: {
+          "contractNumber" : contractId,
+          "tenantId" : tenantId
+        }
+    
+      }
+    
+    
+      const {isLoading, data:measurementData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
+      let isInWorkflowMeasurementPresent = measurementData?.allMeasurements?.code === "NO_MEASUREMENT_ROLL_FOUND"? false : (measurementData?.allMeasurements?.length > 0 && measurementData?.allMeasurements?.filter((ob) => ob?.wfStatus === "SUBMITTED" || ob?.wfStatus === "VERIFIED" || ob?.wfStatus === "DRAFTED")?.length>0);
 
     
     useEffect(() => {
@@ -97,7 +108,7 @@ const ViewContractDetails = () => {
     },[isProjectError]);
 
       useEffect(() => {
-        if(!(data?.additionalDetails?.isTimeExtAlreadyInWorkflow) && data) {
+        if(!(data?.additionalDetails?.isTimeExtAlreadyInWorkflow) && data && !actionsMenu?.find((ob) => ob?.name === "CREATE_TIME_EXTENSION_REQUEST")) {
             
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_TIME_EXTENSION_REQUEST",
@@ -105,7 +116,13 @@ const ViewContractDetails = () => {
             }]))
         }
 
-    }, [data])
+        if(!isInWorkflowMeasurementPresent && measurementData && !actionsMenu?.find((ob) => ob?.name === "CREATE_MEASUREMENT_REQUEST"))
+        setActionsMenu((prevState => [...prevState,{
+            name:"CREATE_MEASUREMENT_REQUEST",
+            action:"CREATE_MEASUREMENT"
+        }]))
+
+    }, [data, measurementData])
 
 
     useEffect(() => {
@@ -177,14 +194,14 @@ const ViewContractDetails = () => {
         //setEditTimeExtension(true)
     }
 
-    if(isProjectLoading || isContractLoading) 
+    if(isProjectLoading || isContractLoading || isLoading) 
          return <Loader/>;
     return (
       <React.Fragment>
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
             <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{showTimeExtension || queryStrings?.isTimeExtension === "true" ? ( revisedWONumber ? t("UPDATE_TE") : t("CREATE_TE")) : revisedWONumber ? t("VIEW_TE") : t("WORKS_VIEW_WORK_ORDER")}</Header>
-            {(data?.applicationData?.wfStatus === "APPROVED" || data?.applicationData?.wfStatus === "PENDING_FOR_ACCEPTANCE" || data?.applicationData?.wfStatus === "ACCEPTED") && 
+            {(data?.applicationData?.wfStatus === "APPROVED" || data?.applicationData?.wfStatus === "PENDING_FOR_ACCEPTANCE" || data?.applicationData?.wfStatus === "ACCEPTED") && !(queryStrings?.isTimeExtension === "true") && !(revisedWONumber) && 
                <MultiLink
                  onHeadClick={() => HandleDownloadPdf()}
                  downloadBtnClassName={"employee-download-btn-className"}
@@ -211,7 +228,6 @@ const ViewContractDetails = () => {
                         moduleCode="Contract"
                         editCallback = {handleEditTimeExtension}
                     />}
-                                        {/* //added temp logic to enable measurement option */}
                     {data?.applicationData?.wfStatus === "ACCEPTED" && actionsMenu?.length>0 && !showTimeExtension && !(queryStrings?.isTimeExtension === "true") ?
                         <ActionBar>
                             {showActions ? <Menu

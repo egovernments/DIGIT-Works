@@ -23,12 +23,12 @@ export const handleModifyProjectFiles = (uploadedDocs, docConfigData) => {
   fileKeyMappings?.map((fileKeyMapping)=>{
     let currentDoc = uploadedDocs?.filter((doc)=>doc?.documentType === fileKeyMapping?.value)[0];
 
-    if(currentDoc?.fileStore) {
+    if(currentDoc?.fileStore || currentDoc?.fileStoreId) {
       if(fileKeyMapping?.value === "OTHERS") {
         documentObject["noSubProject_doc_others_name"] = currentDoc?.additionalDetails?.otherCategoryName;
       }
       documentObject[fileKeyMapping?.key] = [
-        [currentDoc?.additionalDetails?.fileName, {file : { name : currentDoc?.additionalDetails?.fileName, id : currentDoc?.id}, fileStoreId : { fileStoreId : currentDoc?.fileStore}}]
+        [currentDoc?.additionalDetails?.fileName, {file : { name : currentDoc?.additionalDetails?.fileName, id : currentDoc?.id}, fileStoreId : { fileStoreId : currentDoc?.fileStoreId || currentDoc?.fileStore}}]
       ] 
     }
   });

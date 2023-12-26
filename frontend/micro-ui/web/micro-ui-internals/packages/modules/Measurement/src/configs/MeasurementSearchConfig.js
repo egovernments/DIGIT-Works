@@ -1,12 +1,9 @@
 const SearchMeasurementConfig = () => {
     return {
-      label: "WORKS_SEARCH_WAGESEEKERS",
+      label: "MB_SEARCH_MEASUREMENT",
       type: "search",
-      actionLabel: "WORKS_ADD_WAGESEEKER",
-      actionRole: "INDIVIDUAL_CREATOR",
-      actionLink: "masters/create-wageseeker",
       apiDetails: {
-        serviceName: "/individual/v1/_search",
+        serviceName: "/measurement-service/measurement/v1/_search",
         requestParam: {},
         requestBody: {
           apiOperation: "SEARCH",
@@ -14,10 +11,11 @@ const SearchMeasurementConfig = () => {
         },
         minParametersForSearchForm: 1,
         masterName: "commonUiConfig",
-        moduleName: "SearchWageSeekerConfig",
+        moduleName: "SearchMeasurementConfig",
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody.Individual",
         searchFormJsonPath: "requestBody.Individual",
+
       },
       sections: {
         search: {
@@ -29,64 +27,68 @@ const SearchMeasurementConfig = () => {
             minReqFields: 1,
             defaultValues: {
               wardCode: "",
-              individualId: "",
-              name: "",
-              socialCategory: "",
-              mobileNumber: "",
+              MBNumber: "",
+              Projectname: "",
+              status: "",
+              MBReference: "",
               createdFrom: "",
               createdTo: "",
+
             },
             fields: [
               {
-                "label": "COMMON_WARD",
-                "type": "locationdropdown",
-                "isMandatory": false,
-                "disable": false,
-                "populators": {
-                    "name": "wardCode",
-                    "type": "ward",
-                  "optionsKey": "i18nKey",
-                    "defaultText": "COMMON_SELECT_WARD",
-                    "selectedText": "COMMON_SELECTED",
-                    "allowMultiSelect": false
+
+                label: "MB_WARD",
+
+                type: "locationdropdown",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                    name: "wardCode",
+                    type: "ward",
+                  optionsKey: "i18nKey",
+                    defaultText: "COMMON_SELECT_WARD",
+                    selectedText: "COMMON_SELECTED",
+                    allowMultiSelect: false
                 }
             },
               {
-                label: "MASTERS_WAGESEEKER_NAME",
+                label: "MB_PROJECT_NAME",
                 type: "text",
                 isMandatory: false,
                 disable: false,
-                populators: { name: "name", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
+                populators: { name: "Projectname", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
               },
               {
-                label: "MASTERS_WAGESEEKER_ID",
+                label: "MB_NUMBER",
                 type: "text",
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "individualId",
+                  name: "MBNumber",
                   error: `PROJECT_PATTERN_ERR_MSG`,
                   validation: {  minlength: 2 },
                 },
               },
               {
-                label: "CORE_COMMON_PROFILE_MOBILE_NUMBER",
-                type: "mobileNumber",
+                label: "MB_REFERENCE_NUMBER",
+                type: "text",
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "mobileNumber",
+                  name: "MBReference",
                   error: `PROJECT_PATTERN_ERR_MSG`,
-                  validation: { pattern: /^[a-z0-9\/-@# ]*$/i, minlength: 2 },
+                  validation: {  minlength: 2 },
                 },
               },
+           
               {
-                label: "MASTERS_SOCIAL_CATEGORY",
+                label: "MB_STATUS",
                 type: "dropdown",
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "socialCategory",
+                  name: "status",
                   optionsKey: "code",
                   optionsCustomStyle: {
                     top: "2.3rem",
@@ -142,42 +144,38 @@ const SearchMeasurementConfig = () => {
           uiConfig: {
             columns: [
               {
-                label: "MASTERS_WAGESEEKER_ID",
-                jsonPath: "individualId",
+                label: "MB_REFERENCE_NUMBER",
+                jsonPath: "referenceId",
                 additionalCustomization: true,
               },
               {
-                label: "MASTERS_WAGESEEKER_NAME",
-                jsonPath: "name.givenName",
+                label: "MB_NUMBER",
+                jsonPath: "measurementNumber",
               },
               {
-                label: "MASTERS_FATHER_NAME",
-                jsonPath: "fatherName",
+                label: "MB_PROJECT_NAME",
+                jsonPath: "",
               },
               {
-                label: "MASTERS_SOCIAL_CATEGORY",
-                jsonPath: "additionalFields.fields[0].value",
+                label: "MB_NAME_CBO",
+                jsonPath: "",
                 // additionalCustomization: true,
               },
               {
-                label: "CORE_COMMON_PROFILE_CITY",
-                jsonPath: "address[0].tenantId",
+                label: "MB_STATUS",
+                jsonPath: "",
                 additionalCustomization: true,
               },
               {
-                label: "MASTERS_WARD",
-                jsonPath: "address[0].ward.code",
+                label: "MB_AMOUNT",
+                jsonPath: "totalValue",
                 additionalCustomization: true,
               },
-              {
-                label: "MASTERS_LOCALITY",
-                jsonPath: "address[0].locality.code",
-                additionalCustomization: true,
-              },
+            
             ],
             enableGlobalSearch: false,
             enableColumnSort: true,
-            resultsJsonPath: "Individual",
+            resultsJsonPath: "measurements",
           },
           children: {},
           show: true,

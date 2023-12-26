@@ -1,180 +1,201 @@
-export const CreateConfig=[
-    {
-      head: "Sample Object Creation",
-      subHead: "Supporting Details",
-      body: [
-        {
-          inline: true,
-          label: "Salutation",
-          isMandatory: false,
-          type: "text",
-          disable: false,
-          populators: { name: "salutation", error: "Required", validation: { pattern: /^[A-Za-z]+$/i , maxlength:5} },
-        },
-        {
-          inline: true,
-          label: "Name",
-          isMandatory: true,
-          type: "text",
-          disable: false,
-          populators: { name: "name", error: "Required", validation: { pattern: /^[A-Za-z]+$/i } },
-        },
-        {
-          isMandatory: true,
-          type: "radio",
-                  key: "genders",
-          label: "Gender",
-          disable: false,
-          populators: {
-            name: "gender",
-            optionsKey: "name",
-            error: "sample required message",
-            required: true,
-            mdmsConfig: {
-              masterName: "GenderType",
-              moduleName: "common-masters",
-              localePrefix: "COMMON_GENDER",
-            },
-          },
-        },
-        {
-          label: "Age",
-          isMandatory: true,
-          type: "number",
-          disable: false,
-          populators: { name: "age", error: "sample error message", validation: { min: 0, max: 100 } },
-        },
-        {
-          inline: true,
-          label: "DOB",
-          isMandatory: true,
-          description: "Please enter a valid Date of birth",
-          type: "date",
-          disable: false,
-          populators: { name: "dob", error: "Required", validation: { required:true, } },
-        },
-        {
-          label: "Phone number",
-          isMandatory: true,
-          type: "mobileNumber",
-          disable: false,
-          populators: { name: "phNumber", error: "sample error message", validation: { min: 5999999999, max: 9999999999 } },
-        },
-        
-        {
-          "label": "COMMON_WARD",
-          "type": "locationdropdown",
-          "isMandatory": false,
-          "disable": false,
-          "populators": {
-              "name": "ward",
-              "type": "ward",
-              "optionsKey": "i18nKey",
-              "defaultText": "COMMON_SELECT_WARD",
-              "selectedText": "COMMON_SELECTED",
-              "allowMultiSelect": false
-          }
-        },
-        {
-          inline: true,
-          label: "Address",
-          isMandatory: false,
-          description: "address details",
-          type: "textarea",
-          disable: false,
-          populators: { name: "address", error: "Required", validation: { pattern: /^[A-Za-z]+$/i } },
-        },
-        {
-          "inline": true,
-          "label": "Enter Random Amount",
-          "isMandatory": false,
-          "key": "amountInRs",
-          "type": "amount",
-          "disable": false,
-          "preProcess": {
-              "convertStringToRegEx": [
-                "populators.validation.pattern"
-              ]
-          },
-          "populators": {
-            "prefix":"₹ ",
-              "name": "amountInRs",
-              "error": "PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST",
-              "validation": {
-                "pattern": "^[1-9]\\d*(\\.\\d+)?$",
-                "maxlength" : 16,
-                "step" : "0.01",
-                "min" : 0,
-                "max" : 5000000
-              }
-            }
-        }
-      ],
-    },
-    {
-      head: "Application Subheading",
-      body: [
-        {
-          label: "Additional Details",
-          isMandatory: true,
-          description: "Additional Details if any",
-          key: "additionalDetails",
-          type: "text",
-          disable: false,
-          populators: { name: "additionalDetails", error: "sample error message", validation: { pattern: /^[A-Za-z]+$/i } },
-        },
-     
-        // {
-        //   isMandatory: true,
-        //   key: "genders",
-        //   type: "radioordropdown",
-        //   label: "Enter Gender",
-        //   disable: false,
-        //   populators: {
-        //     name: "genders",
-        //     optionsKey: "name",
-        //     error: "sample required message",
-        //     required: true,
-        //     mdmsConfig: {
-        //       masterName: "GenderType",
-        //       moduleName: "common-masters",
-        //       localePrefix: "COMMON_GENDER",
-        //     },
-        //   },
-        // },
-        {
-          isMandatory: false,
-          key: "priority",
-          type: "radio",
-          label: "Enter Priority of Application",
-          disable: false,
-          populators: {
-            name: "priority",
-            optionsKey: "name",
-            error: "sample required message",
-            required: false,
-            options: [
+export const CreateConfig = ({ defaultValue, measurement }) => {
+  return {
+    CreateConfig: [
+      {
+        defaultValues: defaultValue, // Use the default values here
+
+        form: [
+          {
+            head: "",
+            subHead: "",
+            body: [
               {
-                code: "1",
-                name: "P1",
+                inline: true,
+                label: "MB_WORK_ORDER_NUMBER",
+                isMandatory: false,
+                key: "contractNumber",
+                type: "paragraph",
+                disable: true,
+                appendColon: false,
+                populators: {
+                  name: "contractNumber",
+                  // "customClass": "fc-header-texts"
+                },
               },
               {
-                code: "2",
-                name: "P2",
+                inline: true,
+                label: "MB_PROJECT_ID",
+                isMandatory: false,
+                key: "projectID",
+                type: "paragraph",
+                disable: true,
+                appendColon: false,
+                populators: {
+                  name: "projectID",
+                  // "customClass": "fc-header-texts"
+                },
               },
               {
-                code: "3",
-                name: "P3",
+                inline: true,
+                label: "MB_MUSTER_ROLL_NO",
+                isMandatory: false,
+                key: "musterRollNo",
+                type: "paragraph",
+                disable: true,
+                appendColon: false,
+                populators: {
+                  name: "musterRollNo",
+                  customClass: "",
+                },
+              },
+              {
+                inline: true,
+                label: "MB_PROJECT_DATE",
+                isMandatory: false,
+                key: "sanctionDate",
+                type: "paragraph",
+                disable: true,
+                appendColon: false,
+                populators: {
+                  name: "sanctionDate",
+                  // "customClass": "fc-header-texts"
+                },
+              },
+              {
+                inline: true,
+                label: "MB_PROJECT_NAME",
+                isMandatory: false,
+                key: "projectName",
+                type: "paragraph",
+                disable: true,
+                appendColon: false,
+                populators: {
+                  name: "projectName",
+                  customClass: "",
+                },
+              },
+              {
+                inline: true,
+                label: "MB_PROJECT_DESC",
+                isMandatory: false,
+                key: "projectDesc",
+                type: "paragraph",
+                disable: true,
+                appendColon: false,
+                populators: {
+                  name: "projectDesc",
+                  customClass: "",
+                },
+              },
+              {
+                inline: true,
+                label: "ES_COMMON_LOCATION",
+                isMandatory: false,
+                key: "projectLocation",
+                type: "paragraph",
+                disable: true,
+                appendColon: false,
+                populators: {
+                  name: "projectLocation",
+                  customClass: "",
+                },
+              },
+              {
+                inline: true,
+                label: "MB_MEASUREMENT_PERIOD",
+                isMandatory: false,
+                key: "measurementPeriod",
+                type: "paragraph",
+                disable: true,
+                appendColon: false,
+                populators: {
+                  name: "measurementPeriod",
+                  customClass: "",
+                },
               },
             ],
           },
-        },
-        {
-          "type": "component",
-          "component": "SampleComponent",
-          "withoutLabel": true,
-          "key": "comments"
-        },
-      ],
-    },
-  ];
+          {
+            subHead: "",
+            forOnlyUpdate : "",
+            body: [
+              {
+                type: "component",
+                component: "MeasurementHistory",
+                withoutLabel: true,
+                key: "MeasurementHistory",
+                useFieldArray: true,
+                "customProps" : {
+                  "contractNumber" : defaultValue?.contractNumber,
+                  "measurementNumber" : measurement?.measurementNumber
+                }
+              },
+            ],
+          },
+          {
+            head: "MB_SORS",
+            subHead: "",
+            body: [
+              {
+                type: "component",
+                component: "MeasureTable",
+                withoutLabel: true,
+                key: "SOR",
+                mode: "CREATE",
+                useFieldArray: true,
+              },
+            ],
+          },
+          {
+            head: "MB_NONSOR",
+            subHead: "",
+            body: [
+              {
+                type: "component",
+                component: "MeasureTable",
+                withoutLabel: true,
+                key: "NONSOR",
+                mode: "CREATE",
+                useFieldArray: true,
+              },
+            ],
+          },
+          {
+            head: "",
+            subHead: "",
+            body: [
+              {
+                type: "component",
+                component: "ViewOnlyCard",
+                withoutLabel: true,
+                key: "viewAmount",
+              },
+              {
+                "type": "component",
+                "component": "ViewAnalysisStatement",
+                "withoutLabel": true,
+                "key": "labourMaterialAnalysis"
+              }
+            ],
+          },
+          {
+            // "navLink": "Work Details",
+            // "head": "Worksite Photos",
+            body: [
+              {
+                type: "documentUpload",
+                withoutLabel: true,
+                module: "Measurement",
+                error: "WORKS_REQUIRED_ERR",
+                name: "uploadedDocs",
+                key: "documentDetails",
+                customClass: "my doc",
+                localePrefix: "MB_MEASUREMENT_DOC",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+};

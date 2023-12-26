@@ -10,21 +10,22 @@ import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 // import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
 import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
-import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
-import { initProjectComponents } from  "@egovernments/digit-ui-module-project";
+import { initProjectComponents } from "@egovernments/digit-ui-module-project";
+import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
+
 import "@egovernments/digit-ui-works-css/example/index.css";
 import { initMeasurementComponents } from "@egovernments/digit-ui-module-measurement";
-import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukta";
+import { initMuktaCustomisations } from "@egovernments/digit-ui-customisation-mukta";
 
 // import * as comps from "@egovernments/digit-ui-react-components";
 
 // import { subFormRegistry } from "@egovernments/digit-ui-libraries";
 
-import { pgrCustomizations  } from "./pgr";
+import { pgrCustomizations } from "./pgr";
 import { UICustomizations } from "./UICustomizations";
 var Digit = window.Digit || {};
 
@@ -39,7 +40,8 @@ const enabledModules = [
   "Project",
   "Mukta",
   "DSS",
-  "Measurement"
+  "Sample",
+  "Measurement",
   // "Engagement"
 ];
 
@@ -98,14 +100,17 @@ const initDigitUI = () => {
       customiseRenewalCreateFormData: (formData, licenceObject) => licenceObject,
       customiseSendbackFormData: (formData, licenceObject) => licenceObject,
     },
-    commonUiConfig: UICustomizations
+    commonUiConfig: UICustomizations,
   };
   const registry = window?.Digit.ComponentRegistryService.getRegistry();
 
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
   initMuktaCustomisations();
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding="employee" />, document.getElementById("root"));
+  ReactDOM.render(
+    <DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding="employee" />,
+    document.getElementById("root")
+  );
 };
 
 initLibraries().then(() => {

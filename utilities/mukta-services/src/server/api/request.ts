@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { logger } from "../logger";
 import { cacheResponse, getCachedResponse, throwError } from "../utils";
+import config from "../config";
 
 var Axios = require("axios").default;
 var get = require("lodash/get");
@@ -30,7 +31,7 @@ export const defaultheader = {
 };
 
 const getServiceName = (url = "") => url && url.slice && url.slice(url.lastIndexOf(url.split("/")[3]));
-const cacheEnabled = true;
+const cacheEnabled = config.configs.cacheEnabled;
 /*
  
 Used to Make API call through axios library
@@ -48,19 +49,29 @@ Used to Make API call through axios library
 const httpRequest = async (
   _url: string,
   _requestBody: any,
-  _params: any,
+  _params: any={},
   _method: string = "post",
   responseType: string = "",
   headers: any = defaultheader
 ) => {
   try {
-
     if (headers && headers.cachekey && cacheEnabled) {
       const cacheData = getCachedResponse(headers.cachekey);
       if (cacheData) {
         return cacheData;
       }
+      logger.info(
+        "NO CACHE FOUND :: REQUEST :: " +
+        JSON.stringify(headers.cachekey)
+      );
     }
+    logger.info(
+      "INTER-SERVICE :: REQUEST :: " +
+      getServiceName(_url) +
+      " CRITERIA :: " +
+      JSON.stringify(_params)
+    );
+    logger.debug(JSON.stringify(_requestBody))
     const response = await Axios({
       method: _method,
       url: _url,
@@ -78,7 +89,7 @@ const httpRequest = async (
       responseStatus
     );
     if (responseStatus === 200 || responseStatus === 201 || responseStatus === 202) {
-      if (headers && headers.cachekey) {
+      if (headers && headers.cachekey && cacheEnabled) {
         cacheResponse(response.data, headers.cachekey)
       }
       return response.data;
@@ -105,4 +116,4 @@ const httpRequest = async (
   }
 };
 
-module.exports = { httpRequest };
+export { httpRequest };

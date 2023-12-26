@@ -24,7 +24,9 @@ In order to build and run the app, you have to execute only 2 NPM script command
 ### Service Dependencies
 
 - egov-mdms-service
-- individual-service
+- contract
+- estimate
+- measurement
 - muster-roll-service
 - User-service
 - Workflow-service
@@ -51,7 +53,7 @@ For any new requirement one new endpoint with validations and logic for getting 
 Currently below endpoints are in use for 'EMPLOYEE’ roles
 
 ###Flow Diagram
-![Flow](https://raw.githubusercontent.com/egovernments/DIGIT-Works/blob/measurement-bff/utilities/mukta-services/docs/flowdiagram.png)
+![Flow](https://github.com/egovernments/DIGIT-Works/blob/04689228d238592a34e832be2997a0f05ac956f8/utilities/mukta-services/docs/flowdiagram.png?raw=true)
 
 
 

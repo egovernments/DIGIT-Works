@@ -11,6 +11,7 @@ var Digit = window.Digit || {};
 const businessServiceMap = {
   estimate: "ESTIMATE",
   contract: "CONTRACT",
+  measurement: "MB",
   "muster roll": "MR",
   "works.wages": "EXPENSE.WAGES",
   "works.purchase": "EXPENSE.PURCHASE",
@@ -134,7 +135,11 @@ export const UICustomizations = {
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
       const estimateNumber = data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.trim();
-      if (estimateNumber) data.body.inbox.moduleSearchCriteria.estimateNumber = estimateNumber;
+      if (!(data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.includes("RE")) && estimateNumber) data.body.inbox.moduleSearchCriteria.estimateNumber = estimateNumber;
+      if (data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.includes("RE") && estimateNumber) {
+        data.body.inbox.moduleSearchCriteria.revisionNumber = estimateNumber;
+        delete data?.body?.inbox?.moduleSearchCriteria?.estimateNumber;
+      }
 
       const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim();
       if (projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId;
@@ -176,9 +181,11 @@ export const UICustomizations = {
         case "ESTIMATE_ESTIMATE_NO":
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
+              {/* <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-              </Link>
+              </Link> */}
+              {/* here the end condition will be update as backend will add bussinessservice in inbox apo response in business object*/}
+              {Digit.Utils.statusBasedNavigation(row?.ProcessInstance?.action, row?.businessObject?.additionalDetails?.projectNumber, value, row.ProcessInstance.tenantId, value, value?.includes("RE") || row?.businessObject?.businessService === "REVISION-ESTIMATE" ? "REVISION-ESTIMATE" : "ESTIMATE", row?.businessObject?.estimateNumber)}
             </span>
           );
         case "COMMON_ASSIGNEE":
@@ -384,9 +391,12 @@ export const UICustomizations = {
       const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code;
       delete data.body.inbox.moduleSearchCriteria.ward;
       if (ward) data.body.inbox.moduleSearchCriteria.ward = ward;
-
-      const estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim();
-      if (estimateId) data.body.inbox.moduleSearchCriteria.estimateId = estimateId;
+      estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim();
+      if (!(data?.body?.inbox?.moduleSearchCriteria?.estimateId?.includes("RE")) && estimateId) data.body.inbox.moduleSearchCriteria.estimateId = estimateId;
+      if (data?.body?.inbox?.moduleSearchCriteria?.estimateId?.includes("RE") && estimateId) {
+        data.body.inbox.moduleSearchCriteria.revisionNumber = estimateId;
+        delete data?.body?.inbox?.moduleSearchCriteria?.estimateId;
+      }
 
       const projectName = data?.body?.inbox?.moduleSearchCriteria?.projectName?.trim();
       if (projectName) data.body.inbox.moduleSearchCriteria.projectName = projectName;
@@ -420,14 +430,11 @@ export const UICustomizations = {
       if (key === "ESTIMATE_ESTIMATE_NO") {
         return (
           <span className="link">
-            <Link
-              to={`/${
-                window.contextPath
-              }/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${value}`}
-            >
-              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-            </Link>
-          </span>
+              {/* <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
+                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              </Link> */}
+              {Digit.Utils.statusBasedNavigation(row?.ProcessInstance?.action, row?.businessObject?.additionalDetails?.projectNumber, row?.ProcessInstance?.businessId, row.ProcessInstance.tenantId, row?.ProcessInstance?.businessId, row?.businessObject?.businessService === "REVISION-ESTIMATE" ? "REVISION-ESTIMATE" : "ESTIMATE", row?.businessObject?.estimateNumber)}
+            </span>
         );
       }
       if (key === "ES_COMMON_PROJECT_NAME") {
@@ -947,7 +954,7 @@ export const UICustomizations = {
             <span className="link">
               <Link
                 to={
-                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO
+                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO || row?.ProcessInstance?.businessId?.includes("RW")
                     ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}`
                     : `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}`
                 }
@@ -983,14 +990,15 @@ export const UICustomizations = {
     },
   },
   SearchContractConfig: {
-    preProcess: (data, defaultValues) => {
-      const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom, "daystart");
-      const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo, "dayend");
+    preProcess: (data,defaultValues) => {
+      const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom,'daystart');
+      const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo,'dayend');
       let workOrderNumber, revisedWorkOrderNumber;
-      if (data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.includes("WO"))
-        workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
-      else revisedWorkOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
-      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus;
+      if(data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.includes("WO"))
+         workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
+      else
+        revisedWorkOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
+      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
       const projectType = data.body.inbox?.moduleSearchCriteria?.projectType?.code;
       const projectName = data.body.inbox?.moduleSearchCriteria?.projectName?.trim();
       const ward = data.body.inbox?.moduleSearchCriteria?.ward?.[0]?.code;
@@ -1042,7 +1050,7 @@ export const UICustomizations = {
             <span className="link">
               <Link
                 to={
-                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO
+                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO || row?.ProcessInstance?.businessId?.includes("RW")
                     ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance?.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}`
                     : `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance?.tenantId}&workOrderNumber=${value}`
                 }
@@ -2419,6 +2427,159 @@ export const UICustomizations = {
             return t("CS_COMMON_NA");
         }
       }
+    },
+  },
+
+  WMSSearchMeasurementConfig: {
+
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || ( createdFrom!== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+
+    preProcess: (data) => {
+
+      let moduleSearchCriteria = data?.body?.inbox?.moduleSearchCriteria;
+
+      moduleSearchCriteria = {
+        ...(moduleSearchCriteria?.measurementNumber && { measurementNumber: moduleSearchCriteria?.measurementNumber?.trim() }),
+        ...(moduleSearchCriteria?.projectName && { projectName : moduleSearchCriteria?.projectName}),
+        ...(moduleSearchCriteria?.status && {status : moduleSearchCriteria?.status}),
+        ...(moduleSearchCriteria?.ward && {ward : moduleSearchCriteria?.ward}),
+        ...(moduleSearchCriteria?.referenceId && {referenceId : moduleSearchCriteria?.referenceId}),
+        ...(moduleSearchCriteria?.createdFrom && {createdFrom : Digit.Utils.pt.convertDateToEpoch(moduleSearchCriteria?.createdFrom)}),
+        ...(moduleSearchCriteria?.createdTo && {createdTo : Digit.Utils.pt.convertDateToEpoch(moduleSearchCriteria?.createdTo)})
+      }
+      data.body.inbox.moduleSearchCriteria = { ...moduleSearchCriteria };
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
+
+      switch (key) {
+        case "MB_NUMBER":
+          const state = row?.ProcessInstance?.state?.state;
+          const contractNumber = row?.businessObject?.referenceId;
+          return <span className="link">{Digit.Utils.statusBasedNavigation(state, contractNumber, value, tenantId, value)}</span>;
+        case "MB_AMOUNT":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{value}</span> : t("ES_COMMON_NA");
+        case "MB_STATUS":
+          return <span>{t(value)}</span>;
+        case "MASTERS_SOCIAL_CATEGORY":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+
+        case "CORE_COMMON_PROFILE_CITY":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
+
+        case "MASTERS_WARD":
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+
+        case "MASTERS_LOCALITY":
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+        default:
+          return t("NA");
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "MASTERS_WAGESEEKER_ID")
+          link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
+      });
+      return link;
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    populateReqCriteria: () => {
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("measurement") },
+        body: {},
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states = data?.BusinessServices?.[0]?.states
+              ?.filter((state) => state?.state)
+              ?.map((state) => {
+                return {
+                  i18nKey: state?.state,
+                  wfStatus: state?.state,
+                };
+              });
+            return states;
+          },
+        },
+      };
+    },
+  },
+  InboxMeasurementConfig: {
+    preProcess: (data) => {
+      let moduleSearchCriteria = data.body.inbox.moduleSearchCriteria;
+
+      const statusValues = Object.keys(moduleSearchCriteria?.status || {}).filter((key) => moduleSearchCriteria.status[key]);
+      moduleSearchCriteria = {
+        ...(moduleSearchCriteria?.measurementNumber && { measurementNumber: moduleSearchCriteria?.measurementNumber?.trim() }),
+        ...(moduleSearchCriteria?.projectType?.code && { projectType: moduleSearchCriteria?.projectType?.code }),
+        ...(moduleSearchCriteria?.ProjectId && { projectId: moduleSearchCriteria?.ProjectId?.trim() }),
+        ...(moduleSearchCriteria?.assignee?.code === "ASSIGNED TO ME" && { assignee: Digit.UserService.getUser().info.uuid }),
+        ...(moduleSearchCriteria?.ward?.length > 0 && { ward: moduleSearchCriteria.ward?.map((e) => e?.code) }),
+        ...(statusValues.length > 0 && { status: statusValues }),
+      };
+      data.body.inbox.moduleSearchCriteria = { ...moduleSearchCriteria };
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
+
+      switch (key) {
+        case "MB_REFERENCE_NUMBER":
+          const state = row?.ProcessInstance?.state?.state;
+          const contractNumber = row?.businessObject?.referenceId;
+          return <span className="link">{Digit.Utils.statusBasedNavigation(state, contractNumber, value, tenantId, value)}</span>;
+        case "MB_ASSIGNEE":
+          return value ? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
+        case "MB_WORKFLOW_STATE":
+          return <span>{t(value)}</span>;
+        case "MB_AMOUNT":
+          return <Amount customStyle={{ textAlign: "right" }} value={Math.round(value)} t={t}></Amount>;
+        case "MB_SLA_DAYS_REMAINING":
+          return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "ESTIMATE_ESTIMATE_NO")
+          link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${row[key]}`;
+      });
+      return link;
     },
   },
   BillInboxConfig: {
