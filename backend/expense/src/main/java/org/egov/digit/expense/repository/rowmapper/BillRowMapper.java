@@ -32,8 +32,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 	
+	private final ObjectMapper mapper;
+
 	@Autowired
-	private ObjectMapper mapper;
+	public BillRowMapper(ObjectMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	@Override
 	public List<Bill> extractData(ResultSet rs) throws SQLException {
@@ -145,7 +149,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.build();
 			
 			if(lineTiemBillDetailId.equals(detailId)) {
-				if(isLineItemPayable)
+				if(Boolean.TRUE.equals(isLineItemPayable))
 					billDetail.addPayableLineItems(lineItem);
 				else 
 					billDetail.addLineItems(lineItem);
@@ -170,7 +174,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				"payer_lastmodifiedby",
 				"payer_lastmodifiedtime");
 
-		Party payer = Party.builder()
+		return Party.builder()
 				.status(Status.fromValue(rs.getString("payer_status")))
 				.identifier(rs.getString("payer_identifier"))
 				.tenantId(rs.getString("payer_tenantid"))
@@ -178,7 +182,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				.auditDetails(payerAuditDetails)
 				.id(rs.getString("payer_id"))
 				.build();
-		return payer;
+
 	}
 	
 
@@ -196,7 +200,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				"payee_lastmodifiedby",
 				"payee_lastmodifiedtime");
 
-		Party payee = Party.builder()
+		return Party.builder()
 				.status(Status.fromValue(rs.getString("payee_status")))
 				.identifier(rs.getString("payee_identifier"))
 				.tenantId(rs.getString("payee_tenantid"))
@@ -205,7 +209,6 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				.additionalDetails(getadditionalDetail(rs,"payee_additionaldetails"))
 				.id(rs.getString("payee_id"))
 				.build();
-		return payee;
 	}
 	
 	/**
