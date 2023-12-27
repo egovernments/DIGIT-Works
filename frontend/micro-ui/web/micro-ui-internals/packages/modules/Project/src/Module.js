@@ -14,6 +14,8 @@ import ProjectDetails from "./pages/employee/ProjectDetails";
 import ProjectSearch from "./pages/employee/ProjectSearch";
 import ProjectSearchAndInbox from "./pages/employee/ProjectSearchAndInbox";
 import ProjectWMSSearch from "./pages/employee/ProjectWMSSearch";
+import SampleComp from "./SampleComp";
+
 
 export const ProjectModule = ({ stateCode, userType, tenants }) => {
   
@@ -49,7 +51,8 @@ const componentsToRegister = {
     ViewSubProjectsDetails,
     CitizenInfoLabel,
     SelectGeoLocation,
-    ProjectWMSSearch
+    ProjectWMSSearch,
+    GenericViewTestComp:SampleComp
 };
 
 export const initProjectComponents = () => {

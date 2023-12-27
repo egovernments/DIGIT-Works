@@ -10,7 +10,7 @@ function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
 }
 
-const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineStatusPrefix="WF_SERVICE_" ,statusAttribute="status", ...props}) => {
+const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineStatusPrefix="WF_SERVICE_" ,statusAttribute="status",config, ...props}) => {
     const [additionalComment,setAdditionalComment] = useState(false)
     //for testing from url these 2 lines of code are kept here
     // const { estimateNumber } = Digit.Hooks.useQueryParams();
@@ -64,6 +64,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
             id: applicationNo,
             moduleCode: businessService,
             config: {
+                ...config,
                 enabled: true,
                 cacheTime: 0
             }
@@ -82,7 +83,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
             {workflowDetails?.isLoading && <Loader />}
             { workflowDetails?.data?.timeline?.length > 0 && (
                 <React.Fragment>
-                    {workflowDetails?.breakLineRequired === undefined ? <BreakLine /> : workflowDetails?.breakLineRequired ? <BreakLine /> : null}
+                    {workflowDetails?.breakLineRequired === undefined && (props?.breakLineRequired || props?.breakLineRequired === undefined) ? <BreakLine /> : workflowDetails?.breakLineRequired ? <BreakLine /> : null}
                     {!workflowDetails?.isLoading && (
                         <Fragment>
                             <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>

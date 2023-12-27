@@ -102,7 +102,7 @@ config:
         dockerfile: "build/maven/Dockerfile"
         image-name: "measurement-service"
       - work-dir: "backend/measurement-service/src/main/resources/db"
-        image-name: "measurement-service-db"
+        image-name: "measurement-service-db"     
 
   - name: "builds/digit-works/backend/measurement-registry"
     build:

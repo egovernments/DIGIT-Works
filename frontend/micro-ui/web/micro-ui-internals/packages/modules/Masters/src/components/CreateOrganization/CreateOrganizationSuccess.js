@@ -32,6 +32,7 @@ const CreateOrganizationSuccess = ({isSuccess, setCreateOrgStatus}) => {
                 </LinkLabel>
                 <LinkLabel style={{ display: "flex" }} onClick={createOrg}>
                     <AddNewIcon style={{marginRight: "8px"}}/>{t("MASTERS_CREATE_NEW_ORGANISATION")}
+                    
                 </LinkLabel>     
             </div>
                   

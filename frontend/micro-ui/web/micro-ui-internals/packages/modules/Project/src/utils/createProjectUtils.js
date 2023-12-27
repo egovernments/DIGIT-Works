@@ -41,7 +41,7 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive,
   payload_modal.id = document?.[1]?.['file']?.['id'];
   payload_modal.key = docType;
   payload_modal.additionalDetails = {
-    fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] :  documentType?.filter(doc=>doc?.name === docType)?.[0]?.code,
+    fileName : document?.[1]?.['file']?.['name'] || document?.[0] ? document?.[1]?.['file']?.['name'] || document?.[0] :  documentType?.filter(doc=>doc?.name === docType)?.[0]?.code,
     otherCategoryName : otherDocFileName
   }
   payload_modal.tenantId = tenantId;
