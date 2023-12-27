@@ -37,6 +37,7 @@ public class LineItemsRowMapper implements ResultSetExtractor<List<LineItems>> {
             String id = rs.getString("id");
             String estimateId = rs.getString("estimateId");
             String estimateLineItemId = rs.getString("estimateLineItemId");
+            String contractLineItemRef = rs.getString("contractLineItemRef");
             String contractId = rs.getString("contractId");
             String tenantId = rs.getString("tenantId");
             Double unitRate = rs.getDouble("unitRate");
@@ -57,6 +58,7 @@ public class LineItemsRowMapper implements ResultSetExtractor<List<LineItems>> {
                     .id(id)
                     .estimateId(estimateId)
                     .estimateLineItemId(estimateLineItemId)
+                    .contractLineItemRef(contractLineItemRef)
                     .contractId(contractId)
                     .tenantId(tenantId)
                     .unitRate(unitRate)
