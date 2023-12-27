@@ -5,6 +5,8 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,10 @@ public class EstimateDetail {
     @JsonProperty("id")
     private String id = null;
 
+    @JsonProperty("previousLineItemId")
+    private String previousLineItemId = null;
+
+    @Size(min = 1,max = 64)
     @JsonProperty("sorId")
     private String sorId = null;
 
@@ -31,9 +37,11 @@ public class EstimateDetail {
     private String category = null;
 
     @JsonProperty("name")
+    @Size(min = 2,max = 256)
     private String name = null;
 
     @JsonProperty("description")
+    @Size(min = 2,max = 256)
     private String description = null;
 
     @JsonProperty("unitRate")
@@ -47,6 +55,21 @@ public class EstimateDetail {
 
     @JsonProperty("uomValue")
     private Double uomValue = null;
+
+    @JsonProperty("length")
+    private BigDecimal length = null;
+
+    @JsonProperty("width")
+    private BigDecimal width = null;
+
+    @JsonProperty("height")
+    private BigDecimal height =null;
+
+    @JsonProperty("quantity")
+    private BigDecimal quantity =null;
+
+    @JsonProperty("isDeduction")
+    private Boolean isDeduction=null;
 
     @JsonProperty("amountDetail")
     @Valid

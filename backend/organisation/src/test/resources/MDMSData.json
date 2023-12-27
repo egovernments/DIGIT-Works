@@ -1,0 +1,39 @@
+{
+  "ResponseInfo": null,
+  "MdmsRes": {
+    "common-masters": {
+      "OrgTaxIdentifier": [
+        "PAN",
+        "GSTIN"
+      ],
+      "OrgFunctionClass": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "NA"
+      ],
+      "OrgFunctionCategory": [
+        "VEN.CW",
+        "VEN.EW",
+        "CBO.NA"
+      ],
+      "OrgType": [
+        "VEN.CMS",
+        "VEN.NA",
+        "CBO.MSG",
+        "CBO.SDA",
+        "CBO.ALF",
+        "CBO.CLF"
+      ]
+    },
+    "tenant": {
+      "tenants": [
+        "pg",
+        "pg.citya",
+        "pg.cityb",
+        "pg.cityc"
+      ]
+    }
+  }
+}

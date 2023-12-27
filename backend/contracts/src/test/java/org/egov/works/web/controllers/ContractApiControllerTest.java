@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ErrorRes;
-import org.egov.works.Main;
+import org.egov.works.ContractServiceMain;
 import org.egov.works.TestConfiguration;
 import org.egov.works.helper.ContractRequestTestBuilder;
 import org.egov.works.helper.ContractTestBuilder;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -40,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * API tests for ContractApiController
  */
 
-@ContextConfiguration(classes = Main.class)
+@ContextConfiguration(classes = ContractServiceMain.class)
 @WebMvcTest(ContractApiController.class)
 @Import(TestConfiguration.class)
 @AutoConfigureMockMvc

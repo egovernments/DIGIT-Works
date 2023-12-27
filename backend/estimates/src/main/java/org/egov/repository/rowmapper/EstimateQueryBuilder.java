@@ -17,45 +17,51 @@ import java.util.List;
 @Slf4j
 public class EstimateQueryBuilder {
 
-    @Autowired
-    private EstimateServiceConfiguration config;
+    private final EstimateServiceConfiguration config;
 
+    private static final String LEFT_JOIN = "LEFT JOIN ";
 
+    private static final String ORDER_BY_EST_CREATED_TIME = " ORDER BY est.created_time ";
     private static final String FETCH_ESTIMATE_QUERY = "SELECT est.*," +
-            "estDetail.*,estAmtDetail.*,estAdd.*, est.id as estId,estDetail.description as estDetailDescription,est.last_modified_time as estLastModifiedTime, estDetail.id AS estDetailId, " +
+            "estDetail.*,estAmtDetail.*,estAdd.*, est.id as estId,estDetail.description as estDetailDescription,est.last_modified_time as estLastModifiedTime, est.created_time as estCreatedTime, estDetail.id AS estDetailId,estDetail.old_uuid AS estDetailOldUuid," +
             "estDetail.additional_details AS estDetailAdditional,estAmtDetail.additional_details AS estAmtDetailAdditional," +
             "estAdd.id AS estAddId,estAmtDetail.id AS estAmtDetailId,estDetail.estimate_id AS estDetailEstId," +
             "estDetail.is_active AS estDetailActive,estAmtDetail.is_active AS estAmtDetailActive,estDetail.name AS estDetailName "+
             "FROM eg_wms_estimate AS est " +
-            "LEFT JOIN " +
+            LEFT_JOIN +
             "eg_wms_estimate_detail AS estDetail " +
             "ON (est.id=estDetail.estimate_id) " +
-            "LEFT JOIN " +
+            LEFT_JOIN +
             "eg_wms_estimate_address AS estAdd " +
             "ON (est.id=estAdd.estimate_id) " +
-            "LEFT JOIN " +
+            LEFT_JOIN +
             "eg_wms_estimate_amount_detail AS estAmtDetail " +
             "ON (estDetail.id=estAmtDetail.estimate_detail_id) ";
 
     private static final String ESTIMATE_COUNT_QUERY = "SELECT distinct(est.estimate_number) " +
             "FROM eg_wms_estimate AS est " +
-            "LEFT JOIN " +
+            LEFT_JOIN +
             "eg_wms_estimate_detail AS estDetail " +
             "ON (est.id=estDetail.estimate_id) " +
-            "LEFT JOIN " +
+            LEFT_JOIN+
             "eg_wms_estimate_address AS estAdd " +
             "ON (est.id=estAdd.estimate_id) " +
-            "LEFT JOIN " +
+            LEFT_JOIN +
             "eg_wms_estimate_amount_detail AS estAmtDetail " +
             "ON (estDetail.id=estAmtDetail.estimate_detail_id) ";
 
-    private final String paginationWrapper = "SELECT * FROM " +
-            "(SELECT *, DENSE_RANK() OVER (ORDER BY estLastModifiedTime DESC , estId) offset_ FROM " +
+    private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY estCreatedTime [] , estId) offset_ FROM " +
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
     private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+    @Autowired
+    public EstimateQueryBuilder(EstimateServiceConfiguration config) {
+        this.config = config;
+    }
 
     private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
         if (values.isEmpty())
@@ -68,7 +74,7 @@ public class EstimateQueryBuilder {
     public String getEstimateQuery(EstimateSearchCriteria searchCriteria, List<Object> preparedStmtList) {
         log.info("EstimateQueryBuilder::getEstimateQuery");
         StringBuilder queryBuilder = null;
-        if (!searchCriteria.getIsCountNeeded())
+        if (Boolean.FALSE.equals(searchCriteria.getIsCountNeeded()))
             queryBuilder = new StringBuilder(FETCH_ESTIMATE_QUERY);
         else
             queryBuilder = new StringBuilder(ESTIMATE_COUNT_QUERY);
@@ -116,6 +122,35 @@ public class EstimateQueryBuilder {
             preparedStmtList.add(searchCriteria.getProjectId());
         }
 
+        if (StringUtils.isNotBlank(searchCriteria.getBusinessService())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" est.business_service=? ");
+            preparedStmtList.add(searchCriteria.getBusinessService());
+        }
+
+        if (StringUtils.isNotBlank(searchCriteria.getRevisionNumber())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" est.revision_number=? ");
+            preparedStmtList.add(searchCriteria.getRevisionNumber());
+        }
+
+        if (searchCriteria.getVersionNumber() != null) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" est.version_number=? ");
+            preparedStmtList.add(searchCriteria.getVersionNumber());
+        }
+
+        if (StringUtils.isNotBlank(searchCriteria.getOldUuid())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" est.old_uuid=? ");
+            preparedStmtList.add(searchCriteria.getOldUuid());
+        }
+        if(StringUtils.isNotBlank(searchCriteria.getStatus())){
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" est.status=? ");
+            preparedStmtList.add(searchCriteria.getStatus());
+        }
+
         //added the default as active line item and amount detail
         addClauseIfRequired(preparedStmtList, queryBuilder);
         queryBuilder.append(" estDetail.is_active=? ");
@@ -144,7 +179,7 @@ public class EstimateQueryBuilder {
                 throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify toProposalDate without a fromProposalDate");
             }
         }
-        if (!searchCriteria.getIsCountNeeded()) {
+        if (Boolean.FALSE.equals(searchCriteria.getIsCountNeeded())) {
             addOrderByClause(queryBuilder, searchCriteria);
             return addPaginationWrapper(queryBuilder.toString(), preparedStmtList, searchCriteria);
         }
@@ -157,7 +192,7 @@ public class EstimateQueryBuilder {
         log.info("EstimateQueryBuilder::getEstimateQuery");
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
-            queryBuilder.append(" ORDER BY est.created_time ");
+            queryBuilder.append(ORDER_BY_EST_CREATED_TIME);
         } else {
             switch (EstimateSearchCriteria.SortBy.valueOf(criteria.getSortBy().name())) {
                 case executingDepartment:
@@ -170,13 +205,13 @@ public class EstimateQueryBuilder {
                     queryBuilder.append(" ORDER BY est.proposal_date ");
                     break;
                 case createdTime:
-                    queryBuilder.append(" ORDER BY est.created_time ");
+                    queryBuilder.append(ORDER_BY_EST_CREATED_TIME);
                     break;
                 case totalAmount:
                     queryBuilder.append(" ORDER BY estDetail.total_amount ");
                     break;
                 default:
-                    queryBuilder.append(" ORDER BY est.created_time ");
+                    queryBuilder.append(ORDER_BY_EST_CREATED_TIME);
                     break;
             }
         }
@@ -198,9 +233,7 @@ public class EstimateQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+        preparedStmtList.addAll(ids);
     }
 
     private String addPaginationWrapper(String query, List<Object> preparedStmtList,
@@ -208,7 +241,12 @@ public class EstimateQueryBuilder {
         log.info("EstimateQueryBuilder::addPaginationWrapper");
         int limit = config.getDefaultLimit();
         int offset = config.getDefaultOffset();
-        String finalQuery = paginationWrapper.replace("{}", query);
+        String wrapperQuery;
+        if (criteria.getSortOrder() == EstimateSearchCriteria.SortOrder.ASC)
+            wrapperQuery = PAGINATION_WRAPPER.replace("[]", "ASC");
+        else
+            wrapperQuery = PAGINATION_WRAPPER.replace("[]", "DESC");
+        String finalQuery = wrapperQuery.replace("{}", query);
 
         if (criteria.getLimit() != null) {
             if (criteria.getLimit() <= config.getMaxLimit())
