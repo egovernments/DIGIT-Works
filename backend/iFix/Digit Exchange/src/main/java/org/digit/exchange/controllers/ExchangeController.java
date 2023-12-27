@@ -9,6 +9,7 @@ import org.digit.exchange.service.ExchangeService;
 import org.digit.exchange.utils.DispatcherUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,13 +72,13 @@ public class ExchangeController{
         // header.setMeta(messageRequest.getHeader().getFiscalMessage());
         response.setHeader(header);
         //If isMsgEncrypted then encrypt message
-            //Encrypt(message)
+        //Encrypt(message)
         response.setMessage(message);
         return response;
     }
 
     private ResponseMessage processMessage(String messageType, RequestMessage messageRequest){
-        //where does the message need to be delivered to. 
+        //where does the message need to be delivered to.
         String receiver = messageRequest.getHeader().getReceiverId();
         String[] recieverDid = parseDID(receiver);
         String sender = messageRequest.getHeader().getSenderId();
@@ -95,7 +96,7 @@ public class ExchangeController{
                 throw new ResourceNotFoundException("Resource not found");
             // Check if message is encrypted
             // if(messageRequest.getHeader().isMsgEncrypted())
-                //Decrypt Message
+            //Decrypt Message
             //Verify Signature
         }else{
             //Check if sender is same domain
@@ -104,13 +105,13 @@ public class ExchangeController{
                 deliverToUrl = senderDid[1] + "exchange/v1";
                 // Check if message needs to be is encrypted
                 // if(messageRequest.getHeader().isMsgEncrypted())
-                    //Encrypt Message
+                //Encrypt Message
                 //Sign Message
             }else{
                 //Message received from external domain
                 //Check if message needs to be is encrypted
                 //if(messageRequest.getHeader().isMsgEncrypted())
-                    //Decrypt Message
+                //Decrypt Message
                 //Verify Signature
             }
         }
@@ -126,141 +127,11 @@ public class ExchangeController{
         return response;
     }
 
-    @RequestMapping(value = "/program", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> program(@RequestBody RequestMessage messageRequest) {
+    @RequestMapping(value = "/{subpath}", method = RequestMethod.POST)
+    public ResponseEntity<ResponseMessage> program(@RequestBody RequestMessage messageRequest, @PathVariable("subpath") String subpath) {
         try {
-            ResponseMessage response = processMessage("program", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/on-program", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> onprogram(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("on-program", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/estimate", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> estimate(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("estimate", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/on-estimate", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> onestimate(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("on-estimate", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/sanction", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> sanction(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("sanction", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/on-sanction", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> onsanction(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("on-sanction", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }    
-
-    @RequestMapping(value = "/allocation", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> allocation(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("allocation", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/on-allocation", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> onallocation(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("on-allocation", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/disburse", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> disburse(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("disburse", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/on-disburse", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> ondisburse(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("on-disburse", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/demand", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> demand(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("demand", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/on-demand", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> ondemand(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("on-demand", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/receipt", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> receipt(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("receipt", messageRequest);
-            return ResponseEntity.ok(response);            
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @RequestMapping(value = "/on-receipt", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> onreceipt(@RequestBody RequestMessage messageRequest) {
-        try {
-            ResponseMessage response = processMessage("on-receipt", messageRequest);
-            return ResponseEntity.ok(response);            
+            ResponseMessage response = processMessage(subpath, messageRequest);
+            return ResponseEntity.ok(response);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
