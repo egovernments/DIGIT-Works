@@ -27,7 +27,6 @@ public class LineItemsRepository {
     public List<LineItems> getLineItems(ContractCriteria contractCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getLineItemsSearchQuery(contractCriteria, preparedStmtList);
-        List<LineItems> lineItems = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        return lineItems;
+        return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
     }
 }
