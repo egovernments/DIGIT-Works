@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
 import { FormComposer,Toast } from '@egovernments/digit-ui-react-components';
 import { getWageSeekerUpdatePayload, getBankAccountUpdatePayload, getWageSeekerSkillDeletePayload } from '../../../../utils';
+import debounce from 'lodash/debounce';
 
 const navConfig =  [{
     name:"Wage_Seeker_Details",
@@ -117,6 +118,9 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         countSkillsInCategory[skill.code.split('.')[1]] = countSkillsInCategory[skill.code.split('.')[1]] ? countSkillsInCategory[skill.code.split('.')[1]] + 1 : 1
       });
 
+      if(Object.keys(countSkillsInCategory)?.length <= 0)
+        validateCheckPass = false;
+    
       Object.keys(countSkillsInCategory).forEach(key => {
         if(countSkillsInCategory[key] > 1){
             validateCheckPass = false 
@@ -274,7 +278,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         });
     }
 
-    const onSubmit = (data) => {
+    const OnModalSubmit = (data) => {
         data = Digit.Utils.trimStringsInObject(data)
         const validationError = validateSelectedSkills(data)
         if(validationError) return
@@ -285,14 +289,21 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         }else {
             handleResponseForCreate(wageSeekerPayload, data);
         }
-    }
+    };
+
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
+
+    const handleSubmit = (_data) => {
+        // Call the debounced version of onModalSubmit
+        debouncedOnModalSubmit(_data);
+      };
 
     return (
         <React.Fragment>
            <FormComposer
                 label={isModify ? "CORE_COMMON_SAVE" : "ACTION_TEST_MASTERS_CREATE_WAGESEEKER"}
                 config={config?.form}
-                onSubmit={onSubmit}
+                onSubmit={handleSubmit}
                 submitInForm={false}
                 fieldStyle={{ marginRight: 0 }}
                 inline={false}

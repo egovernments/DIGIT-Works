@@ -1,4 +1,4 @@
-import { FormComposer, Header, Toast, WorkflowModal } from "@egovernments/digit-ui-react-components";
+import { Button, CardText, FormComposer, Header, PopUp, Toast, WorkflowModal, Card } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import { createBillPayload } from "../../../utils/createBillUtils";
 import { updateBillPayload } from "../../../utils/updateBillPayload";
 import getModalConfig from "./config";
+import debounce from 'lodash/debounce';
 
 const navConfig =  [
     {
@@ -23,7 +24,8 @@ const CreatePurchaseBillForm = ({
     preProcessData,
     isModify,
     docConfigData,
-    bill
+    bill,
+    MBValidationData
 }) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
@@ -36,6 +38,7 @@ const CreatePurchaseBillForm = ({
     const [selectedApprover, setSelectedApprover] = useState({});
     const [inputFormData,setInputFormData] = useState({})
     const [config, setConfig] = useState({});
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     createPurchaseBillConfig = useMemo(
         () => Digit.Utils.preProcessMDMSConfig(t, createPurchaseBillConfig, {
@@ -146,7 +149,7 @@ const CreatePurchaseBillForm = ({
     }, [approvers])
 
 
-    const onModalSubmit = async (_data) => {
+    const OnModalSubmit = async (_data) => {
         _data = Digit.Utils.trimStringsInObject(_data)
         //here make complete data in combination with _data and inputFormData and create payload accordingly
         //also test edit flow with this change
@@ -185,13 +188,20 @@ const CreatePurchaseBillForm = ({
                 },
             });
         }
-    }
+    };
+
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
 
     const onFormSubmit = async(data) => {
         data = Digit.Utils.trimStringsInObject(data)
         setInputFormData((prevState) => data)
-
-        if(data?.totalBillAmount <= 0)
+        if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills < data?.totalBillAmount)
+         { 
+            setIsPopupOpen(true);
+         }
+        else if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills <=0 || MBValidationData?.allMeasurementsIds?.length <= 0)
+            setToast({show : true, label : t("WORKS_NOT_ALLOWED_TO_CREATED_PB"), error : true})
+        else if(data?.totalBillAmount <= 0)
         setToast({show : true, label : t("EXPENDITURE_VALUE_CANNOT_BE_ZERO"), error : true})
         else
         setShowModal(true);
@@ -218,11 +228,16 @@ const CreatePurchaseBillForm = ({
         };
     });
 
+    const handleSubmit = (_data) => {
+        // Call the debounced version of onModalSubmit
+        debouncedOnModalSubmit(_data);
+      };
+
     return (
         <React.Fragment>
                 {showModal && <WorkflowModal
                     closeModal={() => setShowModal(false)}
-                    onSubmit={onModalSubmit}
+                    onSubmit={handleSubmit}
                     config={config}
                 />
                 }
@@ -255,6 +270,36 @@ const CreatePurchaseBillForm = ({
                         cardClassName = "mukta-header-card"
                     />)
                 }
+                {isPopupOpen && <PopUp>
+                    <div className="popup-view-alaysis" style={{marginTop: "20% !important"}}>
+                    <Card style={{padding:"2rem"}}>
+                    <CardText className="estimate-analysis-cardheader">{t("WORKS_UNPAID_AMT_MSG")}</CardText>
+                    <CardText className="estimate-analysis-cardheader">{t("WORKS_UNPAID_AMT_QUES")}</CardText>
+                    <div style={{display:"inline-flex",width:"100%",marginLeft:"30%",gap:"5%"}}>
+                    <Button
+                    style={{width:"16%"}}
+                    label={t("NO")}
+                    variation="primary"
+                    onButtonClick={() => {
+                        setIsPopupOpen(false);
+                        setShowModal(false);
+                    }}
+                    type="button"
+                    />
+                    <Button
+                    style={{width:"16%"}}
+                    label={t("YES")}
+                    variation="primary"
+                    onButtonClick={() => {
+                        setIsPopupOpen(false);
+                        setShowModal(true);
+                    }}
+                    type="button"
+                    />
+                    </div>
+                    </Card>
+                    </div>
+                </PopUp>}
                {toast?.show && <Toast error={toast?.error} label={toast?.label} isDleteBtn={true} onClose={handleToastClose} />}
         </React.Fragment>
     )
