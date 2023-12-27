@@ -21,16 +21,12 @@ import java.util.Map;
 @Slf4j
 public class NotificationUtil {
 
-    @Autowired
-    private ExpenseCalculatorConfiguration config;
+    private final ExpenseCalculatorConfiguration config;
 
-    @Autowired
-    private ServiceRequestRepository restRepo;
+    private final ServiceRequestRepository restRepo;
 
-    @Autowired
-    private ObjectMapper mapper;
-    @Autowired
-    private ContractUtils contractUtils;
+    private final ObjectMapper mapper;
+    private final ContractUtils contractUtils;
 
     public static final String REQUEST_INFO = "RequestInfo";
     public static final String TENANT_ID = "tenantId";
@@ -43,11 +39,18 @@ public class NotificationUtil {
     public static final String CONTACT_NAME = "contactName";
     public static final String CONTACT_MOBILE_NUMBER = "contactMobileNumber";
 
+    @Autowired
+    public NotificationUtil(ExpenseCalculatorConfiguration config, ServiceRequestRepository restRepo, ObjectMapper mapper, ContractUtils contractUtils) {
+        this.config = config;
+        this.restRepo = restRepo;
+        this.mapper = mapper;
+        this.contractUtils = contractUtils;
+    }
+
 
     public Map<String, String> getCBOContactPersonDetails(RequestInfo requestInfo, String tenantId, String contractNumber){
         String orgId = fetchOrgId(requestInfo, tenantId, contractNumber);
-        Map<String, String> CBODetails = fetchCBODetails(requestInfo, tenantId, orgId);
-        return CBODetails;
+        return fetchCBODetails(requestInfo, tenantId, orgId);
     }
 
     public String fetchOrgId(RequestInfo requestInfo, String tenantId, String contractNumber){

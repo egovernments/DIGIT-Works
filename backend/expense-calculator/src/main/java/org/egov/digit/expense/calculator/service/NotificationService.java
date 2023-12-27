@@ -21,19 +21,24 @@ import java.util.Map;
 @Service
 @Slf4j
 public class NotificationService {
-    @Autowired
-    private ExpenseCalculatorProducer producer;
-    @Autowired
-    private NotificationUtil notificationUtil;
-    @Autowired
-    private LocalizationUtil localizationUtil;
-    @Autowired
-    private ExpenseCalculatorConfiguration config;
-    @Autowired
-    private HRMSUtils hrmsUtils;
+    private final ExpenseCalculatorProducer producer;
+    private final NotificationUtil notificationUtil;
+    private final LocalizationUtil localizationUtil;
+    private final ExpenseCalculatorConfiguration config;
+    private final HRMSUtils hrmsUtils;
 
     public static final String CONTACT_MOBILE_NUMBER = "contactMobileNumber";
     public static final String EXPENSE_CALCULATOR_MODULE_CODE = "rainmaker-common-masters";
+
+    @Autowired
+    public NotificationService(ExpenseCalculatorProducer producer, NotificationUtil notificationUtil, LocalizationUtil localizationUtil, ExpenseCalculatorConfiguration config, HRMSUtils hrmsUtils) {
+        this.producer = producer;
+        this.notificationUtil = notificationUtil;
+        this.localizationUtil = localizationUtil;
+        this.config = config;
+        this.hrmsUtils = hrmsUtils;
+    }
+
     public void sendNotificationForPurchaseBill(PurchaseBillRequest purchaseBillRequest){
 
         String action = purchaseBillRequest.getWorkflow().getAction();
@@ -43,10 +48,10 @@ public class NotificationService {
             String message = null;
             String contactMobileNumber = null;
             if (action.equalsIgnoreCase("APPROVE")) {
-                Map<String, String> CBODetails = notificationUtil.getCBOContactPersonDetails(purchaseBillRequest.getRequestInfo(),
+                Map<String, String> cbODetails = notificationUtil.getCBOContactPersonDetails(purchaseBillRequest.getRequestInfo(),
                         purchaseBillRequest.getBill().getTenantId(), purchaseBillRequest.getBill().getContractNumber());
                 message = getMessage(purchaseBillRequest.getRequestInfo(), purchaseBillRequest.getBill().getTenantId(), "PURCHASE_BILL_APPROVE_TO_VENDOR");
-                contactMobileNumber = CBODetails.get(CONTACT_MOBILE_NUMBER);
+                contactMobileNumber = cbODetails.get(CONTACT_MOBILE_NUMBER);
 
             } else if (action.equalsIgnoreCase("REJECT")) {
 
@@ -74,13 +79,12 @@ public class NotificationService {
     }
 
     public String getMessage(RequestInfo requestInfo, String tenantId, String msgCode){
-        String rootTenantId = tenantId.split("\\.")[0];
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
             locale = requestInfo.getMsgId().split("\\|")[1];
-        Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, rootTenantId,
+        Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, tenantId,
                 locale, EXPENSE_CALCULATOR_MODULE_CODE);
-        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
+        return localizedMessageMap.get(locale + "|" + tenantId).get(msgCode);
     }
 
     public String buildMessageReplaceVariables(String message, String billNumber, String amount){

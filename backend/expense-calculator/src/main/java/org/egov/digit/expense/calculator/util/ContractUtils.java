@@ -13,14 +13,18 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class ContractUtils {
-    @Autowired
-    private ServiceRequestRepository restRepo;
+    private final ServiceRequestRepository restRepo;
+
+    private final ExpenseCalculatorConfiguration configs;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ExpenseCalculatorConfiguration configs;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public ContractUtils(ServiceRequestRepository restRepo, ExpenseCalculatorConfiguration configs, ObjectMapper mapper) {
+        this.restRepo = restRepo;
+        this.configs = configs;
+        this.mapper = mapper;
+    }
 
     public ContractResponse fetchContract (RequestInfo requestInfo, String tenantId, String contractNumber) {
         StringBuilder url = getContractSearchURI();
