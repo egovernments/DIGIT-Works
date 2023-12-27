@@ -43,14 +43,19 @@ import net.minidev.json.JSONArray;
 @Service
 public class BillValidator {
 
-	@Autowired
-	private MdmsUtil mdmsUtil;
+	public static final String BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST = "bill detail id is Invalid for the given ids of update request : ";
+	private final MdmsUtil mdmsUtil;
+
+	private final Configuration configs;
+
+	private final BillRepository billRepository;
 
 	@Autowired
-	private Configuration configs;
-
-	@Autowired
-	private BillRepository billRepository;
+	public BillValidator(MdmsUtil mdmsUtil, Configuration configs, BillRepository billRepository) {
+		this.mdmsUtil = mdmsUtil;
+		this.configs = configs;
+		this.billRepository = billRepository;
+	}
 
 	public void validateCreateRequest(BillRequest billRequest) {
 
@@ -67,7 +72,7 @@ public class BillValidator {
 
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
 		validateBillAmountAndDate(bill, errorMap);
-		validateTenantId(billRequest, mdmsData);
+		validateTenantId(billRequest,mdmsData);
 		validateMasterData(billRequest, errorMap, mdmsData, true);
 
 		if (!CollectionUtils.isEmpty(errorMap))
@@ -90,7 +95,7 @@ public class BillValidator {
 		validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap);
 
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
-		validateTenantId(billRequest, mdmsData);
+		validateTenantId(billRequest,mdmsData);
 		validateMasterData(billRequest, errorMap, mdmsData, false);
 
 		if (!CollectionUtils.isEmpty(errorMap))
@@ -188,15 +193,15 @@ public class BillValidator {
 
 			if(!CollectionUtils.isEmpty(invalidDetailIds))
 				errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_BillDETAIL_ID",
-						"bill detail id is Invalid for the given ids of update request : " + invalidDetailIds);
+						BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST + invalidDetailIds);
 
 			if(!CollectionUtils.isEmpty(invalidLineItemIds))
 				errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_LINEITEM_ID",
-						"bill detail id is Invalid for the given ids of update request : " + invalidLineItemIds);
+						BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST + invalidLineItemIds);
 
 			if(!CollectionUtils.isEmpty(invalidPayableLineItemIds))
 				errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_PAYABLE_LINEITEM_ID",
-						"bill detail id is Invalid for the given ids of update request : " + invalidPayableLineItemIds);
+						BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST + invalidPayableLineItemIds);
 		}
 
 
@@ -227,9 +232,9 @@ public class BillValidator {
 		Bill bill = billRequest.getBill();
 
 		/* validating head code master data */
-		List<String> BusinessCodeList = JsonPath.read(mdmsData.get(Constants.EXPENSE_MODULE_NAME).get(BUSINESS_SERVICE_MASTERNAME),CODE_FILTER);
+		List<String> businessCodeList = JsonPath.read(mdmsData.get(Constants.EXPENSE_MODULE_NAME).get(BUSINESS_SERVICE_MASTERNAME),CODE_FILTER);
 
-		if (!BusinessCodeList.contains(bill.getBusinessService())) {
+		if (!businessCodeList.contains(bill.getBusinessService())) {
 			errorMap.put("EG_EXPENSE_INVALID_BUSINESSSERVICE",
 					"The business service value : " + bill.getBusinessService() + " is invalid");
 		}
@@ -330,10 +335,8 @@ public class BillValidator {
 	 */
 	public boolean isWorkflowActiveForBusinessService(String businessServiceName) {
 		Map<String, Boolean> workflowActiveMap = configs.getBusinessServiceWorkflowStatusMap();
-		boolean isWorkflowActiveForBusinessService = null != workflowActiveMap.get(businessServiceName)
-				? workflowActiveMap.get(businessServiceName)
-				: false;
-		return isWorkflowActiveForBusinessService;
+		return null != workflowActiveMap.get(businessServiceName)
+				&& workflowActiveMap.get(businessServiceName);
 	}
 
 	private List<Bill> getBillsForValidation(BillRequest billRequest, Boolean isCreate){
@@ -344,7 +347,7 @@ public class BillValidator {
 				.tenantId(bill.getTenantId())
 				.build();
 
-		if (isCreate) {
+		if (Boolean.TRUE.equals(isCreate)) {
 
 			billCriteria.setReferenceIds(Stream.of(bill.getReferenceId()).collect(Collectors.toSet()));
 			billCriteria.setBusinessService(bill.getBusinessService());

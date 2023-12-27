@@ -24,35 +24,37 @@ import java.util.Map;
 @Component
 public class MdmsUtil {
 
-	@Autowired
-	private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    private final ObjectMapper mapper;
+
+    private final Configuration configs;
 
 	@Autowired
-	private ObjectMapper mapper;
+	public MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
+		this.restTemplate = restTemplate;
+		this.mapper = mapper;
+		this.configs = configs;
+	}
 
-	@Autowired
-	private Configuration configs;
-
-
-
-	public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, BillRequest billRequest) {
-		StringBuilder uri = new StringBuilder();
-		uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
-		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId);
-		Object response = new HashMap<>();
-		MdmsResponse mdmsResponse = new MdmsResponse();
-		try {
-			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
-		}catch(Exception e) {
-			log.error("Exception occurred while fetching category lists from mdms: ",e);
-		}
+    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, BillRequest billRequest) {
+        StringBuilder uri = new StringBuilder();
+        uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
+        MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId);
+        Object response = new HashMap<>();
+        MdmsResponse mdmsResponse = new MdmsResponse();
+        try {
+            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+            mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+        }catch(Exception e) {
+            log.error("Exception occurred while fetching category lists from mdms: ",e);
+        }
 
 		Long createdTime = billRequest.getBill().getAuditDetails() != null ? billRequest.getBill().getAuditDetails().getCreatedTime() : Instant.now().toEpochMilli();
 		Map<String, Map<String, JSONArray>> mdmsRes = filterMdmsResponseByDate(createdTime, mdmsResponse.getMdmsRes());
 		log.info(mdmsRes.toString());
-		return mdmsRes;
-	}
+        return mdmsRes;
+    }
 	public Map<String, Map<String, JSONArray>> filterMdmsResponseByDate(Long createdTime, Map<String, Map<String, JSONArray>> mdmsRes) {
 		Map<String, Map<String, JSONArray>> filteredMdmsRes = new HashMap<>();
 		for (Map.Entry<String, Map<String, JSONArray>> entry : mdmsRes.entrySet()) {
@@ -89,7 +91,7 @@ public class MdmsUtil {
 	}
 	/**
 	 * prepares Master Data request
-	 *
+	 * 
 	 * @param tenantId
 	 * @param requestInfo
 	 * @return
@@ -99,7 +101,7 @@ public class MdmsUtil {
 		// Criteria for tenant module
 		List<MasterDetail> tenantMasterDetails = new ArrayList<>();
 		Constants.TENANT_MDMS_MASTER_NAMES.forEach(name ->
-				tenantMasterDetails.add(MasterDetail.builder().name(name).build())
+			tenantMasterDetails.add(MasterDetail.builder().name(name).build())
 		);
 
 		ModuleDetail tenantModuleDetail = ModuleDetail.builder()
@@ -110,7 +112,7 @@ public class MdmsUtil {
 		// Criteria for Expense module
 		List<MasterDetail> expenseMasterDetails = new ArrayList<>();
 		Constants.EXPENSE_MDMS_MASTER_NAMES.forEach(name ->
-				expenseMasterDetails.add(MasterDetail.builder().name(name).build())
+			expenseMasterDetails.add(MasterDetail.builder().name(name).build())
 		);
 		ModuleDetail expenseModuleDetail = ModuleDetail.builder()
 				.moduleName(Constants.EXPENSE_MODULE_NAME)
@@ -120,7 +122,7 @@ public class MdmsUtil {
 		List<ModuleDetail> moduleDetails = new ArrayList<>();
 		moduleDetails.add(tenantModuleDetail);
 		moduleDetails.add(expenseModuleDetail);
-
+		
 		MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
 				.tenantId(tenantId)
 				.moduleDetails(moduleDetails)
@@ -131,5 +133,5 @@ public class MdmsUtil {
 				.mdmsCriteria(mdmsCriteria)
 				.build();
 	}
-
+	
 }

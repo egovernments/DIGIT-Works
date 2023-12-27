@@ -4,7 +4,7 @@ import digit.models.coremodels.SMSRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.kafka.Producer;
+import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.util.HRMSUtils;
 import org.egov.digit.expense.util.LocalizationUtil;
 import org.egov.digit.expense.util.NotificationUtil;
@@ -21,16 +21,20 @@ import static org.egov.digit.expense.config.Constants.*;
 @Service
 @Slf4j
 public class NotificationService {
+    private final ExpenseProducer expenseProducer;
+    private final NotificationUtil notificationUtil;
+    private final LocalizationUtil localizationUtil;
+    private final Configuration config;
+    private final HRMSUtils hrmsUtils;
+
     @Autowired
-    private Producer producer;
-    @Autowired
-    private NotificationUtil notificationUtil;
-    @Autowired
-    private LocalizationUtil localizationUtil;
-    @Autowired
-    private Configuration config;
-    @Autowired
-    private HRMSUtils hrmsUtils;
+    public NotificationService(ExpenseProducer expenseProducer, NotificationUtil notificationUtil, LocalizationUtil localizationUtil, Configuration config, HRMSUtils hrmsUtils) {
+        this.expenseProducer = expenseProducer;
+        this.notificationUtil = notificationUtil;
+        this.localizationUtil = localizationUtil;
+        this.config = config;
+        this.hrmsUtils = hrmsUtils;
+    }
 
 
     public void sendNotificationForPurchaseBill(BillRequest billRequest){
@@ -43,11 +47,11 @@ public class NotificationService {
             String contactMobileNumber = null;
             Map<String,Object> addtionalFields= new HashMap<>();
             if (action.equalsIgnoreCase(APPROVE_CODE)) {
-                Map<String, String> CBODetails = notificationUtil.getVendorContactPersonDetails(billRequest.getRequestInfo(),
+                Map<String, String> cboDetails = notificationUtil.getVendorContactPersonDetails(billRequest.getRequestInfo(),
                         billRequest.getBill().getTenantId(),
                         billRequest.getBill().getBillDetails().get(0).getPayee().getIdentifier());
                 message = getMessage(billRequest.getRequestInfo(), billRequest.getBill().getTenantId(), PURCHASE_BILL_APPROVE_TO_VENDOR_LOCALIZATION_CODE,addtionalFields);
-                contactMobileNumber = CBODetails.get(CONTACT_MOBILE_NUMBER);
+                contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
 
             } else if (action.equalsIgnoreCase(REJECT_CODE)) {
 
@@ -74,16 +78,15 @@ public class NotificationService {
     }
 
     public String getMessage(RequestInfo requestInfo, String tenantId, String msgCode, Map<String,Object> addtionalFields){
-        String rootTenantId = tenantId.split("\\.")[0];
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
             locale = requestInfo.getMsgId().split("\\|")[1];
-        Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, rootTenantId,
+        Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, tenantId,
                 locale, EXPENSE_CALCULATOR_MODULE_CODE);
         if(config.isAdditonalFieldRequired()){
             setAdditionalFields(requestInfo,tenantId,msgCode,addtionalFields);
         }
-        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
+        return localizedMessageMap.get(locale + "|" + tenantId).get(msgCode);
     }
 
     public String buildMessageReplaceVariables(String message, String billNumber, String amount){
@@ -118,12 +121,12 @@ public class NotificationService {
             WorksSmsRequest smsRequest= WorksSmsRequest.builder().message(customizedMessage).additionalFields(addtionalFields)
                     .mobileNumber(mobileNumber).build();
             log.info("SMS message with additonal Fields:::::" + smsRequest.toString());
-            producer.push(config.getMuktaNotificationTopic(), smsRequest);
+            expenseProducer.push(config.getMuktaNotificationTopic(), smsRequest);
 
         }else{
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(mobileNumber).message(customizedMessage).build();
             log.info("SMS message without additonalFields:::::" + smsRequest.toString());
-            producer.push(config.getSmsNotificationTopic(), smsRequest);
+            expenseProducer.push(config.getSmsNotificationTopic(), smsRequest);
         }
     }
 }
