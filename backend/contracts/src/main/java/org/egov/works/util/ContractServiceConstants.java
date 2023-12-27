@@ -112,4 +112,5 @@ public class ContractServiceConstants {
     public static final String INVALID_DOCUMENTS_MSG = "Document IDs are invalid";
     public static final String PARSE_ERROR_CODE = "PARSE_ERROR";
     public static final String PARSE_ERROR_MSG = "Error while parsing response from FileStore";
+    public static final String CONTRACT_REVISION_ESTIMATE = "CONTRACT-REVISION-ESTIMATE";
 }
