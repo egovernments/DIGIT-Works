@@ -8,12 +8,16 @@ import lombok.extern.slf4j.Slf4j;
 
 // NOTE: If tracer is disabled change CustomKafkaTemplate to KafkaTemplate in autowiring
 
-@Service
+@Service("OrganisationProducer")
 @Slf4j
-public class Producer {
+public class OrganizationProducer {
+
+	private final CustomKafkaTemplate<String, Object> kafkaTemplate;
 
 	@Autowired
-	private CustomKafkaTemplate<String, Object> kafkaTemplate;
+	public OrganizationProducer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
+		this.kafkaTemplate = kafkaTemplate;
+	}
 
 	public void push(String topic, Object value) {
 		kafkaTemplate.send(topic, value);

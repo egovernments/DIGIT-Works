@@ -1,14 +1,12 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.ProcessInstance;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * Request for Estimate _create and _update api&#39;s
@@ -28,6 +26,7 @@ public class EstimateRequest {
     private RequestInfo requestInfo = null;
 
     @JsonProperty("estimate")
+    @Valid
     private Estimate estimate = null;
 
     @JsonProperty("workflow")

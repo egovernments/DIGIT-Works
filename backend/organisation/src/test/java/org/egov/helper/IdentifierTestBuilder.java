@@ -22,7 +22,7 @@ public class IdentifierTestBuilder {
         this.builder
                 .id("identifier-id-1")
                 .orgId("org-id-1")
-                .type("TI1")
+                .type("PAN")
                 .value("value-1")
                 .additionalDetails(null);
         return this;
@@ -31,7 +31,7 @@ public class IdentifierTestBuilder {
     public IdentifierTestBuilder addGoodIdentifierWithoutIdForOrg(){
         this.builder
                 .orgId("org-id-1")
-                .type("TI1")
+                .type("PAN")
                 .value("value-1")
                 .additionalDetails(null);
         return this;

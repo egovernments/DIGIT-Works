@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class Producer {
+public class ContractProducer {
 
     @Autowired
     private CustomKafkaTemplate<String, Object> kafkaTemplate;
