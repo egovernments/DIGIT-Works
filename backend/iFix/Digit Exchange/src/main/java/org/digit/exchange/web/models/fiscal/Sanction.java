@@ -1,4 +1,4 @@
-package org.digit.exchange.models.fiscal;
+package org.digit.exchange.web.models.fiscal;
 
 import lombok.*;
 
@@ -14,37 +14,36 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 @Getter
 @Setter
-public class Demand extends FiscalMessage {
-    @JsonProperty("id")
-    private String id;
+public class Sanction extends FiscalMessage {
     @JsonProperty("name")
     private String name;
+    @JsonProperty("parent")
+    private String parent;
     @NotNull
     private ZonedDateTime startDate;
     @NotNull
     private ZonedDateTime endDate;
-    @JsonProperty("demands")
-    private List<Demand> demands;
+    @JsonProperty("sanctions")
+    private List<Sanction> sanctions;
     @JsonProperty("audit_details")
     private AuditDetails auditDetails;
     @JsonProperty("additional_details")
     private JsonNode additionalDetails;
 
+    public Sanction(){}
 
-    public Demand(){}
-
-    public Demand(Estimate estimate, BigDecimal netAmount, BigDecimal grossAmount){
+    public Sanction(Estimate estimate, BigDecimal netAmount, BigDecimal grossAmount){
         super.copy(estimate);
-        this.setType("demand");
+        this.setType("sanction");
         this.setNetAmount(netAmount);        
         this.setGrossAmount(grossAmount);        
     }
 
     @JsonIgnore
     public BigDecimal getTotalNetAmount() {
-        if (demands != null && !demands.isEmpty()) {
-            return demands.stream()
-                           .map(Demand::getNetAmount)
+        if (sanctions != null && !sanctions.isEmpty()) {
+            return sanctions.stream()
+                           .map(Sanction::getNetAmount)
                            .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getNetAmount();
@@ -53,12 +52,13 @@ public class Demand extends FiscalMessage {
 
     @JsonIgnore
     public BigDecimal getTotalGrossAmount() {
-        if (demands != null && !demands.isEmpty()) {
-            return demands.stream()
-                           .map(Demand::getGrossAmount)
+        if (sanctions != null && !sanctions.isEmpty()) {
+            return sanctions.stream()
+                           .map(Sanction::getGrossAmount)
                            .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
-            return getGrossAmount();
+            return getNetAmount();
         }
     }
+
 }

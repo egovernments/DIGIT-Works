@@ -3,7 +3,7 @@ package org.digit.exchange.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.digit.exchange.models.RequestMessage;
+import org.digit.exchange.web.models.RequestMessage;
 import org.digit.exchange.repository.RequestMessageRepository;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package org.digit.exchange.utils;
 
 import org.springframework.stereotype.Service;
-import org.digit.exchange.models.fiscal.FiscalMessage;
+import org.digit.exchange.web.models.fiscal.FiscalMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -9,13 +9,9 @@ import com.jcraft.jsch.*;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import java.io.*;
-import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import reactor.core.publisher.Mono;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 @Service

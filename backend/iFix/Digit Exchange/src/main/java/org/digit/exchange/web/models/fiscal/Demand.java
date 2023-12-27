@@ -1,4 +1,4 @@
-package org.digit.exchange.models.fiscal;
+package org.digit.exchange.web.models.fiscal;
 
 import lombok.*;
 
@@ -14,35 +14,37 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 @Getter
 @Setter
-public class Payment extends FiscalMessage {
+public class Demand extends FiscalMessage {
+    @JsonProperty("id")
+    private String id;
     @JsonProperty("name")
     private String name;
     @NotNull
     private ZonedDateTime startDate;
     @NotNull
     private ZonedDateTime endDate;
-    @JsonProperty("payments")
-    private List<Payment> payments;
+    @JsonProperty("demands")
+    private List<Demand> demands;
     @JsonProperty("audit_details")
     private AuditDetails auditDetails;
     @JsonProperty("additional_details")
     private JsonNode additionalDetails;
 
 
-    public Payment(){}
+    public Demand(){}
 
-    public Payment(Estimate estimate, BigDecimal netAmount, BigDecimal grossAmount){
+    public Demand(Estimate estimate, BigDecimal netAmount, BigDecimal grossAmount){
         super.copy(estimate);
-        this.setType("payment");
+        this.setType("demand");
         this.setNetAmount(netAmount);        
         this.setGrossAmount(grossAmount);        
     }
 
     @JsonIgnore
     public BigDecimal getTotalNetAmount() {
-        if (payments != null && !payments.isEmpty()) {
-            return payments.stream()
-                           .map(Payment::getNetAmount)
+        if (demands != null && !demands.isEmpty()) {
+            return demands.stream()
+                           .map(Demand::getNetAmount)
                            .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getNetAmount();
@@ -51,9 +53,9 @@ public class Payment extends FiscalMessage {
 
     @JsonIgnore
     public BigDecimal getTotalGrossAmount() {
-        if (payments != null && !payments.isEmpty()) {
-            return payments.stream()
-                           .map(Payment::getGrossAmount)
+        if (demands != null && !demands.isEmpty()) {
+            return demands.stream()
+                           .map(Demand::getGrossAmount)
                            .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getGrossAmount();

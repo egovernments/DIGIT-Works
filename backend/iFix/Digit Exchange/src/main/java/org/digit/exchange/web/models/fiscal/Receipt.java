@@ -1,4 +1,4 @@
-package org.digit.exchange.models.fiscal;
+package org.digit.exchange.web.models.fiscal;
 
 import lombok.*;
 
@@ -14,38 +14,35 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 @Getter
 @Setter
-public class Estimate extends FiscalMessage {
+public class Receipt extends FiscalMessage {
     @JsonProperty("name")
     private String name;
-    @JsonProperty("parent")
-    private String parent;
     @NotNull
     private ZonedDateTime startDate;
     @NotNull
     private ZonedDateTime endDate;
-    @JsonProperty("estimates")
-    private List<Estimate> estimates;
+    @JsonProperty("reciepts")
+    private List<Receipt> reciepts;
     @JsonProperty("audit_details")
     private AuditDetails auditDetails;
     @JsonProperty("additional_details")
     private JsonNode additionalDetails;
 
-    public Estimate(){}
 
-    public Estimate(Program program, ZonedDateTime startDate, ZonedDateTime endDate, BigDecimal netAmount, BigDecimal grossAmount){
-        super.copy(program);
-        this.setType("estimate");
-        this.startDate = startDate;
-        this.endDate = endDate;
+    public Receipt(){}
+
+    public Receipt(Demand demand, BigDecimal netAmount, BigDecimal grossAmount){
+        super.copy(demand);
+        this.setType("reciept");
         this.setNetAmount(netAmount);        
-        this.setGrossAmount(netAmount);        
+        this.setGrossAmount(grossAmount);        
     }
 
     @JsonIgnore
     public BigDecimal getTotalNetAmount() {
-        if (estimates != null && !estimates.isEmpty()) {
-            return estimates.stream()
-                           .map(Estimate::getNetAmount)
+        if (reciepts != null && !reciepts.isEmpty()) {
+            return reciepts.stream()
+                           .map(Receipt::getNetAmount)
                            .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getNetAmount();
@@ -54,12 +51,13 @@ public class Estimate extends FiscalMessage {
 
     @JsonIgnore
     public BigDecimal getTotalGrossAmount() {
-        if (estimates != null && !estimates.isEmpty()) {
-            return estimates.stream()
-                           .map(Estimate::getGrossAmount)
+        if (reciepts != null && !reciepts.isEmpty()) {
+            return reciepts.stream()
+                           .map(Receipt::getGrossAmount)
                            .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
-            return getGrossAmount();
+            return getNetAmount();
         }
     }
+
 }

@@ -1,14 +1,10 @@
-package org.digit.exchange.models;
+package org.digit.exchange.web.models;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 
 import org.digit.exchange.constants.Action;
 import org.digit.exchange.constants.Status;
-import org.digit.exchange.models.fiscal.FiscalMessage;
 
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonProperty;

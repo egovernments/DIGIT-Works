@@ -1,4 +1,4 @@
-package org.digit.exchange.models;
+package org.digit.exchange.web.models;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -6,7 +6,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import org.digit.exchange.constants.Action;
-import org.digit.exchange.models.fiscal.FiscalMessage;
+import org.digit.exchange.web.models.fiscal.FiscalMessage;
 import org.digit.exchange.utils.ZonedDateTimeConverter;
 
 import lombok.*;
@@ -53,7 +53,7 @@ public class RequestHeader{
     @OneToOne(cascade = CascadeType.ALL)
     @JsonProperty("meta")
     @Embedded
-    private FiscalMessage fiscalMessage;    
+    private FiscalMessage fiscalMessage;
 
     public RequestHeader(){
         UUID uuid = UUID.randomUUID();

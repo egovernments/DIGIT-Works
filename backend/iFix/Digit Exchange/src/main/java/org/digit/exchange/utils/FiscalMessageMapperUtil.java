@@ -1,12 +1,12 @@
 package org.digit.exchange.utils;
 
-import org.digit.exchange.models.fiscal.Allocation;
-import org.digit.exchange.models.fiscal.Demand;
-import org.digit.exchange.models.fiscal.Estimate;
-import org.digit.exchange.models.fiscal.FiscalMessage;
-import org.digit.exchange.models.fiscal.Program;
-import org.digit.exchange.models.fiscal.Receipt;
-import org.digit.exchange.models.fiscal.Sanction;
+import org.digit.exchange.web.models.fiscal.Allocation;
+import org.digit.exchange.web.models.fiscal.Demand;
+import org.digit.exchange.web.models.fiscal.Estimate;
+import org.digit.exchange.web.models.fiscal.FiscalMessage;
+import org.digit.exchange.web.models.fiscal.Program;
+import org.digit.exchange.web.models.fiscal.Receipt;
+import org.digit.exchange.web.models.fiscal.Sanction;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,8 +27,7 @@ public class FiscalMessageMapperUtil {
             mapper.registerModule(new JavaTimeModule());
 
             try {
-                Program program = mapper.readValue(fiscalMessage, Program.class);
-                return program;
+                return mapper.readValue(fiscalMessage, Program.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -37,8 +36,7 @@ public class FiscalMessageMapperUtil {
             mapper.registerModule(new JavaTimeModule());
 
             try {
-                Estimate estimate = mapper.readValue(fiscalMessage, Estimate.class);
-                return estimate;
+                return mapper.readValue(fiscalMessage, Estimate.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -47,8 +45,7 @@ public class FiscalMessageMapperUtil {
             mapper.registerModule(new JavaTimeModule());
 
             try {
-                Sanction sanction = mapper.readValue(fiscalMessage, Sanction.class);
-                return sanction;
+                return mapper.readValue(fiscalMessage, Sanction.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -57,8 +54,7 @@ public class FiscalMessageMapperUtil {
             mapper.registerModule(new JavaTimeModule());
 
             try {
-                Allocation allocation = mapper.readValue(fiscalMessage, Allocation.class);
-                return allocation;
+                return mapper.readValue(fiscalMessage, Allocation.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -67,8 +63,7 @@ public class FiscalMessageMapperUtil {
             mapper.registerModule(new JavaTimeModule());
 
             try {
-                Demand demand = mapper.readValue(fiscalMessage, Demand.class);
-                return demand;
+                return mapper.readValue(fiscalMessage, Demand.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -77,8 +72,7 @@ public class FiscalMessageMapperUtil {
             mapper.registerModule(new JavaTimeModule());
 
             try {
-                Receipt receipt = mapper.readValue(fiscalMessage, Receipt.class);
-                return receipt;
+                return mapper.readValue(fiscalMessage, Receipt.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

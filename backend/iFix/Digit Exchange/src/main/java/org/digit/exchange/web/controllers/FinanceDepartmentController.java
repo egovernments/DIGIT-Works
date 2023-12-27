@@ -1,13 +1,15 @@
-package org.digit.exchange.controllers;
+package org.digit.exchange.web.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.digit.exchange.constants.Action;
-import org.digit.exchange.models.*;
-import org.digit.exchange.models.fiscal.Estimate;
-import org.digit.exchange.models.fiscal.Program;
-import org.digit.exchange.models.fiscal.Sanction;
+import org.digit.exchange.web.models.RequestMessage;
+import org.digit.exchange.web.models.fiscal.Estimate;
+import org.digit.exchange.web.models.fiscal.Program;
+import org.digit.exchange.web.models.fiscal.Sanction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,9 +31,9 @@ import java.util.UUID;
 
 
 @Controller
+@Slf4j
 @RequestMapping("/finance")
 public class FinanceDepartmentController{
-    private static final Logger logger = LoggerFactory.getLogger(ExchangeController.class);
 
     private final WebClient webClient;
 
@@ -42,7 +44,7 @@ public class FinanceDepartmentController{
     //Request to Create a Program
     @RequestMapping(value = "/program/create", method = RequestMethod.POST)
     public ResponseEntity<String> program_create(@RequestBody Program program) {
-        logger.info("Creating new program");
+        log.info("Creating new program");
 
         Program programReply = new Program();
         programReply.copy(program);
@@ -77,9 +79,9 @@ public class FinanceDepartmentController{
     }
 
     //Request to Create a Estimate
-    @RequestMapping(value = "/estimate/create", method = RequestMethod.POST)
+    @PostMapping(value = "/estimate/create")
     public ResponseEntity<String> estimate_create(@RequestBody Estimate estimate) {
-        logger.info("Creating new estimate");
+        log.info("Creating new estimate");
 
         //Set Estimate Id indicating Estimate has been created
         UUID estimateId =  UUID.randomUUID();
@@ -116,9 +118,9 @@ public class FinanceDepartmentController{
     }
 
     //Request to Create a Sanction
-    @RequestMapping(value = "/sanction/create", method = RequestMethod.POST)
+    @PostMapping(value = "/sanction/create")
     public ResponseEntity<String> sanction_create(@RequestBody Sanction sanction) {
-        logger.info("Creating new sanction");
+        log.info("Creating new sanction");
 
         Sanction sanctionReply= new Sanction();
         sanctionReply.copy(sanction);

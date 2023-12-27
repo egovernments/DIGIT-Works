@@ -1,12 +1,14 @@
-package org.digit.exchange.controllers;
+package org.digit.exchange.web.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.digit.exchange.constants.Action;
-import org.digit.exchange.models.*;
-import org.digit.exchange.models.fiscal.Estimate;
-import org.digit.exchange.models.fiscal.Program;
-import org.digit.exchange.models.fiscal.Sanction;
+import org.digit.exchange.web.models.RequestMessage;
+import org.digit.exchange.web.models.fiscal.Estimate;
+import org.digit.exchange.web.models.fiscal.Program;
+import org.digit.exchange.web.models.fiscal.Sanction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,10 +30,9 @@ import java.time.ZonedDateTime;
 
 
 @Controller
+@Slf4j
 @RequestMapping("/line")
 public class LineDepartmentController{
-
-    private static final Logger logger = LoggerFactory.getLogger(ExchangeController.class);
 
     private final WebClient webClient;
     
@@ -41,9 +42,9 @@ public class LineDepartmentController{
     }
 
     //Send Request to Finance Department via DIGIT Exchange
-    @RequestMapping(value = "/program/create", method = RequestMethod.POST)
+    @PostMapping(value = "/program/create")
     public ResponseEntity<String> program_create(@RequestBody Program program) {
-        logger.info("Sending request for creating program : " + program.getName().toString());
+        log.info("Sending request for creating program : " + program.getName());
 
         String to = "finance@http://127.0.0.1:8080";
         String from ="line@http://127.0.0.1:8080";
@@ -61,9 +62,9 @@ public class LineDepartmentController{
     }
 
     //on_program Create Handler
-    @RequestMapping(value = "on-program/create", method = RequestMethod.POST)
+    @PostMapping(value = "on-program/create")
     public ResponseEntity<String> onprogram_create(@RequestBody Program program) {
-        logger.info("Program created with Code:" + program.getProgram());
+        log.info("Program created with Code:" + program.getProgram());
         
         ZoneId zoneId = ZoneId.of("Asia/Kolkata"); // Set the desired time zone
         ZonedDateTime startDate = LocalDateTime.of(2023, 1, 1, 0, 0, 0)
@@ -93,9 +94,9 @@ public class LineDepartmentController{
     }
 
     //on_estimate Create Handler
-    @RequestMapping(value = "on-estimate/create", method = RequestMethod.POST)
+    @PostMapping(value = "on-estimate/create")
     public ResponseEntity<String> onestimate_create(@RequestBody Estimate estimate) {
-        logger.info("Estimate created with Id:" + estimate.getId());
+        log.info("Estimate created with Id:" + estimate.getId());
         
         BigDecimal netAmount = new BigDecimal(10);
         BigDecimal grossAmount = new BigDecimal(10);
@@ -119,9 +120,9 @@ public class LineDepartmentController{
     }
 
     //on_sanction Create Handler
-    @RequestMapping(value = "on-sanction/create", method = RequestMethod.POST)
+    @PostMapping(value = "on-sanction/create")
     public ResponseEntity<String> onsanction_create(@RequestBody Sanction sanction) {
-        logger.info("Sanction created with Id:" + sanction.getId());
+        log.info("Sanction created with Id:" + sanction.getId());
         
         // BigDecimal amount = new BigDecimal(10);
         // Sanction sanction = new Sanction(estimate,amount);

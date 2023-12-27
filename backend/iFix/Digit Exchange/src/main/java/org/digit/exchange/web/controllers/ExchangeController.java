@@ -1,25 +1,21 @@
-package org.digit.exchange.controllers;
+package org.digit.exchange.web.controllers;
 
 import org.digit.exchange.config.AppConfig;
 import org.digit.exchange.constants.Status;
 import org.digit.exchange.exceptions.ResourceNotFoundException;
-import org.digit.exchange.models.*;
-import org.digit.exchange.models.fiscal.FiscalMessage;
+import org.digit.exchange.web.models.RequestMessage;
+import org.digit.exchange.web.models.ResponseHeader;
+import org.digit.exchange.web.models.ResponseMessage;
+import org.digit.exchange.web.models.fiscal.FiscalMessage;
 import org.digit.exchange.service.ExchangeService;
 import org.digit.exchange.utils.DispatcherUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 // import jakarta.servlet.http.HttpServletRequest;
 // import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.web.bind.annotation.PostMapping;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 
@@ -46,8 +42,8 @@ public class ExchangeController{
         if (input == null || input.isEmpty()) {
             return null;
         }
-        String[] parts = input.split("@", 2); // Limit to 2 parts in case there are multiple '@' in the string
-        return parts; // The first part before the '@'
+        // Limit to 2 parts in case there are multiple '@' in the string // The first part before the '@'
+        return input.split("@", 2);
     }
 
     private ResponseMessage prepareResponse(RequestMessage messageRequest, Status status, String senderId, int count, boolean isMsgEncrypted, String message){
@@ -127,7 +123,7 @@ public class ExchangeController{
         return response;
     }
 
-    @RequestMapping(value = "/{subpath}", method = RequestMethod.POST)
+    @PostMapping(value = "/{subpath}")
     public ResponseEntity<ResponseMessage> program(@RequestBody RequestMessage messageRequest, @PathVariable("subpath") String subpath) {
         try {
             ResponseMessage response = processMessage(subpath, messageRequest);

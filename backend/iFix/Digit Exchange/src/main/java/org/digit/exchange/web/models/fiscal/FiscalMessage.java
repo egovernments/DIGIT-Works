@@ -1,4 +1,4 @@
-package org.digit.exchange.models.fiscal;
+package org.digit.exchange.web.models.fiscal;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

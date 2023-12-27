@@ -1,15 +1,16 @@
-package org.digit.exchange.models;
+package org.digit.exchange.web.models;
 
 import lombok.*;
 
+import lombok.extern.slf4j.Slf4j;
 import org.digit.exchange.constants.Action;
-import org.digit.exchange.models.fiscal.Allocation;
-import org.digit.exchange.models.fiscal.Demand;
-import org.digit.exchange.models.fiscal.Estimate;
-import org.digit.exchange.models.fiscal.FiscalMessage;
-import org.digit.exchange.models.fiscal.Program;
-import org.digit.exchange.models.fiscal.Receipt;
-import org.digit.exchange.models.fiscal.Sanction;
+import org.digit.exchange.web.models.fiscal.Allocation;
+import org.digit.exchange.web.models.fiscal.Demand;
+import org.digit.exchange.web.models.fiscal.Estimate;
+import org.digit.exchange.web.models.fiscal.FiscalMessage;
+import org.digit.exchange.web.models.fiscal.Program;
+import org.digit.exchange.web.models.fiscal.Receipt;
+import org.digit.exchange.web.models.fiscal.Sanction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,14 +24,12 @@ import java.util.UUID;
 
 import jakarta.persistence.*;
 
-
+@Slf4j
 @Getter
 @Setter
 @Entity
 @Table(name="request_message")
 public class RequestMessage{
-
-    private static final Logger logger = LoggerFactory.getLogger(RequestMessage.class);
 
     @Id
     private String id;
@@ -49,7 +48,7 @@ public class RequestMessage{
         this.id = uuid.toString();
     }
 
-    public RequestMessage(String to, String from, FiscalMessage message,Action action){
+    public RequestMessage(String to, String from, FiscalMessage message, Action action){
         UUID uuid = UUID.randomUUID();
         this.id = uuid.toString();
         this.header = new RequestHeader(to,from,message,action);
@@ -61,7 +60,7 @@ public class RequestMessage{
                 String jsonProgram = mapper.writeValueAsString(program);
                 this.message = jsonProgram;            
             } catch (JsonProcessingException e) {
-                logger.error("Error while converting FiscalMessage to JSON");
+                log.error("Error while converting FiscalMessage to JSON");
                 throw new RuntimeException("Failed to process JSON", e);
             }
         } else if(message instanceof Estimate){
@@ -72,7 +71,7 @@ public class RequestMessage{
                 String jsonProgram = mapper.writeValueAsString(esimate);
                 this.message = jsonProgram;            
             } catch (JsonProcessingException e) {
-                logger.error("Error while converting FiscalMessage to JSON");
+                log.error("Error while converting FiscalMessage to JSON");
                 throw new RuntimeException("Failed to process JSON", e);
             }
         } else if(message instanceof Sanction){
@@ -83,7 +82,7 @@ public class RequestMessage{
                 String jsonProgram = mapper.writeValueAsString(sanction);
                 this.message = jsonProgram;            
             } catch (JsonProcessingException e) {
-                logger.error("Error while converting FiscalMessage to JSON");
+                log.error("Error while converting FiscalMessage to JSON");
                 throw new RuntimeException("Failed to process JSON", e);
             }
         } else if(message instanceof Allocation){
@@ -94,7 +93,7 @@ public class RequestMessage{
                 String jsonProgram = mapper.writeValueAsString(allocation);
                 this.message = jsonProgram;            
             } catch (JsonProcessingException e) {
-                logger.error("Error while converting FiscalMessage to JSON");
+                log.error("Error while converting FiscalMessage to JSON");
                 throw new RuntimeException("Failed to process JSON", e);
             }
         } else if(message instanceof Demand){
@@ -105,7 +104,7 @@ public class RequestMessage{
                 String jsonProgram = mapper.writeValueAsString(demand);
                 this.message = jsonProgram;            
             } catch (JsonProcessingException e) {
-                logger.error("Error while converting FiscalMessage to JSON");
+                log.error("Error while converting FiscalMessage to JSON");
                 throw new RuntimeException("Failed to process JSON", e);
             }
         } else if(message instanceof Receipt){
@@ -116,7 +115,7 @@ public class RequestMessage{
                 String jsonProgram = mapper.writeValueAsString(receipt);
                 this.message = jsonProgram;            
             } catch (JsonProcessingException e) {
-                logger.error("Error while converting FiscalMessage to JSON");
+                log.error("Error while converting FiscalMessage to JSON");
                 throw new RuntimeException("Failed to process JSON", e);
             }
         }
