@@ -9,7 +9,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * CalculatorSearchRequest
