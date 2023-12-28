@@ -86,6 +86,10 @@ public class ContractUtil {
         // return if no contract is present
         if (!isValidContract) return false;
 
+        if( contractResponse.getContracts().get(0).getBusinessService().equals("CONTRACTS-REVISION-ESTIMATE")
+                && !contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(APPROVED_STATUS))
+            throw new CustomException(CONTRACT_NOT_APPROVED_CODE, CONTRACT_NOT_APPROVED_MSG);
+
         if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
             throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
 
