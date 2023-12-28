@@ -11,7 +11,7 @@ const ROLES = {
   PAYMENT: ["BILL_ACCOUNTANT"],
   MUSTERROLLS: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
   MEASUREMENT: ["MB_CREATOR", "MB_VERIFIER", "MB_APPROVER", "MB_VIEWER"],
-
+  WORKBENCH : ["MDMS_ADMIN"],
   DSS: ["STADMIN"],
 };
 
@@ -215,6 +215,11 @@ const WorksCard = () => {
       label: t("EXP_PAYMENT_INS"),
       link: `/${window?.contextPath}/employee/expenditure/search-payment-instruction`,
       roles: ROLES.PAYMENT,
+    },
+    {
+      label: t("ACTION_TEST_9WORKBENCH"),
+      link: `${window?.location.origin}/workbench-ui/employee`,
+      roles: ROLES.WORKBENCH,
     }
   ];
 
