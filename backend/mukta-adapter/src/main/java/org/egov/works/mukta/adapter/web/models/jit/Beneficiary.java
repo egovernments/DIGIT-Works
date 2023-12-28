@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.egov.common.data.query.annotations.Exclude;
+import org.egov.works.mukta.adapter.web.models.bill.LineItem;
 import org.egov.works.mukta.adapter.web.models.enums.BeneficiaryPaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.BeneficiaryType;
 
@@ -100,7 +101,7 @@ public class Beneficiary {
     private Object additionalDetails;
 
     @JsonProperty("benfLineItems")
-    private List<BenfLineItems> benfLineItems;
+    private List<LineItem> benfLineItems;
 
     @JsonProperty("auditDetails")
     @Exclude

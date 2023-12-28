@@ -99,7 +99,7 @@ public class PaymentService {
         tenantIds.add("pg.citya");
         //TODO: Remove this hardcoding
         Set<String> billNumbers = new HashSet<>();
-        billNumbers.add("PB/2023-24/000523");
+        billNumbers.add("PB/2023-24/000527");
         // Fetch bills for which payment is not yet been created for every tenant
         for (String tenantId : tenantIds) {
             BillCriteria billCriteria = BillCriteria.builder()

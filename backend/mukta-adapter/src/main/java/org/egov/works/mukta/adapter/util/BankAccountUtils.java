@@ -3,6 +3,7 @@ package org.egov.works.mukta.adapter.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.web.models.Pagination;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
@@ -32,9 +33,8 @@ public class BankAccountUtils {
         this.config = config;
     }
 
-    public @Valid List<BankAccount> getBankAccountsByIdentifier(RequestInfo requestInfo, List<String> identifiers, String tenantId) throws Exception {
+    public @Valid List<BankAccount> getBankAccountsByIdentifier(RequestInfo requestInfo, List<String> identifiers, String tenantId) {
         log.info("Fetching Bank account details");
-        List<String> billIds = new ArrayList<>();
         BankAccountSearchCriteria bankAccountSearchCriteria = null;
         if (requestInfo != null && identifiers != null && !identifiers.isEmpty()) {
             Set<String> uniqueIdentifires = new HashSet<>(identifiers);
@@ -43,7 +43,7 @@ public class BankAccountUtils {
                     .referenceId(new ArrayList<>(uniqueIdentifires))
                     .build();
         } else {
-            throw new Exception("");
+            throw new CustomException("INVALID_BANK_ACCOUNT_SEARCH_CRITERIA", "Invalid bank account search criteria");
         }
 
         Pagination pagination = Pagination.builder()

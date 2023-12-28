@@ -4,16 +4,15 @@ package org.egov.works.mukta.adapter.service;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
 import org.egov.works.mukta.adapter.util.*;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
-import org.egov.works.mukta.adapter.web.models.enums.BeneficiaryType;
 import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.Status;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
-import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
 import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,20 +44,25 @@ public class PaymentInstructionService {
         this.mdmsUtil = mdmsUtil;
     }
 
-    public void processPaymentInstruction(PaymentRequest paymentRequest) throws Exception {
+    public void processPaymentInstruction(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction");
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
         List<Beneficiary> beneficiaryList = getBeneficiariesFromPayment(paymentRequest,mdmsData);
     }
 
-    private List<Beneficiary> getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) throws Exception {
+    private List<Beneficiary> getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
         log.info("Started executing getBeneficiariesFromPayment");
         // Get the list of bills based on payment request
         List<Bill> billList =  billUtils.fetchBillsFromPayment(paymentRequest);
+        if(billList == null || billList.isEmpty())
+            throw new CustomException("BILLS_NOT_FOUND", "No bills found for the payment instruction");
 
         billList = filterBillsPayableLineItemByPayments(paymentRequest.getPayment(), billList);
 
         List<Beneficiary> beneficiaryList = piEnrichment.getBeneficiariesFromBills(billList, paymentRequest, mdmsData);
+
+        if(beneficiaryList == null || beneficiaryList.isEmpty())
+            throw new CustomException("BENEFICIARIES_NOT_FOUND", "No beneficiaries found for the payment instruction");
 
         // Get all beneficiary ids from pi request
         List<String> individualIds = new ArrayList<>();
@@ -76,7 +80,7 @@ public class PaymentInstructionService {
         return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, individualIds);
     }
 
-    private List<Beneficiary> getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds) throws Exception {
+    private List<Beneficiary> getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds) {
         log.info("Started executing getBeneficiariesEnrichedData");
         List<String> beneficiaryIds = new ArrayList<>();
         for (Beneficiary beneficiary :beneficiaryList) {

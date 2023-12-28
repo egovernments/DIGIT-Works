@@ -3,6 +3,7 @@ package org.egov.works.mukta.adapter.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.web.models.Pagination;
 import org.egov.works.mukta.adapter.web.models.organisation.OrgResponse;
@@ -19,16 +20,20 @@ import java.util.*;
 @Component
 @Slf4j
 public class OrganisationUtils {
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-    @Autowired
-    private MuktaAdaptorConfig config;
+    private final MuktaAdaptorConfig config;
 
-	public @Valid List<Organisation> getOrganisationsById(RequestInfo requestInfo, List<String> ids, String tenantId) throws Exception {
+	@Autowired
+	public OrganisationUtils(RestTemplate restTemplate, ObjectMapper mapper, MuktaAdaptorConfig config) {
+		this.restTemplate = restTemplate;
+		this.mapper = mapper;
+		this.config = config;
+	}
+
+	public @Valid List<Organisation> getOrganisationsById(RequestInfo requestInfo, List<String> ids, String tenantId) {
 		log.info("Fetching organisations details.");
 		OrgSearchCriteria orgSearchCriteria = null;
 		if (requestInfo != null && ids != null && !ids.isEmpty()) {
@@ -38,7 +43,7 @@ public class OrganisationUtils {
 					.id(new ArrayList<>(uniqueIds))
 					.build();
 		} else {
-			throw new RuntimeException("Request info, or ids are empty in organisation search");
+			throw new CustomException("ORG_CRITERIA_ERROR","Request info, or ids are empty in organisation search");
 		}
 
 		Pagination pagination = Pagination.builder()

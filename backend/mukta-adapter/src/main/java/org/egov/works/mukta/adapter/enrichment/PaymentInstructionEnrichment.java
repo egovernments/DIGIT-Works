@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
 import org.egov.works.mukta.adapter.config.Constants;
+import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.enums.BeneficiaryPaymentStatus;
@@ -17,6 +18,7 @@ import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sound.sampled.Line;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,9 +68,8 @@ public class PaymentInstructionEnrichment {
                     beneficiaryId = Constants.DEDUCTION_BENEFICIARY_BY_HEADCODE.replace("{tanentId}", tenantId).replace("{headcode}", headCode);
                 }
             }
-            List<BenfLineItems> benefLineItemList = new ArrayList<>();
-            BenfLineItems benfLineItems = BenfLineItems.builder().lineItemId(lineItem.getId()).build();
-            benefLineItemList.add(benfLineItems);
+            List<LineItem> benefLineItemList = new ArrayList<>();
+            benefLineItemList.add(lineItem);
             beneficiary = Beneficiary.builder()
                     .amount(lineItem.getAmount())
                     .beneficiaryId(beneficiaryId)
@@ -122,36 +123,44 @@ public class PaymentInstructionEnrichment {
             }
         }
         log.info("Created map of org, individual and bankaccount, started generating beneficiary.");
+        List<Disbursement> disbursements = new ArrayList<>();
         for(Beneficiary piBeneficiary: beneficiaryList) {
             BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBeneficiaryId());
-            if (bankAccount != null) {
-                piBeneficiary.setBenefName(bankAccount.getBankAccountDetails().get(0).getAccountHolderName());
-                piBeneficiary.setBenfAcctNo(bankAccount.getBankAccountDetails().get(0).getAccountNumber());
-                piBeneficiary.setBenfBankIfscCode(bankAccount.getBankAccountDetails().get(0).getBankBranchIdentifier().getCode());
-                piBeneficiary.setBenfAccountType(bankAccount.getBankAccountDetails().get(0).getAccountType());
-                piBeneficiary.setBankAccountId(bankAccount.getBankAccountDetails().get(0).getId());
-            }
-
             Individual individual = individualMap.get(piBeneficiary.getBeneficiaryId());
             Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
-
-            if (individual != null) {
-                piBeneficiary.setBeneficiaryType(BeneficiaryType.IND);
-                piBeneficiary.setBenfMobileNo(individual.getMobileNumber());
-                piBeneficiary.setBenfAddress(individual.getAddress().get(0).getWard().getCode() + " " +individual.getAddress().get(0).getLocality().getCode());
-            } else if (organisation != null) {
-                piBeneficiary.setBeneficiaryType(BeneficiaryType.ORG);
-                piBeneficiary.setBenfMobileNo(organisation.getContactDetails().get(0).getContactMobileNumber());
-                piBeneficiary.setBenfAddress(organisation.getOrgAddress().get(0).getBoundaryCode() + " " +organisation.getOrgAddress().get(0).getCity());
-            } else {
-                piBeneficiary.setBeneficiaryType(BeneficiaryType.DEPT);
-                piBeneficiary.setBenfMobileNo("9999999999");
-                piBeneficiary.setBenfAddress("Temp address");
+            for(LineItem lineItem: piBeneficiary.getBenfLineItems()) {
+                Disbursement disbursement = enrichDisbursement(piBeneficiary, bankAccount, individual, organisation,lineItem);
+                disbursements.add(disbursement);
             }
-            piBeneficiary.setPurpose("Mukta Payment");
         }
         log.info("Beneficiary details enriched and sending back.");
 
+    }
+
+    private Disbursement enrichDisbursement(Beneficiary piBeneficiary, BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem) {
+        log.info("Started executing enrichDisbursement");
+        String payeeFa = "BANK:{ACCOUNT_NO}@{IFSC_CODE}";
+        String payerFa = "MUKTA:GIT";
+        String payeeName = null;
+        if (bankAccount != null) {
+            payeeFa = payeeFa.replace("{ACCOUNT_NO}", bankAccount.getBankAccountDetails().get(0).getAccountNumber());
+            payeeFa = payeeFa.replace("{IFSC_CODE}", bankAccount.getBankAccountDetails().get(0).getBankBranchIdentifier().getCode());
+        }
+        if(individual != null) {
+            payeeName = individual.getName().getGivenName();
+        } else if (organisation != null) {
+            payeeName = organisation.getName();
+        }
+        return Disbursement.builder().referenceId(lineItem.getId())
+                .amount(lineItem.getAmount().toString())
+                .payeeFa(payeeFa)
+                .payerFa(payerFa)
+                .payerName("MUKTA")
+                .payeeName(payeeName)
+                .purpose("Mukta Payment")
+                .currencyCode("INR")
+                .locale("en_IN")
+                .build();
     }
 
 }

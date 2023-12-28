@@ -40,7 +40,6 @@ public class MdmsUtil {
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId);
         Object response = new HashMap<>();
-        Integer rate = 0;
         MdmsResponse mdmsResponse = new MdmsResponse();
         try {
             response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);

@@ -7,6 +7,7 @@ import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.IndividualBulkResponse;
 import org.egov.common.models.individual.IndividualSearch;
 import org.egov.common.models.individual.IndividualSearchRequest;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,16 +19,20 @@ import java.util.*;
 @Component
 @Slf4j
 public class IndividualUtils {
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-    @Autowired
-    private MuktaAdaptorConfig config;
+    private final MuktaAdaptorConfig config;
 
-	public @Valid List<Individual> getIndividualById(RequestInfo requestInfo, List<String> ids, String tenantId) throws Exception {
+	@Autowired
+	public IndividualUtils(RestTemplate restTemplate, ObjectMapper mapper, MuktaAdaptorConfig config) {
+		this.restTemplate = restTemplate;
+		this.mapper = mapper;
+		this.config = config;
+	}
+
+	public @Valid List<Individual> getIndividualById(RequestInfo requestInfo, List<String> ids, String tenantId) {
         IndividualSearch individualSearch = null;
 		if (requestInfo != null && ids != null && !ids.isEmpty()) {
 			Set<String> uniqueIndividualIds = new HashSet<>(ids);
@@ -35,7 +40,7 @@ public class IndividualUtils {
 					.id(new ArrayList<>(uniqueIndividualIds))
 					.build();
 		} else {
-			throw new Exception("");
+			throw new CustomException("INVALID_INDIVIDUAL_SEARCH_CRITERIA", "Invalid individual search criteria");
 		}
 
 		IndividualSearchRequest individualSearchRequest = IndividualSearchRequest.builder()
