@@ -96,7 +96,7 @@ config:
       - work-dir: "backend/expense/src/main/resources/db"
         image-name: "expense-db"
 
-  - name: "builds/digit-works/backend/measurement-service"
+  - name: "builds/mukta_impl/backend/measurement-service"
     build:
       - work-dir: "backend/measurement-service"
         dockerfile: "build/maven/Dockerfile"
@@ -104,7 +104,7 @@ config:
       - work-dir: "backend/measurement-service/src/main/resources/db"
         image-name: "measurement-service-db"     
 
-  - name: "builds/digit-works/backend/measurement-registry"
+  - name: "builds/mukta_impl/backend/measurement-registry"
     build:
       - work-dir: "backend/measurement-registry"
         dockerfile: "build/maven/Dockerfile"
