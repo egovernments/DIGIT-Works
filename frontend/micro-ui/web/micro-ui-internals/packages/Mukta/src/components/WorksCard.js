@@ -218,7 +218,7 @@ const WorksCard = () => {
     },
     {
       label: t("ACTION_TEST_9WORKBENCH"),
-      link: `${window?.location.origin}/workbench-ui/employee`,
+      link: `/workbench-ui/employee`,
       roles: ROLES.WORKBENCH,
     }
   ];
