@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/sor")
+@RequestMapping()
 public class BulkUploadController {
 
     @Autowired
