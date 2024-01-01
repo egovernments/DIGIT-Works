@@ -30,9 +30,9 @@ public class Configuration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
 
-    @Value("${egov.mdms.service.v2.host}")
+    @Value("${egov.mdms.host.v2}")
     private String mdmsHostForSor;
-    @Value("${egov.mdms.service.v2.search.endpoint}")
+    @Value("${egov.mdms.v2.search.endpoint}")
     private String mdmsSorEndPoint;
 
 
