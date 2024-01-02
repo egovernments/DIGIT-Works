@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import javax.validation.constraints.DecimalMax;
-import java.math.BigDecimal;
 
 /**
  * Pagination details

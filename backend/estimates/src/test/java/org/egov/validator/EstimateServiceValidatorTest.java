@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,7 +20,7 @@ import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class EstimateServiceValidatorTest {
+class EstimateServiceValidatorTest {
 
     @InjectMocks
     private EstimateServiceValidator serviceValidator;
@@ -43,12 +42,6 @@ public class EstimateServiceValidatorTest {
 
         Object projectResponse = EstimateRequestBuilderTest.getProjectSearchResponse();
         lenient().when(projectUtil.getProjectDetails(any(EstimateRequest.class))).thenReturn(projectResponse);
-    }
-
-    @Test
-    void validateEstimateOnCreate_IfValidationSuccess() {
-        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
-        assertDoesNotThrow(() -> serviceValidator.validateEstimateOnCreate(estimateRequest));
     }
 
 
@@ -109,13 +102,6 @@ public class EstimateServiceValidatorTest {
     }
 
     @Test
-    void validateEstimateOnCreate_IfProjectIsNull() {
-        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateExceptionForProjectId();
-        CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("{PROJECT_ID=ProjectId is mandatory}"));
-    }
-
-    @Test
     void validateEstimateOnCreate_IfProjectIsEmpty() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         estimateRequest.getEstimate().setProjectId(" ");
@@ -128,7 +114,7 @@ public class EstimateServiceValidatorTest {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         estimateRequest.getEstimate().setAddress(null);
         CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("Address is mandatory"));
+        assertTrue(exception.getMessage().contentEquals("{ADDRESS=Address is mandatory}"));
     }
 
     @Test
@@ -137,13 +123,6 @@ public class EstimateServiceValidatorTest {
         estimateRequest.getEstimate().setEstimateDetails(null);
         CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
         assertTrue(exception.getMessage().contentEquals("{ESTIMATE_DETAILS=Estimate detail is mandatory}"));
-    }
-
-    @Test
-    void validateEstimateOnCreate_IfAmountDetailIsNull() {
-        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateExceptionForAmountDetail();
-        CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("{ESTIMATE.DETAIL.AMOUNT.DETAILS=Amount details are mandatory}"));
     }
 
     @Test

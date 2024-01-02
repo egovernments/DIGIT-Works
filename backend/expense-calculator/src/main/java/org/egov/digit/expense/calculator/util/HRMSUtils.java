@@ -1,6 +1,5 @@
 package org.egov.digit.expense.calculator.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,6 @@ import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,19 +18,18 @@ import java.util.Map;
 @Component
 @Slf4j
 public class HRMSUtils {
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
 
-    @Autowired
-    private ExpenseCalculatorConfiguration config;
+    private final ExpenseCalculatorConfiguration config;
 
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private RestTemplate restTemplate;
     public static final String HRMS_USER_USERNAME_CODE = "$.Employees.*.user.userName";
     public static final String HRMS_USER_MOBILE_NO = "$.Employees.*.user.mobileNumber";
+
+    @Autowired
+    public HRMSUtils(ServiceRequestRepository serviceRequestRepository, ExpenseCalculatorConfiguration config) {
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+    }
 
     public Map<String, String> getEmployeeDetailsByUuid(RequestInfo requestInfo, String tenantId, String uuid) {
         StringBuilder url = getHRMSURIWithUUid(tenantId, uuid);
@@ -44,7 +41,6 @@ public class HRMSUtils {
         Map<String, String> userDetailsForSMS = new HashMap<>();
         List<String> userNames = null;
         List<String> mobileNumbers = null;
-        List<String> designations = null;
 
         try {
             userNames = JsonPath.read(res, HRMS_USER_USERNAME_CODE);

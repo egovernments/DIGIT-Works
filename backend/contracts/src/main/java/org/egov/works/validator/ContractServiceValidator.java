@@ -1,7 +1,7 @@
 package org.egov.works.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -14,9 +14,14 @@ import org.egov.works.util.*;
 import org.egov.works.repository.ContractRepository;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,6 +67,11 @@ public class ContractServiceValidator {
     @Autowired
     private ServiceRequestRepository restRepo;
 
+    @Autowired
+    private MeasurementUtil measurementUtil;
+
+    @Autowired
+    private ContractServiceUtil contractServiceUtil;
 
     public void validateCreateContractRequest(ContractRequest contractRequest) {
         log.info("Validate contract create request");
@@ -78,13 +88,15 @@ public class ContractServiceValidator {
         // Validate request fields against MDMS data
         validateRequestFieldsAgainstMDMS(contractRequest);
 
+        // Validate documentIds against document service
+        validateDocumentIdsAgainstDocumentService(contractRequest);
 
         // Validate orgId against Organization service data
         validateOrganizationIdAgainstOrgService(contractRequest);
 
         if (contractRequest.getContract().getBusinessService() != null &&
                 contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
-            log.info("Validating time extension request");
+            log.info("Validating contract revision request");
             // Validate if Time Extension Request
             validateContractRevisionRequestForCreate(contractRequest);
         } else {
@@ -111,6 +123,9 @@ public class ContractServiceValidator {
         // Validate request fields against MDMS data
         validateRequestFieldsAgainstMDMS(contractRequest);
 
+        // Validate documentIds against document service
+        validateDocumentIdsAgainstDocumentService(contractRequest);
+
         // Validate provided contract for update should exist in DB
         validateContractAgainstDB(contractRequest);
 
@@ -119,7 +134,7 @@ public class ContractServiceValidator {
 
         if (contractRequest.getContract().getBusinessService() != null &&
                 contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
-            // Validate Time Extension Request for Update request
+            // Validate Contract Revision Request for Update request
             validateContractRevisionRequestForUpdate(contractRequest);
         } else {
             // Validate estimateIds against estimate service and DB
@@ -147,7 +162,6 @@ public class ContractServiceValidator {
                                             .requestInfo(contractRequest.getRequestInfo())
                                             .pagination(pagination)
                                             .build();
-        //List<Contract> fetchedContracts = contractService.searchContracts(contractCriteria);
         List<Contract> fetchedContracts = contractRepository.getContracts(contractCriteria);
         if(fetchedContracts.isEmpty()){
             log.error("Update:: Provided contract ["+contractId+"] not found");
@@ -195,9 +209,6 @@ public class ContractServiceValidator {
         // Validate executingAuthority against MDMS data
         validateContractTypeAgainstMDMS(mdmsData, contract.getContractType());
 
-        // Validate document type against MDMS date
-        //validateDocumentTypeAgainstMDMS(mdmsData, contract.getDocuments());
-
         // Validate Officer In Charge role against MDMS data
         
         validateOfficerInChargeRoleAgainstMDMS(mdmsData, contractRequest);
@@ -239,14 +250,14 @@ public class ContractServiceValidator {
             if( value.isPresent())
                 return value.get();
         }
-        catch (Exception ignore){ }
+        catch (Exception ignore){
+            log.error(ignore.toString());
+        }
         return null;
     }
 
     private Object fetchMDMSDataForValidation(RequestInfo requestInfo, String tenantId){
-        String rootTenantId = tenantId.split("\\.")[0];
-        return mdmsUtils.fetchMDMSForValidation(requestInfo, rootTenantId);
-
+        return mdmsUtils.fetchMDMSForValidation(requestInfo, tenantId);
     }
     private void validateTenantIdAgainstMDMS(Object mdmsData,String tenantId) {
         List<Object> tenantRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_TENANTS_VERIFICATION);
@@ -256,17 +267,6 @@ public class ContractServiceValidator {
         }
         log.info("TenantId data validated against MDMS");
     }
-//    private void validateDocumentTypeAgainstMDMS(Object mdmsData, List<Document> documents) {
-//        List<Object> documentTypeAuthorityRes = parseMDMSData(mdmsData,JSON_PATH_FOR_DOCUMENT_TYPE_VERIFICATION);
-//        for(Document document: documents){
-//            String documentType = document.getDocumentType();
-//            if (CollectionUtils.isEmpty(documentTypeAuthorityRes) || !documentTypeAuthorityRes.contains(documentType)){
-//                log.error("The Document Type [" + documentType + "] is not present in MDMS");
-//                throw new CustomException("INVALID_DOCUMENT_TYPE","The Document Type [" + documentType + "] is not present in MDMS");
-//            }
-//        }
-//        log.info("Document Type data validated against MDMS");
-//    }
 
     private void validateContractTypeAgainstMDMS(Object mdmsData, String contractType) {
         List<Object> contractTypeRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION);
@@ -286,6 +286,64 @@ public class ContractServiceValidator {
         }
 
         log.info("Executing Authority data validated against MDMS");
+    }
+
+    /**
+     * Get fileStore from documents and send call to filestore service and
+     * validate if all documents are present in response.
+     * @param contractRequest
+     */
+
+    private void validateDocumentIdsAgainstDocumentService(ContractRequest contractRequest) {
+        if (CollectionUtils.isEmpty(contractRequest.getContract().getDocuments())) {
+            return;
+        }
+        List<String> documentIds = contractRequest.getContract().getDocuments().stream().map(Document::getFileStore).collect(Collectors.toList());
+
+        // Make API request to file store service
+        String fileStoreResponse = getFileStoreResponse(documentIds, contractRequest.getContract().getTenantId());
+
+        // Match documentIds against fileStoreResponse
+        validateDocumentIdsAgainstFileStoreResponse(documentIds, fileStoreResponse);
+
+    }
+    /**
+     * Api request to fileStore service
+     */
+    private String getFileStoreResponse(List<String> fileStoreIds, String tenantId) {
+        StringBuilder fileStoreUrl = new StringBuilder(config.getFileStoreHost()).append(config.getFileStoreEndpoint());
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(fileStoreUrl.toString())
+                .queryParam("tenantId", tenantId);
+        for (String fileStoreId : fileStoreIds) {
+            uriComponentsBuilder.queryParam("fileStoreIds", fileStoreId);
+        }
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                uriComponentsBuilder.toUriString(),
+                HttpMethod.GET,
+                null,
+                String.class
+        );
+        if (responseEntity.getStatusCodeValue() == 200) {
+            // Read and return the response content as a string
+            return responseEntity.getBody();
+        } else {
+            // Handle non-200 status codes (e.g., by throwing an exception)
+            throw new CustomException(FILE_STORE_API_FAILURE, FILE_STORE_API_REQUEST_FAIL_MSG + responseEntity);
+        }
+    }
+    private void validateDocumentIdsAgainstFileStoreResponse(List<String> documentIds, String fileStoreResponse) {
+        Map<String, String> fileStoreResponseMap = new HashMap<>();
+        try{
+            fileStoreResponseMap = mapper.readValue(fileStoreResponse, Map.class);
+        } catch (IOException e) {
+            throw new CustomException(PARSE_ERROR_CODE, PARSE_ERROR_MSG);
+        }
+        for (String documentId : documentIds) {
+            if (!fileStoreResponseMap.containsKey(documentId)) {
+                throw new CustomException(INVALID_DOCUMENTS_CODE, INVALID_DOCUMENTS_MSG);
+            }
+        }
     }
 
     /**
@@ -327,7 +385,7 @@ public class ContractServiceValidator {
      */
     private void validateUpdateEstimateLineItemAssociationWithOtherContracts(ContractRequest contractRequest, Map<String, Set<String>> estimateIdWithEstimateDetailIds) {
         Contract contract = contractRequest.getContract();
-        List<String> estimatedLineItemIds =  new ArrayList<>();;
+        List<String> estimatedLineItemIds =  new ArrayList<>();
         List<LineItems> lineItems = contract.getLineItems();
 
         for(LineItems lineItem : lineItems){
@@ -429,8 +487,8 @@ public class ContractServiceValidator {
 
     private Map<String, Set<String>> getFetchedEstimateDetailIdWithAccountDetailIds(Map<String, List<Estimate>> fetchedEstimatesMap) {
         Map<String, Set<String>> fetchedEstimateDetailIdWithAccountDetailIds = new HashMap<>();
-        for(String fetchedEstimateId : fetchedEstimatesMap.keySet()){
-            for(Estimate estimate : fetchedEstimatesMap.get(fetchedEstimateId)){
+        for(Map.Entry<String, List<Estimate>> fetchedEstimatesMapEntry : fetchedEstimatesMap.entrySet()){
+            for(Estimate estimate : fetchedEstimatesMapEntry.getValue()){
                 for(EstimateDetail estimateDetail: estimate.getEstimateDetails()){
                     Set<String> collect = estimateDetail.getAmountDetail().stream().map(e -> e.getId()).collect(Collectors.toSet());
                     fetchedEstimateDetailIdWithAccountDetailIds.put(estimateDetail.getId(),collect);
@@ -442,8 +500,9 @@ public class ContractServiceValidator {
 
     private Map<String, Set<String>> getFetchedEstimateIdWithEstimateDetailIds(Map<String, List<Estimate>> fetchedEstimatesMap) {
         Map<String, Set<String>> fetchedEstimateIdWithEstimateDetailIds = new HashMap<>();
-        for(String fetchedEstimateId : fetchedEstimatesMap.keySet()){
-            for(Estimate estimate : fetchedEstimatesMap.get(fetchedEstimateId)){
+        for(Map.Entry<String, List<Estimate>> fetchedEstimatesMapEntry : fetchedEstimatesMap.entrySet()){
+            String fetchedEstimateId = fetchedEstimatesMapEntry.getKey();
+            for(Estimate estimate : fetchedEstimatesMapEntry.getValue()){
                 Set<String> estimateDetailsIds = estimate.getEstimateDetails().stream().map(e -> e.getId()).collect(Collectors.toSet());
                 fetchedEstimateIdWithEstimateDetailIds.put(fetchedEstimateId,estimateDetailsIds);
             }
@@ -507,42 +566,6 @@ public class ContractServiceValidator {
             log.error("Completion Period is mandatory and its min value is one day");
             errorMap.put("CONTRACT.COMPLETION_PERIOD", "Completion Period is mandatory and its min value is one day");
         }
-
-//        Object additionalDetails = contract.getAdditionalDetails();
-//        if(additionalDetails == null){
-//            log.error("Additional Details object is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS", "Additional Details object is mandatory");
-//        }
-//
-//        Optional<String> projectName = commonUtil.findValue(additionalDetails, PROJECT_NAME_CONSTANT);
-//        if (!projectName.isPresent()) {
-//            log.error("Project Name is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_NAME", "Project Name is mandatory");
-//        }
-//
-//        Optional<String> projectType = commonUtil.findValue(additionalDetails, PROJECT_TYPE_CONSTANT);
-//        if (!projectType.isPresent()) {
-//            log.error("Project Type is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_TYPE", "Project Type is mandatory");
-//        }
-//
-//        Optional<String> projectId = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT);
-//        if (!projectId.isPresent()) {
-//            log.error("Project Id is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_ID", "Project ID is mandatory");
-//        }
-//
-//        Optional<String> ward = commonUtil.findValue(additionalDetails, WARD_CONSTANT);
-//        if (!ward.isPresent()) {
-//            log.error("Ward is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.WARD", "Ward is mandatory");
-//        }
-//
-//        Optional<String> orgName = commonUtil.findValue(additionalDetails, ORG_NAME_CONSTANT);
-//        if (!orgName.isPresent()) {
-//            log.error("Org Name is mandatory");
-//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.ORG_NAME", "Org Name is mandatory");
-//        }
 
         List<LineItems> lineItems = contract.getLineItems();
 
@@ -643,30 +666,27 @@ public class ContractServiceValidator {
         // Validate if contract number is present
         validateContractNumber(contractRequest);
 
-        Pagination pagination = Pagination.builder()
-                .limit(config.getContractMaxLimit())
-                .offSet(config.getContractDefaultOffset())
-                .build();
-        ContractCriteria contractCriteria = ContractCriteria.builder()
-                .contractNumber(contractRequest.getContract().getContractNumber())
-                .status("ACTIVE")
-                .tenantId(contractRequest.getContract().getTenantId())
-                .requestInfo(contractRequest.getRequestInfo())
-                .pagination(pagination)
-                .build();
-        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+        List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
 
         // Validate if contract is present in DB
         validateContractNumber(contractsFromDB);
+        // Validate if contract revision limit is reached
+        validateRevisionLimit(contractsFromDB);
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
-        // Validate if at least one muster-roll is created and approved
-        //validateMusterRollForTimeExtension(contractRequest);
-        // Validate if previous time extension request is in workflow
-        validateDuplicateTimeExtensionRequest (contractRequest);
+        // Validate if at least one muster-roll is created and approved (Validator removed as per sonarLint
+        // Get from previous commits if required.
+        // Validate if previous contract revision request is in workflow
+        validateContractRevisionRequest(contractRequest);
+        // Validate start date
+        validateStartDate(contractRequest, contractsFromDB);
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
+        // Validate if revised estimate in approved state
+        fetchActiveEstimates(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
+                Collections.singleton(contractRequest.getContract().getLineItems().get(0).getEstimateId()));
 
+        log.info("Contract Revision Request Validated for contract number :: " + contractRequest.getContract().getContractNumber());
     }
 
     /**
@@ -678,29 +698,27 @@ public class ContractServiceValidator {
         // Validate if contract number is present
         validateContractNumber(contractRequest);
 
-        Pagination pagination = Pagination.builder()
-                .limit(config.getContractMaxLimit())
-                .offSet(config.getContractDefaultOffset())
-                .build();
-        ContractCriteria contractCriteria = ContractCriteria.builder()
-                .contractNumber(contractRequest.getContract().getContractNumber())
-                .status("ACTIVE")
-                .tenantId(contractRequest.getContract().getTenantId())
-                .requestInfo(contractRequest.getRequestInfo())
-                .pagination(pagination)
-                .build();
-        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+        List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
 
         // Validate if contract is present in DB
         validateContractNumber(contractsFromDB);
+        // Validate if contract revision limit is reached
+        validateRevisionLimit(contractsFromDB);
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
-        // Validate if at least one muster-roll is created and approved
-        //validateMusterRollForTimeExtension(contractRequest);
+        // Validate if at least one muster-roll is created and approved (Validator removed as per sonarLint
+        // Get from previous commits if required
         // Validate Supplement Number
         validateSupplementNumber (contractRequest);
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
+        // Validate start date
+        validateStartDate(contractRequest, contractsFromDB);
+        // Validate if revised estimate in approved state
+        fetchActiveEstimates(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
+                Collections.singleton(contractRequest.getContract().getLineItems().get(0).getEstimateId()));
+
+        log.info("Contract Revision Request Validated for contract number :: " + contractRequest.getContract().getContractNumber());
     }
     private void validateContractNumber (ContractRequest contractRequest) {
         if (contractRequest.getContract().getContractNumber() == null || contractRequest.getContract().getContractNumber().isEmpty()) {
@@ -722,19 +740,7 @@ public class ContractServiceValidator {
             }
         }
     }
-    private void validateMusterRollForTimeExtension (ContractRequest contractRequest) {
-        // Get all muster-rolls for given contractNumber
-        List<MusterRoll> musterRolls = getMusterRollsForContractNumber (contractRequest);
-        if (musterRolls == null || musterRolls.isEmpty()) {
-            throw new CustomException("MUSTER_ROLLS_NOT_PRESENT", "Muster rolls not present for given contract id");
-        }
-        for (MusterRoll musterRoll : musterRolls) {
-            if (musterRoll.getMusterRollStatus().equalsIgnoreCase("APPROVED"))
-                return;
-        }
-        throw new CustomException("MUSTER_ROLL_NOT_APPROVED", "At least one muster roll must be in approved state");
-    }
-    private void validateDuplicateTimeExtensionRequest (ContractRequest contractRequest ) {
+    private void validateContractRevisionRequest(ContractRequest contractRequest ) {
         Pagination pagination = Pagination.builder()
                 .limit(config.getContractMaxLimit())
                 .offSet(config.getContractDefaultOffset())
@@ -749,34 +755,36 @@ public class ContractServiceValidator {
         List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
 
         if (!contractsFromDB.isEmpty()) {
-            throw new CustomException("DUPLICATE_TIME_EXTENSION_REQUEST", "Duplicate time extension request");
+            throw new CustomException("DUPLICATE_CONTRACT_REVISION_REQUEST", "Duplicate contract revision request");
         }
     }
     private void validateEndDateExtension (ContractRequest contractRequest, List<Contract> contractsFromDB) {
         for (Contract contract : contractsFromDB) {
-            int comparisionResult = contractRequest.getContract().getEndDate().compareTo(contract.getEndDate());
-            if (comparisionResult < 0) {
+            int comparisonResult = contractRequest.getContract().getEndDate().compareTo(contract.getEndDate());
+            if (comparisonResult < 0) {
                 throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
             }
         }
     }
-
-    private List<MusterRoll> getMusterRollsForContractNumber (ContractRequest contractRequest) {
-        StringBuilder uri = new StringBuilder(config.getMusterRollSearchHost()).append(config.getMusterRollSearchEndpoint());
-        uri.append("?tenantId=").append(contractRequest.getContract().getTenantId())
-                .append("&referenceId=").append(contractRequest.getContract().getContractNumber());
-        ObjectNode requestInfoNode = mapper.createObjectNode();
-        requestInfoNode.putPOJO("RequestInfo", contractRequest.getRequestInfo());
-
-        Object musterRollRes = restRepo.fetchResult(uri, requestInfoNode);
-        MusterRollResponse musterRollResponse = null;
-        try {
-            musterRollResponse = mapper.convertValue(musterRollRes, MusterRollResponse.class);
-        }catch (Exception e){
-            log.error("Unable to map muster roll response");
+    private void validateStartDate (ContractRequest contractRequest, List<Contract> contractsFromDB) {
+        for (Contract contract : contractsFromDB) {
+            if (!Objects.equals(contractRequest.getContract().getStartDate(), contract.getStartDate())) {
+                throw new CustomException("START_DATE_DIFFERENT", "Start date of contract revision cannot be different");
+            }
         }
-        return musterRollResponse.getMusterRolls();
     }
+
+    public void validateLineItemRef(ContractRequest contractRequest) {
+        List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
+        Set<String> contractLineItemRef = contractRequest.getContract().getLineItems().stream().map(LineItems::getContractLineItemRef).collect(Collectors.toSet());
+        for (LineItems lineItems : contractsFromDB.get(0).getLineItems()) {
+            if (!contractLineItemRef.contains(lineItems.getContractLineItemRef())) {
+                throw new CustomException("LINE_ITEM_REF_MISMATCH", "Contract Line Item Ref not present in previous contract " + lineItems.getContractLineItemRef());
+            }
+        }
+        log.info("Validated LineItemRef for revised contract");
+    }
+
     private void validateSupplementNumber (ContractRequest contractRequest) {
         if (contractRequest.getContract().getSupplementNumber() == null || contractRequest.getContract().getSupplementNumber().isEmpty()) {
             throw new CustomException("SUPPLEMENT_NUMBER_EMPTY", "Supplement number must not be empty");
@@ -796,6 +804,62 @@ public class ContractServiceValidator {
         List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
         if (contractsFromDB.isEmpty()) {
             throw new CustomException("SUPPLEMENT_NUMBER_NOT_PRESENT", "Supplement Number not present in DB");
+        }
+    }
+    public void validateMeasurement(ContractRequest contractRequest, Estimate estimate) {
+        String jsonPathForMeasurementCumulativeValue = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].cumulativeValue";
+        String jsonPathForMeasurementCurrentValue = "$.measurements[*].measures[?(@.targetId=='{{yourDynamicValue}}')].currentValue";
+        String jsonPathForMeasurementWfStatus = "$.measurements[*].wfStatus";
+        Object measurementResponse = measurementUtil.getMeasurementDetails(contractRequest);
+        List<String> wfStatus;
+        try {
+            wfStatus = JsonPath.read(measurementResponse, jsonPathForMeasurementWfStatus);
+        } catch (Exception e) {
+            throw new CustomException("JSONPATH_ERROR", "Failed to parse measurement search response");
+        }
+
+        contractRequest.getContract().getLineItems().forEach(lineItems -> {
+            if (lineItems.getContractLineItemRef() != null) {
+                List<Integer> measurementCumulativeValue = null;
+                try {
+                    measurementCumulativeValue = JsonPath.read(measurementResponse, jsonPathForMeasurementCumulativeValue.replace("{{yourDynamicValue}}", lineItems.getContractLineItemRef()));
+                } catch (Exception e) {
+                    throw new CustomException("JSONPATH_ERROR", "Failed to parse measurement search response");
+                }
+                if(measurementCumulativeValue == null || measurementCumulativeValue.isEmpty()){
+                    log.info("No measurement found for the given estimate");
+                }
+                else {
+                    Integer cumulativeValue = measurementCumulativeValue.get(0);
+                    if (!wfStatus.get(0).equalsIgnoreCase("APPROVED")){
+                        List<Integer> measurementCurrentValue;
+                        try {
+                            measurementCurrentValue = JsonPath.read(measurementResponse, jsonPathForMeasurementCurrentValue.replace("{{yourDynamicValue}}", lineItems.getContractLineItemRef()));
+                        } catch (Exception e) {
+                            throw new CustomException("JSONPATH_ERROR", "Failed to parse measurement search response");
+                        }
+                        cumulativeValue = cumulativeValue - measurementCurrentValue.get(0);
+                    }
+                    if (lineItems.getNoOfunit() < cumulativeValue)
+                        throw new CustomException("CUMULATIVE_VALUE_GREATER_THAN_CONTRACT_UNITS", "No of Unit of contract" +
+                                " should be greater than or equal to measurement book cumulative value. Retry after changing this value : " + lineItems.getNoOfunit());
+
+                    Double noOfUnit = estimate.getEstimateDetails().stream().filter(estimateDetail -> estimateDetail.getId().equals(lineItems.getEstimateLineItemId())).map(EstimateDetail::getNoOfunit).findFirst().orElse(null);
+                    if (noOfUnit != null && noOfUnit < cumulativeValue){
+                        throw new CustomException("CUMULATIVE_VALUE_GREATER_THAN_ESTIMATE_DETAIL_UNITS", "No of Unit of estimate " +
+                                "should be greater than or equal to measurement book cumulative value. Retry after changing this value : " + noOfUnit);
+                    }
+                }
+            }
+        });
+        log.info("Validated measurements");
+
+    }
+    private void validateRevisionLimit(List<Contract> contractFromDB) {
+        if (contractFromDB.get(0).getVersionNumber() != null &&
+                (contractFromDB.get(0).getVersionNumber() > config.getContractRevisionMaxLimit())) {
+            throw new CustomException("CONTRACT_REVISION_MAX_LIMIT_REACHED",
+                    "Contract cannot be revised more than max limit :: " + config.getContractRevisionMaxLimit());
         }
     }
 

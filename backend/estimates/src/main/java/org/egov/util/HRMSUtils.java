@@ -1,17 +1,14 @@
 package org.egov.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,17 +19,15 @@ import static org.egov.util.EstimateServiceConstant.*;
 @Component
 @Slf4j
 public class HRMSUtils {
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
+
+    private final EstimateServiceConfiguration config;
 
     @Autowired
-    private EstimateServiceConfiguration config;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private RestTemplate restTemplate;
+    public HRMSUtils(ServiceRequestRepository serviceRequestRepository, EstimateServiceConfiguration config) {
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+    }
 
     public Map<String, String> getEmployeeDetailsByUuid(RequestInfo requestInfo, String tenantId, String uuid) {
         StringBuilder url = getHRMSURIWithUUid(tenantId, uuid);
@@ -60,18 +55,6 @@ public class HRMSUtils {
         userDetailsForSMS.put("designation", designations.get(0));
 
         return userDetailsForSMS;
-    }
-
-    private StringBuilder getHRMSURI(String tenantId, List<String> employeeIds) {
-
-        StringBuilder builder = new StringBuilder(config.getHrmsHost());
-        builder.append(config.getHrmsEndPoint());
-        builder.append("?tenantId=");
-        builder.append(tenantId);
-        builder.append("&codes=");
-        builder.append(StringUtils.join(employeeIds, ","));
-
-        return builder;
     }
 
     private StringBuilder getHRMSURIWithUUid(String tenantId, String employeeUuid) {

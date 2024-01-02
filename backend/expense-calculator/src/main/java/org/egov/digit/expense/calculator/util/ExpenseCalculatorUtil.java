@@ -45,22 +45,32 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 @Component
 @Slf4j
 public class ExpenseCalculatorUtil {
-    @Autowired
-    private ObjectMapper mapper;
-    @Autowired
-    private ServiceRequestRepository restRepo;
+
+    private final ObjectMapper mapper;
+    private final ServiceRequestRepository restRepo;
+    
+    private final MdmsUtils mdmsUtils;
+    
+    private final CommonUtil commonUtil;
+
+    private final ExpenseCalculatorConfiguration configs;
+
+    private final ExpenseCalculatorRepository expenseCalculatorRepository;
+    private static final String TENANT_ID_CLAUSE = "?tenantId=";
+    private static final String SERVICE_PLACEHOLDER = "] and service [";
+    private static final String INVALID_HEAD_CODE = "INVALID_HEAD_CODE";
+    private static final String INVALID_HEAD_CODE_PLACEHOLDER = "Invalid head code [";
+    private static final String FOR_SERVICE_PLACEHOLDER = "] for service [";
     
     @Autowired
-    private MdmsUtils mdmsUtils;
-    
-    @Autowired
-    private CommonUtil commonUtil;
-
-    @Autowired
-    private ExpenseCalculatorConfiguration configs;
-
-    @Autowired
-    private ExpenseCalculatorRepository expenseCalculatorRepository;
+    public ExpenseCalculatorUtil(ObjectMapper mapper, ServiceRequestRepository restRepo, MdmsUtils mdmsUtils, CommonUtil commonUtil, ExpenseCalculatorConfiguration configs, ExpenseCalculatorRepository expenseCalculatorRepository) {
+        this.mapper = mapper;
+        this.restRepo = restRepo;
+        this.mdmsUtils = mdmsUtils;
+        this.commonUtil = commonUtil;
+        this.configs = configs;
+        this.expenseCalculatorRepository = expenseCalculatorRepository;
+    }
 
     public List<String> fetchListOfMusterRollIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId, boolean onlyApproved) {
         StringBuilder url = null;
@@ -98,7 +108,7 @@ public class ExpenseCalculatorUtil {
     private StringBuilder getApprovedMusterRollURI(String tenantId, List<String> musterRollId) {
         StringBuilder builder = new StringBuilder(configs.getMusterRollHost());
         builder.append(configs.getMusterRollEndPoint());
-        builder.append("?tenantId=");
+        builder.append(TENANT_ID_CLAUSE);
         builder.append(tenantId);
         builder.append("&musterRollStatus=");
         builder.append("APPROVED");
@@ -111,7 +121,7 @@ public class ExpenseCalculatorUtil {
     private StringBuilder getMusterRollURI(String tenantId, List<String> musterRollId) {
         StringBuilder builder = new StringBuilder(configs.getMusterRollHost());
         builder.append(configs.getMusterRollEndPoint());
-        builder.append("?tenantId=");
+        builder.append(TENANT_ID_CLAUSE);
         builder.append(tenantId);
         builder.append("&ids=");
         builder.append(String.join(",",musterRollId));
@@ -122,7 +132,7 @@ public class ExpenseCalculatorUtil {
     private StringBuilder getMusterRollURI(String tenantId, String contractId) {
         StringBuilder builder = new StringBuilder(configs.getMusterRollHost());
         builder.append(configs.getMusterRollEndPoint());
-        builder.append("?tenantId=");
+        builder.append(TENANT_ID_CLAUSE);
         builder.append(tenantId);
         builder.append("&referenceId=");
         builder.append(contractId);
@@ -137,7 +147,7 @@ public class ExpenseCalculatorUtil {
         MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
         List<String> musterrollIds = new ArrayList<>();
         if (response != null && !CollectionUtils.isEmpty(response.getMusterRolls())) {
-            musterrollIds = response.getMusterRolls().stream().map(muster -> muster.getMusterRollNumber()).collect(Collectors.toList());
+            musterrollIds = response.getMusterRolls().stream().map(MusterRoll::getMusterRollNumber).collect(Collectors.toList());
         }
         return musterrollIds;
     }
@@ -174,7 +184,6 @@ public class ExpenseCalculatorUtil {
     }
     
     public List<Bill> fetchBillsByProject(RequestInfo requestInfo, String tenantId, List<String> projects) {
-    	//log.info("Fetching unique project numbers from the calculator repository for contractId " + contractId);
     	// fetch the bill id from the calculator DB
         List<String> billIds = expenseCalculatorRepository.getBillsByProjectNumber(tenantId, projects);
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
@@ -266,15 +275,15 @@ public class ExpenseCalculatorUtil {
             if(applicableCharge.getCode().equalsIgnoreCase(headCode) && applicableCharge.getService().equals(businessService)) {
             	String calculationType = applicableCharge.getCalculationType();
                 if (StringUtils.isBlank(calculationType)) {
-                    log.error("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +"] and service ["+ businessService +"]");
-                    throw new CustomException("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +"] and service ["+businessService+"]");
+                    log.error("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +SERVICE_PLACEHOLDER+ businessService +"]");
+                    throw new CustomException("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +SERVICE_PLACEHOLDER+businessService+"]");
                 } else {
                     return calculationType;
                 }
             }
         }
-        log.error("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+businessService+"]");
-        throw new CustomException("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+businessService+"]");
+        log.error(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+businessService+"]");
+        throw new CustomException(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+businessService+"]");
     }
     
     public String getDeductionValue(String headCode, List<ApplicableCharge> applicableCharges) {
@@ -292,15 +301,15 @@ public class ExpenseCalculatorUtil {
             if(hCode.getCode().equalsIgnoreCase(headCode)){
                 String category = hCode.getCategory();
                 if (StringUtils.isBlank(category)) {
-                    log.error("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +"] and service ["+businessService+"]");
-                    throw new CustomException("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +"] and service ["+businessService+"]");
+                    log.error("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +SERVICE_PLACEHOLDER+businessService+"]");
+                    throw new CustomException("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +SERVICE_PLACEHOLDER+businessService+"]");
                 } else {
                     return category;
                 }
             }
         }
-        log.error("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+businessService+"]");
-        throw new CustomException("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+businessService+"]");
+        log.error(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+businessService+"]");
+        throw new CustomException(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+businessService+"]");
     }
 
     private StringBuilder searchURI(String host, String endpoint) {
@@ -311,15 +320,13 @@ public class ExpenseCalculatorUtil {
     
     public List<HeadCode> fetchHeadCodesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
         List<HeadCode> headCodes = fetchMDMSDataForHeadCode(requestInfo, tenantId);
-        List<HeadCode> filteredHeadCodes = headCodes.stream()
+        return headCodes.stream()
                                                     .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
-        return filteredHeadCodes;
     }
     
     public List<HeadCode> fetchMDMSDataForHeadCode(RequestInfo requestInfo, String tenantId) {
-        String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId, MDMS_HEAD_CODES);
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, tenantId, MDMS_HEAD_CODES);
         List<Object> headCodeListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_HEAD_CODES);
         List<HeadCode> headCodes = new ArrayList<>();
         for(Object obj : headCodeListJson){
@@ -332,14 +339,12 @@ public class ExpenseCalculatorUtil {
 
     public List<ApplicableCharge> fetchApplicableChargesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
         List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
-        List<ApplicableCharge> filteredApplicableCharges = applicableCharges.stream()
+        return applicableCharges.stream()
                                                                             .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
-        return filteredApplicableCharges;
     }
     private List<ApplicableCharge> fetchMDMSDataForApplicableCharges(RequestInfo requestInfo, String tenantId) {
-        String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId,MDMS_APPLICABLE_CHARGES);
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, tenantId,MDMS_APPLICABLE_CHARGES);
         List<Object> applicableChargesListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_APPLICABLE_CHARGES);
         List<ApplicableCharge> applicableCharges = new ArrayList<>();
         for(Object obj : applicableChargesListJson){

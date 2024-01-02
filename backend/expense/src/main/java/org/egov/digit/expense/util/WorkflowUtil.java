@@ -29,15 +29,18 @@ import digit.models.coremodels.Workflow;
 @Service
 public class WorkflowUtil {
 
-    @Autowired
-    private ServiceRequestRepository repository;
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
+
+    private final Configuration configs;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private Configuration configs;
-
+    public WorkflowUtil(ServiceRequestRepository repository, ObjectMapper mapper, Configuration configs) {
+        this.repository = repository;
+        this.mapper = mapper;
+        this.configs = configs;
+    }
 
 
     /**

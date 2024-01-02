@@ -20,11 +20,15 @@ import static org.egov.util.EstimateServiceConstant.LOCATION_BOUNDARY_NAME_CODE;
 @Slf4j
 public class LocationServiceUtil {
 
-    @Autowired
-    private EstimateServiceConfiguration config;
+    private final EstimateServiceConfiguration config;
+
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    public LocationServiceUtil(EstimateServiceConfiguration config, ServiceRequestRepository serviceRequestRepository) {
+        this.config = config;
+        this.serviceRequestRepository = serviceRequestRepository;
+    }
 
     public Map<String, String> getLocationName(String tenantId, RequestInfo requestInfo, String boundaryCode, String boundaryType) {
         StringBuilder uri = getLocationURI(tenantId, boundaryCode,boundaryType);

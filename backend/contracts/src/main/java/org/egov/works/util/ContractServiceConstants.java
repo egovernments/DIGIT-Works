@@ -1,6 +1,8 @@
 package org.egov.works.util;
 
 public class ContractServiceConstants {
+    // Private constructor to prevent instantiation
+    private ContractServiceConstants() {}
     public static final String MASTER_TENANTS = "tenants";
 
     public static final String CONTRACT_ID_CONSTANT = "contractId";
@@ -14,7 +16,6 @@ public class ContractServiceConstants {
     public static final String MASTER_CONTRACT_TYPE = "ContractType";
     public static final String MASTER_CBO_ROLES = "CBORoles";
     public static final String MASTER_OVER_HEADS = "Overheads";
-    //public static final String MASTER_DOCUMENT_TYPE = "DocumentType";
     public static final String MASTER_OIC_ROLES = "OICRoles";
     public static final String TENANT_FILTER_CODE = "$.*.code";
     public static final String COMMON_ACTIVE_FILTER = "$.*.[?(@.active==true)]";
@@ -25,7 +26,6 @@ public class ContractServiceConstants {
     public static final String JSON_PATH_FOR_TENANTS_VERIFICATION = MDMS_RESP_CONSTANT + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
     public static final String JSON_PATH_FOR_CBO_ROLES_VERIFICATION = MDMS_RESP_CONSTANT + MDMS_WORKS_MODULE_NAME + "." + MASTER_CBO_ROLES;
     public static final String JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION = MDMS_RESP_CONSTANT + MDMS_WORKS_MODULE_NAME + "." + MASTER_CONTRACT_TYPE + ".*";
-    //public static final String JSON_PATH_FOR_DOCUMENT_TYPE_VERIFICATION = MDMS_RESP_CONSTANT + MDMS_WORKS_MODULE_NAME + "." + MASTER_DOCUMENT_TYPE + ".*";
     public static final String JSON_PATH_FOR_OIC_ROLES_VERIFICATION = MDMS_RESP_CONSTANT + MDMS_WORKS_MODULE_NAME + "." + MASTER_OIC_ROLES;
     public static final String JSON_PATH_FOR_OVER_HEADS_VERIFICATION = MDMS_RESP_CONSTANT + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVER_HEADS+ ".*."+COMMON_CODE_FILTER;
 
@@ -89,7 +89,27 @@ public class ContractServiceConstants {
     // Workflow constants
 
     public static final String CONTRACT_REVISION_BUSINESS_SERVICE = "CONTRACT-REVISION";
+    public static final String CONTRACT_BUSINESS_SERVICE = "CONTRACT";
     public static final String CONTRACT_REVISION_APPROVE_LOCALIZATION_CODE = "TIME_EXTENSION_APPROVE";
     public static final String CONTRACT_REVISION_REJECT_LOCALIZATION_CODE = "TIME_EXTENSION_REJECT";
     public static final String CONTRACT_REVISION_SEND_BACK_LOCALIZATION_CODE = "TIME_EXTENSION_SEND_BACK_TO_CBO";
+
+    public static final String OVERHEAD_CODE = "OVERHEAD";
+    public static final String REQUEST_INFO = "RequestInfo";
+    public static final String TENANT_ID = "tenantId";
+    public static final String CRITERIA = "criteria";
+    public static final String IS_ACTIVE = "isActive";
+    public static final String REFERENCE_ID = "referenceId";
+
+    // Workflow actions
+    public static final String REJECT_ACTION = "REJECT";
+    public static final String ACCEPT_ACTION = "ACCEPT";
+    public static final String APPROVE_ACTION = "APPROVE";
+
+    public static final String FILE_STORE_API_FAILURE = "FILE_STORE_API_FAILURE";
+    public static final String FILE_STORE_API_REQUEST_FAIL_MSG = "FileStore API request failed with status code: ";
+    public static final String INVALID_DOCUMENTS_CODE = "INVALID_DOCUMENTS";
+    public static final String INVALID_DOCUMENTS_MSG = "Document IDs are invalid";
+    public static final String PARSE_ERROR_CODE = "PARSE_ERROR";
+    public static final String PARSE_ERROR_MSG = "Error while parsing response from FileStore";
 }

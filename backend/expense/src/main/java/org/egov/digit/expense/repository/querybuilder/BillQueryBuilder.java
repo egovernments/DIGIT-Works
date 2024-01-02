@@ -17,15 +17,13 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class BillQueryBuilder {
 	
-	@Autowired
-	private Configuration configs;
+	private final Configuration configs;
 
-   
-    private static String WRAPPER_QUERY = "SELECT * FROM " +
-            "(SELECT *, DENSE_RANK() OVER (ORDER BY b_id, {sortBy} {orderBy}) offset_ FROM " +
-            "({})" +
-            " result) result_offset " +
-            "WHERE offset_ > ? AND offset_ <= ?";
+
+    @Autowired
+    public BillQueryBuilder(Configuration configs) {
+        this.configs = configs;
+    }
 
 
     public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
@@ -35,11 +33,9 @@ public class BillQueryBuilder {
 
         Set<String> billNumbers = criteria.getBillNumbers();
         if(!CollectionUtils.isEmpty(billNumbers)) {
-            if (billNumbers != null && !billNumbers.isEmpty()) {
-                addClauseIfRequired(query, preparedStmtList);
-                query.append(" bill.billNumber IN (").append(createQuery(billNumbers)).append(")");
-                addToPreparedStatement(preparedStmtList, billNumbers);
-            }
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" bill.billNumber IN (").append(createQuery(billNumbers)).append(")");
+            addToPreparedStatement(preparedStmtList, billNumbers);
         }
 
         Set<String> ids = criteria.getIds();
@@ -89,7 +85,11 @@ public class BillQueryBuilder {
 
     private String addOrderByClause(Pagination pagination) {
 
-    	String paginationWrapper = WRAPPER_QUERY;
+        String paginationWrapper = "SELECT * FROM " +
+                "(SELECT *, DENSE_RANK() OVER (ORDER BY b_id, {sortBy} {orderBy}) offset_ FROM " +
+                "({})" +
+                " result) result_offset " +
+                "WHERE offset_ > ? AND offset_ <= ?";
 
         if ( !StringUtils.isEmpty(pagination.getSortBy()) && Constants.SORTABLE_BILL_COLUMNS.contains(pagination.getSortBy())) {
             paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());

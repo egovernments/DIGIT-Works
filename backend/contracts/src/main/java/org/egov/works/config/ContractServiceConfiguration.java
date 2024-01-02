@@ -11,7 +11,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.util.TimeZone;
 
 @Component
@@ -124,6 +123,12 @@ public class ContractServiceConfiguration {
     @Value("${works.estimate.search.endpoint}")
     private String estimateEndpoint;
 
+    @Value("${works.measurement.service.host}")
+    private String measurementBookHost;
+
+    @Value("${works.measurement.service.search.endpoint}")
+    private String measurementBookSearchEndpoint;
+
     //Project Service
     @Value("${works.project.host}")
     private String worksProjectManagementSystemHost;
@@ -148,9 +153,12 @@ public class ContractServiceConfiguration {
     @Value("${works.contract.search.endpoint}")
     private String contractEndpoint;
 
-//    @Value("${contract.document.id.verification.required}")
-//    private String documentIdVerificationRequired;
+    //Filestore service
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
 
+    @Value("${egov.filestore.endpoint}")
+    private String fileStoreEndpoint;
 
     //SMS notification
     @Value("${notification.sms.enabled}")
@@ -188,6 +196,13 @@ public class ContractServiceConfiguration {
 
     @Value("${contract.duedate.period}")
     private String contractDueDatePeriod;
+
+    // Contract Revision configuration
+    @Value("${contract.revision.max.limit}")
+    private Integer contractRevisionMaxLimit;
+
+    @Value("${contract.revision.measurement.validation}")
+    private Boolean isMeasurementValidationRequired;
 
     @PostConstruct
     public void initialize() {
