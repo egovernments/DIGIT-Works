@@ -1,5 +1,6 @@
 package org.egov.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import javax.validation.constraints.DecimalMax;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Pagination {
 
     @JsonProperty("limit")
