@@ -16,14 +16,18 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class BillUtils {
 
-    @Autowired
-    private ServiceRequestRepository restRepo;
+    private final ServiceRequestRepository restRepo;
+
+    private final ExpenseCalculatorConfiguration configs;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ExpenseCalculatorConfiguration configs;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public BillUtils(ServiceRequestRepository restRepo, ExpenseCalculatorConfiguration configs, ObjectMapper mapper) {
+        this.restRepo = restRepo;
+        this.configs = configs;
+        this.mapper = mapper;
+    }
 
     public BillResponse postCreateBill(RequestInfo requestInfo, Bill bill, Workflow workflow) {
         StringBuilder url = getBillCreateURI();

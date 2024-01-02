@@ -72,7 +72,6 @@ public class WorkflowService {
         processInstance.setModuleName(serviceConfiguration.getContractWFModuleName());
         processInstance.setTenantId(contract.getTenantId());
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
-        /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
 
         if (!CollectionUtils.isEmpty(workflow.getAssignees())) {
@@ -117,11 +116,7 @@ public class WorkflowService {
      */
     public BusinessService getBusinessService(ContractRequest contractRequest) {
         String tenantId = contractRequest.getContract().getTenantId();
-        StringBuilder url;
-        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE))
-            url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractRevisionWFBusinessService());
-        else
-            url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractWFBusinessService());
+        StringBuilder url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractWFBusinessService());
         RequestInfo requestInfo = contractRequest.getRequestInfo();
         Object result = repository.fetchResult(url, requestInfo);
         BusinessServiceResponse response = null;

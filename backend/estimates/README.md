@@ -12,6 +12,13 @@ NA
 - MDMS
 - Project Management service
 - workflow service
+- Notification Service
+- Localization Service
+- Access control
+- MDMS V2
+- User Service
+- Contract Service
+- Measurement Service
 
 ### Swagger API Contract
 

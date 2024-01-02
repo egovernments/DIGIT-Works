@@ -5,7 +5,7 @@ import digit.models.coremodels.SMSRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.MusterRollServiceConfiguration;
-import org.egov.kafka.Producer;
+import org.egov.kafka.MusterRollProducer;
 import org.egov.util.LocalizationUtil;
 import org.egov.util.NotificationUtil;
 import org.egov.web.models.MusterRollRequest;
@@ -20,17 +20,21 @@ import static org.egov.util.MusterRollServiceConstants.*;
 @Slf4j
 public class NotificationService {
 
-    @Autowired
-    private Producer producer;
+    private final MusterRollProducer musterRollProducer;
+
+    private final NotificationUtil notificationUtil;
+
+    private final LocalizationUtil localizationUtil;
+
+    private final MusterRollServiceConfiguration config;
 
     @Autowired
-    private NotificationUtil notificationUtil;
-
-    @Autowired
-    private LocalizationUtil localizationUtil;
-
-    @Autowired
-    private MusterRollServiceConfiguration config;
+    public NotificationService(MusterRollProducer musterRollProducer, NotificationUtil notificationUtil, LocalizationUtil localizationUtil, MusterRollServiceConfiguration config) {
+        this.musterRollProducer = musterRollProducer;
+        this.notificationUtil = notificationUtil;
+        this.localizationUtil = localizationUtil;
+        this.config = config;
+    }
 
     /**
      * Sends sms notification to CBO based on action.
@@ -39,11 +43,11 @@ public class NotificationService {
     public void sendNotificationToCBO(MusterRollRequest musterRollRequest){
         String action = musterRollRequest.getWorkflow().getAction();
         if(action.equalsIgnoreCase(WF_SEND_BACK_TO_CBO_CODE) || action.equalsIgnoreCase(WF_APPROVE_CODE)) {
-                Map<String, String> CBODetails = notificationUtil.getCBOContactPersonDetails(musterRollRequest);
+                Map<String, String> cboDetails = notificationUtil.getCBOContactPersonDetails(musterRollRequest);
                 String amount = notificationUtil.getExpenseAmount(musterRollRequest);
 
                 String message = null;
-                String contactMobileNumber = CBODetails.get(CONTACT_MOBILE_NUMBER);
+                String contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
             if (musterRollRequest.getWorkflow().getAction().equalsIgnoreCase(WF_SEND_BACK_TO_CBO_CODE)) {
                 message = getMessage(musterRollRequest, CBO_NOTIFICATION_FOR_CORRECTION_LOCALIZATION_CODE);
             } else if (musterRollRequest.getWorkflow().getAction().equalsIgnoreCase(WF_APPROVE_CODE)) {
@@ -54,7 +58,7 @@ public class NotificationService {
             String customizedMessage = buildMessageReplaceVariables(message, musterRollRequest.getMusterRoll().getMusterRollNumber(), amount);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
 
-            producer.push(config.getSmsNotificationTopic(), smsRequest);
+            musterRollProducer.push(config.getSmsNotificationTopic(), smsRequest);
         }
     }
 
@@ -65,14 +69,14 @@ public class NotificationService {
      * @return
      */
     public String getMessage(MusterRollRequest musterRollRequest, String msgCode){
-        String rootTenantId = musterRollRequest.getMusterRoll().getTenantId().split("\\.")[0];
+        String tenantId = musterRollRequest.getMusterRoll().getTenantId();
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
             locale = requestInfo.getMsgId().split("\\|")[1];
-        Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, rootTenantId,
+        Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, tenantId,
                 locale, MUSTER_ROLL_MODULE_CODE);
-        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
+        return localizedMessageMap.get(locale + "|" + tenantId).get(msgCode);
     }
 
     public String buildMessageReplaceVariables(String message, String musterRollName, String amount){

@@ -24,14 +24,18 @@ import static org.egov.digit.expense.config.Constants.*;
 @Slf4j
 public class NotificationUtil {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
+
+    private final ServiceRequestRepository restRepo;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ServiceRequestRepository restRepo;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public NotificationUtil(Configuration config, ServiceRequestRepository restRepo, ObjectMapper mapper) {
+        this.config = config;
+        this.restRepo = restRepo;
+        this.mapper = mapper;
+    }
 
 
     public Map<String, String> getCBOContactPersonDetails(BillRequest billRequest){
@@ -41,8 +45,7 @@ public class NotificationUtil {
         if(null != billRequest.getBill().getReferenceId())
             contractNumber = billRequest.getBill().getReferenceId().split("_")[0];
         String orgId = fetchOrgId(requestInfo, tenantId, contractNumber);
-        Map<String, String> CBODetails = fetchCBODetails(requestInfo, tenantId, orgId);
-        return CBODetails;
+        return fetchCBODetails(requestInfo, tenantId, orgId);
     }
 
     public String fetchOrgId(RequestInfo requestInfo, String tenantId, String contractNumber){
@@ -127,7 +130,6 @@ public class NotificationUtil {
     }
 
     public Map<String, String> getVendorContactPersonDetails(RequestInfo requestInfo, String tenantId, String orgId){
-        Map<String, String> VendorDetails = fetchCBODetails(requestInfo, tenantId, orgId);
-        return VendorDetails;
+        return fetchCBODetails(requestInfo, tenantId, orgId);
     }
 }

@@ -18,11 +18,15 @@ import org.springframework.util.StringUtils;
 @Component
 public class PaymentQueryBuilder {
 	
-	@Autowired
-	private QueryBuilderUtils builderUtils;
+	private final QueryBuilderUtils builderUtils;
 	
+	private final Configuration configs;
+
 	@Autowired
-	private Configuration configs;
+	public PaymentQueryBuilder(QueryBuilderUtils builderUtils, Configuration configs) {
+		this.builderUtils = builderUtils;
+		this.configs = configs;
+	}
 
 	public String getPaymentQuery(PaymentSearchRequest paymentSearchRequest, List<Object> preparedStatementValues) {
 
@@ -106,7 +110,7 @@ public class PaymentQueryBuilder {
     }
 
     
-    private static String WRAPPER_QUERY = "SELECT * FROM " +
+    private static final String WRAPPER_QUERY = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY p_id {orderBy}) offset_ FROM " +
             "({})" +
             " result) result_offset " +

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
-import org.egov.digit.expense.util.GenderUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillRequest;
@@ -34,23 +33,27 @@ import static org.egov.digit.expense.config.Constants.GENDER;
 @Component
 public class EnrichmentUtil {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
+
+    private final IdgenUtil idgenUtil;
+
+    private final GenderUtil genderUtil;
 
     @Autowired
-    private IdgenUtil idgenUtil;
+    public EnrichmentUtil(Configuration config, IdgenUtil idgenUtil, GenderUtil genderUtil) {
+        this.config = config;
+        this.idgenUtil = idgenUtil;
+        this.genderUtil = genderUtil;
+    }
 
-    @Autowired
-    private GenderUtil genderUtil;
-
-    public BillRequest encrichBillForCreate(BillRequest billRequest) {
+    public void encrichBillForCreate(BillRequest billRequest) {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
 		AuditDetails audit = getAuditDetails(createdBy, true);
 		String billNumberIdFormatName = bill.getBusinessService().toLowerCase().concat(Constants.BILL_ID_FORMAT_SUFFIX);
 		String billNumber = idgenUtil
-				.getIdList(billRequest.getRequestInfo(), bill.getTenantId().split("\\.")[0], billNumberIdFormatName, null, 1).get(0);
+				.getIdList(billRequest.getRequestInfo(), bill.getTenantId(), billNumberIdFormatName, null, 1).get(0);
 
 	    bill.setId(UUID.randomUUID().toString());
         bill.setAuditDetails(audit);
@@ -99,93 +102,88 @@ public class EnrichmentUtil {
 
             }
         }
-		return billRequest;
     }
-
-	public BillRequest encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest, List<Bill> billsFromSearch) {
+    public void encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest, List<Bill> billsFromSearch) {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
         AuditDetails updateAudit = getAuditDetails(createdBy, false);
         AuditDetails createAudit = getAuditDetails(createdBy, true);
-        
+
         Bill billFromSearch = billsFromSearch.get(0);
 
         // Add createdBy and createdTime to updateAudit
         updateAudit.setCreatedBy(billFromSearch.getAuditDetails().getCreatedBy());
         updateAudit.setCreatedTime(billFromSearch.getAuditDetails().getCreatedTime());
 
-		bill.setAuditDetails(updateAudit);
+        bill.setAuditDetails(updateAudit);
 
-		Party payer = bill.getPayer();
-		if (payer.getId() == null)
-			payer.setId(billFromSearch.getPayer().getId());
-		payer.setAuditDetails(updateAudit);
-		
+        Party payer = bill.getPayer();
+        if (payer.getId() == null)
+            payer.setId(billFromSearch.getPayer().getId());
+        payer.setAuditDetails(updateAudit);
+
         Map<String, BillDetail> billDetailMap = billsFromSearch.stream()
                 .map(Bill::getBillDetails)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 
         for (BillDetail billDetail : bill.getBillDetails()) {
-
-            /*
-             * Enrich new bill detail
-             */
-            if (null == billDetail.getId()) {
-
-                billDetail.setId(UUID.randomUUID().toString());
-                billDetail.setAuditDetails(createAudit);
-                
-                Party payee = billDetail.getPayee();
-                payee.setId(UUID.randomUUID().toString());
-                payee.setAuditDetails(createAudit);
-                
-                for (LineItem lineItem : billDetail.getLineItems()) {
-                    lineItem.setId(UUID.randomUUID().toString());
-                    lineItem.setAuditDetails(createAudit);
-                }
-
-                for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
-                    payablelineItem.setId(UUID.randomUUID().toString());
-                    payablelineItem.setAuditDetails(createAudit);
-                }
-            }
-            /*
-             * Enrich update of bill detail
-             */
-            else {
-
-            	BillDetail detailFromSearch = billDetailMap.get(billDetail.getId());
-            	
-                billDetail.setAuditDetails(createAudit);
-                billDetail.getPayee().setId(detailFromSearch.getPayee().getId()); 
-                billDetail.getPayee().setAuditDetails(createAudit);
-
-                for (LineItem lineItem : billDetail.getLineItems()) {
-
-                    if (null == lineItem.getId()) { /* new line item */
-
-                        lineItem.setId(UUID.randomUUID().toString());
-                        lineItem.setAuditDetails(createAudit);
-                    } else { /* updating line item */
-                        lineItem.setAuditDetails(createAudit);
-                    }
-                }
-
-                for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
-
-                    if (null == payablelineItem.getId()) { /* new payable line item */
-                        payablelineItem.setId(UUID.randomUUID().toString());
-                        payablelineItem.setAuditDetails(createAudit);
-                    } else /* updating payable line item */
-                        payablelineItem.setAuditDetails(createAudit);
-                }
-            }
+            enrichBillDetail(billDetail, billDetailMap, createAudit);
         }
-        return billRequest;
     }
 
+    private void enrichBillDetail(BillDetail billDetail, Map<String, BillDetail> billDetailMap, AuditDetails createAudit) {
+        if (null == billDetail.getId()) {
+            enrichNewBillDetail(billDetail, createAudit);
+        } else {
+            enrichExistingBillDetail(billDetail, billDetailMap, createAudit);
+        }
+    }
+
+    private void enrichNewBillDetail(BillDetail billDetail, AuditDetails createAudit) {
+        billDetail.setId(UUID.randomUUID().toString());
+        billDetail.setAuditDetails(createAudit);
+
+        Party payee = billDetail.getPayee();
+        payee.setId(UUID.randomUUID().toString());
+        payee.setAuditDetails(createAudit);
+
+        for (LineItem lineItem : billDetail.getLineItems()) {
+            lineItem.setId(UUID.randomUUID().toString());
+            lineItem.setAuditDetails(createAudit);
+        }
+
+        for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
+            payablelineItem.setId(UUID.randomUUID().toString());
+            payablelineItem.setAuditDetails(createAudit);
+        }
+    }
+
+    private void enrichExistingBillDetail(BillDetail billDetail, Map<String, BillDetail> billDetailMap, AuditDetails createAudit) {
+        BillDetail detailFromSearch = billDetailMap.get(billDetail.getId());
+
+        billDetail.setAuditDetails(createAudit);
+        billDetail.getPayee().setId(detailFromSearch.getPayee().getId());
+        billDetail.getPayee().setAuditDetails(createAudit);
+
+        for (LineItem lineItem : billDetail.getLineItems()) {
+            enrichLineItem(lineItem, createAudit);
+        }
+
+        for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
+            enrichLineItem(payablelineItem, createAudit);
+        }
+    }
+
+    private void enrichLineItem(LineItem lineItem, AuditDetails createAudit) {
+        if (null == lineItem.getId()) { /* new line item */
+            lineItem.setId(UUID.randomUUID().toString());
+            lineItem.setAuditDetails(createAudit);
+        } else { /* updating line item */
+            lineItem.setAuditDetails(createAudit);
+        }
+    }
 
     public void enrichSearchBillRequest(BillSearchRequest billSearchRequest) {
 
@@ -224,7 +222,7 @@ public class EnrichmentUtil {
         payment.setReferenceStatus(defaultReferenceStatus);
         
 		String paymentNumber = idgenUtil.getIdList(paymentRequest.getRequestInfo(),
-				payment.getTenantId().split("\\.")[0],
+				payment.getTenantId(),
 				Constants.PAYMENT_ID_FORMAT_NAME,
 				null, // id-format is not needed, setting to null
 				1).get(0);
@@ -256,7 +254,6 @@ public class EnrichmentUtil {
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         Long time = System.currentTimeMillis();
-//        payment.setAuditDetails(getAuditDetails(createdBy, false));
 
         // Update each payment status based on request status
         Map<String, PaymentBill> billMap = payment.getBills().stream()
@@ -315,7 +312,7 @@ public class EnrichmentUtil {
 
         Long time = System.currentTimeMillis();
 
-        if (isCreate)
+        if (Boolean.TRUE.equals(isCreate))
             return AuditDetails.builder()
                     .createdBy(by)
                     .createdTime(time)
