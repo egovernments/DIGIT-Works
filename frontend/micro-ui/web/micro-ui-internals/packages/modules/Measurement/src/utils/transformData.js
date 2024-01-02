@@ -73,7 +73,7 @@ export const transformData = (data) => {
 const measurement= {
   id: data?.id ? data?.id : null,
   measurementNumber: data?.measurementNumber ? data?.measurementNumber : null,
-  tenantId: "pg.citya",
+  tenantId: data?.tenantId,
   physicalRefNumber: null,
   referenceId: data.SOR?.[0]?.contractNumber || data.NONSOR?.[0]?.contractNumber,
   entryDate: 0,

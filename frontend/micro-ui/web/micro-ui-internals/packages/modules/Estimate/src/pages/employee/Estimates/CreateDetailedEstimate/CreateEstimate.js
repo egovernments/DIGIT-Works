@@ -301,7 +301,7 @@ const CreateEstimate = ({props}) => {
       return false;
     }
     //To validate that if SOR is present it should have measures
-    if(data?.SORtable?.filter((ob) => ob?.sorCode && (!(ob?.currentMBEntry) || ob?.currentMBEntry <= 0))?.length > 0)
+    if(data?.SORtable?.filter((ob) => ob?.sorCode && (!(ob?.currentMBEntry)))?.length > 0)
     {
       setShowToast({ error: true, label: "ERR_MB_AMOUNT_IS_NOT_RIGHT_FOR_SOR" });
       setShowModal(false);
@@ -323,7 +323,7 @@ const CreateEstimate = ({props}) => {
     let negativeValuedObject = data?.SORtable?.find(item => parseFloat(item.amount) < 0) || data?.NONSORtable?.find(item => parseFloat(item.amount) < 0)
     if(negativeValuedObject)
     {
-      setShowToast({ error: true, label: `${t("ERR_NEGATIVE_VALUE_IS_NOT_ALLOWED")} ${negativeValuedObject?.catgeory} ${negativeValuedObject?.sorId || negativeValuedObject?.sorCode}` });
+      setShowToast({ error: true, label: `${t("ERR_NEGATIVE_VALUE_IS_NOT_ALLOWED")} ${negativeValuedObject?.category}` });
       setShowModal(false);
       return false;
     }
