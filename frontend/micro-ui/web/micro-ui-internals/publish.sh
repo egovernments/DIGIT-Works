@@ -10,8 +10,8 @@ msg() {
 # yarn build
 # sleep 5
 
-# msg "Building and publishing css"
-# cd "$BASEDIR/packages/css" && yarn publish --access public
+msg "Building and publishing css"
+cd "$BASEDIR/packages/css" && yarn publish --access public
 
 # msg "Building and publishing libraries"
 # cd "$BASEDIR/packages/libraries" && yarn publish --access public
@@ -44,3 +44,6 @@ cd "$BASEDIR/packages/modules/Project" &&  rm -rf node_modules &&  rm -rf dist &
 
 msg "Building and publishing Estimate module"
 cd "$BASEDIR/packages/modules/Estimate" &&  rm -rf node_modules &&  rm -rf dist && yarn && npm publish --tag works-1.0
+
+msg "Building and publishing Measurement module"
+cd "$BASEDIR/packages/modules/Measurement" &&  rm -rf node_modules &&  rm -rf dist && yarn && npm publish --tag works-1.0

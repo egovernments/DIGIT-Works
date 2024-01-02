@@ -1,6 +1,6 @@
 {
   "name": "@egovernments/digit-ui-module-works",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "description": "Works",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",

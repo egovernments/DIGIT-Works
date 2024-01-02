@@ -24,15 +24,20 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     if(data.contracts.length === 1) contract = data.contracts[0]
     else {
         //this condition is added because to show work order when there are multiple object in response array
-        if(revisedWONumber)
-        {contract = data.contracts.filter(element => element.supplementNumber && (element.status==="ACTIVE" || element.status==="INWORKFLOW"))?.[0]
-        contract = {...contract, wfStatus:"ACCEPTED"}}
-        else
-        contract = data.contracts.filter(element => (element.status==="ACTIVE" || element.status==="INWORKFLOW"))?.[0]   
+        // if(revisedWONumber)
+        contract = data.contracts.filter(element => element.supplementNumber && (element.status==="ACTIVE" || element.status==="INWORKFLOW"))?.[0]
+        contract = contract ? {...contract, wfStatus:"ACCEPTED"} : {}
+        // else
+        // contract = data.contracts.filter(element => (element.status==="ACTIVE" || element.status==="INWORKFLOW"))?.[0]   
     }
     
     if(revisedWONumber){
         contract = data?.contracts?.filter(row => row?.supplementNumber===revisedWONumber)?.[0]
+    }
+    //Added this condition if from the response array not able to find contract then takes the original contract (usecase : of rejected TE)
+    if(Object.keys(contract)?.length <= 0)
+    {   
+        contract = data?.contracts?.filter((row) => row?.supplementNumber == null && row?.status === "ACTIVE")?.[0];
     }
 
     const contractDetails = {

@@ -3,7 +3,6 @@ import _ from "lodash";
 import React from "react";
 import { Amount, LinkLabel } from "@egovernments/digit-ui-react-components";
 
-
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares
@@ -12,119 +11,121 @@ var Digit = window.Digit || {};
 const businessServiceMap = {
   estimate: "ESTIMATE",
   contract: "CONTRACT",
+  measurement: "MB",
   "muster roll": "MR",
-  "works.wages":"EXPENSE.WAGES",
-  "works.purchase":"EXPENSE.PURCHASE",
-  "works.supervision":"EXPENSE.SUPERVISION",
-  revisedWO:"CONTRACT-REVISION"
+  "works.wages": "EXPENSE.WAGES",
+  "works.purchase": "EXPENSE.PURCHASE",
+  "works.supervision": "EXPENSE.SUPERVISION",
+  revisedWO: "CONTRACT-REVISION",
 };
 
 const getBillType = (businessService) => {
-  switch(businessService) {
+  switch (businessService) {
     case "EXPENSE.WAGES":
-      return 'wage'
+      return "wage";
     case "EXPENSE.PURCHASE":
-      return 'purchase'
+      return "purchase";
     case "EXPENSE.SUPERVISION":
-      return 'supervision'
+      return "supervision";
     default:
-      return 'wage';
+      return "wage";
   }
-}
-const PAYMENT_UPDATE_STATUS="SUCCESSFUL";
-
+};
+const PAYMENT_UPDATE_STATUS = "SUCCESSFUL";
 
 const getCreatePaymentPayload = (data) => {
-  let payment = {}
-  payment.tenantId = Digit.ULBService.getCurrentTenantId()
-  payment.netPayableAmount = 0
-  payment.netPaidAmount = 0
-  payment.additionalDetails = {}
+  let payment = {};
+  payment.tenantId = Digit.ULBService.getCurrentTenantId();
+  payment.netPayableAmount = 0;
+  payment.netPaidAmount = 0;
+  payment.additionalDetails = {};
   //payment.status = 'INITIATED'
 
-  payment.bills = []
-  
-  data?.forEach(item => {
-    const bill = item
-    let billObj = {}
-    billObj.billId = bill?.id
-    billObj.tenantId = bill?.tenantId
-    billObj.totalAmount = bill?.totalAmount
-    /* temp fix for now  before jit integration*/
-    billObj.totalPaidAmount = bill?.totalAmount
-    //billObj.status = 'INITIATED'
-    payment.netPayableAmount=payment.netPayableAmount+bill?.totalAmount;
-    billObj.billDetails = []
-    if(bill?.billDetails?.length > 0) {
-      bill?.billDetails?.forEach(detail => {
-        let billDetailObj = {}
-        billDetailObj.billDetailId = detail?.id //billId
-        billDetailObj.totalAmount = detail?.totalAmount
-    /* temp fix for now  before jit integration*/
+  payment.bills = [];
 
-        billDetailObj.totalPaidAmount = detail?.totalAmount
+  data?.forEach((item) => {
+    const bill = item;
+    let billObj = {};
+    billObj.billId = bill?.id;
+    billObj.tenantId = bill?.tenantId;
+    billObj.totalAmount = bill?.totalAmount;
+    /* temp fix for now  before jit integration*/
+    billObj.totalPaidAmount = bill?.totalAmount;
+    //billObj.status = 'INITIATED'
+    payment.netPayableAmount = payment.netPayableAmount + bill?.totalAmount;
+    billObj.billDetails = [];
+    if (bill?.billDetails?.length > 0) {
+      bill?.billDetails?.forEach((detail) => {
+        let billDetailObj = {};
+        billDetailObj.billDetailId = detail?.id; //billId
+        billDetailObj.totalAmount = detail?.totalAmount;
+        /* temp fix for now  before jit integration*/
+
+        billDetailObj.totalPaidAmount = detail?.totalAmount;
         //billDetailObj.status = 'INITIATED'
-        billDetailObj.payableLineItems = detail?.payableLineItems?.filter((row => row.status==="ACTIVE"))?.map(item => (
-          {
+        billDetailObj.payableLineItems = detail?.payableLineItems
+          ?.filter((row) => row.status === "ACTIVE")
+          ?.map((item) => ({
             lineItemId: item?.id,
             tenantId: item?.tenantId,
             paidAmount: item?.amount,
             //status: 'INITIATED'
-          }
-        ))
-        billDetailObj.additionalDetails = {}
-        billObj.billDetails.push(billDetailObj)
-      })
+          }));
+        billDetailObj.additionalDetails = {};
+        billObj.billDetails.push(billDetailObj);
+      });
     }
-    payment.bills.push(billObj)
-  })
-  payment.netPaidAmount=payment.netPayableAmount;
-  let payload = {payment}
-  
-  return payload
-}
-const getUpdatePaymentPayload = (payment={}) =>{
-  if(payment?.status){
-    payment.status=PAYMENT_UPDATE_STATUS;
-  }
-  if(payment?.bills){
-    payment.bills=payment?.bills?.map(bill=>{
-      if(bill?.status){
-        bill.status=PAYMENT_UPDATE_STATUS;
-      }
-      bill.billDetails= bill.billDetails?.map(billDetail=>{
-        if(billDetail?.status){
-          billDetail.status=PAYMENT_UPDATE_STATUS;
-        }
-        return {...billDetail}
-      })
-      return {...bill}
-    })
-  }
-  return {payment};
-}
+    payment.bills.push(billObj);
+  });
+  payment.netPaidAmount = payment.netPayableAmount;
+  let payload = { payment };
 
-const RetryComponent = ({row,t})=> <LinkLabel
-  onClick={async () => {
-    try {
-      const pdfRegenerateResponse =
-        row?.paymentId &&
-        (await Digit.ExpenseService.regeneratePDF(
-          {
-            Criteria: {
-              paymentId: row?.paymentId,
+  return payload;
+};
+const getUpdatePaymentPayload = (payment = {}) => {
+  if (payment?.status) {
+    payment.status = PAYMENT_UPDATE_STATUS;
+  }
+  if (payment?.bills) {
+    payment.bills = payment?.bills?.map((bill) => {
+      if (bill?.status) {
+        bill.status = PAYMENT_UPDATE_STATUS;
+      }
+      bill.billDetails = bill.billDetails?.map((billDetail) => {
+        if (billDetail?.status) {
+          billDetail.status = PAYMENT_UPDATE_STATUS;
+        }
+        return { ...billDetail };
+      });
+      return { ...bill };
+    });
+  }
+  return { payment };
+};
+
+const RetryComponent = ({ row, t }) => (
+  <LinkLabel
+    onClick={async () => {
+      try {
+        const pdfRegenerateResponse =
+          row?.paymentId &&
+          (await Digit.ExpenseService.regeneratePDF(
+            {
+              Criteria: {
+                paymentId: row?.paymentId,
+              },
             },
-          },
-          row?.tenantId
-        ));
-      console.info(pdfRegenerateResponse);
-    } catch (error) {
-      console.error(error, "downloaderror");
-    }
-  }}
->
-  {t("CS_COMMON_RETRY")}
-</LinkLabel>;
+            row?.tenantId
+          ));
+        console.info(pdfRegenerateResponse);
+      } catch (error) {
+        console.error(error, "downloaderror");
+      }
+    }}
+  >
+    {t("CS_COMMON_RETRY")}
+  </LinkLabel>
+);
 
 export const UICustomizations = {
   EstimateInboxConfig: {
@@ -133,11 +134,15 @@ export const UICustomizations = {
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
-      const estimateNumber = data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.trim()
-      if(estimateNumber) data.body.inbox.moduleSearchCriteria.estimateNumber = estimateNumber
+      const estimateNumber = data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.trim();
+      if (!(data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.includes("RE")) && estimateNumber) data.body.inbox.moduleSearchCriteria.estimateNumber = estimateNumber;
+      if (data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.includes("RE") && estimateNumber) {
+        data.body.inbox.moduleSearchCriteria.revisionNumber = estimateNumber;
+        delete data?.body?.inbox?.moduleSearchCriteria?.estimateNumber;
+      }
 
-      const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim()
-      if(projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId
+      const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim();
+      if (projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId;
       // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
 
       const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
@@ -146,7 +151,6 @@ export const UICustomizations = {
         data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
       }
 
-      
       let ward = _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : []);
       delete data.body.inbox.moduleSearchCriteria.ward;
       ward = ward?.map((row) => row?.code);
@@ -173,32 +177,34 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      switch(key){
-         case "ESTIMATE_ESTIMATE_NO":
+      switch (key) {
+        case "ESTIMATE_ESTIMATE_NO":
           return (
-           <span className="link">
-            <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
-              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-            </Link>
-           </span>
+            <span className="link">
+              {/* <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
+                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              </Link> */}
+              {/* here the end condition will be update as backend will add bussinessservice in inbox apo response in business object*/}
+              {Digit.Utils.statusBasedNavigation(row?.ProcessInstance?.action, row?.businessObject?.additionalDetails?.projectNumber, value, row.ProcessInstance.tenantId, value, value?.includes("RE") || row?.businessObject?.businessService === "REVISION-ESTIMATE" ? "REVISION-ESTIMATE" : "ESTIMATE", row?.businessObject?.estimateNumber)}
+            </span>
           );
-         case "COMMON_ASSIGNEE":
-          return value? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
+        case "COMMON_ASSIGNEE":
+          return value ? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
 
-         case "COMMON_WORKFLOW_STATES":
+        case "COMMON_WORKFLOW_STATES":
           return <span>{t(`WF_EST_${value}`)}</span>;
 
-         case "WORKS_ESTIMATED_AMOUNT":
-          return <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount>
+        case "WORKS_ESTIMATED_AMOUNT":
+          return <Amount customStyle={{ textAlign: "right" }} value={Math.round(value)} t={t}></Amount>;
 
-         case "COMMON_SLA_DAYS":
+        case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
-        
-         default:
+
+        default:
           return t("ES_COMMON_NA");
       }
-     },
-     additionalValidations: (type, data, keys) => {
+    },
+    additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
@@ -207,25 +213,22 @@ export const UICustomizations = {
       let link;
       Object.keys(row).map((key) => {
         if (key === "ESTIMATE_ESTIMATE_NO")
-          link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${
-            row[key]
-          }`;
+          link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${row[key]}`;
       });
       return link;
     },
   },
   AttendanceInboxConfig: {
     preProcess: (data) => {
-      
       //set tenantId
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
       const musterRollNumber = data?.body?.inbox?.moduleSearchCriteria?.musterRollNumber?.trim();
-      if(musterRollNumber) data.body.inbox.moduleSearchCriteria.musterRollNumber = musterRollNumber
+      if (musterRollNumber) data.body.inbox.moduleSearchCriteria.musterRollNumber = musterRollNumber;
 
       const attendanceRegisterName = data?.body?.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim();
-      if(attendanceRegisterName) data.body.inbox.moduleSearchCriteria.attendanceRegisterName = attendanceRegisterName
+      if (attendanceRegisterName) data.body.inbox.moduleSearchCriteria.attendanceRegisterName = attendanceRegisterName;
 
       // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
       const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
@@ -236,11 +239,11 @@ export const UICustomizations = {
 
       //cloning locality and workflow states to format them
       // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
-      
-      let selectedOrg =  _.clone(data.body.inbox.moduleSearchCriteria.orgId ? data.body.inbox.moduleSearchCriteria.orgId : null);
+
+      let selectedOrg = _.clone(data.body.inbox.moduleSearchCriteria.orgId ? data.body.inbox.moduleSearchCriteria.orgId : null);
       delete data.body.inbox.moduleSearchCriteria.orgId;
-      if(selectedOrg) {
-         data.body.inbox.moduleSearchCriteria.orgId = selectedOrg?.[0]?.applicationNumber;
+      if (selectedOrg) {
+        data.body.inbox.moduleSearchCriteria.orgId = selectedOrg?.[0]?.applicationNumber;
       }
 
       // let selectedWard =  _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : null);
@@ -258,11 +261,10 @@ export const UICustomizations = {
       // locality = locality?.map((row) => row?.code);
       states = Object.keys(states)?.filter((key) => states[key]);
       ward = ward?.map((row) => row?.code);
-      
-      
+
       // //adding formatted data to these keys
       // if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
-      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;  
+      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
       if (ward.length > 0) data.body.inbox.moduleSearchCriteria.ward = ward;
       const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType : {});
       if (projectType?.code) data.body.inbox.moduleSearchCriteria.projectType = projectType.code;
@@ -270,10 +272,10 @@ export const UICustomizations = {
       //adding tenantId to moduleSearchCriteria
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
-      //setting limit and offset becoz somehow they are not getting set in muster inbox 
-      data.body.inbox .limit = data.state.tableForm.limit
-      data.body.inbox.offset = data.state.tableForm.offset
-      delete data.state
+      //setting limit and offset becoz somehow they are not getting set in muster inbox
+      data.body.inbox.limit = data.state.tableForm.limit;
+      data.body.inbox.offset = data.state.tableForm.offset;
+      delete data.state;
       return data;
     },
     postProcess: (responseArray, uiConfig) => {
@@ -292,7 +294,9 @@ export const UICustomizations = {
         return (
           <span className="link">
             <Link
-              to={`/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
+              to={`/${
+                window.contextPath
+              }/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
             >
               {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
             </Link>
@@ -310,7 +314,7 @@ export const UICustomizations = {
         return <div>{value?.length}</div>;
       }
 
-      if(key === "ATM_AMOUNT_IN_RS"){
+      if (key === "ATM_AMOUNT_IN_RS") {
         return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
       }
       if (key === "ATM_SLA") {
@@ -321,11 +325,11 @@ export const UICustomizations = {
         );
       }
       if (key === "COMMON_WORKFLOW_STATES") {
-        return <span>{t(`WF_MUSTOR_${value}`)}</span>
+        return <span>{t(`WF_MUSTOR_${value}`)}</span>;
       }
 
       //added this in case we change the key and not updated here , it'll throw that nothing was returned from cell error if that case is not handled here. To prevent that error putting this default
-      return <span>{t(`CASE_NOT_HANDLED`)}</span>
+      return <span>{t(`CASE_NOT_HANDLED`)}</span>;
     },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
@@ -336,7 +340,6 @@ export const UICustomizations = {
       return link;
     },
     populateReqCriteria: () => {
-      
       const tenantId = Digit.ULBService.getCurrentTenantId();
 
       return {
@@ -345,9 +348,9 @@ export const UICustomizations = {
         body: {
           SearchCriteria: {
             tenantId: tenantId,
-            functions : {
-              type : "CBO"
-            }
+            functions: {
+              type: "CBO",
+            },
           },
         },
         config: {
@@ -368,47 +371,50 @@ export const UICustomizations = {
 
       return false;
     },
-    preProcess: (data,defaultValues) => {
+    preProcess: (data, defaultValues) => {
       //get data to set in api
-      const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.fromProposalDate,"daystart");
-      if(fromProposalDate) data.body.inbox.moduleSearchCriteria.fromProposalDate = fromProposalDate
+      const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.fromProposalDate, "daystart");
+      if (fromProposalDate) data.body.inbox.moduleSearchCriteria.fromProposalDate = fromProposalDate;
       const toProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.toProposalDate);
-      if(toProposalDate) data.body.inbox.moduleSearchCriteria.toProposalDate = toProposalDate
-      
-      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
-      delete data?.body?.inbox?.moduleSearchCriteria?.status
-      if(status){
-        data.body.inbox.moduleSearchCriteria.status = status
+      if (toProposalDate) data.body.inbox.moduleSearchCriteria.toProposalDate = toProposalDate;
+
+      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus;
+      delete data?.body?.inbox?.moduleSearchCriteria?.status;
+      if (status) {
+        data.body.inbox.moduleSearchCriteria.status = status;
       }
 
       const projectType = data?.body?.inbox?.moduleSearchCriteria?.typeOfWork?.code;
-      delete data.body.inbox.moduleSearchCriteria.typeOfWork
-      if(projectType) data.body.inbox.moduleSearchCriteria.typeOfWork = projectType
+      delete data.body.inbox.moduleSearchCriteria.typeOfWork;
+      if (projectType) data.body.inbox.moduleSearchCriteria.typeOfWork = projectType;
 
-      const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code
-      delete data.body.inbox.moduleSearchCriteria.ward
-      if(ward) data.body.inbox.moduleSearchCriteria.ward = ward
+      const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code;
+      delete data.body.inbox.moduleSearchCriteria.ward;
+      if (ward) data.body.inbox.moduleSearchCriteria.ward = ward;
+      estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim();
+      if (!(data?.body?.inbox?.moduleSearchCriteria?.estimateId?.includes("RE")) && estimateId) data.body.inbox.moduleSearchCriteria.estimateId = estimateId;
+      if (data?.body?.inbox?.moduleSearchCriteria?.estimateId?.includes("RE") && estimateId) {
+        data.body.inbox.moduleSearchCriteria.revisionNumber = estimateId;
+        delete data?.body?.inbox?.moduleSearchCriteria?.estimateId;
+      }
 
-      const estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim()
-      if(estimateId) data.body.inbox.moduleSearchCriteria.estimateId = estimateId
-    
-      const projectName = data?.body?.inbox?.moduleSearchCriteria?.projectName?.trim()
-      if(projectName) data.body.inbox.moduleSearchCriteria.projectName = projectName
+      const projectName = data?.body?.inbox?.moduleSearchCriteria?.projectName?.trim();
+      if (projectName) data.body.inbox.moduleSearchCriteria.projectName = projectName;
 
-      //set tenantId 
+      //set tenantId
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
       //here iterate over defaultValues and set from presets in the api
-      
-      const presets  = Digit.Hooks.useQueryParams();
-      if(Object.keys(presets).length > 0 ) {
-        Object.keys(presets).forEach(preset => {
+
+      const presets = Digit.Hooks.useQueryParams();
+      if (Object.keys(presets).length > 0) {
+        Object.keys(presets).forEach((preset) => {
           //if present in defaultValues object then only set it
-          if(Object.keys(defaultValues).some(key => key===preset)){
-            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+          if (Object.keys(defaultValues).some((key) => key === preset)) {
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset];
           }
-        })
+        });
       }
 
       return data;
@@ -424,14 +430,11 @@ export const UICustomizations = {
       if (key === "ESTIMATE_ESTIMATE_NO") {
         return (
           <span className="link">
-            <Link
-              to={`/${
-                window.contextPath
-              }/employee/estimate/estimate-details?tenantId=${Digit.ULBService.getCurrentTenantId()}&estimateNumber=${value}`}
-            >
-              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-            </Link>
-          </span>
+              {/* <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
+                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              </Link> */}
+              {Digit.Utils.statusBasedNavigation(row?.ProcessInstance?.action, row?.businessObject?.additionalDetails?.projectNumber, row?.ProcessInstance?.businessId, row.ProcessInstance.tenantId, row?.ProcessInstance?.businessId, row?.businessObject?.businessService === "REVISION-ESTIMATE" ? "REVISION-ESTIMATE" : "ESTIMATE", row?.businessObject?.estimateNumber)}
+            </span>
         );
       }
       if (key === "ES_COMMON_PROJECT_NAME") {
@@ -448,14 +451,14 @@ export const UICustomizations = {
         );
       }
       if (key === "WORKS_ESTIMATED_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount>
+        return <Amount customStyle={{ textAlign: "right" }} value={Math.round(value)} t={t}></Amount>;
       }
-      if(key === "CORE_COMMON_STATUS"){
-        return t(`WF_ESTIMATE_STATUS_${value}`)
+      if (key === "CORE_COMMON_STATUS") {
+        return t(`WF_ESTIMATE_STATUS_${value}`);
       }
       if (key === "ES_COMMON_LOCATION") {
         const location = value;
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId());
         if (location) {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
           let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
@@ -479,25 +482,24 @@ export const UICustomizations = {
       return link;
     },
     populateReqCriteria: () => {
-      
       const tenantId = Digit.ULBService.getCurrentTenantId();
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
         params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate") },
-        body: {
-         
-        },
+        body: {},
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
-              return {
-                "i18nKey":`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")}_STATUS_${state?.state}`,
-                "wfStatus":state?.state
-              }
-            })
-            return states  
+            const states = data?.BusinessServices?.[0]?.states
+              ?.filter((state) => state.state)
+              ?.map((state) => {
+                return {
+                  i18nKey: `WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")}_STATUS_${state?.state}`,
+                  wfStatus: state?.state,
+                };
+              });
+            return states;
           },
         },
       };
@@ -511,10 +513,17 @@ export const UICustomizations = {
       const ward = data.body.Projects[0]?.ward?.[0]?.code;
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors: true, createdFrom, createdTo };
       let name = data.body.Projects[0]?.name?.trim();
-      let projectNumber = data.body.Projects[0]?.projectNumber?.trim()
+      let projectNumber = data.body.Projects[0]?.projectNumber?.trim();
       delete data.body.Projects[0]?.createdFrom;
       delete data.body.Projects[0]?.createdTo;
-      data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(),projectNumber, projectType, name, address : { boundary : ward}  };
+      data.body.Projects[0] = {
+        ...data.body.Projects[0],
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+        projectNumber,
+        projectType,
+        name,
+        address: { boundary: ward },
+      };
 
       return data;
     },
@@ -554,10 +563,8 @@ export const UICustomizations = {
     customValidationCheck: (data) => {
       //checking both to and from date are present
       const { createdFrom, createdTo } = data;
-      if (createdTo !== "" && createdFrom === "")
-        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
-      else if (createdTo === "" && createdFrom !== "")
-        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      if (createdTo !== "" && createdFrom === "") return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      else if (createdTo === "" && createdFrom !== "") return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
 
       return false;
     },
@@ -565,60 +572,61 @@ export const UICustomizations = {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-     switch(key){
+      switch (key) {
         case "WORKS_PROJECT_ID":
-         return (
-          <span className="link">
-            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.tenantId}&projectNumber=${value}`}>
-            {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-            </Link>
-          </span>
-         );
-
-       case "WORKS_PARENT_PROJECT_ID":
-         return value ? (
-          <span className="link">
-            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.tenantId}&projectNumber=${value}`}>
-              {String(value ? value : t("ES_COMMON_NA"))}
-            </Link>
-          </span>
-         ) : (
-          t("ES_COMMON_NA")
-         );
-
-      case "WORKS_PROJECT_NAME": 
-       { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
-        return (
-          <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column?.maxLength}ch` }}>         
-              {String(t(value))}
+          return (
+            <span className="link">
+              <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.tenantId}&projectNumber=${value}`}>
+                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              </Link>
             </span>
-            {/* check condtion - if length greater than 20 */}
-            <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
-              {currentProject?.description}
+          );
+
+        case "WORKS_PARENT_PROJECT_ID":
+          return value ? (
+            <span className="link">
+              <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.tenantId}&projectNumber=${value}`}>
+                {String(value ? value : t("ES_COMMON_NA"))}
+              </Link>
             </span>
-          </div>
-         ); }
+          ) : (
+            t("ES_COMMON_NA")
+          );
 
-      case "PROJECT_ESTIMATED_COST_IN_RS":
-        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
-
-      case "ES_COMMON_LOCATION":    
-      { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId)
-        if (currentProject) {
-          let locality = currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "";
-          let ward = currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "";
-          let city = currentProject?.address?.city
-            ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`)
-            : "";
-          return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
+        case "WORKS_PROJECT_NAME": {
+          let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
+          return (
+            <div class="tooltip">
+              <span class="textoverflow" style={{ "--max-width": `${column?.maxLength}ch` }}>
+                {String(t(value))}
+              </span>
+              {/* check condtion - if length greater than 20 */}
+              <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+                {currentProject?.description}
+              </span>
+            </div>
+          );
         }
-        return <p>{"NA"}</p>
-      }
 
-      default:
-        return t("ES_COMMON_NA");
+        case "PROJECT_ESTIMATED_COST_IN_RS":
+          return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
+
+        case "ES_COMMON_LOCATION": {
+          let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
+          const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId);
+          if (currentProject) {
+            let locality = currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "";
+            let ward = currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "";
+            let city = currentProject?.address?.city
+              ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`)
+              : "";
+            return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
+          }
+          return <p>{"NA"}</p>;
+        }
+
+        default:
+          return t("ES_COMMON_NA");
       }
     },
     additionalValidations: (type, data, keys) => {
@@ -637,18 +645,27 @@ export const UICustomizations = {
   },
   SearchWMSProjectConfig: {
     preProcess: (data) => {
-     const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.inbox.moduleSearchCriteria?.createdFrom, "daystart");
+      const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.inbox.moduleSearchCriteria?.createdFrom, "daystart");
       const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.inbox.moduleSearchCriteria?.createdTo);
       const projectType = data.body.inbox.moduleSearchCriteria?.projectType?.code;
       const boundary = data.body.inbox.moduleSearchCriteria?.boundary?.[0]?.code;
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors: true };
       let projectName = data.body.inbox.moduleSearchCriteria?.projectName?.trim();
-      let projectNumber = data.body.inbox.moduleSearchCriteria?.projectNumber?.trim()
+      let projectNumber = data.body.inbox.moduleSearchCriteria?.projectNumber?.trim();
       delete data.body.inbox.moduleSearchCriteria?.createdFrom;
       delete data.body.inbox.moduleSearchCriteria?.ward;
       delete data.body.inbox.moduleSearchCriteria?.createdTo;
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId(),projectNumber, projectType, projectName, boundary, createdFrom, createdTo};
+      data.body.inbox.moduleSearchCriteria = {
+        ...data.body.inbox.moduleSearchCriteria,
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+        projectNumber,
+        projectType,
+        projectName,
+        boundary,
+        createdFrom,
+        createdTo,
+      };
 
       return data;
     },
@@ -688,10 +705,8 @@ export const UICustomizations = {
     customValidationCheck: (data) => {
       //checking both to and from date are present
       const { createdFrom, createdTo } = data;
-      if (createdTo !== "" && createdFrom === "")
-        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
-      else if (createdTo === "" && createdFrom !== "")
-        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      if (createdTo !== "" && createdFrom === "") return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      else if (createdTo === "" && createdFrom !== "") return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
 
       return false;
     },
@@ -699,60 +714,61 @@ export const UICustomizations = {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-     switch(key){
+      switch (key) {
         case "WORKS_PROJECT_ID":
-         return (
-          <span className="link">
-            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.businessObject?.tenantId}&projectNumber=${value}`}>
-            {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-            </Link>
-          </span>
-         );
-
-       case "WORKS_PARENT_PROJECT_ID":
-         return value ? (
-          <span className="link">
-            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.businessObject?.tenantId}&projectNumber=${value}`}>
-              {String(value ? value : t("ES_COMMON_NA"))}
-            </Link>
-          </span>
-         ) : (
-          t("ES_COMMON_NA")
-         );
-
-      case "WORKS_PROJECT_NAME": 
-       { let currentProject = searchResult?.filter((result) => result?.businessObject?.id === row?.businessObject?.id)[0];
-        return (
-          <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column?.maxLength}ch` }}>         
-              {String(t(value))}
+          return (
+            <span className="link">
+              <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.businessObject?.tenantId}&projectNumber=${value}`}>
+                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              </Link>
             </span>
-            {/* check condtion - if length greater than 20 */}
-            <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
-              {currentProject?.businessObject?.description}
+          );
+
+        case "WORKS_PARENT_PROJECT_ID":
+          return value ? (
+            <span className="link">
+              <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.businessObject?.tenantId}&projectNumber=${value}`}>
+                {String(value ? value : t("ES_COMMON_NA"))}
+              </Link>
             </span>
-          </div>
-         ); }
+          ) : (
+            t("ES_COMMON_NA")
+          );
 
-      case "PROJECT_ESTIMATED_COST_IN_RS":
-        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
-
-      case "ES_COMMON_LOCATION":    
-      { let currentProject = searchResult?.filter((result) => result?.businessObject.id === row?.businessObject.id)[0].businessObject;
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.businessObject.tenantId)
-        if (currentProject) {
-          let locality = currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "";
-          let ward = currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "";
-          let city = currentProject?.address?.city
-            ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`)
-            : "";
-          return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
+        case "WORKS_PROJECT_NAME": {
+          let currentProject = searchResult?.filter((result) => result?.businessObject?.id === row?.businessObject?.id)[0];
+          return (
+            <div class="tooltip">
+              <span class="textoverflow" style={{ "--max-width": `${column?.maxLength}ch` }}>
+                {String(t(value))}
+              </span>
+              {/* check condtion - if length greater than 20 */}
+              <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+                {currentProject?.businessObject?.description}
+              </span>
+            </div>
+          );
         }
-        return <p>{"NA"}</p>
-      }
 
-      default:
-        return t("ES_COMMON_NA");
+        case "PROJECT_ESTIMATED_COST_IN_RS":
+          return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
+
+        case "ES_COMMON_LOCATION": {
+          let currentProject = searchResult?.filter((result) => result?.businessObject.id === row?.businessObject.id)[0].businessObject;
+          const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.businessObject.tenantId);
+          if (currentProject) {
+            let locality = currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "";
+            let ward = currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "";
+            let city = currentProject?.address?.city
+              ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`)
+              : "";
+            return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
+          }
+          return <p>{"NA"}</p>;
+        }
+
+        default:
+          return t("ES_COMMON_NA");
       }
     },
     additionalValidations: (type, data, keys) => {
@@ -771,33 +787,32 @@ export const UICustomizations = {
   },
   SearchAttendanceConfig: {
     preProcess: (data) => {
-      
       //get data to set in api
-      const startDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.startDate,"daystart");
-      if(startDate) data.body.inbox.moduleSearchCriteria.startDate = startDate
+      const startDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.startDate, "daystart");
+      if (startDate) data.body.inbox.moduleSearchCriteria.startDate = startDate;
       const endDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.endDate);
-      if(endDate) data.body.inbox.moduleSearchCriteria.endDate = endDate
-      
-      const projectType = data?.body?.inbox?.moduleSearchCriteria?.projectType?.code;
-      delete data.body.inbox.moduleSearchCriteria.projectType
-      if(projectType) data.body.inbox.moduleSearchCriteria.projectType = projectType
+      if (endDate) data.body.inbox.moduleSearchCriteria.endDate = endDate;
 
-      const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code
-      delete data.body.inbox.moduleSearchCriteria.ward
-      if(ward) data.body.inbox.moduleSearchCriteria.ward = ward
-    
-      const status = data?.body?.inbox?.moduleSearchCriteria?.musterRollStatus?.[0]?.wfStatus
-      delete data?.body?.inbox?.moduleSearchCriteria?.musterRollStatus
-      if(status){
-        data.body.inbox.moduleSearchCriteria.musterRollStatus = status
+      const projectType = data?.body?.inbox?.moduleSearchCriteria?.projectType?.code;
+      delete data.body.inbox.moduleSearchCriteria.projectType;
+      if (projectType) data.body.inbox.moduleSearchCriteria.projectType = projectType;
+
+      const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code;
+      delete data.body.inbox.moduleSearchCriteria.ward;
+      if (ward) data.body.inbox.moduleSearchCriteria.ward = ward;
+
+      const status = data?.body?.inbox?.moduleSearchCriteria?.musterRollStatus?.[0]?.wfStatus;
+      delete data?.body?.inbox?.moduleSearchCriteria?.musterRollStatus;
+      if (status) {
+        data.body.inbox.moduleSearchCriteria.musterRollStatus = status;
       }
 
       const musterRollNumber = data?.body?.inbox?.moduleSearchCriteria?.musterRollNumber?.trim();
-      if(musterRollNumber) data.body.inbox.moduleSearchCriteria.musterRollNumber = musterRollNumber
+      if (musterRollNumber) data.body.inbox.moduleSearchCriteria.musterRollNumber = musterRollNumber;
 
       const attendanceRegisterName = data?.body?.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim();
-      if(attendanceRegisterName) data.body.inbox.moduleSearchCriteria.attendanceRegisterName = attendanceRegisterName
-      //set tenantId 
+      if (attendanceRegisterName) data.body.inbox.moduleSearchCriteria.attendanceRegisterName = attendanceRegisterName;
+      //set tenantId
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
       return data;
@@ -805,8 +820,7 @@ export const UICustomizations = {
     customValidationCheck: (data) => {
       //checking both to and from date are present
       const { startDate, endDate } = data;
-      if ((startDate === "" && endDate !== "") || (startDate !== "" && endDate === ""))
-        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      if ((startDate === "" && endDate !== "") || (startDate !== "" && endDate === "")) return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
 
       return false;
     },
@@ -824,10 +838,12 @@ export const UICustomizations = {
           </span>
         );
       }
-      if(key === "ES_COMMON_LOCATION"){
+      if (key === "ES_COMMON_LOCATION") {
         return value ? (
           <span style={{ whiteSpace: "nowrap" }}>
-            <p>{`${value?.locality ? value?.locality + ", " : ""}${value?.ward ? value?.ward + ", " : ""}${t(Digit.Utils.locale.getCityLocale(row?.businessObject?.tenantId))}`}</p>
+            <p>{`${value?.locality ? value?.locality + ", " : ""}${value?.ward ? value?.ward + ", " : ""}${t(
+              Digit.Utils.locale.getCityLocale(row?.businessObject?.tenantId)
+            )}`}</p>
           </span>
         ) : (
           t("ES_COMMON_NA")
@@ -848,15 +864,13 @@ export const UICustomizations = {
         );
       }
 
-
       if (key === "CORE_COMMON_STATUS") {
-        return <span>{t(`WF_MUSTOR_${value}`)}</span>
+        return <span>{t(`WF_MUSTOR_${value}`)}</span>;
       }
 
-      if(key === "MUSTER_WAGE_AMOUNT") {
-         return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
+      if (key === "MUSTER_WAGE_AMOUNT") {
+        return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
       }
-      
     },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
@@ -867,25 +881,24 @@ export const UICustomizations = {
       return link;
     },
     populateReqCriteria: () => {
-      
       const tenantId = Digit.ULBService.getCurrentTenantId();
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
         params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll") },
-        body: {
-         
-        },
+        body: {},
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
-              return {
-                "i18nKey":`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")}_STATUS_${state?.state}`,
-                "wfStatus":state?.state
-              }
-            })
-            return states  
+            const states = data?.BusinessServices?.[0]?.states
+              ?.filter((state) => state.state)
+              ?.map((state) => {
+                return {
+                  i18nKey: `WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")}_STATUS_${state?.state}`,
+                  wfStatus: state?.state,
+                };
+              });
+            return states;
           },
         },
       };
@@ -894,7 +907,7 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
-    }
+    },
   },
   ContractsInboxConfig: {
     preProcess: (data) => {
@@ -903,11 +916,11 @@ export const UICustomizations = {
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
-      const workOrderNumber = data?.body?.inbox?.moduleSearchCriteria?.workOrderNumber?.trim()
-      if(workOrderNumber) data.body.inbox.moduleSearchCriteria.workOrderNumber = workOrderNumber
+      const workOrderNumber = data?.body?.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
+      if (workOrderNumber) data.body.inbox.moduleSearchCriteria.workOrderNumber = workOrderNumber;
 
-      const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim()
-      if(projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId
+      const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim();
+      if (projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId;
 
       const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
       delete data.body.inbox.moduleSearchCriteria.assignee;
@@ -935,24 +948,30 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      switch(key){
-        case "WORKS_ORDER_NO": 
+      switch (key) {
+        case "WORKS_ORDER_NO":
           return (
-           <span className="link">
-            <Link to={row?.ProcessInstance?.businessService === businessServiceMap.revisedWO ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}` :`/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}`}>
-              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-            </Link>
-           </span>
+            <span className="link">
+              <Link
+                to={
+                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO || row?.ProcessInstance?.businessId?.includes("RW")
+                    ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}`
+                    : `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}`
+                }
+              >
+                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              </Link>
+            </span>
           );
 
         case "COMMON_ASSIGNEE":
-          return value? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
+          return value ? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
 
         case "COMMON_WORKFLOW_STATES":
           return <span>{t(`WF_WO_${value}`)}</span>;
 
         case "ES_COMMON_AMOUNT":
-          return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+          return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
 
         case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
@@ -997,20 +1016,20 @@ export const UICustomizations = {
           projectName,
           startDate,
           endDate,
-          status
+          status,
         },
       };
 
-      const presets  = Digit.Hooks.useQueryParams();
-      if(Object.keys(presets).length > 0 ) {
-        Object.keys(presets).forEach(preset => {
+      const presets = Digit.Hooks.useQueryParams();
+      if (Object.keys(presets).length > 0) {
+        Object.keys(presets).forEach((preset) => {
           //if present in defaultValues object then only set it
-          if(Object.keys(defaultValues).some(key => key===preset)){
-            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+          if (Object.keys(defaultValues).some((key) => key === preset)) {
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset];
           }
-        })
+        });
       }
-      
+
       return data;
     },
     customValidationCheck: (data) => {
@@ -1026,16 +1045,22 @@ export const UICustomizations = {
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
       switch (key) {
-      case "WORKS_ORDER_ID": 
-        return (
-          <span className="link">
-            <Link to={row?.ProcessInstance?.businessService === businessServiceMap.revisedWO ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance?.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}` :`/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance?.tenantId}&workOrderNumber=${value}`}>
+        case "WORKS_ORDER_ID":
+          return (
+            <span className="link">
+              <Link
+                to={
+                  row?.ProcessInstance?.businessService === businessServiceMap.revisedWO || row?.ProcessInstance?.businessId?.includes("RW")
+                    ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance?.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}`
+                    : `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance?.tenantId}&workOrderNumber=${value}`
+                }
+              >
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-            </Link>
-          </span>
-        );
-      
-      case "WORKS_PROJECT_NAME":
+              </Link>
+            </span>
+          );
+
+        case "WORKS_PROJECT_NAME":
           return (
             <div class="tooltip">
               <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
@@ -1047,34 +1072,34 @@ export const UICustomizations = {
               </span>
             </div>
           );
-        
-      case "ES_COMMON_AMOUNT":
-        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
-      case "COMMON_ROLE_OF_CBO": 
-        return <span>{t(`COMMON_MASTERS_${value}`)}</span>;
 
-      case "ES_COMMON_LOCATION": 
-        return value ? (
-          <span style={{ whiteSpace: "break-spaces" }}>
-            {String(
-              `${t(Digit.Utils.locale.getCityLocale(row?.businessObject?.tenantId))}, ${t(
-                Digit.Utils.locale.getMohallaLocale(value, row?.businessObject?.tenantId)
-              )}`
-            )}
-          </span>
-        ) : (
-          t("ES_COMMON_NA")
-        );
-      case "ES_COMMON_STATUS":
-        return value ? (
-          <span style={{ whiteSpace: "break-spaces" }}>
-            {t(`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")}_STATUS_${value}`)}
-          </span>
-        ) : (
-          t("ES_COMMON_NA")
-        );
-      default:
-        return t("ES_COMMON_NA");
+        case "ES_COMMON_AMOUNT":
+          return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
+        case "COMMON_ROLE_OF_CBO":
+          return <span>{t(`COMMON_MASTERS_${value}`)}</span>;
+
+        case "ES_COMMON_LOCATION":
+          return value ? (
+            <span style={{ whiteSpace: "break-spaces" }}>
+              {String(
+                `${t(Digit.Utils.locale.getCityLocale(row?.businessObject?.tenantId))}, ${t(
+                  Digit.Utils.locale.getMohallaLocale(value, row?.businessObject?.tenantId)
+                )}`
+              )}
+            </span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+        case "ES_COMMON_STATUS":
+          return value ? (
+            <span style={{ whiteSpace: "break-spaces" }}>
+              {t(`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")}_STATUS_${value}`)}
+            </span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+        default:
+          return t("ES_COMMON_NA");
       }
     },
     MobileDetailsOnClick: (row, tenantId) => {
@@ -1091,25 +1116,24 @@ export const UICustomizations = {
       }
     },
     populateReqCriteria: () => {
-      
       const tenantId = Digit.ULBService.getCurrentTenantId();
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
         params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract") },
-        body: {
-         
-        },
+        body: {},
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
-              return {
-                "i18nKey":`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")}_STATUS_${state?.state}`,
-                "wfStatus":state?.state
-              }
-            })
-            return states  
+            const states = data?.BusinessServices?.[0]?.states
+              ?.filter((state) => state.state)
+              ?.map((state) => {
+                return {
+                  i18nKey: `WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")}_STATUS_${state?.state}`,
+                  wfStatus: state?.state,
+                };
+              });
+            return states;
           },
         },
       };
@@ -1139,7 +1163,7 @@ export const UICustomizations = {
         wardCode: "wardCode[0].code",
         socialCategory: "socialCategory.code",
       };
-      const textConfig = ["name", "individualId"]
+      const textConfig = ["name", "individualId"];
       let Individual = Object.keys(requestBody)
         .map((key) => {
           if (selectConfig[key]) {
@@ -1147,7 +1171,7 @@ export const UICustomizations = {
           } else if (typeof requestBody[key] == "object") {
             requestBody[key] = requestBody[key]?.code;
           } else if (textConfig?.includes(key)) {
-            requestBody[key] = requestBody[key]?.trim()
+            requestBody[key] = requestBody[key]?.trim();
           }
           return key;
         })
@@ -1175,7 +1199,7 @@ export const UICustomizations = {
           return (
             <span className="link">
               <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.tenantId}&individualId=${value}`}>
-                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
           );
@@ -1215,7 +1239,7 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
-    }
+    },
   },
   SearchWMSWageSeekerConfig: {
     customValidationCheck: (data) => {
@@ -1230,8 +1254,7 @@ export const UICustomizations = {
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
 
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
-      const pathConfig = {
-      };
+      const pathConfig = {};
       const dateConfig = {
         createdFrom: "daystart",
         createdTo: "dayend",
@@ -1241,8 +1264,8 @@ export const UICustomizations = {
         name: "name.givenName",
         socialCategoryValue: "socialCategoryValue.code",
       };
-      const textConfig = ["name", "individualId"]
-      
+      const textConfig = ["name", "individualId"];
+
       let Individual = Object.keys(requestBody)
         .map((key) => {
           if (selectConfig[key]) {
@@ -1250,7 +1273,7 @@ export const UICustomizations = {
           } else if (typeof requestBody[key] == "object") {
             requestBody[key] = requestBody[key]?.code;
           } else if (textConfig?.includes(key)) {
-            requestBody[key] = requestBody[key]?.trim()
+            requestBody[key] = requestBody[key]?.trim();
           }
           return key;
         })
@@ -1266,8 +1289,12 @@ export const UICustomizations = {
           return acc;
         }, {});
 
-      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria ,...Individual, tenantId:Digit.ULBService.getCurrentTenantId()};
-      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId()
+      data.body.inbox.moduleSearchCriteria = {
+        ...data.body.inbox.moduleSearchCriteria,
+        ...Individual,
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+      };
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
@@ -1279,7 +1306,7 @@ export const UICustomizations = {
           return (
             <span className="link">
               <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.businessObject?.tenantId}&individualId=${value}`}>
-                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
           );
@@ -1319,7 +1346,7 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
-    }
+    },
   },
   SearchOrganisationConfig: {
     customValidationCheck: (data) => {
@@ -1330,48 +1357,48 @@ export const UICustomizations = {
 
       return false;
     },
-    preProcess: (data) => {  
-        let requestBody = { ...data.body.SearchCriteria };
-        const pathConfig = {
-          type: "functions.type",
-        };
-        const dateConfig = {
-          createdFrom: "daystart",
-          createdTo: "dayend",
-        };
-        const selectConfig = {
-          boundaryCode: "boundaryCode[0].code",
-          type:"type.code",
-          applicationStatus: "applicationStatus.code",
-        };
-        const textConfig = ["name", "orgNumber"]
+    preProcess: (data) => {
+      let requestBody = { ...data.body.SearchCriteria };
+      const pathConfig = {
+        type: "functions.type",
+      };
+      const dateConfig = {
+        createdFrom: "daystart",
+        createdTo: "dayend",
+      };
+      const selectConfig = {
+        boundaryCode: "boundaryCode[0].code",
+        type: "type.code",
+        applicationStatus: "applicationStatus.code",
+      };
+      const textConfig = ["name", "orgNumber"];
 
-        let SearchCriteria = Object.keys(requestBody)
-          .map((key) => {
-            if (selectConfig[key]) {
-              requestBody[key] = _.get(requestBody, selectConfig[key], null);
-            } else if (typeof requestBody[key] == "object") {
-              requestBody[key] = requestBody[key]?.code;
-            } else if (textConfig?.includes(key)) {
-              requestBody[key] = requestBody[key]?.trim()
-            }
-            return key;
-          })
-          .filter((key) => requestBody[key])
-          .reduce((acc, curr) => {
-            if (pathConfig[curr]) {
-              _.set(acc, pathConfig[curr], requestBody[curr]);
-            } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-              _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-            } else {
-              _.set(acc, curr, requestBody[curr]);
-            }
-            return acc;
-          }, {});
-        data.body.SearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
-        return data;
-      },
-      
+      let SearchCriteria = Object.keys(requestBody)
+        .map((key) => {
+          if (selectConfig[key]) {
+            requestBody[key] = _.get(requestBody, selectConfig[key], null);
+          } else if (typeof requestBody[key] == "object") {
+            requestBody[key] = requestBody[key]?.code;
+          } else if (textConfig?.includes(key)) {
+            requestBody[key] = requestBody[key]?.trim();
+          }
+          return key;
+        })
+        .filter((key) => requestBody[key])
+        .reduce((acc, curr) => {
+          if (pathConfig[curr]) {
+            _.set(acc, pathConfig[curr], requestBody[curr]);
+          } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
+            _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+          } else {
+            _.set(acc, curr, requestBody[curr]);
+          }
+          return acc;
+        }, {});
+      data.body.SearchCriteria = { ...SearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() };
+      return data;
+    },
+
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       //here we can add multiple conditions
       //like if a cell is link then we return link
@@ -1381,7 +1408,7 @@ export const UICustomizations = {
           return (
             <span className="link">
               <Link to={`/${window.contextPath}/employee/masters/view-organization?tenantId=${row?.tenantId}&orgId=${value}`}>
-                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
           );
@@ -1397,10 +1424,18 @@ export const UICustomizations = {
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_ORG_STATUS_${value}`))}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_ORGANISATION_TYPE":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`COMMON_MASTERS_ORG_${value?.split?.('.')?.[0]}`))}</span> : t("ES_COMMON_NA");
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(`COMMON_MASTERS_ORG_${value?.split?.(".")?.[0]}`))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
 
         case "MASTERS_ORGANISATION_SUB_TYPE":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`COMMON_MASTERS_SUBORG_${row?.functions?.[0]?.type?.split?.('.')?.[1]}`))}</span> : t("ES_COMMON_NA");
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(`COMMON_MASTERS_SUBORG_${row?.functions?.[0]?.type?.split?.(".")?.[1]}`))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
         default:
           return t("ES_COMMON_NA");
       }
@@ -1417,7 +1452,7 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
-    }
+    },
   },
   SearchBillWMSConfig: {
     customValidationCheck: (data) => {
@@ -1428,9 +1463,7 @@ export const UICustomizations = {
 
       return false;
     },
-    preProcess: (data,defaultValues) => {
-      
-      
+    preProcess: (data, defaultValues) => {
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const dateConfig = {
         createdFrom: "daystart",
@@ -1441,73 +1474,69 @@ export const UICustomizations = {
         ward: "ward[0].code",
         status: "status[0].code",
       };
-      const textConfig = ["projectName", "billNumber"]
+      const textConfig = ["projectName", "billNumber"];
 
       let SearchCriteria = Object.keys(requestBody)
-      .map((key) => {
-        if (selectConfig[key]) {
-          requestBody[key] = _.get(requestBody, selectConfig[key], null);
-        } else if (typeof requestBody[key] == "object") {
-          requestBody[key] = requestBody[key]?.code;
-        } else if (textConfig?.includes(key)) {
-          requestBody[key] = requestBody[key]?.trim()
-        }
-        return key;
-      })
-      .filter((key) => requestBody[key])
-      .reduce((acc, curr) => {
-        if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-          _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-        } else {
-          _.set(acc, curr, requestBody[curr]);
-        }
-        return acc;
-      }, {});
-      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.inbox.moduleSearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
-
-      const presets  = Digit.Hooks.useQueryParams();
-      if(Object.keys(presets).length > 0 ) {
-        Object.keys(presets).forEach(preset => {
-          //if present in defaultValues object then only set it
-          if(Object.keys(defaultValues).some(key => key===preset)){
-            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+        .map((key) => {
+          if (selectConfig[key]) {
+            requestBody[key] = _.get(requestBody, selectConfig[key], null);
+          } else if (typeof requestBody[key] == "object") {
+            requestBody[key] = requestBody[key]?.code;
+          } else if (textConfig?.includes(key)) {
+            requestBody[key] = requestBody[key]?.trim();
           }
+          return key;
         })
+        .filter((key) => requestBody[key])
+        .reduce((acc, curr) => {
+          if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
+            _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+          } else {
+            _.set(acc, curr, requestBody[curr]);
+          }
+          return acc;
+        }, {});
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria = { ...SearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() };
+
+      const presets = Digit.Hooks.useQueryParams();
+      if (Object.keys(presets).length > 0) {
+        Object.keys(presets).forEach((preset) => {
+          //if present in defaultValues object then only set it
+          if (Object.keys(defaultValues).some((key) => key === preset)) {
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset];
+          }
+        });
       }
 
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      let tenantId = Digit.ULBService.getCurrentTenantId()
+      let tenantId = Digit.ULBService.getCurrentTenantId();
       if (key === "WORKS_BILL_NUMBER") {
-        let billType = ""
+        let billType = "";
         const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
         const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
         const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
-        if(row?.ProcessInstance?.businessService === bsPurchaseBill ){
-          billType = "purchase"
+        if (row?.ProcessInstance?.businessService === bsPurchaseBill) {
+          billType = "purchase";
         }
-        if(row?.ProcessInstance?.businessService === bsSupervisionBill ){
-          billType = "supervision"
+        if (row?.ProcessInstance?.businessService === bsSupervisionBill) {
+          billType = "supervision";
         }
-        if(row?.ProcessInstance?.businessService === bsWageBill ){
-          billType = "wage"
+        if (row?.ProcessInstance?.businessService === bsWageBill) {
+          billType = "wage";
         }
         return (
           <span className="link">
-            <Link
-              to={`/${
-                window.contextPath
-              }/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}
-            >
+            <Link to={`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}>
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
           </span>
         );
       }
       if (key === "EXP_BILL_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+        return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
       }
 
       if (key === "WORKS_PROJECT_NAME") {
@@ -1524,16 +1553,16 @@ export const UICustomizations = {
         );
       }
 
-      if(key === "CORE_COMMON_STATUS") {
-        return value ? t(Digit.Utils.locale.getTransformedLocale(`BILL_STATUS_PAYMENT_${value}`)) : t("ES_COMMON_NA")
+      if (key === "CORE_COMMON_STATUS") {
+        return value ? t(Digit.Utils.locale.getTransformedLocale(`BILL_STATUS_PAYMENT_${value}`)) : t("ES_COMMON_NA");
       }
-      if(key === "ES_COMMON_LOCATION") {
+      if (key === "ES_COMMON_LOCATION") {
         const location = {
-          "ward":value?.ward,
-          "locality":value?.locality,
-          "city":row?.businessObject?.tenantId
+          ward: value?.ward,
+          locality: value?.locality,
+          city: row?.businessObject?.tenantId,
         };
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId());
         if (location) {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
           let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
@@ -1542,16 +1571,15 @@ export const UICustomizations = {
         }
         return <p>{"NA"}</p>;
       }
-      if(key === "WORKS_BILL_TYPE") {
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(value)
-        return value ? t(`COMMON_MASTERS_BILL_TYPE_${headerLocale}`) : t("ES_COMMON_NA")
+      if (key === "WORKS_BILL_TYPE") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(value);
+        return value ? t(`COMMON_MASTERS_BILL_TYPE_${headerLocale}`) : t("ES_COMMON_NA");
       }
     },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
-        if (key === "WORKS_BILL_NUMBER")
-          link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
+        if (key === "WORKS_BILL_NUMBER") link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
       });
       return link;
     },
@@ -1565,57 +1593,60 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
         body: {},
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
-              return {
-                "code": state?.state,
-                "i18nKey":`WF_${Digit.Utils.locale.getTransformedLocale(Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase"))}_STATUS_${state?.state}`,
-                "wfStatus":state?.state
-              }
-            })
-            return states  
+            const states = data?.BusinessServices?.[0]?.states
+              ?.filter((state) => state.state)
+              ?.map((state) => {
+                return {
+                  code: state?.state,
+                  i18nKey: `WF_${Digit.Utils.locale.getTransformedLocale(
+                    Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")
+                  )}_STATUS_${state?.state}`,
+                  wfStatus: state?.state,
+                };
+              });
+            return states;
           },
         },
       };
     },
-    selectionHandler: async (selectedRows,t) => {
-
+    selectionHandler: async (selectedRows, t) => {
       /// here do expense calc search and get the response and send the list of bills to getCreatePaymentPayload
-        const ids = selectedRows?.map(row=> row?.original?.businessObject?.id)
-        
-        const result = await Digit.WorksService.searchBill({
-          "billCriteria": {
-            "tenantId": Digit.ULBService.getCurrentTenantId(),
-            ids,
-            // "businessService":[bsPurchaseBill,bsWageBill,bsSupervisionBill]
-            // "businessService":bsPurchaseBill
-          },
-           "pagination": {
-            "limit": 50,
-            "offSet": 0,
-            "sortBy": "ASC",
-            "order": "ASC"
-          }
-        })
-  
-        const payload = getCreatePaymentPayload(result.bills);
-        let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_INITIATED_TOAST"}
-        try {
-          const response = await Digit.ExpenseService.createPayment(payload);
-          responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
-          return responseToReturn
-        } catch (error) {
-          responseToReturn.isSuccess = false
-          responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
-          return responseToReturn
-        }
+      const ids = selectedRows?.map((row) => row?.original?.businessObject?.id);
+
+      const result = await Digit.WorksService.searchBill({
+        billCriteria: {
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+          ids,
+          // "businessService":[bsPurchaseBill,bsWageBill,bsSupervisionBill]
+          // "businessService":bsPurchaseBill
+        },
+        pagination: {
+          limit: 50,
+          offSet: 0,
+          sortBy: "ASC",
+          order: "ASC",
+        },
+      });
+
+      const payload = getCreatePaymentPayload(result.bills);
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_INITIATED_TOAST" };
+      try {
+        const response = await Digit.ExpenseService.createPayment(payload);
+        responseToReturn.label = `${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`;
+        return responseToReturn;
+      } catch (error) {
+        responseToReturn.isSuccess = false;
+        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED");
+        return responseToReturn;
       }
+    },
   },
-  CreatePAWMSConfig:{
+  CreatePAWMSConfig: {
     customValidationCheck: (data) => {
       //checking both to and from date are present
       const { createdFrom, createdTo } = data;
@@ -1624,7 +1655,7 @@ export const UICustomizations = {
 
       return false;
     },
-    preProcess: (data,defaultValues) => {
+    preProcess: (data, defaultValues) => {
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const dateConfig = {
         createdFrom: "daystart",
@@ -1635,73 +1666,69 @@ export const UICustomizations = {
         ward: "ward[0].code",
         status: "status[0].code",
       };
-      const textConfig = ["projectName", "billNumber"]
+      const textConfig = ["projectName", "billNumber"];
 
       let SearchCriteria = Object.keys(requestBody)
-      .map((key) => {
-        if (selectConfig[key]) {
-          requestBody[key] = _.get(requestBody, selectConfig[key], null);
-        } else if (typeof requestBody[key] == "object") {
-          requestBody[key] = requestBody[key]?.code;
-        } else if (textConfig?.includes(key)) {
-          requestBody[key] = requestBody[key]?.trim()
-        }
-        return key;
-      })
-      .filter((key) => requestBody[key])
-      .reduce((acc, curr) => {
-        if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-          _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-        } else {
-          _.set(acc, curr, requestBody[curr]);
-        }
-        return acc;
-      }, {});
-      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.inbox.moduleSearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
-
-      const presets  = Digit.Hooks.useQueryParams();
-      if(Object.keys(presets).length > 0 ) {
-        Object.keys(presets).forEach(preset => {
-          //if present in defaultValues object then only set it
-          if(Object.keys(defaultValues).some(key => key===preset)){
-            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+        .map((key) => {
+          if (selectConfig[key]) {
+            requestBody[key] = _.get(requestBody, selectConfig[key], null);
+          } else if (typeof requestBody[key] == "object") {
+            requestBody[key] = requestBody[key]?.code;
+          } else if (textConfig?.includes(key)) {
+            requestBody[key] = requestBody[key]?.trim();
           }
+          return key;
         })
+        .filter((key) => requestBody[key])
+        .reduce((acc, curr) => {
+          if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
+            _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+          } else {
+            _.set(acc, curr, requestBody[curr]);
+          }
+          return acc;
+        }, {});
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria = { ...SearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() };
+
+      const presets = Digit.Hooks.useQueryParams();
+      if (Object.keys(presets).length > 0) {
+        Object.keys(presets).forEach((preset) => {
+          //if present in defaultValues object then only set it
+          if (Object.keys(defaultValues).some((key) => key === preset)) {
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset];
+          }
+        });
       }
 
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      let tenantId = Digit.ULBService.getCurrentTenantId()
+      let tenantId = Digit.ULBService.getCurrentTenantId();
       if (key === "WORKS_BILL_NUMBER") {
-        let billType = ""
+        let billType = "";
         const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
         const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
         const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
-        if(row?.ProcessInstance?.businessService === bsPurchaseBill ){
-          billType = "purchase"
+        if (row?.ProcessInstance?.businessService === bsPurchaseBill) {
+          billType = "purchase";
         }
-        if(row?.ProcessInstance?.businessService === bsSupervisionBill ){
-          billType = "supervision"
+        if (row?.ProcessInstance?.businessService === bsSupervisionBill) {
+          billType = "supervision";
         }
-        if(row?.ProcessInstance?.businessService === bsWageBill ){
-          billType = "wage"
+        if (row?.ProcessInstance?.businessService === bsWageBill) {
+          billType = "wage";
         }
         return (
           <span className="link">
-            <Link
-              to={`/${
-                window.contextPath
-              }/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}
-            >
+            <Link to={`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}>
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
           </span>
         );
       }
       if (key === "EXP_BILL_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+        return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
       }
 
       if (key === "WORKS_PROJECT_NAME") {
@@ -1718,16 +1745,16 @@ export const UICustomizations = {
         );
       }
 
-      if(key === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_PAYMENT_INITIATED`) : t("ES_COMMON_NA")
+      if (key === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_PAYMENT_INITIATED`) : t("ES_COMMON_NA");
       }
-      if(key === "ES_COMMON_LOCATION") {
+      if (key === "ES_COMMON_LOCATION") {
         const location = {
-          "ward":value?.ward,
-          "locality":value?.locality,
-          "city":row?.businessObject?.tenantId
+          ward: value?.ward,
+          locality: value?.locality,
+          city: row?.businessObject?.tenantId,
         };
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId());
         if (location) {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
           let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
@@ -1736,16 +1763,15 @@ export const UICustomizations = {
         }
         return <p>{"NA"}</p>;
       }
-      if(key === "WORKS_BILL_TYPE") {
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(value)
-        return value ? t(`COMMON_MASTERS_BILL_TYPE_${headerLocale}`) : t("ES_COMMON_NA")
+      if (key === "WORKS_BILL_TYPE") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(value);
+        return value ? t(`COMMON_MASTERS_BILL_TYPE_${headerLocale}`) : t("ES_COMMON_NA");
       }
     },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
-        if (key === "WORKS_BILL_NUMBER")
-          link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
+        if (key === "WORKS_BILL_NUMBER") link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
       });
       return link;
     },
@@ -1759,88 +1785,89 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
         body: {},
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
-              return {
-                "code": state?.state,
-                "i18nKey":`WF_${Digit.Utils.locale.getTransformedLocale(Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase"))}_STATUS_${state?.state}`,
-                "wfStatus":state?.state
-              }
-            })
-            return states  
+            const states = data?.BusinessServices?.[0]?.states
+              ?.filter((state) => state.state)
+              ?.map((state) => {
+                return {
+                  code: state?.state,
+                  i18nKey: `WF_${Digit.Utils.locale.getTransformedLocale(
+                    Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")
+                  )}_STATUS_${state?.state}`,
+                  wfStatus: state?.state,
+                };
+              });
+            return states;
           },
         },
       };
     },
-    selectionHandler: async (selectedRows,t) => {
-
+    selectionHandler: async (selectedRows, t) => {
       /// here do expense calc search and get the response and send the list of bills to getCreatePaymentPayload
-        const ids = selectedRows?.map(row=> row?.original?.businessObject?.id)
-        
-        const result = await Digit.WorksService.searchBill({
-          "billCriteria": {
-            "tenantId": Digit.ULBService.getCurrentTenantId(),
-            ids,
-            // "businessService":[bsPurchaseBill,bsWageBill,bsSupervisionBill]
-            // "businessService":bsPurchaseBill
-          },
-           "pagination": {
-            "limit": 50,
-            "offSet": 0,
-            "sortBy": "ASC",
-            "order": "ASC"
-          }
-        })
-        
-        // const payload = getCreatePaymentPayload(result.bills);
-        //Updated this code to call create n number of times(one for every bill)
-        let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_INITIATED_TOAST"}
-        let statuses = []
-        for(let i=0;i<result.bills.length;i++){
-          try {
-            const payload = getCreatePaymentPayload([result.bills?.[i]]);
-            const response = await Digit.ExpenseService.createPayment(payload);
-            // responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
-            statuses.push([result.bills?.[i]?.billNumber,"success",response?.payments?.[0]?.paymentNumber])
-            // return responseToReturn
-          } catch (error) {
-            // responseToReturn.isSuccess = false
-            // responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
-            statuses.push([result.bills?.[i]?.billNumber,"failed"])
-            // return responseToReturn
-          }
+      const ids = selectedRows?.map((row) => row?.original?.businessObject?.id);
+
+      const result = await Digit.WorksService.searchBill({
+        billCriteria: {
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+          ids,
+          // "businessService":[bsPurchaseBill,bsWageBill,bsSupervisionBill]
+          // "businessService":bsPurchaseBill
+        },
+        pagination: {
+          limit: 50,
+          offSet: 0,
+          sortBy: "ASC",
+          order: "ASC",
+        },
+      });
+
+      // const payload = getCreatePaymentPayload(result.bills);
+      //Updated this code to call create n number of times(one for every bill)
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_INITIATED_TOAST" };
+      let statuses = [];
+      for (let i = 0; i < result.bills.length; i++) {
+        try {
+          const payload = getCreatePaymentPayload([result.bills?.[i]]);
+          const response = await Digit.ExpenseService.createPayment(payload);
+          // responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
+          statuses.push([result.bills?.[i]?.billNumber, "success", response?.payments?.[0]?.paymentNumber]);
+          // return responseToReturn
+        } catch (error) {
+          // responseToReturn.isSuccess = false
+          // responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
+          statuses.push([result.bills?.[i]?.billNumber, "failed"]);
+          // return responseToReturn
         }
-        
-        let atleastOnePaymentSuccess = statuses?.some(status => status?.[1]==="success")
-        responseToReturn.isSuccess = atleastOnePaymentSuccess ? true : false
-        let initiatedBills = ""
-        let failedBills = ""
-        statuses?.forEach(status => {
-          if(status[1]==="success") initiatedBills += `${status[0]}, `
-          else failedBills += `${status[0]}, `
-        })
-        const returnLabel = `${t("BILL_STATUS_PAYMENT_INITIATED")}:${initiatedBills} ${t("BILL_STATUS_PAYMENT_FAILED")}:${failedBills}`
-        responseToReturn.label = returnLabel
-        return responseToReturn
-      },
-  }
-  ,
-  SearchPIWMS:{
+      }
+
+      let atleastOnePaymentSuccess = statuses?.some((status) => status?.[1] === "success");
+      responseToReturn.isSuccess = atleastOnePaymentSuccess ? true : false;
+      let initiatedBills = "";
+      let failedBills = "";
+      statuses?.forEach((status) => {
+        if (status[1] === "success") initiatedBills += `${status[0]}, `;
+        else failedBills += `${status[0]}, `;
+      });
+      const returnLabel = `${t("BILL_STATUS_PAYMENT_INITIATED")}:${initiatedBills} ${t("BILL_STATUS_PAYMENT_FAILED")}:${failedBills}`;
+      responseToReturn.label = returnLabel;
+      return responseToReturn;
+    },
+  },
+  SearchPIWMS: {
     customValidationCheck: (data) => {
       //checking both to and from date are present
-      
+
       const { createdFrom, createdTo } = data;
       if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
         return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
 
       return false;
     },
-    preProcess: (data,defaultValues,nav) => {
-      
+    preProcess: (data, defaultValues, nav) => {
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const dateConfig = {
         createdFrom: "daystart",
@@ -1850,61 +1877,60 @@ export const UICustomizations = {
         // billType: "billType.code",
         // ward: "ward[0].code",
         status: "status.code",
-        piType:"piType.code"
+        piType: "piType.code",
       };
-      const textConfig = ["billNumber","jitBillNo"]
+      const textConfig = ["billNumber", "jitBillNo"];
 
       let SearchCriteria = Object.keys(requestBody)
-      .map((key) => {
-        if (selectConfig[key]) {
-          requestBody[key] = _.get(requestBody, selectConfig[key], null);
-        } else if (typeof requestBody[key] == "object") {
-          requestBody[key] = requestBody[key]?.code;
-        } else if (textConfig?.includes(key)) {
-          requestBody[key] = requestBody[key]?.trim()
-        }
-        return key;
-      })
-      .filter((key) => requestBody[key])
-      .reduce((acc, curr) => {
-        if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-          _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-        } else {
-          _.set(acc, curr, requestBody[curr]);
-        }
-        return acc;
-      }, {});
-      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.inbox.moduleSearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
-
-      const presets  = Digit.Hooks.useQueryParams();
-      if(Object.keys(presets).length > 0 ) {
-        Object.keys(presets).forEach(preset => {
-          //if present in defaultValues object then only set it
-          if(Object.keys(defaultValues).some(key => key===preset)){
-            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+        .map((key) => {
+          if (selectConfig[key]) {
+            requestBody[key] = _.get(requestBody, selectConfig[key], null);
+          } else if (typeof requestBody[key] == "object") {
+            requestBody[key] = requestBody[key]?.code;
+          } else if (textConfig?.includes(key)) {
+            requestBody[key] = requestBody[key]?.trim();
           }
+          return key;
         })
+        .filter((key) => requestBody[key])
+        .reduce((acc, curr) => {
+          if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
+            _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+          } else {
+            _.set(acc, curr, requestBody[curr]);
+          }
+          return acc;
+        }, {});
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria = { ...SearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() };
+
+      const presets = Digit.Hooks.useQueryParams();
+      if (Object.keys(presets).length > 0) {
+        Object.keys(presets).forEach((preset) => {
+          //if present in defaultValues object then only set it
+          if (Object.keys(defaultValues).some((key) => key === preset)) {
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset];
+          }
+        });
       }
 
-      
-      if(nav === "Pending for action"){
-        data.body.inbox.moduleSearchCriteria.status = ["PARTIAL","FAILED"]
+      if (nav === "Pending for action") {
+        data.body.inbox.moduleSearchCriteria.status = ["PARTIAL", "FAILED"];
       }
 
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      let tenantId = Digit.ULBService.getCurrentTenantId()
-      let numSuccess = 0
-      let numFailed = 0
-      row?.businessObject?.beneficiaryDetails?.forEach(bene => {
-        if(bene?.paymentStatus === "Payment Successful"){
-          numSuccess +=1
-        }else if(bene?.paymentStatus === "Payment Failed"){
-          numFailed += 1
+      let tenantId = Digit.ULBService.getCurrentTenantId();
+      let numSuccess = 0;
+      let numFailed = 0;
+      row?.businessObject?.beneficiaryDetails?.forEach((bene) => {
+        if (bene?.paymentStatus === "Payment Successful") {
+          numSuccess += 1;
+        } else if (bene?.paymentStatus === "Payment Failed") {
+          numFailed += 1;
         }
-      })
+      });
       if (key === "EXP_PI_ID") {
         return (
           <span className="link">
@@ -1912,9 +1938,7 @@ export const UICustomizations = {
               // to={`/${
               //   window.contextPath
               // }/employee/expenditure/view-payment-instruction?tenantId=${tenantId}&piNumber=${value}`}
-              to={`/${
-                window.contextPath
-              }/employee/expenditure/view-payment?tenantId=${tenantId}&paymentNumber=${row?.businessObject?.muktaReferenceId}`}
+              to={`/${window.contextPath}/employee/expenditure/view-payment?tenantId=${tenantId}&paymentNumber=${row?.businessObject?.muktaReferenceId}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
@@ -1922,7 +1946,7 @@ export const UICustomizations = {
         );
       }
       if (key === "EXP_PI_DATE") {
-        return Digit.DateUtils.ConvertEpochToDate(value)
+        return Digit.DateUtils.ConvertEpochToDate(value);
         // return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
 
@@ -1940,23 +1964,21 @@ export const UICustomizations = {
       //   );
       // }
 
-      if(key === "EXP_NO_SUCC_PAYMENTS") {
-        return numSuccess
+      if (key === "EXP_NO_SUCC_PAYMENTS") {
+        return numSuccess;
       }
-      if(key === "EXP_NO_FAIL_PAYMENTS") {
-        return numFailed
+      if (key === "EXP_NO_FAIL_PAYMENTS") {
+        return numFailed;
       }
 
-      if(key === "CORE_COMMON_STATUS") {
-        return t(Digit.Utils.locale.getTransformedLocale(`EXP_PI_STATUS_${value}`))
+      if (key === "CORE_COMMON_STATUS") {
+        return t(Digit.Utils.locale.getTransformedLocale(`EXP_PI_STATUS_${value}`));
       }
-      
-      if(key === "ES_COMMON_TOTAL_AMOUNT") {
-       return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
-      }
-      else{
-        return t("ES_COMMON_NA")
 
+      if (key === "ES_COMMON_TOTAL_AMOUNT") {
+        return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
+      } else {
+        return t("ES_COMMON_NA");
       }
     },
     additionalValidations: (type, data, keys) => {
@@ -1974,8 +1996,7 @@ export const UICustomizations = {
 
       return false;
     },
-    preProcess: (data,defaultValues) => {
-      
+    preProcess: (data, defaultValues) => {
       let requestBody = { ...data.body.paymentCriteria };
       const dateConfig = {
         createdFrom: "daystart",
@@ -1986,76 +2007,72 @@ export const UICustomizations = {
         ward: "ward[0].code",
         status: "status[0].code",
       };
-      const textConfig = ["projectName", "billNumber"]
+      const textConfig = ["projectName", "billNumber"];
 
       let SearchCriteria = Object.keys(requestBody)
-      .map((key) => {
-        if (selectConfig[key]) {
-          requestBody[key] = _.get(requestBody, selectConfig[key], null);
-        } else if (typeof requestBody[key] == "object") {
-          requestBody[key] = requestBody[key]?.code;
-        } else if (textConfig?.includes(key)) {
-          requestBody[key] = requestBody[key]?.trim()
-        }
-        return key;
-      })
-      .filter((key) => requestBody[key])
-      .reduce((acc, curr) => {
-        if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-          _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-        } else {
-          _.set(acc, curr, requestBody[curr]);
-        }
-        return acc;
-      }, {});
-      data.body.paymentCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.paymentCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
-      
-      //added for testing(to have some results)
-      data.body.paymentCriteria.status = "INITIATED"
-
-      const presets  = Digit.Hooks.useQueryParams();
-      if(Object.keys(presets).length > 0 ) {
-        Object.keys(presets).forEach(preset => {
-          //if present in defaultValues object then only set it
-          if(Object.keys(defaultValues).some(key => key===preset)){
-            data.body.paymentCriteria[preset] = presets[preset]
+        .map((key) => {
+          if (selectConfig[key]) {
+            requestBody[key] = _.get(requestBody, selectConfig[key], null);
+          } else if (typeof requestBody[key] == "object") {
+            requestBody[key] = requestBody[key]?.code;
+          } else if (textConfig?.includes(key)) {
+            requestBody[key] = requestBody[key]?.trim();
           }
+          return key;
         })
+        .filter((key) => requestBody[key])
+        .reduce((acc, curr) => {
+          if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
+            _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+          } else {
+            _.set(acc, curr, requestBody[curr]);
+          }
+          return acc;
+        }, {});
+      data.body.paymentCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.paymentCriteria = { ...SearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId() };
+
+      //added for testing(to have some results)
+      data.body.paymentCriteria.status = "INITIATED";
+
+      const presets = Digit.Hooks.useQueryParams();
+      if (Object.keys(presets).length > 0) {
+        Object.keys(presets).forEach((preset) => {
+          //if present in defaultValues object then only set it
+          if (Object.keys(defaultValues).some((key) => key === preset)) {
+            data.body.paymentCriteria[preset] = presets[preset];
+          }
+        });
       }
 
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      let tenantId = Digit.ULBService.getCurrentTenantId()
+      let tenantId = Digit.ULBService.getCurrentTenantId();
       if (key === "WORKS_BILL_NUMBER") {
-        let billType = ""
+        let billType = "";
         const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
         const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
         const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
-        if(row?.ProcessInstance?.businessService === bsPurchaseBill ){
-          billType = "purchase"
+        if (row?.ProcessInstance?.businessService === bsPurchaseBill) {
+          billType = "purchase";
         }
-        if(row?.ProcessInstance?.businessService === bsSupervisionBill ){
-          billType = "supervision"
+        if (row?.ProcessInstance?.businessService === bsSupervisionBill) {
+          billType = "supervision";
         }
-        if(row?.ProcessInstance?.businessService === bsWageBill ){
-          billType = "wage"
+        if (row?.ProcessInstance?.businessService === bsWageBill) {
+          billType = "wage";
         }
         return (
           <span className="link">
-            <Link
-              to={`/${
-                window.contextPath
-              }/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}
-            >
+            <Link to={`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}>
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
           </span>
         );
       }
       if (key === "EXP_BILL_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+        return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
       }
 
       if (key === "WORKS_PROJECT_NAME") {
@@ -2072,16 +2089,16 @@ export const UICustomizations = {
         );
       }
 
-      if(key === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_PAYMENT_INITIATED`) : t("ES_COMMON_NA")
+      if (key === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_PAYMENT_INITIATED`) : t("ES_COMMON_NA");
       }
-      if(key === "ES_COMMON_LOCATION") {
+      if (key === "ES_COMMON_LOCATION") {
         const location = {
-          "ward":value?.ward,
-          "locality":value?.locality,
-          "city":row?.businessObject?.tenantId
+          ward: value?.ward,
+          locality: value?.locality,
+          city: row?.businessObject?.tenantId,
         };
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId());
         if (location) {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
           let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
@@ -2090,9 +2107,9 @@ export const UICustomizations = {
         }
         return <p>{"NA"}</p>;
       }
-      if(key === "WORKS_BILL_TYPE") {
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(value)
-        return value ? t(`COMMON_MASTERS_BILL_TYPE_${headerLocale}`) : t("ES_COMMON_NA")
+      if (key === "WORKS_BILL_TYPE") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(value);
+        return value ? t(`COMMON_MASTERS_BILL_TYPE_${headerLocale}`) : t("ES_COMMON_NA");
       }
     },
     additionalValidations: (type, data, keys) => {
@@ -2100,7 +2117,6 @@ export const UICustomizations = {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
     },
-
   },
   SearchBillConfig: {
     customValidationCheck: (data) => {
@@ -2112,92 +2128,86 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
-      
-      const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.searchCriteria?.createdFrom,"daystart");
-      delete data?.body?.searchCriteria?.createdFrom
+      const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.searchCriteria?.createdFrom, "daystart");
+      delete data?.body?.searchCriteria?.createdFrom;
       // if(createdFromDate) data.body.searchCriteria.createdFrom = createdFromDate
       const createdToDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.searchCriteria?.createdTo);
-      delete data?.body?.searchCriteria?.createdTo
+      delete data?.body?.searchCriteria?.createdTo;
 
       // if(createdToDate) data.body.searchCriteria.createdTo = createdToDate
-      
-      const status = data?.body?.searchCriteria?.status?.[0]?.code
-      delete data?.body?.searchCriteria?.status
+
+      const status = data?.body?.searchCriteria?.status?.[0]?.code;
+      delete data?.body?.searchCriteria?.status;
       // if(status){
       //   data.body.searchCriteria.status = status
       // }
 
       const billType = data?.body?.searchCriteria?.billType?.code;
-      delete data?.body?.searchCriteria?.billType
-      delete data?.body?.searchCriteria?.billTypes
-      if(billType) data.body.searchCriteria.billTypes = [billType]
+      delete data?.body?.searchCriteria?.billType;
+      delete data?.body?.searchCriteria?.billTypes;
+      if (billType) data.body.searchCriteria.billTypes = [billType];
 
       // const ward =  data?.body?.searchCriteria?.ward?.[0]?.code
-      delete data?.body?.searchCriteria?.ward
+      delete data?.body?.searchCriteria?.ward;
       // if(ward) data.body.searchCriteria.ward = ward
 
-      const billNumber = data?.body?.searchCriteria?.billNumber?.trim()
-      delete data?.body?.searchCriteria?.billNumber
-      delete data?.body?.searchCriteria?.billNumbers
-      if(billNumber) data.body.searchCriteria.billNumbers = [billNumber]
-    
-      const projectNumber = data?.body?.searchCriteria?.projectNumber?.trim()
-      delete data?.body?.searchCriteria?.projectNumber
-      if(projectNumber) data.body.searchCriteria.projectNumbers = [projectNumber]
+      const billNumber = data?.body?.searchCriteria?.billNumber?.trim();
+      delete data?.body?.searchCriteria?.billNumber;
+      delete data?.body?.searchCriteria?.billNumbers;
+      if (billNumber) data.body.searchCriteria.billNumbers = [billNumber];
+
+      const projectNumber = data?.body?.searchCriteria?.projectNumber?.trim();
+      delete data?.body?.searchCriteria?.projectNumber;
+      if (projectNumber) data.body.searchCriteria.projectNumbers = [projectNumber];
 
       data.body.searchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
-      delete data.body.searchCriteria.ward
-      
+      delete data.body.searchCriteria.ward;
+
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      let tenantId = Digit.ULBService.getCurrentTenantId()
+      let tenantId = Digit.ULBService.getCurrentTenantId();
       if (key === "WORKS_BILL_NUMBER") {
-        let billType = ""
+        let billType = "";
         const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
         const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
         const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
-        if(row?.bill?.businessService === bsPurchaseBill ){
-          billType = "purchase"
+        if (row?.bill?.businessService === bsPurchaseBill) {
+          billType = "purchase";
         }
-        if(row?.bill?.businessService === bsSupervisionBill ){
-          billType = "supervision"
+        if (row?.bill?.businessService === bsSupervisionBill) {
+          billType = "supervision";
         }
-        if(row?.bill?.businessService === bsWageBill ){
-          billType = "wage"
+        if (row?.bill?.businessService === bsWageBill) {
+          billType = "wage";
         }
         return (
           <span className="link">
-            <Link
-              to={`/${
-                window.contextPath
-              }/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}
-            >
+            <Link to={`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}>
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
           </span>
         );
       }
       if (key === "WORKS_BILL_TYPE") {
-        return value ? t(`COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}`) : t("ES_COMMON_NA")
+        return value ? t(`COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}`) : t("ES_COMMON_NA");
       }
       if (key === "EXP_BILL_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+        return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
       }
-      if(key === "CORE_COMMON_STATUS") {
-        return value ? t(Digit.Utils.locale.getTransformedLocale(`WF_${row?.bill?.businessService}_STATUS_${value}`)) : t("ES_COMMON_NA")
+      if (key === "CORE_COMMON_STATUS") {
+        return value ? t(Digit.Utils.locale.getTransformedLocale(`WF_${row?.bill?.businessService}_STATUS_${value}`)) : t("ES_COMMON_NA");
       }
-      if(key === "ES_COMMON_LOCATION") {
+      if (key === "ES_COMMON_LOCATION") {
         const location = value;
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
-        return location ? t(`TENANT_TENANTS_${headerLocale}`) : t("ES_COMMON_NA")
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+        return location ? t(`TENANT_TENANTS_${headerLocale}`) : t("ES_COMMON_NA");
       }
     },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
-        if (key === "WORKS_BILL_NUMBER")
-          link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
+        if (key === "WORKS_BILL_NUMBER") link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
       });
       return link;
     },
@@ -2211,36 +2221,40 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
         body: {},
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
-              return {
-                "code": state?.state,
-                "i18nKey":`WF_${Digit.Utils.locale.getTransformedLocale(Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase"))}_STATUS_${state?.state}`,
-                "wfStatus":state?.state
-              }
-            })
-            return states  
+            const states = data?.BusinessServices?.[0]?.states
+              ?.filter((state) => state.state)
+              ?.map((state) => {
+                return {
+                  code: state?.state,
+                  i18nKey: `WF_${Digit.Utils.locale.getTransformedLocale(
+                    Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")
+                  )}_STATUS_${state?.state}`,
+                  wfStatus: state?.state,
+                };
+              });
+            return states;
           },
         },
       };
     },
-    selectionHandler: async (selectedRows,t) => {
-      const payload = getCreatePaymentPayload(selectedRows,t);
-      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+    selectionHandler: async (selectedRows, t) => {
+      const payload = getCreatePaymentPayload(selectedRows, t);
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS" };
       try {
         const response = await Digit.PaymentService.createPayment(payload);
-        responseToReturn.label=`${t(responseToReturn?.label)}  : ${response?.payments?.[0]?.paymentNumber}`
-        return responseToReturn
+        responseToReturn.label = `${t(responseToReturn?.label)}  : ${response?.payments?.[0]?.paymentNumber}`;
+        return responseToReturn;
       } catch (error) {
-        responseToReturn.isSuccess = false
-        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
-        return responseToReturn
+        responseToReturn.isSuccess = false;
+        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED");
+        return responseToReturn;
       }
-    }
+    },
   },
   SearchExpenseBillConfig: {
     customValidationCheck: (data) => {
@@ -2252,67 +2266,62 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
-      const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.billCriteria?.createdFrom,"daystart");
-      if(createdFromDate) data.body.billCriteria.createdFrom = createdFromDate
+      const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.billCriteria?.createdFrom, "daystart");
+      if (createdFromDate) data.body.billCriteria.createdFrom = createdFromDate;
       const createdToDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.billCriteria?.createdTo);
-      if(createdToDate) data.body.billCriteria.createdTo = createdToDate
+      if (createdToDate) data.body.billCriteria.createdTo = createdToDate;
 
-      const status = data?.body?.billCriteria?.status?.[0]?.code
-      delete data?.body?.billCriteria?.status
-      if(status){
-        data.body.billCriteria.status = status
+      const status = data?.body?.billCriteria?.status?.[0]?.code;
+      delete data?.body?.billCriteria?.status;
+      if (status) {
+        data.body.billCriteria.status = status;
       }
 
       const billType = data?.body?.billCriteria?.billType?.code;
-      delete data?.body?.billCriteria?.billType
-      if(billType) data.body.billCriteria.businessService = billType
+      delete data?.body?.billCriteria?.billType;
+      if (billType) data.body.billCriteria.businessService = billType;
 
-      const ward =  data?.body?.billCriteria?.ward?.[0]?.code
-      delete data?.body?.billCriteria?.ward
-      if(ward) data.body.billCriteria.ward = ward
+      const ward = data?.body?.billCriteria?.ward?.[0]?.code;
+      delete data?.body?.billCriteria?.ward;
+      if (ward) data.body.billCriteria.ward = ward;
 
-      const billNumber = data?.body?.billCriteria?.billNumber?.trim()
-      delete data?.body?.billCriteria?.billNumber
-      delete data?.body?.billCriteria?.billNumbers
-      if(billNumber) data.body.billCriteria.billNumbers = [billNumber]
-      
+      const billNumber = data?.body?.billCriteria?.billNumber?.trim();
+      delete data?.body?.billCriteria?.billNumber;
+      delete data?.body?.billCriteria?.billNumbers;
+      if (billNumber) data.body.billCriteria.billNumbers = [billNumber];
+
       data.body.billCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "WORKS_BILL_NUMBER") {
-        const billType = getBillType(row?.businessService)
+        const billType = getBillType(row?.businessService);
         return (
           <span className="link">
-            <Link
-              to={`/${
-                window.contextPath
-              }/employee/expenditure/${billType}-bill-details?tenantId=${row?.tenantId}&billNumber=${value}`}
-            >
+            <Link to={`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${row?.tenantId}&billNumber=${value}`}>
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
           </span>
         );
       }
       if (key === "WORKS_BILL_TYPE") {
-        return value ? `COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}` : t("ES_COMMON_NA")
+        return value ? `COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}` : t("ES_COMMON_NA");
       }
       if (key === "EXP_BILL_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+        return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
       }
-      if(key === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      if (key === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA");
       }
-      if(key === "ES_COMMON_LOCATION") {
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId)
-        return t(`TENANT_TENANTS_${headerLocale}`)
+      if (key === "ES_COMMON_LOCATION") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId);
+        return t(`TENANT_TENANTS_${headerLocale}`);
       }
     },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
-        if (key === "WORKS_BILL_NUMBER")
-          link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
+        if (key === "WORKS_BILL_NUMBER") link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
       });
       return link;
     },
@@ -2326,35 +2335,39 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
         body: {},
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
-              return {
-                "code": state?.state,
-                "i18nKey":`WF_${Digit.Utils.locale.getTransformedLocale(Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase"))}_STATUS_${state?.state}`,
-                "wfStatus":state?.state
-              }
-            })
-            return states  
+            const states = data?.BusinessServices?.[0]?.states
+              ?.filter((state) => state.state)
+              ?.map((state) => {
+                return {
+                  code: state?.state,
+                  i18nKey: `WF_${Digit.Utils.locale.getTransformedLocale(
+                    Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")
+                  )}_STATUS_${state?.state}`,
+                  wfStatus: state?.state,
+                };
+              });
+            return states;
           },
         },
       };
     },
     selectionHandler: async (selectedRows) => {
       const payload = getCreatePaymentPayload(selectedRows);
-      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS" };
       try {
         const response = await Digit.PaymentService.createPayment(payload);
-        return responseToReturn
+        return responseToReturn;
       } catch (error) {
-        responseToReturn.isSuccess = false
-        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
-        return responseToReturn
+        responseToReturn.isSuccess = false;
+        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED");
+        return responseToReturn;
       }
-    }
+    },
   },
   DownloadBillConfig: {
     preProcess: (data) => {
@@ -2362,19 +2375,19 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      if(key === "WORKS_SNO"){
-        return <span>{searchResult?.findIndex(e=>e?.id==row?.id)+1}</span>
+      if (key === "WORKS_SNO") {
+        return <span>{searchResult?.findIndex((e) => e?.id == row?.id) + 1}</span>;
       }
       if (key === "ES_COMMON_TOTAL_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+        return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
       }
-      if(key === "CORE_COMMON_STATUS") {
-        return t("BILL_STATUS_PAYMENT_INITIATED")
+      if (key === "CORE_COMMON_STATUS") {
+        return t("BILL_STATUS_PAYMENT_INITIATED");
       }
-      if(key === "ES_COMMON_DATE") {
-        return value ? Digit.DateUtils.ConvertTimestampToDate(parseInt(value), "dd/MM/yyyy") : t("ES_COMMON_NA")
+      if (key === "ES_COMMON_DATE") {
+        return value ? Digit.DateUtils.ConvertTimestampToDate(parseInt(value), "dd/MM/yyyy") : t("ES_COMMON_NA");
       }
-      if(key === "CS_COMMON_ACTION") {
+      if (key === "CS_COMMON_ACTION") {
         switch (row?.status) {
           case "COMPLETED":
             return value ? (
@@ -2403,34 +2416,186 @@ export const UICustomizations = {
               >
                 {t("CS_COMMON_DOWNLOAD")}
               </LinkLabel>
-            ) : <RetryComponent row={row} t={t}/>;
+            ) : (
+              <RetryComponent row={row} t={t} />
+            );
           case "INPROGRESS":
             return t("CS_COMMON_NA");
           case "FAILED":
-            return <RetryComponent row={row} t={t}/>
+            return <RetryComponent row={row} t={t} />;
           default:
             return t("CS_COMMON_NA");
         }
-       
-        
       }
-    }
+    },
   },
-  BillInboxConfig:{
+
+  WMSSearchMeasurementConfig: {
+
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || ( createdFrom!== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+
     preProcess: (data) => {
-      
+
+      let moduleSearchCriteria = data?.body?.inbox?.moduleSearchCriteria;
+
+      moduleSearchCriteria = {
+        ...(moduleSearchCriteria?.measurementNumber && { measurementNumber: moduleSearchCriteria?.measurementNumber?.trim() }),
+        ...(moduleSearchCriteria?.projectName && { projectName : moduleSearchCriteria?.projectName}),
+        ...(moduleSearchCriteria?.status && {status : moduleSearchCriteria?.status}),
+        ...(moduleSearchCriteria?.ward && {ward : moduleSearchCriteria?.ward}),
+        ...(moduleSearchCriteria?.referenceId && {referenceId : moduleSearchCriteria?.referenceId}),
+        ...(moduleSearchCriteria?.createdFrom && {createdFrom : Digit.Utils.pt.convertDateToEpoch(moduleSearchCriteria?.createdFrom)}),
+        ...(moduleSearchCriteria?.createdTo && {createdTo : Digit.Utils.pt.convertDateToEpoch(moduleSearchCriteria?.createdTo)})
+      }
+      data.body.inbox.moduleSearchCriteria = { ...moduleSearchCriteria };
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
+
+      switch (key) {
+        case "MB_NUMBER":
+          const state = row?.ProcessInstance?.state?.state;
+          const contractNumber = row?.businessObject?.referenceId;
+          return <span className="link">{Digit.Utils.statusBasedNavigation(state, contractNumber, value, tenantId, value)}</span>;
+        case "MB_AMOUNT":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{value}</span> : t("ES_COMMON_NA");
+        case "MB_STATUS":
+          return <span>{t(value)}</span>;
+        case "MASTERS_SOCIAL_CATEGORY":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+
+        case "CORE_COMMON_PROFILE_CITY":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
+
+        case "MASTERS_WARD":
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+
+        case "MASTERS_LOCALITY":
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+        default:
+          return t("NA");
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "MASTERS_WAGESEEKER_ID")
+          link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
+      });
+      return link;
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    populateReqCriteria: () => {
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("measurement") },
+        body: {},
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states = data?.BusinessServices?.[0]?.states
+              ?.filter((state) => state?.state)
+              ?.map((state) => {
+                return {
+                  i18nKey: state?.state,
+                  wfStatus: state?.state,
+                };
+              });
+            return states;
+          },
+        },
+      };
+    },
+  },
+  InboxMeasurementConfig: {
+    preProcess: (data) => {
+      let moduleSearchCriteria = data.body.inbox.moduleSearchCriteria;
+
+      const statusValues = Object.keys(moduleSearchCriteria?.status || {}).filter((key) => moduleSearchCriteria.status[key]);
+      moduleSearchCriteria = {
+        ...(moduleSearchCriteria?.measurementNumber && { measurementNumber: moduleSearchCriteria?.measurementNumber?.trim() }),
+        ...(moduleSearchCriteria?.projectType?.code && { projectType: moduleSearchCriteria?.projectType?.code }),
+        ...(moduleSearchCriteria?.ProjectId && { projectId: moduleSearchCriteria?.ProjectId?.trim() }),
+        ...(moduleSearchCriteria?.assignee?.code === "ASSIGNED TO ME" && { assignee: Digit.UserService.getUser().info.uuid }),
+        ...(moduleSearchCriteria?.ward?.length > 0 && { ward: moduleSearchCriteria.ward?.map((e) => e?.code) }),
+        ...(statusValues.length > 0 && { status: statusValues }),
+      };
+      data.body.inbox.moduleSearchCriteria = { ...moduleSearchCriteria };
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
+
+      switch (key) {
+        case "MB_REFERENCE_NUMBER":
+          const state = row?.ProcessInstance?.state?.state;
+          const contractNumber = row?.businessObject?.referenceId;
+          return <span className="link">{Digit.Utils.statusBasedNavigation(state, contractNumber, value, tenantId, value)}</span>;
+        case "MB_ASSIGNEE":
+          return value ? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
+        case "MB_WORKFLOW_STATE":
+          return <span>{t(value)}</span>;
+        case "MB_AMOUNT":
+          return <Amount customStyle={{ textAlign: "right" }} value={Math.round(value)} t={t}></Amount>;
+        case "MB_SLA_DAYS_REMAINING":
+          return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "ESTIMATE_ESTIMATE_NO")
+          link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${row[key]}`;
+      });
+      return link;
+    },
+  },
+  BillInboxConfig: {
+    preProcess: (data) => {
       //set tenantId
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
-      const billNumber = data?.body?.inbox?.moduleSearchCriteria?.billNumber?.trim()
-      if(billNumber) data.body.inbox.moduleSearchCriteria.billNumber = billNumber
+      const billNumber = data?.body?.inbox?.moduleSearchCriteria?.billNumber?.trim();
+      if (billNumber) data.body.inbox.moduleSearchCriteria.billNumber = billNumber;
 
-      const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim()
-      if(projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId
+      const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim();
+      if (projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId;
 
-      const referenceId = data?.body?.inbox?.moduleSearchCriteria?.referenceId?.trim()
-      if(referenceId) data.body.inbox.moduleSearchCriteria.referenceId = referenceId;
+      const referenceId = data?.body?.inbox?.moduleSearchCriteria?.referenceId?.trim();
+      if (referenceId) data.body.inbox.moduleSearchCriteria.referenceId = referenceId;
       // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
 
       const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
@@ -2439,20 +2604,19 @@ export const UICustomizations = {
         data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
       }
 
-      
       let ward = _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : []);
       delete data.body.inbox.moduleSearchCriteria.ward;
-      ward = ward?.map((row) => row?.code)?.filter(row=>row);
+      ward = ward?.map((row) => row?.code)?.filter((row) => row);
       if (ward.length > 0) data.body.inbox.moduleSearchCriteria.ward = ward;
 
       //cloning locality and workflow states to format them
       let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
-      
+
       let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
       delete data.body.inbox.moduleSearchCriteria.locality;
       delete data.body.inbox.moduleSearchCriteria.state;
       delete data.body.inbox.moduleSearchCriteria.status;
-      locality = locality?.map((row) => row?.code)?.filter(row=>row);
+      locality = locality?.map((row) => row?.code)?.filter((row) => row);
       states = Object.keys(states)?.filter((key) => states[key]);
 
       //adding formatted data to these keys
@@ -2460,75 +2624,66 @@ export const UICustomizations = {
       if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
 
       const billType = _.clone(data.body.inbox.moduleSearchCriteria.billType ? data.body.inbox.moduleSearchCriteria.billType : {});
-      delete data.body.inbox.moduleSearchCriteria.billType
+      delete data.body.inbox.moduleSearchCriteria.billType;
       const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
       const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
       const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
-      
+
       if (billType?.code) data.body.inbox.processSearchCriteria.businessService = [billType.code];
-      else data.body.inbox.processSearchCriteria.businessService = [
-        bsPurchaseBill,
-        bsSupervisionBill,
-        bsWageBill
-      ]
+      else data.body.inbox.processSearchCriteria.businessService = [bsPurchaseBill, bsSupervisionBill, bsWageBill];
       //adding tenantId to moduleSearchCriteria
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      
-      switch(key){
-         case "WORKS_BILL_NUMBER":
-          let billType = ""
+      switch (key) {
+        case "WORKS_BILL_NUMBER":
+          let billType = "";
           const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
           const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
           const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
-          if(row.ProcessInstance.businessService === bsPurchaseBill ){
-            billType = "purchase"
+          if (row.ProcessInstance.businessService === bsPurchaseBill) {
+            billType = "purchase";
           }
-          if(row.ProcessInstance.businessService === bsSupervisionBill ){
-            billType = "supervision"
+          if (row.ProcessInstance.businessService === bsSupervisionBill) {
+            billType = "supervision";
           }
-          if(row.ProcessInstance.businessService === bsWageBill ){
-            billType = "wage"
+          if (row.ProcessInstance.businessService === bsWageBill) {
+            billType = "wage";
           }
           return (
             <span className="link">
               <Link
-                to={`/${
-                  window.contextPath
-                }/employee/expenditure/${billType}-bill-details?tenantId=${row.businessObject.tenantId}&billNumber=${value}`}
+                to={`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${row.businessObject.tenantId}&billNumber=${value}`}
               >
                 {String(value ? value : t("ES_COMMON_NA"))}
               </Link>
             </span>
           );
-          
-         case "COMMON_WORKFLOW_STATES":
+
+        case "COMMON_WORKFLOW_STATES":
           return <span>{t(Digit.Utils.locale.getTransformedLocale(`WF_${row.ProcessInstance.businessService}_STATE_${value}`))}</span>;
 
-         case "ES_COMMON_AMOUNT":
-          return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+        case "ES_COMMON_AMOUNT":
+          return <Amount customStyle={{ textAlign: "right" }} value={value} t={t}></Amount>;
 
-         case "COMMON_SLA_DAYS":
+        case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
-        
-         default:
+
+        default:
           return t("ES_COMMON_NA");
       }
-     },
+    },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
         if (key === "ESTIMATE_ESTIMATE_NO")
-          link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${
-            row[key]
-          }`;
+          link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${row[key]}`;
       });
       return link;
     },
-  }
+  },
 };
 
 const downloadPdf = (link, openIn = "_blank") => {
