@@ -61,8 +61,6 @@ public class ContactDetailsQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+        preparedStmtList.addAll(ids);
     }
 }
