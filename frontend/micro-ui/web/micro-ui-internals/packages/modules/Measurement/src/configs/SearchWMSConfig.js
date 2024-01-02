@@ -80,7 +80,7 @@ const SearchMeasurementConfig = () => {
                 },
               },
               {
-                label: "MB_REFERENCE_NUMBER",
+                label: "MB_SEARCH_REFERENCE_NUMBER",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -175,7 +175,7 @@ const SearchMeasurementConfig = () => {
                  additionalCustomization: true,
               },
               {
-                label: "MB_REFERENCE_NUMBER",
+                label: "MB_SEARCH_REFERENCE_NUMBER",
                 jsonPath: "businessObject.referenceId",
               },
               {

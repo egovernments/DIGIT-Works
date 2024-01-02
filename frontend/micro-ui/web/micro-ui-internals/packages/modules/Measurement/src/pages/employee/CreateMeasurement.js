@@ -7,10 +7,10 @@ import { getDefaultValues } from "../../utils/transformEstimateData";
 import { transformData } from "../../utils/transformData";
 import _ from "lodash";
 
-const updateData = (data, formState) => {
+const updateData = (data, formState, tenantId) => {
   const SOR = data?.SORtable || formState?.SOR;
   const NONSOR = data?.NONSORtable || formState?.NONSOR;
-  return { ...formState, ...data, SOR, NONSOR };
+  return { ...formState, ...data, SOR, NONSOR, tenantId };
 };
 
 const CreateMeasurement = ({ props }) => {
@@ -131,7 +131,7 @@ const CreateMeasurement = ({ props }) => {
     }
 
     // Create the measurement payload with transformed data
-    const measurements = transformData(updateData(data, createState));
+    const measurements = transformData(updateData(data, createState, tenantId));
     //call the createMutation for MB and route to response page on onSuccess or show error
     const onError = (resp) => {
       setErrorMessage(resp?.response?.data?.Errors?.[0]?.message);
