@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "4ed4bdb5-a462-4505-a1a1-313afcc8a667",
+		"_postman_id": "b14d1761-b0d2-4421-b9a0-c582c3de87ac",
 		"name": "Contract Service - Postman Test Suite",
-		"description": "## Postman Collection Steps\n\n- Setup the environment variables like base_url and auth_token.\n    \n- Now first create a Estimate by using estimate/_create api.\n    \n- To create contract its Estimate should be in accepted state.\n    \n- Now after creating the estimate put required details in the contract create request body.\n    \n- Now the contract should be in accepted state to create an revision contract.\n    \n- To accept the contract you need to login as a cbo user.\n    \n- Now after contract gets accepted create the revision estimate to create revision contract.\n    \n- After creation of revised estimate we can create the revision contract.",
+		"description": "## Postman Collection Steps\n\n- Setup the environment variables like base_url and auth_token.\n- Now first create a Estimate by using estimate/_create api.\n- To create contract its Estimate should be in accepted state.\n- Now after creating the estimate put required details in the contract create request body.\n- Now the contract should be in accepted state to create an revision contract.\n- To accept the contract you need to login as a cbo user.\n- Now after contract gets accepted create the revision estimate to create revision contract.\n- After creation of revised estimate we can create the revision contract.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "28174622"
+		"_exporter_id": "31932888"
 	},
 	"item": [
 		{
@@ -99,12 +99,12 @@
 					"urlencoded": [
 						{
 							"key": "username",
-							"value": "AUTO1",
+							"value": "{{username}}",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "eGov@123",
+							"value": "{{password}}",
 							"type": "text"
 						},
 						{
@@ -114,7 +114,7 @@
 						},
 						{
 							"key": "tenantId",
-							"value": "pg.citya",
+							"value": "{{tenantId}}",
 							"type": "text"
 						},
 						{
@@ -222,7 +222,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"contract\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"wfStatus\": \"string\",\r\n        \"executingAuthority\": \"IA\",\r\n        \"contractType\": \"CON-01\",\r\n        \"totalContractedAmount\": {{totalEstimatedAmount}},\r\n        \"securityDeposit\": 0,\r\n        \"agreementDate\": 0,\r\n        \"defectLiabilityPeriod\": 0,\r\n        \"orgId\": \"{{orgId}}\",\r\n        \"startDate\": 0,\r\n        \"endDate\": 0,\r\n        \"status\": \"ACTIVE\",\r\n        \"completionPeriod\": \"30\",\r\n        \"lineItems\": [\r\n            {\r\n                \"estimateId\": \"{{estId-WO}}\",\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"status\": \"ACTIVE\",\r\n                \"additionalDetails\": {}\r\n            }\r\n        ],\r\n        \"documents\": [],\r\n        \"processInstance\": null,\r\n        \"additionalDetails\": {\r\n            \"officerInChargeId\": \"{{officerInChargeId}}\",\r\n            \"projectType\": \"MP-CWS\",\r\n            \"ward\": \"B1\",\r\n            \"projectName\": \"Inbox \",\r\n            \"orgName\": \"ABC Corp (May 13)\",\r\n            \"projectId\": \"{{PJNo-est}}\",\r\n            \"estimateDocs\": [\r\n                {\r\n                    \"fileName\": \"{{estfileName}}\",\r\n                    \"fileType\": \"{{estfileType}}\",\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"documentUid\": \"{{estfileStoreId}}\",\r\n                    \"fileStoreId\": \"{{estfileStoreId}}\"\r\n                }\r\n            ],\r\n            \"cboName\": \"ABC Corp (May 13)\",\r\n            \"cboCode\": \"{{orgId}}\",\r\n            \"totalEstimatedAmount\": 430000,\r\n            \"termsAndConditions\": [\r\n                {\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"locality\": \"SUN02\",\r\n            \"estimateNumber\": \"{{estNo-WO}}\",\r\n            \"officerInChargeDesgn\": \"Asst. Engineer ( B&R)\",\r\n            \"officerInChargeName\": {\r\n                \"code\": \"{{officerCode}}\",\r\n                \"name\": \"{{officerName}}\"\r\n            },\r\n            \"projectDesc\": \"Inbox\",\r\n            \"cboOrgNumber\": \"{{cboOrgNumber}}\"\r\n        }\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"CREATE\"\r\n    },\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"msgId\": \"1694151844714|en_IN\",\r\n        \"plainAccessRequest\": {}\r\n    }\r\n}",
+					"raw": "{\r\n    \"contract\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"wfStatus\": \"string\",\r\n        \"executingAuthority\": \"IA\",\r\n        \"contractType\": \"CON-01\",\r\n        \"totalContractedAmount\": {{totalEstimatedAmount}},\r\n        \"securityDeposit\": 0,\r\n        \"agreementDate\": 0,\r\n        \"defectLiabilityPeriod\": 0,\r\n        \"orgId\": \"50d6a357-270f-4488-aa14-a0fd3934692b\",\r\n        \"startDate\": 0,\r\n        \"endDate\": 0,\r\n        \"status\": \"ACTIVE\",\r\n        \"completionPeriod\": \"30\",\r\n        \"lineItems\": [\r\n            {\r\n                \"estimateId\": \"{{estId-WO}}\",\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"status\": \"ACTIVE\",\r\n                \"additionalDetails\": {}\r\n            }\r\n        ],\r\n        \"documents\": [],\r\n        \"processInstance\": null,\r\n        \"additionalDetails\": {\r\n            \"officerInChargeId\": \"{{officerInChargeId}}\",\r\n            \"projectType\": \"MP-CWS\",\r\n            \"ward\": \"B1\",\r\n            \"projectName\": \"Inbox \",\r\n            \"orgName\": \"Bank test\",\r\n            \"projectId\": \"{{PJNo-est}}\",\r\n            \"estimateDocs\": [\r\n                {\r\n                    \"fileName\": \"{{estfileName}}\",\r\n                    \"fileType\": \"{{estfileType}}\",\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"documentUid\": \"{{estfileStoreId}}\",\r\n                    \"fileStoreId\": \"{{estfileStoreId}}\"\r\n                }\r\n            ],\r\n            \"cboName\": \"ABC Corp (May 13)\",\r\n            \"cboCode\": \"50d6a357-270f-4488-aa14-a0fd3934692b\",\r\n            \"totalEstimatedAmount\": 430000,\r\n            \"termsAndConditions\": [\r\n                {\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"locality\": \"SUN02\",\r\n            \"estimateNumber\": \"{{estNo-WO}}\",\r\n            \"officerInChargeDesgn\": \"Asst. Engineer ( B&R)\",\r\n            \"officerInChargeName\": {\r\n                \"code\": \"{{officerCode}}\",\r\n                \"name\": \"{{officerName}}\"\r\n            },\r\n            \"projectDesc\": \"Inbox\",\r\n            \"cboOrgNumber\": \"{{cboOrgNumber}}\"\r\n        }\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"CREATE\"\r\n    },\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"msgId\": \"1694151844714|en_IN\",\r\n        \"plainAccessRequest\": {}\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1147,7 +1147,7 @@
 					"formdata": [
 						{
 							"key": "username",
-							"value": "7838038768",
+							"value": "8796847275",
 							"type": "text"
 						},
 						{
@@ -1210,6 +1210,8 @@
 							"    pm.collectionVariables.set(\"startDate\", responseData.contracts[0].startDate);\r",
 							"    pm.collectionVariables.set(\"endDate\", responseData.contracts[0].endDate);\r",
 							"    pm.collectionVariables.set('lastModifiedTime', responseData.contracts[0].auditDetails.lastModifiedTime);\r",
+							"    //  pm.environment.set(\"contractLineItemRef1\", responseData.contracts[0].lineItems[0].contractLineItemRef);\r",
+							"    // pm.environment.set(\"contractLineItemRef2\", responseData.contracts[0].lineItems[1].contractLineItemRef);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -1524,8 +1526,23 @@
 							"    var res = pm.response.json();\r",
 							"    var contractNumber = res.contracts[0].contractNumber;\r",
 							"    pm.expect(contractNumber).to.eql(pm.collectionVariables.get(\"ContractNumber\"));\r",
+							"   \r",
 							"    }\r",
 							");\r",
+							"\r",
+							"pm.test(\"Contract's search is successful\", function () {\r",
+							"    let responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.collectionVariables.set('wfStatus', responseData.contracts[0].wfStatus);\r",
+							"    pm.collectionVariables.set('status', responseData.contracts[0].status);\r",
+							"    pm.collectionVariables.set(\"startDate\", responseData.contracts[0].startDate);\r",
+							"    pm.collectionVariables.set(\"endDate\", responseData.contracts[0].endDate);\r",
+							"    pm.collectionVariables.set('lastModifiedTime', responseData.contracts[0].auditDetails.lastModifiedTime);\r",
+							"     pm.environment.set(\"contractLineItemRef1\", responseData.contracts[0].lineItems[0].contractLineItemRef);\r",
+							"    pm.environment.set(\"contractLineItemRef2\", responseData.contracts[0].lineItems[1].contractLineItemRef);\r",
+							"    pm.environment.set(\"MB-CO\", responseData.contracts[0].contractNumber);\r",
+							"    pm.environment.set(\"entryDate\",responseData.contracts[0].startDate);\r",
+							"});\r",
 							""
 						],
 						"type": "text/javascript"
