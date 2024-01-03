@@ -137,13 +137,13 @@ const MeasureTable = (props) => {
 
   const getColumns = (mode, t) => {
     if(mode === "CREATERE" && tableKey === "SOR")
-      return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_REVISED_QTY"), t("WORKS_REVISED_AMT"), t("")];
+      return [t("WORKS_SNO"), t("SOR_TYPE"), t("WORKS_CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_REVISED_QTY"), t("WORKS_REVISED_AMT"), t("")];
     if (mode === "CREATEALL" && tableKey === "SOR") {
-      return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
+      return [t("WORKS_SNO"), t("SOR_TYPE"), t("WORKS_CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
     } else if (mode === "VIEWES" && tableKey === "SOR") {
-      return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
+      return [t("WORKS_SNO"), t("SOR_TYPE"), t("WORKS_CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
     } else if(mode === "VIEWRE" & tableKey === "SOR")
-      return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"),t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_REVISIED_ESTIMATED_QUANTITY"), t("WORKS_REVISED_ESTIMATED_AMOUNT")];
+      return [t("WORKS_SNO"), t("SOR_TYPE"), t("WORKS_CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"),t("WORKS_ORIGINAL_QTY"), t("WORKS_ORIGINAL_AMT"), t("WORKS_REVISIED_ESTIMATED_QUANTITY"), t("WORKS_REVISED_ESTIMATED_AMOUNT")];
     else if (mode === "CREATEALL") {
       return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
     } else if(mode === "CREATERE"){
@@ -215,8 +215,7 @@ const MeasureTable = (props) => {
         field[key] = value;
         fields[index] = { ...field };
         setFormValue(fields);
-      },
-      [setValue, tableKey]
+      }
     );
     return fields?.map((row, index) => {
       const consumedQty = row.currentMBEntry;
@@ -408,7 +407,7 @@ const MeasureTable = (props) => {
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
         <div style={{ display: "flex", flexDirection: "row", fontSize: "16px" }}>
           <span style={{ fontWeight: "bold", marginTop:"6px" }}>
-            {t("WORKS_TOTAL")} {t(props.config.key)} {t("WORKS_TOTAL_AMOUNT")} :
+            {t("WORKS_TOTAL")} {t(`WORKS_${props.config.key}`)} {t("WORKS_TOTAL_AMOUNT")} :
           </span>
           <span style={{ marginLeft: "8px" }}>
             <Amount customStyle={{ textAlign: "right", fontSize:"24px" }} value={sum?.toFixed?.(2) || 0} t={t} roundOff={false} rupeeSymbol={true}></Amount>
