@@ -102,7 +102,7 @@ class MeasurementController {
           message: "LAST_CREATED_MEASUREMENT_STILL_IN_WORKFLOW",
           type: "error",
         };
-      } else if (measurementResponse?.length == 0) {
+      } else if (measurementResponse?.length == 0 || measurementResponse?.code === "NO_MEASUREMENT_ROLL_FOUND") {
         /* no measurements are present */
 
         //Under piece of code is used to get the same week monday epoch according to the contract startdate
