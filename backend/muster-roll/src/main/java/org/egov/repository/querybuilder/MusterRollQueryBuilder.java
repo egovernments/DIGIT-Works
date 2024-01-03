@@ -76,13 +76,13 @@ public class MusterRollQueryBuilder {
 
         if (searchCriteria.getFromDate() != null) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" muster.start_date=? ");
+            queryBuilder.append(" muster.start_date>=? ");
             preparedStmtList.add(searchCriteria.getFromDate());
         }
 
         if (searchCriteria.getToDate() != null) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" muster.end_date=? ");
+            queryBuilder.append(" muster.end_date<=? ");
             preparedStmtList.add(searchCriteria.getToDate());
         }
 
