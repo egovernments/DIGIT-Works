@@ -128,12 +128,15 @@ public class BulkUploadService {
         List<String> headers = new ArrayList<>();
 
         for (Cell cell : headerRow) {
-            if(cell.getStringCellValue().equals("Conveyance.1")||
-                    cell.getStringCellValue().equals("Labour Cess.1")||
-                    cell.getStringCellValue().equals("Royality.1")||
+            if(cell.getStringCellValue().equals("LA.1")||
                     cell.getStringCellValue().equals("MA.2")||
-                    cell.getStringCellValue().equals("LH.1")||
-                    cell.getStringCellValue().equals("MH.1")){
+                    cell.getStringCellValue().equals("MHA.3")||
+                    cell.getStringCellValue().equals("ADC.4")||
+                    cell.getStringCellValue().equals("DMF.5")||
+                    cell.getStringCellValue().equals("EMF.6")||
+                    cell.getStringCellValue().equals("LC.7")||
+                    cell.getStringCellValue().equals("RA.8")||
+                    cell.getStringCellValue().equals("CA.9")){
                 headers.add(cell.getStringCellValue());
             }else{
                 headers.add(convertToCamelCase(cell.getStringCellValue()));
