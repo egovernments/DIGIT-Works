@@ -11,7 +11,7 @@ const ROLES = {
   PAYMENT: ["BILL_ACCOUNTANT"],
   MUSTERROLLS: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
   MEASUREMENT: ["MB_CREATOR", "MB_VERIFIER", "MB_APPROVER", "MB_VIEWER"],
-  WORKBENCH : ["MDMS_ADMIN"],
+  WORKBENCH : ["MDMS_ADMIN", "MDMS_STATE_ADMIN", "MDMS_CITY_ADMIN"],
   DSS: ["STADMIN"],
 };
 
@@ -218,7 +218,7 @@ const WorksCard = () => {
     },
     {
       label: t("ACTION_TEST_9WORKBENCH"),
-      link: `/workbench-ui/employee`,
+      link: `/workbench-ui/employee/workbench/manage-master-data`,
       roles: ROLES.WORKBENCH,
     }
   ];
