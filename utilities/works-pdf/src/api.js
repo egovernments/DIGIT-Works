@@ -137,7 +137,7 @@ async function search_estimateDetails(tenantId, requestinfo, estimateNumber) {
   var params = {
     tenantId: tenantId,
     estimateNumber: estimateNumber,
-    limit: 1,
+    limit: 100,
     _offset: 0,
     get offset() {
       return this._offset;
@@ -507,6 +507,21 @@ async function search_mdms_terms_and_conditions(tenantId, requestinfo) {
   });
 }
 
+async function search_measurementBookDetails(tenantId, requestinfo,contractNumber, measurementBookNumber) {
+
+  const searchEndpoint = config.paths.measurement_book_search;
+  const data = {
+    "contractNumber": contractNumber,
+    "measurementNumber": measurementBookNumber,
+    "tenantId": tenantId
+  }
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.measurements, searchEndpoint),
+    data: Object.assign(requestinfo, data)
+  });
+}
+
 module.exports = {
   pool,
   create_pdf,
@@ -532,5 +547,6 @@ module.exports = {
   reset_eg_payments_excel,
   exec_query_eg_payments_excel,
   search_hrms,
-  search_mdms_terms_and_conditions
+  search_mdms_terms_and_conditions,
+  search_measurementBookDetails
 };
