@@ -18,7 +18,7 @@ const search_user = async (uuid: string, tenantId: string, requestinfo: any) => 
 /*
   This asynchronous function searches for muster rolls based on the provided parameters.
 */
-const search_muster = async (params: any, requestinfo: any) => {
+const search_muster = async (params: any, requestinfo: any, key: string) => {
   // Send an HTTP request to the muster search endpoint using the provided parameters and request information.
   const musterResponse = await httpRequest(
     url.resolve(config.host.muster, config.paths.mus_search),
@@ -29,7 +29,7 @@ const search_muster = async (params: any, requestinfo: any) => {
   // Check if there are muster rolls in the response.
   if (musterResponse?.musterRolls?.length > 0) {
     // If muster rolls are found, return them.
-    return musterResponse?.musterRolls?.[0];
+    return key === "View" ? musterResponse?.musterRolls : musterResponse?.musterRolls?.[0];
   }
 
   // If no muster rolls are found, return an error code.

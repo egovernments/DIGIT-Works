@@ -218,7 +218,8 @@ class MeasurementController {
     ids: string,
     defaultRequestInfo: any,
     period: any,
-    contractNumber: string
+    contractNumber: string,
+    key: string
   ) => {
     const nextPromises = [
       search_estimate(
@@ -239,14 +240,29 @@ class MeasurementController {
             fromDate: period?.startDate,
             referenceId: contractNumber,
           },
-          defaultRequestInfo
+          defaultRequestInfo,
+          ""
         )
       );
     }
 
-    const [estimate, muster] = await Promise.all(nextPromises);
+    if(key === "View")
+    {
+      nextPromises.push(
+        search_muster(
+          {
+            tenantId,
+            referenceId: contractNumber,
+          },
+          defaultRequestInfo,
+          key
+        )
+      );
+    }
 
-    return { estimate, muster };
+    let [estimate, muster, musterRolls] = await Promise.all(nextPromises);
+
+    return { estimate, muster, musterRolls };
   };
 
   // This function handles the HTTP request for retrieving all measurements.
@@ -255,7 +271,7 @@ class MeasurementController {
     response: express.Response
   ) => {
     try {
-      const { tenantId, RequestInfo, contractNumber, measurementNumber } =
+      const { tenantId, RequestInfo, contractNumber, measurementNumber, key } =
         request.body;
       const defaultRequestInfo = { RequestInfo };
 
@@ -272,19 +288,20 @@ class MeasurementController {
         const period = this.getPeriod(
           periodResponse?.[0],
           contract,
-          measurement
+          allMeasurements
         );
 
         // Extract estimate IDs from the contract response
         const allEstimateIds = extractEstimateIds(contract);
         const estimateIds = allEstimateIds.join(",");
 
-        const { estimate, muster } = await this.getEstimateandMuster(
+        const { estimate, muster, musterRolls } = await this.getEstimateandMuster(
           tenantId,
           estimateIds,
           defaultRequestInfo,
           period,
-          contractNumber
+          contractNumber,
+          key
         );
 
         // Prepare the payload based on the responses
@@ -294,6 +311,7 @@ class MeasurementController {
           allMeasurements: allMeasurements,
           measurement: measurement || {},
           musterRoll: muster,
+          musterRollsArray : musterRolls,
           period: period,
         };
 
