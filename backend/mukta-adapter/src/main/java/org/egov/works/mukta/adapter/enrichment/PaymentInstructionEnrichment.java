@@ -6,23 +6,17 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
 import org.egov.works.mukta.adapter.config.Constants;
+import org.egov.works.mukta.adapter.web.models.AuditDetails;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
-import org.egov.works.mukta.adapter.web.models.enums.BeneficiaryPaymentStatus;
-import org.egov.works.mukta.adapter.web.models.enums.BeneficiaryType;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
-import org.egov.works.mukta.adapter.web.models.jit.BenfLineItems;
-import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
 import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.sound.sampled.Line;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -102,7 +96,7 @@ public class PaymentInstructionEnrichment {
         return headCodeMap;
     }
 
-    public void enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations) {
+    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations) {
         log.info("Started executing enrichBankaccountOnBeneficiary");
         Map<String, BankAccount> bankAccountMap = new HashMap<>();
         if (bankAccounts != null && !bankAccounts.isEmpty()) {
@@ -123,44 +117,66 @@ public class PaymentInstructionEnrichment {
             }
         }
         log.info("Created map of org, individual and bankaccount, started generating beneficiary.");
+        Disbursement disbursement = new Disbursement();
         List<Disbursement> disbursements = new ArrayList<>();
         for(Beneficiary piBeneficiary: beneficiaryList) {
             BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBeneficiaryId());
             Individual individual = individualMap.get(piBeneficiary.getBeneficiaryId());
             Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
             for(LineItem lineItem: piBeneficiary.getBenfLineItems()) {
-                Disbursement disbursement = enrichDisbursement(piBeneficiary, bankAccount, individual, organisation,lineItem);
-                disbursements.add(disbursement);
+                Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation,lineItem);
+                disbursements.add(disbursementForLineItem);
             }
         }
+        disbursement.setBills(disbursements);
+        disbursement.setBillDate(ZonedDateTime.now());
+        disbursement.setBillCount(disbursements.size());
+        disbursement.setAuditDetails(setAuditDetails("SYSTEM", "SYSTEM"));
         log.info("Beneficiary details enriched and sending back.");
-
+        return disbursement;
     }
 
-    private Disbursement enrichDisbursement(Beneficiary piBeneficiary, BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem) {
+    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem) {
         log.info("Started executing enrichDisbursement");
-        String payeeFa = "BANK:{ACCOUNT_NO}@{IFSC_CODE}";
-        String payerFa = "MUKTA:GIT";
-        String payeeName = null;
-        if (bankAccount != null) {
-            payeeFa = payeeFa.replace("{ACCOUNT_NO}", bankAccount.getBankAccountDetails().get(0).getAccountNumber());
-            payeeFa = payeeFa.replace("{IFSC_CODE}", bankAccount.getBankAccountDetails().get(0).getBankBranchIdentifier().getCode());
+        String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
+        Disbursement disbursement = new Disbursement();
+        org.egov.works.mukta.adapter.web.models.Individual piIndividual = new org.egov.works.mukta.adapter.web.models.Individual();
+        if(bankAccount != null && !bankAccount.getBankAccountDetails().isEmpty()) {
+            accountCode = accountCode.replace("{ACCOUNT_NO}", bankAccount.getBankAccountDetails().get(0).getAccountNumber());
+            accountCode = accountCode.replace("{IFSC_CODE}", bankAccount.getBankAccountDetails().get(0).getBankBranchIdentifier().getCode());
+            disbursement.setAccountCode(accountCode);
         }
-        if(individual != null) {
-            payeeName = individual.getName().getGivenName();
-        } else if (organisation != null) {
-            payeeName = organisation.getName();
+        disbursement.setNetAmount(lineItem.getAmount());
+        disbursement.setGrossAmount(lineItem.getAmount());
+        disbursement.setCurrencyCode(Currency.getInstance("INR"));
+        disbursement.setLocaleCode("en_IN");
+        disbursement.setProgramCode("PROG");
+        if(individual != null){
+            piIndividual.setAddress(individual.getAddress().get(0));
+            piIndividual.setGender(individual.getGender());
+            piIndividual.setPhone(individual.getMobileNumber());
+            piIndividual.setEmail(individual.getEmail());
+            piIndividual.setPin(individual.getAddress().get(0).getPincode());
+            piIndividual.setName(individual.getName().getGivenName());
         }
-        return Disbursement.builder().referenceId(lineItem.getId())
-                .amount(lineItem.getAmount().toString())
-                .payeeFa(payeeFa)
-                .payerFa(payerFa)
-                .payerName("MUKTA")
-                .payeeName(payeeName)
-                .purpose("Mukta Payment")
-                .currencyCode("INR")
-                .locale("en_IN")
-                .build();
+        if(organisation != null){
+            piIndividual.setAddress(organisation.getOrgAddress().get(0));
+            piIndividual.setPhone(organisation.getContactDetails().get(0).getContactMobileNumber());
+            piIndividual.setEmail(organisation.getContactDetails().get(0).getContactEmail());
+            piIndividual.setPin(organisation.getOrgAddress().get(0).getPincode());
+            piIndividual.setName(organisation.getName());
+        }
+        disbursement.setIndividual(piIndividual);
+        disbursement.setAuditDetails(setAuditDetails("SYSTEM", "SYSTEM"));
+        return disbursement;
+    }
+    private AuditDetails setAuditDetails(String createdBy, String lastModifiedBy) {
+        AuditDetails auditDetails = new AuditDetails();
+        auditDetails.setCreatedBy(createdBy);
+        auditDetails.setCreatedTime(ZonedDateTime.now().toEpochSecond());
+        auditDetails.setLastModifiedBy(lastModifiedBy);
+        auditDetails.setLastModifiedTime(ZonedDateTime.now().toEpochSecond());
+        return auditDetails;
     }
 
 }

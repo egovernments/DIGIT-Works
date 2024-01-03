@@ -18,46 +18,39 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Disbursement extends ExchangeMessage {
-    @JsonProperty("individual")
-    private Individual individual;
+public class Sanction extends ExchangeMessage {
+    @JsonProperty("name")
+    private String name;
     @NotNull
-    @JsonProperty("bill_date")
-    private ZonedDateTime billDate;
-    @JsonProperty("start_date")
     private ZonedDateTime startDate;
     @NotNull
-    @JsonProperty("end_date")
     private ZonedDateTime endDate;
-    @JsonProperty("allocation")
-    private Allocation allocation;
-    @JsonProperty("bill_count")
-    private int billCount;
-    @JsonProperty("bills")
-    private List<Disbursement> bills;
+    @JsonProperty("program")
+    private Program program;
+    @JsonProperty("sanctions")
+    private List<Sanction> sanctions;
     @JsonProperty("audit_details")
     private AuditDetails auditDetails;
     @JsonProperty("additional_details")
     private JsonNode additionalDetails;
 
-
-    public Disbursement(){
-        this.setMessageType(MessageType.DISBURSEMENT);
+    public Sanction(){
+        this.setMessageType(MessageType.SANCTION);
     }
 
-    public Disbursement(Allocation allocation, BigDecimal netAmount, BigDecimal grossAmount){
-        super.copy(allocation);
-        this.setMessageType(MessageType.DISBURSEMENT);
-        this.setBillCount(0);
+    public Sanction(Estimate estimate, BigDecimal netAmount, BigDecimal grossAmount){
+        super.copy(estimate);
+        this.setMessageType(MessageType.SANCTION);
+        this.setProgram(estimate.getProgram());
         this.setNetAmount(netAmount);        
-        this.setNetAmount(grossAmount);        
+        this.setGrossAmount(grossAmount);        
     }
 
     @JsonIgnore
     public BigDecimal getTotalNetAmount() {
-        if (bills != null && !bills.isEmpty()) {
-            return bills.stream()
-                           .map(Disbursement::getNetAmount)
+        if (sanctions != null && !sanctions.isEmpty()) {
+            return sanctions.stream()
+                           .map(Sanction::getNetAmount)
                            .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getNetAmount();
@@ -66,32 +59,24 @@ public class Disbursement extends ExchangeMessage {
 
     @JsonIgnore
     public BigDecimal getTotalGrossAmount() {
-        if (bills != null && !bills.isEmpty()) {
-            return bills.stream()
-                           .map(Disbursement::getGrossAmount)
+        if (sanctions != null && !sanctions.isEmpty()) {
+            return sanctions.stream()
+                           .map(Sanction::getGrossAmount)
                            .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
-            return getGrossAmount();
+            return getNetAmount();
         }
     }
 
-    @JsonIgnore
-    public int getBillCount() {
-        if (bills != null && !bills.isEmpty()) {
-            return 1;//getBills().length;
-        } else {
-            return billCount;
-        }
-    }
-
-    static public Disbursement fromString(String json){
+    static public Sanction fromString(String json){
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());
 		try {
-			return mapper.readValue(json, Disbursement.class);
+			return mapper.readValue(json, Sanction.class);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
-			throw new CustomException("Error parsing Bill fromString", e.toString());
+			throw new CustomException("Error parsing Sanction fromString", e.toString());
 		}
 	}
+
 }

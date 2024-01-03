@@ -8,6 +8,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
 import org.egov.works.mukta.adapter.util.*;
+import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
@@ -33,24 +34,27 @@ public class PaymentInstructionService {
     private final OrganisationUtils organisationUtils;
     private final IndividualUtils individualUtils;
     private final MdmsUtil mdmsUtil;
+    private final ProgramServiceUtil programServiceUtil;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, ProgramServiceUtil programServiceUtil) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
         this.organisationUtils = organisationUtils;
         this.individualUtils = individualUtils;
         this.mdmsUtil = mdmsUtil;
+        this.programServiceUtil = programServiceUtil;
     }
 
     public void processPaymentInstruction(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction");
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
-        List<Beneficiary> beneficiaryList = getBeneficiariesFromPayment(paymentRequest,mdmsData);
+        Disbursement disbursementRequest = getBeneficiariesFromPayment(paymentRequest,mdmsData);
+        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
     }
 
-    private List<Beneficiary> getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
+    private Disbursement getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
         log.info("Started executing getBeneficiariesFromPayment");
         // Get the list of bills based on payment request
         List<Bill> billList =  billUtils.fetchBillsFromPayment(paymentRequest);
@@ -80,7 +84,7 @@ public class PaymentInstructionService {
         return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, individualIds);
     }
 
-    private List<Beneficiary> getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds) {
+    private Disbursement getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds) {
         log.info("Started executing getBeneficiariesEnrichedData");
         List<String> beneficiaryIds = new ArrayList<>();
         for (Beneficiary beneficiary :beneficiaryList) {
@@ -100,9 +104,9 @@ public class PaymentInstructionService {
             individuals = individualUtils.getIndividualById(paymentRequest.getRequestInfo(), individualIds, paymentRequest.getPayment().getTenantId());
         }
         // Enrich PI request with beneficiary bankaccount details
-        piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations);
+        Disbursement disbursementRequest = piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations);
         log.info("Beneficiaries are enriched, sending back beneficiaryList");
-        return beneficiaryList;
+        return disbursementRequest;
     }
 
 
