@@ -70,7 +70,7 @@ class MeasurementController {
         if (
           (measurementWorkflowStatus &&
             latestMeasurement?.wfStatus == measurementWorkflowStatus) ||
-          !measurementWorkflowStatus
+          !measurementWorkflowStatus || latestMeasurement?.wfStatus === "DRAFTED"
         ) {
           if (newStartDate < contractResponse?.endDate) {
             return {
