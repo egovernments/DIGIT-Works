@@ -99,12 +99,12 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     
   return (
         <Fragment>
-        <LinkButton className="view-Analysis-button" style={isCreateOrUpdate ? {marginTop:"-3.5%",textAlign:"center"}: {textAlign:"center"}} onClick={() => setIsPopupOpen(true)} label={isEstimate ? t("ESTIMATE_ANALYSIS_STM") : t("MB_UTILIZATION_STM")}></LinkButton>
+        <LinkButton className="view-Analysis-button" style={isCreateOrUpdate ? {marginTop:"-3.5%",textAlign:"center", width:"17%"}: {textAlign:"center",width:"17%"}} onClick={() => setIsPopupOpen(true)} label={isEstimate ? t("ESTIMATE_ANALYSIS_STM") : t("MB_UTILIZATION_STM")}></LinkButton>
         {isPopupOpen && <PopUp>
             <div className="popup-view-alaysis">
             <Card>
             <CardSectionHeader className="estimate-analysis-cardheader">{isEstimate ? t(`ESTIMATE_COST_ANALYSIS_HEADER`): t(`MB_UTILIZATION_STM_HEADER`)}</CardSectionHeader>
-            <LabelFieldPair style={{marginBottom:'1rem', marginTop:"5rem", justifyContent:"space-between"}}>
+            <LabelFieldPair style={{marginBottom:'1rem', marginTop:"3rem", justifyContent:"space-between"}}>
                 <CardLabel className="analysis-estimate-label">{isEstimate ? `${t(`ESTIMATE_LABOUR_COST`)}`: t(`MB_LABOUR_UTILIZATION`)}</CardLabel>
                 <CardLabel>{getAnalysisCost(ChargesCodeMapping?.LabourCost)}</CardLabel>
             </LabelFieldPair >
@@ -117,7 +117,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
                 <CardLabel>{getAnalysisCost(ChargesCodeMapping?.MachineryCost)}</CardLabel>
             </LabelFieldPair>
             <Button
-             style={{marginLeft:"85%", width:"16%"}}
+             style={{marginLeft:"70%", width:"30%"}}
              label={"OK"}
              variation="primary"
              onButtonClick={() => {

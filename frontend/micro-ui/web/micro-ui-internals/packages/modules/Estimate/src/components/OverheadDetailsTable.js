@@ -136,7 +136,7 @@ const OverheadDetailsTable = ({ data }) => {
        {t("WORKS_TABLE_TOTAL_AMOUNT")} :
        </span>
        <span style={{ marginLeft: "8px" }}>
-         <Amount customStyle={{ textAlign: "right", fontSize:"24px" }} value={parseFloat(totalAmount?.includes(",")? totalAmount.replace(",","") : totalAmount)} t={t} roundOff={false} rupeeSymbol={true}></Amount>
+         <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={parseFloat(totalAmount?.includes(",")? totalAmount.replace(",","") : totalAmount)} t={t} roundOff={false} rupeeSymbol={true}></Amount>
        </span>
      </div>
      </div>

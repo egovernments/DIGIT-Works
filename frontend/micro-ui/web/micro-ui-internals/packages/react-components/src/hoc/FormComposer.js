@@ -274,7 +274,7 @@ export const FormComposer = (props) => {
                   name={populators.name}
                   inputRef={ref}
                   customClass={populators?.customClass}
-                  customStyle={populators?.customStyle}
+                  customStyle={populators?.customParaStyle}
                 />
               )}
               name={populators.name}

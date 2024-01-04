@@ -105,7 +105,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
             </tr>
           </thead>
           <tbody>
-            {sortedRows.map((row, rowIndex) => (
+            {sortedRows?.length > 0 ? sortedRows.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {columns.map((column, columnIndex) => (
                   <td key={columnIndex}>
@@ -126,7 +126,10 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
                   </td>
                 ))}
               </tr>
-            ))}
+            )):
+            <td colSpan={7} style={{marginLeft:"10px", color:"#9E9E9E", textAlign:"center"}}>
+              {t("WORKS_NO_DATA_PRESENT_IN_MB")}
+            </td>}
           </tbody>
         </table>
       </CustomCollapsibleTable>

@@ -70,7 +70,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
   return (
     <React.Fragment>
       <Header styles={{fontSize: "24px", marginTop : "40px"}}>{t('WORKS_RELEVANT_DOCUMENTS')}</Header>
-      {docConfig?.bannerLabel && <CitizenInfoLabel info={t("ES_COMMON_INFO")} text={t(docConfig?.bannerLabel)} className="doc-banner"></CitizenInfoLabel>}
+      {docConfig?.bannerLabel && <CitizenInfoLabel info={t("ES_COMMON_INFO")} text={t(docConfig?.bannerLabel)} style={{maxWidth:"80%"}} className="doc-banner"></CitizenInfoLabel>}
       {
         docConfig?.documents?.map((item, index) => {
           if(!item?.active) return
