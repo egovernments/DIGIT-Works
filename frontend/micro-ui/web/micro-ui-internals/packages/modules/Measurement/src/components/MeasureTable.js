@@ -1,4 +1,4 @@
-import { AddIcon, TextInput, Amount, Button, Dropdown, Loader, DeleteIcon } from "@egovernments/digit-ui-react-components";
+import { AddIcon, TextInput, Amount, Button, Dropdown, Loader, DeleteIcon, TextArea } from "@egovernments/digit-ui-react-components";
 
 import React, { Fragment, useEffect, useCallback} from "react";
 import { useTranslation } from "react-i18next";
@@ -123,11 +123,13 @@ const MeasureTable = (props) => {
         obj = { width: "1rem" };
         break;
       case 2:
-        if (((mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES" && mode !== "CREATERE" && mode !== "VIEWRE") ) obj = { width: "52%"}
+        if (((mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES" && mode !== "CREATERE" && mode !== "VIEWRE") ) (mode === "CREATERE" && tableKey === "NONSOR")? obj = { width: "77rem"} : obj = { width: "52%"}
         break;
       case 4:
         (((mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES" && mode !== "CREATERE" && mode !== "VIEWRE"))? obj = {width : "27rem"}  : obj = { width: "30%" };
         break;
+      case 5:
+        if(mode === "CREATERE" && tableKey === "NONSOR") obj = { width: "2rem" };
       default:
         obj = { width: "27rem" };
         break;
@@ -233,13 +235,19 @@ const MeasureTable = (props) => {
             {(mode == "CREATEALL" || mode == "CREATERE") && tableKey!="SOR" ? (
               <>
                 <td style={{margin:"0px",padding:"8px"}}>
-                  <TextInput
+                  { tableKey === "NONSOR"?
+                    <TextArea
+                    style={{ marginBottom: "0px", wordWrap: "break-word" }}
+                    onChange={(e) => handleInputChange("description", e.target.value, index)}
+                    value={row.description}
+                  />
+                    :<TextInput
                     style={{ width: "100%", marginTop: "20px"  }}
                     //  {...register(`SOR.${index}.description`)}
 
                     onChange={(e) => handleInputChange("description", e.target.value, index)}
                     value={row.description}
-                  />
+                  />}
                 </td>
                 <td>
                   <Dropdown
@@ -255,7 +263,7 @@ const MeasureTable = (props) => {
                 </td>
                 <td>
                   <TextInput
-                    style={{ width: "80%", marginTop: "20px", marginLeft: "20px" }}
+                    style={{ width: "80%", marginTop: "20px", marginLeft: (mode === "CREATERE" && tableKey === "NONSOR") ? "5px" : "20px" }}
                     onChange={(e) => handleInputChange("unitRate", e.target.value, index)}
                     value={row.unitRate}
                   />
@@ -412,7 +420,7 @@ const MeasureTable = (props) => {
             {t("WORKS_TABLE_TOTAL_AMOUNT")} :
           </span>
           <span style={{ marginLeft: "8px" }}>
-            <Amount customStyle={{ textAlign: "right", fontSize:"24px" }} value={sum?.toFixed?.(2) || 0} t={t} roundOff={false} rupeeSymbol={true}></Amount>
+            <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={sum?.toFixed?.(2) || 0} t={t} roundOff={false} rupeeSymbol={true}></Amount>
           </span>
         </div>
       </div>

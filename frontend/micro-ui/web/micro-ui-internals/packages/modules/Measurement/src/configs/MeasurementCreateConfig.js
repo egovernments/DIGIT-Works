@@ -19,7 +19,8 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
                 appendColon: false,
                 populators: {
                   name: "contractNumber",
-                  // "customClass": "fc-header-texts"
+                  customStyle :{marginBottom:"-5px", marginTop:"10px"},
+                  customParaStyle : {marginBottom:"revert"}
                 },
               },
               {
@@ -31,6 +32,8 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
                 disable: true,
                 appendColon: false,
                 populators: {
+                  customStyle :{marginBottom:"-5px"},
+                  customParaStyle : {marginBottom:"revert"},
                   name: "projectID",
                   // "customClass": "fc-header-texts"
                 },
@@ -46,6 +49,8 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
                 populators: {
                   name: "musterRollNo",
                   customClass: "",
+                  customStyle :{marginBottom:"-5px"},
+                  customParaStyle : {marginBottom:"revert"}
                 },
               },
               {
@@ -58,6 +63,8 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
                 appendColon: false,
                 populators: {
                   name: "sanctionDate",
+                  customStyle :{marginBottom:"-5px"},
+                  customParaStyle : {marginBottom:"revert"}
                   // "customClass": "fc-header-texts"
                 },
               },
@@ -71,6 +78,8 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
                 appendColon: false,
                 populators: {
                   name: "projectName",
+                  customStyle :{marginBottom:"-5px"},
+                  customParaStyle : {marginBottom:"revert"},
                   customClass: "",
                 },
               },
@@ -84,6 +93,8 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
                 appendColon: false,
                 populators: {
                   name: "projectDesc",
+                  customStyle :{marginBottom:"-5px"},
+                  customParaStyle : {marginBottom:"revert"},
                   customClass: "",
                 },
               },
@@ -97,6 +108,8 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
                 appendColon: false,
                 populators: {
                   name: "projectLocation",
+                  customStyle :{marginBottom:"-5px"},
+                  customParaStyle : {marginBottom:"revert"},
                   customClass: "",
                 },
               },
@@ -110,6 +123,8 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
                 appendColon: false,
                 populators: {
                   name: "measurementPeriod",
+                  customStyle :{marginBottom:"-5px"},
+                  customParaStyle : {marginBottom:"revert"},
                   customClass: "",
                 },
               },
