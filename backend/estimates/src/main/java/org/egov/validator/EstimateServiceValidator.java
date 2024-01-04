@@ -906,7 +906,27 @@ private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDat
             validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
 
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
+            checkWFStatus(estimate,mdmsDataV2ForRate,errorMap,previousEstimate,isCreate);
+
+
+        }
+    }
+
+    private void checkWFStatus(Estimate estimate,Object mdmsDataV2ForRate,
+                               Map<String, String> errorMap,Estimate previousEstimate,Boolean isCreate){
+        if(estimate.getWfStatus().equals("PENDINGFORVERIFICATION")||
+                estimate.getWfStatus().equals("PENDINGFORTECHNICALSANCTION")||
+                estimate.getWfStatus().equals("PENDINGFORAPPROVAL")){
+            log.info("EstimateServiceValidator::checkWFStatus");
+            log.info("Application WfStatus Check  At Verification, Approval or Technical Sanction state");
+
+        }else{
+            log.info("Application WfStatus Check For Validating rates");
             validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap,previousEstimate,isCreate);
         }
+
+
+
+
     }
 }
