@@ -55,6 +55,8 @@ public class ExchangeMessage {
     private Currency currencyCode;
     @JsonProperty("locale_code")
     private String localeCode;
+    @JsonProperty("status")
+    private Status status;
 
     public ExchangeMessage(){
         UUID uuid = UUID.randomUUID();

@@ -96,7 +96,7 @@ public class PaymentInstructionEnrichment {
         return headCodeMap;
     }
 
-    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations) {
+    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations,PaymentRequest paymentRequest) {
         log.info("Started executing enrichBankaccountOnBeneficiary");
         Map<String, BankAccount> bankAccountMap = new HashMap<>();
         if (bankAccounts != null && !bankAccounts.isEmpty()) {
@@ -128,6 +128,7 @@ public class PaymentInstructionEnrichment {
                 disbursements.add(disbursementForLineItem);
             }
         }
+        disbursement.setTargetId(paymentRequest.getPayment().getId());
         disbursement.setBills(disbursements);
         disbursement.setBillDate(ZonedDateTime.now());
         disbursement.setBillCount(disbursements.size());
@@ -147,6 +148,7 @@ public class PaymentInstructionEnrichment {
             disbursement.setAccountCode(accountCode);
         }
         disbursement.setNetAmount(lineItem.getAmount());
+        disbursement.setTargetId(lineItem.getId());
         disbursement.setGrossAmount(lineItem.getAmount());
         disbursement.setCurrencyCode(Currency.getInstance("INR"));
         disbursement.setLocaleCode("en_IN");

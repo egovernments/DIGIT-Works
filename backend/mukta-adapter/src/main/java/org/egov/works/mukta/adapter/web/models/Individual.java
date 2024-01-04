@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Size;
-import java.util.List;
 
 import org.egov.common.models.individual.Address;
 import org.egov.common.models.individual.Gender;
@@ -18,7 +17,7 @@ import org.egov.works.mukta.adapter.constants.Error;
 
 @Getter
 @Setter
-public class Individual extends ExchangeMessage{
+public class Individual{
     @JsonProperty("pin")
 	String pin;
 	

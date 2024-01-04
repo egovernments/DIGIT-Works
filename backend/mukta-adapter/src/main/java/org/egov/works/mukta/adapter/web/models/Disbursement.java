@@ -21,6 +21,8 @@ import java.util.List;
 public class Disbursement extends ExchangeMessage {
     @JsonProperty("individual")
     private Individual individual;
+    @JsonProperty("target_id")
+    private String targetId;
     @NotNull
     @JsonProperty("bill_date")
     private ZonedDateTime billDate;
