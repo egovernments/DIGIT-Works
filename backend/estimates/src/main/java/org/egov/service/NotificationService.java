@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.EstimateServiceConfiguration;
-import org.egov.producer.Producer;
+import org.egov.producer.EstimateProducer;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.EstimateServiceConstant;
@@ -20,7 +20,6 @@ import org.egov.web.models.Workflow;
 import org.egov.web.models.WorksSmsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,26 +32,30 @@ import static org.egov.util.EstimateServiceConstant.*;
 @Slf4j
 public class NotificationService {
 
-    @Autowired
-    private Producer producer;
+    private final EstimateProducer producer;
+
+    private final ServiceRequestRepository repository;
+
+    private final EstimateServiceConfiguration config;
+
+    private final HRMSUtils hrmsUtils;
+
+    private final ProjectUtil projectServiceUtil;
+
+    private final LocationServiceUtil locationServiceUtil;
+
+    private static final String PROJECT_NAME = "projectName";
+    private static final String PROJECT_NUMBER = "projectNumber";
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private EstimateServiceConfiguration config;
-
-    @Autowired
-    private HRMSUtils hrmsUtils;
-
-    @Autowired
-    private ProjectUtil projectServiceUtil;
-
-    @Autowired
-    private LocationServiceUtil locationServiceUtil;
+    public NotificationService(EstimateProducer producer, ServiceRequestRepository repository, EstimateServiceConfiguration config, HRMSUtils hrmsUtils, ProjectUtil projectServiceUtil, LocationServiceUtil locationServiceUtil) {
+        this.producer = producer;
+        this.repository = repository;
+        this.config = config;
+        this.hrmsUtils = hrmsUtils;
+        this.projectServiceUtil = projectServiceUtil;
+        this.locationServiceUtil = locationServiceUtil;
+    }
 
 
     /**
@@ -117,7 +120,7 @@ public class NotificationService {
             setAdditionalFields(request,ESTIMATE_APPROVE_LOCALIZATION_CODE,additionalField);
         }
         log.info("build Message For Approve Action for Estimate Creator");
-        message = buildMessageForApproveAction_Creator(estimate, smsDetails, message);
+        message = buildMessageForApproveActionCreator(estimate, smsDetails, message);
         checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetails);
     }
 
@@ -170,10 +173,10 @@ public class NotificationService {
             throw new CustomException("PARSING_ERROR", "Failed to parse HRMS response");
         }
 
-        projectDetails.put("projectName", projectNames.get(0));
+        projectDetails.put(PROJECT_NAME, projectNames.get(0));
         projectDetails.put("boundary", boundaries.get(0));
         projectDetails.put("boundaryType", boundaryTypes.get(0));
-        projectDetails.put("projectNumber", projectNumber.get(0));
+        projectDetails.put(PROJECT_NUMBER, projectNumber.get(0));
 
         return projectDetails;
     }
@@ -199,14 +202,14 @@ public class NotificationService {
      * @return
      */
     public String getMessage(EstimateRequest request, String msgCode) {
-        String rootTenantId = request.getEstimate().getTenantId().split("\\.")[0];
-        RequestInfo requestInfo= request.getRequestInfo();
+        String tenantId = request.getEstimate().getTenantId();
+        RequestInfo requestInfo = request.getRequestInfo();
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
             locale = requestInfo.getMsgId().split("\\|")[1];
-        Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(requestInfo, rootTenantId,
+        Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(requestInfo, tenantId,
                 locale, EstimateServiceConstant.ESTIMATE_MODULE_CODE);
-        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
+        return localizedMessageMap.get(locale + "|" + tenantId).get(msgCode);
     }
 
     /**
@@ -219,18 +222,18 @@ public class NotificationService {
      */
     public String buildMessageForRejectAction(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
         message = message.replace("{estimteno}", estimate.getEstimateNumber())
-                .replace("{projectid}",userDetailsForSMS.get("projectNumber"))
-                .replace("{project_name}", userDetailsForSMS.get("projectName"))
+                .replace("{projectid}",userDetailsForSMS.get(PROJECT_NUMBER))
+                .replace("{project_name}", userDetailsForSMS.get(PROJECT_NAME))
                 .replace("{location}", userDetailsForSMS.get("locationName"))
                 .replace("{username}", userDetailsForSMS.get("userName"))
                 .replace("{designation}", userDetailsForSMS.get("designation"));
         return message;
     }
 
-    public String buildMessageForApproveAction_Creator(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
+    public String buildMessageForApproveActionCreator(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
         message = message.replace("{estimteno}", estimate.getEstimateNumber())
-                .replace("{projectid}", userDetailsForSMS.get("projectNumber"))
-                .replace("{project_name}", userDetailsForSMS.get("projectName"))
+                .replace("{projectid}", userDetailsForSMS.get(PROJECT_NUMBER))
+                .replace("{project_name}", userDetailsForSMS.get(PROJECT_NAME))
                 .replace("{location}", userDetailsForSMS.get("locationName"));
         return message;
     }

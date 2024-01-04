@@ -24,11 +24,15 @@ import java.util.Map;
 public class IdGenRepository {
 
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    private final EstimateServiceConfiguration config;
 
     @Autowired
-    private EstimateServiceConfiguration config;
+    public IdGenRepository(RestTemplate restTemplate, EstimateServiceConfiguration config) {
+        this.restTemplate = restTemplate;
+        this.config = config;
+    }
 
 
     /**
