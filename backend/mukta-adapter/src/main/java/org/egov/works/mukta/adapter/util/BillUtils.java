@@ -3,6 +3,7 @@ package org.egov.works.mukta.adapter.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.web.models.Pagination;
 import org.egov.works.mukta.adapter.web.models.bill.*;
@@ -118,12 +119,11 @@ public class BillUtils {
         return billCalcResponse;
     }
 
-
-    public @Valid List<Payment> fetchPaymentDetails(RequestInfo requestInfo, Set<String> paymentNumbers, String tenantId) {
+    public @Valid List<Payment> fetchPaymentDetails(RequestInfo requestInfo, Set<String> ids, String tenantId) {
         log.info("Started executing fetchPaymentDetails");
         Map<String, Object> searchCriteria = new HashMap<>();
         searchCriteria.put("tenantId", tenantId);
-        searchCriteria.put("paymentNumbers", paymentNumbers);
+        searchCriteria.put("ids", ids);
         Map<String, Object> requestParams = new HashMap<>();
         requestParams.put("RequestInfo", requestInfo);
         requestParams.put("paymentCriteria", searchCriteria);

@@ -2,8 +2,10 @@ package org.egov.works.mukta.adapter.web.controllers;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.mukta.adapter.kafka.MuktaAdaptorProducer;
+import org.egov.works.mukta.adapter.service.DisbursementService;
 import org.egov.works.mukta.adapter.service.PaymentService;
 import org.egov.works.mukta.adapter.util.ResponseInfoFactory;
+import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
 import org.egov.works.mukta.adapter.web.models.enums.JITServiceId;
 import org.egov.works.mukta.adapter.web.models.jit.SchedulerRequest;
@@ -19,12 +21,14 @@ public class Scheduler {
 
     private final ResponseInfoFactory responseInfoFactory;
     private final PaymentService paymentService;
+    private final DisbursementService disbursementService;
     private final MuktaAdaptorProducer muktaAdaptorProducer;
 
     @Autowired
-    public Scheduler(ResponseInfoFactory responseInfoFactory, PaymentService paymentService, MuktaAdaptorProducer muktaAdaptorProducer) {
+    public Scheduler(ResponseInfoFactory responseInfoFactory, PaymentService paymentService, DisbursementService disbursementService, MuktaAdaptorProducer muktaAdaptorProducer) {
         this.responseInfoFactory = responseInfoFactory;
         this.paymentService = paymentService;
+        this.disbursementService = disbursementService;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
     }
 
@@ -52,5 +56,10 @@ public class Scheduler {
     public void test(@RequestBody @Valid PaymentRequest paymentRequest
                                   ) {
         muktaAdaptorProducer.push("expense-payment-create", paymentRequest);
+    }
+
+    @RequestMapping(path = "/on-disburse", method = RequestMethod.POST)
+    public void onDisburse(@RequestBody @Valid Disbursement disbursementRequest){
+        disbursementService.processDisbursement(disbursementRequest);
     }
 }

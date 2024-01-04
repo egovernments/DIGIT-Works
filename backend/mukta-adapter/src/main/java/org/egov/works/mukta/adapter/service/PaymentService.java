@@ -66,24 +66,6 @@ public class PaymentService {
 
     }
 
-    public List<String> getTenants(RequestInfo requestInfo) {
-        List<String> tenantIds = new ArrayList<>();
-        List<String> tenantsMasters = new ArrayList<>();
-        tenantsMasters.add(Constants.MDMS_TENANTS_MASTER);
-        Map<String, Map<String, JSONArray>> tenantsResponse = mdmsUtil.fetchMdmsData(requestInfo, config.getStateLevelTenantId());
-        JSONArray tenantValues = tenantsResponse.get(Constants.MDMS_TENANT_MODULE_NAME).get(Constants.MDMS_TENANTS_MASTER);
-        for (Object tenant : tenantValues) {
-            // Create ObjectMapper instance
-            // Convert object to JsonNode
-            JsonNode tenantNode = mapper.valueToTree(tenant);
-            String tenantId = tenantNode.get("code").textValue();
-            if (tenantId != null && !tenantId.equals(config.getStateLevelTenantId())) {
-                tenantIds.add(tenantId);
-            }
-        }
-        return tenantIds;
-    }
-
     /**
      * fetches bills for which payment is not yet created by passing paymentStatus as null in search criteria.
      *

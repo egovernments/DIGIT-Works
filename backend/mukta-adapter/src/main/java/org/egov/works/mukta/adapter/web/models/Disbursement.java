@@ -23,12 +23,10 @@ public class Disbursement extends ExchangeMessage {
     private Individual individual;
     @JsonProperty("target_id")
     private String targetId;
-    @NotNull
     @JsonProperty("bill_date")
     private ZonedDateTime billDate;
     @JsonProperty("start_date")
     private ZonedDateTime startDate;
-    @NotNull
     @JsonProperty("end_date")
     private ZonedDateTime endDate;
     @JsonProperty("allocation")
