@@ -117,7 +117,10 @@ public class BulkUploadService {
                 }
                 rowData.put(header, nestedData);
             } else {
-                rowData.put(header, getCellValue(cell));
+                if(cell!=null){
+                    rowData.put(header, getCellValue(cell));
+                }
+
             }
         }
 
@@ -155,8 +158,8 @@ public class BulkUploadService {
                 return cell.getNumericCellValue();
             case BOOLEAN:
                 return cell.getBooleanCellValue();
-           /* case BLANK:
-                return null;*/
+            case BLANK:
+                return "";
             default:
                 return null;
         }
@@ -239,28 +242,32 @@ public class BulkUploadService {
                         amountDetailsArray.add(data);
                     }
                 }
-                if(Objects.equals(e.getKey(), "sorId")){
+                if(Objects.equals(e.getKey(), "sorId") && e.getValue()!=null){
                     mainNode.put("sorId", (String) e.getValue());
                 }
-                if(Objects.equals(e.getKey(), "total")){
+                if(Objects.equals(e.getKey(), "total")&& e.getValue()!=null){
                     mainNode.put("rate", (Double) e.getValue());
                 }
-                if(Objects.equals(e.getKey(), "validFrom")){
-                    mainNode.put("validFrom",convertDateToEpochDateTime((String) e.getValue()));
+                if(Objects.equals(e.getKey(), "validFrom") && e.getValue()!=null){
+                    mainNode.put("validFrom",String.valueOf(convertDateToEpochDateTime((String) e.getValue())));
                 }
-                if(Objects.equals(e.getKey(), "validTo")){
-                    mainNode.put("validTo",convertDateToEpochDateTime((String) e.getValue()));
+                if(Objects.equals(e.getKey(), "validTo") && e.getValue()!=null){
+                    mainNode.put("validTo",String.valueOf(convertDateToEpochDateTime((String) e.getValue())));
                 }
             });
                 mainNode.set("amountDetails",amountDetailsArray );
                 mainNode.put("type","lumpsum");
 
-                mdmsRequest.getMdms().setData(mainNode);
-                System.out.println(mdmsRequest.toString());
+                if(!mainNode.get("amountDetails").isEmpty()){
+                    mdmsRequest.getMdms().setData(mainNode);
+                    System.out.println(mdmsRequest.toString());
 
 
 
-                Object response= bulkUploadUtil.create(mdmsRequest,"WORKS-SOR.Rates");
+                    Object response= bulkUploadUtil.create(mdmsRequest,"WORKS-SOR.Rates");
+                }
+
+
 
 
                 //Material Analysis=MA.1
