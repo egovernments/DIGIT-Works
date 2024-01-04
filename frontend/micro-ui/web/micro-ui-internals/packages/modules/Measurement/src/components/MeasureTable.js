@@ -299,7 +299,7 @@ const MeasureTable = (props) => {
                   textInputStyle={{marginTop:"7px"}}
                   key={row?.id} // important to include key with field's id
                   // {...register(`${tableKey}.${index}.currentMBEntry`)}
-                  value={consumedQty}
+                  value={consumedQty?.toFixed(4)}
                   onChange={() => {}}
                   disable={initialState.length > 0 ? "true" : "false"}
                 />

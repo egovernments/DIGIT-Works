@@ -294,7 +294,7 @@ const CreateEstimate = ({props}) => {
   function validateData(data){
 
     // To validate either SOR or NON SOR must be present
-    if((!data?.SORtable) && !(data?.NONSORtable))
+    if(((!data?.SORtable) && !(data?.NONSORtable)) || (data?.SORtable?.length <= 0 && data?.NONSORtable?.length <= 0))
     {  
       setShowToast({ error: true, label: "ERR_ATLEAST_SOR_OR_NON_SOR_PRESENT" });
       setShowModal(false);
