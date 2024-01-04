@@ -52,6 +52,7 @@ const CreateMeasurement = ({ props }) => {
     body: {
       contractNumber: contractNumber,
       tenantId: tenantId,
+      key: props?.isUpdate ? "View" : ""
     },
   };
 

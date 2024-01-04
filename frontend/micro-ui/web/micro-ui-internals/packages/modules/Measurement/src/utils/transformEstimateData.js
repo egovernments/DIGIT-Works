@@ -143,7 +143,7 @@ export const getDefaultValues = (data, t) => {
 };
 
 export function findMusterRollNumber(musterRolls, measurementNumber, startDate, endDate) {
-  if(musterRolls)
+  if(musterRolls && musterRolls?.length > 0)
   for (const musterRoll of musterRolls) {
     if (
       musterRoll.startDate >= startDate &&
