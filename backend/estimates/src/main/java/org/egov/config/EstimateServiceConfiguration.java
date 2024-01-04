@@ -159,15 +159,6 @@ public class EstimateServiceConfiguration {
 
     @Value("${sms.isAdditonalFieldRequired}")
     private boolean isAdditonalFieldRequired;
-	
-	  @Value("${estimate.revisionEstimate.buisnessService}")
-    private String revisionEstimateBusinessService;
-
-    @Value("${estimate.revisionEstimate.measurementValidation}")
-    private  Boolean revisionEstimateMeasurementValidation;
-
-    @Value("${estimate.revisionEstimate.maxLimit}")
-    private BigDecimal revisionEstimateMaxLimit;
 
 
     @PostConstruct
