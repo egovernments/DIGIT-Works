@@ -1537,7 +1537,7 @@
 							"    pm.collectionVariables.set('status', responseData.contracts[0].status);\r",
 							"    pm.collectionVariables.set(\"startDate\", responseData.contracts[0].startDate);\r",
 							"    pm.collectionVariables.set(\"endDate\", responseData.contracts[0].endDate);\r",
-							"    pm.collectionVariables.set('lastModifiedTime', responseData.contracts[0].auditDetails.lastModifiedTime);\r",
+							"    pm.environment.set('lMTime', responseData.contracts[0].auditDetails.lastModifiedTime);\r",
 							"     pm.environment.set(\"contractLineItemRef1\", responseData.contracts[0].lineItems[0].contractLineItemRef);\r",
 							"    pm.environment.set(\"contractLineItemRef2\", responseData.contracts[0].lineItems[1].contractLineItemRef);\r",
 							"    pm.environment.set(\"MB-CO\", responseData.contracts[0].contractNumber);\r",
@@ -1554,7 +1554,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": null,\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"Search Contract\",\r\n        \"authToken\": \"{{auth}}\"\r\n    },\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"ids\": [\r\n    ],\r\n    \"estimateIds\": [],\r\n    \"estimateLineItemIds\": [],\r\n    \"contractType\": \"\",\r\n    \"orgIds\": [],\r\n    \"contractNumber\": \"{{ContractNumber}}\",\r\n    \"fromDate\": null,\r\n    \"toDate\": null,\r\n    \"pagination\": {\r\n        \"limit\": \"10\",\r\n        \"offSet\": \"\",\r\n        \"sortBy\": \"\",\r\n        \"order\": \"desc\"\r\n    }\r\n}",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": null,\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"Search Contract\",\r\n        \"authToken\": \"{{auth}}\"\r\n    },\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"ids\": [\r\n    ],\r\n    \"estimateIds\": [],\r\n    \"estimateLineItemIds\": [],\r\n    \"contractType\": \"\",\r\n    \"orgIds\": [],\r\n    \"contractNumber\": \"\",\r\n    \"fromDate\": null,\r\n    \"toDate\": null,\r\n    \"pagination\": {\r\n        \"limit\": \"10\",\r\n        \"offSet\": \"\",\r\n        \"sortBy\": \"\",\r\n        \"order\": \"desc\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
