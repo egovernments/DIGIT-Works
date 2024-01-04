@@ -38,6 +38,10 @@ module.exports = {
       process.env.WORK_ORDER_TEMPLATE_ODIYA_IA || "work-order-odiya_ia",
     work_order_template_odiya_ip:
       process.env.WORK_ORDER_TEMPLATE_ODIYA_IP || "work-order-odiya_ip",  
+    deviationStatement_template: process.env.MEASUREMENT_TEMPLATE || "deviation-statement",
+    measurement_template: process.env.MEASUREMENT_TEMPLATE || "measurement-book",
+    detailedEstimate_template: process.env.DETAILED_ESTIMATE_TEMPLATE || "detailed-estimate",
+
   },
   app: {
     port: parseInt(process.env.APP_PORT || 8098) ,
@@ -60,6 +64,7 @@ module.exports = {
     filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
     expense_calculator: process.env.EXPENSE_CALCULATOR_SERVICE_HOST || 'http://localhost:8093',
     hrms: process.env.EGOV_HRMS_HOST || 'http://localhost:8095',
+    measurements: process.env.EGOV_MEASUREMENT_HOST || 'http://localhost:8099',
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -78,7 +83,9 @@ module.exports = {
     expense_calculator_estimate: "/expense-calculator/v1/_estimate",
     expense_calculator_search: "/expense-calculator/v1/_search",
     localization_search: "/localization/messages/v1/_search",
-    hrms_search: "/egov-hrms/employees/_search"
+    hrms_search: "/egov-hrms/employees/_search",
+    deviationStatement_search: "/estimate/v1/_search",
+    measurement_book_search: "/mukta-services/measurement/_search",
   },
   constraints: {
     "beneficiaryIdByHeadCode": "Deduction_{tanentId}_{headcode}"

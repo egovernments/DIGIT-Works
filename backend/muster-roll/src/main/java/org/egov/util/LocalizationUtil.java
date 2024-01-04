@@ -20,11 +20,15 @@ import static org.egov.util.MusterRollServiceConstants.MUSTER_ROLL_MODULE_CODE;
 @Slf4j
 public class LocalizationUtil {
 
-    @Autowired
-    private MusterRollServiceConfiguration config;
+    private final MusterRollServiceConfiguration config;
+
+    private final ServiceRequestRepository restRepo;
 
     @Autowired
-    private ServiceRequestRepository restRepo;
+    public LocalizationUtil(MusterRollServiceConfiguration config, ServiceRequestRepository restRepo) {
+        this.config = config;
+        this.restRepo = restRepo;
+    }
 
 
     /**

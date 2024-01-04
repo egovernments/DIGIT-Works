@@ -147,10 +147,8 @@ public class EstimateServiceConfiguration {
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
-    @Value("${sms.isAdditonalFieldRequired}")
-    private boolean isAdditonalFieldRequired;
-	
-	@Value("${estimate.revisionEstimate.buisnessService}")
+    // RevisionEstimate
+    @Value("${estimate.revisionEstimate.buisnessService}")
     private String revisionEstimateBusinessService;
 
     @Value("${estimate.revisionEstimate.measurementValidation}")
@@ -159,10 +157,24 @@ public class EstimateServiceConfiguration {
     @Value("${estimate.revisionEstimate.maxLimit}")
     private BigDecimal revisionEstimateMaxLimit;
 
+    @Value("${sms.isAdditonalFieldRequired}")
+    private boolean isAdditonalFieldRequired;
+	
+	  @Value("${estimate.revisionEstimate.buisnessService}")
+    private String revisionEstimateBusinessService;
+
+    @Value("${estimate.revisionEstimate.measurementValidation}")
+    private  Boolean revisionEstimateMeasurementValidation;
+
+    @Value("${estimate.revisionEstimate.maxLimit}")
+    private BigDecimal revisionEstimateMaxLimit;
+
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
     }
+
 
 }
 

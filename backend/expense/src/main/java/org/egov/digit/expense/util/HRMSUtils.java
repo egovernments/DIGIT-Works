@@ -1,6 +1,5 @@
 package org.egov.digit.expense.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,6 @@ import org.egov.digit.expense.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,17 +19,16 @@ import static org.egov.digit.expense.config.Constants.*;
 @Component
 @Slf4j
 public class HRMSUtils {
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
+
+    private final Configuration config;
 
     @Autowired
-    private Configuration config;
+    public HRMSUtils(ServiceRequestRepository serviceRequestRepository, Configuration config) {
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+    }
 
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     public Map<String, String> getEmployeeDetailsByUuid(RequestInfo requestInfo, String tenantId, String uuid) {
         StringBuilder url = getHRMSURIWithUUid(tenantId, uuid);
@@ -43,7 +40,6 @@ public class HRMSUtils {
         Map<String, String> userDetailsForSMS = new HashMap<>();
         List<String> userNames = null;
         List<String> mobileNumbers = null;
-        List<String> designations = null;
 
         try {
             userNames = JsonPath.read(res, HRMS_USER_USERNAME_CODE);

@@ -40,7 +40,6 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
         contract = data?.contracts?.filter((row) => row?.supplementNumber == null && row?.status === "ACTIVE")?.[0];
     }
 
-
     const contractDetails = {
         title: " ",
         asSectionHeader: false,

@@ -163,6 +163,10 @@ import useSearchBill from "./bills/useSearchBill";
 import useViewPaymentInstruction from "./payments/useViewPaymentInstruction";
 import useViewPayment from "./payments/useViewPayment";
 import useUpdatePI from "./expenditure/useUpdatePI";
+import useMBDataForPB from "./expenditure/useMBDataForPB";
+
+import useViewMeasurement from "./measurement/useViewMeasurement";
+
 const works = {
   useViewEstimateDetails,
   useViewProjectDetails,
@@ -313,7 +317,12 @@ const bankAccount = {
 const paymentInstruction = {
   useViewPaymentInstruction,
   useUpdatePI,
+  useMBDataForPB,
   useViewPayment
+}
+
+const measurement = {
+  useViewMeasurement
 }
 
 const Hooks = {
@@ -382,7 +391,8 @@ const Hooks = {
   wageSeeker,
   organisation,
   bankAccount,
-  paymentInstruction
+  paymentInstruction,
+  measurement
 };
 
 export default Hooks;
