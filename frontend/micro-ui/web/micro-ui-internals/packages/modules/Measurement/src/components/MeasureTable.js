@@ -1,6 +1,6 @@
 import { AddIcon, TextInput, Amount, Button, Dropdown, Loader, DeleteIcon } from "@egovernments/digit-ui-react-components";
 
-import React, { Fragment, useEffect, useCallback } from "react";
+import React, { Fragment, useEffect, useCallback} from "react";
 import { useTranslation } from "react-i18next";
 import MeasureCard from "./MeasureCard";
 
@@ -213,6 +213,8 @@ const MeasureTable = (props) => {
       (key, value, index) => {
         const field = fields[index] || {};
         field[key] = value;
+        if(tableKey === "NONSOR" && key === "unitRate")
+          field["amount"] = (parseFloat(field[key]) * field["currentMBEntry"]) || 0
         fields[index] = { ...field };
         setFormValue(fields);
       }
@@ -383,7 +385,7 @@ const MeasureTable = (props) => {
                     amount: 0,
                     consumedQ: 0,
                     category:"NON-SOR",
-                    sNo: fields?.length-1,
+                    sNo: fields?.length+1,
                     currentMBEntry: 0,
                     uom: null,
                     description: "",
@@ -407,7 +409,7 @@ const MeasureTable = (props) => {
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
         <div style={{ display: "flex", flexDirection: "row", fontSize: "16px" }}>
           <span style={{ fontWeight: "bold", marginTop:"6px" }}>
-            {t("WORKS_TOTAL")} {t(`WORKS_${props.config.key}`)} {t("WORKS_TOTAL_AMOUNT")} :
+            {t("WORKS_TABLE_TOTAL_AMOUNT")} :
           </span>
           <span style={{ marginLeft: "8px" }}>
             <Amount customStyle={{ textAlign: "right", fontSize:"24px" }} value={sum?.toFixed?.(2) || 0} t={t} roundOff={false} rupeeSymbol={true}></Amount>

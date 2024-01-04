@@ -8,6 +8,7 @@ import {
   Loader,
   Dropdown,
   InputTextAmount,
+  Amount,
 } from "@egovernments/digit-ui-react-components";
 import { Controller } from "react-hook-form";
 import _ from "lodash";
@@ -388,21 +389,13 @@ const OverheadsTable = ({ control, watch, ...props }) => {
   }, [rows, sorTotal, formData]);
 
   return (
+    <React.Fragment>
     <table className="table reports-table sub-work-table">
       <thead>
         <tr>{renderHeader()}</tr>
       </thead>
       <tbody>
         {renderBody}
-        <tr>
-          <td colSpan={3} style={{ textAlign: "right", fontWeight: "600" }}>
-            {t("RT_TOTAL")}
-          </td>
-          <td colSpan={1} style={{ textAlign: "right" }}>
-            {Digit.Utils.dss.formatterWithoutRound(totalAmount, "number")}
-          </td>
-          <td colSpan={1}></td>
-        </tr>
         <tr>
           {/* <td style={getStyles(1)}></td> */}
           <td colSpan={5} style={{ textAlign: "center" }} onClick={addRow}>
@@ -416,6 +409,17 @@ const OverheadsTable = ({ control, watch, ...props }) => {
         </tr>
       </tbody>
     </table>
+    <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
+    <div style={{ display: "flex", flexDirection: "row", fontSize: "16px" }}>
+      <span style={{ fontWeight: "bold", marginTop:"6px" }}>
+      {t("WORKS_TABLE_TOTAL_AMOUNT")} :
+      </span>
+      <span style={{ marginLeft: "8px" }}>
+        <Amount customStyle={{ textAlign: "right", fontSize:"24px" }} value={Digit.Utils.dss.formatterWithoutRound(totalAmount, "number")|| 0} t={t} roundOff={false} rupeeSymbol={true}></Amount>
+      </span>
+    </div>
+  </div>
+  </React.Fragment>
   );
 };
 

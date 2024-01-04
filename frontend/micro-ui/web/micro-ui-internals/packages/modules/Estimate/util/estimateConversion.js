@@ -47,6 +47,14 @@ const fetchData = (RatesData, sorid) => {
 export const transformEstimateObjects = (estimateData, type, RatesData) => {
     let lineItems = estimateData?.estimateDetails ? estimateData?.estimateDetails : estimateData;
     let isEstimateCreateorUpdate = /(estimate\/create-detailed-estimate|estimate\/update-detailed-estimate|estimate\/create-revision-detailed-estimate|estimate\/update-revision-detailed-estimate)/.test(window.location.href);
+    lineItems?.filter(e => e.category === "NON-SOR")
+    .forEach((item, index) => {
+      // Check if the "sorId" is not null or undefined
+      if (item.sorId !== null && item.sorId !== undefined && item?.sorId === "45") {
+          // Update the "sorId" with the desired sequence
+          item.sorId = (index + 1).toString();
+      }
+      });
     const convertedObject = lineItems?.filter(e => e.category === type).reduce((acc, curr) => {
         if (acc[curr.sorId]) {
             acc[curr.sorId].push(curr);

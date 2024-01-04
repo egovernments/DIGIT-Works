@@ -74,10 +74,15 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
                 return (tot + amount * ob?.currentMBEntry)
             },0);
         }
-
+        if(window.location.href.includes("estimate-details"))
+        {
+                    if(category === "LA" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.labour) SORAmount =  formData?.additionalDetails?.labourMaterialAnalysis?.labour;
+                    if(category === "MA" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.material) SORAmount =  formData?.additionalDetails?.labourMaterialAnalysis?.material;
+                    if(category === "MHA" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.machinery) SORAmount =  formData?.additionalDetails?.labourMaterialAnalysis?.machinery;
+        }
         //Conditions is used in the case of View details to capture the data from additional details
         // if(category === "LA" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.labour) return formData?.additionalDetails?.labourMaterialAnalysis?.labour;
-        // if(category === "MA" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.material) return formData?.additionalDetails?.labourMaterialAnalysis?.material;
+        // if(category === "MA" && SORAmount =getAnalysisCost= 0 && formData?.additionalDetails?.labourMaterialAnalysis?.material) return formData?.additionalDetails?.labourMaterialAnalysis?.material;
         // if(category === "MHA" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.machinery) return formData?.additionalDetails?.labourMaterialAnalysis?.machinery;
         // if(window.location.href.includes("update-detailed-estimate"))
         // {
@@ -87,7 +92,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
         // }
 
         SORAmount = SORAmount ? SORAmount : 0;
-        return Digit.Utils.dss.formatterWithoutRound((SORAmount).toFixed(2),"number");        
+        return Digit.Utils.dss.formatterWithoutRound((parseFloat(SORAmount)).toFixed(2),"number");        
     }
     
    
