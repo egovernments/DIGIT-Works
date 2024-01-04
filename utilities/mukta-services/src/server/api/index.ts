@@ -206,6 +206,24 @@ const search_measurement = async (requestinfo: any, cachekey: any, allResponse: 
   return getErrorCodes("WORKS", "NO_MEASUREMENT_ROLL_FOUND");
 }
 
+const calculate_expense = async (params: any, requestinfo: any, cachekey: any) => {
+  // Send an HTTP request to the muster search endpoint using the provided parameters and request information.
+  const expenseResponse = await httpRequest(
+    url.resolve(config.host.expense_calculator, config.paths.expense_caluclator),
+    requestinfo,
+    params
+  );
+
+  // Check if there are muster rolls in the response.
+  if ( Object.keys(expenseResponse.calculation).length > 0) {
+    // If muster rolls are found, return them.
+    return expenseResponse?.calculation;
+  }
+
+  // If no muster rolls are found, return an error code.
+  return getErrorCodes("WORKS", "NO_WB_CALCULATION_FOUND_FOR_GIVEN_MUSTER_ROLL");
+}
+
 export {
   create_pdf,
   create_pdf_and_upload,
@@ -217,5 +235,6 @@ export {
   search_localization,
   search_contract,
   search_estimate,
-  search_measurement
+  search_measurement,
+  calculate_expense
 };
