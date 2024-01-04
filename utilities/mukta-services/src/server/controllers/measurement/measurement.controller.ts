@@ -97,6 +97,12 @@ class MeasurementController {
             type: "error",
           };
         }
+        if(latestMeasurement?.wfStatus === "REJECTED"){
+          return {
+            startDate: latestMeasurement?.additionalDetails?.startDate,
+            endDate: latestMeasurement?.additionalDetails?.endDate,
+          };
+        }
         return {
           startDate: null,
           endDate: null,
