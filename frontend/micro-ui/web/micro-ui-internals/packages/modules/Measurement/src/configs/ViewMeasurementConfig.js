@@ -154,6 +154,7 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
             applicationNo: measurement?.measurementNumber,
             tenantId: measurement?.tenantId,
             timelineStatusPrefix: "WF_MB_",
+            breakLineRequired: false,
           },
           {
             type: "WFACTIONS",
