@@ -14,7 +14,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
     const {t} = useTranslation();
     const { register, errors, setValue, getValues, formData } = props
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    let isCreateOrUpdate = /(measurement\/create|estimate\/create-detailed-estimate|estimate\/update-detailed-estimate|measurement\/update)/.test(window.location.href);
+    let isCreateOrUpdate = /(measurement\/create|estimate\/create-detailed-estimate|estimate\/update-detailed-estimate|measurement\/update|estimate\/create-revision-detailed-estimate|estimate\/update-revision-detailed-estimate)/.test(window.location.href);
     let isEstimateCreateorUpdate = /(estimate\/create-detailed-estimate|estimate\/update-detailed-estimate|estimate\/create-revision-detailed-estimate|estimate\/update-revision-detailed-estimate)/.test(window.location.href);
     //Defined the codes for charges upserted in mdmsV2
     const ChargesCodeMapping = {

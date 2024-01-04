@@ -68,12 +68,12 @@ const MeasurementServiceResponse = () => {
                 <CardText>{t("MB_SUCCESS_RESPONSE_TEXT")} {mbReference}</CardText>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}>
 
-                <div className="link reponse-link">
+                {/* <div className="link reponse-link">
                         <CreateLoiIcon style={{ width: '24px', height: '24px' }} />
                         <Link to={`/${window.contextPath}/employee/measurement/create`}>
                             {t("MB_GO_TO_CREATE")}
                         </Link>
-                    </div>
+                    </div> */}
                     <div className="link reponse-link" >
                         <ArrowRightInbox style={{ width: '24px', height: '24px' }} />
                         <Link to={`/${window.contextPath}/employee/measurement/inbox`}>
@@ -81,12 +81,12 @@ const MeasurementServiceResponse = () => {
                         </Link>
                     </div>
 
-                    <div className="link reponse-link">
+                    {/* <div className="link reponse-link">
                         <AddNewIcon style={{ width: '24px', height: '24px' }} />
                         <Link to={`/${window.contextPath}/employee/measurement/inbox`}>
                             {t("MB_ADD_READING")}
                         </Link>
-                    </div>
+                    </div> */}
                 </div>
 
             </Card>

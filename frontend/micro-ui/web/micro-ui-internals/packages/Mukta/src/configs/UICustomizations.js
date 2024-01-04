@@ -2565,7 +2565,7 @@ export const UICustomizations = {
         case "MB_ASSIGNEE":
           return value ? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
         case "MB_WORKFLOW_STATE":
-          return <span>{t(value)}</span>;
+          return <span>{t(`MB_STATE_${value}`)}</span>;
         case "MB_AMOUNT":
           return <Amount customStyle={{ textAlign: "right" }} value={Math.round(value)} t={t}></Amount>;
         case "MB_SLA_DAYS_REMAINING":

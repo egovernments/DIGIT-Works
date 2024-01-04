@@ -106,7 +106,7 @@ const InboxMeasurementConfig = () => {
           ],
           label: "ES_COMMON_ATTENDENCEMGMT",
           logoIcon: {
-            component: "MeasurementIcon",
+            component: "MeasurementMuktaIcon",
             customClass: "inbox-search-icon--projects",
           },
         },
