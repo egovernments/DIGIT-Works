@@ -41,7 +41,8 @@ class MeasurementController {
   public getPeriod = (
     periodResponse: any = {},
     contractResponse: any = {},
-    measurementResponse: any = []
+    measurementResponse: any = [],
+    key: string="",
   ) => {
     // Check contract status
     const {
@@ -57,7 +58,7 @@ class MeasurementController {
     ) {
       /* only active contract eligible for contract creation*/
 
-      if (measurementResponse?.length > 0) {
+      if (measurementResponse?.length > 0 && key !== "View") {
         /* many measurements are present */
 
         // Logic to be added to get the latest measurement
@@ -70,7 +71,7 @@ class MeasurementController {
         if (
           (measurementWorkflowStatus &&
             latestMeasurement?.wfStatus == measurementWorkflowStatus) ||
-          !measurementWorkflowStatus || latestMeasurement?.wfStatus === "DRAFTED"
+          !measurementWorkflowStatus 
         ) {
           if (newStartDate < contractResponse?.endDate) {
             return {
@@ -102,7 +103,7 @@ class MeasurementController {
           message: "LAST_CREATED_MEASUREMENT_STILL_IN_WORKFLOW",
           type: "error",
         };
-      } else if (measurementResponse?.length == 0 || measurementResponse?.code === "NO_MEASUREMENT_ROLL_FOUND") {
+      } else if (measurementResponse?.length == 0 || measurementResponse?.code === "NO_MEASUREMENT_ROLL_FOUND" || key === "View") {
         /* no measurements are present */
 
         //Under piece of code is used to get the same week monday epoch according to the contract startdate
@@ -288,7 +289,8 @@ class MeasurementController {
         const period = this.getPeriod(
           periodResponse?.[0],
           contract,
-          allMeasurements
+          allMeasurements,
+          key
         );
 
         // Extract estimate IDs from the contract response
