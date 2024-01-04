@@ -41,7 +41,8 @@ class MeasurementController {
   public getPeriod = (
     periodResponse: any = {},
     contractResponse: any = {},
-    measurementResponse: any = []
+    measurementResponse: any = [],
+    key: string="",
   ) => {
     // Check contract status
     const {
@@ -57,7 +58,7 @@ class MeasurementController {
     ) {
       /* only active contract eligible for contract creation*/
 
-      if (measurementResponse?.length > 0) {
+      if (measurementResponse?.length > 0 && key !== "View") {
         /* many measurements are present */
 
         // Logic to be added to get the latest measurement
@@ -70,7 +71,7 @@ class MeasurementController {
         if (
           (measurementWorkflowStatus &&
             latestMeasurement?.wfStatus == measurementWorkflowStatus) ||
-          !measurementWorkflowStatus
+          !measurementWorkflowStatus 
         ) {
           if (newStartDate < contractResponse?.endDate) {
             return {
@@ -96,13 +97,19 @@ class MeasurementController {
             type: "error",
           };
         }
+        if(latestMeasurement?.wfStatus === "REJECTED"){
+          return {
+            startDate: latestMeasurement?.additionalDetails?.startDate,
+            endDate: latestMeasurement?.additionalDetails?.endDate,
+          };
+        }
         return {
           startDate: null,
           endDate: null,
           message: "LAST_CREATED_MEASUREMENT_STILL_IN_WORKFLOW",
           type: "error",
         };
-      } else if (measurementResponse?.length == 0) {
+      } else if (measurementResponse?.length == 0 || measurementResponse?.code === "NO_MEASUREMENT_ROLL_FOUND" || key === "View") {
         /* no measurements are present */
 
         //Under piece of code is used to get the same week monday epoch according to the contract startdate
@@ -218,7 +225,8 @@ class MeasurementController {
     ids: string,
     defaultRequestInfo: any,
     period: any,
-    contractNumber: string
+    contractNumber: string,
+    key: string
   ) => {
     const nextPromises = [
       search_estimate(
@@ -239,14 +247,29 @@ class MeasurementController {
             fromDate: period?.startDate,
             referenceId: contractNumber,
           },
-          defaultRequestInfo
+          defaultRequestInfo,
+          ""
         )
       );
     }
 
-    const [estimate, muster] = await Promise.all(nextPromises);
+    if(key === "View")
+    {
+      nextPromises.push(
+        search_muster(
+          {
+            tenantId,
+            referenceId: contractNumber,
+          },
+          defaultRequestInfo,
+          key
+        )
+      );
+    }
 
-    return { estimate, muster };
+    let [estimate, muster, musterRolls] = await Promise.all(nextPromises);
+
+    return { estimate, muster, musterRolls };
   };
 
   // This function handles the HTTP request for retrieving all measurements.
@@ -255,7 +278,7 @@ class MeasurementController {
     response: express.Response
   ) => {
     try {
-      const { tenantId, RequestInfo, contractNumber, measurementNumber } =
+      const { tenantId, RequestInfo, contractNumber, measurementNumber, key } =
         request.body;
       const defaultRequestInfo = { RequestInfo };
 
@@ -272,19 +295,21 @@ class MeasurementController {
         const period = this.getPeriod(
           periodResponse?.[0],
           contract,
-          measurement
+          allMeasurements,
+          key
         );
 
         // Extract estimate IDs from the contract response
         const allEstimateIds = extractEstimateIds(contract);
         const estimateIds = allEstimateIds.join(",");
 
-        const { estimate, muster } = await this.getEstimateandMuster(
+        const { estimate, muster, musterRolls } = await this.getEstimateandMuster(
           tenantId,
           estimateIds,
           defaultRequestInfo,
           period,
-          contractNumber
+          contractNumber,
+          key
         );
 
         // Prepare the payload based on the responses
@@ -294,6 +319,7 @@ class MeasurementController {
           allMeasurements: allMeasurements,
           measurement: measurement || {},
           musterRoll: muster,
+          musterRollsArray : musterRolls,
           period: period,
         };
 
