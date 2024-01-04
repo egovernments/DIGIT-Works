@@ -16,6 +16,7 @@ const ViewMeasurement = () => {
       contractNumber: workOrderNumber,
       tenantId: tenantId,
       measurementNumber: mbNumber,
+      key: "View"
     },
     changeQueryName:mbNumber,
   };
@@ -61,7 +62,7 @@ const ViewMeasurement = () => {
     Digit.Utils.downloadEgovPDF("measurementBook/measurement-book", { contractNumber : workOrderNumber, measurementNumber : mbNumber, tenantId }, `measurement-${mbNumber}.pdf`);
   };
 
-  config = data(allData?.contract, allData?.estimate, allData?.measurement, allData?.allMeasurements, thumbnails, projectLocation , allData?.period, allData?.musterRollNumber);
+  config = data(allData?.contract, allData?.estimate, allData?.measurement, allData?.allMeasurements, thumbnails, projectLocation , allData?.period, allData?.musterRollNumber, allData?.musterRolls);
 
   if (isMeasurementLoading && config != null) {
     return <Loader />;

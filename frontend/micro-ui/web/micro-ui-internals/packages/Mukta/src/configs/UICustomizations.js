@@ -391,7 +391,7 @@ export const UICustomizations = {
       const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code;
       delete data.body.inbox.moduleSearchCriteria.ward;
       if (ward) data.body.inbox.moduleSearchCriteria.ward = ward;
-      estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim();
+      let estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim();
       if (!(data?.body?.inbox?.moduleSearchCriteria?.estimateId?.includes("RE")) && estimateId) data.body.inbox.moduleSearchCriteria.estimateId = estimateId;
       if (data?.body?.inbox?.moduleSearchCriteria?.estimateId?.includes("RE") && estimateId) {
         data.body.inbox.moduleSearchCriteria.revisionNumber = estimateId;

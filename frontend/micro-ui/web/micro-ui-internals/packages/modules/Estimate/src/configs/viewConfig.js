@@ -53,7 +53,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails, revisionN
                 key: "WORKS_ESTIMATE_TYPE",
                 value: revisionNumber ? "REVISED_ESTIMATE" : "ORIGINAL_ESTIMATE",
               },
-              {...estimateDetails?.revisionNumber && {
+              {...estimateDetails?.revisionNumber && revisionNumber && {
                 key: "ESTIMATE_REVISED_ESTIMATE_NO",
                 value: estimateDetails?.revisionNumber,
               }},

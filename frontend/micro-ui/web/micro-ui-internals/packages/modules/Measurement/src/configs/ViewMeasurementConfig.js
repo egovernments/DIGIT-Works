@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { transformEstimateData } from "../utils/transformEstimateData";
+import { transformEstimateData, findMusterRollNumber } from "../utils/transformEstimateData";
 
-export const data = (contract, estimateDetails, measurement, allMeasurements, thumbnails, projectLocation, period, musterRollNumber) => {
+export const data = (contract, estimateDetails, measurement, allMeasurements, thumbnails, projectLocation, period, musterRollNumber, musterRolls) => {
   const [viewData, setViewData] = useState({ SOR: [], NONSOR: [] });
   
   useEffect(() => {
@@ -40,7 +40,7 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
               },
               {
                 key: "MB_MUSTER_ROLL_ID",
-                value: measurement?.additionalDetails?.musterRollNumber && Object.keys(measurement?.additionalDetails?.musterRollNumber)?.length ? measurement?.additionalDetails?.musterRollNumber : "NA",
+                value: measurement?.additionalDetails?.musterRollNumber && Object.keys(measurement?.additionalDetails?.musterRollNumber)?.length ? measurement?.additionalDetails?.musterRollNumber : (findMusterRollNumber(musterRolls,measurement?.measurementNumber, measurement?.additionalDetails?.startDate, measurement?.additionalDetails?.endDate)) || "NA",
               },
               {
                 key: "MB_PROJECT_DATE",

@@ -141,3 +141,19 @@ export const getDefaultValues = (data, t) => {
 
   return { SOR, NONSOR, contractDetails, uploadedDocs, documents:measurement?.documents || allMeasurements?.[0]?.documents };
 };
+
+export function findMusterRollNumber(musterRolls, measurementNumber, startDate, endDate) {
+  if(musterRolls)
+  for (const musterRoll of musterRolls) {
+    if (
+      musterRoll.startDate >= startDate &&
+      musterRoll.endDate <= endDate
+    ) {
+      // Match found, now find corresponding muster roll number
+      return musterRoll?.musterRollNumber;
+    }
+  }
+  // If no match found
+  return null;
+}
+
