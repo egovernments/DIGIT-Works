@@ -1,4 +1,4 @@
-import { EditIcon, DownloadImgIcon, InfoBannerIcon, Modal, Row, StatusTable } from "@egovernments/digit-ui-react-components";
+import { EditIcon, DownloadImgIcon, InfoBannerIcon, Modal, Row, StatusTable, Amount } from "@egovernments/digit-ui-react-components";
 import React, { useState, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, Link } from "react-router-dom";
@@ -87,12 +87,14 @@ const OverheadDetailsTable = ({ data }) => {
   );
 
   const renderBody = (rows) => {
-    return rows?.map((row, index) => {
+    return rows?.filter(innerArray => !(innerArray.includes("Total")))?.map((row, index) => {
       return renderRow(row, index);
     });
   };
 
+  let totalAmount = data?.tableRows?.filter(innerArray => innerArray.includes("Total"))?.[0]?.[3] 
   return (
+    <React.Fragment>
     <table className="table reports-table sub-work-table" style={tableStyle}>
       <thead>
         <tr>{renderHeader(data?.headers)}</tr>
@@ -128,6 +130,17 @@ const OverheadDetailsTable = ({ data }) => {
         </Modal>
       )}
     </table>
+     <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
+     <div style={{ display: "flex", flexDirection: "row", fontSize: "16px" }}>
+       <span style={{ fontWeight: "bold", marginTop:"6px" }}>
+       {t("WORKS_TABLE_TOTAL_AMOUNT")} :
+       </span>
+       <span style={{ marginLeft: "8px" }}>
+         <Amount customStyle={{ textAlign: "right", fontSize:"24px" }} value={parseFloat(totalAmount?.includes(",")? totalAmount.replace(",","") : totalAmount)} t={t} roundOff={false} rupeeSymbol={true}></Amount>
+       </span>
+     </div>
+     </div>
+     </React.Fragment>
   );
 };
 
