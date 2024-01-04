@@ -133,7 +133,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
         <tbody>
           {renderBody()}
           <tr>
-            <td colSpan={"4"}>
+            <td colSpan={"3"}>
             {error && <CardLabelError style={{width:"100%"}}>{t("MB_APPROVED_QTY_VALIDATION")}</CardLabelError>}
               <div style={{ display: "flex", flexDirection: "row" }}>
                 { (
@@ -194,7 +194,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                 )}
               </div>
             </td>
-            <td colSpan={"4"} style={{textAlign:"end"}}>
+            <td colSpan={"5"} style={{textAlign:"end"}}>
               {t("MB_SUBTOTAL")}: {parseFloat(total)?.toFixed(4)}
             </td>
           </tr>
