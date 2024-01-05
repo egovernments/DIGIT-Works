@@ -69,7 +69,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
     { label: t("MB_ONLY_AMOUNT"), key: "amount" },
   ];
 
-  const filteredArray = data?.allMeasurements.filter((item) => item.measurementNumber !== measurementNumber);
+  const filteredArray =  data?.allMeasurements && data?.allMeasurements?.length > 0 && data?.allMeasurements?.code !== "NO_MEASUREMENT_ROLL_FOUND"? data?.allMeasurements?.filter((item) => item.measurementNumber !== measurementNumber && item?.wfStatus === "APPROVED") : [];
 
   const sortedRows = (filteredArray || [])
     .sort((a, b) => {
@@ -83,7 +83,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
       mbref: {link:true, value:item?.measurementNumber, search:`?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${item?.measurementNumber}`, pathname:window.location.pathname},
       musterid: {link:true, value:findMusterRollNumber(data?.musterRolls, item?.measurementNumber, item?.additionalDetails?.startDate, item?.additionalDetails?.endDate), search:`?tenantId=${tenantId}&musterRollNumber=${findMusterRollNumber(data?.musterRolls, item?.measurementNumber, item?.additionalDetails?.startDate, item?.additionalDetails?.endDate)}`, pathname:`/${window.contextPath}/employee/attendencemgmt/view-attendance`},
       mbDate: Digit.Utils.pt.convertEpochToDate(item?.entryDate),
-      period: t("NA"),
+      period:  `${Digit.DateUtils.ConvertEpochToDate(item?.additionalDetails?.startDate)} - ${Digit.DateUtils.ConvertEpochToDate(item?.additionalDetails?.endDate)}` || t("NA"),
       status: formatStatus(item?.wfStatus),
       amount: item?.additionalDetails?.totalAmount,
     }));

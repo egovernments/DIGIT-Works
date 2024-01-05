@@ -108,7 +108,7 @@ export const getDefaultValues = (data, t) => {
   const measurementPeriod = `${Digit.DateUtils.ConvertEpochToDate(period?.startDate)} - ${Digit.DateUtils.ConvertEpochToDate(period?.endDate)}`;
   const musterRoll = typeof musterRollNumber == "string" ? musterRollNumber : "NA";
 
-  const uploadedDocs = {}
+  let uploadedDocs = {}
   allMeasurements?.[0]?.documents.forEach((doc,index)=>{
         if(doc?.fileStore){
             uploadedDocs[`${doc?.additionalDetails?.fileType}`] = [
@@ -129,6 +129,7 @@ export const getDefaultValues = (data, t) => {
             ]
         }
     })
+   uploadedDocs = window.location.href.includes("measurement/create") ?  {} : uploadedDocs;
   const contractDetails = {
     contractNumber,
     projectID,

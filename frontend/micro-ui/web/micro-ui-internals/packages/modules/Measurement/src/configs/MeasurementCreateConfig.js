@@ -132,7 +132,7 @@ export const CreateConfig = ({ defaultValue, measurement }) => {
           },
           {
             subHead: "",
-            forOnlyUpdate : "",
+            //forOnlyUpdate : "",
             body: [
               {
                 type: "component",
