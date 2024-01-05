@@ -34,8 +34,8 @@ const UpdateRevisionDetailedEstimate = () => {
 
     // const { isLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
-    if(isLoading)
-    return <Loader />
+    // if(isLoading)
+    // return <Loader />
 
     
     const propsToSend = {
