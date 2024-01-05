@@ -1,20 +1,26 @@
-package org.digit.exchange.web.models.fiscal;
+package org.digit.exchange.web.models;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import org.digit.exchange.constants.MessageType;
+import org.digit.exchange.exceptions.CustomException;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import jakarta.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-
 @Getter
 @Setter
-public class Payment extends FiscalMessage {
+@Embeddable
+public class Payment extends ExchangeMessage {
     @JsonProperty("name")
     private String name;
     @NotNull
@@ -29,11 +35,13 @@ public class Payment extends FiscalMessage {
     private JsonNode additionalDetails;
 
 
-    public Payment(){}
+    public Payment(){
+        this.setMessageType(MessageType.PAYMENT);
+    }
 
     public Payment(Estimate estimate, BigDecimal netAmount, BigDecimal grossAmount){
         super.copy(estimate);
-        this.setType("payment");
+        this.setMessageType(MessageType.PAYMENT);
         this.setNetAmount(netAmount);        
         this.setGrossAmount(grossAmount);        
     }
@@ -59,4 +67,15 @@ public class Payment extends FiscalMessage {
             return getGrossAmount();
         }
     }
+
+    static public Payment fromString(String json){
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		try {
+			return mapper.readValue(json, Payment.class);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			throw new CustomException("Error parsing Payment fromString", e);
+		}
+	}
 }
