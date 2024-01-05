@@ -123,13 +123,23 @@ const MeasureTable = (props) => {
         obj = { width: "1rem" };
         break;
       case 2:
-        if (((mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES" && mode !== "CREATERE" && mode !== "VIEWRE") ) (mode === "CREATERE" && tableKey === "NONSOR")? obj = { width: "77rem"} : obj = { width: "52%"}
+        if (((mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES" && mode !== "CREATERE" && mode !== "VIEWRE") ) obj = { width: "52%"}
         break;
       case 4:
         (((mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES" && mode !== "CREATERE" && mode !== "VIEWRE"))? obj = {width : "27rem"}  : obj = { width: "30%" };
         break;
-      case 5:
-        if(mode === "CREATERE" && tableKey === "NONSOR") obj = { width: "2rem" };
+      // case 5:
+      //   if(mode === "CREATERE" && tableKey === "NONSOR") obj = { width: "2rem" };
+      //   break;
+      case 3:
+        if(mode === "CREATERE" && mode === "NONSOR") obj = {width : "340rem"}
+        break;
+      case 7:
+        if(((mode === "VIEWRE" || mode === "CREATERE") && tableKey === "NONSOR") || (mode === "VIEW" || mode === "CREATE")) obj = { width: "130rem" };
+        break;
+      case 9:
+        (mode === "VIEWRE" || mode === "CREATERE") ? ((tableKey === "SOR" && mode === "CREATERE") ? obj = {width : "84rem"} : obj = { width: "130rem" } ) : obj = { width: "130rem" };
+        break;
       default:
         obj = { width: "27rem" };
         break;

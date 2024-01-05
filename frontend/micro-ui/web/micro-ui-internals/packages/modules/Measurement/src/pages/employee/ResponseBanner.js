@@ -59,14 +59,16 @@ const MeasurementServiceResponse = () => {
             <Card>
                 <div>
                     <Banner
+                        applicationNumber={mbReference}
                         successful={true}
                         message={message}
-                        applicationNumber={t("MB_REFERENCE_NUMBER") + " : "   + mbReference}
-                    />
+                        info={t("MB_REFERENCE_NUMBER")}
+                        whichSvg={"tick"}
+                            />
                 </div>
 
-                <CardText>{t("MB_SUCCESS_RESPONSE_TEXT")} {mbReference}</CardText>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}>
+                {/* <CardText>{t("MB_SUCCESS_RESPONSE_TEXT")} {mbReference}</CardText> */}
+                <div style={{ display: 'flex', gap: '25px' }}>
 
                 {/* <div className="link reponse-link">
                         <CreateLoiIcon style={{ width: '24px', height: '24px' }} />

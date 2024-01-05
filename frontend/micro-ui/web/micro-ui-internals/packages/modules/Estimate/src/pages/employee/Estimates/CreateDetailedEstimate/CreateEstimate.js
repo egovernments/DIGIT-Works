@@ -330,7 +330,7 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
   function validateData(data){
 
     // To validate either SOR or NON SOR must be present
-    if(((!data?.SORtable) && !(data?.NONSORtable)) || (data?.SORtable?.length <= 0 && data?.NONSORtable?.length <= 0))
+    if((!(data?.SORtable) && !(data?.NONSORtable)) || (data?.SORtable?.length <= 0 && data?.NONSORtable?.length <= 0) || (data?.SORtable?.length ===1 && data?.SORtable?.[0]?.category === "NON-SOR"))
     {  
       setShowToast({ error: true, label: "ERR_ATLEAST_SOR_OR_NON_SOR_PRESENT" });
       setShowModal(false);
