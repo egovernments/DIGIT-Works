@@ -60,13 +60,13 @@ const useMBDataForPB=({workOrderNumber, tenantId})=>{
 
     const { isLoading : billloading, data : BillData} = Digit.Hooks.useCustomAPIHook(requestCriteriaBill);
 
-    let ValidMeasurement =  data?.allMeasurements?.length > 0 ? data?.allMeasurements?.filter((ob) => ob?.wfStatus !== "DRAFTED" && ob?.wfStatus !== "REJECTED") : [];
+    let ValidMeasurement =  data?.allMeasurements?.length > 0 ? data?.allMeasurements?.filter((ob) => /*ob?.wfStatus !== "DRAFTED" && ob?.wfStatus !== "REJECTED"*/ ob?.wfStatus === "APPROVED") : [];
 
     const SOR = data && transformEstimateData(data?.estimate?.estimateDetails, data?.contract, "SOR", data?.measurement, ValidMeasurement);
 
      let totalMaterialAmount =  data ? SOR?.reduce((tot,ob) => {
         let amountDetails = RatesData?.MdmsRes?.["WORKS-SOR"]?.Rates?.filter((rate) => (rate?.sorId === ob?.sorId || rate?.sorId === ob?.sorCode))?.[0]?.amountDetails;
-        let amount = amountDetails?.reduce((total,item) => item?.heads?.includes("MA") ? (item?.amount + total) : total,0);
+        let amount = amountDetails?.reduce((total,item) => item?.heads?.includes("MA") || item?.heads?.includes("MHA") ? (item?.amount + total) : total,0);
         return (tot + amount * ob?.currentMBEntry)
     },0) : null;
 
