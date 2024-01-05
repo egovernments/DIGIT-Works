@@ -415,7 +415,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
       {t("WORKS_TABLE_TOTAL_AMOUNT")} :
       </span>
       <span style={{ marginLeft: "8px" }}>
-        <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={totalAmount || 0} t={t} roundOff={false} rupeeSymbol={true}></Amount>
+        <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={parseFloat(totalAmount)?.toFixed(2) || 0} t={t} roundOff={false} rupeeSymbol={true} sameDisplay={true}></Amount>
       </span>
     </div>
   </div>

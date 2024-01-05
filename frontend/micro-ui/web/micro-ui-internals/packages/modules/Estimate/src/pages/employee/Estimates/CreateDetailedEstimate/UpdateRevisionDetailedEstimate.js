@@ -10,28 +10,29 @@ const UpdateRevisionDetailedEstimate = () => {
      const isEdit = searchparams.get("isEdit");
      const estimateNumber = searchparams.get("estimateNumber");
 
-     const requestCriteria = {
-        url: "/mdms-v2/v1/_search",
-        body: {
-        MdmsCriteria: {
-            tenantId: tenantId,
-            moduleDetails: [
-            {
-                moduleName: "WORKS-SOR",
-                masterDetails: [
-                {
-                    name: "Rates",
-                    //filter: `[?(@.sorId=='${sorid}')]`,
-                },
-                ],
-            },
-            ],
-        },
-        },
-        changeQueryName:"ratesQuery"
-    };
+    //calling in main Create Estimate Screen
+    //  const requestCriteria = {
+    //     url: "/mdms-v2/v1/_search",
+    //     body: {
+    //     MdmsCriteria: {
+    //         tenantId: tenantId,
+    //         moduleDetails: [
+    //         {
+    //             moduleName: "WORKS-SOR",
+    //             masterDetails: [
+    //             {
+    //                 name: "Rates",
+    //                 //filter: `[?(@.sorId=='${sorid}')]`,
+    //             },
+    //             ],
+    //         },
+    //         ],
+    //     },
+    //     },
+    //     changeQueryName:"ratesQuery"
+    // };
 
-    const { isLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
+    // const { isLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
     if(isLoading)
     return <Loader />
@@ -42,7 +43,7 @@ const UpdateRevisionDetailedEstimate = () => {
         ProjectNumber : projectNumber,
         estimateNumber : estimateNumber,
         TenantId : tenantId,
-        RatesData : RatesData,
+        //RatesData : RatesData,
     }
     return (
         <CreateEstimate props={propsToSend}></CreateEstimate>

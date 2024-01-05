@@ -159,7 +159,7 @@ const fetchEstimateDetailsEdit = (isEdit, data, estimate, isCreateRevisionEstima
                 .map(item => ({ ...item, isActive: false }));
     let deletedOverheads = estimate?.estimateDetails?.filter(item => !overHeadsData.find(x => x.id === item.id) && item.category === "OVERHEAD")
                 .map(item => ({ ...item, isActive: false }));
-    
+    if(window.location.href.includes("estimate/create-revision-detailed-estimate" || "estimate/update-revision-detailed-estimate")) deletedSorNonSor = [];
     return [...detailedEstimates, ...overHeadsData, ...deletedSorNonSor, ...deletedOverheads];
 };
 
