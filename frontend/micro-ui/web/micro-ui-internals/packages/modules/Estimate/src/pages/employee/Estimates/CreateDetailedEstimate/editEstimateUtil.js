@@ -1,8 +1,8 @@
 import { transformEstimateObjects } from "../../../../../util/estimateConversion"
 
-export const editEstimateUtil = (estimate,uom,overheads,RatesData) => {
-    let SORtable = transformEstimateObjects(estimate, "SOR",RatesData)
-    let NONSORtable = transformEstimateObjects(estimate, "NON-SOR",RatesData)
+export const editEstimateUtil = (estimate,uom,overheads,RatesData, allEstimates) => {
+    let SORtable = transformEstimateObjects(estimate, "SOR",RatesData, allEstimates)
+    let NONSORtable = transformEstimateObjects(estimate, "NON-SOR",RatesData, allEstimates)
 
     if(!estimate || !uom || !overheads){
         return {}

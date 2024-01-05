@@ -77,6 +77,19 @@ const CreateEstimate = ({props}) => {
     },
   });
 
+ //fetching all the estimates for revision original values
+ const requestrevisionCriteria = {
+  url: "/estimate/v1/_search",
+  params : {tenantId : tenantId , estimateNumber : estimateNumber},
+  config : {
+    cacheTime : 0
+  },
+  changeQueryName: "allDetailedEstimate"
+};
+
+//fetching estimate data
+const {isLoading: isAllEstimateLoading, data: allEstimates} = Digit.Hooks.useCustomAPIHook(requestrevisionCriteria);
+
   actionMB = actionMB && (isEdit || isEditRevisionEstimate) && estimate && estimate?.wfStatus==="PENDINGFORCORRECTION" ? actionMB?.filter((ob) => ob?.name !== "DRAFT") : actionMB;
 
   const searchParams = {
@@ -209,6 +222,29 @@ const CreateEstimate = ({props}) => {
     }
   );
 
+  const requestCriteria = {
+    url: "/mdms-v2/v1/_search",
+    body: {
+    MdmsCriteria: {
+        tenantId: tenantId,
+        moduleDetails: [
+        {
+            moduleName: "WORKS-SOR",
+            masterDetails: [
+            {
+                name: "Rates",
+                //filter: `[?(@.sorId=='${sorid}')]`,
+            },
+            ],
+        },
+        ],
+    },
+    },
+    changeQueryName:"ratesQuery"
+};
+
+const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
+
   const moduleName = Digit.Utils.getConfigModuleName();
   let { isLoading: isConfigLoading, data: estimateFormConfig } = Digit.Hooks.useCustomMDMS(
     tenant,
@@ -244,7 +280,7 @@ const CreateEstimate = ({props}) => {
   const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", sorAndNonSorData);
   const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
 
-  const initialDefaultValues = editEstimateUtil(estimate, uom, overheads, props?.RatesData);
+  const initialDefaultValues = RatesData ? editEstimateUtil(estimate, uom, overheads, RatesData, allEstimates) : {};
 
   // useEffect(() => {
 
@@ -254,7 +290,7 @@ const CreateEstimate = ({props}) => {
     if (uom && estimate && overheads && (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate)) {
        setSessionFormData(initialDefaultValues)
     }
-  }, [estimate, uom, overheads]);
+  }, [estimate, uom, overheads, RatesData]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (!_.isEqual(formData, sessionFormData)) {
@@ -556,7 +592,7 @@ const CreateEstimate = ({props}) => {
     );
   }, [approvers]);
 
-  if (isConfigLoading || isEstimateLoading || isUomLoading || isOverheadsLoading || isDocLoading) {
+  if (isConfigLoading || isEstimateLoading || isUomLoading || isOverheadsLoading || isDocLoading || isAllEstimateLoading || isRatesLoading) {
     return <Loader />;
   }
   if ((isEdit || isCreateRevisionEstimate || isEditRevisionEstimate) && Object.keys(sessionFormData).length === 0) return <Loader />;

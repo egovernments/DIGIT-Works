@@ -285,7 +285,7 @@ const MeasureTable = (props) => {
             {(mode === "VIEWRE" || mode === "CREATERE") && (
               <>
                 <td>
-                  <Amount customStyle={{ textAlign: "right" }} value={row?.approvedQuantity?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.originalQty?.toFixed?.(2) || 0} t={t} roundOff={false}></Amount>
                 </td>
                 <td>
                   <Amount customStyle={{ textAlign: "right" }} value={row?.originalAmount || 0} t={t} roundOff={false}></Amount>
@@ -420,7 +420,7 @@ const MeasureTable = (props) => {
             {t("WORKS_TABLE_TOTAL_AMOUNT")} :
           </span>
           <span style={{ marginLeft: "8px" }}>
-            <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={sum?.toFixed?.(2) || 0} t={t} roundOff={false} rupeeSymbol={true}></Amount>
+            <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={parseFloat(sum)?.toFixed(2) || 0} t={t} roundOff={false} rupeeSymbol={true} sameDisplay={true}></Amount>
           </span>
         </div>
       </div>

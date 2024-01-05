@@ -92,7 +92,7 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
         // }
 
         SORAmount = SORAmount ? SORAmount : 0;
-        return Digit.Utils.dss.formatterWithoutRound((parseFloat(SORAmount)).toFixed(2),"number");        
+        return Digit.Utils.dss.formatterWithoutRound((parseFloat(SORAmount)).toFixed(2),"number")?.includes(".") ? Digit.Utils.dss.formatterWithoutRound((parseFloat(SORAmount)).toFixed(2),"number") : `${Digit.Utils.dss.formatterWithoutRound((parseFloat(SORAmount)).toFixed(2),"number")}.00`;        
     }
     
    

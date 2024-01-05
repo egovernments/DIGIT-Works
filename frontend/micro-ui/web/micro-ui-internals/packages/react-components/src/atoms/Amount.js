@@ -5,7 +5,7 @@ import React from "react";
 const Amount = ({t,roundOff=true,...props}) => {
     const value=roundOff?Math.round(props?.value):props?.value;
     return (
-        <p style={props?.customStyle}>{props?.rupeeSymbol ? "₹" : ""}{value !== undefined && value !== null ? `${Digit?.Utils?.dss?.formatterWithoutRound(value, "number")}` : t("ES_COMMON_NA")}</p>
+        <p style={props?.customStyle}>{props?.rupeeSymbol ? "₹" : ""}{value !== undefined && value !== null ? (props?.sameDisplay ? value : `${Digit?.Utils?.dss?.formatterWithoutRound(value, "number")}`) : t("ES_COMMON_NA")}</p>
     )
 }
 

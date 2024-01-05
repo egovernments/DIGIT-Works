@@ -42,9 +42,31 @@ const fetchData = (RatesData, sorid) => {
       return oldUnitRate;
     }
   };
+
+  const fetchOriginalQtyAndAmount = (allDetailedEstimate,estimateData, type) => {
+    let lineItems = allDetailedEstimate?.estimates?.filter((ob) => ob?.versionNumber === estimateData?.versionNumber - 1)?.[0]?.estimateDetails;
+    lineItems?.filter(e => e.category === "NON-SOR")
+    .forEach((item, index) => {
+      // Check if the "sorId" is not null or undefined
+      if (item.sorId !== null && item.sorId !== undefined && item?.sorId === "45") {
+          // Update the "sorId" with the desired sequence
+          item.sorId = (index + 1).toString();
+      }
+      });
+    const convertedOriginalObject = lineItems?.filter(e => e.category === type).reduce((acc, curr) => {
+        if (acc[curr.sorId]) {
+            acc[curr.sorId].push(curr);
+        } else {
+            acc[curr.sorId] = [curr];
+        }
+        return acc;
+    }, {});
+    return convertedOriginalObject;
+  }
   
 
-export const transformEstimateObjects = (estimateData, type, RatesData) => {
+export const transformEstimateObjects = (estimateData, type, RatesData, allDetailedEstimate) => {
+  const originalConvertedObject = fetchOriginalQtyAndAmount(allDetailedEstimate,estimateData, type );
     let lineItems = estimateData?.estimateDetails ? estimateData?.estimateDetails : estimateData;
     let isEstimateCreateorUpdate = /(estimate\/create-detailed-estimate|estimate\/update-detailed-estimate|estimate\/create-revision-detailed-estimate|estimate\/update-revision-detailed-estimate)/.test(window.location.href);
     lineItems?.filter(e => e.category === "NON-SOR")
@@ -81,7 +103,8 @@ export const transformEstimateObjects = (estimateData, type, RatesData) => {
         }));
         return {
             amount: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0),
-            originalAmount : convertedObject[key]?.[0]?.amountDetail?.[0]?.amount,
+            originalAmount : originalConvertedObject?.[key]?.reduce((total, item) => total + (item.isDeduction ? -item.amountDetail[0].amount : item.amountDetail[0].amount), 0) || convertedObject[key]?.[0]?.amountDetail?.[0]?.amount,
+            originalQty : originalConvertedObject?.[key]?.reduce((total, item) => total + (item.isDeduction ? -item.noOfunit : item.noOfunit), 0) || convertedObject?.[key]?.reduce((total, item) => total + (item.isDeduction ? -item.noOfunit : item.noOfunit), 0),
             consumedQ : measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0),
             sNo: index + 1,
             currentMBEntry:measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0),

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { transformEstimateObjects } from "../../util/estimateConversion";
 
-export const data = (projectDetails, estimateDetails, overheadDetails, revisionNumber) => {
+export const data = (projectDetails, estimateDetails, overheadDetails, revisionNumber, allDetailedEstimate) => {
   const [viewData, setViewData] = useState({ SOR: [], NONSOR: [] });
 
   const documents = estimateDetails?.additionalDetails?.documents
@@ -24,16 +24,16 @@ export const data = (projectDetails, estimateDetails, overheadDetails, revisionN
 
   useEffect(() => {
     const processArrays = () => {
-      if (estimateDetails) {
+      if (estimateDetails && allDetailedEstimate) {
         //Transforming the estimate search response according to formdata 
         setViewData({
-          SOR: transformEstimateObjects(estimateDetails, "SOR"),
-          NONSOR: transformEstimateObjects(estimateDetails, "NON-SOR"),
+          SOR: transformEstimateObjects(estimateDetails, "SOR", {}, allDetailedEstimate),
+          NONSOR: transformEstimateObjects(estimateDetails, "NON-SOR", {}, allDetailedEstimate),
         });
       }
     };
     processArrays();
-  }, [estimateDetails]);
+  }, [estimateDetails, allDetailedEstimate]);
 
   const getRedirectionCallback = () => {
     if(revisionNumber)
@@ -141,7 +141,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails, revisionN
             type: "COMPONENT",
             cardHeader: { value: "", inlineStyles: {} },
             component: "ViewAnalysisStatement",
-            props: {formData : {...estimateDetails, SORtable:  estimateDetails ? transformEstimateObjects(estimateDetails, "SOR") : []}}
+            props: {formData : {...estimateDetails, SORtable:  estimateDetails ? transformEstimateObjects(estimateDetails, "SOR",{}, allDetailedEstimate) : []}}
           },
           {
             type: "COMPONENT",
