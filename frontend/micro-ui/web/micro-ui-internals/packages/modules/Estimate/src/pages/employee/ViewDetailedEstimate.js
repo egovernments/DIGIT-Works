@@ -158,7 +158,7 @@ const ViewDetailedEstimate = () => {
     },
   };
 
-  const config = data(project, detailedEstimate?.estimates?.filter((ob) => revisionNumber ? (ob?.revisionNumber === revisionNumber) : ob?.businessService === "ESTIMATE")?.[0], overheadItems, revisionNumber, allDetailedEstimate);
+  const config = data(project, detailedEstimate?.estimates?.filter((ob) => revisionNumber ? (ob?.revisionNumber === revisionNumber) : !(ob?.revisionNumber))?.[0], overheadItems, revisionNumber, allDetailedEstimate);
 
   if (isProjectLoading || isDetailedEstimateLoading | isDetailedEstimatesLoading) return <Loader />;
 

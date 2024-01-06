@@ -106,7 +106,7 @@ const InboxMeasurementConfig = () => {
           ],
           label: "ACTION_TEST_MEASUREMENT_HEADER",
           logoIcon: {
-            component: "MeasurementMuktaIcon",
+            component: "MeasurementInboxIcon",
             customClass: "inbox-search-icon--projects",
           },
         },
