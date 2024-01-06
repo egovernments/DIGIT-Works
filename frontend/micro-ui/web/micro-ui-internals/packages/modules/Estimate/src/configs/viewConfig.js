@@ -158,7 +158,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails, revisionN
             type: "DOCUMENTS",
             documents: [
               {
-                title: "WORKS_RELEVANT_DOCUMENTS",
+                title: "ES_WORKS_RELEVANT_DOCUMENTS",
                 BS: "Works",
                 values: documents,
               },
@@ -250,7 +250,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails, revisionN
             type: "DOCUMENTS",
             documents: [
               {
-                title: "WORKS_RELEVANT_DOCUMENTS",
+                title: "ES_PROJECT_WORKS_RELEVANT_DOCUMENTS",
                 BS: "Works",
                 values: Projectdocuments,
               },

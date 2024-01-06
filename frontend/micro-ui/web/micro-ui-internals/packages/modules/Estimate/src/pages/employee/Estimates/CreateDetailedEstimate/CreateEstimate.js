@@ -419,21 +419,20 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
     const nonsorTable = data.NONSORtable;
   
     if (nonsorTable && nonsorTable.length > 0) {
-      const hasRequiredParams = nonsorTable.some(item => 
-        item.unitRate !== undefined && item.unitRate > 0 &&
-        item.description &&
-        item.uom &&
-        item.currentMBEntry !== undefined &&
-        item.currentMBEntry &&
-        (item.measures && item.measures.length > 0 && item.measures.every(measure => measure.description))
+      const hasAtLeastOneItemWithRequiredParams = nonsorTable.some(item =>
+       (item.unitRate !== undefined && item.unitRate > 0) ||
+        item.description ||
+        item.uom ||
+        (item.currentMBEntry !== undefined && item.currentMBEntry) ||
+        (item.measures && item.measures.length > 0 && item.measures.some(measure => measure.description))
       );
   
-      if (!hasRequiredParams) {
-        // If none of the items in the nonsorTable have the required parameters, remove the entire nonsorTable
+      if (!hasAtLeastOneItemWithRequiredParams) {
+        // If none of the items in the nonsorTable have at least one required parameter, remove the entire nonsorTable
         data.NONSORtable = [];
       }
     }
-  }
+}
 
   const onModalSubmit = async (_data, action) => {
     _data = Digit.Utils.trimStringsInObject(_data);
@@ -455,6 +454,7 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
     //make a util for updateEstimatePayload since there are some deviations
 
     if ((isEdit || isEditRevisionEstimate) && (estimateNumber  || revisionNumber)) {
+      debugger;
       await EstimateUpdateMutation(payload, {
         onError: async (error, variables) => {
           setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });

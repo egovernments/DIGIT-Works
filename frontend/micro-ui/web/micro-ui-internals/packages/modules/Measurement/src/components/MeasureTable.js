@@ -124,21 +124,35 @@ const MeasureTable = (props) => {
         break;
       case 2:
         if (((mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES" && mode !== "CREATERE" && mode !== "VIEWRE") ) obj = { width: "52%"}
+        if(mode === "CREATERE" && tableKey === "NONSOR") obj = { width: "45%"}
+        if((mode === "CREATEALL" || mode === "VIEWES" || mode === "VIEWRE") && tableKey === "NONSOR") obj = { width : "49%"}
         break;
       case 4:
         (((mode === "CREATEALL" || mode === "VIEWES" || mode === "CREATERE" || mode === "VIEWRE") && tableKey === "NONSOR") || (mode !== "CREATEALL" && mode !== "VIEWES" && mode !== "CREATERE" && mode !== "VIEWRE"))? obj = {width : "27rem"}  : obj = { width: "30%" };
+        if(mode === "CREATERE" && tableKey === "NONSOR") obj = { width : "73rem"}
+        if(mode === "CREATERE" && tableKey === "SOR") obj = {width : "26%"}
         break;
-      // case 5:
-      //   if(mode === "CREATERE" && tableKey === "NONSOR") obj = { width: "2rem" };
-      //   break;
+      case 5:
+        if(mode === "VIEWRE" && tableKey === "NONSOR") obj = { width: "0rem" };
+        obj = { width : "27rem"};
+        break;
       case 3:
-        if(mode === "CREATERE" && mode === "NONSOR") obj = {width : "340rem"}
+        if(mode === "CREATERE" && tableKey === "NONSOR") obj = {width : "70rem"}
+        if(mode === "CREATEALL" && tableKey === "NONSOR") obj = {width : "16rem"}
+        if(mode === "VIEWES" && tableKey === "NONSOR") obj = { width : "27rem"}
+        if(mode === "VIEWRE" && tableKey === "NONSOR") obj = { width : "27rem"}
         break;
       case 7:
         if(((mode === "VIEWRE" || mode === "CREATERE") && tableKey === "NONSOR") || (mode === "VIEW" || mode === "CREATE")) obj = { width: "130rem" };
+        if(mode === "CREATEALL" && tableKey === "SOR") obj = { width : "27rem"}
+        if(mode === "VIEWES" && tableKey === "SOR") obj = { width : "24rem" }
         break;
       case 9:
-        (mode === "VIEWRE" || mode === "CREATERE") ? ((tableKey === "SOR" && mode === "CREATERE") ? obj = {width : "84rem"} : obj = { width: "130rem" } ) : obj = { width: "130rem" };
+        if (mode === "VIEWRE" || mode === "CREATERE" && tableKey === "SOR")  obj = { width: "130rem" }
+        if (tableKey === "SOR" && mode === "CREATERE") obj = {width : "84rem"}
+        break;
+      case 11:
+        if (mode === "CREATERE" && mode === "SOR") obj = {width : "0rem"}
         break;
       default:
         obj = { width: "27rem" };
@@ -430,7 +444,7 @@ const MeasureTable = (props) => {
             {t("WORKS_TABLE_TOTAL_AMOUNT")} :
           </span>
           <span style={{ marginLeft: "8px" }}>
-            <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={parseFloat(sum)?.toFixed(2) || 0} t={t} roundOff={false} rupeeSymbol={true} sameDisplay={true}></Amount>
+            <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={Digit.Utils.dss.formatterWithoutRound(parseFloat(sum)?.toFixed(2), "number", undefined, true, undefined, 2) || 0} t={t} roundOff={false} rupeeSymbol={true} sameDisplay={true}></Amount>
           </span>
         </div>
       </div>
