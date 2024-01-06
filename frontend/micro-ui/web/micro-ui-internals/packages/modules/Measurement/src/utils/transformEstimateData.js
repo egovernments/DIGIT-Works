@@ -10,7 +10,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
   const lastMeasuredObject = allMeasurements?.filter?.((e) => e?.isActive)?.[0] || {};
   const transformedContract = transformContractObject(contract);
   const isMeasurement = measurement && Object.keys(measurement)?.length > 0;
-  let isMeasurementCreate = window.location.href.includes("/create")
+  let isMeasurementCreate = window.location.href.includes("measurement/create")
   const transformedEstimateObject = lineItems
     .filter((e) => e.category === type)
     .reduce((acc, curr) => {
