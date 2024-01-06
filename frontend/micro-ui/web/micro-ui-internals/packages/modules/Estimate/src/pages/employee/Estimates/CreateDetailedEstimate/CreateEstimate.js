@@ -454,7 +454,6 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
     //make a util for updateEstimatePayload since there are some deviations
 
     if ((isEdit || isEditRevisionEstimate) && (estimateNumber  || revisionNumber)) {
-      debugger;
       await EstimateUpdateMutation(payload, {
         onError: async (error, variables) => {
           setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
