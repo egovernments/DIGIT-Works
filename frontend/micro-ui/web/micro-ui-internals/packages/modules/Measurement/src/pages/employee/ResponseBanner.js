@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { EditIcon, AddNewIcon, InboxIcon , ArrowRightInbox , CreateLoiIcon, CardText } from "@egovernments/digit-ui-react-components";
+import { EditIcon, AddNewIcon, InboxIcon , ArrowRightInbox , CreateLoiIcon, CardText, ArrowLeftWhite } from "@egovernments/digit-ui-react-components";
 
 import { useHistory } from "react-router-dom";
 
@@ -77,7 +77,7 @@ const MeasurementServiceResponse = () => {
                         </Link>
                     </div> */}
                     <div className="link reponse-link" >
-                        <ArrowRightInbox style={{ width: '24px', height: '24px' }} />
+                        <ArrowLeftWhite fill="#F47738" style={{ display:"inline",marginRight:"0.5rem",marginTop:"3px"}} /> 
                         <Link to={`/${window.contextPath}/employee/measurement/inbox`}>
                             {t("MB_GO_INBOX")}
                         </Link>

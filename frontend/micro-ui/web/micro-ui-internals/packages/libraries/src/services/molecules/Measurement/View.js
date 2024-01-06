@@ -89,7 +89,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     additionalDetails: {
       documents: [
         {
-          title: "WORKS_RELEVANT_DOCUMENTS",
+          title: "WORKS_VIEW_RELEVANT_DOCUMENTS",
           BS: "Works",
           values: allDocuments?.map((document) => {
             if (!document.fileStoreId && !document.fileStore) return null;

@@ -37,7 +37,7 @@ export const formatter = (value, symbol, unit, commaSeparated = true, t) => {
   }
 };
 
-export const formatterWithoutRound = (value, symbol, unit, commaSeparated = true, t) => {
+export const formatterWithoutRound = (value, symbol, unit, commaSeparated = true, t, minimumFractionDigits = 0) => {
   if (!value && value !== 0) return "";
   switch (symbol) {
     case "amount":
@@ -49,7 +49,12 @@ export const formatterWithoutRound = (value, symbol, unit, commaSeparated = true
       if (!commaSeparated) {
         return parseInt(value);
       }
-      const Nformatter = new Intl.NumberFormat("en-IN");
+      let options = {};
+      if(minimumFractionDigits)
+      {
+        options.minimumFractionDigits = 2;
+      }
+      const Nformatter = new Intl.NumberFormat("en-IN", options);
       return Nformatter.format(value);
     case "percentage":
       const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });

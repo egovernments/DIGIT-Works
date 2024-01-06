@@ -32,7 +32,7 @@ const checkIfAllValidFiles = (files, regex, maxSize, t, maxFilesAllowed, state) 
     
     // added another condition files.length > 0 , for when  user uploads files more than maxFilesAllowed in one go the
     const uploadedFiles = state.length + 1
-    if ( maxFilesAllowed && (uploadedFiles  > maxFilesAllowed || files.length > maxFilesAllowed)) return [[{ valid: false, name: files[0]?.name?.substring(0, 15), error: t(`FILE_LIMIT_EXCEEDED`)}],true]
+    if ( maxFilesAllowed && (uploadedFiles  > maxFilesAllowed || files.length > maxFilesAllowed || (state.length + files.length) > maxFilesAllowed)) return [[{ valid: false, name: files[0]?.name?.substring(0, 15), error: t(`FILE_LIMIT_EXCEEDED`)}],true]
    
     // Adding a check for fileSize > maxSize
     // const maxSizeInBytes = maxSize * 1000000
