@@ -197,8 +197,8 @@ const CreatePurchaseBillForm = ({
         setInputFormData((prevState) => data)
         if(MBValidationData?.allMeasurementsIds?.length <= 0)
             setToast({show : true, label : t("WORKS_NOT_ALLOWED_TO_CREATED_PB_NO_MB"), error : true})
-        else if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills <=0)
-            setToast({show : true, label : t("WORKS_NOT_ALLOWED_TO_CREATED_PB_UNPAID"), error : true})
+        // else if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills <=0)
+        //     setToast({show : true, label : t("WORKS_NOT_ALLOWED_TO_CREATED_PB_UNPAID"), error : true})
         else if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills < data?.totalBillAmount)
          { 
             setIsPopupOpen(true);
