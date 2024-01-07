@@ -224,6 +224,34 @@ const calculate_expense = async (params: any, requestinfo: any, cachekey: any) =
   return getErrorCodes("WORKS", "NO_WB_CALCULATION_FOUND_FOR_GIVEN_MUSTER_ROLL");
 }
 
+
+const searchRates = async (tenantId: string, module: string, master: string, requestinfo: any) => {
+  const requestBody = {
+    RequestInfo: requestinfo.RequestInfo,
+    MdmsCriteria: {
+      tenantId: tenantId,
+      moduleDetails: [
+        {
+          moduleName: module,
+          masterDetails: [
+            {
+              name: master,
+            },
+          ],
+        },
+      ],
+    },
+  };
+  return await httpRequest(
+    url.resolve(config.host.mdmsV2, config.paths.mdmsV2_search),
+    requestBody,
+    null,
+    "post",
+    "",
+    { cachekey: `${tenantId}-${module}-${master}` }
+  ).then((response: { MdmsRes: any; })=>response.MdmsRes[module][master]);
+}
+
 export {
   create_pdf,
   create_pdf_and_upload,
@@ -236,5 +264,6 @@ export {
   search_contract,
   search_estimate,
   search_measurement,
-  calculate_expense
+  calculate_expense,
+  searchRates
 };
