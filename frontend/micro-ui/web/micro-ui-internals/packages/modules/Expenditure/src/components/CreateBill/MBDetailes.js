@@ -36,7 +36,7 @@ const MBDetailes = ({ formdata }) => {
   return (
         <div style={{marginTop:"2rem", marginBottom:"2rem"}}>
         <StatusTable>
-        <Row className="border-none" label={t("WORKS_MB_NUMBERS")} amountStyle={{overflow:"auto", whiteSpace:"nowrap", marginBottom:"-15px"}} text={getMBLinks(allMeasurementsIds, tenantId, workOrderNumber, history)} textStyle={{ overflow:"hidden", width:"40%", marginRight:"20%" }} />
+        <Row className="border-none" label={t("WORKS_MB_NUMBERS")} amountStyle={{overflow:"auto", whiteSpace:"nowrap", marginBottom:"-15px"}} text={allMeasurementsIds?.length > 0 ? getMBLinks(allMeasurementsIds, tenantId, workOrderNumber, history) : "NA"} textStyle={{ overflow:"hidden", width:"40%", marginRight:"20%" }} />
         <Row className="border-none" label={t("WORKS_TOTAL_MATERIAL_UTILIZED")} text={formattingNumber(totalMaterialAmount) || "0"} textStyle={{ whiteSpace: "pre" }} />
         <Row className="border-none" label={t("WORKS_TOTAL_PAID_AMOUNT")} text={formattingNumber(totalPaidAmountForSuccessfulBills) || "0"} textStyle={{ whiteSpace: "pre" }} />
         <Row className="border-none" label={t("WORKS_TOTAL_UNPAID_AMOUNT")} text={formattingNumber(totalMaterialAmount - totalPaidAmountForSuccessfulBills) || "0"} textStyle={{ whiteSpace: "pre" }} />
