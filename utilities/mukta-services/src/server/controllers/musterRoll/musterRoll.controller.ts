@@ -8,16 +8,17 @@ import {
   calculate_expense,
   search_contract,
   search_estimate,
-  search_mdms,
   search_measurement,
   search_muster,
+  searchRates
 } from "../../api/index";
 import {
- // convertObjectForMeasurment,
+  // convertObjectForMeasurment,
   errorResponder,
   extractEstimateIds,
   sendResponse,
 } from "../../utils/index";
+
 
 // Define the MusterRollController class
 class MusterRollController {
@@ -36,13 +37,13 @@ class MusterRollController {
     this.intializeRoutes();
   }
 
-  
+
 
   // Initialize routes for MeasurementController
   public intializeRoutes() {
     this.router.post(`${this.path}/_validate`, this.doValidations);
   }
- 
+
 
   // Helper function to calculate end date based on start date and days
   public getEndDate = (startDate: number, days: number) => {
@@ -72,55 +73,34 @@ class MusterRollController {
           ...defaultRequestInfo,
           criteria: {
             tenantId,
-            workOrderNumber: contractNumber ? [contractNumber] : null,
+            referenceId: contractNumber ? [contractNumber] : null,
           },
         },
         null,
         true
       ),
 
-      search_mdms(
-        tenantId.split(".")[0],
-        "works",
-        "MeasurementBFFConfig",
+      searchRates(
+        tenantId,
+        "WORKS-SOR",
+        "Rates",
         defaultRequestInfo
-      ),
-
-      search_mdms(
-        tenantId.split(".")[0],
-        "works",
-        "MeasurementCriteria",
-        defaultRequestInfo
-      ),
+      )
     ];
 
-   // if (measurementNumber) {
-      // Add measurement search promise if measurementNumber is provided
-      promises.push(
-        search_measurement(
-          {
-            ...defaultRequestInfo,
-            criteria: {
-              tenantId,
-             // measurementNumber,
-             workOrderNumber: contractNumber ? [contractNumber] : null,
-            },
-          },
-          null
-        )
-      );
-    //}
+ 
 
     // Execute promises in parallel
-    const [contract, allMeasurements, config, periodResponse, measurement] =
+    const [contract, allMeasurements, sorRates] =
       await Promise.all(promises);
 
     return {
       contract,
-      measurement,
-      config,
-      periodResponse,
+      // measurement,
+      // config,
+      // periodResponse,
       allMeasurements,
+      sorRates
     };
   };
 
@@ -141,23 +121,23 @@ class MusterRollController {
       ),
     ];
 
-  
+
 
     const [estimate] = await Promise.all(nextPromises);
 
     return { estimate };
   };
 
-  doValidations= async (
+  doValidations = async (
     request: express.Request,
     response: express.Response
   ) => {
     try {
       const { tenantId, RequestInfo, musterRollNumber } =
         request.body;
-        console.log(request.body);
+      console.log(request.body);
       const defaultRequestInfo = { RequestInfo };
-     
+
 
       const { musterRolls } =
         await this.getMusterRoll(
@@ -165,9 +145,9 @@ class MusterRollController {
           defaultRequestInfo,
           musterRollNumber
         );
-        
 
-        const { contract,  allMeasurements } =
+
+      const { contract, allMeasurements, sorRates } =
         await this.getContractandConfigs(
           tenantId,
           defaultRequestInfo,
@@ -175,81 +155,125 @@ class MusterRollController {
           null
         );
 
-        if (contract !== null && !contract?.notFound) {
-  
-          // Extract estimate IDs from the contract response
-          const allEstimateIds = extractEstimateIds(contract);
-          const estimateIds = allEstimateIds.join(",");
-  
-          var { estimate } = await this.getEstimate(
-            tenantId,
-            estimateIds,
-            defaultRequestInfo
-            );
+      var contractLineItems: any;
 
-          
-        }
-        
-        const {expenseCalculator }=await this.getExpenseCalculation(tenantId,defaultRequestInfo,[musterRolls.id]);
-        let musterRollValidationMapList = []; 
-     var isMbPresent:boolean=false;
-     //var labourCode=["US","SS","SD","HS"];
+      if (contract !== null && !contract?.notFound) {
 
-      if (musterRolls !== null && !musterRolls?.notFound) {
-        // Calculate the period based on the responses
-        var mrStartDate= musterRolls?.startDate;
-       var  mrEndDate= musterRolls?.endDate;
+        // Extract estimate IDs from the contract response
+        const allEstimateIds = extractEstimateIds(contract);
+        const estimateIds = allEstimateIds.join(",");
 
-      
-     for(var allMeasurement of allMeasurements){
-      var mbEndDate=allMeasurement.additionalDetails.endDate
-      var mbStartDate=allMeasurement.additionalDetails.startDate
-      if((mrStartDate>mbStartDate && mrEndDate>mbEndDate) ||(mrStartDate==mbStartDate && mrEndDate==mbEndDate) ){
-        isMbPresent=!isMbPresent;
-      
+        var { estimate } = await this.getEstimate(
+          tenantId,
+          estimateIds,
+          defaultRequestInfo
+        );
+        contractLineItems = contract.lineItems;
+
+
       }
-     }
-     if(isMbPresent === false){
-      let musterRollValidationMap = new TSMap<string, string>();
-      musterRollValidationMap.set("message","MB_PERIOD_IS_NOT_VALID_WRT_MR_PERIOD");
-      musterRollValidationMap.set("type","error");
-      musterRollValidationMapList.push(musterRollValidationMap)
-     }else{
-      // if(estimate.additionalDetails.sorSkillData?.[0].sorType=="L" 
-      // || labourCode.includes(estimate.additionalDetails.sorSkillData?.[0].sorSubType)){
-        
    
-        if(estimate.additionalDetails.labourMaterialAnalysis.labour == 0){
-          let musterRollValidationMap = new TSMap<string, string>();
-   
-          musterRollValidationMap.set("message","MB_LABOUR_UTILIZATION_AMOUNT_IS_ZERO")
-          musterRollValidationMap.set("type","error")
-              musterRollValidationMapList.push(musterRollValidationMap);
-   
-   
-        }
-   
-        if(estimate.additionalDetails.labourMaterialAnalysis.labour != 0 &&
-          expenseCalculator.estimates?.[0].netPayableAmount>
-          estimate.additionalDetails.labourMaterialAnalysis.labour){
-            let musterRollValidationMap= new TSMap<string, string>();
-            musterRollValidationMap.set("message","MB_LABOUR_UTILIZATION_AMOUNT_IS_LESS_THAN_WAGE_BILL")
-            musterRollValidationMap.set("type","warn")
-            musterRollValidationMapList.push(musterRollValidationMap);
-        }
-        
-      }
 
-    // }
 
+
+      const { expenseCalculator } = await this.getExpenseCalculation(tenantId, defaultRequestInfo, [musterRolls.id]);
+
+      // Logic for MR_MB Validation
+
+      var estimateDetails = estimate.estimateDetails;
+      let totalLabourRate = 0;
+      let musterRollValidationMapList = [];
+      var isMbPresent: boolean = false;
+      var labourRateGreaterThanZero:boolean=false;
+      var measurementNumber;
      
-        
-    
+      if (musterRolls !== null && !musterRolls?.notFound) {
+        var mrStartDate = musterRolls?.startDate;
+        var mrEndDate = musterRolls?.endDate;
+        let musterRollValidationMap = new TSMap<string, any>();
+      for (var estimateDetail of estimateDetails) {
+        if (estimateDetail.category == 'SOR') {
+          let sorMap = new TSMap<string, string>();
 
-     const jsonString = JSON.stringify(musterRollValidationMapList);
-     const musterRollValidation = JSON.parse(jsonString);
-  
-  
+          sorMap.set(estimateDetail.sorId, estimateDetail.id);
+          const filteredSorRates: any = sorRates.filter(
+            (rate: any) => rate.sorId === estimateDetail.sorId);
+          const amountDetailsWithLA: { type: string; heads: string; amount: number }[] = filteredSorRates
+            .flatMap((rate: any) => rate.amountDetails)
+            .filter((amountDetail: any) => amountDetail.heads.includes('LA'));
+
+          const foundContractItem = contractLineItems.find((lineItem: any) => {
+            return lineItem.estimateLineItemId === estimateDetail.id;
+          });
+          const contractRef: string = foundContractItem.contractLineItemRef;
+          console.log("Contract Reference ID",contractRef);
+          
+
+          for (var allMeasurement of allMeasurements) {
+            let currentValue;
+            if (allMeasurement.referenceId == musterRolls.referenceId && allMeasurement.wfStatus == 'APPROVED') {
+
+              var mbEndDate = allMeasurement.additionalDetails.endDate
+              var mbStartDate = allMeasurement.additionalDetails.startDate
+              
+              if ((mrStartDate >= mbStartDate && mbEndDate >= mrEndDate) || (mrStartDate == mbStartDate && mrEndDate == mbEndDate)) {
+                measurementNumber = allMeasurement.measurementNumber;
+                const matchingMeasure = allMeasurement.measures.find(
+                  (measure: any) => measure.targetId === contractRef
+                );
+                currentValue = (matchingMeasure.targetId === contractRef) ? matchingMeasure.currentValue : 0;
+                console.log("Current Value::;", currentValue)
+                totalLabourRate += (amountDetailsWithLA[0].amount * currentValue);
+                labourRateGreaterThanZero=totalLabourRate > 0 ? true :labourRateGreaterThanZero;
+                musterRollValidationMap.set("measurementNumber", measurementNumber);
+                 musterRollValidationMap.set("totalLabourRate",totalLabourRate);
+                isMbPresent = !isMbPresent;
+                break;
+                
+              }
+          
+           
+            }
+            if (currentValue != 0) {
+
+              console.log("Matching currentValue:", currentValue);
+            } else {
+              console.log("No matching currentValue found.");
+            }
+
+
+          }
+         
+
+
+
+        }
+
+      }
+      if (isMbPresent === false) {
+        musterRollValidationMap.set("message", "MB_PERIOD_IS_NOT_VALID_WRT_MR_PERIOD");
+        musterRollValidationMap.set("type", "error");
+        musterRollValidationMapList.push(musterRollValidationMap);
+
+      }else{
+        if (expenseCalculator?.totalAmount >
+          totalLabourRate) {
+
+          musterRollValidationMap.set("message", "MB_LABOUR_UTILIZATION_AMOUNT_IS_LESS_THAN_WAGE_BILL")
+          musterRollValidationMap.set("type", "warn")
+          musterRollValidationMapList.push(musterRollValidationMap);
+        }else{
+          musterRollValidationMapList.push(musterRollValidationMap);
+        }
+
+      }
+      
+      console.log(totalLabourRate)
+
+        const jsonString = JSON.stringify(musterRollValidationMapList);
+        const musterRollValidation = JSON.parse(jsonString);
+
+
 
         // Send the final response
         return sendResponse(
@@ -269,17 +293,17 @@ class MusterRollController {
         response
       );
     }
-    
+
   };
 
-   // Helper function to get contract and configuration data
-   getMusterRoll = async (
+  // Helper function to get contract and configuration data
+  getMusterRoll = async (
     tenantId: string,
     defaultRequestInfo: any,
     musterRollNumber: string,
     //measurementNumber: any = null
   ) => {
-   
+
     const params = {
       tenantId: tenantId,
       //fromDate: null,
@@ -288,39 +312,42 @@ class MusterRollController {
 
     // Execute promises in parallel
     var musterRolls =
-      await search_muster(params,defaultRequestInfo,"")
-      console.log(JSON.stringify(musterRolls));
+      await search_muster(params, defaultRequestInfo, "")
+    console.log(JSON.stringify(musterRolls));
 
     return {
       musterRolls
     };
   };
 
-  getExpenseCalculation =async(
+  getExpenseCalculation = async (
     tenantId: string,
     defaultRequestInfo: any,
     musterRollId: any,
-  ) =>{
-    var expenseCalculator=
+  ) => {
+    var expenseCalculator =
 
-   await calculate_expense(
-      null,
-      {
-        ...defaultRequestInfo,
-        criteria:{
-          tenantId,
-          musterRollId
-        }
+      await calculate_expense(
+        null,
+        {
+          ...defaultRequestInfo,
+          criteria: {
+            tenantId,
+            musterRollId
+          }
 
-      },null
-    )
+        }, null
+      )
     return {
       expenseCalculator
     };
-  
 
-    
+
+
   };
+
+
+
 }
 
 // Export the MeasurementController class
