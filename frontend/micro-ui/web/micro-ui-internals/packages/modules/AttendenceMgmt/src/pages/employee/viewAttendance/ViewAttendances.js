@@ -2,13 +2,17 @@ import React, {useState, useEffect} from "react";
 import { useTranslation } from "react-i18next";
 import { Header, Toast,WorkflowActions,Loader,ViewDetailsCard,MultiLink } from "@egovernments/digit-ui-react-components";
 import ApplicationDetails from "../../../../../templates/ApplicationDetails";
+import WarningPopUp from "../../../pageComponents/WarningPopUp";
+import { useHistory } from "react-router-dom";
 
 const ViewAttendance = () => {
   const { t } = useTranslation();
   const { tenantId, musterRollNumber } = Digit.Hooks.useQueryParams();
+  const history = useHistory()
   const [showToast, setShowToast] = useState(null);
   const [showEditTitle, setshowEditTitle] = useState(false);
   const [showDataError, setShowDataError] = useState(null)
+  const [showPopup, setShowPopUp] = useState(null);
   const [modify, setModify] = useState(false);
   const [cardState,setCardState] = useState([])
   const [saveAttendanceState, setSaveAttendanceState] = useState({ displaySave : false, updatePayload: []})
@@ -21,6 +25,17 @@ const ViewAttendance = () => {
   };
 
   const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.attendance.useViewAttendance(tenantId, { musterRollNumber },{},isStateChanged);
+
+  const requestCriteria = {
+    url : "/mukta-services/musterRollValidations/_validate",
+
+    body: {
+      "tenantId" : tenantId,
+      "musterRollNumber": musterRollNumber,
+    }
+
+  }
+  const {isLoading: isMbValidationLoading, data: mbValidationMr} = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
   const { isLoading: approverLoading, isErrorApprover, errorApprover, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: "MUSTER_ROLL_VERIFIER", isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
 
@@ -46,6 +61,7 @@ const ViewAttendance = () => {
                 title: '',
                 values: [
                   { title: "ATM_MUSTER_ROLL_ID", value: muster?.musterRollNumber || t("ES_COMMON_NA") },
+                  { title: "WORKS_MB_NUMBER", value: mbValidationMr?.musterRollValidation?.[0]?.measurementNumber || t("ES_COMMON_NA"), isValueLink: mbValidationMr?.musterRollValidation?.[0]?.measurementNumber ? true : false, navigateLinkHandler: () => history.push(`/${window.contextPath}/employee/measurement/view?tenantId=${tenantId}&workOrderNumber=${muster?.additionalDetails?.contractId}&mbNumber=${mbValidationMr?.musterRollValidation?.[0]?.measurementNumber}`) },
                   { title: "WORKS_ORDER_NO", value: muster?.additionalDetails?.contractId || t("ES_COMMON_NA") },
                   { title: "WORKS_PROJECT_ID", value: muster?.additionalDetails?.projectId || t("ES_COMMON_NA") },
                   { title: "PROJECTS_DESCRIPTION", value: muster?.additionalDetails?.projectDesc || t("ES_COMMON_NA")},
@@ -55,13 +71,14 @@ const ViewAttendance = () => {
                   { title: "MUSTER_ROLLS_NO_OF_WAGE_SEEKERS", value: muster?.individualEntries.length || t("ES_COMMON_NA") },
                   { title: "MUSTER_ROLLS_TOTAL_ATTENDANCE_IN_DAYS", value: muster?.individualEntries?.reduce((acc,row)=>acc + (row?.actualTotalAttendance || row?.modifiedTotalAttendance || 0),0) || "0" },
                   { title: "MUSTER_ROLLS_QUANTITY_OF_WORK_IN_DAYS", value: muster?.individualEntries?.reduce((acc,row)=>acc + ( row?.modifiedTotalAttendance || row?.actualTotalAttendance || 0),0) || "0" },
+                  { title: "WORKS_TOTAL_LABOUR_UTILIZATION", value:Digit.Utils.dss.formatterWithoutRound(isNaN(mbValidationMr?.musterRollValidation?.[0]?.totalLabourRate) ? 0 : parseFloat(mbValidationMr?.musterRollValidation?.[0]?.totalLabourRate).toFixed(2), "number",undefined, true, undefined, 2) || t("ES_COMMON_NA") },
                   { title: "MUSTER_TOTAL_WAGE_AMOUNT", value:Digit.Utils.dss.formatterWithoutRound(muster?.totalAmount, "number") || t("ES_COMMON_NA") },
                 ]
               }
         ])
-    }, [data])
+    }, [data,mbValidationMr])
 
-  if(isLoading || approverLoading) return <Loader />
+  if(isLoading || approverLoading || isMbValidationLoading) return <Loader />
   return (
     <React.Fragment>
       <div className={"employee-application-details"} >
@@ -111,6 +128,27 @@ const ViewAttendance = () => {
           setStateChanged={setStateChanged}
           moduleCode="attendencemgmt"
           editApplicationNumber={""}
+          WorflowValidation={(setShowModal) => {
+                try {
+                  let validationFlag = false;
+                  for (const validation of mbValidationMr?.musterRollValidation) {
+                      if (validation?.type === 'error') {
+                        validationFlag = true;
+                          setShowToast({error : true, label : t(validation?.message)});
+                          break;
+                      } else if (validation?.type === 'warn') {
+                        validationFlag = true;
+                          setShowPopUp({setShowWfModal:setShowModal, label:t(validation?.message)});
+                          break;
+                      }
+                  }
+                  if(!validationFlag)
+                    setShowModal(true);
+          
+              } catch (error) {
+                  showToast(error.message);
+              }
+          }}
           editCallback={() => {
             setModify(true);
             setshowEditTitle(true);
@@ -129,7 +167,10 @@ const ViewAttendance = () => {
           }}
         />
       }
-
+      {showPopup && <WarningPopUp setShowWfModal={showPopup?.setShowWfModal} label={showPopup?.label} setShowPopUp={setShowPopUp} t={t} />}
+      {showToast && (
+        <Toast error={showToast?.error} label={showToast?.label} isDleteBtn={true} onClose={() => closeToast()} />
+      )}
       {showDataError && (
         <Toast error={true} label={t("COMMON_ERROR_FETCHING_MUSTER_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
       )}
