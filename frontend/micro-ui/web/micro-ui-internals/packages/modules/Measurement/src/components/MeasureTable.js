@@ -108,6 +108,7 @@ const MeasureTable = (props) => {
 
   const { t } = useTranslation();
   const sum = parseFloat(fields?.reduce((acc, row) => acc + parseFloat(row?.amount), 0)?.toFixed?.(2)) || 0;
+  let formattedSum =  isNaN(sum) ? 0 : parseFloat(sum)?.toFixed(2)
 
   // register(tableKey)
 
@@ -444,7 +445,7 @@ const MeasureTable = (props) => {
             {t("WORKS_TABLE_TOTAL_AMOUNT")} :
           </span>
           <span style={{ marginLeft: "8px" }}>
-            <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={Digit.Utils.dss.formatterWithoutRound(parseFloat(sum)?.toFixed(2), "number", undefined, true, undefined, 2) || 0} t={t} roundOff={false} rupeeSymbol={true} sameDisplay={true}></Amount>
+            <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={Digit.Utils.dss.formatterWithoutRound(formattedSum, "number", undefined, true, undefined, 2) || 0} t={t} roundOff={false} rupeeSymbol={true} sameDisplay={true}></Amount>
           </span>
         </div>
       </div>
