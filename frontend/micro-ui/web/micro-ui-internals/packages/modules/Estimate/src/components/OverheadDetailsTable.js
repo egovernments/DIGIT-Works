@@ -93,6 +93,7 @@ const OverheadDetailsTable = ({ data }) => {
   };
 
   let totalAmount = data?.tableRows?.filter(innerArray => innerArray.includes("Total"))?.[0]?.[3] 
+  let formattedTotalAmount = isNaN(totalAmount) ? 0 : parseFloat(totalAmount)?.toFixed(2)
   return (
     <React.Fragment>
     <table className="table reports-table sub-work-table" style={tableStyle}>
@@ -136,7 +137,7 @@ const OverheadDetailsTable = ({ data }) => {
        {t("WORKS_TABLE_TOTAL_AMOUNT")} :
        </span>
        <span style={{ marginLeft: "8px" }}>
-         <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={parseFloat(totalAmount?.includes(",")? totalAmount.replace(",","") : parseFloat(totalAmount).toFixed(2))} sameDisplay={true} t={t} roundOff={false} rupeeSymbol={true}></Amount>
+         <Amount customStyle={{ textAlign: "right", fontSize:"24px", fontWeight:"700" }} value={Digit.Utils.dss.formatterWithoutRound(formattedTotalAmount, "number", undefined, true, undefined, 2) || 0} sameDisplay={true} t={t} roundOff={false} rupeeSymbol={true}></Amount>
        </span>
      </div>
      </div>
