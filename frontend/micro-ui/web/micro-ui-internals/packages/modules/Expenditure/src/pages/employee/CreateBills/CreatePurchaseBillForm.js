@@ -195,12 +195,14 @@ const CreatePurchaseBillForm = ({
     const onFormSubmit = async(data) => {
         data = Digit.Utils.trimStringsInObject(data)
         setInputFormData((prevState) => data)
-        if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills < data?.totalBillAmount)
+        if(MBValidationData?.allMeasurementsIds?.length <= 0)
+            setToast({show : true, label : t("WORKS_NOT_ALLOWED_TO_CREATED_PB_NO_MB"), error : true})
+        else if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills <=0)
+            setToast({show : true, label : t("WORKS_NOT_ALLOWED_TO_CREATED_PB_UNPAID"), error : true})
+        else if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills < data?.totalBillAmount)
          { 
             setIsPopupOpen(true);
          }
-        else if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills <=0 || MBValidationData?.allMeasurementsIds?.length <= 0)
-            setToast({show : true, label : t("WORKS_NOT_ALLOWED_TO_CREATED_PB"), error : true})
         else if(data?.totalBillAmount <= 0)
         setToast({show : true, label : t("EXPENDITURE_VALUE_CANNOT_BE_ZERO"), error : true})
         else
