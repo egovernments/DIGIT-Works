@@ -147,7 +147,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails, revisionN
             type: "COMPONENT",
             cardHeader: { value: "", inlineStyles: {} },
             component: "ViewTotalEstAmount",
-            props: {mode: "VIEWES", detail : {...estimateDetails, value:estimateDetails?.additionalDetails?.totalEstimatedAmount} }
+            props: {mode: "VIEWES", detail : {...estimateDetails, value:estimateDetails?.additionalDetails?.totalEstimatedAmount, showTitle:"TOTAL_ESTIMATE_AMOUNT"} }
           }
         ],
       },
