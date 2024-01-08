@@ -507,13 +507,14 @@ async function search_mdms_terms_and_conditions(tenantId, requestinfo) {
   });
 }
 
-async function search_measurementBookDetails(tenantId, requestinfo,contractNumber, measurementBookNumber) {
+async function search_measurementBookDetails(tenantId, requestinfo,contractNumber, measurementBookNumber, key) {
 
   const searchEndpoint = config.paths.measurement_book_search;
   const data = {
     "contractNumber": contractNumber,
     "measurementNumber": measurementBookNumber,
-    "tenantId": tenantId
+    "tenantId": tenantId,
+    "key": key
   }
   return await axios({
     method: "post",
