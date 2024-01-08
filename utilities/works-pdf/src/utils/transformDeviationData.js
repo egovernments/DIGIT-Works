@@ -6,7 +6,6 @@ const transformDeviationData = (data) => {
     const estimates = {};
     estimates["estimateNumber"] = data.estimates[0].estimateNumber;
     estimates["projectNumber"] = data.estimates[0].additionalDetails.projectNumber;
-    estimates["projectName"] = data.estimates[0].additionalDetails.projectName;
     estimates["description"] = data.estimates[0].description;
     estimates["revisionNumber"] = data.estimates[0].revisionNumber;
     estimates["tenantId"] = data.estimates[0].tenantId;
@@ -35,7 +34,7 @@ const transformDeviationData = (data) => {
                 unitRate,
                 quantity,
                 amount,
-                deviation: "NO",
+                deviation: "Excess",
                 originalQuantity: 0,
                 originalAmount: 0
             };
@@ -52,6 +51,8 @@ const transformDeviationData = (data) => {
 
     const lastIndex = data.estimates.length - 1;
 const originalEstimateDetails = data.estimates[lastIndex].estimateDetails;
+estimates["projectName"] = data.estimates[lastIndex].additionalDetails.projectName;
+
 
 for (const estimateDetail of originalEstimateDetails) {
     if (estimateDetail.category === "OVERHEAD") {
