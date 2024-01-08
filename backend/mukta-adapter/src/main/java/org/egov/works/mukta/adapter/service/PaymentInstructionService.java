@@ -54,7 +54,8 @@ public class PaymentInstructionService {
         log.info("Processing payment instruction");
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
         Disbursement disbursementRequest = getBeneficiariesFromPayment(paymentRequest, mdmsData);
-//        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+        log.info("Disbursement request is " + disbursementRequest);
+        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
         muktaAdaptorProducer.push("egf-adapter-payment-create", disbursementRequest);
     }
 
@@ -66,7 +67,7 @@ public class PaymentInstructionService {
             throw new CustomException("BILLS_NOT_FOUND", "No bills found for the payment instruction");
 
         billList = filterBillsPayableLineItemByPayments(paymentRequest.getPayment(), billList);
-
+        log.info("Bills are filtered based on line item status, and sending back."+ billList);
         List<Beneficiary> beneficiaryList = piEnrichment.getBeneficiariesFromBills(billList, paymentRequest, mdmsData);
 
         if (beneficiaryList == null || beneficiaryList.isEmpty())
@@ -99,13 +100,16 @@ public class PaymentInstructionService {
         List<Individual> individuals = new ArrayList<>();
         // Get bank account details by beneficiary ids
         List<BankAccount> bankAccounts = bankAccountUtils.getBankAccountsByIdentifier(paymentRequest.getRequestInfo(), beneficiaryIds, paymentRequest.getPayment().getTenantId());
+        log.info("Bank accounts fetched for the beneficiary ids : " + bankAccounts);
         // Get organizations details
         if (orgIds != null && !orgIds.isEmpty()) {
             organizations = organisationUtils.getOrganisationsById(paymentRequest.getRequestInfo(), orgIds, paymentRequest.getPayment().getTenantId());
+            log.info("Organizations fetched for the org ids : " + organizations);
         }
         // Get bank account details by beneficiary ids
         if (individualIds != null && !individualIds.isEmpty()) {
             individuals = individualUtils.getIndividualById(paymentRequest.getRequestInfo(), individualIds, paymentRequest.getPayment().getTenantId());
+            log.info("Individuals fetched for the individual ids : " + individuals);
         }
         // Enrich PI request with beneficiary bankaccount details
         Disbursement disbursementRequest = piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations, paymentRequest);

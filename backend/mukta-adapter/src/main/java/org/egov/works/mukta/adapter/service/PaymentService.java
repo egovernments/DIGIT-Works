@@ -45,12 +45,13 @@ public class PaymentService {
     public void createPaymentFromBills(RequestInfo requestInfo) {
         // Fetches bill for which payment is not yet created
         List<Bill> bills = fetchBills(requestInfo);
-
+        log.info("Bills fetched: " + bills);
         for (Bill bill : bills) {
             String wfStatus = bill.getWfStatus();
             if (bill.getPaymentStatus() == null && wfStatus != null && wfStatus.equalsIgnoreCase(Constants.APPROVED_STATUS)) {
                 // Get payment request from bill
                 PaymentRequest paymentRequest = getPaymentRequest(requestInfo, bill);
+                log.info("Payment request: " + paymentRequest);
                 // Payment create call
                 List<Payment> payments = createPayment(paymentRequest);
 

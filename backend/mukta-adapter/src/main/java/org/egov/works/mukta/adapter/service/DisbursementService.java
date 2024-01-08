@@ -34,10 +34,12 @@ public class DisbursementService {
         Set<String> ids = new HashSet<>();
         ids.add(disbursementRequest.getTargetId());
         List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, ids, "pg.citya");
+        log.info("Payments fetched for the disbursement request : " + payments);
         if (payments == null || payments.isEmpty()) {
             throw new CustomException("PAYMENT_NOT_FOUND", "Payment not found for the given disbursement request");
         }
         Payment payment = payments.get(0);
+        log.info("Updating the payment status for the payments : " + payment);
         updatePaymentStatus(payment, disbursementRequest, requestInfo);
     }
 
