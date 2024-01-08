@@ -175,7 +175,7 @@ const search_estimate = async (params: any, requestinfo: any, cachekey: any) => 
   // Check if there are estimates in the response.
   if (estimateResponse?.estimates?.length > 0) {
     // If estimates are found, return the first one.
-    return estimateResponse?.estimates?.[0];
+    return estimateResponse?.estimates?.filter((es : any) => es?.wfStatus==="APPROVED")?.[0];
   }
 
   // If no estimates are found, return an error code.

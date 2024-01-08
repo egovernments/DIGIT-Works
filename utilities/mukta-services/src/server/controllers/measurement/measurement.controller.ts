@@ -226,13 +226,14 @@ class MeasurementController {
     defaultRequestInfo: any,
     period: any,
     contractNumber: string,
+    estimateNumber: string,
     key: string
   ) => {
     const nextPromises = [
       search_estimate(
         {
           tenantId,
-          ids,
+          estimateNumber : estimateNumber,
         },
         defaultRequestInfo,
         ids
@@ -253,8 +254,8 @@ class MeasurementController {
       );
     }
 
-    if(key === "View")
-    {
+    // if(key === "View")
+    // {
       nextPromises.push(
         search_muster(
           {
@@ -265,7 +266,7 @@ class MeasurementController {
           key
         )
       );
-    }
+   // }
 
     let [estimate, muster, musterRolls] = await Promise.all(nextPromises);
 
@@ -309,6 +310,7 @@ class MeasurementController {
           defaultRequestInfo,
           period,
           contractNumber,
+          contract?.additionalDetails?.estimateNumber,
           key
         );
 
