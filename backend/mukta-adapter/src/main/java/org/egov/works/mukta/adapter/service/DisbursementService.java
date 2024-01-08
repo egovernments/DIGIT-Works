@@ -22,10 +22,12 @@ import java.util.Set;
 @Service
 public class DisbursementService {
     private final BillUtils billUtils;
+
     @Autowired
     public DisbursementService(BillUtils billUtils) {
         this.billUtils = billUtils;
     }
+
     public void processDisbursement(Disbursement disbursementRequest) {
         log.info("Processing disbursement request");
         RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
@@ -40,7 +42,7 @@ public class DisbursementService {
     }
 
     private void updatePaymentStatus(Payment payment, Disbursement disbursementRequest, RequestInfo requestInfo) {
-        HashMap<String,Status> lineItemIdStatusMap = getLineItemIdStatusMap(disbursementRequest);
+        HashMap<String, Status> lineItemIdStatusMap = getLineItemIdStatusMap(disbursementRequest);
         payment.getBills().forEach(bill -> bill.getBillDetails().forEach(billDetail -> billDetail.getPayableLineItems().forEach(payableLineItem -> payableLineItem.setStatus(PaymentStatus.INITIATED))));
         updatePaymentStatusForPartial(payment, requestInfo);
     }
@@ -62,7 +64,7 @@ public class DisbursementService {
 
     private boolean updatePaymentBills(Payment payment) {
         boolean updatePaymentStatus = false;
-        for (PaymentBill bill: payment.getBills()) {
+        for (PaymentBill bill : payment.getBills()) {
             boolean updateBillStatus = updateBillDetails(bill);
             if (updateBillStatus) {
                 bill.setStatus(PaymentStatus.PARTIAL);
@@ -74,7 +76,7 @@ public class DisbursementService {
 
     private boolean updateBillDetails(PaymentBill bill) {
         boolean updateBillStatus = false;
-        for (PaymentBillDetail billDetail: bill.getBillDetails()) {
+        for (PaymentBillDetail billDetail : bill.getBillDetails()) {
             boolean updateBillDetailsStatus = updateLineItems(billDetail);
             if (updateBillDetailsStatus) {
                 billDetail.setStatus(PaymentStatus.PARTIAL);

@@ -1,20 +1,20 @@
 package org.egov.works.mukta.adapter.web.models;
 
-import lombok.*;
-
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.Getter;
+import lombok.Setter;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.web.models.enums.MessageType;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -41,17 +41,27 @@ public class Allocation extends ExchangeMessage {
     private JsonNode additionalDetails;
 
 
-
-    public Allocation(){
+    public Allocation() {
         this.setMessageType(MessageType.ALLOCATION);
     }
 
-    public Allocation(Sanction sanction, BigDecimal netAmount, BigDecimal grossAmount){
+    public Allocation(Sanction sanction, BigDecimal netAmount, BigDecimal grossAmount) {
         super.copy(sanction);
         this.setMessageType(MessageType.ALLOCATION);
         this.setSanction(sanction);
         this.setNetAmount(netAmount);
         this.setGrossAmount(grossAmount);
+    }
+
+    static public Allocation fromString(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            return mapper.readValue(json, Allocation.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new CustomException("Error parsing Allocation fromString", e.toString());
+        }
     }
 
     @JsonIgnore
@@ -73,17 +83,6 @@ public class Allocation extends ExchangeMessage {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getGrossAmount();
-        }
-    }
-
-    static public Allocation fromString(String json){
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        try {
-            return mapper.readValue(json, Allocation.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new CustomException("Error parsing Allocation fromString", e.toString());
         }
     }
 }

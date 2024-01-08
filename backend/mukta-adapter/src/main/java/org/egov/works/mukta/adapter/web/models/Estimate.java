@@ -36,26 +36,37 @@ public class Estimate extends ExchangeMessage {
     @JsonProperty("additional_details")
     private JsonNode additionalDetails;
 
-    public Estimate(){
+    public Estimate() {
         this.setMessageType(MessageType.ESTIMATE);
     }
 
-    public Estimate(Program program, ZonedDateTime startDate, ZonedDateTime endDate, BigDecimal netAmount, BigDecimal grossAmount){
+    public Estimate(Program program, ZonedDateTime startDate, ZonedDateTime endDate, BigDecimal netAmount, BigDecimal grossAmount) {
         super.copy(program);
         this.setProgram(program);
         this.startDate = startDate;
         this.endDate = endDate;
-        this.setNetAmount(netAmount);        
-        this.setGrossAmount(netAmount);        
-        this.setMessageType( MessageType.ESTIMATE);
+        this.setNetAmount(netAmount);
+        this.setGrossAmount(netAmount);
+        this.setMessageType(MessageType.ESTIMATE);
+    }
+
+    static public Estimate fromString(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            return mapper.readValue(json, Estimate.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new CustomException("Error parsing Estimate fromString", e.toString());
+        }
     }
 
     @JsonIgnore
     public BigDecimal getTotalNetAmount() {
         if (estimates != null && !estimates.isEmpty()) {
             return estimates.stream()
-                           .map(Estimate::getNetAmount)
-                           .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .map(Estimate::getNetAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getNetAmount();
         }
@@ -65,21 +76,10 @@ public class Estimate extends ExchangeMessage {
     public BigDecimal getTotalGrossAmount() {
         if (estimates != null && !estimates.isEmpty()) {
             return estimates.stream()
-                           .map(Estimate::getGrossAmount)
-                           .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .map(Estimate::getGrossAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getGrossAmount();
         }
     }
-
-    static public Estimate fromString(String json){
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		try {
-			return mapper.readValue(json, Estimate.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			throw new CustomException("Error parsing Estimate fromString", e.toString());
-		}
-	}
 }

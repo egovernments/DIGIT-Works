@@ -58,15 +58,26 @@ public class ExchangeMessage {
     @JsonProperty("status")
     private Status status;
 
-    public ExchangeMessage(){
+    public ExchangeMessage() {
         UUID uuid = UUID.randomUUID();
         this.id = uuid.toString();
         this.schemaVersion = "1.0.0";
     }
 
-    public void copy(ExchangeMessage other){
+    static public ExchangeMessage fromString(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            return mapper.readValue(json, ExchangeMessage.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new CustomException("Error parsing ExchangeMessage fromString", e.toString());
+        }
+    }
+
+    public void copy(ExchangeMessage other) {
         this.schemaVersion = other.schemaVersion;
-        this.functionCode= other.functionCode;
+        this.functionCode = other.functionCode;
         this.administrationCode = other.administrationCode;
         this.locationCode = other.locationCode;
         this.programCode = other.programCode;
@@ -75,19 +86,8 @@ public class ExchangeMessage {
         this.sourceOfFundCode = other.sourceOfFundCode;
         this.targetSegmentCode = other.targetSegmentCode;
         this.startDate = other.startDate;
-        this.netAmount=other.netAmount;
-        this.grossAmount=other.grossAmount;
-        this.currencyCode=other.currencyCode;
+        this.netAmount = other.netAmount;
+        this.grossAmount = other.grossAmount;
+        this.currencyCode = other.currencyCode;
     }
-
-    static public ExchangeMessage fromString(String json){
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		try {
-			return mapper.readValue(json, ExchangeMessage.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			throw new CustomException("Error parsing ExchangeMessage fromString", e.toString());
-		}
-	}
 }

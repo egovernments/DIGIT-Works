@@ -7,6 +7,7 @@ import org.egov.common.models.individual.Individual;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
+import org.egov.works.mukta.adapter.kafka.MuktaAdaptorProducer;
 import org.egov.works.mukta.adapter.util.*;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
@@ -35,9 +36,10 @@ public class PaymentInstructionService {
     private final IndividualUtils individualUtils;
     private final MdmsUtil mdmsUtil;
     private final ProgramServiceUtil programServiceUtil;
+    private final MuktaAdaptorProducer muktaAdaptorProducer;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, ProgramServiceUtil programServiceUtil) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -45,34 +47,36 @@ public class PaymentInstructionService {
         this.individualUtils = individualUtils;
         this.mdmsUtil = mdmsUtil;
         this.programServiceUtil = programServiceUtil;
+        this.muktaAdaptorProducer = muktaAdaptorProducer;
     }
 
     public void processPaymentInstruction(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction");
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
-        Disbursement disbursementRequest = getBeneficiariesFromPayment(paymentRequest,mdmsData);
-        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+        Disbursement disbursementRequest = getBeneficiariesFromPayment(paymentRequest, mdmsData);
+//        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+        muktaAdaptorProducer.push("egf-adapter-payment-create", disbursementRequest);
     }
 
     private Disbursement getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
         log.info("Started executing getBeneficiariesFromPayment");
         // Get the list of bills based on payment request
-        List<Bill> billList =  billUtils.fetchBillsFromPayment(paymentRequest);
-        if(billList == null || billList.isEmpty())
+        List<Bill> billList = billUtils.fetchBillsFromPayment(paymentRequest);
+        if (billList == null || billList.isEmpty())
             throw new CustomException("BILLS_NOT_FOUND", "No bills found for the payment instruction");
 
         billList = filterBillsPayableLineItemByPayments(paymentRequest.getPayment(), billList);
 
         List<Beneficiary> beneficiaryList = piEnrichment.getBeneficiariesFromBills(billList, paymentRequest, mdmsData);
 
-        if(beneficiaryList == null || beneficiaryList.isEmpty())
+        if (beneficiaryList == null || beneficiaryList.isEmpty())
             throw new CustomException("BENEFICIARIES_NOT_FOUND", "No beneficiaries found for the payment instruction");
 
         // Get all beneficiary ids from pi request
         List<String> individualIds = new ArrayList<>();
         List<String> orgIds = new ArrayList<>();
-        for(Bill bill: billList) {
-            for (BillDetail billDetail: bill.getBillDetails()) {
+        for (Bill bill : billList) {
+            for (BillDetail billDetail : bill.getBillDetails()) {
                 Party payee = billDetail.getPayee();
                 if (payee != null && payee.getType().equals(Constants.PAYEE_TYPE_INDIVIDUAL)) {
                     individualIds.add(billDetail.getPayee().getIdentifier());
@@ -87,7 +91,7 @@ public class PaymentInstructionService {
     private Disbursement getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds) {
         log.info("Started executing getBeneficiariesEnrichedData");
         List<String> beneficiaryIds = new ArrayList<>();
-        for (Beneficiary beneficiary :beneficiaryList) {
+        for (Beneficiary beneficiary : beneficiaryList) {
             beneficiaryIds.add(beneficiary.getBeneficiaryId());
         }
 
@@ -104,7 +108,7 @@ public class PaymentInstructionService {
             individuals = individualUtils.getIndividualById(paymentRequest.getRequestInfo(), individualIds, paymentRequest.getPayment().getTenantId());
         }
         // Enrich PI request with beneficiary bankaccount details
-        Disbursement disbursementRequest = piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations,paymentRequest);
+        Disbursement disbursementRequest = piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations, paymentRequest);
         log.info("Beneficiaries are enriched, sending back beneficiaryList");
         return disbursementRequest;
     }
@@ -123,7 +127,7 @@ public class PaymentInstructionService {
                 .map(BillDetail::getPayableLineItems)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(LineItem::getId, Function.identity()));
-        for (PaymentBill paymentBill: payment.getBills()) {
+        for (PaymentBill paymentBill : payment.getBills()) {
             for (PaymentBillDetail paymentBillDetail : paymentBill.getBillDetails()) {
                 List<LineItem> lineItems = new ArrayList<>();
                 for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {

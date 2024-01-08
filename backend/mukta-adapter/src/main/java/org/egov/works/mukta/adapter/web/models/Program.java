@@ -19,24 +19,24 @@ public class Program extends ExchangeMessage {
     @JsonProperty("parent")
     private Program parent;
     @JsonProperty("objectives")
-    private String[] objectives;    
+    private String[] objectives;
     @JsonProperty("audit_details")
     private AuditDetails auditDetails;
     @JsonProperty("additional_details")
     private JsonNode additionalDetails;
 
-    public Program(){
+    public Program() {
         this.setMessageType(MessageType.PAYMENT);
     }
 
-    static public Program fromString(String json){
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		try {
-			return mapper.readValue(json, Program.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			throw new CustomException("Error parsing Program fromString", e.toString());
-		}
-	}
+    static public Program fromString(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            return mapper.readValue(json, Program.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new CustomException("Error parsing Program fromString", e.toString());
+        }
+    }
 }

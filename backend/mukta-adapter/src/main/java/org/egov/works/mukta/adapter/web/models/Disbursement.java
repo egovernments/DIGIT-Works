@@ -11,7 +11,6 @@ import lombok.Setter;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.web.models.enums.MessageType;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -41,24 +40,35 @@ public class Disbursement extends ExchangeMessage {
     private JsonNode additionalDetails;
 
 
-    public Disbursement(){
+    public Disbursement() {
         this.setMessageType(MessageType.DISBURSEMENT);
     }
 
-    public Disbursement(Allocation allocation, BigDecimal netAmount, BigDecimal grossAmount){
+    public Disbursement(Allocation allocation, BigDecimal netAmount, BigDecimal grossAmount) {
         super.copy(allocation);
         this.setMessageType(MessageType.DISBURSEMENT);
         this.setBillCount(0);
-        this.setNetAmount(netAmount);        
-        this.setNetAmount(grossAmount);        
+        this.setNetAmount(netAmount);
+        this.setNetAmount(grossAmount);
+    }
+
+    static public Disbursement fromString(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            return mapper.readValue(json, Disbursement.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new CustomException("Error parsing Bill fromString", e.toString());
+        }
     }
 
     @JsonIgnore
     public BigDecimal getTotalNetAmount() {
         if (bills != null && !bills.isEmpty()) {
             return bills.stream()
-                           .map(Disbursement::getNetAmount)
-                           .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .map(Disbursement::getNetAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getNetAmount();
         }
@@ -68,8 +78,8 @@ public class Disbursement extends ExchangeMessage {
     public BigDecimal getTotalGrossAmount() {
         if (bills != null && !bills.isEmpty()) {
             return bills.stream()
-                           .map(Disbursement::getGrossAmount)
-                           .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .map(Disbursement::getGrossAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getGrossAmount();
         }
@@ -83,15 +93,4 @@ public class Disbursement extends ExchangeMessage {
             return billCount;
         }
     }
-
-    static public Disbursement fromString(String json){
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		try {
-			return mapper.readValue(json, Disbursement.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			throw new CustomException("Error parsing Bill fromString", e.toString());
-		}
-	}
 }

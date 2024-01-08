@@ -1,10 +1,8 @@
 package org.egov.works.mukta.adapter.service;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;

@@ -14,18 +14,18 @@ import org.egov.tracer.model.CustomException;
 @Builder
 public class LanguageValue {
     @JsonProperty("language")
-	private String language;
+    private String language;
     @JsonProperty("value")
-	private String value;
+    private String value;
 
-    static public LanguageValue fromString(String json){
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		try {
-			return mapper.readValue(json, LanguageValue.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			throw new CustomException("Error parsing LanguageValue fromString", e.toString());
-		}
-	}
+    static public LanguageValue fromString(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            return mapper.readValue(json, LanguageValue.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new CustomException("Error parsing LanguageValue fromString", e.toString());
+        }
+    }
 }

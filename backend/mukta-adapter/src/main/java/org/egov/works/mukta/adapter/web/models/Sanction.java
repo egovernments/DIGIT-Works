@@ -34,24 +34,35 @@ public class Sanction extends ExchangeMessage {
     @JsonProperty("additional_details")
     private JsonNode additionalDetails;
 
-    public Sanction(){
+    public Sanction() {
         this.setMessageType(MessageType.SANCTION);
     }
 
-    public Sanction(Estimate estimate, BigDecimal netAmount, BigDecimal grossAmount){
+    public Sanction(Estimate estimate, BigDecimal netAmount, BigDecimal grossAmount) {
         super.copy(estimate);
         this.setMessageType(MessageType.SANCTION);
         this.setProgram(estimate.getProgram());
-        this.setNetAmount(netAmount);        
-        this.setGrossAmount(grossAmount);        
+        this.setNetAmount(netAmount);
+        this.setGrossAmount(grossAmount);
+    }
+
+    static public Sanction fromString(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            return mapper.readValue(json, Sanction.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new CustomException("Error parsing Sanction fromString", e.toString());
+        }
     }
 
     @JsonIgnore
     public BigDecimal getTotalNetAmount() {
         if (sanctions != null && !sanctions.isEmpty()) {
             return sanctions.stream()
-                           .map(Sanction::getNetAmount)
-                           .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .map(Sanction::getNetAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getNetAmount();
         }
@@ -61,22 +72,11 @@ public class Sanction extends ExchangeMessage {
     public BigDecimal getTotalGrossAmount() {
         if (sanctions != null && !sanctions.isEmpty()) {
             return sanctions.stream()
-                           .map(Sanction::getGrossAmount)
-                           .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .map(Sanction::getGrossAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             return getNetAmount();
         }
     }
-
-    static public Sanction fromString(String json){
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		try {
-			return mapper.readValue(json, Sanction.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			throw new CustomException("Error parsing Sanction fromString", e.toString());
-		}
-	}
 
 }

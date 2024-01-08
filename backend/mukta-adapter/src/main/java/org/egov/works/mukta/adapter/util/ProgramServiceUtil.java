@@ -24,7 +24,7 @@ public class ProgramServiceUtil {
         this.config = config;
     }
 
-    public void callProgramServiceDisbursement(Disbursement disbursement){
+    public void callProgramServiceDisbursement(Disbursement disbursement) {
         log.info("Calling program service for disbursement");
         String url = config.getProgramServiceHost() + config.getProgramServiceDisbursementEndpoint();
         Object response = null;
