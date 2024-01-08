@@ -72,7 +72,7 @@ public class NotificationService {
 
         if (request.getContract().getBusinessService() != null
                 && !request.getContract().getBusinessService().isEmpty()
-                && request.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+                && request.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)) {
             pushNotificationForRevisedContract (request);
 
         }else {
@@ -138,7 +138,7 @@ public class NotificationService {
                 .build();
 
         List<Contract> contractsFromDB = contractService.getContracts(contractCriteria);
-        Contract originalContractFromDB = contractsFromDB.stream().filter(contract -> (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE))).collect(Collectors.toList()).get(0);
+        Contract originalContractFromDB = contractsFromDB.stream().filter(contract -> (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE))).collect(Collectors.toList()).get(0);
         log.info("Getting officer-in-charge for contract :: " + originalContractFromDB.getContractNumber());
         String officerInChargeUuid = originalContractFromDB.getAuditDetails().getCreatedBy();
         Map<String,String> officerInChargeMobileNumberMap =hrmsUtils.getEmployeeDetailsByUuid(request.getRequestInfo(), request.getContract().getTenantId(),officerInChargeUuid);
@@ -384,7 +384,7 @@ public class NotificationService {
 
         if (request.getContract().getBusinessService() != null
                 && !request.getContract().getBusinessService().isEmpty()
-                && request.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+                && request.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)) {
             if (REJECT_ACTION.equalsIgnoreCase(workflow.getAction())) {
                 message = getMessage(request, ContractServiceConstants.CONTRACT_REVISION_REJECT_LOCALIZATION_CODE);
             } else if (APPROVE_ACTION.equalsIgnoreCase(workflow.getAction())) {

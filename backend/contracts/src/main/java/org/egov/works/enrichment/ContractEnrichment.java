@@ -84,7 +84,8 @@ public class ContractEnrichment {
         enrichIdsAgreementDateAndAuditDetailsOnCreate(contractRequest);
         // Enrich Supplement number and mark contracts and document status as in-workflow
         if (contractRequest.getContract().getBusinessService() != null
-                && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+                && (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)
+                || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE))) {
             // Enrich Supplement Number
             enrichSupplementNumber(contractRequest);
             markContractAndDocumentsStatus(contractRequest, Status.INWORKFLOW);
@@ -169,7 +170,8 @@ public class ContractEnrichment {
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.INACTIVE);
             log.info("Contract components are marked as INACTIVE on workflow 'REJECT' action. Contract Id ["+contract.getId()+"]");
         }
-        if(contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)
+        if(contractRequest.getContract().getBusinessService() != null && (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)
+                || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE))
                  && ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction())) {
             markContractAndDocumentsStatus(contractRequest, Status.ACTIVE);
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.ACTIVE);
@@ -332,7 +334,8 @@ public class ContractEnrichment {
 
     private void enrichIdsAgreementDateAndAuditDetailsOnCreate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
-        if (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+        if (contract.getBusinessService() != null && (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)
+                || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE))) {
             List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
             contract.setOldUuid(contractsFromDB.get(0).getId());
             Long versionNumber = contractsFromDB.get(0).getVersionNumber();
@@ -418,7 +421,8 @@ public class ContractEnrichment {
     }
     private void setContractLineItemRef(ContractRequest contractRequest, Estimate estimate) {
         if (contractRequest.getContract().getBusinessService() != null
-                && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+                && (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)
+                || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE))) {
             // Fetch previous contract and create estimateDetailId to contractLineItemRef map
             Contract previousActiveContract = contractServiceUtil.getActiveContractsFromDB(contractRequest).get(0);
             Map<String, String> estimateDetailIdToContractLineItemRefMap = previousActiveContract.getLineItems()
@@ -444,7 +448,8 @@ public class ContractEnrichment {
     }
 
     public void enrichPreviousContractLineItems(ContractRequest contractRequest) {
-        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)
+        if (contractRequest.getContract().getBusinessService() != null && (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)
+                || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE))
                 && ACCEPT_ACTION.equalsIgnoreCase(contractRequest.getWorkflow().getAction())) {
             log.info("Setting previous contract statuses inactive");
             Contract previousActiveContract = contractServiceUtil.getActiveContractsFromDB(contractRequest).get(0);
