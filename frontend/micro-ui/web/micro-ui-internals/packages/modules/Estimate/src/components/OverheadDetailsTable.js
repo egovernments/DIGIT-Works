@@ -18,7 +18,6 @@ const OverheadDetailsTable = ({ data }) => {
       );
     });
   };
-
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -93,7 +92,8 @@ const OverheadDetailsTable = ({ data }) => {
   };
 
   let totalAmount = data?.tableRows?.filter(innerArray => innerArray.includes("Total"))?.[0]?.[3] 
-  let formattedTotalAmount = isNaN(totalAmount) ? 0 : parseFloat(totalAmount)?.toFixed(2)
+  totalAmount = totalAmount?.includes(",") ? parseFloat(totalAmount?.replace(/,/g, '')) : totalAmount;
+  let formattedTotalAmount = isNaN(totalAmount) ? 0 : parseFloat(totalAmount)?.toFixed(2);
   return (
     <React.Fragment>
     <table className="table reports-table sub-work-table" style={tableStyle}>
