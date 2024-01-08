@@ -9,12 +9,12 @@ const processDocuments = (uploadedDocs, data) => {
   for (const docType in uploadedDocs) {
     if (uploadedDocs.hasOwnProperty(docType)) {
       const docList = uploadedDocs[docType];
-      docList.forEach(([filename, fileInfo]) => {
+      docList.forEach(([filename, fileInfo, id]) => {
         const document = {
           documentType: fileInfo?.file?.type,
           fileStore: fileInfo?.fileStoreId?.fileStoreId,
           documentUid: fileInfo?.file?.name,
-          id: data?.documents?.length == 1 ? data?.documents?.[0]?.id : null,
+          id: id? id : null,
           additionalDetails: {
             fileType: docType,
             tenantId: fileInfo?.fileStoreId?.tenantId,
@@ -26,6 +26,18 @@ const processDocuments = (uploadedDocs, data) => {
     }
   }
 
+  if(window.location.href.includes("/measurement/update") && data)
+    data?.documents.forEach(document => {
+      // Check if the document is present in the result array
+      const isDocumentInResult = documents.some(
+        resultDocument => resultDocument.id === document.id
+      );
+    
+      // If not present, add the document to the result array with isActive set to false
+      if (!isDocumentInResult) {
+        documents.push({...document,isActive:false});
+      }
+    });
   return documents;
 };
 
