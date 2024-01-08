@@ -30,7 +30,7 @@ const processDocuments = (uploadedDocs, data) => {
     data?.documents.forEach(document => {
       // Check if the document is present in the result array
       const isDocumentInResult = documents.some(
-        resultDocument => resultDocument.id === document.id
+        resultDocument => resultDocument?.id === document?.id
       );
     
       // If not present, add the document to the result array with isActive set to false
