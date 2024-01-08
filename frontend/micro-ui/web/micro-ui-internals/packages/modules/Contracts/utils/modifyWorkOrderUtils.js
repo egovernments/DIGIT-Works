@@ -58,7 +58,7 @@ export const updateDefaultValues = ({createWorkOrderConfigMUKTA, isModify, sessi
     }
 
     //update default Values
-    if(!sessionFormData?.basicDetails_projectID || !sessionFormData.workOrderAmountRs || !sessionFormData.basicDetails_dateOfProposal || !sessionFormData.basicDetails_projectName || !sessionFormData.basicDetails_projectDesc ) {
+    if(!sessionFormData?.basicDetails_projectID || !sessionFormData.workOrderAmountRs || !sessionFormData.basicDetails_dateOfProposal || !sessionFormData.basicDetails_projectName || !sessionFormData.basicDetails_projectDesc || sessionFormData?.basicDetails_projectID !== project?.projectNumber ){
       if(isModify) {
         //this field is only for Modify flow
         createWorkOrderConfigMUKTA.defaultValues.basicDetails_workOrdernumber = contract?.contractNumber ? contract?.contractNumber  : "";
