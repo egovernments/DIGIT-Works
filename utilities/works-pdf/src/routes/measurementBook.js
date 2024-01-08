@@ -21,7 +21,6 @@ router.post(
         const tenantId = req.query.tenantId;
         const contractNumber = req.query.contractNumber;
         const measurementNumber = req.query.measurementNumber;
-        const key = req.query.key;
         const requestinfo = req.body;
         if (requestinfo == undefined) {
             return renderError(res, "requestinfo can not be null", 400)
@@ -35,9 +34,7 @@ router.post(
         if (!contractNumber) {
             return renderError(res, "contractNumber is mandatory to generate the receipt", 400)
         }
-        if(!key){
-            return renderError(res, "key is mandatory to generate the musterRollNumber", 400)
-        }
+        const key = "View";
         try {
             try {
                 var resMeasurement = await search_measurementBookDetails(tenantId, requestinfo, contractNumber, measurementNumber, key);
