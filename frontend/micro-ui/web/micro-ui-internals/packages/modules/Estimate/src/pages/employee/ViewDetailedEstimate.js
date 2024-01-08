@@ -137,7 +137,7 @@ const ViewDetailedEstimate = () => {
     Digit.Utils.downloadEgovPDF("detailedEstimate/detailed-estimate", { estimateNumber, tenantId }, `Estimate-${estimateNumber}.pdf`);
   };
 
-  const overheads = detailedEstimate?.estimates?.filter((ob) => revisionNumber ? (ob?.revisionNumber === revisionNumber) : ob?.businessService === "ESTIMATE")?.[0]?.estimateDetails?.filter((row) => row?.category?.includes("OVERHEAD") && row?.isActive);
+  const overheads = detailedEstimate?.estimates?.filter((ob) => revisionNumber ? (ob?.revisionNumber === revisionNumber) : (ob?.businessService === "ESTIMATE" || !(ob?.revisionNumber)))?.[0]?.estimateDetails?.filter((row) => row?.category?.includes("OVERHEAD") && row?.isActive);
   const tableHeaderOverheads = [t("WORKS_SNO"), t("WORKS_OVERHEAD"), t("WORKS_PERCENTAGE"), t("WORKS_AMOUNT")];
   const tableRowsOverheads = overheads?.map((row, index) => {
     return [
