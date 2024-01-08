@@ -187,7 +187,7 @@ class MusterRollController {
       var labourRateGreaterThanZero:boolean=false;
       var measurementNumber;
      
-      if (musterRolls !== null && !musterRolls?.notFound) {
+      if (musterRolls !== null && !musterRolls?.notFound) {  
         var mrStartDate = musterRolls?.startDate;
         var mrEndDate = musterRolls?.endDate;
         let musterRollValidationMap = new TSMap<string, any>();
@@ -206,52 +206,44 @@ class MusterRollController {
             return lineItem.estimateLineItemId === estimateDetail.id;
           });
           const contractRef: string = foundContractItem.contractLineItemRef;
-          console.log("Contract Reference ID",contractRef);
+          
           
 
           for (var allMeasurement of allMeasurements) {
             let currentValue;
-            if (allMeasurement.referenceId == musterRolls.referenceId && allMeasurement.wfStatus == 'APPROVED') {
-
-              var mbEndDate = allMeasurement.additionalDetails.endDate
-              var mbStartDate = allMeasurement.additionalDetails.startDate
+            var mbEndDate = allMeasurement.additionalDetails.endDate
+            var mbStartDate = allMeasurement.additionalDetails.startDate
+            if (allMeasurement.referenceId == musterRolls.referenceId && allMeasurement.wfStatus == 'APPROVED' &&
+            ((mrStartDate >= mbStartDate && mbEndDate >= mrEndDate) || (mrStartDate == mbStartDate && mrEndDate == mbEndDate))) {             
               
-              if ((mrStartDate >= mbStartDate && mbEndDate >= mrEndDate) || (mrStartDate == mbStartDate && mrEndDate == mbEndDate)) {
+              // if ((mrStartDate >= mbStartDate && mbEndDate >= mrEndDate) || (mrStartDate == mbStartDate && mrEndDate == mbEndDate)) {
                 measurementNumber = allMeasurement.measurementNumber;
                 const matchingMeasure = allMeasurement.measures.find(
                   (measure: any) => measure.targetId === contractRef
                 );
                 currentValue = (matchingMeasure.targetId === contractRef) ? matchingMeasure.currentValue : 0;
-                console.log("Current Value::;", currentValue)
-                totalLabourRate += (amountDetailsWithLA[0].amount * currentValue);
+                console.log("Current Value::", currentValue)
+
+                totalLabourRate += ((amountDetailsWithLA!=null && amountDetailsWithLA.length > 0)?amountDetailsWithLA[0].amount:0 )* currentValue;
                 labourRateGreaterThanZero=totalLabourRate > 0 ? true :labourRateGreaterThanZero;
-                musterRollValidationMap.set("measurementNumber", measurementNumber);
+                 musterRollValidationMap.set("measurementNumber", measurementNumber);
                  musterRollValidationMap.set("totalLabourRate",totalLabourRate);
-                isMbPresent = !isMbPresent;
+                isMbPresent = true;
                 break;
                 
-              }
+              // }
           
            
             }
-            if (currentValue != 0) {
-
-              console.log("Matching currentValue:", currentValue);
-            } else {
-              console.log("No matching currentValue found.");
-            }
+          
 
 
           }
-         
-
-
-
         }
 
       }
       if (isMbPresent === false) {
-        musterRollValidationMap.set("message", "MB_PERIOD_IS_NOT_VALID_WRT_MR_PERIOD");
+        musterRollValidationMap.set("message", "MB_PERIOD_IS_NOT_VALID_WRT_MR_PERIOD_OR_NO_APPROVED_MB_IS_PRESENT");
         musterRollValidationMap.set("type", "error");
         musterRollValidationMapList.push(musterRollValidationMap);
 
