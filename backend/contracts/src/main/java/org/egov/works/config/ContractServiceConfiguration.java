@@ -67,8 +67,11 @@ public class ContractServiceConfiguration {
     @Value("${contract.workflow.business.service}")
     private String contractWFBusinessService;
 
+    @Value("${contract.workflow.time.extension.business.service}")
+    private String contractTimeExtensionWFBusinessService;
+
     @Value("${contract.workflow.revision.business.service}")
-    private String contractRevisionWFBusinessService;
+    private String contractRevisionContractWFBusinessService;
 
     @Value("${egov.workflow.host}")
     private String wfHost;

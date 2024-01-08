@@ -95,7 +95,8 @@ public class ContractServiceValidator {
         validateOrganizationIdAgainstOrgService(contractRequest);
 
         if (contractRequest.getContract().getBusinessService() != null &&
-                contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+                (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)
+                        || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE))){
             log.info("Validating contract revision request");
             // Validate if Time Extension Request
             validateContractRevisionRequestForCreate(contractRequest);
@@ -133,7 +134,8 @@ public class ContractServiceValidator {
         validateOrganizationIdAgainstOrgService(contractRequest);
 
         if (contractRequest.getContract().getBusinessService() != null &&
-                contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+                (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)
+                || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE))){
             // Validate Contract Revision Request for Update request
             validateContractRevisionRequestForUpdate(contractRequest);
         } else {
