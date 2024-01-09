@@ -399,18 +399,14 @@ public class PaymentInstructionEnrichment {
         // Remove special characters using regular expression
         String benfName=piBeneficiary.getBenefName().replaceAll("[^a-zA-Z0-9\\s]", "");
         String benfAddress= piBeneficiary.getBenfAddress().replaceAll("[^a-zA-Z0-9\\s]", "");
-        String purpose= piBeneficiary.getPurpose().replaceAll("[^a-zA-Z0-9\\s]", "");
-
-
-
+//        String purpose= piBeneficiary.getPurpose().replaceAll("[^a-zA-Z0-9\\s]", "");
         // Remove extra white spaces using regular expression
         benfName=benfName.replaceAll("\\s+", " ").trim();
         benfAddress=benfAddress.replaceAll("\\s+", " ").trim();
-        purpose=purpose.replaceAll("\\s+", " ").trim();
-
+//        purpose=purpose.replaceAll("\\s+", " ").trim();
         piBeneficiary.setBenefName(benfName);
         piBeneficiary.setBenfAddress(benfAddress);
-        piBeneficiary.setPurpose(purpose);
+//        piBeneficiary.setPurpose(purpose);
 
     }
 
