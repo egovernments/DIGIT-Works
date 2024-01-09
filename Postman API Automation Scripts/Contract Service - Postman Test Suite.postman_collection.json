@@ -359,7 +359,7 @@
 							"    var code = res.Errors[0].code;\r",
 							"    var message = res.Errors[0].message;\r",
 							"    pm.expect(code).to.eql(\"CONTRACT\");\r",
-							"    pm.expect(message).to.eql(\"Contract is mandatory\");\r",
+							"    pm.expect(message).to.eql(\"must not be null\");\r",
 							"    }\r",
 							");"
 						],
