@@ -409,8 +409,8 @@ public class PaymentInstructionEnrichment {
         purpose=purpose.replaceAll("\\s+", " ").trim();
 
         piBeneficiary.setBenefName(benfName);
-        piBeneficiary.setBenefName(benfAddress);
-        piBeneficiary.setBenefName(purpose);
+        piBeneficiary.setBenfAddress(benfAddress);
+        piBeneficiary.setPurpose(purpose);
 
     }
 
