@@ -12,6 +12,12 @@ const transformDeviationData = (data) => {
     estimates["projectName"] = data.projectName;
     const sorIdMap = {};
 
+    const Nformatter = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
+    // Function to format a number with commas
+    function formatNumberWithCommas(value) {
+        return Nformatter.format(value);
+    }
+
     for (const estimateDetail of data.estimates[0].estimateDetails) {
         if (estimateDetail.category === "OVERHEAD") {
             continue;
@@ -95,10 +101,17 @@ for (const estimateDetail of originalEstimateDetails) {
     }
 }
 
+    var totalSum = 0;    
+
     const estimateDetails = [];
     for(const key in sorIdMap){
+        totalSum += sorIdMap[key].amount;
+        sorIdMap[key].unitRate = formatNumberWithCommas(sorIdMap[key].unitRate);
+        sorIdMap[key].amount = formatNumberWithCommas(sorIdMap[key].amount);
+        sorIdMap[key].originalAmount = formatNumberWithCommas(sorIdMap[key].originalAmount);
         estimateDetails.push(sorIdMap[key]);
     }
+    estimates.totalSum = formatNumberWithCommas(totalSum);
     estimates["estimateDetails"] = estimateDetails;
 
 
