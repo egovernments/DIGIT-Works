@@ -3,7 +3,7 @@ const router = express.Router();
 const url = require("url");
 const config = require("../config");
 
-const { search_estimateDetails, create_pdf } = require("../api");
+const { search_estimateDetails, create_pdf, search_projectDetails} = require("../api");
 
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 const { pdf } = require("../config");
@@ -44,6 +44,10 @@ router.post(
 
             }
             var estimate = resEstimate.data;
+            const projectId = estimate.estimates[0].additionalDetails.projectNumber;
+
+            result = await search_projectDetails(tenantId, requestinfo, projectId);
+            estimate.projectName = result.data.Project[0].name;
 
 
             const estimates = transformDetailedData(estimate);

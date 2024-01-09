@@ -10,15 +10,22 @@ const transformDetailedData = (data) => {
     estimates["projectName"] = data.estimates[0].additionalDetails.projectName;
     estimates["description"] = data.estimates[0].description;
     estimates["tenantId"] = data.estimates[0].tenantId;
-    estimates["projectName"] = data.estimates[0].additionalDetails.projectName;
-    estimates["projectLocation"] = data.estimates[0].additionalDetails.locality;
+    estimates["projectName"] = data.projectName;
+    estimates["projectLocation"] = data.estimates[0].additionalDetails.locality + ', ' + data.estimates[0].additionalDetails.location.ward + ', ' + data.estimates[0].additionalDetails.location.city;
     estimates["totalEstimatedAmount"] = data.estimates[0].additionalDetails.totalEstimatedAmount;
     const sorIdMap = {};
+
+    var count = -1;
 
     for (const estimateDetail of data.estimates[0].estimateDetails) {
 
         if(estimateDetail.category === 'NON-SOR' && estimateDetail.sorId === null){
             estimateDetail.sorId = '0';
+        }
+
+        if(estimateDetail.category === 'OVERHEAD' && estimateDetail.sorId === null){
+            estimateDetail.sorId = count;
+            count--;
         }
         
         // if in the end of name there is a square bracket then convert that square bracket into round bracket

@@ -21,7 +21,7 @@ auth_token = config.auth_token;
 async function search_projectDetails(tenantId, requestinfo, projectId) {
   var params = {
     tenantId: tenantId,
-    limit: 1,
+    limit: 11,
     offset: 0
   };
 

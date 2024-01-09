@@ -53,7 +53,7 @@ module.exports = {
     pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8091',
     user: process.env.EGOV_USER_HOST || HOST,
     workflow: process.env.EGOV_WORKFLOW_HOST || 'http://localhost:8094',
-    projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081/',
+    projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8082/',
     estimates: process.env.EGOV_ESTIMATE_HOST || 'http://localhost:8084/',
     musterRoll: process.env.EGOV_MUSTER_ROLL_HOST || 'http://localhost:8085',
     contract: process.env.EGOV_CONTRACT_HOST || 'http://localhost:8086',
