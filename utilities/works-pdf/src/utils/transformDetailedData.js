@@ -13,7 +13,8 @@ const transformDetailedData = (data) => {
     estimates["tenantId"] = data.estimates[lastIndex].tenantId;
     estimates["projectName"] = data.projectName;
     estimates["projectLocation"] = data.estimates[lastIndex].additionalDetails.locality + ', ' + data.estimates[lastIndex].additionalDetails.location.ward + ', ' + data.estimates[lastIndex].additionalDetails.location.city;
-    estimates["totalEstimatedAmount"] = data.estimates[lastIndex].additionalDetails.totalEstimatedAmount;
+    estimates["totalEstimatedAmount"] = parseFloat(data.estimates[lastIndex].additionalDetails.totalEstimatedAmount).toFixed(2);
+
     const sorIdMap = {};
 
     var count = -1;
@@ -70,6 +71,7 @@ const transformDetailedData = (data) => {
 
     const estimateDetails = [];
     for(const key in sorIdMap){
+        sorIdMap[key].estimatedQuantity = sorIdMap[key].estimatedQuantity.toFixed(4);
         estimateDetails.push(sorIdMap[key]);
     }
     estimates["estimateDetails"] = estimateDetails;
