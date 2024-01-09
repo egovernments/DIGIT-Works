@@ -118,11 +118,11 @@ public class BillUtils {
         return billCalcResponse;
     }
 
-    public @Valid List<Payment> fetchPaymentDetails(RequestInfo requestInfo, Set<String> ids, String tenantId) {
+    public @Valid List<Payment> fetchPaymentDetails(RequestInfo requestInfo, String paymentNumber, String tenantId) {
         log.info("Started executing fetchPaymentDetails");
         Map<String, Object> searchCriteria = new HashMap<>();
         searchCriteria.put("tenantId", tenantId);
-        searchCriteria.put("ids", ids);
+        searchCriteria.put("paymentNumber", paymentNumber);
         Map<String, Object> requestParams = new HashMap<>();
         requestParams.put("RequestInfo", requestInfo);
         requestParams.put("paymentCriteria", searchCriteria);

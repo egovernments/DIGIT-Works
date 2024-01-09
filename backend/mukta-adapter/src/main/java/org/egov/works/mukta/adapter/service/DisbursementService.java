@@ -31,13 +31,11 @@ public class DisbursementService {
     public void processDisbursement(Disbursement disbursementRequest) {
         log.info("Processing disbursement request");
         RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
-        Set<String> ids = new HashSet<>();
-        ids.add(disbursementRequest.getTargetId());
-        List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, ids, "pg.citya");
-        log.info("Payments fetched for the disbursement request : " + payments);
+        List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, disbursementRequest.getTargetId(), "pg.citya");
         if (payments == null || payments.isEmpty()) {
             throw new CustomException("PAYMENT_NOT_FOUND", "Payment not found for the given disbursement request");
         }
+        log.info("Payments fetched for the disbursement request : " + payments);
         Payment payment = payments.get(0);
         log.info("Updating the payment status for the payments : " + payment);
         updatePaymentStatus(payment, disbursementRequest, requestInfo);

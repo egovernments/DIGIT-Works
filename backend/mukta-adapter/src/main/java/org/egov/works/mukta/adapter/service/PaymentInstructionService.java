@@ -8,8 +8,11 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
 import org.egov.works.mukta.adapter.kafka.MuktaAdaptorProducer;
+import org.egov.works.mukta.adapter.repository.PaymentRepository;
 import org.egov.works.mukta.adapter.util.*;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
+import org.egov.works.mukta.adapter.web.models.MuktaPayment;
+import org.egov.works.mukta.adapter.web.models.PaymentSearchCriteria;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
@@ -35,28 +38,39 @@ public class PaymentInstructionService {
     private final OrganisationUtils organisationUtils;
     private final IndividualUtils individualUtils;
     private final MdmsUtil mdmsUtil;
+    private final PaymentRepository paymentRepository;
+
     private final ProgramServiceUtil programServiceUtil;
     private final MuktaAdaptorProducer muktaAdaptorProducer;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, PaymentRepository paymentRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
         this.organisationUtils = organisationUtils;
         this.individualUtils = individualUtils;
         this.mdmsUtil = mdmsUtil;
+        this.paymentRepository = paymentRepository;
         this.programServiceUtil = programServiceUtil;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
     }
 
-    public void processPaymentInstruction(PaymentRequest paymentRequest) {
+    public Disbursement processPaymentInstruction(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction");
+        if(paymentRequest.getPayment() == null && paymentRequest.getReferenceId() != null && paymentRequest.getTenantId() != null) {
+            log.info("Fetching payment details by using reference id and tenant id");
+            List<Payment> payments = billUtils.fetchPaymentDetails(paymentRequest.getRequestInfo(), paymentRequest.getReferenceId(), paymentRequest.getTenantId());
+            if (payments == null || payments.isEmpty()) {
+                throw new CustomException("PAYMENT_NOT_FOUND", "Payment not found for the given disbursement request");
+            }
+            log.info("Payments fetched for the disbursement request : " + payments);
+            paymentRequest.setPayment(payments.get(0));
+        }
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
         Disbursement disbursementRequest = getBeneficiariesFromPayment(paymentRequest, mdmsData);
         log.info("Disbursement request is " + disbursementRequest);
-        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
-        muktaAdaptorProducer.push("egf-adapter-payment-create", disbursementRequest);
+        return disbursementRequest;
     }
 
     private Disbursement getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
@@ -146,4 +160,22 @@ public class PaymentInstructionService {
         return billList;
     }
 
+    public void processPaymentInstructionOnFailure(PaymentRequest paymentRequest) {
+        log.info("Processing payment instruction on failure");
+        Disbursement disbursement = processPaymentInstruction(paymentRequest);
+        PaymentSearchCriteria paymentSearchCriteria = PaymentSearchCriteria.builder().paymentId(paymentRequest.getReferenceId()).build();
+        List<MuktaPayment> muktaPayments = paymentRepository.searchPayment(paymentSearchCriteria);
+        if(muktaPayments == null || muktaPayments.isEmpty() || muktaPayments.get(0).getPaymentStatus().equals(PaymentStatus.FAILED.toString())){
+            log.info("No payment found for the payment id : " + paymentRequest.getReferenceId());
+            log.info("Creating new payment for the payment id : " + paymentRequest.getReferenceId());
+            programServiceUtil.callProgramServiceDisbursement(disbursement);
+            muktaAdaptorProducer.push("egf-adapter-payment-create", disbursement);
+        }
+        else{
+            if(muktaPayments.get(0).getPaymentStatus().equals(PaymentStatus.INITIATED.toString())){
+                log.info("Payment is already initiated for the payment id : " + paymentRequest.getReferenceId());
+            }
+        }
+
+    }
 }

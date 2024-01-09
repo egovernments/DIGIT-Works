@@ -11,6 +11,7 @@ import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.Status;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
+import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
 import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
@@ -129,11 +130,13 @@ public class PaymentInstructionEnrichment {
             Individual individual = individualMap.get(piBeneficiary.getBeneficiaryId());
             Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
             for (LineItem lineItem : piBeneficiary.getBenfLineItems()) {
-                Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem);
-                disbursements.add(disbursementForLineItem);
+                if(lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) && !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL)){
+                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem);
+                    disbursements.add(disbursementForLineItem);
+                }
             }
         }
-        disbursement.setTargetId(paymentRequest.getPayment().getId());
+        disbursement.setTargetId(paymentRequest.getPayment().getPaymentNumber());
         disbursement.setBills(disbursements);
         disbursement.setBillDate(ZonedDateTime.now());
         disbursement.setBillCount(disbursements.size());
