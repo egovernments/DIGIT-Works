@@ -12,10 +12,11 @@ const transformDetailedData = (data) => {
     estimates["description"] = data.estimates[lastIndex].description;
     estimates["tenantId"] = data.estimates[lastIndex].tenantId;
     estimates["projectName"] = data.projectName;
-    estimates["projectLocation"] = data.estimates[lastIndex].additionalDetails.locality + ', ' + data.estimates[lastIndex].additionalDetails.location.ward + ', ' + data.estimates[lastIndex].additionalDetails.location.city;
+    estimates["locality"] = data.estimates[lastIndex].additionalDetails.locality;
+    estimates["ward"] = data.estimates[lastIndex].additionalDetails.location.ward;
+    estimates["city"] = data.estimates[lastIndex].additionalDetails.location.city;
 
     const Nformatter = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
-
     // Function to format a number with commas
     function formatNumberWithCommas(value) {
         return Nformatter.format(value);
