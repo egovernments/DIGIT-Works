@@ -3,21 +3,22 @@ const { logger } = require("../logger");
 
 const transformDetailedData = (data) => {
 
+    const lastIndex = data.estimates.length - 1;
     //iterate over estimate make an array of object which contains estimateNumber, projectNumber, projectName and description and an array of estimateDetails
     const estimates = {};
-    estimates["estimateNumber"] = data.estimates[0].estimateNumber;
-    estimates["projectNumber"] = data.estimates[0].additionalDetails.projectNumber;
-    estimates["projectName"] = data.estimates[0].additionalDetails.projectName;
-    estimates["description"] = data.estimates[0].description;
-    estimates["tenantId"] = data.estimates[0].tenantId;
+    estimates["estimateNumber"] = data.estimates[lastIndex].estimateNumber;
+    estimates["projectNumber"] = data.estimates[lastIndex].additionalDetails.projectNumber;
+    estimates["projectName"] = data.estimates[lastIndex].additionalDetails.projectName;
+    estimates["description"] = data.estimates[lastIndex].description;
+    estimates["tenantId"] = data.estimates[lastIndex].tenantId;
     estimates["projectName"] = data.projectName;
-    estimates["projectLocation"] = data.estimates[0].additionalDetails.locality + ', ' + data.estimates[0].additionalDetails.location.ward + ', ' + data.estimates[0].additionalDetails.location.city;
-    estimates["totalEstimatedAmount"] = data.estimates[0].additionalDetails.totalEstimatedAmount;
+    estimates["projectLocation"] = data.estimates[lastIndex].additionalDetails.locality + ', ' + data.estimates[lastIndex].additionalDetails.location.ward + ', ' + data.estimates[lastIndex].additionalDetails.location.city;
+    estimates["totalEstimatedAmount"] = data.estimates[lastIndex].additionalDetails.totalEstimatedAmount;
     const sorIdMap = {};
 
     var count = -1;
 
-    for (const estimateDetail of data.estimates[0].estimateDetails) {
+    for (const estimateDetail of data.estimates[lastIndex].estimateDetails) {
 
         if(estimateDetail.category === 'NON-SOR' && estimateDetail.sorId === null){
             estimateDetail.sorId = '0';
@@ -33,8 +34,16 @@ const transformDetailedData = (data) => {
             estimateDetail.name = estimateDetail.name.replace('[', '(');
             estimateDetail.name = estimateDetail.name.replace(']', ')');
         }
-    
-        const { sorId, category, isDeduction, name, description, uom, unitRate, quantity, amountDetail, additionalDetails } = estimateDetail;
+
+        if(estimateDetail.length == null)estimateDetail.length=1;
+        if(estimateDetail.width == null)estimateDetail.width=1;
+        if(estimateDetail.height == null)estimateDetail.height=1;
+        if(estimateDetail.quantity == null)estimateDetail.quantity=1;
+
+        var estQ = estimateDetail.length*estimateDetail.width*estimateDetail.height*estimateDetail.quantity;
+        estimateDetail.estimatedQuantity = estQ;
+
+        const { sorId, category, isDeduction, name, description, uom, unitRate, estimatedQuantity, amountDetail, additionalDetails } = estimateDetail;
     
         if (sorIdMap[sorId] === undefined) {
             const amount = isDeduction ? -amountDetail[0].amount : amountDetail[0].amount;
@@ -46,7 +55,7 @@ const transformDetailedData = (data) => {
                 description,
                 uom,
                 unitRate,
-                quantity,
+                estimatedQuantity,
                 amount,
                 additionalDetails
             };
@@ -55,7 +64,7 @@ const transformDetailedData = (data) => {
             const amountChange = isDeduction ? -amountDetail[0].amount : amountDetail[0].amount;
     
             sorIdEntry.amount += amountChange;
-            sorIdEntry.quantity += isDeduction ? -quantity : quantity;
+            sorIdEntry.estimatedQuantity += isDeduction ? -estimatedQuantity : estimatedQuantity;
         }
     }
 
