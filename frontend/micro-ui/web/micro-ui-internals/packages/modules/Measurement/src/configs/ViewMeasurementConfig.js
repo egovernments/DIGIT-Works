@@ -130,7 +130,7 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
             type: "COMPONENT",
             cardHeader: { value: "", inlineStyles: {} },
             component: "ViewTotalEstAmount",
-            props: {mode: "VIEWES", detail : {...estimateDetails, value:estimateDetails?.additionalDetails?.totalEstimatedAmount} }
+            props: {mode: "VIEWES", detail : {...estimateDetails, value:measurement?.additionalDetails?.totalAmount} }
           }
         ],
       },

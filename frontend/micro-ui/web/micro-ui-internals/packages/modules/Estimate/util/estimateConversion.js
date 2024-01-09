@@ -103,8 +103,8 @@ export const transformEstimateObjects = (estimateData, type, RatesData, allDetai
         }));
         return {
             amount: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0),
-            originalAmount : originalConvertedObject?.[key]?.reduce((total, item) => total + (item.isDeduction ? -item.amountDetail[0].amount : item.amountDetail[0].amount), 0) || convertedObject[key]?.[0]?.amountDetail?.[0]?.amount,
-            originalQty : originalConvertedObject?.[key]?.reduce((total, item) => total + (item.isDeduction ? -item.noOfunit : item.noOfunit), 0) || convertedObject?.[key]?.reduce((total, item) => total + (item.isDeduction ? -item.noOfunit : item.noOfunit), 0),
+            originalAmount : originalConvertedObject?.[key]?.reduce((total, item) => total + (item.isDeduction ? -item.amountDetail[0].amount : item.amountDetail[0].amount), 0) /*|| convertedObject[key]?.[0]?.amountDetail?.[0]?.amount*/,
+            originalQty : originalConvertedObject?.[key]?.reduce((total, item) => total + (item.isDeduction ? -item.noOfunit : item.noOfunit), 0) /*|| convertedObject?.[key]?.reduce((total, item) => total + (item.isDeduction ? -item.noOfunit : item.noOfunit), 0)*/,
             consumedQ : measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0),
             sNo: index + 1,
             currentMBEntry:measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0),

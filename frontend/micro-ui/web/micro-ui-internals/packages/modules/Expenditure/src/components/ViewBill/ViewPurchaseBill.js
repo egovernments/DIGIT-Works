@@ -83,6 +83,7 @@ const ViewPurchaseBill = ({props}) => {
                 <WorkflowActions
                   forcedActionPrefix={Digit.Utils.locale.getTransformedLocale(`WF_${businessService}_ACTION`)}
                   businessService={businessService}
+                  fullData={data}
                   applicationNo={billNumber}
                   tenantId={tenantId}
                   applicationDetails={data?.applicationData}
