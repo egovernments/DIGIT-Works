@@ -21,8 +21,16 @@ const transformDeviationData = (data) => {
             estimateDetail.name = estimateDetail.name.replace('[', '(');
             estimateDetail.name = estimateDetail.name.replace(']', ')');
         }
+
+        if(estimateDetail.length == null)estimateDetail.length=1;
+        if(estimateDetail.width == null)estimateDetail.width=1;
+        if(estimateDetail.height == null)estimateDetail.height=1;
+        if(estimateDetail.quantity == null)estimateDetail.quantity=1;
+
+        var estQ = estimateDetail.length*estimateDetail.width*estimateDetail.height*estimateDetail.quantity;
+        estimateDetail.estimatedQuantity = estQ;
     
-        const { sorId, isDeduction, name, description, uom, unitRate, quantity, amountDetail } = estimateDetail;
+        const { sorId, isDeduction, name, description, uom, unitRate, estimatedQuantity, amountDetail } = estimateDetail;
     
         if (sorIdMap[sorId] === undefined) {
             const amount = isDeduction ? -amountDetail[0].amount : amountDetail[0].amount;
@@ -33,7 +41,7 @@ const transformDeviationData = (data) => {
                 description,
                 uom,
                 unitRate,
-                quantity,
+                estimatedQuantity,
                 amount,
                 deviation: "Excess",
                 originalQuantity: 0,
@@ -44,7 +52,7 @@ const transformDeviationData = (data) => {
             const amountChange = isDeduction ? -amountDetail[0].amount : amountDetail[0].amount;
     
             sorIdEntry.amount += amountChange;
-            sorIdEntry.quantity += isDeduction ? -quantity : quantity;
+            sorIdEntry.estimatedQuantity += isDeduction ? -estimatedQuantity : estimatedQuantity;
         }
     }
 
@@ -59,14 +67,22 @@ for (const estimateDetail of originalEstimateDetails) {
         continue;
     }
 
-    const { sorId, isDeduction, amountDetail, quantity } = estimateDetail;
+    if(estimateDetail.length == null)estimateDetail.length=1;
+    if(estimateDetail.width == null)estimateDetail.width=1;
+    if(estimateDetail.height == null)estimateDetail.height=1;
+    if(estimateDetail.quantity == null)estimateDetail.quantity=1;
+
+    var estQ = estimateDetail.length*estimateDetail.width*estimateDetail.height*estimateDetail.quantity;
+    estimateDetail.estimatedQuantity = estQ;
+
+    const { sorId, isDeduction, amountDetail, estimatedQuantity } = estimateDetail;
     const sorIdEntry = sorIdMap[sorId];
 
     if (sorIdEntry !== undefined) {
         const amountChange = isDeduction ? -amountDetail[0].amount : amountDetail[0].amount;
 
         sorIdEntry.originalAmount += isDeduction ? -amountChange : amountChange;
-        sorIdEntry.originalQuantity += isDeduction ? -quantity : quantity;
+        sorIdEntry.originalQuantity += isDeduction ? -estimatedQuantity : estimatedQuantity;
 
         // Set deviation based on originalAmount and amount
         if (sorIdEntry.originalAmount === sorIdEntry.amount) {
