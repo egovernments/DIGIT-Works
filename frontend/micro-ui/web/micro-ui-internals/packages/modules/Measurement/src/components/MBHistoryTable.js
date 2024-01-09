@@ -85,7 +85,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
       mbDate: Digit.Utils.pt.convertEpochToDate(item?.entryDate),
       period:  `${Digit.DateUtils.ConvertEpochToDate(item?.additionalDetails?.startDate)} - ${Digit.DateUtils.ConvertEpochToDate(item?.additionalDetails?.endDate)}` || t("NA"),
       status: formatStatus(item?.wfStatus),
-      amount: item?.additionalDetails?.totalAmount,
+      amount: Digit.Utils.dss.formatterWithoutRound(Math.round(parseFloat(item?.additionalDetails?.totalAmount)).toFixed(2), "number",undefined,true,undefined,2),
     }));
 
   if (isLoading) {
