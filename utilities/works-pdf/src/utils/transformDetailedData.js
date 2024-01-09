@@ -13,7 +13,17 @@ const transformDetailedData = (data) => {
     estimates["tenantId"] = data.estimates[lastIndex].tenantId;
     estimates["projectName"] = data.projectName;
     estimates["projectLocation"] = data.estimates[lastIndex].additionalDetails.locality + ', ' + data.estimates[lastIndex].additionalDetails.location.ward + ', ' + data.estimates[lastIndex].additionalDetails.location.city;
-    estimates["totalEstimatedAmount"] = parseFloat(data.estimates[lastIndex].additionalDetails.totalEstimatedAmount).toFixed(2);
+
+    const Nformatter = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
+
+    // Function to format a number with commas
+    function formatNumberWithCommas(value) {
+        return Nformatter.format(value);
+    }
+
+    // Format totalEstimatedAmount with commas
+    var totalEstimatedAmount = parseFloat(data.estimates[lastIndex].additionalDetails.totalEstimatedAmount).toFixed(2);
+    estimates["totalEstimatedAmount"] = formatNumberWithCommas(totalEstimatedAmount);
 
     const sorIdMap = {};
 
