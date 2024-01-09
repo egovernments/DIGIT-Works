@@ -71,6 +71,19 @@ router.post(
             const transformedDataValues = Object.values(transformedData);
             measurementBookDetails.tableData = transformedDataValues;
 
+            const Nformatter = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
+            // Function to format a number with commas
+            function formatNumberWithCommas(value) {
+                return Nformatter.format(value);
+            }
+
+            var totalSum = 0;
+            for(let i = 0;i<measurementBookDetails.tableData.length;i++){
+                totalSum += measurementBookDetails.tableData[i].mbAmount;
+                measurementBookDetails.tableData[i].mbAmount = formatNumberWithCommas(measurementBookDetails.tableData[i].mbAmount);
+            }
+            measurementBookDetails.measurement.totalSum = formatNumberWithCommas(totalSum);
+
             if(measurementBookDetails){
                     var pdfResponse;
                     var pdfkey = config.pdf.measurement_template;
