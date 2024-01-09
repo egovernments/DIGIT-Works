@@ -3,18 +3,58 @@ const router = express.Router();
 const url = require("url");
 const config = require("../config");
 
-const { search_estimateDetails, create_pdf, search_projectDetails} = require("../api");
+const { search_estimateDetails, create_pdf, search_projectDetails, search_localization} = require("../api");
 
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 const { pdf } = require("../config");
 const { logger } = require("../logger");
 const { transformDetailedData } = require("../utils/transformDetailedData");
+const { getLanguageFromRequest, getStateLocalizationModule, getCityLocalizationModule, getStateLocalizationPrefix, getCityLocalizationPrefix, getLocalizationByKey } = require("../utils/localization");
+
 
 function renderError(res, errorMessage, errorCode) {
     if (errorCode == undefined) errorCode = 500;
     res.status(errorCode).send({ errorMessage })
 
 }
+
+async function getStateCityLocalizaitons(request, tenantId) {
+    let localizationMaps = {};
+    let lang = getLanguageFromRequest(request);
+    let modules = [getStateLocalizationModule(tenantId),getCityLocalizationModule(tenantId)].join(",");
+    let localRequest = {}
+    localRequest["RequestInfo"] = request["RequestInfo"];
+    let localizations = await search_localization(localRequest, lang, modules, tenantId);
+    if (localizations?.data?.messages?.length) {
+        localizations.data.messages.forEach(localObj => {
+            localizationMaps[localObj.code] = localObj.message;
+        });
+    }
+    return localizationMaps;
+}
+
+function updateLocalization(pdfData, localizationMaps, tenantId) {
+        if (pdfData?.city) {
+            pdfData.city = pdfData.city.toUpperCase();
+            cityKey = "TENANT_TENANTS_" + pdfData.city.split(".").join("_");
+            pdfData.city = getLocalizationByKey(cityKey, localizationMaps);
+        }
+        if (pdfData?.locality) {
+            let localityKey = getCityLocalizationPrefix(tenantId);
+            localityKey = localityKey + "_ADMIN_" + pdfData.locality;
+            pdfData.locality = getLocalizationByKey(localityKey, localizationMaps);
+        }
+        if (pdfData?.ward) {
+            let boundaryKey = getCityLocalizationPrefix(tenantId);
+            boundaryKey = boundaryKey + "_ADMIN_" + pdfData.ward;
+            pdfData.ward = getLocalizationByKey(boundaryKey, localizationMaps);
+        }
+    
+    return pdfData;
+}
+
+
+
 router.post(
     "/detailed-estimate",
     asyncMiddleware(async function (req, res, next) {
@@ -57,8 +97,10 @@ router.post(
             if (estimate && estimate.pdfData) {
 
                     var pdfResponse;
-
                     const pdfkey = config.pdf.detailedEstimate_template;
+
+                    let localizationMap = await getStateCityLocalizaitons(requestinfo, tenantId);
+                    estimate.pdfData = updateLocalization(estimate.pdfData, localizationMap, tenantId);
 
                     try {
 
