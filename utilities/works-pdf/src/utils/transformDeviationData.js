@@ -36,13 +36,15 @@ const transformDeviationData = (data) => {
         var estQ = estimateDetail.length*estimateDetail.width*estimateDetail.height*estimateDetail.quantity;
         estimateDetail.estimatedQuantity = estQ;
     
-        const { sorId, isDeduction, name, description, uom, unitRate, estimatedQuantity, amountDetail } = estimateDetail;
+        const { sorId, isDeduction, category, name, description, uom, unitRate, estimatedQuantity, amountDetail } = estimateDetail;
     
         if (sorIdMap[sorId] === undefined) {
             const amount = isDeduction ? -amountDetail[0].amount : amountDetail[0].amount;
     
             sorIdMap[sorId] = {
                 sorId,
+                isDeduction,
+                category,
                 name,
                 description,
                 uom,

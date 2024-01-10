@@ -3,7 +3,7 @@ const router = express.Router();
 const url = require("url");
 const config = require("../config");
 
-const { search_estimateDetails, create_pdf, search_projectDetails } = require("../api");
+const { search_estimateDetails, search_revisedEstimateDetails, create_pdf, search_projectDetails } = require("../api");
 
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 const { pdf } = require("../config");
@@ -19,7 +19,7 @@ router.post(
     "/deviation-statement",
     asyncMiddleware(async function (req, res, next) {
         const tenantId = req.query.tenantId;
-        const estimateNumber = req.query.estimateNumber;
+        const revisionNumber = req.query.revisionNumber;
         const requestinfo = req.body;
         if (requestinfo == undefined) {
             return renderError(res, "requestinfo can not be null", 400)
@@ -27,20 +27,30 @@ router.post(
         if (!tenantId) {
             return renderError(res, "tenantId is mandatory to generate the receipt", 400)
         }
-        if (!estimateNumber) {
-            return renderError(res, "estimateNumber is mandatory to generate the receipt", 400)
+        if (!revisionNumber) {
+            return renderError(res, "revisionNumber is mandatory to generate the receipt", 400)
         }
         try {
+            try {
+                var resRevisedEstimate = await search_revisedEstimateDetails(tenantId, requestinfo, revisionNumber);
+            }
+            catch (ex) {
+                return renderError(res, "Failed to query details of the revisedEstimate", 500);
+            }
+            const estimate = resRevisedEstimate.data;
+
+            const estimateNumber = estimate.estimates[0].estimateNumber;
+
             try {
                 var resEstimate = await search_estimateDetails(tenantId, requestinfo, estimateNumber);
             }
             catch (ex) {
                 return renderError(res, "Failed to query details of the estimate", 500);
             }
-            const estimate = resEstimate.data;
-            if(estimate.estimates.length <2){
-                return renderError(res, "Revision is not done for this estimate", 404);
-            }
+            const originalEstimateLength = resEstimate.data.estimates.length;
+            estimate.estimates.push(resEstimate.data.estimates[originalEstimateLength - 1]);
+
+
             const projectId = estimate.estimates[0].additionalDetails.projectNumber;
 
             result = await search_projectDetails(tenantId, requestinfo, projectId);
@@ -50,6 +60,20 @@ router.post(
             if (estimate && estimate.estimates.length > 1) {
                 estimates = transformDeviationData(estimate);
             }
+
+            // Filter values with category 'SOR'
+            const sorArray = estimates.estimateDetails.filter(item => item.category === 'SOR');
+
+            // Filter values with category 'NON-SOR'
+            const nonSorArray = estimates.estimateDetails.filter(item => item.category === 'NON-SOR');
+
+            const overHeadArray = estimates.estimateDetails.filter(item => item.category === 'OVERHEAD');
+
+            /// Combine all three arrays
+            const combinedArray = sorArray.concat(nonSorArray, overHeadArray);
+
+            estimates.estimateDetails = combinedArray;
+
             estimate.pdfData = estimates;
 
             if (estimate && estimate.pdfData) {
