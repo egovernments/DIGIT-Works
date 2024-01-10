@@ -918,6 +918,10 @@ export const UICustomizations = {
 
       const workOrderNumber = data?.body?.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
       if (workOrderNumber) data.body.inbox.moduleSearchCriteria.workOrderNumber = workOrderNumber;
+      if(workOrderNumber && workOrderNumber?.includes("TE")){
+         data.body.inbox.moduleSearchCriteria.revisedWorkOrderNumber = workOrderNumber;
+         delete data.body.inbox.moduleSearchCriteria.workOrderNumber;
+      }
 
       const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim();
       if (projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId;
