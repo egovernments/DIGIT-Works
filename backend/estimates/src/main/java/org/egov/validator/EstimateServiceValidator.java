@@ -935,7 +935,7 @@ private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDat
 
     private void checkEstimateBuisnessService(Estimate estimate, Object mdmsDataV2ForSor,
                                               Set<String> uniqueIdentifiers, Map<String, String> errorMap) {
-        if (estimate.getBusinessService() != null && !estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService())) {
+        if (estimate.getBusinessService() != null && estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService())) {
             log.info("EstimateServiceValidator::checkEstimateBuisnessService");
             log.info("Sor Id and UOM Validation On Revisied Estimate is not required ");
         }else {
