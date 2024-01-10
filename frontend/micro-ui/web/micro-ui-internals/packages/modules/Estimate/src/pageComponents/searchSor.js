@@ -116,6 +116,7 @@ const searchSor = (props) => {
         }
       });
         setFormValue(formData);
+        setStateData({...stateData, SORSubType:null, SORVariant:null, selectedSor:null});
       } else {
         // Rates are not available, handle it here (e.g., display an error message)
         console.error('Rates not available in fetchData response');
