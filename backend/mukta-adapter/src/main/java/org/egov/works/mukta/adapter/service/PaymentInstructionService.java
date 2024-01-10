@@ -6,6 +6,7 @@ import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
+import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
 import org.egov.works.mukta.adapter.kafka.MuktaAdaptorProducer;
 import org.egov.works.mukta.adapter.repository.PaymentRepository;
@@ -62,7 +63,7 @@ public class PaymentInstructionService {
             log.info("Fetching payment details by using reference id and tenant id");
             List<Payment> payments = billUtils.fetchPaymentDetails(paymentRequest.getRequestInfo(), paymentRequest.getReferenceId(), paymentRequest.getTenantId());
             if (payments == null || payments.isEmpty()) {
-                throw new CustomException("PAYMENT_NOT_FOUND", "Payment not found for the given disbursement request");
+                throw new CustomException(Error.PAYMENT_NOT_FOUND, Error.PAYMENT_NOT_FOUND_MESSAGE);
             }
             log.info("Payments fetched for the disbursement request : " + payments);
             paymentRequest.setPayment(payments.get(0));
@@ -78,14 +79,14 @@ public class PaymentInstructionService {
         // Get the list of bills based on payment request
         List<Bill> billList = billUtils.fetchBillsFromPayment(paymentRequest);
         if (billList == null || billList.isEmpty())
-            throw new CustomException("BILLS_NOT_FOUND", "No bills found for the payment instruction");
+            throw new CustomException(Error.BILLS_NOT_FOUND , Error.BILLS_NOT_FOUND_MESSAGE);
 
         billList = filterBillsPayableLineItemByPayments(paymentRequest.getPayment(), billList);
         log.info("Bills are filtered based on line item status, and sending back."+ billList);
         List<Beneficiary> beneficiaryList = piEnrichment.getBeneficiariesFromBills(billList, paymentRequest, mdmsData);
 
         if (beneficiaryList == null || beneficiaryList.isEmpty())
-            throw new CustomException("BENEFICIARIES_NOT_FOUND", "No beneficiaries found for the payment instruction");
+            throw new CustomException(Error.BENEFICIARIES_NOT_FOUND, Error.BENEFICIARIES_NOT_FOUND_MESSAGE);
 
         // Get all beneficiary ids from pi request
         List<String> individualIds = new ArrayList<>();
@@ -176,6 +177,5 @@ public class PaymentInstructionService {
                 log.info("Payment is already initiated for the payment id : " + paymentRequest.getReferenceId());
             }
         }
-
     }
 }

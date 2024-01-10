@@ -9,6 +9,7 @@ import org.egov.common.models.individual.IndividualSearch;
 import org.egov.common.models.individual.IndividualSearchRequest;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
+import org.egov.works.mukta.adapter.constants.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -40,7 +41,7 @@ public class IndividualUtils {
                     .id(new ArrayList<>(uniqueIndividualIds))
                     .build();
         } else {
-            throw new CustomException("INVALID_INDIVIDUAL_SEARCH_CRITERIA", "Invalid individual search criteria");
+            throw new CustomException(Error.INVALID_INDIVIDUAL_SEARCH_CRITERIA, Error.INVALID_INDIVIDUAL_SEARCH_CRITERIA_MESSAGE);
         }
 
         IndividualSearchRequest individualSearchRequest = IndividualSearchRequest.builder()

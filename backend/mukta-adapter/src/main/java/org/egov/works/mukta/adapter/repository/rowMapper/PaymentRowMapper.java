@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.web.models.MuktaPayment;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class PaymentRowMapper implements ResultSetExtractor<List<MuktaPayment>> 
             }
 
         } catch (IOException e) {
-            throw new CustomException("PARSING ERROR", "The propertyAdditionalDetail json cannot be parsed");
+            throw new CustomException(Error.PARSING_ERROR, Error.PARSE_ERROR_MESSAGE);
         }
 
         if(additionalDetails.isEmpty())

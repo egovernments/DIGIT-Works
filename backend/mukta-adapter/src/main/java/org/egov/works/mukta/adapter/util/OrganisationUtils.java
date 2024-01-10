@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
+import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.web.models.Pagination;
 import org.egov.works.mukta.adapter.web.models.organisation.OrgResponse;
 import org.egov.works.mukta.adapter.web.models.organisation.OrgSearchCriteria;
@@ -43,7 +44,7 @@ public class OrganisationUtils {
                     .id(new ArrayList<>(uniqueIds))
                     .build();
         } else {
-            throw new CustomException("ORG_CRITERIA_ERROR", "Request info, or ids are empty in organisation search");
+            throw new CustomException(Error.ORG_CRITERIA_ERROR, Error.ORG_CRITERIA_ERROR_MESSAGE);
         }
 
         Pagination pagination = Pagination.builder()

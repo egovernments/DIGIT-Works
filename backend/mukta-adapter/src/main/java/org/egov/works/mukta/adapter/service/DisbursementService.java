@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.util.BillUtils;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.Status;
@@ -14,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -33,7 +32,7 @@ public class DisbursementService {
         RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
         List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, disbursementRequest.getTargetId(), "pg.citya");
         if (payments == null || payments.isEmpty()) {
-            throw new CustomException("PAYMENT_NOT_FOUND", "Payment not found for the given disbursement request");
+            throw new CustomException(Error.PAYMENT_NOT_FOUND, Error.PAYMENT_NOT_FOUND_MESSAGE);
         }
         log.info("Payments fetched for the disbursement request : " + payments);
         Payment payment = payments.get(0);

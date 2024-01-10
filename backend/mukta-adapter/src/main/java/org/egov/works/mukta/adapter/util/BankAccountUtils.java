@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
+import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.web.models.Pagination;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccountResponse;
@@ -43,7 +44,7 @@ public class BankAccountUtils {
                     .referenceId(new ArrayList<>(uniqueIdentifires))
                     .build();
         } else {
-            throw new CustomException("INVALID_BANK_ACCOUNT_SEARCH_CRITERIA", "Invalid bank account search criteria");
+            throw new CustomException(Error.INVALID_BANK_ACCOUNT_SEARCH_CRITERIA, Error.INVALID_BANK_ACCOUNT_SEARCH_CRITERIA_MESSAGE);
         }
 
         Pagination pagination = Pagination.builder()

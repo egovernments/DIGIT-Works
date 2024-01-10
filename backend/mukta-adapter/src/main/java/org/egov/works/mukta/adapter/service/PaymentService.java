@@ -26,15 +26,13 @@ public class PaymentService {
     private final MuktaAdaptorConfig config;
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
-    private final MdmsUtil mdmsUtil;
 
     @Autowired
-    public PaymentService(BillUtils billUtils, MuktaAdaptorConfig config, RestTemplate restTemplate, ObjectMapper mapper, MdmsUtil mdmsUtil) {
+    public PaymentService(BillUtils billUtils, MuktaAdaptorConfig config, RestTemplate restTemplate, ObjectMapper mapper) {
         this.billUtils = billUtils;
         this.config = config;
         this.restTemplate = restTemplate;
         this.mapper = mapper;
-        this.mdmsUtil = mdmsUtil;
     }
 
     /**
