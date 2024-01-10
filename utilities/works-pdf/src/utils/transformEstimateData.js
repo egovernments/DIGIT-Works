@@ -37,18 +37,17 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
         estimateDetailsArray[0].mbAmount += estimateDetailsArray[j].amountDetail[0].amount;
       }
 
+      const numItems = estimateDetailsArray[j].noOfunit ?? 1;
+      const length = estimateDetailsArray[j].length ?? 1;
+      const width = estimateDetailsArray[j].width ?? 1;
+      const height = estimateDetailsArray[j].height ?? 1;
+      const estQ = numItems*length*width*height;
+    
       // if isDeduction is true then subtract quantity from estimatedQuantity and if isDeduction is false then add quantity to estimatedQuantity
       if (estimateDetailsArray[j].isDeduction) {
-        estimateDetailsArray[0].estimatedQuantity -= estimateDetailsArray[j].quantity;
+        estimateDetailsArray[0].estimatedQuantity -= estQ;
       } else {
-        estimateDetailsArray[0].estimatedQuantity += estimateDetailsArray[j].quantity;
-      }
-
-      // if isDeduction is true then subtract noOfunit from currentQuantity and if isDeduction is false then add noOfunit to currentQuantity
-      if (estimateDetailsArray[j].isDeduction) {
-        estimateDetailsArray[0].currentQuantity -= estimateDetailsArray[j].noOfunit;
-      } else {
-        estimateDetailsArray[0].currentQuantity += estimateDetailsArray[j].noOfunit;
+        estimateDetailsArray[0].estimatedQuantity += estQ;
       }
     }
 
@@ -67,6 +66,7 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
       consumedQuantity,
       currentQuantity,
       mbAmount,
+      isDeduction,
       quantity,
     } = estimateDetailsArray[0];
   
@@ -77,6 +77,7 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
       uom,
       unitRate,
       quantity,
+      isDeduction,
       estimatedQuantity,
       consumedQuantity,
       currentQuantity,
@@ -99,8 +100,21 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
         const matchingMeasure = measurement.measures.find(measure => measure.targetId === contractLineItemId);
 
         if (matchingMeasure) {
-            // Update consumedQuantity in sorIdMeasuresMap
-            sorIdMeasuresMap[sorId].consumedQuantity = matchingMeasure.cumulativeValue;
+
+          const numItems = matchingMeasure.numItems ?? 1;
+          const length = matchingMeasure.length ?? 1;
+          const width = matchingMeasure.width ?? 1;
+          const height = matchingMeasure.height ?? 1;
+
+          if(sorIdMeasuresMap[sorId].isDeduction){
+            sorIdMeasuresMap[sorId].currentQuantity -= numItems*length*width*height;
+          }
+          else{
+            sorIdMeasuresMap[sorId].currentQuantity += numItems*length*width*height;
+          }
+
+          // Update consumedQuantity in sorIdMeasuresMap
+          sorIdMeasuresMap[sorId].consumedQuantity = matchingMeasure.cumulativeValue;
         }
     }
 }
