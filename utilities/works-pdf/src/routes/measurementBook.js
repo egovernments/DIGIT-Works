@@ -118,7 +118,17 @@ router.post(
 
             // make an array of all the values from the transformedData without keys
             const transformedDataValues = Object.values(transformedData);
-            measurementBookDetails.tableData = transformedDataValues;
+
+            // Filter values with category 'SOR'
+            const sorArray = transformedDataValues.filter(item => item.category === 'SOR');
+
+            // Filter values with category 'NON-SOR'
+            const nonSorArray = transformedDataValues.filter(item => item.category === 'NON-SOR');
+
+            // Concatenate the two arrays
+            const combinedArray = sorArray.concat(nonSorArray);
+
+            measurementBookDetails.tableData = combinedArray;
 
             const Nformatter = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
             // Function to format a number with commas
