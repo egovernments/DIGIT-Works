@@ -58,7 +58,7 @@ module.exports = {
     musterRoll: process.env.EGOV_MUSTER_ROLL_HOST || 'http://localhost:8085',
     contract: process.env.EGOV_CONTRACT_HOST || 'http://localhost:8086',
     organisation: process.env.EGOV_ORGANISATION_HOST || 'http://localhost:8090',
-    localization: process.env.EGOV_LOCALIZATION_HOST || 'http://localhost:8098',
+    localization: process.env.EGOV_LOCALIZATION_HOST || 'http://localhost:8081',
     expense: process.env.EXPENSE_SERVICE_HOST || 'http://localhost:8087',
     bankaccount: process.env.BANKACCOUNT_SERVICE_HOST || 'http://localhost:8091',
     filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
