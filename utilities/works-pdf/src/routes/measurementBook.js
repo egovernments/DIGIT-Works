@@ -101,8 +101,15 @@ router.post(
             // convert startDateTime and endDateTime into dd/mm/yyyy format and show only date in a variable named measurement period
             const startDate = new Date(measurement.additionalDetails.startDate);
             const endDate = new Date(measurement.additionalDetails.endDate);
-            const measurementPeriod = startDate.getDate() + "/" + (startDate.getMonth() + 1) + "/" + startDate.getFullYear() + " - " + endDate.getDate() + "/" + (endDate.getMonth() + 1) + "/" + endDate.getFullYear();
-
+            // Format dates in IST
+            const options = {
+                day: 'numeric',
+                month: 'numeric',
+                year: 'numeric',
+                timeZone: 'Asia/Kolkata' // Use the time zone for Indian Standard Time (IST)
+            };
+            const measurementPeriod = startDate.toLocaleString('en-IN', options) + ' - ' + endDate.toLocaleString('en-IN', options);
+            
             // make a new variable in measurement named measurementPeriod and assign measurementPeriod to it
             measurementBookDetails.measurement.measurementPeriod = measurementPeriod;
 
