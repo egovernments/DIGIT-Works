@@ -107,10 +107,16 @@ for (const estimateDetail of originalEstimateDetails) {
 
     const estimateDetails = [];
     for(const key in sorIdMap){
+        sorIdMap[key].estimatedQuantity = sorIdMap[key].estimatedQuantity.toFixed(4);
+        sorIdMap[key].originalQuantity = sorIdMap[key].originalQuantity.toFixed(4);
         totalSum += sorIdMap[key].amount;
+        sorIdMap[key].amount = sorIdMap[key].amount.toFixed(4);
+        sorIdMap[key].originalAmount = sorIdMap[key].originalAmount.toFixed(4);
+        sorIdMap[key].unitRate = sorIdMap[key].unitRate.toFixed(4);
         sorIdMap[key].unitRate = formatNumberWithCommas(sorIdMap[key].unitRate);
         sorIdMap[key].amount = formatNumberWithCommas(sorIdMap[key].amount);
         sorIdMap[key].originalAmount = formatNumberWithCommas(sorIdMap[key].originalAmount);
+        
         estimateDetails.push(sorIdMap[key]);
     }
     estimates.totalSum = formatNumberWithCommas(totalSum);
