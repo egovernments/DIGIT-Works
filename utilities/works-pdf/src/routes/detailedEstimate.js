@@ -91,6 +91,19 @@ router.post(
 
 
             const estimates = transformDetailedData(estimate);
+
+            // Filter values with category 'SOR'
+            const sorArray = estimates.estimateDetails.filter(item => item.category === 'SOR');
+
+            // Filter values with category 'NON-SOR'
+            const nonSorArray = estimates.estimateDetails.filter(item => item.category === 'NON-SOR');
+
+            const overHeadArray = estimates.estimateDetails.filter(item => item.category === 'OVERHEAD');
+
+            /// Combine all three arrays
+            const combinedArray = sorArray.concat(nonSorArray, overHeadArray);
+
+            estimates.estimateDetails = combinedArray;
             
             estimate.pdfData = estimates;
 
