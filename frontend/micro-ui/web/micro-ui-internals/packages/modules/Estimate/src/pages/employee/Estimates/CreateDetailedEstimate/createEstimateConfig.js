@@ -75,7 +75,7 @@ export const createEstimateConfig = () => {
                 ]
             },
             {
-                "head": "NON SOR",
+                "head": "NON_SOR",
                 "subHead": "",
                 "navLink": "Work Details",
                 "body": [

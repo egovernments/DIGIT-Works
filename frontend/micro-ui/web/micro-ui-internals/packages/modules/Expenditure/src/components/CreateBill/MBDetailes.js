@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from "react-router-dom";
-import { CardSectionHeader, Card, CardHeader, CardLabel, LinkLabel, Row, StatusTable} from "@egovernments/digit-ui-react-components";
+import { CardSectionHeader, Card, CardHeader, CardLabel, LinkLabel, Row, StatusTable, CitizenInfoLabel} from "@egovernments/digit-ui-react-components";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
 
 const getMBLinks = (mblinks, tenantId, workOrderNumber, history) => {
@@ -35,6 +35,7 @@ const MBDetailes = ({ formdata }) => {
  
   return (
         <div style={{marginTop:"2rem", marginBottom:"2rem"}}>
+        {allMeasurementsIds && !(allMeasurementsIds?.length > 0) && <CitizenInfoLabel style={{marginBottom:"2rem", maxWidth:"40%"}} info={t("WORKS_PB_INFO")} text={t("WORKS_INFO_MB_NOT_CREATED")} />}
         <StatusTable>
         <Row className="border-none" label={t("WORKS_MB_NUMBERS")} amountStyle={{overflow:"auto", whiteSpace:"nowrap", marginBottom:"-15px"}} text={allMeasurementsIds?.length > 0 ? getMBLinks(allMeasurementsIds, tenantId, workOrderNumber, history) : "NA"} textStyle={{ overflow:"hidden", width:"40%", marginRight:"20%" }} />
         <Row className="border-none" label={t("WORKS_TOTAL_MATERIAL_UTILIZED")} text={formattingNumber(totalMaterialAmount) || "0"} textStyle={{ whiteSpace: "pre" }} />

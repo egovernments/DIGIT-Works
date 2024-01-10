@@ -178,7 +178,7 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       switch (key) {
-        case "ESTIMATE_ESTIMATE_NO":
+        case "ESTIMATE_INBOX_ESTIMATE_NO":
           return (
             <span className="link">
               {/* <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
@@ -212,7 +212,7 @@ export const UICustomizations = {
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
-        if (key === "ESTIMATE_ESTIMATE_NO")
+        if (key === "ESTIMATE_INBOX_ESTIMATE_NO")
           link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${row[key]}`;
       });
       return link;
@@ -427,7 +427,7 @@ export const UICustomizations = {
       const getAmount = (item) => {
         return item.amountDetail.reduce((acc, row) => acc + row.amount, 0);
       };
-      if (key === "ESTIMATE_ESTIMATE_NO") {
+      if (key === "ESTIMATE_SEARCH_ESTIMATE_NO") {
         return (
           <span className="link">
               {/* <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
@@ -476,7 +476,7 @@ export const UICustomizations = {
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
-        if (key === "ESTIMATE_ESTIMATE_NO")
+        if (key === "ESTIMATE_SEARCH_ESTIMATE_NO")
           link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${row[key]}`;
       });
       return link;
@@ -953,7 +953,7 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       switch (key) {
-        case "WORKS_ORDER_NO":
+        case "WORKS_INBOX_ORDER_NO":
           return (
             <span className="link">
               <Link
@@ -987,7 +987,7 @@ export const UICustomizations = {
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
-        if (key === "WORKS_ORDER_NO")
+        if (key === "WORKS_INBOX_ORDER_NO")
           link = `/${window.contextPath}/employee/contracts/contract-details?tenantId=${tenantId}&workOrderNumber=${row[key]}`;
       });
       return link;
@@ -1055,7 +1055,7 @@ export const UICustomizations = {
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
       switch (key) {
-        case "WORKS_ORDER_ID":
+        case "WORKS_SEARCH_ORDER_ID":
           return (
             <span className="link">
               <Link
@@ -1115,7 +1115,7 @@ export const UICustomizations = {
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
-        if (key === "WORKS_ORDER_ID")
+        if (key === "WORKS_SEARCH_ORDER_ID")
           link = `/${window.contextPath}/employee/contracts/contract-details?tenantId=${tenantId}&workOrderNumber=${row[key]}`;
       });
       return link;

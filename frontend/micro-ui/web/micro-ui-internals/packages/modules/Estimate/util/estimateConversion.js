@@ -44,7 +44,7 @@ const fetchData = (RatesData, sorid) => {
   };
 
   const fetchOriginalQtyAndAmount = (allDetailedEstimate,estimateData, type) => {
-    let lineItems = allDetailedEstimate?.estimates?.filter((ob) => ob?.versionNumber === estimateData?.versionNumber - 1)?.[0]?.estimateDetails;
+    let lineItems = allDetailedEstimate?.estimates?.filter((ob) => ob?.versionNumber === 1)?.[0]?.estimateDetails;
     lineItems?.filter(e => e.category === "NON-SOR")
     .forEach((item, index) => {
       // Check if the "sorId" is not null or undefined

@@ -36,7 +36,7 @@ const inboxConfigMukta = () => {
           },
           fields: [
             {
-              label: "ESTIMATE_ESTIMATE_NO",
+              label: "ESTIMATE_INBOX_ESTIMATE_NO",
               type: "text",
               isMandatory: false,
               disable: false,
@@ -104,7 +104,7 @@ const inboxConfigMukta = () => {
         uiConfig: {
           columns: [
             {
-              label: "ESTIMATE_ESTIMATE_NO",
+              label: "ESTIMATE_INBOX_ESTIMATE_NO",
               jsonPath: "ProcessInstance.businessId",
               key: "estimateNumber",
               additionalCustomization: true,
