@@ -105,14 +105,15 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
 
           const numItems = matchingMeasure.numItems ?? 1;
           const length = matchingMeasure.length ?? 1;
-          const width = matchingMeasure.width ?? 1;
+          const width = matchingMeasure.breadth ?? 1;
           const height = matchingMeasure.height ?? 1;
+          const q = (numItems*length*width*height).toFixed(2);
 
           if(sorIdMeasuresMap[sorId].isDeduction){
-            sorIdMeasuresMap[sorId].currentQuantity -= numItems*length*width*height;
+            sorIdMeasuresMap[sorId].currentQuantity -= q;
           }
           else{
-            sorIdMeasuresMap[sorId].currentQuantity += numItems*length*width*height;
+            sorIdMeasuresMap[sorId].currentQuantity += q;
           }
 
           // Update consumedQuantity in sorIdMeasuresMap
