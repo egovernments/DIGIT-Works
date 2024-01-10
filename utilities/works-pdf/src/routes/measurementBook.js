@@ -92,8 +92,6 @@ router.post(
             estimate.locality = estimate.additionalDetails.locality;
             estimate.ward = estimate.additionalDetails.location.ward ;
             estimate.city = estimate.additionalDetails.location.city ;
-            // const completeLocation = estimate.additionalDetails.locality + ', ' + estimate.additionalDetails.location.ward + ', ' + estimate.additionalDetails.location.city;
-            // estimate.location = completeLocation;
 
             let localizationMap = await getStateCityLocalizaitons(requestinfo, tenantId);
             estimate = updateLocalization(estimate, localizationMap, tenantId);
@@ -109,7 +107,7 @@ router.post(
                 timeZone: 'Asia/Kolkata' // Use the time zone for Indian Standard Time (IST)
             };
             const measurementPeriod = startDate.toLocaleString('en-IN', options) + ' - ' + endDate.toLocaleString('en-IN', options);
-            
+
             // make a new variable in measurement named measurementPeriod and assign measurementPeriod to it
             measurementBookDetails.measurement.measurementPeriod = measurementPeriod;
 
