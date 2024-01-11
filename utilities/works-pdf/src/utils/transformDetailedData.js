@@ -82,6 +82,7 @@ const transformDetailedData = (data) => {
 
     const estimateDetails = [];
     for(const key in sorIdMap){
+        sorIdMap[key].amount = sorIdMap[key].amount.toFixed(2);
         sorIdMap[key].estimatedQuantity = sorIdMap[key].estimatedQuantity.toFixed(4);
         estimateDetails.push(sorIdMap[key]);
     }
