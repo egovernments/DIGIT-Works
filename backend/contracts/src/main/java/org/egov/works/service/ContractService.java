@@ -204,11 +204,13 @@ public class ContractService {
     private Contract createContractFromPreviousContractAndEstimateRequest(Contract oldContract,EstimateRequest request){
         log.info("ContractService::createContractFromPreviousContractAndEstimateRequest");
 
+        List<LineItems> lineItemsList = new ArrayList<>();
         LineItems lineItems=LineItems.builder()
                 .estimateId(request.getEstimate().getId())
                 .status(request.getEstimate().getStatus())
                 .tenantId(request.getEstimate().getTenantId())
                 .build();
+        lineItemsList.add(lineItems);
 
 
         return Contract.builder().tenantId(oldContract.getTenantId())
@@ -229,7 +231,7 @@ public class ContractService {
                 .documents(oldContract.getDocuments())
                 .processInstance(oldContract.getProcessInstance())
                 .additionalDetails(oldContract.getAdditionalDetails())
-                .lineItems(Collections.singletonList(lineItems))
+                .lineItems(lineItemsList)
                 .build();
     }
 
