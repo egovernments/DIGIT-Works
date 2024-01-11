@@ -18,6 +18,12 @@ const transformDeviationData = (data) => {
         return Nformatter.format(value);
     }
 
+    const Nformatter1 = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 });
+    // Function to format a number with commas
+    function formatNumberWithCommas1(value) {
+        return Nformatter1.format(value);
+    }
+
     for (const estimateDetail of data.estimates[0].estimateDetails) {
         if (estimateDetail.category === "OVERHEAD") {
             continue;
@@ -119,7 +125,7 @@ for (const estimateDetail of originalEstimateDetails) {
         
         estimateDetails.push(sorIdMap[key]);
     }
-    estimates.totalSum = formatNumberWithCommas(totalSum);
+    estimates.totalSum = formatNumberWithCommas1(totalSum);
     estimates["estimateDetails"] = estimateDetails;
 
 
