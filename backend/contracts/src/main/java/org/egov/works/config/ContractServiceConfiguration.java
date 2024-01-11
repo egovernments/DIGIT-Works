@@ -217,9 +217,6 @@ public class ContractServiceConfiguration {
     @Value("${sms.isAdditonalFieldRequired}")
     private boolean isAdditonalFieldRequired;
 
-    @Value("${egov.idgen.revised.contract.supplement.number.format}")
-    private String idFormat;
-
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
