@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
 import lombok.Setter;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.mukta.adapter.web.models.enums.Action;
 import org.egov.works.mukta.adapter.web.models.enums.MessageType;
 
 import javax.validation.constraints.NotNull;
@@ -35,12 +36,12 @@ public class Sanction extends ExchangeMessage {
     private JsonNode additionalDetails;
 
     public Sanction() {
-        this.setMessageType(MessageType.SANCTION);
+        this.setAction(Action.CREATE);
     }
 
     public Sanction(Estimate estimate, BigDecimal netAmount, BigDecimal grossAmount) {
         super.copy(estimate);
-        this.setMessageType(MessageType.SANCTION);
+        this.setAction(Action.CREATE);
         this.setProgram(estimate.getProgram());
         this.setNetAmount(netAmount);
         this.setGrossAmount(grossAmount);

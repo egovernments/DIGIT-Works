@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
 import lombok.Setter;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.mukta.adapter.web.models.enums.Action;
 import org.egov.works.mukta.adapter.web.models.enums.MessageType;
 
 import java.math.BigDecimal;
@@ -22,18 +23,14 @@ public class Disbursement extends ExchangeMessage {
     private Individual individual;
     @JsonProperty("target_id")
     private String targetId;
-    @JsonProperty("bill_date")
-    private ZonedDateTime billDate;
-    @JsonProperty("start_date")
-    private ZonedDateTime startDate;
-    @JsonProperty("end_date")
-    private ZonedDateTime endDate;
-    @JsonProperty("allocation")
-    private Allocation allocation;
-    @JsonProperty("bill_count")
-    private int billCount;
-    @JsonProperty("bills")
-    private List<Disbursement> bills;
+    @JsonProperty("disbursement_date")
+    private ZonedDateTime disbursementDate;
+    @JsonProperty("allocation_ids")
+    private List<String> allocationIds;
+    @JsonProperty("disbursements_count")
+    private int disbursementsCount;
+    @JsonProperty("disbursements")
+    private List<Disbursement> disbursements;
     @JsonProperty("audit_details")
     private AuditDetails auditDetails;
     @JsonProperty("additional_details")
@@ -41,13 +38,13 @@ public class Disbursement extends ExchangeMessage {
 
 
     public Disbursement() {
-        this.setMessageType(MessageType.DISBURSEMENT);
+        this.setAction(Action.CREATE);
     }
 
     public Disbursement(Allocation allocation, BigDecimal netAmount, BigDecimal grossAmount) {
         super.copy(allocation);
-        this.setMessageType(MessageType.DISBURSEMENT);
-        this.setBillCount(0);
+        this.setAction(Action.CREATE);
+        this.setDisbursementsCount(0);
         this.setNetAmount(netAmount);
         this.setNetAmount(grossAmount);
     }
@@ -65,8 +62,8 @@ public class Disbursement extends ExchangeMessage {
 
     @JsonIgnore
     public BigDecimal getTotalNetAmount() {
-        if (bills != null && !bills.isEmpty()) {
-            return bills.stream()
+        if (disbursements != null && !disbursements.isEmpty()) {
+            return disbursements.stream()
                     .map(Disbursement::getNetAmount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
@@ -76,8 +73,8 @@ public class Disbursement extends ExchangeMessage {
 
     @JsonIgnore
     public BigDecimal getTotalGrossAmount() {
-        if (bills != null && !bills.isEmpty()) {
-            return bills.stream()
+        if (disbursements != null && !disbursements.isEmpty()) {
+            return disbursements.stream()
                     .map(Disbursement::getGrossAmount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
@@ -87,10 +84,10 @@ public class Disbursement extends ExchangeMessage {
 
     @JsonIgnore
     public int getBillCount() {
-        if (bills != null && !bills.isEmpty()) {
+        if (disbursements != null && !disbursements.isEmpty()) {
             return 1;//getBills().length;
         } else {
-            return billCount;
+            return disbursementsCount;
         }
     }
 }

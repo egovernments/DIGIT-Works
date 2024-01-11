@@ -39,8 +39,8 @@ public class PaymentRequest {
     @Valid
     private String tenantId;
 
-    @JsonProperty("parentPI")
+    @JsonProperty("parentId")
     @Valid
-    private String parentPI;
+    private String parentId;
 
 }

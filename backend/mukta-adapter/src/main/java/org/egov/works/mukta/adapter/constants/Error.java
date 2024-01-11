@@ -27,4 +27,6 @@ public class Error {
     public static final String INVALID_INDIVIDUAL_SEARCH_CRITERIA_MESSAGE = "Invalid individual search criteria";
     public static final String ORG_CRITERIA_ERROR = "ORG_CRITERIA_ERROR";
     public static final String ORG_CRITERIA_ERROR_MESSAGE = "Request info, or ids are empty in organisation search";
+    public static final String PAYMENT_ALREADY_PROCESSED = "PAYMENT_ALREADY_PROCESSED";
+    public static final String PAYMENT_ALREADY_PROCESSED_MESSAGE = "Payment already processed";
 }

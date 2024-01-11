@@ -137,9 +137,9 @@ public class PaymentInstructionEnrichment {
             }
         }
         disbursement.setTargetId(paymentRequest.getPayment().getPaymentNumber());
-        disbursement.setBills(disbursements);
-        disbursement.setBillDate(ZonedDateTime.now());
-        disbursement.setBillCount(disbursements.size());
+        disbursement.setDisbursements(disbursements);
+        disbursement.setDisbursementDate(ZonedDateTime.now());
+        disbursement.setDisbursementsCount(disbursements.size());
         disbursement.setAuditDetails(setAuditDetails("SYSTEM", "SYSTEM"));
         disbursement.setLocationCode(paymentRequest.getPayment().getTenantId());
         Status status = Status.builder().statusCode(StatusCode.INITIATED).statusMessage("Initiated").build();

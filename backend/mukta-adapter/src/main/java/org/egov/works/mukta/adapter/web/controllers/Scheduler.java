@@ -66,8 +66,5 @@ public class Scheduler {
         disbursementService.processDisbursement(disbursementRequest);
     }
 
-    @RequestMapping(path = "/on-failure", method = RequestMethod.POST)
-    public void onFailure(@RequestBody @Valid PaymentRequest paymentRequest) {
-        paymentInstructionService.processPaymentInstructionOnFailure(paymentRequest);
-    }
+
 }

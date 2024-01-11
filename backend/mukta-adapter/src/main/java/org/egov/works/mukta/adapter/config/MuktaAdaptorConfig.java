@@ -81,12 +81,6 @@ public class MuktaAdaptorConfig {
     @Value("${ifms.pi.index.enrich.topic}")
     private String ifmsPiEnrichmentTopic;
 
-    // audit log
-    @Value("${egov.audit.log.host}")
-    private String auditLogHost;
-
-    @Value("${egov.audit.log.search.endpoint}")
-    private String auditLogSearchEndPoint;
     //State Level Tenant I'd
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
@@ -134,4 +128,8 @@ public class MuktaAdaptorConfig {
     private String programServiceHost;
     @Value("${egov.program.service.disbursement.endpoint}")
     private String programServiceDisbursementEndpoint;
+
+    // Kafka Topics
+    @Value("${disburse.create.topic}")
+    private String disburseCreateTopic;
 }

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
 import lombok.Setter;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.mukta.adapter.web.models.enums.Action;
 import org.egov.works.mukta.adapter.web.models.enums.MessageType;
 
 import javax.validation.constraints.NotNull;
@@ -37,7 +38,7 @@ public class Estimate extends ExchangeMessage {
     private JsonNode additionalDetails;
 
     public Estimate() {
-        this.setMessageType(MessageType.ESTIMATE);
+        this.setAction(Action.CREATE);
     }
 
     public Estimate(Program program, ZonedDateTime startDate, ZonedDateTime endDate, BigDecimal netAmount, BigDecimal grossAmount) {
@@ -47,7 +48,7 @@ public class Estimate extends ExchangeMessage {
         this.endDate = endDate;
         this.setNetAmount(netAmount);
         this.setGrossAmount(netAmount);
-        this.setMessageType(MessageType.ESTIMATE);
+        this.setAction(Action.CREATE);
     }
 
     static public Estimate fromString(String json) {

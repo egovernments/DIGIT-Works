@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
 import lombok.Setter;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.mukta.adapter.web.models.enums.Action;
 import org.egov.works.mukta.adapter.web.models.enums.MessageType;
 
 @Getter
@@ -26,7 +27,7 @@ public class Program extends ExchangeMessage {
     private JsonNode additionalDetails;
 
     public Program() {
-        this.setMessageType(MessageType.PAYMENT);
+        this.setAction(Action.CREATE);
     }
 
     static public Program fromString(String json) {

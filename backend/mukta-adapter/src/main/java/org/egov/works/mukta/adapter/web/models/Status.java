@@ -18,10 +18,6 @@ import java.util.List;
 @Setter
 @Builder
 public class Status {
-    @Id
-    @JsonProperty("id")
-    String id;
-
     @JsonProperty("status_code")
     StatusCode statusCode;
 

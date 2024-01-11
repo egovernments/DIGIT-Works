@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
 import lombok.Setter;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.mukta.adapter.web.models.enums.Action;
 import org.egov.works.mukta.adapter.web.models.enums.MessageType;
 import org.springframework.data.annotation.Id;
 
@@ -21,16 +22,18 @@ public class ExchangeMessage {
     @JsonProperty("id")
     @Id
     private String id;
+    @JsonProperty("name")
+    private String name;
     @JsonProperty("schema_version")
     private String schemaVersion;
-    @JsonProperty("message_type")
-    private MessageType messageType;
+    @JsonProperty("action")
+    private Action action;
     @JsonProperty("account_code")
     private String accountCode;
-    @JsonProperty("function_code")
-    private String functionCode;
     @JsonProperty("administration_code")
     private String administrationCode;
+    @JsonProperty("function_code")
+    private String functionCode;
     @JsonProperty("location_code")
     private String locationCode;
     @JsonProperty("program_code")
@@ -78,9 +81,9 @@ public class ExchangeMessage {
     public void copy(ExchangeMessage other) {
         this.schemaVersion = other.schemaVersion;
         this.functionCode = other.functionCode;
-        this.administrationCode = other.administrationCode;
         this.locationCode = other.locationCode;
         this.programCode = other.programCode;
+        this.administrationCode = other.administrationCode;
         this.recipientSegmentCode = other.recipientSegmentCode;
         this.economicSegmentCode = other.economicSegmentCode;
         this.sourceOfFundCode = other.sourceOfFundCode;

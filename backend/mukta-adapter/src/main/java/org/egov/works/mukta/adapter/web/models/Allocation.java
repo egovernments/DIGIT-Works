@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
 import lombok.Setter;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.mukta.adapter.web.models.enums.Action;
 import org.egov.works.mukta.adapter.web.models.enums.MessageType;
 
 import javax.validation.constraints.NotNull;
@@ -42,12 +43,12 @@ public class Allocation extends ExchangeMessage {
 
 
     public Allocation() {
-        this.setMessageType(MessageType.ALLOCATION);
+        this.setAction(Action.CREATE);
     }
 
     public Allocation(Sanction sanction, BigDecimal netAmount, BigDecimal grossAmount) {
         super.copy(sanction);
-        this.setMessageType(MessageType.ALLOCATION);
+        this.setAction(Action.CREATE);
         this.setSanction(sanction);
         this.setNetAmount(netAmount);
         this.setGrossAmount(grossAmount);

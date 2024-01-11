@@ -98,7 +98,7 @@ public class DisbursementService {
 
     private HashMap<String, Status> getLineItemIdStatusMap(Disbursement disbursementRequest) {
         HashMap<String, Status> lineItemIdStatusMap = new HashMap<>();
-        disbursementRequest.getBills().forEach(disbursement -> lineItemIdStatusMap.put(disbursement.getTargetId(), disbursement.getStatus()));
+        disbursementRequest.getDisbursements().forEach(disbursement -> lineItemIdStatusMap.put(disbursement.getTargetId(), disbursement.getStatus()));
         return lineItemIdStatusMap;
     }
 }
