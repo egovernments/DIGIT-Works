@@ -16,7 +16,7 @@ const transformDetailedData = (data) => {
     estimates["ward"] = data.estimates[lastIndex].additionalDetails.location.ward;
     estimates["city"] = data.estimates[lastIndex].additionalDetails.location.city;
 
-    const Nformatter = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
+    const Nformatter = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 });
     // Function to format a number with commas
     function formatNumberWithCommas(value) {
         return Nformatter.format(value);
@@ -24,6 +24,7 @@ const transformDetailedData = (data) => {
 
     // Format totalEstimatedAmount with commas
     var totalEstimatedAmount = parseFloat(data.estimates[lastIndex].additionalDetails.totalEstimatedAmount).toFixed(2);
+
     estimates["totalEstimatedAmount"] = formatNumberWithCommas(totalEstimatedAmount);
 
     const sorIdMap = {};
