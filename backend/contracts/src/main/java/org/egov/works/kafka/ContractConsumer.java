@@ -42,9 +42,9 @@ public class ContractConsumer {
         try {
             request = objectMapper.readValue(consumerRecord, EstimateRequest.class);
             if(request.getEstimate().getBusinessService().equals(REVISION_ESTIMATE)){
-                log.info("Request is not for Revised Estimate");
-            }else{
                 contractService.createAndPostRevisedContractRequest(request);
+            }else{
+                log.info("Request is not for Revised Estimate");
             }
 
         } catch (Exception exception) {
