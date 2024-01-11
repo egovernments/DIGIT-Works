@@ -2478,7 +2478,7 @@ export const UICustomizations = {
           const contractNumber = row?.businessObject?.referenceId;
           return <span className="link">{Digit.Utils.statusBasedNavigation(state, contractNumber, value, tenantId, value)}</span>;
         case "MB_AMOUNT":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{value}</span> : t("ES_COMMON_NA");
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{Digit.Utils.dss.formatterWithoutRound(parseFloat(value).toFixed(2), "number", undefined, true, undefined, 2)}</span> : t("ES_COMMON_NA");
         case "MB_STATUS":
           return <span>{t(value)}</span>;
         case "MASTERS_SOCIAL_CATEGORY":
