@@ -132,7 +132,7 @@ const ViewDetailedEstimate = () => {
 
   const HandleDownloadPdf = () => {
     if(revisionNumber)
-      Digit.Utils.downloadEgovPDF("deviationStatement/deviation-statement", { estimateNumber, tenantId }, `RevisedEstimate-${estimateNumber}.pdf`);
+      Digit.Utils.downloadEgovPDF("deviationStatement/deviation-statement", { revisionNumber, tenantId }, `RevisedEstimate-${revisionNumber}.pdf`);
     else
     Digit.Utils.downloadEgovPDF("detailedEstimate/detailed-estimate", { estimateNumber, tenantId }, `Estimate-${estimateNumber}.pdf`);
   };
