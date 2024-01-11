@@ -24,7 +24,6 @@ const transformDetailedData = (data) => {
 
     // Format totalEstimatedAmount with commas
     var totalEstimatedAmount = parseFloat(data.estimates[lastIndex].additionalDetails.totalEstimatedAmount).toFixed(2);
-    // totalEstimatedAmount = parseFloat(totalEstimatedAmount).toLocaleString("en-IN", { maximumFractionDigits: 0 });
 
     estimates["totalEstimatedAmount"] = formatNumberWithCommas(totalEstimatedAmount);
 
