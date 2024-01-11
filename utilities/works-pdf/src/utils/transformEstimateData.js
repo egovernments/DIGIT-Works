@@ -116,6 +116,9 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
             sorIdMeasuresMap[sorId].currentQuantity += q;
           }
 
+          const mbAmount = sorIdMeasuresMap[sorId].unitRate * sorIdMeasuresMap[sorId].currentQuantity;
+          sorIdMeasuresMap[sorId].mbAmount = mbAmount;
+
           // Update consumedQuantity in sorIdMeasuresMap
           sorIdMeasuresMap[sorId].consumedQuantity = matchingMeasure.cumulativeValue;
         }
