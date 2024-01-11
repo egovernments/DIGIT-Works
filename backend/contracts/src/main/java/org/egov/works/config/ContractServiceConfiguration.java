@@ -60,6 +60,9 @@ public class ContractServiceConfiguration {
     @Value("${egov.idgen.supplement.number.name}")
     private String idgenSupplementNumberName;
 
+    @Value("${egov.idgen.contract.revision.number.name}")
+    private String idgenRevisionNumberName;
+
     //Workflow Config
     @Value("${contract.workflow.module.name}")
     private String contractWFModuleName;
@@ -213,6 +216,9 @@ public class ContractServiceConfiguration {
 
     @Value("${sms.isAdditonalFieldRequired}")
     private boolean isAdditonalFieldRequired;
+
+    @Value("${egov.idgen.revised.contract.supplement.number.format}")
+    private String idFormat;
 
     @PostConstruct
     public void initialize() {

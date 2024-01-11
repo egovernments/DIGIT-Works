@@ -391,8 +391,12 @@ public class ContractEnrichment {
     }
     private void enrichSupplementNumber (ContractRequest contractRequest) {
         log.info("Generating supplement number");
+
+        String idName = contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE)?
+                 config.getIdgenRevisionNumberName():config.getIdgenSupplementNumberName();
+
         List<String> idList = idgenUtil.getIdList(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
-                config.getIdgenSupplementNumberName(), "", 1);
+                idName, "", 1);
         String generatedSupplementNumber = idList.get(0);
         contractRequest.getContract().setSupplementNumber(generatedSupplementNumber);
         log.info("Supplement Number enrichment is done. Generated Supplement Number ["+generatedSupplementNumber+"]");

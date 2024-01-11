@@ -113,4 +113,6 @@ public class ContractServiceConstants {
     public static final String PARSE_ERROR_CODE = "PARSE_ERROR";
     public static final String PARSE_ERROR_MSG = "Error while parsing response from FileStore";
     public static final String CONTRACT_REVISION_ESTIMATE = "CONTRACT-REVISION-ESTIMATE";
+
+    public static final String REVISION_ESTIMATE="REVISION-ESTIMATE";
 }
