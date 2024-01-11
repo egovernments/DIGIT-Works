@@ -481,7 +481,7 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
           };
           if(action === "DRAFT")
           {
-            setShowToast({ label: "Application Drafted Successfully" });
+            setShowToast({ label: t("WORKS_ESTIMATE_APPLICATION_DRAFTED") });
             if(isCreateRevisionEstimate || isEditRevisionEstimate)
               setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-revision-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&revisionNumber=${responseData?.estimates[0]?.revisionNumber}&projectNumber=${projectNumber}&isEditRevisionEstimate=true`, state)}, 3000);
             else
@@ -519,7 +519,7 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
           };
           if(action === "DRAFT")
           {
-            setShowToast({ label: "Application Drafted successfully" });
+            setShowToast({ label: t("WORKS_ESTIMATE_APPLICATION_DRAFTED") });
             if(isCreateRevisionEstimate || isEditRevisionEstimate)
               setTimeout(() => {history.push(`/${window?.contextPath}/employee/estimate/update-revision-detailed-estimate?tenantId=${responseData?.estimates[0]?.tenantId}&revisionNumber=${responseData?.estimates[0]?.revisionNumber}&projectNumber=${projectNumber}&isEditRevisionEstimate=true`, state)}, 3000);
             else
