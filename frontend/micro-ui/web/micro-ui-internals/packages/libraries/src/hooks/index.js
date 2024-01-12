@@ -166,6 +166,8 @@ import useUpdatePI from "./expenditure/useUpdatePI";
 import useMBDataForPB from "./expenditure/useMBDataForPB";
 
 import useViewMeasurement from "./measurement/useViewMeasurement";
+import useEstimateSearchValidation from "./mukta/useEstimateSearchValidation";
+import useTEorMBCreateValidation from "./mukta/useTEorMBCreateValidation";
 
 const works = {
   useViewEstimateDetails,
@@ -324,6 +326,10 @@ const paymentInstruction = {
 const measurement = {
   useViewMeasurement
 }
+const mukta = {
+  useEstimateSearchValidation,
+  useTEorMBCreateValidation
+}
 
 const Hooks = {
   useSessionStorage,
@@ -392,7 +398,8 @@ const Hooks = {
   organisation,
   bankAccount,
   paymentInstruction,
-  measurement
+  measurement,
+  mukta
 };
 
 export default Hooks;

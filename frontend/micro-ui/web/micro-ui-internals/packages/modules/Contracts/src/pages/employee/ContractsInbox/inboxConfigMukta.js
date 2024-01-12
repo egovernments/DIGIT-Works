@@ -43,7 +43,7 @@ const inboxConfigMukta = () => {
                     },
                     fields: [
                         {
-                            label: "WO_NUMBER",
+                            label: "WO_INBOX_NUMBER",
                             type: "text",
                             isMandatory: false,
                             disable: false,
@@ -103,7 +103,7 @@ const inboxConfigMukta = () => {
                 uiConfig: {
                     columns: [
                         {
-                            label: "WORKS_ORDER_NO",
+                            label: "WORKS_INBOX_ORDER_NO",
                             jsonPath: "ProcessInstance.businessId",
                             additionalCustomization: true,
                             key:"workOrderNumber"

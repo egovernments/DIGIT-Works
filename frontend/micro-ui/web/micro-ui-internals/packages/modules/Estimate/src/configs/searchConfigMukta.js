@@ -83,7 +83,7 @@ const searchConfigMukta = () => {
                                 }
                             },
                             {
-                                "label": "ESTIMATE_ESTIMATE_NO",
+                                "label": "ESTIMATE_SEARCH_ESTIMATE_NO",
                                 "type": "text",
                                 "isMandatory": false,
                                 "disable": false,
