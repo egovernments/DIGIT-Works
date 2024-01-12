@@ -90,7 +90,7 @@ return  {
               }
           },
           {
-              "label": "WORKS_ORDER_ID",
+              "label": "WORKS_SEARCH_ORDER_ID",
               "type": "text",
               "isMandatory": false,
               "disable": false,
@@ -159,7 +159,7 @@ return  {
       "uiConfig": {
         "columns": [
           {
-            "label": "WORKS_ORDER_ID",
+            "label": "WORKS_SEARCH_ORDER_ID",
             "jsonPath": "businessObject.contractNumber",
             "additionalCustomization": true
           },

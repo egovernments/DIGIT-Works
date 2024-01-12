@@ -12,6 +12,7 @@ const ViewDetailedEstimate = () => {
   const { t } = useTranslation();
   const [actionsMenu, setActionsMenu] = useState([]);
   const [isStateChanged, setStateChanged] = useState(``);
+  const [toast, setToast] = useState({ show: false, label: "", error: false });
   const menuRef = useRef();
 
   const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
@@ -66,6 +67,7 @@ const ViewDetailedEstimate = () => {
       cacheTime: 0,
     },
   });
+  let validationData = Digit.Hooks.mukta.useEstimateSearchValidation({detailedestimates : allDetailedEstimate,tenantId, t});
 
   //fetching all work orders for a particular estimate
   let allContract = contracts;
@@ -114,7 +116,16 @@ const ViewDetailedEstimate = () => {
   
   }, [detailedEstimate, isStateChanged, contracts]);
 
+  const handleToastClose = () => {
+    setToast({ show: false, label: "", error: false });
+}
+
   const handleActionBar = (option) => {
+    if(validationData && Object.keys(validationData)?.length > 0 && validationData?.type?.includes(option?.name))
+    {
+      setToast({error: validationData?.error, label: validationData?.label, show:true})
+      return;
+    }
     if (option?.name === "CREATE_CONTRACT") {
       history.push(`/${window.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&estimateNumber=${estimateNumber}`);
     }
@@ -132,7 +143,7 @@ const ViewDetailedEstimate = () => {
 
   const HandleDownloadPdf = () => {
     if(revisionNumber)
-      Digit.Utils.downloadEgovPDF("deviationStatement/deviation-statement", { revisionNumber, tenantId }, `RevisedEstimate-${revisionNumber}.pdf`);
+      Digit.Utils.downloadEgovPDF("deviationStatement/deviation-statement", { revisionNumber, tenantId }, `DeviationStatement-${revisionNumber}.pdf`);
     else
     Digit.Utils.downloadEgovPDF("detailedEstimate/detailed-estimate", { estimateNumber, tenantId }, `Estimate-${estimateNumber}.pdf`);
   };
@@ -171,6 +182,7 @@ const ViewDetailedEstimate = () => {
         <MultiLink onHeadClick={() => HandleDownloadPdf()} downloadBtnClassName={"employee-download-btn-className"} label={t("CS_COMMON_DOWNLOAD")} />
       </div>
       <ViewComposer data={config} isLoading={false} />
+      {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
       <>
         {detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" && !isLoadingContracts && actionsMenu?.length > 0 ? (
           <ActionBar>
