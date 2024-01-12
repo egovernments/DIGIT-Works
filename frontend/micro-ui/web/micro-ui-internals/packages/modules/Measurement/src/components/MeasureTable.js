@@ -367,7 +367,7 @@ const MeasureTable = (props) => {
             </td>
 
             <td>
-              <Amount customStyle={{ textAlign: "right" }} value={row?.amount || 0} t={t} roundOff={false}></Amount>
+              <Amount customStyle={{ textAlign: "right" }} value={parseFloat(row?.amount).toFixed(2) || 0} t={t} roundOff={false}></Amount>
             </td>
             {(mode == "CREATEALL" || mode == "CREATERE") && (
               <td>
