@@ -69,23 +69,23 @@ const SearchMeasurementConfig = () => {
                 populators: { name: "projectName", validation: { pattern: "^[^\\$\"<>?\\\\~`!@$%^()+={}\\[\\]*:;“”‘’]{1,50}$", maxlength: 140 } },
               },
               {
-                label: "MB_NUMBER",
-                type: "text",
-                isMandatory: false,
-                disable: false,
-                populators: {
-                  name: "measurementNumber",
-                  error: `PROJECT_PATTERN_ERR_MSG`,
-                  validation: {  minlength: 2 },
-                },
-              },
-              {
                 label: "MB_SEARCH_REFERENCE_NUMBER",
                 type: "text",
                 isMandatory: false,
                 disable: false,
                 populators: {
                   name: "referenceId",
+                  error: `PROJECT_PATTERN_ERR_MSG`,
+                  validation: {  minlength: 2 },
+                },
+              },
+              {
+                label: "MB_NUMBER",
+                type: "text",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                  name: "measurementNumber",
                   error: `PROJECT_PATTERN_ERR_MSG`,
                   validation: {  minlength: 2 },
                 },
