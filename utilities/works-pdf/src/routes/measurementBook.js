@@ -146,6 +146,9 @@ router.post(
             for(let i = 0;i<measurementBookDetails.tableData.length;i++){
                 totalSum += measurementBookDetails.tableData[i].mbAmount;
                 measurementBookDetails.tableData[i].mbAmount = formatNumberWithCommas(measurementBookDetails.tableData[i].mbAmount);
+                // measurementBookDetails.tableData[i].consumedQuantity = parseFloat(measurementBookDetails.tableData[i].consumedQuantity).toFixed(4);
+                measurementBookDetails.tableData[i].currentQuantity = parseFloat(measurementBookDetails.tableData[i].currentQuantity).toFixed(4);
+                // measurementBookDetails.tableData[i].estimatedQuantity = parseFloat(measurementBookDetails.tableData[i].estimatedQuantity).toFixed(4);
             }
             measurementBookDetails.measurement.totalSum = formatNumberWithCommas1(totalSum);
 

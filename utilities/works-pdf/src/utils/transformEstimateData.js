@@ -1,3 +1,4 @@
+const { all } = require("axios");
 const { pdf } = require("../config");
 
 const transformEstimateData = (lineItems, contract, measurement, allMeasurements, estimateDetails) => {
@@ -107,7 +108,7 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
           const length = matchingMeasure.length ?? 1;
           const width = matchingMeasure.breadth ?? 1;
           const height = matchingMeasure.height ?? 1;
-          const q = (numItems*length*width*height).toFixed(2);
+          const q = numItems*length*width*height;
 
           if(sorIdMeasuresMap[sorId].isDeduction){
             sorIdMeasuresMap[sorId].currentQuantity -= q;
@@ -118,12 +119,28 @@ const transformEstimateData = (lineItems, contract, measurement, allMeasurements
 
           const mbAmount = sorIdMeasuresMap[sorId].unitRate * sorIdMeasuresMap[sorId].currentQuantity;
           sorIdMeasuresMap[sorId].mbAmount = mbAmount;
+        }
+    }
+}
 
+for(const sorId of Object.keys(sorIdMeasuresMap)){
+  const id = sorIdMeasuresMap[sorId].id;
+
+    // Find the line item with matching estimateLineItemId
+    const matchingLineItem = lineItems.find(item => item.estimateLineItemId === id);
+
+    if (matchingLineItem) {
+        const contractLineItemId = matchingLineItem.contractLineItemRef;
+        
+        // Find the measure with matching targetId
+        const matchingMeasure = allMeasurements[1].measures.find(measure => measure.targetId === contractLineItemId);
+
+        if(matchingMeasure){
           // Update consumedQuantity in sorIdMeasuresMap
           sorIdMeasuresMap[sorId].consumedQuantity = matchingMeasure.cumulativeValue;
         }
     }
-}
+  } 
 
   return sorIdMeasuresMap;
 };
