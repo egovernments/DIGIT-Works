@@ -88,6 +88,8 @@ const ViewContractDetails = () => {
       const {isLoading, data:measurementData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
       let isInWorkflowMeasurementPresent = measurementData?.allMeasurements?.code === "NO_MEASUREMENT_ROLL_FOUND"? false : (measurementData?.allMeasurements?.length > 0 && measurementData?.allMeasurements?.filter((ob) => ob?.wfStatus === "SUBMITTED" || ob?.wfStatus === "VERIFIED" || ob?.wfStatus === "DRAFTED")?.length>0);
 
+      let validationData = Digit.Hooks.mukta.useTEorMBCreateValidation({estimateNumber : measurementData?.estimate?.estimateNumber, tenantId, t})
+
     
     useEffect(() => {
         if (!window.location.href.includes("create-contract") && sessionFormData && Object.keys(sessionFormData) != 0) {
@@ -138,8 +140,12 @@ const ViewContractDetails = () => {
     const HandleDownloadPdf = () => {
         Digit.Utils.downloadEgovPDF('workOrder/work-order',{contractId,tenantId},`WorkOrder-${contractId}.pdf`)
     }
-
     const handleActionBar = (option) => {
+        if(validationData && Object?.keys(validationData)?.length > 0 && validationData?.type?.includes(option?.action))
+        {
+            setToast({show : true, label : t(`${validationData?.label}_${option?.action}`), error : validationData?.error});
+            return;
+        }
         if (option?.name === "CREATE_PURCHASE_BILL") {
             history.push(`/${window.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&workOrderNumber=${contractId}`);
         }
