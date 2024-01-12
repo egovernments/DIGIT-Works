@@ -12,6 +12,7 @@ const ViewDetailedEstimate = () => {
   const { t } = useTranslation();
   const [actionsMenu, setActionsMenu] = useState([]);
   const [isStateChanged, setStateChanged] = useState(``);
+  const [toast, setToast] = useState({ show: false, label: "", error: false });
   const menuRef = useRef();
 
   const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
@@ -29,7 +30,18 @@ const ViewDetailedEstimate = () => {
   //fetching estimate data
   const {isLoading: isDetailedEstimateLoading, data: detailedEstimate} = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
+  //fetching all the estimates for revision original values
+  const requestrevisionCriteria = {
+    url: "/estimate/v1/_search",
+    params : {tenantId : tenantId , estimateNumber : estimateNumber},
+    config : {
+      cacheTime : 0
+    },
+    changeQueryName: "allDetailedEstimate"
+  };
 
+  //fetching estimate data
+  const {isLoading: isDetailedEstimatesLoading, data: allDetailedEstimate} = Digit.Hooks.useCustomAPIHook(requestrevisionCriteria);
   //fetching project data
   const { isLoading: isProjectLoading, data: project } = Digit.Hooks.project.useProjectSearch({
     tenantId,
@@ -55,6 +67,8 @@ const ViewDetailedEstimate = () => {
       cacheTime: 0,
     },
   });
+
+  let validationData = Digit.Hooks.mukta.useEstimateSearchValidation({detailedestimates : allDetailedEstimate,tenantId, t});
 
   //fetching all work orders for a particular estimate
   let allContract = contracts;
@@ -103,7 +117,16 @@ const ViewDetailedEstimate = () => {
   
   }, [detailedEstimate, isStateChanged, contracts]);
 
+  const handleToastClose = () => {
+    setToast({ show: false, label: "", error: false });
+}
+
   const handleActionBar = (option) => {
+    if(validationData && Object.keys(validationData)?.length > 0 && validationData?.type?.includes(option?.name))
+    {
+      setToast({error: validationData?.error, label: validationData?.label, show:true})
+      return;
+    }
     if (option?.name === "CREATE_CONTRACT") {
       history.push(`/${window.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&estimateNumber=${estimateNumber}`);
     }
@@ -121,12 +144,12 @@ const ViewDetailedEstimate = () => {
 
   const HandleDownloadPdf = () => {
     if(revisionNumber)
-      Digit.Utils.downloadEgovPDF("deviationStatement/deviation-statement", { estimateNumber, tenantId }, `RevisedEstimate-${estimateNumber}.pdf`);
+      Digit.Utils.downloadEgovPDF("deviationStatement/deviation-statement", { revisionNumber, tenantId }, `RevisedEstimate-${revisionNumber}.pdf`);
     else
     Digit.Utils.downloadEgovPDF("detailedEstimate/detailed-estimate", { estimateNumber, tenantId }, `Estimate-${estimateNumber}.pdf`);
   };
 
-  const overheads = detailedEstimate?.estimates[0]?.estimateDetails?.filter((row) => row?.category?.includes("OVERHEAD") && row?.isActive);
+  const overheads = detailedEstimate?.estimates?.filter((ob) => revisionNumber ? (ob?.revisionNumber === revisionNumber) : (ob?.businessService === "ESTIMATE" || !(ob?.revisionNumber)))?.[0]?.estimateDetails?.filter((row) => row?.category?.includes("OVERHEAD") && row?.isActive);
   const tableHeaderOverheads = [t("WORKS_SNO"), t("WORKS_OVERHEAD"), t("WORKS_PERCENTAGE"), t("WORKS_AMOUNT")];
   const tableRowsOverheads = overheads?.map((row, index) => {
     return [
@@ -147,9 +170,9 @@ const ViewDetailedEstimate = () => {
     },
   };
 
-  const config = data(project, detailedEstimate?.estimates[0], overheadItems, revisionNumber);
+  const config = data(project, detailedEstimate?.estimates?.filter((ob) => revisionNumber ? (ob?.revisionNumber === revisionNumber) : !(ob?.revisionNumber))?.[0], overheadItems, revisionNumber, allDetailedEstimate);
 
-  if (isProjectLoading || isDetailedEstimateLoading) return <Loader />;
+  if (isProjectLoading || isDetailedEstimateLoading | isDetailedEstimatesLoading) return <Loader />;
 
   return (
     <div className={"employee-main-application-details"}>
@@ -160,6 +183,7 @@ const ViewDetailedEstimate = () => {
         <MultiLink onHeadClick={() => HandleDownloadPdf()} downloadBtnClassName={"employee-download-btn-className"} label={t("CS_COMMON_DOWNLOAD")} />
       </div>
       <ViewComposer data={config} isLoading={false} />
+      {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
       <>
         {detailedEstimate?.estimates?.filter((ob) => ob?.businessService !== "REVISION-ESTIMATE")?.[0]?.wfStatus === "APPROVED" && !isLoadingContracts && actionsMenu?.length > 0 ? (
           <ActionBar>
