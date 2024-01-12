@@ -31,8 +31,9 @@ const TotalEstAmount = ({formData,setValue,t,...props}) => {
 
     
     useEffect(() => {
+        if(formData?.totalEstimatedAmount !== getTotalAmount)
         setValue("totalEstimatedAmount", getTotalAmount)
-    }, [getTotalAmount])
+    }, [getTotalAmount, formData])
     
  
   return (
