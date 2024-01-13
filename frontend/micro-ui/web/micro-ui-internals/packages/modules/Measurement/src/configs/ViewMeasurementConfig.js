@@ -17,7 +17,7 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
   }, [estimateDetails]);
 
   
-  let musterrollNumber = measurement?.additionalDetails?.musterRollNumber && Object.keys(measurement?.additionalDetails?.musterRollNumber)?.length ? measurement?.additionalDetails?.musterRollNumber : (findMusterRollNumber(musterRolls,measurement?.measurementNumber, measurement?.additionalDetails?.startDate, measurement?.additionalDetails?.endDate)); 
+  let musterrollNumber = (findMusterRollNumber(musterRolls,measurement?.measurementNumber, measurement?.additionalDetails?.startDate, measurement?.additionalDetails?.endDate)); 
 
   return {
     cards: [
@@ -42,7 +42,7 @@ export const data = (contract, estimateDetails, measurement, allMeasurements, th
                 key: "MB_MUSTER_ROLL_ID",
                 isLink : musterrollNumber ? true : false,
                 to : `/works-ui/employee/attendencemgmt/view-attendance?tenantId=${measurement?.tenantId}&musterRollNumber=${musterrollNumber}`,
-                value: measurement?.additionalDetails?.musterRollNumber && Object.keys(measurement?.additionalDetails?.musterRollNumber)?.length ? measurement?.additionalDetails?.musterRollNumber : (findMusterRollNumber(musterRolls,measurement?.measurementNumber, measurement?.additionalDetails?.startDate, measurement?.additionalDetails?.endDate)) || "NA",
+                value: (findMusterRollNumber(musterRolls,measurement?.measurementNumber, measurement?.additionalDetails?.startDate, measurement?.additionalDetails?.endDate)) || "NA",
               },
               {
                 key: "MB_PROJECT_DATE",
