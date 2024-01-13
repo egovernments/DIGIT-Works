@@ -1,5 +1,8 @@
 package org.egov.works.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -15,6 +18,7 @@ import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,6 +54,9 @@ public class ContractService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     public ContractResponse createContract(ContractRequest contractRequest) {
         log.info("Create contract");
@@ -207,10 +214,31 @@ public class ContractService {
         List<LineItems> lineItemsList = new ArrayList<>();
         LineItems lineItems=LineItems.builder()
                 .estimateId(request.getEstimate().getId())
-                .status(request.getEstimate().getStatus())
+                .status(Status.ACTIVE)
                 .tenantId(request.getEstimate().getTenantId())
                 .build();
         lineItemsList.add(lineItems);
+        BigDecimal totalEstimatedAmount = null;
+
+        Object additionalDetailsObject = request.getEstimate().getAdditionalDetails();
+
+        if (additionalDetailsObject instanceof Map) {
+            // Convert additionalDetailsObject to Map<String, Object>
+            Map<String, Object> additionalDetailsMap = (Map<String, Object>) additionalDetailsObject;
+
+            // Now you can use additionalDetailsMap as a Map<String, Object>
+           log.info("Is additionalDetailsMap an instance of Map? " + (additionalDetailsMap instanceof Map));
+
+            // Accessing totalEstimatedAmount
+            totalEstimatedAmount = (BigDecimal)additionalDetailsMap.get("totalEstimatedAmount");
+            if (totalEstimatedAmount != null) {
+                log.info("Total Estimated Amount: " + totalEstimatedAmount);
+            }else{
+                log.info("Total Estimate Amount not found");
+            }
+        }
+
+
 
 
         return Contract.builder().tenantId(oldContract.getTenantId())
@@ -218,7 +246,7 @@ public class ContractService {
                 .executingAuthority(oldContract.getExecutingAuthority())
                 .businessService(CONTRACT_REVISION_ESTIMATE)
                 .contractNumber(oldContract.getContractNumber())
-                .totalContractedAmount(oldContract.getTotalContractedAmount())
+                .totalContractedAmount(totalEstimatedAmount)
                 .contractType(oldContract.getContractType())
                 .securityDeposit(oldContract.getSecurityDeposit())
                 .agreementDate(oldContract.getAgreementDate())
@@ -226,7 +254,7 @@ public class ContractService {
                 .orgId(oldContract.getOrgId())
                 .startDate(oldContract.getStartDate())
                 .endDate(oldContract.getEndDate())
-                .status(Status.valueOf("ACTIVE"))
+                .status(Status.ACTIVE)
                 .completionPeriod(oldContract.getCompletionPeriod())
                 .documents(oldContract.getDocuments())
                 .processInstance(oldContract.getProcessInstance())
