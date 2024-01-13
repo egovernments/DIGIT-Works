@@ -33,6 +33,7 @@ const CreateMeasurement = ({ props }) => {
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
+  const mbNumber = searchparams.get("mbNumber");
 
   // use this for call create or update
   const reqCriteria = {
@@ -62,7 +63,7 @@ const CreateMeasurement = ({ props }) => {
   useEffect(() => {
     const fetchRequiredData = () => {
       if (data) {
-        const defaultValues = getDefaultValues(data, t);
+        const defaultValues = getDefaultValues(data, t, mbNumber);
         setState({
           SOR: defaultValues?.SOR,
           NONSOR: defaultValues?.NONSOR,

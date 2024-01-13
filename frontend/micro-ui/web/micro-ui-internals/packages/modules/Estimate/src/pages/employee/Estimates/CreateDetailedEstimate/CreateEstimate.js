@@ -280,17 +280,17 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
   const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", sorAndNonSorData);
   const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
 
-  const initialDefaultValues = RatesData ? editEstimateUtil(estimate, uom, overheads, RatesData, allEstimates) : {};
+  const initialDefaultValues = RatesData ? editEstimateUtil(allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0], uom, overheads, RatesData, allEstimates) : {};
 
   // useEffect(() => {
 
   // }, [])
 
   useEffect(() => {
-    if (uom && estimate && overheads && (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate)) {
+    if (uom && estimate && allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0] && overheads && (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate)) {
        setSessionFormData(initialDefaultValues)
     }
-  }, [estimate, uom, overheads, RatesData]);
+  }, [allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0], uom, overheads, RatesData]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (!_.isEqual(formData, sessionFormData)) {
@@ -448,7 +448,7 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
     removeNonsortableObjectWithoutRequiredParams(completeFormData);
     let validated = action !== "DRAFT" ? validateData(completeFormData) : true;
     if(validated){
-    const payload = createEstimatePayload(completeFormData, projectData, isEdit, estimate, isCreateRevisionEstimate, isEditRevisionEstimate);
+    const payload = createEstimatePayload(completeFormData, projectData, isEdit, allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0], isCreateRevisionEstimate, isEditRevisionEstimate);
     setShowModal(false);
 
     //make a util for updateEstimatePayload since there are some deviations

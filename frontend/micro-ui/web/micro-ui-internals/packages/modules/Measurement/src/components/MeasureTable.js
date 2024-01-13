@@ -371,8 +371,8 @@ const MeasureTable = (props) => {
             </td>
             {(mode == "CREATEALL" || mode == "CREATERE") && (
               <td>
-                <span className="icon-wrapper" onClick={() => remove(index)}>
-                  <DeleteIcon fill={"#FF9100"} />
+                <span className="icon-wrapper" onClick={() => (mode === "CREATERE" && ((row?.category === "SOR" && !(row?.amountDetails))|| (row?.category === "NON-SOR" && row?.showMeasure === false) ) ) ? "" : remove(index)}>
+                  <DeleteIcon fill={(mode === "CREATERE" && ((row?.category === "SOR" && !(row?.amountDetails))|| (row?.category === "NON-SOR" && row?.showMeasure === false) )) ? "lightgrey" : "#FF9100"} />
                 </span>
               </td>
             )}
