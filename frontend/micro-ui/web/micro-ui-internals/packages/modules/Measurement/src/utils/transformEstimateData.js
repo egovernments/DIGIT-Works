@@ -87,7 +87,7 @@ export const transformMeasureObject = (measurement = {}) => {
   };
 };
 
-export const getDefaultValues = (data, t) => {
+export const getDefaultValues = (data, t, mbNumber) => {
   const { contract, estimate, allMeasurements, measurement, musterRollNumber, period } = data;
 
   const SOR = transformEstimateData(estimate?.estimateDetails, contract, "SOR", measurement, allMeasurements);
@@ -96,6 +96,7 @@ export const getDefaultValues = (data, t) => {
   // extract details from contract
   const {
     contractNumber,
+    supplementNumber,
     issueDate,
     additionalDetails: { projectId: projectID, projectName: projectName, projectDesc: projectDesc, locality: projectLoc, ward: projectWard },
   } = contract;
@@ -105,7 +106,15 @@ export const getDefaultValues = (data, t) => {
   const city = projectLoc ? t(`${headerLocale}_ADMIN_${projectLoc}`) : "";
 
   const projectLocation = `${Pward ? Pward + ", " : ""}${city}`;
-  const measurementPeriod = `${Digit.DateUtils.ConvertEpochToDate(period?.startDate)} - ${Digit.DateUtils.ConvertEpochToDate(period?.endDate)}`;
+  let CurrentStartDate = period?.startDate;
+  let CurrentEndDate = period?.endDate;
+  let measurementPeriod = `${Digit.DateUtils.ConvertEpochToDate(period?.startDate)} - ${Digit.DateUtils.ConvertEpochToDate(period?.endDate)}`;
+  if(window?.location.href.includes("measurement/update") && data?.allMeasurements  && data?.allMeasurements?.length > 0 && data?.allMeasurements?.code !== "NO_MEASUREMENT_ROLL_FOUND" && data?.allMeasurements?.filter(ob => ob?.measurementNumber === mbNumber)?.length > 0)
+  {
+     measurementPeriod = `${Digit.DateUtils.ConvertEpochToDate(data?.allMeasurements?.filter(ob => ob?.measurementNumber === mbNumber)?.[0]?.additionalDetails?.startDate)} - ${Digit.DateUtils.ConvertEpochToDate(data?.allMeasurements?.filter(ob => ob?.measurementNumber === mbNumber)?.[0]?.additionalDetails?.endDate)}`;
+     CurrentStartDate = data?.allMeasurements?.filter(ob => ob?.measurementNumber === mbNumber)?.[0]?.additionalDetails?.startDate;
+     CurrentEndDate = data?.allMeasurements?.filter(ob => ob?.measurementNumber === mbNumber)?.[0]?.additionalDetails?.endDate;
+  }
   const musterRoll = typeof musterRollNumber == "string" ? musterRollNumber : "NA";
 
   let uploadedDocs = {}
@@ -132,6 +141,7 @@ export const getDefaultValues = (data, t) => {
    uploadedDocs = window.location.href.includes("measurement/create") ?  {} : uploadedDocs;
   const contractDetails = {
     contractNumber,
+    supplementNumber,
     projectID,
     projectName,
     projectDesc,
@@ -139,6 +149,8 @@ export const getDefaultValues = (data, t) => {
     sanctionDate: Digit.DateUtils.ConvertEpochToDate(issueDate),
     musterRollNo: musterRoll,
     measurementPeriod: measurementPeriod,
+    CurrentStartDate,
+    CurrentEndDate
   };
 
   return { SOR, NONSOR, contractDetails, uploadedDocs, documents:measurement?.documents || allMeasurements?.[0]?.documents };
