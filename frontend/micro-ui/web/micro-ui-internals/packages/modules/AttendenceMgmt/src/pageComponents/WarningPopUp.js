@@ -1,4 +1,4 @@
-import { Button, Card, CardText, Modal,PopUp,RadioButtons } from '@egovernments/digit-ui-react-components'
+import { AlertIcon, Button, Card, CardSubHeader, CardText, Modal,PopUp,RadioButtons } from '@egovernments/digit-ui-react-components'
 import React from 'react'
 
 const WarningPopUp = ({setShowWfModal, label, setShowPopUp, t}) => {
@@ -6,15 +6,18 @@ const WarningPopUp = ({setShowWfModal, label, setShowPopUp, t}) => {
   return (
       <div>
         {<PopUp>
-            <div className="popup-view-alaysis" style={{marginTop: "20% !important"}}>
+            <div className="popup-view-alaysis" style={{marginTop: "20% !important", width:"27rem"}}>
             <Card style={{padding:"2rem"}}>
+            <div style={{display:"flex", marginBottom:"-2rem"}}>
+                <AlertIcon style={{marginLeft:"-1.4rem"}} />
+                <CardSubHeader>{t("CS_ALERT")}</CardSubHeader>
+             </div>
             <CardText className="estimate-analysis-cardheader">{t(label)}</CardText>
-            <CardText className="estimate-analysis-cardheader">{t("WORKS_MR_UNPAID_AMT_QUES")}</CardText>
-            <div style={{display:"inline-flex",width:"100%",marginLeft:"30%",gap:"5%"}}>
+            <div style={{display:"inline-flex",width:"100%",gap:"5%"}}>
             <Button
-            style={{width:"16%"}}
-            label={t("NO")}
-            variation="primary"
+            style={{width:"45%"}}
+            label={t("CANCEL")}
+            variation="secondary"
             onButtonClick={() => {
                 setShowPopUp(false);
                 setShowWfModal(false);
@@ -22,8 +25,8 @@ const WarningPopUp = ({setShowWfModal, label, setShowPopUp, t}) => {
             type="button"
             />
             <Button
-            style={{width:"16%"}}
-            label={t("YES")}
+            style={{width:"45%"}}
+            label={t("CONFIRM")}
             variation="primary"
             onButtonClick={() => {
                 setShowPopUp(false);
