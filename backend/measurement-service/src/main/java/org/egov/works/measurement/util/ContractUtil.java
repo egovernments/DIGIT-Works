@@ -234,7 +234,9 @@ public class ContractUtil {
         Map<String, ArrayList<String>> lineItemsToEstimateId = new HashMap<>();    // [estimateId , estimateLineItemId]
         response.getContracts().get(0).getLineItems().forEach(
                 lineItems -> {
-                    if (lineItems.getStatus().toString().equalsIgnoreCase(ACTIVE_STATUS)) {
+                    if (lineItems.getStatus().toString().equalsIgnoreCase(ACTIVE_STATUS) ||
+                            (response.getContracts().get(0).getBusinessService().equals(CONTRACT_REVISION_ESTIMATE)
+                                    &&lineItems.getStatus().toString().equalsIgnoreCase(INWORKFLOW) )) {
                         lineItemsIdList.add(lineItems.getContractLineItemRef());  // id  remove this
                         ArrayList<String> arr = new ArrayList<>();
                         arr.add(lineItems.getEstimateId());
