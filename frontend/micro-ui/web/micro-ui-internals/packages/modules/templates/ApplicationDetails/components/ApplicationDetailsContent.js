@@ -45,6 +45,7 @@ import MustorRollDetailsTable from "../../../Expenditure/src/components/ViewBill
 import StatusTableWithRadio from "../../../Expenditure/src/components/ViewBill/StatusTableWithRadio";
 import ShowTotalValue from "../../../Expenditure/src/components/ViewBill/ShowTotalValue";
 import SkillDetails from "./SkillDetails";
+import MBDetailes from "../../../Expenditure/src/components/CreateBill/MBDetailes";
 import Photos from "./Photos";
 
 
@@ -317,6 +318,8 @@ function ApplicationDetailsContent({
             {detail?.isTable && <SubWorkTableDetails data={detail} />}
 
             {detail?.isInfoLabel && <CitizenInfoLabel info={detail?.infoHeader} text={detail?.infoText} fill={detail?.infoIconFill} className={"doc-banner"} style={detail?.style} textStyle={detail?.textStyle} ></CitizenInfoLabel>}
+
+            {detail?.isMbDetails && <MBDetailes />}
 
             <StatusTable style={getTableStyles()}>
               {detail?.title &&

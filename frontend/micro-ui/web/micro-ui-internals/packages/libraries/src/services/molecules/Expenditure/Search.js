@@ -248,6 +248,11 @@ export const BillsSearch = {
         ]
     };
 
+    const mbdetails = {
+      title: "EXP_MB_DETAILES",
+      isMbDetails : true
+  };
+
     const invoiceDetails = {
         title: "EXP_INVOICE_DETAILS",
         asSectionHeader: true,
@@ -341,7 +346,7 @@ export const BillsSearch = {
         }
     }
     const details = {
-        basic_details :  {applicationDetails : [headerDetails, invoiceDetails]},
+        basic_details :  {applicationDetails : [headerDetails,mbdetails, invoiceDetails]},
         bill_details :  {applicationDetails : [billDetails, deductionsTable, netPayableAmt, documentDetails]}
     }
 
