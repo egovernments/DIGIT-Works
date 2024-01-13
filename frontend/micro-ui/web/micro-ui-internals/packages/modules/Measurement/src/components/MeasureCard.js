@@ -16,13 +16,13 @@ const getStyles = (index) => {
       obj = { width: "45rem" };
       break;
     case 4:
-      obj = { width: "3rem" };
+      obj = { width: "9rem" };
       break;
     case 5:
-      obj = { width: "3rem" };
+      obj = { width: "9rem" };
       break;
     default:
-      obj = { width: "3rem" };
+      obj = { width: "9rem" };
       break;
   }
   return obj;
