@@ -230,14 +230,15 @@ public class ContractService {
            log.info("Is additionalDetailsMap an instance of Map? " + (additionalDetailsMap instanceof Map));
 
             // Accessing totalEstimatedAmount
-            totalEstimatedAmount = (BigDecimal)additionalDetailsMap.get("totalEstimatedAmount");
-            if (totalEstimatedAmount != null) {
-                log.info("Total Estimated Amount: " + totalEstimatedAmount);
-            }else{
-                log.info("Total Estimate Amount not found");
-            }
+            totalEstimatedAmount = new BigDecimal(additionalDetailsMap.get("totalEstimatedAmount").toString());
+
         }
 
+        if (totalEstimatedAmount!=null) {
+            log.info("Total Estimated Amount: " + totalEstimatedAmount);
+        }else{
+            log.info("Total Estimate Amount not found");
+        }
 
 
 
