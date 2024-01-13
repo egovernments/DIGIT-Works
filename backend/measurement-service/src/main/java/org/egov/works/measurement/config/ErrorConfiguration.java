@@ -68,4 +68,6 @@ public class ErrorConfiguration {
     public static final String CONTRACT_NOT_APPROVED_CODE = "CONTRACT_NOT_APPROVED";
 
     public static final String CONTRACT_NOT_APPROVED_MSG = "Contract not in approved state";
+
+    public static final String CONTRACT_REVISION_ESTIMATE="CONTRACT-REVISION-ESTIMATE";
 }
