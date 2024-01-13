@@ -136,6 +136,7 @@ import {
   SearchIcon,
   DeleteIcon,
   CreateLoiIcon,
+  AlertIcon,
   OBPSIconSolidBg,
   DocumentIconSolid,
   PMBIconSolid,
@@ -274,6 +275,7 @@ import WorkflowTimeline from "./atoms/WorkflowTimeline";
 import WorkflowActions from "./atoms/WorkflowActions";
 import Amount from "./atoms/Amount";
 import Paragraph from "./atoms/Paragraph";
+import AlertPopUp from "./atoms/AlertPopUp";
 export {
   InputTextAmount,
   Button,
@@ -493,6 +495,7 @@ export {
   SearchIcon,
   DeleteIcon,
   CreateLoiIcon,
+  AlertIcon,
   WSICon,
   CameraIcon,
   EditPencilIcon,
@@ -530,6 +533,7 @@ export {
   InboxIcon,
   UnMaskComponent,
   PrivacyMaskIcon,
+  AlertPopUp,
   DeathIcon,
   BirthIcon,
   FirenocIcon,

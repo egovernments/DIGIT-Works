@@ -23,7 +23,7 @@ const getMBLinks = (mblinks, tenantId, workOrderNumber, history) => {
 const MBDetailes = ({ formdata }) => {
   const { t } = useTranslation();
   const { tenantId, workOrderNumber } = Digit.Hooks.useQueryParams();
-  const { allMeasurementsIds, totalMaterialAmount, totalPaidAmountForSuccessfulBills } = Digit.Hooks.paymentInstruction.useMBDataForPB({workOrderNumber,tenantId});
+  const { allMeasurementsIds, totalMaterialAmount, totalPaidAmountForSuccessfulBills, isMeasurementLoading } = Digit.Hooks.paymentInstruction.useMBDataForPB({workOrderNumber,tenantId});
   const history = useHistory();
   const formattingNumber = (amount) => {
     if(amount)
@@ -31,16 +31,16 @@ const MBDetailes = ({ formdata }) => {
     else
       return 0;
   }
-
+  let rowStyle = window?.location.href.includes("create-purchase-bill") ? {marginRight:"9%"} : {}
  
   return (
         <div style={{marginTop:"2rem", marginBottom:"2rem"}}>
-        {allMeasurementsIds && !(allMeasurementsIds?.length > 0) && <CitizenInfoLabel style={{marginBottom:"2rem", maxWidth:"40%"}} info={t("WORKS_PB_INFO")} text={t("WORKS_INFO_MB_NOT_CREATED")} />}
+        {!isMeasurementLoading && allMeasurementsIds && !(allMeasurementsIds?.length > 0) && <CitizenInfoLabel textStyle={{color:"#505A5F"}} fill={"#D4351C"} style={{marginBottom:"2rem", maxWidth:"40%",backgroundColor:"#EFC7C1"}} info={t("WORKS_PB_INFO")} text={t("WORKS_INFO_MB_NOT_CREATED")} />}
         <StatusTable>
-        <Row className="border-none" label={t("WORKS_MB_NUMBERS")} amountStyle={{overflow:"auto", whiteSpace:"nowrap", marginBottom:"-15px"}} text={allMeasurementsIds?.length > 0 ? getMBLinks(allMeasurementsIds, tenantId, workOrderNumber, history) : "NA"} textStyle={{ overflow:"hidden", width:"40%", marginRight:"20%" }} />
-        <Row className="border-none" label={t("WORKS_TOTAL_MATERIAL_UTILIZED")} text={formattingNumber(totalMaterialAmount) || "0"} textStyle={{ whiteSpace: "pre" }} />
-        <Row className="border-none" label={t("WORKS_TOTAL_PAID_AMOUNT")} text={formattingNumber(totalPaidAmountForSuccessfulBills) || "0"} textStyle={{ whiteSpace: "pre" }} />
-        <Row className="border-none" label={t("WORKS_TOTAL_UNPAID_AMOUNT")} text={formattingNumber(totalMaterialAmount - totalPaidAmountForSuccessfulBills) || "0"} textStyle={{ whiteSpace: "pre" }} />
+        <Row className="border-none" label={t("WORKS_MB_NUMBERS")} amountStyle={{overflow:"auto", whiteSpace:"nowrap", marginBottom:"-15px"}} text={allMeasurementsIds?.length > 0 ? getMBLinks(allMeasurementsIds, tenantId, workOrderNumber, history) : "NA"} textStyle={{ overflow:"hidden", width:"40%", marginRight:window.location.href.includes("create-purchase-bill")? "29%" : "20%" }} />
+        <Row className="border-none" label={t("WORKS_TOTAL_MATERIAL_UTILIZED")} text={formattingNumber(totalMaterialAmount) || "0"} textStyle={{ whiteSpace: "pre", ...rowStyle}} />
+        <Row className="border-none" label={t("WORKS_TOTAL_PAID_AMOUNT")} text={formattingNumber(totalPaidAmountForSuccessfulBills) || "0"} textStyle={{ whiteSpace: "pre", ...rowStyle}} />
+        <Row className="border-none" label={t("WORKS_TOTAL_UNPAID_AMOUNT")} text={formattingNumber(totalMaterialAmount - totalPaidAmountForSuccessfulBills) || "0"} textStyle={{ whiteSpace: "pre", ...rowStyle }} />
        </StatusTable>
        </div>
   )

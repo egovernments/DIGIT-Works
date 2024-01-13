@@ -77,7 +77,8 @@ const useMBDataForPB=({workOrderNumber, tenantId})=>{
     let finalObject = {
         allMeasurementsIds,
         totalMaterialAmount,
-        totalPaidAmountForSuccessfulBills
+        totalPaidAmountForSuccessfulBills,
+        isMeasurementLoading
     }
 
       return finalObject;

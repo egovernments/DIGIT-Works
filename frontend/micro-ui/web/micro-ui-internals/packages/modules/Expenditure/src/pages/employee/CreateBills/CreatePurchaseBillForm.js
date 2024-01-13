@@ -1,4 +1,4 @@
-import { Button, CardText, FormComposer, Header, PopUp, Toast, WorkflowModal, Card } from "@egovernments/digit-ui-react-components";
+import { Button, CardText, FormComposer, Header, PopUp, Toast, WorkflowModal, Card, CardHeader, CardSubHeader, AlertPopUp } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
@@ -272,36 +272,7 @@ const CreatePurchaseBillForm = ({
                         cardClassName = "mukta-header-card"
                     />)
                 }
-                {isPopupOpen && <PopUp>
-                    <div className="popup-view-alaysis" style={{marginTop: "20% !important"}}>
-                    <Card style={{padding:"2rem"}}>
-                    <CardText className="estimate-analysis-cardheader">{t("WORKS_UNPAID_AMT_MSG")}</CardText>
-                    <CardText className="estimate-analysis-cardheader">{t("WORKS_UNPAID_AMT_QUES")}</CardText>
-                    <div style={{display:"inline-flex",width:"100%",marginLeft:"30%",gap:"5%"}}>
-                    <Button
-                    style={{width:"16%"}}
-                    label={t("NO")}
-                    variation="primary"
-                    onButtonClick={() => {
-                        setIsPopupOpen(false);
-                        setShowModal(false);
-                    }}
-                    type="button"
-                    />
-                    <Button
-                    style={{width:"16%"}}
-                    label={t("YES")}
-                    variation="primary"
-                    onButtonClick={() => {
-                        setIsPopupOpen(false);
-                        setShowModal(true);
-                    }}
-                    type="button"
-                    />
-                    </div>
-                    </Card>
-                    </div>
-                </PopUp>}
+                {isPopupOpen && <AlertPopUp setIsPopupOpen={setIsPopupOpen} setShowModal={setShowModal} t={t} label={"WORKS_UNPAID_AMT_MSG"} />}
                {toast?.show && <Toast error={toast?.error} label={toast?.label} isDleteBtn={true} onClose={handleToastClose} />}
         </React.Fragment>
     )
