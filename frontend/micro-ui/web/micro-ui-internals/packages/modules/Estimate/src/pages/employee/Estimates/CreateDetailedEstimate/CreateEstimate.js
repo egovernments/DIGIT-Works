@@ -261,6 +261,8 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
     }
   );
 
+  let currentEstimate = window.location.href.includes("/update-revision-detailed-estimate") ?  estimate : allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0];
+
   const closeToast = () => {
     setTimeout(() => {
       setShowToast(null);
@@ -280,17 +282,17 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
   const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", sorAndNonSorData);
   const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
 
-  const initialDefaultValues = RatesData ? editEstimateUtil(allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0], uom, overheads, RatesData, allEstimates) : {};
+  const initialDefaultValues = RatesData ? editEstimateUtil(currentEstimate, uom, overheads, RatesData, allEstimates) : {};
 
   // useEffect(() => {
 
   // }, [])
 
   useEffect(() => {
-    if (uom && estimate && allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0] && overheads && (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate)) {
+    if (uom && estimate && currentEstimate && overheads && (isEdit || isCreateRevisionEstimate || isEditRevisionEstimate)) {
        setSessionFormData(initialDefaultValues)
     }
-  }, [allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0], uom, overheads, RatesData]);
+  }, [currentEstimate, uom, overheads, RatesData]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (!_.isEqual(formData, sessionFormData)) {
@@ -448,7 +450,7 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
     removeNonsortableObjectWithoutRequiredParams(completeFormData);
     let validated = action !== "DRAFT" ? validateData(completeFormData) : true;
     if(validated){
-    const payload = createEstimatePayload(completeFormData, projectData, isEdit, allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0], isCreateRevisionEstimate, isEditRevisionEstimate);
+    const payload = createEstimatePayload(completeFormData, projectData, isEdit,  currentEstimate, isCreateRevisionEstimate, isEditRevisionEstimate);
     setShowModal(false);
 
     //make a util for updateEstimatePayload since there are some deviations
