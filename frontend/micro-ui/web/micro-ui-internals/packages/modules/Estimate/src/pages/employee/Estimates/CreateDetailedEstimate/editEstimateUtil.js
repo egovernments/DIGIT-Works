@@ -72,6 +72,7 @@ export const editEstimateUtil = (estimate,uom,overheads,RatesData, allEstimates)
         let corresOverhead = overheads.filter(overheadRow=>overheadRow?.code === row?.amountDetail?.[0]?.type)?.[0]
         overHeadItems.push({
             "id": row?.id || undefined,
+            "previousLineItemId" : row?.previousLineItemId || undefined,
             "percentage": corresOverhead?.type==="percentage" ? `${corresOverhead?.value}` : "Lumpsum",
             "amount": row?.amountDetail?.[0]?.amount,
             "name":{

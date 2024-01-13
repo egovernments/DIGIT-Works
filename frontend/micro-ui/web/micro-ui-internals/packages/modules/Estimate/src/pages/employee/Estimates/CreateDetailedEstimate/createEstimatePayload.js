@@ -135,22 +135,29 @@ const fetchEstimateDetailsEdit = (isEdit, data, estimate, isCreateRevisionEstima
   let overHeadsData = data?.overheadDetails
     ?.filter((row) => row && row.amount !== "0" && row.amount !== undefined)
     ?.map((row) => {
-      return {
-        id: estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.id || null,
-        category: "OVERHEAD",
-        name: row?.name?.code,
-        description: row?.name?.description,
-        amountDetail: [
-          {
-            type: row?.name?.code,
-            amount: row?.amount,
-            id: estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.amountDetail?.[0]?.id || null
-          },
-        ],
-        additionalDetails: {
-          row,
-        },
-      };
+      let overheadObject = {
+            id: estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.id || null,
+            category: "OVERHEAD",
+            name: row?.name?.code,
+            description: row?.name?.description,
+            amountDetail: [
+              {
+                type: row?.name?.code,
+                amount: row?.amount,
+                id: estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.amountDetail?.[0]?.id || null
+              },
+            ],
+            additionalDetails: {
+              row,
+            },
+          };
+        if(isCreateRevisionEstimate || isEditRevisionEstimate)
+        overheadObject = {
+          ...overheadObject,
+          id: isEditRevisionEstimate ? estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.id : null,
+          previousLineItemId : isEditRevisionEstimate? estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.previousLineItemId : estimate?.estimateDetails?.filter((ob) => ob?.category === "OVERHEAD" && ob?.name === row?.name?.code)?.[0]?.id,
+        }
+        return overheadObject;
     });
 
     //idetified and lineitems which has been deleted and then marked it as inactive
