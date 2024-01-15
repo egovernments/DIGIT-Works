@@ -261,7 +261,7 @@ const { isRatesLoading, data : RatesData} = Digit.Hooks.useCustomAPIHook(request
     }
   );
 
-  let currentEstimate = window.location.href.includes("/update-revision-detailed-estimate") ?  estimate : allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0];
+  let currentEstimate = window.location.href.includes("/update-revision-detailed-estimate") || window.location.href.includes("/update-detailed-estimate") ?  estimate : allEstimates?.estimates?.filter((ob) => ob?.wfStatus === "APPROVED")?.[0];
 
   const closeToast = () => {
     setTimeout(() => {
