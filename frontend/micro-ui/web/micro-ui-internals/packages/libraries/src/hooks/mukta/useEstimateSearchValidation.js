@@ -32,12 +32,12 @@ const useEstimateSearchValidation=({detailedestimates, tenantId, t})=>{
   
       body: {
         criteria : {
-          "referenceId" : [contracts?.[0]?.contractNumber],
+          "referenceId" : [contracts?.filter((ob) => ob?.wfStatus === "ACCEPTED")?.[0]?.contractNumber],
           "tenantId" : tenantId
        }
       },
       config: {
-          enabled : contracts && contracts?.[0]?.contractNumber ? true : false
+          enabled : contracts && contracts?.filter((ob) => ob?.wfStatus === "ACCEPTED")?.[0]?.contractNumber ? true : false
       }
   
     }
