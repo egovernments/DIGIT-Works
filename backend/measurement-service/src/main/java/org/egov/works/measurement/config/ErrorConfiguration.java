@@ -70,4 +70,6 @@ public class ErrorConfiguration {
     public static final String CONTRACT_NOT_APPROVED_MSG = "Contract not in approved state";
 
     public static final String CONTRACT_REVISION_ESTIMATE="CONTRACT-REVISION-ESTIMATE";
+
+    public static final String BUSINESS_SERVICE_TE_CONTRACT="CONTRACT-REVISION";
 }

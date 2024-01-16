@@ -95,7 +95,7 @@ public class ContractUtil {
             throw new CustomException(CONTRACT_NOT_APPROVED_CODE, CONTRACT_NOT_APPROVED_MSG);
 
         if (contractResponse.getContracts().get(0).getBusinessService().equals(BUSINESS_SERVICE_TE_CONTRACT)
-                && !contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
+                && !contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(APPROVED_STATUS))
             throw new CustomException(CONTRACT_NOT_APPROVED_CODE, CONTRACT_NOT_APPROVED_MSG);
 
 
