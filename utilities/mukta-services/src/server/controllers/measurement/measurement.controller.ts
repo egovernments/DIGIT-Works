@@ -268,7 +268,7 @@ class MeasurementController {
     //}
 
     let [estimate, muster, musterRolls] = await Promise.all(nextPromises);
-
+    if(!(key === "View")) muster = muster?.[0]; 
     return { estimate, muster, musterRolls };
   };
 
