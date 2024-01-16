@@ -151,7 +151,8 @@ public class ContractService {
         RequestInfo requestInfo= request.getRequestInfo();
         String tenantId=null;
         List<String> estimateIds= new ArrayList<>();
-
+      // Need to check the status of the estimate if it is Active or not
+        if(request.getEstimate().getStatus().equals(Status.ACTIVE)){
         if(!request.getWorkflow().getAction().equals("APPROVE")){
             throw new CustomException("REVISED_ESTIMATE_NOT_APPROVED", "Revised Estimate is not Approved");
         }
@@ -173,6 +174,9 @@ public class ContractService {
 
         }else{
             createContract(createRevisedContractRequest(contractList,request));
+        }
+        }else {
+            log.info("ESTIMATE_NOT_ACTIVE","Estimate is not in Active state");
         }
     }
 
