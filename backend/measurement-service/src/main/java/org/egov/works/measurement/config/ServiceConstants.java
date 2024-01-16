@@ -62,4 +62,6 @@ public class ServiceConstants {
     public static final String CONTRACT_SERVICE="CONTRACT";
     public static final String INWORKFLOW="INWORKFLOW";
 
+    public static final String CONTRACT_REVISION_ESTIMATE="CONTRACT-REVISION-ESTIMATE";
+
 }
