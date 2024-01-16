@@ -1539,7 +1539,7 @@ export const UICustomizations = {
         }
         return (
           <span className="link">
-            <Link to={`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}>
+            <Link to={`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}&workOrderNumber=${row?.businessObject?.referenceId?.split("_")?.[0]}`}>
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
           </span>
@@ -2665,7 +2665,7 @@ export const UICustomizations = {
           return (
             <span className="link">
               <Link
-                to={`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${row.businessObject.tenantId}&billNumber=${value}`}
+                to={`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${row.businessObject.tenantId}&billNumber=${value}&workOrderNumber=${row?.businessObject?.referenceId?.split("_")?.[0]}`}
               >
                 {String(value ? value : t("ES_COMMON_NA"))}
               </Link>
