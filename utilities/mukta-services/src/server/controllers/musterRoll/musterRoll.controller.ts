@@ -308,7 +308,7 @@ class MusterRollController {
     console.log(JSON.stringify(musterRolls));
 
     return {
-      musterRolls
+      musterRolls : musterRolls?.[0]
     };
   };
 
