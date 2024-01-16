@@ -124,7 +124,7 @@ const measurement= {
   // Process NONSOR data
   if (data.NONSOR && Array.isArray(data.NONSOR)) {
     data.NONSOR.forEach((nonsorItem) => {
-      sumNonSor += nonsorItem.measures?.[0]?.rowAmount;
+      //sumNonSor += nonsorItem.measures?.[0]?.rowAmount;
       measurement.measures.push(...getMeasurementFromMeasures(nonsorItem, "NONSOR"));
       nonsorItem.measures?.forEach((measure) => {
         if (measure.rowAmount) {
