@@ -150,8 +150,8 @@ const search_contract = async (params: any, requestinfo: any, cachekey: any) => 
 
   // Check if there are contracts in the response.
   if (contractResponse?.contracts?.length > 0) {
-    // If contracts are found, return the first one.
-    return contractResponse?.contracts?.[0];
+    // If contracts are found, return the first ACTIVE one.
+    return contractResponse?.contracts?.filter((ob: any) => ob?.status === "ACTIVE")?.[0];
   }
 
   // If no contracts are found, return an error code.
