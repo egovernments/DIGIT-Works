@@ -241,7 +241,8 @@ public class ContractUtil {
         response.getContracts().get(0).getLineItems().forEach(
                 lineItems -> {
                     if (lineItems.getStatus().toString().equalsIgnoreCase(ACTIVE_STATUS) ||
-                            (response.getContracts().get(0).getBusinessService().equals(CONTRACT_REVISION_ESTIMATE)
+                            ((response.getContracts().get(0).getBusinessService().equals(CONTRACT_REVISION_ESTIMATE))||
+                                    (response.getContracts().get(0).getBusinessService().equals(BUSINESS_SERVICE_TE_CONTRACT))
                                     &&lineItems.getStatus().toString().equalsIgnoreCase(INWORKFLOW) )) {
                         lineItemsIdList.add(lineItems.getContractLineItemRef());  // id  remove this
                         ArrayList<String> arr = new ArrayList<>();
