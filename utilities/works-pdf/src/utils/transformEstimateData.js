@@ -131,14 +131,21 @@ for(const sorId of Object.keys(sorIdMeasuresMap)){
 
     if (matchingLineItem) {
         const contractLineItemId = matchingLineItem.contractLineItemRef;
-        
-        // Find the measure with matching targetId
-        const matchingMeasure = allMeasurements[1].measures.find(measure => measure.targetId === contractLineItemId);
 
-        if(matchingMeasure){
-          // Update consumedQuantity in sorIdMeasuresMap
-          sorIdMeasuresMap[sorId].consumedQuantity = matchingMeasure.cumulativeValue;
+        for(let i = 0;i< allMeasurements.length;i++){
+          if(allMeasurements[i].wfStatus == 'APPROVED'){
+            // Find the measure with matching targetId
+            const matchingMeasure = allMeasurements[i].measures.find(measure => measure.targetId === contractLineItemId);
+
+            if(matchingMeasure){
+            // Update consumedQuantity in sorIdMeasuresMap
+            sorIdMeasuresMap[sorId].consumedQuantity = matchingMeasure.cumulativeValue;
+            break;
+            }
+          }
         }
+        
+        
     }
   } 
 
