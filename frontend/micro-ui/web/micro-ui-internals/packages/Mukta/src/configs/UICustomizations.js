@@ -1014,6 +1014,7 @@ export const UICustomizations = {
       const ward = data.body.inbox?.moduleSearchCriteria?.ward?.[0]?.code;
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      const businessService = data?.body?.inbox?.moduleSearchCriteria?.businessService;
       data.body.inbox = {
         ...data.body.inbox,
         tenantId: Digit.ULBService.getCurrentTenantId(),
@@ -1027,6 +1028,7 @@ export const UICustomizations = {
           startDate,
           endDate,
           status,
+          businessService
         },
       };
 
