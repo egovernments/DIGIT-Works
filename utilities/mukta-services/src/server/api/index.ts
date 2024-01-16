@@ -29,7 +29,7 @@ const search_muster = async (params: any, requestinfo: any, key: string) => {
   // Check if there are muster rolls in the response.
   if (musterResponse?.musterRolls?.length > 0) {
     // If muster rolls are found, return them.
-    return key === "View" ? musterResponse?.musterRolls : musterResponse?.musterRolls?.[0];
+    return musterResponse?.musterRolls;
   }
 
   // If no muster rolls are found, return an error code.
