@@ -253,8 +253,8 @@ class MeasurementController {
       );
     }
 
-    if(key === "View")
-    {
+    //if(key === "View")
+    //{
       nextPromises.push(
         search_muster(
           {
@@ -265,7 +265,7 @@ class MeasurementController {
           key
         )
       );
-    }
+    //}
 
     let [estimate, muster, musterRolls] = await Promise.all(nextPromises);
 
