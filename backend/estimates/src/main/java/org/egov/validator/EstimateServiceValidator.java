@@ -521,7 +521,10 @@ public class EstimateServiceValidator {
                     throw new CustomException(JSONPATH_ERROR, FAILED_TO_PARSE_MDMS_RESPONSE);
                 }
                 JsonNode filteredRates = mapper.convertValue(ratesForGivenSor, JsonNode.class);
-                validateDate(filteredRates, estimateDetail, errorMap, validatingDate);
+                if (estimate.getBusinessService() != null && !estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService())) {
+                    validateDate(filteredRates, estimateDetail, errorMap, validatingDate);
+                }
+
             }
         }
 
@@ -529,10 +532,11 @@ public class EstimateServiceValidator {
 
     private void validateRateOnPreviousEstimate(EstimateDetail estimateDetail, Map<String, String> errorMap, HashMap<String,EstimateDetail> previousEstimateDetailMap,Boolean isCreate) {
         log.info("EstimateServiceValidator::validateRateOnPreviousEstimate");
-        if(previousEstimateDetailMap.containsKey(Boolean.TRUE.equals(isCreate)?estimateDetail.getPreviousLineItemId():estimateDetail.getId())){
-            EstimateDetail previousEstimateDetail = previousEstimateDetailMap.get(Boolean.TRUE.equals(isCreate)?estimateDetail.getPreviousLineItemId():estimateDetail.getId());
-            if(!Objects.equals(previousEstimateDetail.getUnitRate(), estimateDetail.getUnitRate())){
-                errorMap.put("INVALID_UNIT_RATE", "Unit rate is not matching with previous approved estimate");
+        if (previousEstimateDetailMap.containsKey(Boolean.TRUE.equals(isCreate) ? estimateDetail.getPreviousLineItemId() : estimateDetail.getId())) {
+            EstimateDetail previousEstimateDetail = previousEstimateDetailMap.get(Boolean.TRUE.equals(isCreate) ? estimateDetail.getPreviousLineItemId() : estimateDetail.getId());
+            if (!Objects.equals(previousEstimateDetail.getUnitRate(), estimateDetail.getUnitRate())) {
+                log.info("For Revision Estimate we want to check the Unit Rate of Previous Estimate Detail");
+                //errorMap.put("INVALID_UNIT_RATE", "Unit rate is not matching with previous approved estimate");
             }
         }
         else{
@@ -884,6 +888,7 @@ private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDat
 
     private void validateRequestOnMDMSV1AndV2(EstimateRequest request,Map<String, String> errorMap,Boolean isCreate,Estimate previousEstimate){
         log.info("EstimateServiceValidator::validateRequestOnMDMSV1AndV2");
+
         Estimate estimate = request.getEstimate();
         List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
         String rootTenantId = estimate.getTenantId();
@@ -903,10 +908,41 @@ private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDat
 
         if (!uniqueIdentifiers.isEmpty()) {
             Object mdmsDataV2ForSor = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, false);
-            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
+
+            checkEstimateBuisnessService(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
 
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
-            validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap,previousEstimate,isCreate);
+            checkWFStatus(estimate, mdmsDataV2ForRate, errorMap, previousEstimate, isCreate);
+
+
         }
     }
+
+    private void checkWFStatus(Estimate estimate,Object mdmsDataV2ForRate,
+                               Map<String, String> errorMap,Estimate previousEstimate,Boolean isCreate){
+        if(estimate.getWfStatus().equals("PENDINGFORVERIFICATION")||
+                estimate.getWfStatus().equals("PENDINGFORTECHNICALSANCTION")||
+                estimate.getWfStatus().equals("PENDINGFORAPPROVAL")){
+            log.info("EstimateServiceValidator::checkWFStatus");
+            log.info("Application WfStatus Check  At Verification, Approval or Technical Sanction state");
+
+        }else{
+            log.info("Application WfStatus Check For Validating rates");
+            validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap,previousEstimate,isCreate);
+        }
+
+    }
+
+    private void checkEstimateBuisnessService(Estimate estimate, Object mdmsDataV2ForSor,
+                                              Set<String> uniqueIdentifiers, Map<String, String> errorMap) {
+        if (estimate.getBusinessService() != null && estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService())) {
+            log.info("EstimateServiceValidator::checkEstimateBuisnessService");
+            log.info("Sor Id and UOM Validation On Revisied Estimate is not required ");
+        }else {
+            log.info("EstimateServiceValidator::checkEstimateBuisnessService");
+            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
+        }
+
+    }
 }
+
