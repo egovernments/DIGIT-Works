@@ -57,6 +57,11 @@ public class ServiceConstants {
     public static final String SOR_CODE = "SOR";
     public static final String NON_SOR_CODE = "NON-SOR";
     public static final String ACTIVE_STATUS = "ACTIVE";
-    public static final String BUSINESS_SERVICE_REVISION_CONTRACT = "CONTRACT-REVISION";
+    public static final String BUSINESS_SERVICE_TE_CONTRACT = "CONTRACT-REVISION";
+
+    public static final String CONTRACT_SERVICE="CONTRACT";
+    public static final String INWORKFLOW="INWORKFLOW";
+
+    public static final String CONTRACT_REVISION_ESTIMATE="CONTRACT-REVISION-ESTIMATE";
 
 }

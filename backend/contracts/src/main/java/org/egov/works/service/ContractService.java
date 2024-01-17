@@ -1,7 +1,12 @@
 package org.egov.works.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.enrichment.ContractEnrichment;
 import org.egov.works.kafka.ContractProducer;
@@ -13,11 +18,11 @@ import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.egov.works.util.ContractServiceConstants.*;
 
 @Service
 @Slf4j
@@ -49,6 +54,9 @@ public class ContractService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     public ContractResponse createContract(ContractRequest contractRequest) {
         log.info("Create contract");
@@ -137,5 +145,129 @@ public class ContractService {
 
         return filteredContracts;
     }
+
+    public void createAndPostRevisedContractRequest(EstimateRequest request){
+        log.info("ContractService::createAndPostRevisedContractRequest");
+        RequestInfo requestInfo= request.getRequestInfo();
+        String tenantId=null;
+        List<String> estimateIds= new ArrayList<>();
+      // Need to check the status of the estimate if it is Active or not
+        if(request.getEstimate().getStatus().equals(Status.ACTIVE)){
+        if(!request.getWorkflow().getAction().equals("APPROVE")){
+            throw new CustomException("REVISED_ESTIMATE_NOT_APPROVED", "Revised Estimate is not Approved");
+        }
+
+        if(request.getEstimate()!=null || request.getEstimate().getOldUuid()!=null){
+            tenantId=request.getEstimate().getTenantId();
+            estimateIds.add(request.getEstimate().getOldUuid());
+        }else{
+            log.info("Estimate olduuid not present in the revised estimate request");
+            throw new CustomException("DATA_NOT_PRESENT", "Data required for the contract " +
+                    "search is not present in the request");
+        }
+        ContractCriteria contractCriteria=ContractCriteria.builder().requestInfo(requestInfo)
+                .tenantId(tenantId).estimateIds(estimateIds).build();
+        List<Contract> contractList=searchContracts(contractCriteria);
+        if (contractList.isEmpty()){
+            //throw new CustomException("NO_CONTRACT_FOUND","No Contract found with the given search criteria");
+            log.info("NO_CONTRACT_FOUND::: No Contract found with the given search criteria");
+
+        }else{
+            createContract(createRevisedContractRequest(contractList,request));
+        }
+        }else {
+            log.info("ESTIMATE_NOT_ACTIVE","Estimate is not in Active state");
+        }
+    }
+
+    private ContractRequest createRevisedContractRequest(List<Contract> contractList, EstimateRequest request){
+        Contract latestContract = null;
+        long latestCreatedTime = Long.MIN_VALUE;
+
+
+        for (Contract contract : contractList) {
+            long currentCreatedTime = contract.getAuditDetails().getCreatedTime();
+            if (currentCreatedTime > latestCreatedTime) {
+                latestCreatedTime = currentCreatedTime;
+                latestContract = contract;
+            }
+        }
+
+
+        //TE- Approved
+        //WO-Accepted
+        if(latestContract.getBusinessService().equals(CONTRACT_BUSINESS_SERVICE)&& !Objects.equals(latestContract.getWfStatus(), "ACCEPTED")) {
+            throw new CustomException("WF_STATUS_NOT_ACCEPTED","Contract wfStatus is not Accepted");
+        }
+        if(latestContract.getBusinessService().equals(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)&& !Objects.equals(latestContract.getWfStatus(), "APPROVED")){
+            throw new CustomException("WF_STATUS_NOT_APPROVED","Time Extension  wfStatus is not Approved");
+        }
+
+        Workflow workflow=Workflow.builder().action("SUBMIT").assignees(new ArrayList<>()).build();
+
+        return ContractRequest.builder()
+                .requestInfo(request.getRequestInfo())
+                .contract(createContractFromPreviousContractAndEstimateRequest(latestContract,request))
+                .workflow(workflow)
+                .build();
+    }
+
+    private Contract createContractFromPreviousContractAndEstimateRequest(Contract oldContract,EstimateRequest request){
+        log.info("ContractService::createContractFromPreviousContractAndEstimateRequest");
+
+        List<LineItems> lineItemsList = new ArrayList<>();
+        LineItems lineItems=LineItems.builder()
+                .estimateId(request.getEstimate().getId())
+                .status(Status.ACTIVE)
+                .tenantId(request.getEstimate().getTenantId())
+                .build();
+        lineItemsList.add(lineItems);
+        BigDecimal totalEstimatedAmount = null;
+
+        Object additionalDetailsObject = request.getEstimate().getAdditionalDetails();
+
+        if (additionalDetailsObject instanceof Map) {
+            // Convert additionalDetailsObject to Map<String, Object>
+            Map<String, Object> additionalDetailsMap = (Map<String, Object>) additionalDetailsObject;
+
+            // Now you can use additionalDetailsMap as a Map<String, Object>
+           log.info("Is additionalDetailsMap an instance of Map? " + (additionalDetailsMap instanceof Map));
+
+            // Accessing totalEstimatedAmount
+            totalEstimatedAmount = new BigDecimal(additionalDetailsMap.get("totalEstimatedAmount").toString());
+
+        }
+
+        if (totalEstimatedAmount!=null) {
+            log.info("Total Estimated Amount: " + totalEstimatedAmount);
+        }else{
+            log.info("Total Estimate Amount not found");
+        }
+
+
+
+        return Contract.builder().tenantId(oldContract.getTenantId())
+                .wfStatus("APPROVED")
+                .executingAuthority(oldContract.getExecutingAuthority())
+                .businessService(CONTRACT_REVISION_ESTIMATE)
+                .contractNumber(oldContract.getContractNumber())
+                .totalContractedAmount(totalEstimatedAmount)
+                .contractType(oldContract.getContractType())
+                .securityDeposit(oldContract.getSecurityDeposit())
+                .agreementDate(oldContract.getAgreementDate())
+                .defectLiabilityPeriod(oldContract.getDefectLiabilityPeriod())
+                .orgId(oldContract.getOrgId())
+                .startDate(oldContract.getStartDate())
+                .endDate(oldContract.getEndDate())
+                .status(Status.ACTIVE)
+                .completionPeriod(oldContract.getCompletionPeriod())
+                .documents(oldContract.getDocuments())
+                .processInstance(oldContract.getProcessInstance())
+                .additionalDetails(oldContract.getAdditionalDetails())
+                .lineItems(lineItemsList)
+                .build();
+    }
+
+
 
 }

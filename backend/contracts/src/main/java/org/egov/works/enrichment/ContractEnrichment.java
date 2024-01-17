@@ -172,7 +172,7 @@ public class ContractEnrichment {
         }
         if(contractRequest.getContract().getBusinessService() != null && (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)
                 || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE))
-                 && ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction())) {
+                && ACCEPT_ACTION.equalsIgnoreCase(workflow.getAction())) {
             markContractAndDocumentsStatus(contractRequest, Status.ACTIVE);
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.ACTIVE);
         }
@@ -391,8 +391,12 @@ public class ContractEnrichment {
     }
     private void enrichSupplementNumber (ContractRequest contractRequest) {
         log.info("Generating supplement number");
+
+        String idName = contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE)?
+                config.getIdgenRevisionNumberName():config.getIdgenSupplementNumberName();
+
         List<String> idList = idgenUtil.getIdList(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
-                config.getIdgenSupplementNumberName(), "", 1);
+                idName, "", 1);
         String generatedSupplementNumber = idList.get(0);
         contractRequest.getContract().setSupplementNumber(generatedSupplementNumber);
         log.info("Supplement Number enrichment is done. Generated Supplement Number ["+generatedSupplementNumber+"]");
@@ -429,8 +433,14 @@ public class ContractEnrichment {
                     .stream().collect(Collectors.toMap(LineItems::getEstimateLineItemId, LineItems::getContractLineItemRef));
             // Create map of estimateDetailId and prevEstimateDetailId
             Map<String, String> estimateDetailIdToPreviousEstimateDetailIdMap = estimate.getEstimateDetails()
-                    .stream().filter(estimateDetail -> estimateDetail.getPreviousLineItemId() != null)
-                    .collect(Collectors.toMap(EstimateDetail::getId, EstimateDetail::getPreviousLineItemId));
+                    .stream()
+                    .collect(Collectors.toMap(EstimateDetail::getId, estimateDetail ->
+                    {
+                        if(contractRequest.getContract().getLineItems().get(0).getEstimateId().equalsIgnoreCase(previousActiveContract.getLineItems().get(0).getEstimateId())){
+                            return estimateDetail.getId();
+                        } else
+                            return estimateDetail.getPreviousLineItemId() != null ? estimateDetail.getPreviousLineItemId() : "default";
+                    }));
             // iterate through current contract line item estimate detail id and get the prev estimate detail id,
             // if it is not null then get the contractLineItemRef by querying the map.
             for (LineItems lineItems : contractRequest.getContract().getLineItems()) {

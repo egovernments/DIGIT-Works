@@ -60,6 +60,9 @@ public class ContractServiceConfiguration {
     @Value("${egov.idgen.supplement.number.name}")
     private String idgenSupplementNumberName;
 
+    @Value("${egov.idgen.contract.revision.number.name}")
+    private String idgenRevisionNumberName;
+
     //Workflow Config
     @Value("${contract.workflow.module.name}")
     private String contractWFModuleName;

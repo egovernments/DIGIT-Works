@@ -1,36 +1,35 @@
 package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
- * ContractRequest
+ * Request for Estimate _create and _update api&#39;s
  */
+@ApiModel(description = "Request for Estimate _create and _update api's")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-12-30T13:05:25.880+05:30")
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ContractRequest {
+public class EstimateRequest {
+
     @JsonProperty("RequestInfo")
-    @Valid
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("contract")
+    @JsonProperty("estimate")
     @Valid
-    @NotNull
-    private Contract contract = null;
+    private Estimate estimate = null;
 
     @JsonProperty("workflow")
-    @Valid
     private Workflow workflow = null;
 }
 

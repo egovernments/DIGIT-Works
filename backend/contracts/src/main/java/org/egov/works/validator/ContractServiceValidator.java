@@ -105,7 +105,6 @@ public class ContractServiceValidator {
             validateCreateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
         }
 
-
         log.info("Contract create request validated");
     }
 
@@ -135,7 +134,7 @@ public class ContractServiceValidator {
 
         if (contractRequest.getContract().getBusinessService() != null &&
                 (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_TIME_EXTENSION_BUSINESS_SERVICE)
-                || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE))){
+                        || contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_ESTIMATE))){
             // Validate Contract Revision Request for Update request
             validateContractRevisionRequestForUpdate(contractRequest);
         } else {
@@ -155,20 +154,22 @@ public class ContractServiceValidator {
         contracts.add(contractId);
 
         Pagination pagination = Pagination.builder()
-                                          .limit(config.getContractMaxLimit())
-                                          .offSet(config.getContractDefaultOffset())
-                                          .build();
+                .limit(config.getContractMaxLimit())
+                .offSet(config.getContractDefaultOffset())
+                .build();
         ContractCriteria contractCriteria = ContractCriteria.builder()
-                                            .ids(contracts)
-                                            .tenantId(tenantId)
-                                            .requestInfo(contractRequest.getRequestInfo())
-                                            .pagination(pagination)
-                                            .build();
+                .ids(contracts)
+                .tenantId(tenantId)
+                .requestInfo(contractRequest.getRequestInfo())
+                .pagination(pagination)
+                .build();
         List<Contract> fetchedContracts = contractRepository.getContracts(contractCriteria);
         if(fetchedContracts.isEmpty()){
             log.error("Update:: Provided contract ["+contractId+"] not found");
             throw new CustomException("CONTRACT_NOT_FOUND","Provided contract ["+contractId+"] not found");
         }
+        if (fetchedContracts.get(0).getWfStatus().equalsIgnoreCase(REJECTED_STATUS))
+            throw new CustomException("CONTRACT_REJECTED","Provided contract ["+contractId+"] is rejected");
         log.info("Update:: Provided contract ["+contractId+"] found in DB");
 
     }
@@ -212,7 +213,7 @@ public class ContractServiceValidator {
         validateContractTypeAgainstMDMS(mdmsData, contract.getContractType());
 
         // Validate Officer In Charge role against MDMS data
-        
+
         validateOfficerInChargeRoleAgainstMDMS(mdmsData, contractRequest);
 
         log.info("Request Fields validated against MDMS");
@@ -717,8 +718,10 @@ public class ContractServiceValidator {
         // Validate start date
         validateStartDate(contractRequest, contractsFromDB);
         // Validate if revised estimate in approved state
-        fetchActiveEstimates(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
+        List<Estimate> estimate = fetchActiveEstimates(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
                 Collections.singleton(contractRequest.getContract().getLineItems().get(0).getEstimateId()));
+        // Validate if contractRequest estimate line item id exists in fetchActiveEstimates
+        validateEstimateLineItemId(estimate, contractRequest.getContract().getLineItems());
 
         log.info("Contract Revision Request Validated for contract number :: " + contractRequest.getContract().getContractNumber());
     }
@@ -775,6 +778,16 @@ public class ContractServiceValidator {
             }
         }
     }
+
+    public void validateEstimateLineItemId(List<Estimate> estimate, List<LineItems> contractLineItems) {
+        Set<String> estimateDetailId = estimate.get(0).getEstimateDetails().stream().map(EstimateDetail::getId).collect(Collectors.toSet());
+        for (LineItems lineItem : contractLineItems) {
+            if (!estimateDetailId.contains(lineItem.getEstimateLineItemId())) {
+                throw new CustomException("ESTIMATE_LINE_ITEM_ID_MISMATCH", "Estimate line item id not present in estimate : " + lineItem.getEstimateLineItemId());
+            }
+        }
+    }
+
 
     public void validateLineItemRef(ContractRequest contractRequest) {
         List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);

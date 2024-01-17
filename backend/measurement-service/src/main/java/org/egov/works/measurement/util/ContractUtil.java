@@ -86,14 +86,22 @@ public class ContractUtil {
         // return if no contract is present
         if (!isValidContract) return false;
 
-        if( contractResponse.getContracts().get(0).getBusinessService().equals("CONTRACTS-REVISION-ESTIMATE")
+        if (contractResponse.getContracts().get(0).getBusinessService().equals(CONTRACT_SERVICE)
+                && !contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
+            throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
+
+        if( contractResponse.getContracts().get(0).getBusinessService().equals(CONTRACT_REVISION_ESTIMATE)
                 && !contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(APPROVED_STATUS))
             throw new CustomException(CONTRACT_NOT_APPROVED_CODE, CONTRACT_NOT_APPROVED_MSG);
 
-        if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
-            throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
+        if (contractResponse.getContracts().get(0).getBusinessService().equals(BUSINESS_SERVICE_TE_CONTRACT)
+                && !contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(APPROVED_STATUS))
+            throw new CustomException(CONTRACT_NOT_APPROVED_CODE, CONTRACT_NOT_APPROVED_MSG);
 
-        boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getEndDate()) <= 0));
+
+
+        boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getStartDate()) >= 0)
+                && (measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getEndDate()) <= 0));
 
         lineItemsToEstimateIdMap = getValidLineItemsId(contractResponse); // get set of active line items
 
@@ -232,7 +240,10 @@ public class ContractUtil {
         Map<String, ArrayList<String>> lineItemsToEstimateId = new HashMap<>();    // [estimateId , estimateLineItemId]
         response.getContracts().get(0).getLineItems().forEach(
                 lineItems -> {
-                    if (lineItems.getStatus().toString().equalsIgnoreCase(ACTIVE_STATUS)) {
+                    if (lineItems.getStatus().toString().equalsIgnoreCase(ACTIVE_STATUS) ||
+                            ((response.getContracts().get(0).getBusinessService().equals(CONTRACT_REVISION_ESTIMATE))||
+                                    (response.getContracts().get(0).getBusinessService().equals(BUSINESS_SERVICE_TE_CONTRACT))
+                                    &&lineItems.getStatus().toString().equalsIgnoreCase(INWORKFLOW) )) {
                         lineItemsIdList.add(lineItems.getContractLineItemRef());  // id  remove this
                         ArrayList<String> arr = new ArrayList<>();
                         arr.add(lineItems.getEstimateId());
