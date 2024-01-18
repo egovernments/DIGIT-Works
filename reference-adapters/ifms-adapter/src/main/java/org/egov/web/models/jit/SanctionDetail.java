@@ -27,6 +27,9 @@ public class SanctionDetail {
     @JsonProperty("ddoCode")
     private String ddoCode;
 
+    @JsonProperty("programCode")
+    private String programCode;
+
     @JsonProperty("masterAllotmentId")
     private String masterAllotmentId;
 

@@ -115,6 +115,14 @@ public class IfmsAdapterConfig {
     @Value("${egov.audit.log.search.endpoint}")
     private String auditLogSearchEndPoint;
 
+    //Program Service
+    @Value("${egov.program.service.host}")
+    private String programServiceHost;
+    @Value("${egov.program.service.onsanction.endpoint}")
+    private String programServiceOnSanctionEndpoint;
+    @Value("${egov.program.service.onallocation.endpoint}")
+    private String programServiceOnAllocationEndpoint;
+
     // es log configurations
     @Value("${egov.es.indexer.host}")
     private String esIndexerHost;

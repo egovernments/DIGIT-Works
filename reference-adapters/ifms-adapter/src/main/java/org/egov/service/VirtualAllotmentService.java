@@ -11,6 +11,10 @@ import org.egov.repository.ExecutedVALogsRepository;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.MdmsUtils;
+import org.egov.utils.ProgramServiceUtil;
+import org.egov.web.models.*;
+import org.egov.web.models.enums.MsgHeaderStatusReasonCode;
+import org.egov.web.models.enums.RequestStatus;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,25 +33,34 @@ import static org.egov.config.Constants.*;
 public class VirtualAllotmentService {
 
 
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private MdmsUtils mdmsUtils;
+    private final ObjectMapper objectMapper;
+    private final MdmsUtils mdmsUtils;
+
+    private final IfmsAdapterConfig ifmsAdapterConfig;
+
+    private final IfmsService ifmsService;
+
+    private final ExecutedVALogsRepository executedVALogsRepository;
+
+    private final VirtualAllotmentEnrichment vaEnrichment;
+
+    private final SanctionDetailsRepository sanctionDetailsRepository;
+    private final VirtualAllotmentEnrichment virtualAllotmentEnrichment;
+    private final ProgramServiceUtil programServiceUtil;
 
     @Autowired
-    private IfmsAdapterConfig ifmsAdapterConfig;
+    public VirtualAllotmentService(ObjectMapper objectMapper, MdmsUtils mdmsUtils, IfmsAdapterConfig ifmsAdapterConfig, IfmsService ifmsService, ExecutedVALogsRepository executedVALogsRepository, VirtualAllotmentEnrichment vaEnrichment, SanctionDetailsRepository sanctionDetailsRepository, VirtualAllotmentEnrichment virtualAllotmentEnrichment, ProgramServiceUtil programServiceUtil) {
+        this.objectMapper = objectMapper;
+        this.mdmsUtils = mdmsUtils;
+        this.ifmsAdapterConfig = ifmsAdapterConfig;
+        this.ifmsService = ifmsService;
+        this.executedVALogsRepository = executedVALogsRepository;
+        this.vaEnrichment = vaEnrichment;
+        this.sanctionDetailsRepository = sanctionDetailsRepository;
+        this.virtualAllotmentEnrichment = virtualAllotmentEnrichment;
+        this.programServiceUtil = programServiceUtil;
+    }
 
-    @Autowired
-    private IfmsService ifmsService;
-
-    @Autowired
-    private ExecutedVALogsRepository executedVALogsRepository;
-
-    @Autowired
-    private VirtualAllotmentEnrichment vaEnrichment;
-
-    @Autowired
-    private SanctionDetailsRepository sanctionDetailsRepository;
 
     public void generateVirtualAllotment(RequestInfo requestInfo) {
         log.info("Start executing VA service.");
@@ -130,7 +143,7 @@ public class VirtualAllotmentService {
                     // Get allotments to create and
                     List<Allotment> createAllotments =  vaEnrichment.getAllotmentsForCreate(updatedSanctions, allotmentList, tenantId, requestInfo);
                     sanctionDetailsRepository.createUpdateSanctionFunds(createSanctions, updateSanctions, createAllotments);
-                    System.out.println(updatedSanctions);
+                    processAllotmentsAndSanctions(createAllotments, createSanctions);
                 }
                 // Update last executed for the va
                 if (executedVALog == null) {
@@ -145,6 +158,43 @@ public class VirtualAllotmentService {
             }
         } catch (Exception e) {
             log.info("Exception occurred while executing VirtualAllotmentService:processVAForHOA." + e);
+        }
+    }
+
+    private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions) {
+        log.info("Processing allotments and sanctions");
+        // TODO: Process allotments and sanctions
+        MsgCallbackHeader msgCallbackHeader = MsgCallbackHeader.builder()
+                .senderId("IFMS")
+                .receiverId("Program")
+                .statusReasonCode(MsgHeaderStatusReasonCode.RJCT_ACTION_INVALID)
+                .status(RequestStatus.RCVD)
+                .isMsgEncrypted(false)
+                .build();
+        try {
+            if(createSanctions != null && !createSanctions.isEmpty()){
+                log.info("Processing created sanction for on_sanction/create");
+                List<Sanction> sanctionList = virtualAllotmentEnrichment.createSanctionsPayload(createSanctions);
+                OnSanctionRequest onSanctionRequest = OnSanctionRequest.builder()
+                        .header(msgCallbackHeader)
+                        .message(sanctionList)
+                        .signature("aaaa")
+                        .build();
+                programServiceUtil.callProgramServiceOnSanctionOrAllocation(onSanctionRequest, true);
+            }
+
+            if(createAllotments != null && !createAllotments.isEmpty()){
+                log.info("Processing created allotment for on_allocation/create");
+                List<Allocation> allotmentList = virtualAllotmentEnrichment.createAllotmentsPayload(createAllotments);
+                OnAllocationRequest onSanctionRequest = OnAllocationRequest.builder()
+                        .header(msgCallbackHeader)
+                        .message(allotmentList)
+                        .signature("aaaa")
+                        .build();
+                programServiceUtil.callProgramServiceOnSanctionOrAllocation(onSanctionRequest, false);
+            }
+        }catch (Exception e){
+            throw new RuntimeException("Error in calling on_sanction and on_allocation apis" + e.toString());
         }
     }
 

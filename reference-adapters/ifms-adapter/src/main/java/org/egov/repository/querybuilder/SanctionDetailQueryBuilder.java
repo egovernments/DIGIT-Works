@@ -54,9 +54,9 @@ public class SanctionDetailQueryBuilder {
             "jit_allotment_details AS allotmentDetails " +
             "ON (snacDetails.id=allotmentDetails.sanctionId)";
 
-    public static final String SANCTION_DETAILS_INSERT_QUERY = "INSERT INTO jit_sanction_details (id, tenantId, hoaCode, ddoCode,"
+    public static final String SANCTION_DETAILS_INSERT_QUERY = "INSERT INTO jit_sanction_details (id, tenantId, hoaCode, ddoCode, programCode,"
             + " masterAllotmentId, sanctionedAmount, financialYear, additionalDetails, createdby, createdtime, lastmodifiedby, lastmodifiedtime) "
-            + "	VALUES (:id, :tenantId, :hoaCode, :ddoCode, :masterAllotmentId, :sanctionedAmount, :financialYear, :additionalDetails,"
+            + "	VALUES (:id, :tenantId, :hoaCode, :ddoCode, :programCode, :masterAllotmentId, :sanctionedAmount, :financialYear, :additionalDetails,"
             + " :createdby, :createdtime, :lastmodifiedby, :lastmodifiedtime);";
 
     public static final String ALLOTMENT_DETAILS_INSERT_QUERY = "INSERT INTO jit_allotment_details (id, tenantId, sanctionId, allotmentSerialNo, ssuAllotmentId,"

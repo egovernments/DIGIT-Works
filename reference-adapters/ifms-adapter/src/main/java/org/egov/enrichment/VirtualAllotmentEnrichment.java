@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.HelperUtil;
+import org.egov.web.models.Allocation;
+import org.egov.web.models.Sanction;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.jit.*;
 import org.postgresql.util.PGobject;
@@ -105,6 +107,7 @@ public class VirtualAllotmentEnrichment {
     public void enrichAndUpdateSanctions (List<SanctionDetail> sanctionDetails, String tenantId, JsonNode hoaNode, JsonNode ssuNode, RequestInfo requestInfo) {
         String hoaCode = hoaNode.get("code").asText();
         String ddoCode = ssuNode.get("ddoCode").asText();
+        String programCode = ssuNode.get("programCode").asText();
         String userId = requestInfo.getUserInfo().getUuid();
         Long time = System.currentTimeMillis();
 
@@ -114,6 +117,7 @@ public class VirtualAllotmentEnrichment {
                 sanctionDetail.setHoaCode(hoaCode);
                 sanctionDetail.setDdoCode(ddoCode);
                 sanctionDetail.setTenantId(tenantId);
+                sanctionDetail.setProgramCode(programCode);
                 sanctionDetail.setAuditDetails(auditDetails);
                 sanctionDetail.getFundsSummary().setTenantId(tenantId);
                 sanctionDetail.getFundsSummary().setAuditDetails(auditDetails);
@@ -264,4 +268,33 @@ public class VirtualAllotmentEnrichment {
         return executedVALog;
     }
 
+    public List<Sanction> createSanctionsPayload(List<SanctionDetail> sanctions) {
+        List<Sanction> sanctionList = new ArrayList<>();
+        for(SanctionDetail sanctionDetail: sanctions){
+            Sanction sanction = new Sanction();
+            sanction.setId(sanctionDetail.getId());
+            sanction.setSanctionedAmount(sanctionDetail.getSanctionedAmount());
+            sanction.setLocationCode(sanctionDetail.getTenantId());
+            sanction.setProgramCode(sanctionDetail.getProgramCode());
+            sanction.setAuditDetails(sanctionDetail.getAuditDetails());
+            sanctionList.add(sanction);
+        }
+
+        return sanctionList;
+    }
+
+    public List<Allocation> createAllotmentsPayload(List<Allotment> allotments) {
+        List<Allocation> allotmentList = new ArrayList<>();
+        for(Allotment allotment: allotments){
+            Allocation allocationPayload = new Allocation();
+            allocationPayload.setId(allotment.getId());
+            allocationPayload.setSanctionId(allotment.getSanctionId());
+            allocationPayload.setAmount(allotment.getDecimalAllottedAmount());
+            allocationPayload.setLocationCode(allotment.getTenantId());
+            allocationPayload.setAuditDetails(allotment.getAuditDetails());
+            allotmentList.add(allocationPayload);
+        }
+
+        return allotmentList;
+    }
 }
