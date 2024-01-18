@@ -1,6 +1,5 @@
 package org.egov.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.ServiceRequestRepository;
@@ -18,17 +17,16 @@ public class ProgramServiceUtil {
         this.config = config;
         this.serviceRequestRepository = serviceRequestRepository;
     }
-    public Object callProgramServiceOnSanctionOrAllocation(Object request,Boolean isSanction){
+    public void callProgramServiceOnSanctionOrAllocation(Object request, Boolean isSanction){
         log.info("ProgramServiceUtil::callProgramServiceOnSanctionOrAllocation");
         StringBuilder uriBuilder = getProgramServiceUrl(isSanction);
-        log.info("ProgramServiceUtil::callProgramServiceOnSanctionOrAllocation::uri::"+uriBuilder.toString());
+        log.info("ProgramServiceUtil::callProgramServiceOnSanctionOrAllocation::uri::"+ uriBuilder);
         Object result = serviceRequestRepository.fetchResult(uriBuilder,request);
         log.info("ProgramServiceUtil::callProgramServiceOnSanctionOrAllocation::result::"+result.toString());
-        return result;
     }
     private StringBuilder getProgramServiceUrl(Boolean isSanction){
         StringBuilder uriBuilder = new StringBuilder();
         return uriBuilder.append(config.getProgramServiceHost())
-                .append(isSanction?config.getProgramServiceOnSanctionEndpoint():config.getProgramServiceOnAllocationEndpoint());
+                .append(Boolean.TRUE.equals(isSanction)?config.getProgramServiceOnSanctionEndpoint():config.getProgramServiceOnAllocationEndpoint());
     }
 }

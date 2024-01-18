@@ -1,28 +1,18 @@
 package org.egov.enrichment;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
 import org.egov.utils.HelperUtil;
 import org.egov.web.models.Allocation;
 import org.egov.web.models.Sanction;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.jit.*;
-import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.egov.config.Constants.*;
@@ -49,23 +39,21 @@ public class VirtualAllotmentEnrichment {
                 .fromDate(fromDate)
                 .build();
 
-        JITRequest jitRequest = JITRequest.builder()
+        return JITRequest.builder()
                 .serviceId(JITServiceId.VA)
                 .params(vaRequest)
                 .build();
-        return jitRequest;
     }
 
 
     public SanctionDetailsSearchCriteria getSanctionDetailsSearchCriteriaForVA(String tenantId, JsonNode hoaNode, JsonNode ssuNode) {
         String hoaCode = hoaNode.get("code").asText();
         String ddoCode = ssuNode.get("ddoCode").asText();
-        SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
+        return SanctionDetailsSearchCriteria.builder()
                 .tenantId(tenantId)
                 .hoaCode(hoaCode)
                 .ddoCode(ddoCode)
                 .build();
-        return  searchCriteria;
     }
 
     public List<SanctionDetail> getCreateAndUpdateSanctionDetails(List<SanctionDetail> existingSanctionDetails, List<Allotment> allotments) {
@@ -246,7 +234,7 @@ public class VirtualAllotmentEnrichment {
         JsonNode emptyObject = objectMapper.createObjectNode();
 
         AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
-        ExecutedVALog executedVALog = ExecutedVALog.builder()
+        return ExecutedVALog.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(tenantId)
                 .hoaCode(hoaCode)
@@ -256,7 +244,6 @@ public class VirtualAllotmentEnrichment {
                 .additionalDetails(emptyObject)
                 .auditDetails(auditDetails)
                 .build();
-        return executedVALog;
     }
 
     public ExecutedVALog enrichExecutedVaLogForUpdate (ExecutedVALog executedVALog, RequestInfo requestInfo) {

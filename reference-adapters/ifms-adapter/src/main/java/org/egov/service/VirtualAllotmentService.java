@@ -163,7 +163,6 @@ public class VirtualAllotmentService {
 
     private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions) {
         log.info("Processing allotments and sanctions");
-        // TODO: Process allotments and sanctions
         MsgCallbackHeader msgCallbackHeader = MsgCallbackHeader.builder()
                 .senderId("IFMS")
                 .receiverId("Program")
@@ -203,9 +202,9 @@ public class VirtualAllotmentService {
         List<String> tenantsMasters = new ArrayList<>();
         tenantsMasters.add(MDMS_TENANTS_MASTER);
         Map<String, Map<String, JSONArray>> tenantsResponse = mdmsUtils.fetchMdmsData(requestInfo, ifmsAdapterConfig.getStateLevelTenantId(), MDMS_TENANT_MODULE_NAME, tenantsMasters);
-        System.out.println(tenantsResponse);
+       log.info("Tenants response from MDMS : " + tenantsResponse);
         JSONArray tenantValues = tenantsResponse.get(MDMS_TENANT_MODULE_NAME).get(MDMS_TENANTS_MASTER);
-        System.out.println(tenantValues);
+        log.info("Tenants response from MDMS : " + tenantValues);
         for (Object tenant: tenantValues) {
             // Create ObjectMapper instance
             // Convert object to JsonNode
