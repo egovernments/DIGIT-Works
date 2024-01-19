@@ -1,0 +1,7 @@
+
+[
+java:S1124"EReorder the modifiers to comply with the Java Language Specification.(ºë¯‚
+^
+java:S1128"CRemove this unused import 'org.springframework.data.annotation.Id'.(áŠ¿¸ýÿÿÿÿ
+F
+java:S1128"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ

@@ -1,0 +1,15 @@
+
+Z	java:S112+"FDefine and throw a dedicated exception instead of using a generic one.(æÎe
+`	java:S112""FDefine and throw a dedicated exception instead of using a generic one.(ûÑİ¤øÿÿÿÿ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+V
+java:S1854#";Remove this useless assignment to local variable "billIds".(ÕÃ¥äùÿÿÿÿ
+G
+java:S1481#",Remove this unused "billIds" local variable.(ÕÃ¥äùÿÿÿÿ

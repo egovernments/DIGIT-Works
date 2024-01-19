@@ -1,0 +1,21 @@
+
+n	java:S116"TRename this field "QueryUtil" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(şíÖùÿÿÿÿ
+u	java:S1160"`Rename this field "ORDER_BY_CREATED_TIME" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ìëßÔ
+s
+java:S30082"XRename this field "WRAPPER_QUERY" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÉŒ‡ øÿÿÿÿ
+7
+java:S11700"!Make this final field static too.(ìëßÔ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+N
+java:S1135ƒ"2Complete the task associated to this TODO comment.(åÑõüÿÿÿÿ
+C
+java:S1602¡",Remove useless curly braces around statement(ì‚å¼
+Y
+java:S1612¡"BReplace this lambda with method reference 'preparedStmtList::add'.(ì‚å¼
+O
+java:S10680"9Remove this unused "ORDER_BY_CREATED_TIME" private field.(ìëßÔ

@@ -1,0 +1,26 @@
+
+Z	java:S112J"FDefine and throw a dedicated exception instead of using a generic one.(²ìç9
+j
+java:S1192v"ODefine a constant instead of duplicating this literal "lastmodifiedby" 4 times.(È˜ğııÿÿÿÿ
+m
+java:S1192s"RDefine a constant instead of duplicating this literal "additionalDetails" 4 times.(¯¥Ûøÿÿÿÿ
+g
+java:S1192u"LDefine a constant instead of duplicating this literal "createdtime" 3 times.(”ÃÄìşÿÿÿÿ
+e
+java:S1192t"JDefine a constant instead of duplicating this literal "createdby" 3 times.(®ÉÁ—ûÿÿÿÿ
+_
+java:S1192o"IDefine a constant instead of duplicating this literal "tenantId" 3 times.(Ó¡Ÿœ
+g
+java:S1192w"QDefine a constant instead of duplicating this literal "lastmodifiedtime" 4 times.(Ú‰¯¢
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813!"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813$"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813'"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813*"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813,"BRemove this field injection and use constructor injection instead.(êæÄŞ

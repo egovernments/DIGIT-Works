@@ -1,0 +1,6 @@
+
+|
+java:S14885"aImmediately return this expression instead of assigning it to the temporary variable "timestamp".(·ÌÊëûÿÿÿÿ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+@	java:S106/"+Replace this use of System.out by a logger.(ù‘®µ
