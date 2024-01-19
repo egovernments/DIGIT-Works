@@ -7,30 +7,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="expense-calculator" />
         <module name="ifms-adapter" />
         <module name="egov-mdms-service-test" />
-        <module name="egov-persister" />
-        <module name="measurement-registry" />
-        <module name="exchange" />
-        <module name="expense" />
-        <module name="bankaccounts" />
-        <module name="estimates" />
         <module name="mukta-adaptor" />
+        <module name="estimates" />
+        <module name="egov-persister" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="bankaccounts" options="-parameters" />
       <module name="egov-mdms-service-test" options="-parameters" />
       <module name="egov-persister" options="-parameters" />
       <module name="estimates" options="-parameters" />
-      <module name="exchange" options="-parameters" />
-      <module name="expense" options="-parameters" />
-      <module name="expense-calculator" options="-parameters" />
       <module name="ifms-adapter" options="-parameters" />
-      <module name="measurement-registry" options="-parameters" />
       <module name="mukta-adaptor" options="-parameters" />
     </option>
   </component>

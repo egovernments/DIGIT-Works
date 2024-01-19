@@ -5,16 +5,10 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/../../reference-adapters/ifms-adapter/pom.xml" />
-        <option value="$PROJECT_DIR$/../expense-calculator/pom.xml" />
-        <option value="$PROJECT_DIR$/../expense/pom.xml" />
-        <option value="$PROJECT_DIR$/../../../DIGIT-OSS/core-services/egov-persister/pom.xml" />
-        <option value="$PROJECT_DIR$/../bankaccounts/pom.xml" />
-        <option value="$PROJECT_DIR$/../../../DigitExchange/pom.xml" />
-        <option value="$PROJECT_DIR$/../estimates/pom.xml" />
+        <option value="$PROJECT_DIR$/../../backend/estimates/pom.xml" />
+        <option value="$PROJECT_DIR$/../ifms-adapter/pom.xml" />
         <option value="$PROJECT_DIR$/../../../DIGIT-OSS/core-services/egov-mdms-service/pom.xml" />
-        <option value="$PROJECT_DIR$/../measurement-registry/pom.xml" />
-        <option value="$PROJECT_DIR$/../../reference-adapters/mukta-adapter/pom.xml" />
+        <option value="$PROJECT_DIR$/../../../DIGIT-OSS/core-services/egov-persister/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />
