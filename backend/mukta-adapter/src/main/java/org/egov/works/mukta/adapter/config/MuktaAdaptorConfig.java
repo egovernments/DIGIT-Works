@@ -132,4 +132,10 @@ public class MuktaAdaptorConfig {
     // Kafka Topics
     @Value("${disburse.create.topic}")
     private String disburseCreateTopic;
+
+    // Pagination Default Parameters
+    @Value("${mukta.adapter.default.offset}")
+    private Integer defaultOffset;
+    @Value("${mukta.adapter.default.limit}")
+    private Integer defaultLimit;
 }

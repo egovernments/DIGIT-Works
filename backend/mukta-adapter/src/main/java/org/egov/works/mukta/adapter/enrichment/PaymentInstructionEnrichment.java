@@ -136,10 +136,11 @@ public class PaymentInstructionEnrichment {
                 }
             }
         }
+        UUID uuid = UUID.randomUUID();
+        disbursement.setId(uuid.toString());
         disbursement.setTargetId(paymentRequest.getPayment().getPaymentNumber());
         disbursement.setDisbursements(disbursements);
         disbursement.setDisbursementDate(ZonedDateTime.now());
-        disbursement.setDisbursementsCount(disbursements.size());
         disbursement.setAuditDetails(setAuditDetails("SYSTEM", "SYSTEM"));
         disbursement.setLocationCode(paymentRequest.getPayment().getTenantId());
         Status status = Status.builder().statusCode(StatusCode.INITIATED).statusMessage("Initiated").build();
@@ -152,6 +153,8 @@ public class PaymentInstructionEnrichment {
         log.info("Started executing enrichDisbursement");
         String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
         Disbursement disbursement = new Disbursement();
+        UUID uuid = UUID.randomUUID();
+        disbursement.setId(uuid.toString());
         org.egov.works.mukta.adapter.web.models.Individual piIndividual = new org.egov.works.mukta.adapter.web.models.Individual();
         if (bankAccount != null && !bankAccount.getBankAccountDetails().isEmpty()) {
             accountCode = accountCode.replace("{ACCOUNT_NO}", bankAccount.getBankAccountDetails().get(0).getAccountNumber());
@@ -164,6 +167,7 @@ public class PaymentInstructionEnrichment {
         disbursement.setCurrencyCode(Currency.getInstance("INR"));
         disbursement.setLocaleCode("en_IN");
         disbursement.setProgramCode("PROG");
+        disbursement.setLocationCode(lineItem.getTenantId());
 
         if (individual != null) {
             piIndividual.setAddress(individual.getAddress().get(0));

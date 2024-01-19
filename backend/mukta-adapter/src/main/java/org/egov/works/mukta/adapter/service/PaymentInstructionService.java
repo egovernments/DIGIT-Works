@@ -10,16 +10,17 @@ import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
 import org.egov.works.mukta.adapter.kafka.MuktaAdaptorProducer;
-import org.egov.works.mukta.adapter.repository.PaymentRepository;
+import org.egov.works.mukta.adapter.repository.DisbursementRepository;
 import org.egov.works.mukta.adapter.util.*;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.DisbursementRequest;
-import org.egov.works.mukta.adapter.web.models.MuktaPayment;
-import org.egov.works.mukta.adapter.web.models.PaymentSearchCriteria;
+import org.egov.works.mukta.adapter.web.models.DisbursementSearchCriteria;
+import org.egov.works.mukta.adapter.web.models.DisbursementSearchRequest;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.Status;
+import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
 import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,20 +42,20 @@ public class PaymentInstructionService {
     private final OrganisationUtils organisationUtils;
     private final IndividualUtils individualUtils;
     private final MdmsUtil mdmsUtil;
-    private final PaymentRepository paymentRepository;
+    private final DisbursementRepository disbursementRepository;
     private final ProgramServiceUtil programServiceUtil;
     private final MuktaAdaptorProducer muktaAdaptorProducer;
     private final MuktaAdaptorConfig muktaAdaptorConfig;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, PaymentRepository paymentRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
         this.organisationUtils = organisationUtils;
         this.individualUtils = individualUtils;
         this.mdmsUtil = mdmsUtil;
-        this.paymentRepository = paymentRepository;
+        this.disbursementRepository = disbursementRepository;
         this.programServiceUtil = programServiceUtil;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
         this.muktaAdaptorConfig = muktaAdaptorConfig;
@@ -62,16 +63,16 @@ public class PaymentInstructionService {
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction on failure");
-        PaymentSearchCriteria paymentSearchCriteria = PaymentSearchCriteria.builder().paymentId(paymentRequest.getReferenceId()).build();
-        List<MuktaPayment> muktaPayments = paymentRepository.searchPayment(paymentSearchCriteria);
-        if(muktaPayments != null && !muktaPayments.isEmpty() && (muktaPayments.get(0).getPaymentStatus().equals(PaymentStatus.INITIATED.toString()) || muktaPayments.get(0).getPaymentStatus().equals(PaymentStatus.SUCCESSFUL.toString()))){
+        DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder().criteria(DisbursementSearchCriteria.builder().paymentNumber(paymentRequest.getReferenceId()).build()).build();
+        List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
+        if(disbursements != null && !disbursements.isEmpty() && (disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.INITIATED) || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL))){
             throw new CustomException(Error.PAYMENT_ALREADY_PROCESSED, Error.PAYMENT_ALREADY_PROCESSED_MESSAGE);
         }
         log.info("No payment found for the payment id : " + paymentRequest.getReferenceId());
         log.info("Creating new payment for the payment id : " + paymentRequest.getReferenceId());
         Disbursement disbursement = processPaymentInstruction(paymentRequest);
         DisbursementRequest disbursementRequest = DisbursementRequest.builder().disbursement(disbursement).requestInfo(paymentRequest.getRequestInfo()).build();
-        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+//        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
         return disbursement;
     }
@@ -178,5 +179,10 @@ public class PaymentInstructionService {
         }
         log.info("Bills are filtered based on line item status, and sending back.");
         return billList;
+    }
+
+    public List<Disbursement> processDisbursementSearch(DisbursementSearchRequest disbursementSearchRequest) {
+        log.info("Searching for disbursements based on the criteria: "+ disbursementSearchRequest.getCriteria());
+        return disbursementRepository.searchDisbursement(disbursementSearchRequest);
     }
 }
