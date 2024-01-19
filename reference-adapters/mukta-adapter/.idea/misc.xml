@@ -14,6 +14,7 @@
         <option value="$PROJECT_DIR$/../estimates/pom.xml" />
         <option value="$PROJECT_DIR$/../../../DIGIT-OSS/core-services/egov-mdms-service/pom.xml" />
         <option value="$PROJECT_DIR$/../measurement-registry/pom.xml" />
+        <option value="$PROJECT_DIR$/../../reference-adapters/mukta-adapter/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />

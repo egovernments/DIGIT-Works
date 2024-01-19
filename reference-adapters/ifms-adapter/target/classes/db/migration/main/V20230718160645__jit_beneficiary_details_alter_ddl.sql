@@ -1,0 +1,1 @@
+ALTER TABLE jit_beneficiary_details ADD COLUMN beneficiaryNumber character varying(64);
