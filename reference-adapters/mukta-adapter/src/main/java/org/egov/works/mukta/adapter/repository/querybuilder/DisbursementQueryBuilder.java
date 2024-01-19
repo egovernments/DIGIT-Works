@@ -66,7 +66,6 @@ public class DisbursementQueryBuilder {
             query.append(" code.type = ? ");
             preparedStmtList.add(disbursementSearchCriteria.getType());
         }
-        log.info("executing query ::: " + query);
         return addPaginationWrapper(query,disbursementSearchRequest.getPagination(),preparedStmtList);
     }
 
