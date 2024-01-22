@@ -212,3 +212,10 @@ config:
         image-name: "ifms-adapter"
       - work-dir: "reference-adapters/ifms-adapter/src/main/resources/db"
         image-name: "ifms-adapter-db"
+  - name: "builds/digit-works/reference-adapters/mukta-adapter"
+    build:
+      - work-dir: "reference-adapters/mukta-adapter"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "mukta-adapter"
+      - work-dir: "reference-adapters/mukta-adapter/src/main/resources/db"
+        image-name: "mukta-adapter-db"
