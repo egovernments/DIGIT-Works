@@ -1,10 +1,11 @@
-import { Loader, FormComposerV2, Header, Toast, ActionBar, Menu, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Loader, FormComposerV2, Header, Toast, ActionBar, Menu, SubmitBar, WorkflowModal } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CreateConfig } from "../../configs/MeasurementCreateConfig";
 import { getDefaultValues } from "../../utils/transformEstimateData";
 import { transformData } from "../../utils/transformData";
+import getModalConfig from "./config";
 import _ from "lodash";
 
 const updateData = (data, formState, tenantId) => {
@@ -17,6 +18,7 @@ const CreateMeasurement = ({ props }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
+  const rolesForThisAction = "MB_VERIFIER"; 
   const MeasurementSession = Digit.Hooks.useSessionStorage("MEASUREMENT_CREATE", {});
   // const [sessionFormData, setSessionFormData, clearSessionFormData] = MeasurementSession;
   const [createState, setState] = useState({ SOR: [], NONSOR: [], accessors: undefined, period: {} });
@@ -24,6 +26,10 @@ const CreateMeasurement = ({ props }) => {
   const [showToast, setShowToast] = useState({display: false, error: false});
   const [errorMessage, setErrorMessage] = useState("");
   const [displayMenu, setDisplayMenu] = useState(false);
+  const [config, setConfig] = useState({});
+  const [approvers, setApprovers] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedApprover, setSelectedApprover] = useState({});
 
   const getFormAccessors = useCallback((accessors) => {
     if (!createState?.accessors) {
@@ -58,6 +64,16 @@ const CreateMeasurement = ({ props }) => {
   };
 
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+
+  const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch(
+    { roles: rolesForThisAction, isActive: true },
+    Digit.ULBService.getCurrentTenantId(),
+    null,
+    null,
+    { enabled: true }
+  );
+
+  employeeDatav1?.Employees.map((emp) => (emp.nameOfEmp = emp?.user?.name || "NA"));
 
   // fetch the required data........
   useEffect(() => {
@@ -98,6 +114,22 @@ const CreateMeasurement = ({ props }) => {
     fetchRequiredData();
   }, [data]);
 
+  useEffect(() => {
+    setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter((emp) => emp?.nameOfEmp !== "NA") : []);
+  }, [employeeDatav1]);
+  useEffect(() => {
+    setConfig(
+      getModalConfig({
+        t,
+        approvers,
+        selectedApprover,
+        setSelectedApprover,
+        approverLoading,
+        isEdit : props?.isUpdate,
+      })
+    );
+  }, [approvers]);
+
   // action to be performed....
   let actionMB = [
     {
@@ -108,7 +140,7 @@ const CreateMeasurement = ({ props }) => {
     },
   ];
 
-  function onActionSelect(action) {
+  function onActionSelect(action = "SUBMIT") {
     if (createState?.period?.type == "error") {
       setErrorMessage(createState?.period?.message);
       setShowToast({display:true, error:true});
@@ -116,7 +148,8 @@ const CreateMeasurement = ({ props }) => {
     }
     if (action?.name === "SUBMIT") {
       createState.workflowAction = "SUBMIT";
-      handleCreateMeasurement(createState, action);
+      setShowModal(true);
+      //handleCreateMeasurement(createState, action);
     }
     if (action?.name === "SAVE_AS_DRAFT") {
       createState.workflowAction = "SAVE_AS_DRAFT";
@@ -126,12 +159,15 @@ const CreateMeasurement = ({ props }) => {
 
   // Handle form submission
   const handleCreateMeasurement = async (data, action) => {
+    setShowModal(false);
     if (props?.isUpdate) {
       data.id = props?.data?.[0].id;
       data.measurementNumber = props?.data?.[0].measurementNumber;
       data.wfStatus = props?.data?.[0]?.wfStatus;
     }
 
+    if(selectedApprover)
+      data.selectedApprover = selectedApprover;
     // Create the measurement payload with transformed data
     const measurements = transformData(updateData(data, createState, tenantId));
     //call the createMutation for MB and route to response page on onSuccess or show error
@@ -192,13 +228,14 @@ const CreateMeasurement = ({ props }) => {
   actionMB = actionMB && (props?.isUpdate) && props?.data && props?.data?.[0]?.wfStatus==="SENT_BACK" ? actionMB?.filter((ob) => ob?.name !== "SAVE_AS_DRAFT") : actionMB;
 
   // if data is still loading return loader
-  if (isLoading || !defaultState?.contract) {
+  if (isLoading || !defaultState?.contract || approverLoading) {
     return <Loader />;
   }
 
   // else render form and data
   return (
     <div>
+      {showModal && <WorkflowModal closeModal={() => setShowModal(false)} onSubmit={(_data) => handleCreateMeasurement({..._data,...createState},"SUBMIT")} config={config} />}
       <Header className="works-header-view modify-header">{t("MB_MEASUREMENT_BOOK")}</Header>
       <FormComposerV2
         label={t("MB_SUBMIT_BAR")}
@@ -210,7 +247,7 @@ const CreateMeasurement = ({ props }) => {
         })}
         getFormAccessors={getFormAccessors}
         defaultValues={{ ...createState }}
-        onSubmit={handleCreateMeasurement}
+        onSubmit={onActionSelect}
         fieldStyle={{ marginRight: 0 }}
         showMultipleCardsWithoutNavs={true}
         onFormValueChange={onFormValueChange}
