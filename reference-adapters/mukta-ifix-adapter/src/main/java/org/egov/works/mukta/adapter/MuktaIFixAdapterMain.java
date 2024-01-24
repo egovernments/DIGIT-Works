@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Import;
 @Import({TracerConfiguration.class})
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.egov.works.mukta.adapter", "org.egov.works.mukta.adapter.web.controllers", "org.egov.works.mukta.adapter.config"})
-public class MuktaAdapterMain {
+public class MuktaIFixAdapterMain {
 
 
     public static void main(String[] args) {
-        SpringApplication.run(MuktaAdapterMain.class, args);
+        SpringApplication.run(MuktaIFixAdapterMain.class, args);
     }
 
 }
