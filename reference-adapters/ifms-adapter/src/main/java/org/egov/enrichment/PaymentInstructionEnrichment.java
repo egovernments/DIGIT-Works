@@ -6,12 +6,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.common.models.individual.Individual;
 import org.egov.config.Constants;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.service.IfmsService;
+import org.egov.tracer.model.CustomException;
 import org.egov.utils.*;
+import org.egov.web.models.Disbursement;
+import org.egov.web.models.DisbursementRequest;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.*;
@@ -706,4 +711,143 @@ public class PaymentInstructionEnrichment {
         return piRequest;
     }
 
+    public PaymentInstruction enrichPaymentIntsructionsFromDisbursementRequest(DisbursementRequest disbursementRequest,Map<String,Map<String,JSONArray>> mdmsData,SanctionDetail sanctionDetail) {
+        log.info("Started executing enrichPaymentIntsructionsFromDisbursementRequest");
+        Disbursement disbursement = disbursementRequest.getMessage();
+        List<Beneficiary> beneficiaryList = getBeneficiariesFromDisbursement(disbursement);
+        return getEnrichedPaymentRequestFromDisbursement(disbursement, beneficiaryList, sanctionDetail,mdmsData);
+    }
+
+    private PaymentInstruction getEnrichedPaymentRequestFromDisbursement(Disbursement disbursement, List<Beneficiary> beneficiaryList, SanctionDetail sanctionDetail,Map<String,Map<String,JSONArray>> mdmsData) {
+        RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
+        List<String> beneficiaryNumbers = idgenUtil.getIdList(requestInfo,disbursement.getLocationCode(),config.getPiBenefInstructionNumberFormat(),null,beneficiaryList.size());
+        String jitBillNo = idgenUtil.getIdList(requestInfo, disbursement.getLocationCode(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
+        String piId = UUID.randomUUID().toString();
+        for(Beneficiary beneficiary:beneficiaryList){
+            beneficiary.setBeneficiaryNumber(beneficiaryNumbers.get(beneficiaryList.indexOf(beneficiary)));
+            beneficiary.setPiId(piId);
+        }
+        Allotment latestAllotment = null;
+        for(Allotment allotment:sanctionDetail.getAllotmentDetails()){
+            if(!allotment.getAllotmentTxnType().equals(VA_TRANSACTION_TYPE_WITHDRAWAL)){
+                latestAllotment = allotment;
+                break;
+            }
+        }
+        JSONArray ssuDetails = mdmsData.get("ifms").get("SSUDetails");
+        JsonNode ssuNode = objectMapper.valueToTree(ssuDetails.get(0));
+        JsonNode hoaNode = getHoaNodeFromSanctionDetail(sanctionDetail,mdmsData);
+        if(hoaNode == null){
+            throw new CustomException("HOA_NOT_FOUND","HOA not found in the system");
+        }
+        TransactionDetails transactionDetails = TransactionDetails.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(disbursement.getLocationCode())
+                .sanctionId(sanctionDetail.getId())
+                .paymentInstId(piId)
+                .transactionAmount(disbursement.getNetAmount())
+                .transactionType(TransactionType.DEBIT)
+                .auditDetails(disbursement.getAuditDetails())
+                .build();
+        PADetails paDetails = PADetails.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(disbursement.getLocationCode())
+                .piId(piId)
+                .muktaReferenceId(disbursement.getTargetId())
+                .auditDetails(disbursement.getAuditDetails())
+                .build();
+        return PaymentInstruction.builder()
+                .id(piId)
+                .tenantId(disbursement.getLocationCode())
+                .muktaReferenceId(disbursement.getTargetId())
+                .netAmount(disbursement.getNetAmount())
+                .grossAmount(disbursement.getGrossAmount())
+                .jitBillNo(jitBillNo)
+                .jitBillDate(util.getFormattedTimeFromTimestamp(disbursement.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
+                .numBeneficiaries(beneficiaryList.size())
+                .auditDetails(disbursement.getAuditDetails())
+                .jitBillDdoCode(sanctionDetail.getDdoCode())
+                .hoa(sanctionDetail.getHoaCode())
+                .granteeAgCode(ssuNode.get("granteeAgCode").asText())
+                .schemeCode(hoaNode.get("schemeCode").asText())
+                .ssuIaId(ssuNode.get("ssuId").asText())
+                .mstAllotmentDistId(sanctionDetail.getMasterAllotmentId())
+                .ssuAllotmentId(latestAllotment.getSsuAllotmentId())
+                .allotmentTxnSlNo(String.valueOf(latestAllotment.getAllotmentSerialNo()))
+                .billGrossAmount(String.valueOf(disbursement.getGrossAmount()))
+                .billNetAmount(String.valueOf(disbursement.getNetAmount()))
+                .beneficiaryDetails(beneficiaryList)
+                .purpose("Mukta Payment")
+                .transactionDetails(Collections.singletonList(transactionDetails))
+                .piStatus(PIStatus.INITIATED)
+                .paDetails(Collections.singletonList(paDetails))
+                .build();
+    }
+
+    private JsonNode getHoaNodeFromSanctionDetail(SanctionDetail sanctionDetail, Map<String, Map<String, JSONArray>> mdmsData) {
+        String hoaCode = sanctionDetail.getHoaCode();
+        JSONArray hoaDetails = mdmsData.get("ifms").get("HeadOfAccounts");
+        JsonNode hoaNode = null;
+        if(!hoaDetails.isEmpty()){
+            for(Object hoa:hoaDetails){
+                JsonNode node = objectMapper.valueToTree(hoa);
+                if(node.get("code").asText().equals(hoaCode)){
+                    hoaNode = node;
+                    break;
+                }
+            }
+        }
+        return hoaNode;
+    }
+
+    private List<Beneficiary> getBeneficiariesFromDisbursement(Disbursement disbursement) {
+        AuditDetails auditDetails = disbursement.getAuditDetails();
+        HashMap<String, Beneficiary> accountCodeToBeneficiaryMap = new HashMap<>();
+        for(Disbursement disbursementDetail: disbursement.getDisbursements()) {
+            Beneficiary beneficiary = accountCodeToBeneficiaryMap.get(disbursementDetail.getAccountCode());
+            if(beneficiary == null){
+                String beneficiaryId = UUID.randomUUID().toString();
+                List<BenfLineItems> benfLineItems = new ArrayList<>();
+                BenfLineItems benfLineItem = BenfLineItems.builder()
+                        .id(UUID.randomUUID().toString())
+                        .beneficiaryId(beneficiaryId)
+                        .lineItemId(disbursementDetail.getTargetId())
+                        .auditDetails(auditDetails).build();
+                benfLineItems.add(benfLineItem);
+
+                beneficiary = Beneficiary.builder()
+                        .id(beneficiaryId)
+                        .tenantId(disbursement.getLocationCode())
+                        .muktaReferenceId(disbursementDetail.getTargetId())
+                        .bankAccountId(disbursementDetail.getAccountCode())
+                        .amount(disbursementDetail.getNetAmount())
+                        .benfLineItems(benfLineItems)
+                        .auditDetails(auditDetails)
+                        .paymentStatus(BeneficiaryPaymentStatus.INITIATED)
+                        .benefName(disbursementDetail.getIndividual().getName())
+                        .benfAcctNo(disbursementDetail.getAccountCode().split("@")[0])
+                        .benfBankIfscCode(disbursementDetail.getAccountCode().split("@")[1])
+                        .benfMobileNo(disbursementDetail.getIndividual().getPhone())
+                        .benfEmailId(disbursementDetail.getIndividual().getEmail())
+                        .benfAddress(disbursementDetail.getIndividual().getAddress().toString())
+                        .benfAmount(disbursementDetail.getNetAmount().toString())
+                        .purpose("Mukta Payment")
+                        .beneficiaryType(BeneficiaryType.IND)
+                        .build();
+
+                accountCodeToBeneficiaryMap.put(disbursementDetail.getAccountCode(),beneficiary);
+            }else{
+                BenfLineItems benfLineItem = BenfLineItems.builder()
+                        .id(UUID.randomUUID().toString())
+                        .beneficiaryId(beneficiary.getId())
+                        .lineItemId(disbursementDetail.getTargetId())
+                        .auditDetails(auditDetails).build();
+
+                beneficiary.setAmount(beneficiary.getAmount().add(disbursementDetail.getNetAmount()));
+                beneficiary.getBenfLineItems().add(benfLineItem);
+            }
+        }
+
+        return new ArrayList<>(accountCodeToBeneficiaryMap.values());
+    }
 }

@@ -177,7 +177,7 @@ public class PISService {
      * @param requestInfo
      * @param paymentInstruction
      */
-    private void updateFundsSummary(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
+    public void updateFundsSummary(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
         log.info("Executing PISService:updateFundsSummary");
         SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
                 .ids(Collections.singletonList(paymentInstruction.getTransactionDetails().get(0).getSanctionId()))

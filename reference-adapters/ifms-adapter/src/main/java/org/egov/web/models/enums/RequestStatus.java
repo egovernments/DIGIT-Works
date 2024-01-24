@@ -1,5 +1,6 @@
 package org.egov.web.models.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum RequestStatus {
@@ -8,7 +9,7 @@ public enum RequestStatus {
     SUCC("succ"),
     RJCT("rjct");
 
-    private String value;
+    private final String value;
     RequestStatus(String value){
         this.value = value;
     }
@@ -17,5 +18,15 @@ public enum RequestStatus {
     @JsonValue
     public String toString() {
         return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static RequestStatus fromString(String value) {
+        for (RequestStatus status : RequestStatus.values()) {
+            if (status.value.equalsIgnoreCase(value)) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Invalid RequestStatus value: " + value);
     }
 }

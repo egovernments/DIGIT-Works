@@ -26,9 +26,9 @@ public class PIQueryBuilder {
             + " VALUES (:id, :tenantId, :muktaReferenceId, :piId, :paBillRefNumber, :paFinYear, :paAdviceId, :paAdviceDate, :paTokenNumber, :paTokenDate,"
             + " :paErrorMsg, :additionalDetails, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
     public static final String BENEFICIARY_DETAILS_INSERT_QUERY = "INSERT INTO jit_beneficiary_details "
-            + "(id, tenantId, muktaReferenceId, piId, beneficiaryId, beneficiaryType, beneficiaryNumber, bankAccountId, amount, voucherNumber, voucherDate, utrNo, utrDate, endToEndId, challanNumber, "
+            + "(id, tenantId, muktaReferenceId, piId, beneficiaryId, beneficiaryType, beneficiaryNumber, bankAccountCode, amount, voucherNumber, voucherDate, utrNo, utrDate, endToEndId, challanNumber, "
             + "challanDate, paymentStatus, paymentStatusMessage, additionalDetails, createdtime, createdby, lastmodifiedtime, lastmodifiedby)"
-            + " VALUES (:id, :tenantId, :muktaReferenceId, :piId, :beneficiaryId, :beneficiaryType, :beneficiaryNumber, :bankAccountId, :amount, :voucherNumber, :voucherDate, :utrNo, :utrDate, :endToEndId, :challanNumber, "
+            + " VALUES (:id, :tenantId, :muktaReferenceId, :piId, :beneficiaryId, :beneficiaryType, :beneficiaryNumber, :bankAccountCode, :amount, :voucherNumber, :voucherDate, :utrNo, :utrDate, :endToEndId, :challanNumber, "
             + " :challanDate, :paymentStatus, :paymentStatusMessage, :additionalDetails, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
 
     public static final String TRANSACTION_DETAILS_INSERT_QUERY = "INSERT INTO jit_transaction_details "
@@ -98,7 +98,7 @@ public class PIQueryBuilder {
             "benfDetail.beneficiaryId as benfDetailBeneficiaryId, " +
             "benfDetail.beneficiaryType as benfDetailBeneficiaryType, " +
             "benfDetail.beneficiaryNumber as benfDetailBeneficiaryNumber, " +
-            "benfDetail.bankAccountId as benfDetailBankAccountId, " +
+            "benfDetail.bankAccountCode as benfDetailBankAccountId, " +
             "benfDetail.amount as benfDetailAmount, " +
             "benfDetail.voucherNumber as benfDetailVoucherNumber, " +
             "benfDetail.voucherDate as benfDetailVoucherDate, " +

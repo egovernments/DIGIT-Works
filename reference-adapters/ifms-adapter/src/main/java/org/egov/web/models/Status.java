@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.enums.StatusCode;
 
@@ -14,6 +12,8 @@ import org.egov.web.models.enums.StatusCode;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Status {
     @JsonProperty("status_code")
     StatusCode statusCode;

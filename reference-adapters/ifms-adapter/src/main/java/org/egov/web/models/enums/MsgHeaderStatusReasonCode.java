@@ -1,5 +1,7 @@
 package org.egov.web.models.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum MsgHeaderStatusReasonCode {
     RJCT_VERSION_INVALID("rjct.version.invalid"),
     RJCT_MESSAGE_ID_DUPLICATE("rjct.message_id.duplicate"),
@@ -10,13 +12,15 @@ public enum MsgHeaderStatusReasonCode {
     RJCT_TOTAL_COUNT_LIMIT_EXCEEDED("rjct.total_count.limit_exceeded"),
     RJCT_ERRORS_TOO_MANY("rjct.errors.too_many");
 
-    private final String code;
+    private final String value;
 
-    MsgHeaderStatusReasonCode(String code) {
-        this.code = code;
+    MsgHeaderStatusReasonCode(String value) {
+        this.value = value;
     }
 
-    public String getCode() {
-        return code;
+    @Override
+    @JsonValue
+    public String toString() {
+        return String.valueOf(value);
     }
 }
