@@ -78,48 +78,10 @@ public class MuktaAdaptorConfig {
 
     @Value("${egov.organisation.search.endpoint}")
     private String organisationSearchEndPoint;
-    @Value("${ifms.pi.index.enrich.topic}")
-    private String ifmsPiEnrichmentTopic;
 
     //State Level Tenant I'd
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
-
-    // es log configurations
-    @Value("${egov.es.indexer.host}")
-    private String esIndexerHost;
-
-    @Value("${ifms.request.log.index}")
-    private String ifmsRequestLogIndex;
-
-    @Value("${ifms.error.log.index}")
-    private String ifmsErrorLogIndex;
-
-    @Value("${ifms.request.log.enabled}")
-    private Boolean ifmsRequestLogEnabled;
-
-    @Value("${ifms.error.log.enabled}")
-    private Boolean ifmsErrorLogEnabled;
-
-    @Value("${ifms.request.enc.secret}")
-    private String ifmsRequestEncSecret;
-    @Value("${ifms.jit.hostname}")
-    private String ifmsJitHostName;
-
-    @Value("${ifms.jit.authenticate.endpoint}")
-    private String ifmsJitAuthEndpoint;
-
-    @Value("${ifms.jit.service.endpoint}")
-    private String ifmsJitRequestEndpoint;
-
-    @Value("${ifms.jit.client.id}")
-    private String ifmsJitClientId;
-
-    @Value("${ifms.jit.client.secret}")
-    private String ifmsJitClientSecret;
-
-    @Value("${ifms.jit.public.key.filepath}")
-    private String ifmsJitPublicKeyFilePath;
 
     @Value("${payment.create.topic}")
     private String paymentCreateTopic;
