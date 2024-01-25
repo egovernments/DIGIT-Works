@@ -122,7 +122,7 @@ public class BillUtils {
         log.info("Started executing fetchPaymentDetails");
         Map<String, Object> searchCriteria = new HashMap<>();
         searchCriteria.put("tenantId", tenantId);
-        searchCriteria.put("paymentNumber", paymentNumber);
+        searchCriteria.put("paymentNumbers", Collections.singletonList(paymentNumber));
         Map<String, Object> requestParams = new HashMap<>();
         requestParams.put("RequestInfo", requestInfo);
         requestParams.put("paymentCriteria", searchCriteria);
@@ -139,7 +139,7 @@ public class BillUtils {
             log.error("Exception occurred while fetching payment details from bill service: ", e);
         }
         log.info("Payment fetched, sending back.");
-        return paymentResponse.getPayments();
+        return paymentResponse != null? paymentResponse.getPayments() : null;
     }
 
     public void updatePaymentStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus, ReferenceStatus referenceStatus) {
