@@ -12,10 +12,7 @@ import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
 import org.egov.works.mukta.adapter.kafka.MuktaAdaptorProducer;
 import org.egov.works.mukta.adapter.repository.DisbursementRepository;
 import org.egov.works.mukta.adapter.util.*;
-import org.egov.works.mukta.adapter.web.models.Disbursement;
-import org.egov.works.mukta.adapter.web.models.DisbursementRequest;
-import org.egov.works.mukta.adapter.web.models.DisbursementSearchCriteria;
-import org.egov.works.mukta.adapter.web.models.DisbursementSearchRequest;
+import org.egov.works.mukta.adapter.web.models.*;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
@@ -63,7 +60,11 @@ public class PaymentInstructionService {
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction on failure");
-        DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder().criteria(DisbursementSearchCriteria.builder().paymentNumber(paymentRequest.getReferenceId()).build()).build();
+        DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
+                .requestInfo(paymentRequest.getRequestInfo())
+                .criteria(DisbursementSearchCriteria.builder().paymentNumber(paymentRequest.getReferenceId()).build())
+                .pagination(Pagination.builder().build())
+                .build();
         List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
         if(disbursements != null && !disbursements.isEmpty() && (disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.INITIATED) || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL))){
             throw new CustomException(Error.PAYMENT_ALREADY_PROCESSED, Error.PAYMENT_ALREADY_PROCESSED_MESSAGE);

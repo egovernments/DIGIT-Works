@@ -9,9 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
-import org.springframework.data.annotation.Id;
-
-import java.util.List;
 
 
 @Getter
