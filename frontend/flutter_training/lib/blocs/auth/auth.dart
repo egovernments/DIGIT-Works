@@ -10,7 +10,7 @@ import 'package:flutter_training/services/urls.dart';
 import 'package:flutter_training/utils/global_variables.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:universal_html/html.dart' as html;
-
+import 'package:flutter_training/Env/env_config.dart';
 import '../../data/remote_client.dart';
 import '../../data/repositories/auth_repository/auth.dart';
 import '../../services/local_storage.dart';
@@ -35,7 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         "username": event.userId.toString(),
         "password": event.password.toString(),
         "userType": 'EMPLOYEE',
-        "tenantId": event.tenantId.toString(),
+        "tenantId": envConfig.variables.tenantId.toString(),
         "scope": "read",
         "grant_type": "password"
       });
