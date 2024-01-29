@@ -3,6 +3,7 @@ package org.egov.works.mukta.adapter.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
@@ -26,13 +27,15 @@ public class PaymentService {
     private final MuktaAdaptorConfig config;
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
+    private final MdmsUtil mdmsUtil;
 
     @Autowired
-    public PaymentService(BillUtils billUtils, MuktaAdaptorConfig config, RestTemplate restTemplate, ObjectMapper mapper) {
+    public PaymentService(BillUtils billUtils, MuktaAdaptorConfig config, RestTemplate restTemplate, ObjectMapper mapper, MdmsUtil mdmsUtil) {
         this.billUtils = billUtils;
         this.config = config;
         this.restTemplate = restTemplate;
         this.mapper = mapper;
+        this.mdmsUtil = mdmsUtil;
     }
 
     /**
@@ -42,7 +45,8 @@ public class PaymentService {
      */
     public void createPaymentFromBills(RequestInfo requestInfo) {
         // Fetches bill for which payment is not yet created
-        List<Bill> bills = fetchBills(requestInfo);
+        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, requestInfo.getUserInfo().getTenantId());
+        List<Bill> bills = fetchBills(requestInfo,mdmsData);
         log.info("Bills fetched: " + bills);
         for (Bill bill : bills) {
             String wfStatus = bill.getWfStatus();
@@ -69,27 +73,20 @@ public class PaymentService {
      * @param requestInfo
      * @return
      */
-    private List<Bill> fetchBills(RequestInfo requestInfo) {
+    private List<Bill> fetchBills(RequestInfo requestInfo, Map<String, Map<String, JSONArray>> mdmsData) {
         List<Bill> bills = new ArrayList<>();
         // Gets the list of tenants from MDMS
-//        List<String> tenantIds = getTenants(requestInfo);
-//        log.info(tenantIds.toString());
-        List<String> tenantIds = new ArrayList<>();
-        tenantIds.add("pg.citya");
-        //TODO: Remove this hardcoding
-        Set<String> billNumbers = new HashSet<>();
-        billNumbers.add("PB/2023-24/000527");
+        List<String> tenantIds = getTenants(mdmsData);
+        log.info(tenantIds.toString());
         // Fetch bills for which payment is not yet been created for every tenant
         for (String tenantId : tenantIds) {
             BillCriteria billCriteria = BillCriteria.builder()
                     .tenantId(tenantId)
-                    .billNumbers(billNumbers)
-                    .businessService("EXPENSE.PURCHASE")
                     .isPaymentStatusNull(true)
                     .build();
 
-            Integer offset = 0;
-            Integer limit = 100;
+            int offset = 0;
+            int limit = 100;
             List<Bill> currentBills;
             // loop for adding bills from every paged call to fetch bills
             do {
@@ -110,6 +107,17 @@ public class PaymentService {
 
         }
         return bills;
+    }
+
+    private List<String> getTenants(Map<String, Map<String, JSONArray>> mdmsData) {
+        List<String> tenantIds = new ArrayList<>();
+        JSONArray tenantArray = mdmsData.get("tenant").get("tenants");
+        for (Object tenant : tenantArray) {
+            Map<String, Object> tenantMap = (Map<String, Object>) tenant;
+            if(tenantMap.get("code") != null && !tenantMap.get("code").toString().equals(config.getStateLevelTenantId()))
+                tenantIds.add(tenantMap.get("code").toString());
+        }
+        return tenantIds;
     }
 
     /**

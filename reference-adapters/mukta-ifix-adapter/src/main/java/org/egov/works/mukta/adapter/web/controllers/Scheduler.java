@@ -46,7 +46,6 @@ public class Scheduler {
     @RequestMapping(path = "_scheduler", method = RequestMethod.POST)
     public ResponseInfo scheduler(@RequestBody @Valid SchedulerRequest schedulerRequest,
                                   @RequestParam("serviceId") JITServiceId serviceId) {
-
         // Switch case is used to direct request to the respective services.
         if (Objects.requireNonNull(serviceId) == JITServiceId.PA) {
             paymentService.createPaymentFromBills(schedulerRequest.getRequestInfo());
