@@ -24,8 +24,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -36,7 +39,6 @@ public class DisbursementService {
     private final MdmsUtils mdmsUtils;
     private final SanctionDetailsRepository sanctionDetailsRepository;
     private final IfmsService ifmsService;
-    private final PISService pisService;
     private final ObjectMapper objectMapper;
     private final PIUtils piUtils;
 
@@ -49,28 +51,149 @@ public class DisbursementService {
         this.mdmsUtils = mdmsUtils;
         this.sanctionDetailsRepository = sanctionDetailsRepository;
         this.ifmsService = ifmsService;
-        this.pisService = pisService;
         this.objectMapper = objectMapper;
         this.piUtils = piUtils;
     }
     public DisbursementResponse processDisbursementRequest(DisbursementRequest disbursementRequest) {
-        PaymentStatus paymentStatus = null;
-        disbursementValidator.validateDisbursementRequest(disbursementRequest);
+        PaymentStatus paymentStatus;
+        PaymentInstruction lastPI = null;
+        PaymentInstruction originalPI = null;
+        RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
+        Map<String,Map<String,JSONArray>> mdmsData = mdmsUtils.fetchHoaAndSSUDetails(requestInfo,disbursementRequest.getMessage().getLocationCode());
+        disbursementValidator.validateDisbursementRequest(disbursementRequest,mdmsData);
         PISearchCriteria piSearchCriteria = PISearchCriteria.builder()
                 .muktaReferenceId(disbursementRequest.getMessage().getTargetId())
                 .tenantId(disbursementRequest.getMessage().getLocationCode())
+                .sortBy(PISearchCriteria.SortBy.createdTime)
+                .sortOrder(PISearchCriteria.SortOrder.DESC)
+                .isActive(true)
                 .build();
-
         List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchCriteria);
-        RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
-        Map<String,Map<String,JSONArray>> mdmsData = mdmsUtils.fetchHoaAndSSUDetails(requestInfo,disbursementRequest.getMessage().getLocationCode());
         SanctionDetailsSearchCriteria sanctionDetailsSearchCriteria = SanctionDetailsSearchCriteria.builder()
                 .ids(Collections.singletonList(disbursementRequest.getMessage().getSanctionId()))
                 .build();
         List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(sanctionDetailsSearchCriteria);
 
-        disbursementValidator.validatePI(paymentInstructions,disbursementRequest,mdmsData);
-        PaymentInstruction paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0));
+        if(!paymentInstructions.isEmpty()){
+            for(PaymentInstruction paymentInstruction:paymentInstructions){
+                if(!paymentInstruction.getPiStatus().equals(PIStatus.FAILED) && lastPI == null){
+                    lastPI = paymentInstruction;
+                    originalPI = paymentInstruction;
+                }else if(!paymentInstruction.getPiStatus().equals(PIStatus.FAILED)){
+                    originalPI = paymentInstruction;
+                }
+            }
+        }
+        PaymentInstruction paymentInstructionFromDisbursement;
+        if(lastPI != null && lastPI.getPiStatus().equals(PIStatus.PARTIAL)){
+            log.info("Payment Instruction is in PARTIAL status, processing it for revised PI.");
+            paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),true,lastPI);
+            paymentStatus = processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI);
+        }else{
+            log.info("Payment Instruction is not in PARTIAL status, processing it for PI creation.");
+            disbursementValidator.validatePI(paymentInstructions,disbursementRequest,mdmsData);
+            paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),false,lastPI);
+            paymentStatus = processDisbursementForPICreation(disbursementRequest, paymentInstructionFromDisbursement, requestInfo, sanctionDetails);
+        }
+        log.info("Saving PI data.");
+        piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), sanctionDetails.get(0).getFundsSummary(), paymentStatus);
+        piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
+
+        return enrichDisbursementResponse(disbursementRequest,paymentInstructionFromDisbursement);
+    }
+
+    private PaymentStatus processDisbursementForRevisedPICreation(PaymentInstruction paymentInstructionFromDisbursement, RequestInfo requestInfo, PaymentInstruction lastPI, PaymentInstruction originalPI) {
+        PaymentStatus paymentStatus = null;
+        try {
+            CORRequest corRequest = paymentInstructionEnrichment.getCorPaymentInstructionRequestForIFMS(paymentInstructionFromDisbursement,lastPI,originalPI);
+            JITRequest jitRequest = JITRequest.builder()
+                    .serviceId(JITServiceId.COR)
+                    .params(corRequest)
+                    .build();
+            try {
+                JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
+                if(jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()){
+                    paymentStatus = PaymentStatus.INITIATED;
+                    try {
+                        Object piResponseNode = jitResponse.getData().get(0);
+                        JsonNode node = objectMapper.valueToTree(piResponseNode);
+                        String piSuccessCode = node.get("successCode").asText();
+                        String piSucessDescrp = node.get("sucessDescrp").asText();
+                        paymentInstructionFromDisbursement.setPiSuccessCode(piSuccessCode);
+                        paymentInstructionFromDisbursement.setPiSuccessDesc(piSucessDescrp);
+                    }catch (Exception e){
+                        log.info("Exception while parsing COR success response " + e);
+                    }
+                }else{
+                    paymentStatus = PaymentStatus.PARTIAL;
+                    try {
+                        String piErrorDescrp = null;
+                        // Set error response to PI
+                        if (jitResponse.getErrorMsg() != null) {
+                            piErrorDescrp = jitResponse.getErrorMsg();
+                        } else if (jitResponse.getErrorMsgs() != null && !jitResponse.getErrorMsgs().isEmpty()) {
+                            piErrorDescrp = jitResponse.getErrorMsgs().toString();
+                        }
+                        paymentInstructionFromDisbursement.setPiErrorResp(piErrorDescrp);
+                    }catch (Exception e) {
+                        log.info("Exception while parsing COR Error response " + e);
+                    }
+                }
+            }catch (Exception e){
+                paymentStatus = PaymentStatus.PARTIAL;
+                String errorMessage;
+                Throwable cause = e.getCause();
+                if (cause instanceof HttpServerErrorException.InternalServerError) {
+                    errorMessage = ((HttpServerErrorException.InternalServerError) cause).getResponseBodyAsString();
+                } else {
+                    errorMessage = e.getMessage();
+                }
+                log.error("Exception while calling request." + e);
+                paymentInstructionFromDisbursement.setPiErrorResp(errorMessage);
+            }
+            updatePIDateForRevisedPI(paymentInstructionFromDisbursement,lastPI,originalPI,paymentStatus,requestInfo);
+        }catch (Exception e){
+            log.info("Exception " + e);
+            throw new CustomException("ERROR_REVISED_PI","Exception while generating revised PI" + e);
+        }
+        return paymentStatus;
+    }
+
+    private void updatePIDateForRevisedPI(PaymentInstruction paymentInstructionFromDisbursement, PaymentInstruction lastPI, PaymentInstruction originalPI, PaymentStatus paymentStatus,RequestInfo requestInfo) {
+        log.info("Updating PI data for revised PI.");
+        if(paymentStatus.equals(PaymentStatus.PARTIAL)){
+            paymentInstructionFromDisbursement.setPiStatus(PIStatus.FAILED);
+            paymentInstructionFromDisbursement.setIsActive(false);
+
+            PaymentInstruction lastPiForUpdate = lastPI == null ? originalPI : lastPI;
+            Map<String, Beneficiary> beneficiaryMap = new HashMap<>();
+            if (lastPiForUpdate != null && lastPiForUpdate.getBeneficiaryDetails() != null && !lastPiForUpdate.getBeneficiaryDetails().isEmpty()) {
+                beneficiaryMap = lastPiForUpdate.getBeneficiaryDetails().stream()
+                        .collect(Collectors.toMap(Beneficiary::getBeneficiaryNumber, Function.identity()));
+            }
+
+            for(Beneficiary beneficiary: paymentInstructionFromDisbursement.getBeneficiaryDetails()) {
+                beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+                if (beneficiaryMap.containsKey(beneficiary.getBeneficiaryNumber())) {
+                    beneficiary.setPaymentStatusMessage(beneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getPaymentStatusMessage());
+                }
+            }
+        }
+
+        if(paymentStatus.equals(PaymentStatus.INITIATED)){
+            paymentInstructionFromDisbursement.setIsActive(true);
+            PaymentInstruction lastPiForUpdate = lastPI == null ? originalPI : lastPI;
+            // Update last revised PI status to COMPLETED
+            lastPiForUpdate.setPiStatus(PIStatus.COMPLETED);
+            lastPiForUpdate.getAuditDetails().setLastModifiedTime(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedTime());
+            lastPiForUpdate.getAuditDetails().setLastModifiedBy(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedBy());
+            piRepository.update(Collections.singletonList(lastPiForUpdate), null);
+            piUtils.updatePIIndex(requestInfo, lastPiForUpdate);
+        }
+    }
+
+    private PaymentStatus processDisbursementForPICreation(DisbursementRequest disbursementRequest, PaymentInstruction paymentInstructionFromDisbursement, RequestInfo requestInfo,List<SanctionDetail> sanctionDetails) {
+        PaymentStatus paymentStatus = null;
         if(sanctionDetails.get(0).getFundsSummary().getAvailableAmount().compareTo(disbursementRequest.getMessage().getNetAmount()) < 0){
             log.info("Fund not available processing payment instruction for FAILED.");
             // Get enriched PI request to store on DB
@@ -110,7 +233,7 @@ public class DisbursementService {
         }catch (Exception e){
             log.info("Exception while creating a pi, setting payment status to FAILED.");
             paymentStatus = PaymentStatus.FAILED;
-            String errorMessage = e.getMessage();
+            String errorMessage;
             Throwable cause = e.getCause();
             if (cause instanceof HttpServerErrorException.InternalServerError) {
                 errorMessage = ((HttpServerErrorException.InternalServerError) cause).getResponseBodyAsString();
@@ -126,11 +249,7 @@ public class DisbursementService {
                 beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
             }
         }
-        log.info("Saving PI data.");
-        piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), sanctionDetails.get(0).getFundsSummary(), paymentStatus);
-        piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
-
-        return enrichDisbursementResponse(disbursementRequest,paymentInstructionFromDisbursement);
+        return paymentStatus;
     }
 
     private DisbursementResponse enrichDisbursementResponse(DisbursementRequest disbursementRequest, PaymentInstruction paymentInstructionFromDisbursement) {

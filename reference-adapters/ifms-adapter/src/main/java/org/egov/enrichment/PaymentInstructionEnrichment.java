@@ -711,22 +711,34 @@ public class PaymentInstructionEnrichment {
         return piRequest;
     }
 
-    public PaymentInstruction enrichPaymentIntsructionsFromDisbursementRequest(DisbursementRequest disbursementRequest,Map<String,Map<String,JSONArray>> mdmsData,SanctionDetail sanctionDetail) {
+    public PaymentInstruction enrichPaymentIntsructionsFromDisbursementRequest(DisbursementRequest disbursementRequest,Map<String,Map<String,JSONArray>> mdmsData,SanctionDetail sanctionDetail,Boolean isRevised,PaymentInstruction lastPi) {
         log.info("Started executing enrichPaymentIntsructionsFromDisbursementRequest");
         Disbursement disbursement = disbursementRequest.getMessage();
         List<Beneficiary> beneficiaryList = getBeneficiariesFromDisbursement(disbursement);
-        return getEnrichedPaymentRequestFromDisbursement(disbursement, beneficiaryList, sanctionDetail,mdmsData);
+        return getEnrichedPaymentRequestFromDisbursement(disbursement, beneficiaryList, sanctionDetail,mdmsData,isRevised,lastPi);
     }
 
-    private PaymentInstruction getEnrichedPaymentRequestFromDisbursement(Disbursement disbursement, List<Beneficiary> beneficiaryList, SanctionDetail sanctionDetail,Map<String,Map<String,JSONArray>> mdmsData) {
+    private PaymentInstruction getEnrichedPaymentRequestFromDisbursement(Disbursement disbursement, List<Beneficiary> beneficiaryList, SanctionDetail sanctionDetail,Map<String,Map<String,JSONArray>> mdmsData, Boolean isRevised,PaymentInstruction lastPi) {
         RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
-        List<String> beneficiaryNumbers = idgenUtil.getIdList(requestInfo,disbursement.getLocationCode(),config.getPiBenefInstructionNumberFormat(),null,beneficiaryList.size());
         String jitBillNo = idgenUtil.getIdList(requestInfo, disbursement.getLocationCode(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
         String piId = UUID.randomUUID().toString();
-        for(Beneficiary beneficiary:beneficiaryList){
-            beneficiary.setBeneficiaryNumber(beneficiaryNumbers.get(beneficiaryList.indexOf(beneficiary)));
-            beneficiary.setPiId(piId);
+        if(Boolean.FALSE.equals(isRevised)){
+            List<String> beneficiaryNumbers = idgenUtil.getIdList(requestInfo,disbursement.getLocationCode(),config.getPiBenefInstructionNumberFormat(),null,beneficiaryList.size());
+            for(Beneficiary beneficiary:beneficiaryList){
+                beneficiary.setBeneficiaryNumber(beneficiaryNumbers.get(beneficiaryList.indexOf(beneficiary)));
+                beneficiary.setPiId(piId);
+            }
+        }else{
+            HashMap<String,String> muktaRefIdToBeneficiaryNumberMap = new HashMap<>();
+            for(Beneficiary beneficiary:lastPi.getBeneficiaryDetails()){
+                muktaRefIdToBeneficiaryNumberMap.put(beneficiary.getMuktaReferenceId(),beneficiary.getBeneficiaryNumber());
+            }
+            for(Beneficiary beneficiary:beneficiaryList){
+                beneficiary.setBeneficiaryNumber(muktaRefIdToBeneficiaryNumberMap.get(beneficiary.getMuktaReferenceId()));
+                beneficiary.setPiId(piId);
+            }
         }
+
         Allotment latestAllotment = null;
         for(Allotment allotment:sanctionDetail.getAllotmentDetails()){
             if(!allotment.getAllotmentTxnType().equals(VA_TRANSACTION_TYPE_WITHDRAWAL)){
@@ -781,6 +793,7 @@ public class PaymentInstructionEnrichment {
                 .transactionDetails(Collections.singletonList(transactionDetails))
                 .piStatus(PIStatus.INITIATED)
                 .paDetails(Collections.singletonList(paDetails))
+                .isActive(true)
                 .build();
     }
 
@@ -849,5 +862,51 @@ public class PaymentInstructionEnrichment {
         }
 
         return new ArrayList<>(accountCodeToBeneficiaryMap.values());
+    }
+
+    public CORRequest getCorPaymentInstructionRequestForIFMS(PaymentInstruction paymentInstructionFromDisbursement, PaymentInstruction lastPI, PaymentInstruction originalPI) {
+        log.info("Started executing getCorPaymentInstructionRequestForIFMS");
+        List<CORBeneficiaryDetails> beneficiaryListForCorRequest = getBeneficiariesForCORRequest(paymentInstructionFromDisbursement, lastPI, originalPI);
+
+        return CORRequest.builder()
+                .jitCorBillNo(paymentInstructionFromDisbursement.getJitBillNo())
+                .jitCorBillDate(util.getFormattedTimeFromTimestamp(paymentInstructionFromDisbursement.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
+                // External department Application name for example ‘MUKTA’
+                .jitCorBillDeptCode(JIT_FD_EXT_APP_NAME)
+                // Original bill reference number while payment failed first time.
+                .jitOrgBillRefNo(originalPI.getPaDetails().get(0).getPaBillRefNumber())
+                // Payment Instruction bill no while payment failed first time.
+                .jitOrgBillNo(originalPI.getJitBillNo())
+                // Payment Instruction bill date while payment failed first time.
+                .jitOrgBillDate(util.getFormattedTimeFromTimestamp(originalPI.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
+                .beneficiaryDtls(beneficiaryListForCorRequest)
+                .build();
+    }
+
+    private List<CORBeneficiaryDetails> getBeneficiariesForCORRequest(PaymentInstruction paymentInstructionFromDisbursement, PaymentInstruction lastPI, PaymentInstruction originalPI) {
+        List<CORBeneficiaryDetails> beneficiaryList = new ArrayList<>();
+        String jitCurrBillNo = lastPI.getPaDetails().get(0).getPaBillRefNumber();
+        HashMap<String, Beneficiary> lastPIBeneficiaryMap = new HashMap<>();
+        for(Beneficiary beneficiary:lastPI.getBeneficiaryDetails()){
+            lastPIBeneficiaryMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
+        }
+        HashMap<String, Beneficiary> originalPIBeneficiaryMap = new HashMap<>();
+        for(Beneficiary beneficiary:originalPI.getBeneficiaryDetails()){
+            originalPIBeneficiaryMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
+        }
+        for(Beneficiary beneficiary:paymentInstructionFromDisbursement.getBeneficiaryDetails()){
+            CORBeneficiaryDetails beneficiaryForCor = CORBeneficiaryDetails.builder()
+                    .benefId(beneficiary.getBeneficiaryNumber())
+                    .jitCurBillRefNo(jitCurrBillNo)
+                    .orgAccountNo(originalPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[0])
+                    .orgIfsc(originalPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[1])
+                    .correctedAccountNo(beneficiary.getBankAccountId().split("@")[0])
+                    .correctedIfsc(beneficiary.getBankAccountId().split("@")[1])
+                    .curAccountNo(lastPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[0])
+                    .curIfsc(lastPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[1])
+                    .build();
+            beneficiaryList.add(beneficiaryForCor);
+        }
+        return beneficiaryList;
     }
 }

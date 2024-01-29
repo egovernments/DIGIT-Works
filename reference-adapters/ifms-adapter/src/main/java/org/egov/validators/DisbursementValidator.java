@@ -29,20 +29,9 @@ public class DisbursementValidator {
         this.objectMapper = objectMapper;
     }
 
-    public void validateDisbursementRequest(DisbursementRequest disbursementRequest) {
+    public void validateDisbursementRequest(DisbursementRequest disbursementRequest, Map<String, Map<String,JSONArray>> mdmsData) {
         log.info("DisbursementValidator.validateDisbursementRequest()");
-    }
 
-    public void validatePI(List<PaymentInstruction> paymentInstructions, DisbursementRequest disbursementRequest, Map<String, Map<String,JSONArray>> mdmsData) {
-        log.info("DisbursementValidator.validatePI()");
-        if(!paymentInstructions.isEmpty()){
-            PIStatus piStatus = paymentInstructions.get(0).getPiStatus();
-            if(piStatus.equals(PIStatus.INITIATED) || piStatus.equals(PIStatus.APPROVED) || piStatus.equals(PIStatus.IN_PROCESS) || piStatus.equals(PIStatus.SUCCESSFUL)){
-                throw new CustomException("PI_STATUS_IS_ALREADY_INITIATED","Payment Instruction is already initiated");
-            }
-        }else{
-            log.info("DisbursementValidator.validatePI() - Payment Instruction not found");
-        }
         JSONArray ssuDetails = mdmsData.get("ifms").get("SSUDetails");
         if(!ssuDetails.isEmpty()){
             JsonNode ssuDetail = objectMapper.valueToTree(ssuDetails.get(0));
@@ -50,6 +39,18 @@ public class DisbursementValidator {
             if(!programCode.equals(disbursementRequest.getMessage().getProgramCode())){
                 throw new CustomException("INVALID_PROGRAM_CODE", "Program Code is invalid for the tenantId and disbursement Request.");
             }
+        }
+    }
+
+    public void validatePI(List<PaymentInstruction> paymentInstructions, DisbursementRequest disbursementRequest, Map<String, Map<String,JSONArray>> mdmsData) {
+        log.info("DisbursementValidator.validatePI()");
+        if(!paymentInstructions.isEmpty()){
+            PIStatus piStatus = paymentInstructions.get(0).getPiStatus();
+            if(piStatus.equals(PIStatus.INITIATED) || piStatus.equals(PIStatus.APPROVED) || piStatus.equals(PIStatus.IN_PROCESS) || piStatus.equals(PIStatus.SUCCESSFUL)){
+                throw new CustomException("PI_ALREADY_EXISTS","Payment Instruction already exists");
+            }
+        }else{
+            log.info("DisbursementValidator.validatePI() - Payment Instruction not found");
         }
     }
 }
