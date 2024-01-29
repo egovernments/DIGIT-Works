@@ -2,6 +2,7 @@ package org.egov.works.mukta.adapter.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.constants.Error;

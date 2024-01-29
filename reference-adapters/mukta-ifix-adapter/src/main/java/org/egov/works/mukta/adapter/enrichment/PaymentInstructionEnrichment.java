@@ -2,11 +2,11 @@ package org.egov.works.mukta.adapter.enrichment;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
 import org.egov.works.mukta.adapter.config.Constants;
-import org.egov.works.mukta.adapter.web.models.AuditDetails;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.Status;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
@@ -131,7 +131,7 @@ public class PaymentInstructionEnrichment {
             Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
             for (LineItem lineItem : piBeneficiary.getBenfLineItems()) {
                 if(lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) && !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL)){
-                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem);
+                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, paymentRequest.getRequestInfo().getUserInfo().getUuid());
                     disbursements.add(disbursementForLineItem);
                 }
             }
@@ -141,7 +141,7 @@ public class PaymentInstructionEnrichment {
         disbursement.setTargetId(paymentRequest.getPayment().getPaymentNumber());
         disbursement.setDisbursements(disbursements);
         disbursement.setDisbursementDate(ZonedDateTime.now());
-        disbursement.setAuditDetails(setAuditDetails("SYSTEM", "SYSTEM"));
+        disbursement.setAuditDetails(setAuditDetails(paymentRequest.getRequestInfo().getUserInfo().getUuid(), paymentRequest.getRequestInfo().getUserInfo().getUuid()));
         disbursement.setLocationCode(paymentRequest.getPayment().getTenantId());
         Status status = Status.builder().statusCode(StatusCode.INITIATED).statusMessage("Initiated").build();
         disbursement.setStatus(status);
@@ -149,7 +149,7 @@ public class PaymentInstructionEnrichment {
         return disbursement;
     }
 
-    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem) {
+    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,String userId) {
         log.info("Started executing enrichDisbursement");
         String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
         Disbursement disbursement = new Disbursement();
@@ -185,7 +185,7 @@ public class PaymentInstructionEnrichment {
             piIndividual.setName(organisation.getName());
         }
         disbursement.setIndividual(piIndividual);
-        disbursement.setAuditDetails(setAuditDetails("SYSTEM", "SYSTEM"));
+        disbursement.setAuditDetails(setAuditDetails(userId, userId));
 
         Status status = Status.builder().statusCode(StatusCode.INITIATED).statusMessage("Initiated").build();
         disbursement.setStatus(status);

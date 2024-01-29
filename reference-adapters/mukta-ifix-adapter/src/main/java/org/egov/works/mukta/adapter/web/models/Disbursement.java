@@ -1,6 +1,7 @@
 package org.egov.works.mukta.adapter.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

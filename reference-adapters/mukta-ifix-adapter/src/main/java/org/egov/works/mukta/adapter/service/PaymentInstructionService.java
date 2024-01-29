@@ -90,9 +90,9 @@ public class PaymentInstructionService {
             paymentRequest.setPayment(payments.get(0));
         }
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
-        Disbursement disbursementRequest = getBeneficiariesFromPayment(paymentRequest, mdmsData);
-        log.info("Disbursement request is " + disbursementRequest);
-        return disbursementRequest;
+        Disbursement disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData);
+        log.info("Disbursement request is " + disbursement);
+        return disbursement;
     }
 
     private Disbursement getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
