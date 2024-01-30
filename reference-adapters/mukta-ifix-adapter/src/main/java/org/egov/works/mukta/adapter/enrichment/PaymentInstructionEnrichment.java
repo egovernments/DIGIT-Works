@@ -170,7 +170,7 @@ public class PaymentInstructionEnrichment {
         disbursement.setLocationCode(lineItem.getTenantId());
 
         if (individual != null) {
-            piIndividual.setAddress(individual.getAddress().get(0));
+            piIndividual.setAddress(individual.getAddress().get(0).getAddressLine1());
             piIndividual.setGender(individual.getGender());
             piIndividual.setPhone(individual.getMobileNumber());
             piIndividual.setEmail(individual.getEmail());
@@ -178,7 +178,7 @@ public class PaymentInstructionEnrichment {
             piIndividual.setName(individual.getName().getGivenName());
         }
         if (organisation != null) {
-            piIndividual.setAddress(organisation.getOrgAddress().get(0));
+            piIndividual.setAddress(organisation.getOrgAddress().get(0).getAddressLine1());
             piIndividual.setPhone(organisation.getContactDetails().get(0).getContactMobileNumber());
             piIndividual.setEmail(organisation.getContactDetails().get(0).getContactEmail());
             piIndividual.setPin(organisation.getOrgAddress().get(0).getPincode());

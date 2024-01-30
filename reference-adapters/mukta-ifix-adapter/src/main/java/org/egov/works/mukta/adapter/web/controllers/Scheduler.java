@@ -59,11 +59,4 @@ public class Scheduler {
     ) {
         muktaAdaptorProducer.push("expense-payment-create", paymentRequest);
     }
-
-    @RequestMapping(path = "/on-disburse", method = RequestMethod.POST)
-    public void onDisburse(@RequestBody @Valid Disbursement disbursementRequest) {
-        disbursementService.processDisbursement(disbursementRequest);
-    }
-
-
 }

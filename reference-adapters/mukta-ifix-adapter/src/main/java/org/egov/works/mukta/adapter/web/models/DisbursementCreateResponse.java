@@ -9,7 +9,7 @@ import org.egov.common.contract.response.ResponseInfo;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DisbursementResponse {
+public class DisbursementCreateResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
     @JsonProperty("Disbursement")

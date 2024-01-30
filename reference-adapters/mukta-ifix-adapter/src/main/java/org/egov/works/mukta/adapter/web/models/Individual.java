@@ -29,7 +29,7 @@ public class Individual {
 
     @JsonProperty("address")
     @Size(min = 1, message = Error.INVALID_ADDRESS)
-    Address address;
+    String address;
 
     // @JsonProperty("encoded_photo")
     // @NotBlank(message = Error.INVALID_ENCODED_PHOTO)

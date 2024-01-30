@@ -7,10 +7,12 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.util.BillUtils;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
+import org.egov.works.mukta.adapter.web.models.DisbursementRequest;
 import org.egov.works.mukta.adapter.web.models.Status;
 import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.ReferenceStatus;
+import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,22 +29,31 @@ public class DisbursementService {
         this.billUtils = billUtils;
     }
 
-    public void processDisbursement(Disbursement disbursementRequest) {
+    public void processDisbursement(DisbursementRequest disbursementRequest) {
         log.info("Processing disbursement request");
+        Disbursement disbursement = disbursementRequest.getMessage();
+        String tenantId = disbursement.getLocationCode();
+        //TODO: FIX MANUAL UUID
         RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
-        List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, disbursementRequest.getTargetId(), "pg.citya");
+        List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, disbursement.getTargetId(), tenantId);
         if (payments == null || payments.isEmpty()) {
             throw new CustomException(Error.PAYMENT_NOT_FOUND, Error.PAYMENT_NOT_FOUND_MESSAGE);
         }
         log.info("Payments fetched for the disbursement request : " + payments);
         Payment payment = payments.get(0);
         log.info("Updating the payment status for the payments : " + payment);
-        updatePaymentStatus(payment, disbursementRequest, requestInfo);
+        updatePaymentStatus(payment, disbursement, requestInfo);
     }
 
-    private void updatePaymentStatus(Payment payment, Disbursement disbursementRequest, RequestInfo requestInfo) {
-        HashMap<String, Status> lineItemIdStatusMap = getLineItemIdStatusMap(disbursementRequest);
-        payment.getBills().forEach(bill -> bill.getBillDetails().forEach(billDetail -> billDetail.getPayableLineItems().forEach(payableLineItem -> payableLineItem.setStatus(PaymentStatus.INITIATED))));
+    private void updatePaymentStatus(Payment payment, Disbursement disbursement, RequestInfo requestInfo) {
+        HashMap<StatusCode, PaymentStatus> lineItemIdStatusMap = getStatusCodeToPaymentStatusMap();
+        HashMap<String, StatusCode> targetIdToStatusCodeMap = new HashMap<>();
+        for(Disbursement disbursement1: disbursement.getDisbursements()){
+            targetIdToStatusCodeMap.put(disbursement1.getTargetId(), disbursement1.getStatus().getStatusCode());
+        }
+        payment.getBills().forEach(bill ->
+                bill.getBillDetails().forEach(billDetail ->
+                        billDetail.getPayableLineItems().forEach(payableLineItem -> payableLineItem.setStatus(lineItemIdStatusMap.get(targetIdToStatusCodeMap.get(payableLineItem.getLineItemId()))))));
         updatePaymentStatusForPartial(payment, requestInfo);
     }
 
@@ -96,9 +107,13 @@ public class DisbursementService {
         return updateBillDetailsStatus;
     }
 
-    private HashMap<String, Status> getLineItemIdStatusMap(Disbursement disbursementRequest) {
-        HashMap<String, Status> lineItemIdStatusMap = new HashMap<>();
-        disbursementRequest.getDisbursements().forEach(disbursement -> lineItemIdStatusMap.put(disbursement.getTargetId(), disbursement.getStatus()));
-        return lineItemIdStatusMap;
+    private HashMap<StatusCode, PaymentStatus> getStatusCodeToPaymentStatusMap() {
+        HashMap<StatusCode,PaymentStatus> statusCodePaymentStatusHashMap = new HashMap<>();
+        statusCodePaymentStatusHashMap.put(StatusCode.INITIATED, PaymentStatus.INITIATED);
+        statusCodePaymentStatusHashMap.put(StatusCode.SUCCESSFUL,PaymentStatus.SUCCESSFUL);
+        statusCodePaymentStatusHashMap.put(StatusCode.FAILED,PaymentStatus.FAILED);
+        statusCodePaymentStatusHashMap.put(StatusCode.CANCELLED,PaymentStatus.CANCELLED);
+        statusCodePaymentStatusHashMap.put(StatusCode.PARTIAL,PaymentStatus.PARTIAL);
+        return statusCodePaymentStatusHashMap;
     }
 }

@@ -1,18 +1,20 @@
 package org.egov.works.mukta.adapter.web.models;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
-import org.egov.common.contract.request.RequestInfo;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Builder
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class DisbursementRequest {
-    @JsonProperty("RequestInfo")
-    private RequestInfo requestInfo;
-    @JsonProperty
-    private Disbursement disbursement;
+    @JsonProperty("signature")
+    private String signature;
+    @JsonProperty("header")
+    private MsgCallbackHeader header;
+    @JsonProperty("message")
+    private Disbursement message;
 }

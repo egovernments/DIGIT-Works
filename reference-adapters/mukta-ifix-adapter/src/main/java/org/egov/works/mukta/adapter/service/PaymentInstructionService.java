@@ -72,7 +72,7 @@ public class PaymentInstructionService {
         log.info("No payment found for the payment id : " + paymentRequest.getReferenceId());
         log.info("Creating new payment for the payment id : " + paymentRequest.getReferenceId());
         Disbursement disbursement = processPaymentInstruction(paymentRequest);
-        DisbursementRequest disbursementRequest = DisbursementRequest.builder().disbursement(disbursement).requestInfo(paymentRequest.getRequestInfo()).build();
+        DisbursementCreateRequest disbursementRequest = DisbursementCreateRequest.builder().disbursement(disbursement).requestInfo(paymentRequest.getRequestInfo()).build();
 //        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
         return disbursement;
