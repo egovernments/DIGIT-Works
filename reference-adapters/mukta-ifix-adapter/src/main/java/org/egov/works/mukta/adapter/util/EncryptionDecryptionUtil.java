@@ -1,6 +1,5 @@
 package org.egov.works.mukta.adapter.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -65,8 +64,8 @@ public class EncryptionDecryptionUtil {
                 objectToDecryptNotList = true;
                 objectToDecrypt = Collections.singletonList(objectToDecrypt);
             }
-            final User encrichedUserInfo = getEncrichedAndCopiedUserInfo(requestInfo.getUserInfo());
-            requestInfo.setUserInfo(encrichedUserInfo);
+            final User enrichedUserInfo = getEnrichedAndCopiedUserInfo(requestInfo.getUserInfo());
+            requestInfo.setUserInfo(enrichedUserInfo);
 
             String purpose = "searchIndividual";
 
@@ -89,7 +88,7 @@ public class EncryptionDecryptionUtil {
         }
     }
 
-    private User getEncrichedAndCopiedUserInfo(User userInfo) {
+    private User getEnrichedAndCopiedUserInfo(User userInfo) {
         List<Role> newRoleList = new ArrayList<>();
         if (userInfo.getRoles() != null) {
             for (Role role : userInfo.getRoles()) {
@@ -99,8 +98,8 @@ public class EncryptionDecryptionUtil {
         }
 
         if (newRoleList.stream().filter(role -> (role.getCode() != null) && (userInfo.getType() != null) && role.getCode().equalsIgnoreCase(userInfo.getType())).count() == 0) {
-            Role roleFromtype = Role.builder().code(userInfo.getType()).name(userInfo.getType()).build();
-            newRoleList.add(roleFromtype);
+            Role roleFromType = Role.builder().code(userInfo.getType()).name(userInfo.getType()).build();
+            newRoleList.add(roleFromType);
         }
 
         return User.builder().id(userInfo.getId()).userName(userInfo.getUserName()).name(userInfo.getName())

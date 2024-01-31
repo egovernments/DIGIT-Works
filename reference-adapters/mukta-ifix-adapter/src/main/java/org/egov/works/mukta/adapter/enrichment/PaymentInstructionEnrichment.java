@@ -18,6 +18,7 @@ import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -140,13 +141,23 @@ public class PaymentInstructionEnrichment {
         disbursement.setId(uuid.toString());
         disbursement.setTargetId(paymentRequest.getPayment().getPaymentNumber());
         disbursement.setDisbursements(disbursements);
-        disbursement.setDisbursementDate(ZonedDateTime.now());
+        disbursement.setDisbursementDate(ZonedDateTime.now().toEpochSecond());
         disbursement.setAuditDetails(setAuditDetails(paymentRequest.getRequestInfo().getUserInfo().getUuid(), paymentRequest.getRequestInfo().getUserInfo().getUuid()));
         disbursement.setLocationCode(paymentRequest.getPayment().getTenantId());
-        Status status = Status.builder().statusCode(StatusCode.INITIATED).statusMessage("Initiated").build();
-        disbursement.setStatus(status);
+        setAmountForParentDisbursement(disbursement);
         log.info("Beneficiary details enriched and sending back.");
         return disbursement;
+    }
+
+    private void setAmountForParentDisbursement(Disbursement disbursement) {
+        BigDecimal netAmount = BigDecimal.ZERO;
+        BigDecimal grossAmount = BigDecimal.ZERO;
+        for (Disbursement disbursement1 : disbursement.getDisbursements()) {
+            netAmount = netAmount.add(disbursement1.getNetAmount());
+            grossAmount = grossAmount.add(disbursement1.getGrossAmount());
+        }
+        disbursement.setNetAmount(netAmount);
+        disbursement.setGrossAmount(grossAmount);
     }
 
     private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,String userId) {
@@ -187,8 +198,6 @@ public class PaymentInstructionEnrichment {
         disbursement.setIndividual(piIndividual);
         disbursement.setAuditDetails(setAuditDetails(userId, userId));
 
-        Status status = Status.builder().statusCode(StatusCode.INITIATED).statusMessage("Initiated").build();
-        disbursement.setStatus(status);
         return disbursement;
     }
 
@@ -201,4 +210,11 @@ public class PaymentInstructionEnrichment {
         return auditDetails;
     }
 
+    public void enrichDisbursementStatus(Disbursement disbursement) {
+        Status status = Status.builder().statusCode(StatusCode.INITIATED).statusMessage("Initiated").build();
+        disbursement.setStatus(status);
+        disbursement.getDisbursements().forEach(disbursement1 -> {
+            disbursement1.setStatus(status);
+        });
+    }
 }

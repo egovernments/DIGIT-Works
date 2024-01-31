@@ -43,9 +43,10 @@ public class PaymentInstructionService {
     private final ProgramServiceUtil programServiceUtil;
     private final MuktaAdaptorProducer muktaAdaptorProducer;
     private final MuktaAdaptorConfig muktaAdaptorConfig;
+    private final EncryptionDecryptionUtil encryptionDecryptionUtil;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, EncryptionDecryptionUtil encryptionDecryptionUtil) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -56,6 +57,7 @@ public class PaymentInstructionService {
         this.programServiceUtil = programServiceUtil;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
         this.muktaAdaptorConfig = muktaAdaptorConfig;
+        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
     }
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
@@ -91,6 +93,9 @@ public class PaymentInstructionService {
         }
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
         Disbursement disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData);
+        log.info("Encrypting Disbursement Object");
+        disbursement = encryptionDecryptionUtil.encryptObject(disbursement, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), Disbursement.class);
+        piEnrichment.enrichDisbursementStatus(disbursement);
         log.info("Disbursement request is " + disbursement);
         return disbursement;
     }

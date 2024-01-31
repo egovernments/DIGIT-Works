@@ -29,8 +29,7 @@ public class ExchangeCode {
     private Currency currencyCode;
     @JsonProperty("locale_code")
     private String localeCode;
-    @JsonProperty("status")
-    private Status status;
+
 
     static public ExchangeCode fromString(String json) {
         ObjectMapper mapper = new ObjectMapper();

@@ -34,6 +34,10 @@ public class OrgResponse {
 
     @JsonProperty("pagination")
     private Pagination pagination = null;
+    @JsonProperty("workflow")
+    private String workflow = null;
+    @JsonProperty("TotalCount")
+    private Integer totalCount = null;
 
     public OrgResponse addOrganisationsItem(Organisation organisationsItem) {
         if (this.organisations == null) {

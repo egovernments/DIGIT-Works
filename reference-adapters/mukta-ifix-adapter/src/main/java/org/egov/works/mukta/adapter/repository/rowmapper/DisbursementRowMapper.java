@@ -45,7 +45,7 @@ public class DisbursementRowMapper implements ResultSetExtractor<List<Disburseme
                 String disburseParentId = rs.getString("disburseParentId");
                 String disburseStatus = rs.getString("disburseStatus");
                 String disburseStatusMessage = rs.getString("disburseStatusMessage");
-                Object disburseIndividual = rs.getObject("disburseIndividual");
+                JsonNode disburseIndividual = getAdditionalDetail(rs, "disburseIndividual");
                 BigDecimal disburseNetAmount = rs.getBigDecimal("disburseNetAmount");
                 BigDecimal disburseGrossAmount = rs.getBigDecimal("disburseGrossAmount");
                 Long disburseCreatedTime = rs.getLong("disburseCreatedTime");
@@ -64,7 +64,12 @@ public class DisbursementRowMapper implements ResultSetExtractor<List<Disburseme
 
                 Status status = Status.builder().statusCode(StatusCode.fromValue(disburseStatus)).statusMessage(disburseStatusMessage).build();
                 AuditDetails auditDetails = AuditDetails.builder().createdBy(disburseCreatedBy).createdTime(disburseCreatedTime).lastModifiedBy(disburseLastModifiedBy).lastModifiedTime(disburseLastModifiedTime).build();
-                Individual individual = objectMapper.convertValue(disburseIndividual, Individual.class);
+                Individual individual = null;
+                try {
+                    individual = objectMapper.treeToValue(disburseIndividual, Individual.class);
+                } catch (Exception e){
+                    System.out.println(e.fillInStackTrace());
+                }
                 disbursement = new Disbursement();
                 disbursement.setId(id);
                 disbursement.setProgramCode(disburseProgramCode);

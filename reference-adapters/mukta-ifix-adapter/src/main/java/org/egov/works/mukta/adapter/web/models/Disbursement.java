@@ -28,11 +28,13 @@ public class Disbursement extends ExchangeCode {
     @JsonProperty("parent_id")
     private String parentId;
     @JsonProperty("disbursement_date")
-    private ZonedDateTime disbursementDate;
+    private Long disbursementDate;
     @JsonProperty("allocation_ids")
     private List<String> allocationIds;
     @JsonProperty("disbursements")
     private List<Disbursement> disbursements;
+    @JsonProperty("status")
+    private Status status;
     @NotNull
     @JsonProperty("account_code")
     private String accountCode;

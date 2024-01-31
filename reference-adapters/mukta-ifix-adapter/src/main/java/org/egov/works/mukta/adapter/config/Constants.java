@@ -52,5 +52,5 @@ public class Constants {
     public static final String INVALID_DATE_FORMAT_MESSAGE = "Failed to parse date format in user";
     public static final String CITIZEN_UPPER = "CITIZEN";
     public static final String CITIZEN_LOWER = "Citizen";
-
+    public static final String DISBURSEMENT_ENCRYPT = "DisbursementEncrypt";
 }

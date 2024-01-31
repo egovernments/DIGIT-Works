@@ -100,4 +100,6 @@ public class MuktaAdaptorConfig {
     private Integer defaultOffset;
     @Value("${mukta.adapter.default.limit}")
     private Integer defaultLimit;
+    @Value("${mukta.adapter.encryption.key}")
+    private String muktaAdapterEncryptionKey;
 }
