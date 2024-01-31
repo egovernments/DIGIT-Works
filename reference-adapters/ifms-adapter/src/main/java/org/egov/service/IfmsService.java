@@ -231,8 +231,7 @@ public class IfmsService {
         List<String> ssuMasters = new ArrayList<>();
         ssuMasters.add(MDMS_SSU_DETAILS_MASTER);
         Map<String, Map<String, JSONArray>> ssuDetailsResponse = mdmsUtils.fetchMdmsDataWithActiveFilter(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, ssuMasters);
-        JSONArray ssuDetailsList = ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
-        return ssuDetailsList;
+        return ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
     }
 
     /*
@@ -242,7 +241,7 @@ public class IfmsService {
     public JITResponse loadCustomResponse() {
         JITResponse vaResponse = null;
         try {
-            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/7CORFailure.json");
+            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/2PIResponse.json");
             vaResponse = objectMapper.readValue(file, JITResponse.class);
         } catch (IOException e) {
             e.printStackTrace();

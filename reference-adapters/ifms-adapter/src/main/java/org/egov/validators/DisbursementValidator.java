@@ -9,6 +9,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.service.IfmsService;
 import org.egov.tracer.model.CustomException;
+import org.egov.web.models.Disbursement;
 import org.egov.web.models.DisbursementRequest;
 import org.egov.web.models.enums.PIStatus;
 import org.egov.web.models.enums.PaymentStatus;
@@ -31,13 +32,29 @@ public class DisbursementValidator {
 
     public void validateDisbursementRequest(DisbursementRequest disbursementRequest, Map<String, Map<String,JSONArray>> mdmsData) {
         log.info("DisbursementValidator.validateDisbursementRequest()");
-
+        Disbursement disbursement = disbursementRequest.getMessage();
         JSONArray ssuDetails = mdmsData.get("ifms").get("SSUDetails");
         if(!ssuDetails.isEmpty()){
             JsonNode ssuDetail = objectMapper.valueToTree(ssuDetails.get(0));
             String programCode = ssuDetail.get("programCode").asText();
             if(!programCode.equals(disbursementRequest.getMessage().getProgramCode())){
                 throw new CustomException("INVALID_PROGRAM_CODE", "Program Code is invalid for the tenantId and disbursement Request.");
+            }
+        }
+
+        if(disbursement.getSanctionId() == null){
+            throw new CustomException("INVALID_SANCTION_ID", "Sanction Id is mandatory for the disbursement Request.");
+        }
+        validateChildDisbursements(disbursement.getDisbursements(), mdmsData);
+    }
+
+    private void validateChildDisbursements(List<Disbursement> disbursements, Map<String, Map<String, JSONArray>> mdmsData) {
+        log.info("DisbursementValidator.validateChildDisbursements()");
+        if(disbursements != null && !disbursements.isEmpty()){
+            for(Disbursement disbursement : disbursements){
+                if(disbursement.getAccountCode() == null){
+                    throw new CustomException("INVALID_ACCOUNT_CODE", "Account Code is mandatory for the disbursement Request.");
+                }
             }
         }
     }
