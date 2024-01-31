@@ -1,6 +1,8 @@
 package org.egov.works.mukta.adapter.service;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
@@ -23,10 +25,7 @@ import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,9 +43,10 @@ public class PaymentInstructionService {
     private final MuktaAdaptorProducer muktaAdaptorProducer;
     private final MuktaAdaptorConfig muktaAdaptorConfig;
     private final EncryptionDecryptionUtil encryptionDecryptionUtil;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, EncryptionDecryptionUtil encryptionDecryptionUtil) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, EncryptionDecryptionUtil encryptionDecryptionUtil, ObjectMapper objectMapper) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -58,6 +58,7 @@ public class PaymentInstructionService {
         this.muktaAdaptorProducer = muktaAdaptorProducer;
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.encryptionDecryptionUtil = encryptionDecryptionUtil;
+        this.objectMapper = objectMapper;
     }
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
@@ -102,6 +103,10 @@ public class PaymentInstructionService {
 
     private Disbursement getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
         log.info("Started executing getBeneficiariesFromPayment");
+        JSONArray ssuDetails = mdmsData.get(Constants.MDMS_IFMS_MODULE_NAME).get(Constants.MDMS_SSU_DETAILS_MASTER);
+        JSONArray headCodes = mdmsData.get(Constants.MDMS_EXPENSE_MODULE_NAME).get(Constants.MDMS_HEAD_CODES_MASTER);
+        HashMap<String,String> headCodeCategoryMap = getHeadCodeCategoryMap(headCodes);
+        JsonNode ssuNode = objectMapper.valueToTree(ssuDetails.get(0));
         // Get the list of bills based on payment request
         List<Bill> billList = billUtils.fetchBillsFromPayment(paymentRequest);
         if (billList == null || billList.isEmpty())
@@ -127,10 +132,19 @@ public class PaymentInstructionService {
                 }
             }
         }
-        return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, individualIds);
+        return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, individualIds,ssuNode,headCodeCategoryMap);
     }
 
-    private Disbursement getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds) {
+    private HashMap<String, String> getHeadCodeCategoryMap(JSONArray headCodes) {
+        HashMap<String,String> headCodeCategoryMap = new HashMap<>();
+        for (Object headCode : headCodes) {
+            JsonNode headCodeNode = objectMapper.valueToTree(headCode);
+            headCodeCategoryMap.put(headCodeNode.get("code").asText(),headCodeNode.get(Constants.HEAD_CODE_CATEGORY_KEY).asText());
+        }
+        return headCodeCategoryMap;
+    }
+
+    private Disbursement getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds,JsonNode ssuNode,HashMap<String,String> headCodeCategoryMap) {
         log.info("Started executing getBeneficiariesEnrichedData");
         List<String> beneficiaryIds = new ArrayList<>();
         for (Beneficiary beneficiary : beneficiaryList) {
@@ -153,7 +167,7 @@ public class PaymentInstructionService {
             log.info("Individuals fetched for the individual ids : " + individuals);
         }
         // Enrich PI request with beneficiary bankaccount details
-        Disbursement disbursementRequest = piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations, paymentRequest);
+        Disbursement disbursementRequest = piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations, paymentRequest,ssuNode,headCodeCategoryMap);
         log.info("Beneficiaries are enriched, sending back beneficiaryList");
         return disbursementRequest;
     }

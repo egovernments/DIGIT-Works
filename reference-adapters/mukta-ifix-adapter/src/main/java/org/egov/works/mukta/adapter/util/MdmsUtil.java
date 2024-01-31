@@ -66,9 +66,17 @@ public class MdmsUtil {
         ModuleDetail headCodesModuleDetail = ModuleDetail.builder().masterDetails(headCodesMasterDetails)
                 .moduleName(MDMS_EXPENSE_MODULE_NAME).build();
 
+        // Master Details for SSU
+        List<MasterDetail> ssuMasterDetails = new ArrayList<>();
+        MasterDetail ssuMasterDetail = MasterDetail.builder().name(MDMS_SSU_DETAILS_MASTER).build();
+        ssuMasterDetails.add(ssuMasterDetail);
+        ModuleDetail ssuModuleDetail = ModuleDetail.builder().masterDetails(ssuMasterDetails)
+                .moduleName(MDMS_IFMS_MODULE_NAME).build();
+
         List<ModuleDetail> moduleDetailList = new ArrayList<>();
         moduleDetailList.add(tenantModuleDetail);
         moduleDetailList.add(headCodesModuleDetail);
+        moduleDetailList.add(ssuModuleDetail);
 
         MdmsCriteria mdmsCriteria = new MdmsCriteria();
         mdmsCriteria.setTenantId(tenantId);

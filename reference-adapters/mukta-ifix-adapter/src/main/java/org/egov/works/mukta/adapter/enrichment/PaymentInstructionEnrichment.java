@@ -103,8 +103,9 @@ public class PaymentInstructionEnrichment {
         return headCodeMap;
     }
 
-    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations, PaymentRequest paymentRequest) {
+    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations, PaymentRequest paymentRequest, JsonNode ssuNode,HashMap<String,String> headCodeCategoryMap) {
         log.info("Started executing enrichBankaccountOnBeneficiary");
+        String programCode = ssuNode.get("programCode").asText();
         Map<String, BankAccount> bankAccountMap = new HashMap<>();
         if (bankAccounts != null && !bankAccounts.isEmpty()) {
             for (BankAccount bankAccount : bankAccounts) {
@@ -132,7 +133,7 @@ public class PaymentInstructionEnrichment {
             Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
             for (LineItem lineItem : piBeneficiary.getBenfLineItems()) {
                 if(lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) && !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL)){
-                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, paymentRequest.getRequestInfo().getUserInfo().getUuid());
+                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, paymentRequest.getRequestInfo().getUserInfo().getUuid(),programCode,headCodeCategoryMap);
                     disbursements.add(disbursementForLineItem);
                 }
             }
@@ -144,6 +145,7 @@ public class PaymentInstructionEnrichment {
         disbursement.setDisbursementDate(ZonedDateTime.now().toEpochSecond());
         disbursement.setAuditDetails(setAuditDetails(paymentRequest.getRequestInfo().getUserInfo().getUuid(), paymentRequest.getRequestInfo().getUserInfo().getUuid()));
         disbursement.setLocationCode(paymentRequest.getPayment().getTenantId());
+        disbursement.setProgramCode(programCode);
         setAmountForParentDisbursement(disbursement);
         log.info("Beneficiary details enriched and sending back.");
         return disbursement;
@@ -160,7 +162,7 @@ public class PaymentInstructionEnrichment {
         disbursement.setGrossAmount(grossAmount);
     }
 
-    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,String userId) {
+    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,String userId,String programCode,HashMap<String,String> headCodeCategoryMap) {
         log.info("Started executing enrichDisbursement");
         String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
         Disbursement disbursement = new Disbursement();
@@ -177,23 +179,28 @@ public class PaymentInstructionEnrichment {
         disbursement.setGrossAmount(lineItem.getAmount());
         disbursement.setCurrencyCode(Currency.getInstance("INR"));
         disbursement.setLocaleCode("en_IN");
-        disbursement.setProgramCode("PROG");
+        disbursement.setProgramCode(programCode);
         disbursement.setLocationCode(lineItem.getTenantId());
 
-        if (individual != null) {
-            piIndividual.setAddress(individual.getAddress().get(0).getAddressLine1());
-            piIndividual.setGender(individual.getGender());
-            piIndividual.setPhone(individual.getMobileNumber());
-            piIndividual.setEmail(individual.getEmail());
-            piIndividual.setPin(individual.getAddress().get(0).getPincode());
-            piIndividual.setName(individual.getName().getGivenName());
-        }
-        if (organisation != null) {
-            piIndividual.setAddress(organisation.getOrgAddress().get(0).getAddressLine1());
-            piIndividual.setPhone(organisation.getContactDetails().get(0).getContactMobileNumber());
-            piIndividual.setEmail(organisation.getContactDetails().get(0).getContactEmail());
-            piIndividual.setPin(organisation.getOrgAddress().get(0).getPincode());
-            piIndividual.setName(organisation.getName());
+        if(headCodeCategoryMap.get(lineItem.getHeadCode()).equals(Constants.HEAD_CODE_DEDUCTION_CATEGORY)){
+            piIndividual.setName(lineItem.getHeadCode());
+            piIndividual.setPhone("9999999999");
+        }else{
+            if (individual != null) {
+                piIndividual.setAddress(individual.getAddress().get(0).getAddressLine1());
+                piIndividual.setGender(individual.getGender());
+                piIndividual.setPhone(individual.getMobileNumber());
+                piIndividual.setEmail(individual.getEmail());
+                piIndividual.setPin(individual.getAddress().get(0).getPincode());
+                piIndividual.setName(individual.getName().getGivenName());
+            }
+            if (organisation != null) {
+                piIndividual.setAddress(organisation.getOrgAddress().get(0).getAddressLine1());
+                piIndividual.setPhone(organisation.getContactDetails().get(0).getContactMobileNumber());
+                piIndividual.setEmail(organisation.getContactDetails().get(0).getContactEmail());
+                piIndividual.setPin(organisation.getOrgAddress().get(0).getPincode());
+                piIndividual.setName(organisation.getName());
+            }
         }
         disbursement.setIndividual(piIndividual);
         disbursement.setAuditDetails(setAuditDetails(userId, userId));
