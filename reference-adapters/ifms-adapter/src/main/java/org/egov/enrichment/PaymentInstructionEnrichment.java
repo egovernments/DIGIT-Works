@@ -616,7 +616,7 @@ public class PaymentInstructionEnrichment {
         JsonNode emptyObject = objectMapper.createObjectNode();
         AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
 
-        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), tenantId, config.getPaymentInstructionNumberFormat(), null, 1).get(0);
+        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), tenantId, config.getRevisedPaymentInstructionNumberFormat(), null, 1).get(0);
         PaymentInstruction paymentInstruction = PaymentInstruction.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(tenantId)

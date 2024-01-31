@@ -105,6 +105,9 @@ public class IfmsAdapterConfig {
     @Value("${egov.idgen.ifms.pi.reference.number}")
     private String paymentInstructionNumberFormat;
 
+    @Value("${egov.idgen.ifms.repi.reference.number}")
+    private String revisedPaymentInstructionNumberFormat;
+
     @Value("${egov.idgen.ifms.benf.reference.number}")
     private String piBenefInstructionNumberFormat;
 
