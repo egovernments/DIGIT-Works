@@ -143,4 +143,6 @@ public class IfmsAdapterConfig {
     private String ifmsRequestEncSecret;
     @Value("${mukta.adapter.encryption.key}")
     private String muktaAdapterEncryptionKey;
+    @Value("${payment.instruction.encryption.key}")
+    private String paymentInstructionEncryptionKey;
 }

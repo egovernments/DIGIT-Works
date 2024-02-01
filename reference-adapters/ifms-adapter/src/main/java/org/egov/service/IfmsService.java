@@ -241,7 +241,7 @@ public class IfmsService {
     public JITResponse loadCustomResponse() {
         JITResponse vaResponse = null;
         try {
-            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/2PIResponse.json");
+            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/7CORSuccess.json");
             vaResponse = objectMapper.readValue(file, JITResponse.class);
         } catch (IOException e) {
             e.printStackTrace();
