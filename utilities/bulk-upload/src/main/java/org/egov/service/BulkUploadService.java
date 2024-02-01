@@ -15,7 +15,9 @@ import org.egov.config.Configuration;
 import org.egov.repository.IdGenRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.BulkUploadUtil;
+import org.egov.web.models.Mdms;
 import org.egov.web.models.MdmsRequest;
+import org.egov.web.models.MdmsResponseV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -53,6 +55,21 @@ public class BulkUploadService {
     ResourceLoader resourceLoader;
 
 
+    // Function to check if a row is empty
+    private boolean isRowNotEmpty(Row row) {
+        Iterator<Cell> cellIterator = row.iterator();
+        while (cellIterator.hasNext()) {
+            Cell cell = cellIterator.next();
+            if (cell.getCellType() != CellType.BLANK) {
+                // If any cell in the row is not blank
+                return true;
+            }
+        }
+        // If all cells in the row are blank
+        return false;
+    }
+
+
 
     public List<Map<String, Object>> bulkUpload(MultipartFile file, String schemaCode, String tenantId) throws IOException {
         List<Map<String, Object>> jsonData = new ArrayList<>();
@@ -72,12 +89,31 @@ public class BulkUploadService {
             Row headerRow = rowIterator.next();
             List<String> headers = getHeaders(headerRow);
 
-            while (rowIterator.hasNext()) {
-                Row row = rowIterator.next();
-                Map<String, Object> rowData = processRow(row, headers);
+            /*
+                while (rowIterator.hasNext()) {
 
-                jsonData.add(rowData);
+                    Row row = rowIterator.next();
+                    Map<String, Object> rowData = processRow(row, headers);
+
+                    jsonData.add(rowData);
+                }
+            */
+
+            //Updated to not iterate for empty rows
+            while (rowIterator.hasNext()) {
+
+                Row row = rowIterator.next();
+
+                // Checking if the row is not empty
+                if (isRowNotEmpty(row)) {
+                    Map<String, Object> rowData = processRow(row, headers);
+                    jsonData.add(rowData);
+                } else {
+                    // If the row is empty, break
+                    break;
+                }
             }
+
         }
         MdmsRequest mdmsRequest;
 
@@ -93,7 +129,7 @@ public class BulkUploadService {
             return createSORRate(mdmsRequest,jsonData);
         }
 
-       // return jsonData;
+       // return jsonData
     }
 
 
@@ -265,6 +301,14 @@ public class BulkUploadService {
 
 
                     Object response= bulkUploadUtil.create(mdmsRequest,"WORKS-SOR.Rates");
+
+
+                    // Adding response to the list
+                    Map<String, Object> responseMap = new HashMap<>();
+                    responseMap.put("sorId", mainNode.get("sorId").asText());
+                    responseMap.put("sorRateDetails", mainNode);
+                    list.add(responseMap);
+
                 }
 
 
