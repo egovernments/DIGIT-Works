@@ -394,15 +394,18 @@ public class PaymentInstructionEnrichment {
         log.info("Beneficiary details enriched and sending back.");
 
     }
-
     public static void removeSpecialCharactersAndExtraSpaces(Beneficiary piBeneficiary) {
         // Remove special characters using regular expression
-        String benfName=piBeneficiary.getBenefName().replaceAll("[^a-zA-Z0-9\\s]", "");
-        String benfAddress= piBeneficiary.getBenfAddress().replaceAll("[^a-zA-Z0-9\\s]", "");
+        String benfName=Optional.ofNullable(piBeneficiary.getBenefName())
+                .map(s -> s.replaceAll("[^a-zA-Z0-9\\s]", ""))
+                .orElse(null);
+        String benfAddress= Optional.ofNullable(piBeneficiary.getBenfAddress())
+                .map(s -> s.replaceAll("[^a-zA-Z0-9\\s]", ""))
+                .orElse(null);
 //        String purpose= piBeneficiary.getPurpose().replaceAll("[^a-zA-Z0-9\\s]", "");
         // Remove extra white spaces using regular expression
-        benfName=benfName.replaceAll("\\s+", " ").trim();
-        benfAddress=benfAddress.replaceAll("\\s+", " ").trim();
+        benfName=Optional.ofNullable(benfName).map(s-> s.replaceAll("\\s+", " ").trim()).orElse(null);
+        benfAddress=Optional.ofNullable(benfAddress).map(s-> s.replaceAll("\\s+", " ").trim()).orElse(null);
 //        purpose=purpose.replaceAll("\\s+", " ").trim();
         piBeneficiary.setBenefName(benfName);
         piBeneficiary.setBenfAddress(benfAddress);
@@ -616,7 +619,7 @@ public class PaymentInstructionEnrichment {
         JsonNode emptyObject = objectMapper.createObjectNode();
         AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
 
-        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), tenantId, config.getPaymentInstructionNumberFormat(), null, 1).get(0);
+        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), tenantId, config.getRevisedPaymentInstructionNumberFormat(), null, 1).get(0);
         PaymentInstruction paymentInstruction = PaymentInstruction.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(tenantId)
