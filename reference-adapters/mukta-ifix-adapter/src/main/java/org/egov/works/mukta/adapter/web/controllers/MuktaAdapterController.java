@@ -47,10 +47,9 @@ public class MuktaAdapterController {
         return ResponseEntity.ok(disbursementResponse);
     }
 
-    //TODO: FIX THIS
     @RequestMapping(path = "/on-disburse/_create", method = RequestMethod.POST)
     public ResponseEntity<Object> onDisburseCreate(@RequestBody @Valid DisbursementRequest disbursementRequest){
-        disbursementService.processDisbursement(disbursementRequest);
-        return null;
+        DisbursementResponse disbursementResponse = disbursementService.processDisbursement(disbursementRequest);
+        return ResponseEntity.ok(disbursementResponse);
     }
 }

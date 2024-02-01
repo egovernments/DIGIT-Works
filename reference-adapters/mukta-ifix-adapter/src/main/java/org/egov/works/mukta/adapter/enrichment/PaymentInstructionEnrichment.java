@@ -211,17 +211,15 @@ public class PaymentInstructionEnrichment {
     private AuditDetails setAuditDetails(String createdBy, String lastModifiedBy) {
         AuditDetails auditDetails = new AuditDetails();
         auditDetails.setCreatedBy(createdBy);
-        auditDetails.setCreatedTime(ZonedDateTime.now().toEpochSecond());
+        auditDetails.setCreatedTime(System.currentTimeMillis());
         auditDetails.setLastModifiedBy(lastModifiedBy);
-        auditDetails.setLastModifiedTime(ZonedDateTime.now().toEpochSecond());
+        auditDetails.setLastModifiedTime(System.currentTimeMillis());
         return auditDetails;
     }
 
     public void enrichDisbursementStatus(Disbursement disbursement) {
         Status status = Status.builder().statusCode(StatusCode.INITIATED).statusMessage("Initiated").build();
         disbursement.setStatus(status);
-        disbursement.getDisbursements().forEach(disbursement1 -> {
-            disbursement1.setStatus(status);
-        });
+        disbursement.getDisbursements().forEach(disbursement1 -> disbursement1.setStatus(status));
     }
 }
