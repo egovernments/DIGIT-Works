@@ -236,18 +236,27 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     }
 
     const handleResponseForUpdate = async (orgPayload, bankAccountPayload) => {
-        await UpdateOrganisationMutation(orgPayload, {
-            onError: async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
-            onSuccess: async (responseData) => {
-                await UpdateBankAccountMutation(bankAccountPayload, {
-                    onError :  async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
-                    onSuccess: async (responseData) => {
-                        sendDataToResponsePage(orgId, true, "MASTERS_ORG_MODIFICATION_SUCCESS", true)
-                        clearSessionFormData()
+            await UpdateOrganisationMutation(orgPayload, {
+                onError: async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
+                onSuccess: async (responseData) => {
+                    if(orgDataFromAPI?.bankDetails && orgDataFromAPI?.bankDetails?.length > 0)
+                        await UpdateBankAccountMutation(bankAccountPayload, {
+                            onError :  async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
+                            onSuccess: async (responseData) => {
+                                sendDataToResponsePage(orgId, true, "MASTERS_ORG_MODIFICATION_SUCCESS", true)
+                                clearSessionFormData()
+                            }
+                        })
+                    else
+                        await CreateBankAccountMutation(bankAccountPayload, {
+                            onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_ORG_MODIFICATION_FAIL", false),
+                            onSuccess: async (bankResponseData) => {
+                                sendDataToResponsePage(orgId, true, "MASTERS_ORG_MODIFICATION_SUCCESS")
+                                clearSessionFormData()
+                            }
+                        }) 
                     }
-                })
-            }
-        });
+            });
     }
 
     const handleResponseForCreate = async (orgPayload, data) => {
@@ -317,8 +326,8 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 setShowCBOToVendorError(true);
             }
             else{
-            const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
-            handleResponseForUpdate(orgPayload, bankAccountPayload);
+                const bankAccountPayload = orgDataFromAPI?.bankDetails && orgDataFromAPI?.bankDetails?.length > 0 ? getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false}) : getBankAccountUpdatePayload({formData: data, apiData: '', tenantId, isModify:false, referenceId: orgDataFromAPI?.organisation?.id});
+                handleResponseForUpdate(orgPayload, bankAccountPayload);
             }
         }else {
             const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {})
@@ -331,7 +340,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     }
     };  
 
-    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,20000);
 
     const handleSubmit = (_data) => {
         // Call the debounced version of onModalSubmit

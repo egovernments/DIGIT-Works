@@ -343,7 +343,7 @@ const CreateEstimate = () => {
         }
       }; // Adjust the debounce delay (in milliseconds) as needed
 
-      const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
+      const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,20000);
       
 
     const handleSubmit = (_data) => {
