@@ -191,7 +191,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         }
     };
 
-    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,20000);
 
     const handleSubmit = (_data) => {
         // Call the debounced version of onModalSubmit

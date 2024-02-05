@@ -231,7 +231,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
       }
     };
 
-    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,20000);
     const handleResponseForCreate = async (payload) => {
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
