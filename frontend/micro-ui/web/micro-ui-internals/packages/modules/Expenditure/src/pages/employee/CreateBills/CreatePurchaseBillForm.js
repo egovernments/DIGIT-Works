@@ -188,7 +188,7 @@ const CreatePurchaseBillForm = ({
         }
     };
 
-    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,20000);
 
     const onFormSubmit = async(data) => {
         data = Digit.Utils.trimStringsInObject(data)
