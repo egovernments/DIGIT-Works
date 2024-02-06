@@ -40,6 +40,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const [withSubProjectSubSchemeOptions, setWithSubProjectSubSchemeOptions] = useState([]);
     const [noSubProjectSubSchemeOptions, setNoSubProjectSubSchemeOptions] = useState([]);
     const [selectedWard, setSelectedWard] = useState('');
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false)
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const [currentFormCategory, setCurrentFormCategory] = useState(createProjectConfig?.metaData?.currentFormCategory ? createProjectConfig?.metaData?.currentFormCategory : "project");
@@ -225,16 +226,18 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
       let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId, docConfigData, modifyParams, createProjectConfig);
 
       if(!isModify) {
+        setIsButtonDisabled(true)
         handleResponseForCreate(payload);
       }else {
         handleResponseForUpdate(payload);
       }
     };
 
-    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,20000);
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
     const handleResponseForCreate = async (payload) => {
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
+            setIsButtonDisabled(false);
             sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
         },
         onSuccess: async (responseData, variables) => {
@@ -244,26 +247,33 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             let parentProjectNumber = responseData?.Project[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
+                  setIsButtonDisabled(false);
                   sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
+                  setIsButtonDisabled(false);
                   setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors?.[0]?.message, error : true}));
                 }else if(responseData?.ResponseInfo?.status){
+                  setIsButtonDisabled(false);
                   sendDataToResponsePage(responseData?.Project?.[0]?.projectNumber, true, "WORKS_PROJECT_CREATED", true);
                   clearSessionFormData();
                 }else{
+                  setIsButtonDisabled(false);
                   setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
                 }
               }
             })
           }else{
             if(responseData?.ResponseInfo?.Errors) {
+              setIsButtonDisabled(false);
               sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
             }else if(responseData?.ResponseInfo?.status){
+              setIsButtonDisabled(false);
               sendDataToResponsePage(responseData?.Project?.[0]?.projectNumber, true, "WORKS_PROJECT_CREATED", true);
               clearSessionFormData();
             }else{
+              setIsButtonDisabled(false);
               sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
             }
           }
@@ -375,6 +385,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
                 isDescriptionBold={false}
                 noBreakLine={true}
                 showNavs={config?.metaData?.showNavs}
+                isDisabled={isButtonDisabled}
                 showFormInNav={true}
                 showMultipleCardsWithoutNavs={false}
                 showMultipleCardsInNavs={false}
