@@ -32,6 +32,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
     const [selectedOrg, setSelectedOrg] = useState('')
     const [showDuplicateUserError, setShowDuplicateUserError] = useState(false)
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [showDuplicateContactToast, setShowDuplicateContactToast] = useState(false)
     const [showValidToError, setShowValidToError] = useState(false)
     const [showCBOToVendorError, setShowCBOToVendorError] = useState(false)
@@ -243,6 +244,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                         await UpdateBankAccountMutation(bankAccountPayload, {
                             onError :  async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
                             onSuccess: async (responseData) => {
+                                setIsButtonDisabled(false);
                                 sendDataToResponsePage(orgId, true, "MASTERS_ORG_MODIFICATION_SUCCESS", true)
                                 clearSessionFormData()
                             }
@@ -251,6 +253,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                         await CreateBankAccountMutation(bankAccountPayload, {
                             onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_ORG_MODIFICATION_FAIL", false),
                             onSuccess: async (bankResponseData) => {
+                                setIsButtonDisabled(false);
                                 sendDataToResponsePage(orgId, true, "MASTERS_ORG_MODIFICATION_SUCCESS")
                                 clearSessionFormData()
                             }
@@ -268,6 +271,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 await CreateBankAccountMutation(bankAccountPayload, {
                     onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_ORG_CREATION_FAIL", false),
                     onSuccess: async (bankResponseData) => {
+                        setIsButtonDisabled(false);
                         sendDataToResponsePage(responseData?.organisations?.[0].orgNumber, true, "MASTERS_ORG_CREATION_SUCCESS", true, "MASTERS_ORG_CREATION_SUCCESS_MESSAGE")
                         clearSessionFormData()
                     }
@@ -286,6 +290,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
 
 
     const OnModalSubmit = async (data) => {
+        setIsButtonDisabled(true);
         data = Digit.Utils.trimStringsInObject(data)
         //here call org search with mobile number and see if number is already there with some other org , do an early return
         
@@ -311,18 +316,21 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         
         //check if another org associated with entered number
         if(searchOrgResponse?.organisations?.length>0 && searchOrgResponse?.organisations?.[0]?.orgNumber !== orgNumber ){
+            setIsButtonDisabled(false);
             setShowDuplicateContactToast(true)
             closeToast()
             return 
         }
 
         if((data?.funDetails_validTo ? Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validTo) : Digit.Utils.pt.convertDateToEpoch(ORG_VALIDTO_DATE)) < Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validFrom)){
+            setIsButtonDisabled(false);
             setShowValidToError(true);
         }
         else{
             const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
             if(searchOrgResponse?.organisations?.length>0 && data?.funDetails_orgType?.code === 'VEN' && searchOrgResponse?.organisations?.[0]?.functions?.[0]?.type.includes("CBO")){
+                setIsButtonDisabled(false);
                 setShowCBOToVendorError(true);
             }
             else{
@@ -332,6 +340,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         }else {
             const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {})
             if(userData?.user?.length > 0 && userData?.user?.[0]?.roles.some(role => role.code === "ORG_ADMIN")) {
+                setIsButtonDisabled(false);
                 setShowDuplicateUserError(true)
                 return
             }
@@ -340,7 +349,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     }
     };  
 
-    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,20000);
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
 
     const handleSubmit = (_data) => {
         // Call the debounced version of onModalSubmit
@@ -370,6 +379,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
           onFormValueChange={onFormValueChange}
           cardClassName="mukta-header-card"
           labelBold={true}
+          isDisabled={isButtonDisabled}
         />
         {showDuplicateUserError && (
           <Toast error={true} label={t("ES_COMMON_MOBILE_EXISTS_ERROR")} isDleteBtn={true} onClose={() => setShowDuplicateUserError(false)} />

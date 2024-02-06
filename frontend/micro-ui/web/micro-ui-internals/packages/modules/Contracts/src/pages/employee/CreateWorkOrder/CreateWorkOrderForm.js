@@ -27,6 +27,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     const rolesForThisAction = "WORK_ORDER_VERIFIER" //hardcoded for now
     const [approvers, setApprovers] = useState([]);
     const [selectedApprover, setSelectedApprover] = useState({});
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [inputFormdata, setInputFormData] = useState([]);
     const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
@@ -156,17 +157,22 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     }
 
     const handleResponseForCreateWO = async(payload) => {
+        setIsButtonDisabled(true);
         await CreateWOMutation(payload, {
             onError: async (error, variables) => {
+                setIsButtonDisabled(false);
                 sendDataToResponsePage("", false, "CONTRACTS_WO_FAILED", false);
             },
             onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
+                        setIsButtonDisabled(false)
                         setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
                     }else if(responseData?.ResponseInfo?.status){
+                        setIsButtonDisabled(false);
                         sendDataToResponsePage(responseData?.contracts?.[0]?.contractNumber, true, "CONTRACTS_WO_CREATED_FORWARDED", true);
                         clearSessionFormData();
                     }else{
+                        setIsButtonDisabled(false);
                         setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
                     }
             },
@@ -191,7 +197,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         }
     };
 
-    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,20000);
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
 
     const handleSubmit = (_data) => {
         // Call the debounced version of onModalSubmit
@@ -217,6 +223,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                     closeModal={() => setShowModal(false)}
                     onSubmit={handleSubmit}
                     config={createWOModalConfig}
+                    isDisabled={isButtonDisabled}
                 />
             }
             <Header styles={{fontSize: "32px"}}>{isModify ? t("COMMON_MODIFY_WO") : t("ACTION_TEST_CREATE_WO")}</Header>

@@ -328,7 +328,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         }
     };
 
-    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,20000);
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
 
     const handleSubmit = (_data) => {
         // Call the debounced version of onModalSubmit
