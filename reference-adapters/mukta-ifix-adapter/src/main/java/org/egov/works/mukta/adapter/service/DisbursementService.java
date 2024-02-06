@@ -9,6 +9,7 @@ import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.kafka.MuktaAdaptorProducer;
 import org.egov.works.mukta.adapter.util.BillUtils;
+import org.egov.works.mukta.adapter.validators.DisbursementValidator;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.DisbursementRequest;
 import org.egov.works.mukta.adapter.web.models.DisbursementResponse;
@@ -20,8 +21,7 @@ import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -29,16 +29,19 @@ public class DisbursementService {
     private final BillUtils billUtils;
     private final MuktaAdaptorConfig muktaAdaptorConfig;
     private final MuktaAdaptorProducer muktaAdaptorProducer;
+    private final DisbursementValidator disbursementValidator;
 
     @Autowired
-    public DisbursementService(BillUtils billUtils, MuktaAdaptorConfig muktaAdaptorConfig, MuktaAdaptorProducer muktaAdaptorProducer) {
+    public DisbursementService(BillUtils billUtils, MuktaAdaptorConfig muktaAdaptorConfig, MuktaAdaptorProducer muktaAdaptorProducer, DisbursementValidator disbursementValidator) {
         this.billUtils = billUtils;
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
+        this.disbursementValidator = disbursementValidator;
     }
 
-    public DisbursementResponse processDisbursement(DisbursementRequest disbursementRequest) {
+    public DisbursementResponse processOnDisbursement(DisbursementRequest disbursementRequest) {
         log.info("Processing disbursement request");
+        disbursementValidator.validateOnDisbursementRequest(disbursementRequest);
         Disbursement disbursement = disbursementRequest.getMessage();
         String tenantId = disbursement.getLocationCode();
         //TODO: FIX MANUAL UUID
@@ -52,26 +55,33 @@ public class DisbursementService {
         log.info("Updating the payment status for the payments : " + payment);
         updatePaymentStatus(payment, disbursement, requestInfo);
         log.info("Updating the disbursement status for the payments : " + disbursementRequest.getMessage());
-        DisbursementResponse disbursementResponse = getDisbursementResponse(disbursementRequest,payment);
+        DisbursementResponse disbursementResponse = getDisbursementResponse(disbursementRequest);
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementResponse);
         return disbursementResponse;
     }
 
-    private DisbursementResponse getDisbursementResponse(DisbursementRequest disbursementRequest,Payment payment) {
-        HashMap<PaymentStatus, StatusCode> paymentStatusToStatusCodeHashMap = getPaymentStatusToStatusCodeMap();
+    private DisbursementResponse getDisbursementResponse(DisbursementRequest disbursementRequest) {
         AuditDetails auditDetails = disbursementRequest.getMessage().getAuditDetails();
         AuditDetails updatedAuditDetails = AuditDetails.builder().createdBy(auditDetails.getCreatedBy()).createdTime(auditDetails.getCreatedTime()).lastModifiedBy(auditDetails.getLastModifiedBy()).lastModifiedTime(System.currentTimeMillis()).build();
         DisbursementResponse disbursementResponse = DisbursementResponse.builder().signature(disbursementRequest.getSignature()).header(disbursementRequest.getHeader()).message(disbursementRequest.getMessage()).build();
         disbursementResponse.getMessage().setAuditDetails(updatedAuditDetails);
         disbursementResponse.getMessage().getDisbursements().forEach(disbursement -> disbursement.setAuditDetails(updatedAuditDetails));
-        disbursementResponse.getMessage().getStatus().setStatusCode(paymentStatusToStatusCodeHashMap.get(payment.getStatus()));
-        disbursementResponse.getMessage().getStatus().setStatusMessage(payment.getStatus().toString());
+        HashSet<StatusCode> statusCodes = new HashSet<>();
+        for(Disbursement disbursement: disbursementResponse.getMessage().getDisbursements()){
+            statusCodes.add(disbursement.getStatus().getStatusCode());
+        }
+
+        if(statusCodes.size() == 1){
+            disbursementResponse.getMessage().setStatus(Status.builder().statusCode(statusCodes.iterator().next()).statusMessage(statusCodes.iterator().next().toString()).build());
+        }else{
+            disbursementResponse.getMessage().setStatus(Status.builder().statusCode(StatusCode.PARTIAL).statusMessage(StatusCode.PARTIAL.toString()).build());
+        }
         return disbursementResponse;
     }
 
 
     private void updatePaymentStatus(Payment payment, Disbursement disbursement, RequestInfo requestInfo) {
-        HashMap<StatusCode, PaymentStatus> lineItemIdStatusMap = getStatusCodeToPaymentStatusMap();
+        EnumMap<StatusCode, PaymentStatus> lineItemIdStatusMap = getStatusCodeToPaymentStatusMap();
         HashMap<String, StatusCode> targetIdToStatusCodeMap = new HashMap<>();
         for(Disbursement disbursement1: disbursement.getDisbursements()){
             targetIdToStatusCodeMap.put(disbursement1.getTargetId(), disbursement1.getStatus().getStatusCode());
@@ -132,22 +142,14 @@ public class DisbursementService {
         return updateBillDetailsStatus;
     }
 
-    private HashMap<StatusCode, PaymentStatus> getStatusCodeToPaymentStatusMap() {
-        HashMap<StatusCode,PaymentStatus> statusCodePaymentStatusHashMap = new HashMap<>();
+    private EnumMap<StatusCode, PaymentStatus> getStatusCodeToPaymentStatusMap() {
+        EnumMap<StatusCode,PaymentStatus> statusCodePaymentStatusHashMap = new EnumMap<>(StatusCode.class);
         statusCodePaymentStatusHashMap.put(StatusCode.INITIATED, PaymentStatus.INITIATED);
+        statusCodePaymentStatusHashMap.put(StatusCode.IN_PROCESS, PaymentStatus.INITIATED);
         statusCodePaymentStatusHashMap.put(StatusCode.SUCCESSFUL,PaymentStatus.SUCCESSFUL);
         statusCodePaymentStatusHashMap.put(StatusCode.FAILED,PaymentStatus.FAILED);
         statusCodePaymentStatusHashMap.put(StatusCode.CANCELLED,PaymentStatus.CANCELLED);
         statusCodePaymentStatusHashMap.put(StatusCode.PARTIAL,PaymentStatus.PARTIAL);
         return statusCodePaymentStatusHashMap;
-    }
-    private HashMap<PaymentStatus, StatusCode> getPaymentStatusToStatusCodeMap() {
-        HashMap<PaymentStatus, StatusCode> paymentStatusToStatusCodeHashMap = new HashMap<>();
-        paymentStatusToStatusCodeHashMap.put(PaymentStatus.INITIATED, StatusCode.INITIATED);
-        paymentStatusToStatusCodeHashMap.put(PaymentStatus.SUCCESSFUL, StatusCode.SUCCESSFUL);
-        paymentStatusToStatusCodeHashMap.put(PaymentStatus.FAILED, StatusCode.FAILED);
-        paymentStatusToStatusCodeHashMap.put(PaymentStatus.CANCELLED, StatusCode.CANCELLED);
-        paymentStatusToStatusCodeHashMap.put(PaymentStatus.PARTIAL, StatusCode.PARTIAL);
-        return paymentStatusToStatusCodeHashMap;
     }
 }

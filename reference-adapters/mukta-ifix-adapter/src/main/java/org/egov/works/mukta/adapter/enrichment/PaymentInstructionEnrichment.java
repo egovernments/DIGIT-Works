@@ -103,7 +103,7 @@ public class PaymentInstructionEnrichment {
         return headCodeMap;
     }
 
-    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations, PaymentRequest paymentRequest, JsonNode ssuNode,HashMap<String,String> headCodeCategoryMap) {
+    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations, PaymentRequest paymentRequest, JsonNode ssuNode, Map<String,String> headCodeCategoryMap) {
         log.info("Started executing enrichBankaccountOnBeneficiary");
         String programCode = ssuNode.get("programCode").asText();
         Map<String, BankAccount> bankAccountMap = new HashMap<>();
@@ -162,7 +162,7 @@ public class PaymentInstructionEnrichment {
         disbursement.setGrossAmount(grossAmount);
     }
 
-    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,String userId,String programCode,HashMap<String,String> headCodeCategoryMap) {
+    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,String userId,String programCode,Map<String,String> headCodeCategoryMap) {
         log.info("Started executing enrichDisbursement");
         String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
         Disbursement disbursement = new Disbursement();

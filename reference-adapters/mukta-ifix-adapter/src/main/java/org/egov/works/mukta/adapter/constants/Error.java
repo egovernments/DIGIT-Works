@@ -3,11 +3,7 @@ package org.egov.works.mukta.adapter.constants;
 public class Error {
 
     public static final String INVALID_REQUEST = "invalid_request";
-    public static final String UNKNOWN_ERROR = "unknown_error";
-    public static final String JSON_PROCESSING_ERROR = "json_processing_error";
-    public static final String INVALID_ID = "invalid_id";
     public static final String INVALID_ADDRESS = "invalid_address";
-    public static final String INVALID_PIN = "invalid_pin";
     public static final String INVALID_EMAIL = "invalid_email";
     public static final String INVALID_PHONE = "invalid_phone";
 
@@ -29,4 +25,14 @@ public class Error {
     public static final String ORG_CRITERIA_ERROR_MESSAGE = "Request info, or ids are empty in organisation search";
     public static final String PAYMENT_ALREADY_PROCESSED = "PAYMENT_ALREADY_PROCESSED";
     public static final String PAYMENT_ALREADY_PROCESSED_MESSAGE = "Payment already processed";
+    public static final String PAYMENT_REFERENCE_ID_NOT_FOUND_MESSAGE = "Payment reference id not found";
+    public static final String SIGNATURE_NOT_FOUND_MESSAGE = "Signature not found in the request";
+    public static final String HEADER_NOT_FOUND_MESSAGE = "Header not found in the request";
+    public static final String MESSAGE_NOT_FOUND_MESSAGE = "Message not found in the request";
+    public static final String DISBURSEMENT_NOT_FOUND = "DISBURSEMENT_NOT_FOUND";
+    public static final String DISBURSEMENT_NOT_FOUND_MESSAGE = "Disbursement not found for the given disbursement request";
+    public static final String TARGET_ID_NOT_MATCHED = "TARGET_ID_NOT_MATCHED";
+    public static final String TARGET_ID_NOT_MATCHED_MESSAGE = "Target id not matched with the payment reference id";
+    public static final String ALL_CHILDS_ARE_NOT_PRESENT = "ALL_CHILDS_ARE_NOT_PRESENT";
+    public static final String ALL_CHILDS_ARE_NOT_PRESENT_MESSAGE = "All child disbursements are not present in the request";
 }

@@ -6,7 +6,6 @@ import org.egov.works.mukta.adapter.service.DisbursementService;
 import org.egov.works.mukta.adapter.service.PaymentInstructionService;
 import org.egov.works.mukta.adapter.service.PaymentService;
 import org.egov.works.mukta.adapter.util.ResponseInfoFactory;
-import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
 import org.egov.works.mukta.adapter.web.models.enums.JITServiceId;
 import org.egov.works.mukta.adapter.web.models.jit.SchedulerRequest;
@@ -22,17 +21,13 @@ public class Scheduler {
 
     private final ResponseInfoFactory responseInfoFactory;
     private final PaymentService paymentService;
-    private final DisbursementService disbursementService;
     private final MuktaAdaptorProducer muktaAdaptorProducer;
-    private final PaymentInstructionService paymentInstructionService;
 
     @Autowired
     public Scheduler(ResponseInfoFactory responseInfoFactory, PaymentService paymentService, DisbursementService disbursementService, MuktaAdaptorProducer muktaAdaptorProducer, PaymentInstructionService paymentInstructionService) {
         this.responseInfoFactory = responseInfoFactory;
         this.paymentService = paymentService;
-        this.disbursementService = disbursementService;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
-        this.paymentInstructionService = paymentInstructionService;
     }
 
     /**

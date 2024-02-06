@@ -29,26 +29,4 @@ public class ExchangeCode {
     private Currency currencyCode;
     @JsonProperty("locale_code")
     private String localeCode;
-
-
-    static public ExchangeCode fromString(String json) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        try {
-            return mapper.readValue(json, ExchangeCode.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new CustomException("Error parsing ExchangeMessage fromString", e.toString());
-        }
-    }
-
-    public void copy(ExchangeCode other) {
-        this.functionCode = other.functionCode;
-        this.administrationCode = other.administrationCode;
-        this.recipientSegmentCode = other.recipientSegmentCode;
-        this.economicSegmentCode = other.economicSegmentCode;
-        this.sourceOfFundCode = other.sourceOfFundCode;
-        this.targetSegmentCode = other.targetSegmentCode;
-        this.currencyCode = other.currencyCode;
-    }
 }

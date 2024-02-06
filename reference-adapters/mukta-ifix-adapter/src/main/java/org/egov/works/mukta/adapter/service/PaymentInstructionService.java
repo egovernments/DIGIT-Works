@@ -69,7 +69,9 @@ public class PaymentInstructionService {
                 .pagination(Pagination.builder().build())
                 .build();
         List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
-        if(disbursements != null && !disbursements.isEmpty() && (disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.INITIATED) || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL))){
+        if(disbursements != null && !disbursements.isEmpty() && (disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.INITIATED)
+                || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.APPROVED)
+                || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.IN_PROCESS) || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL))){
             throw new CustomException(Error.PAYMENT_ALREADY_PROCESSED, Error.PAYMENT_ALREADY_PROCESSED_MESSAGE);
         }
         log.info("No payment found for the payment id : " + paymentRequest.getReferenceId());

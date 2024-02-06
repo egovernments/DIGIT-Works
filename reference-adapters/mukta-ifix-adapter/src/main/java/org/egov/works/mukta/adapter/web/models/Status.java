@@ -20,15 +20,4 @@ public class Status {
 
     @JsonProperty("status_message")
     String statusMessage;
-
-    static public Status fromString(String json) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        try {
-            return mapper.readValue(json, Status.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new CustomException("Error parsing VerificationRequest fromString", e.toString());
-        }
-    }
 }

@@ -28,8 +28,4 @@ public class PISearchRequest {
     @Valid
     @NotNull
     private PISearchCriteria searchCriteria = null;
-
-//    @JsonProperty("pagination")
-//    @Valid
-//    private Pagination pagination = null;
 }

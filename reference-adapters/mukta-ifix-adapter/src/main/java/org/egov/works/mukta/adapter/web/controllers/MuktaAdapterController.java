@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mukta-adapter/v1")
+@RequestMapping("/v1")
 public class MuktaAdapterController {
     private final PaymentInstructionService paymentInstructionService;
     private final ResponseInfoFactory responseInfoFactory;
@@ -49,7 +49,7 @@ public class MuktaAdapterController {
 
     @RequestMapping(path = "/on-disburse/_create", method = RequestMethod.POST)
     public ResponseEntity<Object> onDisburseCreate(@RequestBody @Valid DisbursementRequest disbursementRequest){
-        DisbursementResponse disbursementResponse = disbursementService.processDisbursement(disbursementRequest);
+        DisbursementResponse disbursementResponse = disbursementService.processOnDisbursement(disbursementRequest);
         return ResponseEntity.ok(disbursementResponse);
     }
 }

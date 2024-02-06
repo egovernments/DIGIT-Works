@@ -18,7 +18,7 @@ public class ResponseInfoFactory {
             ts = requestInfo.getTs();
         final String resMsgId = RES_MSG_ID; // FIXME : Hard-coded
         final String msgId = requestInfo != null ? requestInfo.getMsgId() : "";
-        final String responseStatus = success ? SUCCESSFUL : FAILED;
+        final String responseStatus = Boolean.TRUE.equals(success) ? SUCCESSFUL : FAILED;
 
         return ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).resMsgId(resMsgId).msgId(msgId).resMsgId(resMsgId)
                 .status(responseStatus).build();
