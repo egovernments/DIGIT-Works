@@ -2,7 +2,6 @@ package org.egov.enrichment;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -22,7 +21,6 @@ import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.egov.web.models.organisation.Organisation;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -772,7 +770,7 @@ public class PaymentInstructionEnrichment {
                 .muktaReferenceId(disbursement.getTargetId())
                 .auditDetails(disbursement.getAuditDetails())
                 .build();
-        return PaymentInstruction.builder()
+        PaymentInstruction paymentInstruction = PaymentInstruction.builder()
                 .id(piId)
                 .tenantId(disbursement.getLocationCode())
                 .muktaReferenceId(disbursement.getTargetId())
@@ -799,6 +797,11 @@ public class PaymentInstructionEnrichment {
                 .paDetails(Collections.singletonList(paDetails))
                 .isActive(true)
                 .build();
+
+        if(isRevised && lastPi != null){
+            paymentInstruction.setParentPiNumber(lastPi.getJitBillNo());
+        }
+        return paymentInstruction;
     }
 
     private JsonNode getHoaNodeFromSanctionDetail(SanctionDetail sanctionDetail, Map<String, Map<String, JSONArray>> mdmsData) {
@@ -912,5 +915,48 @@ public class PaymentInstructionEnrichment {
             beneficiaryList.add(beneficiaryForCor);
         }
         return beneficiaryList;
+    }
+
+    public void setStatusOfDisbursementForPI(PaymentInstruction paymentInstruction, Disbursement disbursement) {
+        EnumMap<PIStatus, StatusCode> piStatusStatusCodeEnumMap = getPiStatusStatusCodeEnumMap();
+        EnumMap<BeneficiaryPaymentStatus, StatusCode> beneficiaryPaymentStatusStatusCodeEnumMap = getBeneficiaryPaymentStatusStatusCodeEnumMap();
+        HashMap<String, BeneficiaryPaymentStatus> muktaRefIdToBenefPaymentStatusMap = getMuktaRefIdToBenefPayementStatusMap(paymentInstruction);
+        for(Disbursement disbursement1: disbursement.getDisbursements()){
+            BeneficiaryPaymentStatus beneficiaryPaymentStatus = muktaRefIdToBenefPaymentStatusMap.get(disbursement1.getTargetId());
+            disbursement1.getStatus().setStatusCode(beneficiaryPaymentStatusStatusCodeEnumMap.get(beneficiaryPaymentStatus));
+            disbursement1.getStatus().setStatusMessage(beneficiaryPaymentStatusStatusCodeEnumMap.get(beneficiaryPaymentStatus).toString());
+        }
+        disbursement.getStatus().setStatusCode(piStatusStatusCodeEnumMap.get(paymentInstruction.getPiStatus()));
+        disbursement.getStatus().setStatusMessage(piStatusStatusCodeEnumMap.get(paymentInstruction.getPiStatus()).toString());
+    }
+
+    private HashMap<String, BeneficiaryPaymentStatus> getMuktaRefIdToBenefPayementStatusMap(PaymentInstruction paymentInstruction) {
+        HashMap<String, BeneficiaryPaymentStatus> muktaRefIdToBenefPayementStatusMap = new HashMap<>();
+        for(Beneficiary beneficiary:paymentInstruction.getBeneficiaryDetails()){
+            muktaRefIdToBenefPayementStatusMap.put(beneficiary.getMuktaReferenceId(),beneficiary.getPaymentStatus());
+        }
+        return muktaRefIdToBenefPayementStatusMap;
+    }
+
+    private EnumMap<BeneficiaryPaymentStatus, StatusCode> getBeneficiaryPaymentStatusStatusCodeEnumMap() {
+        EnumMap<BeneficiaryPaymentStatus, StatusCode> beneficiaryPaymentStatusStatusCodeEnumMap = new EnumMap<>(BeneficiaryPaymentStatus.class);
+        beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.INITIATED, StatusCode.INITIATED);
+        beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.FAILED, StatusCode.FAILED);
+        beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.IN_PROCESS, StatusCode.IN_PROCESS);
+        beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.SUCCESS, StatusCode.SUCCESSFUL);
+        beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.PENDING, StatusCode.IN_PROCESS);
+        return beneficiaryPaymentStatusStatusCodeEnumMap;
+    }
+
+    private EnumMap<PIStatus, StatusCode> getPiStatusStatusCodeEnumMap() {
+        EnumMap<PIStatus, StatusCode> piStatusStatusCodeEnumMap = new EnumMap<>(PIStatus.class);
+        piStatusStatusCodeEnumMap.put(PIStatus.INITIATED, StatusCode.INITIATED);
+        piStatusStatusCodeEnumMap.put(PIStatus.FAILED, StatusCode.FAILED);
+        piStatusStatusCodeEnumMap.put(PIStatus.SUCCESSFUL, StatusCode.SUCCESSFUL);
+        piStatusStatusCodeEnumMap.put(PIStatus.PARTIAL, StatusCode.PARTIAL);
+        piStatusStatusCodeEnumMap.put(PIStatus.IN_PROCESS, StatusCode.IN_PROCESS);
+        piStatusStatusCodeEnumMap.put(PIStatus.APPROVED, StatusCode.IN_PROCESS);
+        piStatusStatusCodeEnumMap.put(PIStatus.COMPLETED, StatusCode.COMPLETED);
+        return piStatusStatusCodeEnumMap;
     }
 }

@@ -7,13 +7,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import javax.validation.constraints.NotNull;
 
 public enum StatusCode {
-    FAILED("FAILED"),
-    INITIATED("INITIATED"),
-    PARTIAL("PARTIAL"),
+    RECEIVED("RECEIVED"),
     APPROVED("APPROVED"),
+    REJECTED("REJECTED"),
     IN_PROCESS("IN PROCESS"),
+    INITIATED("INITIATED"),
+    SUCCESSFUL("SUCCESSFUL"),
+    FAILED("FAILED"),
+    PARTIAL("PARTIAL"),
+    CANCELLED("CANCELLED"),
     COMPLETED("COMPLETED"),
-    SUCCESSFUL("SUCCESSFUL");
+    ERROR("ERROR"),
+    INFO("INFO");
 
     private String value;
 

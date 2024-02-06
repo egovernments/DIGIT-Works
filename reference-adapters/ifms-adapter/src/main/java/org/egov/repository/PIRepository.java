@@ -215,9 +215,7 @@ public class PIRepository {
     public List<PaymentInstruction> searchPi (PISearchCriteria piSearchCriteria){
         List<Object> preparedStmtList = new ArrayList<>();
         String query = piQueryBuilder.getPaymentInstructionSearchQuery(piSearchCriteria, preparedStmtList);
-        List<PaymentInstruction> paymentInstructions = jdbcTemplate.query(query, piRowMapper, preparedStmtList.toArray());
-
-        return paymentInstructions;
+        return jdbcTemplate.query(query, piRowMapper, preparedStmtList.toArray());
     }
 
     @Transactional

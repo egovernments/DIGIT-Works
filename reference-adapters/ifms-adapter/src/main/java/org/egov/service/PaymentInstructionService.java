@@ -14,6 +14,9 @@ import org.egov.repository.SanctionDetailsRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.*;
 import org.egov.validators.PaymentInstructionValidator;
+import org.egov.web.models.Disbursement;
+import org.egov.web.models.DisbursementSearchCriteria;
+import org.egov.web.models.Pagination;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.*;
@@ -26,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -54,11 +58,9 @@ public class PaymentInstructionService {
     @Autowired
     private PIUtils piUtils;
     @Autowired
-    private SanctionDetailsRepository sanctionDetailsRepository;
-    @Autowired
-    private PaymentInstructionValidator paymentInstructionValidator;
-    @Autowired
     private PIStatusLogsRepository piStatusLogsRepository;
+    @Autowired
+    private PaymentInstructionEnrichment paymentInstructionEnrichment;
 
     public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
         log.info("Started executing processPaymentRequest");
@@ -617,6 +619,25 @@ public class PaymentInstructionService {
         } catch (Exception e) {
             log.info("Exception in searchPIStatusLogsForPi : " + e);
         }
+    }
+
+    public void processPIForOnDisburse(PaymentInstruction paymentInstruction, RequestInfo requestInfo) {
+        log.info("Processing PI For Creating Disbursement Request");
+        DisbursementSearchCriteria disbursementSearchCriteria = DisbursementSearchCriteria.builder()
+                .paymentNumber(paymentInstruction.getMuktaReferenceId())
+                .status(StatusCode.INITIATED.toString())
+                .build();
+        Pagination pagination = Pagination.builder()
+                .sortBy("createdTime")
+                .order(Pagination.OrderEnum.DESC)
+                .limit(0)
+                .build();
+
+        // TODO: Remove this after dev Fetch Disbursement From Program Service.
+        File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/Disbursement.json");
+        Disbursement disbursement = objectMapper.convertValue(file, Disbursement.class);
+
+        paymentInstructionEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursement);
     }
 
 }

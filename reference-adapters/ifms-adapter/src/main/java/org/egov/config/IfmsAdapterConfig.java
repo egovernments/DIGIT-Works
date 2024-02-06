@@ -122,6 +122,10 @@ public class IfmsAdapterConfig {
     private String programServiceOnSanctionEndpoint;
     @Value("${egov.program.service.onallocation.endpoint}")
     private String programServiceOnAllocationEndpoint;
+    @Value("${egov.program.service.search.endpoint}")
+    private String programServiceSearchEndpoint;
+    @Value("${egov.program.service.ondisburse.endpoint}")
+    private String programServiceOnDisburseEndpoint;
 
     // es log configurations
     @Value("${egov.es.indexer.host}")

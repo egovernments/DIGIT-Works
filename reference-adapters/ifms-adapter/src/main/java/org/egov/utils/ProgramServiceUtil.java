@@ -19,14 +19,31 @@ public class ProgramServiceUtil {
     }
     public void callProgramServiceOnSanctionOrAllocation(Object request, Boolean isSanction){
         log.info("ProgramServiceUtil::callProgramServiceOnSanctionOrAllocation");
-        StringBuilder uriBuilder = getProgramServiceUrl(isSanction);
+        StringBuilder uriBuilder = new StringBuilder();
+        uriBuilder.append(config.getProgramServiceHost())
+                .append(Boolean.TRUE.equals(isSanction)?config.getProgramServiceOnSanctionEndpoint():config.getProgramServiceOnAllocationEndpoint());
         log.info("ProgramServiceUtil::callProgramServiceOnSanctionOrAllocation::uri::"+ uriBuilder);
         Object result = serviceRequestRepository.fetchResult(uriBuilder,request);
         log.info("ProgramServiceUtil::callProgramServiceOnSanctionOrAllocation::result::"+result.toString());
     }
-    private StringBuilder getProgramServiceUrl(Boolean isSanction){
+
+    public void searchDisbursements(Object request){
+        log.info("ProgramServiceUtil::searchDisbursements");
         StringBuilder uriBuilder = new StringBuilder();
-        return uriBuilder.append(config.getProgramServiceHost())
-                .append(Boolean.TRUE.equals(isSanction)?config.getProgramServiceOnSanctionEndpoint():config.getProgramServiceOnAllocationEndpoint());
+        uriBuilder.append(config.getProgramServiceHost())
+                .append(config.getProgramServiceSearchEndpoint());
+        log.info("ProgramServiceUtil::searchDisbursements::uri::"+ uriBuilder);
+        Object result = serviceRequestRepository.fetchResult(uriBuilder,request);
+        log.info("ProgramServiceUtil::searchDisbursements::result::"+result.toString());
+    }
+
+    public void callOnDisburse(Object request){
+        log.info("ProgramServiceUtil::callOnDisburse");
+        StringBuilder uriBuilder = new StringBuilder();
+        uriBuilder.append(config.getProgramServiceHost())
+                .append(config.getProgramServiceOnDisburseEndpoint());
+        log.info("ProgramServiceUtil::callOnDisburse::uri::"+ uriBuilder);
+        Object result = serviceRequestRepository.fetchResult(uriBuilder,request);
+        log.info("ProgramServiceUtil::callOnDisburse::result::"+result.toString());
     }
 }

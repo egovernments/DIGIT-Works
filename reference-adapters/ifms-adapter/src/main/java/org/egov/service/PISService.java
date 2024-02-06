@@ -130,11 +130,11 @@ public class PISService {
                     jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PIS_SUCCESS;
                     // Create PI status log based on current existing PIS request
                     paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PIS, jitRespStatusForPI, requestInfo);
+                    paymentInstructionService.processPIForOnDisburse(paymentInstruction, requestInfo);
                 }
             } catch (Exception e) {
                 log.info("Exception occurred while processing PIS response." + e);
             }
-
         }
     }
 
@@ -145,8 +145,7 @@ public class PISService {
     public List<PaymentInstruction> getInitiatedPaymentInstructions(){
         log.info("Executing PISService:getInitiatedPaymentInstructions");
         PISearchCriteria piSearchCriteria = PISearchCriteria.builder().piStatus(PIStatus.INITIATED).piType(PIType.ORIGINAL).build();
-        List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchCriteria);
-        return paymentInstructions;
+        return piRepository.searchPi(piSearchCriteria);
     }
 
     /**
@@ -160,16 +159,17 @@ public class PISService {
             beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
         }
         paymentInstruction.setPiStatus(PIStatus.FAILED);
-
-        List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
-                Collections.singleton(paymentInstruction.getMuktaReferenceId()),
-                paymentInstruction.getTenantId());
-        for (Payment payment : payments) {
-            PaymentRequest paymentRequest = PaymentRequest.builder()
-                    .requestInfo(requestInfo).payment(payment).build();
-
-            billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_DECLINED);
-        }
+        // TODO: Update payment status to failed
+//        List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
+//                Collections.singleton(paymentInstruction.getMuktaReferenceId()),
+//                paymentInstruction.getTenantId());
+//        for (Payment payment : payments) {
+//            PaymentRequest paymentRequest = PaymentRequest.builder()
+//                    .requestInfo(requestInfo).payment(payment).build();
+//
+//            billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_DECLINED);
+//        }
+        paymentInstructionService.processPIForOnDisburse(paymentInstruction, requestInfo);
     }
 
     /**

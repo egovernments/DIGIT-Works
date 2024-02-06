@@ -22,7 +22,7 @@ public class ExchangeCode {
     private String recipientSegmentCode;
     @JsonProperty("economic_segment_code")
     private String economicSegmentCode;
-    @JsonProperty("source_of_found_code")
+    @JsonProperty("source_of_fund_code")
     private String sourceOfFundCode;
     @JsonProperty("target_segment_code")
     private String targetSegmentCode;
