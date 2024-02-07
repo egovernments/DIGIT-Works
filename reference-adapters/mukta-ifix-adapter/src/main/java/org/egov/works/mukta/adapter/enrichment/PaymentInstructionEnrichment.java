@@ -139,9 +139,11 @@ public class PaymentInstructionEnrichment {
             Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
             if(piBeneficiary.getBeneficiaryType().equals(BeneficiaryType.DEPT) && bankAccount == null){
                 isAnyDisbursementFailed = true;
+                log.error("Bank account not found for department beneficiary. -> "+piBeneficiary.getBeneficiaryId());
             }
             if(!piBeneficiary.getBeneficiaryType().equals(BeneficiaryType.DEPT) && (bankAccount == null || (individual == null && organisation == null))){
                 isAnyDisbursementFailed = true;
+                log.error("Bank account or individual or organisation not found for individual/organisation beneficiary. -> "+piBeneficiary.getBeneficiaryId());
             }
             for (LineItem lineItem : piBeneficiary.getBenfLineItems()) {
                 if(lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) && !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL)){
