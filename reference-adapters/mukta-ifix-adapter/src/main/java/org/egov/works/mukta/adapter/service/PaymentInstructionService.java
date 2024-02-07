@@ -44,9 +44,10 @@ public class PaymentInstructionService {
     private final MuktaAdaptorConfig muktaAdaptorConfig;
     private final EncryptionDecryptionUtil encryptionDecryptionUtil;
     private final ObjectMapper objectMapper;
+    private final PaymentService paymentService;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, EncryptionDecryptionUtil encryptionDecryptionUtil, ObjectMapper objectMapper) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, EncryptionDecryptionUtil encryptionDecryptionUtil, ObjectMapper objectMapper, PaymentService paymentService) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -59,6 +60,7 @@ public class PaymentInstructionService {
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.encryptionDecryptionUtil = encryptionDecryptionUtil;
         this.objectMapper = objectMapper;
+        this.paymentService = paymentService;
     }
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
@@ -91,20 +93,26 @@ public class PaymentInstructionService {
 
     public Disbursement processPaymentInstruction(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction");
-        if(paymentRequest.getPayment() == null && paymentRequest.getReferenceId() != null && paymentRequest.getTenantId() != null) {
-            log.info("Fetching payment details by using reference id and tenant id");
-            List<Payment> payments = billUtils.fetchPaymentDetails(paymentRequest.getRequestInfo(), paymentRequest.getReferenceId(), paymentRequest.getTenantId());
-            if (payments == null || payments.isEmpty()) {
-                throw new CustomException(Error.PAYMENT_NOT_FOUND, Error.PAYMENT_NOT_FOUND_MESSAGE);
+        Disbursement disbursement = null;
+        try {
+            if(paymentRequest.getPayment() == null && paymentRequest.getReferenceId() != null && paymentRequest.getTenantId() != null) {
+                log.info("Fetching payment details by using reference id and tenant id");
+                List<Payment> payments = billUtils.fetchPaymentDetails(paymentRequest.getRequestInfo(), paymentRequest.getReferenceId(), paymentRequest.getTenantId());
+                if (payments == null || payments.isEmpty()) {
+                    throw new CustomException(Error.PAYMENT_NOT_FOUND, Error.PAYMENT_NOT_FOUND_MESSAGE);
+                }
+                log.info("Payments fetched for the disbursement request : " + payments);
+                paymentRequest.setPayment(payments.get(0));
             }
-            log.info("Payments fetched for the disbursement request : " + payments);
-            paymentRequest.setPayment(payments.get(0));
+            Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
+            disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData);
+            log.info("Encrypting Disbursement Object");
+            JsonNode node =encryptionDecryptionUtil.encryptObject(disbursement, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), JsonNode.class);
+            disbursement = objectMapper.convertValue(node, Disbursement.class);
+        }catch (Exception e){
+            piEnrichment.enrichDisbursementStatus(disbursement,StatusCode.FAILED);
+            log.error("Error occurred while processing the payment instruction", e);
         }
-        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
-        Disbursement disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData);
-        log.info("Encrypting Disbursement Object");
-        disbursement = encryptionDecryptionUtil.encryptObject(disbursement, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), Disbursement.class);
-        piEnrichment.enrichDisbursementStatus(disbursement);
         log.info("Disbursement request is " + disbursement);
         return disbursement;
     }

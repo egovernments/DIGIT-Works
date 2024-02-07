@@ -11,6 +11,7 @@ import org.egov.works.mukta.adapter.util.BillUtils;
 import org.egov.works.mukta.adapter.util.MdmsUtil;
 import org.egov.works.mukta.adapter.web.models.Pagination;
 import org.egov.works.mukta.adapter.web.models.bill.*;
+import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -196,6 +197,18 @@ public class PaymentService {
         log.info(paymentResponse.toString());
         return paymentResponse.getPayments();
     }
-
+    public void updatePaymentStatusToFailed(PaymentRequest paymentRequest){
+        if(paymentRequest.getPayment() != null && paymentRequest.getPayment().getStatus() != PaymentStatus.FAILED){
+            paymentRequest.getPayment().setStatus(PaymentStatus.FAILED);
+            paymentRequest.getPayment().getBills().forEach(bill -> {
+                bill.setStatus(PaymentStatus.FAILED);
+                bill.getBillDetails().forEach(billDetail -> {
+                    billDetail.setStatus(PaymentStatus.FAILED);
+                    billDetail.getPayableLineItems().forEach(payableLineItem -> payableLineItem.setStatus(PaymentStatus.FAILED));
+                });
+            });
+            billUtils.callPaymentUpdate(paymentRequest);
+        }
+    }
 }
 

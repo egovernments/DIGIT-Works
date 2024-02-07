@@ -6,11 +6,13 @@ import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.Status;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
+import org.egov.works.mukta.adapter.web.models.enums.BeneficiaryType;
 import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
@@ -59,12 +61,14 @@ public class PaymentInstructionEnrichment {
         String beneficiaryId = payee.getIdentifier();
         String headCode = lineItem.getHeadCode();
         Beneficiary beneficiary = null;
+        BeneficiaryType beneficiaryType = BeneficiaryType.IND;
         if (beneficiaryId != null && headCode != null) {
             JsonNode headCodeNode = headCodeMap.get(headCode);
             if (headCodeNode != null) {
                 String headCodeCategory = headCodeNode.get(Constants.HEAD_CODE_CATEGORY_KEY).asText();
                 if (headCodeCategory != null && headCodeCategory.equalsIgnoreCase(Constants.HEAD_CODE_DEDUCTION_CATEGORY)) {
                     beneficiaryId = Constants.DEDUCTION_BENEFICIARY_BY_HEADCODE.replace("{tanentId}", tenantId).replace("{headcode}", headCode);
+                    beneficiaryType = BeneficiaryType.DEPT;
                 }
             }
             List<LineItem> benefLineItemList = new ArrayList<>();
@@ -72,6 +76,7 @@ public class PaymentInstructionEnrichment {
             beneficiary = Beneficiary.builder()
                     .amount(lineItem.getAmount())
                     .beneficiaryId(beneficiaryId)
+                    .beneficiaryType(beneficiaryType)
                     .benfLineItems(benefLineItemList).build();
         }
         log.info("Beneficiary generated and sending back.");
@@ -106,6 +111,7 @@ public class PaymentInstructionEnrichment {
     public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations, PaymentRequest paymentRequest, JsonNode ssuNode, Map<String,String> headCodeCategoryMap) {
         log.info("Started executing enrichBankaccountOnBeneficiary");
         String programCode = ssuNode.get("programCode").asText();
+        Boolean isAnyDisbursementFailed = false;
         Map<String, BankAccount> bankAccountMap = new HashMap<>();
         if (bankAccounts != null && !bankAccounts.isEmpty()) {
             for (BankAccount bankAccount : bankAccounts) {
@@ -131,6 +137,12 @@ public class PaymentInstructionEnrichment {
             BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBeneficiaryId());
             Individual individual = individualMap.get(piBeneficiary.getBeneficiaryId());
             Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
+            if(piBeneficiary.getBeneficiaryType().equals(BeneficiaryType.DEPT) && bankAccount == null){
+                isAnyDisbursementFailed = true;
+            }
+            if(!piBeneficiary.getBeneficiaryType().equals(BeneficiaryType.DEPT) && (bankAccount == null || (individual == null && organisation == null))){
+                isAnyDisbursementFailed = true;
+            }
             for (LineItem lineItem : piBeneficiary.getBenfLineItems()) {
                 if(lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) && !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL)){
                     Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, paymentRequest.getRequestInfo().getUserInfo().getUuid(),programCode,headCodeCategoryMap);
@@ -146,6 +158,11 @@ public class PaymentInstructionEnrichment {
         disbursement.setAuditDetails(setAuditDetails(paymentRequest.getRequestInfo().getUserInfo().getUuid(), paymentRequest.getRequestInfo().getUserInfo().getUuid()));
         disbursement.setLocationCode(paymentRequest.getPayment().getTenantId());
         disbursement.setProgramCode(programCode);
+        if(isAnyDisbursementFailed){
+            enrichDisbursementStatus(disbursement,StatusCode.FAILED);
+        }else{
+            enrichDisbursementStatus(disbursement,StatusCode.INITIATED);
+        }
         setAmountForParentDisbursement(disbursement);
         log.info("Beneficiary details enriched and sending back.");
         return disbursement;
@@ -217,9 +234,11 @@ public class PaymentInstructionEnrichment {
         return auditDetails;
     }
 
-    public void enrichDisbursementStatus(Disbursement disbursement) {
-        Status status = Status.builder().statusCode(StatusCode.INITIATED).statusMessage("Initiated").build();
+    public void enrichDisbursementStatus(Disbursement disbursement,StatusCode statusCode) {
+        Status status = Status.builder().statusCode(statusCode).statusMessage(statusCode.toString()).build();
         disbursement.setStatus(status);
-        disbursement.getDisbursements().forEach(disbursement1 -> disbursement1.setStatus(status));
+        for(Disbursement disbursement1: disbursement.getDisbursements()){
+            disbursement1.setStatus(status);
+        }
     }
 }
