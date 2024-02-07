@@ -35,4 +35,5 @@ public class Error {
     public static final String TARGET_ID_NOT_MATCHED_MESSAGE = "Target id not matched with the payment reference id";
     public static final String ALL_CHILDS_ARE_NOT_PRESENT = "ALL_CHILDS_ARE_NOT_PRESENT";
     public static final String ALL_CHILDS_ARE_NOT_PRESENT_MESSAGE = "All child disbursements are not present in the request";
+    public static final String TENANT_ID_NOT_FOUND = "TENANT_ID_NOT_FOUND";
 }

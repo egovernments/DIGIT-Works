@@ -63,6 +63,12 @@ public class PaymentInstructionService {
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction on failure");
+        if(paymentRequest.getReferenceId() == null){
+            throw new CustomException(Error.INVALID_REQUEST, Error.PAYMENT_REFERENCE_ID_NOT_FOUND_MESSAGE);
+        }
+        if(paymentRequest.getTenantId() == null){
+            throw new CustomException(Error.INVALID_REQUEST, Error.TENANT_ID_NOT_FOUND);
+        }
         DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
                 .requestInfo(paymentRequest.getRequestInfo())
                 .criteria(DisbursementSearchCriteria.builder().paymentNumber(paymentRequest.getReferenceId()).build())
