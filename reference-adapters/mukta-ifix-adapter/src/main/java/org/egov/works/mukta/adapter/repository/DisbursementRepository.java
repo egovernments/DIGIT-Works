@@ -31,7 +31,7 @@ public class DisbursementRepository {
 
     public List<Disbursement> searchDisbursement(DisbursementSearchRequest disbursementSearchRequest) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = disbursementQueryBuilder.getDisbursementSearchQuery(disbursementSearchRequest, preparedStmtList,null);
+        String query = disbursementQueryBuilder.getDisbursementSearchQuery(disbursementSearchRequest, preparedStmtList,null,true);
         List<Disbursement> disbursements = jdbcTemplate.query(query, preparedStmtList.toArray(), disbursementRowMapper);
         List<String> parentIds = new ArrayList<>();
         for (Disbursement disbursement : disbursements) {
@@ -52,7 +52,7 @@ public class DisbursementRepository {
                 .criteria(DisbursementSearchCriteria.builder().build())
                 .pagination(Pagination.builder().build())
                 .build();
-        String query = disbursementQueryBuilder.getDisbursementSearchQuery(disbursementSearchCriteriaForChildrens, preparedStmtList,parentIds);
+        String query = disbursementQueryBuilder.getDisbursementSearchQuery(disbursementSearchCriteriaForChildrens, preparedStmtList,parentIds,false);
         List<Disbursement> disbursementsForChildrens = jdbcTemplate.query(query, preparedStmtList.toArray(), disbursementRowMapper);
         if(disbursementsForChildrens == null || disbursementsForChildrens.isEmpty()){
             log.info("No childrens found for disbursements");

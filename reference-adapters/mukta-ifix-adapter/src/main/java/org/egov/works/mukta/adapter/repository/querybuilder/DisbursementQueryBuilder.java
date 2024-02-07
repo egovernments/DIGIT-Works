@@ -33,7 +33,7 @@ public class DisbursementQueryBuilder {
         this.config = config;
     }
 
-    public String getDisbursementSearchQuery(DisbursementSearchRequest disbursementSearchRequest, List<Object> preparedStmtList, List<String> parentIds){
+    public String getDisbursementSearchQuery(DisbursementSearchRequest disbursementSearchRequest, List<Object> preparedStmtList, List<String> parentIds,boolean isPaginationRequired){
         DisbursementSearchCriteria disbursementSearchCriteria = disbursementSearchRequest.getCriteria();
         StringBuilder query = new StringBuilder(DISBURSEMENT_SEARCH_QUERY);
         if (parentIds == null || parentIds.isEmpty()){
@@ -66,7 +66,10 @@ public class DisbursementQueryBuilder {
             query.append(" code.type = ? ");
             preparedStmtList.add(disbursementSearchCriteria.getType());
         }
-        return addPaginationWrapper(query,disbursementSearchRequest.getPagination(),preparedStmtList);
+        if(isPaginationRequired){
+            return addPaginationWrapper(query,disbursementSearchRequest.getPagination(),preparedStmtList);
+        }
+        return query.toString();
     }
 
     private String createQuery(Collection<String> ids) {

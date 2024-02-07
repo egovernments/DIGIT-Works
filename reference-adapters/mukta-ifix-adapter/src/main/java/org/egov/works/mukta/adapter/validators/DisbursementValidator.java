@@ -67,7 +67,7 @@ public class DisbursementValidator {
         if(disbursements == null || disbursements.isEmpty()){
             throw new CustomException(Error.DISBURSEMENT_NOT_FOUND, Error.DISBURSEMENT_NOT_FOUND_MESSAGE);
         }
-        //Validating disbursment From DB
+        //Validating disbursement From DB
         Disbursement disbursementFromDB = disbursements.get(0);
         if(!disbursementFromDB.getTargetId().equals(disbursement.getTargetId())){
             throw new CustomException(Error.TARGET_ID_NOT_MATCHED, Error.TARGET_ID_NOT_MATCHED_MESSAGE);
