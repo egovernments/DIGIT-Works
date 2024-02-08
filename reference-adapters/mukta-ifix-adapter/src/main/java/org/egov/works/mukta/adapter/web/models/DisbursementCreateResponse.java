@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 
+import javax.validation.Valid;
+
 @Getter
 @Setter
 @Builder
@@ -13,5 +15,6 @@ public class DisbursementCreateResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
     @JsonProperty("Disbursement")
+    @Valid
     private Disbursement disbursement;
 }

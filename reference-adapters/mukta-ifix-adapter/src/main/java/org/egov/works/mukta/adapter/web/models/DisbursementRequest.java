@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.Valid;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,7 +16,9 @@ public class DisbursementRequest {
     @JsonProperty("signature")
     private String signature;
     @JsonProperty("header")
-    private MsgCallbackHeader header;
+    @Valid
+    private MsgHeader header;
     @JsonProperty("message")
+    @Valid
     private Disbursement message;
 }

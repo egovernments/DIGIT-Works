@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,12 +16,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Valid
 public class Disbursement extends ExchangeCode {
     @JsonProperty("id")
     private String id;
     @NotNull
     @JsonProperty("target_id")
     private String targetId;
+    @NotNull
     @JsonProperty("location_code")
     private String locationCode;
     @JsonProperty("parent_id")
@@ -29,11 +32,12 @@ public class Disbursement extends ExchangeCode {
     private Long disbursementDate;
     @JsonProperty("allocation_ids")
     private List<String> allocationIds;
+    @JsonProperty("sanction_id")
+    private String sanctionId;
     @JsonProperty("disbursements")
     private List<Disbursement> disbursements;
     @JsonProperty("status")
     private Status status;
-    @NotNull
     @JsonProperty("account_code")
     private String accountCode;
     @NotNull
@@ -42,10 +46,10 @@ public class Disbursement extends ExchangeCode {
     @NotNull
     @JsonProperty("gross_amount")
     private BigDecimal grossAmount;
-    @NotNull
     @JsonProperty("individual")
     private Individual individual;
     @JsonProperty("program_code")
+    @NotNull
     private String programCode;
     @JsonProperty("additional_details")
     private Object additionalDetails;

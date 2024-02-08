@@ -12,7 +12,7 @@ public class DisbursementResponse {
     @JsonProperty("signature")
     private String signature;
     @JsonProperty("header")
-    private MsgCallbackHeader header;
+    private MsgHeader header;
     @JsonProperty("message")
     private Disbursement message;
 }

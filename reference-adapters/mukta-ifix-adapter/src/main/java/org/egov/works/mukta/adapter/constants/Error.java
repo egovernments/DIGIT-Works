@@ -2,14 +2,14 @@ package org.egov.works.mukta.adapter.constants;
 
 public class Error {
 
-    public static final String INVALID_REQUEST = "invalid_request";
-    public static final String INVALID_ADDRESS = "invalid_address";
-    public static final String INVALID_EMAIL = "invalid_email";
-    public static final String INVALID_PHONE = "invalid_phone";
+    public static final String INVALID_REQUEST = "INVALID_REQUEST";
+    public static final String INVALID_ADDRESS = "INVALID_ADDRESS";
+    public static final String INVALID_EMAIL = "INVALID_EMAIL";
+    public static final String INVALID_PHONE = "INVALID_PHONE";
 
-    public static final String INVALID_NAME = "invalid_name";
-    public static final String INVALID_GENDER = "invalid_gender";
-    public static final String PARSING_ERROR = "PARSING ERROR";
+    public static final String INVALID_NAME = "INVALID_NAME";
+    public static final String INVALID_GENDER = "INVALID_GENDER";
+    public static final String PARSING_ERROR = "PARSING_ERROR";
     public static final String PARSE_ERROR_MESSAGE = "The propertyAdditionalDetail json cannot be parsed";
     public static final String PAYMENT_NOT_FOUND = "PAYMENT_NOT_FOUND";
     public static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found for the given disbursement request";
@@ -30,12 +30,19 @@ public class Error {
     public static final String HEADER_NOT_FOUND_MESSAGE = "Header not found in the request";
     public static final String MESSAGE_NOT_FOUND_MESSAGE = "Message not found in the request";
     public static final String DISBURSEMENT_NOT_FOUND = "DISBURSEMENT_NOT_FOUND";
-    public static final String DISBURSEMENT_NOT_FOUND_MESSAGE = "Disbursement not found for the given disbursement request";
+    public static final String DISBURSEMENT_NOT_FOUND_IN_DB_MESSAGE = "Disbursement not found in the DB for the given disbursement request";
     public static final String TARGET_ID_NOT_MATCHED = "TARGET_ID_NOT_MATCHED";
     public static final String TARGET_ID_NOT_MATCHED_MESSAGE = "Target id not matched with the payment reference id";
     public static final String ALL_CHILDS_ARE_NOT_PRESENT = "ALL_CHILDS_ARE_NOT_PRESENT";
     public static final String ALL_CHILDS_ARE_NOT_PRESENT_MESSAGE = "All child disbursements are not present in the request";
-    public static final String TENANT_ID_NOT_FOUND = "TENANT_ID_NOT_FOUND";
     public static final String REFERENCE_ID_AND_PAYEMENT_NOT_FOUND = "Request should contain either reference id or payement number inside payment";
     public static final String REFERENCE_ID_AND_TENANT_ID_NOT_FOUND = "Request should contain both reference id or tenant id if payment is null";
+    public static final String SENDER_ID_AND_RECEIVER_ID_SAME_MESSAGE = "Sender and receiver id cannot be same";
+    public static final String DISBURSEMENTS_NOT_FOUND_MESSAGE = "Disbursements not found in the request";
+    public static final String GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED = "Gross amount and net amount not matched with the disbursement from db";
+    public static final String ID_NOT_FOUND_MESSAGE = "Disbursement id not found in the request";
+    public static final String DISBURSEMENT_STATUS_NOT_FOUND = "Disbursement status not found in the request";
+    public static final String INDIVIDUAL_NOT_FOUND = "INDIVIDUAL_NOT_FOUND";
+    public static final String ALLOCATION_IDS_NOT_FOUND_MESSAGE = "Allocation ids not found in the request";
+    public static final String GROSS_AMOUNT_AND_NET_AMOUNT_NOT_FOUND_MESSAGE = "Gross amount and net amount not found in the request";
 }

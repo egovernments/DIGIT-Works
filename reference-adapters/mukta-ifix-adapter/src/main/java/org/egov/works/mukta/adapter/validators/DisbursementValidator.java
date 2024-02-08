@@ -11,9 +11,8 @@ import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -28,7 +27,15 @@ public class DisbursementValidator {
     public void validateOnDisbursementRequest(DisbursementRequest disbursementRequest) {
         log.info("Validating on disbursement request");
         validateRequestBodyForOnDisbursement(disbursementRequest);
+        validateHeader(disbursementRequest.getHeader());
         validateDisbursement(disbursementRequest.getMessage());
+    }
+
+    private void validateHeader(MsgHeader header) {
+        log.info("Validating header");
+        if(Objects.equals(header.getSenderId(), header.getReceiverId())){
+            throw new CustomException(Error.INVALID_REQUEST, Error.SENDER_ID_AND_RECEIVER_ID_SAME_MESSAGE);
+        }
     }
 
     public void isValidForDisbursementCreate(PaymentRequest paymentRequest){
@@ -71,13 +78,39 @@ public class DisbursementValidator {
 
     public void validateDisbursement(Disbursement disbursement) {
         log.info("Validating disbursement");
-        if(disbursement.getTargetId() == null || disbursement.getTargetId().isEmpty()){
+        if (disbursement.getId() == null) {
+            throw new CustomException(Error.INVALID_REQUEST, Error.ID_NOT_FOUND_MESSAGE);
+        }
+        if(disbursement.getTargetId() == null){
             throw new CustomException(Error.INVALID_REQUEST, Error.PAYMENT_REFERENCE_ID_NOT_FOUND_MESSAGE);
         }
         if(disbursement.getStatus() == null || disbursement.getStatus().getStatusCode() == null){
-            throw new CustomException(Error.INVALID_REQUEST, "Disbursement status not found in the request");
+            throw new CustomException(Error.INVALID_REQUEST, Error.DISBURSEMENT_STATUS_NOT_FOUND);
         }
+        if(disbursement.getDisbursements() == null || disbursement.getDisbursements().isEmpty()){
+            throw new CustomException(Error.INVALID_REQUEST, Error.DISBURSEMENTS_NOT_FOUND_MESSAGE);
+        }
+        if(disbursement.getAllocationIds() == null || disbursement.getAllocationIds().isEmpty()){
+            throw new CustomException(Error.INVALID_REQUEST, Error.ALLOCATION_IDS_NOT_FOUND_MESSAGE);
+        }
+        validateDisbursementAmount(disbursement);
         validateDisbursementFromDB(disbursement);
+    }
+
+    private void validateDisbursementAmount(Disbursement disbursement) {
+        log.info("Validating disbursement amount");
+        BigDecimal grossAmount = BigDecimal.ZERO;
+        BigDecimal netAmount = BigDecimal.ZERO;
+        for(Disbursement disbursement1: disbursement.getDisbursements()){
+            if(disbursement1.getGrossAmount() == null || disbursement1.getNetAmount() == null){
+                throw new CustomException(Error.INVALID_REQUEST, Error.GROSS_AMOUNT_AND_NET_AMOUNT_NOT_FOUND_MESSAGE);
+            }
+            grossAmount = grossAmount.add(disbursement1.getGrossAmount());
+            netAmount = netAmount.add(disbursement1.getNetAmount());
+        }
+        if(!grossAmount.equals(disbursement.getGrossAmount()) && !netAmount.equals(disbursement.getNetAmount())){
+            throw new CustomException(Error.INVALID_REQUEST, Error.GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED);
+        }
     }
 
     private void validateDisbursementFromDB(Disbursement disbursement) {
@@ -92,7 +125,7 @@ public class DisbursementValidator {
                 .build();
         List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
         if(disbursements == null || disbursements.isEmpty()){
-            throw new CustomException(Error.DISBURSEMENT_NOT_FOUND, Error.DISBURSEMENT_NOT_FOUND_MESSAGE);
+            throw new CustomException(Error.DISBURSEMENT_NOT_FOUND, Error.DISBURSEMENT_NOT_FOUND_IN_DB_MESSAGE);
         }
         //Validating disbursement From DB
         Disbursement disbursementFromDB = disbursements.get(0);
@@ -102,15 +135,35 @@ public class DisbursementValidator {
         if(disbursementFromDB.getDisbursements().size() != disbursement.getDisbursements().size()){
             throw new CustomException(Error.ALL_CHILDS_ARE_NOT_PRESENT, Error.ALL_CHILDS_ARE_NOT_PRESENT_MESSAGE);
         }
-        HashSet<String> disbursementChildIds = new HashSet<>();
+        HashMap<String,Disbursement> disbursementsFromDB = new HashMap<>();
         for(Disbursement disbursement1: disbursementFromDB.getDisbursements()){
-            disbursementChildIds.add(disbursement1.getId());
+            disbursementsFromDB.put(disbursement1.getId(), disbursement1);
         }
         for(Disbursement disbursement1: disbursement.getDisbursements()){
-            disbursementChildIds.remove(disbursement1.getId());
+            if(disbursementsFromDB.containsKey(disbursement1.getId())){
+                validateChildDisbursement(disbursementsFromDB.get(disbursement1.getId()), disbursement1);
+                disbursementsFromDB.remove(disbursement1.getId());
+            }
         }
-        if(!disbursementChildIds.isEmpty()){
+        if(!disbursementsFromDB.isEmpty()){
             throw new CustomException(Error.ALL_CHILDS_ARE_NOT_PRESENT, Error.ALL_CHILDS_ARE_NOT_PRESENT_MESSAGE);
         }
+    }
+
+    private void validateChildDisbursement(Disbursement disbursementFromDB, Disbursement disbursement) {
+        log.info("Validating child disbursement");
+        if(!disbursementFromDB.getTargetId().equals(disbursement.getTargetId())){
+            throw new CustomException(Error.TARGET_ID_NOT_MATCHED, Error.TARGET_ID_NOT_MATCHED_MESSAGE);
+        }
+        if(!disbursementFromDB.getGrossAmount().equals(disbursement.getGrossAmount()) && !disbursementFromDB.getNetAmount().equals(disbursement.getNetAmount())){
+            throw new CustomException(Error.INVALID_REQUEST, Error.GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED);
+        }
+        if(disbursement.getIndividual() == null){
+            throw new CustomException(Error.INVALID_REQUEST, Error.INDIVIDUAL_NOT_FOUND);
+        }
+        if(disbursement.getIndividual().getAddress() == null){
+            throw new CustomException(Error.INVALID_REQUEST, Error.INVALID_ADDRESS);
+        }
+
     }
 }
