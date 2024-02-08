@@ -8,6 +8,7 @@ import org.egov.works.mukta.adapter.service.PaymentInstructionService;
 import org.egov.works.mukta.adapter.service.PaymentService;
 import org.egov.works.mukta.adapter.util.BillUtils;
 import org.egov.works.mukta.adapter.util.ProgramServiceUtil;
+import org.egov.works.mukta.adapter.validators.DisbursementValidator;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.DisbursementCreateRequest;
 import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
@@ -29,15 +30,17 @@ public class MuktaAdaptorConsumer {
     private final MuktaAdaptorProducer muktaAdaptorProducer;
     private final MuktaAdaptorConfig muktaAdaptorConfig;
     private final PaymentService paymentService;
+    private final DisbursementValidator disbursementValidator;
 
     @Autowired
-    public MuktaAdaptorConsumer(ObjectMapper objectMapper, PaymentInstructionService paymentInstructionService, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, PaymentService paymentService) {
+    public MuktaAdaptorConsumer(ObjectMapper objectMapper, PaymentInstructionService paymentInstructionService, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, PaymentService paymentService, DisbursementValidator disbursementValidator) {
         this.objectMapper = objectMapper;
         this.paymentInstructionService = paymentInstructionService;
         this.programServiceUtil = programServiceUtil;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.paymentService = paymentService;
+        this.disbursementValidator = disbursementValidator;
     }
 
     @KafkaListener(topics = {"${payment.create.topic}"})
@@ -47,6 +50,7 @@ public class MuktaAdaptorConsumer {
             log.info("Payment data received on.");
             paymentRequest = objectMapper.readValue(record, PaymentRequest.class);
             log.info("Payment data is " + paymentRequest);
+            disbursementValidator.isValidForDisbursementCreate(paymentRequest);
             Disbursement disbursement = paymentInstructionService.processPaymentInstruction(paymentRequest);
             if(disbursement.getStatus().getStatusCode().equals(StatusCode.FAILED)){
                 paymentService.updatePaymentStatusToFailed(paymentRequest);

@@ -113,6 +113,10 @@ public class PaymentInstructionEnrichment {
         String programCode = ssuNode.get("programCode").asText();
         Boolean isAnyDisbursementFailed = false;
         Map<String, BankAccount> bankAccountMap = new HashMap<>();
+        AuditDetails auditDetails = AuditDetails.builder().createdBy(paymentRequest.getRequestInfo().getUserInfo().getUuid())
+                .createdTime(System.currentTimeMillis())
+                .lastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid())
+                .lastModifiedTime(System.currentTimeMillis()).build();
         if (bankAccounts != null && !bankAccounts.isEmpty()) {
             for (BankAccount bankAccount : bankAccounts) {
                 bankAccountMap.put(bankAccount.getReferenceId(), bankAccount);
@@ -147,7 +151,7 @@ public class PaymentInstructionEnrichment {
             }
             for (LineItem lineItem : piBeneficiary.getBenfLineItems()) {
                 if(lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) && !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL)){
-                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, paymentRequest.getRequestInfo().getUserInfo().getUuid(),programCode,headCodeCategoryMap);
+                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, auditDetails,programCode,headCodeCategoryMap);
                     disbursements.add(disbursementForLineItem);
                 }
             }
@@ -157,10 +161,10 @@ public class PaymentInstructionEnrichment {
         disbursement.setTargetId(paymentRequest.getPayment().getPaymentNumber());
         disbursement.setDisbursements(disbursements);
         disbursement.setDisbursementDate(ZonedDateTime.now().toEpochSecond());
-        disbursement.setAuditDetails(setAuditDetails(paymentRequest.getRequestInfo().getUserInfo().getUuid(), paymentRequest.getRequestInfo().getUserInfo().getUuid()));
+        disbursement.setAuditDetails(auditDetails);
         disbursement.setLocationCode(paymentRequest.getPayment().getTenantId());
         disbursement.setProgramCode(programCode);
-        if(isAnyDisbursementFailed){
+        if(Boolean.TRUE.equals(isAnyDisbursementFailed)){
             enrichDisbursementStatus(disbursement,StatusCode.FAILED);
         }else{
             enrichDisbursementStatus(disbursement,StatusCode.INITIATED);
@@ -181,7 +185,7 @@ public class PaymentInstructionEnrichment {
         disbursement.setGrossAmount(grossAmount);
     }
 
-    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,String userId,String programCode,Map<String,String> headCodeCategoryMap) {
+    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,AuditDetails auditDetails,String programCode,Map<String,String> headCodeCategoryMap) {
         log.info("Started executing enrichDisbursement");
         String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
         Disbursement disbursement = new Disbursement();
@@ -222,18 +226,9 @@ public class PaymentInstructionEnrichment {
             }
         }
         disbursement.setIndividual(piIndividual);
-        disbursement.setAuditDetails(setAuditDetails(userId, userId));
+        disbursement.setAuditDetails(auditDetails);
 
         return disbursement;
-    }
-
-    private AuditDetails setAuditDetails(String createdBy, String lastModifiedBy) {
-        AuditDetails auditDetails = new AuditDetails();
-        auditDetails.setCreatedBy(createdBy);
-        auditDetails.setCreatedTime(System.currentTimeMillis());
-        auditDetails.setLastModifiedBy(lastModifiedBy);
-        auditDetails.setLastModifiedTime(System.currentTimeMillis());
-        return auditDetails;
     }
 
     public void enrichDisbursementStatus(Disbursement disbursement,StatusCode statusCode) {

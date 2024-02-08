@@ -36,6 +36,6 @@ public class Error {
     public static final String ALL_CHILDS_ARE_NOT_PRESENT = "ALL_CHILDS_ARE_NOT_PRESENT";
     public static final String ALL_CHILDS_ARE_NOT_PRESENT_MESSAGE = "All child disbursements are not present in the request";
     public static final String TENANT_ID_NOT_FOUND = "TENANT_ID_NOT_FOUND";
-    public static final String DISBURSEMENT_CREATION_FAILED = "DISBURSEMENT_CREATION_FAILED";
-    public static final String DISBURSEMENT_CREATION_FAILED_MESSAGE = "Disbursement creation failed";
+    public static final String REFERENCE_ID_AND_PAYEMENT_NOT_FOUND = "Request should contain either reference id or payement number inside payment";
+    public static final String REFERENCE_ID_AND_TENANT_ID_NOT_FOUND = "Request should contain both reference id or tenant id if payment is null";
 }

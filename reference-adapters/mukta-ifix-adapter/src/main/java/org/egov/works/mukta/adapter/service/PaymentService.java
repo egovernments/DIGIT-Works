@@ -198,6 +198,7 @@ public class PaymentService {
         return paymentResponse.getPayments();
     }
     public void updatePaymentStatusToFailed(PaymentRequest paymentRequest){
+        log.error("Updating payment status to failed as disbursement failed.");
         if(paymentRequest.getPayment() != null && paymentRequest.getPayment().getStatus() != PaymentStatus.FAILED){
             paymentRequest.getPayment().setStatus(PaymentStatus.FAILED);
             paymentRequest.getPayment().getBills().forEach(bill -> {

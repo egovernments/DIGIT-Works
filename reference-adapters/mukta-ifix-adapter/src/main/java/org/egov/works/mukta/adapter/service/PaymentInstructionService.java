@@ -14,6 +14,7 @@ import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
 import org.egov.works.mukta.adapter.kafka.MuktaAdaptorProducer;
 import org.egov.works.mukta.adapter.repository.DisbursementRepository;
 import org.egov.works.mukta.adapter.util.*;
+import org.egov.works.mukta.adapter.validators.DisbursementValidator;
 import org.egov.works.mukta.adapter.web.models.*;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
@@ -44,10 +45,10 @@ public class PaymentInstructionService {
     private final MuktaAdaptorConfig muktaAdaptorConfig;
     private final EncryptionDecryptionUtil encryptionDecryptionUtil;
     private final ObjectMapper objectMapper;
-    private final PaymentService paymentService;
+    private final DisbursementValidator disbursementValidator;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, EncryptionDecryptionUtil encryptionDecryptionUtil, ObjectMapper objectMapper, PaymentService paymentService) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, EncryptionDecryptionUtil encryptionDecryptionUtil, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -60,30 +61,13 @@ public class PaymentInstructionService {
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.encryptionDecryptionUtil = encryptionDecryptionUtil;
         this.objectMapper = objectMapper;
-        this.paymentService = paymentService;
+        this.disbursementValidator = disbursementValidator;
     }
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction on failure");
-        if(paymentRequest.getReferenceId() == null){
-            throw new CustomException(Error.INVALID_REQUEST, Error.PAYMENT_REFERENCE_ID_NOT_FOUND_MESSAGE);
-        }
-        if(paymentRequest.getTenantId() == null){
-            throw new CustomException(Error.INVALID_REQUEST, Error.TENANT_ID_NOT_FOUND);
-        }
-        DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
-                .requestInfo(paymentRequest.getRequestInfo())
-                .criteria(DisbursementSearchCriteria.builder().paymentNumber(paymentRequest.getReferenceId()).build())
-                .pagination(Pagination.builder().build())
-                .build();
-        List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
-        if(disbursements != null && !disbursements.isEmpty() && (disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.INITIATED)
-                || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.APPROVED)
-                || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.IN_PROCESS) || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL))){
-            throw new CustomException(Error.PAYMENT_ALREADY_PROCESSED, Error.PAYMENT_ALREADY_PROCESSED_MESSAGE);
-        }
-        log.info("No payment found for the payment id : " + paymentRequest.getReferenceId());
-        log.info("Creating new payment for the payment id : " + paymentRequest.getReferenceId());
+        disbursementValidator.isValidForDisbursementCreate(paymentRequest);
+        log.info("Creating new disbursement for the payment id : " + paymentRequest.getReferenceId());
         Disbursement disbursement = processPaymentInstruction(paymentRequest);
         DisbursementCreateRequest disbursementRequest = DisbursementCreateRequest.builder().disbursement(disbursement).requestInfo(paymentRequest.getRequestInfo()).build();
 //        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
@@ -110,8 +94,8 @@ public class PaymentInstructionService {
             JsonNode node =encryptionDecryptionUtil.encryptObject(disbursement, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), JsonNode.class);
             disbursement = objectMapper.convertValue(node, Disbursement.class);
         }catch (Exception e){
-            piEnrichment.enrichDisbursementStatus(disbursement,StatusCode.FAILED);
             log.error("Error occurred while processing the payment instruction", e);
+            piEnrichment.enrichDisbursementStatus(disbursement,StatusCode.FAILED);
         }
         log.info("Disbursement request is " + disbursement);
         return disbursement;
