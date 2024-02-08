@@ -59,7 +59,7 @@ const fetchDeductions = (deductions, tenantId) => {
     return deductionsList
 }
 
-export const createBillPayload = (data, contract,  docConfigData,workflowDetails) => {
+export const createBillPayload = (data, contract,  docConfigData,workflowDetails, MBValidationData) => {
 
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
     const tenantId = Digit.ULBService.getCurrentTenantId()
@@ -87,7 +87,7 @@ export const createBillPayload = (data, contract,  docConfigData,workflowDetails
                 "payee": {
                   "tenantId": tenantId,
                   "type": "ORG", 
-                  "identifier": data?.invoiceDetails_vendor.code,
+                  "identifier": data?.invoiceDetails_vendor?.code,
                   "status": "ACTIVE"
                 },
                 "lineItems": [
@@ -123,7 +123,8 @@ export const createBillPayload = (data, contract,  docConfigData,workflowDetails
                 "ward":contract.additionalDetails.ward,
                 "orgName":contract.additionalDetails.orgName,
                 "projectName":contract.additionalDetails.projectName,
-                "invoiceDate": convertDateToEpoch(data?.invoiceDetails_invoiceDate)
+                "invoiceDate": convertDateToEpoch(data?.invoiceDetails_invoiceDate),
+                "mbValidationData" : MBValidationData
             },
             "documents": fetchDocuments(
               data?.uploadedDocs,

@@ -23,7 +23,15 @@ const getMBLinks = (mblinks, tenantId, workOrderNumber, history) => {
 const MBDetailes = ({ formdata }) => {
   const { t } = useTranslation();
   const { tenantId, workOrderNumber } = Digit.Hooks.useQueryParams();
-  const { allMeasurementsIds, totalMaterialAmount, totalPaidAmountForSuccessfulBills, isMeasurementLoading } = Digit.Hooks.paymentInstruction.useMBDataForPB({workOrderNumber,tenantId});
+  let { allMeasurementsIds, totalMaterialAmount, totalPaidAmountForSuccessfulBills, isMeasurementLoading } = Digit.Hooks.paymentInstruction.useMBDataForPB({workOrderNumber,tenantId});
+
+  //setting the value for mb details in view page
+  if(formdata?.isMbDetails && formdata?.mbValidationData)
+  {
+    allMeasurementsIds = formdata?.mbValidationData?.allMeasurementsIds;
+    totalMaterialAmount = formdata?.mbValidationData?.totalMaterialAmount
+    totalPaidAmountForSuccessfulBills = formdata?.mbValidationData?.totalPaidAmountForSuccessfulBills;
+  }
   const history = useHistory();
   const formattingNumber = (amount) => {
     if(amount)
@@ -40,7 +48,7 @@ const MBDetailes = ({ formdata }) => {
         <Row className="border-none" label={t("WORKS_MB_NUMBERS")} amountStyle={{overflow:"auto", whiteSpace:"nowrap", marginBottom:"-15px"}} text={allMeasurementsIds?.length > 0 ? getMBLinks(allMeasurementsIds, tenantId, workOrderNumber, history) : "NA"} textStyle={{ overflow:"hidden", width:"40%", marginRight:window.location.href.includes("create-purchase-bill")? "29%" : "20%" }} />
         <Row className="border-none" label={t("WORKS_TOTAL_MATERIAL_UTILIZED")} text={formattingNumber(totalMaterialAmount) || "0"} textStyle={{ whiteSpace: "pre", ...rowStyle}} />
         <Row className="border-none" label={t("WORKS_TOTAL_PAID_AMOUNT")} text={formattingNumber(totalPaidAmountForSuccessfulBills) || "0"} textStyle={{ whiteSpace: "pre", ...rowStyle}} />
-        <Row className="border-none" label={t("WORKS_TOTAL_UNPAID_AMOUNT")} text={formattingNumber(totalMaterialAmount - totalPaidAmountForSuccessfulBills) || "0"} textStyle={{ whiteSpace: "pre", ...rowStyle }} />
+        <Row className="border-none" label={t("WORKS_TOTAL_UNPAID_AMOUNT")} text={formattingNumber(Math.abs(totalMaterialAmount - totalPaidAmountForSuccessfulBills)) || "0"} textStyle={{ whiteSpace: "pre", ...rowStyle }} />
        </StatusTable>
        </div>
   )
