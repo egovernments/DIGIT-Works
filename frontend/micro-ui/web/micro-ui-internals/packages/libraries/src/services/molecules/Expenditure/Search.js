@@ -250,7 +250,8 @@ export const BillsSearch = {
 
     const mbdetails = {
       title: "EXP_MB_DETAILES",
-      isMbDetails : true
+      isMbDetails : true,
+      mbValidationData : billData?.additionalDetails?.mbValidationData
   };
 
     const invoiceDetails = {
