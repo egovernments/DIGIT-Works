@@ -164,6 +164,8 @@ public class DisbursementValidator {
         if(disbursement.getIndividual().getAddress() == null){
             throw new CustomException(Error.INVALID_REQUEST, Error.INVALID_ADDRESS);
         }
-
+        if(disbursement.getStatus() == null || disbursement.getStatus().getStatusCode() == null){
+            throw new CustomException(Error.INVALID_REQUEST, Error.DISBURSEMENT_STATUS_NOT_FOUND);
+        }
     }
 }
