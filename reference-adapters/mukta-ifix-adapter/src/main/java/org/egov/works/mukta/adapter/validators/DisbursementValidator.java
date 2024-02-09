@@ -102,8 +102,11 @@ public class DisbursementValidator {
         BigDecimal grossAmount = BigDecimal.ZERO;
         BigDecimal netAmount = BigDecimal.ZERO;
         for(Disbursement disbursement1: disbursement.getDisbursements()){
-            if(disbursement1.getGrossAmount() == null || disbursement1.getNetAmount() == null){
-                throw new CustomException(Error.INVALID_REQUEST, Error.GROSS_AMOUNT_AND_NET_AMOUNT_NOT_FOUND_MESSAGE);
+            if(disbursement1.getGrossAmount() == null){
+                throw new CustomException(Error.INVALID_REQUEST, Error.GROSS_AMOUNT_AND_NOT_FOUND_MESSAGE);
+            }
+            if(disbursement1.getNetAmount() == null){
+                throw new CustomException(Error.INVALID_REQUEST, Error.NET_AMOUNT_NOT_FOUND_MESSAGE);
             }
             grossAmount = grossAmount.add(disbursement1.getGrossAmount());
             netAmount = netAmount.add(disbursement1.getNetAmount());
@@ -163,6 +166,12 @@ public class DisbursementValidator {
         }
         if(disbursement.getIndividual().getAddress() == null){
             throw new CustomException(Error.INVALID_REQUEST, Error.INVALID_ADDRESS);
+        }
+        if(disbursement.getIndividual().getName() == null){
+            throw new CustomException(Error.INVALID_REQUEST, Error.INVALID_NAME);
+        }
+        if(disbursement.getIndividual().getPhone() == null){
+            throw new CustomException(Error.INVALID_REQUEST, Error.INVALID_PHONE);
         }
         if(disbursement.getStatus() == null || disbursement.getStatus().getStatusCode() == null){
             throw new CustomException(Error.INVALID_REQUEST, Error.DISBURSEMENT_STATUS_NOT_FOUND);

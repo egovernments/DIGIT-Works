@@ -30,7 +30,7 @@ public class Error {
     public static final String HEADER_NOT_FOUND_MESSAGE = "Header not found in the request";
     public static final String MESSAGE_NOT_FOUND_MESSAGE = "Message not found in the request";
     public static final String DISBURSEMENT_NOT_FOUND = "DISBURSEMENT_NOT_FOUND";
-    public static final String DISBURSEMENT_NOT_FOUND_IN_DB_MESSAGE = "Disbursement not found in the DB for the given disbursement request";
+    public static final String DISBURSEMENT_NOT_FOUND_IN_DB_MESSAGE = "Disbursement not found for the given disbursement request";
     public static final String TARGET_ID_NOT_MATCHED = "TARGET_ID_NOT_MATCHED";
     public static final String TARGET_ID_NOT_MATCHED_MESSAGE = "Target id not matched with the payment reference id";
     public static final String ALL_CHILDS_ARE_NOT_PRESENT = "ALL_CHILDS_ARE_NOT_PRESENT";
@@ -39,10 +39,12 @@ public class Error {
     public static final String REFERENCE_ID_AND_TENANT_ID_NOT_FOUND = "Request should contain both reference id or tenant id if payment is null";
     public static final String SENDER_ID_AND_RECEIVER_ID_SAME_MESSAGE = "Sender and receiver id cannot be same";
     public static final String DISBURSEMENTS_NOT_FOUND_MESSAGE = "Disbursements not found in the request";
-    public static final String GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED = "Gross amount and net amount not matched with the disbursement from db";
+    public static final String GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED = "Gross amount and net amount not matched with the disbursement";
     public static final String ID_NOT_FOUND_MESSAGE = "Disbursement id not found in the request";
     public static final String DISBURSEMENT_STATUS_NOT_FOUND = "Disbursement status not found in the request";
     public static final String INDIVIDUAL_NOT_FOUND = "INDIVIDUAL_NOT_FOUND";
     public static final String ALLOCATION_IDS_NOT_FOUND_MESSAGE = "Allocation ids not found in the request";
     public static final String GROSS_AMOUNT_AND_NET_AMOUNT_NOT_FOUND_MESSAGE = "Gross amount and net amount not found in the request";
+    public static final String GROSS_AMOUNT_AND_NOT_FOUND_MESSAGE = "Gross amount not found in the request";
+    public static final String NET_AMOUNT_NOT_FOUND_MESSAGE = "Net amount not found in the request";
 }
