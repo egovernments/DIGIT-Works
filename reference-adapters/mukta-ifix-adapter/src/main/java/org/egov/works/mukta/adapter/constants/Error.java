@@ -39,7 +39,7 @@ public class Error {
     public static final String REFERENCE_ID_AND_TENANT_ID_NOT_FOUND = "Request should contain both reference id or tenant id if payment is null";
     public static final String SENDER_ID_AND_RECEIVER_ID_SAME_MESSAGE = "Sender and receiver id cannot be same";
     public static final String DISBURSEMENTS_NOT_FOUND_MESSAGE = "Disbursements not found in the request";
-    public static final String GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED = "Gross amount and net amount not matched with the disbursement child items addition.";
+    public static final String GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED = "Sum of disbursement child item amounts should be equal to original disbursement amount.";
     public static final String ID_NOT_FOUND_MESSAGE = "Disbursement id not found in the request";
     public static final String DISBURSEMENT_STATUS_NOT_FOUND = "Disbursement status not found in the request";
     public static final String INDIVIDUAL_NOT_FOUND = "INDIVIDUAL_NOT_FOUND";

@@ -34,7 +34,13 @@ public class PaymentInstructionEnrichment {
     public PaymentInstructionEnrichment(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
-
+    /**
+     * The function enriches the beneficiary based on the bills and payment request.
+     * @param billList The bill list
+     * @param paymentRequest The payment request
+     * @param mdmsData The mdms data
+     * @return The list of beneficiaries
+     */
     public List<Beneficiary> getBeneficiariesFromBills(List<Bill> billList, PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
         log.info("Started generating beneficiaries lists for PI");
         List<Beneficiary> beneficiaryList = new ArrayList<>();
@@ -55,7 +61,14 @@ public class PaymentInstructionEnrichment {
         beneficiaryList = combineBeneficiaryById(beneficiaryList);
         return beneficiaryList;
     }
-
+    /**
+     * The function generates the beneficiary based on the line item and payee details.
+     * @param lineItem The line item
+     * @param payee The payee
+     * @param headCodeMap The head code map
+     * @param tenantId The tenant id
+     * @return The beneficiary
+     */
     private Beneficiary getBeneficiariesFromLineItem(LineItem lineItem, Party payee, Map<String, JsonNode> headCodeMap, String tenantId) {
         log.info("Started executing getBeneficiariesFromLineItem");
         String beneficiaryId = payee.getIdentifier();
@@ -82,7 +95,11 @@ public class PaymentInstructionEnrichment {
         log.info("Beneficiary generated and sending back.");
         return beneficiary;
     }
-
+    /**
+     * The function combines the beneficiary based on the beneficiary id.
+     * @param beneficiaryList The beneficiary list
+     * @return The combined beneficiary list
+     */
     private List<Beneficiary> combineBeneficiaryById(List<Beneficiary> beneficiaryList) {
         log.info("Started executing combineBeneficiaryById");
         Map<String, Beneficiary> benfMap = new HashMap<>();
@@ -98,7 +115,11 @@ public class PaymentInstructionEnrichment {
         log.info("Beneficiary details are combined based on account details, sending back.");
         return beneficiaries;
     }
-
+    /**
+     * The function generates the head code map based on the head codes list.
+     * @param headCodesList The head codes list
+     * @return The head code map
+     */
     private Map<String, JsonNode> getHeadCodeHashMap(JSONArray headCodesList) {
         Map<String, JsonNode> headCodeMap = new HashMap<>();
         for (Object headcode : headCodesList) {
@@ -107,11 +128,21 @@ public class PaymentInstructionEnrichment {
         }
         return headCodeMap;
     }
-
+    /**
+     * The function enriches the bank account on the beneficiary.
+     * @param beneficiaryList The beneficiary list
+     * @param bankAccounts The bank accounts
+     * @param individuals The individuals
+     * @param organisations The organisations
+     * @param paymentRequest The payment request
+     * @param ssuNode The ssu node
+     * @param headCodeCategoryMap The head code category map
+     * @return The disbursement
+     */
     public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations, PaymentRequest paymentRequest, JsonNode ssuNode, Map<String,String> headCodeCategoryMap) {
         log.info("Started executing enrichBankaccountOnBeneficiary");
         String programCode = ssuNode.get("programCode").asText();
-        Boolean isAnyDisbursementFailed = false;
+        boolean isAnyDisbursementFailed = false;
         Map<String, BankAccount> bankAccountMap = new HashMap<>();
         AuditDetails auditDetails = AuditDetails.builder().createdBy(paymentRequest.getRequestInfo().getUserInfo().getUuid())
                 .createdTime(System.currentTimeMillis())
@@ -137,6 +168,7 @@ public class PaymentInstructionEnrichment {
         log.info("Created map of org, individual and bankaccount, started generating beneficiary.");
         Disbursement disbursement = new Disbursement();
         List<Disbursement> disbursements = new ArrayList<>();
+        // Enriching the disbursement for each line line item.
         for (Beneficiary piBeneficiary : beneficiaryList) {
             BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBeneficiaryId());
             Individual individual = individualMap.get(piBeneficiary.getBeneficiaryId());
@@ -156,6 +188,7 @@ public class PaymentInstructionEnrichment {
                 }
             }
         }
+        // Enriching the parent disbursement.
         UUID uuid = UUID.randomUUID();
         disbursement.setId(uuid.toString());
         disbursement.setTargetId(paymentRequest.getPayment().getPaymentNumber());
@@ -184,7 +217,17 @@ public class PaymentInstructionEnrichment {
         disbursement.setNetAmount(netAmount);
         disbursement.setGrossAmount(grossAmount);
     }
-
+    /**
+     * The function enriches the disbursement for each line item.
+     * @param bankAccount The bank account
+     * @param individual The individual
+     * @param organisation The organisation
+     * @param lineItem The line item
+     * @param auditDetails The audit details
+     * @param programCode The program code
+     * @param headCodeCategoryMap The head code category map
+     * @return The disbursement
+     */
     private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,AuditDetails auditDetails,String programCode,Map<String,String> headCodeCategoryMap) {
         log.info("Started executing enrichDisbursement");
         String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
@@ -230,7 +273,11 @@ public class PaymentInstructionEnrichment {
 
         return disbursement;
     }
-
+    /**
+     * The function enriches the disbursement status.
+     * @param disbursement The disbursement
+     * @param statusCode The status code
+     */
     public void enrichDisbursementStatus(Disbursement disbursement,StatusCode statusCode) {
         Status status = Status.builder().statusCode(statusCode).statusMessage(statusCode.toString()).build();
         disbursement.setStatus(status);

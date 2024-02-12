@@ -42,7 +42,11 @@ public class MuktaAdaptorConsumer {
         this.paymentService = paymentService;
         this.disbursementValidator = disbursementValidator;
     }
-
+    /**
+     * The function listens to the payment create topic and processes the payment request
+     * @param record The payment request
+     * @param topic The topic name
+     */
     @KafkaListener(topics = {"${payment.create.topic}"})
     public void listen(final String record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         PaymentRequest paymentRequest = null;

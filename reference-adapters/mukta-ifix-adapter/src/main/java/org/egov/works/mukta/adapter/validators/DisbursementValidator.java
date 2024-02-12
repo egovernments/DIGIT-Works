@@ -23,21 +23,30 @@ public class DisbursementValidator {
     public DisbursementValidator(DisbursementRepository disbursementRepository) {
         this.disbursementRepository = disbursementRepository;
     }
-
+    /**
+     * Validates the disbursement request
+     * @param disbursementRequest The disbursement request
+     */
     public void validateOnDisbursementRequest(DisbursementRequest disbursementRequest) {
         log.info("Validating on disbursement request");
         validateRequestBodyForOnDisbursement(disbursementRequest);
         validateHeader(disbursementRequest.getHeader());
         validateDisbursement(disbursementRequest.getMessage());
     }
-
+    /**
+     * Validates the header
+     * @param header The message header
+     */
     private void validateHeader(MsgHeader header) {
         log.info("Validating header");
         if(Objects.equals(header.getSenderId(), header.getReceiverId())){
             throw new CustomException(Error.INVALID_REQUEST, Error.SENDER_ID_AND_RECEIVER_ID_SAME_MESSAGE);
         }
     }
-
+    /**
+     * Validates the request body for disbursement create
+     * @param paymentRequest The payment request
+     */
     public void isValidForDisbursementCreate(PaymentRequest paymentRequest){
         log.info("Validating request body for disbursement create");
         if(paymentRequest.getReferenceId() == null && paymentRequest.getPayment().getPaymentNumber() == null){
@@ -63,6 +72,10 @@ public class DisbursementValidator {
         }
         log.info("No active disbursement found for the payment id : " + paymentRequest.getReferenceId());
     }
+    /**
+     * Validates the request body for on disbursement
+     * @param disbursementRequest The disbursement request
+     */
     private void validateRequestBodyForOnDisbursement(DisbursementRequest disbursementRequest) {
         log.info("Validating request body for on disbursement");
         if(disbursementRequest.getSignature() == null || disbursementRequest.getSignature().isEmpty()){
@@ -75,7 +88,10 @@ public class DisbursementValidator {
             throw new CustomException(Error.INVALID_REQUEST, Error.MESSAGE_NOT_FOUND_MESSAGE);
         }
     }
-
+    /**
+     * Validates the disbursement
+     * @param disbursement The disbursement
+     */
     public void validateDisbursement(Disbursement disbursement) {
         log.info("Validating disbursement");
         if (disbursement.getId() == null) {
@@ -97,6 +113,10 @@ public class DisbursementValidator {
         validateDisbursementFromDB(disbursement);
     }
 
+    /**
+     * Validates the disbursement amount
+     * @param disbursement The disbursement
+     */
     private void validateDisbursementAmount(Disbursement disbursement) {
         log.info("Validating disbursement amount");
         BigDecimal grossAmount = BigDecimal.ZERO;
@@ -115,7 +135,10 @@ public class DisbursementValidator {
             throw new CustomException(Error.INVALID_REQUEST, Error.GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED);
         }
     }
-
+    /**
+     * Validates the disbursement from db
+     * @param disbursement The disbursement
+     */
     private void validateDisbursementFromDB(Disbursement disbursement) {
         log.info("Validating disbursement from db");
         DisbursementSearchCriteria disbursementSearchCriteria = DisbursementSearchCriteria.builder()
@@ -152,7 +175,11 @@ public class DisbursementValidator {
             throw new CustomException(Error.ALL_CHILDS_ARE_NOT_PRESENT, Error.ALL_CHILDS_ARE_NOT_PRESENT_MESSAGE);
         }
     }
-
+    /**
+     * Validates the child disbursement
+     * @param disbursementFromDB The disbursement from db
+     * @param disbursement The disbursement
+     */
     private void validateChildDisbursement(Disbursement disbursementFromDB, Disbursement disbursement) {
         log.info("Validating child disbursement");
         if(!disbursementFromDB.getTargetId().equals(disbursement.getTargetId())){

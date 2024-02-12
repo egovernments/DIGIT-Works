@@ -166,7 +166,7 @@ public class PaymentInstructionService {
             individuals = individualUtils.getIndividualById(paymentRequest.getRequestInfo(), individualIds, paymentRequest.getPayment().getTenantId());
             log.info("Individuals fetched for the individual ids : " + individuals);
         }
-        // Enrich PI request with beneficiary bankaccount details
+        // Enrich disbursement request with beneficiary bankaccount details
         Disbursement disbursementRequest = piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations, paymentRequest,ssuNode,headCodeCategoryMap);
         log.info("Beneficiaries are enriched, sending back beneficiaryList");
         return disbursementRequest;

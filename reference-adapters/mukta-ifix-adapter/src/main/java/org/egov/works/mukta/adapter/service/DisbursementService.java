@@ -38,7 +38,11 @@ public class DisbursementService {
         this.muktaAdaptorProducer = muktaAdaptorProducer;
         this.disbursementValidator = disbursementValidator;
     }
-
+    /**
+     * Processes the disbursement request and updates the payment status
+     * @param disbursementRequest The disbursement request
+     * @return The disbursement response
+     */
     public DisbursementResponse processOnDisbursement(DisbursementRequest disbursementRequest) {
         log.info("Processing disbursement request");
         disbursementValidator.validateOnDisbursementRequest(disbursementRequest);
@@ -59,7 +63,11 @@ public class DisbursementService {
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementResponse);
         return disbursementResponse;
     }
-
+    /**
+     * Processes the disbursement request and updates the payment status
+     * @param disbursementRequest The disbursement request
+     * @return The disbursement response
+     */
     private DisbursementResponse getDisbursementResponse(DisbursementRequest disbursementRequest) {
         AuditDetails auditDetails = disbursementRequest.getMessage().getAuditDetails();
         AuditDetails updatedAuditDetails = AuditDetails.builder().createdBy(auditDetails.getCreatedBy()).createdTime(auditDetails.getCreatedTime()).lastModifiedBy(auditDetails.getLastModifiedBy()).lastModifiedTime(System.currentTimeMillis()).build();
@@ -79,7 +87,12 @@ public class DisbursementService {
         return disbursementResponse;
     }
 
-
+    /**
+     * Updates the payment status based on the disbursement status
+     * @param payment The payment
+     * @param disbursement The disbursement
+     * @param requestInfo The request info
+     */
     private void updatePaymentStatus(Payment payment, Disbursement disbursement, RequestInfo requestInfo) {
         EnumMap<StatusCode, PaymentStatus> lineItemIdStatusMap = getStatusCodeToPaymentStatusMap();
         HashMap<String, StatusCode> targetIdToStatusCodeMap = new HashMap<>();
@@ -91,7 +104,11 @@ public class DisbursementService {
                         billDetail.getPayableLineItems().forEach(payableLineItem -> payableLineItem.setStatus(lineItemIdStatusMap.get(targetIdToStatusCodeMap.get(payableLineItem.getLineItemId()))))));
         updatePaymentStatusForPartial(payment, requestInfo);
     }
-
+    /**
+     * Updates the payment status for partial
+     * @param payment The payment
+     * @param requestInfo The request info
+     */
     private void updatePaymentStatusForPartial(Payment payment, RequestInfo requestInfo) {
         try {
             log.info("Updating payment status for partial.");
@@ -106,7 +123,11 @@ public class DisbursementService {
             log.error("Exception while updating the payment status FailureDetailsService:updatePaymentStatusForPartial : " + e);
         }
     }
-
+    /**
+     * Updates the payment status for partial
+     * @param payment The payment
+     * @return The boolean value
+     */
     private boolean updatePaymentBills(Payment payment) {
         boolean updatePaymentStatus = false;
         for (PaymentBill bill : payment.getBills()) {
@@ -118,7 +139,11 @@ public class DisbursementService {
         }
         return updatePaymentStatus;
     }
-
+    /**
+     * Updates the bill details
+     * @param bill The payment bill
+     * @return The boolean value
+     */
     private boolean updateBillDetails(PaymentBill bill) {
         boolean updateBillStatus = false;
         for (PaymentBillDetail billDetail : bill.getBillDetails()) {
@@ -130,7 +155,11 @@ public class DisbursementService {
         }
         return updateBillStatus;
     }
-
+    /**
+     * Updates the line items
+     * @param billDetail The payment bill detail
+     * @return The boolean value
+     */
     private boolean updateLineItems(PaymentBillDetail billDetail) {
         boolean updateBillDetailsStatus = false;
         for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
@@ -141,7 +170,10 @@ public class DisbursementService {
         }
         return updateBillDetailsStatus;
     }
-
+    /**
+     * Returns the status code to payment status map
+     * @return The status code to payment status map
+     */
     private EnumMap<StatusCode, PaymentStatus> getStatusCodeToPaymentStatusMap() {
         EnumMap<StatusCode,PaymentStatus> statusCodePaymentStatusHashMap = new EnumMap<>(StatusCode.class);
         statusCodePaymentStatusHashMap.put(StatusCode.INITIATED, PaymentStatus.INITIATED);

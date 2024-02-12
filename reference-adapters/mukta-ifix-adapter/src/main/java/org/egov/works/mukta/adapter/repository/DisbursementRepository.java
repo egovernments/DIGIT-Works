@@ -30,13 +30,16 @@ public class DisbursementRepository {
     }
 
     public List<Disbursement> searchDisbursement(DisbursementSearchRequest disbursementSearchRequest) {
+        log.info("DisbursementSearchRequest: " + disbursementSearchRequest.toString());
         List<Object> preparedStmtList = new ArrayList<>();
         String query = disbursementQueryBuilder.getDisbursementSearchQuery(disbursementSearchRequest, preparedStmtList,null,true);
         List<Disbursement> disbursements = jdbcTemplate.query(query, preparedStmtList.toArray(), disbursementRowMapper);
         List<String> parentIds = new ArrayList<>();
-        for (Disbursement disbursement : disbursements) {
-            if (disbursement.getId() != null) {
-                parentIds.add(disbursement.getId());
+        if (disbursements != null) {
+            for (Disbursement disbursement : disbursements) {
+                if (disbursement.getId() != null) {
+                    parentIds.add(disbursement.getId());
+                }
             }
         }
         if(!parentIds.isEmpty()){
