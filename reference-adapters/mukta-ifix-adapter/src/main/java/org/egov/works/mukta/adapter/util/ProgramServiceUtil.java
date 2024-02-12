@@ -27,6 +27,7 @@ public class ProgramServiceUtil {
     public void callProgramServiceDisbursement(DisbursementCreateRequest disbursement) {
         log.info("Calling program service for disbursement");
         String url = config.getProgramServiceHost() + config.getProgramServiceDisbursementEndpoint();
+        log.info("URL for program service disbursement: " + url);
         Object response = null;
         try {
             response = restTemplate.postForObject(url, disbursement, Object.class);

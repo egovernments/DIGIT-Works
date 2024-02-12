@@ -45,22 +45,46 @@ public class DisbursementService {
      */
     public DisbursementResponse processOnDisbursement(DisbursementRequest disbursementRequest) {
         log.info("Processing disbursement request");
+
+        // Validate the disbursement request
         disbursementValidator.validateOnDisbursementRequest(disbursementRequest);
+
+        // Extract the disbursement message from the request
         Disbursement disbursement = disbursementRequest.getMessage();
+
+        // Extract the tenant ID from the disbursement
         String tenantId = disbursement.getLocationCode();
-        //TODO: FIX MANUAL UUID
+
+        // TODO: FIX MANUAL UUID
+        // Build the request info with a hardcoded user UUID
         RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
+
+        // Fetch payment details using the request info, target ID from disbursement, and tenant ID
         List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, disbursement.getTargetId(), tenantId);
+
+        // If no payments are found, throw a custom exception
         if (payments == null || payments.isEmpty()) {
             throw new CustomException(Error.PAYMENT_NOT_FOUND, Error.PAYMENT_NOT_FOUND_MESSAGE);
         }
+
         log.info("Payments fetched for the disbursement request : " + payments);
+
+        // Extract the first payment from the list of payments
         Payment payment = payments.get(0);
+
         log.info("Updating the payment status for the payments : " + payment);
+
+        // Update the payment status
         updatePaymentStatus(payment, disbursement, requestInfo);
+
         log.info("Updating the disbursement status for the payments : " + disbursementRequest.getMessage());
+
+        // Get the disbursement response
         DisbursementResponse disbursementResponse = getDisbursementResponse(disbursementRequest);
+
+        // Push the disbursement response to the disburse update topic
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementResponse);
+
         return disbursementResponse;
     }
     /**
@@ -94,6 +118,7 @@ public class DisbursementService {
      * @param requestInfo The request info
      */
     private void updatePaymentStatus(Payment payment, Disbursement disbursement, RequestInfo requestInfo) {
+        log.info("Updating payment status for the payment : " + payment);
         EnumMap<StatusCode, PaymentStatus> lineItemIdStatusMap = getStatusCodeToPaymentStatusMap();
         HashMap<String, StatusCode> targetIdToStatusCodeMap = new HashMap<>();
         for(Disbursement disbursement1: disbursement.getDisbursements()){

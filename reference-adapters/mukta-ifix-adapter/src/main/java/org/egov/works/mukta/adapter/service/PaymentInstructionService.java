@@ -71,6 +71,7 @@ public class PaymentInstructionService {
         Disbursement disbursement = processPaymentInstruction(paymentRequest);
         DisbursementCreateRequest disbursementRequest = DisbursementCreateRequest.builder().disbursement(disbursement).requestInfo(paymentRequest.getRequestInfo()).build();
 //        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+        log.info("Pushing disbursement request to the kafka topic");
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
         return disbursement;
     }
@@ -79,23 +80,42 @@ public class PaymentInstructionService {
         log.info("Processing payment instruction");
         Disbursement disbursement = null;
         try {
+            // Check if payment details are not present in the request
             if(paymentRequest.getPayment() == null && paymentRequest.getReferenceId() != null && paymentRequest.getTenantId() != null) {
                 log.info("Fetching payment details by using reference id and tenant id");
                 List<Payment> payments = billUtils.fetchPaymentDetails(paymentRequest.getRequestInfo(), paymentRequest.getReferenceId(), paymentRequest.getTenantId());
+
+                // If no payments are found, throw a custom exception
                 if (payments == null || payments.isEmpty()) {
                     throw new CustomException(Error.PAYMENT_NOT_FOUND, Error.PAYMENT_NOT_FOUND_MESSAGE);
                 }
                 log.info("Payments fetched for the disbursement request : " + payments);
                 paymentRequest.setPayment(payments.get(0));
             }
+
+            // Fetch MDMS data
             Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
+
+            // Get beneficiaries from payment
             disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData);
+
             log.info("Encrypting Disbursement Object");
-            JsonNode node =encryptionDecryptionUtil.encryptObject(disbursement, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), JsonNode.class);
+            // Encrypt the disbursement object
+            JsonNode node = encryptionDecryptionUtil.encryptObject(disbursement, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), JsonNode.class);
+
+            // Convert the encrypted object back to Disbursement
             disbursement = objectMapper.convertValue(node, Disbursement.class);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Error occurred while processing the payment instruction", e);
-            piEnrichment.enrichDisbursementStatus(disbursement,StatusCode.FAILED);
+
+            // If disbursement is not null, enrich its status
+            if (disbursement != null) {
+                piEnrichment.enrichDisbursementStatus(disbursement, StatusCode.FAILED);
+            } else {
+                // If disbursement is null, log the error and throw a custom exception
+                log.error("Disbursement is null. Cannot enrich status.");
+                throw new CustomException(Error.DISBURSEMENT_NOT_FOUND, Error.DISBURSEMENT_NOT_FOUND_MESSAGE);
+            }
         }
         log.info("Disbursement request is " + disbursement);
         return disbursement;
@@ -103,38 +123,63 @@ public class PaymentInstructionService {
 
     private Disbursement getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
         log.info("Started executing getBeneficiariesFromPayment");
+
+        // Fetching SSU details and Head codes from MDMS data
         JSONArray ssuDetails = mdmsData.get(Constants.MDMS_IFMS_MODULE_NAME).get(Constants.MDMS_SSU_DETAILS_MASTER);
         JSONArray headCodes = mdmsData.get(Constants.MDMS_EXPENSE_MODULE_NAME).get(Constants.MDMS_HEAD_CODES_MASTER);
-        HashMap<String,String> headCodeCategoryMap = getHeadCodeCategoryMap(headCodes);
-        JsonNode ssuNode = objectMapper.valueToTree(ssuDetails.get(0));
-        // Get the list of bills based on payment request
-        List<Bill> billList = billUtils.fetchBillsFromPayment(paymentRequest);
-        if (billList == null || billList.isEmpty())
-            throw new CustomException(Error.BILLS_NOT_FOUND , Error.BILLS_NOT_FOUND_MESSAGE);
 
+        // Creating a map of head code categories
+        HashMap<String,String> headCodeCategoryMap = getHeadCodeCategoryMap(headCodes);
+
+        // Converting SSU details to JsonNode
+        JsonNode ssuNode = objectMapper.valueToTree(ssuDetails.get(0));
+
+        // Fetching the list of bills based on payment request
+        List<Bill> billList = billUtils.fetchBillsFromPayment(paymentRequest);
+
+        // If no bills are found, throw a custom exception
+        if (billList == null || billList.isEmpty()) {
+            throw new CustomException(Error.BILLS_NOT_FOUND , Error.BILLS_NOT_FOUND_MESSAGE);
+        }
+
+        // Filtering bills based on line item status
         billList = filterBillsPayableLineItemByPayments(paymentRequest.getPayment(), billList);
         log.info("Bills are filtered based on line item status, and sending back."+ billList);
+
+        // Fetching beneficiaries from bills
         List<Beneficiary> beneficiaryList = piEnrichment.getBeneficiariesFromBills(billList, paymentRequest, mdmsData);
 
-        if (beneficiaryList == null || beneficiaryList.isEmpty())
+        // If no beneficiaries are found, throw a custom exception
+        if (beneficiaryList == null || beneficiaryList.isEmpty()) {
             throw new CustomException(Error.BENEFICIARIES_NOT_FOUND, Error.BENEFICIARIES_NOT_FOUND_MESSAGE);
+        }
 
-        // Get all beneficiary ids from pi request
+        // Fetching all beneficiary ids from payment request
         List<String> individualIds = new ArrayList<>();
         List<String> orgIds = new ArrayList<>();
         for (Bill bill : billList) {
             for (BillDetail billDetail : bill.getBillDetails()) {
                 Party payee = billDetail.getPayee();
+
+                // If payee is an individual, add to individualIds list
                 if (payee != null && payee.getType().equals(Constants.PAYEE_TYPE_INDIVIDUAL)) {
                     individualIds.add(billDetail.getPayee().getIdentifier());
-                } else if (payee != null) {
+                }
+                // If payee is an organization, add to orgIds list
+                else if (payee != null) {
                     orgIds.add(billDetail.getPayee().getIdentifier());
                 }
             }
         }
+
+        // If no individual or organization ids are found, throw a custom exception
+        if (individualIds.isEmpty() && orgIds.isEmpty()) {
+            throw new CustomException(Error.NO_BENEFICIARY_IDS_FOUND, Error.NO_BENEFICIARY_IDS_FOUND_MESSAGE);
+        }
+
+        // Enriching beneficiaries data and returning the disbursement
         return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, individualIds,ssuNode,headCodeCategoryMap);
     }
-
     private HashMap<String, String> getHeadCodeCategoryMap(JSONArray headCodes) {
         HashMap<String,String> headCodeCategoryMap = new HashMap<>();
         for (Object headCode : headCodes) {
@@ -146,6 +191,8 @@ public class PaymentInstructionService {
 
     private Disbursement getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds,JsonNode ssuNode,HashMap<String,String> headCodeCategoryMap) {
         log.info("Started executing getBeneficiariesEnrichedData");
+
+        // Collecting beneficiary ids from the beneficiary list
         List<String> beneficiaryIds = new ArrayList<>();
         for (Beneficiary beneficiary : beneficiaryList) {
             beneficiaryIds.add(beneficiary.getBeneficiaryId());
@@ -153,22 +200,33 @@ public class PaymentInstructionService {
 
         List<Organisation> organizations = new ArrayList<>();
         List<Individual> individuals = new ArrayList<>();
-        // Get bank account details by beneficiary ids
+
+        // Fetching bank account details by beneficiary ids
         List<BankAccount> bankAccounts = bankAccountUtils.getBankAccountsByIdentifier(paymentRequest.getRequestInfo(), beneficiaryIds, paymentRequest.getPayment().getTenantId());
+        if (bankAccounts == null || bankAccounts.isEmpty()) {
+            throw new CustomException(Error.BANK_ACCOUNTS_NOT_FOUND, Error.BANK_ACCOUNTS_NOT_FOUND_MESSAGE);
+        }
         log.info("Bank accounts fetched for the beneficiary ids : " + bankAccounts);
-        // Get organizations details
+
+        // Fetching organization details if orgIds are not empty
         if (orgIds != null && !orgIds.isEmpty()) {
             organizations = organisationUtils.getOrganisationsById(paymentRequest.getRequestInfo(), orgIds, paymentRequest.getPayment().getTenantId());
             log.info("Organizations fetched for the org ids : " + organizations);
         }
-        // Get bank account details by beneficiary ids
+
+        // Fetching individual details if individualIds are not empty
         if (individualIds != null && !individualIds.isEmpty()) {
             individuals = individualUtils.getIndividualById(paymentRequest.getRequestInfo(), individualIds, paymentRequest.getPayment().getTenantId());
             log.info("Individuals fetched for the individual ids : " + individuals);
         }
-        // Enrich disbursement request with beneficiary bankaccount details
+
+        // Enriching disbursement request with beneficiary bank account details
         Disbursement disbursementRequest = piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations, paymentRequest,ssuNode,headCodeCategoryMap);
+        if (disbursementRequest == null) {
+            throw new CustomException(Error.DISBURSEMENT_ENRICHMENT_FAILED, Error.DISBURSEMENT_ENRICHMENT_FAILED_MESSAGE);
+        }
         log.info("Beneficiaries are enriched, sending back beneficiaryList");
+
         return disbursementRequest;
     }
 

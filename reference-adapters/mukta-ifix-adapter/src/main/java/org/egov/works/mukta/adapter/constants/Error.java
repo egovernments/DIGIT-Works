@@ -47,4 +47,11 @@ public class Error {
     public static final String GROSS_AMOUNT_AND_NOT_FOUND_MESSAGE = "Gross amount not found in the request";
     public static final String NET_AMOUNT_NOT_FOUND_MESSAGE = "Net amount not found in the request";
     public static final String GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED_WITH_ORIGINAL_DISBURSEMENT = "Gross amount and net amount not matched with the disbursement child items not matched with DB.";
+    public static final String DISBURSEMENT_NOT_FOUND_MESSAGE = "Disbursement not found in the request";
+    public static final String NO_BENEFICIARY_IDS_FOUND = "NO_BENEFICIARY_IDS_FOUND";
+    public static final String NO_BENEFICIARY_IDS_FOUND_MESSAGE = "No beneficiary ids found in the request";
+    public static final String DISBURSEMENT_ENRICHMENT_FAILED = "DISBURSEMENT_ENRICHMENT_FAILED";
+    public static final String DISBURSEMENT_ENRICHMENT_FAILED_MESSAGE = "Disbursement enrichment failed for the given payment request";
+    public static final String BANK_ACCOUNTS_NOT_FOUND = "BANK_ACCOUNTS_NOT_FOUND";
+    public static final String BANK_ACCOUNTS_NOT_FOUND_MESSAGE = "Bank accounts not found for the given bank account search criteria";
 }

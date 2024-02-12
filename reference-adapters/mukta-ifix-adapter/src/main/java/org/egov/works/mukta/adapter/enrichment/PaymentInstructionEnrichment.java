@@ -6,7 +6,6 @@ import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
-import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.Status;
@@ -148,6 +147,7 @@ public class PaymentInstructionEnrichment {
                 .createdTime(System.currentTimeMillis())
                 .lastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid())
                 .lastModifiedTime(System.currentTimeMillis()).build();
+        // Creating map of bank account, individual and organisation based on the beneficiary id.git
         if (bankAccounts != null && !bankAccounts.isEmpty()) {
             for (BankAccount bankAccount : bankAccounts) {
                 bankAccountMap.put(bankAccount.getReferenceId(), bankAccount);

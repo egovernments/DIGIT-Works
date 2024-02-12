@@ -39,6 +39,7 @@ public class DisbursementValidator {
      */
     private void validateHeader(MsgHeader header) {
         log.info("Validating header");
+        // Check if the sender ID is the same as the receiver ID
         if(Objects.equals(header.getSenderId(), header.getReceiverId())){
             throw new CustomException(Error.INVALID_REQUEST, Error.SENDER_ID_AND_RECEIVER_ID_SAME_MESSAGE);
         }
