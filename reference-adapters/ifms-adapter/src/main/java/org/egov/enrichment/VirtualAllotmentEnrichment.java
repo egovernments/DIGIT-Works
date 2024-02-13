@@ -8,7 +8,10 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.utils.HelperUtil;
 import org.egov.web.models.Allocation;
 import org.egov.web.models.Sanction;
+import org.egov.web.models.Status;
+import org.egov.web.models.enums.AllocationType;
 import org.egov.web.models.enums.JITServiceId;
+import org.egov.web.models.enums.StatusCode;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -210,6 +213,7 @@ public class VirtualAllotmentEnrichment {
                         .id(UUID.randomUUID().toString())
                         .tenantId(tenantId)
                         .sanctionId(sanctionDetail.getId())
+                        .programCode(sanctionDetail.getProgramCode())
                         .allotmentSerialNo(Integer.parseInt(allotment.getAllotmentTxnSlNo()))
                         .ssuAllotmentId(allotment.getSsuAllotmentId())
                         .decimalAllottedAmount(new BigDecimal(allotment.getAllotmentAmount()))
@@ -263,6 +267,7 @@ public class VirtualAllotmentEnrichment {
             sanction.setSanctionedAmount(sanctionDetail.getSanctionedAmount());
             sanction.setLocationCode(sanctionDetail.getTenantId());
             sanction.setProgramCode(sanctionDetail.getProgramCode());
+            sanction.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
             sanction.setAuditDetails(sanctionDetail.getAuditDetails());
             sanctionList.add(sanction);
         }
@@ -279,6 +284,12 @@ public class VirtualAllotmentEnrichment {
             allocationPayload.setAmount(allotment.getDecimalAllottedAmount());
             allocationPayload.setLocationCode(allotment.getTenantId());
             allocationPayload.setAuditDetails(allotment.getAuditDetails());
+            allocationPayload.setProgramCode(allotment.getProgramCode());
+            if(allotment.getAllotmentTxnType().equals("Allotment withdrawal")){
+                allocationPayload.setType(AllocationType.DEDUCTION);
+            }else{
+                allocationPayload.setType(AllocationType.ALLOCATION);
+            }
             allotmentList.add(allocationPayload);
         }
 

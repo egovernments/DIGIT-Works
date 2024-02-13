@@ -75,13 +75,13 @@ public class IfmsService {
     }
 
     public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
-//        if (jitAuthValues.getAuthToken() == null) {
-//            getAuthDetailsFromIFMS();
-//        }
+        if (jitAuthValues.getAuthToken() == null) {
+            getAuthDetailsFromIFMS();
+        }
         JITResponse decryptedResponse = null;
         try {
-//            decryptedResponse = callServiceAPI(jitRequest);
-            decryptedResponse = loadCustomResponse();
+            decryptedResponse = callServiceAPI(jitRequest);
+//            decryptedResponse = loadCustomResponse();
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             String message = e.toString();
             if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
@@ -241,14 +241,11 @@ public class IfmsService {
     public JITResponse loadCustomResponse() {
         JITResponse vaResponse = null;
         try {
-            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/4PAGResponse.json");
+            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/1VAResponse.json");
             vaResponse = objectMapper.readValue(file, JITResponse.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return vaResponse;
     }
-
-
-
 }

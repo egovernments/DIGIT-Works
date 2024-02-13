@@ -2,6 +2,8 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.egov.web.models.enums.Action;
+import org.egov.web.models.enums.MessageType;
 import org.egov.web.models.enums.MsgHeaderStatusReasonCode;
 import org.egov.web.models.enums.RequestStatus;
 
@@ -17,21 +19,30 @@ public class MsgCallbackHeader {
     @JsonProperty("message_id")
     @NotNull
     private String messageId;
+
     @JsonProperty("message_ts")
     @NotNull
-    private String messageTs;
-    @JsonProperty("status")
+    private long messageTs;
+
+    @JsonProperty("message_type")
     @NotNull
-    private RequestStatus status;
-    @JsonProperty("status_reason_code")
-    private MsgHeaderStatusReasonCode statusReasonCode;
-    @JsonProperty("status_reason_message")
-    @Size(max = 999)
-    private String statusReasonMessage;
+    private MessageType messageType;
+
+    @JsonProperty("action")
+    @NotNull
+    private Action action;
+
     @JsonProperty("sender_id")
+    @NotNull
     private String senderId;
+
+    @JsonProperty("sender_uri")
+    private String senderUri;
+
+    @NotNull
     @JsonProperty("receiver_id")
     private String receiverId;
+
     @JsonProperty("is_msg_encrypted")
-    private Boolean isMsgEncrypted;
+    private boolean isMsgEncrypted;
 }

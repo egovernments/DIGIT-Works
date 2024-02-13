@@ -13,6 +13,8 @@ import org.egov.tracer.model.CustomException;
 import org.egov.utils.MdmsUtils;
 import org.egov.utils.ProgramServiceUtil;
 import org.egov.web.models.*;
+import org.egov.web.models.enums.Action;
+import org.egov.web.models.enums.MessageType;
 import org.egov.web.models.enums.MsgHeaderStatusReasonCode;
 import org.egov.web.models.enums.RequestStatus;
 import org.egov.web.models.jit.*;
@@ -163,12 +165,14 @@ public class VirtualAllotmentService {
 
     private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions) {
         log.info("Processing allotments and sanctions");
+        String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
         MsgCallbackHeader msgCallbackHeader = MsgCallbackHeader.builder()
-                .senderId("IFMS")
-                .receiverId("Program")
-                .statusReasonCode(MsgHeaderStatusReasonCode.RJCT_ACTION_INVALID)
-                .status(RequestStatus.RCVD)
-                .isMsgEncrypted(false)
+                .senderId("program@https://unified-qa.digit.org")
+                .receiverId("program@https://unified-dev.digit.org")
+                .messageType(MessageType.ON_SANCTION)
+                .messageId("123456")
+                .messageTs(1606970629)
+                .action(Action.CREATE)
                 .build();
         try {
             if(createSanctions != null && !createSanctions.isEmpty()){
@@ -177,7 +181,7 @@ public class VirtualAllotmentService {
                 OnSanctionRequest onSanctionRequest = OnSanctionRequest.builder()
                         .header(msgCallbackHeader)
                         .message(sanctionList)
-                        .signature("aaaa")
+                        .signature(signature)
                         .build();
                 programServiceUtil.callProgramServiceOnSanctionOrAllocation(onSanctionRequest, true);
             }
@@ -185,12 +189,13 @@ public class VirtualAllotmentService {
             if(createAllotments != null && !createAllotments.isEmpty()){
                 log.info("Processing created allotment for on_allocation/create");
                 List<Allocation> allotmentList = virtualAllotmentEnrichment.createAllotmentsPayload(createAllotments);
-                OnAllocationRequest onSanctionRequest = OnAllocationRequest.builder()
+                msgCallbackHeader.setMessageType(MessageType.ON_ALLOCATION);
+                OnAllocationRequest onAllocationRequest = OnAllocationRequest.builder()
                         .header(msgCallbackHeader)
                         .message(allotmentList)
-                        .signature("aaaa")
+                        .signature(signature)
                         .build();
-                programServiceUtil.callProgramServiceOnSanctionOrAllocation(onSanctionRequest, false);
+                programServiceUtil.callProgramServiceOnSanctionOrAllocation(onAllocationRequest, false);
             }
         }catch (Exception e){
             throw new RuntimeException("Error in calling on_sanction and on_allocation apis" + e.toString());

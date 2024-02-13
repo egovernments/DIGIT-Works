@@ -15,26 +15,26 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class BillConsumer {
 
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private PaymentInstructionService piService;
+//    @Autowired
+//    private ObjectMapper objectMapper;
+//    @Autowired
+//    private PaymentInstructionService piService;
 
-    @KafkaListener(topics = {"${payment.create.topic}"})
-    public void listen(final String record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-        try {
-            log.info("Payment data received on.");
-            PaymentRequest paymentRequest = objectMapper.readValue(record, PaymentRequest.class);
-            log.info("Payment data is " + paymentRequest);
-
-            // Check PI is already created or not
-            boolean createNewPi = piService.isPaymentValidForCreateNewPI(paymentRequest.getPayment());
-            if (createNewPi)
-                piService.processPaymentRequestForNewPI(paymentRequest);
-        } catch (Exception e) {
-            log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
-            throw new RuntimeException(e);
-        }
-    }
+//    @KafkaListener(topics = {"${payment.create.topic}"})
+//    public void listen(final String record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+//        try {
+//            log.info("Payment data received on.");
+//            PaymentRequest paymentRequest = objectMapper.readValue(record, PaymentRequest.class);
+//            log.info("Payment data is " + paymentRequest);
+//
+//            // Check PI is already created or not
+//            boolean createNewPi = piService.isPaymentValidForCreateNewPI(paymentRequest.getPayment());
+//            if (createNewPi)
+//                piService.processPaymentRequestForNewPI(paymentRequest);
+//        } catch (Exception e) {
+//            log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
+//            throw new RuntimeException(e);
+//        }
+//    }
 
 }
