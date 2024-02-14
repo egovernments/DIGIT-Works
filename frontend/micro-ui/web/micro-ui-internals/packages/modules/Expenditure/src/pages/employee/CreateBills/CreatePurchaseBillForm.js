@@ -37,6 +37,7 @@ const CreatePurchaseBillForm = ({
     const [selectedApprover, setSelectedApprover] = useState({});
     const [inputFormData,setInputFormData] = useState({})
     const [config, setConfig] = useState({});
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false)
 
     createPurchaseBillConfig = useMemo(
         () => Digit.Utils.preProcessMDMSConfig(t, createPurchaseBillConfig, {
@@ -148,6 +149,7 @@ const CreatePurchaseBillForm = ({
 
 
     const OnModalSubmit = async (_data) => {
+        setIsButtonDisabled(true);
         _data = Digit.Utils.trimStringsInObject(_data)
         //here make complete data in combination with _data and inputFormData and create payload accordingly
         //also test edit flow with this change
@@ -179,16 +181,18 @@ const CreatePurchaseBillForm = ({
 
             await CreatePurchaseBillMutation(payload, {
                 onError: async (error, variables) => {
+                    setIsButtonDisabled(false);
                     sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
                 },
                 onSuccess: async (responseData, variables) => {
+                setIsButtonDisabled(false);
                 sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
                 },
             });
         }
     };
 
-    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,20000);
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
 
     const onFormSubmit = async(data) => {
         data = Digit.Utils.trimStringsInObject(data)
@@ -232,6 +236,7 @@ const CreatePurchaseBillForm = ({
                     closeModal={() => setShowModal(false)}
                     onSubmit={handleSubmit}
                     config={config}
+                    isDisabled = {isButtonDisabled}
                 />
                 }
 
