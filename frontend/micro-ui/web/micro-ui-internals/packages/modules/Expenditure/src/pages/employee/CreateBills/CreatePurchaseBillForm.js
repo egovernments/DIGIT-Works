@@ -160,7 +160,7 @@ const CreatePurchaseBillForm = ({
             assignees:selectedApprover.uuid ? [selectedApprover.uuid]: [],
             comment:_data.comments ? _data.comments : ""
         }
-        const payload = createBillPayload(inputFormData, contract, docConfigData,workflowDetails);
+        const payload = createBillPayload(inputFormData, contract, docConfigData,workflowDetails, MBValidationData);
         
         if(isModify){
             const updatedBillObject = updateBillPayload(bill,payload)

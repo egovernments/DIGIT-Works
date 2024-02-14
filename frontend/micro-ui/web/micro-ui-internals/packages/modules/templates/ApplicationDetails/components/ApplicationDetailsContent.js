@@ -319,7 +319,7 @@ function ApplicationDetailsContent({
 
             {detail?.isInfoLabel && <CitizenInfoLabel info={detail?.infoHeader} text={detail?.infoText} fill={detail?.infoIconFill} className={"doc-banner"} style={detail?.style} textStyle={detail?.textStyle} ></CitizenInfoLabel>}
 
-            {detail?.isMbDetails && <MBDetailes />}
+            {detail?.isMbDetails && <MBDetailes formdata={applicationDetails?.applicationDetails?.filter((ob) => ob?.isMbDetails)?.[0]} />}
 
             <StatusTable style={getTableStyles()}>
               {detail?.title &&
