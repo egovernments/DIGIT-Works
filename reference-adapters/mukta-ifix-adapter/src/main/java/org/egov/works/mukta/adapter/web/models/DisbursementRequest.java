@@ -1,10 +1,7 @@
 package org.egov.works.mukta.adapter.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.Valid;
 
@@ -12,6 +9,7 @@ import javax.validation.Valid;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class DisbursementRequest {
     @JsonProperty("signature")
     private String signature;

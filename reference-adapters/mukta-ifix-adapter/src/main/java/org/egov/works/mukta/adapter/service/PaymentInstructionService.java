@@ -18,9 +18,8 @@ import org.egov.works.mukta.adapter.validators.DisbursementValidator;
 import org.egov.works.mukta.adapter.web.models.*;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
-import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
+import org.egov.works.mukta.adapter.web.models.enums.*;
 import org.egov.works.mukta.adapter.web.models.enums.Status;
-import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
 import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +68,18 @@ public class PaymentInstructionService {
         disbursementValidator.isValidForDisbursementCreate(paymentRequest);
         log.info("Creating new disbursement for the payment id : " + paymentRequest.getReferenceId());
         Disbursement disbursement = processPaymentInstruction(paymentRequest);
-        DisbursementCreateRequest disbursementRequest = DisbursementCreateRequest.builder().disbursement(disbursement).requestInfo(paymentRequest.getRequestInfo()).build();
-//        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+        String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
+        MsgHeader msgHeader = MsgHeader.builder().messageId(UUID.randomUUID().toString())
+                .messageTs(System.currentTimeMillis())
+                .senderId(muktaAdaptorConfig.getProgramSenderId())
+                .receiverId(muktaAdaptorConfig.getProgramRecieverId())
+                .senderUri(muktaAdaptorConfig.getProgramSenderId())
+                .action(Action.CREATE)
+                .messageType(MessageType.DISBURSE)
+                .isMsgEncrypted(false)
+                .build();
+        DisbursementRequest disbursementRequest = DisbursementRequest.builder().message(disbursement).header(msgHeader).signature(signature).build();
+        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
         log.info("Pushing disbursement request to the kafka topic");
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
         return disbursement;
@@ -114,7 +123,7 @@ public class PaymentInstructionService {
             } else {
                 // If disbursement is null, log the error and throw a custom exception
                 log.error("Disbursement is null. Cannot enrich status.");
-                throw new CustomException(Error.DISBURSEMENT_NOT_FOUND, Error.DISBURSEMENT_NOT_FOUND_MESSAGE);
+                throw new CustomException(Error.DISBURSEMENT_ENRICHMENT_FAILED, e.getMessage());
             }
         }
         log.info("Disbursement request is " + disbursement);

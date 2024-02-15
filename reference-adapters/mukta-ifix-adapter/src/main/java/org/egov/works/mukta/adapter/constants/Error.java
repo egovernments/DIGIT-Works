@@ -46,7 +46,7 @@ public class Error {
     public static final String ALLOCATION_IDS_NOT_FOUND_MESSAGE = "Allocation ids not found in the request";
     public static final String GROSS_AMOUNT_AND_NOT_FOUND_MESSAGE = "Gross amount not found in the request";
     public static final String NET_AMOUNT_NOT_FOUND_MESSAGE = "Net amount not found in the request";
-    public static final String GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED_WITH_ORIGINAL_DISBURSEMENT = "Gross amount and net amount not matched with the disbursement child items not matched with DB.";
+    public static final String GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED_WITH_ORIGINAL_DISBURSEMENT = "Gross amount and net amount not matched with the disbursement child items.";
     public static final String DISBURSEMENT_NOT_FOUND_MESSAGE = "Disbursement not found in the request";
     public static final String NO_BENEFICIARY_IDS_FOUND = "NO_BENEFICIARY_IDS_FOUND";
     public static final String NO_BENEFICIARY_IDS_FOUND_MESSAGE = "No beneficiary ids found in the request";

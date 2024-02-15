@@ -65,7 +65,7 @@ public class DisbursementValidator {
         List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
         if(disbursements != null && !disbursements.isEmpty() && (disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.INITIATED)
                 || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.APPROVED)
-                || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.IN_PROCESS) || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL))){
+                || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.INPROCESS) || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL))){
             throw new CustomException(Error.PAYMENT_ALREADY_PROCESSED, Error.PAYMENT_ALREADY_PROCESSED_MESSAGE);
         }
         if(paymentRequest.getReferenceId() == null){
@@ -120,19 +120,24 @@ public class DisbursementValidator {
      */
     private void validateDisbursementAmount(Disbursement disbursement) {
         log.info("Validating disbursement amount");
+
         BigDecimal grossAmount = BigDecimal.ZERO;
         BigDecimal netAmount = BigDecimal.ZERO;
-        for(Disbursement disbursement1: disbursement.getDisbursements()){
-            if(disbursement1.getGrossAmount() == null){
+
+        for (Disbursement disbursement1 : disbursement.getDisbursements()) {
+            if (disbursement1.getGrossAmount() == null) {
                 throw new CustomException(Error.INVALID_REQUEST, Error.GROSS_AMOUNT_AND_NOT_FOUND_MESSAGE);
             }
-            if(disbursement1.getNetAmount() == null){
+            if (disbursement1.getNetAmount() == null) {
                 throw new CustomException(Error.INVALID_REQUEST, Error.NET_AMOUNT_NOT_FOUND_MESSAGE);
             }
             grossAmount = grossAmount.add(disbursement1.getGrossAmount());
             netAmount = netAmount.add(disbursement1.getNetAmount());
         }
-        if(!grossAmount.equals(disbursement.getGrossAmount()) && !netAmount.equals(disbursement.getNetAmount())){
+
+        // Use compareTo for BigDecimal comparison
+        if (grossAmount.compareTo(disbursement.getGrossAmount()) != 0 ||
+                netAmount.compareTo(disbursement.getNetAmount()) != 0) {
             throw new CustomException(Error.INVALID_REQUEST, Error.GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED);
         }
     }

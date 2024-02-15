@@ -11,7 +11,11 @@ import org.egov.works.mukta.adapter.util.ProgramServiceUtil;
 import org.egov.works.mukta.adapter.validators.DisbursementValidator;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.DisbursementCreateRequest;
+import org.egov.works.mukta.adapter.web.models.DisbursementRequest;
+import org.egov.works.mukta.adapter.web.models.MsgHeader;
 import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
+import org.egov.works.mukta.adapter.web.models.enums.Action;
+import org.egov.works.mukta.adapter.web.models.enums.MessageType;
 import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -59,8 +65,18 @@ public class MuktaAdaptorConsumer {
             if(disbursement.getStatus().getStatusCode().equals(StatusCode.FAILED)){
                 paymentService.updatePaymentStatusToFailed(paymentRequest);
             }
-            DisbursementCreateRequest disbursementRequest = DisbursementCreateRequest.builder().disbursement(disbursement).requestInfo(paymentRequest.getRequestInfo()).build();
-//            programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+            String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
+            MsgHeader msgHeader = MsgHeader.builder().messageId(UUID.randomUUID().toString())
+                    .messageTs(System.currentTimeMillis())
+                    .senderId(muktaAdaptorConfig.getProgramSenderId())
+                    .receiverId(muktaAdaptorConfig.getProgramRecieverId())
+                    .senderUri(muktaAdaptorConfig.getProgramSenderId())
+                    .messageType(MessageType.DISBURSE)
+                    .action(Action.CREATE)
+                    .isMsgEncrypted(false)
+                    .build();
+            DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).signature(signature).build();
+            programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
             muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
         } catch (Exception e) {
             paymentService.updatePaymentStatusToFailed(paymentRequest);
