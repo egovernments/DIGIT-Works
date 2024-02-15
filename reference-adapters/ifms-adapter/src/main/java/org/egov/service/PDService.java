@@ -157,7 +157,7 @@ public class PDService {
 //                    billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.SUCCESSFUL, ReferenceStatus.PAYMENT_SUCCESS);
 //                }
                 //Calling On disburse for the PI
-                paymentInstructionService.processPIForOnDisburse(paymentInstruction, requestInfo);
+                paymentInstructionService.processPIForOnDisburse(paymentInstruction);
                 // Set pi status response
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PD_SUCCESS;
                 // Create PI status log based on current existing PD request

@@ -126,6 +126,8 @@ public class IfmsAdapterConfig {
     private String programServiceSearchEndpoint;
     @Value("${egov.program.service.ondisburse.endpoint}")
     private String programServiceOnDisburseEndpoint;
+    @Value("${egov.program.service.disburse.search.endpoint}")
+    private String programServiceDisburseSearchEndpoint;
 
     // es log configurations
     @Value("${egov.es.indexer.host}")
@@ -149,4 +151,7 @@ public class IfmsAdapterConfig {
     private String muktaAdapterEncryptionKey;
     @Value("${payment.instruction.encryption.key}")
     private String paymentInstructionEncryptionKey;
+
+    @Value("${program.service.domain}")
+    private String programServiceDomain;
 }

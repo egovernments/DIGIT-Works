@@ -10,16 +10,16 @@ import org.egov.config.Constants;
 import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.PIRepository;
 import org.egov.repository.PIStatusLogsRepository;
-import org.egov.repository.SanctionDetailsRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.*;
-import org.egov.validators.PaymentInstructionValidator;
-import org.egov.web.models.Disbursement;
-import org.egov.web.models.DisbursementSearchCriteria;
-import org.egov.web.models.Pagination;
+import org.egov.web.models.*;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
+import org.egov.web.models.disburse.DisburseSearch;
+import org.egov.web.models.disburse.DisburseSearchRequest;
+import org.egov.web.models.disburse.DisburseSearchResponse;
 import org.egov.web.models.enums.*;
+import org.egov.web.models.enums.Status;
 import org.egov.web.models.jit.*;
 import org.egov.web.models.jit.PISearchCriteria;
 import org.egov.web.models.organisation.Organisation;
@@ -60,7 +60,7 @@ public class PaymentInstructionService {
     @Autowired
     private PIStatusLogsRepository piStatusLogsRepository;
     @Autowired
-    private PaymentInstructionEnrichment paymentInstructionEnrichment;
+    private ProgramServiceUtil programServiceUtil;
 
     public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
         log.info("Started executing processPaymentRequest");
@@ -621,23 +621,32 @@ public class PaymentInstructionService {
         }
     }
 
-    public void processPIForOnDisburse(PaymentInstruction paymentInstruction, RequestInfo requestInfo) {
+    public void processPIForOnDisburse(PaymentInstruction paymentInstruction) {
         log.info("Processing PI For Creating Disbursement Request");
-        DisbursementSearchCriteria disbursementSearchCriteria = DisbursementSearchCriteria.builder()
-                .paymentNumber(paymentInstruction.getMuktaReferenceId())
-                .status(StatusCode.INITIATED.toString())
+        String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
+        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(paymentInstruction.getProgramCode(),paymentInstruction.getTenantId());
+        DisburseSearch disburseSearch = DisburseSearch.builder()
+                .targetId(paymentInstruction.getMuktaReferenceId())
+                .locationCode(paymentInstruction.getTenantId())
                 .build();
-        Pagination pagination = Pagination.builder()
-                .sortBy("createdTime")
-                .order(Pagination.OrderEnum.DESC)
-                .limit(0)
+        DisburseSearchRequest disburseSearchRequest = DisburseSearchRequest.builder()
+                .signature(signature)
+                .header(msgCallbackHeader)
+                .disburseSearch(disburseSearch)
                 .build();
-
-        // TODO: Remove this after dev Fetch Disbursement From Program Service.
-        File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/Disbursement.json");
-        Disbursement disbursement = objectMapper.convertValue(file, Disbursement.class);
-
-        paymentInstructionEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursement);
+        DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
+        List<Disbursement> disbursements = disbursementResponse.getDisbursements();
+        piEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursements.get(0));
+        try {
+            DisbursementRequest disbursementRequest = DisbursementRequest.builder()
+                    .signature(signature)
+                    .header(msgCallbackHeader)
+                    .message(disbursements.get(0))
+                    .build();
+            programServiceUtil.callOnDisburse(disbursementRequest);
+        }catch (Exception e){
+            log.error("Exception while calling onDisburse : "+e);
+        }
     }
 
 }

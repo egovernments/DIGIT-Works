@@ -175,7 +175,7 @@ public class FailureDetailsService {
             // Update PI indexer based on updated PI
             piUtils.updatePIIndex(requestInfo, pi);
             //Call On disburse for the PI
-            paymentInstructionService.processPIForOnDisburse(pi, requestInfo);
+            paymentInstructionService.processPIForOnDisburse(pi);
 
         } catch (Exception e) {
             log.error("Failed in FailureDetailsService:addReversalTransactionAndUpdatePIPa " + e);
@@ -335,7 +335,7 @@ public class FailureDetailsService {
 //                    billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.SUCCESSFUL,ReferenceStatus.PAYMENT_SUCCESS);
 //                }
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_SUCCESS;
-                paymentInstructionService.processPIForOnDisburse(paymentInstruction, requestInfo);
+                paymentInstructionService.processPIForOnDisburse(paymentInstruction);
             } else {
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_NO_RESPONSE;
             }

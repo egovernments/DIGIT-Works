@@ -15,9 +15,9 @@ import java.util.Set;
 public class PIQueryBuilder {
 
     public static final String PAYMENT_INSTRUCTION_INSERT_QUERY = "INSERT INTO jit_payment_inst_details "
-            + "(id, tenantId, piNumber, parentPiNumber, muktaReferenceId, numBeneficiaries, grossAmount, netAmount, piStatus, isActive, piSuccessCode, piSuccessDesc, "
+            + "(id, tenantId, piNumber, programCode, parentPiNumber, muktaReferenceId, numBeneficiaries, grossAmount, netAmount, piStatus, isActive, piSuccessCode, piSuccessDesc, "
             + "piApprovedId, piApprovalDate, piErrorResp, additionalDetails, createdtime, createdby, lastmodifiedtime, lastmodifiedby)"
-            + " VALUES (:id, :tenantId, :piNumber, :parentPiNumber, :muktaReferenceId, :numBeneficiaries, :grossAmount, :netAmount, :piStatus, :isActive, :piSuccessCode, :piSuccessDesc, "
+            + " VALUES (:id, :tenantId, :piNumber, :programCode, :parentPiNumber, :muktaReferenceId, :numBeneficiaries, :grossAmount, :netAmount, :piStatus, :isActive, :piSuccessCode, :piSuccessDesc, "
             + " :piApprovedId, :piApprovalDate, :piErrorResp, :additionalDetails, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
 
     public static final String PAYMENT_ADVICE_DETAILS_INSERT_QUERY = "INSERT INTO jit_payment_advice_details "
@@ -57,6 +57,7 @@ public class PIQueryBuilder {
 
     public static final String SEARCH_PI_QUERY = " SELECT pymtInst.id as pymtInstId, " +
             "pymtInst.tenantId as pymtInstTenantId, " +
+            "pymtInst.programCode as pymtInstProgramCode, " +
             "pymtInst.piNumber as pymtInstPiNumber, " +
             "pymtInst.parentPiNumber as pymtInstParentPiNumber, " +
             "pymtInst.muktaReferenceId as pymtInstMuktaReferenceId, " +

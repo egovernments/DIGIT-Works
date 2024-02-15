@@ -6,13 +6,17 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.config.JITAuthValues;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.utils.AuthenticationUtils;
-import org.egov.utils.ESLogUtils;
-import org.egov.utils.JitRequestUtils;
-import org.egov.utils.MdmsUtils;
+import org.egov.tracer.model.CustomException;
+import org.egov.utils.*;
+import org.egov.web.models.MsgCallbackHeader;
+import org.egov.web.models.enums.Action;
+import org.egov.web.models.enums.MessageType;
 import org.egov.web.models.jit.JITRequest;
 import org.egov.web.models.jit.JITRequestLog;
 import org.egov.web.models.jit.JITResponse;
+import org.egov.web.models.program.ProgramSearch;
+import org.egov.web.models.program.ProgramSearchRequest;
+import org.egov.web.models.program.ProgramSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -61,6 +65,8 @@ public class IfmsService {
 
     @Autowired
     private ESLogUtils esLogUtils;
+    @Autowired
+    private ProgramServiceUtil programServiceUtil;
 
     public Map<String, String> getKeys() throws NoSuchAlgorithmException {
         Map<String, String> keyMap = new HashMap<>();
@@ -75,13 +81,13 @@ public class IfmsService {
     }
 
     public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
-        if (jitAuthValues.getAuthToken() == null) {
-            getAuthDetailsFromIFMS();
-        }
+//        if (jitAuthValues.getAuthToken() == null) {
+//            getAuthDetailsFromIFMS();
+//        }
         JITResponse decryptedResponse = null;
         try {
-            decryptedResponse = callServiceAPI(jitRequest);
-//            decryptedResponse = loadCustomResponse();
+//            decryptedResponse = callServiceAPI(jitRequest);
+            decryptedResponse = loadCustomResponse();
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             String message = e.toString();
             if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
@@ -241,11 +247,38 @@ public class IfmsService {
     public JITResponse loadCustomResponse() {
         JITResponse vaResponse = null;
         try {
-            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/1VAResponse.json");
+            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/3PISResponse.json");
             vaResponse = objectMapper.readValue(file, JITResponse.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return vaResponse;
+    }
+
+    public MsgCallbackHeader getMessageCallbackHeader(String programCode,String locationCode) {
+        String idFormat = "program@{URI}";
+        String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
+        MsgCallbackHeader msgCallbackHeader = MsgCallbackHeader.builder()
+                .senderId("program@https://unified-qa.digit.org")
+                .receiverId("program@https://unified-dev.digit.org")
+                .messageType(MessageType.SANCTION)
+                .messageId("123456")
+                .messageTs(System.currentTimeMillis())
+                .action(Action.CREATE)
+                .build();
+        ProgramSearch programSearch = ProgramSearch.builder().programCode(programCode).locationCode(locationCode).build();
+        ProgramSearchRequest programSearchRequest = ProgramSearchRequest.builder()
+                .signature(signature)
+                .header(msgCallbackHeader)
+                .programSearch(programSearch)
+                .build();
+        ProgramSearchResponse programSearchResponse = programServiceUtil.searchProgram(programSearchRequest);
+        if(programSearchResponse.getPrograms().isEmpty()){
+            throw new CustomException("INVALID_PROGRAM_CODE","Program code is invalid for the disbursement Request.");
+        }
+        String receiverId = idFormat.replace("{URI}", programSearchResponse.getPrograms().get(0).getClientHostUrl());
+        msgCallbackHeader.setReceiverId(receiverId);
+        msgCallbackHeader.setSenderId(idFormat.replace("{URI}", ifmsAdapterConfig.getProgramServiceDomain()));
+        return msgCallbackHeader;
     }
 }

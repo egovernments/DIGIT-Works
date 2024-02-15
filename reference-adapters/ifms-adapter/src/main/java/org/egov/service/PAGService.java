@@ -136,7 +136,7 @@ public class PAGService {
                 // Create PI status log based on current existing PIS request
                 paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PAG, jitRespStatusForPI, requestInfo);
                 log.info("Convering PaymentInstruction to Disbursement And Calling OnDisburse");
-                paymentInstructionService.processPIForOnDisburse(paymentInstruction, requestInfo);
+                paymentInstructionService.processPIForOnDisburse(paymentInstruction);
             }
             log.info("PAG status updated for PI : " + paymentInstruction.getJitBillNo());
         }

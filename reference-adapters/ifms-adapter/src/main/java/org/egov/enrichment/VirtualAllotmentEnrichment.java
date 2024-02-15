@@ -285,6 +285,7 @@ public class VirtualAllotmentEnrichment {
             allocationPayload.setLocationCode(allotment.getTenantId());
             allocationPayload.setAuditDetails(allotment.getAuditDetails());
             allocationPayload.setProgramCode(allotment.getProgramCode());
+            allocationPayload.setStatus(Status.builder().statusCode(StatusCode.INITIATED).build());
             if(allotment.getAllotmentTxnType().equals("Allotment withdrawal")){
                 allocationPayload.setType(AllocationType.DEDUCTION);
             }else{

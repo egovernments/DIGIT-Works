@@ -13,10 +13,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.utils.MdmsUtils;
 import org.egov.utils.ProgramServiceUtil;
 import org.egov.web.models.*;
-import org.egov.web.models.enums.Action;
 import org.egov.web.models.enums.MessageType;
-import org.egov.web.models.enums.MsgHeaderStatusReasonCode;
-import org.egov.web.models.enums.RequestStatus;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -145,7 +142,7 @@ public class VirtualAllotmentService {
                     // Get allotments to create and
                     List<Allotment> createAllotments =  vaEnrichment.getAllotmentsForCreate(updatedSanctions, allotmentList, tenantId, requestInfo);
                     sanctionDetailsRepository.createUpdateSanctionFunds(createSanctions, updateSanctions, createAllotments);
-                    processAllotmentsAndSanctions(createAllotments, createSanctions);
+                    processAllotmentsAndSanctions(createAllotments, createSanctions,ssuNode,tenantId);
                 }
                 // Update last executed for the va
                 if (executedVALog == null) {
@@ -163,21 +160,16 @@ public class VirtualAllotmentService {
         }
     }
 
-    private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions) {
+    private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions, JsonNode ssuNode,String tenantId) {
         log.info("Processing allotments and sanctions");
+        String programCode = ssuNode.get("programCode").asText();
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
-        MsgCallbackHeader msgCallbackHeader = MsgCallbackHeader.builder()
-                .senderId("program@https://unified-qa.digit.org")
-                .receiverId("program@https://unified-dev.digit.org")
-                .messageType(MessageType.ON_SANCTION)
-                .messageId("123456")
-                .messageTs(1606970629)
-                .action(Action.CREATE)
-                .build();
+        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(programCode,tenantId);
         try {
             if(createSanctions != null && !createSanctions.isEmpty()){
                 log.info("Processing created sanction for on_sanction/create");
                 List<Sanction> sanctionList = virtualAllotmentEnrichment.createSanctionsPayload(createSanctions);
+                msgCallbackHeader.setMessageType(MessageType.ON_SANCTION);
                 OnSanctionRequest onSanctionRequest = OnSanctionRequest.builder()
                         .header(msgCallbackHeader)
                         .message(sanctionList)

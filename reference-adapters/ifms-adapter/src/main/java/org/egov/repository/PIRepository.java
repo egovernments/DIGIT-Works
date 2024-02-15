@@ -73,6 +73,7 @@ public class PIRepository {
             MapSqlParameterSource piRequestParamMap = new MapSqlParameterSource();
             piRequestParamMap.addValue("id", piRequest.getId());
             piRequestParamMap.addValue("tenantId", piRequest.getTenantId());
+            piRequestParamMap.addValue("programCode",piRequest.getProgramCode());
             piRequestParamMap.addValue("piNumber", piRequest.getJitBillNo());
             piRequestParamMap.addValue("parentPiNumber", piRequest.getParentPiNumber());
             piRequestParamMap.addValue("muktaReferenceId", piRequest.getMuktaReferenceId());

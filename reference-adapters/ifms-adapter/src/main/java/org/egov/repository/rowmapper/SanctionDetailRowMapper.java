@@ -35,6 +35,7 @@ public class SanctionDetailRowMapper implements ResultSetExtractor<List<Sanction
 
         while (rs.next()) {
             String id = rs.getString("snacDetailsId");
+            String programCode = rs.getString("snacDetailsProgramCode");
             String tenantId = rs.getString("snacDetailsTenantId");
             String hoaCode = rs.getString("snacDetailsHoaCode");
             String ddoCode = rs.getString("snacDetailsDdoCode");
@@ -55,6 +56,7 @@ public class SanctionDetailRowMapper implements ResultSetExtractor<List<Sanction
             SanctionDetail sanctionDetail = SanctionDetail.builder()
                     .id(id)
                     .tenantId(tenantId)
+                    .programCode(programCode)
                     .hoaCode(hoaCode)
                     .ddoCode(ddoCode)
                     .masterAllotmentId(masterAllotmentId)

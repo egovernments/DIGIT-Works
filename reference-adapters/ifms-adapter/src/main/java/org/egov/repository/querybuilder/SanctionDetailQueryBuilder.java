@@ -12,6 +12,7 @@ public class SanctionDetailQueryBuilder {
 
     private static final String SANCTION_DETAILS_SELECT_QUERY = " SELECT snacDetails.id as snacDetailsId, " +
             "snacDetails.tenantId as snacDetailsTenantId, " +
+            "snacDetails.programCode as snacDetailsProgramCode, "+
             "snacDetails.hoaCode as snacDetailsHoaCode, " +
             "snacDetails.ddoCode as snacDetailsDdoCode, " +
             "snacDetails.masterAllotmentId as snacDetailsMasterAllotmentId, " +

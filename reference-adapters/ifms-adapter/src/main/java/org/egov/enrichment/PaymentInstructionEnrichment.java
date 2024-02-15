@@ -773,6 +773,7 @@ public class PaymentInstructionEnrichment {
         PaymentInstruction paymentInstruction = PaymentInstruction.builder()
                 .id(piId)
                 .tenantId(disbursement.getLocationCode())
+                .programCode(sanctionDetail.getProgramCode())
                 .muktaReferenceId(disbursement.getTargetId())
                 .netAmount(disbursement.getNetAmount())
                 .grossAmount(disbursement.getGrossAmount())
@@ -942,9 +943,9 @@ public class PaymentInstructionEnrichment {
         EnumMap<BeneficiaryPaymentStatus, StatusCode> beneficiaryPaymentStatusStatusCodeEnumMap = new EnumMap<>(BeneficiaryPaymentStatus.class);
         beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.INITIATED, StatusCode.INITIATED);
         beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.FAILED, StatusCode.FAILED);
-        beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.IN_PROCESS, StatusCode.IN_PROCESS);
+        beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.IN_PROCESS, StatusCode.INPROCESS);
         beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.SUCCESS, StatusCode.SUCCESSFUL);
-        beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.PENDING, StatusCode.IN_PROCESS);
+        beneficiaryPaymentStatusStatusCodeEnumMap.put(BeneficiaryPaymentStatus.PENDING, StatusCode.FAILED);
         return beneficiaryPaymentStatusStatusCodeEnumMap;
     }
 
@@ -954,8 +955,8 @@ public class PaymentInstructionEnrichment {
         piStatusStatusCodeEnumMap.put(PIStatus.FAILED, StatusCode.FAILED);
         piStatusStatusCodeEnumMap.put(PIStatus.SUCCESSFUL, StatusCode.SUCCESSFUL);
         piStatusStatusCodeEnumMap.put(PIStatus.PARTIAL, StatusCode.PARTIAL);
-        piStatusStatusCodeEnumMap.put(PIStatus.IN_PROCESS, StatusCode.IN_PROCESS);
-        piStatusStatusCodeEnumMap.put(PIStatus.APPROVED, StatusCode.IN_PROCESS);
+        piStatusStatusCodeEnumMap.put(PIStatus.IN_PROCESS, StatusCode.INPROCESS);
+        piStatusStatusCodeEnumMap.put(PIStatus.APPROVED, StatusCode.INPROCESS);
         piStatusStatusCodeEnumMap.put(PIStatus.COMPLETED, StatusCode.COMPLETED);
         return piStatusStatusCodeEnumMap;
     }
