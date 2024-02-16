@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/disburse/v1/")
+@RequestMapping("/v1/disburse/")
 public class DisburseController {
     private final DisbursementService disbursementService;
 
