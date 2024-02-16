@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import javax.validation.constraints.NotNull;
 
 public enum Action {
-    CREATE("CREATE"),
-    UPDATE("UPDATE"),
-    SEARCH("SEARCH");
+    CREATE("create"),
+    UPDATE("update"),
+    SEARCH("search");
 
     private String value;
     Action(String value) {

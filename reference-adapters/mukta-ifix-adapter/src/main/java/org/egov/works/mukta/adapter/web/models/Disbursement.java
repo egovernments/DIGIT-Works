@@ -26,6 +26,8 @@ public class Disbursement extends ExchangeCode {
     @NotNull
     @JsonProperty("location_code")
     private String locationCode;
+    @JsonProperty("transaction_id")
+    private String transactionId;
     @JsonProperty("parent_id")
     private String parentId;
     @JsonProperty("disbursement_date")

@@ -119,7 +119,7 @@ public class PaymentInstructionService {
 
             // If disbursement is not null, enrich its status
             if (disbursement != null) {
-                piEnrichment.enrichDisbursementStatus(disbursement, StatusCode.FAILED);
+                piEnrichment.enrichDisbursementStatus(disbursement, StatusCode.FAILED,e.getMessage());
             } else {
                 // If disbursement is null, log the error and throw a custom exception
                 log.error("Disbursement is null. Cannot enrich status.");

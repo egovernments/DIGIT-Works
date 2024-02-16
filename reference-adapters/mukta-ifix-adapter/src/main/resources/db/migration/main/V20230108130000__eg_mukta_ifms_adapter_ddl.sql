@@ -4,6 +4,7 @@ CREATE TABLE eg_mukta_ifms_disburse (
                                         program_code VARCHAR(64),
                                         target_id VARCHAR(64),
                                         parent_id varchar(64),
+                                        transaction_id VARCHAR(64),
                                         account_code VARCHAR(256),
                                         status VARCHAR(64),
                                         status_message VARCHAR(256),

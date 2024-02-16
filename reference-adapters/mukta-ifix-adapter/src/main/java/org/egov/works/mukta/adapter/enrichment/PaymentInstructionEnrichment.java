@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
 import org.egov.works.mukta.adapter.config.Constants;
+import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.Status;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
@@ -198,9 +199,9 @@ public class PaymentInstructionEnrichment {
         disbursement.setLocationCode(paymentRequest.getPayment().getTenantId());
         disbursement.setProgramCode(programCode);
         if(Boolean.TRUE.equals(isAnyDisbursementFailed)){
-            enrichDisbursementStatus(disbursement,StatusCode.FAILED);
+            enrichDisbursementStatus(disbursement,StatusCode.FAILED, Error.DISBURSEMENT_ENRICHMENT_FAILED_MESSAGE);
         }else{
-            enrichDisbursementStatus(disbursement,StatusCode.INITIATED);
+            enrichDisbursementStatus(disbursement,StatusCode.INITIATED, Error.DISBURSEMENT_ENRICHMENT_FAILED_MESSAGE);
         }
         setAmountForParentDisbursement(disbursement);
         log.info("Beneficiary details enriched and sending back.");
@@ -275,11 +276,13 @@ public class PaymentInstructionEnrichment {
     }
     /**
      * The function enriches the disbursement status.
+     *
      * @param disbursement The disbursement
-     * @param statusCode The status code
+     * @param statusCode   The status code
+     * @param message
      */
-    public void enrichDisbursementStatus(Disbursement disbursement,StatusCode statusCode) {
-        Status status = Status.builder().statusCode(statusCode).statusMessage(statusCode.toString()).build();
+    public void enrichDisbursementStatus(Disbursement disbursement, StatusCode statusCode, String message) {
+        Status status = Status.builder().statusCode(statusCode).statusMessage(message).build();
         disbursement.setStatus(status);
         for(Disbursement disbursement1: disbursement.getDisbursements()){
             disbursement1.setStatus(status);

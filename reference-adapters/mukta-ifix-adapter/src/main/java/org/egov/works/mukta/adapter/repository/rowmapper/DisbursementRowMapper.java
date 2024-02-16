@@ -43,6 +43,7 @@ public class DisbursementRowMapper implements ResultSetExtractor<List<Disburseme
                 String disburseTargetId = rs.getString("disburseTargetId");
                 String disburseAccountCode = rs.getString("disburseAccountCode");
                 String disburseParentId = rs.getString("disburseParentId");
+                String disburseTransactionId = rs.getString("disburseTransactionId");
                 String disburseStatus = rs.getString("disburseStatus");
                 String disburseStatusMessage = rs.getString("disburseStatusMessage");
                 JsonNode disburseIndividual = getAdditionalDetail(rs, "disburseIndividual");
@@ -74,6 +75,7 @@ public class DisbursementRowMapper implements ResultSetExtractor<List<Disburseme
                 disbursement.setId(id);
                 disbursement.setProgramCode(disburseProgramCode);
                 disbursement.setTargetId(disburseTargetId);
+                disbursement.setTransactionId(disburseTransactionId);
                 disbursement.setAccountCode(disburseAccountCode);
                 disbursement.setParentId(disburseParentId);
                 disbursement.setStatus(status);
