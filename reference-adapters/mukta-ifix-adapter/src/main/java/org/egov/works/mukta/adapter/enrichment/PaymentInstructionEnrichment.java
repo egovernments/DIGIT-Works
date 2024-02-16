@@ -252,9 +252,10 @@ public class PaymentInstructionEnrichment {
         if(headCodeCategoryMap.get(lineItem.getHeadCode()).equals(Constants.HEAD_CODE_DEDUCTION_CATEGORY)){
             piIndividual.setName(lineItem.getHeadCode());
             piIndividual.setPhone("9999999999");
+            piIndividual.setAddress(lineItem.getTenantId());
         }else{
             if (individual != null) {
-                piIndividual.setAddress(individual.getAddress().get(0).getAddressLine1());
+                piIndividual.setAddress(individual.getAddress().get(0).getAddressLine1() == null ? individual.getAddress().get(0).getCity() : individual.getAddress().get(0).getAddressLine1());
                 piIndividual.setGender(individual.getGender());
                 piIndividual.setPhone(individual.getMobileNumber());
                 piIndividual.setEmail(individual.getEmail());
@@ -262,7 +263,7 @@ public class PaymentInstructionEnrichment {
                 piIndividual.setName(individual.getName().getGivenName());
             }
             if (organisation != null) {
-                piIndividual.setAddress(organisation.getOrgAddress().get(0).getAddressLine1());
+                piIndividual.setAddress(organisation.getOrgAddress().get(0).getAddressLine1() == null ? organisation.getOrgAddress().get(0).getCity() : organisation.getOrgAddress().get(0).getAddressLine1());
                 piIndividual.setPhone(organisation.getContactDetails().get(0).getContactMobileNumber());
                 piIndividual.setEmail(organisation.getContactDetails().get(0).getContactEmail());
                 piIndividual.setPin(organisation.getOrgAddress().get(0).getPincode());
