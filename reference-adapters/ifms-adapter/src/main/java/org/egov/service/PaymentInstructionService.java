@@ -637,6 +637,7 @@ public class PaymentInstructionService {
         DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
         List<Disbursement> disbursements = disbursementResponse.getDisbursements();
         piEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursements.get(0));
+        msgCallbackHeader.setAction(Action.CREATE);
         try {
             DisbursementRequest disbursementRequest = DisbursementRequest.builder()
                     .signature(signature)

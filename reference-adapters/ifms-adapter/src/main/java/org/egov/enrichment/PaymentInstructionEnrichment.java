@@ -723,7 +723,7 @@ public class PaymentInstructionEnrichment {
     private PaymentInstruction getEnrichedPaymentRequestFromDisbursement(Disbursement disbursement, List<Beneficiary> beneficiaryList, SanctionDetail sanctionDetail,Map<String,Map<String,JSONArray>> mdmsData, Boolean isRevised,PaymentInstruction lastPi) {
         RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
         String jitBillNo = idgenUtil.getIdList(requestInfo, disbursement.getLocationCode(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
-        String piId = UUID.randomUUID().toString();
+        String piId = disbursement.getId();
         if(Boolean.FALSE.equals(isRevised)){
             List<String> beneficiaryNumbers = idgenUtil.getIdList(requestInfo,disbursement.getLocationCode(),config.getPiBenefInstructionNumberFormat(),null,beneficiaryList.size());
             for(Beneficiary beneficiary:beneficiaryList){
@@ -921,20 +921,22 @@ public class PaymentInstructionEnrichment {
     public void setStatusOfDisbursementForPI(PaymentInstruction paymentInstruction, Disbursement disbursement) {
         EnumMap<PIStatus, StatusCode> piStatusStatusCodeEnumMap = getPiStatusStatusCodeEnumMap();
         EnumMap<BeneficiaryPaymentStatus, StatusCode> beneficiaryPaymentStatusStatusCodeEnumMap = getBeneficiaryPaymentStatusStatusCodeEnumMap();
-        HashMap<String, BeneficiaryPaymentStatus> muktaRefIdToBenefPaymentStatusMap = getMuktaRefIdToBenefPayementStatusMap(paymentInstruction);
+        HashMap<String, Beneficiary> muktaRefIdToBenefPaymentStatusMap = getMuktaRefIdToBenefPayementStatusMap(paymentInstruction);
         for(Disbursement disbursement1: disbursement.getDisbursements()){
-            BeneficiaryPaymentStatus beneficiaryPaymentStatus = muktaRefIdToBenefPaymentStatusMap.get(disbursement1.getTargetId());
-            disbursement1.getStatus().setStatusCode(beneficiaryPaymentStatusStatusCodeEnumMap.get(beneficiaryPaymentStatus));
-            disbursement1.getStatus().setStatusMessage(beneficiaryPaymentStatusStatusCodeEnumMap.get(beneficiaryPaymentStatus).toString());
+            Beneficiary beneficiary = muktaRefIdToBenefPaymentStatusMap.get(disbursement1.getTargetId());
+            disbursement1.getStatus().setStatusCode(beneficiaryPaymentStatusStatusCodeEnumMap.get(beneficiary.getPaymentStatus()));
+            disbursement1.getStatus().setStatusMessage(beneficiaryPaymentStatusStatusCodeEnumMap.get(beneficiary.getPaymentStatus()).toString());
+            disbursement1.setTransactionId(beneficiary.getBeneficiaryNumber());
         }
         disbursement.getStatus().setStatusCode(piStatusStatusCodeEnumMap.get(paymentInstruction.getPiStatus()));
         disbursement.getStatus().setStatusMessage(piStatusStatusCodeEnumMap.get(paymentInstruction.getPiStatus()).toString());
+        disbursement.setTransactionId(paymentInstruction.getJitBillNo());
     }
 
-    private HashMap<String, BeneficiaryPaymentStatus> getMuktaRefIdToBenefPayementStatusMap(PaymentInstruction paymentInstruction) {
-        HashMap<String, BeneficiaryPaymentStatus> muktaRefIdToBenefPayementStatusMap = new HashMap<>();
+    private HashMap<String, Beneficiary> getMuktaRefIdToBenefPayementStatusMap(PaymentInstruction paymentInstruction) {
+        HashMap<String, Beneficiary> muktaRefIdToBenefPayementStatusMap = new HashMap<>();
         for(Beneficiary beneficiary:paymentInstruction.getBeneficiaryDetails()){
-            muktaRefIdToBenefPayementStatusMap.put(beneficiary.getMuktaReferenceId(),beneficiary.getPaymentStatus());
+            muktaRefIdToBenefPayementStatusMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
         }
         return muktaRefIdToBenefPayementStatusMap;
     }

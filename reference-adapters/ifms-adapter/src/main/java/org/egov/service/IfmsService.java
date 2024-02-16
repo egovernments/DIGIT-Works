@@ -81,13 +81,13 @@ public class IfmsService {
     }
 
     public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
-//        if (jitAuthValues.getAuthToken() == null) {
-//            getAuthDetailsFromIFMS();
-//        }
+        if (jitAuthValues.getAuthToken() == null) {
+            getAuthDetailsFromIFMS();
+        }
         JITResponse decryptedResponse = null;
         try {
-//            decryptedResponse = callServiceAPI(jitRequest);
-            decryptedResponse = loadCustomResponse();
+            decryptedResponse = callServiceAPI(jitRequest);
+//            decryptedResponse = loadCustomResponse();
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             String message = e.toString();
             if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
@@ -247,7 +247,7 @@ public class IfmsService {
     public JITResponse loadCustomResponse() {
         JITResponse vaResponse = null;
         try {
-            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/3PISResponse.json");
+            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/5PDResponse.json");
             vaResponse = objectMapper.readValue(file, JITResponse.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -264,7 +264,7 @@ public class IfmsService {
                 .messageType(MessageType.SANCTION)
                 .messageId("123456")
                 .messageTs(System.currentTimeMillis())
-                .action(Action.CREATE)
+                .action(Action.SEARCH)
                 .build();
         ProgramSearch programSearch = ProgramSearch.builder().programCode(programCode).locationCode(locationCode).build();
         ProgramSearchRequest programSearchRequest = ProgramSearchRequest.builder()

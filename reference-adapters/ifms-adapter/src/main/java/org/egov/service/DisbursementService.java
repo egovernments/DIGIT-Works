@@ -14,7 +14,6 @@ import org.egov.tracer.model.CustomException;
 import org.egov.utils.EncryptionDecryptionUtil;
 import org.egov.utils.MdmsUtils;
 import org.egov.utils.PIUtils;
-import org.egov.utils.ProgramServiceUtil;
 import org.egov.validators.DisbursementValidator;
 import org.egov.web.models.*;
 import org.egov.web.models.enums.*;
@@ -99,7 +98,7 @@ public class DisbursementService {
             paymentStatus = processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI);
         }else{
             log.info("Payment Instruction is not in PARTIAL status, processing it for PI creation.");
-            disbursementValidator.validatePI(paymentInstructions,disbursementRequest,mdmsData);
+            disbursementValidator.validatePI(paymentInstructions);
             paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),false,lastPI);
             paymentStatus = processDisbursementForPICreation(disbursementRequest, paymentInstructionFromDisbursement, requestInfo, sanctionDetails);
         }
@@ -280,6 +279,7 @@ public class DisbursementService {
 
         disbursementResponse.getMessage().getStatus().setStatusCode(statusCode);
         disbursementResponse.getMessage().getStatus().setStatusMessage(statusMessage);
+        disbursementResponse.getMessage().setTransactionId(paymentInstructionFromDisbursement.getJitBillNo());
         for(Disbursement disbursement: disbursementResponse.getMessage().getDisbursements()){
             disbursement.getStatus().setStatusCode(statusCode);
             disbursement.getStatus().setStatusMessage(statusMessage);
