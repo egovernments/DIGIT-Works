@@ -27,6 +27,7 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -276,9 +277,14 @@ public class IfmsService {
                 break;
         }
         try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(Objects.requireNonNull(classLoader.getResource("sample/" + filename)).getFile());
-            vaResponse = objectMapper.readValue(file, JITResponse.class);
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("sample/"+ filename);
+
+            if (inputStream != null) {
+                vaResponse = objectMapper.readValue(inputStream, JITResponse.class);
+            } else {
+                // Handle the case where the file is not found
+                System.err.println("File not found: " + filename);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
