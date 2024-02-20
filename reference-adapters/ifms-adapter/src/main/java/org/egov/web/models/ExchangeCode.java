@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.*;
 import org.egov.tracer.model.CustomException;
 
-import java.util.Currency;
 
 @Getter
 @Setter
@@ -27,7 +26,7 @@ public class ExchangeCode {
     @JsonProperty("target_segment_code")
     private String targetSegmentCode;
     @JsonProperty("currency_code")
-    private Currency currencyCode;
+    private String currencyCode;
     @JsonProperty("locale_code")
     private String localeCode;
     @JsonProperty("status")
