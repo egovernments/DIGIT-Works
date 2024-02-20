@@ -276,7 +276,8 @@ public class IfmsService {
                 break;
         }
         try {
-            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/" + filename);
+            ClassLoader classLoader = getClass().getClassLoader();
+            File file = new File(Objects.requireNonNull(classLoader.getResource("sample/" + filename)).getFile());
             vaResponse = objectMapper.readValue(file, JITResponse.class);
         } catch (IOException e) {
             e.printStackTrace();
