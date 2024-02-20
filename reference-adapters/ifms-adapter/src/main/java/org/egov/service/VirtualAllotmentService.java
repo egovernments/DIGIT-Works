@@ -13,6 +13,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.utils.MdmsUtils;
 import org.egov.utils.ProgramServiceUtil;
 import org.egov.web.models.*;
+import org.egov.web.models.enums.Action;
 import org.egov.web.models.enums.MessageType;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,6 +171,7 @@ public class VirtualAllotmentService {
                 log.info("Processing created sanction for on_sanction/create");
                 List<Sanction> sanctionList = virtualAllotmentEnrichment.createSanctionsPayload(createSanctions);
                 msgCallbackHeader.setMessageType(MessageType.ON_SANCTION);
+                msgCallbackHeader.setAction(Action.CREATE);
                 OnSanctionRequest onSanctionRequest = OnSanctionRequest.builder()
                         .header(msgCallbackHeader)
                         .message(sanctionList)

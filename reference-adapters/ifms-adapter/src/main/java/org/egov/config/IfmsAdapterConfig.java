@@ -152,6 +152,6 @@ public class IfmsAdapterConfig {
     @Value("${payment.instruction.encryption.key}")
     private String paymentInstructionEncryptionKey;
 
-    @Value("${program.service.domain}")
-    private String programServiceDomain;
+    @Value("${app.domain}")
+    private String appDomain;
 }

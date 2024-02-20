@@ -714,8 +714,8 @@ public class PaymentInstructionEnrichment {
     public PaymentInstruction enrichPaymentIntsructionsFromDisbursementRequest(DisbursementRequest disbursementRequest,Map<String,Map<String,JSONArray>> mdmsData,SanctionDetail sanctionDetail,Boolean isRevised,PaymentInstruction lastPi) {
         log.info("Started executing enrichPaymentIntsructionsFromDisbursementRequest");
         Disbursement disbursement = disbursementRequest.getMessage();
-        RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
-        disbursement = encryptionDecryptionUtil.decryptObject(disbursement,config.getMuktaAdapterEncryptionKey(),Disbursement.class,requestInfo);
+//        RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
+//        disbursement = encryptionDecryptionUtil.decryptObject(disbursement,config.getMuktaAdapterEncryptionKey(),Disbursement.class,requestInfo);
         List<Beneficiary> beneficiaryList = getBeneficiariesFromDisbursement(disbursement);
         return getEnrichedPaymentRequestFromDisbursement(disbursement, beneficiaryList, sanctionDetail,mdmsData,isRevised,lastPi);
     }

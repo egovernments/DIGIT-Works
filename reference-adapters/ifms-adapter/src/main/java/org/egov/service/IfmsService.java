@@ -28,10 +28,9 @@ import org.springframework.web.client.HttpServerErrorException;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.egov.config.Constants.*;
 
@@ -81,13 +80,13 @@ public class IfmsService {
     }
 
     public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
-        if (jitAuthValues.getAuthToken() == null) {
-            getAuthDetailsFromIFMS();
-        }
+//        if (jitAuthValues.getAuthToken() == null) {
+//            getAuthDetailsFromIFMS();
+//        }
         JITResponse decryptedResponse = null;
         try {
-            decryptedResponse = callServiceAPI(jitRequest);
-//            decryptedResponse = loadCustomResponse();
+//            decryptedResponse = callServiceAPI(jitRequest);
+            decryptedResponse = loadCustomResponse(jitRequest.getServiceId().toString());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             String message = e.toString();
             if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
@@ -244,10 +243,40 @@ public class IfmsService {
         It's for testing the multiple combination of VA response
         TODO: Remove after development
      */
-    public JITResponse loadCustomResponse() {
+    public JITResponse loadCustomResponse(String serviceId) {
         JITResponse vaResponse = null;
+        String filename = "";
+        switch (serviceId) {
+            case "VA":
+                filename = "1VAResponse.json";
+                break;
+            case "PI":
+                filename = "2PIResponse.json";
+                break;
+            case "PIS":
+                filename = "3PISResponse.json";
+                break;
+            case "PAG":
+                filename = "4PAGResponse.json";
+                break;
+            case "PD":
+                filename = "5PDResponse.json";
+                break;
+            case "FD":
+                filename = "6FDResponse.json";
+                break;
+            case "COR":
+                filename = "7CORSuccess.json";
+                break;
+            case "FTPS":
+                filename = "8FTPSResponse.json";
+                break;
+            case "FTFPS":
+                filename = "9FTFPSResponse.json";
+                break;
+        }
         try {
-            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/5PDResponse.json");
+            File file = new File("/home/admin1/DIGIT/DIGIT-Works/reference-adapters/ifms-adapter/src/test/resources/" + filename);
             vaResponse = objectMapper.readValue(file, JITResponse.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -278,7 +307,18 @@ public class IfmsService {
         }
         String receiverId = idFormat.replace("{URI}", programSearchResponse.getPrograms().get(0).getClientHostUrl());
         msgCallbackHeader.setReceiverId(receiverId);
-        msgCallbackHeader.setSenderId(idFormat.replace("{URI}", ifmsAdapterConfig.getProgramServiceDomain()));
+        msgCallbackHeader.setSenderId(idFormat.replace("{URI}", Objects.requireNonNull(extractHostUrlFromURL(ifmsAdapterConfig.getAppDomain()))));
         return msgCallbackHeader;
+    }
+    private static String extractHostUrlFromURL(String input) {
+        // Regular expression pattern to match the domain with http/https
+        Pattern pattern = Pattern.compile("(https?://[a-zA-Z0-9.-]+)");
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()) {
+            return matcher.group(1); // Returns the matched domain with http/https
+        } else {
+            return null; // No match found
+        }
     }
 }
