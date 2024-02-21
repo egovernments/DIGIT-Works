@@ -282,7 +282,13 @@ public class DisbursementService {
         disbursementResponse.getMessage().getStatus().setStatusCode(statusCode);
         disbursementResponse.getMessage().getStatus().setStatusMessage(statusMessage);
         disbursementResponse.getMessage().setTransactionId(paymentInstructionFromDisbursement.getJitBillNo());
+        HashMap<String, Beneficiary> muktaRefIdToBenefPayementStatusMap = new HashMap<>();
+        for(Beneficiary beneficiary:paymentInstructionFromDisbursement.getBeneficiaryDetails()){
+            muktaRefIdToBenefPayementStatusMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
+        }
         for(Disbursement disbursement: disbursementResponse.getMessage().getDisbursements()){
+            Beneficiary beneficiary = muktaRefIdToBenefPayementStatusMap.get(disbursement.getTargetId());
+            disbursement.setTransactionId(beneficiary.getBeneficiaryNumber());
             disbursement.getStatus().setStatusCode(statusCode);
             disbursement.getStatus().setStatusMessage(statusMessage);
         }
