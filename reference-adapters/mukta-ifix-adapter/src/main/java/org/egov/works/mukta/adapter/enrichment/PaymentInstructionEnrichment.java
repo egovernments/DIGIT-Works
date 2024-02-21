@@ -201,7 +201,7 @@ public class PaymentInstructionEnrichment {
         if(Boolean.TRUE.equals(isAnyDisbursementFailed)){
             enrichDisbursementStatus(disbursement,StatusCode.FAILED, Error.DISBURSEMENT_ENRICHMENT_FAILED_MESSAGE);
         }else{
-            enrichDisbursementStatus(disbursement,StatusCode.INITIATED, Error.DISBURSEMENT_ENRICHMENT_FAILED_MESSAGE);
+            enrichDisbursementStatus(disbursement,StatusCode.INITIATED, StatusCode.INITIATED.toString());
         }
         setAmountForParentDisbursement(disbursement);
         log.info("Beneficiary details enriched and sending back.");
@@ -244,7 +244,7 @@ public class PaymentInstructionEnrichment {
         disbursement.setNetAmount(lineItem.getAmount());
         disbursement.setTargetId(lineItem.getId());
         disbursement.setGrossAmount(lineItem.getAmount());
-        disbursement.setCurrencyCode(Currency.getInstance("INR"));
+        disbursement.setCurrencyCode("INR");
         disbursement.setLocaleCode("en_IN");
         disbursement.setProgramCode(programCode);
         disbursement.setLocationCode(lineItem.getTenantId());

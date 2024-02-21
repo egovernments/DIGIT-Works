@@ -31,7 +31,7 @@ public class MuktaAdapterController {
     }
 
 
-    @RequestMapping(path = "/disburse/create", method = RequestMethod.POST)
+    @RequestMapping(path = "/disburse/_create", method = RequestMethod.POST)
     public ResponseEntity<Object> disburseCreate(@RequestBody @Valid PaymentRequest paymentRequest) {
         Disbursement disbursement = paymentInstructionService.processDisbursementCreate(paymentRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(paymentRequest.getRequestInfo(), true);
@@ -39,7 +39,7 @@ public class MuktaAdapterController {
         return ResponseEntity.ok(disbursementResponse);
     }
 
-    @RequestMapping(path = "/disburse/search", method = RequestMethod.POST)
+    @RequestMapping(path = "/disburse/_search", method = RequestMethod.POST)
     public ResponseEntity<Object> disburseSearch(@RequestBody @Valid DisbursementSearchRequest disbursementSearchRequest) {
         List<Disbursement> disbursements = paymentInstructionService.processDisbursementSearch(disbursementSearchRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(disbursementSearchRequest.getRequestInfo(), true);

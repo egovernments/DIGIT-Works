@@ -108,12 +108,12 @@ public class PaymentInstructionService {
             // Get beneficiaries from payment
             disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData);
 
-            log.info("Encrypting Disbursement Object");
-            // Encrypt the disbursement object
-            JsonNode node = encryptionDecryptionUtil.encryptObject(disbursement, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), JsonNode.class);
-
-            // Convert the encrypted object back to Disbursement
-            disbursement = objectMapper.convertValue(node, Disbursement.class);
+//            log.info("Encrypting Disbursement Object");
+//            // Encrypt the disbursement object
+//            JsonNode node = encryptionDecryptionUtil.encryptObject(disbursement, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), JsonNode.class);
+//
+//            // Convert the encrypted object back to Disbursement
+//            disbursement = objectMapper.convertValue(node, Disbursement.class);
         } catch (Exception e) {
             log.error("Error occurred while processing the payment instruction", e);
 

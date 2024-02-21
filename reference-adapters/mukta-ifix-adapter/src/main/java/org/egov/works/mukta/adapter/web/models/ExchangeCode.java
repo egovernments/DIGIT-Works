@@ -26,7 +26,7 @@ public class ExchangeCode {
     @JsonProperty("target_segment_code")
     private String targetSegmentCode;
     @JsonProperty("currency_code")
-    private Currency currencyCode;
+    private String currencyCode;
     @JsonProperty("locale_code")
     private String localeCode;
 }
