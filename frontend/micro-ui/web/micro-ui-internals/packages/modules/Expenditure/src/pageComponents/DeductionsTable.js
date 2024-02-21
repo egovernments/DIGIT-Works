@@ -215,7 +215,7 @@ const DeductionsTable = ({control,watch,...props}) => {
                 //set the percentage field
                 //set the amount field
                 //disable both the fields
-                const amount = formData?.billDetails_billAmt ? parseFloat(Digit.Utils.dss.convertFormatterToNumber(formData?.billDetails_billAmt) * (parseFloat(e.value)/100)).toFixed(1) : 0
+                const amount = formData?.invoiceDetails_materialCost ? parseFloat(Digit.Utils.dss.convertFormatterToNumber(formData?.invoiceDetails_materialCost) * (parseFloat(e.value)/100)).toFixed(1) : 0
                 setValue(`deductionDetails.${row.key}.percentage`,`${e.value} ${t("WORKS_PERCENT")}`)
                 setValue(`deductionDetails.${row.key}.amount`,amount)
 
