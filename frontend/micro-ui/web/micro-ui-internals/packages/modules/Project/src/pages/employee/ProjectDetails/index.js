@@ -101,8 +101,8 @@ const ProjectDetails = () => {
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
 
     //fetch estimate details
-    const { data : estimates, isError : isEstimateSearchError,isLoading:estimateLoading } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
-    
+    let { data : estimates, isError : isEstimateSearchError,isLoading:estimateLoading } = Digit.Hooks.works.useSearchEstimate( tenantId, { offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
+    estimates = estimates?.filter((ob) => ob?.wfStatus !== "REJECTED")
 
     useEffect(()=>{
         const projectModifierRoles = ["PROJECT_CREATOR"];
