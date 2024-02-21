@@ -16,6 +16,7 @@ import org.egov.utils.MdmsUtils;
 import org.egov.utils.PIUtils;
 import org.egov.validators.DisbursementValidator;
 import org.egov.web.models.*;
+import org.egov.web.models.Status;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +105,7 @@ public class DisbursementService {
         }
         log.info("Saving PI data.");
         paymentInstructionFromDisbursement = encryptionDecryptionUtil.encryptObject(paymentInstructionFromDisbursement, ifmsAdapterConfig.getStateLevelTenantId(),ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class);
-        piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), sanctionDetails.get(0).getFundsSummary(), paymentStatus);
+        piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), paymentStatus.equals(PaymentStatus.FAILED) ? null:sanctionDetails.get(0).getFundsSummary(), paymentStatus);
         piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
 
         return enrichDisbursementResponse(disbursementRequest,paymentInstructionFromDisbursement);
@@ -212,10 +213,11 @@ public class DisbursementService {
             for(Beneficiary beneficiary: paymentInstructionFromDisbursement.getBeneficiaryDetails()) {
                 beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
             }
-            log.info("Saving PI for failure, no funds available.");
-            piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), null, paymentStatus);
-            piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
-            throw new CustomException("INSUFFICIENT_FUNDS","Insufficient funds in the system");
+//            log.info("Saving PI for failure, no funds available.");
+//            piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), null, paymentStatus);
+//            piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
+
+            return paymentStatus;
         }
         JITRequest jitRequest = paymentInstructionEnrichment.getJitPaymentInstructionRequestForIFMS(paymentInstructionFromDisbursement);
         try {
