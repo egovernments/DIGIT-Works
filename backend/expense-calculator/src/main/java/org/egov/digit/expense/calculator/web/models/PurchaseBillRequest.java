@@ -1,7 +1,5 @@
 package org.egov.digit.expense.calculator.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.validation.Valid;
 

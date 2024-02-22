@@ -13,14 +13,18 @@ import java.util.HashMap;
 @Component
 public class UrlShortenerUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     @Value("${egov.url.shortner.host}")
     private String urlShortnerHost;
 
     @Value("${egov.url.shortner.endpoint}")
     private String urShortnerPath;
+
+    @Autowired
+    public UrlShortenerUtil(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public String getShortenedUrl(String url) {
 
@@ -32,7 +36,6 @@ public class UrlShortenerUtil {
 
         if (StringUtils.isEmpty(res)) {
             log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url);
-            ;
             return url;
         } else return res;
     }

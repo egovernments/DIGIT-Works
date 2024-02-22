@@ -21,6 +21,7 @@ const businessServiceMap = {
   estimate: "ESTIMATE",
   contract: "CONTRACT",
   "muster roll": "MR",
+  measurement: "MB",
   "works.wages":"EXPENSE.WAGES",
   "works.purchase":"EXPENSE.PURCHASE",
   "works.supervision":"EXPENSE.SUPERVISION"
@@ -180,6 +181,9 @@ export const UICustomizations = {
     }
     else if (moduleCode?.includes("works.supervision")) {
       return businessServiceMap?.["works.supervision"];
+    }
+    else if (moduleCode?.includes("measurement")){
+      return businessServiceMap?.measurement;
     }
     else {
       return businessServiceMap;

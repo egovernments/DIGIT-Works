@@ -27,26 +27,32 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 @Component
 public class WageSeekerBillGeneratorService {
 
-	@Autowired
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
+
+	private final ExpenseCalculatorUtil expenseCalculatorUtil;
+
+	private final MdmsUtils mdmsUtils;
+
+	private final CommonUtil commonUtil;
+
+	private final ContractUtils contractUtils;
+
+	private final ExpenseCalculatorConfiguration configs;
+
+	private final IdgenUtil idgenUtil;
+	private static final String MUSTER_ROLL_REFERENCE_ID_MISSING = "MUSTER_ROLL_REFERENCE_ID_MISSING";
+	private static final String REFERENCE_ID_MISSING = "ReferenceId is missing for musterRollNumber [";
 
 	@Autowired
-	private ExpenseCalculatorUtil expenseCalculatorUtil;
-
-	@Autowired
-	private MdmsUtils mdmsUtils;
-
-	@Autowired
-	private CommonUtil commonUtil;
-
-	@Autowired
-	private ContractUtils contractUtils;
-
-	@Autowired
-	private ExpenseCalculatorConfiguration configs;
-
-	@Autowired
-	private IdgenUtil idgenUtil;
+	public WageSeekerBillGeneratorService(ObjectMapper mapper, ExpenseCalculatorUtil expenseCalculatorUtil, MdmsUtils mdmsUtils, CommonUtil commonUtil, ContractUtils contractUtils, ExpenseCalculatorConfiguration configs, IdgenUtil idgenUtil) {
+		this.mapper = mapper;
+		this.expenseCalculatorUtil = expenseCalculatorUtil;
+		this.mdmsUtils = mdmsUtils;
+		this.commonUtil = commonUtil;
+		this.contractUtils = contractUtils;
+		this.configs = configs;
+		this.idgenUtil = idgenUtil;
+	}
 
 	public Calculation calculateEstimates(RequestInfo requestInfo, String tenantId, List<MusterRoll> musterRolls,
 			List<LabourCharge> labourCharges) {
@@ -75,16 +81,6 @@ public class WageSeekerBillGeneratorService {
 		return mdmsData;
 	}
 	
-	/**
-	 * Returns true if a wage bill has been created for a muster roll already.
-	 * @param requestInfo
-	 * @param musterRolls
-	 * @return
-	 */
-	private boolean isBillExists(RequestInfo requestInfo, List<MusterRoll> musterRolls) {
-		return false;
-	}
-
 	private List<Bill> createBillForMusterRolls(RequestInfo requestInfo, List<MusterRoll> musterRolls,
 			List<LabourCharge> labourCharges, Map<String, String> metaInfo) {
 		
@@ -111,15 +107,15 @@ public class WageSeekerBillGeneratorService {
 							wagesMasterCategory);
 			//Fetch all master data. We should do away with previous two statements 
 			Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForCalculator(requestInfo, tenantId);
+			Long musterRollCreatedTime = musterRoll.getAuditDetails().getCreatedTime();
 
-			BigDecimal netPayableAmount = BigDecimal.ZERO;
 			// Muster roll reference id is contractNumber
 			String referenceId = musterRoll.getReferenceId();
 			if (referenceId == null) {
-				log.error("MUSTER_ROLL_REFERENCE_ID_MISSING",
-						"Reference Id is missing for muster roll [" + musterRollNumber + "]");
-				throw new CustomException("MUSTER_ROLL_REFERENCE_ID_MISSING",
-						"Reference Id is missing for muster roll [" + musterRollNumber + "]");
+				log.error(MUSTER_ROLL_REFERENCE_ID_MISSING,
+						REFERENCE_ID_MISSING + musterRollNumber + "]");
+				throw new CustomException(MUSTER_ROLL_REFERENCE_ID_MISSING,
+						REFERENCE_ID_MISSING + musterRollNumber + "]");
 			}
 			// Get orgId for contractNumber
 			String cboId = getCBOID(requestInfo, tenantId, referenceId);
@@ -130,7 +126,7 @@ public class WageSeekerBillGeneratorService {
 			for (IndividualEntry individualEntry : individualEntries) {
 				String individualId = individualEntry.getIndividualId();
 				// Calculate net amount to pay to wage seeker
-				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges);
+				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges,musterRollCreatedTime);
 				BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount));
 				// BUGFIX PFM-4214 - If actual amount to pay is 0 then do not generate the payment for that individual
 				if (actualAmountToPay.compareTo(BigDecimal.ZERO) <= 0)
@@ -142,18 +138,15 @@ public class WageSeekerBillGeneratorService {
 				//Fetch labor cess rate filtering by labor head code and service
 				List<Object> rates = JsonPath.read(mdmsData.get(ExpenseCalculatorServiceConstants.EXPENSE_MODULE)
 						.get(ExpenseCalculatorServiceConstants.MDMS_APPLICABLE_CHARGES), jsonFilter);
-				double cessRate = Double.valueOf((String) rates.get(0));
-				BigDecimal labourCessRate = new BigDecimal(cessRate);
-				BigDecimal labourCess = actualAmountToPay.multiply(labourCessRate.divide(new BigDecimal(100.0)));
+				double cessRate = Double.parseDouble((String) rates.get(0));
+				BigDecimal labourCessRate = BigDecimal.valueOf(cessRate);
+				BigDecimal labourCess = actualAmountToPay.multiply(labourCessRate.divide(BigDecimal.valueOf(100.0)));
 				
 				// Add to the wage amount
 				actualAmountToPay = actualAmountToPay.add(labourCess);
 
-				// Calculate net payable amount
-				//netPayableAmount = netPayableAmount.add(actualAmountToPay);
-				
 				// Build lineItem
-				List<LineItem> lineItems = new ArrayList<LineItem>();
+				List<LineItem> lineItems = new ArrayList<>();
 				LineItem wageLineItem = buildLineItem(tenantId, actualAmountToPay, configs.getWageHeadCode(), LineItem.TypeEnum.PAYABLE);
 				// If wageLineItem amount is less equal zero then do not add that
 				if (wageLineItem.getAmount().compareTo(BigDecimal.ZERO) > 0)
@@ -223,16 +216,6 @@ public class WageSeekerBillGeneratorService {
 		return orgId;
 	}
 
-	private String getContractId(MusterRoll musterRoll) {
-//        final Object additionalDetails = musterRoll.getAdditionalDetails();
-//        final Optional<String> contractId = commonUtil.findValue(additionalDetails, CONTRACT_ID_CONSTANT);
-//        if(contractId.isPresent())
-//            return contractId.get();
-//
-//        return null;
-		return musterRoll.getReferenceId();
-	}
-
 	private Calculation makeCalculation(List<CalcEstimate> calcEstimates, String tenantId) {
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		for (CalcEstimate estimate : calcEstimates) {
@@ -251,18 +234,19 @@ public class WageSeekerBillGeneratorService {
 			List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
 			String tenantId = musterRoll.getTenantId();
 			BigDecimal netPayableAmount = BigDecimal.ZERO;
+			Long musterRollCreatedTime = musterRoll.getAuditDetails().getCreatedTime();
 			if (musterRoll.getReferenceId() == null) {
-				log.error("MUSTER_ROLL_REFERENCE_ID_MISSING",
-						"Reference Id is missing for muster roll [" + musterRollNumber + "]");
-				throw new CustomException("MUSTER_ROLL_REFERENCE_ID_MISSING",
-						"Reference Id is missing for muster roll [" + musterRollNumber + "]");
+				log.error(MUSTER_ROLL_REFERENCE_ID_MISSING,
+						REFERENCE_ID_MISSING + musterRollNumber + "]");
+				throw new CustomException(MUSTER_ROLL_REFERENCE_ID_MISSING,
+						REFERENCE_ID_MISSING + musterRollNumber + "]");
 			}
 
 			String cboId = getCBOID(requestInfo, tenantId, musterRoll.getReferenceId());
 			for (IndividualEntry individualEntry : individualEntries) {
 				String individualId = individualEntry.getIndividualId();
 				// Calculate net amount to pay to wage seeker
-				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges);
+				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges,musterRollCreatedTime);
 				
 				//Round off
 				BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount)).setScale(0, RoundingMode.HALF_UP);
@@ -299,7 +283,7 @@ public class WageSeekerBillGeneratorService {
 	private List<LineItem> calculateAndSetPayableLineItems(String tenantId, List<LineItem> lineItems,
 			List<HeadCode> headCodes, List<ApplicableCharge> applicableCharges) {
 
-		List<LineItem> payables = new ArrayList<LineItem>();
+		List<LineItem> payables = new ArrayList<>();
 
 		BigDecimal expense = BigDecimal.ZERO;
 		BigDecimal totalDeduction = BigDecimal.ZERO;
@@ -318,7 +302,7 @@ public class WageSeekerBillGeneratorService {
 		for (LineItem lineItem : lineItems) {
 			String headCode = lineItem.getHeadCode();
 			String category = expenseCalculatorUtil.getHeadCodeCategory(headCode, headCodes,configs.getWagesMasterCategory());
-			BigDecimal deduction = BigDecimal.ZERO;
+			BigDecimal deduction;
 			// Generate PayableLineItem only if status is ACTIVE and headCode category type
 			// is deduction
 			if (DEDUCTION_CONSTANT.equalsIgnoreCase(category)
@@ -360,7 +344,6 @@ public class WageSeekerBillGeneratorService {
 	private LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay,String headCode, LineItem.TypeEnum lineItemType) {
 		//Round off
 		BigDecimal roundOffAmount = actualAmountToPay.setScale(0, BigDecimal.ROUND_HALF_UP);
-		//roundOffAmount = actualAmountToPay.scale(0, RoundingMode.CEILING);
 		return LineItem.builder().amount(roundOffAmount).paidAmount(BigDecimal.ZERO)
 				.headCode(headCode).type(lineItemType).status("ACTIVE").tenantId(tenantId).build();
 	}
@@ -371,8 +354,7 @@ public class WageSeekerBillGeneratorService {
 	}
 
 	private Party buildParty(RequestInfo requestInfo, String type, String tenantId) {
-		String rootTenantId = tenantId.split("\\.")[0];
-		Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, rootTenantId);
+		Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, tenantId);
 		List<Object> payerList = commonUtil.readJSONPathValue(mdmsResp, JSON_PATH_FOR_PAYER);
 		for (Object obj : payerList) {
 			Payer payer = mapper.convertValue(obj, Payer.class);
@@ -396,22 +378,25 @@ public class WageSeekerBillGeneratorService {
 		return totalAttendance.multiply(skillAmount);
 	}
 
-	private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
-
-		// return new Double(150);
+	private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges, Long musterRollCreatedTime) {
 		String skill = getWageSeekerSkill(individualEntry);
-		String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
+		boolean isSkillCodePresent = false;
 		for (LabourCharge labourCharge : labourCharges) {
-//            if(labourCharge.getCode().equalsIgnoreCase(skill)
-//                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
-			// TODO: Removing the unit check here.
 			if (labourCharge.getCode().equalsIgnoreCase(skill)) {
-				return labourCharge.getAmount();
+				isSkillCodePresent = true;
+				if((labourCharge.getEffectiveTo() != null && labourCharge.getEffectiveFrom().longValue() <= musterRollCreatedTime && labourCharge.getEffectiveTo().longValue() >= musterRollCreatedTime) ||
+						(labourCharge.getEffectiveTo() == null && labourCharge.getEffectiveFrom().longValue() <= musterRollCreatedTime && labourCharge.getActive())) {
+					return labourCharge.getAmount();
+				}
 			}
 		}
 
-		log.error("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
-		throw new CustomException("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+		if(!isSkillCodePresent){
+			log.error("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+			throw new CustomException("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+		}
+		log.error("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
+		throw new CustomException("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
 	}
 
 	private Integer getWageSeekerSkillCodeId(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
@@ -448,8 +433,7 @@ public class WageSeekerBillGeneratorService {
 	 * @return
 	 */
 	private String generateWBId(RequestInfo requestInfo, String tenantId) {
-		String rootTenantId = tenantId.split("\\.")[0];
-		List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, configs.getWageBillreferenceIdFormatKey(),
+		List<String> idList = idgenUtil.getIdList(requestInfo, tenantId, configs.getWageBillreferenceIdFormatKey(),
 				"", 1);
 		String generatedWBId = idList.get(0);
 		log.info("ReferenceId generated. Generated generatedUniqueId is [" + generatedWBId + "]");

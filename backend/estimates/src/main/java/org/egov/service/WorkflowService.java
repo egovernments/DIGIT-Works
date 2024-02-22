@@ -9,6 +9,7 @@ import org.egov.common.contract.request.User;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.EstimateServiceConstant;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +23,20 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WorkflowService {
 
-    @Autowired
-    private EstimateServiceConfiguration serviceConfiguration;
+    private final EstimateServiceConfiguration serviceConfiguration;
+
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
+    private static final String PARSING_ERROR = "PARSING ERROR";
+    private static final String TENANT_ID = "?tenantId=";
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public WorkflowService(EstimateServiceConfiguration serviceConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
 
     /*
@@ -46,7 +53,7 @@ public class WorkflowService {
         try {
             response = mapper.convertValue(result, BusinessServiceResponse.class);
         } catch (IllegalArgumentException e) {
-            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow business service search");
+            throw new CustomException(PARSING_ERROR, "Failed to parse response of workflow business service search");
         }
 
         if (CollectionUtils.isEmpty(response.getBusinessServices()))
@@ -65,10 +72,11 @@ public class WorkflowService {
         ProcessInstance processInstance = getProcessInstanceForEstimate(estimateRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(estimateRequest.getRequestInfo(), Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
-        estimateRequest.getEstimate().setWfStatus(state.getState());        
+        estimateRequest.getEstimate().setWfStatus(state.getState());
         estimateRequest.getEstimate().setStatus(Estimate.StatusEnum.fromValue(state.getApplicationStatus()));
         return state.getApplicationStatus();
     }
+
 
 
     public void validateAssignee(EstimateRequest estimateRequest) {
@@ -92,7 +100,7 @@ public class WorkflowService {
         log.info("WorkflowService::getSearchURLWithParams");
         StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
         url.append(serviceConfiguration.getWfBusinessServiceSearchPath());
-        url.append("?tenantId=");
+        url.append(TENANT_ID);
         url.append(tenantId);
         url.append("&businessServices=");
         url.append(businessService);
@@ -105,15 +113,16 @@ public class WorkflowService {
 
         List<EstimateRequest> enrichedServiceWrappers = new ArrayList<>();
 
-        for (String tenantId : tenantIdToServiceWrapperMap.keySet()) {
+        for (Map.Entry<String, List<EstimateRequest>> entry : tenantIdToServiceWrapperMap.entrySet()) {
+            String tenantId = entry.getKey();
 
             List<String> estimateNumbers = new ArrayList<>();
 
             List<EstimateRequest> tenantSpecificWrappers = tenantIdToServiceWrapperMap.get(tenantId);
 
-            tenantSpecificWrappers.forEach(estimateWrapper -> {
-                estimateNumbers.add(estimateWrapper.getEstimate().getEstimateNumber());
-            });
+            tenantSpecificWrappers.forEach(estimateWrapper ->
+                estimateNumbers.add(estimateWrapper.getEstimate().getEstimateNumber())
+            );
 
             RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
@@ -125,7 +134,7 @@ public class WorkflowService {
             try {
                 processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
             } catch (IllegalArgumentException e) {
-                throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
+                throw new CustomException(PARSING_ERROR, "Failed to parse response of workflow processInstance search");
             }
 
             if (CollectionUtils.isEmpty(processInstanceResponse.getProcessInstances()) || processInstanceResponse.getProcessInstances().size() != estimateNumbers.size())
@@ -133,9 +142,9 @@ public class WorkflowService {
 
             Map<String, org.egov.web.models.Workflow> businessIdToWorkflow = getWorkflow(processInstanceResponse.getProcessInstances());
 
-            tenantSpecificWrappers.forEach(estimateWrapper -> {
-                estimateWrapper.setWorkflow(businessIdToWorkflow.get(estimateWrapper.getEstimate().getEstimateNumber()));
-            });
+            tenantSpecificWrappers.forEach(estimateWrapper ->
+                estimateWrapper.setWorkflow(businessIdToWorkflow.get(estimateWrapper.getEstimate().getEstimateNumber()))
+            );
 
             enrichedServiceWrappers.addAll(tenantSpecificWrappers);
         }
@@ -171,13 +180,17 @@ public class WorkflowService {
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
         ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setBusinessId(estimate.getEstimateNumber());
+        if(estimate.getBusinessService() != null && estimate.getBusinessService().equals(serviceConfiguration.getRevisionEstimateBusinessService())){
+            processInstance.setBusinessId(estimate.getRevisionNumber());
+        }else{
+            processInstance.setBusinessId(estimate.getEstimateNumber());
+        }
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(serviceConfiguration.getEstimateWFModuleName());
         processInstance.setTenantId(estimate.getTenantId());
         processInstance.setBusinessService(serviceConfiguration.getEstimateWFBusinessService());
-        /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
+
 
         if (!CollectionUtils.isEmpty(workflow.getAssignees())) {
             List<User> users = new ArrayList<>();
@@ -245,7 +258,7 @@ public class WorkflowService {
         log.info("WorkflowService::getprocessInstanceSearchURL");
         StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
         url.append(serviceConfiguration.getWfProcessInstanceSearchPath());
-        url.append("?tenantId=");
+        url.append(TENANT_ID);
         url.append(tenantId);
         url.append("&businessIds=");
         url.append(estimateNumber);
@@ -258,10 +271,19 @@ public class WorkflowService {
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
 
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-        StringBuilder searchUrl = getProcessInstanceSearchURLWithHistory(
-                estimate.getTenantId()
-                , estimate.getEstimateNumber()
-                , Boolean.FALSE);
+        StringBuilder searchUrl;
+        if (estimate.getBusinessService() != null && estimate.getBusinessService().equals(serviceConfiguration.getRevisionEstimateBusinessService())) {
+            searchUrl = getProcessInstanceSearchURLWithHistory(
+                    estimate.getTenantId()
+                    , estimate.getRevisionNumber()
+                    , Boolean.FALSE);
+        }
+        else {
+            searchUrl = getProcessInstanceSearchURLWithHistory(
+                    estimate.getTenantId()
+                    , estimate.getEstimateNumber()
+                    , Boolean.FALSE);
+        }
 
         Object result = repository.fetchResult(searchUrl, requestInfoWrapper);
 
@@ -269,7 +291,7 @@ public class WorkflowService {
         try {
             processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
         } catch (IllegalArgumentException e) {
-            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
+            throw new CustomException(PARSING_ERROR, "Failed to parse response of workflow processInstance search");
         }
 
         if (CollectionUtils.isEmpty(processInstanceResponse.getProcessInstances()))
@@ -283,7 +305,7 @@ public class WorkflowService {
         StringBuilder url = new StringBuilder();
         url.append(serviceConfiguration.getWfHost())
                 .append(serviceConfiguration.getWfProcessInstanceSearchPath())
-                .append("?tenantId=").append(tenantId)
+                .append(TENANT_ID).append(tenantId)
                 .append("&businessIds=").append(estimateNumber)
                 .append("&history=").append(history);
         return url;

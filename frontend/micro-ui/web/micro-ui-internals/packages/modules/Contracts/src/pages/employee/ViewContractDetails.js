@@ -73,6 +73,20 @@ const ViewContractDetails = () => {
         }
     })
 
+    //fetching measurement data
+    const requestCriteria = {
+        url : "/mukta-services/measurement/_search",
+    
+        body: {
+          "contractNumber" : contractId,
+          "tenantId" : tenantId
+        }
+    
+      }
+    
+    
+      const {isLoading, data:measurementData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
+      let isInWorkflowMeasurementPresent = measurementData?.allMeasurements?.code === "NO_MEASUREMENT_ROLL_FOUND"? false : (measurementData?.allMeasurements?.length > 0 && measurementData?.allMeasurements?.filter((ob) => ob?.wfStatus === "SUBMITTED" || ob?.wfStatus === "VERIFIED" || ob?.wfStatus === "DRAFTED")?.length>0);
 
     
     useEffect(() => {
@@ -94,7 +108,7 @@ const ViewContractDetails = () => {
     },[isProjectError]);
 
       useEffect(() => {
-        if(!(data?.additionalDetails?.isTimeExtAlreadyInWorkflow) && data) {
+        if(!(data?.additionalDetails?.isTimeExtAlreadyInWorkflow) && data && !actionsMenu?.find((ob) => ob?.name === "CREATE_TIME_EXTENSION_REQUEST")) {
             
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_TIME_EXTENSION_REQUEST",
@@ -102,7 +116,13 @@ const ViewContractDetails = () => {
             }]))
         }
 
-    }, [data])
+        if(!isInWorkflowMeasurementPresent && measurementData && !actionsMenu?.find((ob) => ob?.name === "CREATE_MEASUREMENT_REQUEST"))
+        setActionsMenu((prevState => [...prevState,{
+            name:"CREATE_MEASUREMENT_REQUEST",
+            action:"CREATE_MEASUREMENT"
+        }]))
+
+    }, [data, measurementData])
 
 
     useEffect(() => {
@@ -123,7 +143,9 @@ const ViewContractDetails = () => {
         if (option?.name === "CREATE_PURCHASE_BILL") {
             history.push(`/${window.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&workOrderNumber=${contractId}`);
         }
-
+        if (option?.action === "CREATE_MEASUREMENT") {
+            history.push(`/${window.contextPath}/employee/measurement/create?tenantId=${tenantId}&workOrderNumber=${contractId}`);
+        }
         if (option?.action === "TIME_EXTENSTION") {
             window.location.href = `${window.location.href}&isTimeExtension=${true}`
            // window.location.replace(`${window.location.href}&isTimeExtension=${true}`);
@@ -172,7 +194,7 @@ const ViewContractDetails = () => {
         //setEditTimeExtension(true)
     }
 
-    if(isProjectLoading || isContractLoading) 
+    if(isProjectLoading || isContractLoading || isLoading) 
          return <Loader/>;
     return (
       <React.Fragment>
@@ -208,7 +230,6 @@ const ViewContractDetails = () => {
                     />}
                     {data?.applicationData?.wfStatus === "ACCEPTED" && actionsMenu?.length>0 && !showTimeExtension && !(queryStrings?.isTimeExtension === "true") ?
                         <ActionBar>
-
                             {showActions ? <Menu
                                 localeKeyPrefix={`WF_CONTRACT_ACTION`}
                                 options={actionsMenu}

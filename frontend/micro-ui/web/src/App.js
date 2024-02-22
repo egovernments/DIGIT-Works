@@ -6,6 +6,7 @@ import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
 import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
+import { initMeasurementComponents } from "@egovernments/digit-ui-module-measurement";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
@@ -46,6 +47,7 @@ const enabledModules = [
   "Estimate",
   "Project",
   "Mukta",
+  "Measurement"
 ];
 
 const initDigitUI = () => {
@@ -58,6 +60,7 @@ const initDigitUI = () => {
   initEstimateComponents();
   initAttendenceMgmtComponents();
   initContractsComponents();
+  initMeasurementComponents();
   initExpenditureComponents();
   initMastersComponents();
   initProjectComponents();

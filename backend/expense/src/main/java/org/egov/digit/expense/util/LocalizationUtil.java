@@ -18,10 +18,14 @@ import static org.egov.digit.expense.config.Constants.*;
 @Slf4j
 public class LocalizationUtil {
 
+    private final Configuration config;
+    private final ServiceRequestRepository restRepo;
+
     @Autowired
-    private Configuration config;
-    @Autowired
-    private ServiceRequestRepository restRepo;
+    public LocalizationUtil(Configuration config, ServiceRequestRepository restRepo) {
+        this.config = config;
+        this.restRepo = restRepo;
+    }
 
 
     /**

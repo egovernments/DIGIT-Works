@@ -10,7 +10,7 @@
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
-    "micro-ui-internals/packages/modules/Project",
+    "micro-ui-internals/packages/modules/Measurement",
     "micro-ui-internals/packages/modules/Estimate"
   ],
   "homepage": "/core-ui",
@@ -22,6 +22,7 @@
     "@egovernments/digit-ui-module-works": "^0.0.9",
     "@egovernments/digit-ui-module-attendencemgmt": "^0.0.9",
     "@egovernments/digit-ui-module-contracts": "^0.0.6",
+    "@egovernments/digit-ui-module-measurement": "1.0.0",
     "@egovernments/digit-ui-module-estimate": "^0.0.5",
     "@egovernments/digit-ui-module-expenditure": "^0.0.7",
     "@egovernments/digit-ui-module-masters": "^0.0.7",

@@ -31,6 +31,14 @@ const PurchaseBill = () => {
         cacheTime: 0
     });
 
+    const { allMeasurementsIds, totalMaterialAmount, totalPaidAmountForSuccessfulBills } = Digit.Hooks.paymentInstruction.useMBDataForPB({workOrderNumber:contractNumber,tenantId});
+    let MBValidationData = {
+        allMeasurementsIds,
+        totalMaterialAmount,
+        totalPaidAmountForSuccessfulBills
+    }
+
+
     const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
     stateTenant,
     Digit.Utils.getConfigModuleName(),
@@ -137,12 +145,12 @@ const PurchaseBill = () => {
             updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract, docConfigData, billData, setIsFormReady,charges,org:vendorOptionsModify?.organisations?.[0]});
             setNameOfVendor(createNameOfVendorObject(vendorOptions));
         }
-    },[isContractLoading, isOrgSearchLoading, isDocConfigLoading, isBillSearchLoading,isChargesLoading,isConfigLoading,isOrgSearchLoadingModify]);
+    },[isContractLoading, isOrgSearchLoading, isDocConfigLoading, isBillSearchLoading,isChargesLoading,isOrgSearchLoadingModify]);
 
     
     // if(isConfigLoading) return <Loader></Loader>
 
-    if(isContractLoading || isOrgSearchLoading || isDocConfigLoading || isBillSearchLoading || isChargesLoading || isConfigLoading) return <Loader />
+    if(isContractLoading || isOrgSearchLoading || isDocConfigLoading || isBillSearchLoading || isChargesLoading) return <Loader />
 
     return (
         <React.Fragment>
@@ -158,6 +166,7 @@ const PurchaseBill = () => {
                 isModify={isModify} 
                 docConfigData={docConfigData}
                 bill={isModify?billData?.bills?.[0]:null}
+                MBValidationData={MBValidationData}
                 ></CreatePurchaseBillForm>
             }
         </React.Fragment>

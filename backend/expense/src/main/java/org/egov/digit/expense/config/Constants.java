@@ -53,8 +53,12 @@ public class Constants {
 	public static final String BILL_ID_FORMAT_SUFFIX = ".bill.number";
 	
 	public static final String PAYMENT_ID_FORMAT_NAME = "expense.payment.number";
+
+	public static final String EFFECTIVE_FROM_FIELD_MDMS = "effectiveFrom";
+	public static final String EFFECTIVE_TO_FIELD_MDMS = "effectiveTo";
+	public static final String ACTIVE_FIELD_MDMS = "active";
 	
-	public static final List<String> MDMS_MASTER_NAMES = Collections
+	public static final List<String> EXPENSE_MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME, BUSINESS_SERVICE_MASTERNAME));
 
 	public static final List<String> TENANT_MDMS_MASTER_NAMES = Collections
@@ -126,17 +130,17 @@ public class Constants {
 			
 			+ " payer.id as payer_id, payer.tenantid as payer_tenantid, payer.type as payer_type, payer.identifier as payer_identifier, payer.parentid as payer_parentid, "
 			+ " payer.createdby as payer_createdby, payer.createdtime as payer_createdtime, payer.lastmodifiedby as payer_lastmodifiedby, "
-			+ "	payer.lastmodifiedtime as payer_lastmodifiedtime, payer.additionaldetails as payer_additionaldetails, payer.status as payer_status "
+			+ "payer.lastmodifiedtime as payer_lastmodifiedtime, payer.additionaldetails as payer_additionaldetails, payer.status as payer_status "
 			
-			+ "	FROM eg_expense_bill bill "
+			+ "FROM eg_expense_bill bill "
 			
-			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYER 	ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
+			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYER ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_BILLDETAIL BD 	ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
+			+ INNER_JOIN + " EG_EXPENSE_BILLDETAIL BD ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_LINEITEM LI 	ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
+			+ INNER_JOIN + " EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYEE 	ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
+			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
 	
 	
 }

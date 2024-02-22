@@ -22,13 +22,11 @@ public class ExpenseCalculatorServiceConstants {
     public static final String MDMS_PAYER_LIST = "PayerList";
     public static final String MDMS_COMMON_ACTIVE_FILTER ="$.*.[?(@.active==true)]";
     public static final String MDMS_COMMON_MASTERS ="common-masters";
-   // public static final String JSON_PATH_FOR_WAGE_SEEKERS_SKILLS = MDMS_RESP_CONSTANT+MDMS_COMMON_MASTERS + "." + WAGE_SEEKER_SKILLS;
     public static final String JSON_PATH_FOR_PAYER_LIST = MDMS_RESP_CONSTANT+EXPENSE_MODULE + "." + PAYER_MASTER;
     public static final List<String> SUPERVISION_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(MDMS_HEAD_CODES, MDMS_BUSINESS_SERVICE, MDMS_APPLICABLE_CHARGES));
     public static final String BUSINESS_SERVICE_SUPERVISION = "works.supervision";
     public static final String BUSINESS_SERVICE_PURCHASE = "works.purchase";
-   // public static final String BILL_TYPE_WAGE = "works.wage";
     public static final String MDMS_EXPENSE_MASTERS ="expense";
 
     public static final String JSON_PATH_FOR_PAYER = MDMS_RESP_CONSTANT + MDMS_EXPENSE_MASTERS + "." + MDMS_PAYER_LIST + ".*";
@@ -38,8 +36,6 @@ public class ExpenseCalculatorServiceConstants {
 
     public static final String JSON_PATH_FOR_APPLICABLE_CHARGES = MDMS_RESP_CONSTANT+MDMS_EXPENSE_MASTERS + "." + MDMS_APPLICABLE_CHARGES;
 
-//    public static final String BUSINESS_SERVICE_SUPERVISION = "WORKS-SUPERVISION";
-//    public static final String BUSINESS_SERVICE_PURCHASE = "WORKS-PURCHASE";
     public static final String BILL_TYPE_WAGE = "WAGE";
     public static final String PAYEE_TYPE_SUPERVISIONBILL = "ORGANIZATION";
     public static final String CBO_IMPLEMENTATION_AGENCY = "IA";

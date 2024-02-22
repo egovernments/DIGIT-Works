@@ -1,0 +1,76 @@
+.sor-dropdowns {
+  margin-top: 10px;
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.sor-label {
+  display: inline-block;
+  width: 110px;
+  flex-basis: 100px;
+}
+
+.dropdown-width {
+  width: 40rem;
+  height: 2.5rem;
+  padding: 5px 10px;
+}
+
+.search-sor-container {
+  display: flex;
+  width: 69.25%; /* make it 69.25*/
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.search-sor-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.search-sor-label {
+  margin-top: 26px;
+}
+
+.add-sor-button {
+  padding: 10px 50px 10px 50px;
+  margin-top: 20px;
+  width: 8.625rem; /*width: 8.625rem;*/ 
+  height: 2.5rem;
+  margin-left : 158px /*158*/
+}
+
+.search-sor-input {
+  width: 27.375rem;
+  height: 2.5rem;
+}
+
+.popup-view-alaysis {
+  margin-left: 35% !important;
+  margin-top: 10% !important;
+  margin-bottom: 8% !important;
+  width: 32rem;
+}
+
+.view-Analysis-button {
+  border: 3px solid;
+  width: 15%;
+  padding: 10px 15px;
+  border-color: rgb(244, 119, 56);
+  color: rgb(244, 119, 56) !important;
+  font-size: 16px;
+}
+
+.analysis-estimate-label {
+  font-size: 16px;
+  font-style: bold;
+  font-weight: 700 !important;
+  width : 60% !important;
+}
+
+.estimate-analysis-cardheader {
+  margin-top: 14px;
+  margin-bottom: 1rem;
+}
