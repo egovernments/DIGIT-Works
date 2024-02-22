@@ -11,6 +11,7 @@ import org.egov.web.models.Document;
 import org.egov.web.models.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import java.util.*;
 public class AttendanceLogRowMapper implements ResultSetExtractor<List<AttendanceLog>> {
 
     @Autowired
+    @Qualifier("objectMapper")
     private ObjectMapper mapper;
 
     @Override
@@ -35,6 +37,7 @@ public class AttendanceLogRowMapper implements ResultSetExtractor<List<Attendanc
 
         while (rs.next()) {
             String id = rs.getString("logid");
+            String clientReferenceId = rs.getString("logClientReferenceId");
             String individualId = rs.getString("logIndividualId");
             String tenantId = rs.getString("logTenantId");
             String registerId = rs.getString("logRegisterId");
@@ -45,15 +48,21 @@ public class AttendanceLogRowMapper implements ResultSetExtractor<List<Attendanc
             String lastmodifiedby = rs.getString("logLastModifiedBy");
             Long createdtime = rs.getLong("logCreatedTime");
             Long lastmodifiedtime = rs.getLong("logLastModifiedTime");
-
+            String clientcreatedby = rs.getString("logClientCreatedBy");
+            String clientlastmodifiedby = rs.getString("logClientLastModifiedBy");
+            Long clientcreatedtime = rs.getLong("logClientCreatedTime");
+            Long clientlastmodifiedtime = rs.getLong("logClientLastModifiedTime");
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
                     .build();
-
+            AuditDetails clientAuditDetails = AuditDetails.builder().createdBy(clientcreatedby).createdTime(clientcreatedtime)
+                    .lastModifiedBy(clientlastmodifiedby).lastModifiedTime(clientlastmodifiedtime)
+                    .build();
             JsonNode additionalDetails = getAdditionalDetail("logAdditionalDetails", rs);
 
             AttendanceLog attendanceLog = AttendanceLog.builder()
                     .id(id)
+                    .clientReferenceId(clientReferenceId)
                     .individualId(individualId)
                     .tenantId(tenantId)
                     .registerId(registerId)
@@ -62,6 +71,7 @@ public class AttendanceLogRowMapper implements ResultSetExtractor<List<Attendanc
                     .type(eventType)
                     .additionalDetails(additionalDetails)
                     .auditDetails(auditDetails)
+                    .clientAuditDetails(clientAuditDetails)
                     .build();
 
             if (!attendanceLogMap.containsKey(id)) {

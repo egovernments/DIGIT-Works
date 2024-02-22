@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendanceLogEnrichment;
-import org.egov.kafka.Producer;
+import org.egov.common.producer.Producer;
 import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.repository.AttendanceLogRepository;
 import org.egov.util.ResponseInfoFactory;
@@ -98,5 +98,11 @@ public class AttendanceLogService {
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
         log.info("Attendance logs updated successfully for register ["+registerId+"]");
         return attendanceLogResponse;
+    }
+
+    public void putInCache(List<AttendanceLog> attendanceLogs) {
+        log.info("putting {} Attendance Logs in cache", attendanceLogs.size());
+        attendanceLogRepository.putInCache(attendanceLogs);
+        log.info("successfully put Attendance Logs in cache");
     }
 }
