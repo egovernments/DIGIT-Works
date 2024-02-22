@@ -50,6 +50,7 @@ class MeasurementController {
       period,
       measurementWorkflowStatus,
       enableMeasurementAfterContractEndDate,
+      measurementBookStartDate
     } = periodResponse || {};
 
     if (
@@ -112,15 +113,21 @@ class MeasurementController {
       } else if (measurementResponse?.length == 0 || measurementResponse?.code === "NO_MEASUREMENT_ROLL_FOUND" || key === "View") {
         /* no measurements are present */
 
+        // Need to implement a check with the mdms configured date with the contractResponse?.startDate 
+        //if configured date is greater than contractResponse?.startDate then we will take 
+        //the period as a configured date period
+        //otherwise it will go in the flow as is.
         //Under piece of code is used to get the same week monday epoch according to the contract startdate
-        const givenEpochTime: number = contractResponse?.startDate;
-        const givenDateTime: Date = new Date(givenEpochTime);
-        const daysToMonday: number = (givenDateTime.getDay() + 7) % 7;
-        const mondayDateTime: Date = new Date(givenDateTime);
-        mondayDateTime.setDate(givenDateTime.getDate() - daysToMonday);
+        // const givenEpochTime: number = contractResponse?.startDate;
+        // const givenDateTime: Date = new Date(givenEpochTime);
+        // const daysToMonday: number = (givenDateTime.getDay() + 7) % 7;
+        // const mondayDateTime: Date = new Date(givenDateTime);
+        // mondayDateTime.setDate(givenDateTime.getDate() - daysToMonday);
+
+       const mbStartDate:Date= this.setStartDateForMeasurementBook(periodResponse,contractResponse,measurementBookStartDate)
 
         // Get the Monday epoch datetime in milliseconds
-        const mondayEpochTimeMillis: number = mondayDateTime.getTime();
+        const mondayEpochTimeMillis: number = mbStartDate.getTime();
 
         const newEndDate = this.getEndDate(
           mondayEpochTimeMillis,   
@@ -144,6 +151,21 @@ class MeasurementController {
       type: "error",
     };
   };
+
+  setStartDateForMeasurementBook= (periodResponse:any,contractResponse: any,measurementBookStartDate:number) =>{
+    let givenEpochTime: number;
+    if(measurementBookStartDate<contractResponse?.startDate){
+      givenEpochTime = contractResponse?.startDate;
+    }else{
+      givenEpochTime=measurementBookStartDate;
+    }
+    const givenDateTime: Date = new Date(givenEpochTime);
+    const daysToMonday: number = (givenDateTime.getDay() + 7) % 7;
+    const mondayDateTime: Date = new Date(givenDateTime);
+    mondayDateTime.setDate(givenDateTime.getDate() - daysToMonday);
+    return mondayDateTime;
+
+  }
 
   // Helper function to get contract and configuration data
   getContractandConfigs = async (

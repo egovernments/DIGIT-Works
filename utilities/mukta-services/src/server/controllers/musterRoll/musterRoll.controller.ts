@@ -10,7 +10,8 @@ import {
   search_estimate,
   search_measurement,
   search_muster,
-  searchRates
+  searchRates,
+  search_mdms
 } from "../../api/index";
 import {
   // convertObjectForMeasurment,
@@ -55,8 +56,7 @@ class MusterRollController {
   getContractandConfigs = async (
     tenantId: string,
     defaultRequestInfo: any,
-    contractNumber: string,
-    measurementNumber: any = null
+    contractNumber: string
   ) => {
     // Define an array of promises for parallel execution
     const promises = [
@@ -85,22 +85,27 @@ class MusterRollController {
         "WORKS-SOR",
         "Rates",
         defaultRequestInfo
-      )
+      ),
+
+      search_mdms(
+        tenantId.split(".")[0],
+        "works",
+        "MeasurementCriteria",
+        defaultRequestInfo
+      ),
     ];
 
  
 
     // Execute promises in parallel
-    const [contract, allMeasurements, sorRates] =
+    const [contract, allMeasurements, sorRates,periodResponse] =
       await Promise.all(promises);
 
     return {
       contract,
-      // measurement,
-      // config,
-      // periodResponse,
       allMeasurements,
-      sorRates
+      sorRates,
+      periodResponse
     };
   };
 
@@ -147,12 +152,11 @@ class MusterRollController {
         );
 
 
-      const { contract, allMeasurements, sorRates } =
+      const { contract, allMeasurements, sorRates, periodResponse} =
         await this.getContractandConfigs(
           tenantId,
           defaultRequestInfo,
-          musterRolls?.referenceId,
-          null
+          musterRolls?.referenceId
         );
 
       var contractLineItems: any;
@@ -184,6 +188,7 @@ class MusterRollController {
       let totalLabourRate = 0;
       let musterRollValidationMapList = [];
       var isMbPresent: boolean = false;
+      var isConfiguredDateGreater:boolean=false
       var labourRateGreaterThanZero:boolean=false;
       var measurementNumber;
      
@@ -213,6 +218,9 @@ class MusterRollController {
             let currentValue;
             var mbEndDate = allMeasurement.additionalDetails.endDate
             var mbStartDate = allMeasurement.additionalDetails.startDate
+           if(mrStartDate>periodResponse?.[0].measurementBookStartDate){
+            isConfiguredDateGreater=true;
+           
             if (allMeasurement.referenceId == musterRolls.referenceId && allMeasurement.wfStatus == 'APPROVED' &&
             ((mrStartDate >= mbStartDate && mbEndDate >= mrEndDate) || (mrStartDate == mbStartDate && mrEndDate == mbEndDate))) {             
               
@@ -235,14 +243,16 @@ class MusterRollController {
           
            
             }
+          }
           
-
+             // need to refactor this check based on the configured data from MDMS.
+            // If mrStartDate< the configured date then the validation should not be checked
 
           }
         }
 
       }
-      if (isMbPresent === false) {
+      if (isMbPresent === false && isConfiguredDateGreater === true) {
         musterRollValidationMap.set("message", "MB_PERIOD_IS_NOT_VALID_WRT_MR_PERIOD_OR_NO_APPROVED_MB_IS_PRESENT");
         musterRollValidationMap.set("type", "error");
         musterRollValidationMapList.push(musterRollValidationMap);
@@ -259,8 +269,6 @@ class MusterRollController {
         }
 
       }
-      
-      console.log(totalLabourRate)
 
         const jsonString = JSON.stringify(musterRollValidationMapList);
         const musterRollValidation = JSON.parse(jsonString);
