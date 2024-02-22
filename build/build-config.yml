@@ -27,6 +27,14 @@ config:
       - work-dir: "backend/attendance/src/main/resources/db"
         image-name: "attendance-db"
 
+  - name: "builds/health-campaign-services/health-services/health-attendance-works"
+    build:
+      - work-dir: "backend/attendance"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "health-attendance"
+      - work-dir: "backend/attendance/src/main/resources/db"
+        image-name: "health-attendance-db"
+
   - name: "builds/digit-works/backend/muster-roll"
     build:
       - work-dir: "backend/muster-roll"
