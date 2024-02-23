@@ -211,9 +211,20 @@ class MusterRollController {
             return lineItem.estimateLineItemId === estimateDetail.id;
           });
           const contractRef: string = foundContractItem.contractLineItemRef;
+
+          const givenDateTime: Date = new Date(periodResponse?.[0].measurementBookStartDate);
+          const daysToMonday: number = (givenDateTime.getDay() + 7) % 7;
+          const mondayDateTime: Date = new Date(givenDateTime);
+          mondayDateTime.setDate(givenDateTime.getDate() - daysToMonday);
+          const mbConfigruedStartDate: number = mondayDateTime.getTime();
+          // const mbConfiguredEndDate = this.getEndDate(
+          //   mbConfigruedStartDate,   
+          //   periodResponse?.period
+          // );
           
           
-          if(mrStartDate>periodResponse?.[0].measurementBookStartDate){
+          
+          if(mrStartDate>=mbConfigruedStartDate ){
             isConfiguredDateLesser=true;
           for (var allMeasurement of allMeasurements) {
             let currentValue;
