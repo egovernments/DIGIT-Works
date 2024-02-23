@@ -188,7 +188,7 @@ class MusterRollController {
       let totalLabourRate = 0;
       let musterRollValidationMapList = [];
       var isMbPresent: boolean = false;
-      var isConfiguredDateGreater:boolean=false
+      var isConfiguredDateLesser:boolean=false
       var labourRateGreaterThanZero:boolean=false;
       var measurementNumber;
      
@@ -213,13 +213,13 @@ class MusterRollController {
           const contractRef: string = foundContractItem.contractLineItemRef;
           
           
-
+          if(mrStartDate>periodResponse?.[0].measurementBookStartDate){
+            isConfiguredDateLesser=true;
           for (var allMeasurement of allMeasurements) {
             let currentValue;
             var mbEndDate = allMeasurement.additionalDetails.endDate
             var mbStartDate = allMeasurement.additionalDetails.startDate
-           if(mrStartDate>periodResponse?.[0].measurementBookStartDate){
-            isConfiguredDateGreater=true;
+          
            
             if (allMeasurement.referenceId == musterRolls.referenceId && allMeasurement.wfStatus == 'APPROVED' &&
             ((mrStartDate >= mbStartDate && mbEndDate >= mrEndDate) || (mrStartDate == mbStartDate && mrEndDate == mbEndDate))) {             
@@ -243,16 +243,17 @@ class MusterRollController {
           
            
             }
-          }
+          
           
              // need to refactor this check based on the configured data from MDMS.
             // If mrStartDate< the configured date then the validation should not be checked
 
           }
         }
+      }
 
       }
-      if (isMbPresent === false && isConfiguredDateGreater === true) {
+      if (isMbPresent === false && isConfiguredDateLesser === true) {
         musterRollValidationMap.set("message", "MB_PERIOD_IS_NOT_VALID_WRT_MR_PERIOD_OR_NO_APPROVED_MB_IS_PRESENT");
         musterRollValidationMap.set("type", "error");
         musterRollValidationMapList.push(musterRollValidationMap);
