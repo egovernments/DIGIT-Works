@@ -190,6 +190,7 @@ class MusterRollController {
       var isMbPresent: boolean = false;
       var isConfiguredDateLesser:boolean=false
       var labourRateGreaterThanZero:boolean=false;
+      let nonSorEstimateCategory : boolean=false;
       var measurementNumber;
      
       if (musterRolls !== null && !musterRolls?.notFound) {  
@@ -197,10 +198,11 @@ class MusterRollController {
         var mrEndDate = musterRolls?.endDate;
         let musterRollValidationMap = new TSMap<string, any>();
       for (var estimateDetail of estimateDetails) {
-        if (estimateDetail.category == 'SOR') {
-          let sorMap = new TSMap<string, string>();
+        nonSorEstimateCategory = estimateDetail?.category !== 'SOR';
+        //if (estimateDetail.category == 'SOR') {
+          // let sorMap = new TSMap<string, string>();
 
-          sorMap.set(estimateDetail.sorId, estimateDetail.id);
+          // sorMap.set(estimateDetail.sorId, estimateDetail.id);
           const filteredSorRates: any = sorRates.filter(
             (rate: any) => rate.sorId === estimateDetail.sorId);
           const amountDetailsWithLA: { type: string; heads: string; amount: number }[] = filteredSorRates
@@ -243,7 +245,7 @@ class MusterRollController {
                 currentValue = (matchingMeasure.targetId === contractRef) ? matchingMeasure.currentValue : 0;
                 console.log("Current Value::", currentValue)
 
-                totalLabourRate += ((amountDetailsWithLA!=null && amountDetailsWithLA.length > 0)?amountDetailsWithLA[0].amount:0 )* currentValue;
+                totalLabourRate += !nonSorEstimateCategory?((amountDetailsWithLA!=null && amountDetailsWithLA.length > 0)?amountDetailsWithLA[0].amount:0 )* currentValue:0;
                 labourRateGreaterThanZero=totalLabourRate > 0 ? true :labourRateGreaterThanZero;
                  musterRollValidationMap.set("measurementNumber", measurementNumber);
                  musterRollValidationMap.set("totalLabourRate",totalLabourRate);
@@ -261,7 +263,7 @@ class MusterRollController {
 
           }
         }
-      }
+      //}
 
       }
       if (isMbPresent === false && isConfiguredDateLesser === true) {
@@ -271,12 +273,10 @@ class MusterRollController {
 
       }else{
         if (expenseCalculator?.totalAmount >
-          totalLabourRate) {
+          totalLabourRate && !nonSorEstimateCategory) {
 
           musterRollValidationMap.set("message", "MB_LABOUR_UTILIZATION_AMOUNT_IS_LESS_THAN_WAGE_BILL")
           musterRollValidationMap.set("type", "warn")
-          musterRollValidationMapList.push(musterRollValidationMap);
-        }else{
           musterRollValidationMapList.push(musterRollValidationMap);
         }
 
