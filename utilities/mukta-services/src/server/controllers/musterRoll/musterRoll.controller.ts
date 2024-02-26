@@ -273,7 +273,7 @@ class MusterRollController {
 
       }else{
         if (expenseCalculator?.totalAmount >
-          totalLabourRate && !nonSorEstimateCategory) {
+          totalLabourRate ) {
 
           musterRollValidationMap.set("message", "MB_LABOUR_UTILIZATION_AMOUNT_IS_LESS_THAN_WAGE_BILL")
           musterRollValidationMap.set("type", "warn")
