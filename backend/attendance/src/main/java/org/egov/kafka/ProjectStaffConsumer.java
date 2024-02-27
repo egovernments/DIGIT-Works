@@ -56,15 +56,15 @@ public class ProjectStaffConsumer {
                 try {
                     RequestInfo requestInfo = request.getRequestInfo();
 
-                    String staffUserUuid = projectStaff.getUserId();
+                    List<String> staffUserUuids = Collections.singletonList(projectStaff.getUserId());
                     String tenantId = projectStaff.getTenantId();
 
                     // Search for the individual details using the user UUID
-                    IndividualSearch individualSearch = IndividualSearch.builder().userUuid(staffUserUuid).build();
+                    IndividualSearch individualSearch = IndividualSearch.builder().userUuid(staffUserUuids).build();
                     List<Individual> individualList = individualServiceUtil.getIndividualDetailsFromSearchCriteria(individualSearch, requestInfo, tenantId);
 
                     if (individualList.isEmpty())
-                        throw new CustomException("INVALID_STAFF_ID", "No Individual found for the given staff Uuid - " + staffUserUuid);
+                        throw new CustomException("INVALID_STAFF_ID", "No Individual found for the given staff Uuid - " + staffUserUuids);
                     Individual individual = individualList.get(0);
 
                     List<Role> roleList = individual.getUserDetails().getRoles();

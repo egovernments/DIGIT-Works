@@ -175,7 +175,7 @@ public class ProjectStaffUtil {
             throw new CustomException("INDIVIDUAL_REPORTING_TO_INVALID", "Did not find reportingTo Uuid in HRMS Employee object");
 
         // Get the individual details for the reportingToUuid
-        IndividualSearch individualSearch = IndividualSearch.builder().userUuid(reportingToUuid).build();
+        IndividualSearch individualSearch = IndividualSearch.builder().userUuid(Collections.singletonList(reportingToUuid)).build();
         List<Individual> individualList = individualServiceUtil.getIndividualDetailsFromSearchCriteria(individualSearch, requestInfo, tenantId);
 
         if (individualList.isEmpty())
