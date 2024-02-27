@@ -1,7 +1,6 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.egov.web.models.enums.AllocationType;
 import org.egov.web.models.enums.Type;
@@ -9,6 +8,7 @@ import org.egov.web.models.enums.Type;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -31,17 +31,21 @@ public class Allocation extends ExchangeCode {
     private String programCode;
 
     @JsonProperty("sanction_id")
-    @NotNull
-    @Size(min = 2, max = 64)
     private String sanctionId;
 
-    @JsonProperty("amount")
+    @JsonProperty("net_amount")
     @NotNull
-    private BigDecimal amount;
+    private BigDecimal netAmount;
+
+    @JsonProperty("gross_amount")
+    @NotNull
+    private BigDecimal grossAmount;
 
     @JsonProperty("type")
-    @NotNull
     private AllocationType type;
+
+    @JsonProperty("children")
+    private List<Allocation> children;
 
     @JsonProperty("audit_details")
     private AuditDetails auditDetails;

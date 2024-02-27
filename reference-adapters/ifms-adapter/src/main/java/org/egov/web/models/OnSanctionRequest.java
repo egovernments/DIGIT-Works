@@ -16,5 +16,5 @@ public class OnSanctionRequest {
     @JsonProperty("header")
     private MsgCallbackHeader header;
     @JsonProperty("message")
-    private List<Sanction> message;
+    private Sanction message;
 }

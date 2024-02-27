@@ -169,12 +169,12 @@ public class VirtualAllotmentService {
         try {
             if(createSanctions != null && !createSanctions.isEmpty()){
                 log.info("Processing created sanction for on_sanction/create");
-                List<Sanction> sanctionList = virtualAllotmentEnrichment.createSanctionsPayload(createSanctions);
+                Sanction message = virtualAllotmentEnrichment.createSanctionsPayload(createSanctions);
                 msgCallbackHeader.setMessageType(MessageType.ON_SANCTION);
                 msgCallbackHeader.setAction(Action.CREATE);
                 OnSanctionRequest onSanctionRequest = OnSanctionRequest.builder()
                         .header(msgCallbackHeader)
-                        .message(sanctionList)
+                        .message(message)
                         .signature(signature)
                         .build();
                 programServiceUtil.callProgramServiceOnSanctionOrAllocation(onSanctionRequest, true);
@@ -182,11 +182,11 @@ public class VirtualAllotmentService {
 
             if(createAllotments != null && !createAllotments.isEmpty()){
                 log.info("Processing created allotment for on_allocation/create");
-                List<Allocation> allotmentList = virtualAllotmentEnrichment.createAllotmentsPayload(createAllotments);
+                Allocation message = virtualAllotmentEnrichment.createAllotmentsPayload(createAllotments);
                 msgCallbackHeader.setMessageType(MessageType.ON_ALLOCATION);
                 OnAllocationRequest onAllocationRequest = OnAllocationRequest.builder()
                         .header(msgCallbackHeader)
-                        .message(allotmentList)
+                        .message(message)
                         .signature(signature)
                         .build();
                 programServiceUtil.callProgramServiceOnSanctionOrAllocation(onAllocationRequest, false);

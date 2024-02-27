@@ -16,5 +16,5 @@ public class OnAllocationRequest {
     @JsonProperty("header")
     private MsgCallbackHeader header;
     @JsonProperty("message")
-    private List<Allocation> message;
+    private Allocation message;
 }

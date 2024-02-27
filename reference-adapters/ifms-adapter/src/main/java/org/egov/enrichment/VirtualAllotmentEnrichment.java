@@ -259,41 +259,82 @@ public class VirtualAllotmentEnrichment {
         return executedVALog;
     }
 
-    public List<Sanction> createSanctionsPayload(List<SanctionDetail> sanctions) {
+    public Sanction createSanctionsPayload(List<SanctionDetail> sanctions) {
+        Sanction message = new Sanction();
+        String locationCode = sanctions.get(0).getTenantId();
+        String programCode = sanctions.get(0).getProgramCode();
+        BigDecimal netAmount = BigDecimal.ZERO;
+        BigDecimal grossAmount = BigDecimal.ZERO;
+        AuditDetails details = sanctions.get(0).getAuditDetails();
+        org.egov.web.models.AuditDetails auditDetails = org.egov.web.models.AuditDetails.builder().createdTime(details.getCreatedTime()).createdBy(details.getCreatedBy())
+                .lastModifiedTime(details.getLastModifiedTime()).lastModifiedBy(details.getLastModifiedBy()).build();
         List<Sanction> sanctionList = new ArrayList<>();
         for(SanctionDetail sanctionDetail: sanctions){
             Sanction sanction = new Sanction();
             sanction.setId(sanctionDetail.getId());
-            sanction.setSanctionedAmount(sanctionDetail.getSanctionedAmount());
+            sanction.setNetAmount(sanctionDetail.getSanctionedAmount());
+            sanction.setGrossAmount(sanctionDetail.getSanctionedAmount());
+            sanction.setAvailableAmount(sanctionDetail.getSanctionedAmount());
             sanction.setLocationCode(sanctionDetail.getTenantId());
             sanction.setProgramCode(sanctionDetail.getProgramCode());
             sanction.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
-            sanction.setAuditDetails(sanctionDetail.getAuditDetails());
+            sanction.setAuditDetails(auditDetails);
+            netAmount = netAmount.add(sanction.getNetAmount());
+            grossAmount = grossAmount.add(sanction.getGrossAmount());
             sanctionList.add(sanction);
         }
-
-        return sanctionList;
+        message.setId(UUID.randomUUID().toString());
+        message.setLocationCode(locationCode);
+        message.setProgramCode(programCode);
+        message.setNetAmount(netAmount);
+        message.setGrossAmount(grossAmount);
+        message.setChildren(sanctionList);
+        message.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
+        message.setAuditDetails(auditDetails);
+        return message;
     }
 
-    public List<Allocation> createAllotmentsPayload(List<Allotment> allotments) {
+    public Allocation createAllotmentsPayload(List<Allotment> allotments) {
+        Allocation message = new Allocation();
+        String locationCode = allotments.get(0).getTenantId();
+        String programCode = allotments.get(0).getProgramCode();
+        BigDecimal netAmount = BigDecimal.ZERO;
+        BigDecimal grossAmount = BigDecimal.ZERO;
+        AuditDetails details = allotments.get(0).getAuditDetails();
+        org.egov.web.models.AuditDetails auditDetails = org.egov.web.models.AuditDetails.builder()
+                .createdTime(details.getCreatedTime())
+                .createdBy(details.getCreatedBy())
+                .lastModifiedTime(details.getLastModifiedTime())
+                .lastModifiedBy(details.getLastModifiedBy())
+                .build();
         List<Allocation> allotmentList = new ArrayList<>();
         for(Allotment allotment: allotments){
             Allocation allocationPayload = new Allocation();
             allocationPayload.setId(allotment.getId());
             allocationPayload.setSanctionId(allotment.getSanctionId());
-            allocationPayload.setAmount(allotment.getDecimalAllottedAmount());
+            allocationPayload.setNetAmount(allotment.getDecimalAllottedAmount());
+            allocationPayload.setGrossAmount(allotment.getDecimalAllottedAmount());
             allocationPayload.setLocationCode(allotment.getTenantId());
-            allocationPayload.setAuditDetails(allotment.getAuditDetails());
+            allocationPayload.setAuditDetails(auditDetails);
             allocationPayload.setProgramCode(allotment.getProgramCode());
-            allocationPayload.setStatus(Status.builder().statusCode(StatusCode.INITIATED).build());
+            allocationPayload.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
             if(allotment.getAllotmentTxnType().equals("Allotment withdrawal")){
                 allocationPayload.setType(AllocationType.DEDUCTION);
             }else{
                 allocationPayload.setType(AllocationType.ALLOCATION);
             }
+            netAmount = netAmount.add(allocationPayload.getNetAmount());
+            grossAmount = grossAmount.add(allocationPayload.getGrossAmount());
             allotmentList.add(allocationPayload);
         }
-
-        return allotmentList;
+        message.setId(UUID.randomUUID().toString());
+        message.setLocationCode(locationCode);
+        message.setProgramCode(programCode);
+        message.setNetAmount(netAmount);
+        message.setGrossAmount(grossAmount);
+        message.setChildren(allotmentList);
+        message.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
+        message.setAuditDetails(auditDetails);
+        return message;
     }
 }

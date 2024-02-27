@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -34,12 +35,25 @@ public class DisbursementValidator {
 
     public void validateDisbursementRequest(DisbursementRequest disbursementRequest, Map<String, Map<String,JSONArray>> mdmsData) {
         log.info("DisbursementValidator.validateDisbursementRequest()");
+        if(disbursementRequest.getHeader() == null){
+            throw new CustomException("INVALID_HEADER", "Header is mandatory for the disbursement Request.");
+        }
+        if(disbursementRequest.getMessage() == null){
+            throw new CustomException("INVALID_MESSAGE", "Message is mandatory for the disbursement Request.");
+        }
         Disbursement disbursement = disbursementRequest.getMessage();
+        validateDisbursement(disbursement,mdmsData);
+        validateChildDisbursements(disbursement.getDisbursements(),disbursementRequest);
+    }
+
+    private void validateDisbursement(Disbursement disbursement, Map<String, Map<String, JSONArray>> mdmsData) {
+        validateChildDisbursement(disbursement);
+
         JSONArray ssuDetails = mdmsData.get("ifms").get("SSUDetails");
         if(!ssuDetails.isEmpty()){
             JsonNode ssuDetail = objectMapper.valueToTree(ssuDetails.get(0));
             String programCode = ssuDetail.get("programCode").asText();
-            if(!programCode.equals(disbursementRequest.getMessage().getProgramCode())){
+            if(!programCode.equals(disbursement.getProgramCode())){
                 throw new CustomException("INVALID_PROGRAM_CODE", "Program Code is invalid for the tenantId and disbursement Request.");
             }
         }
@@ -47,7 +61,6 @@ public class DisbursementValidator {
         if(disbursement.getSanctionId() == null){
             throw new CustomException("INVALID_SANCTION_ID", "Sanction Id is mandatory for the disbursement Request.");
         }
-        validateChildDisbursements(disbursement.getDisbursements(),disbursementRequest);
     }
 
     private void validateChildDisbursements(List<Disbursement> disbursements, DisbursementRequest disbursementRequest) {
@@ -60,7 +73,10 @@ public class DisbursementValidator {
                 // Use the result of subtraction to update the variables
                 netAmount = netAmount.subtract(disbursement.getNetAmount());
                 grossAmount = grossAmount.subtract(disbursement.getGrossAmount());
-
+                validateChildDisbursement(disbursement);
+                if(disbursement.getAccountCode() == null){
+                    throw new CustomException("INVALID_ACCOUNT_CODE", "Account Code is mandatory for the disbursement Request.");
+                }
                 validateIndividual(disbursement.getIndividual());
             }
         }
@@ -68,6 +84,34 @@ public class DisbursementValidator {
         // Use compareTo() for BigDecimal equality comparison
         if (netAmount.compareTo(BigDecimal.ZERO) != 0 || grossAmount.compareTo(BigDecimal.ZERO) != 0) {
             throw new CustomException("INVALID_AMOUNT", "Net Amount and Gross Amount are not matching with the child disbursements.");
+        }
+    }
+
+    private void validateChildDisbursement(Disbursement disbursement) {
+        if(disbursement.getId() == null){
+            disbursement.setId(UUID.randomUUID().toString());
+        }
+        if(disbursement.getTargetId() == null){
+            throw new CustomException("INVALID_TARGET_ID", "Target Id is mandatory for the disbursement Request.");
+        }
+        if(disbursement.getLocationCode() == null){
+            throw new CustomException("INVALID_LOCATION_CODE", "Location Code is mandatory for the disbursement Request.");
+        }
+
+        if(disbursement.getNetAmount() == null){
+            throw new CustomException("INVALID_NET_AMOUNT", "Net Amount is mandatory for the disbursement Request.");
+        }
+        if(disbursement.getGrossAmount() == null){
+            throw new CustomException("INVALID_GROSS_AMOUNT", "Gross Amount is mandatory for the disbursement Request.");
+        }
+        if(!disbursement.getNetAmount().equals(disbursement.getGrossAmount())){
+            throw new CustomException("INVALID_AMOUNT", "Net Amount and Gross Amount are not matching for the disbursement Request.");
+        }
+        if(disbursement.getStatus() == null){
+            throw new CustomException("INVALID_STATUS","Status is mandatory for the disbursement Request.");
+        }
+        if(disbursement.getStatus().getStatusCode() == null){
+            throw new CustomException("INVALID_STATUS_CODE","Status Code is mandatory for the disbursement Request.");
         }
     }
 

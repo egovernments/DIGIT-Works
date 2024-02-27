@@ -297,7 +297,7 @@ public class IfmsService {
         MsgCallbackHeader msgCallbackHeader = MsgCallbackHeader.builder()
                 .senderId("program@https://unified-qa.digit.org")
                 .receiverId("program@https://unified-dev.digit.org")
-                .messageType(MessageType.SANCTION)
+                .messageType(MessageType.PROGRAM)
                 .messageId("123456")
                 .messageTs(System.currentTimeMillis())
                 .action(Action.SEARCH)
