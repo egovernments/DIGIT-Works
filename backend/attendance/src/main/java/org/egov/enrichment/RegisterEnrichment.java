@@ -42,10 +42,10 @@ public class RegisterEnrichment {
         RequestInfo requestInfo = attendanceRegisterRequest.getRequestInfo();
         List<AttendanceRegister> attendanceRegisters = attendanceRegisterRequest.getAttendanceRegister();
 
-        String tenantId = attendanceRegisters.get(0).getTenantId();
+        String rootTenantId = attendanceRegisters.get(0).getTenantId().split("\\.")[0];
 
         //Get Register Numbers from IdGen Service for number of registers present in AttendanceRegisters
-        List<String> registerNumbers = getIdList(requestInfo, tenantId
+        List<String> registerNumbers = getIdList(requestInfo, rootTenantId
                 , config.getIdgenAttendanceRegisterNumberName(), "", attendanceRegisters.size()); //idFormat will be fetched by idGen service
 
         for (int i = 0; i < attendanceRegisters.size(); i++) {

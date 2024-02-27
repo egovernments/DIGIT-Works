@@ -229,8 +229,10 @@ public class AttendeeServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
 
         String tenantId = attendeeListFromRequest.get(0).getTenantId();
+        //split the tenantId
+        String rootTenantId = tenantId.split("\\.")[0];
 
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
 
         //check tenant Id
         log.info("validate tenantId with MDMS");
@@ -252,8 +254,10 @@ public class AttendeeServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
 
         String tenantId = attendeeListFromRequest.get(0).getTenantId();
+        //split the tenantId
+        String rootTenantId = tenantId.split("\\.")[0];
 
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
 
         //check tenant Id
         log.info("validate tenantId with MDMS");

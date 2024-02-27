@@ -52,9 +52,10 @@ public class AttendanceServiceValidator {
         log.info("Attendance registers referenceId and ServiceCode are validated");
 
         String tenantId = attendanceRegisters.get(0).getTenantId();
+        String rootTenantId = tenantId.split("\\.")[0];
 
         //Get MDMS data using create attendance register request and tenantId
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
 
@@ -107,9 +108,10 @@ public class AttendanceServiceValidator {
         }
 
         String tenantId = attendanceRegisters.get(0).getTenantId();
+        String rootTenantId = tenantId.split("\\.")[0];
 
         //Get MDMS data using create attendance register request and tenantId
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
 

@@ -67,7 +67,7 @@ public class RegisterEnrichmentTest {
         List<IdResponse> idResponses = new ArrayList<>();
         IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
 
-        when(idGenRepository.getId(eq(attendanceRegisterRequest.getRequestInfo()), eq("pb.amritsar"), eq("attendance.register.number"), eq(""), eq(1)))
+        lenient().when(idGenRepository.getId(eq(attendanceRegisterRequest.getRequestInfo()), eq("pb"), eq("attendance.register.number"), eq(""), eq(1)))
                 .thenReturn(idGenerationResponse);
 
         CustomException exception = assertThrows(CustomException.class,()->registerEnrichment.enrichRegisterOnCreate(attendanceRegisterRequest));
