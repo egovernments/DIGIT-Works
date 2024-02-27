@@ -625,6 +625,7 @@ public class PaymentInstructionService {
         log.info("Processing PI For Creating Disbursement Request");
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
         MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(paymentInstruction.getProgramCode(),paymentInstruction.getTenantId());
+        msgCallbackHeader.setMessageType(MessageType.DISBURSE);
         DisburseSearch disburseSearch = DisburseSearch.builder()
                 .targetId(paymentInstruction.getMuktaReferenceId())
                 .locationCode(paymentInstruction.getTenantId())
