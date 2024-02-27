@@ -121,6 +121,8 @@ public class SanctionDetailQueryBuilder {
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
             queryBuilder.append(" ORDER BY snacDetails.lastmodifiedtime ");
+        }else{
+            queryBuilder.append(" ORDER BY snacDetails.").append(criteria.getSortBy().name());
         }
 
         if (criteria.getSortOrder() == SanctionDetailsSearchCriteria.SortOrder.ASC)
