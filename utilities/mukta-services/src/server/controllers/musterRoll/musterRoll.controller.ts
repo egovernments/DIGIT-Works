@@ -242,7 +242,7 @@ class MusterRollController {
                 const matchingMeasure = allMeasurement.measures.find(
                   (measure: any) => measure.targetId === contractRef
                 );
-                currentValue = (matchingMeasure.targetId === contractRef) ? matchingMeasure.currentValue : 0;
+                currentValue = (matchingMeasure?.targetId === contractRef) ? matchingMeasure.currentValue : 0;
                 console.log("Current Value::", currentValue)
 
                 totalLabourRate += !nonSorEstimateCategory?((amountDetailsWithLA!=null && amountDetailsWithLA.length > 0)?amountDetailsWithLA[0].amount:0 )* currentValue:0;
