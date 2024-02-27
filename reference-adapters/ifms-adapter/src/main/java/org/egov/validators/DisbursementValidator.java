@@ -12,6 +12,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.web.models.Disbursement;
 import org.egov.web.models.DisbursementRequest;
 import org.egov.web.models.Individual;
+import org.egov.web.models.MsgCallbackHeader;
 import org.egov.web.models.enums.PIStatus;
 import org.egov.web.models.enums.PaymentStatus;
 import org.egov.web.models.jit.PaymentInstruction;
@@ -42,8 +43,21 @@ public class DisbursementValidator {
             throw new CustomException("INVALID_MESSAGE", "Message is mandatory for the disbursement Request.");
         }
         Disbursement disbursement = disbursementRequest.getMessage();
+        validateHeader(disbursementRequest.getHeader());
         validateDisbursement(disbursement,mdmsData);
         validateChildDisbursements(disbursement.getDisbursements(),disbursementRequest);
+    }
+
+    private void validateHeader(MsgCallbackHeader header) {
+        if(header.getSenderId() == null){
+            throw new CustomException("INVALID_SENDER_ID", "Sender Id is mandatory for the disbursement Request.");
+        }
+        if(header.getReceiverId() == null){
+            throw new CustomException("INVALID_RECEIVER_ID", "Receiver Id is mandatory for the disbursement Request.");
+        }
+        if(header.getSenderId().equals(header.getReceiverId())){
+            throw new CustomException("INVALID_SENDER_RECEIVER_ID", "Sender Id and Receiver Id cannot be same for the disbursement Request.");
+        }
     }
 
     private void validateDisbursement(Disbursement disbursement, Map<String, Map<String, JSONArray>> mdmsData) {
@@ -124,6 +138,9 @@ public class DisbursementValidator {
         }
         if(individual.getPhone() == null){
             throw new CustomException("INVALID_PHONE", "Phone is mandatory for the disbursement Request.");
+        }
+        if(individual.getAddress() == null){
+            throw new CustomException("INVALID_ADDRESS", "Address is mandatory for the disbursement Request.");
         }
     }
 
