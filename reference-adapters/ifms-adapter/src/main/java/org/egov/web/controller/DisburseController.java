@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/v1/disburse/")
 public class DisburseController {
@@ -24,7 +26,7 @@ public class DisburseController {
     }
 
     @RequestMapping(path = "_create", method = RequestMethod.POST)
-    public DisbursementResponse request(@RequestBody DisbursementRequest disbursementRequest) {
+    public DisbursementResponse request(@RequestBody @Valid DisbursementRequest disbursementRequest) {
         return disbursementService.processDisbursementRequest(disbursementRequest);
     }
 }

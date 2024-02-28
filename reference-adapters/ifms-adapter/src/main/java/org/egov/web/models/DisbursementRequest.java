@@ -3,6 +3,8 @@ package org.egov.web.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,5 +16,6 @@ public class DisbursementRequest {
     @JsonProperty("header")
     private MsgCallbackHeader header;
     @JsonProperty("message")
+    @NotNull
     private Disbursement message;
 }
