@@ -49,7 +49,7 @@ const setDeductionTableData = (bill,charges,t) => {
       "comments": row?.additionalDetails?.comments,
       "name":{
         "name": `COMMON_MASTERS_DEDUCTIONS_${row.headCode}`,
-        ...chargesObject?.[0]
+        ...chargesObject
       }
   }
   })
