@@ -32,7 +32,7 @@ public class Disbursement extends ExchangeCode {
     private Long disbursementDate;
     @JsonProperty("sanction_id")
     private String sanctionId;
-    @JsonProperty("disbursements")
+    @JsonProperty("children")
     private List<Disbursement> disbursements;
     @NotNull
     @JsonProperty("account_code")

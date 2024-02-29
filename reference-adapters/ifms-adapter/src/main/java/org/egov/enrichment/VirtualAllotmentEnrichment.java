@@ -332,6 +332,7 @@ public class VirtualAllotmentEnrichment {
         message.setNetAmount(netAmount);
         message.setGrossAmount(grossAmount);
         message.setChildren(allotmentList);
+        message.setType(AllocationType.ALLOCATION);
         message.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
         message.setAuditDetails(auditDetails);
         return message;
