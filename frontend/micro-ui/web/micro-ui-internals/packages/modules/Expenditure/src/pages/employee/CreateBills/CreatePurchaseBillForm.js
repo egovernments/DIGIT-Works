@@ -91,7 +91,7 @@ const CreatePurchaseBillForm = ({
             }
 
             if(difference?.billDetails_billAmt){
-                let billAmount = parseFloat(Digit.Utils.dss.convertFormatterToNumber(formData?.billDetails_billAmt));
+                let billAmount = parseFloat(Digit.Utils.dss.convertFormatterToNumber(formData.invoiceDetails_materialCost));
                 formData?.deductionDetails && formData?.deductionDetails?.forEach((data, index)=>{
                   if(data?.name?.calculationType === "percentage") {
                     const amount = billAmount ? (billAmount * (parseFloat(data?.name?.value)/100)).toFixed(1) : 0
