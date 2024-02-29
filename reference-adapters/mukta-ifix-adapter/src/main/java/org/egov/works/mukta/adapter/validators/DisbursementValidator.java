@@ -107,9 +107,9 @@ public class DisbursementValidator {
         if(disbursement.getDisbursements() == null || disbursement.getDisbursements().isEmpty()){
             throw new CustomException(Error.INVALID_REQUEST, Error.DISBURSEMENTS_NOT_FOUND_MESSAGE);
         }
-        if(disbursement.getAllocationIds() == null || disbursement.getAllocationIds().isEmpty()){
-            throw new CustomException(Error.INVALID_REQUEST, Error.ALLOCATION_IDS_NOT_FOUND_MESSAGE);
-        }
+//        if(disbursement.getAllocationIds() == null || disbursement.getAllocationIds().isEmpty()){
+//            throw new CustomException(Error.INVALID_REQUEST, Error.ALLOCATION_IDS_NOT_FOUND_MESSAGE);
+//        }
         validateDisbursementAmount(disbursement);
         validateDisbursementFromDB(disbursement);
     }
