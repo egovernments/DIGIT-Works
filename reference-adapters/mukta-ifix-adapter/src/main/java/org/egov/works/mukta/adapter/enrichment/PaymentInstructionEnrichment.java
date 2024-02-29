@@ -210,7 +210,6 @@ public class PaymentInstructionEnrichment {
         disbursement.setAuditDetails(auditDetails);
         disbursement.setLocationCode(paymentRequest.getPayment().getTenantId());
         disbursement.setProgramCode(programCode);
-        disbursement.setSanctionId("7b6bb0f8-109d-4b94-bc97-c3220509c632");
         if(Boolean.TRUE.equals(isAnyDisbursementFailed)){
             enrichDisbursementStatus(disbursement,StatusCode.FAILED, Error.DISBURSEMENT_ENRICHMENT_FAILED_MESSAGE);
         }else{
