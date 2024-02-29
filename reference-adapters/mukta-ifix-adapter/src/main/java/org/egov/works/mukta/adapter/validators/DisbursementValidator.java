@@ -191,7 +191,8 @@ public class DisbursementValidator {
         if(!disbursementFromDB.getTargetId().equals(disbursement.getTargetId())){
             throw new CustomException(Error.TARGET_ID_NOT_MATCHED, Error.TARGET_ID_NOT_MATCHED_MESSAGE);
         }
-        if(!disbursementFromDB.getGrossAmount().equals(disbursement.getGrossAmount()) && !disbursementFromDB.getNetAmount().equals(disbursement.getNetAmount())){
+        if (disbursementFromDB.getGrossAmount().compareTo(disbursement.getGrossAmount()) != 0 ||
+                disbursementFromDB.getNetAmount().compareTo(disbursement.getNetAmount()) != 0) {
             throw new CustomException(Error.INVALID_REQUEST, Error.GROSS_AMOUNT_AND_NET_AMOUNT_NOT_MATCHED_WITH_ORIGINAL_DISBURSEMENT);
         }
         if(disbursement.getIndividual() == null){
