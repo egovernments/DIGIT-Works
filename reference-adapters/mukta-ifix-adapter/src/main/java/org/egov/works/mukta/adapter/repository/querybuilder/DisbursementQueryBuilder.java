@@ -95,8 +95,8 @@ public class DisbursementQueryBuilder {
     public String addPaginationWrapper(StringBuilder query, Pagination pagination, List<Object> preparedStmtList) {
         String paginatedQuery = addOrderByClause(pagination);
 
-        int limit = null != pagination.getLimit() ? pagination.getLimit() : config.getDefaultLimit();
-        int offset = null != pagination.getOffSet() ? pagination.getOffSet() : config.getDefaultOffset();
+        int limit = pagination != null && pagination.getLimit() != null ? pagination.getLimit() : config.getDefaultLimit();
+        int offset = pagination != null && pagination.getOffSet() != null? pagination.getOffSet() : config.getDefaultOffset();
 
         String finalQuery = paginatedQuery.replace("{}", query);
 
@@ -110,8 +110,10 @@ public class DisbursementQueryBuilder {
     private String addOrderByClause(Pagination pagination) {
 
         String paginationWrapper = WRAPPER_QUERY;
+        if(pagination == null)
+            return paginationWrapper.replace("{sortBy}", "createdtime").replace("{orderBy}", Pagination.OrderEnum.DESC.name());
 
-        if ( !StringUtils.isEmpty(pagination.getSortBy())) {
+        if ( pagination.getSortBy() != null && StringUtils.isNotBlank(pagination.getSortBy())) {
             paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
         }
         else{

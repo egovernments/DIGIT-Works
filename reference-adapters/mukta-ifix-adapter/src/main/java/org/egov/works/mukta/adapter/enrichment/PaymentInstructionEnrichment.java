@@ -2,6 +2,8 @@ package org.egov.works.mukta.adapter.enrichment;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.JsonObject;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -51,7 +53,7 @@ public class PaymentInstructionEnrichment {
         for (Bill bill : billList) {
             for (BillDetail billDetail : bill.getBillDetails()) {
                 for (LineItem lineItem : billDetail.getPayableLineItems()) {
-                    Beneficiary beneficiary = getBeneficiariesFromLineItem(lineItem, billDetail.getPayee(), headCodeMap, paymentRequest.getPayment().getTenantId());
+                    Beneficiary beneficiary = getBeneficiariesFromLineItem(lineItem, billDetail.getPayee(), headCodeMap, paymentRequest.getPayment().getTenantId(),bill);
                     beneficiaryList.add(beneficiary);
                 }
             }
@@ -69,9 +71,10 @@ public class PaymentInstructionEnrichment {
      * @param tenantId The tenant id
      * @return The beneficiary
      */
-    private Beneficiary getBeneficiariesFromLineItem(LineItem lineItem, Party payee, Map<String, JsonNode> headCodeMap, String tenantId) {
+    private Beneficiary getBeneficiariesFromLineItem(LineItem lineItem, Party payee, Map<String, JsonNode> headCodeMap, String tenantId,Bill bill) {
         log.info("Started executing getBeneficiariesFromLineItem");
         String beneficiaryId = payee.getIdentifier();
+        ObjectNode additionalDetails = objectMapper.createObjectNode();
         String headCode = lineItem.getHeadCode();
         Beneficiary beneficiary = null;
         BeneficiaryType beneficiaryType = BeneficiaryType.IND;
@@ -86,10 +89,13 @@ public class PaymentInstructionEnrichment {
             }
             List<LineItem> benefLineItemList = new ArrayList<>();
             benefLineItemList.add(lineItem);
+            additionalDetails.put("billNumber",bill.getBillNumber());
+            additionalDetails.put("referenceId", bill.getReferenceId());
             beneficiary = Beneficiary.builder()
                     .amount(lineItem.getAmount())
                     .beneficiaryId(beneficiaryId)
                     .beneficiaryType(beneficiaryType)
+                    .additionalDetails(additionalDetails)
                     .benfLineItems(benefLineItemList).build();
         }
         log.info("Beneficiary generated and sending back.");
@@ -148,6 +154,9 @@ public class PaymentInstructionEnrichment {
                 .createdTime(System.currentTimeMillis())
                 .lastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid())
                 .lastModifiedTime(System.currentTimeMillis()).build();
+        Set<String> billNumbers = new HashSet<>();
+        Set<String> referenceIds = new HashSet<>();
+        ObjectNode additionalDetailsForDisbursement = objectMapper.createObjectNode();
         // Creating map of bank account, individual and organisation based on the beneficiary id.git
         if (bankAccounts != null && !bankAccounts.isEmpty()) {
             for (BankAccount bankAccount : bankAccounts) {
@@ -174,6 +183,7 @@ public class PaymentInstructionEnrichment {
             BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBeneficiaryId());
             Individual individual = individualMap.get(piBeneficiary.getBeneficiaryId());
             Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
+            ObjectNode additionalDetails = (ObjectNode) piBeneficiary.getAdditionalDetails();
             if(piBeneficiary.getBeneficiaryType().equals(BeneficiaryType.DEPT) && bankAccount == null){
                 isAnyDisbursementFailed = true;
                 log.error("Bank account not found for department beneficiary. -> "+piBeneficiary.getBeneficiaryId());
@@ -188,6 +198,8 @@ public class PaymentInstructionEnrichment {
                     disbursements.add(disbursementForLineItem);
                 }
             }
+            billNumbers.add(additionalDetails.get("billNumber").asText());
+            referenceIds.add(additionalDetails.get("referenceId").asText());
         }
         // Enriching the parent disbursement.
         UUID uuid = UUID.randomUUID();
@@ -198,12 +210,17 @@ public class PaymentInstructionEnrichment {
         disbursement.setAuditDetails(auditDetails);
         disbursement.setLocationCode(paymentRequest.getPayment().getTenantId());
         disbursement.setProgramCode(programCode);
+        disbursement.setSanctionId("7b6bb0f8-109d-4b94-bc97-c3220509c632");
         if(Boolean.TRUE.equals(isAnyDisbursementFailed)){
             enrichDisbursementStatus(disbursement,StatusCode.FAILED, Error.DISBURSEMENT_ENRICHMENT_FAILED_MESSAGE);
         }else{
             enrichDisbursementStatus(disbursement,StatusCode.INITIATED, StatusCode.INITIATED.toString());
         }
         setAmountForParentDisbursement(disbursement);
+
+        additionalDetailsForDisbursement.put("billNumbers", objectMapper.valueToTree(billNumbers));
+        additionalDetailsForDisbursement.put("referenceIds", objectMapper.valueToTree(referenceIds));
+        disbursement.setAdditionalDetails(additionalDetailsForDisbursement);
         log.info("Beneficiary details enriched and sending back.");
         return disbursement;
     }
