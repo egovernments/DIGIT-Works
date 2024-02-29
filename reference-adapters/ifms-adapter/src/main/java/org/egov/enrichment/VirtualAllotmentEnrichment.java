@@ -274,7 +274,6 @@ public class VirtualAllotmentEnrichment {
             sanction.setId(sanctionDetail.getId());
             sanction.setNetAmount(sanctionDetail.getSanctionedAmount());
             sanction.setGrossAmount(sanctionDetail.getSanctionedAmount());
-            sanction.setAvailableAmount(sanctionDetail.getSanctionedAmount());
             sanction.setLocationCode(sanctionDetail.getTenantId());
             sanction.setProgramCode(sanctionDetail.getProgramCode());
             sanction.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());

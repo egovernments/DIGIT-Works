@@ -61,7 +61,6 @@ public class DisbursementValidator {
     }
 
     private void validateDisbursement(Disbursement disbursement, Map<String, Map<String, JSONArray>> mdmsData) {
-        validateChildDisbursement(disbursement);
 
         JSONArray ssuDetails = mdmsData.get("ifms").get("SSUDetails");
         if(!ssuDetails.isEmpty()){
@@ -75,6 +74,10 @@ public class DisbursementValidator {
         if(disbursement.getSanctionId() == null){
             throw new CustomException("INVALID_SANCTION_ID", "Sanction Id is mandatory for the disbursement Request.");
         }
+        if(disbursement.getDisbursements() == null || disbursement.getDisbursements().isEmpty()){
+            throw new CustomException("INVALID_CHILD_DISBURSEMENTS", "Child Disbursements are mandatory for the disbursement Request.");
+        }
+        validateChildDisbursement(disbursement);
     }
 
     private void validateChildDisbursements(List<Disbursement> disbursements, DisbursementRequest disbursementRequest) {
@@ -85,9 +88,9 @@ public class DisbursementValidator {
         if (disbursements != null && !disbursements.isEmpty()) {
             for (Disbursement disbursement : disbursements) {
                 // Use the result of subtraction to update the variables
+                validateChildDisbursement(disbursement);
                 netAmount = netAmount.subtract(disbursement.getNetAmount());
                 grossAmount = grossAmount.subtract(disbursement.getGrossAmount());
-                validateChildDisbursement(disbursement);
                 if(disbursement.getAccountCode() == null){
                     throw new CustomException("INVALID_ACCOUNT_CODE", "Account Code is mandatory for the disbursement Request.");
                 }

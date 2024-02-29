@@ -264,7 +264,7 @@ public class IfmsService {
                 filename = "5PDResponse.json";
                 break;
             case "FD":
-                filename = "6FDResponse.json";
+                filename = "6FDNewResponse.json";
                 break;
             case "COR":
                 filename = "7CORSuccess.json";
