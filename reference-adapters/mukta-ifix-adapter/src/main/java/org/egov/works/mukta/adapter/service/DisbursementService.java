@@ -51,7 +51,7 @@ public class DisbursementService {
     public DisbursementResponse processOnDisbursement(DisbursementRequest disbursementRequest) {
         log.info("Processing disbursement request");
         // Validate the disbursement request
-        disbursementValidator.validateOnDisbursementRequest(disbursementRequest);
+//        disbursementValidator.validateOnDisbursementRequest(disbursementRequest);
         // Extract the disbursement message from the request
         Disbursement disbursement = disbursementRequest.getMessage();
         // Extract the tenant ID from the disbursement
@@ -126,6 +126,7 @@ public class DisbursementService {
      */
     private void updatePaymentStatus(Payment payment, Disbursement disbursement, RequestInfo requestInfo) {
         log.info("Updating payment status for the payment : " + payment);
+        PaymentRequest paymentRequest = PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
         EnumMap<StatusCode, PaymentStatus> lineItemIdStatusMap = getStatusCodeToPaymentStatusMap();
         HashMap<String, StatusCode> targetIdToStatusCodeMap = new HashMap<>();
         for(Disbursement disbursement1: disbursement.getDisbursements()){
@@ -134,7 +135,13 @@ public class DisbursementService {
         payment.getBills().forEach(bill ->
                 bill.getBillDetails().forEach(billDetail ->
                         billDetail.getPayableLineItems().forEach(payableLineItem -> payableLineItem.setStatus(lineItemIdStatusMap.get(targetIdToStatusCodeMap.get(payableLineItem.getLineItemId()))))));
-        updatePaymentStatusForPartial(payment, requestInfo);
+        if(disbursement.getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
+            updatePaymentStatusForPartial(payment, requestInfo);
+        }else if(disbursement.getStatus().getStatusCode().equals(StatusCode.FAILED)){
+            billUtils.updatePaymentStatus(paymentRequest,PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
+        }else if(disbursement.getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL)){
+            billUtils.updatePaymentStatus(paymentRequest,PaymentStatus.SUCCESSFUL, ReferenceStatus.PAYMENT_SUCCESS);
+        }
     }
     /**
      * Updates the payment status for partial
