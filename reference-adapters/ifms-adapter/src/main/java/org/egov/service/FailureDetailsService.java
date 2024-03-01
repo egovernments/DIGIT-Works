@@ -76,18 +76,12 @@ public class FailureDetailsService {
         if (pi != null) {
             Map<String, JsonNode> failedBeneficiariesMapById =  getFailedBeneficiaryMap(failedPiResponse);
 
-            List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, Collections.singleton(pi.getMuktaReferenceId()), pi.getTenantId());
-            if (payments != null && !payments.isEmpty()) {
-                Payment payment = payments.get(0);
-                updatePiAndPaymentForFailedBenef(pi, payment, failedBeneficiariesMapById);
-                addReversalTransactionAndUpdatePIPa(pi, requestInfo);
-                // Set success response based on service id
-                JitRespStatusForPI jitRespStatusForPI =  serviceId == JITServiceId.FD ? JitRespStatusForPI.STATUS_LOG_FD_SUCCESS: JitRespStatusForPI.STATUS_LOG_FTFPS_SUCCESS;
-                // Create PI status log based on current existing PIS request
-                paymentInstructionService.createAndSavePIStatusLog(pi, serviceId, jitRespStatusForPI, requestInfo);
-            } else {
-                log.info("Payment data not found for paymentNumber : "+ pi.getMuktaReferenceId());
-            }
+            updatePiAndPaymentForFailedBenef(pi, failedBeneficiariesMapById);
+            addReversalTransactionAndUpdatePIPa(pi, requestInfo);
+            // Set success response based on service id
+            JitRespStatusForPI jitRespStatusForPI =  serviceId == JITServiceId.FD ? JitRespStatusForPI.STATUS_LOG_FD_SUCCESS: JitRespStatusForPI.STATUS_LOG_FTFPS_SUCCESS;
+            // Create PI status log based on current existing PIS request
+            paymentInstructionService.createAndSavePIStatusLog(pi, serviceId, jitRespStatusForPI, requestInfo);
         }
 
     }
@@ -131,14 +125,7 @@ public class FailureDetailsService {
         return failedPiBenfMap;
     }
 
-    private void updatePiAndPaymentForFailedBenef(PaymentInstruction pi, Payment payment, Map<String, JsonNode> failedBeneficiariesMapById) {
-        Map<String, PaymentLineItem> paymentPayableLineItemMap = payment.getBills().stream()
-                .map(PaymentBill::getBillDetails)
-                .flatMap(Collection::stream)
-                .map(PaymentBillDetail::getPayableLineItems)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toMap(PaymentLineItem::getLineItemId, Function.identity()));
-
+    private void updatePiAndPaymentForFailedBenef(PaymentInstruction pi, Map<String, JsonNode> failedBeneficiariesMapById) {
         for (Beneficiary beneficiary: pi.getBeneficiaryDetails()) {
             String benfNumber = beneficiary.getBeneficiaryNumber();
             if (failedBeneficiariesMapById.get(benfNumber) != null && !failedBeneficiariesMapById.get(benfNumber).isEmpty()) {
@@ -147,11 +134,6 @@ public class FailureDetailsService {
                 beneficiary.setPaymentStatusMessage(benfDtl.get("failedReason").asText());
                 beneficiary.setChallanNumber(benfDtl.get("challanNumber").asText());
                 beneficiary.setChallanDate(benfDtl.get("challanDate").asText());
-                for (BenfLineItems lineItem: beneficiary.getBenfLineItems()) {
-                    if (paymentPayableLineItemMap.containsKey(lineItem.getLineItemId())) {
-                        paymentPayableLineItemMap.get(lineItem.getLineItemId()).setStatus(PaymentStatus.FAILED);
-                    }
-                }
             }
         }
     }
