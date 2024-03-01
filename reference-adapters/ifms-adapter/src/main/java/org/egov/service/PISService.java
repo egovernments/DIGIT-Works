@@ -128,7 +128,7 @@ public class PISService {
                     jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PIS_SUCCESS;
                     // Create PI status log based on current existing PIS request
                     paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PIS, jitRespStatusForPI, requestInfo);
-                    paymentInstructionService.processPIForOnDisburse(paymentInstruction);
+                    paymentInstructionService.processPIForOnDisburse(paymentInstruction,requestInfo);
                 }
             } catch (Exception e) {
                 log.info("Exception occurred while processing PIS response." + e);
@@ -167,7 +167,7 @@ public class PISService {
 //
 //            billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_DECLINED);
 //        }
-        paymentInstructionService.processPIForOnDisburse(paymentInstruction);
+        paymentInstructionService.processPIForOnDisburse(paymentInstruction,requestInfo);
     }
 
     /**

@@ -723,8 +723,10 @@ public class PaymentInstructionEnrichment {
 
     private PaymentInstruction getEnrichedPaymentRequestFromDisbursement(Disbursement disbursement, List<Beneficiary> beneficiaryList, SanctionDetail sanctionDetail,Map<String,Map<String,JSONArray>> mdmsData, Boolean isRevised,PaymentInstruction lastPi) {
         RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
+        AuditDetails auditDetails = AuditDetails.builder().createdBy(disbursement.getAuditDetails().getCreatedBy()).createdTime(System.currentTimeMillis()).lastModifiedBy(disbursement.getAuditDetails().getLastModifiedBy()).lastModifiedTime(System.currentTimeMillis()).build();
         String jitBillNo = idgenUtil.getIdList(requestInfo, disbursement.getLocationCode(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
         String piId = disbursement.getId();
+        String parentPiNumber = null;
         ObjectNode additionalDetails = objectMapper.valueToTree(disbursement.getAdditionalDetails());
         if(Boolean.FALSE.equals(isRevised)){
             List<String> beneficiaryNumbers = idgenUtil.getIdList(requestInfo,disbursement.getLocationCode(),config.getPiBenefInstructionNumberFormat(),null,beneficiaryList.size());
@@ -741,6 +743,8 @@ public class PaymentInstructionEnrichment {
                 beneficiary.setBeneficiaryNumber(muktaRefIdToBeneficiaryNumberMap.get(beneficiary.getMuktaReferenceId()));
                 beneficiary.setPiId(piId);
             }
+            parentPiNumber = lastPi.getJitBillNo();
+            additionalDetails.put("parentPiNumber",parentPiNumber);
         }
 
         Allotment latestAllotment = null;
@@ -765,26 +769,29 @@ public class PaymentInstructionEnrichment {
                 .paymentInstId(piId)
                 .transactionAmount(disbursement.getNetAmount())
                 .transactionType(TransactionType.DEBIT)
-                .auditDetails(disbursement.getAuditDetails())
+                .auditDetails(auditDetails)
                 .build();
         PADetails paDetails = PADetails.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(disbursement.getLocationCode())
                 .piId(piId)
                 .muktaReferenceId(disbursement.getTargetId())
-                .auditDetails(disbursement.getAuditDetails())
+                .auditDetails(auditDetails)
                 .build();
-        PaymentInstruction paymentInstruction = PaymentInstruction.builder()
+
+
+        return PaymentInstruction.builder()
                 .id(piId)
                 .tenantId(disbursement.getLocationCode())
                 .programCode(sanctionDetail.getProgramCode())
+                .parentPiNumber(parentPiNumber)
                 .muktaReferenceId(disbursement.getTargetId())
                 .netAmount(disbursement.getNetAmount())
                 .grossAmount(disbursement.getGrossAmount())
                 .jitBillNo(jitBillNo)
                 .jitBillDate(util.getFormattedTimeFromTimestamp(disbursement.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
                 .numBeneficiaries(beneficiaryList.size())
-                .auditDetails(disbursement.getAuditDetails())
+                .auditDetails(auditDetails)
                 .jitBillDdoCode(sanctionDetail.getDdoCode())
                 .hoa(sanctionDetail.getHoaCode())
                 .granteeAgCode(ssuNode.get("granteeAgCode").asText())
@@ -803,11 +810,6 @@ public class PaymentInstructionEnrichment {
                 .paDetails(Collections.singletonList(paDetails))
                 .isActive(true)
                 .build();
-
-        if(isRevised && lastPi != null){
-            paymentInstruction.setParentPiNumber(lastPi.getJitBillNo());
-        }
-        return paymentInstruction;
     }
 
     private JsonNode getHoaNodeFromSanctionDetail(SanctionDetail sanctionDetail, Map<String, Map<String, JSONArray>> mdmsData) {
@@ -970,18 +972,13 @@ public class PaymentInstructionEnrichment {
     }
 
     public void setAddtionaInfoForDisbursement(PaymentInstruction paymentInstruction, Disbursement disbursement) {
-        ObjectNode additionalDetails = objectMapper.createObjectNode();
-        ObjectNode additionalDetailsForDisbursement = objectMapper.valueToTree(disbursement.getAdditionalDetails());
+        ObjectNode additionalDetailsForDisbursement = objectMapper.valueToTree(paymentInstruction.getAdditionalDetails());
         HashMap<String, Beneficiary> muktaRefIdToBenefPaymentStatusMap = getMuktaRefIdToBenefPayementStatusMap(paymentInstruction);
-        additionalDetails.set("billNumbers", additionalDetailsForDisbursement.get("billNumbers"));
-        additionalDetails.set("referenceIds", additionalDetailsForDisbursement.get("referenceIds"));
-        additionalDetails.set("hoaCode", additionalDetailsForDisbursement.get("hoaCode"));
-        additionalDetails.set("mstAllotmentId", additionalDetailsForDisbursement.get("mstAllotmentId"));
-        additionalDetails.set("piStatus", objectMapper.valueToTree(paymentInstruction.getPiStatus()));
-        additionalDetails.set("numBeneficiaries", objectMapper.valueToTree(paymentInstruction.getNumBeneficiaries()));
-        additionalDetails.set("parentPiNumber", objectMapper.valueToTree(paymentInstruction.getParentPiNumber()));
-        additionalDetails.set("paDetails", objectMapper.valueToTree(paymentInstruction.getPaDetails().get(0)));
-        disbursement.setAdditionalDetails(additionalDetails);
+        additionalDetailsForDisbursement.set("piStatus", objectMapper.valueToTree(paymentInstruction.getPiStatus()));
+        additionalDetailsForDisbursement.set("numBeneficiaries", objectMapper.valueToTree(paymentInstruction.getNumBeneficiaries()));
+        additionalDetailsForDisbursement.set("parentPiNumber", objectMapper.valueToTree(paymentInstruction.getParentPiNumber()));
+        additionalDetailsForDisbursement.set("paDetails", objectMapper.valueToTree(paymentInstruction.getPaDetails().get(0)));
+        disbursement.setAdditionalDetails(additionalDetailsForDisbursement);
         for(Disbursement disbursement1: disbursement.getDisbursements()){
             Beneficiary beneficiary = muktaRefIdToBenefPaymentStatusMap.get(disbursement1.getTargetId());
             ObjectNode additionalDetailsForChild = objectMapper.createObjectNode();

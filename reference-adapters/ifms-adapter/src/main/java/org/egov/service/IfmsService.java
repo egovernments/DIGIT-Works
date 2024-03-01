@@ -65,8 +65,6 @@ public class IfmsService {
 
     @Autowired
     private ESLogUtils esLogUtils;
-    @Autowired
-    private ProgramServiceUtil programServiceUtil;
 
     public Map<String, String> getKeys() throws NoSuchAlgorithmException {
         Map<String, String> keyMap = new HashMap<>();
@@ -291,31 +289,28 @@ public class IfmsService {
         return vaResponse;
     }
 
-    public MsgCallbackHeader getMessageCallbackHeader(String programCode,String locationCode) {
+    public MsgCallbackHeader getMessageCallbackHeader(RequestInfo requestInfo,String locationCode) {
         String idFormat = "program@{URI}";
-        String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
-        MsgCallbackHeader msgCallbackHeader = MsgCallbackHeader.builder()
-                .senderId("program@https://unified-qa.digit.org")
-                .receiverId("program@https://unified-dev.digit.org")
-                .messageType(MessageType.PROGRAM)
-                .messageId("123456")
-                .messageTs(System.currentTimeMillis())
-                .action(Action.SEARCH)
-                .build();
-        ProgramSearch programSearch = ProgramSearch.builder().programCode(programCode).locationCode(locationCode).build();
-        ProgramSearchRequest programSearchRequest = ProgramSearchRequest.builder()
-                .signature(signature)
-                .header(msgCallbackHeader)
-                .programSearch(programSearch)
-                .build();
-        ProgramSearchResponse programSearchResponse = programServiceUtil.searchProgram(programSearchRequest);
-        if(programSearchResponse.getPrograms().isEmpty()){
-            throw new CustomException("INVALID_PROGRAM_CODE","Program code is invalid for the disbursement Request.");
+        Map<String,Map<String,JSONArray>> exchangeServers = mdmsUtils.fetchExchangeServers(requestInfo,locationCode);
+        JSONArray exchangeServer = exchangeServers.get(MDMS_EXCHANGE_MODULE_NAME).get(MDMS_EXCHANGE_SERVER_MASTER);
+        String senderId = null;
+        String receiverId = null;
+        for (Object o : exchangeServer) {
+            Map<String, String> exchangeServerMap = (Map<String, String>) o;
+            if (exchangeServerMap.get("code").equals("IFMS")) {
+                senderId = exchangeServerMap.get("hostUrl");
+            }
+            if (exchangeServerMap.get("code").equals("MUKTA")) {
+                receiverId = exchangeServerMap.get("hostUrl");
+            }
         }
-        String receiverId = idFormat.replace("{URI}", programSearchResponse.getPrograms().get(0).getClientHostUrl());
-        msgCallbackHeader.setReceiverId(receiverId);
-        msgCallbackHeader.setSenderId(idFormat.replace("{URI}", Objects.requireNonNull(extractHostUrlFromURL(ifmsAdapterConfig.getAppDomain()))));
-        return msgCallbackHeader;
+
+        return MsgCallbackHeader.builder()
+                .messageId(UUID.randomUUID().toString())
+                .senderId(idFormat.replace("{URI}", Objects.requireNonNull(extractHostUrlFromURL(senderId))))
+                .receiverId(idFormat.replace("{URI}", Objects.requireNonNull(extractHostUrlFromURL(receiverId))))
+                .senderUri(extractHostUrlFromURL(senderId))
+                .build();
     }
     private static String extractHostUrlFromURL(String input) {
         // Regular expression pattern to match the domain with http/https

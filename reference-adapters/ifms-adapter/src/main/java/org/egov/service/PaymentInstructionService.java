@@ -623,44 +623,46 @@ public class PaymentInstructionService {
         }
     }
 
-    public void processPIForOnDisburse(PaymentInstruction paymentInstruction) {
+    public void processPIForOnDisburse(PaymentInstruction paymentInstruction, RequestInfo requestInfo) {
         log.info("Processing PI For Creating Disbursement Request");
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
-//        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(paymentInstruction.getProgramCode(),paymentInstruction.getTenantId());
-//        msgCallbackHeader.setMessageType(MessageType.DISBURSE);
-//        DisburseSearch disburseSearch = DisburseSearch.builder()
-//                .targetId(paymentInstruction.getMuktaReferenceId())
-//                .locationCode(paymentInstruction.getTenantId())
-//                .build();
-//        DisburseSearchRequest disburseSearchRequest = DisburseSearchRequest.builder()
-//                .signature(signature)
-//                .header(msgCallbackHeader)
-//                .disburseSearch(disburseSearch)
-//                .build();
-//        DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
-//        List<Disbursement> disbursements = disbursementResponse.getDisbursements();
-        List<Disbursement> disbursements = new ArrayList<>();
-        try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("sample/Disbursement.json");
-            DisburseSearchResponse disbursementResponse = objectMapper.readValue(inputStream, DisburseSearchResponse.class);
-            disbursements = disbursementResponse.getDisbursements();
-        } catch (IOException e) {
-            log.error("Exception while reading disbursements.json : " + e);
-        }
+        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,paymentInstruction.getTenantId());
+        msgCallbackHeader.setMessageType(MessageType.DISBURSE);
+        msgCallbackHeader.setAction(Action.SEARCH);
+        DisburseSearch disburseSearch = DisburseSearch.builder()
+                .targetId(paymentInstruction.getMuktaReferenceId())
+                .locationCode(paymentInstruction.getTenantId())
+                .build();
+        DisburseSearchRequest disburseSearchRequest = DisburseSearchRequest.builder()
+                .signature(signature)
+                .header(msgCallbackHeader)
+                .disburseSearch(disburseSearch)
+                .build();
+        DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
+        List<Disbursement> disbursements = disbursementResponse.getDisbursements();
+//        List<Disbursement> disbursements = new ArrayList<>();
+//        try {
+//            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("sample/Disbursement.json");
+//            DisburseSearchResponse disbursementResponse = objectMapper.readValue(inputStream, DisburseSearchResponse.class);
+//            disbursements = disbursementResponse.getDisbursements();
+//        } catch (IOException e) {
+//            log.error("Exception while reading disbursements.json : " + e);
+//        }
 
             piEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursements.get(0));
             piEnrichment.setAddtionaInfoForDisbursement(paymentInstruction, disbursements.get(0));
-//        msgCallbackHeader.setAction(Action.CREATE);
-//        try {
-//            DisbursementRequest disbursementRequest = DisbursementRequest.builder()
-//                    .signature(signature)
-//                    .header(msgCallbackHeader)
-//                    .message(disbursements.get(0))
-//                    .build();
-//            programServiceUtil.callOnDisburse(disbursementRequest);
-//        }catch (Exception e){
-//            log.error("Exception while calling onDisburse : "+e);
-//        }
+        msgCallbackHeader.setAction(Action.CREATE);
+        msgCallbackHeader.setMessageType(MessageType.ON_DISBURSE);
+        try {
+            DisbursementRequest disbursementRequest = DisbursementRequest.builder()
+                    .signature(signature)
+                    .header(msgCallbackHeader)
+                    .message(disbursements.get(0))
+                    .build();
+            programServiceUtil.callOnDisburse(disbursementRequest);
+        }catch (Exception e){
+            log.error("Exception while calling onDisburse : "+e);
+        }
         log.info("Processing PI For Creating Disbursement Request Completed");
     }
 }

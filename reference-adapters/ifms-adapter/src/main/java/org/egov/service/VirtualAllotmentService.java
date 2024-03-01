@@ -143,7 +143,7 @@ public class VirtualAllotmentService {
                     // Get allotments to create and
                     List<Allotment> createAllotments =  vaEnrichment.getAllotmentsForCreate(updatedSanctions, allotmentList, tenantId, requestInfo);
                     sanctionDetailsRepository.createUpdateSanctionFunds(createSanctions, updateSanctions, createAllotments);
-                    processAllotmentsAndSanctions(createAllotments, createSanctions,ssuNode,tenantId);
+                    processAllotmentsAndSanctions(createAllotments, createSanctions,ssuNode,tenantId,requestInfo);
                 }
                 // Update last executed for the va
                 if (executedVALog == null) {
@@ -161,11 +161,10 @@ public class VirtualAllotmentService {
         }
     }
 
-    private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions, JsonNode ssuNode,String tenantId) {
+    private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions, JsonNode ssuNode,String tenantId,RequestInfo requestInfo) {
         log.info("Processing allotments and sanctions");
-        String programCode = ssuNode.get("programCode").asText();
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
-        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(programCode,tenantId);
+        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,tenantId);
         try {
             if(createSanctions != null && !createSanctions.isEmpty()){
                 log.info("Processing created sanction for on_sanction/create");
@@ -184,6 +183,7 @@ public class VirtualAllotmentService {
                 log.info("Processing created allotment for on_allocation/create");
                 Allocation message = virtualAllotmentEnrichment.createAllotmentsPayload(createAllotments);
                 msgCallbackHeader.setMessageType(MessageType.ON_ALLOCATION);
+                msgCallbackHeader.setAction(Action.CREATE);
                 OnAllocationRequest onAllocationRequest = OnAllocationRequest.builder()
                         .header(msgCallbackHeader)
                         .message(message)

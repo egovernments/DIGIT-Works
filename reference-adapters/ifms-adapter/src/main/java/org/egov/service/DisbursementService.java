@@ -194,7 +194,7 @@ public class DisbursementService {
             PaymentInstruction lastPiForUpdate = lastPI == null ? originalPI : lastPI;
             // Update last revised PI status to COMPLETED
             lastPiForUpdate.setPiStatus(PIStatus.COMPLETED);
-            lastPiForUpdate.getAuditDetails().setLastModifiedTime(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedTime());
+            lastPiForUpdate.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
             lastPiForUpdate.getAuditDetails().setLastModifiedBy(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedBy());
             piRepository.update(Collections.singletonList(lastPiForUpdate), null);
             piUtils.updatePIIndex(requestInfo, lastPiForUpdate);

@@ -30,6 +30,22 @@ public class MdmsUtils {
     @Autowired
     private IfmsAdapterConfig config;
 
+	public Map<String,Map<String,JSONArray>> fetchExchangeServers(RequestInfo requestInfo, String tenantId) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, MDMS_EXCHANGE_MODULE_NAME, Arrays.asList(MDMS_EXCHANGE_SERVER_MASTER));
+		Object response = new HashMap<>();
+		MdmsResponse mdmsResponse = new MdmsResponse();
+		try {
+			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
+
+		log.info(mdmsResponse.toString());
+		return mdmsResponse.getMdmsRes();
+	}
 	public Map<String, Map<String,JSONArray>> fetchHoaAndSSUDetails(RequestInfo requestInfo, String tenantId) {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
