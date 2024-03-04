@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -26,8 +27,12 @@ import java.util.*;
 @Slf4j
 public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public EstimateRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Estimate> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -45,11 +50,14 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             String wfStatus = rs.getString("wf_status");
             String name = rs.getString("name");
             String description = rs.getString("description");
+            String revisionNumber = rs.getString("revision_number");
+            String businessService = rs.getString("business_service");
+            BigDecimal versionNumber = rs.getBigDecimal("version_number");
+            String oldUuid = rs.getString("old_uuid");
             String referenceNumber = rs.getString("reference_number");
             String executingDepartment = rs.getString("executing_department");
             String createdby = rs.getString("created_by");
             String lastmodifiedby = rs.getString("last_modified_by");
-            //BigDecimal totalAmount = rs.getBigDecimal("total_amount");
             Long createdtime = rs.getLong("created_time");
             Long lastmodifiedtime = rs.getLong("last_modified_time");
 
@@ -62,6 +70,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             Estimate estimate = Estimate.builder().estimateNumber(estimateNumber).id(id)
                     .wfStatus(wfStatus).status(Estimate.StatusEnum.fromValue(status)).projectId(projectId)
                     .additionalDetails(additionalDetails).tenantId(tenantId).name(name)
+                    .revisionNumber(revisionNumber).businessService(businessService).versionNumber(versionNumber).oldUuid(oldUuid)
                     .description(description).referenceNumber(referenceNumber).executingDepartment(executingDepartment)
                     .proposalDate(proposalDate).auditDetails(auditDetails).build();
 
@@ -72,7 +81,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             addEstimateDetails(rs, estimateDetailMap, estimateMap.get(id));
 
             if (!isAddressAdded) {
-                Address address = getEstimateAddress(id, tenantId, rs);
+                Address address = getEstimateAddress(tenantId, rs);
                 //one-to-one mapping
                 estimate.setAddress(address);
                 isAddressAdded = true;
@@ -81,9 +90,9 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
         return new ArrayList<>(estimateMap.values());
     }
 
-    private Address getEstimateAddress(String id, String tenantId, ResultSet rs) throws SQLException {
+    private Address getEstimateAddress(String tenantId, ResultSet rs) throws SQLException {
         log.debug("EstimateRowMapper::getEstimateAddress");
-        Address address = Address.builder()
+        return Address.builder()
                 .id(rs.getString("estAddId"))
                 .tenantId(tenantId).addressLine1(rs.getString("address_line_1"))
                 .addressLine2(rs.getString("address_line_2")).addressNumber(rs.getString("address_number"))
@@ -92,8 +101,6 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                 .landmark(rs.getString("landmark")).latitude(rs.getDouble("latitude"))
                 .longitude(rs.getDouble("longitude"))
                 .build();
-
-        return address;
     }
 
     private void addEstimateDetails(ResultSet rs, Map<String, EstimateDetail> estimateDetailMap, Estimate estimate) throws SQLException {
@@ -101,6 +108,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
         String estDetailsId = rs.getString("estDetailId");
         EstimateDetail estimateDetail = EstimateDetail.builder()
                 .id(estDetailsId)
+                .previousLineItemId(rs.getString("estDetailOldUuid"))
                 .sorId(rs.getString("sor_id"))
                 .category(rs.getString("category"))
                 .name(rs.getString("estDetailName"))
@@ -109,6 +117,11 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                 .noOfunit(rs.getDouble("no_of_unit"))
                 //.totalAmount(rs.getDouble("total_amount"))
                 .uomValue(rs.getDouble("uom_value"))
+                .length(rs.getBigDecimal("length"))
+                .width(rs.getBigDecimal("width"))
+                .height(rs.getBigDecimal("height"))
+                .isDeduction(rs.getBoolean("is_deduction"))
+                .quantity(rs.getBigDecimal("quantity"))
                 .uom(rs.getString("uom"))
                 .isActive(rs.getBoolean("estDetailActive"))
                 .build();

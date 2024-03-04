@@ -27,6 +27,14 @@ config:
       - work-dir: "backend/attendance/src/main/resources/db"
         image-name: "attendance-db"
 
+  - name: "builds/health-campaign-services/health-services/health-attendance-works"
+    build:
+      - work-dir: "backend/attendance"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "health-attendance"
+      - work-dir: "backend/attendance/src/main/resources/db"
+        image-name: "health-attendance-db"
+
   - name: "builds/digit-works/backend/muster-roll"
     build:
       - work-dir: "backend/muster-roll"
@@ -96,7 +104,23 @@ config:
       - work-dir: "backend/expense/src/main/resources/db"
         image-name: "expense-db"
 
-# utilities
+  - name: "builds/digit-works/backend/measurement-service"
+    build:
+      - work-dir: "backend/measurement-service"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "measurement-service"
+      - work-dir: "backend/measurement-service/src/main/resources/db"
+        image-name: "measurement-service-db"     
+
+  - name: "builds/digit-works/backend/measurement-registry"
+    build:
+      - work-dir: "backend/measurement-registry"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "measurement-registry"
+      - work-dir: "backend/measurement-registry/src/main/resources/db"
+        image-name: "measurement-registry-db"
+
+  # utilities
   - name: "builds/digit-works/utilities/egov-pdf"
     build:
       - work-dir: "utilities/egov-pdf"
@@ -105,6 +129,10 @@ config:
     build:
       - work-dir: "utilities/egov-bff-service"
         image-name: "egov-bff-service"  
+  - name: "builds/digit-works/utilities/mukta-services"
+    build:
+      - work-dir: "utilities/mukta-services"
+        image-name: "mukta-services"
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
@@ -142,3 +170,60 @@ config:
       - work-dir: "utilities/expense-cronjob"
         image-name: "expense-cronjob"
         dockerfile: "utilities/expense-cronjob/Dockerfile"
+
+  - name: "builds/digit-works/utilities/ifms-cronjob-va"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-va"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-pis"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-pis"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-pag"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-pag"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-pd"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-pd"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-fd"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-fd"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-ftps"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-ftps"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-ftfps"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-ftfps"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-pa"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-pa"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+
+# reference-adapters
+  - name: "builds/digit-works/reference-adapters/ifms-adapter"
+    build:
+      - work-dir: "reference-adapters/ifms-adapter"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "ifms-adapter"
+      - work-dir: "reference-adapters/ifms-adapter/src/main/resources/db"
+        image-name: "ifms-adapter-db"
+  - name: "builds/digit-works/reference-adapters/mukta-ifix-adapter"
+    build:
+      - work-dir: "reference-adapters/mukta-ifix-adapter"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "mukta-ifix-adapter"
+      - work-dir: "reference-adapters/mukta-ifix-adapter/src/main/resources/db"
+        image-name: "mukta-ifix-adapter-db"

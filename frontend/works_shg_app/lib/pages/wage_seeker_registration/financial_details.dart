@@ -158,7 +158,6 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                     StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
                       return DigitRadioButtonList<String>(
-                        context,
                         labelText: t.translate(i18.common.accountType),
                         formControlName: accountTypeKey,
                         options:
@@ -175,6 +174,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                     DigitTextFormField(
                         formControlName: ifscCodeKey,
                         label: t.translate(i18.common.ifscCode),
+                        textCapitalization: TextCapitalization.characters,
                         onChanged: (val) async {
                           final url = Uri.parse(
                               '${Urls.commonServices.bankDetails}/${form.value[ifscCodeKey]}');
@@ -218,7 +218,9 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                                     form.value[accountNoKey].toString(),
                                 reAccountNumber:
                                     form.value[reAccountNoKey].toString(),
-                                ifscCode: form.value[ifscCodeKey].toString(),
+                                ifscCode: form.value[ifscCodeKey]
+                                    .toString()
+                                    .toUpperCase(),
                                 accountType:
                                     form.value[accountTypeKey].toString(),
                                 bankName: hintText);

@@ -17,8 +17,8 @@ public class ContactDetailsOrgIdsRowMapper implements ResultSetExtractor<Set<Str
         Set<String> orgIds = new HashSet<>();
 
         while (resultSet.next()) {
-            String contactDetail_orgId = resultSet.getString("contactDetail_orgId");
-            orgIds.add(contactDetail_orgId);
+            String contactDetailOrgId = resultSet.getString("contactDetail_orgId");
+            orgIds.add(contactDetailOrgId);
         }
 
         return orgIds;

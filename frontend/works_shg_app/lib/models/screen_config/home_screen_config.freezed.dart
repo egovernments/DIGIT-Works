@@ -192,6 +192,9 @@ mixin _$CommonUIConfigModel {
   @JsonKey(name: 'CBOMyWorks')
   List<CBOMyWorksSearchCriteriaModel>? get cboMyWorksSearchCriteria =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: 'CBOMyServiceRequests')
+  List<CBOMyServiceRequestsConfig>? get cboMyServiceRequestsConfig =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -209,7 +212,9 @@ abstract class $CommonUIConfigModelCopyWith<$Res> {
       {@JsonKey(name: 'CBOHomeScreenConfig')
           List<CBOHomeScreenConfigModel>? cboHomeScreenConfig,
       @JsonKey(name: 'CBOMyWorks')
-          List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria});
+          List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria,
+      @JsonKey(name: 'CBOMyServiceRequests')
+          List<CBOMyServiceRequestsConfig>? cboMyServiceRequestsConfig});
 }
 
 /// @nodoc
@@ -227,6 +232,7 @@ class _$CommonUIConfigModelCopyWithImpl<$Res, $Val extends CommonUIConfigModel>
   $Res call({
     Object? cboHomeScreenConfig = freezed,
     Object? cboMyWorksSearchCriteria = freezed,
+    Object? cboMyServiceRequestsConfig = freezed,
   }) {
     return _then(_value.copyWith(
       cboHomeScreenConfig: freezed == cboHomeScreenConfig
@@ -237,6 +243,10 @@ class _$CommonUIConfigModelCopyWithImpl<$Res, $Val extends CommonUIConfigModel>
           ? _value.cboMyWorksSearchCriteria
           : cboMyWorksSearchCriteria // ignore: cast_nullable_to_non_nullable
               as List<CBOMyWorksSearchCriteriaModel>?,
+      cboMyServiceRequestsConfig: freezed == cboMyServiceRequestsConfig
+          ? _value.cboMyServiceRequestsConfig
+          : cboMyServiceRequestsConfig // ignore: cast_nullable_to_non_nullable
+              as List<CBOMyServiceRequestsConfig>?,
     ) as $Val);
   }
 }
@@ -253,7 +263,9 @@ abstract class _$$_CommonUIConfigModelCopyWith<$Res>
       {@JsonKey(name: 'CBOHomeScreenConfig')
           List<CBOHomeScreenConfigModel>? cboHomeScreenConfig,
       @JsonKey(name: 'CBOMyWorks')
-          List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria});
+          List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria,
+      @JsonKey(name: 'CBOMyServiceRequests')
+          List<CBOMyServiceRequestsConfig>? cboMyServiceRequestsConfig});
 }
 
 /// @nodoc
@@ -269,6 +281,7 @@ class __$$_CommonUIConfigModelCopyWithImpl<$Res>
   $Res call({
     Object? cboHomeScreenConfig = freezed,
     Object? cboMyWorksSearchCriteria = freezed,
+    Object? cboMyServiceRequestsConfig = freezed,
   }) {
     return _then(_$_CommonUIConfigModel(
       cboHomeScreenConfig: freezed == cboHomeScreenConfig
@@ -279,6 +292,10 @@ class __$$_CommonUIConfigModelCopyWithImpl<$Res>
           ? _value._cboMyWorksSearchCriteria
           : cboMyWorksSearchCriteria // ignore: cast_nullable_to_non_nullable
               as List<CBOMyWorksSearchCriteriaModel>?,
+      cboMyServiceRequestsConfig: freezed == cboMyServiceRequestsConfig
+          ? _value._cboMyServiceRequestsConfig
+          : cboMyServiceRequestsConfig // ignore: cast_nullable_to_non_nullable
+              as List<CBOMyServiceRequestsConfig>?,
     ));
   }
 }
@@ -290,9 +307,12 @@ class _$_CommonUIConfigModel implements _CommonUIConfigModel {
       {@JsonKey(name: 'CBOHomeScreenConfig')
           final List<CBOHomeScreenConfigModel>? cboHomeScreenConfig,
       @JsonKey(name: 'CBOMyWorks')
-          final List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria})
+          final List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria,
+      @JsonKey(name: 'CBOMyServiceRequests')
+          final List<CBOMyServiceRequestsConfig>? cboMyServiceRequestsConfig})
       : _cboHomeScreenConfig = cboHomeScreenConfig,
-        _cboMyWorksSearchCriteria = cboMyWorksSearchCriteria;
+        _cboMyWorksSearchCriteria = cboMyWorksSearchCriteria,
+        _cboMyServiceRequestsConfig = cboMyServiceRequestsConfig;
 
   factory _$_CommonUIConfigModel.fromJson(Map<String, dynamic> json) =>
       _$$_CommonUIConfigModelFromJson(json);
@@ -321,9 +341,21 @@ class _$_CommonUIConfigModel implements _CommonUIConfigModel {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<CBOMyServiceRequestsConfig>? _cboMyServiceRequestsConfig;
+  @override
+  @JsonKey(name: 'CBOMyServiceRequests')
+  List<CBOMyServiceRequestsConfig>? get cboMyServiceRequestsConfig {
+    final value = _cboMyServiceRequestsConfig;
+    if (value == null) return null;
+    if (_cboMyServiceRequestsConfig is EqualUnmodifiableListView)
+      return _cboMyServiceRequestsConfig;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   String toString() {
-    return 'CommonUIConfigModel(cboHomeScreenConfig: $cboHomeScreenConfig, cboMyWorksSearchCriteria: $cboMyWorksSearchCriteria)';
+    return 'CommonUIConfigModel(cboHomeScreenConfig: $cboHomeScreenConfig, cboMyWorksSearchCriteria: $cboMyWorksSearchCriteria, cboMyServiceRequestsConfig: $cboMyServiceRequestsConfig)';
   }
 
   @override
@@ -334,7 +366,10 @@ class _$_CommonUIConfigModel implements _CommonUIConfigModel {
             const DeepCollectionEquality()
                 .equals(other._cboHomeScreenConfig, _cboHomeScreenConfig) &&
             const DeepCollectionEquality().equals(
-                other._cboMyWorksSearchCriteria, _cboMyWorksSearchCriteria));
+                other._cboMyWorksSearchCriteria, _cboMyWorksSearchCriteria) &&
+            const DeepCollectionEquality().equals(
+                other._cboMyServiceRequestsConfig,
+                _cboMyServiceRequestsConfig));
   }
 
   @JsonKey(ignore: true)
@@ -342,7 +377,8 @@ class _$_CommonUIConfigModel implements _CommonUIConfigModel {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_cboHomeScreenConfig),
-      const DeepCollectionEquality().hash(_cboMyWorksSearchCriteria));
+      const DeepCollectionEquality().hash(_cboMyWorksSearchCriteria),
+      const DeepCollectionEquality().hash(_cboMyServiceRequestsConfig));
 
   @JsonKey(ignore: true)
   @override
@@ -364,8 +400,10 @@ abstract class _CommonUIConfigModel implements CommonUIConfigModel {
       {@JsonKey(name: 'CBOHomeScreenConfig')
           final List<CBOHomeScreenConfigModel>? cboHomeScreenConfig,
       @JsonKey(name: 'CBOMyWorks')
-          final List<CBOMyWorksSearchCriteriaModel>?
-              cboMyWorksSearchCriteria}) = _$_CommonUIConfigModel;
+          final List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria,
+      @JsonKey(name: 'CBOMyServiceRequests')
+          final List<CBOMyServiceRequestsConfig>?
+              cboMyServiceRequestsConfig}) = _$_CommonUIConfigModel;
 
   factory _CommonUIConfigModel.fromJson(Map<String, dynamic> json) =
       _$_CommonUIConfigModel.fromJson;
@@ -376,6 +414,9 @@ abstract class _CommonUIConfigModel implements CommonUIConfigModel {
   @override
   @JsonKey(name: 'CBOMyWorks')
   List<CBOMyWorksSearchCriteriaModel>? get cboMyWorksSearchCriteria;
+  @override
+  @JsonKey(name: 'CBOMyServiceRequests')
+  List<CBOMyServiceRequestsConfig>? get cboMyServiceRequestsConfig;
   @override
   @JsonKey(ignore: true)
   _$$_CommonUIConfigModelCopyWith<_$_CommonUIConfigModel> get copyWith =>

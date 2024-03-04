@@ -8,7 +8,6 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,14 +22,15 @@ import static org.egov.util.MusterRollServiceConstants.*;
 @Component
 public class MdmsUtil {
 
-    @Autowired
-    private MusterRollServiceConfiguration config;
+    private final MusterRollServiceConfiguration config;
+
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    public final String filterWorksModuleCode = "$.[?(@.code=='{code}')]";
-    public final String PLACEHOLDER_CODE = "{code}";
+    public MdmsUtil(MusterRollServiceConfiguration config, ServiceRequestRepository serviceRequestRepository) {
+        this.config = config;
+        this.serviceRequestRepository = serviceRequestRepository;
+    }
 
     /**
      * Calls MDMS service to fetch works master data
@@ -41,9 +41,8 @@ public class MdmsUtil {
      */
     public Object mDMSCall(MusterRollRequest request, String tenantId) {
         RequestInfo requestInfo = request.getRequestInfo();
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId, request);
-        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-        return result;
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
+        return serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
     }
 
     /**
@@ -55,9 +54,8 @@ public class MdmsUtil {
      */
     public Object mDMSCallMuster(MusterRollRequest request, String tenantId) {
         RequestInfo requestInfo = request.getRequestInfo();
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestMuster(requestInfo, tenantId, request);
-        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-        return result;
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestMuster(requestInfo, tenantId);
+        return serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
     }
 
     /**
@@ -68,9 +66,9 @@ public class MdmsUtil {
      * @param request
      * @return
      */
-    public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId, MusterRollRequest request) {
+    public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
 
-        ModuleDetail tenantModuleDetail = getTenantModuleRequestData(request);
+        ModuleDetail tenantModuleDetail = getTenantModuleRequestData();
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(tenantModuleDetail);
@@ -78,9 +76,8 @@ public class MdmsUtil {
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
 
-        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+        return MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo).build();
-        return mdmsCriteriaReq;
     }
 
     /**
@@ -91,7 +88,7 @@ public class MdmsUtil {
      * @param request
      * @return
      */
-    public MdmsCriteriaReq getMDMSRequestMuster(RequestInfo requestInfo, String tenantId, MusterRollRequest request) {
+    public MdmsCriteriaReq getMDMSRequestMuster(RequestInfo requestInfo, String tenantId) {
 
         ModuleDetail musterRollModuleDetail = getMusterRollModuleRequestData();
 
@@ -101,24 +98,20 @@ public class MdmsUtil {
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
 
-        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+        return MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo).build();
-        return mdmsCriteriaReq;
     }
 
-    private ModuleDetail getTenantModuleRequestData(MusterRollRequest request) {
-        MusterRoll musterRoll = request.getMusterRoll();
+    private ModuleDetail getTenantModuleRequestData() {
         List<MasterDetail> musterRollTenantMasterDetails = new ArrayList<>();
 
         MasterDetail tenantMasterDetails = MasterDetail.builder().name(MASTER_TENANTS)
-                .filter(filterCode).build();
+                .filter(FILTER_CODE).build();
 
         musterRollTenantMasterDetails.add(tenantMasterDetails);
 
-        ModuleDetail musterRollTenantModuleDetail = ModuleDetail.builder().masterDetails(musterRollTenantMasterDetails)
+        return ModuleDetail.builder().masterDetails(musterRollTenantMasterDetails)
                 .moduleName(MDMS_TENANT_MODULE_NAME).build();
-
-        return musterRollTenantModuleDetail;
     }
 
     private ModuleDetail getMusterRollModuleRequestData() {
@@ -131,10 +124,8 @@ public class MdmsUtil {
         MasterDetail musterWageSeekerSkillsMasterDetails = MasterDetail.builder().name(MASTER_WAGER_SEEKER_SKILLS).build();
         musterRollMasterDetails.add(musterWageSeekerSkillsMasterDetails);
 
-        ModuleDetail musterRollModuleDetail = ModuleDetail.builder().masterDetails(musterRollMasterDetails)
+        return ModuleDetail.builder().masterDetails(musterRollMasterDetails)
                 .moduleName(MDMS_COMMON_MASTERS_MODULE_NAME).build();
-
-        return musterRollModuleDetail;
     }
 
     /**

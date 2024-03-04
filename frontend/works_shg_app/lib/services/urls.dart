@@ -58,12 +58,14 @@ class UserServices {
   String get editProfile => 'user/profile/_update';
   String get changePassword => 'user/password/_update';
   String get sendOtp => 'user-otp/v1/_send';
+  String get logOut => 'user/_logout';
 }
 
 class WorkServices {
   const WorkServices();
   String get myWorks => 'contract/v1/_search';
   String get updateWorkOrder => 'contract/v1/_update';
+  String get createWorkOrder => 'contract/v1/_create';
 }
 
 class MusterRollServices {
@@ -83,4 +85,5 @@ class AttendanceRegisterServices {
   String get updateAttendanceLog => 'attendance/log/v1/_update';
   String get deEnrollAttendee => 'attendance/attendee/v1/_delete';
   String get individualSearch => 'individual/v1/_search';
+  String get wmsIndividualSearch => 'wms/individual/_search';
 }

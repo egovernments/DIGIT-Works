@@ -13,7 +13,7 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.kafka.Producer;
+import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.PaymentRepository;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
@@ -45,7 +45,7 @@ public class PaymentService {
     private PaymentValidator validator;
 
     @Autowired
-    private Producer producer;
+    private ExpenseProducer expenseProducer;
 
     @Autowired
     private Configuration config;
@@ -69,7 +69,7 @@ public class PaymentService {
         validator.validateCreateRequest(paymentRequest);
         enrichmentUtil.encrichCreatePayment(paymentRequest);
 
-        producer.push(config.getPaymentCreateTopic(), paymentRequest);
+        expenseProducer.push(config.getPaymentCreateTopic(), paymentRequest);
         backUpdateBillForPayment(paymentRequest);
 
         return PaymentResponse.builder()
@@ -84,12 +84,12 @@ public class PaymentService {
         log.info("PaymentService::update");
         Payment payment = paymentRequest.getPayment();
         List<Payment> paymentsFromSearch = validator.validateUpdateRequest(paymentRequest);
-        enrichmentUtil.encrichUpdatePayment(paymentRequest);
+        enrichmentUtil.encrichUpdatePayment(paymentRequest, paymentsFromSearch.get(0));
         paymentRequest.setPayment(paymentsFromSearch.get(0));
         backUpdateBillForPayment(paymentRequest);
 
         /* only status update should be allowed here */
-        producer.push(config.getPaymentUpdateTopic(), paymentRequest);
+        expenseProducer.push(config.getPaymentUpdateTopic(), paymentRequest);
         return PaymentResponse.builder()
                 .payments(Arrays.asList(payment))
                 .responseInfo(
@@ -119,7 +119,6 @@ public class PaymentService {
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, true);
         
-        Boolean isPaymentCancelled = payment.getStatus().equals(PaymentStatus.CANCELLED);
 
         Set<String> billIds = paymentRequest.getPayment().getBills()
                 .stream().map(PaymentBill::getBillId)
@@ -146,28 +145,34 @@ public class PaymentService {
 		for (PaymentBill paymentBill : payment.getBills()) {
 
 			Bill billFromSearch = billMap.get(paymentBill.getBillId());
-			billFromSearch.setTotalPaidAmount(
-					getResultantAmount(billFromSearch.getTotalPaidAmount(),paymentBill.getTotalPaidAmount(), isPaymentCancelled));
 			billFromSearch.setPaymentStatus(payment.getStatus());
 			billFromSearch.setAuditDetails(auditDetails);
-
-			for (PaymentBillDetail paymentBillDetail : paymentBill.getBillDetails()) {
+            // Define bill paid amount to ZERO, it will calculeted in bill details
+            BigDecimal billPaidAmount = BigDecimal.ZERO;
+            for (PaymentBillDetail paymentBillDetail : paymentBill.getBillDetails()) {
 
 				BillDetail billDetailFromSearch = billDetailMap.get(paymentBillDetail.getBillDetailId());
 				billDetailFromSearch.setPaymentStatus(paymentBillDetail.getStatus());
-				billDetailFromSearch.setTotalPaidAmount(
-						getResultantAmount(billDetailFromSearch.getTotalPaidAmount(), paymentBillDetail.getTotalPaidAmount(), isPaymentCancelled));
 				billDetailFromSearch.setAuditDetails(auditDetails);
-
-				for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
+                // Define bill details paid amount to ZERO, it will calculeted in lineitem
+                BigDecimal billDetailPaidAmount = BigDecimal.ZERO;
+                for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
 
 					LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getLineItemId());
 					lineItemFromSearch.setPaymentStatus(payableLineItem.getStatus());
-					lineItemFromSearch.setPaidAmount(
-							getResultantAmount(lineItemFromSearch.getPaidAmount(), payableLineItem.getPaidAmount(), isPaymentCancelled));
+                    /**
+                     * Set paid amount based on payment status, because don't have support of partial payment
+                     * todo: Remove this while implementing partial payment
+                     */
+                    lineItemFromSearch.setPaidAmount(getLineItemPaidAmountByStatus(lineItemFromSearch, payableLineItem.getStatus()));
+                    billDetailPaidAmount = billDetailPaidAmount.add(lineItemFromSearch.getPaidAmount());
 					lineItemFromSearch.setAuditDetails(auditDetails);
 				}
+                // Add lineitem paid amount to billdetails and
+                billDetailFromSearch.setTotalPaidAmount(billDetailPaidAmount);
+                billPaidAmount = billPaidAmount.add(billDetailPaidAmount);
 			}
+            billFromSearch.setTotalPaidAmount(billPaidAmount);
 		}
 		
         /*
@@ -179,18 +184,24 @@ public class PaymentService {
                     .bill(bill)
                     .requestInfo(requestInfo)
                     .build();
-            producer.push(config.getBillUpdateTopic(), billRequest);
+            expenseProducer.push(config.getBillUpdateTopic(), billRequest);
         }
     }
 
-	private BigDecimal getResultantAmount(BigDecimal billPaidAmount, BigDecimal paymentPaidAmount,
-			Boolean isPaymentCancelled) {
-		
-		if(isPaymentCancelled)
-			return billPaidAmount.subtract(paymentPaidAmount);
-		
-		return billPaidAmount.add(paymentPaidAmount);
-	}
+
+    /**
+     * For lineitem paid amount will be either ZERO or same as Payable amount
+     * @param lineItem
+     * @param paymentStatus
+     * @return
+     */
+    private BigDecimal getLineItemPaidAmountByStatus(LineItem lineItem, PaymentStatus paymentStatus) {
+        BigDecimal paidAmount = BigDecimal.ZERO;
+        if (lineItem != null && paymentStatus != null && (paymentStatus.equals(PaymentStatus.SUCCESSFUL)))
+                {paidAmount = lineItem.getAmount();
+        }
+        return paidAmount;
+    }
 
 
 }

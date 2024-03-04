@@ -1,7 +1,7 @@
 package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.Main;
+import org.egov.MusterRollMain;
 import org.egov.TestConfiguration;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -36,11 +36,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 */
 
 
-@ContextConfiguration(classes=Main.class)
+@ContextConfiguration(classes= MusterRollMain.class)
 @WebMvcTest(MusterRollApiController.class)
 @Import({TestConfiguration.class})
 @AutoConfigureMockMvc
-public class MusterRollApiControllerTest {
+class MusterRollApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -59,7 +59,7 @@ public class MusterRollApiControllerTest {
 
 
     @Test
-    public void musterRollV1EstimatePostSuccess() throws Exception {
+    void musterRollV1EstimatePostSuccess() throws Exception {
 
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         ResponseInfo responseInfo = MusterRollRequestBuilderTest.builder().getResponseInfo_Success();
@@ -79,7 +79,7 @@ public class MusterRollApiControllerTest {
     }
 
     @Test
-    public void musterRollV1EstimatePostFailure() throws Exception {
+     void musterRollV1EstimatePostFailure() throws Exception {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateException();
         ResponseInfo responseInfo = MusterRollRequestBuilderTest.builder().getResponseInfo_Success();
         when(musterRollService.estimateMusterRoll(any(MusterRollRequest.class))).thenThrow(new CustomException("END_DATE_EMPTY","EndDate is mandatory"));
@@ -99,7 +99,7 @@ public class MusterRollApiControllerTest {
     }
 
     @Test
-    public void musterRollV1CreatePostSuccess() throws Exception {
+     void musterRollV1CreatePostSuccess() throws Exception {
 
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         ResponseInfo responseInfo = MusterRollRequestBuilderTest.builder().getResponseInfo_Success();
@@ -120,7 +120,7 @@ public class MusterRollApiControllerTest {
     }
 
     @Test
-    public void musterRollV1CreatePostFailure() throws Exception {
+     void musterRollV1CreatePostFailure() throws Exception {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateException();
         ResponseInfo responseInfo = MusterRollRequestBuilderTest.builder().getResponseInfo_Success();
         when(musterRollService.createMusterRoll(any(MusterRollRequest.class))).thenThrow(new CustomException("DUPLICATE_MUSTER_ROLL","Muster roll already exists for this register and date"));

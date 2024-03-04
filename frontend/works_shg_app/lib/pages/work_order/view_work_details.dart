@@ -11,6 +11,7 @@ import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/localization/localization.dart';
+import '../../blocs/time_extension_request/valid_time_extension.dart';
 import '../../blocs/work_orders/accept_work_order.dart';
 import '../../blocs/work_orders/decline_work_order.dart';
 import '../../blocs/work_orders/my_works_search_criteria.dart';
@@ -212,34 +213,100 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                             : workOrderList.isNotEmpty &&
                                     workOrderList.first['payload']['wfStatus'] != acceptCode
                                 ? SizedBox(
-                                    height: 60,
-                                    child: DigitCard(
-                                      padding: const EdgeInsets.all(8.0),
-                                      margin: const EdgeInsets.all(0.0),
-                                      child: DigitElevatedButton(
-                                        onPressed: () {
-                                          context.router.push(
-                                              AttendanceRegisterTableRoute(
-                                                  registerId: workOrderList
-                                                      .first['payload']
-                                                          ['additionalDetails']
-                                                          ['attendanceRegisterNumber']
-                                                      .toString(),
-                                                  tenantId: workOrderList.first['payload']
-                                                          ['tenantId']
-                                                      .toString()));
-                                        },
-                                        child: Center(
-                                          child: Text(
-                                              t.translate(i18.home.manageWageSeekers),
+                          height: 60,
+                                  child: DigitCard(
+                                    padding: const EdgeInsets.all(8.0),
+                                    margin: const EdgeInsets.all(0),
+                                    child: DigitElevatedButton(
+                                      onPressed: () => DigitActionDialog.show(context,
+                                            widget: Center(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                                    child: DigitOutlineIconButton(
+                                                      buttonStyle: OutlinedButton.styleFrom(
+                                                          minimumSize: Size(
+                                                              MediaQuery.of(context).size.width / 2.8,
+                                                              50),
+                                                          shape: const RoundedRectangleBorder(),
+                                                          side: BorderSide(
+                                                              color: const DigitColors().burningOrange,
+                                                              width: 1)),
+                                                      onPressed: () {
+                                                        context.router.push(AttendanceRegisterTableRoute(
+                                                            registerId: (contracts?.contracts ?? []).first.additionalDetails?.attendanceRegisterNumber.toString() ?? ''
+                                                                .toString(),
+                                                            tenantId: (contracts?.contracts ?? []).first.tenantId.toString()));
+                                                        Navigator.of(context, rootNavigator: true).pop();
+                                                      },
+                                                      label: AppLocalizations.of(context)
+                                                          .translate(i18.home.manageWageSeekers),
+                                                      icon: Icons.fingerprint,
+                                                      textStyle: const TextStyle(
+                                                          fontWeight: FontWeight.w700, fontSize: 18),
+                                                    ),
+                                                  ),
+                                                  /*Padding(
+                                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                                    child: DigitOutlineIconButton(
+                                                      label: AppLocalizations.of(context)
+                                                          .translate(i18.workOrder.projectClosure),
+                                                      icon: Icons.cancel_outlined,
+                                                      buttonStyle: OutlinedButton.styleFrom(
+                                                          minimumSize: Size(
+                                                              MediaQuery.of(context).size.width / 2.8,
+                                                              50),
+                                                          shape: const RoundedRectangleBorder(),
+                                                          side: BorderSide(
+                                                              color: const DigitColors().burningOrange,
+                                                              width: 1)),
+                                                      onPressed: () =>
+                                                          Navigator.of(context, rootNavigator: true)
+                                                              .pop(),
+                                                      textStyle: const TextStyle(
+                                                          fontWeight: FontWeight.w700, fontSize: 18),
+                                                    ),
+                                                  )*/
+                                                  DigitOutlineIconButton(
+                                                    label: AppLocalizations.of(context)
+                                                        .translate(i18.workOrder.requestTimeExtension),
+                                                    icon: Icons.calendar_today_rounded,
+                                                    buttonStyle: OutlinedButton.styleFrom(
+                                                        minimumSize: Size(
+                                                            MediaQuery.of(context).size.width / 2.8, 50),
+                                                        shape: const RoundedRectangleBorder(),
+                                                        side: BorderSide(
+                                                            color: const DigitColors().burningOrange,
+                                                            width: 1)),
+                                                    onPressed: () {
+                                                      Navigator.of(context, rootNavigator: true).pop();
+                                                      context.read<ValidTimeExtCreationsSearchBloc>().add(
+                                                          SearchValidTimeExtCreationsEvent(
+                                                              contract: contracts?.contracts?.first,
+                                                              contractNo: (contracts?.contracts ?? []).first.contractNumber.toString(),
+                                                              tenantId: (contracts?.contracts ?? []).first.tenantId.toString(),
+                                                              status: 'APPROVED'));
+                                                    },
+                                                    textStyle: const TextStyle(
+                                                        fontWeight: FontWeight.w700, fontSize: 18),
+                                                  )
+                                                ],
+                                              ),
+                                            )),
+                                      child: Center(
+                                        child: Text(
+                                              AppLocalizations.of(context)
+                                                  .translate(i18.common.takeAction),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleMedium!
                                                   .apply(color: Colors.white)),
-                                        ),
                                       ),
                                     ),
-                                  )
+                                  ),
+                                )
                                 : Container();
                       });
             }));
@@ -285,7 +352,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                             i18.common.location:
                                                 '${t.translate('${CommonMethods.getConvertedLocalizedCode('locality', subString: e.additionalDetails?.locality ?? 'NA')}')}, ${t.translate(CommonMethods.getConvertedLocalizedCode('ward', subString: e.additionalDetails?.ward ?? 'NA'))}',
                                             i18.attendanceMgmt.projectType:
-                                                t.translate('ES_COMMON_${e.additionalDetails?.projectType ?? 'NA'}'),
+                                                'ES_COMMON_${e.additionalDetails?.projectType ?? 'NA'}',
                                             i18.attendanceMgmt.projectName:
                                                 e.additionalDetails?.projectName ?? 'NA',
                                             i18.attendanceMgmt.projectDesc:
@@ -298,26 +365,24 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                     .map((e) => {
                                           'cardDetails': {
                                             i18.workOrder.nameOfCBO:
-                                                AppLocalizations.of(context).translate(
-                                                    e.additionalDetails?.cboName ?? 'NA'),
+                                                    e.additionalDetails?.cboName ?? 'NA',
                                             i18.workOrder.roleOfCBO:
-                                                AppLocalizations.of(context).translate(
-                                                    e.executingAuthority ?? 'NA'),
+                                                    e.executingAuthority ?? 'NA',
                                             i18.attendanceMgmt.engineerInCharge: e
                                                     .additionalDetails
                                                     ?.officerInChargeName
                                                     ?.name ??
                                                 'NA',
                                             i18.attendanceMgmt.officeInCharge:
-                                                t.translate(e.additionalDetails
+                                                e.additionalDetails
                                                         ?.officerInChargeDesgn ??
-                                                    'NA'),
+                                                    'NA',
                                             i18.workOrder.completionPeriod:
                                                 '${e.completionPeriod} ${t.translate(i18.common.days)}',
                                             i18.workOrder.workOrderAmount:
                                                 '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
-                                            i18.common.status: t.translate(
-                                                'WF_WORK_ORDER_STATE_${e.wfStatus.toString()}'),
+                                            i18.common.status:
+                                                'WF_WORK_ORDER_STATE_${e.wfStatus.toString()}',
                                             Constants.activeInboxStatus: e.wfStatus == acceptCode ? 'true' : 'false'
                                           },
                                           'payload': e.toMap()
@@ -361,16 +426,16 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                         })
                                     .toList();
                                 // fileStoreList = ;
-                                attachedFiles = contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs != null?  [...contracts.contracts!.first.documents!
+                                attachedFiles = contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs != null ? [...contracts.contracts!.first.documents!.where((d) => d.fileStore != null && d.status != 'INACTIVE')
                                     .map((e) => FileStoreModel(
-                                        name: t.translate(e.documentType ?? ''), fileStoreId: e.fileStore)),
+                                        name: e.documentType != 'OTHERS' ? e.documentType ?? '' : e.additionalDetails?.otherCategoryName ?? '', fileStoreId: e.fileStore)),
                                 ...contracts.contracts!.first.additionalDetails!.estimateDocs!.where((m) => m.fileStoreId != null)
                                     .map((e) => FileStoreModel(
-                                    name: t.translate(e.fileType ?? ''), fileStoreId: e.fileStoreId))] : contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs == null  ? [...contracts.contracts!.first.documents!
+                                    name: e.fileType != 'Others' ?  e.fileType ?? '' : e.fileName ?? '', fileStoreId: e.fileStoreId))] : contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs == null  ? [...contracts.contracts!.first.documents!.where((d) => d.fileStore != null && d.status != 'INACTIVE')
                                     .map((e) => FileStoreModel(
-                                    name: t.translate(e.documentType ?? ''), fileStoreId: e.fileStore))] : contracts.contracts!.first.documents == null && contracts.contracts!.first.additionalDetails?.estimateDocs != null ? [...contracts.contracts!.first.additionalDetails!.estimateDocs!.where((m) => m.fileStoreId != null)
+                                    name: e.documentType != 'OTHERS' ? e.documentType ?? '' : e.additionalDetails?.otherCategoryName ?? '', fileStoreId: e.fileStore))] : contracts.contracts!.first.documents == null && contracts.contracts!.first.additionalDetails?.estimateDocs != null ? [...contracts.contracts!.first.additionalDetails!.estimateDocs!.where((m) => m.fileStoreId != null)
                                     .map((e) => FileStoreModel(
-                                    name: t.translate(e.fileType ?? ''), fileStoreId: e.fileStoreId))] : [];
+                                    name: e.fileType != 'Others' ?  e.fileType ?? '' : e.fileName ?? '', fileStoreId: e.fileStoreId))] : [];
                               }
                             });
                       },
@@ -543,6 +608,20 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                                   isScrollable: true)),
                                                           align: Alignment.centerLeft,
                                                         ),
+                                                      ),
+                                                      BlocListener<ValidTimeExtCreationsSearchBloc, ValidTimeExtCreationsSearchState>(
+                                                        listener: (context, validContractState) {
+                                                          validContractState.maybeWhen(
+                                                              orElse: () => false,
+                                                              loaded: (Contracts? contracts) => context.router
+                                                                  .push(CreateTimeExtensionRequestRoute(
+                                                                contractNumber:
+                                                                contracts?.contractNumber,
+                                                              )),
+                                                              error: (String? error) => Notifiers.getToastMessage(
+                                                                  context, error ?? 'ERR!', 'ERROR'));
+                                                        },
+                                                        child: const SizedBox.shrink(),
                                                       ),
                                                     ],
                                                   )

@@ -18,8 +18,7 @@ import java.util.Set;
 @Slf4j
 public class OrganisationFunctionQueryBuilder {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
 
     private static final String FETCH_ORGANISATION_FUNCTION_QUERY = "SELECT org.id as organisation_Id, org.tenant_id as organisation_tenantId, " +
             "org.application_number as organisation_applicationNumber, org.name as organisation_name, org.org_number as organisation_orgNumber, " +
@@ -39,7 +38,7 @@ public class OrganisationFunctionQueryBuilder {
             "FROM eg_org org " +
             "LEFT JOIN eg_org_function orgFunction ON org.id = orgFunction.org_id";
 
-    private final String paginationWrapper = "SELECT * FROM " +
+    private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY organisation_lastModifiedTime DESC , organisation_Id) offset_ FROM " +
             "({})" +
             " result) result_offset " +
@@ -50,8 +49,13 @@ public class OrganisationFunctionQueryBuilder {
 
     private static final String COUNT_WRAPPER = "SELECT COUNT(*) FROM ({INTERNAL_QUERY}) as count";
 
+    @Autowired
+    public OrganisationFunctionQueryBuilder(Configuration config) {
+        this.config = config;
+    }
+
     public String getOrganisationSearchQuery(OrgSearchRequest orgSearchRequest, Set<String> orgIds, List<Object> preparedStmtList, Boolean isCountQuery) {
-        String query = isCountQuery ? ORGANISATIONS_COUNT_QUERY : FETCH_ORGANISATION_FUNCTION_QUERY;
+        String query = Boolean.TRUE.equals(isCountQuery) ? ORGANISATIONS_COUNT_QUERY : FETCH_ORGANISATION_FUNCTION_QUERY;
         StringBuilder queryBuilder = new StringBuilder(query);
         OrgSearchCriteria searchCriteria = orgSearchRequest.getSearchCriteria();
 
@@ -159,7 +163,7 @@ public class OrganisationFunctionQueryBuilder {
             }
         }
 
-        if (isCountQuery) {
+        if (Boolean.TRUE.equals(isCountQuery)) {
             return queryBuilder.toString();
         }
 
@@ -176,9 +180,7 @@ public class OrganisationFunctionQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+        preparedStmtList.addAll(ids);
     }
 
     private String  createQuery(Collection<String> ids) {
@@ -219,7 +221,7 @@ public class OrganisationFunctionQueryBuilder {
         log.info("OrganisationQueryBuilder::addPaginationWrapper");
         double limit = config.getDefaultLimit();
         double offset = config.getDefaultOffset();
-        String finalQuery = paginationWrapper.replace("{}", query);
+        String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
 
         if (pagination != null && pagination.getLimit() != null) {
             if (pagination.getLimit() <= config.getMaxLimit())

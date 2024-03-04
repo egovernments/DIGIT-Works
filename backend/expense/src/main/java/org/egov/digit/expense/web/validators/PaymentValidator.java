@@ -36,10 +36,10 @@ public class PaymentValidator {
 
 	@Autowired
 	private BillService billService;
-	
+
 	@Autowired
 	private PaymentService paymentService;
-	
+
 	public List<Payment> validateUpdateRequest(PaymentRequest paymentRequest) {
 
 		Map<String, String> errorMap = new HashMap<>();
@@ -111,6 +111,15 @@ public class PaymentValidator {
 		if (payment.getBills().size() != billIds.size())
 			throw new CustomException("EG_PAYMENT_DUPLICATE_BILLS_ERROR",
 					"The same bills cannot be repeated in the payment request");
+
+		// While creating new payment it will check, is payment is already created for that bill, if yes then don't create payment
+		if (isCreate) {
+			PaymentSearchRequest paymentSearchRequest = preparePaymentCriteriaFromPaymentRequest(paymentRequest, billIds);
+			List<Payment> payments = paymentService.search(paymentSearchRequest).getPayments();
+			if (!payments.isEmpty())
+				throw new CustomException("EG_PAYMENT_DUPLICATE_PAYMENT_ERROR",
+						"Payment can not be generated for the same bills");
+		}
 
 		BillSearchRequest billSearchRequest = prepareBillCriteriaFromPaymentRequest(paymentRequest, billIds);
 		List<Bill> billsFromSearch = billService.search(billSearchRequest, false).getBills();
@@ -243,7 +252,7 @@ public class PaymentValidator {
 			/*
 			 * Skip amount validation if id of bill detail is invalid
 			 */
-			if (isCreate && payableLineItem.getPaidAmount().compareTo(totalPendingAmount) != 0) {
+			if (Boolean.TRUE.equals(isCreate) && payableLineItem.getPaidAmount().compareTo(totalPendingAmount) != 0) {
 
 				errorMap.put("EG_EXPENSE_PAYMENT_LINEITEM_INVALID_AMOUNT[" + lineItemIndex + "]",
 						"The paid line item amount " + payableLineItem.getPaidAmount() + " for line item with id : "
@@ -265,13 +274,31 @@ public class PaymentValidator {
 				.offSet(0)
 				.limit(billIds.size())
 				.build();
-		
-		BillSearchRequest billSearchRequest = BillSearchRequest.builder()
+
+		return BillSearchRequest.builder()
 				.billCriteria(billCriteria)
 				.pagination(pagination)
 				.requestInfo(paymentRequest.getRequestInfo())
 				.build();
-		return billSearchRequest;
+	}
+
+	public PaymentSearchRequest preparePaymentCriteriaFromPaymentRequest (PaymentRequest paymentRequest, Set<String> billIds) {
+
+		Payment payment = paymentRequest.getPayment();
+		PaymentCriteria paymentCriteria = PaymentCriteria.builder()
+				.tenantId(payment.getTenantId())
+				.billIds(billIds)
+				.build();
+		Pagination pagination = Pagination.builder()
+				.offSet(0)
+				.limit(billIds.size())
+				.build();
+
+		return PaymentSearchRequest.builder()
+				.paymentCriteria(paymentCriteria)
+				.pagination(pagination)
+				.requestInfo(paymentRequest.getRequestInfo())
+				.build();
 	}
 	
 	public PaymentSearchRequest getPaymentSearchRequest (PaymentRequest paymentRequest) {

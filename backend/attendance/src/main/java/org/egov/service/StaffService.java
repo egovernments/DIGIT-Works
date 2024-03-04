@@ -4,7 +4,7 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.StaffEnrichmentService;
-import org.egov.kafka.Producer;
+import org.egov.common.producer.Producer;
 import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
 import org.egov.util.ResponseInfoFactory;
@@ -17,8 +17,7 @@ import org.egov.web.models.StaffSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -58,7 +57,7 @@ public class StaffService {
      * @param staffPermissionRequest
      * @return
      */
-    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest) {
+    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest, Boolean cboMigrationReq) {
         //incoming createRequest validation
         log.info("Validating incoming staff request");
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
@@ -79,7 +78,10 @@ public class StaffService {
 
         //validator call by passing staff request and the data from db call
         log.info("staffServiceValidator called to validate Create StaffPermission request");
-        staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
+        // When changing the CBO skip this validation
+        if (!cboMigrationReq) {
+            staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
+        }
 
         //enrichment call by passing staff request and data from db call
         log.info("staffEnrichmentService called to enrich Create StaffPermission request");
@@ -171,6 +173,30 @@ public class StaffService {
             staffIds.add(staffPermission.getUserId());
         }
         return staffIds;
+    }
+
+    /**
+     * Creates a map of attendance registerId and its first staff enrolled.
+     *
+     * @param tenantId
+     * @param registerIds
+     * @return
+     */
+    public Map<String, StaffPermission> fetchRegisterIdtoFirstStaffMap(String tenantId, List<String> registerIds) {
+        Map<String, StaffPermission> registerIdToFirstStaffMap = new HashMap<>(); //mapping of registerId to the first StaffPermission for each unique registerId
+
+        for ( String registerId  : registerIds) {
+            if (!registerIdToFirstStaffMap.containsKey(registerId)) {
+                StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().tenantId(tenantId).registerIds(Collections.singletonList(registerId)).build();
+
+                List<StaffPermission> staffPermissionList = staffRepository.getFirstStaff(staffSearchCriteria);
+
+                if (!staffPermissionList.isEmpty()) {
+                    registerIdToFirstStaffMap.put(registerId, staffPermissionList.get(0));
+                }
+            }
+        }
+        return registerIdToFirstStaffMap;
     }
 
 }

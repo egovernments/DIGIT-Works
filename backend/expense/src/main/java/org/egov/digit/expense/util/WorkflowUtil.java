@@ -29,15 +29,18 @@ import digit.models.coremodels.Workflow;
 @Service
 public class WorkflowUtil {
 
-    @Autowired
-    private ServiceRequestRepository repository;
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
+
+    private final Configuration configs;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private Configuration configs;
-
+    public WorkflowUtil(ServiceRequestRepository repository, ObjectMapper mapper, Configuration configs) {
+        this.repository = repository;
+        this.mapper = mapper;
+        this.configs = configs;
+    }
 
 
     /**
@@ -116,8 +119,9 @@ public class WorkflowUtil {
     	Bill bill = billRequest.getBill();
     	Workflow workflowFromRequest = billRequest.getWorkflow();
     	List<User> assignes = new ArrayList<>();
-    	
-		if (!CollectionUtils.isEmpty(assignes))
+
+        // Changed check from assignes to workflowFromRequest assignee object because it's checking incorrect object
+		if (!CollectionUtils.isEmpty(workflowFromRequest.getAssignes()) && !workflowFromRequest.getAssignes().isEmpty())
 			for (String userId : workflowFromRequest.getAssignes()) {
 
 				User user = User.builder()
