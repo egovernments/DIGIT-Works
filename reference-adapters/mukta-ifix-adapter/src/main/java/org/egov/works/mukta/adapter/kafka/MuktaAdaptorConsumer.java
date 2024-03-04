@@ -66,15 +66,9 @@ public class MuktaAdaptorConsumer {
                 paymentService.updatePaymentStatusToFailed(paymentRequest);
             }
             String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
-            MsgHeader msgHeader = MsgHeader.builder().messageId(UUID.randomUUID().toString())
-                    .messageTs(System.currentTimeMillis())
-                    .senderId(muktaAdaptorConfig.getProgramSenderId())
-                    .receiverId(muktaAdaptorConfig.getProgramRecieverId())
-                    .senderUri(muktaAdaptorConfig.getProgramSenderId())
-                    .messageType(MessageType.DISBURSE)
-                    .action(Action.CREATE)
-                    .isMsgEncrypted(false)
-                    .build();
+            MsgHeader msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), paymentRequest.getTenantId());
+            msgHeader.setAction(Action.CREATE);
+            msgHeader.setMessageType(MessageType.DISBURSE);
             DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).signature(signature).build();
             programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
             muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);

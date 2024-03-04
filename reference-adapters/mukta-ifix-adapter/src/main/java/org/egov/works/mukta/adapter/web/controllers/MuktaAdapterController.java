@@ -6,6 +6,8 @@ import org.egov.works.mukta.adapter.service.PaymentInstructionService;
 import org.egov.works.mukta.adapter.util.ResponseInfoFactory;
 import org.egov.works.mukta.adapter.web.models.*;
 import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
+import org.egov.works.mukta.adapter.web.models.jit.PIResponse;
+import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,5 +58,13 @@ public class MuktaAdapterController {
     public ResponseEntity<Object> onDisburseUpdate(@RequestBody @Valid DisbursementRequest disbursementRequest){
         DisbursementResponse disbursementResponse = disbursementService.processOnDisbursement(disbursementRequest);
         return ResponseEntity.ok(disbursementResponse);
+    }
+
+    @RequestMapping(path = "/pi/_search", method = RequestMethod.POST)
+    public ResponseEntity<Object> piSearch(@RequestBody @Valid DisbursementSearchRequest disbursementSearchRequest) {
+        List<PaymentInstruction> paymentInstructions = paymentInstructionService.processPaymentInstructionSearch(disbursementSearchRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(disbursementSearchRequest.getRequestInfo(), true);
+        PIResponse paymentInstructionResponse = PIResponse.builder().paymentInstructions(paymentInstructions).responseInfo(responseInfo).build();
+        return ResponseEntity.ok(paymentInstructionResponse);
     }
 }

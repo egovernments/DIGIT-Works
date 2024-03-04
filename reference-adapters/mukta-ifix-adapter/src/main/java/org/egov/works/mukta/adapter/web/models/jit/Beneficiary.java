@@ -101,7 +101,10 @@ public class Beneficiary {
     private Object additionalDetails;
 
     @JsonProperty("benfLineItems")
-    private List<LineItem> benfLineItems;
+    private List<BenfLineItems> benfLineItems;
+
+    @JsonProperty("lineItems")
+    private List<LineItem> lineItems;
 
     @JsonProperty("auditDetails")
     @Exclude

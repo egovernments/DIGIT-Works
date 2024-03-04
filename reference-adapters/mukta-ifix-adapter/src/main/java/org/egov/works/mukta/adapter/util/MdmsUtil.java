@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.egov.works.mukta.adapter.config.Constants.*;
 
@@ -34,7 +31,22 @@ public class MdmsUtil {
         this.configs = configs;
     }
 
+    public Map<String,Map<String,JSONArray>> fetchExchangeServers(RequestInfo requestInfo, String tenantId) {
+        StringBuilder uri = new StringBuilder();
+        uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
+        MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, MDMS_EXCHANGE_MODULE_NAME, Arrays.asList(MDMS_EXCHANGE_SERVER_MASTER));
+        Object response = new HashMap<>();
+        MdmsResponse mdmsResponse = new MdmsResponse();
+        try {
+            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+            mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+        } catch (Exception e) {
+            log.error("Exception occurred while fetching category lists from mdms: ", e);
+        }
 
+        log.info(mdmsResponse.toString());
+        return mdmsResponse.getMdmsRes();
+    }
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId) {
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
@@ -87,5 +99,39 @@ public class MdmsUtil {
         mdmsCriteriaReq.setRequestInfo(requestInfo);
 
         return mdmsCriteriaReq;
+    }
+
+    /**
+     * prepares Master Data request
+     *
+     * @param tenantId
+     * @param moduleName
+     * @param masterNames
+     * @param requestInfo
+     * @return
+     */
+    public MdmsCriteriaReq prepareMdMsRequest(RequestInfo requestInfo, String tenantId, String moduleName,
+                                              List<String> masterNames) {
+
+        List<MasterDetail> masterDetails = new ArrayList<>();
+        masterNames.forEach(name -> masterDetails.add(MasterDetail.builder().name(name).build()));
+
+        ModuleDetail moduleDetail = ModuleDetail.builder()
+                .moduleName(moduleName)
+                .masterDetails(masterDetails)
+                .build();
+
+        List<ModuleDetail> moduleDetails = new ArrayList<>();
+        moduleDetails.add(moduleDetail);
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
+                .tenantId(tenantId)
+                .moduleDetails(moduleDetails)
+                .build();
+
+        return MdmsCriteriaReq.builder()
+                .requestInfo(requestInfo)
+                .mdmsCriteria(mdmsCriteria)
+                .build();
     }
 }

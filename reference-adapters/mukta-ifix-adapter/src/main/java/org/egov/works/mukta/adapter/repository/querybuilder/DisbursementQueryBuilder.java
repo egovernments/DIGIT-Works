@@ -56,6 +56,11 @@ public class DisbursementQueryBuilder {
             query.append(" disburse.target_id = ? ");
             preparedStmtList.add(disbursementSearchCriteria.getPaymentNumber());
         }
+        if(disbursementSearchCriteria.getTransactionId() != null){
+            query.append(AND_CLAUSE);
+            query.append(" disburse.transaction_id = ? ");
+            preparedStmtList.add(disbursementSearchCriteria.getTransactionId());
+        }
         if(disbursementSearchCriteria.getStatus() != null){
             query.append(AND_CLAUSE);
             query.append(" disburse.status = ? ");

@@ -1,5 +1,6 @@
 package org.egov.works.mukta.adapter.enrichment;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,10 +15,11 @@ import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.Status;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
 import org.egov.works.mukta.adapter.web.models.bill.*;
-import org.egov.works.mukta.adapter.web.models.enums.BeneficiaryType;
-import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
-import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
+import org.egov.works.mukta.adapter.web.models.enums.*;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
+import org.egov.works.mukta.adapter.web.models.jit.BenfLineItems;
+import org.egov.works.mukta.adapter.web.models.jit.PADetails;
+import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
 import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,7 +98,7 @@ public class PaymentInstructionEnrichment {
                     .beneficiaryId(beneficiaryId)
                     .beneficiaryType(beneficiaryType)
                     .additionalDetails(additionalDetails)
-                    .benfLineItems(benefLineItemList).build();
+                    .lineItems(benefLineItemList).build();
         }
         log.info("Beneficiary generated and sending back.");
         return beneficiary;
@@ -192,7 +194,7 @@ public class PaymentInstructionEnrichment {
                 isAnyDisbursementFailed = true;
                 log.error("Bank account or individual or organisation not found for individual/organisation beneficiary. -> "+piBeneficiary.getBeneficiaryId());
             }
-            for (LineItem lineItem : piBeneficiary.getBenfLineItems()) {
+            for (LineItem lineItem : piBeneficiary.getLineItems()) {
                 if(lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) && !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL)){
                     Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, auditDetails,programCode,headCodeCategoryMap);
                     disbursements.add(disbursementForLineItem);
@@ -304,5 +306,107 @@ public class PaymentInstructionEnrichment {
         for(Disbursement disbursement1: disbursement.getDisbursements()){
             disbursement1.setStatus(status);
         }
+    }
+
+    public PaymentInstruction getPaymentInstructionFromDisbursement(Disbursement disbursement) {
+        log.info("Started executing getPaymentInstructionFromDisbursement");
+        List<Beneficiary> beneficiaries = new ArrayList<>();
+        AuditDetails auditDetails = disbursement.getAuditDetails();
+        ObjectNode additionalDetailsOfDisbursement = objectMapper.valueToTree(disbursement.getAdditionalDetails());
+        HashMap<String,List<Disbursement>> beneficiaryDisbursementMap = getBeneficiaryDisbursementMap(disbursement);
+        for(Map.Entry<String,List<Disbursement>> entry: beneficiaryDisbursementMap.entrySet()){
+            String beneficiaryId = entry.getKey();
+            String beneficiaryType = null;
+            String beneficiaryPaymentStatus = null;
+            List<Disbursement> disbursements = entry.getValue();
+            Disbursement disbursementLineItem = disbursements.get(0);
+            List<BenfLineItems> benfLineItems = new ArrayList<>();
+            for(Disbursement disbursement1: disbursements){
+                ObjectNode additionalDetails = (ObjectNode) disbursement1.getAdditionalDetails();
+                BenfLineItems benfLineItem = BenfLineItems.builder().id(UUID.randomUUID().toString())
+                        .lineItemId(disbursement1.getTargetId())
+                        .beneficiaryId(beneficiaryId)
+                        .auditDetails(auditDetails)
+                        .build();
+
+                beneficiaryType = additionalDetails.get("beneficiaryType").asText();
+                beneficiaryPaymentStatus = additionalDetails.get("beneficiaryStatus").asText();
+                benfLineItems.add(benfLineItem);
+            }
+            Beneficiary beneficiary = Beneficiary.builder()
+                    .id(beneficiaryId)
+                    .tenantId(disbursementLineItem.getLocationCode())
+                    .muktaReferenceId(disbursementLineItem.getTargetId())
+                    .beneficiaryNumber(disbursementLineItem.getTargetId())
+                    .bankAccountId(disbursementLineItem.getAccountCode())
+                    .amount(disbursementLineItem.getNetAmount())
+                    .beneficiaryId(beneficiaryId)
+                    .beneficiaryType(BeneficiaryType.valueOf(beneficiaryType))
+                    .paymentStatus(getBenefStatus(beneficiaryPaymentStatus))
+                    .benfLineItems(benfLineItems)
+                    .auditDetails(auditDetails)
+                    .build();
+            beneficiaries.add(beneficiary);
+        }
+        ObjectNode additionalDetailsForPI = objectMapper.createObjectNode();
+        additionalDetailsForPI.put("billNumbers", additionalDetailsOfDisbursement.get("billNumbers"));
+        additionalDetailsForPI.put("referenceIds", additionalDetailsOfDisbursement.get("referenceIds"));
+        additionalDetailsForPI.put("mstAllotmentId", additionalDetailsOfDisbursement.get("mstAllotmentId"));
+        additionalDetailsForPI.put("hoaCode", additionalDetailsOfDisbursement.get("hoaCode"));
+        JsonNode paDetailsNode = additionalDetailsOfDisbursement.get("paDetails");
+        PADetails paDetails = objectMapper.convertValue(
+                paDetailsNode,
+                PADetails.class
+        );
+        return PaymentInstruction.builder()
+                .id(disbursement.getId())
+                .tenantId(disbursement.getLocationCode())
+                .jitBillNo(disbursement.getTransactionId())
+                .muktaReferenceId(disbursement.getTargetId())
+                .netAmount(disbursement.getNetAmount())
+                .grossAmount(disbursement.getGrossAmount())
+                .piStatus(PIStatus.fromValue(additionalDetailsOfDisbursement.get("piStatus").asText()))
+                .piErrorResp(disbursement.getStatus().getStatusMessage())
+                .additionalDetails(additionalDetailsForPI)
+                .numBeneficiaries(additionalDetailsOfDisbursement.get("numBeneficiaries").asInt())
+                .paDetails(Collections.singletonList(paDetails))
+                .parentPiNumber(additionalDetailsOfDisbursement.get("parentPiNumber").asText())
+                .isActive(true)
+                .beneficiaryDetails(beneficiaries)
+                .auditDetails(auditDetails)
+                .build();
+    }
+
+    private BeneficiaryPaymentStatus getBenefStatus(String beneficiaryPaymentStatus) {
+        switch (beneficiaryPaymentStatus){
+            case "Payment Pending":
+                return BeneficiaryPaymentStatus.PENDING;
+            case "Payment Initiated":
+                return BeneficiaryPaymentStatus.INITIATED;
+            case "Payment In Process":
+                return BeneficiaryPaymentStatus.IN_PROCESS;
+            case "Payment Successful":
+                return BeneficiaryPaymentStatus.SUCCESS;
+            case "Payment Failed":
+                return BeneficiaryPaymentStatus.FAILED;
+            default:
+                return null;
+        }
+    }
+
+    private HashMap<String, List<Disbursement>> getBeneficiaryDisbursementMap(Disbursement disbursement) {
+        HashMap<String,List<Disbursement>> beneficiaryDisbursementMap = new HashMap<>();
+        for(Disbursement disbursement1: disbursement.getDisbursements()){
+            ObjectNode additionalDetails = (ObjectNode) disbursement1.getAdditionalDetails();
+            if(beneficiaryDisbursementMap.containsKey(additionalDetails.get("beneficiaryId").asText())){
+                beneficiaryDisbursementMap.get(additionalDetails.get("beneficiaryId").asText()).add(disbursement1);
+            }else{
+                List<Disbursement> disbursements = new ArrayList<>();
+                disbursements.add(disbursement1);
+                beneficiaryDisbursementMap.put(additionalDetails.get("beneficiaryId").asText(),disbursements);
+            }
+        }
+
+        return beneficiaryDisbursementMap;
     }
 }

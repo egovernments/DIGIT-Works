@@ -12,14 +12,17 @@ import java.util.List;
 @Builder
 public class DisbursementSearchCriteria {
     @JsonProperty("ids")
-    List<String> ids;
+    private List<String> ids;
 
-    @JsonProperty("paymentNumber")
-    String paymentNumber;
+    @JsonProperty("payment_number")
+    private String paymentNumber;
+
+    @JsonProperty("transaction_id")
+    private String transactionId;
 
     @JsonProperty("status")
-    String status;
+    private String status;
 
     @JsonProperty("type")
-    String type;
+    private String type;
 }

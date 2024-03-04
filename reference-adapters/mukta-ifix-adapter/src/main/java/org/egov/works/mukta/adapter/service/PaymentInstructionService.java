@@ -21,6 +21,7 @@ import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.enums.*;
 import org.egov.works.mukta.adapter.web.models.enums.Status;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
+import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
 import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,12 +43,11 @@ public class PaymentInstructionService {
     private final ProgramServiceUtil programServiceUtil;
     private final MuktaAdaptorProducer muktaAdaptorProducer;
     private final MuktaAdaptorConfig muktaAdaptorConfig;
-    private final EncryptionDecryptionUtil encryptionDecryptionUtil;
     private final ObjectMapper objectMapper;
     private final DisbursementValidator disbursementValidator;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, EncryptionDecryptionUtil encryptionDecryptionUtil, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -58,7 +58,6 @@ public class PaymentInstructionService {
         this.programServiceUtil = programServiceUtil;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
         this.muktaAdaptorConfig = muktaAdaptorConfig;
-        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
         this.objectMapper = objectMapper;
         this.disbursementValidator = disbursementValidator;
     }
@@ -69,15 +68,9 @@ public class PaymentInstructionService {
         log.info("Creating new disbursement for the payment id : " + paymentRequest.getReferenceId());
         Disbursement disbursement = processPaymentInstruction(paymentRequest);
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
-        MsgHeader msgHeader = MsgHeader.builder().messageId(UUID.randomUUID().toString())
-                .messageTs(System.currentTimeMillis())
-                .senderId(muktaAdaptorConfig.getProgramSenderId())
-                .receiverId(muktaAdaptorConfig.getProgramRecieverId())
-                .senderUri(muktaAdaptorConfig.getProgramSenderId())
-                .action(Action.CREATE)
-                .messageType(MessageType.DISBURSE)
-                .isMsgEncrypted(false)
-                .build();
+        MsgHeader msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), paymentRequest.getTenantId());
+        msgHeader.setAction(Action.CREATE);
+        msgHeader.setMessageType(MessageType.DISBURSE);
         DisbursementRequest disbursementRequest = DisbursementRequest.builder().message(disbursement).header(msgHeader).signature(signature).build();
         programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
         log.info("Pushing disbursement request to the kafka topic");
@@ -271,5 +264,15 @@ public class PaymentInstructionService {
     public List<Disbursement> processDisbursementSearch(DisbursementSearchRequest disbursementSearchRequest) {
         log.info("Searching for disbursements based on the criteria: "+ disbursementSearchRequest.getCriteria());
         return disbursementRepository.searchDisbursement(disbursementSearchRequest);
+    }
+
+    public List<PaymentInstruction> processPaymentInstructionSearch(DisbursementSearchRequest disbursementSearchRequest) {
+        List<Disbursement> disbursementList = disbursementRepository.searchDisbursement(disbursementSearchRequest);
+        List<PaymentInstruction> paymentInstructions = new ArrayList<>();
+        for(Disbursement disbursement: disbursementList){
+            PaymentInstruction paymentInstruction = piEnrichment.getPaymentInstructionFromDisbursement(disbursement);
+            paymentInstructions.add(paymentInstruction);
+        }
+        return paymentInstructions;
     }
 }
