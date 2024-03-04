@@ -94,9 +94,7 @@ public class MdmsUtils {
 			List<String> masterNames) {
 
 		List<MasterDetail> masterDetails = new ArrayList<>();
-		masterNames.forEach(name -> {
-			masterDetails.add(MasterDetail.builder().name(name).build());
-		});
+		masterNames.forEach(name -> masterDetails.add(MasterDetail.builder().name(name).build()));
 
 		ModuleDetail moduleDetail = ModuleDetail.builder()
 				.moduleName(moduleName)
