@@ -33,10 +33,10 @@ public class Consumer {
     private AttendanceRegisterService attendanceRegisterService;
 
     @KafkaListener(topics = "${organisation.contact.details.update.topic}")
-    public void updateAttendanceStaff(String consumerRecord,
+    public void updateAttendanceStaff(Map<String, Object> consumerRecord,
                                       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic){
         try {
-            OrgContactUpdateDiff orgContactUpdateDiff = objectMapper.readValue(consumerRecord, OrgContactUpdateDiff.class);
+            OrgContactUpdateDiff orgContactUpdateDiff = objectMapper.convertValue(consumerRecord, OrgContactUpdateDiff.class);
             organisationContactDetailsStaffUpdateService.updateStaffPermissionsForContactDetails(orgContactUpdateDiff);
         } catch(Exception e){
             log.error("Error updating staff permissions for update in organisation contact details", e);
@@ -49,9 +49,9 @@ public class Consumer {
      * @param topic
      */
     @KafkaListener(topics = "${contracts.revision.topic}")
-    public void updateEndDate(String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    public void updateEndDate(Map<String, Object> consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
-            JsonNode attendanceContractRevisionRequest = objectMapper.readValue(consumerRecord, JsonNode.class);
+            JsonNode attendanceContractRevisionRequest = objectMapper.convertValue(consumerRecord, JsonNode.class);
             RequestInfo requestInfo = objectMapper.convertValue(attendanceContractRevisionRequest.get("RequestInfo"), RequestInfo.class);
             String tenantId = attendanceContractRevisionRequest.get("tenantId").asText();
             String referenceId = attendanceContractRevisionRequest.get("referenceId").asText();
