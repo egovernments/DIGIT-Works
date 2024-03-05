@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Constants;
+import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.PIRepository;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.utils.BillUtils;
@@ -43,6 +44,9 @@ public class FailureDetailsService {
     private PIRepository piRepository;
     @Autowired
     private PIUtils piUtils;
+
+    @Autowired
+    private IfmsAdapterConfig ifmsConfig;
 
     public void updateFailureDetails(RequestInfo requestInfo) {
         try {
@@ -97,7 +101,7 @@ public class FailureDetailsService {
     private JITRequest getFailedPayload() {
 
         Map<String, String> failedRequestParams = new HashMap<>();
-        Long subtractedTimeMillis = System.currentTimeMillis() - (120 * 60L * 60L * 1000L);
+        Long subtractedTimeMillis = System.currentTimeMillis() - (Integer.parseInt(ifmsConfig.getDaysToFetchFailedPayments()) * 60L * 60L * 1000L);
         //subtractedTimeMillis = 1683755974760L;
         String finYear = helperUtil.getFormattedTimeFromTimestamp(subtractedTimeMillis, "yyyy");
         String voucherDate = helperUtil.getFormattedTimeFromTimestamp(subtractedTimeMillis, "yyyy-MM-dd");
