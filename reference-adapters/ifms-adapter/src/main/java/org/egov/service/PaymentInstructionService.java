@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.config.Constants;
+import org.egov.config.IfmsAdapterConfig;
 import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.PIRepository;
 import org.egov.repository.PIStatusLogsRepository;
@@ -63,6 +64,8 @@ public class PaymentInstructionService {
     private PIStatusLogsRepository piStatusLogsRepository;
     @Autowired
     private ProgramServiceUtil programServiceUtil;
+    @Autowired
+    private IfmsAdapterConfig config;
 
     public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
         log.info("Started executing processPaymentRequest");
@@ -626,7 +629,7 @@ public class PaymentInstructionService {
     public void processPIForOnDisburse(PaymentInstruction paymentInstruction, RequestInfo requestInfo) {
         log.info("Processing PI For Creating Disbursement Request");
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
-        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,paymentInstruction.getTenantId());
+        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,config.getStateLevelTenantId());
         msgCallbackHeader.setMessageType(MessageType.DISBURSE);
         msgCallbackHeader.setAction(Action.SEARCH);
         DisburseSearch disburseSearch = DisburseSearch.builder()

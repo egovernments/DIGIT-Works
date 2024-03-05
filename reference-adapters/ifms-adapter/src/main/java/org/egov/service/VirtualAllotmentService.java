@@ -143,7 +143,7 @@ public class VirtualAllotmentService {
                     // Get allotments to create and
                     List<Allotment> createAllotments =  vaEnrichment.getAllotmentsForCreate(updatedSanctions, allotmentList, tenantId, requestInfo);
                     sanctionDetailsRepository.createUpdateSanctionFunds(createSanctions, updateSanctions, createAllotments);
-                    processAllotmentsAndSanctions(createAllotments, createSanctions,ssuNode,tenantId,requestInfo);
+                    processAllotmentsAndSanctions(createAllotments, createSanctions,requestInfo);
                 }
                 // Update last executed for the va
                 if (executedVALog == null) {
@@ -161,10 +161,10 @@ public class VirtualAllotmentService {
         }
     }
 
-    private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions, JsonNode ssuNode,String tenantId,RequestInfo requestInfo) {
+    private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions,RequestInfo requestInfo) {
         log.info("Processing allotments and sanctions");
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
-        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,tenantId);
+        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,ifmsAdapterConfig.getStateLevelTenantId());
         try {
             if(createSanctions != null && !createSanctions.isEmpty()){
                 log.info("Processing created sanction for on_sanction/create");
