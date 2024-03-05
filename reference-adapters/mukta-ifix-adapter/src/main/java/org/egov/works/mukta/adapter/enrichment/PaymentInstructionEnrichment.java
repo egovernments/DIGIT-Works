@@ -151,7 +151,6 @@ public class PaymentInstructionEnrichment {
         log.info("Started executing enrichBankaccountOnBeneficiary");
         String programCode = ssuNode.get("programCode").asText();
         boolean isAnyDisbursementFailed = false;
-        Map<String, BankAccount> bankAccountMap = new HashMap<>();
         AuditDetails auditDetails = AuditDetails.builder().createdBy(paymentRequest.getRequestInfo().getUserInfo().getUuid())
                 .createdTime(System.currentTimeMillis())
                 .lastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid())
@@ -160,23 +159,9 @@ public class PaymentInstructionEnrichment {
         Set<String> referenceIds = new HashSet<>();
         ObjectNode additionalDetailsForDisbursement = objectMapper.createObjectNode();
         // Creating map of bank account, individual and organisation based on the beneficiary id.git
-        if (bankAccounts != null && !bankAccounts.isEmpty()) {
-            for (BankAccount bankAccount : bankAccounts) {
-                bankAccountMap.put(bankAccount.getReferenceId(), bankAccount);
-            }
-        }
-        Map<String, Individual> individualMap = new HashMap<>();
-        if (individuals != null && !individuals.isEmpty()) {
-            for (Individual individual : individuals) {
-                individualMap.put(individual.getId(), individual);
-            }
-        }
-        Map<String, Organisation> organisationMap = new HashMap<>();
-        if (organisations != null && !organisations.isEmpty()) {
-            for (Organisation organisation : organisations) {
-                organisationMap.put(organisation.getId(), organisation);
-            }
-        }
+        Map<String, BankAccount> bankAccountMap = createBankAccountMap(bankAccounts);
+        Map<String, Individual> individualMap = createIndividualMap(individuals);
+        Map<String, Organisation> organisationMap = createOrganisationMap(organisations);
         log.info("Created map of org, individual and bankaccount, started generating beneficiary.");
         Disbursement disbursement = new Disbursement();
         List<Disbursement> disbursements = new ArrayList<>();
@@ -204,6 +189,12 @@ public class PaymentInstructionEnrichment {
             referenceIds.add(additionalDetails.get("referenceId").asText());
         }
         // Enriching the parent disbursement.
+        enrichParentDisbursement(disbursement, paymentRequest, disbursements, auditDetails, programCode, isAnyDisbursementFailed, additionalDetailsForDisbursement, billNumbers, referenceIds);
+        log.info("Beneficiary details enriched and sending back.");
+        return disbursement;
+    }
+
+    private void enrichParentDisbursement(Disbursement disbursement, PaymentRequest paymentRequest, List<Disbursement> disbursements, AuditDetails auditDetails, String programCode, boolean isAnyDisbursementFailed, ObjectNode additionalDetailsForDisbursement, Set<String> billNumbers, Set<String> referenceIds) {
         UUID uuid = UUID.randomUUID();
         disbursement.setId(uuid.toString());
         disbursement.setTargetId(paymentRequest.getPayment().getPaymentNumber());
@@ -219,11 +210,40 @@ public class PaymentInstructionEnrichment {
         }
         setAmountForParentDisbursement(disbursement);
 
-        additionalDetailsForDisbursement.put("billNumbers", objectMapper.valueToTree(billNumbers));
-        additionalDetailsForDisbursement.put("referenceIds", objectMapper.valueToTree(referenceIds));
+        additionalDetailsForDisbursement.set("billNumbers", objectMapper.valueToTree(billNumbers));
+        additionalDetailsForDisbursement.set("referenceIds", objectMapper.valueToTree(referenceIds));
         disbursement.setAdditionalDetails(additionalDetailsForDisbursement);
-        log.info("Beneficiary details enriched and sending back.");
-        return disbursement;
+    }
+
+
+    private Map<String, BankAccount> createBankAccountMap(List<BankAccount> bankAccounts) {
+        Map<String, BankAccount> bankAccountMap = new HashMap<>();
+        if (bankAccounts != null && !bankAccounts.isEmpty()) {
+            for (BankAccount bankAccount : bankAccounts) {
+                bankAccountMap.put(bankAccount.getReferenceId(), bankAccount);
+            }
+        }
+        return bankAccountMap;
+    }
+
+    private Map<String, Individual> createIndividualMap(List<Individual> individuals) {
+        Map<String, Individual> individualMap = new HashMap<>();
+        if (individuals != null && !individuals.isEmpty()) {
+            for (Individual individual : individuals) {
+                individualMap.put(individual.getId(), individual);
+            }
+        }
+        return individualMap;
+    }
+
+    private Map<String, Organisation> createOrganisationMap(List<Organisation> organisations) {
+        Map<String, Organisation> organisationMap = new HashMap<>();
+        if (organisations != null && !organisations.isEmpty()) {
+            for (Organisation organisation : organisations) {
+                organisationMap.put(organisation.getId(), organisation);
+            }
+        }
+        return organisationMap;
     }
 
     private void setAmountForParentDisbursement(Disbursement disbursement) {
@@ -349,10 +369,10 @@ public class PaymentInstructionEnrichment {
             beneficiaries.add(beneficiary);
         }
         ObjectNode additionalDetailsForPI = objectMapper.createObjectNode();
-        additionalDetailsForPI.put("billNumbers", additionalDetailsOfDisbursement.get("billNumbers"));
-        additionalDetailsForPI.put("referenceIds", additionalDetailsOfDisbursement.get("referenceIds"));
-        additionalDetailsForPI.put("mstAllotmentId", additionalDetailsOfDisbursement.get("mstAllotmentId"));
-        additionalDetailsForPI.put("hoaCode", additionalDetailsOfDisbursement.get("hoaCode"));
+        additionalDetailsForPI.set("billNumbers", additionalDetailsOfDisbursement.get("billNumbers"));
+        additionalDetailsForPI.set("referenceIds", additionalDetailsOfDisbursement.get("referenceIds"));
+        additionalDetailsForPI.set("mstAllotmentId", additionalDetailsOfDisbursement.get("mstAllotmentId"));
+        additionalDetailsForPI.set("hoaCode", additionalDetailsOfDisbursement.get("hoaCode"));
         JsonNode paDetailsNode = additionalDetailsOfDisbursement.get("paDetails");
         PADetails paDetails = objectMapper.convertValue(
                 paDetailsNode,
