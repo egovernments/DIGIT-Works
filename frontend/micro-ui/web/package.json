@@ -23,7 +23,7 @@
     "@egovernments/digit-ui-module-hrms": "1.5.26",
     "@egovernments/digit-ui-module-dss": "1.5.52",
     "@egovernments/digit-ui-module-attendencemgmt": "0.3.3",
-    "@egovernments/digit-ui-module-contracts": "0.3.10",
+    "@egovernments/digit-ui-module-contracts": "0.3.11",
     "@egovernments/digit-ui-module-measurement":"0.1.1",
     "@egovernments/digit-ui-module-estimate": "0.3.28",
     "@egovernments/digit-ui-module-masters": "0.3.3",

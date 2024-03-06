@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment, useRef }from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
 import { Menu, Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast, MultiLink } from '@egovernments/digit-ui-react-components';
+import { isWorkEndInPreviousWeek } from '../../../utils';
 
 
 const ViewContractDetails = () => {
@@ -56,6 +57,17 @@ const ViewContractDetails = () => {
     const TermsAndConditions = Digit.ComponentRegistryService.getComponent("TermsAndConditions");
     const {isLoading : isContractLoading, data, isError : isContractError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {}, {cacheTime : 0},revisedWONumber)
     //const {isLoading : isContractLoading, data } = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
+
+    //mdms call for getting the allowed measurement validation date
+    const { isLoading: ismdmsLoading, data: mdmsData } = Digit.Hooks.useCustomMDMS(
+        tenantId?.split(".")[0],
+        "works",
+        [
+            {
+                "name": "MeasurementCriteria"
+            }
+        ]
+    );
 
     //fetching project data
     const { isLoading: isProjectLoading, data: project, isError : isProjectError } = Digit.Hooks.project.useProjectSearch({
@@ -144,6 +156,11 @@ const ViewContractDetails = () => {
         if(validationData && Object?.keys(validationData)?.length > 0 && validationData?.type?.includes(option?.action))
         {
             setToast({show : true, label : t(`${validationData?.label}_${option?.action}`), error : validationData?.error});
+            return;
+        }
+        if(isWorkEndInPreviousWeek(data?.applicationData?.endDate, mdmsData?.works?.MeasurementCriteria?.[0]?.measurementBookStartDate))
+        {
+            setToast({show : true, label : t(`MB_CREATION_NOT_POSSIBLE_WORK_END_DATE_PASSED`), error : true});
             return;
         }
         if (option?.name === "CREATE_PURCHASE_BILL") {
