@@ -364,7 +364,7 @@ public class PaymentInstructionEnrichment {
                     .amount(disbursementLineItem.getNetAmount())
                     .beneficiaryId(beneficiaryId)
                     .beneficiaryType(BeneficiaryType.valueOf(beneficiaryTypeNode == null? "IND": beneficiaryTypeNode.asText()))
-                    .paymentStatus(getBenefStatus(beneficiaryPaymentStatusNode == null? "Payment Initiated": beneficiaryPaymentStatusNode.asText()))
+                    .paymentStatus(getBenefStatus(beneficiaryPaymentStatusNode,disbursementLineItem.getStatus().getStatusCode()))
                     .benfLineItems(benfLineItems)
                     .auditDetails(auditDetails)
                     .build();
@@ -402,20 +402,35 @@ public class PaymentInstructionEnrichment {
                 .build();
     }
 
-    private BeneficiaryPaymentStatus getBenefStatus(String beneficiaryPaymentStatus) {
-        switch (beneficiaryPaymentStatus){
-            case "Payment Pending":
-                return BeneficiaryPaymentStatus.PENDING;
-            case "Payment Initiated":
-                return BeneficiaryPaymentStatus.INITIATED;
-            case "Payment In Process":
-                return BeneficiaryPaymentStatus.IN_PROCESS;
-            case "Payment Successful":
-                return BeneficiaryPaymentStatus.SUCCESS;
-            case "Payment Failed":
-                return BeneficiaryPaymentStatus.FAILED;
-            default:
-                return null;
+    private BeneficiaryPaymentStatus getBenefStatus(JsonNode beneficiaryPaymentStatus,StatusCode statusCode) {
+        if(beneficiaryPaymentStatus == null){
+            switch (statusCode){
+                case INITIATED:
+                    return BeneficiaryPaymentStatus.INITIATED;
+                case INPROCESS:
+                    return BeneficiaryPaymentStatus.IN_PROCESS;
+                case SUCCESSFUL:
+                    return BeneficiaryPaymentStatus.SUCCESS;
+                case FAILED:
+                    return BeneficiaryPaymentStatus.FAILED;
+                default:
+                    return null;
+            }
+        }else{
+            switch (beneficiaryPaymentStatus.asText()){
+                case "Payment Pending":
+                    return BeneficiaryPaymentStatus.PENDING;
+                case "Payment Initiated":
+                    return BeneficiaryPaymentStatus.INITIATED;
+                case "Payment In Process":
+                    return BeneficiaryPaymentStatus.IN_PROCESS;
+                case "Payment Successful":
+                    return BeneficiaryPaymentStatus.SUCCESS;
+                case "Payment Failed":
+                    return BeneficiaryPaymentStatus.FAILED;
+                default:
+                    return null;
+            }
         }
     }
 
