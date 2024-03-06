@@ -336,8 +336,8 @@ public class PaymentInstructionEnrichment {
         HashMap<String,List<Disbursement>> beneficiaryDisbursementMap = getBeneficiaryDisbursementMap(disbursement);
         for(Map.Entry<String,List<Disbursement>> entry: beneficiaryDisbursementMap.entrySet()){
             String beneficiaryId = entry.getKey();
-            String beneficiaryType = null;
-            String beneficiaryPaymentStatus = null;
+            JsonNode beneficiaryTypeNode = null;
+            JsonNode beneficiaryPaymentStatusNode = null;
             List<Disbursement> disbursements = entry.getValue();
             Disbursement disbursementLineItem = disbursements.get(0);
             List<BenfLineItems> benfLineItems = new ArrayList<>();
@@ -349,8 +349,10 @@ public class PaymentInstructionEnrichment {
                         .auditDetails(auditDetails)
                         .build();
 
-                beneficiaryType = additionalDetails.get("beneficiaryType").asText();
-                beneficiaryPaymentStatus = additionalDetails.get("beneficiaryStatus").asText();
+                if(additionalDetails != null){
+                    beneficiaryTypeNode = additionalDetails.get("beneficiaryType");
+                    beneficiaryPaymentStatusNode = additionalDetails.get("beneficiaryStatus");
+                }
                 benfLineItems.add(benfLineItem);
             }
             Beneficiary beneficiary = Beneficiary.builder()
@@ -361,8 +363,8 @@ public class PaymentInstructionEnrichment {
                     .bankAccountId(disbursementLineItem.getAccountCode())
                     .amount(disbursementLineItem.getNetAmount())
                     .beneficiaryId(beneficiaryId)
-                    .beneficiaryType(BeneficiaryType.valueOf(beneficiaryType))
-                    .paymentStatus(getBenefStatus(beneficiaryPaymentStatus))
+                    .beneficiaryType(BeneficiaryType.valueOf(beneficiaryTypeNode == null? "IND": beneficiaryTypeNode.asText()))
+                    .paymentStatus(getBenefStatus(beneficiaryPaymentStatusNode == null? "Payment Initiated": beneficiaryPaymentStatusNode.asText()))
                     .benfLineItems(benfLineItems)
                     .auditDetails(auditDetails)
                     .build();
@@ -378,6 +380,9 @@ public class PaymentInstructionEnrichment {
                 paDetailsNode,
                 PADetails.class
         );
+        JsonNode piStatus = additionalDetailsOfDisbursement.get("piStatus");
+        JsonNode numBeneficiaries = additionalDetailsOfDisbursement.get("numBeneficiaries");
+        JsonNode parentPiNumber = additionalDetailsOfDisbursement.get("parentPiNumber");
         return PaymentInstruction.builder()
                 .id(disbursement.getId())
                 .tenantId(disbursement.getLocationCode())
@@ -385,12 +390,12 @@ public class PaymentInstructionEnrichment {
                 .muktaReferenceId(disbursement.getTargetId())
                 .netAmount(disbursement.getNetAmount())
                 .grossAmount(disbursement.getGrossAmount())
-                .piStatus(PIStatus.fromValue(additionalDetailsOfDisbursement.get("piStatus").asText()))
+                .piStatus(PIStatus.fromValue(piStatus == null? disbursement.getStatus().getStatusCode().toString(): piStatus.asText()))
                 .piErrorResp(disbursement.getStatus().getStatusMessage())
                 .additionalDetails(additionalDetailsForPI)
-                .numBeneficiaries(additionalDetailsOfDisbursement.get("numBeneficiaries").asInt())
+                .numBeneficiaries(numBeneficiaries == null? disbursement.getDisbursements().size(): numBeneficiaries.asInt())
                 .paDetails(Collections.singletonList(paDetails))
-                .parentPiNumber(additionalDetailsOfDisbursement.get("parentPiNumber").asText())
+                .parentPiNumber(parentPiNumber == null? null: parentPiNumber.asText())
                 .isActive(true)
                 .beneficiaryDetails(beneficiaries)
                 .auditDetails(auditDetails)
@@ -418,13 +423,18 @@ public class PaymentInstructionEnrichment {
         HashMap<String,List<Disbursement>> beneficiaryDisbursementMap = new HashMap<>();
         for(Disbursement disbursement1: disbursement.getDisbursements()){
             ObjectNode additionalDetails = (ObjectNode) disbursement1.getAdditionalDetails();
-            if(beneficiaryDisbursementMap.containsKey(additionalDetails.get("beneficiaryId").asText())){
-                beneficiaryDisbursementMap.get(additionalDetails.get("beneficiaryId").asText()).add(disbursement1);
-            }else{
-                List<Disbursement> disbursements = new ArrayList<>();
-                disbursements.add(disbursement1);
-                beneficiaryDisbursementMap.put(additionalDetails.get("beneficiaryId").asText(),disbursements);
+            String beneficiaryId = disbursement1.getTargetId();
+            if(additionalDetails != null){
+                JsonNode benfIdNode = additionalDetails.get("beneficiaryId");
+                beneficiaryId = benfIdNode == null? beneficiaryId: benfIdNode.asText();
             }
+                if(beneficiaryDisbursementMap.containsKey(beneficiaryId)){
+                    beneficiaryDisbursementMap.get(beneficiaryId).add(disbursement1);
+                }else {
+                    List<Disbursement> disbursements = new ArrayList<>();
+                    disbursements.add(disbursement1);
+                    beneficiaryDisbursementMap.put(beneficiaryId, disbursements);
+                }
         }
 
         return beneficiaryDisbursementMap;
