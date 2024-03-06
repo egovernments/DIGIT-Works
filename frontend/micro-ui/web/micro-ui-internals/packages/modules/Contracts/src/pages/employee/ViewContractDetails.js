@@ -158,7 +158,7 @@ const ViewContractDetails = () => {
             setToast({show : true, label : t(`${validationData?.label}_${option?.action}`), error : validationData?.error});
             return;
         }
-        if(isWorkEndInPreviousWeek(data?.applicationData?.endDate, mdmsData?.works?.MeasurementCriteria?.[0]?.measurementBookStartDate))
+        if(option?.action === "CREATE_MEASUREMENT" && isWorkEndInPreviousWeek(data?.applicationData?.endDate, mdmsData?.works?.MeasurementCriteria?.[0]?.measurementBookStartDate))
         {
             setToast({show : true, label : t(`MB_CREATION_NOT_POSSIBLE_WORK_END_DATE_PASSED`), error : true});
             return;
