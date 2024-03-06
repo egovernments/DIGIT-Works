@@ -137,6 +137,6 @@ public class IfmsAdapterConfig {
     @Value("${ifms.request.enc.secret}")
     private String ifmsRequestEncSecret;
 
-    @Value("${numberOfDays.to.fetch.failed.payments}")
+    @Value("${numberofdays.to.fetch.failed.payments}")
     private String daysToFetchFailedPayments;
 }
