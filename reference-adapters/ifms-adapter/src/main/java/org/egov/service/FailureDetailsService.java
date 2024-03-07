@@ -48,6 +48,9 @@ public class FailureDetailsService {
     @Autowired
     private IfmsAdapterConfig ifmsConfig;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public void updateFailureDetails(RequestInfo requestInfo) {
         try {
             JITRequest jitFDRequest = getFailedPayload();
@@ -87,6 +90,11 @@ public class FailureDetailsService {
                 Payment payment = payments.get(0);
                 updatePiAndPaymentForFailedBenef(pi, payment, failedBeneficiariesMapById);
                 addReversalTransactionAndUpdatePIPa(pi, payment, requestInfo);
+                try{
+                    notificationService.sendSmsNotification(requestInfo,pi);
+                }catch (Exception exception){
+                    log.error("Notification Exception ::: " + exception.getMessage());
+                }
                 // Set success response based on service id
                 JitRespStatusForPI jitRespStatusForPI =  serviceId == JITServiceId.FD ? JitRespStatusForPI.STATUS_LOG_FD_SUCCESS: JitRespStatusForPI.STATUS_LOG_FTFPS_SUCCESS;
                 // Create PI status log based on current existing PIS request
@@ -160,6 +168,7 @@ public class FailureDetailsService {
                 }
             }
         }
+
     }
 
     private void addReversalTransactionAndUpdatePIPa(PaymentInstruction pi, Payment payment, RequestInfo requestInfo) {

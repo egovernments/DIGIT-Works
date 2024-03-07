@@ -32,4 +32,14 @@ public class Constants {
 	public static final String APPROVED_STATUS = "APPROVED";
 
 	public static final String DOC_INSERT_PATH = "/_doc";
+
+	public static final String JIT_PAYMENT_SUCCESSFUL_LOCALIZATION_CODE = "JIT_PAYMENT_SUCCESSFUL";
+
+	public static final String JIT_PAYMENT_FAILED_LOCALIZATION_CODE = "JIT_PAYMENT_FAILED";
+
+	public static final String JIT_SERVICE_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+
+	public static final String JIT_SERVICE_MSGS_JSONPATH = "$.messages.*.message";
+
+	public static final String JIT_LOCALIZATION_MODULE_CODE = "rainmaker-ifms";
 }

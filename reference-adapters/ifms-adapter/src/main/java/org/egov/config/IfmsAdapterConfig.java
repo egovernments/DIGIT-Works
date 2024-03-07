@@ -139,4 +139,26 @@ public class IfmsAdapterConfig {
   
     @Value("${numberofdays.to.fetch.failed.payments}")
     private String daysToFetchFailedPayments;
+
+    @Value("${kafka.topics.notification.sms}")
+    private String smsNotifTopic;
+
+    @Value("${kafka.topics.works.notification.sms.name}")
+    private String muktaNotificationTopic;
+
+    @Value("${sms.isAdditonalFieldRequired}")
+    private boolean isAdditonalFieldRequired;
+
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    @Value("${egov.localization.statelevel}")
+    private Boolean isLocalizationStateLevel;
+
 }

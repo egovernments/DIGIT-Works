@@ -42,6 +42,9 @@ public class PDService {
     @Autowired
     private PIUtils piUtils;
 
+    @Autowired
+    private NotificationService notificationService;
+
     /**
      * Call the JIT system for which payment status is in-process and update the status of payment advice based
      * on the response.
@@ -160,6 +163,12 @@ public class PDService {
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PD_SUCCESS;
                 // Create PI status log based on current existing PD request
                 paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PD, jitRespStatusForPI, requestInfo);
+                try{
+                    notificationService.sendSmsNotification(requestInfo,paymentInstruction);
+                }catch (Exception exception){
+                    log.error("Notification Exception ::: " + exception.getMessage());
+                }
+
             }
 
         }
