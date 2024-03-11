@@ -91,44 +91,18 @@ public class PaymentInstructionService {
     public Disbursement processPaymentInstruction(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction");
         Disbursement disbursement = null;
-        try {
-            // Check if payment details are not present in the request
-            if(paymentRequest.getPayment() == null && paymentRequest.getReferenceId() != null && paymentRequest.getTenantId() != null) {
-                log.info("Fetching payment details by using reference id and tenant id");
-                List<Payment> payments = billUtils.fetchPaymentDetails(paymentRequest.getRequestInfo(), paymentRequest.getReferenceId(), paymentRequest.getTenantId());
-
-                // If no payments are found, throw a custom exception
-                if (payments == null || payments.isEmpty()) {
-                    throw new CustomException(Error.PAYMENT_NOT_FOUND, Error.PAYMENT_NOT_FOUND_MESSAGE);
-                }
-                log.info("Payments fetched for the disbursement request : " + payments);
-                paymentRequest.setPayment(payments.get(0));
+        if(paymentRequest.getPayment() == null && paymentRequest.getReferenceId() != null && paymentRequest.getTenantId() != null) {
+            log.info("Fetching payment details by using reference id and tenant id");
+            List<Payment> payments = billUtils.fetchPaymentDetails(paymentRequest.getRequestInfo(), paymentRequest.getReferenceId(), paymentRequest.getTenantId());
+            // If no payments are found, throw a custom exception
+            if (payments == null || payments.isEmpty()) {
+                throw new CustomException(Error.PAYMENT_NOT_FOUND, Error.PAYMENT_NOT_FOUND_MESSAGE);
             }
-
-            // Fetch MDMS data
-            Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
-
-            // Get beneficiaries from payment
-            disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData);
-
-//            log.info("Encrypting Disbursement Object");
-//            // Encrypt the disbursement object
-//            JsonNode node = encryptionDecryptionUtil.encryptObject(disbursement, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), JsonNode.class);
-//
-//            // Convert the encrypted object back to Disbursement
-//            disbursement = objectMapper.convertValue(node, Disbursement.class);
-        } catch (Exception e) {
-            log.error("Error occurred while processing the payment instruction", e);
-
-            // If disbursement is not null, enrich its status
-            if (disbursement != null) {
-                piEnrichment.enrichDisbursementStatus(disbursement, StatusCode.FAILED,e.getMessage());
-            } else {
-                // If disbursement is null, log the error and throw a custom exception
-                log.error("Disbursement is null. Cannot enrich status.");
-                throw new CustomException(Error.DISBURSEMENT_ENRICHMENT_FAILED, e.getMessage());
-            }
+            log.info("Payments fetched for the disbursement request : " + payments);
+            paymentRequest.setPayment(payments.get(0));
         }
+        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
+        disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData);
         log.info("Disbursement request is " + disbursement);
         return disbursement;
     }

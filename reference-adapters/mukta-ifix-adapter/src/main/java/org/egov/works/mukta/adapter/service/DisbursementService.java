@@ -84,7 +84,6 @@ public class DisbursementService {
         // Push the disbursement response to the disburse update topic
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementResponse);
         muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(), indexerRequest);
-
         return disbursementResponse;
     }
 
