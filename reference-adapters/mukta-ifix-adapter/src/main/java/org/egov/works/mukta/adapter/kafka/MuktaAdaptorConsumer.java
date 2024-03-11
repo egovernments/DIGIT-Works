@@ -67,7 +67,7 @@ public class MuktaAdaptorConsumer {
         Map<String, Object> indexerRequest = new HashMap<>();
         PaymentInstruction pi = null;
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
-        MsgHeader msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
+        MsgHeader msgHeader = null;
         try {
             log.info("Payment data received on.");
             paymentRequest = objectMapper.readValue(record, PaymentRequest.class);
@@ -77,6 +77,7 @@ public class MuktaAdaptorConsumer {
             pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(disbursement);
             indexerRequest.put("RequestInfo", paymentRequest.getRequestInfo());
             indexerRequest.put("paymentInstruction", pi);
+            msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
             msgHeader.setAction(Action.CREATE);
             msgHeader.setMessageType(MessageType.DISBURSE);
             DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).signature(signature).build();
