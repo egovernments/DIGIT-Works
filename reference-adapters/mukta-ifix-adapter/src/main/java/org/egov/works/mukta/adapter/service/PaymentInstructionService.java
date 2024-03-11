@@ -109,32 +109,24 @@ public class PaymentInstructionService {
 
     private Disbursement getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
         log.info("Started executing getBeneficiariesFromPayment");
-
         // Fetching SSU details and Head codes from MDMS data
         JSONArray ssuDetails = mdmsData.get(Constants.MDMS_IFMS_MODULE_NAME).get(Constants.MDMS_SSU_DETAILS_MASTER);
         JSONArray headCodes = mdmsData.get(Constants.MDMS_EXPENSE_MODULE_NAME).get(Constants.MDMS_HEAD_CODES_MASTER);
-
         // Creating a map of head code categories
         HashMap<String,String> headCodeCategoryMap = getHeadCodeCategoryMap(headCodes);
-
         // Converting SSU details to JsonNode
         JsonNode ssuNode = objectMapper.valueToTree(ssuDetails.get(0));
-
         // Fetching the list of bills based on payment request
         List<Bill> billList = billUtils.fetchBillsFromPayment(paymentRequest);
-
         // If no bills are found, throw a custom exception
         if (billList == null || billList.isEmpty()) {
             throw new CustomException(Error.BILLS_NOT_FOUND , Error.BILLS_NOT_FOUND_MESSAGE);
         }
-
         // Filtering bills based on line item status
         billList = filterBillsPayableLineItemByPayments(paymentRequest.getPayment(), billList);
         log.info("Bills are filtered based on line item status, and sending back."+ billList);
-
         // Fetching beneficiaries from bills
         List<Beneficiary> beneficiaryList = piEnrichment.getBeneficiariesFromBills(billList, paymentRequest, mdmsData);
-
         // If no beneficiaries are found, throw a custom exception
         if (beneficiaryList == null || beneficiaryList.isEmpty()) {
             throw new CustomException(Error.BENEFICIARIES_NOT_FOUND, Error.BENEFICIARIES_NOT_FOUND_MESSAGE);

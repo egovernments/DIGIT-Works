@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
+import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
 import org.egov.works.mukta.adapter.web.models.DisbursementCreateRequest;
 import org.egov.works.mukta.adapter.web.models.DisbursementRequest;
@@ -48,7 +50,7 @@ public class ProgramServiceUtil {
             response = restTemplate.postForObject(url, disbursement, Object.class);
         } catch (Exception e) {
             log.error("Error while calling program service for disbursement", e);
-            paymentInstructionEnrichment.enrichDisbursementStatus(disbursement.getMessage(), StatusCode.FAILED, e.getMessage());
+            throw new CustomException(Error.PROGRAM_SERVICE_ERROR,"Error while calling program service for disbursement");
         }
         log.info("Response from program service for disbursement: " + response);
     }

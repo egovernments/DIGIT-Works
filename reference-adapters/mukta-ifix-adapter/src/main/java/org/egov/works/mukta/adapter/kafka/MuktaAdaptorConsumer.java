@@ -16,10 +16,7 @@ import org.egov.works.mukta.adapter.web.models.DisbursementCreateRequest;
 import org.egov.works.mukta.adapter.web.models.DisbursementRequest;
 import org.egov.works.mukta.adapter.web.models.MsgHeader;
 import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
-import org.egov.works.mukta.adapter.web.models.enums.Action;
-import org.egov.works.mukta.adapter.web.models.enums.MessageType;
-import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
-import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
+import org.egov.works.mukta.adapter.web.models.enums.*;
 import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -95,7 +92,9 @@ public class MuktaAdaptorConsumer {
             if (disbursement != null) {
                 paymentInstructionEnrichment.enrichDisbursementStatus(disbursement, StatusCode.FAILED,e.getMessage());
                 DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).signature(signature).build();
-                muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
+                muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementRequest);
+                pi.setPiStatus(PIStatus.FAILED);
+                pi.setPiErrorResp(e.getMessage());
                 indexerRequest.put("RequestInfo", paymentRequest.getRequestInfo());
                 indexerRequest.put("paymentInstruction", pi);
                 muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(), indexerRequest);

@@ -54,4 +54,5 @@ public class Error {
     public static final String DISBURSEMENT_ENRICHMENT_FAILED_MESSAGE = "Disbursement enrichment failed for the given payment request";
     public static final String BANK_ACCOUNTS_NOT_FOUND = "BANK_ACCOUNTS_NOT_FOUND";
     public static final String BANK_ACCOUNTS_NOT_FOUND_MESSAGE = "Bank accounts not found for the given bank account search criteria";
+    public static final String PROGRAM_SERVICE_ERROR = "PROGRAM_SERVICE_ERROR";
 }
