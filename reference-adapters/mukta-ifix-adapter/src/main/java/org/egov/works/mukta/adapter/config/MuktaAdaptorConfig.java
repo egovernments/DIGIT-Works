@@ -85,6 +85,8 @@ public class MuktaAdaptorConfig {
 
     @Value("${payment.create.topic}")
     private String paymentCreateTopic;
+    @Value("${ifms.pi.index.enrich.topic}")
+    private String ifmsPiEnrichmentTopic;
 
     @Value("${egov.program.service.host}")
     private String programServiceHost;

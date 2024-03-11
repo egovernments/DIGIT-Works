@@ -67,14 +67,24 @@ public class PaymentInstructionService {
         disbursementValidator.isValidForDisbursementCreate(paymentRequest);
         log.info("Creating new disbursement for the payment id : " + paymentRequest.getReferenceId());
         Disbursement disbursement = processPaymentInstruction(paymentRequest);
+        PaymentInstruction pi = piEnrichment.getPaymentInstructionFromDisbursement(disbursement);
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
         MsgHeader msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), paymentRequest.getTenantId());
         msgHeader.setAction(Action.CREATE);
         msgHeader.setMessageType(MessageType.DISBURSE);
         DisbursementRequest disbursementRequest = DisbursementRequest.builder().message(disbursement).header(msgHeader).signature(signature).build();
+        muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
+        Map<String, Object> indexerRequest = new HashMap<>();
+        indexerRequest.put("RequestInfo", paymentRequest.getRequestInfo());
+        indexerRequest.put("paymentInstruction", pi);
+        muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(),indexerRequest);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
         log.info("Pushing disbursement request to the kafka topic");
-        muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
         return disbursement;
     }
 

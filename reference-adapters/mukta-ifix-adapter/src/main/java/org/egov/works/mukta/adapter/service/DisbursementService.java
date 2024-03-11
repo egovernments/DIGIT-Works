@@ -9,6 +9,7 @@ import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.constants.Error;
+import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
 import org.egov.works.mukta.adapter.kafka.MuktaAdaptorProducer;
 import org.egov.works.mukta.adapter.util.BillUtils;
 import org.egov.works.mukta.adapter.util.UserUtil;
@@ -21,6 +22,7 @@ import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.ReferenceStatus;
 import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
+import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,14 +36,16 @@ public class DisbursementService {
     private final MuktaAdaptorProducer muktaAdaptorProducer;
     private final DisbursementValidator disbursementValidator;
     private final UserUtil userUtil;
+    private final PaymentInstructionEnrichment paymentInstructionEnrichment;
 
     @Autowired
-    public DisbursementService(BillUtils billUtils, MuktaAdaptorConfig muktaAdaptorConfig, MuktaAdaptorProducer muktaAdaptorProducer, DisbursementValidator disbursementValidator, UserUtil userUtil) {
+    public DisbursementService(BillUtils billUtils, MuktaAdaptorConfig muktaAdaptorConfig, MuktaAdaptorProducer muktaAdaptorProducer, DisbursementValidator disbursementValidator, UserUtil userUtil, PaymentInstructionEnrichment paymentInstructionEnrichment) {
         this.billUtils = billUtils;
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
         this.disbursementValidator = disbursementValidator;
         this.userUtil = userUtil;
+        this.paymentInstructionEnrichment = paymentInstructionEnrichment;
     }
     /**
      * Processes the disbursement request and updates the payment status
@@ -73,8 +77,13 @@ public class DisbursementService {
         log.info("Updating the disbursement status for the payments : " + disbursementRequest.getMessage());
         // Get the disbursement response
         DisbursementResponse disbursementResponse = getDisbursementResponse(disbursementRequest);
+        PaymentInstruction pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(disbursementResponse.getMessage());
+        Map<String, Object> indexerRequest = new HashMap<>();
+        indexerRequest.put("RequestInfo", requestInfo);
+        indexerRequest.put("paymentInstruction", pi);
         // Push the disbursement response to the disburse update topic
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementResponse);
+        muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(), indexerRequest);
 
         return disbursementResponse;
     }
