@@ -3,7 +3,7 @@
   "errorMsg": null,
   "data": [
     {
-      "billNo": "PI-1013/2023-24/000190",
+      "billNo": "PI-1013/2023-24/000248",
       "ssuIaId": "1621",
       "finYear": "2024",
       "adviceId": "38",
@@ -17,14 +17,14 @@
           "benfAccountNo": "389201502452",
           "benfBankIfscCode": "ICIC0003892",
           "amount": "250",
-          "benfId": "BN-1013/000137"
+          "benfId": "BN-1013/000218"
         },
         {
           "benfName": "C K",
           "benfAccountNo": "389201502453",
           "benfBankIfscCode": "ICIC0003892",
           "amount": "250",
-          "benfId": "BN-1013/000136"
+          "benfId": "BN-1013/000217"
         }
       ]
     }

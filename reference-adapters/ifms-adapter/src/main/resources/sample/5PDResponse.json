@@ -3,7 +3,7 @@
   "errorMsg": null,
   "data": [
     {
-      "billNumber": "PI-1013/2023-24/000190",
+      "billNumber": "PI-1013/2023-24/000248",
       "billDate": "2023-05-25",
       "voucherNo": "22171",
       "voucherDate": "2023-06-01",
@@ -18,7 +18,7 @@
           "utrNo": "RBI504",
           "utrDate": "2023-06-01",
           "endToEndId": "EP112202320000003231520002",
-          "benfId": "BN-1013/000137"
+          "benfId": "BN-1013/000218"
         },
         {
           "benfAcctNo": "389201502453",
@@ -26,7 +26,7 @@
           "utrNo": "RBI504",
           "utrDate": "2023-06-01",
           "endToEndId": "EP112202320000002231520002",
-          "benfId": "BN-1013/000136"
+          "benfId": "BN-1013/000217"
         }
       ]
     }

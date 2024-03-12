@@ -1,18 +1,5 @@
 {
-  "administration_code": null,
-  "function_code": null,
-  "recipient_segment_code": null,
-  "economic_segment_code": null,
-  "source_of_fund_code": null,
-  "target_segment_code": null,
-  "currency_code": null,
-  "locale_code": null,
-  "id": "8913533b-a741-486e-8796-6d9f74b19824",
-  "target_id": "EP/1013/2023-24/01/29/000075",
-  "location_code": "pg.citya",
-  "parent_id": null,
-  "disbursement_date": null,
-  "allocation_ids": null,
+  "header": {},
   "disbursements": [
     {
       "administration_code": null,
@@ -23,92 +10,79 @@
       "target_segment_code": null,
       "currency_code": null,
       "locale_code": null,
-      "id": "fe72f4ab-89d3-4296-acfb-5d335ab74698",
-      "target_id": "35ce685f-432c-4523-9803-5cc30a44d21c",
-      "location_code": "pg.citya",
-      "parent_id": "8913533b-a741-486e-8796-6d9f74b19824",
-      "disbursement_date": null,
-      "allocation_ids": null,
-      "disbursements": null,
       "status": {
         "status_code": "INITIATED",
-        "status_message": "Initiated"
+        "status_message": "Jit Bill is received successfully ,Payment Instruction will be generated after Bill is submitted by SSU in JIT-FS"
       },
-      "account_code": "214148|+fcs/ta4mgbXonGlWLV4TKLcUZYQEZM6ImTmFbSXqNMmdOpQcPClwple7j8=",
-      "net_amount": 19,
-      "gross_amount": 19,
-      "individual": {
-        "pin": null,
-        "name": "214148|madpvbse7cWULDekEWfNVoWLoGc=",
-        "gender": null,
-        "address": null,
-        "email": null,
-        "phone": "214148|9Psj8da2nQfXrY73QqxRsmy/AqhNJpwu4es="
+      "id": "cca5b10b-ecec-4ca1-bfbe-391d7971d917",
+      "target_id": "EP/1013/2023-24/02/08/000083",
+      "location_code": "pg.citya",
+      "transaction_id": "PI-1013/2023-24/000230",
+      "parent_id": null,
+      "disbursement_date": 1709101242,
+      "sanction_id": "47044772-e762-4647-8017-3650a31c88ab",
+      "disbursements": [
+        {
+          "administration_code": null,
+          "function_code": null,
+          "recipient_segment_code": null,
+          "economic_segment_code": null,
+          "source_of_fund_code": null,
+          "target_segment_code": null,
+          "currency_code": "INR",
+          "locale_code": "en_IN",
+          "status": {
+            "status_code": "INITIATED",
+            "status_message": "Jit Bill is received successfully ,Payment Instruction will be generated after Bill is submitted by SSU in JIT-FS"
+          },
+          "id": "eb3c9f9e-7050-4277-a95f-3164e10799dc",
+          "target_id": "4f8d25b8-6c19-47cb-b415-483f698634d6",
+          "location_code": "pg.citya",
+          "transaction_id": "BN-1013/000197",
+          "parent_id": null,
+          "disbursement_date": null,
+          "sanction_id": null,
+          "disbursements": null,
+          "account_code": "XYZ1230987@SBI000007",
+          "net_amount": 1500.0,
+          "gross_amount": 1500.0,
+          "individual": {
+            "pin": null,
+            "name": "LC",
+            "gender": null,
+            "address": "pg.citya",
+            "email": null,
+            "phone": "9999999999"
+          },
+          "program_code": "PG/2023-24/000310",
+          "additional_details": null,
+          "audit_details": {
+            "createdBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
+            "lastModifiedBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
+            "createdTime": 1709101242858,
+            "lastModifiedTime": 1709101242858
+          }
+        }
+      ],
+      "account_code": null,
+      "net_amount": 1500.0,
+      "gross_amount": 1500.0,
+      "individual": null,
+      "program_code": "PG/2023-24/000310",
+      "additional_details": {
+        "billNumbers": [
+          "PB/2023-24/000549"
+        ],
+        "referenceIds": [
+          "WO/2023-24/000959"
+        ]
       },
-      "program_code": "PORG/2023-24/PG.CITYA/00001",
-      "additional_details": null,
       "audit_details": {
         "createdBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
         "lastModifiedBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
-        "createdTime": 1706763190,
-        "lastModifiedTime": 1706763190
-      }
-    },
-    {
-      "administration_code": null,
-      "function_code": null,
-      "recipient_segment_code": null,
-      "economic_segment_code": null,
-      "source_of_fund_code": null,
-      "target_segment_code": null,
-      "currency_code": null,
-      "locale_code": null,
-      "id": "ec5d6eeb-e9fc-457a-8840-0f31d25423fa",
-      "target_id": "bc44dcdd-a25d-48f6-838b-061f57831272",
-      "location_code": "pg.citya",
-      "parent_id": "8913533b-a741-486e-8796-6d9f74b19824",
-      "disbursement_date": null,
-      "allocation_ids": null,
-      "disbursements": null,
-      "status": {
-        "status_code": "INITIATED",
-        "status_message": "Initiated"
-      },
-      "account_code": "214148|lZtA+NyymgbXogfDLs95TNK/I+i6XbFuv939WO26FHqgcEF2",
-      "net_amount": 1000,
-      "gross_amount": 1000,
-      "individual": {
-        "pin": null,
-        "name": "214148|gYGL12JnLU+368ExbS7thdP1",
-        "gender": null,
-        "address": null,
-        "email": null,
-        "phone": "214148|9Psj8Ne4kwbWrAnzKXiU7Ut1EygBDEtm+Xw="
-      },
-      "program_code": "PORG/2023-24/PG.CITYA/00001",
-      "additional_details": null,
-      "audit_details": {
-        "createdBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
-        "lastModifiedBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
-        "createdTime": 1706763190,
-        "lastModifiedTime": 1706763190
+        "createdTime": 1709101242858,
+        "lastModifiedTime": 1709101242858
       }
     }
-  ],
-  "status": {
-    "status_code": "INITIATED",
-    "status_message": "Initiated"
-  },
-  "account_code": null,
-  "net_amount": 1019,
-  "gross_amount": 1019,
-  "individual": null,
-  "program_code": "PORG/2023-24/PG.CITYA/00001",
-  "additional_details": null,
-  "audit_details": {
-    "createdBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
-    "lastModifiedBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
-    "createdTime": 1706763190,
-    "lastModifiedTime": 1706763190
-  }
+  ]
 }

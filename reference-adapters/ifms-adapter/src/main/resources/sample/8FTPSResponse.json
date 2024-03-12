@@ -3,7 +3,7 @@
   "errorMsg": null,
   "data": [
     {
-      "jitCorBillNo": "PI-1013/2023-24/000185",
+      "jitCorBillNo": "PI-1013/2023-24/000256",
       "jitCorBillDate": "2023-03-30 16:26:42",
       "jitOrgBillRefNo": "202211033261",
       "voucherNo": "221723",
@@ -19,7 +19,7 @@
           "utrNo": "RBI4891",
           "utrDate": "2023-03-31",
           "endToEndId": "EP112202220000010230830037",
-          "benfId": "BN-1013/000131"
+          "benfId": "BN-1013/000224"
         },
         {
           "benfAcctNo": "12345678889",
@@ -27,7 +27,7 @@
           "utrNo": "RBI4892",
           "utrDate": "2023-03-31",
           "endToEndId": "EP112202220000011230830039",
-          "benfId": "BN-1013/000096"
+          "benfId": "BN-1013/000223"
         }
       ]
     }
