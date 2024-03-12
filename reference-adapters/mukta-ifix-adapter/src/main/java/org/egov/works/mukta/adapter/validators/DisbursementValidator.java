@@ -48,8 +48,9 @@ public class DisbursementValidator {
      * Validates the request body for disbursement create
      * @param paymentRequest The payment request
      */
-    public void isValidForDisbursementCreate(PaymentRequest paymentRequest){
+    public Boolean isValidForDisbursementCreate(PaymentRequest paymentRequest){
         log.info("Validating request body for disbursement create");
+        Boolean isRevised = false;
         if(paymentRequest.getReferenceId() == null && paymentRequest.getPayment().getPaymentNumber() == null){
             throw new CustomException(Error.INVALID_REQUEST, Error.REFERENCE_ID_AND_PAYEMENT_NOT_FOUND);
         }
@@ -68,10 +69,14 @@ public class DisbursementValidator {
                 || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.INPROCESS) || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL))){
             throw new CustomException(Error.PAYMENT_ALREADY_PROCESSED, Error.PAYMENT_ALREADY_PROCESSED_MESSAGE);
         }
+        if(disbursements != null && !disbursements.isEmpty() && disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
+            isRevised = true;
+        }
         if(paymentRequest.getReferenceId() == null){
             paymentRequest.setReferenceId(paymentRequest.getPayment().getPaymentNumber());
         }
         log.info("No active disbursement found for the payment id : " + paymentRequest.getReferenceId());
+        return isRevised;
     }
     /**
      * Validates the request body for on disbursement

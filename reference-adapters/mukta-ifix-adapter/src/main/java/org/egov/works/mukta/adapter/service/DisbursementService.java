@@ -82,7 +82,7 @@ public class DisbursementService {
         PaymentInstruction pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(disbursementResponse.getMessage());
         // Push the disbursement response to the disburse update topic
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementResponse);
-        paymentInstructionService.updatePIIndex(requestInfo, pi);
+        paymentInstructionService.updatePIIndex(requestInfo, pi,false);
         return disbursementResponse;
     }
 

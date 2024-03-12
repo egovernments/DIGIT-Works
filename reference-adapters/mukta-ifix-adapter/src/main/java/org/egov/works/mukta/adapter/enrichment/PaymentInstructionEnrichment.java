@@ -147,7 +147,7 @@ public class PaymentInstructionEnrichment {
      * @param headCodeCategoryMap The head code category map
      * @return The disbursement
      */
-    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations, PaymentRequest paymentRequest, JsonNode ssuNode, Map<String,String> headCodeCategoryMap) {
+    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations, PaymentRequest paymentRequest, JsonNode ssuNode, Map<String,String> headCodeCategoryMap,Boolean isRevised) {
         log.info("Started executing enrichBankaccountOnBeneficiary");
         String programCode = ssuNode.get("programCode").asText();
         boolean isAnyDisbursementFailed = false;
@@ -189,12 +189,12 @@ public class PaymentInstructionEnrichment {
             referenceIds.add(additionalDetails.get("referenceId").asText());
         }
         // Enriching the parent disbursement.
-        enrichParentDisbursement(disbursement, paymentRequest, disbursements, auditDetails, programCode, isAnyDisbursementFailed, additionalDetailsForDisbursement, billNumbers, referenceIds);
+        enrichParentDisbursement(disbursement, paymentRequest, disbursements, auditDetails, programCode, isAnyDisbursementFailed, additionalDetailsForDisbursement, billNumbers, referenceIds,isRevised);
         log.info("Beneficiary details enriched and sending back.");
         return disbursement;
     }
 
-    private void enrichParentDisbursement(Disbursement disbursement, PaymentRequest paymentRequest, List<Disbursement> disbursements, AuditDetails auditDetails, String programCode, boolean isAnyDisbursementFailed, ObjectNode additionalDetailsForDisbursement, Set<String> billNumbers, Set<String> referenceIds) {
+    private void enrichParentDisbursement(Disbursement disbursement, PaymentRequest paymentRequest, List<Disbursement> disbursements, AuditDetails auditDetails, String programCode, boolean isAnyDisbursementFailed, ObjectNode additionalDetailsForDisbursement, Set<String> billNumbers, Set<String> referenceIds,Boolean isRevised) {
         UUID uuid = UUID.randomUUID();
         disbursement.setId(uuid.toString());
         disbursement.setTargetId(paymentRequest.getPayment().getPaymentNumber());
@@ -212,6 +212,7 @@ public class PaymentInstructionEnrichment {
 
         additionalDetailsForDisbursement.set("billNumbers", objectMapper.valueToTree(billNumbers));
         additionalDetailsForDisbursement.set("referenceIds", objectMapper.valueToTree(referenceIds));
+        additionalDetailsForDisbursement.set("isRevised", objectMapper.valueToTree(isRevised));
         disbursement.setAdditionalDetails(additionalDetailsForDisbursement);
     }
 
@@ -390,7 +391,7 @@ public class PaymentInstructionEnrichment {
                 .muktaReferenceId(disbursement.getTargetId())
                 .netAmount(disbursement.getNetAmount())
                 .grossAmount(disbursement.getGrossAmount())
-                .piStatus(PIStatus.fromValue(piStatus == null? disbursement.getStatus().getStatusCode().toString(): piStatus.asText()))
+                .piStatus(getPiStatus(piStatus,disbursement.getStatus().getStatusCode()))
                 .piErrorResp(disbursement.getStatus().getStatusMessage())
                 .additionalDetails(additionalDetailsForPI)
                 .numBeneficiaries(numBeneficiaries == null? disbursement.getDisbursements().size(): numBeneficiaries.asInt())
@@ -400,6 +401,25 @@ public class PaymentInstructionEnrichment {
                 .beneficiaryDetails(beneficiaries)
                 .auditDetails(auditDetails)
                 .build();
+    }
+
+    private PIStatus getPiStatus(JsonNode piStatus, StatusCode statusCode) {
+        if(piStatus == null){
+            switch (statusCode){
+                case INITIATED:
+                    return PIStatus.INITIATED;
+                    case INPROCESS:
+                        return PIStatus.IN_PROCESS;
+                case SUCCESSFUL:
+                    return PIStatus.SUCCESSFUL;
+                case FAILED:
+                case ERROR:
+                    return PIStatus.FAILED;
+                default:
+                    return null;
+            }
+        }
+        return PIStatus.valueOf(piStatus.asText());
     }
 
     private BeneficiaryPaymentStatus getBenefStatus(JsonNode beneficiaryPaymentStatus,StatusCode statusCode) {

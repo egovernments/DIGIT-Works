@@ -47,9 +47,10 @@ public class PaymentInstructionService {
     private final MuktaAdaptorConfig muktaAdaptorConfig;
     private final ObjectMapper objectMapper;
     private final DisbursementValidator disbursementValidator;
+    private final PaymentInstructionService paymentInstructionService;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator, PaymentInstructionService paymentInstructionService) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -62,13 +63,14 @@ public class PaymentInstructionService {
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.objectMapper = objectMapper;
         this.disbursementValidator = disbursementValidator;
+        this.paymentInstructionService = paymentInstructionService;
     }
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction on failure");
-        disbursementValidator.isValidForDisbursementCreate(paymentRequest);
+        Boolean isRevised = disbursementValidator.isValidForDisbursementCreate(paymentRequest);
         log.info("Creating new disbursement for the payment id : " + paymentRequest.getReferenceId());
-        Disbursement disbursement = processPaymentInstruction(paymentRequest);
+        Disbursement disbursement = processPaymentInstruction(paymentRequest,isRevised);
         PaymentInstruction pi = piEnrichment.getPaymentInstructionFromDisbursement(disbursement);
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
         MsgHeader msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), paymentRequest.getTenantId());
@@ -76,10 +78,7 @@ public class PaymentInstructionService {
         msgHeader.setMessageType(MessageType.DISBURSE);
         DisbursementRequest disbursementRequest = DisbursementRequest.builder().message(disbursement).header(msgHeader).signature(signature).build();
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
-        Map<String, Object> indexerRequest = new HashMap<>();
-        indexerRequest.put("RequestInfo", paymentRequest.getRequestInfo());
-        indexerRequest.put("paymentInstruction", pi);
-        muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(),indexerRequest);
+        paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(),pi,isRevised);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -90,7 +89,7 @@ public class PaymentInstructionService {
         return disbursement;
     }
 
-    public Disbursement processPaymentInstruction(PaymentRequest paymentRequest) {
+    public Disbursement processPaymentInstruction(PaymentRequest paymentRequest,Boolean isRevised) {
         log.info("Processing payment instruction");
         Disbursement disbursement = null;
         if(paymentRequest.getPayment() == null && paymentRequest.getReferenceId() != null && paymentRequest.getTenantId() != null) {
@@ -104,12 +103,12 @@ public class PaymentInstructionService {
             paymentRequest.setPayment(payments.get(0));
         }
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
-        disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData);
+        disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData,isRevised);
         log.info("Disbursement request is " + disbursement);
         return disbursement;
     }
 
-    private Disbursement getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData) {
+    private Disbursement getBeneficiariesFromPayment(PaymentRequest paymentRequest, Map<String, Map<String, JSONArray>> mdmsData, Boolean isRevised) {
         log.info("Started executing getBeneficiariesFromPayment");
         // Fetching SSU details and Head codes from MDMS data
         JSONArray ssuDetails = mdmsData.get(Constants.MDMS_IFMS_MODULE_NAME).get(Constants.MDMS_SSU_DETAILS_MASTER);
@@ -158,7 +157,7 @@ public class PaymentInstructionService {
         }
 
         // Enriching beneficiaries data and returning the disbursement
-        return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, individualIds,ssuNode,headCodeCategoryMap);
+        return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, individualIds,ssuNode,headCodeCategoryMap, isRevised);
     }
     private HashMap<String, String> getHeadCodeCategoryMap(JSONArray headCodes) {
         HashMap<String,String> headCodeCategoryMap = new HashMap<>();
@@ -169,7 +168,7 @@ public class PaymentInstructionService {
         return headCodeCategoryMap;
     }
 
-    private Disbursement getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds,JsonNode ssuNode,HashMap<String,String> headCodeCategoryMap) {
+    private Disbursement getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds,JsonNode ssuNode,HashMap<String,String> headCodeCategoryMap,Boolean isRevised) {
         log.info("Started executing getBeneficiariesEnrichedData");
 
         // Collecting beneficiary ids from the beneficiary list
@@ -201,7 +200,7 @@ public class PaymentInstructionService {
         }
 
         // Enriching disbursement request with beneficiary bank account details
-        Disbursement disbursementRequest = piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations, paymentRequest,ssuNode,headCodeCategoryMap);
+        Disbursement disbursementRequest = piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations, paymentRequest,ssuNode,headCodeCategoryMap,isRevised);
         if (disbursementRequest == null) {
             throw new CustomException(Error.DISBURSEMENT_ENRICHMENT_FAILED, Error.DISBURSEMENT_ENRICHMENT_FAILED_MESSAGE);
         }
@@ -254,7 +253,7 @@ public class PaymentInstructionService {
         return paymentInstructions;
     }
 
-    public void updatePIIndex(RequestInfo requestInfo, PaymentInstruction pi) {
+    public void updatePIIndex(RequestInfo requestInfo, PaymentInstruction pi,Boolean isRevised) {
         log.info("Executing PIUtils:updatePiForIndexer");
         try {
             Map<String, Object> indexerRequest = new HashMap<>();

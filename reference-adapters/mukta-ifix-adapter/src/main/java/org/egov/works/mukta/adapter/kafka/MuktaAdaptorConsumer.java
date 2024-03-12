@@ -64,19 +64,20 @@ public class MuktaAdaptorConsumer {
         PaymentInstruction pi = null;
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
         MsgHeader msgHeader = null;
+        Boolean isRevised = false;
         try {
             log.info("Payment data received on.");
             paymentRequest = objectMapper.readValue(record, PaymentRequest.class);
             log.info("Payment data is " + paymentRequest);
-            disbursementValidator.isValidForDisbursementCreate(paymentRequest);
-            disbursement = paymentInstructionService.processPaymentInstruction(paymentRequest);
+            isRevised = disbursementValidator.isValidForDisbursementCreate(paymentRequest);
+            disbursement = paymentInstructionService.processPaymentInstruction(paymentRequest,isRevised);
             pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(disbursement);
             msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
             msgHeader.setAction(Action.CREATE);
             msgHeader.setMessageType(MessageType.DISBURSE);
             DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).signature(signature).build();
             muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
-            paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(), pi);
+            paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(), pi,isRevised);
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
@@ -92,7 +93,7 @@ public class MuktaAdaptorConsumer {
                 muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementRequest);
                 pi.setPiStatus(PIStatus.FAILED);
                 pi.setPiErrorResp(e.getMessage());
-                paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(), pi);
+                paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(), pi,isRevised);
             } else {
                 // If disbursement is null, log the error and throw a custom exception
                 log.error("Disbursement is null. Cannot enrich status.");
