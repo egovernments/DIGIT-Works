@@ -3,8 +3,10 @@ package org.egov.works.mukta.adapter.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
@@ -250,5 +252,29 @@ public class PaymentInstructionService {
             paymentInstructions.add(paymentInstruction);
         }
         return paymentInstructions;
+    }
+
+    public void updatePIIndex(RequestInfo requestInfo, PaymentInstruction pi) {
+        log.info("Executing PIUtils:updatePiForIndexer");
+        try {
+            Map<String, Object> indexerRequest = new HashMap<>();
+            JsonNode node = objectMapper.valueToTree(pi);
+            ObjectNode piObjectNode = (ObjectNode) node;
+            if (pi.getParentPiNumber() == null || pi.getParentPiNumber().equals("")) {
+                piObjectNode.put("parentPiNumber", "");
+                piObjectNode.put("piType", "ORIGINAL");
+            }
+            else {
+                piObjectNode.put("piType", "REVISED");
+            }
+            if (pi.getPiErrorResp() == null) {
+                piObjectNode.put("piErrorResp", "");
+            }
+            indexerRequest.put("RequestInfo", requestInfo);
+            indexerRequest.put("paymentInstruction", piObjectNode);
+            muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(),indexerRequest);
+        }catch (Exception e){
+            log.error("Exception occurred in : PaymentInstructionService:updatePiForIndexer " + e);
+        }
     }
 }

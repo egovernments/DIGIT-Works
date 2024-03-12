@@ -37,15 +37,17 @@ public class DisbursementService {
     private final DisbursementValidator disbursementValidator;
     private final UserUtil userUtil;
     private final PaymentInstructionEnrichment paymentInstructionEnrichment;
+    private final PaymentInstructionService paymentInstructionService;
 
     @Autowired
-    public DisbursementService(BillUtils billUtils, MuktaAdaptorConfig muktaAdaptorConfig, MuktaAdaptorProducer muktaAdaptorProducer, DisbursementValidator disbursementValidator, UserUtil userUtil, PaymentInstructionEnrichment paymentInstructionEnrichment) {
+    public DisbursementService(BillUtils billUtils, MuktaAdaptorConfig muktaAdaptorConfig, MuktaAdaptorProducer muktaAdaptorProducer, DisbursementValidator disbursementValidator, UserUtil userUtil, PaymentInstructionEnrichment paymentInstructionEnrichment, PaymentInstructionService paymentInstructionService) {
         this.billUtils = billUtils;
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
         this.disbursementValidator = disbursementValidator;
         this.userUtil = userUtil;
         this.paymentInstructionEnrichment = paymentInstructionEnrichment;
+        this.paymentInstructionService = paymentInstructionService;
     }
     /**
      * Processes the disbursement request and updates the payment status
@@ -78,12 +80,9 @@ public class DisbursementService {
         // Get the disbursement response
         DisbursementResponse disbursementResponse = getDisbursementResponse(disbursementRequest);
         PaymentInstruction pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(disbursementResponse.getMessage());
-        Map<String, Object> indexerRequest = new HashMap<>();
-        indexerRequest.put("RequestInfo", requestInfo);
-        indexerRequest.put("paymentInstruction", pi);
         // Push the disbursement response to the disburse update topic
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementResponse);
-        muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(), indexerRequest);
+        paymentInstructionService.updatePIIndex(requestInfo, pi);
         return disbursementResponse;
     }
 
@@ -145,7 +144,7 @@ public class DisbursementService {
                         billDetail.getPayableLineItems().forEach(payableLineItem -> payableLineItem.setStatus(lineItemIdStatusMap.get(targetIdToStatusCodeMap.get(payableLineItem.getLineItemId()))))));
         if(disbursement.getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
             updatePaymentStatusForPartial(payment, requestInfo);
-        }else if(disbursement.getStatus().getStatusCode().equals(StatusCode.FAILED)){
+        }else if(disbursement.getStatus().getStatusCode().equals(StatusCode.FAILED) || disbursement.getStatus().getStatusCode().equals(StatusCode.ERROR)){
             billUtils.updatePaymentStatus(paymentRequest,PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
         }else if(disbursement.getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL)){
             billUtils.updatePaymentStatus(paymentRequest,PaymentStatus.SUCCESSFUL, ReferenceStatus.PAYMENT_SUCCESS);
