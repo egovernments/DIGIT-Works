@@ -406,10 +406,10 @@ public class PaymentInstructionEnrichment {
     private PIStatus getPiStatus(JsonNode piStatus, StatusCode statusCode) {
         if(piStatus == null){
             switch (statusCode){
+                case INPROCESS:
+                    return PIStatus.IN_PROCESS;
                 case INITIATED:
                     return PIStatus.INITIATED;
-                    case INPROCESS:
-                        return PIStatus.IN_PROCESS;
                 case SUCCESSFUL:
                     return PIStatus.SUCCESSFUL;
                 case FAILED:
@@ -419,7 +419,7 @@ public class PaymentInstructionEnrichment {
                     return null;
             }
         }
-        return PIStatus.valueOf(piStatus.asText());
+        return PIStatus.fromValue(piStatus.asText());
     }
 
     private BeneficiaryPaymentStatus getBenefStatus(JsonNode beneficiaryPaymentStatus,StatusCode statusCode) {

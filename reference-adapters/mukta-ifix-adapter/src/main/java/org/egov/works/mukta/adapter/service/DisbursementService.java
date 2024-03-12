@@ -57,7 +57,7 @@ public class DisbursementService {
     public DisbursementResponse processOnDisbursement(DisbursementRequest disbursementRequest) {
         log.info("Processing disbursement request");
         // Validate the disbursement request
-        disbursementValidator.validateOnDisbursementRequest(disbursementRequest);
+//        disbursementValidator.validateOnDisbursementRequest(disbursementRequest);
         // Extract the disbursement message from the request
         Disbursement disbursement = disbursementRequest.getMessage();
         // Extract the tenant ID from the disbursement
