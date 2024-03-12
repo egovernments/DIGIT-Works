@@ -154,4 +154,6 @@ public class IfmsAdapterConfig {
 
     @Value("${app.domain}")
     private String appDomain;
+    @Value("${egov.system.user.uuid}")
+    private String systemUserUUID;
 }

@@ -62,7 +62,7 @@ public class DisbursementService {
         PaymentStatus paymentStatus;
         PaymentInstruction lastPI = null;
         PaymentInstruction originalPI = null;
-        RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
+        RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid(ifmsAdapterConfig.getSystemUserUUID()).build()).build();
         Map<String,Map<String,JSONArray>> mdmsData = mdmsUtils.fetchHoaAndSSUDetails(requestInfo,disbursementRequest.getMessage().getLocationCode());
         disbursementValidator.validateDisbursementRequest(disbursementRequest,mdmsData);
         PISearchCriteria piSearchCriteria = PISearchCriteria.builder()
