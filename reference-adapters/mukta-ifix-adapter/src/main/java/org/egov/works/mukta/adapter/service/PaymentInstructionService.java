@@ -47,10 +47,9 @@ public class PaymentInstructionService {
     private final MuktaAdaptorConfig muktaAdaptorConfig;
     private final ObjectMapper objectMapper;
     private final DisbursementValidator disbursementValidator;
-    private final PaymentInstructionService paymentInstructionService;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator, PaymentInstructionService paymentInstructionService) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -63,7 +62,6 @@ public class PaymentInstructionService {
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.objectMapper = objectMapper;
         this.disbursementValidator = disbursementValidator;
-        this.paymentInstructionService = paymentInstructionService;
     }
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
@@ -78,7 +76,7 @@ public class PaymentInstructionService {
         msgHeader.setMessageType(MessageType.DISBURSE);
         DisbursementRequest disbursementRequest = DisbursementRequest.builder().message(disbursement).header(msgHeader).signature(signature).build();
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
-        paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(),pi,isRevised);
+        updatePIIndex(paymentRequest.getRequestInfo(),pi,isRevised);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {

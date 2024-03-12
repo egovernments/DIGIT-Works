@@ -343,7 +343,7 @@ public class PaymentInstructionEnrichment {
             Disbursement disbursementLineItem = disbursements.get(0);
             List<BenfLineItems> benfLineItems = new ArrayList<>();
             for(Disbursement disbursement1: disbursements){
-                ObjectNode additionalDetails = (ObjectNode) disbursement1.getAdditionalDetails();
+                ObjectNode additionalDetails = objectMapper.valueToTree(disbursement1.getAdditionalDetails());
                 BenfLineItems benfLineItem = BenfLineItems.builder().id(UUID.randomUUID().toString())
                         .lineItemId(disbursement1.getTargetId())
                         .beneficiaryId(beneficiaryId)
@@ -457,7 +457,7 @@ public class PaymentInstructionEnrichment {
     private HashMap<String, List<Disbursement>> getBeneficiaryDisbursementMap(Disbursement disbursement) {
         HashMap<String,List<Disbursement>> beneficiaryDisbursementMap = new HashMap<>();
         for(Disbursement disbursement1: disbursement.getDisbursements()){
-            ObjectNode additionalDetails = (ObjectNode) disbursement1.getAdditionalDetails();
+            ObjectNode additionalDetails = objectMapper.valueToTree(disbursement1.getAdditionalDetails());
             String beneficiaryId = disbursement1.getTargetId();
             if(additionalDetails != null){
                 JsonNode benfIdNode = additionalDetails.get("beneficiaryId");
