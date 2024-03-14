@@ -77,7 +77,7 @@ public class ContractApiControllerTest {
                 .contracts(Collections.singletonList(ContractTestBuilder.builder().withValidContract().build())).build();
         lenient().when(contractService.createContract(any(ContractRequest.class))).thenReturn(contractResponse);
         ObjectMapper objectMapper = new ObjectMapper();
-        String content = objectMapper.writeValueAsString(contractResponse);
+        String content = objectMapper.writeValueAsString(contractRequest);
         MvcResult result = mockMvc.perform(post("/v1/_create").contentType(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isOk()).andReturn();
         String responseString = result.getResponse().getContentAsString();
         ContractResponse response = objectMapper.readValue(responseString, ContractResponse.class);
@@ -108,7 +108,7 @@ public class ContractApiControllerTest {
                 .contracts(Collections.singletonList(ContractTestBuilder.builder().withValidContract().build())).build();
         lenient().when(contractService.updateContract(any(ContractRequest.class))).thenReturn(contractResponse);
         ObjectMapper objectMapper = new ObjectMapper();
-        String content = objectMapper.writeValueAsString(contractResponse);
+        String content = objectMapper.writeValueAsString(contractRequest);
         MvcResult result = mockMvc.perform(post("/v1/_update").contentType(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isOk()).andReturn();
         String responseString = result.getResponse().getContentAsString();
         ContractResponse response = objectMapper.readValue(responseString, ContractResponse.class);

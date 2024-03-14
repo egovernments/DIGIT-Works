@@ -1,5 +1,7 @@
 package org.egov.works.util;
 
+import javax.swing.plaf.PanelUI;
+
 public class ContractServiceConstants {
     // Private constructor to prevent instantiation
     private ContractServiceConstants() {}
@@ -106,6 +108,7 @@ public class ContractServiceConstants {
     public static final String ACCEPT_ACTION = "ACCEPT";
     public static final String APPROVE_ACTION = "APPROVE";
 
+    public static final String REJECTED_STATUS = "REJECTED";
     public static final String FILE_STORE_API_FAILURE = "FILE_STORE_API_FAILURE";
     public static final String FILE_STORE_API_REQUEST_FAIL_MSG = "FileStore API request failed with status code: ";
     public static final String INVALID_DOCUMENTS_CODE = "INVALID_DOCUMENTS";
