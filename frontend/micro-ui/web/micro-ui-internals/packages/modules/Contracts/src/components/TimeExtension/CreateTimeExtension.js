@@ -111,7 +111,7 @@ const CreateTimeExtension = ({isEdit,revisedWONumber,...props}) => {
   };
 
   const handleSubmit = () => {
-    if (!extensionRequested || !reasonForExtension || extensionRequested <= 0) {
+    if (!extensionRequested || !reasonForExtension || extensionRequested <= 0 || extensionRequested > 365) {
       setShowToast({
         label: "TE_SUBMIT_VALIDATION",
         isError: true,
@@ -135,9 +135,9 @@ const CreateTimeExtension = ({isEdit,revisedWONumber,...props}) => {
                 onChange={(e) => setExtensionRequested(e.target.value)}
                 ValidationRequired={true}
                 validation={{ type: "number" }}
+                maxlength={3}
                 min={1}
                 step={1}
-                maxlength={3}
                 defaultValue={isEdit ? contractObject?.additionalDetails?.timeExt : null}
               />
             </div>
