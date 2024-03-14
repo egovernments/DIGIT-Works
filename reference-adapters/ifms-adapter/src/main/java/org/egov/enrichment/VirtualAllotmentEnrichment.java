@@ -318,9 +318,9 @@ public class VirtualAllotmentEnrichment {
             allocationPayload.setProgramCode(allotment.getProgramCode());
             allocationPayload.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
             if(allotment.getAllotmentTxnType().equals("Allotment withdrawal")){
-                allocationPayload.setType(AllocationType.DEDUCTION);
+                allocationPayload.setAllocationType(AllocationType.DEDUCTION);
             }else{
-                allocationPayload.setType(AllocationType.ALLOCATION);
+                allocationPayload.setAllocationType(AllocationType.ALLOCATION);
             }
             netAmount = netAmount.add(allocationPayload.getNetAmount());
             grossAmount = grossAmount.add(allocationPayload.getGrossAmount());
@@ -332,7 +332,7 @@ public class VirtualAllotmentEnrichment {
         message.setNetAmount(netAmount);
         message.setGrossAmount(grossAmount);
         message.setChildren(allotmentList);
-        message.setType(AllocationType.ALLOCATION);
+        message.setAllocationType(AllocationType.ALLOCATION);
         message.setSanctionId(UUID.randomUUID().toString());
         message.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
         message.setAuditDetails(auditDetails);
