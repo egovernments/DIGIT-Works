@@ -38,6 +38,8 @@ public class Disbursement extends ExchangeCode {
     private String sanctionId;
     @JsonProperty("children")
     private List<Disbursement> disbursements;
+    @JsonProperty("type")
+    private String type;
     @JsonProperty("status")
     private Status status;
     @JsonProperty("account_code")
