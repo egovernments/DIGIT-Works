@@ -635,6 +635,7 @@ public class PaymentInstructionService {
         DisburseSearch disburseSearch = DisburseSearch.builder()
                 .targetId(paymentInstruction.getMuktaReferenceId())
                 .locationCode(paymentInstruction.getTenantId())
+                .pagination(PaginationForDisburse.builder().sortBy("created_time").sortOrder(PaginationForDisburse.SortOrder.DESC).build())
                 .build();
         DisburseSearchRequest disburseSearchRequest = DisburseSearchRequest.builder()
                 .signature(signature)

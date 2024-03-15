@@ -16,7 +16,6 @@ import org.egov.utils.MdmsUtils;
 import org.egov.utils.PIUtils;
 import org.egov.validators.DisbursementValidator;
 import org.egov.web.models.*;
-import org.egov.web.models.Status;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +108,11 @@ public class DisbursementService {
             sanctionDetails.get(0).getFundsSummary().setAvailableAmount(sanctionDetails.get(0).getFundsSummary().getAvailableAmount().subtract(paymentInstructionFromDisbursement.getGrossAmount()));
             sanctionDetails.get(0).getFundsSummary().getAuditDetails().setLastModifiedTime(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedTime());
             sanctionDetails.get(0).getFundsSummary().getAuditDetails().setLastModifiedBy(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedBy());
+        }
+        if(paymentStatus.equals(PaymentStatus.FAILED)){
+            for(Beneficiary beneficiary: paymentInstructionFromDisbursement.getBeneficiaryDetails()) {
+                beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+            }
         }
         paymentInstructionFromDisbursement = encryptionDecryptionUtil.encryptObject(paymentInstructionFromDisbursement, ifmsAdapterConfig.getStateLevelTenantId(),ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class);
         piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), paymentStatus.equals(PaymentStatus.FAILED) ? null:sanctionDetails.get(0).getFundsSummary(), paymentStatus);
@@ -209,7 +213,7 @@ public class DisbursementService {
 
     private PaymentStatus processDisbursementForPICreation(DisbursementRequest disbursementRequest, PaymentInstruction paymentInstructionFromDisbursement, RequestInfo requestInfo,List<SanctionDetail> sanctionDetails) {
         PaymentStatus paymentStatus = null;
-        if(sanctionDetails.get(0).getFundsSummary().getAvailableAmount().compareTo(disbursementRequest.getMessage().getNetAmount()) < 0){
+        if(sanctionDetails.get(0).getFundsSummary().getAvailableAmount().compareTo(disbursementRequest.getMessage().getGrossAmount()) < 0){
             log.info("Fund not available processing payment instruction for FAILED.");
             // Get enriched PI request to store on DB
             paymentStatus = PaymentStatus.FAILED;
@@ -219,9 +223,6 @@ public class DisbursementService {
             for(Beneficiary beneficiary: paymentInstructionFromDisbursement.getBeneficiaryDetails()) {
                 beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
             }
-//            log.info("Saving PI for failure, no funds available.");
-//            piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), null, paymentStatus);
-//            piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
 
             return paymentStatus;
         }
@@ -260,11 +261,7 @@ public class DisbursementService {
             paymentInstructionFromDisbursement.setPiStatus(PIStatus.FAILED);
             paymentInstructionFromDisbursement.setPiErrorResp(errorMessage);
         }
-        if(paymentStatus.equals(PaymentStatus.FAILED)){
-            for(Beneficiary beneficiary: paymentInstructionFromDisbursement.getBeneficiaryDetails()) {
-                beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
-            }
-        }
+
         return paymentStatus;
     }
 

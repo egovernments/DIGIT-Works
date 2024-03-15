@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.web.models.Pagination;
+import org.egov.web.models.PaginationForDisburse;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -31,6 +32,6 @@ public class DisburseSearch {
     private String targetId;
 
     @JsonProperty("pagination")
-    private Pagination pagination;
+    private PaginationForDisburse pagination;
 
 }
