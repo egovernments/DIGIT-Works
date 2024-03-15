@@ -104,6 +104,12 @@ public class DisbursementService {
             paymentStatus = processDisbursementForPICreation(disbursementRequest, paymentInstructionFromDisbursement, requestInfo, sanctionDetails);
         }
         log.info("Saving PI data.");
+        // Subtract amount from available amount in Sanction Details if PI is in INITIATED status and parent PI number is null
+        if (paymentStatus.equals(PaymentStatus.INITIATED) && paymentInstructionFromDisbursement.getParentPiNumber() == null) {
+            sanctionDetails.get(0).getFundsSummary().setAvailableAmount(sanctionDetails.get(0).getFundsSummary().getAvailableAmount().subtract(paymentInstructionFromDisbursement.getGrossAmount()));
+            sanctionDetails.get(0).getFundsSummary().getAuditDetails().setLastModifiedTime(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedTime());
+            sanctionDetails.get(0).getFundsSummary().getAuditDetails().setLastModifiedBy(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedBy());
+        }
         paymentInstructionFromDisbursement = encryptionDecryptionUtil.encryptObject(paymentInstructionFromDisbursement, ifmsAdapterConfig.getStateLevelTenantId(),ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class);
         piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), paymentStatus.equals(PaymentStatus.FAILED) ? null:sanctionDetails.get(0).getFundsSummary(), paymentStatus);
         piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);

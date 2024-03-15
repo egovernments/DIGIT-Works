@@ -41,8 +41,8 @@ public class Allocation extends ExchangeCode {
     @NotNull
     private BigDecimal grossAmount;
 
-    @JsonProperty("type")
-    private AllocationType type;
+    @JsonProperty("allocation_type")
+    private AllocationType allocationType;
 
     @JsonProperty("children")
     private List<Allocation> children;
