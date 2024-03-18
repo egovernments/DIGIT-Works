@@ -42,8 +42,8 @@ def getUser():
         if len(users) == 0:
             raise Exception("user not found")
         else:
-            userInfo = users[0]
-#             userInfo = {"id": user['id'], "tenantId": user['tenantId'], "uuid": user['uuid'], "roles": user['roles']}
+            user = users[0]
+            userInfo = {"id": user['id'], "tenantId": user['tenantId'], "uuid": user['uuid'], "roles": user['roles']}
         return userInfo
     except Exception as ex:
         logging.info("Exception while fetching user info.")
