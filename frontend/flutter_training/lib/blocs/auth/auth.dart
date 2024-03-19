@@ -5,6 +5,7 @@ import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_training/Env/env_config.dart';
 import 'package:flutter_training/models/user_details/user_details_model.dart';
 import 'package:flutter_training/services/urls.dart';
 import 'package:flutter_training/utils/global_variables.dart';
