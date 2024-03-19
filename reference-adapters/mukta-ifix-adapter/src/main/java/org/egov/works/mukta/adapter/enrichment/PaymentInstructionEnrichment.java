@@ -180,7 +180,8 @@ public class PaymentInstructionEnrichment {
                 log.error("Bank account or individual or organisation not found for individual/organisation beneficiary. -> "+piBeneficiary.getBeneficiaryId());
             }
             for (LineItem lineItem : piBeneficiary.getLineItems()) {
-                if(lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) && !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL)){
+                if (lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) &&
+                        (lineItem.getPaymentStatus() == null || !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL))) {
                     Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, auditDetails,programCode,headCodeCategoryMap);
                     disbursements.add(disbursementForLineItem);
                 }
