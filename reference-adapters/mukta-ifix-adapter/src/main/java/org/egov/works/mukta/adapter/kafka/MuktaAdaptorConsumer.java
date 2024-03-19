@@ -85,6 +85,7 @@ public class MuktaAdaptorConsumer {
             }
             programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
         } catch (Exception e) {
+            log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
             paymentService.updatePaymentStatusToFailed(paymentRequest);
             // If disbursement is not null, enrich its status
             if (disbursement != null) {
@@ -97,9 +98,7 @@ public class MuktaAdaptorConsumer {
             } else {
                 // If disbursement is null, log the error and throw a custom exception
                 log.error("Disbursement is null. Cannot enrich status.");
-                throw new CustomException(Error.DISBURSEMENT_ENRICHMENT_FAILED, e.getMessage());
             }
-            log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
             throw new CustomException("Error occurred while processing the consumed save estimate record from topic : " + topic, e.toString());
         }
     }
