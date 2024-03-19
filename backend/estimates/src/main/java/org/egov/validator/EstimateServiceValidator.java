@@ -131,8 +131,7 @@ public class EstimateServiceValidator {
             List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
             List<EstimateDetail> prevEstimateDetails = previousEstimate.getEstimateDetails();
             HashMap<String,EstimateDetail> prevEstimateDetailMap = new HashMap<>();
-            prevEstimateDetails.forEach(estimateDetail ->
-                    prevEstimateDetailMap.put(estimateDetail.getId(),estimateDetail)
+                prevEstimateDetails.forEach(estimateDetail -> prevEstimateDetailMap.put(estimateDetail.getId(),estimateDetail)
             );
 
             for(EstimateDetail estimateDetail: estimateDetails){
@@ -143,9 +142,9 @@ public class EstimateServiceValidator {
         }
     }
 
-    private void validateContractAndMeasurementBook(EstimateRequest estimateRequest, Estimate estimateForRevision, Map<String, String> errorMap) {
+    private void validateContractAndMeasurementBook(EstimateRequest estimateRequest, Estimate previousEstimate, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateContractAndMeasurementBook");
-        Object contractResponse = contractUtils.getContractDetails(estimateRequest.getRequestInfo(), estimateForRevision);
+        Object contractResponse = contractUtils.getContractDetails(estimateRequest.getRequestInfo(), previousEstimate);
         final String jsonPathForContractNumber = "$.contracts.*.contractNumber";
         List<Object> contractNumbers = null;
         try {
@@ -160,19 +159,43 @@ public class EstimateServiceValidator {
             log.info("Contract found for the given estimate");
             String contractNumber = contractNumbers.get(0).toString();
             Object measurementResponse = measurementUtils.getMeasurementDetails(estimateRequest, contractNumber);
-            validateMeasurement(measurementResponse, estimateRequest,contractResponse, errorMap);
+            validateMeasurement(measurementResponse, estimateRequest,previousEstimate,contractResponse, errorMap);
         }
     }
 
-    private void validateMeasurement(Object measurementResponse, EstimateRequest estimateRequest, Object contractResponse, Map<String, String> errorMap) {
+    private void validateMeasurement(Object measurementResponse, EstimateRequest estimateRequest, Estimate previousEstimate, Object contractResponse, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateMeasurement");
         List<EstimateDetail> estimateDetail = estimateRequest.getEstimate().getEstimateDetails();
-
+        List<EstimateDetail> previousEstimateDetail = previousEstimate.getEstimateDetails();
+        HashMap<String,EstimateDetail> previousEstimateDetailMap = new HashMap<>();
+        previousEstimateDetail.forEach(estimateDetail1 -> previousEstimateDetailMap.put(estimateDetail1.getId(),estimateDetail1));
+        estimateDetail.forEach(estimateDetail1 -> {
+            if(estimateDetail1.getPreviousLineItemId() != null && previousEstimateDetailMap.containsKey(estimateDetail1.getPreviousLineItemId()) && estimateDetail1.isActive()){
+                previousEstimateDetailMap.remove(estimateDetail1.getPreviousLineItemId());
+            }
+        });
+        validateMeasurementCumulativeValueForDeletedItems(previousEstimateDetailMap, measurementResponse, contractResponse, errorMap);
         estimateDetail.forEach(estimateDetail1 -> {
             if (!estimateDetail1.getCategory().equals(OVERHEAD_CODE) && estimateDetail1.getPreviousLineItemId() != null) {
                 validateMeasurementForEstimateDetail(estimateDetail1, measurementResponse, contractResponse, errorMap);
             }
         });
+    }
+
+    private void validateMeasurementCumulativeValueForDeletedItems(HashMap<String,EstimateDetail> previousEstimateDetailMap, Object measurementResponse, Object contractResponse, Map<String, String> errorMap) {
+        String jsonPathForContractLineItemRef = "$.contracts[*].lineItems[?(@.estimateLineItemId=='{{}}')].contractLineItemRef";
+        String jsonPathForMeasurementCumulativeValue = "$.measurements[*].measures[?(@.targetId=='{{}}')].cumulativeValue";
+        for(Map.Entry<String,EstimateDetail> entry : previousEstimateDetailMap.entrySet()){
+            String contractLineItemRefId = getContractLineItemRefId(contractResponse, jsonPathForContractLineItemRef, entry.getKey());
+            List<Integer> measurementCumulativeValue = getMeasurementCumulativeValue(measurementResponse, jsonPathForMeasurementCumulativeValue, contractLineItemRefId);
+            if(measurementCumulativeValue == null || measurementCumulativeValue.isEmpty()){
+                log.info("No measurement found for the given estimate");
+            }else{
+                if(measurementCumulativeValue.get(0) != 0){
+                    errorMap.put("INVALID_ESTIMATE_DETAIL", "Measurement book cumulative value should be zero for deleted items");
+                }
+            }
+        }
     }
 
     private void validateMeasurementForEstimateDetail(EstimateDetail estimateDetail1, Object measurementResponse, Object contractResponse, Map<String, String> errorMap) {
