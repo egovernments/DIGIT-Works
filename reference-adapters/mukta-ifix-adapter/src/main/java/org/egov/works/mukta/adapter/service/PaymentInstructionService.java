@@ -69,13 +69,15 @@ public class PaymentInstructionService {
         Boolean isRevised = disbursementValidator.isValidForDisbursementCreate(paymentRequest);
         log.info("Creating new disbursement for the payment id : " + paymentRequest.getReferenceId());
         Disbursement disbursement = processPaymentInstruction(paymentRequest,isRevised);
-        PaymentInstruction pi = piEnrichment.getPaymentInstructionFromDisbursement(disbursement);
+        Disbursement encriptedDisbursement = piEnrichment.encriptDisbursement(disbursement);
+        PaymentInstruction pi = piEnrichment.getPaymentInstructionFromDisbursement(encriptedDisbursement);
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
-        MsgHeader msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), paymentRequest.getTenantId());
+        MsgHeader msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
         msgHeader.setAction(Action.CREATE);
         msgHeader.setMessageType(MessageType.DISBURSE);
         DisbursementRequest disbursementRequest = DisbursementRequest.builder().message(disbursement).header(msgHeader).signature(signature).build();
-        muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
+        DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().message(encriptedDisbursement).header(msgHeader).signature(signature).build();
+        muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), encriptedDisbursementRequest);
         updatePIIndex(paymentRequest.getRequestInfo(),pi,isRevised);
         try {
             Thread.sleep(5000);
@@ -84,7 +86,7 @@ public class PaymentInstructionService {
         }
         programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
         log.info("Pushing disbursement request to the kafka topic");
-        return disbursement;
+        return encriptedDisbursement;
     }
 
     public Disbursement processPaymentInstruction(PaymentRequest paymentRequest,Boolean isRevised) {
@@ -102,6 +104,7 @@ public class PaymentInstructionService {
         }
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
         disbursement = getBeneficiariesFromPayment(paymentRequest, mdmsData,isRevised);
+        piEnrichment.enrichExchangeCodes(disbursement, mdmsData);
         log.info("Disbursement request is " + disbursement);
         return disbursement;
     }

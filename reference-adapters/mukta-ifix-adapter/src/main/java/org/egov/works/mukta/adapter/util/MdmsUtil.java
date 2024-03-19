@@ -85,10 +85,29 @@ public class MdmsUtil {
         ModuleDetail ssuModuleDetail = ModuleDetail.builder().masterDetails(ssuMasterDetails)
                 .moduleName(MDMS_IFMS_MODULE_NAME).build();
 
+        // Master Details for Exchange Codes
+        List<MasterDetail> exchangeCodesMasterDetails = new ArrayList<>();
+        MasterDetail administrativeCodesMaster = MasterDetail.builder().name(MDMS_ADMINISTRATIVE_CODES_MASTER).build();
+        MasterDetail economicSegmentCodesMaster = MasterDetail.builder().name(MDMS_ECONOMIC_SEGMENT_CODES_MASTER).build();
+        MasterDetail functionCodesMaster = MasterDetail.builder().name(MDMS_FUNCTION_CODES_MASTER).build();
+        MasterDetail recipientSegmentCodesMaster = MasterDetail.builder().name(MDMS_RECIPIENT_SEGMENT_CODES_MASTER).build();
+        MasterDetail sourceOfFundsCodesMaster = MasterDetail.builder().name(MDMS_SOURCE_OF_FUNDS_CODE_MASTER).build();
+        MasterDetail targetSegmentCodesMaster = MasterDetail.builder().name(MDMS_TARGET_SEGMENT_CODES_MASTER).build();
+        exchangeCodesMasterDetails.add(administrativeCodesMaster);
+        exchangeCodesMasterDetails.add(economicSegmentCodesMaster);
+        exchangeCodesMasterDetails.add(functionCodesMaster);
+        exchangeCodesMasterDetails.add(recipientSegmentCodesMaster);
+        exchangeCodesMasterDetails.add(sourceOfFundsCodesMaster);
+        exchangeCodesMasterDetails.add(targetSegmentCodesMaster);
+        ModuleDetail exchangeCodesModuleDetail = ModuleDetail.builder().masterDetails(exchangeCodesMasterDetails)
+                .moduleName(MDMS_SEGMENT_CODES_MODULE).build();
+
+
         List<ModuleDetail> moduleDetailList = new ArrayList<>();
         moduleDetailList.add(tenantModuleDetail);
         moduleDetailList.add(headCodesModuleDetail);
         moduleDetailList.add(ssuModuleDetail);
+        moduleDetailList.add(exchangeCodesModuleDetail);
 
         MdmsCriteria mdmsCriteria = new MdmsCriteria();
         mdmsCriteria.setTenantId(tenantId);

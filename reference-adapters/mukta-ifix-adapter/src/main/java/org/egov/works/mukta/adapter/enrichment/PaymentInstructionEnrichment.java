@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
 import org.egov.works.mukta.adapter.config.Constants;
+import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.constants.Error;
+import org.egov.works.mukta.adapter.util.EncryptionDecryptionUtil;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.Status;
 import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
@@ -33,10 +35,14 @@ import java.util.*;
 public class PaymentInstructionEnrichment {
 
     private final ObjectMapper objectMapper;
+    private final EncryptionDecryptionUtil encryptionDecryptionUtil;
+    private final MuktaAdaptorConfig muktaAdaptorConfig;
 
     @Autowired
-    public PaymentInstructionEnrichment(ObjectMapper objectMapper) {
+    public PaymentInstructionEnrichment(ObjectMapper objectMapper, EncryptionDecryptionUtil encryptionDecryptionUtil, MuktaAdaptorConfig muktaAdaptorConfig) {
         this.objectMapper = objectMapper;
+        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
+        this.muktaAdaptorConfig = muktaAdaptorConfig;
     }
     /**
      * The function enriches the beneficiary based on the bills and payment request.
@@ -478,5 +484,45 @@ public class PaymentInstructionEnrichment {
         }
 
         return beneficiaryDisbursementMap;
+    }
+
+    public void enrichExchangeCodes(Disbursement disbursement, Map<String, Map<String, JSONArray>> mdmsData) {
+        log.info("Started executing enrichExchangeCodes");
+        String targetSegmentCode = extractCode(mdmsData, Constants.MDMS_SEGMENT_CODES_MODULE, Constants.MDMS_TARGET_SEGMENT_CODES_MASTER);
+        String sourceOfFundsCode = extractCode(mdmsData, Constants.MDMS_SEGMENT_CODES_MODULE, Constants.MDMS_SOURCE_OF_FUNDS_CODE_MASTER);
+        String recipientSegmentCode = extractCode(mdmsData, Constants.MDMS_SEGMENT_CODES_MODULE, Constants.MDMS_RECIPIENT_SEGMENT_CODES_MASTER);
+        String functionCode = extractCode(mdmsData, Constants.MDMS_SEGMENT_CODES_MODULE, Constants.MDMS_FUNCTION_CODES_MASTER);
+        String economicSegmentCode = extractCode(mdmsData, Constants.MDMS_SEGMENT_CODES_MODULE, Constants.MDMS_ECONOMIC_SEGMENT_CODES_MASTER);
+        String administrativeCode = extractCode(mdmsData, Constants.MDMS_SEGMENT_CODES_MODULE, Constants.MDMS_ADMINISTRATIVE_CODES_MASTER);
+        disbursement.setTargetSegmentCode(targetSegmentCode);
+        disbursement.setSourceOfFundCode(sourceOfFundsCode);
+        disbursement.setRecipientSegmentCode(recipientSegmentCode);
+        disbursement.setFunctionCode(functionCode);
+        disbursement.setEconomicSegmentCode(economicSegmentCode);
+        disbursement.setAdministrationCode(administrativeCode);
+        for(Disbursement disbursement1: disbursement.getDisbursements()){
+            disbursement1.setTargetSegmentCode(targetSegmentCode);
+            disbursement1.setSourceOfFundCode(sourceOfFundsCode);
+            disbursement1.setRecipientSegmentCode(recipientSegmentCode);
+            disbursement1.setFunctionCode(functionCode);
+            disbursement1.setEconomicSegmentCode(economicSegmentCode);
+            disbursement1.setAdministrationCode(administrativeCode);
+        }
+    }
+
+    private String extractCode(Map<String, Map<String, JSONArray>> mdmsData, String moduleName, String masterName) {
+        String res = null;
+        JSONArray data = mdmsData.get(moduleName).get(masterName);
+        for (Object o : data) {
+            Map<String, String> map = (Map<String, String>) o;
+            res = map.get("code");
+        }
+        return res;
+    }
+
+    public Disbursement encriptDisbursement(Disbursement disbursement) {
+        Disbursement disbursement1 = disbursement;
+        disbursement1 = encryptionDecryptionUtil.encryptObject(disbursement1, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), Disbursement.class);
+        return disbursement1;
     }
 }

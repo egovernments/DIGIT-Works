@@ -60,7 +60,7 @@ public class MuktaAdaptorConsumer {
     @KafkaListener(topics = {"${payment.create.topic}"})
     public void listen(final String record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         PaymentRequest paymentRequest = null;
-        Disbursement disbursement = null;
+        Disbursement encryptedDisbursement = null;
         PaymentInstruction pi = null;
         String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
         MsgHeader msgHeader = null;
@@ -70,13 +70,15 @@ public class MuktaAdaptorConsumer {
             paymentRequest = objectMapper.readValue(record, PaymentRequest.class);
             log.info("Payment data is " + paymentRequest);
             isRevised = disbursementValidator.isValidForDisbursementCreate(paymentRequest);
-            disbursement = paymentInstructionService.processPaymentInstruction(paymentRequest,isRevised);
-            pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(disbursement);
+            Disbursement disbursement = paymentInstructionService.processPaymentInstruction(paymentRequest,isRevised);
+            encryptedDisbursement = paymentInstructionEnrichment.encriptDisbursement(disbursement);
+            pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(encryptedDisbursement);
             msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
             msgHeader.setAction(Action.CREATE);
             msgHeader.setMessageType(MessageType.DISBURSE);
             DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).signature(signature).build();
-            muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), disbursementRequest);
+            DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().header(msgHeader).message(encryptedDisbursement).signature(signature).build();
+            muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), encriptedDisbursementRequest);
             paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(), pi,isRevised);
             try {
                 Thread.sleep(5000);
@@ -88,9 +90,9 @@ public class MuktaAdaptorConsumer {
             log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
             paymentService.updatePaymentStatusToFailed(paymentRequest);
             // If disbursement is not null, enrich its status
-            if (disbursement != null) {
-                paymentInstructionEnrichment.enrichDisbursementStatus(disbursement, StatusCode.FAILED,e.getMessage());
-                DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).signature(signature).build();
+            if (encryptedDisbursement != null) {
+                paymentInstructionEnrichment.enrichDisbursementStatus(encryptedDisbursement, StatusCode.FAILED,e.getMessage());
+                DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(encryptedDisbursement).signature(signature).build();
                 muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementRequest);
                 pi.setPiStatus(PIStatus.FAILED);
                 pi.setPiErrorResp(e.getMessage());

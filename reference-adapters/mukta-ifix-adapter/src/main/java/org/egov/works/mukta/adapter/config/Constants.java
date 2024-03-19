@@ -7,10 +7,18 @@ public class Constants {
     public static final String MDMS_TENANT_MODULE_NAME = "tenant";
     public static final String MDMS_TENANTS_MASTER = "tenants";
     public static final String MDMS_IFMS_MODULE_NAME = "ifms";
+    public static final String MDMS_SEGMENT_CODES_MODULE = "segment-codes";
+
     public static final String MDMS_EXCHANGE_MODULE_NAME = "exchange";
     public static final String MDMS_EXCHANGE_SERVER_MASTER = "ExchangeServers";
     public static final String MDMS_SCHEMA_DETAILS_MASTER = "SchemeDetails";
     public static final String MDMS_SSU_DETAILS_MASTER = "SSUDetails";
+    public static final String MDMS_ADMINISTRATIVE_CODES_MASTER = "AdministrativeCodes";
+    public static final String MDMS_ECONOMIC_SEGMENT_CODES_MASTER ="EconomicSegmentCodes";
+    public static final String MDMS_FUNCTION_CODES_MASTER = "FunctionCodes";
+    public static final String MDMS_RECIPIENT_SEGMENT_CODES_MASTER = "RecipientSegmentCodes";
+    public static final String MDMS_SOURCE_OF_FUNDS_CODE_MASTER = "SourceOfFundCodes";
+    public static final String MDMS_TARGET_SEGMENT_CODES_MASTER = "TargetSegmentCodes";
     public static final String PAYEE_TYPE_INDIVIDUAL = "INDIVIDUAL";
 
     public static final String VA_REQUEST_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
