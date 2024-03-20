@@ -23,6 +23,7 @@ public class Disbursement extends ExchangeCode {
     @JsonProperty("target_id")
     private String targetId;
     @JsonProperty("location_code")
+    @NotNull
     private String locationCode;
     @JsonProperty("transaction_id")
     private String transactionId;
@@ -31,10 +32,10 @@ public class Disbursement extends ExchangeCode {
     @JsonProperty("disbursement_date")
     private Long disbursementDate;
     @JsonProperty("sanction_id")
+    @NotNull
     private String sanctionId;
     @JsonProperty("children")
     private List<Disbursement> disbursements;
-    @NotNull
     @JsonProperty("account_code")
     private String accountCode;
     @NotNull
@@ -43,7 +44,6 @@ public class Disbursement extends ExchangeCode {
     @NotNull
     @JsonProperty("gross_amount")
     private BigDecimal grossAmount;
-    @NotNull
     @JsonProperty("individual")
     private Individual individual;
     @JsonProperty("program_code")

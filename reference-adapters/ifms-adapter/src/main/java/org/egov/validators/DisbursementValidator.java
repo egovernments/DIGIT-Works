@@ -36,12 +36,6 @@ public class DisbursementValidator {
 
     public void validateDisbursementRequest(DisbursementRequest disbursementRequest, Map<String, Map<String,JSONArray>> mdmsData) {
         log.info("DisbursementValidator.validateDisbursementRequest()");
-        if(disbursementRequest.getHeader() == null){
-            throw new CustomException("INVALID_HEADER", "Header is mandatory for the disbursement Request.");
-        }
-        if(disbursementRequest.getMessage() == null){
-            throw new CustomException("INVALID_MESSAGE", "Message is mandatory for the disbursement Request.");
-        }
         Disbursement disbursement = disbursementRequest.getMessage();
         validateHeader(disbursementRequest.getHeader());
         validateDisbursement(disbursement,mdmsData);
@@ -49,12 +43,6 @@ public class DisbursementValidator {
     }
 
     private void validateHeader(MsgCallbackHeader header) {
-        if(header.getSenderId() == null){
-            throw new CustomException("INVALID_SENDER_ID", "Sender Id is mandatory for the disbursement Request.");
-        }
-        if(header.getReceiverId() == null){
-            throw new CustomException("INVALID_RECEIVER_ID", "Receiver Id is mandatory for the disbursement Request.");
-        }
         if(header.getSenderId().equals(header.getReceiverId())){
             throw new CustomException("INVALID_SENDER_RECEIVER_ID", "Sender Id and Receiver Id cannot be same for the disbursement Request.");
         }
@@ -107,19 +95,6 @@ public class DisbursementValidator {
     private void validateChildDisbursement(Disbursement disbursement) {
         if(disbursement.getId() == null){
             disbursement.setId(UUID.randomUUID().toString());
-        }
-        if(disbursement.getTargetId() == null){
-            throw new CustomException("INVALID_TARGET_ID", "Target Id is mandatory for the disbursement Request.");
-        }
-        if(disbursement.getLocationCode() == null){
-            throw new CustomException("INVALID_LOCATION_CODE", "Location Code is mandatory for the disbursement Request.");
-        }
-
-        if(disbursement.getNetAmount() == null){
-            throw new CustomException("INVALID_NET_AMOUNT", "Net Amount is mandatory for the disbursement Request.");
-        }
-        if(disbursement.getGrossAmount() == null){
-            throw new CustomException("INVALID_GROSS_AMOUNT", "Gross Amount is mandatory for the disbursement Request.");
         }
         if(!disbursement.getNetAmount().equals(disbursement.getGrossAmount())){
             throw new CustomException("INVALID_AMOUNT", "Net Amount and Gross Amount are not matching for the disbursement Request.");

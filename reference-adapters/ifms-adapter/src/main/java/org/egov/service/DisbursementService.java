@@ -61,7 +61,7 @@ public class DisbursementService {
         PaymentStatus paymentStatus;
         PaymentInstruction lastPI = null;
         PaymentInstruction originalPI = null;
-        RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid(ifmsAdapterConfig.getSystemUserUUID()).build()).build();
+        RequestInfo requestInfo = RequestInfo.builder().build();
         Map<String,Map<String,JSONArray>> mdmsData = mdmsUtils.fetchHoaAndSSUDetails(requestInfo,disbursementRequest.getMessage().getLocationCode());
         disbursementValidator.validateDisbursementRequest(disbursementRequest,mdmsData);
         PISearchCriteria piSearchCriteria = PISearchCriteria.builder()
@@ -74,6 +74,7 @@ public class DisbursementService {
         List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchCriteria);
         SanctionDetailsSearchCriteria sanctionDetailsSearchCriteria = SanctionDetailsSearchCriteria.builder()
                 .ids(Collections.singletonList(disbursementRequest.getMessage().getSanctionId()))
+                .tenantId(disbursementRequest.getMessage().getLocationCode())
                 .build();
         List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(sanctionDetailsSearchCriteria);
         if(sanctionDetails.isEmpty()){
