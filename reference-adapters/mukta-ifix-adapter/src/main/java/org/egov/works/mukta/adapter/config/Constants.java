@@ -19,6 +19,7 @@ public class Constants {
     public static final String MDMS_RECIPIENT_SEGMENT_CODES_MASTER = "RecipientSegmentCodes";
     public static final String MDMS_SOURCE_OF_FUNDS_CODE_MASTER = "SourceOfFundCodes";
     public static final String MDMS_TARGET_SEGMENT_CODES_MASTER = "TargetSegmentCodes";
+    public static final String MDMS_GEOGRAPHIC_CODES_MASTER = "GeographicSegmentCodes";
     public static final String PAYEE_TYPE_INDIVIDUAL = "INDIVIDUAL";
 
     public static final String VA_REQUEST_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";

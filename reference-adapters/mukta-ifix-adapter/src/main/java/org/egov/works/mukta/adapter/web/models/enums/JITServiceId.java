@@ -7,21 +7,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * status of the Property
  */
 public enum JITServiceId {
-
-    VA("VA"),
-
-    PI("PI"),
-
-    PIS("PIS"),
-
-    PAG("PAG"),
-
-    PD("PD"),
-
-    FD("FD"),
-    COR("COR"),
-    FTPS("FTPS"),
-    FTFPS("FTFPS"),
     PA("PA");
 
     private String value;

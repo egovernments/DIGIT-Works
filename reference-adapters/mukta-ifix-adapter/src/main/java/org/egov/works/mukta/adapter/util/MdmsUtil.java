@@ -93,12 +93,14 @@ public class MdmsUtil {
         MasterDetail recipientSegmentCodesMaster = MasterDetail.builder().name(MDMS_RECIPIENT_SEGMENT_CODES_MASTER).build();
         MasterDetail sourceOfFundsCodesMaster = MasterDetail.builder().name(MDMS_SOURCE_OF_FUNDS_CODE_MASTER).build();
         MasterDetail targetSegmentCodesMaster = MasterDetail.builder().name(MDMS_TARGET_SEGMENT_CODES_MASTER).build();
+        MasterDetail geographicSegmentCodesMaster = MasterDetail.builder().name(MDMS_GEOGRAPHIC_CODES_MASTER).build();
         exchangeCodesMasterDetails.add(administrativeCodesMaster);
         exchangeCodesMasterDetails.add(economicSegmentCodesMaster);
         exchangeCodesMasterDetails.add(functionCodesMaster);
         exchangeCodesMasterDetails.add(recipientSegmentCodesMaster);
         exchangeCodesMasterDetails.add(sourceOfFundsCodesMaster);
         exchangeCodesMasterDetails.add(targetSegmentCodesMaster);
+        exchangeCodesMasterDetails.add(geographicSegmentCodesMaster);
         ModuleDetail exchangeCodesModuleDetail = ModuleDetail.builder().masterDetails(exchangeCodesMasterDetails)
                 .moduleName(MDMS_SEGMENT_CODES_MODULE).build();
 

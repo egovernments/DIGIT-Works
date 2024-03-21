@@ -4,11 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.works.mukta.adapter.web.models.enums.Action;
 import org.egov.works.mukta.adapter.web.models.enums.MessageType;
-import org.egov.works.mukta.adapter.web.models.enums.MsgHeaderStatusReasonCode;
-import org.egov.works.mukta.adapter.web.models.enums.RequestStatus;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Getter
 @Setter

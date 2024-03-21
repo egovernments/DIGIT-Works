@@ -500,12 +500,14 @@ public class PaymentInstructionEnrichment {
         String functionCode = extractCode(mdmsData, Constants.MDMS_SEGMENT_CODES_MODULE, Constants.MDMS_FUNCTION_CODES_MASTER);
         String economicSegmentCode = extractCode(mdmsData, Constants.MDMS_SEGMENT_CODES_MODULE, Constants.MDMS_ECONOMIC_SEGMENT_CODES_MASTER);
         String administrativeCode = extractCode(mdmsData, Constants.MDMS_SEGMENT_CODES_MODULE, Constants.MDMS_ADMINISTRATIVE_CODES_MASTER);
+        String geographicSegmentCode = extractCode(mdmsData,Constants.MDMS_SEGMENT_CODES_MODULE,Constants.MDMS_GEOGRAPHIC_CODES_MASTER);
         disbursement.setTargetSegmentCode(targetSegmentCode);
         disbursement.setSourceOfFundCode(sourceOfFundsCode);
         disbursement.setRecipientSegmentCode(recipientSegmentCode);
         disbursement.setFunctionCode(functionCode);
         disbursement.setEconomicSegmentCode(economicSegmentCode);
         disbursement.setAdministrationCode(administrativeCode);
+        disbursement.setLocaleCode(geographicSegmentCode);
         for(Disbursement disbursement1: disbursement.getDisbursements()){
             disbursement1.setTargetSegmentCode(targetSegmentCode);
             disbursement1.setSourceOfFundCode(sourceOfFundsCode);
@@ -513,6 +515,7 @@ public class PaymentInstructionEnrichment {
             disbursement1.setFunctionCode(functionCode);
             disbursement1.setEconomicSegmentCode(economicSegmentCode);
             disbursement1.setAdministrationCode(administrativeCode);
+            disbursement1.setLocaleCode(geographicSegmentCode);
         }
     }
 
