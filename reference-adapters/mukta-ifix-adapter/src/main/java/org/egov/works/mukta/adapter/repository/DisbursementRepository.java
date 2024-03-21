@@ -1,8 +1,10 @@
 package org.egov.works.mukta.adapter.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.repository.querybuilder.DisbursementQueryBuilder;
 import org.egov.works.mukta.adapter.repository.rowmapper.DisbursementRowMapper;
+import org.egov.works.mukta.adapter.util.EncryptionDecryptionUtil;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.DisbursementSearchCriteria;
 import org.egov.works.mukta.adapter.web.models.DisbursementSearchRequest;
@@ -20,12 +22,16 @@ import java.util.List;
 public class DisbursementRepository {
     private final DisbursementQueryBuilder disbursementQueryBuilder;
     private final DisbursementRowMapper disbursementRowMapper;
+    private final EncryptionDecryptionUtil encryptionDecryptionUtil;
+    private final MuktaAdaptorConfig muktaAdaptorConfig;
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public DisbursementRepository(DisbursementQueryBuilder disbursementQueryBuilder, DisbursementRowMapper disbursementRowMapper, JdbcTemplate jdbcTemplate) {
+    public DisbursementRepository(DisbursementQueryBuilder disbursementQueryBuilder, DisbursementRowMapper disbursementRowMapper, EncryptionDecryptionUtil encryptionDecryptionUtil, MuktaAdaptorConfig muktaAdaptorConfig, JdbcTemplate jdbcTemplate) {
         this.disbursementQueryBuilder = disbursementQueryBuilder;
         this.disbursementRowMapper = disbursementRowMapper;
+        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
+        this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -45,7 +51,7 @@ public class DisbursementRepository {
         if(!parentIds.isEmpty()){
             enrichedDisbursements(parentIds, disbursements);
         }
-
+        disbursements.replaceAll(disbursement -> encryptionDecryptionUtil.decryptObject(disbursement, muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), Disbursement.class, disbursementSearchRequest.getRequestInfo()));
         return disbursements;
     }
 
