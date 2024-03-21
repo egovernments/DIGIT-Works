@@ -57,6 +57,12 @@ public class DisbursementService {
         this.encryptionDecryptionUtil = encryptionDecryptionUtil;
         this.ifmsAdapterConfig = ifmsAdapterConfig;
     }
+
+    /**
+     * Process the disbursement request and create a payment instruction.
+     * @param disbursementRequest
+     * @return
+     */
     public DisbursementResponse processDisbursementRequest(DisbursementRequest disbursementRequest) {
         PaymentStatus paymentStatus;
         PaymentInstruction lastPI = null;
@@ -91,6 +97,7 @@ public class DisbursementService {
             }
         }
         PaymentInstruction paymentInstructionFromDisbursement;
+        // Check if last PI is in PARTIAL status, if yes then process it for revised PI creation
         if(lastPI != null && lastPI.getPiStatus().equals(PIStatus.PARTIAL)){
             log.info("Payment Instruction is in PARTIAL status, processing it for revised PI.");
             lastPI = encryptionDecryptionUtil.decryptObject(lastPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
@@ -115,6 +122,7 @@ public class DisbursementService {
                 beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
             }
         }
+        // Encrypt PI and save it to DB
         paymentInstructionFromDisbursement = encryptionDecryptionUtil.encryptObject(paymentInstructionFromDisbursement, ifmsAdapterConfig.getStateLevelTenantId(),ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class);
         piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), paymentStatus.equals(PaymentStatus.FAILED) ? null:sanctionDetails.get(0).getFundsSummary(), paymentStatus);
         piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
@@ -122,6 +130,11 @@ public class DisbursementService {
         return enrichDisbursementResponse(disbursementRequest,paymentInstructionFromDisbursement);
     }
 
+    /**
+     * Process the revised PI creation for the disbursement request.
+     * @param disbursementRequest
+     * @return
+     */
     private PaymentStatus processDisbursementForRevisedPICreation(PaymentInstruction paymentInstructionFromDisbursement, RequestInfo requestInfo, PaymentInstruction lastPI, PaymentInstruction originalPI) {
         PaymentStatus paymentStatus = null;
         try {
@@ -178,7 +191,14 @@ public class DisbursementService {
         }
         return paymentStatus;
     }
-
+    /**
+     * Update PI data for revised PI.
+     * @param paymentInstructionFromDisbursement
+     * @param lastPI
+     * @param originalPI
+     * @param paymentStatus
+     * @param requestInfo
+     */
     private void updatePIDateForRevisedPI(PaymentInstruction paymentInstructionFromDisbursement, PaymentInstruction lastPI, PaymentInstruction originalPI, PaymentStatus paymentStatus,RequestInfo requestInfo) {
         log.info("Updating PI data for revised PI.");
         if(paymentStatus.equals(PaymentStatus.PARTIAL)){
@@ -211,7 +231,11 @@ public class DisbursementService {
             piUtils.updatePIIndex(requestInfo, lastPiForUpdate);
         }
     }
-
+    /**
+     * Process the disbursement request for PI creation.
+     * @param disbursementRequest
+     * @return
+     */
     private PaymentStatus processDisbursementForPICreation(DisbursementRequest disbursementRequest, PaymentInstruction paymentInstructionFromDisbursement, RequestInfo requestInfo,List<SanctionDetail> sanctionDetails) {
         PaymentStatus paymentStatus = null;
         if(sanctionDetails.get(0).getFundsSummary().getAvailableAmount().compareTo(disbursementRequest.getMessage().getGrossAmount()) < 0){
@@ -265,7 +289,12 @@ public class DisbursementService {
 
         return paymentStatus;
     }
-
+    /**
+     * Enrich the disbursement response with the status and transaction id.
+     * @param disbursementRequest
+     * @param paymentInstructionFromDisbursement
+     * @return
+     */
     private DisbursementResponse enrichDisbursementResponse(DisbursementRequest disbursementRequest, PaymentInstruction paymentInstructionFromDisbursement) {
         StatusCode statusCode = StatusCode.INITIATED;
         String statusMessage = null;

@@ -61,7 +61,10 @@ public class VirtualAllotmentService {
         this.programServiceUtil = programServiceUtil;
     }
 
-
+    /**
+     * Generate Virtual Allotment for all tenants
+     * @param requestInfo
+     */
     public void generateVirtualAllotment(RequestInfo requestInfo) {
         log.info("Start executing VA service.");
 
@@ -161,11 +164,17 @@ public class VirtualAllotmentService {
         }
     }
 
+    /**
+     * Process allotments and sanctions For OnSanction and OnAllocation
+     * @param createAllotments
+     * @param createSanctions
+     * @param requestInfo
+     */
     private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions,RequestInfo requestInfo) {
         log.info("Processing allotments and sanctions");
-        String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
         MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,ifmsAdapterConfig.getStateLevelTenantId());
         try {
+            // Call on_sanction and on_allocation apis
             if(createSanctions != null && !createSanctions.isEmpty()){
                 log.info("Processing created sanction for on_sanction/create");
                 Sanction message = virtualAllotmentEnrichment.createSanctionsPayload(createSanctions);
@@ -174,7 +183,6 @@ public class VirtualAllotmentService {
                 OnSanctionRequest onSanctionRequest = OnSanctionRequest.builder()
                         .header(msgCallbackHeader)
                         .message(message)
-                        .signature(signature)
                         .build();
                 programServiceUtil.callProgramServiceOnSanctionOrAllocation(onSanctionRequest, true);
             }
@@ -187,7 +195,6 @@ public class VirtualAllotmentService {
                 OnAllocationRequest onAllocationRequest = OnAllocationRequest.builder()
                         .header(msgCallbackHeader)
                         .message(message)
-                        .signature(signature)
                         .build();
                 programServiceUtil.callProgramServiceOnSanctionOrAllocation(onAllocationRequest, false);
             }

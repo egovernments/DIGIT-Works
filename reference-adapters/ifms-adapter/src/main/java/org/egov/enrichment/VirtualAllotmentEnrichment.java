@@ -258,7 +258,11 @@ public class VirtualAllotmentEnrichment {
         executedVALog.getAuditDetails().setLastModifiedTime(time);
         return executedVALog;
     }
-
+    /**
+     * This method creates the payload for the virtual allotment
+     * @param sanctions
+     * @return
+     */
     public Sanction createSanctionsPayload(List<SanctionDetail> sanctions) {
         Sanction message = new Sanction();
         String locationCode = sanctions.get(0).getTenantId();
@@ -292,7 +296,11 @@ public class VirtualAllotmentEnrichment {
         message.setAuditDetails(auditDetails);
         return message;
     }
-
+    /**
+     * This method creates the payload for the virtual allotment
+     * @param allotments
+     * @return
+     */
     public Allocation createAllotmentsPayload(List<Allotment> allotments) {
         Allocation message = new Allocation();
         String locationCode = allotments.get(0).getTenantId();

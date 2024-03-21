@@ -626,9 +626,13 @@ public class PaymentInstructionService {
         }
     }
 
+    /**
+     * Process PI for creating disbursement request
+     * @param paymentInstruction
+     * @param requestInfo
+     */
     public void processPIForOnDisburse(PaymentInstruction paymentInstruction, RequestInfo requestInfo) {
         log.info("Processing PI For Creating Disbursement Request");
-        String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
         MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,config.getStateLevelTenantId());
         msgCallbackHeader.setMessageType(MessageType.DISBURSE);
         msgCallbackHeader.setAction(Action.SEARCH);
@@ -638,28 +642,17 @@ public class PaymentInstructionService {
                 .pagination(PaginationForDisburse.builder().sortBy("created_time").sortOrder(PaginationForDisburse.SortOrder.DESC).build())
                 .build();
         DisburseSearchRequest disburseSearchRequest = DisburseSearchRequest.builder()
-                .signature(signature)
                 .header(msgCallbackHeader)
                 .disburseSearch(disburseSearch)
                 .build();
         DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
         List<Disbursement> disbursements = disbursementResponse.getDisbursements();
-//        List<Disbursement> disbursements = new ArrayList<>();
-//        try {
-//            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("sample/Disbursement.json");
-//            DisburseSearchResponse disbursementResponse = objectMapper.readValue(inputStream, DisburseSearchResponse.class);
-//            disbursements = disbursementResponse.getDisbursements();
-//        } catch (IOException e) {
-//            log.error("Exception while reading disbursements.json : " + e);
-//        }
-
-            piEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursements.get(0));
-            piEnrichment.setAddtionaInfoForDisbursement(paymentInstruction, disbursements.get(0));
+        piEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursements.get(0));
+        piEnrichment.setAddtionaInfoForDisbursement(paymentInstruction, disbursements.get(0));
         msgCallbackHeader.setAction(Action.CREATE);
         msgCallbackHeader.setMessageType(MessageType.ON_DISBURSE);
         try {
             DisbursementRequest disbursementRequest = DisbursementRequest.builder()
-                    .signature(signature)
                     .header(msgCallbackHeader)
                     .message(disbursements.get(0))
                     .build();
