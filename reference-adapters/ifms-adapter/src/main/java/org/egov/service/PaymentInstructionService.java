@@ -7,16 +7,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.config.Constants;
+import org.egov.config.IfmsAdapterConfig;
 import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.PIRepository;
 import org.egov.repository.PIStatusLogsRepository;
-import org.egov.repository.SanctionDetailsRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.*;
-import org.egov.validators.PaymentInstructionValidator;
+import org.egov.web.models.*;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
+import org.egov.web.models.disburse.DisburseSearch;
+import org.egov.web.models.disburse.DisburseSearchRequest;
+import org.egov.web.models.disburse.DisburseSearchResponse;
 import org.egov.web.models.enums.*;
+import org.egov.web.models.enums.Status;
 import org.egov.web.models.jit.*;
 import org.egov.web.models.jit.PISearchCriteria;
 import org.egov.web.models.organisation.Organisation;
@@ -26,6 +30,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -54,11 +61,11 @@ public class PaymentInstructionService {
     @Autowired
     private PIUtils piUtils;
     @Autowired
-    private SanctionDetailsRepository sanctionDetailsRepository;
-    @Autowired
-    private PaymentInstructionValidator paymentInstructionValidator;
-    @Autowired
     private PIStatusLogsRepository piStatusLogsRepository;
+    @Autowired
+    private ProgramServiceUtil programServiceUtil;
+    @Autowired
+    private IfmsAdapterConfig config;
 
     public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
         log.info("Started executing processPaymentRequest");
@@ -619,4 +626,40 @@ public class PaymentInstructionService {
         }
     }
 
+    /**
+     * Process PI for creating disbursement request
+     * @param paymentInstruction
+     * @param requestInfo
+     */
+    public void processPIForOnDisburse(PaymentInstruction paymentInstruction, RequestInfo requestInfo) {
+        log.info("Processing PI For Creating Disbursement Request");
+        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,config.getStateLevelTenantId());
+        msgCallbackHeader.setMessageType(MessageType.DISBURSE);
+        msgCallbackHeader.setAction(Action.SEARCH);
+        DisburseSearch disburseSearch = DisburseSearch.builder()
+                .targetId(paymentInstruction.getMuktaReferenceId())
+                .locationCode(paymentInstruction.getTenantId())
+                .pagination(PaginationForDisburse.builder().sortBy("created_time").sortOrder(PaginationForDisburse.SortOrder.DESC).build())
+                .build();
+        DisburseSearchRequest disburseSearchRequest = DisburseSearchRequest.builder()
+                .header(msgCallbackHeader)
+                .disburseSearch(disburseSearch)
+                .build();
+        DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
+        List<Disbursement> disbursements = disbursementResponse.getDisbursements();
+        piEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursements.get(0));
+        piEnrichment.setAddtionaInfoForDisbursement(paymentInstruction, disbursements.get(0));
+        msgCallbackHeader.setAction(Action.CREATE);
+        msgCallbackHeader.setMessageType(MessageType.ON_DISBURSE);
+        try {
+            DisbursementRequest disbursementRequest = DisbursementRequest.builder()
+                    .header(msgCallbackHeader)
+                    .message(disbursements.get(0))
+                    .build();
+            programServiceUtil.callOnDisburse(disbursementRequest);
+        }catch (Exception e){
+            log.error("Exception while calling onDisburse : "+e);
+        }
+        log.info("Processing PI For Creating Disbursement Request Completed");
+    }
 }

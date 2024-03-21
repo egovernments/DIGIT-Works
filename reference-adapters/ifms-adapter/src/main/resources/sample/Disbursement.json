@@ -1,0 +1,88 @@
+{
+  "header": {},
+  "disbursements": [
+    {
+      "administration_code": null,
+      "function_code": null,
+      "recipient_segment_code": null,
+      "economic_segment_code": null,
+      "source_of_fund_code": null,
+      "target_segment_code": null,
+      "currency_code": null,
+      "locale_code": null,
+      "status": {
+        "status_code": "INITIATED",
+        "status_message": "Jit Bill is received successfully ,Payment Instruction will be generated after Bill is submitted by SSU in JIT-FS"
+      },
+      "id": "cca5b10b-ecec-4ca1-bfbe-391d7971d917",
+      "target_id": "EP/1013/2023-24/02/08/000083",
+      "location_code": "pg.citya",
+      "transaction_id": "PI-1013/2023-24/000230",
+      "parent_id": null,
+      "disbursement_date": 1709101242,
+      "sanction_id": "47044772-e762-4647-8017-3650a31c88ab",
+      "disbursements": [
+        {
+          "administration_code": null,
+          "function_code": null,
+          "recipient_segment_code": null,
+          "economic_segment_code": null,
+          "source_of_fund_code": null,
+          "target_segment_code": null,
+          "currency_code": "INR",
+          "locale_code": "en_IN",
+          "status": {
+            "status_code": "INITIATED",
+            "status_message": "Jit Bill is received successfully ,Payment Instruction will be generated after Bill is submitted by SSU in JIT-FS"
+          },
+          "id": "eb3c9f9e-7050-4277-a95f-3164e10799dc",
+          "target_id": "4f8d25b8-6c19-47cb-b415-483f698634d6",
+          "location_code": "pg.citya",
+          "transaction_id": "BN-1013/000197",
+          "parent_id": null,
+          "disbursement_date": null,
+          "sanction_id": null,
+          "disbursements": null,
+          "account_code": "XYZ1230987@SBI000007",
+          "net_amount": 1500.0,
+          "gross_amount": 1500.0,
+          "individual": {
+            "pin": null,
+            "name": "LC",
+            "gender": null,
+            "address": "pg.citya",
+            "email": null,
+            "phone": "9999999999"
+          },
+          "program_code": "PG/2023-24/000310",
+          "additional_details": null,
+          "audit_details": {
+            "createdBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
+            "lastModifiedBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
+            "createdTime": 1709101242858,
+            "lastModifiedTime": 1709101242858
+          }
+        }
+      ],
+      "account_code": null,
+      "net_amount": 1500.0,
+      "gross_amount": 1500.0,
+      "individual": null,
+      "program_code": "PG/2023-24/000310",
+      "additional_details": {
+        "billNumbers": [
+          "PB/2023-24/000549"
+        ],
+        "referenceIds": [
+          "WO/2023-24/000959"
+        ]
+      },
+      "audit_details": {
+        "createdBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
+        "lastModifiedBy": "ee3379e9-7f25-4be8-9cc1-dc599e1668c9",
+        "createdTime": 1709101242858,
+        "lastModifiedTime": 1709101242858
+      }
+    }
+  ]
+}

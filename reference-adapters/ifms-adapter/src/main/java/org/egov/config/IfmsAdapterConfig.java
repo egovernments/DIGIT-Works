@@ -115,6 +115,20 @@ public class IfmsAdapterConfig {
     @Value("${egov.audit.log.search.endpoint}")
     private String auditLogSearchEndPoint;
 
+    //Program Service
+    @Value("${egov.program.service.host}")
+    private String programServiceHost;
+    @Value("${egov.program.service.onsanction.endpoint}")
+    private String programServiceOnSanctionEndpoint;
+    @Value("${egov.program.service.onallocation.endpoint}")
+    private String programServiceOnAllocationEndpoint;
+    @Value("${egov.program.service.search.endpoint}")
+    private String programServiceSearchEndpoint;
+    @Value("${egov.program.service.ondisburse.endpoint}")
+    private String programServiceOnDisburseEndpoint;
+    @Value("${egov.program.service.disburse.search.endpoint}")
+    private String programServiceDisburseSearchEndpoint;
+
     // es log configurations
     @Value("${egov.es.indexer.host}")
     private String esIndexerHost;
@@ -133,4 +147,11 @@ public class IfmsAdapterConfig {
 
     @Value("${ifms.request.enc.secret}")
     private String ifmsRequestEncSecret;
+    @Value("${mukta.adapter.encryption.key}")
+    private String muktaAdapterEncryptionKey;
+    @Value("${payment.instruction.encryption.key}")
+    private String paymentInstructionEncryptionKey;
+
+    @Value("${app.domain}")
+    private String appDomain;
 }

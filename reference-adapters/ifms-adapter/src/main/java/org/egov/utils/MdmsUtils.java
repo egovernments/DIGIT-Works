@@ -30,6 +30,39 @@ public class MdmsUtils {
     @Autowired
     private IfmsAdapterConfig config;
 
+	public Map<String,Map<String,JSONArray>> fetchExchangeServers(RequestInfo requestInfo, String tenantId) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, MDMS_EXCHANGE_MODULE_NAME, Arrays.asList(MDMS_EXCHANGE_SERVER_MASTER));
+		Object response = new HashMap<>();
+		MdmsResponse mdmsResponse = new MdmsResponse();
+		try {
+			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
+
+		log.info(mdmsResponse.toString());
+		return mdmsResponse.getMdmsRes();
+	}
+	public Map<String, Map<String,JSONArray>> fetchHoaAndSSUDetails(RequestInfo requestInfo, String tenantId) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, Arrays.asList(MDMS_HEAD_OF_ACCOUNT_MASTER, MDMS_SSU_DETAILS_MASTER));
+		Object response = new HashMap<>();
+		MdmsResponse mdmsResponse = new MdmsResponse();
+		try {
+			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
+
+		log.info(mdmsResponse.toString());
+		return mdmsResponse.getMdmsRes();
+	}
+
 	public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId,
 			String moduleName, List<String> masterNameList) {
 		StringBuilder uri = new StringBuilder();
@@ -61,9 +94,7 @@ public class MdmsUtils {
 			List<String> masterNames) {
 
 		List<MasterDetail> masterDetails = new ArrayList<>();
-		masterNames.forEach(name -> {
-			masterDetails.add(MasterDetail.builder().name(name).build());
-		});
+		masterNames.forEach(name -> masterDetails.add(MasterDetail.builder().name(name).build()));
 
 		ModuleDetail moduleDetail = ModuleDetail.builder()
 				.moduleName(moduleName)

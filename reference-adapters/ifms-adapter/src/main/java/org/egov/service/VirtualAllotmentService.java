@@ -11,6 +11,10 @@ import org.egov.repository.ExecutedVALogsRepository;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.MdmsUtils;
+import org.egov.utils.ProgramServiceUtil;
+import org.egov.web.models.*;
+import org.egov.web.models.enums.Action;
+import org.egov.web.models.enums.MessageType;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,26 +33,38 @@ import static org.egov.config.Constants.*;
 public class VirtualAllotmentService {
 
 
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private MdmsUtils mdmsUtils;
+    private final ObjectMapper objectMapper;
+    private final MdmsUtils mdmsUtils;
+
+    private final IfmsAdapterConfig ifmsAdapterConfig;
+
+    private final IfmsService ifmsService;
+
+    private final ExecutedVALogsRepository executedVALogsRepository;
+
+    private final VirtualAllotmentEnrichment vaEnrichment;
+
+    private final SanctionDetailsRepository sanctionDetailsRepository;
+    private final VirtualAllotmentEnrichment virtualAllotmentEnrichment;
+    private final ProgramServiceUtil programServiceUtil;
 
     @Autowired
-    private IfmsAdapterConfig ifmsAdapterConfig;
+    public VirtualAllotmentService(ObjectMapper objectMapper, MdmsUtils mdmsUtils, IfmsAdapterConfig ifmsAdapterConfig, IfmsService ifmsService, ExecutedVALogsRepository executedVALogsRepository, VirtualAllotmentEnrichment vaEnrichment, SanctionDetailsRepository sanctionDetailsRepository, VirtualAllotmentEnrichment virtualAllotmentEnrichment, ProgramServiceUtil programServiceUtil) {
+        this.objectMapper = objectMapper;
+        this.mdmsUtils = mdmsUtils;
+        this.ifmsAdapterConfig = ifmsAdapterConfig;
+        this.ifmsService = ifmsService;
+        this.executedVALogsRepository = executedVALogsRepository;
+        this.vaEnrichment = vaEnrichment;
+        this.sanctionDetailsRepository = sanctionDetailsRepository;
+        this.virtualAllotmentEnrichment = virtualAllotmentEnrichment;
+        this.programServiceUtil = programServiceUtil;
+    }
 
-    @Autowired
-    private IfmsService ifmsService;
-
-    @Autowired
-    private ExecutedVALogsRepository executedVALogsRepository;
-
-    @Autowired
-    private VirtualAllotmentEnrichment vaEnrichment;
-
-    @Autowired
-    private SanctionDetailsRepository sanctionDetailsRepository;
-
+    /**
+     * Generate Virtual Allotment for all tenants
+     * @param requestInfo
+     */
     public void generateVirtualAllotment(RequestInfo requestInfo) {
         log.info("Start executing VA service.");
 
@@ -130,7 +146,7 @@ public class VirtualAllotmentService {
                     // Get allotments to create and
                     List<Allotment> createAllotments =  vaEnrichment.getAllotmentsForCreate(updatedSanctions, allotmentList, tenantId, requestInfo);
                     sanctionDetailsRepository.createUpdateSanctionFunds(createSanctions, updateSanctions, createAllotments);
-                    System.out.println(updatedSanctions);
+                    processAllotmentsAndSanctions(createAllotments, createSanctions,requestInfo);
                 }
                 // Update last executed for the va
                 if (executedVALog == null) {
@@ -148,14 +164,53 @@ public class VirtualAllotmentService {
         }
     }
 
+    /**
+     * Process allotments and sanctions For OnSanction and OnAllocation
+     * @param createAllotments
+     * @param createSanctions
+     * @param requestInfo
+     */
+    private void processAllotmentsAndSanctions(List<Allotment> createAllotments, List<SanctionDetail> createSanctions,RequestInfo requestInfo) {
+        log.info("Processing allotments and sanctions");
+        MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,ifmsAdapterConfig.getStateLevelTenantId());
+        try {
+            // Call on_sanction and on_allocation apis
+            if(createSanctions != null && !createSanctions.isEmpty()){
+                log.info("Processing created sanction for on_sanction/create");
+                Sanction message = virtualAllotmentEnrichment.createSanctionsPayload(createSanctions);
+                msgCallbackHeader.setMessageType(MessageType.ON_SANCTION);
+                msgCallbackHeader.setAction(Action.CREATE);
+                OnSanctionRequest onSanctionRequest = OnSanctionRequest.builder()
+                        .header(msgCallbackHeader)
+                        .message(message)
+                        .build();
+                programServiceUtil.callProgramServiceOnSanctionOrAllocation(onSanctionRequest, true);
+            }
+
+            if(createAllotments != null && !createAllotments.isEmpty()){
+                log.info("Processing created allotment for on_allocation/create");
+                Allocation message = virtualAllotmentEnrichment.createAllotmentsPayload(createAllotments);
+                msgCallbackHeader.setMessageType(MessageType.ON_ALLOCATION);
+                msgCallbackHeader.setAction(Action.CREATE);
+                OnAllocationRequest onAllocationRequest = OnAllocationRequest.builder()
+                        .header(msgCallbackHeader)
+                        .message(message)
+                        .build();
+                programServiceUtil.callProgramServiceOnSanctionOrAllocation(onAllocationRequest, false);
+            }
+        }catch (Exception e){
+            throw new RuntimeException("Error in calling on_sanction and on_allocation apis" + e.toString());
+        }
+    }
+
     public List<String> getTenants(RequestInfo requestInfo) {
         List<String> tenantIds = new ArrayList<>();
         List<String> tenantsMasters = new ArrayList<>();
         tenantsMasters.add(MDMS_TENANTS_MASTER);
         Map<String, Map<String, JSONArray>> tenantsResponse = mdmsUtils.fetchMdmsData(requestInfo, ifmsAdapterConfig.getStateLevelTenantId(), MDMS_TENANT_MODULE_NAME, tenantsMasters);
-        System.out.println(tenantsResponse);
+       log.info("Tenants response from MDMS : " + tenantsResponse);
         JSONArray tenantValues = tenantsResponse.get(MDMS_TENANT_MODULE_NAME).get(MDMS_TENANTS_MASTER);
-        System.out.println(tenantValues);
+        log.info("Tenants response from MDMS : " + tenantValues);
         for (Object tenant: tenantValues) {
             // Create ObjectMapper instance
             // Convert object to JsonNode

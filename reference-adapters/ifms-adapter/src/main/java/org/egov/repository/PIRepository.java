@@ -73,6 +73,7 @@ public class PIRepository {
             MapSqlParameterSource piRequestParamMap = new MapSqlParameterSource();
             piRequestParamMap.addValue("id", piRequest.getId());
             piRequestParamMap.addValue("tenantId", piRequest.getTenantId());
+            piRequestParamMap.addValue("programCode",piRequest.getProgramCode());
             piRequestParamMap.addValue("piNumber", piRequest.getJitBillNo());
             piRequestParamMap.addValue("parentPiNumber", piRequest.getParentPiNumber());
             piRequestParamMap.addValue("muktaReferenceId", piRequest.getMuktaReferenceId());
@@ -169,7 +170,7 @@ public class PIRepository {
                 beneficiaryParamMap.addValue("beneficiaryId", beneficiary.getBeneficiaryId());
                 beneficiaryParamMap.addValue("beneficiaryType", beneficiary.getBeneficiaryType().toString());
                 beneficiaryParamMap.addValue("beneficiaryNumber", beneficiary.getBeneficiaryNumber());
-                beneficiaryParamMap.addValue("bankAccountId", beneficiary.getBankAccountId());
+                beneficiaryParamMap.addValue("bankAccountCode", beneficiary.getBankAccountId());
                 beneficiaryParamMap.addValue("amount", beneficiary.getAmount());
                 beneficiaryParamMap.addValue("voucherNumber", beneficiary.getVoucherNumber());
                 beneficiaryParamMap.addValue("voucherDate", beneficiary.getVoucherDate());
@@ -215,9 +216,7 @@ public class PIRepository {
     public List<PaymentInstruction> searchPi (PISearchCriteria piSearchCriteria){
         List<Object> preparedStmtList = new ArrayList<>();
         String query = piQueryBuilder.getPaymentInstructionSearchQuery(piSearchCriteria, preparedStmtList);
-        List<PaymentInstruction> paymentInstructions = jdbcTemplate.query(query, piRowMapper, preparedStmtList.toArray());
-
-        return paymentInstructions;
+        return jdbcTemplate.query(query, piRowMapper, preparedStmtList.toArray());
     }
 
     @Transactional
