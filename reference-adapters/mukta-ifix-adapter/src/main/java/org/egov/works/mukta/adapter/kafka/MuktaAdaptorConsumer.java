@@ -62,7 +62,6 @@ public class MuktaAdaptorConsumer {
         PaymentRequest paymentRequest = null;
         Disbursement encryptedDisbursement = null;
         PaymentInstruction pi = null;
-        String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
         MsgHeader msgHeader = null;
         Boolean isRevised = false;
         try {
@@ -76,8 +75,8 @@ public class MuktaAdaptorConsumer {
             msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
             msgHeader.setAction(Action.CREATE);
             msgHeader.setMessageType(MessageType.DISBURSE);
-            DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).signature(signature).build();
-            DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().header(msgHeader).message(encryptedDisbursement).signature(signature).build();
+            DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).build();
+            DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().header(msgHeader).message(encryptedDisbursement).build();
             muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), encriptedDisbursementRequest);
             paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(), pi,isRevised);
             try {
@@ -92,7 +91,7 @@ public class MuktaAdaptorConsumer {
             // If disbursement is not null, enrich its status
             if (encryptedDisbursement != null) {
                 paymentInstructionEnrichment.enrichDisbursementStatus(encryptedDisbursement, StatusCode.FAILED,e.getMessage());
-                DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(encryptedDisbursement).signature(signature).build();
+                DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(encryptedDisbursement).build();
                 muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementRequest);
                 pi.setPiStatus(PIStatus.FAILED);
                 pi.setPiErrorResp(e.getMessage());

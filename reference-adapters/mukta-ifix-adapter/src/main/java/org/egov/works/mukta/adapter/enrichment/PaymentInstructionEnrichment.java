@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.egov.common.models.individual.Individual;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
@@ -486,6 +487,11 @@ public class PaymentInstructionEnrichment {
         return beneficiaryDisbursementMap;
     }
 
+    /**
+     * Enrich Exchange Codes for disbursement
+     * @param disbursement
+     * @param mdmsData
+     */
     public void enrichExchangeCodes(Disbursement disbursement, Map<String, Map<String, JSONArray>> mdmsData) {
         log.info("Started executing enrichExchangeCodes");
         String targetSegmentCode = extractCode(mdmsData, Constants.MDMS_SEGMENT_CODES_MODULE, Constants.MDMS_TARGET_SEGMENT_CODES_MASTER);
@@ -511,13 +517,11 @@ public class PaymentInstructionEnrichment {
     }
 
     private String extractCode(Map<String, Map<String, JSONArray>> mdmsData, String moduleName, String masterName) {
-        String res = null;
         JSONArray data = mdmsData.get(moduleName).get(masterName);
-        for (Object o : data) {
-            Map<String, String> map = (Map<String, String>) o;
-            res = map.get("code");
-        }
-        return res;
+        Random random = new Random();
+        int randomIndex = random.nextInt(data.size());
+        Map<String, String> segmentCode = (Map<String, String>) data.get(randomIndex);
+        return segmentCode.get("code");
     }
 
     public Disbursement encriptDisbursement(Disbursement disbursement) {

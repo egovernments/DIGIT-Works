@@ -71,12 +71,11 @@ public class PaymentInstructionService {
         Disbursement disbursement = processPaymentInstruction(paymentRequest,isRevised);
         Disbursement encriptedDisbursement = piEnrichment.encriptDisbursement(disbursement);
         PaymentInstruction pi = piEnrichment.getPaymentInstructionFromDisbursement(encriptedDisbursement);
-        String signature = "Signature:  namespace=\\\"g2p\\\", kidId=\\\"{sender_id}|{unique_key_id}|{algorithm}\\\", algorithm=\\\"ed25519\\\", created=\\\"1606970629\\\", expires=\\\"1607030629\\\", headers=\\\"(created) (expires) digest\\\", signature=\\\"Base64(signing content)";
         MsgHeader msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
         msgHeader.setAction(Action.CREATE);
         msgHeader.setMessageType(MessageType.DISBURSE);
-        DisbursementRequest disbursementRequest = DisbursementRequest.builder().message(disbursement).header(msgHeader).signature(signature).build();
-        DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().message(encriptedDisbursement).header(msgHeader).signature(signature).build();
+        DisbursementRequest disbursementRequest = DisbursementRequest.builder().message(disbursement).header(msgHeader).build();
+        DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().message(encriptedDisbursement).header(msgHeader).build();
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), encriptedDisbursementRequest);
         updatePIIndex(paymentRequest.getRequestInfo(),pi,isRevised);
         try {
