@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.*;
 import org.egov.tracer.model.CustomException;
+import org.egov.web.models.enums.MessageType;
 
 
 @Getter
@@ -13,6 +14,8 @@ import org.egov.tracer.model.CustomException;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExchangeCode {
+    @JsonProperty("type")
+    private MessageType type;
     @JsonProperty("administration_code")
     private String administrationCode;
     @JsonProperty("function_code")
