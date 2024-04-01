@@ -59,9 +59,9 @@ public class AttendeeService {
         attendeeServiceValidator.validateAttendeeCreateRequestParameters(attendeeCreateRequest);
 
         //validate whether attendees are project staff and whether attendees have the correct reporting staff
-        attendeeServiceValidator.validateAttendeeDetails(attendeeCreateRequest);
-        if(attendeeCreateRequest.getAttendees().isEmpty())
-            throw new CustomException("NO_VALID_ATTENDEES","No Valid attendees provided in this request.");
+//        attendeeServiceValidator.validateAttendeeDetails(attendeeCreateRequest);
+//        if(attendeeCreateRequest.getAttendees().isEmpty())
+//            throw new CustomException("NO_VALID_ATTENDEES","No Valid attendees provided in this request.");
 
         //extract registerIds and attendee IndividualIds from client request
         String tenantId = attendeeCreateRequest.getAttendees().get(0).getTenantId();
