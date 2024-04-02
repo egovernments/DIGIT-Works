@@ -268,15 +268,12 @@ class MusterRollController {
       if (isMbPresent === false && isConfiguredDateLesser === true) {
         musterRollValidationMap.set("message", "MB_PERIOD_IS_NOT_VALID_WRT_MR_PERIOD_OR_NO_APPROVED_MB_IS_PRESENT");
         musterRollValidationMap.set("type", "error");
-        // musterRollValidationMapList.push(musterRollValidationMap);
-
       }else{
         if (expenseCalculator?.totalAmount >
           totalLabourRate ) {
 
           musterRollValidationMap.set("message", "MB_LABOUR_UTILIZATION_AMOUNT_IS_LESS_THAN_WAGE_BILL")
-          musterRollValidationMap.set("type", "warn")
-          // musterRollValidationMapList.push(musterRollValidationMap);
+          musterRollValidationMap.set("type", "warn");
         }
 
       }
