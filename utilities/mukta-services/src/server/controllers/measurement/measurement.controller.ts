@@ -157,7 +157,7 @@ class MeasurementController {
       givenEpochTime=measurementBookStartDate;
     }
     const givenDateTime: Date = new Date(givenEpochTime);
-    const daysToMonday: number = (givenDateTime.getDay() + 6) % 7;
+    const daysToMonday: number = (givenDateTime.getDay() + 7) % 7;
     const mondayDateTime: Date = new Date(givenDateTime);
     mondayDateTime.setDate(givenDateTime.getDate() - daysToMonday);
     return mondayDateTime;
