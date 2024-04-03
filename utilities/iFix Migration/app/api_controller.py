@@ -71,7 +71,7 @@ def process_pi_data_for_each_tenant(request_info, tenant_id):
     }
     data = {
         "RequestInfo": request_info,
-        "searchCriteria": {"tenantId": "od.testing", "muktaReferenceId": "EP/TE/2023-24/02/23/002774"},
+        "searchCriteria": {"tenantId": "od.testing", "muktaReferenceId": "EP/TE/2023-24/03/22/002827"},
         "pagination": {
             "limit": "10",  # Adjust the limit as needed
             "offSet": "0",
@@ -516,11 +516,11 @@ def create_disbursement_for_department(beneficiary, request_info, pi_created_tim
             "gross_amount": amount,
             "individual": {
                 "pin": None,
-                "name": beneficiary['beneficiaryId'],
+                "name": beneficiary['beneficiaryType'],
                 "gender": None,
-                "address": None,
+                "address": beneficiary['tenantId'],
                 "email": None,
-                "phone": "0000000000",
+                "phone": "99999999999",
             },
             "program_code": "PG/2023-24/000310",
             "additional_details": None,
@@ -534,6 +534,18 @@ def create_disbursement_for_department(beneficiary, request_info, pi_created_tim
         disbursements.append(disbursement)
 
     return disbursements
+
+
+def encrypt_disbursement(disbursement_data):
+    url = 'http://localhost:8081/program-service/v1/disburse/encrypt'
+    headers = {'Content-Type': 'application/json'}
+
+    response = requests.post(url, json=disbursement_data, headers=headers)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return jsonify({'error': 'Failed to encrypt disbursement.'}), response.status_code
 
 
 def process_pi_data(request_info, entry):
@@ -575,20 +587,13 @@ def process_pi_data(request_info, entry):
     }
     main_disbursement = {
         "id": entry['id'],
-        "disbursements": disbursements,
+        "children": disbursements,
         "location_code": entry['tenantId'],
         "transaction_id": entry['jitBillNo'],
         "gross_amount": entry['grossAmount'],
         "sanction_id": None,
         "account_code": None,
-        "individual": {
-            "pin": None,
-            "name": None,
-            "gender": None,
-            "address": None,
-            "email": None,
-            "phone": None,
-        },
+        "individual": None,
         "net_amount": entry['netAmount'],
         "target_id": entry['muktaReferenceId'],
         "currency_code": "INR",
@@ -601,7 +606,7 @@ def process_pi_data(request_info, entry):
         "target_segment_code": None,
         "status": {
             "status_code": status_map[entry['piStatus']],
-            "status_message": entry['piErrorResp']
+            "status_message": entry['piErrorResp'] if 'piErrorResp' in entry else entry['piSuccessDesc']
         },
         "program_code": "PG/2023-24/000310",
         "additional_details": {},
@@ -612,6 +617,7 @@ def process_pi_data(request_info, entry):
             "lastModifiedTime": entry['auditDetails']['lastModifiedTime']
         }
     }
+    main_disbursement = encrypt_disbursement(main_disbursement)
     return main_disbursement
 
 
@@ -643,8 +649,8 @@ def get_program_message_codes_values(disbursement):
     values_eg_program_message_codes = [
         disbursement['id'],
         disbursement['location_code'],
-        None,
-        None,
+        'disburse',
+        disbursement['id'],
         disbursement['function_code'],
         disbursement['administration_code'],
         disbursement['program_code'],
@@ -658,6 +664,7 @@ def get_program_message_codes_values(disbursement):
         disbursement['audit_details']['lastModifiedBy']
     ]
     return values_eg_program_message_codes
+
 
 def get_mukta_ifms_disburse_values(disbursement, parent_id=None):
     values_eg_mukta_ifms_disburse = [
@@ -678,6 +685,7 @@ def get_mukta_ifms_disburse_values(disbursement, parent_id=None):
     ]
     return values_eg_mukta_ifms_disburse
 
+
 def get_mukta_ifms_message_codes_values(message):
     values_eg_mukta_ifms_message_codes = [
         message['id'],
@@ -697,6 +705,8 @@ def get_mukta_ifms_message_codes_values(message):
         message['audit_details']['lastModifiedBy']
     ]
     return values_eg_mukta_ifms_message_codes
+
+
 def push_data_to_db(disbursement, cursor):
     query_eg_program_disburse = """
         INSERT INTO eg_program_disburse 
@@ -733,7 +743,7 @@ def push_data_to_db(disbursement, cursor):
     values_eg_mukta_ifms_message_codes = get_mukta_ifms_message_codes_values(disbursement)
     cursor.execute(query_eg_program_message_codes, values_eg_program_message_codes)
     cursor.execute(query_eg_mukta_ifms_message_codes, values_eg_mukta_ifms_message_codes)
-    for disburse in disbursement['disbursements']:
+    for disburse in disbursement['children']:
         values_eg_program_disburse = get_program_disburse_values(disburse, disbursement['id'])
         values_eg_mukta_ifms_disburse = get_mukta_ifms_disburse_values(disburse, disbursement['id'])
         cursor.execute(query_eg_program_disburse, values_eg_program_disburse)
@@ -777,13 +787,11 @@ def insert_data(request_info):
         connection.commit()
 
         # Use Flask's current_app to access the application context
-        with current_app.app_context():
-            return jsonify({"message": "Data inserted successfully"}), 201
+        return jsonify({"message": "Data inserted successfully"}), 201
 
     except Exception as e:
         # Use Flask's current_app to access the application context
-        with current_app.app_context():
-            return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
     finally:
         # Close the cursor and connection in the finally block
@@ -792,6 +800,104 @@ def insert_data(request_info):
 
         if connection:
             connection.close()
+
+
+def process_disbursement_data_for_each_tenant(tenant_id, type, result_type):
+    api_url = f"http://localhost:8081/program-service/v1/{type}/_search"
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    data = {
+        "signature": None,
+        "header": {
+            "message_id": "123",
+            "message_ts": "1707460264352",
+            "action": "search",
+            "message_type": type,
+            "sender_id": "program@https://unified-dev.digit.org/",
+            "sender_uri": "https://spp.example.org/{namespace}/callback/on-search",
+            "receiver_id": "program@https://unified-qa.digit.org/"
+        },
+        "message": {
+            "location_code": tenant_id
+        },
+        "pagination": {
+            "limit": "10",  # Adjust the limit as needed
+            "offSet": "0",
+            "sortBy": "",
+            "order": "ASC"
+        }
+    }
+    all_data = []
+
+    while True:
+        response = requests.post(api_url, json=data, headers=headers)
+
+        if response.status_code == 200:
+            response_data = response.json()
+            # Assuming your response is stored in the variable 'response_data'
+            all_data.extend(response_data.get(result_type, []))
+
+            # Check if there are more records to fetch
+            if len(response_data.get(result_type, [])) < int(data["pagination"]["limit"]):
+                break
+
+            # Update the offset for the next request
+            data["pagination"]["offSet"] = str(int(data["pagination"]["offSet"]) + int(data["pagination"]["limit"]))
+
+        else:
+            print(f"Failed to fetch data from the API. Status code: {response.status_code}")
+            print(response.text)
+            break
+
+    return all_data
+
+
+def publish_data_to_kafka(all_data, value):
+    producer = KafkaProducer(bootstrap_servers='localhost:9092')
+    topic = 'exchange-topic'
+    signature = None
+    header = {
+        "message_id": "123",
+        "message_ts": "1707460264352",
+        "action": "create",
+        "message_type": value,
+        "sender_id": "program@https://unified-dev.digit.org/",
+        "sender_uri": "https://spp.example.org/{namespace}/callback/on-push",
+        "receiver_id": "program@https://unified-qa.digit.org/"
+    }
+    d = {
+        "signature": signature,
+        "header": header,
+        "message": None
+    }
+    for data in all_data:
+        d['message'] = data
+        json_data = json.dumps(d).encode('utf-8')
+        producer.send(topic, json_data)
+        producer.flush()
+
+    producer.close()
+
+
+@app.route('/exchange/push', methods=['POST'])
+def push_data_to_exchange():
+    try:
+        request_info = request.get_json()
+        request_info = request_info['RequestInfo']
+        tenant_ids = fetch_data_from_mdms(request_info)
+        for tenant_id in tenant_ids:
+            all_data_for_disbursement = process_disbursement_data_for_each_tenant(tenant_id, 'disburse','disbursements')
+            all_data_for_program = process_disbursement_data_for_each_tenant(tenant_id, 'program','programs')
+            all_data_for_sanction = process_disbursement_data_for_each_tenant(tenant_id, 'sanction','sanctions')
+            all_data_for_allocation = process_disbursement_data_for_each_tenant(tenant_id, 'allocation', 'allocations')
+            publish_data_to_kafka(all_data_for_disbursement, 'disburse')
+            publish_data_to_kafka(all_data_for_program, 'program')
+            publish_data_to_kafka(all_data_for_sanction, 'sanction')
+            publish_data_to_kafka(all_data_for_allocation, 'allocation')
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 def publish_to_kafka(data):
