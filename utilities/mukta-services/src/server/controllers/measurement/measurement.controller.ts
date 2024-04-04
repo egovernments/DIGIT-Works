@@ -77,10 +77,7 @@ class MeasurementController {
           if (newStartDate < contractResponse?.endDate) {
             return {
               startDate: newStartDate,
-              endDate:
-                newEndDate < contractResponse?.endDate
-                  ? newEndDate
-                  : contractResponse?.endDate,
+              endDate: newEndDate
             };
           }
           if (enableMeasurementAfterContractEndDate) {
