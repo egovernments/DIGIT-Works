@@ -79,13 +79,13 @@ public class IfmsService {
     }
 
     public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
-//        if (jitAuthValues.getAuthToken() == null) {
-//            getAuthDetailsFromIFMS();
-//        }
+        if (jitAuthValues.getAuthToken() == null) {
+            getAuthDetailsFromIFMS();
+        }
         JITResponse decryptedResponse = null;
         try {
-//            decryptedResponse = callServiceAPI(jitRequest);
-            decryptedResponse = loadCustomResponse(jitRequest.getServiceId().toString());
+            decryptedResponse = callServiceAPI(jitRequest);
+//            decryptedResponse = loadCustomResponse(jitRequest.getServiceId().toString());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             String message = e.toString();
             if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
