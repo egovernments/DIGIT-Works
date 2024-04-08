@@ -326,8 +326,11 @@ public class ExpenseCalculatorService {
 
     private List<SorDetail> fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String tenantId, List<MusterRoll> musterRolls){
         log.info("Fetch wage seeker skills MDMS");
-        Object mdmsData = mdmsUtils.fetchMDMSDataForLabourCharges(requestInfo, tenantId);
+//        Object mdmsData = mdmsUtils.fetchMDMSDataForLabourCharges(requestInfo, tenantId);
         List<String> sorList = getLabourSorFromMusterRolls(musterRolls);
+        if (sorList.isEmpty()) {
+            throw new CustomException("SOR_NOT_FOUND", "No sor found in additional details of muster roll");
+        }
         Object sorFromMDMSV2 = mdmsUtils.getLabourSorFromMDMSV2(requestInfo, tenantId, sorList, false);
         List<Object> sorListJson = commonUtil.readJSONPathValue(sorFromMDMSV2, JSON_PATH_FOR_SOR);
         List<SorDetail> sorDetails = new ArrayList<>();
@@ -336,6 +339,9 @@ public class ExpenseCalculatorService {
             sorDetails.add(sorDetail);
         }
         List<String> sorIds = sorDetails.stream().map(SorDetail::getId).collect(Collectors.toList());
+        if (sorIds.isEmpty()) {
+            throw new CustomException("NO_SOR_FOUND", "No sor found in mdms");
+        }
         Object ratesFromMDMV2 = mdmsUtils.getLabourSorFromMDMSV2(requestInfo, tenantId, sorIds, true);
         List<Object> rateListJson = commonUtil.readJSONPathValue(ratesFromMDMV2, JSON_PATH_FOR_RATES);
         List<RateDetail> rateDetails = new ArrayList<>();
