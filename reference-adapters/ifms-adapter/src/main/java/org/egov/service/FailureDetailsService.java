@@ -90,7 +90,6 @@ public class FailureDetailsService {
 
         Map<String, String> failedRequestParams = new HashMap<>();
         Long subtractedTimeMillis = System.currentTimeMillis() - (120 * 60L * 60L * 1000L);
-        //subtractedTimeMillis = 1683755974760L;
         String finYear = helperUtil.getFormattedTimeFromTimestamp(subtractedTimeMillis, "yyyy");
         String voucherDate = helperUtil.getFormattedTimeFromTimestamp(subtractedTimeMillis, "yyyy-MM-dd");
         failedRequestParams.put("finYear", finYear);
@@ -152,8 +151,6 @@ public class FailureDetailsService {
                 }
             }
             piRepository.update(Collections.singletonList(pi), null);
-            //TODO: REMOVE THIS COMMENTED CODE
-//            updatePaymentStatusForPartial(payment, requestInfo);
             // Update PI indexer based on updated PI
             piUtils.updatePIIndex(requestInfo, pi);
             //Call On disburse for the PI
@@ -305,17 +302,6 @@ public class FailureDetailsService {
                 paymentInstruction.setPiStatus(PIStatus.SUCCESSFUL);
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
                 piUtils.updatePIIndex(requestInfo, paymentInstruction);
-                // TODO: REMOVE THIS COMMENTED CODE
-//                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
-//                        Collections.singleton(paymentInstruction.getMuktaReferenceId()),
-//                        paymentInstruction.getTenantId());
-//
-//                for (Payment payment : payments) {
-//                    PaymentRequest paymentRequest = PaymentRequest.builder()
-//                            .requestInfo(requestInfo).payment(payment).build();
-//
-//                    billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.SUCCESSFUL,ReferenceStatus.PAYMENT_SUCCESS);
-//                }
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_SUCCESS;
                 paymentInstructionService.processPIForOnDisburse(paymentInstruction,requestInfo);
             } else {

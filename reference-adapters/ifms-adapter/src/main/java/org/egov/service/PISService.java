@@ -157,16 +157,6 @@ public class PISService {
             beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
         }
         paymentInstruction.setPiStatus(PIStatus.FAILED);
-        // TODO: Update payment status to failed
-//        List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
-//                Collections.singleton(paymentInstruction.getMuktaReferenceId()),
-//                paymentInstruction.getTenantId());
-//        for (Payment payment : payments) {
-//            PaymentRequest paymentRequest = PaymentRequest.builder()
-//                    .requestInfo(requestInfo).payment(payment).build();
-//
-//            billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_DECLINED);
-//        }
         paymentInstructionService.processPIForOnDisburse(paymentInstruction,requestInfo);
     }
 
