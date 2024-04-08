@@ -85,7 +85,7 @@ def fetch_data_from_mdms(request_info, tenant_id):
     payload = {
         "RequestInfo": request_info,
         "MdmsCriteria": {
-            "tenantId": "pg.citya",
+            "tenantId": tenant_id,
             "moduleDetails": [
                 {
                     "moduleName": "segment-codes",
