@@ -118,15 +118,15 @@ public class IfmsAdapterConfig {
     //Program Service
     @Value("${egov.program.service.host}")
     private String programServiceHost;
-    @Value("${egov.program.service.onsanction.endpoint}")
+    @Value("${program.onsanction.create.endpoint}")
     private String programServiceOnSanctionEndpoint;
-    @Value("${egov.program.service.onallocation.endpoint}")
+    @Value("${program.onallocation.create.endpoint}")
     private String programServiceOnAllocationEndpoint;
-    @Value("${egov.program.service.search.endpoint}")
+    @Value("${program.program.search.endpoint}")
     private String programServiceSearchEndpoint;
-    @Value("${egov.program.service.ondisburse.endpoint}")
+    @Value("${program.ondisburse.create.endpoint}")
     private String programServiceOnDisburseEndpoint;
-    @Value("${egov.program.service.disburse.search.endpoint}")
+    @Value("${program.disburse.search.endpoint}")
     private String programServiceDisburseSearchEndpoint;
 
     // es log configurations
