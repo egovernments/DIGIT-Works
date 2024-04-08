@@ -144,18 +144,6 @@ public class PDService {
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
                 // Update PI indexer based on updated PI
                 piUtils.updatePIIndex(requestInfo, paymentInstruction);
-                // TODO: REMOVE THIS COMMENTED CODE
-//                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
-//                        Collections.singleton(paymentInstruction.getMuktaReferenceId()),
-//                        paymentInstruction.getTenantId());
-//
-//                log.info("Updating payment details for PD : " + paymentInstruction.getJitBillNo());
-//                for (Payment payment : payments) {
-//                    PaymentRequest paymentRequest = PaymentRequest.builder()
-//                            .requestInfo(requestInfo).payment(payment).build();
-//
-//                    billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.SUCCESSFUL, ReferenceStatus.PAYMENT_SUCCESS);
-//                }
                 //Calling On disburse for the PI
                 paymentInstructionService.processPIForOnDisburse(paymentInstruction,requestInfo);
                 // Set pi status response
