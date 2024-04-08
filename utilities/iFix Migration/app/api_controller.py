@@ -42,6 +42,7 @@ def extract_codes(api_response):
 def fetch_tenants_from_mdms(request_info):
     mdms_host = os.getenv('MDMS_HOST')
     mdms_search = os.getenv('MDMS_SEARCH')
+    state_level_tenant_id = os.getenv('STATE_LEVEL_TENANT_ID')
     api_url = f"{mdms_host}{mdms_search}"
     auth_token = request_info.get("authToken", "")  # Extract authToken from RequestInfo
 
@@ -53,7 +54,7 @@ def fetch_tenants_from_mdms(request_info):
     payload = {
         "RequestInfo": request_info,
         "MdmsCriteria": {
-            "tenantId": "od",
+            "tenantId": state_level_tenant_id,
             "moduleDetails": [
                 {
                     "moduleName": "tenant",
