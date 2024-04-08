@@ -530,6 +530,20 @@ public class PaymentInstructionEnrichment {
     public Disbursement encriptDisbursement(Disbursement disbursement) {
         Disbursement disbursement1 = disbursement;
         disbursement1 = encryptionDecryptionUtil.encryptObject(disbursement1, muktaAdaptorConfig.getStateLevelTenantId(), muktaAdaptorConfig.getMuktaAdapterEncryptionKey(), Disbursement.class);
+        HashMap<String,BigDecimal> childIdToNetAmountMap = new HashMap<>();
+        HashMap<String, BigDecimal> childIdToGrossAmountMap = new HashMap<>();
+        disbursement.getDisbursements().forEach(childDisbursement -> {
+            childIdToNetAmountMap.put(childDisbursement.getId(), childDisbursement.getNetAmount());
+            childIdToGrossAmountMap.put(childDisbursement.getId(), childDisbursement.getGrossAmount());
+        });
+        for(Disbursement childDisbursement: disbursement1.getDisbursements()){
+            BigDecimal netAmount = childIdToNetAmountMap.get(childDisbursement.getId());
+            BigDecimal grossAmount = childIdToGrossAmountMap.get(childDisbursement.getId());
+            childDisbursement.setNetAmount(netAmount);
+            childDisbursement.setGrossAmount(grossAmount);
+        }
+        disbursement1.setNetAmount(disbursement.getNetAmount());
+        disbursement1.setGrossAmount(disbursement.getGrossAmount());
         return disbursement1;
     }
 }
