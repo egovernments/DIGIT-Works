@@ -110,9 +110,4 @@ public class MuktaAdaptorConfig {
     //System User
     @Value("${egov.system.user.username}")
     private String systemUserUsername;
-
-    @Value("${program.sender.id}")
-    private String programSenderId;
-    @Value("${program.reciever.id}")
-    private String programRecieverId;
 }
