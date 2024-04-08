@@ -251,7 +251,7 @@ public class MdmsUtils {
     }
 
     public StringBuilder getMDMSV2SearchUrl() {
-        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsV2EndPoint());
+        return new StringBuilder().append(config.getMdmsV2Host()).append(config.getMdmsV2EndPoint());
     }
 
 }
