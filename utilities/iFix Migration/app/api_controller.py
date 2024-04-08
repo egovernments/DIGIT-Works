@@ -1,3 +1,5 @@
+import copy
+
 from flask import Flask, request, jsonify, current_app
 import psycopg2
 from psycopg2.extras import Json
@@ -734,7 +736,6 @@ def process_pi_data(request_info, entry, mdms_data):
         }
     }
     enrich_codes_from_mdms(main_disbursement, mdms_data)
-    main_disbursement = encrypt_disbursement(main_disbursement)
     return main_disbursement
 
 
@@ -851,16 +852,8 @@ def push_data_to_db(disbursement, cursor):
         gross_amount, status, status_message, additional_details, created_time, created_by, last_modified_time, last_modified_by) 
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
-    query_eg_mukta_ifms_disburse = """
-        INSERT INTO eg_mukta_ifms_disburse 
-        (id, program_code, target_id, parent_id, transaction_id, account_code, status, status_message, individual, net_amount, 
-        gross_amount, created_time, created_by, last_modified_time, last_modified_by) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """
     values_eg_program_disburse = get_program_disburse_values(disbursement)
-    values_eg_mukta_ifms_disburse = get_mukta_ifms_disburse_values(disbursement)
     cursor.execute(query_eg_program_disburse, values_eg_program_disburse)
-    cursor.execute(query_eg_mukta_ifms_disburse, values_eg_mukta_ifms_disburse)
     # Insert data into eg_program_message_codes table
     query_eg_program_message_codes = """
         INSERT INTO eg_program_message_codes 
@@ -869,27 +862,63 @@ def push_data_to_db(disbursement, cursor):
         last_modified_time, last_modified_by) 
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
-    query_eg_mukta_ifms_message_codes = """
-        INSERT INTO eg_mukta_ifms_message_codes 
-        (id, location_code, parent_id, function_code, administration_code, program_code, recipient_segment_code, 
-        economic_segment_code, source_of_fund_code, target_segment_code, additional_details, created_time, 
-        created_by, last_modified_time, last_modified_by, type) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """
     values_eg_program_message_codes = get_program_message_codes_values(disbursement)
-    values_eg_mukta_ifms_message_codes = get_mukta_ifms_message_codes_values(disbursement)
     cursor.execute(query_eg_program_message_codes, values_eg_program_message_codes)
-    cursor.execute(query_eg_mukta_ifms_message_codes, values_eg_mukta_ifms_message_codes)
     for disburse in disbursement['children']:
         values_eg_program_disburse = get_program_disburse_values(disburse, disbursement['id'])
-        values_eg_mukta_ifms_disburse = get_mukta_ifms_disburse_values(disburse, disbursement['id'])
         cursor.execute(query_eg_program_disburse, values_eg_program_disburse)
-        cursor.execute(query_eg_mukta_ifms_disburse, values_eg_mukta_ifms_disburse)
         # Insert data into eg_program_message_codes table
         values_eg_program_message_codes = get_program_message_codes_values(disburse)
-        values_eg_mukta_ifms_message_codes = get_mukta_ifms_message_codes_values(disburse)
         cursor.execute(query_eg_program_message_codes, values_eg_program_message_codes)
+
+
+def encrypt_disbursement_for_mukta(disbursement):
+    tenant_id = disbursement['location_code']
+    disbursement_copy = copy.deepcopy(disbursement)
+    for child in disbursement_copy['children']:
+        object_for_enc = {
+            "name": child['individual']['name'],
+            "address": child['individual']['address'],
+            "email": child['individual']['email'],
+            "phone": child['individual']['phone'],
+            "pin": child['individual']['pin'],
+            "account_code": child['account_code']
+        }
+        encrypted_object = encrypt_object(object_for_enc,tenant_id)
+        child['individual']['name'] = encrypted_object[0]
+        child['individual']['address'] = encrypted_object[1]
+        child['individual']['email'] = encrypted_object[2]
+        child['individual']['phone'] = encrypted_object[3]
+        child['individual']['pin'] = encrypted_object[4]
+        child['account_code'] = encrypted_object[5]
+
+    return disbursement_copy
+
+
+def push_mukta_data_to_db(mukta_disbursement, cursor):
+    query_eg_mukta_ifms_disburse = """
+            INSERT INTO eg_mukta_ifms_disburse 
+            (id, program_code, target_id, parent_id, transaction_id, account_code, status, status_message, individual, net_amount, 
+            gross_amount, created_time, created_by, last_modified_time, last_modified_by) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+    query_eg_mukta_ifms_message_codes = """
+            INSERT INTO eg_mukta_ifms_message_codes 
+            (id, location_code, parent_id, function_code, administration_code, program_code, recipient_segment_code, 
+            economic_segment_code, source_of_fund_code, target_segment_code, additional_details, created_time, 
+            created_by, last_modified_time, last_modified_by, type) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+    values_eg_mukta_ifms_disburse = get_mukta_ifms_disburse_values(mukta_disbursement)
+    values_eg_mukta_ifms_message_codes = get_mukta_ifms_message_codes_values(mukta_disbursement)
+    cursor.execute(query_eg_mukta_ifms_disburse, values_eg_mukta_ifms_disburse)
+    cursor.execute(query_eg_mukta_ifms_message_codes, values_eg_mukta_ifms_message_codes)
+    for disburse in mukta_disbursement['children']:
+        values_eg_mukta_ifms_disburse = get_mukta_ifms_disburse_values(disburse, mukta_disbursement['id'])
+        values_eg_mukta_ifms_message_codes = get_mukta_ifms_message_codes_values(disburse)
+        cursor.execute(query_eg_mukta_ifms_disburse, values_eg_mukta_ifms_disburse)
         cursor.execute(query_eg_mukta_ifms_message_codes, values_eg_mukta_ifms_message_codes)
+
 
 
 def enrich_disbursement_from_pi_and_insert(request_info, all_data, cursor, connection, mdms_data):
@@ -899,9 +928,12 @@ def enrich_disbursement_from_pi_and_insert(request_info, all_data, cursor, conne
             continue
         print('Processing data for: ' + entry['id'])
         disbursement = process_pi_data(request_info, entry, mdms_data)
+        mukta_disbursement = encrypt_disbursement_for_mukta(disbursement)
+        disbursement = encrypt_disbursement(disbursement)
         if isinstance(disbursement, tuple):
             print('Failed to process data for: ' + entry['id'])
             continue
+        push_mukta_data_to_db(mukta_disbursement, cursor)
         push_data_to_db(disbursement, cursor)
         insert_migration_status(entry['id'], True, cursor)
         connection.commit()
@@ -1129,33 +1161,42 @@ def enrich_bankaccount_and_program_codes_ifms_data(mdms_data, cursor, connection
         beneficiary_id = jit_beneficiary_detail[1]
         created_time = jit_beneficiary_detail[2]
         bank_account = fetch_bank_account_from_audit_logs(request_info, beneficiary_id, tenant_id, created_time)
-        bank_account = encrypt_account_number(bank_account)
+        object_to_enc = {
+            "bankaccountcode": bank_account
+        }
+        bank_account = encrypt_object(object_to_enc, tenant_id)
         bank_account_query = '''Update jit_beneficiary_details set bankaccountcode = %s where id = %s'''
-        cursor.execute(bank_account_query, (bank_account, jit_beneficiary_detail_id))
+        cursor.execute(bank_account_query, (bank_account[0], jit_beneficiary_detail_id))
         connection.commit()
         print("Bank Account updated for JIT Beneficiary Detail: ", jit_beneficiary_detail_id)
 
 
-def encrypt_account_number(account_number):
+def encrypt_object(object, tenant_id):
     enc_host = os.getenv('ENC_HOST')
     enc_encrypt = os.getenv('ENC_ENCRYPT_ENDPOINT')
     api_url = f"{enc_host}{enc_encrypt}"
     headers = {
         'Content-Type': 'application/json',
     }
-    data = [
-        account_number
-    ]
+    enc_data = []
+    for key, value in object.items():
+        enc_data.append({
+            "tenantId": tenant_id,
+            "type": "Normal",
+            "value": value
+        })
+    data = {
+        "encryptionRequests": enc_data,
+    }
     response = requests.post(api_url, json=data, headers=headers)
 
     # Check if the request was successful (status code 200)
     if response.status_code == 200:
         response = response.json()
-        return response[0]
+        return response
     else:
         # If not successful, print the error status code and response text
         print(f"Error: {response.status_code}\n{response.text}")
-        return account_number
 
 
 @app.route('/ifms/migrate', methods=['POST'])
