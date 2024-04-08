@@ -1,6 +1,6 @@
 import copy
 
-from flask import Flask, request, jsonify, current_app
+from flask import Flask, request, jsonify
 import psycopg2
 from psycopg2.extras import Json
 import requests  # Import the requests library
