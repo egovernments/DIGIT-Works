@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,5 +34,8 @@ public class SorDetail {
 
     @JsonProperty("description")
     private String description;
+
+    @JsonProperty("rateDetails")
+    private List<RateDetail> rateDetails;
 
 }
