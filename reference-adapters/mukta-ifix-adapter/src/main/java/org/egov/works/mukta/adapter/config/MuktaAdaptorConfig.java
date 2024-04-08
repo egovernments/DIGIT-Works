@@ -90,7 +90,7 @@ public class MuktaAdaptorConfig {
 
     @Value("${egov.program.service.host}")
     private String programServiceHost;
-    @Value("${egov.program.service.disbursement.endpoint}")
+    @Value("${egov.program.service.disbursement.create.endpoint}")
     private String programServiceDisbursementEndpoint;
 
     // Kafka Topics
