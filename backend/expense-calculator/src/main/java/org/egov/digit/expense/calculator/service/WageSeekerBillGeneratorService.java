@@ -247,7 +247,7 @@ public class WageSeekerBillGeneratorService {
 			for (IndividualEntry individualEntry : individualEntries) {
 				String individualId = individualEntry.getIndividualId();
 				// Calculate net amount to pay to wage seeker
-				Double skillAmount = getWageSeekerSkillAmount(individualEntry, sorDetails,musterRollCreatedTime);
+				Double skillAmount = getWageSeekerSkillAmountFromV2(individualEntry, sorDetails,musterRollCreatedTime);
 				
 				//Round off
 				BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount)).setScale(0, RoundingMode.HALF_UP);
@@ -386,8 +386,16 @@ public class WageSeekerBillGeneratorService {
 			if (sorDetail.getId().equalsIgnoreCase(skill)) {
 				isSkillCodePresent = true;
 				for (RateDetail rateDetail : sorDetail.getRateDetails()) {
-					if((rateDetail.getValidTo() != null && rateDetail.getValidFrom().longValue() <= musterRollCreatedTime && rateDetail.getValidTo().longValue() >= musterRollCreatedTime) ||
-							(rateDetail.getValidTo() == null && rateDetail.getValidFrom().longValue() <= musterRollCreatedTime)) {
+					long validFrom = Long.parseLong(rateDetail.getValidFrom());
+					long validTo;
+					try {
+						validTo = rateDetail.getValidTo() == null ? 0 : Long.parseLong(rateDetail.getValidTo());
+					} catch (NumberFormatException e) {
+						validTo = 0;
+					}
+
+					if((validTo != 0 && validFrom <= musterRollCreatedTime && validTo >= musterRollCreatedTime) ||
+							(validTo == 0 && validFrom <= musterRollCreatedTime)) {
 						return rateDetail.getRate();
 					}
 				}
@@ -403,28 +411,31 @@ public class WageSeekerBillGeneratorService {
 		throw new CustomException("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
 	}
 
-	private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<SorDetail> sorDetails, Long musterRollCreatedTime) {
-		String skill = getWageSeekerSkill(individualEntry);
-		boolean isSkillCodePresent = false;
-		for (SorDetail sorDetail : sorDetails) {
-			if (sorDetail.getId().equalsIgnoreCase(skill)) {
-				isSkillCodePresent = true;
-				for (RateDetail rateDetail : sorDetail.getRateDetails()) {
-					if((rateDetail.getValidTo() != null && rateDetail.getValidFrom().longValue() <= musterRollCreatedTime && rateDetail.getValidTo().longValue() >= musterRollCreatedTime) ||
-							(rateDetail.getValidTo() == null && rateDetail.getValidFrom().longValue() <= musterRollCreatedTime)) {
-						return rateDetail.getRate();
-					}
-				}
-			}
-		}
-
-		if(!isSkillCodePresent){
-			log.error("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
-			throw new CustomException("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
-		}
-		log.error("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
-		throw new CustomException("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
-	}
+//	private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<SorDetail> sorDetails, Long musterRollCreatedTime) {
+//		String skill = getWageSeekerSkill(individualEntry);
+//		boolean isSkillCodePresent = false;
+//		for (SorDetail sorDetail : sorDetails) {
+//			if (sorDetail.getId().equalsIgnoreCase(skill)) {
+//				isSkillCodePresent = true;
+//				for (RateDetail rateDetail : sorDetail.getRateDetails()) {
+//					try {
+//						long validTo =  Long.parseLong(String.valueOf(rateDetail.getValidTo()));
+//					}
+//					if((rateDetail.getValidTo() != null && rateDetail.getValidFrom().longValue() <= musterRollCreatedTime && rateDetail.getValidTo().longValue() >= musterRollCreatedTime) ||
+//							(rateDetail.getValidTo() == null && rateDetail.getValidFrom().longValue() <= musterRollCreatedTime)) {
+//						return rateDetail.getRate();
+//					}
+//				}
+//			}
+//		}
+//
+//		if(!isSkillCodePresent){
+//			log.error("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+//			throw new CustomException("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+//		}
+//		log.error("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
+//		throw new CustomException("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
+//	}
 
 	private String getWageSeekerSkillCodeId(IndividualEntry individualEntry, List<SorDetail> sorDetails) {
 		String skill = getWageSeekerSkill(individualEntry);

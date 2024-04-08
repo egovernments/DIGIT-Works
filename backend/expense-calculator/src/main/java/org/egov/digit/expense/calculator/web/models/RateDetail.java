@@ -21,9 +21,9 @@ public class RateDetail {
     private String sorId = null;
 
     @JsonProperty("validFrom")
-    private BigDecimal validFrom = null;
+    private String validFrom = null;
 
     @JsonProperty("validTo")
-    private BigDecimal validTo = null;
+    private String validTo = null;
 
 }
