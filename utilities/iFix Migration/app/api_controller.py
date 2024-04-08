@@ -1166,8 +1166,13 @@ def enrich_bankaccount_and_program_codes_ifms_data(mdms_data, cursor, connection
         }
         bank_account = encrypt_object(object_to_enc, tenant_id)
         bank_account_query = '''Update jit_beneficiary_details set bankaccountcode = %s where id = %s'''
-        cursor.execute(bank_account_query, (bank_account[0], jit_beneficiary_detail_id))
-        connection.commit()
+        try:
+            cursor.execute(bank_account_query, (bank_account[0], jit_beneficiary_detail_id))
+            connection.commit()
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            connection.rollback()
+            continue
         print("Bank Account updated for JIT Beneficiary Detail: ", jit_beneficiary_detail_id)
 
 
