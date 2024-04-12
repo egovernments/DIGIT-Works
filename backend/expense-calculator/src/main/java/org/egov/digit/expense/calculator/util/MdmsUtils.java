@@ -144,7 +144,7 @@ public class MdmsUtils {
         return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
     }
 
-    private MdmsCriteriaReq getMDMSValidationRequest(RequestInfo requestInfo, String tenantId) {
+    public MdmsCriteriaReq getMDMSValidationRequest(RequestInfo requestInfo, String tenantId) {
         ModuleDetail tenantModuleDetail = getTenantModuleDetail();
         ModuleDetail expenseModuleDetail = getExpenseModuleDetail();
 
