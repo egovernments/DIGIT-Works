@@ -1154,6 +1154,16 @@ def enrich_bankaccount_and_program_codes_ifms_data(mdms_data, cursor, connection
         connection.commit()
         print(f"Program code updated for JIT Payment Inst Detail: {jit_payment_inst_detail}")
 
+    jit_sanction_details = '''Select id from jit_sanction_details where tenantid = %s'''
+    cursor.execute(jit_sanction_details, (tenant_id,))
+    jit_sanction_details = cursor.fetchall()
+    for jit_sanction_detail in jit_sanction_details:
+        jit_sanction_detail = jit_sanction_detail[0]
+        program_code_query = '''Update jit_sanction_details set programcode = %s where id = %s'''
+        cursor.execute(program_code_query, (program_code, jit_sanction_detail))
+        connection.commit()
+        print(f"Program code updated for JIT Sanction Detail: {jit_sanction_detail}")
+
     jit_beneficiary_details_query = '''Select id, beneficiaryid, createdtime from jit_beneficiary_details where tenantid = %s'''
     cursor.execute(jit_beneficiary_details_query, (tenant_id,))
     jit_beneficiary_details = cursor.fetchall()
