@@ -965,10 +965,10 @@ def insert_data(request_info):
             request_info = request_info['RequestInfo']
             tenant_ids = fetch_tenants_from_mdms(request_info)
             # Process for each tenant id
-            # for tenant_id in tenant_ids:
-            #     print('Processing for tenant: ', tenant_id)
-            mdms_data = fetch_data_from_mdms(request_info, 'od.testing')
-            process_pi_data_for_each_tenant(request_info, 'od.testing', cursor, connection, mdms_data)
+            for tenant_id in tenant_ids:
+                print('Processing for tenant: ', tenant_id)
+                mdms_data = fetch_data_from_mdms(request_info, tenant_id)
+                process_pi_data_for_each_tenant(request_info, 'od.testing', cursor, connection, mdms_data)
 
             # Use Flask's current_app to access the application context
             return jsonify({"message": "Data inserted successfully"}), 201
