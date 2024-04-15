@@ -143,11 +143,11 @@ def process_pi_data_for_each_tenant(request_info, tenant_id, cursor, connection,
             all_data = response_data.get("paymentInstructions", [])
             enrich_disbursement_from_pi_and_insert(request_info, all_data, cursor, connection, mdms_data)
             # Check if there are more records to fetch
-            if len(response_data.get("paymentInstructions", [])) < int(data["pagination"]["limit"]):
+            if len(response_data.get("paymentInstructions", [])) < int(data["searchCriteria"]["limit"]):
                 break
 
             # Update the offset for the next request
-            data["pagination"]["offSet"] = str(int(data["pagination"]["offSet"]) + int(data["pagination"]["limit"]))
+            data["searchCriteria"]["offSet"] = str(int(data["searchCriteria"]["offSet"]) + int(data["searchCriteria"]["limit"]))
 
         else:
             print(f"Failed to fetch data from the API. Status code: {response.status_code}")
