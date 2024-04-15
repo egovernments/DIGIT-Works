@@ -9,10 +9,12 @@ import json
 import threading
 from dotenv import load_dotenv
 import os
+import logging
 
 app = Flask(__name__)
 load_dotenv('.env')
 
+logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 # Replace these with your PostgreSQL database details
 DB_HOST = os.getenv('DB_HOST')
 DB_PORT = os.getenv('DB_PORT')
@@ -928,16 +930,19 @@ def enrich_disbursement_from_pi_and_insert(request_info, all_data, cursor, conne
         if is_migrated:
             continue
         print('Processing data for: ' + entry['id'])
+        logging.info(f"Processing data for: {entry['id']}")
         disbursement = process_pi_data(request_info, entry, mdms_data)
         mukta_disbursement = encrypt_disbursement_for_mukta(disbursement)
         disbursement = encrypt_disbursement(disbursement)
         if isinstance(disbursement, tuple):
             print('Failed to process data for: ' + entry['id'])
+            logging.error(f"Failed to process data for: {entry['id']}")
             continue
         push_mukta_data_to_db(mukta_disbursement, cursor)
         push_data_to_db(disbursement, cursor)
         insert_migration_status(entry['id'], True, cursor)
         connection.commit()
+        logging.info(f"Data inserted successfully for: {entry['id']}")
         print('Data inserted successfully for: ' + entry['id'])
 
 
@@ -967,8 +972,9 @@ def insert_data(request_info):
             # Process for each tenant id
             for tenant_id in tenant_ids:
                 print('Processing for tenant: ', tenant_id)
+                logging.info(f"Processing for tenant: {tenant_id}")
                 mdms_data = fetch_data_from_mdms(request_info, tenant_id)
-                process_pi_data_for_each_tenant(request_info, 'od.testing', cursor, connection, mdms_data)
+                process_pi_data_for_each_tenant(request_info, tenant_id, cursor, connection, mdms_data)
 
             # Use Flask's current_app to access the application context
             return jsonify({"message": "Data inserted successfully"}), 201
@@ -976,6 +982,7 @@ def insert_data(request_info):
         except Exception as e:
             # Use Flask's current_app to access the application context
             print(f"Last Error: {str(e)}")
+            logging.error(f"Last Error: {str(e)}")
             return jsonify({"error": str(e)}), 500
 
         finally:
@@ -1152,6 +1159,7 @@ def enrich_bankaccount_and_program_codes_ifms_data(mdms_data, cursor, connection
         program_code_query = '''Update jit_payment_inst_details set programcode = %s where id = %s'''
         cursor.execute(program_code_query, (program_code, jit_payment_inst_detail))
         connection.commit()
+        logging.info(f"Program code updated for JIT Payment Inst Detail: {jit_payment_inst_detail}")
         print(f"Program code updated for JIT Payment Inst Detail: {jit_payment_inst_detail}")
 
     jit_sanction_details = '''Select id from jit_sanction_details where tenantid = %s'''
@@ -1162,6 +1170,7 @@ def enrich_bankaccount_and_program_codes_ifms_data(mdms_data, cursor, connection
         program_code_query = '''Update jit_sanction_details set programcode = %s where id = %s'''
         cursor.execute(program_code_query, (program_code, jit_sanction_detail))
         connection.commit()
+        logging.info(f"Program code updated for JIT Sanction Detail: {jit_sanction_detail}")
         print(f"Program code updated for JIT Sanction Detail: {jit_sanction_detail}")
 
     jit_beneficiary_details_query = '''Select id, beneficiaryid, createdtime from jit_beneficiary_details where tenantid = %s'''
@@ -1184,6 +1193,7 @@ def enrich_bankaccount_and_program_codes_ifms_data(mdms_data, cursor, connection
             print(f"Error: {str(e)}")
             connection.rollback()
             continue
+        logging.info(f"Bank Account updated for JIT Beneficiary Detail: {jit_beneficiary_detail_id}")
         print("Bank Account updated for JIT Beneficiary Detail: ", jit_beneficiary_detail_id)
 
 
@@ -1220,6 +1230,7 @@ def migrate_ifms_data():
     connection = None
     cursor = None
     try:
+        logging.info("Starting IFMS data migration")
         # Connect to PostgreSQL
         connection = connect_to_database()
         cursor = connection.cursor()
