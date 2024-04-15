@@ -88,7 +88,7 @@ def fetch_data_from_mdms(request_info, tenant_id):
     payload = {
         "RequestInfo": request_info,
         "MdmsCriteria": {
-            "tenantId": tenant_id,
+            "tenantId": "pg.citya",
             "moduleDetails": [
                 {
                     "moduleName": "segment-codes",
@@ -125,7 +125,7 @@ def process_pi_data_for_each_tenant(request_info, tenant_id, cursor, connection,
     }
     data = {
         "RequestInfo": request_info,
-        "searchCriteria": {"tenantId": tenant_id,
+        "searchCriteria": {"tenantId": "od.testing",
                            "limit": 10,
                            "offSet": 0,
                            "sortBy": "createdTime",
@@ -855,7 +855,7 @@ def push_data_to_db(disbursement, cursor):
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
     values_eg_program_disburse = get_program_disburse_values(disbursement)
-    cursor.execute(query_eg_program_disburse, values_eg_program_disburse)
+    cursor.executenant_idte(query_eg_program_disburse, values_eg_program_disburse)
     # Insert data into eg_program_message_codes table
     query_eg_program_message_codes = """
         INSERT INTO eg_program_message_codes 
