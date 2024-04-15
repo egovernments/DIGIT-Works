@@ -125,13 +125,12 @@ def process_pi_data_for_each_tenant(request_info, tenant_id, cursor, connection,
     }
     data = {
         "RequestInfo": request_info,
-        "searchCriteria": {"tenantId": tenant_id},
-        "pagination": {
-            "limit": "10",  # Adjust the limit as needed
-            "offSet": "0",
-            "sortBy": "",
-            "order": "ASC"
-        }
+        "searchCriteria": {"tenantId": tenant_id,
+                           "limit": 10,
+                           "offSet": 0,
+                           "sortBy": "createdTime",
+                           "sortOrder": "DESC"
+                           }
     }
     all_data = []
 
