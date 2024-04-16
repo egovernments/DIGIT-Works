@@ -1046,17 +1046,18 @@ def process_disbursement_data_for_each_tenant(tenant_id, type, result_type):
 
 
 def publish_data_to_kafka(all_data, value):
-    producer = KafkaProducer(bootstrap_servers='localhost:9092')
-    topic = 'exchange-topic'
+    kafka_server = os.getenv('KAFKA_SERVER')
+    exchange_topic = os.getenv('MIGRATE_EXCHANGE_TOPIC')
+    producer = KafkaProducer(bootstrap_servers=kafka_server)
     signature = None
     header = {
         "message_id": "123",
         "message_ts": "1707460264352",
         "action": "create",
         "message_type": value,
-        "sender_id": "program@https://unified-dev.digit.org/",
+        "sender_id": "program@https://mukta-uat.digit.org/",
         "sender_uri": "https://spp.example.org/{namespace}/callback/on-push",
-        "receiver_id": "program@https://unified-qa.digit.org/"
+        "receiver_id": "program@https://mukta-uat.digit.org/"
     }
     d = {
         "signature": signature,
@@ -1066,7 +1067,7 @@ def publish_data_to_kafka(all_data, value):
     for data in all_data:
         d['message'] = data
         json_data = json.dumps(d).encode('utf-8')
-        producer.send(topic, json_data)
+        producer.send(exchange_topic, json_data)
         producer.flush()
 
     producer.close()
@@ -1094,14 +1095,15 @@ def push_data_to_exchange():
 
 
 def publish_to_kafka(data):
-    producer = KafkaProducer(bootstrap_servers='localhost:9092')
-    topic = 'migrate-data'
+    kafka_server = os.getenv('KAFKA_SERVER')
+    migrate_data_topic = os.getenv('MIGRATE_DATA_TOPIC')
+    producer = KafkaProducer(bootstrap_servers=kafka_server)
 
     # Convert data to JSON before publishing
     json_data = json.dumps(data).encode('utf-8')
 
     # Publish data to the Kafka topic
-    producer.send(topic, json_data)
+    producer.send(migrate_data_topic, json_data)
     producer.flush()
 
     # Close the producer
@@ -1137,8 +1139,11 @@ def start_kafka_consumer():
 
 
 def consume_from_kafka():
-    consumer = KafkaConsumer('migrate-data', bootstrap_servers='localhost:9092',
-                             group_id='ifix-migration')
+    kafka_server = os.getenv('KAFKA_SERVER')
+    migrate_data_topic = os.getenv('MIGRATE_DATA_TOPIC')
+    consumer_group = os.getenv('MIGRATE_DATA_GROUP')
+    consumer = KafkaConsumer(migrate_data_topic, bootstrap_servers=kafka_server,
+                             group_id=consumer_group)
 
     for message in consumer:
         # Decode and process the message payload
