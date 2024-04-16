@@ -12,13 +12,17 @@ import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
 import org.egov.digit.expense.calculator.web.models.IndividualEntry;
 import org.egov.digit.expense.calculator.web.models.MusterRoll;
+import org.egov.digit.expense.calculator.web.models.MusterRollRequest;
 import org.egov.digit.expense.calculator.web.models.MusterRollResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_TENANTS_VERIFICATION;
 
@@ -32,6 +36,8 @@ public class SorMigrationUtil {
     private final MdmsUtils mdmsUtils;
     private final CommonUtil commonUtil;
     private final ExpenseCalculatorProducer producer;
+    private final JdbcTemplate jdbcTemplate;
+    private static final String MIGRATE_SOR_SEARCH_QUERY = " SELECT * FROM eg_sor_migration WHERE id = {} ";
 
     @Value("${expense.sor.migration.mapping}")
     private String sorMigrationMappingString;
@@ -47,13 +53,14 @@ public class SorMigrationUtil {
     private String individualUpdateTopic;
 
 
-    public SorMigrationUtil(ServiceRequestRepository restRepo, ExpenseCalculatorConfiguration configs, ObjectMapper mapper, MdmsUtils mdmsUtils, CommonUtil commonUtil, ExpenseCalculatorProducer producer) {
+    public SorMigrationUtil(ServiceRequestRepository restRepo, ExpenseCalculatorConfiguration configs, ObjectMapper mapper, MdmsUtils mdmsUtils, CommonUtil commonUtil, ExpenseCalculatorProducer producer, JdbcTemplate jdbcTemplate) {
         this.restRepo = restRepo;
         this.configs = configs;
         this.mapper = mapper;
         this.mdmsUtils = mdmsUtils;
         this.commonUtil = commonUtil;
         this.producer = producer;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public String migrateSor(RequestInfo requestInfo, String key) {
@@ -103,26 +110,45 @@ public class SorMigrationUtil {
                 log.error("No muster rolls found for tenantId {}", tenantId);
             }
 
+
             for (MusterRoll musterRoll : musterRollResponse.getMusterRolls()) {
-                for (IndividualEntry individualEntry : musterRoll.getIndividualEntries()) {
-                    Map<String, Object> additionalDetailsMap;
-                    try {
-                        String addDetails = mapper.writeValueAsString(individualEntry.getAdditionalDetails());
-                        additionalDetailsMap = mapper.readValue(addDetails, new TypeReference<Map<String, Object>>() {
-                        });
-                    } catch (JsonProcessingException e) {
-                        throw new CustomException("PARSING_ERROR", "error while parsing additionalDetails" + e);
+                try {
+                    String isMigratedQuery = "SELECT is_migration_successful FROM eg_sor_migration WHERE id = '" + musterRoll.getId() + "'";
+                    List<Map<String, Object>> isMigrated = jdbcTemplate.queryForList(isMigratedQuery);
+                    if (!CollectionUtils.isEmpty(isMigrated) && isMigrated.get(0).get("is_migration_successful").equals(true)) {
+                        log.info("Sor already migrated for id :: " + musterRoll.getId());
+                        continue;
                     }
-                    if (sorMapping.containsKey(additionalDetailsMap.get("skillCode").toString())) {
-                        additionalDetailsMap.put("skillCode", sorMapping.get(additionalDetailsMap.get("skillCode").toString()));
-                    } else {
-                        log.error("Skill code {} not found in sor mapping", additionalDetailsMap.get("skillCode"));
+                    for (IndividualEntry individualEntry : musterRoll.getIndividualEntries()) {
+                        Map<String, Object> additionalDetailsMap;
+                        try {
+                            String addDetails = mapper.writeValueAsString(individualEntry.getAdditionalDetails());
+                            additionalDetailsMap = mapper.readValue(addDetails, new TypeReference<Map<String, Object>>() {
+                            });
+                        } catch (JsonProcessingException e) {
+                            throw new CustomException("PARSING_ERROR", "error while parsing additionalDetails" + e);
+                        }
+                        if (sorMapping.containsKey(additionalDetailsMap.get("skillCode").toString())) {
+                            additionalDetailsMap.put("skillCode", sorMapping.get(additionalDetailsMap.get("skillCode").toString()));
+                        } else {
+                            log.error("Skill code {} not found in sor mapping", additionalDetailsMap.get("skillCode"));
+                        }
+                        individualEntry.setAdditionalDetails(mapper.convertValue(additionalDetailsMap, Object.class));
                     }
-                    individualEntry.setAdditionalDetails(mapper.convertValue(additionalDetailsMap, Object.class));
+                    musterRoll.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                    musterRoll.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                    MusterRollRequest musterRollRequest = MusterRollRequest.builder().musterRoll(musterRoll).requestInfo(requestInfo).build();
+                    producer.push(musterRollUpdateTopic, musterRollRequest);
+                    String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + musterRoll.getId() + "', true);";
+                    jdbcTemplate.update(insertQuery);
+                    log.info("Migrated muster roll for muster roll id {}", musterRoll.getId());
+                } catch (Exception e) {
+                    log.error("Error migrating muster roll for id {}", musterRoll.getId(), e);
+                    String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + musterRoll.getId() + "', false);";
+                    jdbcTemplate.update(insertQuery);
                 }
-                musterRoll.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
-                musterRoll.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-                producer.push(musterRollUpdateTopic, musterRoll);
+
+
             }
             offset = offset + limit;
         } while (musterRollResponse.getMusterRolls().size() > 0);
@@ -144,15 +170,26 @@ public class SorMigrationUtil {
                 log.error("No individuals found for tenantId {}", tenantId);
             }
             for (Individual individual : individualResponse.getIndividual()) {
-                for (Skill skill : individual.getSkills()) {
-                    String labourCode = skill.getLevel() + "." + skill.getType();
-                    if (sorMapping.containsKey(labourCode)) {
-                        skill.setExperience(sorMapping.get(labourCode));
+                try {
+                    for (Skill skill : individual.getSkills()) {
+                        String labourCode = skill.getLevel() + "." + skill.getType();
+                        if (sorMapping.containsKey(labourCode)) {
+                            skill.setType("SOR");
+                            skill.setLevel(sorMapping.get(labourCode));
+                        }
                     }
+                    individual.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                    individual.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                    producer.push(individualUpdateTopic, individual);
+                    log.info("Migrated individual for individual id {}", individual.getId());
+                    String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + individual.getId() + "', true);";
+                    jdbcTemplate.update(insertQuery);
+                } catch (Exception e) {
+                    log.error("Error migrating individual for id {}", individual.getId(), e);
+                    String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + individual.getId() + "', false);";
+                    jdbcTemplate.update(insertQuery);
                 }
-                individual.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
-                individual.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-                producer.push(individualUpdateTopic, individual);
+
             }
             offset = offset + limit;
         } while (individualResponse.getIndividual().size() > 0) ;
