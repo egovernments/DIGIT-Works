@@ -75,7 +75,7 @@ def fetch_tenants_from_mdms(request_info):
 
 
 def fetch_data_from_mdms(request_info, tenant_id):
-    mdms_host = os.getenv('DEV_MDMS_HOST')
+    mdms_host = os.getenv('MDMS_HOST')
     mdms_search = os.getenv('MDMS_SEARCH')
     api_url = f"{mdms_host}{mdms_search}"
     auth_token = request_info.get("authToken", "")  # Extract authToken from RequestInfo
@@ -88,7 +88,7 @@ def fetch_data_from_mdms(request_info, tenant_id):
     payload = {
         "RequestInfo": request_info,
         "MdmsCriteria": {
-            "tenantId": "pg.citya",
+            "tenantId": tenant_id,
             "moduleDetails": [
                 {
                     "moduleName": "segment-codes",
