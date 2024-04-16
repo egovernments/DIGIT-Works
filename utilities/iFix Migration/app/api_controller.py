@@ -1195,6 +1195,7 @@ def enrich_bankaccount_and_program_codes_ifms_data(mdms_data, cursor, connection
             connection.commit()
         except Exception as e:
             print(f"Error: {str(e)}")
+            logging.error(f"Error: {str(e)}")
             connection.rollback()
             continue
         logging.info(f"Bank Account updated for JIT Beneficiary Detail: {jit_beneficiary_detail_id}")
