@@ -724,7 +724,9 @@ public class PaymentInstructionEnrichment {
     private PaymentInstruction getEnrichedPaymentRequestFromDisbursement(Disbursement disbursement, List<Beneficiary> beneficiaryList, SanctionDetail sanctionDetail,Map<String,Map<String,JSONArray>> mdmsData, Boolean isRevised,PaymentInstruction lastPi) {
         RequestInfo requestInfo = RequestInfo.builder().userInfo(User.builder().uuid("ee3379e9-7f25-4be8-9cc1-dc599e1668c9").build()).build();
         AuditDetails auditDetails = AuditDetails.builder().createdBy(disbursement.getAuditDetails().getCreatedBy()).createdTime(System.currentTimeMillis()).lastModifiedBy(disbursement.getAuditDetails().getLastModifiedBy()).lastModifiedTime(System.currentTimeMillis()).build();
-        String jitBillNo = idgenUtil.getIdList(requestInfo, disbursement.getLocationCode(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
+        // Get id format name from config and generate id
+        String idFormatName = isRevised ? config.getRevisedPaymentInstructionNumberFormat() : config.getPaymentInstructionNumberFormat();
+        String jitBillNo = idgenUtil.getIdList(requestInfo, disbursement.getLocationCode(), idFormatName, null, 1).get(0);
         String piId = disbursement.getId();
         String parentPiNumber = null;
         ObjectNode additionalDetails = objectMapper.valueToTree(disbursement.getAdditionalDetails());
@@ -863,7 +865,7 @@ public class PaymentInstructionEnrichment {
                         .purpose("Mukta Payment")
                         .beneficiaryType(BeneficiaryType.IND)
                         .build();
-
+                removeSpecialCharactersAndExtraSpaces(beneficiary);
                 accountCodeToBeneficiaryMap.put(disbursementDetail.getAccountCode(),beneficiary);
             }else{
                 BenfLineItems benfLineItem = BenfLineItems.builder()
@@ -878,6 +880,22 @@ public class PaymentInstructionEnrichment {
         }
 
         return new ArrayList<>(accountCodeToBeneficiaryMap.values());
+    }
+
+    public static void removeSpecialCharactersAndExtraSpaces(Beneficiary piBeneficiary) {
+        // Remove special characters using regular expression
+        String benfName=Optional.ofNullable(piBeneficiary.getBenefName())
+                .map(s -> s.replaceAll("[^a-zA-Z0-9\\s]", ""))
+                .orElse(null);
+        String benfAddress= Optional.ofNullable(piBeneficiary.getBenfAddress())
+                .map(s -> s.replaceAll("[^a-zA-Z0-9\\s]", ""))
+                .orElse(null);
+        // Remove extra white spaces using regular expression
+        benfName=Optional.ofNullable(benfName).map(s-> s.replaceAll("\\s+", " ").trim()).orElse(null);
+        benfAddress=Optional.ofNullable(benfAddress).map(s-> s.replaceAll("\\s+", " ").trim()).orElse(null);
+        piBeneficiary.setBenefName(benfName);
+        piBeneficiary.setBenfAddress(benfAddress);
+
     }
 
     public CORRequest getCorPaymentInstructionRequestForIFMS(PaymentInstruction paymentInstructionFromDisbursement, PaymentInstruction lastPI, PaymentInstruction originalPI) {

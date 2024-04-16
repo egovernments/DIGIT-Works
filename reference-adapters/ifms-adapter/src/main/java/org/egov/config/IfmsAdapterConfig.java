@@ -108,6 +108,9 @@ public class IfmsAdapterConfig {
     @Value("${egov.idgen.ifms.benf.reference.number}")
     private String piBenefInstructionNumberFormat;
 
+    @Value("${egov.idgen.ifms.repi.reference.number}")
+    private String revisedPaymentInstructionNumberFormat;
+
     // audit log
     @Value("${egov.audit.log.host}")
     private String auditLogHost;
