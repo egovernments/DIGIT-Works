@@ -133,6 +133,7 @@ public class SorMigrationUtil {
                             additionalDetailsMap.put("skillCode", sorMapping.get(additionalDetailsMap.get("skillCode").toString()));
                         } else {
                             log.error("Skill code {} not found in sor mapping", additionalDetailsMap.get("skillCode"));
+                            throw new CustomException("SKILL_CODE_NOT_FOUND", "Skill code not found in sor mapping");
                         }
                         individualEntry.setAdditionalDetails(mapper.convertValue(additionalDetailsMap, Object.class));
                     }
@@ -171,21 +172,30 @@ public class SorMigrationUtil {
                 log.error("No individuals found for tenantId {}", tenantId);
             }
             for (Individual individual : individualResponse.getIndividual()) {
+                String MIGRATE_SEARCH_QUERY = "SELECT is_migration_successful FROM eg_sor_migration WHERE id = '" + individual.getId() + "'";
+                List<Map<String, Object>> isMigrated = jdbcTemplate.queryForList(MIGRATE_SEARCH_QUERY);
+                if (!CollectionUtils.isEmpty(isMigrated) && isMigrated.get(0).get("is_migration_successful").equals(true)) {
+                    log.info("Individual already migrated for id :: " + individual.getId());
+                    continue;
+                }
                 try {
                     for (Skill skill : individual.getSkills()) {
                         String labourCode = skill.getLevel() + "." + skill.getType();
                         if (sorMapping.containsKey(labourCode)) {
                             skill.setType("SOR");
                             skill.setLevel(sorMapping.get(labourCode));
+                        } else {
+                            log.error("Labour code {} not found in sor mapping", labourCode);
+                            throw new CustomException("SKILL_CODE_NOT_FOUND", "Labour code not found in sor mapping");
                         }
                     }
                     individual.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                     individual.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                     List<Individual> individuals = Collections.singletonList(individual);
                     producer.push(individualUpdateTopic, individuals);
-                    log.info("Migrated individual for individual id {}", individual.getId());
                     String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + individual.getId() + "', true);";
                     jdbcTemplate.update(insertQuery);
+                    log.info("Migrated individual for individual id {}", individual.getId());
                 } catch (Exception e) {
                     log.error("Error migrating individual for id {}", individual.getId(), e);
                     String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + individual.getId() + "', false);";
