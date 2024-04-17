@@ -20,6 +20,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -180,7 +181,8 @@ public class SorMigrationUtil {
                     }
                     individual.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                     individual.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-                    producer.push(individualUpdateTopic, individual);
+                    List<Individual> individuals = Collections.singletonList(individual);
+                    producer.push(individualUpdateTopic, individuals);
                     log.info("Migrated individual for individual id {}", individual.getId());
                     String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + individual.getId() + "', true);";
                     jdbcTemplate.update(insertQuery);
