@@ -232,5 +232,4 @@ config:
   - name: "builds/digit-works/libraries/works-services-common"
     build:
       - work-dir: "libraries/works-services-common"
-        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "works-services-common"
