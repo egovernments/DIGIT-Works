@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.PIRepository;
@@ -22,6 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -103,7 +106,7 @@ public class DisbursementService {
             lastPI = encryptionDecryptionUtil.decryptObject(lastPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
             originalPI = encryptionDecryptionUtil.decryptObject(originalPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
             paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),true,lastPI);
-            paymentStatus = processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI);
+            paymentStatus =  validateAndProcessDisbursement(paymentInstructionFromDisbursement, requestInfo, lastPI, originalPI, disbursementRequest, sanctionDetails);
         }else{
             log.info("Payment Instruction is not in PARTIAL status, processing it for PI creation.");
             disbursementValidator.validatePI(paymentInstructions);
@@ -132,7 +135,10 @@ public class DisbursementService {
 
     /**
      * Process the revised PI creation for the disbursement request.
-     * @param disbursementRequest
+     * @param paymentInstructionFromDisbursement
+     * @param requestInfo
+     * @param lastPI
+     * @param originalPI
      * @return
      */
     private PaymentStatus processDisbursementForRevisedPICreation(PaymentInstruction paymentInstructionFromDisbursement, RequestInfo requestInfo, PaymentInstruction lastPI, PaymentInstruction originalPI) {
@@ -327,5 +333,88 @@ public class DisbursementService {
         }
 
         return disbursementResponse;
+    }
+
+    /**
+     * Method to convert epochDateTimeFormat to LocalDateTime
+     * @param epochTime The epoch time in milliseconds
+     * @return The corresponding LocalDateTime object
+    */
+    private LocalDateTime convertEpochToLocalDateTime(long epochTime) {
+        Instant instant = Instant.ofEpochMilli(epochTime);
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    }
+
+    /**
+     * Method to get the financial year of the given date
+     * @param date The date for which the financial year is needed
+     * @return The financial year in the format "YYYY-YYYY"
+     */
+    private String getFinancialYear(LocalDateTime date){
+
+        int year = date.getYear();
+        int month = date.getMonthValue();
+
+        // Check if the date falls in the current or next financial year
+        int startYear, endYear;
+        if (month < 4) { // Before April, so belongs to the previous financial year
+            startYear = year - 1;
+            endYear = year;
+        } else {
+            startYear = year;
+            endYear = year + 1;
+        }
+
+        return startYear + "-" + endYear;
+    }
+
+    /**
+     * This method validates the 90Days scenario and processes the disbursement accordingly
+     * @param paymentInstructionFromDisbursement The payment instruction received from the disbursement
+     * @param requestInfo Information related to the request
+     * @param lastPI The last payment instruction
+     * @param originalPI The original payment instruction
+     * @param disbursementRequest The disbursement request
+     * @param sanctionDetails Details related to sanctions
+     * @return The status of the payment
+     */
+    private PaymentStatus validateAndProcessDisbursement(PaymentInstruction paymentInstructionFromDisbursement, RequestInfo requestInfo, PaymentInstruction lastPI,
+                                                         PaymentInstruction originalPI,DisbursementRequest disbursementRequest,List<SanctionDetail> sanctionDetails){
+
+        LocalDateTime originalPICreatedDate = convertEpochToLocalDateTime(lastPI.getAuditDetails().getCreatedTime());
+        LocalDateTime corPICreatedDate = convertEpochToLocalDateTime(paymentInstructionFromDisbursement.getAuditDetails().getCreatedTime());
+        LocalDateTime failureDate = convertEpochToLocalDateTime(lastPI.getAuditDetails().getLastModifiedTime());  // lastModifiedDate of the originalPI
+        LocalDateTime failureDatePlus90 = failureDate.plusDays(90);
+
+        // Check if financial year of COR PI Request createdDate and OriginalPI createdDate is same
+        if(getFinancialYear(originalPICreatedDate).equals(getFinancialYear(corPICreatedDate))){
+
+            // Check if corPICreatedDate <= (originalPICreatedDate + 90 days)
+            if(corPICreatedDate.isBefore(failureDatePlus90) || corPICreatedDate.isEqual(failureDatePlus90)){
+                // Normal Flow
+                log.info("Payment Instruction is valid for Correction PI Request for same financial year.");
+                return processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI);
+            }else{
+                // Create New PI
+                log.info("New Payment Instruction is created due to 90 days scenario.");
+                return processDisbursementForPICreation(disbursementRequest, paymentInstructionFromDisbursement, requestInfo, sanctionDetails);
+
+            }
+
+        }else{  // If financial year is not same
+
+            // Check if (corPICreatedDate <= (originalPICreatedDate + 90 days)) and corPICreatedDate <= 30th April 23:59:59
+            if((corPICreatedDate.isBefore(failureDatePlus90) || corPICreatedDate.isEqual(failureDatePlus90))
+                    && corPICreatedDate.getMonth().equals(Month.APRIL) && corPICreatedDate.getDayOfMonth() <= 30){
+                // Normal flow
+                log.info("Payment Instruction is valid for Correction PI Request.");
+                return processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI);
+            }else{
+                // Create new PI
+                log.info("New Payment Instruction is created due to 90 days or 30th April scenario");
+                return processDisbursementForPICreation(disbursementRequest, paymentInstructionFromDisbursement, requestInfo, sanctionDetails);
+            }
+
+        }
     }
 }
