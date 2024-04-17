@@ -73,8 +73,8 @@ public class MusterRollServiceUtil {
 	 */
 	public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode,
 			Individual matchedIndividual, BankAccount bankAccount, boolean isCreate) {
-		final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "."
-				+ MASTER_WAGER_SEEKER_SKILLS + ".*";
+		final String jsonPathForWorksMuster = "$.MdmsRes." + "WORKS-SOR" + "."
+				+ "SOR" + ".*";
 		List<LinkedHashMap<String, String>> musterRes = null;
 
 		try {
@@ -89,7 +89,7 @@ public class MusterRollServiceUtil {
 		String skillValue = "";
 		if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
 			for (LinkedHashMap<String, String> codeValueMap : musterRes) {
-				if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
+				if (codeValueMap.get("id").equalsIgnoreCase(skillCode)) {
 					skillValue = codeValueMap.get("name");
 					break;
 				}
@@ -146,15 +146,15 @@ public class MusterRollServiceUtil {
 		if (!isCreate && !CollectionUtils.isEmpty(matchedIndividual.getSkills())) {
 			List<String> skillList = new ArrayList<>();
 			for (Skill skill : matchedIndividual.getSkills()) {
-				skillList.add(skill.getLevel() + "." + skill.getType());
+				skillList.add(skill.getLevel());
 			}
 			additionalDetails.put(SKILL_CODE, skillList);
 		}
 	}
 
 	public void updateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode) {
-		final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "."
-				+ MASTER_WAGER_SEEKER_SKILLS + ".*";
+		final String jsonPathForWorksMuster = "$.MdmsRes." + "WORKS-SOR" + "."
+				+ "SOR" + ".*";
 		List<LinkedHashMap<String, String>> musterRes = null;
 
 		try {
@@ -169,7 +169,7 @@ public class MusterRollServiceUtil {
 		String skillValue = "";
 		if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
 			for (LinkedHashMap<String, String> codeValueMap : musterRes) {
-				if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
+				if (codeValueMap.get("id").equalsIgnoreCase(skillCode)) {
 					skillValue = codeValueMap.get("name");
 					break;
 				}
