@@ -220,3 +220,10 @@ config:
         image-name: "mukta-ifix-adapter"
       - work-dir: "reference-adapters/mukta-ifix-adapter/src/main/resources/db"
         image-name: "mukta-ifix-adapter-db"
+
+# libraries
+  - name: "builds/digit-works/libraries/works-services-common"
+    build:
+      - work-dir: "libraries/works-services-common"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "works-services-common"
