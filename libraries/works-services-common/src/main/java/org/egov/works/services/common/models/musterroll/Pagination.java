@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.egov.works.services.common.models.bankaccounts.Order;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMax;
 
 
 @Data

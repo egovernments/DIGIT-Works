@@ -3,13 +3,13 @@ package org.egov.works.services.common.models.estimate;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.egov.common.contract.models.Address;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.workflow.ProcessInstance;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

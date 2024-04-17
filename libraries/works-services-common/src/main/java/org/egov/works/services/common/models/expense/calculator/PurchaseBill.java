@@ -11,9 +11,9 @@ import org.egov.common.contract.models.Workflow;
 import org.egov.works.services.common.models.expense.BillDetail;
 import org.egov.works.services.common.models.expense.Party;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

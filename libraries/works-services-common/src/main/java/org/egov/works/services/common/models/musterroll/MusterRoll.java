@@ -6,7 +6,7 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

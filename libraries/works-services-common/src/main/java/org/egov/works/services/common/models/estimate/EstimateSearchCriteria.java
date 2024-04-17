@@ -2,9 +2,9 @@ package org.egov.works.services.common.models.estimate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class EstimateSearchCriteria {
     private List<String> ids;
 
     @JsonProperty("tenantId")
-    private String tenantId = null;//mand
+    private String tenantId = null;
 
     @JsonProperty("estimateNumber")
     private String estimateNumber = null;

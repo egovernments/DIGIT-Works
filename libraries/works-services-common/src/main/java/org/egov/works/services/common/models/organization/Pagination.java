@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMax;
 
 @Data
 @AllArgsConstructor

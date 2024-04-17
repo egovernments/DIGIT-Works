@@ -9,9 +9,9 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.works.services.common.models.expense.enums.PaymentStatus;
 import org.egov.works.services.common.models.expense.enums.Status;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

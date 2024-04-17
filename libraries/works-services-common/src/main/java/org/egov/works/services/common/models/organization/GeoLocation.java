@@ -4,7 +4,7 @@ package org.egov.works.services.common.models.organization;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Getter
 @Setter

@@ -9,7 +9,7 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.works.services.common.models.expense.enums.PaymentStatus;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 

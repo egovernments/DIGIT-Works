@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.tracer.model.CustomException;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Data
 @AllArgsConstructor

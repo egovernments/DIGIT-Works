@@ -3,9 +3,9 @@ package org.egov.works.services.common.models.measurement;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.validation.constraints.Max;
 import lombok.*;
 
-import javax.validation.constraints.Max;
 
 
 @Data

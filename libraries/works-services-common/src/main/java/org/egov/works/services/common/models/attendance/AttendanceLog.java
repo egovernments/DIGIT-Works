@@ -1,10 +1,10 @@
 package org.egov.works.services.common.models.attendance;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import lombok.*;
 import org.egov.common.contract.models.AuditDetails;
 
-import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

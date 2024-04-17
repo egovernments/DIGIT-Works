@@ -5,7 +5,7 @@ import lombok.*;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Getter
 @Setter

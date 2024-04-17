@@ -9,8 +9,8 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.works.services.common.models.expense.enums.PaymentStatus;
 import org.egov.works.services.common.models.expense.enums.ReferenceStatus;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
