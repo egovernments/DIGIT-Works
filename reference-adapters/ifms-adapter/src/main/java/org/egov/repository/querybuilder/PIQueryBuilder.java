@@ -2,8 +2,11 @@ package org.egov.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.config.IfmsAdapterConfig;
+import org.egov.web.models.Pagination;
 import org.egov.web.models.enums.PIType;
 import org.egov.web.models.jit.PISearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -14,6 +17,8 @@ import java.util.Set;
 @Slf4j
 public class PIQueryBuilder {
 
+    @Autowired
+    private IfmsAdapterConfig ifmsAdapterConfig;
     public static final String PAYMENT_INSTRUCTION_INSERT_QUERY = "INSERT INTO jit_payment_inst_details "
             + "(id, tenantId, piNumber, programCode, parentPiNumber, muktaReferenceId, numBeneficiaries, grossAmount, netAmount, piStatus, isActive, piSuccessCode, piSuccessDesc, "
             + "piApprovedId, piApprovalDate, piErrorResp, additionalDetails, createdtime, createdby, lastmodifiedtime, lastmodifiedby)"
@@ -72,7 +77,7 @@ public class PIQueryBuilder {
             "pymtInst.piApprovalDate as pymtInstPiApprovalDate, " +
             "pymtInst.piErrorResp as pymtInstPiErrorResp, " +
             "pymtInst.additionalDetails as pymtInstAdditionalDetails, " +
-            "pymtInst.createdtime as pymtInstCreatedTime, " +
+            "pymtInst.createdtime as createdTime, " +
             "pymtInst.createdby as pymtInstCreatedBy, " +
             "pymtInst.lastmodifiedtime as pymtInstLastModifiedTime, " +
             "pymtInst.lastmodifiedby as pymtInstLastModifiedBy, " +
@@ -148,6 +153,12 @@ public class PIQueryBuilder {
             "jit_beneficiary_lineitems as benfLineItem " +
             "ON (benfDetail.id=benfLineItem.beneficiaryId)";
 
+    private static String WRAPPER_QUERY = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY {sortBy} {orderBy}) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
+
 
     public String getPaymentInstructionSearchQuery(PISearchCriteria criteria, List<Object> preparedStmtList){
         StringBuilder query = new StringBuilder(SEARCH_PI_QUERY);
@@ -204,12 +215,14 @@ public class PIQueryBuilder {
             query.append(" pymtInst.parentPiNumber IS NOT NULL AND pymtInst.parentPiNumber <> '' ");
         }
 
-        addOrderByClause(query, criteria);
+//        addOrderByClause(query, criteria);
 
-        addLimitAndOffset(query, criteria, preparedStmtList);
+//        addLimitAndOffset(query, criteria, preparedStmtList);
 
-        log.info("executing query ::: " + query);
-        return query.toString();
+        String finalQuery = addPaginationWrapper(query, criteria, preparedStmtList);
+
+        log.info("executing query ::: " + finalQuery);
+        return finalQuery.toString();
     }
 
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
@@ -243,17 +256,54 @@ public class PIQueryBuilder {
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
         preparedStmtList.addAll(ids);
     }
-    private void addOrderByClause(StringBuilder queryBuilder, PISearchCriteria criteria) {
+    private String addOrderByClause(StringBuilder queryBuilder, PISearchCriteria criteria) {
+//
+//        //default
+//        if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
+//            queryBuilder.append(" ORDER BY pymtInst.createdtime ");
+//        } else if (criteria.getSortBy() != null && !StringUtils.isEmpty(criteria.getSortBy().name())) {
+//            queryBuilder.append(" ORDER BY pymtInst."+ criteria.getSortBy().toString() +" ");
+//        }
+//
+//        if (criteria.getSortOrder() == PISearchCriteria.SortOrder.ASC)
+//            queryBuilder.append(" ASC ");
+//        else queryBuilder.append(" DESC ");
 
-        //default
-        if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
-            queryBuilder.append(" ORDER BY pymtInst.createdtime ");
-        } else if (criteria.getSortBy() != null && !StringUtils.isEmpty(criteria.getSortBy().name())) {
-            queryBuilder.append(" ORDER BY pymtInst."+ criteria.getSortBy().toString() +" ");
+
+        String paginationWrapper = WRAPPER_QUERY;
+
+        // TODO: Add possible fields on which we can sort
+        if ( !StringUtils.isEmpty(criteria.getSortBy().toString())) {
+            paginationWrapper=paginationWrapper.replace("{sortBy}", criteria.getSortBy().toString());
+        }
+        else{
+            paginationWrapper=paginationWrapper.replace("{sortBy}", "pymtInst.createdtime");
         }
 
-        if (criteria.getSortOrder() == PISearchCriteria.SortOrder.ASC)
-            queryBuilder.append(" ASC ");
-        else queryBuilder.append(" DESC ");
+        if (criteria.getSortOrder() != null && Pagination.OrderEnum.fromValue(criteria.getSortOrder().toString()) != null) {
+            paginationWrapper=paginationWrapper.replace("{orderBy}", criteria.getSortOrder().name());
+        }
+        else{
+            paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.DESC.name());
+        }
+
+        return paginationWrapper;
     }
+
+    public String addPaginationWrapper(StringBuilder query, PISearchCriteria searchCriteria, List<Object> preparedStmtList) {
+        String paginatedQuery = addOrderByClause(query, searchCriteria);
+
+        int limit = null != searchCriteria.getLimit() ? searchCriteria.getLimit() : 100;
+        int offset = null != searchCriteria.getOffset() ? searchCriteria.getOffset() : 0;
+
+        String finalQuery = paginatedQuery.replace("{}", query);
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit + offset);
+
+        return finalQuery;
+    }
+
+
+
 }

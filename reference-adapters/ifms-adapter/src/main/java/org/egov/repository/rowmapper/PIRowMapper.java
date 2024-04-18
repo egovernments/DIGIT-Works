@@ -56,7 +56,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
                 String piErrorResp = rs.getString("pymtInstPiErrorResp");
                 Object additionalDetails = getAdditionalDetail(rs, "pymtInstAdditionalDetails");
 
-                AuditDetails auditDetails = getAuditDetailsForKey(rs, "pymtInstCreatedBy","pymtInstCreatedTime",
+                AuditDetails auditDetails = getAuditDetailsForKey(rs, "pymtInstCreatedBy","createdTime",
                         "pymtInstLastModifiedBy","pymtInstLastModifiedTime") ;
 
                 paymentInstruction = PaymentInstruction.builder()
