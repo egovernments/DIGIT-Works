@@ -8,7 +8,7 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.2</version>
     </parent>
-    <groupId>org.example</groupId>
+    <groupId>org.egov.works</groupId>
     <artifactId>works-services-common</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
