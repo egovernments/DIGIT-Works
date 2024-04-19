@@ -125,9 +125,9 @@ def process_pi_data_for_each_tenant(request_info, tenant_id, cursor, connection,
     }
     data = {
         "RequestInfo": request_info,
-        "searchCriteria": {"tenantId": "od.testing",
+        "searchCriteria": {"tenantId": tenant_id,
                            "limit": 10,
-                           "offSet": 0,
+                           "offset": 0,
                            "sortBy": "createdTime",
                            "sortOrder": "DESC"
                            }
@@ -147,7 +147,7 @@ def process_pi_data_for_each_tenant(request_info, tenant_id, cursor, connection,
                 break
 
             # Update the offset for the next request
-            data["searchCriteria"]["offSet"] = str(int(data["searchCriteria"]["offSet"]) + int(data["searchCriteria"]["limit"]))
+            data["searchCriteria"]["offset"] = str(int(data["searchCriteria"]["offset"]) + int(data["searchCriteria"]["limit"]))
 
         else:
             print(f"Failed to fetch data from the API. Status code: {response.status_code}")
@@ -855,7 +855,7 @@ def push_data_to_db(disbursement, cursor):
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
     values_eg_program_disburse = get_program_disburse_values(disbursement)
-    cursor.executenant_idte(query_eg_program_disburse, values_eg_program_disburse)
+    cursor.execute(query_eg_program_disburse, values_eg_program_disburse)
     # Insert data into eg_program_message_codes table
     query_eg_program_message_codes = """
         INSERT INTO eg_program_message_codes 
@@ -1046,18 +1046,17 @@ def process_disbursement_data_for_each_tenant(tenant_id, type, result_type):
 
 
 def publish_data_to_kafka(all_data, value):
-    kafka_server = os.getenv('KAFKA_SERVER')
-    exchange_topic = os.getenv('MIGRATE_EXCHANGE_TOPIC')
-    producer = KafkaProducer(bootstrap_servers=kafka_server)
+    producer = KafkaProducer(bootstrap_servers='kafka-v2.kafka-cluster:9092')
+    topic = 'exchange-topic'
     signature = None
     header = {
         "message_id": "123",
         "message_ts": "1707460264352",
         "action": "create",
         "message_type": value,
-        "sender_id": "program@https://mukta-uat.digit.org/",
+        "sender_id": "program@https://mukta-uat.digit.org/mukta/digit-exchange",
         "sender_uri": "https://spp.example.org/{namespace}/callback/on-push",
-        "receiver_id": "program@https://mukta-uat.digit.org/"
+        "receiver_id": "program@https://mukta-uat.digit.org/ifms/digit-exchange"
     }
     d = {
         "signature": signature,
@@ -1067,7 +1066,8 @@ def publish_data_to_kafka(all_data, value):
     for data in all_data:
         d['message'] = data
         json_data = json.dumps(d).encode('utf-8')
-        producer.send(exchange_topic, json_data)
+        json_data['header']['message_id']=data['id']
+        producer.send(topic, json_data)
         producer.flush()
 
     producer.close()
@@ -1095,15 +1095,14 @@ def push_data_to_exchange():
 
 
 def publish_to_kafka(data):
-    kafka_server = os.getenv('KAFKA_SERVER')
-    migrate_data_topic = os.getenv('MIGRATE_DATA_TOPIC')
-    producer = KafkaProducer(bootstrap_servers=kafka_server)
+    producer = KafkaProducer(bootstrap_servers='kafka-v2.kafka-cluster:9092')
+    topic = 'migrate-data'
 
     # Convert data to JSON before publishing
     json_data = json.dumps(data).encode('utf-8')
 
     # Publish data to the Kafka topic
-    producer.send(migrate_data_topic, json_data)
+    producer.send(topic, json_data)
     producer.flush()
 
     # Close the producer
@@ -1139,11 +1138,8 @@ def start_kafka_consumer():
 
 
 def consume_from_kafka():
-    kafka_server = os.getenv('KAFKA_SERVER')
-    migrate_data_topic = os.getenv('MIGRATE_DATA_TOPIC')
-    consumer_group = os.getenv('MIGRATE_DATA_GROUP')
-    consumer = KafkaConsumer(migrate_data_topic, bootstrap_servers=kafka_server,
-                             group_id=consumer_group)
+    consumer = KafkaConsumer('migrate-data', bootstrap_servers='kafka-v2.kafka-cluster:9092',
+                             group_id='ifix-migration')
 
     for message in consumer:
         # Decode and process the message payload
@@ -1195,7 +1191,6 @@ def enrich_bankaccount_and_program_codes_ifms_data(mdms_data, cursor, connection
             connection.commit()
         except Exception as e:
             print(f"Error: {str(e)}")
-            logging.error(f"Error: {str(e)}")
             connection.rollback()
             continue
         logging.info(f"Bank Account updated for JIT Beneficiary Detail: {jit_beneficiary_detail_id}")
