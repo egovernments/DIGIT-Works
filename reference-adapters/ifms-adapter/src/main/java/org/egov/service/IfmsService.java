@@ -314,11 +314,14 @@ public class IfmsService {
     }
     private static String extractHostUrlFromURL(String input) {
         // Regular expression pattern to match the domain with http/https
-        Pattern pattern = Pattern.compile("(https?://[a-zA-Z0-9.-]+)");
+        // Pattern pattern = Pattern.compile("(https?://[a-zA-Z0-9.-]+)");
+        // Regex pattern to match the domain with http/https
+        String regex = "\\bhttps?://\\S+\\b";
+        // Regular expression pattern to match the domain with http/https
+        Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);
-
         if (matcher.find()) {
-            return matcher.group(1); // Returns the matched domain with http/https
+            return matcher.group(); // Returns the matched domain with http/https
         } else {
             return null; // No match found
         }
