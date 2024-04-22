@@ -791,7 +791,7 @@ public class PaymentInstructionEnrichment {
                 .netAmount(disbursement.getNetAmount())
                 .grossAmount(disbursement.getGrossAmount())
                 .jitBillNo(jitBillNo)
-                .jitBillDate(util.getFormattedTimeFromTimestamp(disbursement.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
+                .jitBillDate(util.getFormattedTimeFromTimestamp(disbursement.getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
                 .numBeneficiaries(beneficiaryList.size())
                 .auditDetails(auditDetails)
                 .jitBillDdoCode(sanctionDetail.getDdoCode())
@@ -834,6 +834,11 @@ public class PaymentInstructionEnrichment {
         AuditDetails auditDetails = disbursement.getAuditDetails();
         HashMap<String, Beneficiary> accountCodeToBeneficiaryMap = new HashMap<>();
         for(Disbursement disbursementDetail: disbursement.getDisbursements()) {
+            String accountType = null;
+            if(disbursementDetail.getAdditionalDetails() != null){
+                ObjectNode additionalDetails = objectMapper.valueToTree(disbursementDetail.getAdditionalDetails());
+                accountType = additionalDetails.get("accountType").asText();
+            }
             Beneficiary beneficiary = accountCodeToBeneficiaryMap.get(disbursementDetail.getAccountCode());
             if(beneficiary == null){
                 String beneficiaryId = UUID.randomUUID().toString();
@@ -862,6 +867,7 @@ public class PaymentInstructionEnrichment {
                         .benfEmailId(disbursementDetail.getIndividual().getEmail())
                         .benfAddress(disbursementDetail.getIndividual().getAddress())
                         .benfAmount(disbursementDetail.getNetAmount().toString())
+                        .benfAccountType(accountType)
                         .purpose("Mukta Payment")
                         .beneficiaryType(BeneficiaryType.IND)
                         .build();
