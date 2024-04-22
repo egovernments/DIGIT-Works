@@ -73,21 +73,9 @@ public class ProgramServiceUtil {
 
         return MsgHeader.builder()
                 .messageId(UUID.randomUUID().toString())
-                .senderId(idFormat.replace("{URI}", Objects.requireNonNull(extractHostUrlFromURL(senderId))))
-                .receiverId(idFormat.replace("{URI}", Objects.requireNonNull(extractHostUrlFromURL(receiverId))))
-                .senderUri(extractHostUrlFromURL(senderId))
+                .senderId(idFormat.replace("{URI}", Objects.requireNonNull(senderId)))
+                .receiverId(idFormat.replace("{URI}", Objects.requireNonNull(receiverId)))
+                .senderUri(senderId)
                 .build();
-    }
-
-    private static String extractHostUrlFromURL(String input) {
-        // Regular expression pattern to match the domain with http/https
-        Pattern pattern = Pattern.compile("(https?://[a-zA-Z0-9.-]+)");
-        Matcher matcher = pattern.matcher(input);
-
-        if (matcher.find()) {
-            return matcher.group(1); // Returns the matched domain with http/https
-        } else {
-            return null; // No match found
-        }
     }
 }
