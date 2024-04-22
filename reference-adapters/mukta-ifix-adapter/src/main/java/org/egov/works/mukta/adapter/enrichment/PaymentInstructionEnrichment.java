@@ -279,6 +279,8 @@ public class PaymentInstructionEnrichment {
     private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,AuditDetails auditDetails,String programCode,Map<String,String> headCodeCategoryMap) {
         log.info("Started executing enrichDisbursement");
         String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
+        String accountType = "SAVINGS";
+        ObjectNode additionalDetails = objectMapper.createObjectNode();
         Disbursement disbursement = new Disbursement();
         UUID uuid = UUID.randomUUID();
         disbursement.setId(uuid.toString());
@@ -286,6 +288,7 @@ public class PaymentInstructionEnrichment {
         if (bankAccount != null && !bankAccount.getBankAccountDetails().isEmpty()) {
             accountCode = accountCode.replace("{ACCOUNT_NO}", bankAccount.getBankAccountDetails().get(0).getAccountNumber());
             accountCode = accountCode.replace("{IFSC_CODE}", bankAccount.getBankAccountDetails().get(0).getBankBranchIdentifier().getCode());
+            accountType = bankAccount.getBankAccountDetails().get(0).getAccountType();
             disbursement.setAccountCode(accountCode);
         }
         disbursement.setNetAmount(lineItem.getAmount());
@@ -319,7 +322,8 @@ public class PaymentInstructionEnrichment {
         }
         disbursement.setIndividual(piIndividual);
         disbursement.setAuditDetails(auditDetails);
-
+        additionalDetails.put(Constants.ACCOUNT_TYPE, accountType);
+        disbursement.setAdditionalDetails(additionalDetails);
         return disbursement;
     }
     /**
