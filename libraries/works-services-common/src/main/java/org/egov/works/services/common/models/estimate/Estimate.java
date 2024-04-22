@@ -57,7 +57,7 @@ public class Estimate {
     private BigDecimal proposalDate = null;
 
     @JsonProperty("status")
-    private StatusEnum status = null;
+    private Status status = null;
     //private String status = null;
 
     @JsonProperty("wfStatus")
@@ -106,42 +106,5 @@ public class Estimate {
         this.estimateDetails.add(estimateDetailsItem);
         return this;
     }
-
-    /**
-     * It stores the status of the estimate.
-     */
-    public enum StatusEnum {
-
-        DRAFT("DRAFT"),
-        
-        INWORKFLOW("INWORKFLOW"),
-
-        ACTIVE("ACTIVE"),
-
-        INACTIVE("INACTIVE");
-
-        private String value;
-
-        StatusEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonCreator
-        public static StatusEnum fromValue(String text) {
-            for (StatusEnum b : StatusEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
 }
 
