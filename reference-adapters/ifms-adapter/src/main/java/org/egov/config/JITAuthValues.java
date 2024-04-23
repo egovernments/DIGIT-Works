@@ -14,5 +14,6 @@ import org.springframework.stereotype.Component;
 public class JITAuthValues {
     private String authToken;
     private String sekString;
+    private Long lastLogin;
 
 }
