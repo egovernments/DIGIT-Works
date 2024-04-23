@@ -20,11 +20,15 @@ import static org.egov.works.util.ContractServiceConstants.*;
 @Component
 @Slf4j
 public class MDMSUtils {
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
+
+    private final ContractServiceConfiguration config;
 
     @Autowired
-    private ContractServiceConfiguration config;
+    public MDMSUtils(ServiceRequestRepository serviceRequestRepository, ContractServiceConfiguration config) {
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+    }
 
     public Object fetchMDMSForValidation(RequestInfo requestInfo, String tenantId) {
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSValidationRequest(requestInfo, tenantId);
