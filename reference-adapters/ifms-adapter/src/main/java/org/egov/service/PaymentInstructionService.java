@@ -649,7 +649,7 @@ public class PaymentInstructionService {
         List<Disbursement> disbursements = disbursementResponse.getDisbursements();
         piEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursements.get(0));
         piEnrichment.setAddtionaInfoForDisbursement(paymentInstruction, disbursements.get(0));
-        msgCallbackHeader.setAction(Action.CREATE);
+        msgCallbackHeader.setAction(Action.UPDATE);
         msgCallbackHeader.setMessageType(MessageType.ON_DISBURSE);
         try {
             DisbursementRequest disbursementRequest = DisbursementRequest.builder()
