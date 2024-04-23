@@ -279,7 +279,7 @@ public class PaymentInstructionEnrichment {
     private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,AuditDetails auditDetails,String programCode,Map<String,String> headCodeCategoryMap) {
         log.info("Started executing enrichDisbursement");
         String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
-        String accountType = "SAVINGS";
+        String accountType = null;
         ObjectNode additionalDetails = objectMapper.createObjectNode();
         Disbursement disbursement = new Disbursement();
         UUID uuid = UUID.randomUUID();
