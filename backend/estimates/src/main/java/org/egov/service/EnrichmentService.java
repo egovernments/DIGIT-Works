@@ -1,12 +1,11 @@
 package org.egov.service;
 
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.idgen.IdGenerationResponse;
+import org.egov.common.contract.idgen.IdResponse;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.EstimateRepository;
 import org.egov.repository.IdGenRepository;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -142,7 +140,6 @@ public class EnrichmentService {
      * enrich the search estimate criteria with default values in case the
      * values are not passed as part of request
      *
-     * @param requestInfo
      * @param searchCriteria
      */
     public void enrichEstimateOnSearch(EstimateSearchCriteria searchCriteria) {

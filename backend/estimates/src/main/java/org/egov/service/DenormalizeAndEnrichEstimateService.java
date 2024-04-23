@@ -3,9 +3,9 @@ package org.egov.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.ProcessInstanceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.workflow.ProcessInstanceResponse;
 import org.egov.util.EstimateServiceConstant;
 import org.egov.util.ProjectUtil;
 import org.egov.web.models.Estimate;
