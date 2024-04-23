@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.workflow.ProcessInstance;
+import org.egov.common.models.project.Address;
+import org.egov.common.models.project.Project;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;

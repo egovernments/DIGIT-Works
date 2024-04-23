@@ -2,10 +2,12 @@ package org.egov.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.models.project.Address;
 import org.egov.web.models.*;
 import org.springframework.core.io.ClassPathResource;
 
@@ -56,7 +58,7 @@ public class EstimateRequestBuilderTest {
 
         List<String> assignees = new ArrayList<>();
         assignees.add("88ba2d55-b7a4-41e2-8598-19a83d63c9a9");
-        Workflow workflow = Workflow.builder().action("CREATE").assignees(assignees).build();
+        Workflow workflow = Workflow.builder().action("CREATE").assignes(assignees).build();
 
         this.estimateRequest = EstimateRequest.builder()
                 .requestInfo(getRequestInfo())
@@ -87,7 +89,7 @@ public class EstimateRequestBuilderTest {
 
         List<String> assignees = new ArrayList<>();
         assignees.add("88ba2d55-b7a4-41e2-8598-19a83d63c9a9");
-        Workflow workflow = Workflow.builder().action("CREATE").assignees(assignees).build();
+        Workflow workflow = Workflow.builder().action("CREATE").assignes(assignees).build();
 
         this.estimateRequest = EstimateRequest.builder()
                 .requestInfo(getRequestInfo())
@@ -115,7 +117,7 @@ public class EstimateRequestBuilderTest {
 
         List<String> assignees = new ArrayList<>();
         assignees.add("88ba2d55-b7a4-41e2-8598-19a83d63c9a9");
-        Workflow workflow = Workflow.builder().action("CREATE").assignees(assignees).build();
+        Workflow workflow = Workflow.builder().action("CREATE").assignes(assignees).build();
 
         this.estimateRequest = EstimateRequest.builder()
                 .requestInfo(getRequestInfo())
