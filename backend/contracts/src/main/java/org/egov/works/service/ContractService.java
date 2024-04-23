@@ -23,32 +23,36 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ContractService {
 
-    @Autowired
-    private ContractServiceValidator contractServiceValidator;
+    private final ContractServiceValidator contractServiceValidator;
+
+    private final ResponseInfoFactory responseInfoFactory;
+
+    private final ContractServiceConfiguration contractServiceConfiguration;
+
+    private final ContractEnrichment contractEnrichment;
+
+    private final ContractProducer contractProducer;
+
+    private final ContractRepository contractRepository;
+
+    private final LineItemsRepository lineItemsRepository;
+
+    private final WorkflowService workflowService;
+
+    private final NotificationService notificationService;
 
     @Autowired
-    private ResponseInfoFactory responseInfoFactory;
-
-    @Autowired
-    private ContractServiceConfiguration contractServiceConfiguration;
-
-    @Autowired
-    private ContractEnrichment contractEnrichment;
-
-    @Autowired
-    private ContractProducer contractProducer;
-
-    @Autowired
-    private ContractRepository contractRepository;
-
-    @Autowired
-    private LineItemsRepository lineItemsRepository;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private NotificationService notificationService;
+    public ContractService(ContractServiceValidator contractServiceValidator, ResponseInfoFactory responseInfoFactory, ContractServiceConfiguration contractServiceConfiguration, ContractEnrichment contractEnrichment, ContractProducer contractProducer, ContractRepository contractRepository, LineItemsRepository lineItemsRepository, WorkflowService workflowService, NotificationService notificationService) {
+        this.contractServiceValidator = contractServiceValidator;
+        this.responseInfoFactory = responseInfoFactory;
+        this.contractServiceConfiguration = contractServiceConfiguration;
+        this.contractEnrichment = contractEnrichment;
+        this.contractProducer = contractProducer;
+        this.contractRepository = contractRepository;
+        this.lineItemsRepository = lineItemsRepository;
+        this.workflowService = workflowService;
+        this.notificationService = notificationService;
+    }
 
     public ContractResponse createContract(ContractRequest contractRequest) {
         log.info("Create contract");

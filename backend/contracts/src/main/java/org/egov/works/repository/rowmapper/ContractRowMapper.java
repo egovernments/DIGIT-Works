@@ -2,9 +2,9 @@ package org.egov.works.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.Contract;
 import org.egov.works.web.models.Document;
@@ -25,8 +25,12 @@ import java.util.*;
 @Slf4j
 public class ContractRowMapper implements ResultSetExtractor<List<Contract>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public ContractRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Contract> extractData(ResultSet rs) throws SQLException, DataAccessException {

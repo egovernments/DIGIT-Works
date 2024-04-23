@@ -2,15 +2,13 @@ package org.egov.works.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.repository.ServiceRequestRepository;
-import org.egov.works.web.models.Estimate;
-import org.egov.works.web.models.EstimateResponse;
+import org.egov.works.services.common.models.estimate.Estimate;
+import org.egov.works.services.common.models.estimate.EstimateResponse;
 import org.egov.works.web.models.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,17 +23,20 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EstimateServiceUtil {
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+
+    private final ContractServiceConfiguration config;
+
+    private final ObjectMapper mapper;
+
+    private final RestTemplate restTemplate;
 
     @Autowired
-    private ContractServiceConfiguration config;
+    public EstimateServiceUtil(ContractServiceConfiguration config, ObjectMapper mapper, RestTemplate restTemplate) {
+        this.config = config;
+        this.mapper = mapper;
+        this.restTemplate = restTemplate;
+    }
 
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private RestTemplate restTemplate;
     private StringBuilder getSearchURLWithParams(String tenantId, Set<String> estimateIds) {
         StringBuilder url = new StringBuilder(config.getEstimateHost());
         url.append(config.getEstimateEndpoint());
@@ -57,7 +58,8 @@ public class EstimateServiceUtil {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         EstimateResponse response = null;
         try {
-            response = restTemplate.postForObject(uri.toString(), request, EstimateResponse.class);
+            Object res = restTemplate.postForObject(uri.toString(), request, Object.class);
+            response = mapper.convertValue(res, EstimateResponse.class);
         } catch (HttpClientErrorException e) {
             log.error("External Service threw an Exception: ", e);
             throw new ServiceCallException(e.getResponseBodyAsString());
