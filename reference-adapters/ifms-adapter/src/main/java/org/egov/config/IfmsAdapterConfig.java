@@ -157,4 +157,7 @@ public class IfmsAdapterConfig {
 
     @Value("${app.domain}")
     private String appDomain;
+
+    @Value("${ifms.session.timeout}")
+    private Long ifmsSessionTimeout;
 }

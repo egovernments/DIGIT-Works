@@ -79,7 +79,8 @@ public class IfmsService {
     }
 
     public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
-        if (jitAuthValues.getAuthToken() == null) {
+        // Check if the auth token is null or the session has expired
+        if (jitAuthValues.getAuthToken() == null || (System.currentTimeMillis() - jitAuthValues.getLastLogin()) >= config.getIfmsSessionTimeout()){
             getAuthDetailsFromIFMS();
         }
         JITResponse decryptedResponse = null;
@@ -152,6 +153,7 @@ public class IfmsService {
             // Set authentication details to the request
             jitAuthValues.setAuthToken(authResponse.get("authToken"));
             jitAuthValues.setSekString(decryptedSek);
+            jitAuthValues.setLastLogin(System.currentTimeMillis());
             // save auth response to ES
             esLogUtils.saveAuthenticateRequest(appKeys.toString(), authResponse.toString());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
