@@ -55,4 +55,6 @@ public class Error {
     public static final String BANK_ACCOUNTS_NOT_FOUND = "BANK_ACCOUNTS_NOT_FOUND";
     public static final String BANK_ACCOUNTS_NOT_FOUND_MESSAGE = "Bank accounts not found for the given bank account search criteria";
     public static final String PROGRAM_SERVICE_ERROR = "PROGRAM_SERVICE_ERROR";
+    public static final String DISBURSEMENT_CREATION_FAILED = "DISBURSEMENT_CREATION_FAILED";
+    public static final String DISBURSEMENT_CREATION_FAILED_MESSAGE = "Disbursement creation failed for the given payment request";
 }

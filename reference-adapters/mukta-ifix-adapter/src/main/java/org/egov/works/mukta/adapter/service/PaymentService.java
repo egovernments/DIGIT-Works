@@ -211,5 +211,19 @@ public class PaymentService {
             billUtils.callPaymentUpdate(paymentRequest);
         }
     }
+    public void updatePaymentStatusToInitiated(PaymentRequest paymentRequest){
+        log.error("Updating payment status to failed as disbursement failed.");
+        if(paymentRequest.getPayment() != null && paymentRequest.getPayment().getStatus() != PaymentStatus.INITIATED){
+            paymentRequest.getPayment().setStatus(PaymentStatus.INITIATED);
+            paymentRequest.getPayment().getBills().forEach(bill -> {
+                bill.setStatus(PaymentStatus.INITIATED);
+                bill.getBillDetails().forEach(billDetail -> {
+                    billDetail.setStatus(PaymentStatus.INITIATED);
+                    billDetail.getPayableLineItems().forEach(payableLineItem -> payableLineItem.setStatus(PaymentStatus.INITIATED));
+                });
+            });
+            billUtils.callPaymentUpdate(paymentRequest);
+        }
+    }
 }
 
