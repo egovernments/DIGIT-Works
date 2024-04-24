@@ -837,6 +837,7 @@ public class PaymentInstructionEnrichment {
             String accountType = null;
             String beneficiaryId = null;
             String beneficiaryType = null;
+            String benfId = UUID.randomUUID().toString();
             if(disbursementDetail.getAdditionalDetails() != null){
                 ObjectNode additionalDetails = objectMapper.valueToTree(disbursementDetail.getAdditionalDetails());
                 if (additionalDetails.hasNonNull("accountType")) {
@@ -854,13 +855,13 @@ public class PaymentInstructionEnrichment {
                 List<BenfLineItems> benfLineItems = new ArrayList<>();
                 BenfLineItems benfLineItem = BenfLineItems.builder()
                         .id(UUID.randomUUID().toString())
-                        .beneficiaryId(beneficiaryId)
+                        .beneficiaryId(benfId)
                         .lineItemId(disbursementDetail.getTargetId())
                         .auditDetails(auditDetails).build();
                 benfLineItems.add(benfLineItem);
 
                 beneficiary = Beneficiary.builder()
-                        .id(beneficiaryId)
+                        .id(benfId)
                         .beneficiaryId(beneficiaryId)
                         .tenantId(disbursement.getLocationCode())
                         .muktaReferenceId(disbursementDetail.getTargetId())
