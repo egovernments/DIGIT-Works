@@ -92,7 +92,7 @@ public class PaymentInstructionService {
                 throw new RuntimeException(e);
             }
             programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
-            paymentService.updatePaymentStatusToInitiated(paymentRequest);
+            paymentService.updatePaymentStatus(paymentRequest.getPayment(),disbursement, paymentRequest.getRequestInfo());
             log.info("Pushing disbursement request to the kafka topic");
             return encriptedDisbursement;
         }catch (Exception e){

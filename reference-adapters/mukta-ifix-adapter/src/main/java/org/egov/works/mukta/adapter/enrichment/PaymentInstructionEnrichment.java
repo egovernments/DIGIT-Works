@@ -450,6 +450,7 @@ public class PaymentInstructionEnrichment {
                 case SUCCESSFUL:
                     return BeneficiaryPaymentStatus.SUCCESS;
                 case FAILED:
+                case ERROR:
                     return BeneficiaryPaymentStatus.FAILED;
                 default:
                     return null;
