@@ -353,6 +353,7 @@ public class PaymentInstructionEnrichment {
         HashMap<String,List<Disbursement>> beneficiaryDisbursementMap = getBeneficiaryDisbursementMap(disbursement);
         for(Map.Entry<String,List<Disbursement>> entry: beneficiaryDisbursementMap.entrySet()){
             String beneficiaryId = entry.getKey();
+            String beneficiaryDetailsId = UUID.randomUUID().toString();
             JsonNode beneficiaryTypeNode = null;
             JsonNode beneficiaryPaymentStatusNode = null;
             List<Disbursement> disbursements = entry.getValue();
@@ -361,7 +362,7 @@ public class PaymentInstructionEnrichment {
             for(Disbursement disbursement1: disbursements){
                 BenfLineItems benfLineItem = BenfLineItems.builder().id(UUID.randomUUID().toString())
                         .lineItemId(disbursement1.getTargetId())
-                        .beneficiaryId(beneficiaryId)
+                        .beneficiaryId(beneficiaryDetailsId)
                         .auditDetails(auditDetails)
                         .build();
 
@@ -374,7 +375,7 @@ public class PaymentInstructionEnrichment {
                 benfLineItems.add(benfLineItem);
             }
             Beneficiary beneficiary = Beneficiary.builder()
-                    .id(beneficiaryId)
+                    .id(beneficiaryDetailsId)
                     .tenantId(disbursementLineItem.getLocationCode())
                     .muktaReferenceId(disbursementLineItem.getTargetId())
                     .beneficiaryNumber(disbursementLineItem.getTransactionId())
