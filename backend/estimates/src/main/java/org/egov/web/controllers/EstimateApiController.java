@@ -25,17 +25,21 @@ import java.util.List;
 @RequestMapping("/v1")
 public class EstimateApiController {
 
-    @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
     private HttpServletRequest request;
 
-    @Autowired
     private ResponseInfoCreator responseInfoCreator;
 
-    @Autowired
     private EstimateService estimateService;
+
+    @Autowired
+    public EstimateApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoCreator responseInfoCreator, EstimateService estimateService) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+        this.responseInfoCreator = responseInfoCreator;
+        this.estimateService = estimateService;
+    }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<EstimateResponse> createEstimate(@ApiParam(value = "Request object to create estimate in the system", required = true) @Valid @RequestBody EstimateRequest body, @ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType) {
