@@ -189,7 +189,7 @@ public class PaymentInstructionEnrichment {
             for (LineItem lineItem : piBeneficiary.getLineItems()) {
                 if (lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) &&
                         (lineItem.getPaymentStatus() == null || !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL))) {
-                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, auditDetails,programCode,headCodeCategoryMap);
+                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, auditDetails,programCode,headCodeCategoryMap, piBeneficiary.getBeneficiaryId());
                     disbursements.add(disbursementForLineItem);
                 }
             }
@@ -276,7 +276,7 @@ public class PaymentInstructionEnrichment {
      * @param headCodeCategoryMap The head code category map
      * @return The disbursement
      */
-    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,AuditDetails auditDetails,String programCode,Map<String,String> headCodeCategoryMap) {
+    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,AuditDetails auditDetails,String programCode,Map<String,String> headCodeCategoryMap,String beneficiaryId) {
         log.info("Started executing enrichDisbursement");
         String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
         String accountType = null;
@@ -323,6 +323,7 @@ public class PaymentInstructionEnrichment {
         disbursement.setIndividual(piIndividual);
         disbursement.setAuditDetails(auditDetails);
         additionalDetails.put(Constants.ACCOUNT_TYPE, accountType);
+        additionalDetails.put("beneficiaryId",beneficiaryId);
         disbursement.setAdditionalDetails(additionalDetails);
         return disbursement;
     }
@@ -373,7 +374,7 @@ public class PaymentInstructionEnrichment {
                     .id(beneficiaryId)
                     .tenantId(disbursementLineItem.getLocationCode())
                     .muktaReferenceId(disbursementLineItem.getTargetId())
-                    .beneficiaryNumber(disbursementLineItem.getTargetId())
+                    .beneficiaryNumber(disbursementLineItem.getTransactionId())
                     .bankAccountId(disbursementLineItem.getAccountCode())
                     .amount(disbursementLineItem.getNetAmount())
                     .beneficiaryId(beneficiaryId)
