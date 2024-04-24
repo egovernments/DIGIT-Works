@@ -469,7 +469,7 @@ def create_disbursement_for_individual(beneficiary, individual, request_info, pi
             },
             "program_code": "PG/2023-24/000310",
             "additional_details": {
-                "beneficiaryId": entry['beneficiaryId'],
+                "beneficiaryId": beneficiary['beneficiaryId'],
                 "beneficiaryType": "IND",
                 "beneficiaryStatus": beneficiary['paymentStatus']
             },
@@ -536,7 +536,7 @@ def create_disbursement_for_organization(beneficiary, organization, request_info
             },
             "program_code": "PG/2023-24/000310",
             "additional_details": {
-                "beneficiaryId": entry['beneficiaryId'],
+                "beneficiaryId": beneficiary['beneficiaryId'],
                 "beneficiaryType": "ORG",
                 "beneficiaryStatus": beneficiary['paymentStatus']
             },
@@ -603,7 +603,7 @@ def create_disbursement_for_department(beneficiary, request_info, pi_created_tim
             },
             "program_code": "PG/2023-24/000310",
             "additional_details": {
-                "beneficiaryId": entry['beneficiaryId'],
+                "beneficiaryId": beneficiary['beneficiaryId'],
                 "beneficiaryType": "DEPT",
                 "beneficiaryStatus": beneficiary['paymentStatus']
             },
