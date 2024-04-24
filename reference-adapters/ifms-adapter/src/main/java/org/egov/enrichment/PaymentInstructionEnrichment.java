@@ -780,7 +780,8 @@ public class PaymentInstructionEnrichment {
                 .muktaReferenceId(disbursement.getTargetId())
                 .auditDetails(auditDetails)
                 .build();
-
+        additionalDetails.set("paDetails", objectMapper.valueToTree(paDetails));
+        disbursement.setAdditionalDetails(additionalDetails);
 
         return PaymentInstruction.builder()
                 .id(piId)
