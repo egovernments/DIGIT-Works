@@ -303,6 +303,7 @@ public class PaymentInstructionEnrichment {
             piIndividual.setName(lineItem.getHeadCode());
             piIndividual.setPhone("9999999999");
             piIndividual.setAddress(lineItem.getTenantId());
+            additionalDetails.put("beneficiaryType",BeneficiaryType.DEPT.toString());
         }else{
             if (individual != null) {
                 piIndividual.setAddress(individual.getAddress().get(0).getAddressLine1() == null ? individual.getAddress().get(0).getCity() : individual.getAddress().get(0).getAddressLine1());
@@ -311,6 +312,7 @@ public class PaymentInstructionEnrichment {
                 piIndividual.setEmail(individual.getEmail());
                 piIndividual.setPin(individual.getAddress().get(0).getPincode());
                 piIndividual.setName(individual.getName().getGivenName());
+                additionalDetails.put("beneficiaryType",BeneficiaryType.IND.toString());
             }
             if (organisation != null) {
                 piIndividual.setAddress(organisation.getOrgAddress().get(0).getAddressLine1() == null ? organisation.getOrgAddress().get(0).getCity() : organisation.getOrgAddress().get(0).getAddressLine1());
@@ -318,6 +320,7 @@ public class PaymentInstructionEnrichment {
                 piIndividual.setEmail(organisation.getContactDetails().get(0).getContactEmail());
                 piIndividual.setPin(organisation.getOrgAddress().get(0).getPincode());
                 piIndividual.setName(organisation.getName());
+                additionalDetails.put("beneficiaryType",BeneficiaryType.ORG.toString());
             }
         }
         disbursement.setIndividual(piIndividual);
