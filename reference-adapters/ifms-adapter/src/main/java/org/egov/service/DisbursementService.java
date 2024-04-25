@@ -317,7 +317,9 @@ public class DisbursementService {
         disbursementResponse.getMessage().setTransactionId(paymentInstructionFromDisbursement.getJitBillNo());
         HashMap<String, Beneficiary> muktaRefIdToBenefPayementStatusMap = new HashMap<>();
         for(Beneficiary beneficiary:paymentInstructionFromDisbursement.getBeneficiaryDetails()){
-            muktaRefIdToBenefPayementStatusMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
+            for(BenfLineItems benfLineItems: beneficiary.getBenfLineItems()){
+                muktaRefIdToBenefPayementStatusMap.put(benfLineItems.getLineItemId(),beneficiary);
+            }
         }
         for(Disbursement disbursement: disbursementResponse.getMessage().getDisbursements()){
             Beneficiary beneficiary = muktaRefIdToBenefPayementStatusMap.get(disbursement.getTargetId());

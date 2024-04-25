@@ -120,7 +120,7 @@ public class PaymentInstructionEnrichment {
         Map<String, Beneficiary> benfMap = new HashMap<>();
         for (Beneficiary beneficiary : beneficiaryList) {
             if (benfMap.containsKey(beneficiary.getBeneficiaryId())) {
-                benfMap.get(beneficiary.getBeneficiaryId()).getBenfLineItems().addAll(beneficiary.getBenfLineItems());
+                benfMap.get(beneficiary.getBeneficiaryId()).getLineItems().addAll(beneficiary.getLineItems());
                 benfMap.get(beneficiary.getBeneficiaryId()).setAmount(benfMap.get(beneficiary.getBeneficiaryId()).getAmount().add(beneficiary.getAmount()));
             } else {
                 benfMap.put(beneficiary.getBeneficiaryId(), beneficiary);
