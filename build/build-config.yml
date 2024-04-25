@@ -59,7 +59,7 @@ config:
   - name: "builds/digit-works/backend/contracts"
     build:
       - work-dir: "backend/contracts"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "contracts"
       - work-dir: "backend/contracts/src/main/resources/db"
         image-name: "contracts-db"
