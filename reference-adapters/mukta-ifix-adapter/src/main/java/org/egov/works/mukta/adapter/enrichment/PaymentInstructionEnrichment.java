@@ -218,8 +218,8 @@ public class PaymentInstructionEnrichment {
         }
         setAmountForParentDisbursement(disbursement);
 
-        additionalDetailsForDisbursement.set("billNumbers", objectMapper.valueToTree(billNumbers));
-        additionalDetailsForDisbursement.set("referenceIds", objectMapper.valueToTree(referenceIds));
+        additionalDetailsForDisbursement.set("billNumber", objectMapper.valueToTree(billNumbers));
+        additionalDetailsForDisbursement.set("referenceId", objectMapper.valueToTree(referenceIds));
         additionalDetailsForDisbursement.set("isRevised", objectMapper.valueToTree(isRevised));
         disbursement.setAdditionalDetails(additionalDetailsForDisbursement);
     }
@@ -390,8 +390,8 @@ public class PaymentInstructionEnrichment {
             beneficiaries.add(beneficiary);
         }
         ObjectNode additionalDetailsForPI = objectMapper.createObjectNode();
-        additionalDetailsForPI.set("billNumbers", additionalDetailsOfDisbursement.get("billNumbers"));
-        additionalDetailsForPI.set("referenceIds", additionalDetailsOfDisbursement.get("referenceIds"));
+        additionalDetailsForPI.set("billNumber", additionalDetailsOfDisbursement.get("billNumber"));
+        additionalDetailsForPI.set("referenceId", additionalDetailsOfDisbursement.get("referenceId"));
         additionalDetailsForPI.set("mstAllotmentId", additionalDetailsOfDisbursement.get("mstAllotmentId"));
         additionalDetailsForPI.set("hoaCode", additionalDetailsOfDisbursement.get("hoaCode"));
         JsonNode paDetailsNode = additionalDetailsOfDisbursement.get("paDetails");
