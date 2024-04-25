@@ -47,6 +47,7 @@ public class PaymentInstructionService {
     private final MuktaAdaptorConfig muktaAdaptorConfig;
     private final ObjectMapper objectMapper;
     private final DisbursementValidator disbursementValidator;
+    private final PaymentService paymentService;
 
     @Autowired
     public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator) {
@@ -61,31 +62,52 @@ public class PaymentInstructionService {
         this.muktaAdaptorProducer = muktaAdaptorProducer;
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.objectMapper = objectMapper;
+        this.paymentService = paymentService;
         this.disbursementValidator = disbursementValidator;
     }
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
         log.info("Processing payment instruction on failure");
-        Boolean isRevised = disbursementValidator.isValidForDisbursementCreate(paymentRequest);
-        log.info("Creating new disbursement for the payment id : " + paymentRequest.getReferenceId());
-        Disbursement disbursement = processPaymentInstruction(paymentRequest,isRevised);
-        Disbursement encriptedDisbursement = piEnrichment.encriptDisbursement(disbursement);
-        PaymentInstruction pi = piEnrichment.getPaymentInstructionFromDisbursement(encriptedDisbursement);
-        MsgHeader msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
-        msgHeader.setAction(Action.CREATE);
-        msgHeader.setMessageType(MessageType.DISBURSE);
-        DisbursementRequest disbursementRequest = DisbursementRequest.builder().message(disbursement).header(msgHeader).build();
-        DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().message(encriptedDisbursement).header(msgHeader).build();
-        muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), encriptedDisbursementRequest);
-        updatePIIndex(paymentRequest.getRequestInfo(),pi,isRevised);
+        Disbursement disbursement = null;
+        Disbursement encriptedDisbursement = null;
+        PaymentInstruction pi = null;
+        MsgHeader msgHeader = null;
+        Boolean isRevised = false;
         try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            isRevised = disbursementValidator.isValidForDisbursementCreate(paymentRequest);
+            log.info("Creating new disbursement for the payment id : " + paymentRequest.getReferenceId());
+            disbursement = processPaymentInstruction(paymentRequest,isRevised);
+            encriptedDisbursement = piEnrichment.encriptDisbursement(disbursement);
+            pi = piEnrichment.getPaymentInstructionFromDisbursement(encriptedDisbursement);
+            msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
+            msgHeader.setAction(Action.CREATE);
+            msgHeader.setMessageType(MessageType.DISBURSE);
+            DisbursementRequest disbursementRequest = DisbursementRequest.builder().message(disbursement).header(msgHeader).build();
+            DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().message(encriptedDisbursement).header(msgHeader).build();
+            muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), encriptedDisbursementRequest);
+            updatePIIndex(paymentRequest.getRequestInfo(),pi,isRevised);
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+            paymentService.updatePaymentStatus(paymentRequest.getPayment(),disbursement, paymentRequest.getRequestInfo());
+            log.info("Pushing disbursement request to the kafka topic");
+            return encriptedDisbursement;
+        }catch (Exception e){
+            paymentService.updatePaymentStatusToFailed(paymentRequest);
+            if(encriptedDisbursement != null){
+                piEnrichment.enrichDisbursementStatus(encriptedDisbursement, StatusCode.FAILED,e.getMessage());
+                DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(encriptedDisbursement).build();
+                muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementRequest);
+                pi.setPiStatus(PIStatus.FAILED);
+                pi.setPiErrorResp(e.getMessage());
+                updatePIIndex(paymentRequest.getRequestInfo(), pi,isRevised);
+            }
+            log.error("Exception occurred in : PaymentInstructionService:processDisbursementCreate " + e);
+            throw new CustomException(Error.DISBURSEMENT_CREATION_FAILED, e.getMessage());
         }
-        programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
-        log.info("Pushing disbursement request to the kafka topic");
-        return encriptedDisbursement;
     }
 
     public Disbursement processPaymentInstruction(PaymentRequest paymentRequest,Boolean isRevised) {

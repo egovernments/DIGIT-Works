@@ -780,7 +780,8 @@ public class PaymentInstructionEnrichment {
                 .muktaReferenceId(disbursement.getTargetId())
                 .auditDetails(auditDetails)
                 .build();
-
+        additionalDetails.set("paDetails", objectMapper.valueToTree(paDetails));
+        disbursement.setAdditionalDetails(additionalDetails);
 
         return PaymentInstruction.builder()
                 .id(piId)
@@ -835,23 +836,33 @@ public class PaymentInstructionEnrichment {
         HashMap<String, Beneficiary> accountCodeToBeneficiaryMap = new HashMap<>();
         for(Disbursement disbursementDetail: disbursement.getDisbursements()) {
             String accountType = null;
+            String beneficiaryId = null;
+            String beneficiaryType = null;
+            String benfId = UUID.randomUUID().toString();
             if(disbursementDetail.getAdditionalDetails() != null){
                 ObjectNode additionalDetails = objectMapper.valueToTree(disbursementDetail.getAdditionalDetails());
-                accountType = additionalDetails.get("accountType").asText();
+                if (additionalDetails.hasNonNull("accountType")) {
+                    accountType = additionalDetails.get("accountType").asText();
+                }
+                if (additionalDetails.hasNonNull("beneficiaryId")) {
+                    beneficiaryId = additionalDetails.get("beneficiaryId").asText();
+                }
+                if (additionalDetails.hasNonNull("beneficiaryType")) {
+                    beneficiaryType = additionalDetails.get("beneficiaryType").asText();
+                }
             }
             Beneficiary beneficiary = accountCodeToBeneficiaryMap.get(disbursementDetail.getAccountCode());
             if(beneficiary == null){
-                String beneficiaryId = UUID.randomUUID().toString();
                 List<BenfLineItems> benfLineItems = new ArrayList<>();
                 BenfLineItems benfLineItem = BenfLineItems.builder()
                         .id(UUID.randomUUID().toString())
-                        .beneficiaryId(beneficiaryId)
+                        .beneficiaryId(benfId)
                         .lineItemId(disbursementDetail.getTargetId())
                         .auditDetails(auditDetails).build();
                 benfLineItems.add(benfLineItem);
 
                 beneficiary = Beneficiary.builder()
-                        .id(beneficiaryId)
+                        .id(benfId)
                         .beneficiaryId(beneficiaryId)
                         .tenantId(disbursement.getLocationCode())
                         .muktaReferenceId(disbursementDetail.getTargetId())
@@ -869,7 +880,7 @@ public class PaymentInstructionEnrichment {
                         .benfAmount(disbursementDetail.getNetAmount().toString())
                         .benfAccountType(accountType)
                         .purpose("Mukta Payment")
-                        .beneficiaryType(BeneficiaryType.IND)
+                        .beneficiaryType(BeneficiaryType.fromValue(beneficiaryType))
                         .build();
                 removeSpecialCharactersAndExtraSpaces(beneficiary);
                 accountCodeToBeneficiaryMap.put(disbursementDetail.getAccountCode(),beneficiary);
@@ -1005,9 +1016,7 @@ public class PaymentInstructionEnrichment {
         disbursement.setAdditionalDetails(additionalDetailsForDisbursement);
         for(Disbursement disbursement1: disbursement.getDisbursements()){
             Beneficiary beneficiary = muktaRefIdToBenefPaymentStatusMap.get(disbursement1.getTargetId());
-            ObjectNode additionalDetailsForChild = objectMapper.createObjectNode();
-            additionalDetailsForChild.set("beneficiaryId", objectMapper.valueToTree(beneficiary.getBeneficiaryId()));
-            additionalDetailsForChild.set("beneficiaryType", objectMapper.valueToTree(beneficiary.getBeneficiaryType()));
+            ObjectNode additionalDetailsForChild = objectMapper.valueToTree(disbursement1.getAdditionalDetails());
             additionalDetailsForChild.set("beneficiaryStatus", objectMapper.valueToTree(beneficiary.getPaymentStatus()));
             disbursement1.setAdditionalDetails(additionalDetailsForChild);
         }

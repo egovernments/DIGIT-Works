@@ -38,9 +38,10 @@ public class DisbursementService {
     private final UserUtil userUtil;
     private final PaymentInstructionEnrichment paymentInstructionEnrichment;
     private final PaymentInstructionService paymentInstructionService;
+    private final PaymentService paymentService;
 
     @Autowired
-    public DisbursementService(BillUtils billUtils, MuktaAdaptorConfig muktaAdaptorConfig, MuktaAdaptorProducer muktaAdaptorProducer, DisbursementValidator disbursementValidator, UserUtil userUtil, PaymentInstructionEnrichment paymentInstructionEnrichment, PaymentInstructionService paymentInstructionService) {
+    public DisbursementService(BillUtils billUtils, MuktaAdaptorConfig muktaAdaptorConfig, MuktaAdaptorProducer muktaAdaptorProducer, DisbursementValidator disbursementValidator, UserUtil userUtil, PaymentInstructionEnrichment paymentInstructionEnrichment, PaymentInstructionService paymentInstructionService, PaymentService paymentService) {
         this.billUtils = billUtils;
         this.muktaAdaptorConfig = muktaAdaptorConfig;
         this.muktaAdaptorProducer = muktaAdaptorProducer;
@@ -48,6 +49,7 @@ public class DisbursementService {
         this.userUtil = userUtil;
         this.paymentInstructionEnrichment = paymentInstructionEnrichment;
         this.paymentInstructionService = paymentInstructionService;
+        this.paymentService = paymentService;
     }
     /**
      * Processes the disbursement request and updates the payment status
@@ -75,7 +77,7 @@ public class DisbursementService {
         Payment payment = payments.get(0);
         log.info("Updating the payment status for the payments : " + payment);
         // Update the payment status
-        updatePaymentStatus(payment, disbursement, requestInfo);
+        paymentService.updatePaymentStatus(payment, disbursement, requestInfo);
         log.info("Updating the disbursement status for the payments : " + disbursementRequest.getMessage());
         // Get the disbursement response
         DisbursementResponse disbursementResponse = getDisbursementResponse(disbursementRequest);
@@ -123,111 +125,5 @@ public class DisbursementService {
             disbursementResponse.getMessage().setStatus(Status.builder().statusCode(StatusCode.PARTIAL).statusMessage(StatusCode.PARTIAL.toString()).build());
         }
         return disbursementResponse;
-    }
-
-    /**
-     * Updates the payment status based on the disbursement status
-     * @param payment The payment
-     * @param disbursement The disbursement
-     * @param requestInfo The request info
-     */
-    private void updatePaymentStatus(Payment payment, Disbursement disbursement, RequestInfo requestInfo) {
-        log.info("Updating payment status for the payment : " + payment);
-        PaymentRequest paymentRequest = PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
-        EnumMap<StatusCode, PaymentStatus> lineItemIdStatusMap = getStatusCodeToPaymentStatusMap();
-        HashMap<String, StatusCode> targetIdToStatusCodeMap = new HashMap<>();
-        for(Disbursement disbursement1: disbursement.getDisbursements()){
-            targetIdToStatusCodeMap.put(disbursement1.getTargetId(), disbursement1.getStatus().getStatusCode());
-        }
-        payment.getBills().forEach(bill ->
-                bill.getBillDetails().forEach(billDetail ->
-                        billDetail.getPayableLineItems().forEach(payableLineItem -> payableLineItem.setStatus(lineItemIdStatusMap.get(targetIdToStatusCodeMap.get(payableLineItem.getLineItemId()))))));
-        if(disbursement.getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
-            updatePaymentStatusForPartial(payment, requestInfo);
-        }else if(disbursement.getStatus().getStatusCode().equals(StatusCode.FAILED) || disbursement.getStatus().getStatusCode().equals(StatusCode.ERROR)){
-            billUtils.updatePaymentStatus(paymentRequest,PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
-        }else if(disbursement.getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL)){
-            billUtils.updatePaymentStatus(paymentRequest,PaymentStatus.SUCCESSFUL, ReferenceStatus.PAYMENT_SUCCESS);
-        }
-    }
-    /**
-     * Updates the payment status for partial
-     * @param payment The payment
-     * @param requestInfo The request info
-     */
-    private void updatePaymentStatusForPartial(Payment payment, RequestInfo requestInfo) {
-        try {
-            log.info("Updating payment status for partial.");
-            boolean updatePaymentStatus = updatePaymentBills(payment);
-            if (updatePaymentStatus) {
-                payment.setStatus(PaymentStatus.PARTIAL);
-                payment.setReferenceStatus(ReferenceStatus.PAYMENT_PARTIAL);
-                PaymentRequest paymentRequest = PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
-                billUtils.callPaymentUpdate(paymentRequest);
-            }
-        } catch (Exception e) {
-            log.error("Exception while updating the payment status FailureDetailsService:updatePaymentStatusForPartial : " + e);
-        }
-    }
-    /**
-     * Updates the payment status for partial
-     * @param payment The payment
-     * @return The boolean value
-     */
-    private boolean updatePaymentBills(Payment payment) {
-        boolean updatePaymentStatus = false;
-        for (PaymentBill bill : payment.getBills()) {
-            boolean updateBillStatus = updateBillDetails(bill);
-            if (updateBillStatus) {
-                bill.setStatus(PaymentStatus.PARTIAL);
-                updatePaymentStatus = true;
-            }
-        }
-        return updatePaymentStatus;
-    }
-    /**
-     * Updates the bill details
-     * @param bill The payment bill
-     * @return The boolean value
-     */
-    private boolean updateBillDetails(PaymentBill bill) {
-        boolean updateBillStatus = false;
-        for (PaymentBillDetail billDetail : bill.getBillDetails()) {
-            boolean updateBillDetailsStatus = updateLineItems(billDetail);
-            if (updateBillDetailsStatus) {
-                billDetail.setStatus(PaymentStatus.PARTIAL);
-                updateBillStatus = true;
-            }
-        }
-        return updateBillStatus;
-    }
-    /**
-     * Updates the line items
-     * @param billDetail The payment bill detail
-     * @return The boolean value
-     */
-    private boolean updateLineItems(PaymentBillDetail billDetail) {
-        boolean updateBillDetailsStatus = false;
-        for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
-            if (lineItem.getStatus().equals(PaymentStatus.FAILED)) {
-                updateBillDetailsStatus = true;
-                break;
-            }
-        }
-        return updateBillDetailsStatus;
-    }
-    /**
-     * Returns the status code to payment status map
-     * @return The status code to payment status map
-     */
-    private EnumMap<StatusCode, PaymentStatus> getStatusCodeToPaymentStatusMap() {
-        EnumMap<StatusCode,PaymentStatus> statusCodePaymentStatusHashMap = new EnumMap<>(StatusCode.class);
-        statusCodePaymentStatusHashMap.put(StatusCode.INITIATED, PaymentStatus.INITIATED);
-        statusCodePaymentStatusHashMap.put(StatusCode.INPROCESS, PaymentStatus.INITIATED);
-        statusCodePaymentStatusHashMap.put(StatusCode.SUCCESSFUL,PaymentStatus.SUCCESSFUL);
-        statusCodePaymentStatusHashMap.put(StatusCode.FAILED,PaymentStatus.FAILED);
-        statusCodePaymentStatusHashMap.put(StatusCode.CANCELLED,PaymentStatus.CANCELLED);
-        statusCodePaymentStatusHashMap.put(StatusCode.PARTIAL,PaymentStatus.PARTIAL);
-        return statusCodePaymentStatusHashMap;
     }
 }

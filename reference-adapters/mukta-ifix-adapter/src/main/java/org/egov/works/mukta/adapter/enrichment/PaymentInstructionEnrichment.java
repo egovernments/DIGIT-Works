@@ -189,7 +189,7 @@ public class PaymentInstructionEnrichment {
             for (LineItem lineItem : piBeneficiary.getLineItems()) {
                 if (lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) &&
                         (lineItem.getPaymentStatus() == null || !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL))) {
-                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, auditDetails,programCode,headCodeCategoryMap);
+                    Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, auditDetails,programCode,headCodeCategoryMap, piBeneficiary.getBeneficiaryId());
                     disbursements.add(disbursementForLineItem);
                 }
             }
@@ -218,8 +218,8 @@ public class PaymentInstructionEnrichment {
         }
         setAmountForParentDisbursement(disbursement);
 
-        additionalDetailsForDisbursement.set("billNumbers", objectMapper.valueToTree(billNumbers));
-        additionalDetailsForDisbursement.set("referenceIds", objectMapper.valueToTree(referenceIds));
+        additionalDetailsForDisbursement.set("billNumber", objectMapper.valueToTree(billNumbers));
+        additionalDetailsForDisbursement.set("referenceId", objectMapper.valueToTree(referenceIds));
         additionalDetailsForDisbursement.set("isRevised", objectMapper.valueToTree(isRevised));
         disbursement.setAdditionalDetails(additionalDetailsForDisbursement);
     }
@@ -276,7 +276,7 @@ public class PaymentInstructionEnrichment {
      * @param headCodeCategoryMap The head code category map
      * @return The disbursement
      */
-    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,AuditDetails auditDetails,String programCode,Map<String,String> headCodeCategoryMap) {
+    private Disbursement enrichDisbursementForEachLineItem(BankAccount bankAccount, Individual individual, Organisation organisation, LineItem lineItem,AuditDetails auditDetails,String programCode,Map<String,String> headCodeCategoryMap,String beneficiaryId) {
         log.info("Started executing enrichDisbursement");
         String accountCode = "{ACCOUNT_NO}@{IFSC_CODE}";
         String accountType = null;
@@ -303,6 +303,7 @@ public class PaymentInstructionEnrichment {
             piIndividual.setName(lineItem.getHeadCode());
             piIndividual.setPhone("9999999999");
             piIndividual.setAddress(lineItem.getTenantId());
+            additionalDetails.put("beneficiaryType",BeneficiaryType.DEPT.toString());
         }else{
             if (individual != null) {
                 piIndividual.setAddress(individual.getAddress().get(0).getAddressLine1() == null ? individual.getAddress().get(0).getCity() : individual.getAddress().get(0).getAddressLine1());
@@ -311,6 +312,7 @@ public class PaymentInstructionEnrichment {
                 piIndividual.setEmail(individual.getEmail());
                 piIndividual.setPin(individual.getAddress().get(0).getPincode());
                 piIndividual.setName(individual.getName().getGivenName());
+                additionalDetails.put("beneficiaryType",BeneficiaryType.IND.toString());
             }
             if (organisation != null) {
                 piIndividual.setAddress(organisation.getOrgAddress().get(0).getAddressLine1() == null ? organisation.getOrgAddress().get(0).getCity() : organisation.getOrgAddress().get(0).getAddressLine1());
@@ -318,11 +320,13 @@ public class PaymentInstructionEnrichment {
                 piIndividual.setEmail(organisation.getContactDetails().get(0).getContactEmail());
                 piIndividual.setPin(organisation.getOrgAddress().get(0).getPincode());
                 piIndividual.setName(organisation.getName());
+                additionalDetails.put("beneficiaryType",BeneficiaryType.ORG.toString());
             }
         }
         disbursement.setIndividual(piIndividual);
         disbursement.setAuditDetails(auditDetails);
         additionalDetails.put(Constants.ACCOUNT_TYPE, accountType);
+        additionalDetails.put("beneficiaryId",beneficiaryId);
         disbursement.setAdditionalDetails(additionalDetails);
         return disbursement;
     }
@@ -349,6 +353,7 @@ public class PaymentInstructionEnrichment {
         HashMap<String,List<Disbursement>> beneficiaryDisbursementMap = getBeneficiaryDisbursementMap(disbursement);
         for(Map.Entry<String,List<Disbursement>> entry: beneficiaryDisbursementMap.entrySet()){
             String beneficiaryId = entry.getKey();
+            String beneficiaryDetailsId = UUID.randomUUID().toString();
             JsonNode beneficiaryTypeNode = null;
             JsonNode beneficiaryPaymentStatusNode = null;
             List<Disbursement> disbursements = entry.getValue();
@@ -357,7 +362,7 @@ public class PaymentInstructionEnrichment {
             for(Disbursement disbursement1: disbursements){
                 BenfLineItems benfLineItem = BenfLineItems.builder().id(UUID.randomUUID().toString())
                         .lineItemId(disbursement1.getTargetId())
-                        .beneficiaryId(beneficiaryId)
+                        .beneficiaryId(beneficiaryDetailsId)
                         .auditDetails(auditDetails)
                         .build();
 
@@ -370,10 +375,10 @@ public class PaymentInstructionEnrichment {
                 benfLineItems.add(benfLineItem);
             }
             Beneficiary beneficiary = Beneficiary.builder()
-                    .id(beneficiaryId)
+                    .id(beneficiaryDetailsId)
                     .tenantId(disbursementLineItem.getLocationCode())
                     .muktaReferenceId(disbursementLineItem.getTargetId())
-                    .beneficiaryNumber(disbursementLineItem.getTargetId())
+                    .beneficiaryNumber(disbursementLineItem.getTransactionId())
                     .bankAccountId(disbursementLineItem.getAccountCode())
                     .amount(disbursementLineItem.getNetAmount())
                     .beneficiaryId(beneficiaryId)
@@ -385,8 +390,8 @@ public class PaymentInstructionEnrichment {
             beneficiaries.add(beneficiary);
         }
         ObjectNode additionalDetailsForPI = objectMapper.createObjectNode();
-        additionalDetailsForPI.set("billNumbers", additionalDetailsOfDisbursement.get("billNumbers"));
-        additionalDetailsForPI.set("referenceIds", additionalDetailsOfDisbursement.get("referenceIds"));
+        additionalDetailsForPI.set("billNumber", additionalDetailsOfDisbursement.get("billNumber"));
+        additionalDetailsForPI.set("referenceId", additionalDetailsOfDisbursement.get("referenceId"));
         additionalDetailsForPI.set("mstAllotmentId", additionalDetailsOfDisbursement.get("mstAllotmentId"));
         additionalDetailsForPI.set("hoaCode", additionalDetailsOfDisbursement.get("hoaCode"));
         JsonNode paDetailsNode = additionalDetailsOfDisbursement.get("paDetails");
@@ -445,6 +450,7 @@ public class PaymentInstructionEnrichment {
                 case SUCCESSFUL:
                     return BeneficiaryPaymentStatus.SUCCESS;
                 case FAILED:
+                case ERROR:
                     return BeneficiaryPaymentStatus.FAILED;
                 default:
                     return null;
