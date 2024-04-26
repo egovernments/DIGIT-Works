@@ -632,9 +632,6 @@ public class PaymentInstructionService {
      * @param requestInfo
      */
     public void processPIForOnDisburse(PaymentInstruction paymentInstruction, RequestInfo requestInfo,Boolean isRevised) {
-        if(isRevised == null){
-            isRevised = false;
-        }
         log.info("Processing PI For Creating Disbursement Request");
         MsgCallbackHeader msgCallbackHeader = ifmsService.getMessageCallbackHeader(requestInfo,config.getStateLevelTenantId());
         msgCallbackHeader.setMessageType(MessageType.DISBURSE);
@@ -650,14 +647,20 @@ public class PaymentInstructionService {
                 .build();
         DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
         List<Disbursement> disbursements = disbursementResponse.getDisbursements();
-        Disbursement disbursement = disbursements.get(0);
+        Disbursement disbursement = null;
         if(isRevised){
             for(Disbursement disbursement1: disbursements){
                 if(disbursement1.getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
                     disbursement = disbursement1;
                     break;
-
                 }
+            }
+            if(disbursement == null){
+                throw new CustomException("DISBURSEMENT_NOT_FOUND","Disbursement not found for revised PI");
+            }
+        }else{
+            if (disbursements != null && !disbursements.isEmpty()) {
+                disbursement = disbursements.get(0);
             }
         }
         piEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursement);
