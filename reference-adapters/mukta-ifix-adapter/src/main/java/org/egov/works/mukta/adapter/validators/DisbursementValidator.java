@@ -30,19 +30,7 @@ public class DisbursementValidator {
     public void validateOnDisbursementRequest(DisbursementRequest disbursementRequest) {
         log.info("Validating on disbursement request");
         validateRequestBodyForOnDisbursement(disbursementRequest);
-        validateHeader(disbursementRequest.getHeader());
         validateDisbursement(disbursementRequest.getMessage());
-    }
-    /**
-     * Validates the header
-     * @param header The message header
-     */
-    private void validateHeader(MsgHeader header) {
-        log.info("Validating header");
-        // Check if the sender ID is the same as the receiver ID
-        if(Objects.equals(header.getSenderId(), header.getReceiverId())){
-            throw new CustomException(Error.INVALID_REQUEST, Error.SENDER_ID_AND_RECEIVER_ID_SAME_MESSAGE);
-        }
     }
     /**
      * Validates the request body for disbursement create
