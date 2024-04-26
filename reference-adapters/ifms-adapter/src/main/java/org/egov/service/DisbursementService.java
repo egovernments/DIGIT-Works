@@ -42,10 +42,11 @@ public class DisbursementService {
     private final PIUtils piUtils;
     private final EncryptionDecryptionUtil encryptionDecryptionUtil;
     private final IfmsAdapterConfig ifmsAdapterConfig;
+    private final PaymentInstructionService paymentInstructionService;
 
 
     @Autowired
-    public DisbursementService(DisbursementValidator disbursementValidator, PIRepository piRepository, PaymentInstructionEnrichment paymentInstructionEnrichment, MdmsUtils mdmsUtils, SanctionDetailsRepository sanctionDetailsRepository, IfmsService ifmsService, PISService pisService, ObjectMapper objectMapper, PIUtils piUtils, EncryptionDecryptionUtil encryptionDecryptionUtil, IfmsAdapterConfig ifmsAdapterConfig) {
+    public DisbursementService(DisbursementValidator disbursementValidator, PIRepository piRepository, PaymentInstructionEnrichment paymentInstructionEnrichment, MdmsUtils mdmsUtils, SanctionDetailsRepository sanctionDetailsRepository, IfmsService ifmsService, PISService pisService, ObjectMapper objectMapper, PIUtils piUtils, EncryptionDecryptionUtil encryptionDecryptionUtil, IfmsAdapterConfig ifmsAdapterConfig, PaymentInstructionService paymentInstructionService) {
         this.disbursementValidator = disbursementValidator;
         this.piRepository = piRepository;
         this.paymentInstructionEnrichment = paymentInstructionEnrichment;
@@ -56,6 +57,7 @@ public class DisbursementService {
         this.piUtils = piUtils;
         this.encryptionDecryptionUtil = encryptionDecryptionUtil;
         this.ifmsAdapterConfig = ifmsAdapterConfig;
+        this.paymentInstructionService = paymentInstructionService;
     }
 
     /**
@@ -229,6 +231,7 @@ public class DisbursementService {
             lastPiForUpdate.getAuditDetails().setLastModifiedBy(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedBy());
             piRepository.update(Collections.singletonList(lastPiForUpdate), null);
             piUtils.updatePIIndex(requestInfo, lastPiForUpdate);
+            paymentInstructionService.processPIForOnDisburse(lastPiForUpdate, requestInfo);
         }
     }
     /**

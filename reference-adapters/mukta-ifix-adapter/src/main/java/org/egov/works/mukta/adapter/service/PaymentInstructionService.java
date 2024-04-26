@@ -96,6 +96,7 @@ public class PaymentInstructionService {
             log.info("Pushing disbursement request to the kafka topic");
             return encriptedDisbursement;
         }catch (Exception e){
+            log.info("Exception occurred in : PaymentInstructionService:processDisbursementCreate " + e);
             paymentService.updatePaymentStatusToFailed(paymentRequest);
             if(encriptedDisbursement != null){
                 piEnrichment.enrichDisbursementStatus(encriptedDisbursement, StatusCode.FAILED,e.getMessage());
