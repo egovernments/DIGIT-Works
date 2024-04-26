@@ -101,6 +101,6 @@ public class MDMSUtils {
               .filter(filter).build();
     }
     public StringBuilder getMDMSSearchUrl() {
-        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+        return new StringBuilder().append(config.getMdmsV2Host()).append(config.getMdmsV2EndPoint());
     }
 }
