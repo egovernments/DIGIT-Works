@@ -231,7 +231,7 @@ public class DisbursementService {
             lastPiForUpdate.getAuditDetails().setLastModifiedBy(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedBy());
             piRepository.update(Collections.singletonList(lastPiForUpdate), null);
             piUtils.updatePIIndex(requestInfo, lastPiForUpdate);
-            paymentInstructionService.processPIForOnDisburse(lastPiForUpdate, requestInfo);
+            paymentInstructionService.processPIForOnDisburse(lastPiForUpdate, requestInfo, true);
         }
     }
     /**
