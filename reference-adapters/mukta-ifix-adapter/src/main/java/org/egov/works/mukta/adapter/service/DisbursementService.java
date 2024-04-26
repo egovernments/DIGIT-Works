@@ -115,12 +115,14 @@ public class DisbursementService {
         disbursementResponse.getMessage().setAuditDetails(updatedAuditDetails);
         disbursementResponse.getMessage().getDisbursements().forEach(disbursement -> disbursement.setAuditDetails(updatedAuditDetails));
         HashSet<StatusCode> statusCodes = new HashSet<>();
+        HashSet<String> statusMessages = new HashSet<>();
         for(Disbursement disbursement: disbursementResponse.getMessage().getDisbursements()){
             statusCodes.add(disbursement.getStatus().getStatusCode());
+            statusMessages.add(disbursement.getStatus().getStatusMessage());
         }
 
         if(statusCodes.size() == 1){
-            disbursementResponse.getMessage().setStatus(Status.builder().statusCode(statusCodes.iterator().next()).statusMessage(statusCodes.iterator().next().toString()).build());
+            disbursementResponse.getMessage().setStatus(Status.builder().statusCode(statusCodes.iterator().next()).statusMessage(statusMessages.iterator().next()).build());
         }else{
             disbursementResponse.getMessage().setStatus(Status.builder().statusCode(StatusCode.PARTIAL).statusMessage(StatusCode.PARTIAL.toString()).build());
         }
