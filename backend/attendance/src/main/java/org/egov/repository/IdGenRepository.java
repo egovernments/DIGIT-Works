@@ -20,11 +20,15 @@ import java.util.Map;
 @Repository
 public class IdGenRepository {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    private final AttendanceServiceConfiguration config;
 
     @Autowired
-    private AttendanceServiceConfiguration config;
+    public IdGenRepository(RestTemplate restTemplate, AttendanceServiceConfiguration config) {
+        this.restTemplate = restTemplate;
+        this.config = config;
+    }
 
     /**
      * Call iDgen to generateIds

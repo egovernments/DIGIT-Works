@@ -3,7 +3,6 @@ package org.egov.helper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -14,6 +13,9 @@ import org.egov.web.models.IndividualEntry;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,18 +62,16 @@ public class AttendeeRequestBuilderTest {
     }
 
     public static Object getMdmsResponseForValidTenant() {
-
         Object mdmsResponse = null;
-
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/TenantMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            Path path = Paths.get("src/test/resources/TenantMDMSData.json");
+            String exampleRequest = Files.readString(path, StandardCharsets.UTF_8);
             mdmsResponse = objectMapper.readValue(exampleRequest, Object.class);
         } catch (Exception exception) {
             log.error("AttendeeRequestBuilderTest::getMdmsResponse::Exception while parsing mdms json");
         }
-        return  mdmsResponse;
+        return mdmsResponse;
     }
 
     public static Object getMdmsResponseForInvalidTenant() {
@@ -80,13 +80,13 @@ public class AttendeeRequestBuilderTest {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/InvalidTenantMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            Path path = Paths.get("src/test/resources/InvalidTenantMDMSData.json");
+            String exampleRequest = Files.readString(path, StandardCharsets.UTF_8);
             mdmsResponse = objectMapper.readValue(exampleRequest, Object.class);
         } catch (Exception exception) {
             log.error("AttendeeRequestBuilderTest::getMdmsResponse::Exception while parsing mdms json");
         }
-        return  mdmsResponse;
+        return mdmsResponse;
     }
 
     public static ResponseInfo getResponseInfo_Success() {
