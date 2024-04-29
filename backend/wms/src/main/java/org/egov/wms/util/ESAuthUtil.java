@@ -1,5 +1,7 @@
 package org.egov.wms.util;
 
+import org.egov.wms.config.SearchConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -8,15 +10,16 @@ import java.util.Base64;
 @Component
 public class ESAuthUtil {
 
-    @Value("${egov.indexer.es.username}")
-    private String esUsername;
+    private final SearchConfiguration config;
 
-    @Value("${egov.indexer.es.password}")
-    private String esPassword;
+    @Autowired
+    public ESAuthUtil(SearchConfiguration config) {
+        this.config = config;
+    }
 
 
     public String getESEncodedCredentials() {
-        String credentials = esUsername + ":" + esPassword;
+        String credentials = config.getEsUserName() + ":" + config.getEsPassword();
         byte[] credentialsBytes = credentials.getBytes();
         byte[] base64CredentialsBytes = Base64.getEncoder().encode(credentialsBytes);
         return "Basic " + new String(base64CredentialsBytes);
