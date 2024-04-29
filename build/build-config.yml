@@ -22,7 +22,7 @@ config:
   - name: "builds/digit-works/backend/attendance"
     build:
       - work-dir: "backend/attendance"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "attendance"
       - work-dir: "backend/attendance/src/main/resources/db"
         image-name: "attendance-db"
@@ -67,7 +67,7 @@ config:
   - name: "builds/digit-works/backend/contracts"
     build:
       - work-dir: "backend/contracts"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "contracts"
       - work-dir: "backend/contracts/src/main/resources/db"
         image-name: "contracts-db"
