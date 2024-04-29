@@ -26,11 +26,15 @@ import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 @Slf4j
 public class AttendeeServiceValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+    private final MDMSUtils mdmsUtils;
+
+    private final IndividualServiceUtil individualServiceUtil;
 
     @Autowired
-    private IndividualServiceUtil individualServiceUtil;
+    public AttendeeServiceValidator(MDMSUtils mdmsUtils, IndividualServiceUtil individualServiceUtil) {
+        this.mdmsUtils = mdmsUtils;
+        this.individualServiceUtil = individualServiceUtil;
+    }
 
     public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();

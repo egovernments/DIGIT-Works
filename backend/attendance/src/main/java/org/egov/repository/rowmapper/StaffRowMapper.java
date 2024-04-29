@@ -23,8 +23,12 @@ import java.util.Map;
 @Component
 public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public StaffRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<StaffPermission> extractData(ResultSet rs) throws SQLException, DataAccessException {

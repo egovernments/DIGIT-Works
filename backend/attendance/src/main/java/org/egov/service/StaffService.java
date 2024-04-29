@@ -27,17 +27,10 @@ public class StaffService {
     private StaffServiceValidator staffServiceValidator;
 
     @Autowired
-    private ResponseInfoFactory responseInfoFactory;
-
-    @Autowired
     private StaffEnrichmentService staffEnrichmentService;
 
     @Autowired
     private StaffRepository staffRepository;
-
-    @Autowired
-    private RegisterRepository registerRepository;
-
 
     @Autowired
     private Producer producer;

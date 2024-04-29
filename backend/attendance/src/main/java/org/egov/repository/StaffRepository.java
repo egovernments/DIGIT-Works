@@ -15,14 +15,18 @@ import java.util.List;
 @Repository
 @Slf4j
 public class StaffRepository {
-    @Autowired
-    private StaffRowMapper rowMapper;
+    private final StaffRowMapper rowMapper;
+
+    private final StaffQueryBuilder queryBuilder;
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private StaffQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public StaffRepository(StaffRowMapper rowMapper, StaffQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+        this.rowMapper = rowMapper;
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public List<StaffPermission> getActiveStaff(StaffSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();

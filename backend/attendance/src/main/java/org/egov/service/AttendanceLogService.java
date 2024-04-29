@@ -18,24 +18,28 @@ import java.util.List;
 @Service
 @Slf4j
 public class AttendanceLogService {
-    @Autowired
-    private AttendanceLogServiceValidator attendanceLogServiceValidator;
+    private final AttendanceLogServiceValidator attendanceLogServiceValidator;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    private final ResponseInfoFactory responseInfoFactory;
 
 
-    @Autowired
-    private AttendanceLogEnrichment attendanceLogEnricher;
+    private final AttendanceLogEnrichment attendanceLogEnricher;
+
+    private final Producer producer;
+
+    private final AttendanceServiceConfiguration config;
+
+    private final AttendanceLogRepository attendanceLogRepository;
 
     @Autowired
-    private Producer producer;
-
-    @Autowired
-    private AttendanceServiceConfiguration config;
-
-    @Autowired
-    private AttendanceLogRepository attendanceLogRepository;
+    public AttendanceLogService(AttendanceLogServiceValidator attendanceLogServiceValidator, ResponseInfoFactory responseInfoFactory, AttendanceLogEnrichment attendanceLogEnricher, Producer producer, AttendanceServiceConfiguration config, AttendanceLogRepository attendanceLogRepository) {
+        this.attendanceLogServiceValidator = attendanceLogServiceValidator;
+        this.responseInfoFactory = responseInfoFactory;
+        this.attendanceLogEnricher = attendanceLogEnricher;
+        this.producer = producer;
+        this.config = config;
+        this.attendanceLogRepository = attendanceLogRepository;
+    }
 
     /**
      * Create Attendance Log
