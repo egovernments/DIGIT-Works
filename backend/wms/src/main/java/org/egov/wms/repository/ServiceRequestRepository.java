@@ -20,7 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ServiceRequestRepository {
 	private ObjectMapper mapper;
-
+	
+	@Autowired
 	private RestTemplate restTemplate;
 
 	private ESAuthUtil esAuthUtil;
