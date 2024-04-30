@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -38,6 +40,9 @@ public class ESLogUtils {
 
     @Autowired
     private JITAuthValues jitAuthValues;
+
+    @Autowired
+    private ESAuthUtil esAuthUtil;
 
     public @Valid JITRequestLog saveAuthenticateRequest(String request, String authResponse) {
         JITRequestLog jitRequestLog = null;
@@ -185,7 +190,12 @@ public class ESLogUtils {
 
         Object response = new HashMap<>();
         try {
-            response = restTemplate.postForObject(uri.toString(), request, Map.class);
+            final HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", esAuthUtil.getESEncodedCredentials());
+            final HttpEntity<Object> entity = new HttpEntity<>(request, headers);
+            log.info("Request: " + objectMapper.writeValueAsString(request));
+            log.info("Entity: " + objectMapper.writeValueAsString(entity));
+            response = restTemplate.postForObject(uri.toString(), entity, Map.class);
             log.info("Elasticsearch query executed." + response);
         } catch (Exception e) {
             log.error("Exception occurred while executing query in indexer : ", e);
