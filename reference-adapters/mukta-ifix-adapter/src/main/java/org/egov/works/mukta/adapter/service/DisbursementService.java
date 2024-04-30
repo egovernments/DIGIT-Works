@@ -164,18 +164,18 @@ public class DisbursementService {
         DisbursementResponse disbursementResponse = DisbursementResponse.builder().signature(disbursementRequest.getSignature()).header(disbursementRequest.getHeader()).message(disbursementRequest.getMessage()).build();
         disbursementResponse.getMessage().setAuditDetails(updatedAuditDetails);
         disbursementResponse.getMessage().getDisbursements().forEach(disbursement -> disbursement.setAuditDetails(updatedAuditDetails));
-        HashSet<StatusCode> statusCodes = new HashSet<>();
-        HashSet<String> statusMessages = new HashSet<>();
-        for(Disbursement disbursement: disbursementResponse.getMessage().getDisbursements()){
-            statusCodes.add(disbursement.getStatus().getStatusCode());
-            statusMessages.add(disbursement.getStatus().getStatusMessage());
-        }
-
-        if(statusCodes.size() == 1){
-            disbursementResponse.getMessage().setStatus(Status.builder().statusCode(statusCodes.iterator().next()).statusMessage(statusMessages.iterator().next()).build());
-        }else if(!disbursementRequest.getMessage().getStatus().getStatusCode().equals(StatusCode.COMPLETED)){
-            disbursementResponse.getMessage().setStatus(Status.builder().statusCode(StatusCode.PARTIAL).statusMessage(StatusCode.PARTIAL.toString()).build());
-        }
+//        HashSet<StatusCode> statusCodes = new HashSet<>();
+//        HashSet<String> statusMessages = new HashSet<>();
+//        for(Disbursement disbursement: disbursementResponse.getMessage().getDisbursements()){
+//            statusCodes.add(disbursement.getStatus().getStatusCode());
+//            statusMessages.add(disbursement.getStatus().getStatusMessage());
+//        }
+//
+//        if(statusCodes.size() == 1){
+//            disbursementResponse.getMessage().setStatus(Status.builder().statusCode(statusCodes.iterator().next()).statusMessage(statusMessages.iterator().next()).build());
+//        }else if(!disbursementRequest.getMessage().getStatus().getStatusCode().equals(StatusCode.COMPLETED)){
+//            disbursementResponse.getMessage().setStatus(Status.builder().statusCode(StatusCode.PARTIAL).statusMessage(StatusCode.PARTIAL.toString()).build());
+//        }
         return disbursementResponse;
     }
 
