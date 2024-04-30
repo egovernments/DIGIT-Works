@@ -14,10 +14,7 @@ import org.egov.works.mukta.adapter.kafka.MuktaAdaptorProducer;
 import org.egov.works.mukta.adapter.util.BillUtils;
 import org.egov.works.mukta.adapter.util.UserUtil;
 import org.egov.works.mukta.adapter.validators.DisbursementValidator;
-import org.egov.works.mukta.adapter.web.models.Disbursement;
-import org.egov.works.mukta.adapter.web.models.DisbursementRequest;
-import org.egov.works.mukta.adapter.web.models.DisbursementResponse;
-import org.egov.works.mukta.adapter.web.models.Status;
+import org.egov.works.mukta.adapter.web.models.*;
 import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.ReferenceStatus;
@@ -77,7 +74,9 @@ public class DisbursementService {
         Payment payment = payments.get(0);
         log.info("Updating the payment status for the payments : " + payment);
         // Update the payment status
-        paymentService.updatePaymentStatus(payment, disbursement, requestInfo);
+        boolean updatePaymentStatus = canUpdatePaymentStatus(disbursement);
+        if (updatePaymentStatus)
+            paymentService.updatePaymentStatus(payment, disbursement, requestInfo);
         log.info("Updating the disbursement status for the payments : " + disbursementRequest.getMessage());
         // Get the disbursement response
         DisbursementResponse disbursementResponse = getDisbursementResponse(disbursementRequest);
@@ -86,6 +85,32 @@ public class DisbursementService {
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementResponse);
         paymentInstructionService.updatePIIndex(requestInfo, pi,false);
         return disbursementResponse;
+    }
+
+    private boolean canUpdatePaymentStatus(Disbursement disbursement) {
+        log.info("Checking if the payment status can be updated for the disbursement : " + disbursement.getId());
+        boolean isRevised = false;
+        DisbursementSearchCriteria disbursementSearchCriteria = DisbursementSearchCriteria.builder()
+                .paymentNumber(disbursement.getTargetId())
+                .build();
+        DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
+                .criteria(disbursementSearchCriteria)
+                .pagination(Pagination.builder().limit(50).build())
+                .build();
+        List<Disbursement> disbursements = paymentInstructionService.processDisbursementSearch(disbursementSearchRequest);
+
+        for(Disbursement disbursement1: disbursements){
+            if(disbursement1.getStatus().getStatusCode().equals(StatusCode.PARTIAL) || disbursement1.getStatus().getStatusCode().equals(StatusCode.COMPLETED)){
+                isRevised = true;
+            }
+        }
+        if(isRevised) {
+            if (disbursement.getStatus().getStatusCode().equals(StatusCode.PARTIAL) || disbursement.getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL)) {
+                return true;
+            }
+            return false;
+        }
+        return true;
     }
 
     private RequestInfo getRequestInfoForSystemUser() {
