@@ -123,7 +123,7 @@ public class DisbursementService {
 
         if(statusCodes.size() == 1){
             disbursementResponse.getMessage().setStatus(Status.builder().statusCode(statusCodes.iterator().next()).statusMessage(statusMessages.iterator().next()).build());
-        }else{
+        }else if(!disbursementRequest.getMessage().getStatus().getStatusCode().equals(StatusCode.COMPLETED)){
             disbursementResponse.getMessage().setStatus(Status.builder().statusCode(StatusCode.PARTIAL).statusMessage(StatusCode.PARTIAL.toString()).build());
         }
         return disbursementResponse;
