@@ -433,6 +433,8 @@ public class PaymentInstructionEnrichment {
                 case FAILED:
                 case ERROR:
                     return PIStatus.FAILED;
+                case COMPLETED:
+                    return PIStatus.COMPLETED;
                 default:
                     return null;
             }
