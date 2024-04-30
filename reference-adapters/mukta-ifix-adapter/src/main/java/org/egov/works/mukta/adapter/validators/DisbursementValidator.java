@@ -45,7 +45,7 @@ public class DisbursementValidator {
         if(paymentRequest.getReferenceId() != null && paymentRequest.getTenantId() == null){
             throw new CustomException(Error.INVALID_REQUEST, Error.REFERENCE_ID_AND_TENANT_ID_NOT_FOUND);
         }
-        Pagination pagination = Pagination.builder().sortBy("createdtime").order(Pagination.OrderEnum.DESC).limit(1).build();
+        Pagination pagination = Pagination.builder().sortBy("createdtime").limit(50).order(Pagination.OrderEnum.DESC).build();
         DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
                 .requestInfo(paymentRequest.getRequestInfo())
                 .criteria(DisbursementSearchCriteria.builder().paymentNumber(paymentRequest.getPayment() == null? paymentRequest.getReferenceId(): paymentRequest.getPayment().getPaymentNumber()).build())
@@ -57,8 +57,10 @@ public class DisbursementValidator {
                 || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.INPROCESS) || disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL))){
             throw new CustomException(Error.PAYMENT_ALREADY_PROCESSED, Error.PAYMENT_ALREADY_PROCESSED_MESSAGE);
         }
-        if(disbursements != null && !disbursements.isEmpty() && disbursements.get(0).getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
-            isRevised = true;
+        for(Disbursement disbursement: disbursements){
+            if(disbursement.getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
+                isRevised = true;
+            }
         }
         if(paymentRequest.getReferenceId() == null){
             paymentRequest.setReferenceId(paymentRequest.getPayment().getPaymentNumber());
