@@ -248,10 +248,10 @@ public class PaymentService {
                 bill.setStatus(lineItemIdStatusMap.get(disbursement.getStatus().getStatusCode()));
             }
         }
-        payment.setStatus(lineItemIdStatusMap.get(disbursement.getStatus().getStatusCode()));
         if(disbursement.getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
             updatePaymentStatusForPartial(payment, requestInfo);
-        }else {
+        }else if(!disbursement.getStatus().getStatusCode().equals(StatusCode.COMPLETED)) {
+            payment.setStatus(lineItemIdStatusMap.get(disbursement.getStatus().getStatusCode()));
             billUtils.callPaymentUpdate(paymentRequest);
         }
     }

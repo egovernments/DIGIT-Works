@@ -97,7 +97,9 @@ public class PaymentInstructionService {
             return encriptedDisbursement;
         }catch (Exception e){
             log.info("Exception occurred in : PaymentInstructionService:processDisbursementCreate " + e);
-            paymentService.updatePaymentStatusToFailed(paymentRequest);
+            if(!isRevised){
+                paymentService.updatePaymentStatusToFailed(paymentRequest);
+            }
             if(encriptedDisbursement != null){
                 piEnrichment.enrichDisbursementStatus(encriptedDisbursement, StatusCode.FAILED,e.getMessage());
                 DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(encriptedDisbursement).build();
