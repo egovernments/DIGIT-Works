@@ -47,7 +47,7 @@ public class MdmsUtils {
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId,
 			String moduleName, List<String> masterNameList) {
 		StringBuilder uri = new StringBuilder();
-		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2EndPoint());
 		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, moduleName, masterNameList);
 		Object response = new HashMap<>();
 		MdmsResponse mdmsResponse = new MdmsResponse();
@@ -206,7 +206,7 @@ public class MdmsUtils {
 
 
     public StringBuilder getMDMSSearchUrl() {
-        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+        return new StringBuilder().append(config.getMdmsV2Host()).append(config.getMdmsV2EndPoint());
     }
 
     public Object fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String rootTenantId) {

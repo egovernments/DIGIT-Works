@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.web.models.MusterRollConsumerError;
-import org.egov.digit.expense.calculator.web.models.MusterRollRequest;
+import org.egov.works.services.common.models.musterroll.MusterRollRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;

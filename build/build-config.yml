@@ -83,7 +83,7 @@ config:
   - name: "builds/digit-works/backend/expense-calculator"
     build:
       - work-dir: "backend/expense-calculator"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "expense-calculator"
       - work-dir: "backend/expense-calculator/src/main/resources/db"
         image-name: "expense-calculator-db"
