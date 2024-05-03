@@ -37,7 +37,7 @@ config:
   - name: "builds/digit-works/backend/estimates"
     build:
       - work-dir: "backend/estimates"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "estimates"
       - work-dir: "backend/estimates/src/main/resources/db"
         image-name: "estimates-db"
