@@ -52,7 +52,7 @@ public class MDMSUtils {
         log.info("MDMSUtils::mDMSCall");
         RequestInfo requestInfo = request.getRequestInfo();
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId, request);
-        return serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return serviceRequestRepository.fetchResult(getMdmsSearchUrlV2(), mdmsCriteriaReq);
     }
 
     /**
@@ -109,7 +109,7 @@ public class MDMSUtils {
 
         log.info("MDMSUtils::search MDMS request for overhead -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
 
-        return serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return serviceRequestRepository.fetchResult(getMdmsSearchUrlV2(), mdmsCriteriaReq);
     }
 
     /**
