@@ -27,6 +27,14 @@ config:
       - work-dir: "backend/attendance/src/main/resources/db"
         image-name: "attendance-db"
 
+  - name: "builds/health-campaign-services/health-services/health-attendance-works"
+    build:
+      - work-dir: "backend/attendance"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "health-attendance"
+      - work-dir: "backend/attendance/src/main/resources/db"
+        image-name: "health-attendance-db"
+
   - name: "builds/digit-works/backend/muster-roll"
     build:
       - work-dir: "backend/muster-roll"
@@ -212,7 +220,6 @@ config:
         image-name: "ifms-adapter"
       - work-dir: "reference-adapters/ifms-adapter/src/main/resources/db"
         image-name: "ifms-adapter-db"
-
   - name: "builds/digit-works/reference-adapters/mukta-ifix-adapter"
     build:
       - work-dir: "reference-adapters/mukta-ifix-adapter"
@@ -220,3 +227,9 @@ config:
         image-name: "mukta-ifix-adapter"
       - work-dir: "reference-adapters/mukta-ifix-adapter/src/main/resources/db"
         image-name: "mukta-ifix-adapter-db"
+
+# libraries
+  - name: "builds/digit-works/libraries/works-services-common"
+    build:
+      - work-dir: "libraries/works-services-common"
+        image-name: "works-services-common"
