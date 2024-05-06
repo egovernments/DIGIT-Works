@@ -1,6 +1,6 @@
 package org.egov.digit.expense.web.controller;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.digit.expense.service.BillService;
 import org.egov.digit.expense.web.models.BillRequest;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 
 @Controller
 @RequestMapping("/bill/v1/")
