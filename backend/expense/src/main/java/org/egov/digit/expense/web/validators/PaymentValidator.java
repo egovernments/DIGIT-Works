@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 
 import org.egov.digit.expense.repository.PaymentRepository;
 import org.egov.digit.expense.service.BillService;
-import org.egov.digit.expense.service.PaymentService;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillDetail;
@@ -35,11 +34,15 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class PaymentValidator {
 
-	@Autowired
-	private BillService billService;
+	private final BillService billService;
+
+	private final PaymentRepository paymentRepository;
 
 	@Autowired
-	private PaymentRepository paymentRepository;
+	public PaymentValidator(BillService billService, PaymentRepository paymentRepository) {
+		this.billService = billService;
+		this.paymentRepository = paymentRepository;
+	}
 
 	public List<Payment> validateUpdateRequest(PaymentRequest paymentRequest) {
 
