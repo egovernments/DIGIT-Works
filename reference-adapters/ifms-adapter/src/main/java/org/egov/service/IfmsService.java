@@ -6,13 +6,17 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.config.JITAuthValues;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.utils.AuthenticationUtils;
-import org.egov.utils.ESLogUtils;
-import org.egov.utils.JitRequestUtils;
-import org.egov.utils.MdmsUtils;
+import org.egov.tracer.model.CustomException;
+import org.egov.utils.*;
+import org.egov.web.models.MsgCallbackHeader;
+import org.egov.web.models.enums.Action;
+import org.egov.web.models.enums.MessageType;
 import org.egov.web.models.jit.JITRequest;
 import org.egov.web.models.jit.JITRequestLog;
 import org.egov.web.models.jit.JITResponse;
+import org.egov.web.models.program.ProgramSearch;
+import org.egov.web.models.program.ProgramSearchRequest;
+import org.egov.web.models.program.ProgramSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,11 +27,11 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.egov.config.Constants.*;
 
@@ -75,12 +79,14 @@ public class IfmsService {
     }
 
     public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
-        if (jitAuthValues.getAuthToken() == null) {
+        // Check if the auth token is null or the session has expired
+        if (jitAuthValues.getAuthToken() == null || (System.currentTimeMillis() - jitAuthValues.getLastLogin()) >= config.getIfmsSessionTimeout()){
             getAuthDetailsFromIFMS();
         }
         JITResponse decryptedResponse = null;
         try {
             decryptedResponse = callServiceAPI(jitRequest);
+//            decryptedResponse = loadCustomResponse(jitRequest.getServiceId().toString());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             String message = e.toString();
             if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
@@ -147,6 +153,7 @@ public class IfmsService {
             // Set authentication details to the request
             jitAuthValues.setAuthToken(authResponse.get("authToken"));
             jitAuthValues.setSekString(decryptedSek);
+            jitAuthValues.setLastLogin(System.currentTimeMillis());
             // save auth response to ES
             esLogUtils.saveAuthenticateRequest(appKeys.toString(), authResponse.toString());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
@@ -230,25 +237,95 @@ public class IfmsService {
         List<String> ssuMasters = new ArrayList<>();
         ssuMasters.add(MDMS_SSU_DETAILS_MASTER);
         Map<String, Map<String, JSONArray>> ssuDetailsResponse = mdmsUtils.fetchMdmsDataWithActiveFilter(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, ssuMasters);
-        JSONArray ssuDetailsList = ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
-        return ssuDetailsList;
+        return ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
     }
 
     /*
         It's for testing the multiple combination of VA response
         TODO: Remove after development
      */
-    public JITResponse loadCustomResponse() {
+    public JITResponse loadCustomResponse(String serviceId) {
         JITResponse vaResponse = null;
+        String filename = "";
+        switch (serviceId) {
+            case "VA":
+                filename = "1VAResponse.json";
+                break;
+            case "PI":
+                filename = "2PIResponse.json";
+                break;
+            case "PIS":
+                filename = "3PISResponse.json";
+                break;
+            case "PAG":
+                filename = "4PAGResponse.json";
+                break;
+            case "PD":
+                filename = "5PDResponse.json";
+                break;
+            case "FD":
+                filename = "6FDNewResponse.json";
+                break;
+            case "COR":
+                filename = "7CORSuccess.json";
+                break;
+            case "FTPS":
+                filename = "8FTPSResponse.json";
+                break;
+            case "FTFPS":
+                filename = "9FTFPSResponse.json";
+                break;
+        }
         try {
-            File file = new File("D:/egovernments/digit-works-bkp2/reference-adapters/ifms-adapter/src/test/resources/7CORSuccess.json");
-            vaResponse = objectMapper.readValue(file, JITResponse.class);
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("sample/"+ filename);
+
+            if (inputStream != null) {
+                vaResponse = objectMapper.readValue(inputStream, JITResponse.class);
+            } else {
+                // Handle the case where the file is not found
+                System.err.println("File not found: " + filename);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return vaResponse;
     }
 
+    public MsgCallbackHeader getMessageCallbackHeader(RequestInfo requestInfo,String locationCode) {
+        String idFormat = "program@{URI}";
+        Map<String,Map<String,JSONArray>> exchangeServers = mdmsUtils.fetchExchangeServers(requestInfo,locationCode);
+        JSONArray exchangeServer = exchangeServers.get(MDMS_EXCHANGE_MODULE_NAME).get(MDMS_EXCHANGE_SERVER_MASTER);
+        String senderId = null;
+        String receiverId = null;
+        for (Object o : exchangeServer) {
+            Map<String, String> exchangeServerMap = (Map<String, String>) o;
+            if (exchangeServerMap.get("code").equals("IFMS")) {
+                senderId = exchangeServerMap.get("hostUrl");
+            }
+            if (exchangeServerMap.get("code").equals("MUKTA")) {
+                receiverId = exchangeServerMap.get("hostUrl");
+            }
+        }
 
-
+        return MsgCallbackHeader.builder()
+                .messageId(UUID.randomUUID().toString())
+                .senderId(idFormat.replace("{URI}", Objects.requireNonNull(extractHostUrlFromURL(senderId))))
+                .receiverId(idFormat.replace("{URI}", Objects.requireNonNull(extractHostUrlFromURL(receiverId))))
+                .senderUri(extractHostUrlFromURL(senderId))
+                .build();
+    }
+    private static String extractHostUrlFromURL(String input) {
+        // Regular expression pattern to match the domain with http/https
+        // Pattern pattern = Pattern.compile("(https?://[a-zA-Z0-9.-]+)");
+        // Regex pattern to match the domain with http/https
+        String regex = "\\bhttps?://\\S+\\b";
+        // Regular expression pattern to match the domain with http/https
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.find()) {
+            return matcher.group(); // Returns the matched domain with http/https
+        } else {
+            return null; // No match found
+        }
+    }
 }

@@ -24,25 +24,27 @@ import static org.egov.config.Constants.JIT_BILL_DATE_FORMAT;
 @Slf4j
 public class PAGService {
 
-    @Autowired
-    private PaymentInstructionService paymentInstructionService;
-    @Autowired
-    private IfmsService ifmsService;
+    private final PaymentInstructionService paymentInstructionService;
+    private final IfmsService ifmsService;
+
+    private final ObjectMapper objectMapper;
+
+    private final PIRepository piRepository;
+
+    private final HelperUtil helperUtil;
+
+    private final PIUtils piUtils;
+
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private PIRepository piRepository;
-
-    @Autowired
-    private HelperUtil helperUtil;
-
-    @Autowired
-    private PIUtils piUtils;
-
-    @Autowired
-    private BillUtils billUtils;
+    public PAGService(PaymentInstructionService paymentInstructionService, IfmsService ifmsService, ObjectMapper objectMapper, PIRepository piRepository, HelperUtil helperUtil, PIUtils piUtils) {
+        this.paymentInstructionService = paymentInstructionService;
+        this.ifmsService = ifmsService;
+        this.objectMapper = objectMapper;
+        this.piRepository = piRepository;
+        this.helperUtil = helperUtil;
+        this.piUtils = piUtils;
+    }
 
     /**
      * Call the JIT system for which payment status is approved and update the status of payment advice based
@@ -133,9 +135,10 @@ public class PAGService {
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PAG_SUCCESS;
                 // Create PI status log based on current existing PIS request
                 paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PAG, jitRespStatusForPI, requestInfo);
+                log.info("Convering PaymentInstruction to Disbursement And Calling OnDisburse");
+                paymentInstructionService.processPIForOnDisburse(paymentInstruction,requestInfo,false);
             }
             log.info("PAG status updated for PI : " + paymentInstruction.getJitBillNo());
-
         }
     }
 
@@ -145,8 +148,6 @@ public class PAGService {
      */
     public List<PaymentInstruction> getApprovedPaymentInstructions() {
         PISearchCriteria piSearchCriteria = PISearchCriteria.builder().piStatus(PIStatus.APPROVED).build();
-        List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchCriteria);
-        return paymentInstructions;
-
+        return piRepository.searchPi(piSearchCriteria);
     }
 }

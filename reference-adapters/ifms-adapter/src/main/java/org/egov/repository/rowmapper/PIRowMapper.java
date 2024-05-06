@@ -40,6 +40,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
             if(paymentInstruction == null){
 
                 String tenantId = rs.getString("pymtInstTenantId");
+                String programCode = rs.getString("pymtInstProgramCode");
                 String jitBillNo = rs.getString("pymtInstPiNumber");
                 String parentPiNumber = rs.getString("pymtInstParentPiNumber");
                 String muktaReferenceId = rs.getString("pymtInstMuktaReferenceId");
@@ -61,6 +62,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
                 paymentInstruction = PaymentInstruction.builder()
                         .id(id)
                         .tenantId(tenantId)
+                        .programCode(programCode)
                         .jitBillNo(jitBillNo)
                         .parentPiNumber(parentPiNumber)
                         .muktaReferenceId(muktaReferenceId)

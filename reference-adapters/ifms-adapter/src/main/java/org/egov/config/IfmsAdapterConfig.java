@@ -108,12 +108,29 @@ public class IfmsAdapterConfig {
     @Value("${egov.idgen.ifms.benf.reference.number}")
     private String piBenefInstructionNumberFormat;
 
+    @Value("${egov.idgen.ifms.repi.reference.number}")
+    private String revisedPaymentInstructionNumberFormat;
+
     // audit log
     @Value("${egov.audit.log.host}")
     private String auditLogHost;
 
     @Value("${egov.audit.log.search.endpoint}")
     private String auditLogSearchEndPoint;
+
+    //Program Service
+    @Value("${egov.program.service.host}")
+    private String programServiceHost;
+    @Value("${program.onsanction.create.endpoint}")
+    private String programServiceOnSanctionEndpoint;
+    @Value("${program.onallocation.create.endpoint}")
+    private String programServiceOnAllocationEndpoint;
+    @Value("${program.program.search.endpoint}")
+    private String programServiceSearchEndpoint;
+    @Value("${program.ondisburse.create.endpoint}")
+    private String programServiceOnDisburseEndpoint;
+    @Value("${program.disburse.search.endpoint}")
+    private String programServiceDisburseSearchEndpoint;
 
     // es log configurations
     @Value("${egov.es.indexer.host}")
@@ -133,4 +150,14 @@ public class IfmsAdapterConfig {
 
     @Value("${ifms.request.enc.secret}")
     private String ifmsRequestEncSecret;
+    @Value("${mukta.adapter.encryption.key}")
+    private String muktaAdapterEncryptionKey;
+    @Value("${payment.instruction.encryption.key}")
+    private String paymentInstructionEncryptionKey;
+
+    @Value("${app.domain}")
+    private String appDomain;
+
+    @Value("${ifms.session.timeout}")
+    private Long ifmsSessionTimeout;
 }

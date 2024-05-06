@@ -73,8 +73,7 @@ public class Scheduler {
                 break;
         }
 
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(schedulerRequest.getRequestInfo(), true);
-        return responseInfo;
+        return responseInfoFactory.createResponseInfoFromRequestInfo(schedulerRequest.getRequestInfo(), true);
     }
 
 }

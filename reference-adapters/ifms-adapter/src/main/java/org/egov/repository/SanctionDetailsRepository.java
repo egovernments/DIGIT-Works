@@ -149,6 +149,7 @@ public class SanctionDetailsRepository {
             sanctionDetailParamMap.addValue("tenantId", sanctionDetail.getTenantId());
             sanctionDetailParamMap.addValue("hoaCode", sanctionDetail.getHoaCode());
             sanctionDetailParamMap.addValue("ddoCode", sanctionDetail.getDdoCode());
+            sanctionDetailParamMap.addValue("programCode", sanctionDetail.getProgramCode());
             sanctionDetailParamMap.addValue("masterAllotmentId", sanctionDetail.getMasterAllotmentId());
             sanctionDetailParamMap.addValue("sanctionedAmount", sanctionDetail.getSanctionedAmount());
             sanctionDetailParamMap.addValue("financialYear", sanctionDetail.getFinancialYear());

@@ -27,6 +27,10 @@ public class Allotment {
     @Exclude
     private String tenantId = null;
 
+    @JsonProperty("programCode")
+    @Exclude
+    private String programCode = null;
+
     @JsonProperty("sanctionId")
     @Exclude
     private String sanctionId = null;
