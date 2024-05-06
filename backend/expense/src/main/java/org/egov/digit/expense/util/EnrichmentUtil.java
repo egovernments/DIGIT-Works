@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.web.models.Bill;
@@ -26,7 +27,6 @@ import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import digit.models.coremodels.AuditDetails;
 
 import static org.egov.digit.expense.config.Constants.GENDER;
 
