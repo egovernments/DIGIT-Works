@@ -38,8 +38,6 @@ public class FailureDetailsService {
     @Autowired
     private BillUtils billUtils;
     @Autowired
-    private SanctionDetailsRepository sanctionDetailsRepository;
-    @Autowired
     private PIRepository piRepository;
     @Autowired
     private PIUtils piUtils;
@@ -78,18 +76,12 @@ public class FailureDetailsService {
         if (pi != null) {
             Map<String, JsonNode> failedBeneficiariesMapById =  getFailedBeneficiaryMap(failedPiResponse);
 
-            List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, Collections.singleton(pi.getMuktaReferenceId()), pi.getTenantId());
-            if (payments != null && !payments.isEmpty()) {
-                Payment payment = payments.get(0);
-                updatePiAndPaymentForFailedBenef(pi, payment, failedBeneficiariesMapById);
-                addReversalTransactionAndUpdatePIPa(pi, payment, requestInfo);
-                // Set success response based on service id
-                JitRespStatusForPI jitRespStatusForPI =  serviceId == JITServiceId.FD ? JitRespStatusForPI.STATUS_LOG_FD_SUCCESS: JitRespStatusForPI.STATUS_LOG_FTFPS_SUCCESS;
-                // Create PI status log based on current existing PIS request
-                paymentInstructionService.createAndSavePIStatusLog(pi, serviceId, jitRespStatusForPI, requestInfo);
-            } else {
-                log.info("Payment data not found for paymentNumber : "+ pi.getMuktaReferenceId());
-            }
+            updatePiAndPaymentForFailedBenef(pi, failedBeneficiariesMapById);
+            addReversalTransactionAndUpdatePIPa(pi, requestInfo);
+            // Set success response based on service id
+            JitRespStatusForPI jitRespStatusForPI =  serviceId == JITServiceId.FD ? JitRespStatusForPI.STATUS_LOG_FD_SUCCESS: JitRespStatusForPI.STATUS_LOG_FTFPS_SUCCESS;
+            // Create PI status log based on current existing PIS request
+            paymentInstructionService.createAndSavePIStatusLog(pi, serviceId, jitRespStatusForPI, requestInfo);
         }
 
     }
@@ -98,7 +90,6 @@ public class FailureDetailsService {
 
         Map<String, String> failedRequestParams = new HashMap<>();
         Long subtractedTimeMillis = System.currentTimeMillis() - (120 * 60L * 60L * 1000L);
-        //subtractedTimeMillis = 1683755974760L;
         String finYear = helperUtil.getFormattedTimeFromTimestamp(subtractedTimeMillis, "yyyy");
         String voucherDate = helperUtil.getFormattedTimeFromTimestamp(subtractedTimeMillis, "yyyy-MM-dd");
         failedRequestParams.put("finYear", finYear);
@@ -133,14 +124,7 @@ public class FailureDetailsService {
         return failedPiBenfMap;
     }
 
-    private void updatePiAndPaymentForFailedBenef(PaymentInstruction pi, Payment payment, Map<String, JsonNode> failedBeneficiariesMapById) {
-        Map<String, PaymentLineItem> paymentPayableLineItemMap = payment.getBills().stream()
-                .map(PaymentBill::getBillDetails)
-                .flatMap(Collection::stream)
-                .map(PaymentBillDetail::getPayableLineItems)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toMap(PaymentLineItem::getLineItemId, Function.identity()));
-
+    private void updatePiAndPaymentForFailedBenef(PaymentInstruction pi, Map<String, JsonNode> failedBeneficiariesMapById) {
         for (Beneficiary beneficiary: pi.getBeneficiaryDetails()) {
             String benfNumber = beneficiary.getBeneficiaryNumber();
             if (failedBeneficiariesMapById.get(benfNumber) != null && !failedBeneficiariesMapById.get(benfNumber).isEmpty()) {
@@ -149,16 +133,11 @@ public class FailureDetailsService {
                 beneficiary.setPaymentStatusMessage(benfDtl.get("failedReason").asText());
                 beneficiary.setChallanNumber(benfDtl.get("challanNumber").asText());
                 beneficiary.setChallanDate(benfDtl.get("challanDate").asText());
-                for (BenfLineItems lineItem: beneficiary.getBenfLineItems()) {
-                    if (paymentPayableLineItemMap.containsKey(lineItem.getLineItemId())) {
-                        paymentPayableLineItemMap.get(lineItem.getLineItemId()).setStatus(PaymentStatus.FAILED);
-                    }
-                }
             }
         }
     }
 
-    private void addReversalTransactionAndUpdatePIPa(PaymentInstruction pi, Payment payment, RequestInfo requestInfo) {
+    private void addReversalTransactionAndUpdatePIPa(PaymentInstruction pi, RequestInfo requestInfo) {
         try {
             Long currentTime = System.currentTimeMillis();
             String userId = requestInfo.getUserInfo().getUuid();
@@ -172,48 +151,49 @@ public class FailureDetailsService {
                 }
             }
             piRepository.update(Collections.singletonList(pi), null);
-            updatePaymentStatusForPartial(payment, requestInfo);
             // Update PI indexer based on updated PI
             piUtils.updatePIIndex(requestInfo, pi);
+            //Call On disburse for the PI
+            paymentInstructionService.processPIForOnDisburse(pi, requestInfo, false);
 
         } catch (Exception e) {
             log.error("Failed in FailureDetailsService:addReversalTransactionAndUpdatePIPa " + e);
         }
     }
 
-    private void updatePaymentStatusForPartial(Payment payment, RequestInfo requestInfo) {
-        try {
-            log.info("Updating payment status for partial.");
-            boolean updatePaymentStatus = false;
-            for (PaymentBill bill: payment.getBills()) {
-                boolean updateBillStatus = false;
-                for (PaymentBillDetail billDetail: bill.getBillDetails()) {
-                    boolean updateBillDetailsStatus = false;
-                    for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
-                        if (lineItem.getStatus().equals(PaymentStatus.FAILED)) {
-                            updateBillDetailsStatus = true;
-                        }
-                    }
-                    if (updateBillDetailsStatus) {
-                        billDetail.setStatus(PaymentStatus.PARTIAL);
-                        updateBillStatus = true;
-                    }
-                }
-                if (updateBillStatus) {
-                    bill.setStatus(PaymentStatus.PARTIAL);
-                    updatePaymentStatus = true;
-                }
-            }
-            if (updatePaymentStatus) {
-                payment.setStatus(PaymentStatus.PARTIAL);
-                payment.setReferenceStatus(ReferenceStatus.PAYMENT_PARTIAL);
-                PaymentRequest paymentRequest = PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
-                billUtils.callPaymentUpdate(paymentRequest);
-            }
-        }catch (Exception e) {
-            log.error("Exception while updating the payment status FailureDetailsService:updatePaymentStatusForPartial : " + e);
-        }
-    }
+//    private void updatePaymentStatusForPartial(Payment payment, RequestInfo requestInfo) {
+//        try {
+//            log.info("Updating payment status for partial.");
+//            boolean updatePaymentStatus = false;
+//            for (PaymentBill bill: payment.getBills()) {
+//                boolean updateBillStatus = false;
+//                for (PaymentBillDetail billDetail: bill.getBillDetails()) {
+//                    boolean updateBillDetailsStatus = false;
+//                    for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
+//                        if (lineItem.getStatus().equals(PaymentStatus.FAILED)) {
+//                            updateBillDetailsStatus = true;
+//                        }
+//                    }
+//                    if (updateBillDetailsStatus) {
+//                        billDetail.setStatus(PaymentStatus.PARTIAL);
+//                        updateBillStatus = true;
+//                    }
+//                }
+//                if (updateBillStatus) {
+//                    bill.setStatus(PaymentStatus.PARTIAL);
+//                    updatePaymentStatus = true;
+//                }
+//            }
+//            if (updatePaymentStatus) {
+//                payment.setStatus(PaymentStatus.PARTIAL);
+//                payment.setReferenceStatus(ReferenceStatus.PAYMENT_PARTIAL);
+//                PaymentRequest paymentRequest = PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
+//                billUtils.callPaymentUpdate(paymentRequest);
+//            }
+//        }catch (Exception e) {
+//            log.error("Exception while updating the payment status FailureDetailsService:updatePaymentStatusForPartial : " + e);
+//        }
+//    }
 
 
     public void updateFTPSStatus(RequestInfo requestInfo) {
@@ -259,7 +239,7 @@ public class FailureDetailsService {
                 paymentInstructionService.createAndSavePIStatusLog(pi, JITServiceId.FTPS, jitRespStatusForPI, requestInfo);
                 continue;
             }
-            // If FTPS api has response then process the response
+            // If FTPS api has rSUCCESSFULesponse then process the response
             for (Object data : jitResponse.getData()) {
                 processFTPSResponse(data, pi, requestInfo);
             }
@@ -322,17 +302,8 @@ public class FailureDetailsService {
                 paymentInstruction.setPiStatus(PIStatus.SUCCESSFUL);
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
                 piUtils.updatePIIndex(requestInfo, paymentInstruction);
-                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
-                        Collections.singleton(paymentInstruction.getMuktaReferenceId()),
-                        paymentInstruction.getTenantId());
-
-                for (Payment payment : payments) {
-                    PaymentRequest paymentRequest = PaymentRequest.builder()
-                            .requestInfo(requestInfo).payment(payment).build();
-
-                    billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.SUCCESSFUL,ReferenceStatus.PAYMENT_SUCCESS);
-                }
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_SUCCESS;
+                paymentInstructionService.processPIForOnDisburse(paymentInstruction,requestInfo,false);
             } else {
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_NO_RESPONSE;
             }

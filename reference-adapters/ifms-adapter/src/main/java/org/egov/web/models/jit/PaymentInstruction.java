@@ -30,6 +30,9 @@ public class PaymentInstruction {
     @Exclude
     private String tenantId;
 
+    @JsonProperty("programCode")
+    private String programCode;
+
     @JsonProperty("parentPiNumber")
     @Exclude
     private String parentPiNumber;

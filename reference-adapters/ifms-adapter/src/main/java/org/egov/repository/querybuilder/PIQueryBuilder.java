@@ -15,9 +15,9 @@ import java.util.Set;
 public class PIQueryBuilder {
 
     public static final String PAYMENT_INSTRUCTION_INSERT_QUERY = "INSERT INTO jit_payment_inst_details "
-            + "(id, tenantId, piNumber, parentPiNumber, muktaReferenceId, numBeneficiaries, grossAmount, netAmount, piStatus, isActive, piSuccessCode, piSuccessDesc, "
+            + "(id, tenantId, piNumber, programCode, parentPiNumber, muktaReferenceId, numBeneficiaries, grossAmount, netAmount, piStatus, isActive, piSuccessCode, piSuccessDesc, "
             + "piApprovedId, piApprovalDate, piErrorResp, additionalDetails, createdtime, createdby, lastmodifiedtime, lastmodifiedby)"
-            + " VALUES (:id, :tenantId, :piNumber, :parentPiNumber, :muktaReferenceId, :numBeneficiaries, :grossAmount, :netAmount, :piStatus, :isActive, :piSuccessCode, :piSuccessDesc, "
+            + " VALUES (:id, :tenantId, :piNumber, :programCode, :parentPiNumber, :muktaReferenceId, :numBeneficiaries, :grossAmount, :netAmount, :piStatus, :isActive, :piSuccessCode, :piSuccessDesc, "
             + " :piApprovedId, :piApprovalDate, :piErrorResp, :additionalDetails, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
 
     public static final String PAYMENT_ADVICE_DETAILS_INSERT_QUERY = "INSERT INTO jit_payment_advice_details "
@@ -26,9 +26,9 @@ public class PIQueryBuilder {
             + " VALUES (:id, :tenantId, :muktaReferenceId, :piId, :paBillRefNumber, :paFinYear, :paAdviceId, :paAdviceDate, :paTokenNumber, :paTokenDate,"
             + " :paErrorMsg, :additionalDetails, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
     public static final String BENEFICIARY_DETAILS_INSERT_QUERY = "INSERT INTO jit_beneficiary_details "
-            + "(id, tenantId, muktaReferenceId, piId, beneficiaryId, beneficiaryType, beneficiaryNumber, bankAccountId, amount, voucherNumber, voucherDate, utrNo, utrDate, endToEndId, challanNumber, "
+            + "(id, tenantId, muktaReferenceId, piId, beneficiaryId, beneficiaryType, beneficiaryNumber, bankAccountCode, amount, voucherNumber, voucherDate, utrNo, utrDate, endToEndId, challanNumber, "
             + "challanDate, paymentStatus, paymentStatusMessage, additionalDetails, createdtime, createdby, lastmodifiedtime, lastmodifiedby)"
-            + " VALUES (:id, :tenantId, :muktaReferenceId, :piId, :beneficiaryId, :beneficiaryType, :beneficiaryNumber, :bankAccountId, :amount, :voucherNumber, :voucherDate, :utrNo, :utrDate, :endToEndId, :challanNumber, "
+            + " VALUES (:id, :tenantId, :muktaReferenceId, :piId, :beneficiaryId, :beneficiaryType, :beneficiaryNumber, :bankAccountCode, :amount, :voucherNumber, :voucherDate, :utrNo, :utrDate, :endToEndId, :challanNumber, "
             + " :challanDate, :paymentStatus, :paymentStatusMessage, :additionalDetails, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
 
     public static final String TRANSACTION_DETAILS_INSERT_QUERY = "INSERT INTO jit_transaction_details "
@@ -57,6 +57,7 @@ public class PIQueryBuilder {
 
     public static final String SEARCH_PI_QUERY = " SELECT pymtInst.id as pymtInstId, " +
             "pymtInst.tenantId as pymtInstTenantId, " +
+            "pymtInst.programCode as pymtInstProgramCode, " +
             "pymtInst.piNumber as pymtInstPiNumber, " +
             "pymtInst.parentPiNumber as pymtInstParentPiNumber, " +
             "pymtInst.muktaReferenceId as pymtInstMuktaReferenceId, " +
@@ -98,7 +99,7 @@ public class PIQueryBuilder {
             "benfDetail.beneficiaryId as benfDetailBeneficiaryId, " +
             "benfDetail.beneficiaryType as benfDetailBeneficiaryType, " +
             "benfDetail.beneficiaryNumber as benfDetailBeneficiaryNumber, " +
-            "benfDetail.bankAccountId as benfDetailBankAccountId, " +
+            "benfDetail.bankAccountCode as benfDetailBankAccountId, " +
             "benfDetail.amount as benfDetailAmount, " +
             "benfDetail.voucherNumber as benfDetailVoucherNumber, " +
             "benfDetail.voucherDate as benfDetailVoucherDate, " +

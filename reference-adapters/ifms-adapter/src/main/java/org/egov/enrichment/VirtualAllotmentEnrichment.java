@@ -1,26 +1,21 @@
 package org.egov.enrichment;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
 import org.egov.utils.HelperUtil;
+import org.egov.web.models.Allocation;
+import org.egov.web.models.Sanction;
+import org.egov.web.models.Status;
+import org.egov.web.models.enums.AllocationType;
 import org.egov.web.models.enums.JITServiceId;
+import org.egov.web.models.enums.StatusCode;
 import org.egov.web.models.jit.*;
-import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.egov.config.Constants.*;
@@ -47,23 +42,21 @@ public class VirtualAllotmentEnrichment {
                 .fromDate(fromDate)
                 .build();
 
-        JITRequest jitRequest = JITRequest.builder()
+        return JITRequest.builder()
                 .serviceId(JITServiceId.VA)
                 .params(vaRequest)
                 .build();
-        return jitRequest;
     }
 
 
     public SanctionDetailsSearchCriteria getSanctionDetailsSearchCriteriaForVA(String tenantId, JsonNode hoaNode, JsonNode ssuNode) {
         String hoaCode = hoaNode.get("code").asText();
         String ddoCode = ssuNode.get("ddoCode").asText();
-        SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
+        return SanctionDetailsSearchCriteria.builder()
                 .tenantId(tenantId)
                 .hoaCode(hoaCode)
                 .ddoCode(ddoCode)
                 .build();
-        return  searchCriteria;
     }
 
     public List<SanctionDetail> getCreateAndUpdateSanctionDetails(List<SanctionDetail> existingSanctionDetails, List<Allotment> allotments) {
@@ -105,6 +98,7 @@ public class VirtualAllotmentEnrichment {
     public void enrichAndUpdateSanctions (List<SanctionDetail> sanctionDetails, String tenantId, JsonNode hoaNode, JsonNode ssuNode, RequestInfo requestInfo) {
         String hoaCode = hoaNode.get("code").asText();
         String ddoCode = ssuNode.get("ddoCode").asText();
+        String programCode = ssuNode.get("programCode").asText();
         String userId = requestInfo.getUserInfo().getUuid();
         Long time = System.currentTimeMillis();
 
@@ -114,6 +108,7 @@ public class VirtualAllotmentEnrichment {
                 sanctionDetail.setHoaCode(hoaCode);
                 sanctionDetail.setDdoCode(ddoCode);
                 sanctionDetail.setTenantId(tenantId);
+                sanctionDetail.setProgramCode(programCode);
                 sanctionDetail.setAuditDetails(auditDetails);
                 sanctionDetail.getFundsSummary().setTenantId(tenantId);
                 sanctionDetail.getFundsSummary().setAuditDetails(auditDetails);
@@ -218,6 +213,7 @@ public class VirtualAllotmentEnrichment {
                         .id(UUID.randomUUID().toString())
                         .tenantId(tenantId)
                         .sanctionId(sanctionDetail.getId())
+                        .programCode(sanctionDetail.getProgramCode())
                         .allotmentSerialNo(Integer.parseInt(allotment.getAllotmentTxnSlNo()))
                         .ssuAllotmentId(allotment.getSsuAllotmentId())
                         .decimalAllottedAmount(new BigDecimal(allotment.getAllotmentAmount()))
@@ -242,7 +238,7 @@ public class VirtualAllotmentEnrichment {
         JsonNode emptyObject = objectMapper.createObjectNode();
 
         AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
-        ExecutedVALog executedVALog = ExecutedVALog.builder()
+        return ExecutedVALog.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(tenantId)
                 .hoaCode(hoaCode)
@@ -252,7 +248,6 @@ public class VirtualAllotmentEnrichment {
                 .additionalDetails(emptyObject)
                 .auditDetails(auditDetails)
                 .build();
-        return executedVALog;
     }
 
     public ExecutedVALog enrichExecutedVaLogForUpdate (ExecutedVALog executedVALog, RequestInfo requestInfo) {
@@ -263,5 +258,92 @@ public class VirtualAllotmentEnrichment {
         executedVALog.getAuditDetails().setLastModifiedTime(time);
         return executedVALog;
     }
-
+    /**
+     * This method creates the payload for the virtual allotment
+     * @param sanctions
+     * @return
+     */
+    public Sanction createSanctionsPayload(List<SanctionDetail> sanctions) {
+        Sanction message = new Sanction();
+        String locationCode = sanctions.get(0).getTenantId();
+        String programCode = sanctions.get(0).getProgramCode();
+        BigDecimal netAmount = BigDecimal.ZERO;
+        BigDecimal grossAmount = BigDecimal.ZERO;
+        AuditDetails details = sanctions.get(0).getAuditDetails();
+        org.egov.web.models.AuditDetails auditDetails = org.egov.web.models.AuditDetails.builder().createdTime(details.getCreatedTime()).createdBy(details.getCreatedBy())
+                .lastModifiedTime(details.getLastModifiedTime()).lastModifiedBy(details.getLastModifiedBy()).build();
+        List<Sanction> sanctionList = new ArrayList<>();
+        for(SanctionDetail sanctionDetail: sanctions){
+            Sanction sanction = new Sanction();
+            sanction.setId(sanctionDetail.getId());
+            sanction.setNetAmount(sanctionDetail.getSanctionedAmount());
+            sanction.setGrossAmount(sanctionDetail.getSanctionedAmount());
+            sanction.setLocationCode(sanctionDetail.getTenantId());
+            sanction.setProgramCode(sanctionDetail.getProgramCode());
+            sanction.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
+            sanction.setAuditDetails(auditDetails);
+            netAmount = netAmount.add(sanction.getNetAmount());
+            grossAmount = grossAmount.add(sanction.getGrossAmount());
+            sanctionList.add(sanction);
+        }
+        message.setId(UUID.randomUUID().toString());
+        message.setLocationCode(locationCode);
+        message.setProgramCode(programCode);
+        message.setNetAmount(netAmount);
+        message.setGrossAmount(grossAmount);
+        message.setChildren(sanctionList);
+        message.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
+        message.setAuditDetails(auditDetails);
+        return message;
+    }
+    /**
+     * This method creates the payload for the virtual allotment
+     * @param allotments
+     * @return
+     */
+    public Allocation createAllotmentsPayload(List<Allotment> allotments) {
+        Allocation message = new Allocation();
+        String locationCode = allotments.get(0).getTenantId();
+        String programCode = allotments.get(0).getProgramCode();
+        BigDecimal netAmount = BigDecimal.ZERO;
+        BigDecimal grossAmount = BigDecimal.ZERO;
+        AuditDetails details = allotments.get(0).getAuditDetails();
+        org.egov.web.models.AuditDetails auditDetails = org.egov.web.models.AuditDetails.builder()
+                .createdTime(details.getCreatedTime())
+                .createdBy(details.getCreatedBy())
+                .lastModifiedTime(details.getLastModifiedTime())
+                .lastModifiedBy(details.getLastModifiedBy())
+                .build();
+        List<Allocation> allotmentList = new ArrayList<>();
+        for(Allotment allotment: allotments){
+            Allocation allocationPayload = new Allocation();
+            allocationPayload.setId(allotment.getId());
+            allocationPayload.setSanctionId(allotment.getSanctionId());
+            allocationPayload.setNetAmount(allotment.getDecimalAllottedAmount());
+            allocationPayload.setGrossAmount(allotment.getDecimalAllottedAmount());
+            allocationPayload.setLocationCode(allotment.getTenantId());
+            allocationPayload.setAuditDetails(auditDetails);
+            allocationPayload.setProgramCode(allotment.getProgramCode());
+            allocationPayload.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
+            if(allotment.getAllotmentTxnType().equals("Allotment withdrawal")){
+                allocationPayload.setAllocationType(AllocationType.DEDUCTION);
+            }else{
+                allocationPayload.setAllocationType(AllocationType.ALLOCATION);
+            }
+            netAmount = netAmount.add(allocationPayload.getNetAmount());
+            grossAmount = grossAmount.add(allocationPayload.getGrossAmount());
+            allotmentList.add(allocationPayload);
+        }
+        message.setId(UUID.randomUUID().toString());
+        message.setLocationCode(locationCode);
+        message.setProgramCode(programCode);
+        message.setNetAmount(netAmount);
+        message.setGrossAmount(grossAmount);
+        message.setChildren(allotmentList);
+        message.setAllocationType(AllocationType.ALLOCATION);
+        message.setSanctionId(UUID.randomUUID().toString());
+        message.setStatus(Status.builder().statusCode(StatusCode.SUCCESSFUL).statusMessage(StatusCode.SUCCESSFUL.toString()).build());
+        message.setAuditDetails(auditDetails);
+        return message;
+    }
 }
