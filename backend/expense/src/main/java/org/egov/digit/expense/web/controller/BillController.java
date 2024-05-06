@@ -20,26 +20,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/bill/v1/")
 public class BillController {
 	
+	private final BillService service;
+
 	@Autowired
-	private BillService service;
+	public BillController(BillService service) {
+		this.service = service;
+	}
 
 	@PostMapping(value = "_create")
-	public ResponseEntity<BillResponse> Create(@Valid @RequestBody BillRequest billRequest) {
+	public ResponseEntity<BillResponse> create(@Valid @RequestBody BillRequest billRequest) {
 
 		BillResponse response = service.create(billRequest);
-		return new ResponseEntity<BillResponse>(response, HttpStatus.CREATED);
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 
 	@PostMapping(value = "_search")
 	public ResponseEntity<BillResponse> search(@Valid @RequestBody BillSearchRequest billSearchRequest) {
 		BillResponse billResponse = service.search(billSearchRequest, true);
-		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(billResponse, HttpStatus.ACCEPTED);
 	}
 
 	@PostMapping(value = "_update")
 	public ResponseEntity<BillResponse> update(@Valid @RequestBody BillRequest billRequest) {
 		BillResponse response = service.update(billRequest);
-		return new ResponseEntity<BillResponse>(response, HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
 
 }

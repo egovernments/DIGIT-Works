@@ -49,7 +49,7 @@ public class BillDetail {
 	@JsonProperty("totalAmount")
 	@Valid
 	@Builder.Default
-	private BigDecimal totalAmount = BigDecimal.ZERO;;
+	private BigDecimal totalAmount = BigDecimal.ZERO;
 	
 	@JsonProperty("totalPaidAmount")
 	@Valid
