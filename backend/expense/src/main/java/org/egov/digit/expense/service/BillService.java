@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.contract.workflow.ProcessInstance;
+import org.egov.common.contract.workflow.ProcessInstanceResponse;
+import org.egov.common.contract.workflow.State;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.BillRepository;
@@ -23,9 +26,6 @@ import org.egov.digit.expense.web.validators.BillValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import digit.models.coremodels.ProcessInstance;
-import digit.models.coremodels.ProcessInstanceResponse;
-import digit.models.coremodels.State;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
