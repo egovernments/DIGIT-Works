@@ -15,6 +15,7 @@ public class AttendanceLogQueryBuilder {
 
     private static final String ATTENDANCE_LOG_SELECT_QUERY = " SELECT log.id as logid, " +
             "log.individual_id as logIndividualId, " +
+            "log.clientreferenceid as logClientReferenceId, " +
             "log.tenantId as logTenantId, " +
             "log.register_id as logRegisterId, " +
             "log.status as logStatus, " +
@@ -25,6 +26,10 @@ public class AttendanceLogQueryBuilder {
             "log.lastmodifiedby as logLastModifiedBy, " +
             "log.createdtime as logCreatedTime, " +
             "log.lastmodifiedtime as logLastModifiedTime, " +
+            "log.clientcreatedby as logClientCreatedBy, " +
+            "log.clientlastmodifiedby as logClientLastModifiedBy, " +
+            "log.clientcreatedtime as logClientCreatedTime, " +
+            "log.clientlastmodifiedtime as logClientLastModifiedTime, " +
             "doc.id as docId, " +
             "doc.filestore_id as docFileStoreId, " +
             "doc.document_type as docDocumentType, " +
@@ -50,6 +55,13 @@ public class AttendanceLogQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" log.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
+        }
+
+        List<String> clientReferenceIds = criteria.getClientReferenceId();
+        if (clientReferenceIds != null && !clientReferenceIds.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" log.clientreferenceid IN (").append(createQuery(clientReferenceIds)).append(")");
+            addToPreparedStatement(preparedStmtList, clientReferenceIds);
         }
 
         if (StringUtils.isNotBlank(criteria.getTenantId())) {
