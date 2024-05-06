@@ -1,5 +1,6 @@
 package org.egov.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -167,6 +168,23 @@ public class MdmsUtils {
 				.requestInfo(requestInfo)
 				.mdmsCriteria(mdmsCriteria)
 				.build();
+	}
+
+	public Boolean validateFromAndToDates (JsonNode jsonNode, String detailsArrayName) {
+		JsonNode detailsArray = jsonNode.get(detailsArrayName);
+		if (detailsArray != null && detailsArray.isArray()) {
+			for (JsonNode details : detailsArray) {
+				long effectiveFrom = details.get("effectiveFrom").asLong();
+				Long effectiveTo = details.has("effectiveTo") ?
+						details.get("effectiveTo").asLong() : null;
+				long currentTime = System.currentTimeMillis();
+
+				if (effectiveFrom > currentTime || (effectiveTo != null && effectiveTo < currentTime)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

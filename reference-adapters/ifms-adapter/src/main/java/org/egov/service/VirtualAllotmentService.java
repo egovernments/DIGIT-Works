@@ -96,10 +96,13 @@ public class VirtualAllotmentService {
                 JSONArray ssuList = ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
 
                 for (Object ssu: ssuList) {
+                    JsonNode ssuNode = objectMapper.valueToTree(ssu);
+                        if (mdmsUtils.validateFromAndToDates(ssuNode, "SSUDetails")) {
+                            continue;
+                        }
                     for (Object hoa: hoaList) {
                         // Convert object to JsonNode
                         JsonNode hoaNode = objectMapper.valueToTree(hoa);
-                        JsonNode ssuNode = objectMapper.valueToTree(ssu);
                         processVAForHOA(tenantId, hoaNode, ssuNode, requestInfo);
                     }
 
