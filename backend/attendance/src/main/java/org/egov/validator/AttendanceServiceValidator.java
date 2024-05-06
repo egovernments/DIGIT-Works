@@ -25,13 +25,17 @@ import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 @Slf4j
 public class AttendanceServiceValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+    private final MDMSUtils mdmsUtils;
+
+    private final RegisterRepository registerRepository;
+    private final IndividualServiceUtil individualServiceUtil;
 
     @Autowired
-    private RegisterRepository registerRepository;
-    @Autowired
-    private IndividualServiceUtil individualServiceUtil;
+    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil) {
+        this.mdmsUtils = mdmsUtils;
+        this.registerRepository = registerRepository;
+        this.individualServiceUtil = individualServiceUtil;
+    }
 
     /* Validates create Attendance Register request body */
     public void validateCreateAttendanceRegister(AttendanceRegisterRequest request) {

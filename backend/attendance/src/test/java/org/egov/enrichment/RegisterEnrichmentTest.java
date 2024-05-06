@@ -23,15 +23,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -46,11 +42,6 @@ public class RegisterEnrichmentTest {
 
     @Mock
     private IdGenRepository idGenRepository;
-
-    @Mock
-    private AttendanceServiceUtil attendanceServiceUtil;
-    @Mock
-    private IndividualServiceUtil individualServiceUtil;
 
     @BeforeEach
     void setupBeforeEach() {

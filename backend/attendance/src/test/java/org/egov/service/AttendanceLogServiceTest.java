@@ -5,8 +5,6 @@ import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendanceLogEnrichment;
 import org.egov.helper.AttendanceLogRequestTestBuilder;
 import org.egov.kafka.Producer;
-import org.egov.repository.AttendanceLogRepository;
-import org.egov.tracer.model.CustomException;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceLogServiceValidator;
 import org.egov.web.models.AttendanceLogRequest;
@@ -16,10 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -33,11 +30,6 @@ public class AttendanceLogServiceTest {
     @Mock
     private AttendanceLogServiceValidator attendanceLogServiceValidator;
 
-
-    @Mock
-    private ResponseInfoFactory responseInfoFactory;
-
-
     @Mock
     private AttendanceLogEnrichment attendanceLogEnricher;
 
@@ -46,6 +38,8 @@ public class AttendanceLogServiceTest {
 
     @Mock
     private AttendanceServiceConfiguration config;
+    @Mock
+    private ResponseInfoFactory responseInfoFactory;
 
 
     @DisplayName("create attendance log successfully")

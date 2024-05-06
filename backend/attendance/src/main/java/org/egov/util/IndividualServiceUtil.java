@@ -28,19 +28,16 @@ import static java.lang.Long.parseLong;
 @Slf4j
 public class IndividualServiceUtil {
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final AttendanceServiceConfiguration config;
+    private final RestTemplate restTemplate;
+    private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     @Autowired
-    private AttendanceServiceConfiguration config;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
-    private MultiStateInstanceUtil multiStateInstanceUtil;
+    public IndividualServiceUtil(AttendanceServiceConfiguration config, RestTemplate restTemplate, MultiStateInstanceUtil multiStateInstanceUtil) {
+        this.config = config;
+        this.restTemplate = restTemplate;
+        this.multiStateInstanceUtil = multiStateInstanceUtil;
+    }
 
     public List<String> fetchIndividualIds(List<String> individualIds, RequestInfo requestInfo, String tenantId) {
 

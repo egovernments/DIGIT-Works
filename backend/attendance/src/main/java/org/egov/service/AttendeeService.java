@@ -21,29 +21,30 @@ import java.util.Map;
 @Service
 @Slf4j
 public class AttendeeService {
-    @Autowired
-    private AttendeeServiceValidator attendeeServiceValidator;
+    private final AttendeeServiceValidator attendeeServiceValidator;
+
+    private final AttendeeRepository attendeeRepository;
+
+    private final AttendanceRegisterService attendanceRegisterService;
+
+    private final AttendanceServiceValidator attendanceServiceValidator;
+
+    private final AttendeeEnrichmentService attendeeEnrichmentService;
+
+    private final AttendanceServiceConfiguration attendanceServiceConfiguration;
+
+    private final Producer producer;
 
     @Autowired
-    private ResponseInfoFactory responseInfoFactory;
-
-    @Autowired
-    private AttendeeRepository attendeeRepository;
-
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
-
-    @Autowired
-    private AttendanceServiceValidator attendanceServiceValidator;
-
-    @Autowired
-    private AttendeeEnrichmentService attendeeEnrichmentService;
-
-    @Autowired
-    private AttendanceServiceConfiguration attendanceServiceConfiguration;
-
-    @Autowired
-    private Producer producer;
+    public AttendeeService(AttendeeServiceValidator attendeeServiceValidator, AttendeeRepository attendeeRepository, AttendanceRegisterService attendanceRegisterService, AttendanceServiceValidator attendanceServiceValidator, AttendeeEnrichmentService attendeeEnrichmentService, AttendanceServiceConfiguration attendanceServiceConfiguration, Producer producer) {
+        this.attendeeServiceValidator = attendeeServiceValidator;
+        this.attendeeRepository = attendeeRepository;
+        this.attendanceRegisterService = attendanceRegisterService;
+        this.attendanceServiceValidator = attendanceServiceValidator;
+        this.attendeeEnrichmentService = attendeeEnrichmentService;
+        this.attendanceServiceConfiguration = attendanceServiceConfiguration;
+        this.producer = producer;
+    }
 
 
     /**

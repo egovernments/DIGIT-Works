@@ -3,15 +3,14 @@ package org.egov.service;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.models.individual.Individual;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
-import org.egov.web.models.Organisation.ContactDetails;
-import org.egov.web.models.Organisation.OrgContactUpdateDiff;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
+import org.egov.works.services.common.models.organization.ContactDetails;
+import org.egov.works.services.common.models.organization.OrgContactUpdateDiff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,20 +21,24 @@ import java.util.*;
 @Service
 public class OrganisationContactDetailsStaffUpdateService {
 
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
-    @Autowired
-    private StaffService staffService;
-    @Autowired
-    private IndividualServiceUtil individualServiceUtil;
+    private final AttendanceRegisterService attendanceRegisterService;
+    private final StaffService staffService;
+    private final IndividualServiceUtil individualServiceUtil;
+
+    private final AttendanceServiceConfiguration configuration;
 
     @Autowired
-    private AttendanceServiceConfiguration configuration;
+    public OrganisationContactDetailsStaffUpdateService(AttendanceRegisterService attendanceRegisterService, StaffService staffService, IndividualServiceUtil individualServiceUtil, AttendanceServiceConfiguration configuration) {
+        this.attendanceRegisterService = attendanceRegisterService;
+        this.staffService = staffService;
+        this.individualServiceUtil = individualServiceUtil;
+        this.configuration = configuration;
+    }
 
     public void updateStaffPermissionsForContactDetails(OrgContactUpdateDiff orgContactUpdateDiff) {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(orgContactUpdateDiff.getRequestInfo()).build();
         String tenantId = orgContactUpdateDiff.getTenantId();
-        List<ContactDetails> oldContacts = orgContactUpdateDiff.getOldContacts();
+        Set<ContactDetails> oldContacts = orgContactUpdateDiff.getOldContacts();
 
         for(ContactDetails oldContact : oldContacts) {
             AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria =
@@ -50,7 +53,7 @@ public class OrganisationContactDetailsStaffUpdateService {
                     log.error(e.toString());
                 }
             }
-            List<ContactDetails> newContacts = orgContactUpdateDiff.getNewContacts();
+            Set<ContactDetails> newContacts = orgContactUpdateDiff.getNewContacts();
             grantPermission(attendanceRegisterList, newContacts, orgContactUpdateDiff.getRequestInfo());
             revokePermission(attendanceRegisterList, oldContact.getIndividualId(), orgContactUpdateDiff.getRequestInfo());
         }
@@ -74,7 +77,7 @@ public class OrganisationContactDetailsStaffUpdateService {
         log.info("Revoked permission for: " + individualOrUserId + " on " + attendanceRegisters.size() + " registers.");
     }
 
-    private void grantPermission(List<AttendanceRegister> attendanceRegisters, List<ContactDetails> newContacts, RequestInfo requestInfo) {
+    private void grantPermission(List<AttendanceRegister> attendanceRegisters, Set<ContactDetails> newContacts, RequestInfo requestInfo) {
         if(attendanceRegisters.isEmpty()) {
             log.info("No attendance registers to grant permission on");
             return;

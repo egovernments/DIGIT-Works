@@ -3,7 +3,6 @@ package org.egov.helper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -57,36 +56,6 @@ public class StaffRequestBuilderTest {
                 .emailId("xyz@egovernments.org").type("EMPLOYEE").roles(roles).build();
         RequestInfo requestInfo = RequestInfo.builder().apiId("attendance-services").msgId("search with from and to values").userInfo(userInfo).build();
         return requestInfo;
-    }
-
-    public static Object getMdmsResponseForValidTenant() {
-
-        Object mdmsResponse = null;
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/TenantMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-            mdmsResponse = objectMapper.readValue(exampleRequest, Object.class);
-        } catch (Exception exception) {
-            log.error("AttendeeRequestBuilderTest::getMdmsResponse::Exception while parsing mdms json");
-        }
-        return mdmsResponse;
-    }
-
-    public static Object getMdmsResponseForInvalidTenant() {
-
-        Object mdmsResponse = null;
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/InvalidTenantMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-            mdmsResponse = objectMapper.readValue(exampleRequest, Object.class);
-        } catch (Exception exception) {
-            log.error("AttendeeRequestBuilderTest::getMdmsResponse::Exception while parsing mdms json");
-        }
-        return mdmsResponse;
     }
 
     public static ResponseInfo getResponseInfo_Success() {
