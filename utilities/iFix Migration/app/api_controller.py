@@ -10,6 +10,14 @@ import threading
 from dotenv import load_dotenv
 import os
 import logging
+import uuid
+import app
+import traceback
+
+import json
+from decimal import Decimal
+from requests import Request, Session
+
 
 app = Flask(__name__)
 load_dotenv('.env')
@@ -301,6 +309,7 @@ def get_payment(request_info, payment_number, tenant_id):
 
 
 def fetch_bank_account(request_info, bank_account_id, tenant_id):
+    print(f"bank_account_id: {bank_account_id}")
     bank_account_host = os.getenv('BANK_ACCOUNT_HOST')
     bank_account_search = os.getenv('BANK_ACCOUNT_SEARCH')
     url = f"{bank_account_host}{bank_account_search}"
@@ -320,12 +329,15 @@ def fetch_bank_account(request_info, bank_account_id, tenant_id):
         },
         'RequestInfo': request_info
     }
+    print(f"fetch_bank_account : data: {data}")
 
     response = requests.post(url, headers=headers, json=data)
+    print(f"fetch_bank_account : response: {response}")
 
     # Check if the request was successful (status code 200)
     if response.status_code == 200:
         bank_account_data = response.json()
+        print(f"fetch_bank_account : bank_account_data: {bank_account_data}")
         if len(bank_account_data['bankAccounts']) > 0:
             return bank_account_data['bankAccounts'][0]['id']
         else:
@@ -359,30 +371,41 @@ def decrypt_account_number(account_number):
 
 
 def get_account_code(request_info, response_data, pi_created_time):
-    sorted_logs = sorted(response_data["AuditLogs"], key=lambda x: x["changeDate"])
+    try:
+        print(f"get_account_code : response_data: {response_data}")
+        sorted_logs = sorted(response_data["AuditLogs"], key=lambda x: x["changeDate"])
 
-    # Find the first log with changeDate greater than the given time
-    matching_log_eg_bank_account = next((log for log in sorted_logs if log["changeDate"] < pi_created_time and log[
-        "entityName"] == 'eg_bank_account_detail'), None)
-    matching_log_eg_bank_branch_identifier = next((log for log in sorted_logs if
-                                                   log["changeDate"] < pi_created_time and log[
-                                                       "entityName"] == 'eg_bank_branch_identifier'), None)
-    if matching_log_eg_bank_account is None and matching_log_eg_bank_branch_identifier is None and len(sorted_logs) > 0:
-        matching_log_eg_bank_account = next(
-            (log for log in sorted_logs if log["entityName"] == 'eg_bank_account_detail'), None)
-        matching_log_eg_bank_branch_identifier = next(
-            (log for log in sorted_logs if log["entityName"] == 'eg_bank_branch_identifier'), None)
-    # Extract the required information if a matching log is found
-    if matching_log_eg_bank_account:
-        account_number = matching_log_eg_bank_account["keyValueMap"]["accountNumber"]
-    if matching_log_eg_bank_branch_identifier:
-        branch_code = matching_log_eg_bank_branch_identifier["keyValueMap"]["code"]
-    if account_number is not None:
-        account_number = decrypt_account_number(account_number)
-        return account_number + '@' + branch_code
-    else:
-        print("No log found with changeDate greater than the given time.")
+        # Find the first log with changeDate greater than the given time
+        matching_log_eg_bank_account = next((log for log in sorted_logs if log["changeDate"] < pi_created_time and log[
+            "entityName"] == 'eg_bank_account_detail'), None)
+        matching_log_eg_bank_branch_identifier = next((log for log in sorted_logs if
+                                                       log["changeDate"] < pi_created_time and log[
+                                                           "entityName"] == 'eg_bank_branch_identifier'), None)
 
+        print(f"get_account_code : matching_log_eg_bank_account: {matching_log_eg_bank_account}")
+        print(f"get_account_code : matching_log_eg_bank_branch_identifier: {matching_log_eg_bank_branch_identifier}")
+
+        if matching_log_eg_bank_account is None and matching_log_eg_bank_branch_identifier is None and len(sorted_logs) > 0:
+            matching_log_eg_bank_account = next(
+                (log for log in sorted_logs if log["entityName"] == 'eg_bank_account_detail'), None)
+            matching_log_eg_bank_branch_identifier = next(
+                (log for log in sorted_logs if log["entityName"] == 'eg_bank_branch_identifier'), None)
+        # Extract the required information if a matching log is found
+        if matching_log_eg_bank_account:
+            account_number = matching_log_eg_bank_account["keyValueMap"]["accountNumber"]
+        if matching_log_eg_bank_branch_identifier:
+            branch_code = matching_log_eg_bank_branch_identifier["keyValueMap"]["code"]
+
+        print(f"get_account_code : account_number: {account_number}")
+        if account_number is not None:
+            account_number = decrypt_account_number(account_number)
+            return account_number + '@' + branch_code
+        else:
+            print("No log found with changeDate greater than the given time.")
+    except Exception as e:
+        # Use Flask's current_app to access the application context
+        print(f"Last Error: {str(e)}")
+        print(f"response_data: {str(response_data)}")
 
 def fetch_bank_account_from_audit_logs(request_info, bank_account_detail_id, tenant_id, pi_created_time):
     account_id = fetch_bank_account(request_info, bank_account_detail_id, tenant_id)
@@ -404,7 +427,11 @@ def fetch_bank_account_from_audit_logs(request_info, bank_account_detail_id, ten
         "RequestInfo": request_info
     }
 
+    print(f"fetch_bank_account_from_audit_logs params: {str(params)}")
+    print(f"fetch_bank_account_from_audit_logs data: {str(data)}")
+
     response = requests.post(api_url, params=params, json=data, headers=headers)
+    print(f"fetch_bank_account_from_audit_logs response: {str(response)}")
 
     # Check if the request was successful (status code 200)
     if response.status_code == 200:
@@ -1006,9 +1033,9 @@ def process_disbursement_data_for_each_tenant(tenant_id, type, result_type):
             "message_ts": "1707460264352",
             "action": "search",
             "message_type": type,
-            "sender_id": "program@https://unified-dev.digit.org/",
+            "sender_id": "program@https://mukta.odisha.gov.in/mukta/digit-exchange",
             "sender_uri": "https://spp.example.org/{namespace}/callback/on-search",
-            "receiver_id": "program@https://unified-qa.digit.org/"
+            "receiver_id": "program@https://mukta.odisha.gov.in/ifms/digit-exchange"
         },
         "message": {
             "location_code": tenant_id
@@ -1047,16 +1074,16 @@ def process_disbursement_data_for_each_tenant(tenant_id, type, result_type):
 
 def publish_data_to_kafka(all_data, value):
     producer = KafkaProducer(bootstrap_servers='kafka-v2.kafka-cluster:9092')
-    topic = 'exchange-topic'
+    topic = 'works-dx-exchange-topic'
     signature = None
     header = {
         "message_id": "123",
         "message_ts": "1707460264352",
         "action": "create",
         "message_type": value,
-        "sender_id": "program@https://mukta-uat.digit.org/mukta/digit-exchange",
+        "sender_id": "program@https://mukta.odisha.gov.in/mukta/digit-exchange",
         "sender_uri": "https://spp.example.org/{namespace}/callback/on-push",
-        "receiver_id": "program@https://mukta-uat.digit.org/ifms/digit-exchange"
+        "receiver_id": "program@https://mukta.odisha.gov.in/ifms/digit-exchange"
     }
     d = {
         "signature": signature,
@@ -1173,7 +1200,7 @@ def enrich_bankaccount_and_program_codes_ifms_data(mdms_data, cursor, connection
         logging.info(f"Program code updated for JIT Sanction Detail: {jit_sanction_detail}")
         print(f"Program code updated for JIT Sanction Detail: {jit_sanction_detail}")
 
-    jit_beneficiary_details_query = '''Select id, beneficiaryid, createdtime from jit_beneficiary_details where tenantid = %s'''
+    jit_beneficiary_details_query = '''Select id, beneficiaryid, createdtime from jit_beneficiary_details where tenantid = %s and bankaccountcode is null'''
     cursor.execute(jit_beneficiary_details_query, (tenant_id,))
     jit_beneficiary_details = cursor.fetchall()
     for jit_beneficiary_detail in jit_beneficiary_details:
@@ -1223,6 +1250,206 @@ def encrypt_object(object, tenant_id):
     else:
         # If not successful, print the error status code and response text
         print(f"Error: {response.status_code}\n{response.text}")
+
+def fetch_sanction_ids():
+    connection = connect_to_database()
+    cursor = connection.cursor()
+    cursor.execute("SELECT sanctionid FROM jit_funds_summary WHERE availableamount > 0")
+    result = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return [row[0] for row in result]
+
+def enrich_record(record):
+
+    try:
+    # Extract values from the record fetched from jit_funds_summary
+        tenant_id = record[1]
+        sanction_id = record[2]
+        available_amount = record[3]
+        created_by = record[4]
+        last_modified_by = record[5]
+
+        # Generate a random UUID for id
+        new_id = uuid.uuid4()
+
+        # Create the enriched record for jit_allotment_details
+        enriched_record = {
+                'id': str(new_id),
+                'tenantid': tenant_id,
+                'sanctionid': sanction_id,
+                'allotmentserialno': 0,
+                'ssuallotmentid': 24,
+                'allotmentamount': available_amount,
+                'allotmenttransactiontype': 'Allotment withdrawal',
+                'sanctionbalance': 0.00,
+                'allotmentdate': '1715003530000',
+                'additionaldetails': {},
+                'createdtime': '1715003530000',
+                'createdby': created_by,
+                'lastmodifiedtime': '1715003530000',
+                'lastmodifiedby': last_modified_by
+            }
+
+        print("enriched_record for sanction id: ", sanction_id)
+        return enriched_record
+    except Exception as e:
+        traceback.print_exc()
+        print(f"Error: {str(e)}")
+        raise e
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return str(obj)  # Convert Decimal to string
+        return super().default(obj)
+
+
+def create_on_allocation(data):
+    program_host = os.getenv('IFIX_PROGRAM_SERVICE_HOST')
+    on_allocation_create = os.getenv('ON_ALLOCATION_CREATE')
+    base_url = f"{program_host}{on_allocation_create}"
+
+    print("data: ", data)
+
+    headers = {
+        'accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
+
+    # Use the custom encoder when serializing the data
+    encoded_data = json.dumps(data, cls=DecimalEncoder)
+
+    session = Session()
+    request = Request('POST', base_url, headers=headers, data=encoded_data)
+    prepared_request = session.prepare_request(request)
+    response = session.send(prepared_request)
+    print(response.text)
+
+    return response
+
+    # response = requests.post(base_url, headers=headers, json=data)
+    # return response
+
+@app.route('/funds/migrate', methods=['POST'])
+def migrate_funds_data():
+    connection = None
+    cursor = None
+    try:
+        print("Starting Funds data migration")
+        # connect to postgreSQL
+        connection = connect_to_database()
+        cursor = connection.cursor()
+        sanction_ids = fetch_sanction_ids()
+        whole_data = []
+
+        for sanction_id in sanction_ids:
+            cursor.execute("SELECT id, tenantid, sanctionid, availableamount, createdby, lastmodifiedby FROM jit_funds_summary WHERE sanctionid = %s", (sanction_id,))
+            record = cursor.fetchone()
+            enriched_record = enrich_record(record)
+            whole_data.append(enriched_record)
+
+        #Insert whole_data in jit_allotment_details table
+        for data in whole_data:
+            cursor.execute("""
+                            INSERT INTO jit_allotment_details (
+                                id, tenantid, sanctionid, allotmentserialno, ssuallotmentid, allotmentamount,
+                                allotmenttransactiontype, sanctionbalance, allotmentdate, additionaldetails,
+                                createdtime, createdby, lastmodifiedtime, lastmodifiedby
+                            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """, (
+                            data['id'], data['tenantid'], data['sanctionid'], data['allotmentserialno'],
+                            data['ssuallotmentid'], data['allotmentamount'], data['allotmenttransactiontype'],
+                            data['sanctionbalance'], data['allotmentdate'], Json(data['additionaldetails']),
+                            data['createdtime'], data['createdby'], data['lastmodifiedtime'], data['lastmodifiedby']
+                        ))
+
+            print("Data inserted successfully in allotment_details for sanctionid: ", data['sanctionid'])
+            cursor.execute("SELECT id, program_code FROM eg_program_sanction WHERE id = %s", (data['sanctionid'],))
+            program_record = cursor.fetchone()
+
+            # Call the API to create on-allocation
+            on_allocation_data = {
+                "signature": None,
+                "header": {
+                    "message_id": data['id'],
+                    "message_ts": "1708428280",
+                    "message_type": "on-allocation",
+                    "action": "create",
+                    "sender_id": "program@https://mukta.odisha.gov.in/ifms/digit-exchange",
+                    "receiver_id": "program@https://mukta.odisha.gov.in/mukta/digit-exchange"
+                },
+                "message": {
+                    "id": data['id'],
+                    "location_code": data['tenantid'],
+                    "program_code": program_record[1],
+                    "sanction_id": data['sanctionid'],
+                    "net_amount": data['allotmentamount'],
+                    "gross_amount": data['allotmentamount'],
+                    "allocation_type": "DEDUCTION",
+                    "children": [
+                        {
+                            "id": data['id'],
+                            "location_code": data['tenantid'],
+                            "program_code": program_record[1],
+                            "sanction_id": data['sanctionid'],
+                            "net_amount": data['allotmentamount'],
+                            "gross_amount": data['allotmentamount'],
+                            "allocation_type": "DEDUCTION",
+                            "status": {
+                                "status_code": "INITIATED",
+                                "status_message": "INITIATED"
+                            },
+                            "additional_details": {},
+                            "function_code": None,
+                            "administration_code": None,
+                            "recipient_segment_code": None,
+                            "economic_segment_code": None,
+                            "source_of_fund_code": None,
+                            "target_segment_code": None,
+                            "currency_code": None,
+                            "locale_code": None
+                        }
+                    ],
+                    "status": {
+                        "status_code": "INITIATED",
+                        "status_message": "INITIATED"
+                    },
+                    "additional_details": {},
+                    "function_code": None,
+                    "administration_code": None,
+                    "recipient_segment_code": None,
+                    "economic_segment_code": None,
+                    "source_of_fund_code": None,
+                    "target_segment_code": None,
+                    "currency_code": None,
+                    "locale_code": None
+                }
+            }
+
+            cursor.execute("UPDATE jit_funds_summary SET availableamount = 0 WHERE sanctionid = %s", (data['sanctionid'],))
+
+            response = create_on_allocation(on_allocation_data)
+            if response.status_code == 200:
+                print(f"On-allocation created successfully for id: {data['id']}")
+            else:
+                print(f"Error creating on-allocation for id: {data['id']}")
+
+
+        connection.commit()
+        logging.info("Funds data migration completed successfully")
+        return jsonify({"message": "Funds data migration completed successfully"}), 200
+    except Exception as e:
+        traceback.print_exc()
+        print(f"Error during Funds data migration: {str(e)}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
 
 
 @app.route('/ifms/migrate', methods=['POST'])

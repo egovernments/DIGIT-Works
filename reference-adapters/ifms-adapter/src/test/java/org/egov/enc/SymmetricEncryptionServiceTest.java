@@ -168,4 +168,21 @@ class SymmetricEncryptionServiceTest {
     }
 
      */
+
+    @Test
+    public void testIFMSDecryptResponse() throws Exception {
+        String rek = "osFuJQQlPe3q0CoOemNrujjRRNwrEKpQbVpZf8JR6tc=";
+        String ciphertext = "A7AYiOdLWeQrco4q6DW5WFqvuw5GaIrL4hZRJOXlJf9rLGZbc4ZwjiZwSjlAcNy9YAz3iGj3W7wopCEEI9tM/zwZC5jbW6BmJHoVVVnNpnDfJD+xyRDeRecyp5NPP/ApJaGtynzBa+Z5n8bIaZNLNKwXdDEr3efR1D2WPU87eveNGEc0yqupuDG3Iio11/1H4HUclc1sBVi4/LruwbIDpByB/DP5lr+5hV8AdbBMMZ1CIFG0tJI2vRXG6rKXTlPaHO2ePimy63k7Or+ZRkwUSA==";        byte[] secret = Base64.getDecoder().decode(rek);
+        SecretKey secretKey = new SecretKeySpec(secret, "AES");
+        byte[] plainBytes = SymmetricEncryptionService.decrypt(ciphertext, secretKey);
+        String plaintext = new String(plainBytes);
+        System.out.println(plaintext);
+    }
+    @Test
+    public void testSecretEncryptRequest() throws Exception {
+        String secretKey = "bssnx12vlsve5221";
+        String encryptedRequest = "n9MBzNvRy99xbqS0ozAb0r+TI+jf/AcSkAoahafLbXZYOgVGtsNhlcNAOHDO7/i32ufBfCH0aUrPbKNYCAocJbSkf9XcIB1cTzpF0gX1nLlhuOeF0N8ZzfrqB4DMr7vZvENWm2uBEJUsq4RoNh5aMrbZHcyISPbd1X6OlRralNk/G3klXSKoBS87iu0YMJbe1f/aTOKpWjCA9lhiffLoudQ5OXs0NNoqq8i/vCPQLpyZsnCEO3rmSRzONljSC78X+PV3xjGF3HZUkuYu9wuquszZATEe01YLD/uSle9kyUxKgW6qnJcd+D7eCHZvYe6vAYLkM81YWf3f8qhcwn5i8R/7ydNHeza9m+ZEsk42Q5NzA7Rb6L8lLFG02gB95lv/i8GX2RpH64Sg8e4AAvI+Q/R8Sf8b1dIM3ecJhiW00Fg995HYnC85jlaq1XTmf9y3m0EZ91GB2XhN9nvP0gcpPS7F8UqgFJ2I4apG/ABSUsXDf5c3t94gGS0S1VZ+7rIQeh6DJgPZrwrm68XGIFHj9qXTkGcLfl2N3VA5HByNux8=";
+        String decryptedRequest = SymmetricEncryptionService.decryptRequest(encryptedRequest, secretKey);
+        System.out.println("decryptedRequest : " + decryptedRequest);
+    }
 }
