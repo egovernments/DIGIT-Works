@@ -107,7 +107,7 @@ config:
   - name: "builds/digit-works/backend/measurement-service"
     build:
       - work-dir: "backend/measurement-service"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "measurement-service"
       - work-dir: "backend/measurement-service/src/main/resources/db"
         image-name: "measurement-service-db"     
