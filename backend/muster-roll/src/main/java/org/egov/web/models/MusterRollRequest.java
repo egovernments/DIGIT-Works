@@ -1,6 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 import lombok.AllArgsConstructor;

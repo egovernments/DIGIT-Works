@@ -6,12 +6,14 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.idgen.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.repository.IdGenRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -179,7 +181,7 @@ public class EnrichmentService {
         if (auditDetails != null && StringUtils.isNotBlank(auditDetails.getCreatedBy())) {
             List<String> updatedAssignees = new ArrayList<>();
             updatedAssignees.add(auditDetails.getCreatedBy());
-            workflow.setAssignees(updatedAssignees);
+            workflow.setAssignes(updatedAssignees);
         }
     }
 
