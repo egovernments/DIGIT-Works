@@ -2,7 +2,7 @@ package org.egov.web.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.MusterRollService;
@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.Collections;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
 
 @Controller
 @RequestMapping("/v1")

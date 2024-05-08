@@ -1,9 +1,9 @@
 package org.egov.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.UserDetailResponse;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.user.UserDetailResponse;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;

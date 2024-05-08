@@ -3,18 +3,23 @@ package org.egov.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
+import org.egov.common.models.individual.IndividualBulkResponse;
+import org.egov.common.models.individual.IndividualSearch;
+import org.egov.common.models.individual.IndividualSearchRequest;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
-import org.json.JSONObject;
+import org.egov.works.services.common.models.bankaccounts.*;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -244,7 +249,7 @@ public class CalculationService {
         return absentees;
     }
 
-    private void getAllAttendees(MusterRoll musterRoll,AttendanceRegister register,Set<String> attendeesWithLogs,List<IndividualEntry> absentees) {
+    private void getAllAttendees(MusterRoll musterRoll, AttendanceRegister register, Set<String> attendeesWithLogs, List<IndividualEntry> absentees) {
         List<IndividualEntry> entries = register.getAttendees();
         Set<String> allAttendees = null;
 
@@ -361,7 +366,7 @@ public class CalculationService {
      * @param musterRollRequest
      * @return List<AttendanceLog>
      */
-    private List<AttendanceLog> fetchAttendanceLogsAndHours(MusterRollRequest musterRollRequest,Object mdmsData) {
+    private List<AttendanceLog> fetchAttendanceLogsAndHours(MusterRollRequest musterRollRequest, Object mdmsData) {
 
         //fetch the attendance log
         List<AttendanceLog> attendanceLogList = getAttendanceLogs(musterRollRequest.getMusterRoll(),musterRollRequest.getRequestInfo());
@@ -413,7 +418,7 @@ public class CalculationService {
                 .queryParam("registerId",musterRoll.getRegisterId())
                 .queryParam("fromTime",fromTime)
                 .queryParam("toTime",toTime)
-                .queryParam("status",Status.ACTIVE);
+                .queryParam("status", Status.ACTIVE);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         AttendanceLogResponse attendanceLogResponse = null;
 
