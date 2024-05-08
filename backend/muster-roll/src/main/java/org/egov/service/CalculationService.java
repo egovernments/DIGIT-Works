@@ -18,7 +18,8 @@ import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
-import org.json.JSONObject;
+import org.egov.works.services.common.models.bankaccounts.*;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -248,7 +249,7 @@ public class CalculationService {
         return absentees;
     }
 
-    private void getAllAttendees(MusterRoll musterRoll,AttendanceRegister register,Set<String> attendeesWithLogs,List<IndividualEntry> absentees) {
+    private void getAllAttendees(MusterRoll musterRoll, AttendanceRegister register, Set<String> attendeesWithLogs, List<IndividualEntry> absentees) {
         List<IndividualEntry> entries = register.getAttendees();
         Set<String> allAttendees = null;
 
@@ -365,7 +366,7 @@ public class CalculationService {
      * @param musterRollRequest
      * @return List<AttendanceLog>
      */
-    private List<AttendanceLog> fetchAttendanceLogsAndHours(MusterRollRequest musterRollRequest,Object mdmsData) {
+    private List<AttendanceLog> fetchAttendanceLogsAndHours(MusterRollRequest musterRollRequest, Object mdmsData) {
 
         //fetch the attendance log
         List<AttendanceLog> attendanceLogList = getAttendanceLogs(musterRollRequest.getMusterRoll(),musterRollRequest.getRequestInfo());
@@ -417,7 +418,7 @@ public class CalculationService {
                 .queryParam("registerId",musterRoll.getRegisterId())
                 .queryParam("fromTime",fromTime)
                 .queryParam("toTime",toTime)
-                .queryParam("status",Status.ACTIVE);
+                .queryParam("status", Status.ACTIVE);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         AttendanceLogResponse attendanceLogResponse = null;
 

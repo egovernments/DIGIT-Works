@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.egov.common.contract.models.AuditDetails;
 import lombok.*;
 import org.egov.common.contract.models.Document;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;

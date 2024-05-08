@@ -2,6 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.egov.works.services.common.models.musterroll.Status;
 
 import java.math.BigDecimal;
 import java.util.List;

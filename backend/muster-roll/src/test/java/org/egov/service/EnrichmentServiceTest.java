@@ -11,7 +11,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.MusterRollRequest;
-import org.egov.web.models.Status;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

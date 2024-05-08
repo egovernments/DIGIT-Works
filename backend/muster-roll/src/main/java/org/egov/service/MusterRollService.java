@@ -24,7 +24,7 @@ import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.web.models.MusterRollSearchCriteria;
-import org.egov.web.models.Status;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

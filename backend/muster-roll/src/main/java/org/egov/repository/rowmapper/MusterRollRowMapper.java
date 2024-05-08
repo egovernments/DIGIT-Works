@@ -9,7 +9,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceEntry;
 import org.egov.web.models.IndividualEntry;
 import org.egov.web.models.MusterRoll;
-import org.egov.web.models.Status;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
