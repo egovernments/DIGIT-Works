@@ -1,10 +1,10 @@
 package org.egov.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.IdGenerationRequest;
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdRequest;
-import digit.models.coremodels.IdResponse;
+import org.egov.common.contract.idgen.IdGenerationRequest;
+import org.egov.common.contract.idgen.IdGenerationResponse;
+import org.egov.common.contract.idgen.IdResponse;
+import org.egov.common.contract.idgen.IdRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;

@@ -3,8 +3,8 @@ package org.egov.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceEntry;
 import org.egov.web.models.IndividualEntry;

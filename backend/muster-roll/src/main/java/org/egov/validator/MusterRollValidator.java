@@ -1,13 +1,11 @@
 package org.egov.validator;
 
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.config.MusterRollServiceConfiguration;
-import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
 import org.egov.web.models.*;

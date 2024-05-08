@@ -1,7 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
+import org.egov.common.contract.models.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;

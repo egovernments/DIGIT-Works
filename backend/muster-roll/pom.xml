@@ -59,21 +59,21 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>2.5.0</version>
+        </dependency>
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-core</artifactId>
             <version>1.5.18</version>
         </dependency>
+        <!-- Egov dependencies -->
         <dependency>
             <groupId>org.egov.services</groupId>
             <artifactId>tracer</artifactId>
             <version>2.9.0-SNAPSHOT</version>
-        </dependency>
-       <dependency>
-            <groupId>org.egov.services</groupId>
-            <artifactId>digit-models</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.egov</groupId>
@@ -81,20 +81,30 @@
             <version>2.9.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>org.egov.services</groupId>
+            <artifactId>digit-models</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
+        <dependency>
+            <groupId>org.egov.works</groupId>
+            <artifactId>works-services-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.egov.common</groupId>
+            <artifactId>health-services-models</artifactId>
+            <version>1.0.12-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
-        <!-- Bean Validation API support -->
-<!--        <dependency>-->
-<!--            <groupId>javax.validation</groupId>-->
-<!--            <artifactId>validation-api</artifactId>-->
-<!--        </dependency>-->
     </dependencies>
     <repositories>
     <repository>

@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Identifier;
+import org.egov.common.models.individual.Individual;
+import org.egov.common.models.individual.Skill;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.*;
@@ -72,7 +75,7 @@ public class MusterRollServiceUtil {
 	 *
 	 */
 	public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode,
-			Individual matchedIndividual, BankAccount bankAccount, boolean isCreate) {
+										  Individual matchedIndividual, BankAccount bankAccount, boolean isCreate) {
 		final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "."
 				+ MASTER_WAGER_SEEKER_SKILLS + ".*";
 		List<LinkedHashMap<String, String>> musterRes = null;

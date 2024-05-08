@@ -1,9 +1,10 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.*;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.workflow.*;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;

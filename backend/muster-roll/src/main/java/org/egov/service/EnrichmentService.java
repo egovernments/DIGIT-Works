@@ -2,16 +2,14 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.IdResponse;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.idgen.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.repository.IdGenRepository;
-import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
