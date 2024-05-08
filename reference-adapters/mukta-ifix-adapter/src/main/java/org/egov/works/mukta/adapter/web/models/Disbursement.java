@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Valid
-public class Disbursement extends ExchangeCode implements Serializable {
+public class Disbursement extends ExchangeCode {
     @JsonProperty("id")
     private String id;
     @NotNull

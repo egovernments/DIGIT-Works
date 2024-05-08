@@ -1,5 +1,6 @@
 package org.egov.works.mukta.adapter.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
@@ -32,26 +33,29 @@ public class RedisService {
 
 
     public void setCacheForDisbursement(Disbursement disbursement) {
-        log.info("Setting cache for disbursement");
         try {
-            setObject(Constants.REDIS_KEY.replace("{uuid}", disbursement.getId()), disbursement);
-        } catch (Exception e) {
-            // Handle exception, log error, or perform any other necessary action
+            String disbursementJson = objectMapper.writeValueAsString(disbursement);
+            redisTemplate.opsForValue().set(getRedisKey(disbursement.getId()), disbursementJson);
+        } catch (JsonProcessingException e) {
+            // Handle JSON processing exception
             e.printStackTrace();
         }
     }
 
     public Disbursement getDisbursementFromCache(String id) {
-        log.info("Getting cache for disbursement");
-        try {
-            Object disburse = getObject(Constants.REDIS_KEY.replace("{uuid}", id));
-            if (disburse != null) {
-                return objectMapper.convertValue(disburse, Disbursement.class);
+        String disbursementJson = (String) redisTemplate.opsForValue().get(getRedisKey(id));
+        if (disbursementJson != null) {
+            try {
+                return objectMapper.readValue(disbursementJson, Disbursement.class);
+            } catch (JsonProcessingException e) {
+                // Handle JSON processing exception
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            // Handle exception, log error, or perform any other necessary action
-            e.printStackTrace();
         }
-        return null; // Return null if cache retrieval fails
+        return null;
+    }
+
+    private String getRedisKey(String id) {
+        return Constants.REDIS_KEY.replace("{uuid}", id);
     }
 }
