@@ -38,7 +38,7 @@ config:
   - name: "builds/digit-works/backend/muster-roll"
     build:
       - work-dir: "backend/muster-roll"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "muster-roll"
       - work-dir: "backend/muster-roll/src/main/resources/db"
         image-name: "muster-roll-db"
