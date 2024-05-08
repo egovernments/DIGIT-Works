@@ -1,9 +1,9 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.ProcessInstance;
 import lombok.*;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;
