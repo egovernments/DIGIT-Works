@@ -1,9 +1,11 @@
 package org.egov.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.*;
+import org.egov.common.contract.models.RequestInfoWrapper;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.workflow.*;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
@@ -113,7 +115,7 @@ public class WorkflowUtil {
         processInstance.setModuleName(wfModuleName);
         processInstance.setTenantId(tenantId);
         processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessServiceCode).getBusinessService());
-        processInstance.setDocuments(workflow.getVerificationDocuments());
+        processInstance.setDocuments(workflow.getDocuments());
         processInstance.setComment(workflow.getComments());
 
         if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -152,7 +154,7 @@ public class WorkflowUtil {
                     .action(processInstance.getAction())
                     .assignes(userIds)
                     .comments(processInstance.getComment())
-                    .verificationDocuments(processInstance.getDocuments())
+                    .documents(processInstance.getDocuments())
                     .build();
 
             businessIdToWorkflow.put(processInstance.getBusinessId(), workflow);
