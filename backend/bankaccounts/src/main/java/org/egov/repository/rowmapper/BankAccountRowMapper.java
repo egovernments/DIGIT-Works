@@ -26,8 +26,12 @@ import java.util.*;
 @Slf4j
 public class BankAccountRowMapper implements ResultSetExtractor<List<BankAccount>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public BankAccountRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
 
     @Override

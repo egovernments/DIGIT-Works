@@ -16,11 +16,15 @@ import java.util.List;
 @Slf4j
 public class IndividualUtil {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
+
+    private final ServiceRequestRepository requestRepository;
 
     @Autowired
-    private ServiceRequestRepository requestRepository;
+    public IndividualUtil(Configuration config, ServiceRequestRepository requestRepository) {
+        this.config = config;
+        this.requestRepository = requestRepository;
+    }
 
     /**
      * fetch the individual details from individual service
