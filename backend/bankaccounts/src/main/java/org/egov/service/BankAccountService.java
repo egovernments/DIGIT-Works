@@ -8,6 +8,7 @@ import org.egov.kafka.Producer;
 import org.egov.repository.BankAccountRepository;
 import org.egov.validator.BankAccountValidator;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.bankaccounts.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
