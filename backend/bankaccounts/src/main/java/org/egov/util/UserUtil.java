@@ -21,20 +21,17 @@ import java.util.List;
 @Component
 public class UserUtil {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+    private final ServiceRequestRepository serviceRequestRepository;
+
+    private final Configuration configs;
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private Configuration configs;
-
-
-    @Autowired
-    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration configs) {
         this.mapper = mapper;
         this.serviceRequestRepository = serviceRequestRepository;
+        this.configs = configs;
     }
 
     /**

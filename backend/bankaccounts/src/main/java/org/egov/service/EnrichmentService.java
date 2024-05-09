@@ -19,11 +19,15 @@ import java.util.UUID;
 @Slf4j
 public class EnrichmentService {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
+
+    private final BankAccountUtil bankAccountUtil;
 
     @Autowired
-    private BankAccountUtil bankAccountUtil;
+    public EnrichmentService(Configuration config, BankAccountUtil bankAccountUtil) {
+        this.config = config;
+        this.bankAccountUtil = bankAccountUtil;
+    }
 
 
     /**

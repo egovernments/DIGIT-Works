@@ -33,16 +33,16 @@ public class BankaccountApiController {
 
     private final HttpServletRequest request;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    private final ResponseInfoFactory responseInfoFactory;
+
+    private final BankAccountService bankAccountService;
 
     @Autowired
-    private BankAccountService bankAccountService;
-
-    @Autowired
-    public BankaccountApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public BankaccountApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoFactory responseInfoFactory, BankAccountService bankAccountService) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.responseInfoFactory = responseInfoFactory;
+        this.bankAccountService = bankAccountService;
     }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)

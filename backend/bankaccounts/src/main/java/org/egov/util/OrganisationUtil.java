@@ -17,14 +17,18 @@ import java.util.List;
 @Slf4j
 public class OrganisationUtil {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
+
+    private final RestTemplate restTemplate;
+
+    private final ServiceRequestRepository requestRepository;
 
     @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private ServiceRequestRepository requestRepository;
+    public OrganisationUtil(Configuration config, RestTemplate restTemplate, ServiceRequestRepository requestRepository) {
+        this.config = config;
+        this.restTemplate = restTemplate;
+        this.requestRepository = requestRepository;
+    }
 
 
     /**
