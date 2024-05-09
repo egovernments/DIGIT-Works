@@ -1,13 +1,14 @@
 package org.egov.service;
 
 
-import digit.models.coremodels.Document;
+import org.egov.common.contract.models.Document;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
 import org.egov.util.BankAccountUtil;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.bankaccounts.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -19,11 +20,15 @@ import java.util.UUID;
 @Slf4j
 public class EnrichmentService {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
+
+    private final BankAccountUtil bankAccountUtil;
 
     @Autowired
-    private BankAccountUtil bankAccountUtil;
+    public EnrichmentService(Configuration config, BankAccountUtil bankAccountUtil) {
+        this.config = config;
+        this.bankAccountUtil = bankAccountUtil;
+    }
 
 
     /**
