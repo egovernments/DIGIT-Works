@@ -65,20 +65,24 @@ public class MuktaAdaptorConsumer {
         try {
             log.info("Payment data received on.");
             paymentRequest = objectMapper.readValue(record, PaymentRequest.class);
-            log.info("Payment data is " + paymentRequest);
-            isRevised = disbursementValidator.isValidForDisbursementCreate(paymentRequest);
-            Disbursement disbursement = paymentInstructionService.processPaymentInstruction(paymentRequest,isRevised);
-            encryptedDisbursement = paymentInstructionEnrichment.encriptDisbursement(disbursement);
-            pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(encryptedDisbursement);
-            msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
-            msgHeader.setAction(Action.CREATE);
-            msgHeader.setMessageType(MessageType.DISBURSE);
-            DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).build();
-            DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().header(msgHeader).message(encryptedDisbursement).build();
-            muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), encriptedDisbursementRequest);
-            paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(), pi,isRevised);
-            redisService.setCacheForDisbursement(encryptedDisbursement);
-            programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+            Boolean isDisbursementCreated = disbursementValidator.isDisbursementCreated(paymentRequest);
+            if(Boolean.FALSE.equals(isDisbursementCreated))
+            {
+                log.info("Payment data is " + paymentRequest);
+                isRevised = disbursementValidator.isValidForDisbursementCreate(paymentRequest);
+                Disbursement disbursement = paymentInstructionService.processPaymentInstruction(paymentRequest,isRevised);
+                encryptedDisbursement = paymentInstructionEnrichment.encriptDisbursement(disbursement);
+                pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(encryptedDisbursement);
+                msgHeader = programServiceUtil.getMessageCallbackHeader(paymentRequest.getRequestInfo(), muktaAdaptorConfig.getStateLevelTenantId());
+                msgHeader.setAction(Action.CREATE);
+                msgHeader.setMessageType(MessageType.DISBURSE);
+                DisbursementRequest disbursementRequest = DisbursementRequest.builder().header(msgHeader).message(disbursement).build();
+                DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().header(msgHeader).message(encryptedDisbursement).build();
+                muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), encriptedDisbursementRequest);
+                paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(), pi,isRevised);
+                redisService.setCacheForDisbursement(encryptedDisbursement);
+                programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+            }
         } catch (Exception e) {
             log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
             paymentService.updatePaymentStatusToFailed(paymentRequest);

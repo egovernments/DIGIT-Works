@@ -209,4 +209,20 @@ public class DisbursementValidator {
             throw new CustomException(Error.INVALID_REQUEST, Error.DISBURSEMENT_STATUS_NOT_FOUND);
         }
     }
+
+    public Boolean isDisbursementCreated(PaymentRequest paymentRequest) {
+        DisbursementSearchCriteria searchCriteria = DisbursementSearchCriteria.builder()
+                .paymentNumber(paymentRequest.getPayment().getPaymentNumber())
+                .build();
+        DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
+                .requestInfo(paymentRequest.getRequestInfo())
+                .criteria(searchCriteria)
+                .pagination(Pagination.builder().build())
+                .build();
+        List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
+        if(!disbursements.isEmpty()){
+            return false;
+        }
+        return true;
+    }
 }
