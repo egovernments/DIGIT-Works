@@ -75,7 +75,7 @@ config:
   - name: "builds/digit-works/backend/bankaccounts"
     build:
       - work-dir: "backend/bankaccounts"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "bankaccounts"
       - work-dir: "backend/bankaccounts/src/main/resources/db"
         image-name: "bankaccounts-db"
