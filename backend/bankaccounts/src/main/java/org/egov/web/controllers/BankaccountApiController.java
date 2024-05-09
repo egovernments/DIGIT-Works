@@ -10,6 +10,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.BankAccountService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.bankaccounts.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

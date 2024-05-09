@@ -8,6 +8,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
 import org.egov.util.BankAccountUtil;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.bankaccounts.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
