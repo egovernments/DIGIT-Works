@@ -1,7 +1,7 @@
 package org.egov.service;
 
 
-import digit.models.coremodels.Document;
+import org.egov.common.contract.models.Document;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
