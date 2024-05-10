@@ -211,18 +211,24 @@ public class DisbursementValidator {
     }
 
     public Boolean isDisbursementCreated(PaymentRequest paymentRequest) {
-        DisbursementSearchCriteria searchCriteria = DisbursementSearchCriteria.builder()
-                .paymentNumber(paymentRequest.getPayment().getPaymentNumber())
-                .build();
-        DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
-                .requestInfo(paymentRequest.getRequestInfo())
-                .criteria(searchCriteria)
-                .pagination(Pagination.builder().build())
-                .build();
-        List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
-        if(!disbursements.isEmpty()){
+        Object payment = redisService.getObject(Constants.PAYMENT_REDIS_KEY.replace("{uuid}", paymentRequest.getPayment().getId()));
+        if(payment == null){
+            DisbursementSearchCriteria searchCriteria = DisbursementSearchCriteria.builder()
+                    .paymentNumber(paymentRequest.getPayment().getPaymentNumber())
+                    .build();
+            DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
+                    .requestInfo(paymentRequest.getRequestInfo())
+                    .criteria(searchCriteria)
+                    .pagination(Pagination.builder().build())
+                    .build();
+            List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
+            if(!disbursements.isEmpty()){
+                return false;
+            }
+            return true;
+        }else{
+            redisService.setObject(Constants.PAYMENT_REDIS_KEY.replace("{uuid}", paymentRequest.getPayment().getId()), paymentRequest.getPayment());
             return false;
         }
-        return true;
     }
 }

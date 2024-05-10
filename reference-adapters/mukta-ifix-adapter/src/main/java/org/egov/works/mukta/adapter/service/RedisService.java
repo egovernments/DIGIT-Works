@@ -23,10 +23,18 @@ public class RedisService {
         this.objectMapper = objectMapper;
     }
 
+    public void setObject(String key, Object value) {
+        redisTemplate.opsForValue().set(key, value);
+    }
+
+    public Object getObject(String key) {
+        return redisTemplate.opsForValue().get(key);
+    }
+
     public void setCacheForDisbursement(Disbursement disbursement) {
         try {
             String disbursementJson = objectMapper.writeValueAsString(disbursement);
-            redisTemplate.opsForValue().set(getRedisKey(disbursement.getId()), disbursementJson);
+            redisTemplate.opsForValue().set(getDisburseRedisKey(disbursement.getId()), disbursementJson);
         } catch (JsonProcessingException e) {
             // Handle JSON processing exception
             log.error("Error serializing disbursement object", e);
@@ -34,7 +42,7 @@ public class RedisService {
     }
 
     public Disbursement getDisbursementFromCache(String id) {
-        String disbursementJson = (String) redisTemplate.opsForValue().get(getRedisKey(id));
+        String disbursementJson = (String) redisTemplate.opsForValue().get(getDisburseRedisKey(id));
         if (disbursementJson != null) {
             try {
                 return objectMapper.readValue(disbursementJson, Disbursement.class);
@@ -46,7 +54,7 @@ public class RedisService {
         return null;
     }
 
-    private String getRedisKey(String id) {
-        return Constants.REDIS_KEY.replace("{uuid}", id);
+    private String getDisburseRedisKey(String id) {
+        return Constants.DISBURSE_REDIS_KEY.replace("{uuid}", id);
     }
 }
