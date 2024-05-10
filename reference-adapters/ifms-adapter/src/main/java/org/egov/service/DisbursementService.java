@@ -105,13 +105,11 @@ public class DisbursementService {
             lastPI = encryptionDecryptionUtil.decryptObject(lastPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
             originalPI = encryptionDecryptionUtil.decryptObject(originalPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
             paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),true,lastPI);
-            savePiInDatabase(paymentInstructionFromDisbursement, sanctionDetails.get(0), PaymentStatus.INITIATED,requestInfo);
-            paymentStatus = processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI);
+            paymentStatus = processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI,sanctionDetails.get(0));
         }else{
             log.info("Payment Instruction is not in PARTIAL status, processing it for PI creation.");
             disbursementValidator.validatePI(paymentInstructions);
             paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),false,lastPI);
-            savePiInDatabase(paymentInstructionFromDisbursement, sanctionDetails.get(0), PaymentStatus.INITIATED,requestInfo);
             paymentStatus = processDisbursementForPICreation(disbursementRequest, paymentInstructionFromDisbursement, requestInfo, sanctionDetails);
         }
         if(paymentStatus.equals(PaymentStatus.FAILED)){
@@ -146,7 +144,7 @@ public class DisbursementService {
      * @param disbursementRequest
      * @return
      */
-    private PaymentStatus processDisbursementForRevisedPICreation(PaymentInstruction paymentInstructionFromDisbursement, RequestInfo requestInfo, PaymentInstruction lastPI, PaymentInstruction originalPI) {
+    private PaymentStatus processDisbursementForRevisedPICreation(PaymentInstruction paymentInstructionFromDisbursement, RequestInfo requestInfo, PaymentInstruction lastPI, PaymentInstruction originalPI, SanctionDetail sanctionDetail) {
         PaymentStatus paymentStatus = null;
         try {
             CORRequest corRequest = paymentInstructionEnrichment.getCorPaymentInstructionRequestForIFMS(paymentInstructionFromDisbursement,lastPI,originalPI);
@@ -154,6 +152,8 @@ public class DisbursementService {
                     .serviceId(JITServiceId.COR)
                     .params(corRequest)
                     .build();
+            savePiInDatabase(paymentInstructionFromDisbursement, sanctionDetail, PaymentStatus.INITIATED,requestInfo);
+
             try {
                 JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
                 if(jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()){
@@ -264,6 +264,7 @@ public class DisbursementService {
             return paymentStatus;
         }
         JITRequest jitRequest = paymentInstructionEnrichment.getJitPaymentInstructionRequestForIFMS(paymentInstructionFromDisbursement);
+        savePiInDatabase(paymentInstructionFromDisbursement, sanctionDetails.get(0), PaymentStatus.INITIATED,requestInfo);
         try {
             log.info("Calling IFMS for JIT");
             JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
