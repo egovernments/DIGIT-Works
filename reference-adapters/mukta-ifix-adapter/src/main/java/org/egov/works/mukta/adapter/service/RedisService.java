@@ -23,22 +23,13 @@ public class RedisService {
         this.objectMapper = objectMapper;
     }
 
-    public void setObject(String key, Object value) {
-        redisTemplate.opsForValue().set(key, value);
-    }
-
-    public Object getObject(String key) {
-        return redisTemplate.opsForValue().get(key);
-    }
-
-
     public void setCacheForDisbursement(Disbursement disbursement) {
         try {
             String disbursementJson = objectMapper.writeValueAsString(disbursement);
             redisTemplate.opsForValue().set(getRedisKey(disbursement.getId()), disbursementJson);
         } catch (JsonProcessingException e) {
             // Handle JSON processing exception
-            e.printStackTrace();
+            log.error("Error serializing disbursement object", e);
         }
     }
 
