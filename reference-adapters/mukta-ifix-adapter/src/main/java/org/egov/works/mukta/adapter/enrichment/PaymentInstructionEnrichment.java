@@ -353,6 +353,7 @@ public class PaymentInstructionEnrichment {
         HashMap<String,List<Disbursement>> beneficiaryDisbursementMap = getBeneficiaryDisbursementMap(disbursement);
         for(Map.Entry<String,List<Disbursement>> entry: beneficiaryDisbursementMap.entrySet()){
             String beneficiaryId = entry.getKey();
+            BigDecimal totalAmountForBenef = BigDecimal.ZERO;
             String beneficiaryDetailsId = UUID.randomUUID().toString();
             JsonNode beneficiaryTypeNode = null;
             JsonNode beneficiaryPaymentStatusNode = null;
@@ -366,7 +367,7 @@ public class PaymentInstructionEnrichment {
                         .auditDetails(auditDetails)
                         .build();
 
-
+                totalAmountForBenef = totalAmountForBenef.add(disbursement1.getGrossAmount());
                 if(disbursement1.getAdditionalDetails() != null){
                     ObjectNode additionalDetails = objectMapper.valueToTree(disbursement1.getAdditionalDetails());
                     beneficiaryTypeNode = additionalDetails.get("beneficiaryType");
@@ -380,7 +381,7 @@ public class PaymentInstructionEnrichment {
                     .muktaReferenceId(disbursementLineItem.getTargetId())
                     .beneficiaryNumber(disbursementLineItem.getTransactionId())
                     .bankAccountId(disbursementLineItem.getAccountCode())
-                    .amount(disbursementLineItem.getNetAmount())
+                    .amount(totalAmountForBenef)
                     .beneficiaryId(beneficiaryId)
                     .beneficiaryType(BeneficiaryType.valueOf(beneficiaryTypeNode == null? "IND": beneficiaryTypeNode.asText()))
                     .paymentStatus(getBenefStatus(beneficiaryPaymentStatusNode,disbursementLineItem.getStatus().getStatusCode()))

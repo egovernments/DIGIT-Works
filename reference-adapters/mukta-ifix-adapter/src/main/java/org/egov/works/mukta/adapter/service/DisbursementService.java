@@ -83,7 +83,8 @@ public class DisbursementService {
         log.info("Updating the disbursement status for the payments : " + disbursementRequest.getMessage());
         // Get the disbursement response
         DisbursementResponse disbursementResponse = getDisbursementResponse(disbursementRequest);
-        PaymentInstruction pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(disbursementResponse.getMessage());
+        Disbursement encryptedDisbursement = paymentInstructionEnrichment.encriptDisbursement(disbursementResponse.getMessage());
+        PaymentInstruction pi = paymentInstructionEnrichment.getPaymentInstructionFromDisbursement(encryptedDisbursement);
         // Push the disbursement response to the disburse update topic
         muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseUpdateTopic(), disbursementResponse);
         paymentInstructionService.updatePIIndex(requestInfo, pi,false);
