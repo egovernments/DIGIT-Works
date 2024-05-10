@@ -105,31 +105,40 @@ public class DisbursementService {
             lastPI = encryptionDecryptionUtil.decryptObject(lastPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
             originalPI = encryptionDecryptionUtil.decryptObject(originalPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
             paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),true,lastPI);
+            savePiInDatabase(paymentInstructionFromDisbursement, sanctionDetails.get(0), PaymentStatus.INITIATED,requestInfo);
             paymentStatus = processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI);
         }else{
             log.info("Payment Instruction is not in PARTIAL status, processing it for PI creation.");
             disbursementValidator.validatePI(paymentInstructions);
             paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),false,lastPI);
+            savePiInDatabase(paymentInstructionFromDisbursement, sanctionDetails.get(0), PaymentStatus.INITIATED,requestInfo);
             paymentStatus = processDisbursementForPICreation(disbursementRequest, paymentInstructionFromDisbursement, requestInfo, sanctionDetails);
         }
+        if(paymentStatus.equals(PaymentStatus.FAILED)){
+            for(Beneficiary beneficiary: paymentInstructionFromDisbursement.getBeneficiaryDetails()){
+                beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+            }
+            if(paymentInstructionFromDisbursement.getParentPiNumber() == null){
+                sanctionDetails.get(0).getFundsSummary().setAvailableAmount(sanctionDetails.get(0).getFundsSummary().getAvailableAmount().add(paymentInstructionFromDisbursement.getGrossAmount()));
+            }
+        }
+        piRepository.update(Collections.singletonList(paymentInstructionFromDisbursement),sanctionDetails.get(0).getFundsSummary());
+        piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
+        return enrichDisbursementResponse(disbursementRequest,paymentInstructionFromDisbursement);
+    }
+
+    private void savePiInDatabase(PaymentInstruction paymentInstructionFromDisbursement, SanctionDetail sanctionDetail,PaymentStatus paymentStatus,RequestInfo requestInfo){
         log.info("Saving PI data.");
         // Subtract amount from available amount in Sanction Details if PI is in INITIATED status and parent PI number is null
         if (paymentStatus.equals(PaymentStatus.INITIATED) && paymentInstructionFromDisbursement.getParentPiNumber() == null) {
-            sanctionDetails.get(0).getFundsSummary().setAvailableAmount(sanctionDetails.get(0).getFundsSummary().getAvailableAmount().subtract(paymentInstructionFromDisbursement.getGrossAmount()));
-            sanctionDetails.get(0).getFundsSummary().getAuditDetails().setLastModifiedTime(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedTime());
-            sanctionDetails.get(0).getFundsSummary().getAuditDetails().setLastModifiedBy(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedBy());
-        }
-        if(paymentStatus.equals(PaymentStatus.FAILED)){
-            for(Beneficiary beneficiary: paymentInstructionFromDisbursement.getBeneficiaryDetails()) {
-                beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
-            }
+            sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().subtract(paymentInstructionFromDisbursement.getGrossAmount()));
+            sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedTime(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedTime());
+            sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedBy(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedBy());
         }
         // Encrypt PI and save it to DB
         paymentInstructionFromDisbursement = encryptionDecryptionUtil.encryptObject(paymentInstructionFromDisbursement, ifmsAdapterConfig.getStateLevelTenantId(),ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class);
-        piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), paymentStatus.equals(PaymentStatus.FAILED) ? null:sanctionDetails.get(0).getFundsSummary(), paymentStatus);
+        piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), paymentStatus.equals(PaymentStatus.FAILED) ? null:sanctionDetail.getFundsSummary(), paymentStatus);
         piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
-
-        return enrichDisbursementResponse(disbursementRequest,paymentInstructionFromDisbursement);
     }
 
     /**
