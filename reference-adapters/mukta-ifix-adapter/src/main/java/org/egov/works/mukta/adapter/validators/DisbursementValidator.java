@@ -222,10 +222,7 @@ public class DisbursementValidator {
                     .pagination(Pagination.builder().build())
                     .build();
             List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
-            if(!disbursements.isEmpty()){
-                return false;
-            }
-            return true;
+            return disbursements.isEmpty();
         }else{
             redisService.setObject(Constants.PAYMENT_REDIS_KEY.replace("{uuid}", paymentRequest.getPayment().getId()), paymentRequest.getPayment());
             return false;
