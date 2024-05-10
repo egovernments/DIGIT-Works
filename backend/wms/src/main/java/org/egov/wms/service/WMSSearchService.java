@@ -140,7 +140,7 @@ public class WMSSearchService {
             e.printStackTrace();
         }
         StringBuilder uri = getURI(indexName, SEARCH_PATH);
-        Object result = serviceRequestRepository.fetchResult(uri, finalQueryBody);
+        Object result = serviceRequestRepository.fetchESResult(uri, finalQueryBody);
         List<WMSSearch> wmsSearchItemsList = parseInboxItemsFromSearchResponse(result, businessServices);
         log.info(result.toString());
         return wmsSearchItemsList;
@@ -175,7 +175,7 @@ public class WMSSearchService {
 
         Map<String, Object> finalQueryBody = queryBuilder.getESQuery(wmsSearchRequest, Boolean.FALSE, module);
         StringBuilder uri = getURI(indexName, COUNT_PATH);
-        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
+        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchESResult(uri, finalQueryBody);
         Integer totalCount = 0;
         if(response.containsKey(COUNT_CONSTANT)){
             totalCount = (Integer) response.get(COUNT_CONSTANT);
@@ -188,7 +188,7 @@ public class WMSSearchService {
     public List<HashMap<String, Object>> getStatusCountMap(WMSSearchRequest wmsSearchRequest, String indexName){
         Map<String, Object> finalQueryBody = queryBuilder.getStatusCountQuery(wmsSearchRequest);
         StringBuilder uri = getURI(indexName, SEARCH_PATH);
-        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
+        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchESResult(uri, finalQueryBody);
         HashMap<String, Object> statusCountMap = parseStatusCountMapFromAggregationResponse(response);
         List<HashMap<String, Object>> transformedStatusMap = transformStatusMap(wmsSearchRequest, statusCountMap);
         return transformedStatusMap;
@@ -331,7 +331,7 @@ public class WMSSearchService {
             wmsSearchRequest.getInbox().getProcessSearchCriteria().setStatus(businessServiceVsUuidsBasedOnSearchCriteria.get(businessService));
             Map<String, Object> finalQueryBody = queryBuilder.getNearingSlaCountQuery(wmsSearchRequest, businessServiceSla, module);
             StringBuilder uri = getURI(indexName, COUNT_PATH);
-            Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
+            Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchESResult(uri, finalQueryBody);
             Integer currentCount = 0;
             if(response.containsKey(COUNT_CONSTANT)){
                 currentCount = (Integer) response.get(COUNT_CONSTANT);
