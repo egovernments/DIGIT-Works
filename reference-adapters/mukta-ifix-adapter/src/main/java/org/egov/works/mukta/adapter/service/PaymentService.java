@@ -131,7 +131,7 @@ public class PaymentService {
      * @param bill
      * @return
      */
-    private PaymentRequest getPaymentRequest(RequestInfo requestInfo, Bill bill) {
+    public PaymentRequest getPaymentRequest(RequestInfo requestInfo, Bill bill) {
 
         List<PaymentBillDetail> paymentBillDetails = new ArrayList<>();
         // loop to add list of bill details
@@ -185,7 +185,7 @@ public class PaymentService {
      * @param paymentRequest
      * @return
      */
-    private @Valid List<Payment> createPayment(Object paymentRequest) {
+    public @Valid List<Payment> createPayment(Object paymentRequest) {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getBillHost()).append(config.getPaymentCreateEndpoint());
         Object response = new HashMap<>();

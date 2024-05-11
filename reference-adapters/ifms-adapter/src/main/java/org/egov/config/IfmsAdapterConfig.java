@@ -160,4 +160,7 @@ public class IfmsAdapterConfig {
 
     @Value("${ifms.session.timeout}")
     private Long ifmsSessionTimeout;
+
+    @Value("${kafka.error.queue}")
+    private String kafkaErrorQueue;
 }

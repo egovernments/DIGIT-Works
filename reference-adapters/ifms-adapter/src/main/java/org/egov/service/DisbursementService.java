@@ -8,6 +8,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.enrichment.PaymentInstructionEnrichment;
+import org.egov.kafka.IfmsAdapterProducer;
 import org.egov.repository.PIRepository;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.tracer.model.CustomException;
@@ -43,10 +44,11 @@ public class DisbursementService {
     private final EncryptionDecryptionUtil encryptionDecryptionUtil;
     private final IfmsAdapterConfig ifmsAdapterConfig;
     private final PaymentInstructionService paymentInstructionService;
+    private final IfmsAdapterProducer ifmsAdapterProducer;
 
 
     @Autowired
-    public DisbursementService(DisbursementValidator disbursementValidator, PIRepository piRepository, PaymentInstructionEnrichment paymentInstructionEnrichment, MdmsUtils mdmsUtils, SanctionDetailsRepository sanctionDetailsRepository, IfmsService ifmsService, PISService pisService, ObjectMapper objectMapper, PIUtils piUtils, EncryptionDecryptionUtil encryptionDecryptionUtil, IfmsAdapterConfig ifmsAdapterConfig, PaymentInstructionService paymentInstructionService) {
+    public DisbursementService(DisbursementValidator disbursementValidator, PIRepository piRepository, PaymentInstructionEnrichment paymentInstructionEnrichment, MdmsUtils mdmsUtils, SanctionDetailsRepository sanctionDetailsRepository, IfmsService ifmsService, PISService pisService, ObjectMapper objectMapper, PIUtils piUtils, EncryptionDecryptionUtil encryptionDecryptionUtil, IfmsAdapterConfig ifmsAdapterConfig, PaymentInstructionService paymentInstructionService, IfmsAdapterProducer ifmsAdapterProducer) {
         this.disbursementValidator = disbursementValidator;
         this.piRepository = piRepository;
         this.paymentInstructionEnrichment = paymentInstructionEnrichment;
@@ -58,6 +60,7 @@ public class DisbursementService {
         this.encryptionDecryptionUtil = encryptionDecryptionUtil;
         this.ifmsAdapterConfig = ifmsAdapterConfig;
         this.paymentInstructionService = paymentInstructionService;
+        this.ifmsAdapterProducer = ifmsAdapterProducer;
     }
 
     /**
@@ -69,60 +72,85 @@ public class DisbursementService {
         PaymentStatus paymentStatus;
         PaymentInstruction lastPI = null;
         PaymentInstruction originalPI = null;
+        PaymentInstruction paymentInstructionFromDisbursement = null;
         RequestInfo requestInfo = RequestInfo.builder().build();
-        Map<String,Map<String,JSONArray>> mdmsData = mdmsUtils.fetchHoaAndSSUDetails(requestInfo,disbursementRequest.getMessage().getLocationCode());
-        disbursementValidator.validateDisbursementRequest(disbursementRequest,mdmsData);
-        PISearchCriteria piSearchCriteria = PISearchCriteria.builder()
-                .muktaReferenceId(disbursementRequest.getMessage().getTargetId())
-                .tenantId(disbursementRequest.getMessage().getLocationCode())
-                .sortBy(PISearchCriteria.SortBy.createdTime)
-                .sortOrder(PISearchCriteria.SortOrder.DESC)
-                .isActive(true)
-                .build();
-        List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchCriteria);
-        SanctionDetailsSearchCriteria sanctionDetailsSearchCriteria = SanctionDetailsSearchCriteria.builder()
-                .ids(Collections.singletonList(disbursementRequest.getMessage().getSanctionId()))
-                .tenantId(disbursementRequest.getMessage().getLocationCode())
-                .build();
-        List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(sanctionDetailsSearchCriteria);
-        if(sanctionDetails.isEmpty()){
-            throw new CustomException("INVALID_SANCTION_ID","Sanction Id is invalid for the disbursement Request.");
-        }
-        if(!paymentInstructions.isEmpty()){
-            for(PaymentInstruction paymentInstruction:paymentInstructions){
-                if(!paymentInstruction.getPiStatus().equals(PIStatus.FAILED) && lastPI == null){
-                    lastPI = paymentInstruction;
-                    originalPI = paymentInstruction;
-                }else if(!paymentInstruction.getPiStatus().equals(PIStatus.FAILED)){
-                    originalPI = paymentInstruction;
+        try {
+            Map<String,Map<String,JSONArray>> mdmsData = mdmsUtils.fetchHoaAndSSUDetails(requestInfo,disbursementRequest.getMessage().getLocationCode());
+            disbursementValidator.validateDisbursementRequest(disbursementRequest,mdmsData);
+            PISearchCriteria piSearchCriteria = PISearchCriteria.builder()
+                    .muktaReferenceId(disbursementRequest.getMessage().getTargetId())
+                    .tenantId(disbursementRequest.getMessage().getLocationCode())
+                    .sortBy(PISearchCriteria.SortBy.createdTime)
+                    .sortOrder(PISearchCriteria.SortOrder.DESC)
+                    .isActive(true)
+                    .build();
+            List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchCriteria);
+            SanctionDetailsSearchCriteria sanctionDetailsSearchCriteria = SanctionDetailsSearchCriteria.builder()
+                    .ids(Collections.singletonList(disbursementRequest.getMessage().getSanctionId()))
+                    .tenantId(disbursementRequest.getMessage().getLocationCode())
+                    .build();
+            List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(sanctionDetailsSearchCriteria);
+            if(sanctionDetails.isEmpty()){
+                throw new CustomException("INVALID_SANCTION_ID","Sanction Id is invalid for the disbursement Request.");
+            }
+            if(!paymentInstructions.isEmpty()){
+                for(PaymentInstruction paymentInstruction:paymentInstructions){
+                    if(!paymentInstruction.getPiStatus().equals(PIStatus.FAILED) && lastPI == null){
+                        lastPI = paymentInstruction;
+                        originalPI = paymentInstruction;
+                    }else if(!paymentInstruction.getPiStatus().equals(PIStatus.FAILED)){
+                        originalPI = paymentInstruction;
+                    }
                 }
             }
-        }
-        PaymentInstruction paymentInstructionFromDisbursement;
-        // Check if last PI is in PARTIAL status, if yes then process it for revised PI creation
-        if(lastPI != null && lastPI.getPiStatus().equals(PIStatus.PARTIAL)){
-            log.info("Payment Instruction is in PARTIAL status, processing it for revised PI.");
-            lastPI = encryptionDecryptionUtil.decryptObject(lastPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
-            originalPI = encryptionDecryptionUtil.decryptObject(originalPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
-            paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),true,lastPI);
-            paymentStatus = processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI,sanctionDetails.get(0));
-        }else{
-            log.info("Payment Instruction is not in PARTIAL status, processing it for PI creation.");
-            disbursementValidator.validatePI(paymentInstructions);
-            paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),false,lastPI);
-            paymentStatus = processDisbursementForPICreation(disbursementRequest, paymentInstructionFromDisbursement, requestInfo, sanctionDetails);
-        }
-        if(paymentStatus.equals(PaymentStatus.FAILED)){
-            for(Beneficiary beneficiary: paymentInstructionFromDisbursement.getBeneficiaryDetails()){
-                beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+            // Check if last PI is in PARTIAL status, if yes then process it for revised PI creation
+            if(lastPI != null && lastPI.getPiStatus().equals(PIStatus.PARTIAL)){
+                log.info("Payment Instruction is in PARTIAL status, processing it for revised PI.");
+                lastPI = encryptionDecryptionUtil.decryptObject(lastPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
+                originalPI = encryptionDecryptionUtil.decryptObject(originalPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
+                paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),true,lastPI);
+                paymentStatus = processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI,sanctionDetails.get(0));
+            }else{
+                log.info("Payment Instruction is not in PARTIAL status, processing it for PI creation.");
+                disbursementValidator.validatePI(paymentInstructions);
+                paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),false,lastPI);
+                paymentStatus = processDisbursementForPICreation(disbursementRequest, paymentInstructionFromDisbursement, requestInfo, sanctionDetails);
             }
-            if(paymentInstructionFromDisbursement.getParentPiNumber() == null){
-                sanctionDetails.get(0).getFundsSummary().setAvailableAmount(sanctionDetails.get(0).getFundsSummary().getAvailableAmount().add(paymentInstructionFromDisbursement.getGrossAmount()));
+            if(paymentStatus.equals(PaymentStatus.FAILED)){
+                for(Beneficiary beneficiary: paymentInstructionFromDisbursement.getBeneficiaryDetails()){
+                    beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+                }
+                if(paymentInstructionFromDisbursement.getParentPiNumber() == null){
+                    sanctionDetails.get(0).getFundsSummary().setAvailableAmount(sanctionDetails.get(0).getFundsSummary().getAvailableAmount().add(paymentInstructionFromDisbursement.getGrossAmount()));
+                }
             }
+            piRepository.update(Collections.singletonList(paymentInstructionFromDisbursement),sanctionDetails.get(0).getFundsSummary());
+            piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
+            return enrichDisbursementResponse(disbursementRequest,paymentInstructionFromDisbursement);
+        }catch (Exception e){
+            log.info("Exception while processing disbursement request " + e);
+            enrichDisbursementForFailure(disbursementRequest, e.getMessage());
+            if(paymentInstructionFromDisbursement != null){
+                paymentInstructionFromDisbursement.setPiStatus(PIStatus.FAILED);
+                paymentInstructionFromDisbursement.setPiErrorResp(e.getMessage());
+                for(Beneficiary beneficiary: paymentInstructionFromDisbursement.getBeneficiaryDetails()){
+                    beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+                }
+                piRepository.update(Collections.singletonList(paymentInstructionFromDisbursement),null);
+                piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
+            }
+            ifmsAdapterProducer.push(ifmsAdapterConfig.getKafkaErrorQueue(),disbursementRequest);
+            throw new CustomException("ERROR_PROCESSING_DISBURSEMENT","Exception while processing disbursement request " + e);
         }
-        piRepository.update(Collections.singletonList(paymentInstructionFromDisbursement),sanctionDetails.get(0).getFundsSummary());
-        piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
-        return enrichDisbursementResponse(disbursementRequest,paymentInstructionFromDisbursement);
+    }
+
+    private void enrichDisbursementForFailure(DisbursementRequest disbursementRequest, String message) {
+        for(Disbursement disbursement: disbursementRequest.getMessage().getDisbursements()){
+            disbursement.getStatus().setStatusCode(StatusCode.ERROR);
+            disbursement.getStatus().setStatusMessage(message);
+        }
+        disbursementRequest.getMessage().getStatus().setStatusCode(StatusCode.ERROR);
+        disbursementRequest.getMessage().getStatus().setStatusMessage(message);
     }
 
     private void savePiInDatabase(PaymentInstruction paymentInstructionFromDisbursement, SanctionDetail sanctionDetail,PaymentStatus paymentStatus,RequestInfo requestInfo){
@@ -134,9 +162,17 @@ public class DisbursementService {
             sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedBy(paymentInstructionFromDisbursement.getAuditDetails().getLastModifiedBy());
         }
         // Encrypt PI and save it to DB
-        paymentInstructionFromDisbursement = encryptionDecryptionUtil.encryptObject(paymentInstructionFromDisbursement, ifmsAdapterConfig.getStateLevelTenantId(),ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class);
-        piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), paymentStatus.equals(PaymentStatus.FAILED) ? null:sanctionDetail.getFundsSummary(), paymentStatus);
-        piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
+        try {
+            paymentInstructionFromDisbursement = encryptionDecryptionUtil.encryptObject(paymentInstructionFromDisbursement, ifmsAdapterConfig.getStateLevelTenantId(),ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class);
+            piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), paymentStatus.equals(PaymentStatus.FAILED) ? null:sanctionDetail.getFundsSummary(), paymentStatus);
+            piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
+        }catch (Exception e){
+            log.info("Exception while encrypting PI data " + e);
+            piRepository.save(Collections.singletonList(paymentInstructionFromDisbursement), paymentStatus.equals(PaymentStatus.FAILED) ? null:sanctionDetail.getFundsSummary(), paymentStatus);
+            piUtils.updatePIIndex(requestInfo, paymentInstructionFromDisbursement);
+            throw new CustomException("ENC_ERROR","Exception while saving PI data " + e);
+        }
+
     }
 
     /**
