@@ -865,7 +865,7 @@ public class PaymentInstructionEnrichment {
                         .id(benfId)
                         .beneficiaryId(beneficiaryId)
                         .tenantId(disbursement.getLocationCode())
-                        .muktaReferenceId(disbursementDetail.getTargetId())
+                        .muktaReferenceId(disbursement.getTargetId())
                         .bankAccountId(disbursementDetail.getAccountCode())
                         .amount(disbursementDetail.getNetAmount())
                         .benfLineItems(benfLineItems)
@@ -979,7 +979,9 @@ public class PaymentInstructionEnrichment {
     private HashMap<String, Beneficiary> getMuktaRefIdToBenefPayementStatusMap(PaymentInstruction paymentInstruction) {
         HashMap<String, Beneficiary> muktaRefIdToBenefPayementStatusMap = new HashMap<>();
         for(Beneficiary beneficiary:paymentInstruction.getBeneficiaryDetails()){
-            muktaRefIdToBenefPayementStatusMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
+            for(BenfLineItems lineItem:beneficiary.getBenfLineItems()){
+                muktaRefIdToBenefPayementStatusMap.put(lineItem.getLineItemId(),beneficiary);
+            }
         }
         return muktaRefIdToBenefPayementStatusMap;
     }
