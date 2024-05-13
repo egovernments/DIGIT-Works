@@ -70,7 +70,6 @@ public class MainConfiguration {
      * @return
      * @throws Exception
      */
-    /*
     @Bean
     public RestTemplate restTemplate() throws Exception {
         TrustManager[] trustAllCertificates = new TrustManager[]{
@@ -113,5 +112,4 @@ public class MainConfiguration {
         converter.setObjectMapper(objectMapper);
         return converter;
     }
-    */
 }
