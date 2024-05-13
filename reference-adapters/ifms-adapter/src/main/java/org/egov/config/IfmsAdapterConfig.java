@@ -161,6 +161,9 @@ public class IfmsAdapterConfig {
     @Value("${ifms.session.timeout}")
     private Long ifmsSessionTimeout;
 
-    @Value("${kafka.error.queue}")
-    private String kafkaErrorQueue;
+    @Value("${ifix.adapter.error.queue.topic}")
+    private String ifixAdapterErrorQueueTopic;
+
+    @Value("${ifix.adapter.es.error.queue.topic}")
+    private String ifixAdapterESErrorQueueTopic;
 }
