@@ -8,7 +8,7 @@ import os
 import uuid
 import copy
 import traceback
-
+from kafka import KafkaProducer
 
 
 load_dotenv('.env')
@@ -311,7 +311,7 @@ def search_payment_instruction_from_ifms_adapter(payment_number, tenant_id):
             "searchCriteria": {
                 "tenantId": tenant_id,
                 "muktaReferenceId": payment_number,
-                "limit": "100",
+                "limit": "10000",
                 "offset": "0",
                 "sortBy": "createdTime",
                 "order": "ASC"
@@ -448,6 +448,7 @@ def migrate_payment_instruction(disbursement, payment_instruction, pi_object, be
                     beneficiary['beneficiaryNumber'] = line_item_id_benf_id_map[benf_line_item['lineItemId']]
 
         insert_payment_instruction_db(payment_instruction, payment_instruction_copy, cursor, connection)
+        push_pi_data_for_indexer(payment_instruction)
         # call_on_disburse_update_api(disbursement)
 
     except Exception as e:
@@ -529,7 +530,7 @@ def insert_payment_instruction_db(payment_instruction, payment_instruction_copy,
                 benf_details.get('beneficiaryId'),
                 benf_details.get('beneficiaryType'),
                 benf_details.get('beneficiaryNumber'),
-                benf_details.get('bankAccountCode'),
+                benf_details.get('bankAccountId'),
                 benf_details.get('amount'),
                 benf_details.get('voucherNumber', None),
                 benf_details.get('voucherDate', None),
@@ -836,7 +837,8 @@ def upate_pi_to_fail_in_db(payment_instruction, cursor, connection):
         connection.commit()
 
         # TODO:push to indexer
-        
+        push_pi_data_for_indexer(payment_instruction)
+
     except Exception as e:
         print("upate_pi_to_fail : error {}".format(str(e)))
         traceback.print_exc()
@@ -848,15 +850,75 @@ def update_disburse_to_fail(disburse):
             'status_code': 'FAILED',
             'status_message': 'FAILED'
         }
-        for benficiary in disburse['childrens']:
+        for benficiary in disburse['children']:
             benficiary['status'] = {
                 'status_code': 'FAILED',
                 'status_message': 'FAILED'
             }
-            call_on_disburse_update_api(disburse)
+            # call_on_disburse_update_api(disburse)
     except Exception as e:
         print("update_disburse_to_fail : error {}".format(str(e)))
         traceback.print_exc()
+
+
+def store_sanction_amounts_for_backup(processed_pi, in_progress_pi, cursor, connection):
+    print('store_sanction_amounts_for_backup')
+    try:
+        cursor.execute('''CREATE TABLE IF NOT EXISTS ifms_prod_issue_transaction_table (
+            payment_no VARCHAR(255),
+            jit_bill_no VARCHAR(255),
+            sanction_id VARCHAR(255),
+            master_allotment_id VARCHAR(255),
+            allotment_id VARCHAR(255),
+            amount DECIMAL(10, 2),
+            status VARCHAR(50)
+        );''')
+        connection.commit()
+        for payment in processed_pi:
+            for pi in processed_pi.get(payment):
+                payment_instruction = processed_pi.get(payment).get(pi)
+                print('pi {}'.format(pi))
+                cursor.execute('''select sanctionid from jit_allotment_details where ssuallotmentid = %s''', (str(payment_instruction['AW_ALLOTMENT_DIST_ID']),))
+                result = cursor.fetchone()
+                sanction_id = result[0]
+
+                cursor.execute('''INSERT INTO ifms_prod_issue_transaction_table
+                    (payment_no, jit_bill_no, sanction_id, master_allotment_id, allotment_id, amount, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)''', (payment_instruction['PAYMENT_NO'], payment_instruction['JIT_BILL_NUMBER'], sanction_id, str(payment_instruction['MST_ALLOTMENT_DIST_ID']), str(payment_instruction['AW_ALLOTMENT_DIST_ID']), payment_instruction['GROSS_AMOUNT'], 'SUCCESS'))
+                connection.commit()
+
+        for payment in in_progress_pi:
+            for pi in in_progress_pi.get(payment):
+                payment_instruction = in_progress_pi.get(payment).get(pi)
+                print('pi {}'.format(pi))
+                cursor.execute('''select sanctionid from jit_allotment_details where ssuallotmentid = %s''',(str(payment_instruction['AW_ALLOTMENT_DIST_ID']),))
+                result = cursor.fetchone()
+                sanction_id = result[0]
+
+                cursor.execute('''INSERT INTO ifms_prod_issue_transaction_table
+                    (payment_no, jit_bill_no, sanction_id, master_allotment_id, allotment_id, amount, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)''', (payment_instruction['PAYMENT_NO'], payment_instruction['JIT_BILL_NUMBER'], sanction_id, str(payment_instruction['MST_ALLOTMENT_DIST_ID']), str(payment_instruction['AW_ALLOTMENT_DIST_ID']), payment_instruction['GROSS_AMOUNT'], 'FAILED'))
+                connection.commit()
+
+    except Exception as e:
+        print("store_sanction_amounts_for_backup : error {}".format(str(e)))
+        traceback.print_exc()
+
+def push_pi_data_for_indexer(payment_instruction):
+    payment_instruction['paDetails'] = None
+    payment_instruction['piType']= 'ORIGINAL';
+    payment_instruction['parentPiNumber'] = '';
+    payment_instruction['piErrorResp'] = ''
+    producer = KafkaProducer(bootstrap_servers=os.getenv('KAFKA_SERVER'))
+    request = {}
+    request['RequestInfo'] = get_request_info()
+    request['paymentInstruction'] = payment_instruction
+    json_data = json.dumps(request).encode('utf-8')
+    producer.send(os.getenv('KAFKA_UPDATE_IFMS_PI_INDEX_TOPIC'), json_data)
+    producer.send(os.getenv('KAFKA_UPDATE_MUKTA_PI_INDEX_TOPIC'), json_data)
+    producer.flush()
+    producer.close()
+
 def process_pi():
     processed_pi = load_file('processed_pi_output.json')
     in_progress_pi = load_file('in_progress_pi_output.json')
@@ -868,11 +930,12 @@ def process_pi():
     # Create a cursor object
     cursor = connection.cursor()
 
-    # process_successful_pi(processed_pi, benf_account_map, cursor, connection)
+    process_successful_pi(processed_pi, benf_account_map, cursor, connection)
     in_progress = in_progress_pi.keys()
     success = processed_pi.keys()
     payments_to_be_fail = set(in_progress) - set(success)
     process_initiated_inprogress_pis_for_fail(in_progress_pi, payments_to_be_fail, cursor, connection)
+    store_sanction_amounts_for_backup(processed_pi, in_progress_pi, cursor, connection)
 
 if __name__ == '__main__':
     process_pi()
