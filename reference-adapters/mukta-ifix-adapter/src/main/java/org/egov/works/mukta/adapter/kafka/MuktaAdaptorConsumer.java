@@ -14,6 +14,7 @@ import org.egov.works.mukta.adapter.util.ProgramServiceUtil;
 import org.egov.works.mukta.adapter.validators.DisbursementValidator;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.DisbursementRequest;
+import org.egov.works.mukta.adapter.web.models.ErrorRes;
 import org.egov.works.mukta.adapter.web.models.MsgHeader;
 import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
 import org.egov.works.mukta.adapter.web.models.enums.*;
@@ -23,6 +24,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 
 @Slf4j
 @Component
@@ -82,10 +85,14 @@ public class MuktaAdaptorConsumer {
                 paymentInstructionService.updatePIIndex(paymentRequest.getRequestInfo(), pi,isRevised);
                 redisService.setCacheForDisbursement(encryptedDisbursement);
                 programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
+            }else{
+                log.info("Payment data is already processed.");
             }
         } catch (Exception e) {
             log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
-            paymentService.updatePaymentStatusToFailed(paymentRequest);
+            log.info("Pushing data to error queue");
+            ErrorRes errorRes = ErrorRes.builder().message(e.getMessage()).objects(Collections.singletonList(paymentRequest.getPayment())).build();
+            muktaAdaptorProducer.push(muktaAdaptorConfig.getMuktaIfixAdapterErrorQueueTopic(), errorRes);
             // If disbursement is not null, enrich its status
             if (encryptedDisbursement != null) {
                 paymentInstructionEnrichment.enrichDisbursementStatus(encryptedDisbursement, StatusCode.FAILED,e.getMessage());
@@ -99,6 +106,7 @@ public class MuktaAdaptorConsumer {
                 // If disbursement is null, log the error and throw a custom exception
                 log.error("Disbursement is null. Cannot enrich status.");
             }
+            paymentService.updatePaymentStatusToFailed(paymentRequest);
             throw new CustomException("Error occurred while processing the consumed save estimate record from topic : " + topic, e.toString());
         }
     }

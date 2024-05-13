@@ -25,23 +25,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ErrorRes {
-    @JsonProperty("ResponseInfo")
-    @NotNull
+    @JsonProperty("message")
+    private String message;
 
-    @Valid
-    private ResponseInfo responseInfo = null;
-
-    @JsonProperty("Errors")
-    @Valid
-    private List<Error> errors = null;
-
-
-    public ErrorRes addErrorsItem(Error errorsItem) {
-        if (this.errors == null) {
-            this.errors = new ArrayList<>();
-        }
-        this.errors.add(errorsItem);
-        return this;
-    }
-
+    @JsonProperty("objects")
+    private List<Object> objects;
 }

@@ -2,6 +2,7 @@ package org.egov.works.mukta.adapter.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
 import org.egov.works.mukta.adapter.web.models.bill.Payment;
@@ -28,14 +29,20 @@ public class RedisService {
         try {
             String paymentJson = objectMapper.writeValueAsString(payment);
             redisTemplate.opsForValue().set(getPaymentRedisKey(payment.getId()), paymentJson);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             // Handle JSON processing exception
-            log.error("Error serializing payment object", e);
+            log.error("Error while pushing data to redis", e);
+            throw new CustomException("REDIS_ERROR", "Error while pushing data to redis");
         }
     }
 
     public Payment getPaymentFromCache(String id) {
-        String paymentJson = (String) redisTemplate.opsForValue().get(getPaymentRedisKey(id));
+        String paymentJson = null;
+        try {
+            paymentJson = (String) redisTemplate.opsForValue().get(getPaymentRedisKey(id));
+        } catch (Exception e) {
+            throw  new CustomException("REDIS_ERROR", "Error while fetching data from redis");
+        }
         if (paymentJson != null) {
             try {
                 return objectMapper.readValue(paymentJson, Payment.class);
@@ -57,12 +64,18 @@ public class RedisService {
             redisTemplate.opsForValue().set(getDisburseRedisKey(disbursement.getId()), disbursementJson);
         } catch (JsonProcessingException e) {
             // Handle JSON processing exception
-            log.error("Error serializing disbursement object", e);
+            log.error("Error while pushing data to redis", e);
+            throw new CustomException("REDIS_ERROR", "Error while pushing data to redis");
         }
     }
 
     public Disbursement getDisbursementFromCache(String id) {
-        String disbursementJson = (String) redisTemplate.opsForValue().get(getDisburseRedisKey(id));
+        String disbursementJson = null;
+        try {
+            disbursementJson = (String) redisTemplate.opsForValue().get(getDisburseRedisKey(id));
+        } catch (Exception e) {
+            throw  new CustomException("REDIS_ERROR", "Error while fetching data from redis");
+        }
         if (disbursementJson != null) {
             try {
                 return objectMapper.readValue(disbursementJson, Disbursement.class);

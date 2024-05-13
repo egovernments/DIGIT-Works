@@ -69,7 +69,7 @@ public class MuktaAdapterController {
     }
 
     // TODO: Remove this after dev
-    @RequestMapping(path = "/test/payment-create", method = RequestMethod.POST)
+    @RequestMapping(path = "/manual/payment-create", method = RequestMethod.POST)
     public ResponseEntity<Object> paymentCreate(@RequestBody @Valid BillSearchRequest billSearchRequest){
         List<Payment> payments = paymentInstructionService.processCreatePayment(billSearchRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(), true);
