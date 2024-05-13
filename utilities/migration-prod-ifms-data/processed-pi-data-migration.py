@@ -319,15 +319,15 @@ def search_payment_instruction_from_ifms_adapter(payment_number, tenant_id):
         }
 
         response = requests.post(api_url, json=request, headers=headers)
-        disbursements = []
+        paymentInstructions = []
         if response.status_code == 200:
             response_data = response.json()
             # Assuming your response is stored in the variable 'response_data'
-            disbursements.extend(response_data.get('paymentInstructions', []))
+            paymentInstructions.extend(response_data.get('paymentInstructions', []))
         else:
             print(f"Failed to fetch data from the API. Status code: {response.status_code}")
             print(response.text)
-        return disbursements
+        return paymentInstructions
     except Exception as e:
         print("search_payment_instruction_from_ifms_adapter : error {}".format(str(e)))
         raise e
@@ -361,7 +361,7 @@ def get_sanction_details(ssuallotmentid, tenantid, cursor):
         print("get_sanction_details : error {}".format(str(e)))
         raise e
 
-def migrate_payment_instruction(disbursement, payment_instruction, pi_object, cursor, connection):
+def migrate_payment_instruction(disbursement, payment_instruction, pi_object, benf_account_map, cursor, connection):
     try:
         # Deep clone the object
         payment_instruction_copy = copy.deepcopy(payment_instruction)
@@ -369,6 +369,7 @@ def migrate_payment_instruction(disbursement, payment_instruction, pi_object, cu
         payment_instruction['id'] = disbursement['id']
         payment_instruction['piStatus'] = 'INITIATED'
         payment_instruction['piSuccessCode'] = '0'
+        payment_instruction['piSuccessDesc'] = 'Jit Bill is received successfully ,Payment Instruction will be generated after Bill is submitted by SSU in JIT-FS'
         payment_instruction['piApprovedId'] = None
         payment_instruction['piApprovalDate'] = None
         payment_instruction['jitBillNo'] = pi_object['JIT_BILL_NUMBER']
@@ -417,20 +418,37 @@ def migrate_payment_instruction(disbursement, payment_instruction, pi_object, cu
         payment_instruction['beneficiaryDetails'] = sorted(payment_instruction.get('beneficiaryDetails'), key=lambda x: x['amount'])
         pi_object['beneficiaryDetails'] = sorted(pi_object.get('beneficiaryDetails'), key=lambda x: x['BENF_AMOUNT'])
         beneficiary_line_item_map = {}
+
+        bank_account_benf_id_map = {}
+        for idx, beneficiary in enumerate(pi_object['beneficiaryDetails']):
+            bank_account_benf_id_map[benf_account_map[beneficiary.get('BENF_ID')]] = beneficiary.get('BENF_ID')
+
+        line_item_id_benf_id_map = {}
+        for idx, disburse in enumerate(disbursement['children']):
+            line_item_id_benf_id_map[disburse.get('target_id')] = bank_account_benf_id_map.get(disburse.get('account_code'), None)
+            disburse['transaction_id'] = line_item_id_benf_id_map.get(disburse.get('target_id'), None)
+            disburse["status"] = {
+                "status_code": "INITIATED",
+                "status_message": "INITIATED"
+            }
+
+        disbursement["status"] = {
+            "status_code": "INITIATED",
+            "status_message": "INITIATED"
+        }
+
         for idx, beneficiary in enumerate(payment_instruction['beneficiaryDetails']):
             beneficiary['id'] = str(uuid.uuid4())
             beneficiary['piId'] = payment_instruction.get('id')
             beneficiary['paymentStatus'] = 'Payment Initiated';
-            payment_instruction.get('beneficiaryDetails')[idx]['beneficiaryNumber'] = pi_object.get('beneficiaryDetails')[idx].get('BENF_ID')
             for benf_line_item in beneficiary.get('benfLineItems'):
                 benf_line_item['beneficiaryId'] = beneficiary.get('id')
                 beneficiary_line_item_map[benf_line_item['lineItemId']] = beneficiary.get('beneficiaryNumber')
-
-        for idx, beneficiary in enumerate(disbursement['children']):
-            beneficiary['transaction_id'] = beneficiary_line_item_map.get(beneficiary.get('target_id'), None)
+                if (benf_line_item['lineItemId'] in line_item_id_benf_id_map):
+                    beneficiary['beneficiaryNumber'] = line_item_id_benf_id_map[benf_line_item['lineItemId']]
 
         insert_payment_instruction_db(payment_instruction, payment_instruction_copy, cursor, connection)
-
+        # call_on_disburse_update_api(disbursement)
 
     except Exception as e:
         print("create_payment_instruction : error {}".format(str(e)))
@@ -672,14 +690,7 @@ def delete_payment_instruction_data_from_db(payment_instruction, cursor, connect
         print("delete_payment_instruction_data_from_db : error {}".format(str(e)))
         traceback.print_exc()
 
-def delete_payment_instruction(payment_instruction, cursor):
-    try:
-        print('delete_payment_instruction')
-    except Exception as e:
-        print("delete_payment_instruction : error {}".format(str(e)))
-        raise e
-
-def process_successful_pi(processed_pi, in_progress_pi, pis_to_save_processed, pis_to_delete_processed, pis_to_delete_inprogress, cursor, connection):
+def process_successful_pi(processed_pi, benf_account_map, cursor, connection):
     try:
         for payment_number in processed_pi:
             print('payment_number {}'.format(payment_number))
@@ -712,19 +723,19 @@ def process_successful_pi(processed_pi, in_progress_pi, pis_to_save_processed, p
             print('pi_number {}'.format(pi_number))
             pi_json = processed_pi.get(payment_number).get(pi_number);
             print('pi_json {}'.format(pi_json))
-            migrate_payment_instruction(first_disburse, first_payment_instruction, pi_json, cursor, connection)
+            migrate_payment_instruction(first_disburse, first_payment_instruction, pi_json, benf_account_map, cursor, connection)
 
             if len(disbursements_for_delete) > 0:
                 for disburse in disbursements_for_delete:
                     print('disburse {}'.format(disburse))
                     delete_disburse_data_from_db(disburse, cursor, connection)
 
+
             if len(payment_instructions_for_delete) > 0:
                 for payment_instruction in payment_instructions_for_delete:
                     print('disburse {}'.format(payment_instruction))
                     delete_payment_instruction_data_from_db(payment_instruction, cursor, connection)
-
-
+                    connection.commit()
 
     except Exception as e:
         print("process_successfull_pi : error {}".format(str(e)))
@@ -732,25 +743,136 @@ def process_successful_pi(processed_pi, in_progress_pi, pis_to_save_processed, p
         raise e
 
 
+def call_on_disburse_update_api(disburse):
+    try:
+        program_service_host = os.getenv('PROGRAM_SERVICE_HOST')
+        program_disburse_update = os.getenv('PROGRAM_DISBURSE_UPDATE')
 
+        api_url = f"{program_service_host}/{program_disburse_update}"
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        request = {
+            "signature": None,
+            "header": {
+                "message_id": disburse['id'],
+                "message_ts": "1708428280",
+                "message_type": "on-disburse",
+                "action": "create",
+                "sender_id": os.getenv('PROGRAM_DISBURSE_UPDATE_SENDER_ID'),
+                "receiver_id": os.getenv('PROGRAM_DISBURSE_UPDATE_RECEIVER_ID')
+            },
+            "message": disburse
+        }
 
+        response = requests.post(api_url, json=request, headers=headers)
+        if response.status_code == 200:
+            print(f"Disbursement updated for payment number: {disburse['target_id']}")
+        else:
+            print(f"Failed to update disburse for {disburse['target_id']} from the API. Status code: {response.status_code}")
+            print(response.text)
+    except Exception as e:
+        print("search_disburse_from_program_service : error {}".format(str(e)))
+        raise e
 
+def process_initiated_inprogress_pis_for_fail(pis_to_fail_inprogress, payments_to_be_fail, cursor, connection):
+    try:
+        for payment_number in payments_to_be_fail:
+            print('payment_number {}'.format(payment_number))
+            disburse_from_db = get_disburse_from_db(payment_number, cursor)
+            if disburse_from_db == None:
+                raise Exception('Disburse details not found for payment number {}'.format(payment_number))
+            disbursements = search_disburse_from_program_service(disburse_from_db[0], disburse_from_db[1])
+            payment_instructions = search_payment_instruction_from_ifms_adapter(payment_number, disbursements[0]['location_code'])
+            if len(payment_instructions) > 0:
+                for payment_instruction in payment_instructions:
+                    print('payment_instruction {}'.format(payment_instruction))
+                    if (payment_instruction['piStatus'] != 'FAILED'):
+                        upate_pi_to_fail_in_db(payment_instruction, cursor, connection)
 
+            if len(disbursements) > 0:
+                for disburse in disbursements:
+                    print('disburse {}'.format(disburse))
+                    update_disburse_to_fail(disburse)
+    except Exception as e:
+        print("process_initiated_inprogress_pis_for_fail : error {}".format(str(e)))
+        traceback.print_exc()
+
+def upate_pi_to_fail_in_db(payment_instruction, cursor, connection):
+    try:
+        payment_instruction['piStatus'] = 'FAILED'
+        update_query = '''UPDATE jit_payment_inst_details SET pistatus = %s WHERE id = %s;'''
+        cursor.execute(update_query, (payment_instruction['piStatus'], payment_instruction['id']))
+        update_query = '''UPDATE jit_beneficiary_details SET paymentStatus = %s WHERE piId = %s;'''
+        cursor.execute(update_query, ('Payment Failed', payment_instruction['id']))
+        for beneficiary in payment_instruction['beneficiaryDetails']:
+            beneficiary['paymentStatus'] = 'Payment Failed'
+        transaction_details = copy.deepcopy(payment_instruction['transactionDetails'][0]);
+        transaction_details['id'] = str(uuid.uuid4())
+        transaction_details['transactionType'] = 'REVERSAL'
+        payment_instruction['transactionDetails'].append(transaction_details)
+
+        JIT_TRANSACTION_DETAILS_INSERT_QUERY = """
+            INSERT INTO jit_transaction_details 
+            (id, tenantId, sanctionId, paymentInstId, transactionAmount, transactionDate, transactionType, 
+            additionalDetails, createdtime, createdby, lastmodifiedtime, lastmodifiedby)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, 
+            %s, %s, %s, %s, %s);
+        """
+        cursor.execute(JIT_TRANSACTION_DETAILS_INSERT_QUERY, [
+            transaction_details.get('id'),
+            transaction_details.get('tenantId'),
+            transaction_details.get('sanctionId'),
+            payment_instruction.get('id'),
+            transaction_details.get('transactionAmount'),
+            transaction_details.get('transactionDate'),
+            transaction_details.get('transactionType', 'DEBIT'),
+            Json(transaction_details.get('additionalDetails', {})),
+            transaction_details.get('auditDetails', {}).get('createdTime'),
+            transaction_details.get('auditDetails', {}).get('createdBy'),
+            transaction_details.get('auditDetails', {}).get('lastModifiedTime'),
+            transaction_details.get('auditDetails', {}).get('lastModifiedBy')
+        ])
+        connection.commit()
+
+        # TODO:push to indexer
+        
+    except Exception as e:
+        print("upate_pi_to_fail : error {}".format(str(e)))
+        traceback.print_exc()
+
+def update_disburse_to_fail(disburse):
+    try:
+        print('updating disbursement for fail {}'.format(disburse['id']))
+        disburse['status'] = {
+            'status_code': 'FAILED',
+            'status_message': 'FAILED'
+        }
+        for benficiary in disburse['childrens']:
+            benficiary['status'] = {
+                'status_code': 'FAILED',
+                'status_message': 'FAILED'
+            }
+            call_on_disburse_update_api(disburse)
+    except Exception as e:
+        print("update_disburse_to_fail : error {}".format(str(e)))
+        traceback.print_exc()
 def process_pi():
     processed_pi = load_file('processed_pi_output.json')
     in_progress_pi = load_file('in_progress_pi_output.json')
+    benf_account_map = load_file('benf_account.json')
     [pis_to_save_processed, pis_to_fail_inprogress, pis_to_delete_inprogress, pis_to_delete_processed] = get_processed_in_progress_pi_and_failed_pis(processed_pi, in_progress_pi)
 
     # Connect to PostgreSQL
     connection = connect_to_database()
     # Create a cursor object
     cursor = connection.cursor()
-    
-    process_successful_pi(processed_pi, in_progress_pi, pis_to_save_processed, pis_to_delete_processed, pis_to_delete_inprogress, cursor, connection)
-    
-    
-    
 
+    # process_successful_pi(processed_pi, benf_account_map, cursor, connection)
+    in_progress = in_progress_pi.keys()
+    success = processed_pi.keys()
+    payments_to_be_fail = set(in_progress) - set(success)
+    process_initiated_inprogress_pis_for_fail(in_progress_pi, payments_to_be_fail, cursor, connection)
 
 if __name__ == '__main__':
     process_pi()

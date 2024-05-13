@@ -1,5 +1,7 @@
 import pandas as pd
-import json 
+import json
+import os
+
 
 def process_data(data_dict):
     data = {}
@@ -40,8 +42,13 @@ def process_data(data_dict):
         data[i['PAYMENT_NO']][i["JIT_BILL_NUMBER"]] = jit_bill_details
     return data
 
+# Get the current working directory
+current_directory = os.getcwd()
 # Path to your Excel file
-excel_file = 'D:\\egovernments\\migration-prod-ifms-data\\all_pi_details.xlsx'
+file_name = 'all_pi_details.xlsx'
+# Combine the directory and file name to get the full file path
+file_path = os.path.join(current_directory, file_name)
+excel_file = file_path
 
 # Name of the sheet you want to read
 sheet_name = 'Processed PI'  # Change this to the actual sheet name
@@ -58,7 +65,7 @@ data_dict = df.to_dict(orient='records')
 processed_pi_data = process_data(data_dict)
     
 # If you want to write JSON data to a file, you can use the following:
-with open('D:\\egovernments\\migration-prod-ifms-data\\processed_pi_output.json', 'w') as f:
+with open(os.path.join(current_directory, 'processed_pi_output.json'), 'w') as f:
     json.dump(processed_pi_data, f)
 
 
@@ -77,5 +84,5 @@ data_dict = df.to_dict(orient='records')
 in_processed_pi = process_data(data_dict)
 
 # If you want to write JSON data to a file, you can use the following:
-with open('D:\\egovernments\\migration-prod-ifms-data\\in_progress_pi_output.json', 'w') as f:
+with open(os.path.join(current_directory, 'in_progress_pi_output.json'), 'w') as f:
     json.dump(in_processed_pi, f)
