@@ -211,9 +211,9 @@ public class DisbursementValidator {
     }
 
     public Boolean isDisbursementCreated(PaymentRequest paymentRequest) {
-        Object payment = redisService.getObject(Constants.PAYMENT_REDIS_KEY.replace("{uuid}", paymentRequest.getPayment().getId()));
+        Object payment = redisService.getPaymentFromCache(Constants.PAYMENT_REDIS_KEY.replace("{uuid}", paymentRequest.getPayment().getId()));
         if(payment == null){
-            redisService.setObject(Constants.PAYMENT_REDIS_KEY.replace("{uuid}", paymentRequest.getPayment().getId()), paymentRequest.getPayment());
+            redisService.setCacheForPayment(paymentRequest.getPayment());
             DisbursementSearchCriteria searchCriteria = DisbursementSearchCriteria.builder()
                     .paymentNumber(paymentRequest.getPayment().getPaymentNumber())
                     .build();

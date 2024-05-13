@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
+import org.egov.works.mukta.adapter.web.models.bill.Payment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,31 @@ public class RedisService {
         this.objectMapper = objectMapper;
     }
 
-    public void setObject(String key, Object value) {
-        redisTemplate.opsForValue().set(key, value);
+    public void setCacheForPayment(Payment payment){
+        try {
+            String paymentJson = objectMapper.writeValueAsString(payment);
+            redisTemplate.opsForValue().set(getPaymentRedisKey(payment.getId()), paymentJson);
+        } catch (JsonProcessingException e) {
+            // Handle JSON processing exception
+            log.error("Error serializing payment object", e);
+        }
     }
 
-    public Object getObject(String key) {
-        return redisTemplate.opsForValue().get(key);
+    public Payment getPaymentFromCache(String id) {
+        String paymentJson = (String) redisTemplate.opsForValue().get(getPaymentRedisKey(id));
+        if (paymentJson != null) {
+            try {
+                return objectMapper.readValue(paymentJson, Payment.class);
+            } catch (JsonProcessingException e) {
+                // Handle JSON processing exception
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private String getPaymentRedisKey(String id) {
+        return Constants.PAYMENT_REDIS_KEY.replace("{uuid}", id);
     }
 
     public void setCacheForDisbursement(Disbursement disbursement) {
