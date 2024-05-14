@@ -46,7 +46,7 @@ public class WMSSearchApplication {
 
 			// Disable hostname verification
 			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-				public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) {
+				public boolean verify(String hostname, SSLSession sslSession) {
 					return true;
 				}
 			});
