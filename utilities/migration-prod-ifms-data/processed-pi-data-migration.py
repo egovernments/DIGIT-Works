@@ -207,7 +207,6 @@ def load_file(file_name):
         with open(file_path, "r") as json_file:
             data = json.load(json_file)
         print("JSON data loaded successfully.")
-        print("Data:", data)
     else:
         print("File not found:", file_path)
 
@@ -247,10 +246,10 @@ def get_processed_in_progress_pi_and_failed_pis(processed_pi, in_progress_pi):
             count = count + 1
         
             
-    print("pis_to_fail_inprogress", pis_to_fail_inprogress)
-    print("pis_to_delete_inprogress", pis_to_delete_inprogress)
-    print("pis_to_delete_processed", pis_to_delete_processed)
-    print("pis_to_save_processed", pis_to_save_processed)
+    # print("pis_to_fail_inprogress", pis_to_fail_inprogress)
+    # print("pis_to_delete_inprogress", pis_to_delete_inprogress)
+    # print("pis_to_delete_processed", pis_to_delete_processed)
+    # print("pis_to_save_processed", pis_to_save_processed)
 
     return [pis_to_save_processed, pis_to_fail_inprogress, pis_to_delete_inprogress, pis_to_delete_processed]
 
@@ -694,7 +693,7 @@ def delete_payment_instruction_data_from_db(payment_instruction, cursor, connect
 def process_successful_pi(processed_pi, benf_account_map, cursor, connection):
     try:
         for payment_number in processed_pi:
-            print('payment_number {}'.format(payment_number))
+            print('process_successful_pi_for_payment_number {}'.format(payment_number))
             disburse_from_db = get_disburse_from_db(payment_number, cursor)
             if disburse_from_db == None:
                 raise Exception('Disburse details not found for payment number {}'.format(payment_number))
@@ -704,7 +703,7 @@ def process_successful_pi(processed_pi, benf_account_map, cursor, connection):
             first_disburse = disbursements[0]
             count = 0
             for disburse in disbursements:
-                print('disburse {}'.format(disburse))
+                print('process_successful_pi_for_disburse {}'.format(disburse['target_id']))
                 if count > 0:
                     disbursements_for_delete.append(disburse)
                 count = count + 1
@@ -715,7 +714,7 @@ def process_successful_pi(processed_pi, benf_account_map, cursor, connection):
             first_payment_instruction = payment_instructions[0]
             count = 0
             for payment_instruction in payment_instructions:
-                print('payment_instruction {}'.format(payment_instruction))
+                print('process_successful_pi_payment_instruction {}'.format(payment_instruction['id']))
                 if count > 0:
                     payment_instructions_for_delete.append(payment_instruction)
                 count = count + 1
@@ -723,18 +722,18 @@ def process_successful_pi(processed_pi, benf_account_map, cursor, connection):
             pi_number = next(iter(processed_pi.get(payment_number)))
             print('pi_number {}'.format(pi_number))
             pi_json = processed_pi.get(payment_number).get(pi_number);
-            print('pi_json {}'.format(pi_json))
+            print('pi_json {}'.format(pi_json.get('PAYMENT_NO')))
             migrate_payment_instruction(first_disburse, first_payment_instruction, pi_json, benf_account_map, cursor, connection)
 
             if len(disbursements_for_delete) > 0:
                 for disburse in disbursements_for_delete:
-                    print('disburse {}'.format(disburse))
+                    print('delete_disburse_data_from_db_disburse {}'.format(disburse['id']))
                     delete_disburse_data_from_db(disburse, cursor, connection)
 
 
             if len(payment_instructions_for_delete) > 0:
                 for payment_instruction in payment_instructions_for_delete:
-                    print('disburse {}'.format(payment_instruction))
+                    print('delete_payment_instruction_data_from_db_for_disburse {}'.format(payment_instruction['id']))
                     delete_payment_instruction_data_from_db(payment_instruction, cursor, connection)
                     connection.commit()
 
@@ -779,7 +778,7 @@ def call_on_disburse_update_api(disburse):
 def process_initiated_inprogress_pis_for_fail(pis_to_fail_inprogress, payments_to_be_fail, cursor, connection):
     try:
         for payment_number in payments_to_be_fail:
-            print('payment_number {}'.format(payment_number))
+            print('process_initiated_inprogress_pis_for_fail_for_payment_number {}'.format(payment_number))
             disburse_from_db = get_disburse_from_db(payment_number, cursor)
             if disburse_from_db == None:
                 raise Exception('Disburse details not found for payment number {}'.format(payment_number))
@@ -787,13 +786,13 @@ def process_initiated_inprogress_pis_for_fail(pis_to_fail_inprogress, payments_t
             payment_instructions = search_payment_instruction_from_ifms_adapter(payment_number, disbursements[0]['location_code'])
             if len(payment_instructions) > 0:
                 for payment_instruction in payment_instructions:
-                    print('payment_instruction {}'.format(payment_instruction))
+                    print('process_initiated_inprogress_pis_for_fail_payment_instruction {}'.format(payment_instruction.get('id')))
                     if (payment_instruction['piStatus'] != 'FAILED'):
                         upate_pi_to_fail_in_db(payment_instruction, cursor, connection)
 
             if len(disbursements) > 0:
                 for disburse in disbursements:
-                    print('disburse {}'.format(disburse))
+                    print('process_initiated_inprogress_pis_for_fail_disburse {}'.format(disburse.get('id')))
                     update_disburse_to_fail(disburse)
     except Exception as e:
         print("process_initiated_inprogress_pis_for_fail : error {}".format(str(e)))
@@ -877,7 +876,7 @@ def store_sanction_amounts_for_backup(processed_pi, in_progress_pi, cursor, conn
         for payment in processed_pi:
             for pi in processed_pi.get(payment):
                 payment_instruction = processed_pi.get(payment).get(pi)
-                print('pi {}'.format(pi))
+                print('store_sanction_amounts_for_backup_pi {}'.format(pi))
                 cursor.execute('''select sanctionid from jit_allotment_details where ssuallotmentid = %s''', (str(payment_instruction['AW_ALLOTMENT_DIST_ID']),))
                 result = cursor.fetchone()
                 sanction_id = result[0]
@@ -890,7 +889,7 @@ def store_sanction_amounts_for_backup(processed_pi, in_progress_pi, cursor, conn
         for payment in in_progress_pi:
             for pi in in_progress_pi.get(payment):
                 payment_instruction = in_progress_pi.get(payment).get(pi)
-                print('pi {}'.format(pi))
+                print('store_sanction_amounts_for_backup_pi {}'.format(pi))
                 cursor.execute('''select sanctionid from jit_allotment_details where ssuallotmentid = %s''',(str(payment_instruction['AW_ALLOTMENT_DIST_ID']),))
                 result = cursor.fetchone()
                 sanction_id = result[0]
