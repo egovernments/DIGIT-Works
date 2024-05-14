@@ -739,10 +739,14 @@ public class PaymentInstructionEnrichment {
         }else{
             HashMap<String,String> muktaRefIdToBeneficiaryNumberMap = new HashMap<>();
             for(Beneficiary beneficiary:lastPi.getBeneficiaryDetails()){
-                muktaRefIdToBeneficiaryNumberMap.put(beneficiary.getMuktaReferenceId(),beneficiary.getBeneficiaryNumber());
+                for(BenfLineItems lineItem:beneficiary.getBenfLineItems()){
+                    muktaRefIdToBeneficiaryNumberMap.put(lineItem.getLineItemId(),beneficiary.getBeneficiaryNumber());
+                }
             }
             for(Beneficiary beneficiary:beneficiaryList){
-                beneficiary.setBeneficiaryNumber(muktaRefIdToBeneficiaryNumberMap.get(beneficiary.getMuktaReferenceId()));
+                for(BenfLineItems lineItem:beneficiary.getBenfLineItems()) {
+                    beneficiary.setBeneficiaryNumber(muktaRefIdToBeneficiaryNumberMap.get(lineItem.getLineItemId()));
+                }
                 beneficiary.setPiId(piId);
             }
             parentPiNumber = lastPi.getJitBillNo();
