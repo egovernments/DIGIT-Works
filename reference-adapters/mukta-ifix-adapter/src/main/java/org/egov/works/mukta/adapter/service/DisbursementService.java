@@ -77,7 +77,7 @@ public class DisbursementService {
         Payment payment = payments.get(0);
         log.info("Updating the payment status for the payments : " + payment);
         // Update the payment status
-        boolean updatePaymentStatus = canUpdatePaymentStatus(disbursement);
+        boolean updatePaymentStatus = canUpdatePaymentStatus(disbursement,payment, requestInfo);
         if (updatePaymentStatus)
             paymentService.updatePaymentStatus(payment, disbursement, requestInfo);
         log.info("Updating the disbursement status for the payments : " + disbursementRequest.getMessage());
@@ -91,7 +91,7 @@ public class DisbursementService {
         return disbursementResponse;
     }
 
-    private boolean canUpdatePaymentStatus(Disbursement disbursement) {
+    private boolean canUpdatePaymentStatus(Disbursement disbursement, Payment payment, RequestInfo requestInfo) {
         log.info("Checking if the payment status can be updated for the disbursement : " + disbursement.getId());
         boolean isRevised = false;
         DisbursementSearchCriteria disbursementSearchCriteria = DisbursementSearchCriteria.builder()
@@ -112,9 +112,30 @@ public class DisbursementService {
             if (disbursement.getStatus().getStatusCode().equals(StatusCode.PARTIAL) || disbursement.getStatus().getStatusCode().equals(StatusCode.SUCCESSFUL)) {
                 return true;
             }
+            if(disbursement.getStatus().getStatusCode().equals(StatusCode.FAILED) || disbursement.getStatus().getStatusCode().equals(StatusCode.ERROR)){
+                updatePaymentStatusForRevisedFailed(disbursement, payment, requestInfo);
+            }
             return false;
         }
         return true;
+    }
+
+    private void updatePaymentStatusForRevisedFailed(Disbursement disbursement, Payment payment, RequestInfo requestInfo) {
+        EnumMap<StatusCode, PaymentStatus> lineItemIdStatusMap = paymentService.getStatusCodeToPaymentStatusMap();
+        HashMap<String, StatusCode> targetIdToStatusCodeMap = new HashMap<>();
+        for(Disbursement disbursement1: disbursement.getDisbursements()){
+            targetIdToStatusCodeMap.put(disbursement1.getTargetId(), disbursement1.getStatus().getStatusCode());
+        }
+        for (PaymentBill bill : payment.getBills()) {
+            for (PaymentBillDetail billDetail : bill.getBillDetails()) {
+                for (PaymentLineItem payableLineItem : billDetail.getPayableLineItems()) {
+                    if(lineItemIdStatusMap.get(targetIdToStatusCodeMap.get(payableLineItem.getLineItemId())) != null){
+                        payableLineItem.setStatus(lineItemIdStatusMap.get(targetIdToStatusCodeMap.get(payableLineItem.getLineItemId())));
+                    }
+                }
+            }
+        }
+        paymentService.updatePaymentStatusForPartial(payment,requestInfo);
     }
 
     private RequestInfo getRequestInfoForSystemUser() {
