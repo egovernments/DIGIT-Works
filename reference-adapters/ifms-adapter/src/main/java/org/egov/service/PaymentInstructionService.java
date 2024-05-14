@@ -670,7 +670,7 @@ public class PaymentInstructionService {
         try {
             DisbursementRequest disbursementRequest = DisbursementRequest.builder()
                     .header(msgCallbackHeader)
-                    .message(disbursements.get(0))
+                    .message(disbursement)
                     .build();
             programServiceUtil.callOnDisburse(disbursementRequest);
         }catch (Exception e){
