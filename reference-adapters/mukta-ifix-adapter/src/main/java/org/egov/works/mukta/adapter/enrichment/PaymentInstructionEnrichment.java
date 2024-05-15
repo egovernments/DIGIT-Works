@@ -352,7 +352,7 @@ public class PaymentInstructionEnrichment {
         ObjectNode additionalDetailsOfDisbursement = objectMapper.valueToTree(disbursement.getAdditionalDetails());
         HashMap<String,List<Disbursement>> beneficiaryDisbursementMap = getBeneficiaryDisbursementMap(disbursement);
         for(Map.Entry<String,List<Disbursement>> entry: beneficiaryDisbursementMap.entrySet()){
-            String beneficiaryId = entry.getKey();
+            String beneficiaryId = null;
             BigDecimal totalAmountForBenef = BigDecimal.ZERO;
             String beneficiaryDetailsId = UUID.randomUUID().toString();
             JsonNode beneficiaryTypeNode = null;
@@ -370,6 +370,8 @@ public class PaymentInstructionEnrichment {
                 totalAmountForBenef = totalAmountForBenef.add(disbursement1.getGrossAmount());
                 if(disbursement1.getAdditionalDetails() != null){
                     ObjectNode additionalDetails = objectMapper.valueToTree(disbursement1.getAdditionalDetails());
+                    JsonNode benfIdNode = additionalDetails.get("beneficiaryId");
+                    beneficiaryId = benfIdNode == null? beneficiaryId: benfIdNode.asText();
                     beneficiaryTypeNode = additionalDetails.get("beneficiaryType");
                     beneficiaryPaymentStatusNode = additionalDetails.get("beneficiaryStatus");
                 }
@@ -479,21 +481,12 @@ public class PaymentInstructionEnrichment {
     private HashMap<String, List<Disbursement>> getBeneficiaryDisbursementMap(Disbursement disbursement) {
         HashMap<String,List<Disbursement>> beneficiaryDisbursementMap = new HashMap<>();
         for(Disbursement disbursement1: disbursement.getDisbursements()){
-            String beneficiaryId = null;
-            if(disbursement1.getAdditionalDetails() != null){
-                ObjectNode additionalDetails = objectMapper.valueToTree(disbursement1.getAdditionalDetails());
-                beneficiaryId = disbursement1.getTargetId();
-                if(additionalDetails != null){
-                    JsonNode benfIdNode = additionalDetails.get("beneficiaryId");
-                    beneficiaryId = benfIdNode == null? beneficiaryId: benfIdNode.asText();
-                }
-            }
-            if(beneficiaryDisbursementMap.containsKey(beneficiaryId)){
-                beneficiaryDisbursementMap.get(beneficiaryId).add(disbursement1);
+            if(beneficiaryDisbursementMap.containsKey(disbursement1.getTransactionId() == null? disbursement1.getAccountCode(): disbursement1.getTransactionId())){
+                beneficiaryDisbursementMap.get(disbursement1.getTransactionId() == null? disbursement1.getAccountCode(): disbursement1.getTransactionId()).add(disbursement1);
             }else {
                 List<Disbursement> disbursements = new ArrayList<>();
                 disbursements.add(disbursement1);
-                beneficiaryDisbursementMap.put(beneficiaryId, disbursements);
+                beneficiaryDisbursementMap.put(disbursement1.getTransactionId() == null? disbursement1.getAccountCode(): disbursement1.getTransactionId(), disbursements);
             }
         }
 
