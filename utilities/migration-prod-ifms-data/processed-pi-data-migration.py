@@ -939,8 +939,185 @@ def process_pi():
     process_initiated_inprogress_pis_for_fail(in_progress_pi, payments_to_be_fail, cursor, connection)
     store_sanction_amounts_for_backup(processed_pi, in_progress_pi, cursor, connection)
 
+
+
+def search_payment_instruction_by_id(id, tenant_id):
+    try:
+        ifms_service_host = os.getenv('IFMS_HOST')
+        ifms_pi_search = os.getenv('IFMS_PI_SEARCH')
+
+        api_url = f"{ifms_service_host}/{ifms_pi_search}"
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        request = {
+            "RequestInfo": get_request_info(),
+            "searchCriteria": {
+                "tenantId": tenant_id,
+                "ids": [id],
+                "limit": "10000",
+                "offset": "0",
+                "sortBy": "createdTime",
+                "order": "ASC"
+            }
+        }
+
+        response = requests.post(api_url, json=request, headers=headers)
+        paymentInstructions = []
+        if response.status_code == 200:
+            response_data = response.json()
+            # Assuming your response is stored in the variable 'response_data'
+            paymentInstructions.extend(response_data.get('paymentInstructions', []))
+        else:
+            print(f"Failed to fetch data from the API. Status code: {response.status_code}")
+            print(response.text)
+        return paymentInstructions[0]
+    except Exception as e:
+        print("search_payment_instruction_from_ifms_adapter : error {}".format(str(e)))
+        raise e
+
+
+def reindex():
+    try:
+        payment_inst = [
+            {"id": "38be1320-7864-4cee-adc2-cf264dba9bb6", "tenantid": "od.balasore"},
+            {"id": "d157c4c8-554b-4ba8-ba11-7ea0e2f0fcbe", "tenantid": "od.balasore"},
+            {"id": "04b5e39c-6d01-4876-bb1c-bed28ba772e8", "tenantid": "od.balasore"},
+            {"id": "86295294-2422-4101-b23f-0f4bdc6e7c44", "tenantid": "od.balasore"},
+            {"id": "3de62d8e-044b-45d6-adf8-ce3ad2220dac", "tenantid": "od.balasore"},
+            {"id": "4ba54060-ce76-4294-aa9c-492017535292", "tenantid": "od.balasore"},
+            {"id": "994b4094-2e53-4f63-af3e-f867a7109345", "tenantid": "od.balasore"},
+            {"id": "bb43d19c-4880-4fe7-8030-e2e7aba29d04", "tenantid": "od.balasore"},
+            {"id": "e2dbab5a-eb12-4f2b-a543-42ad5d0d69ba", "tenantid": "od.balasore"},
+            {"id": "20a0d3ae-5ed6-403a-8106-2d435652e28f", "tenantid": "od.padampur"},
+            {"id": "4cdce082-2ba3-4a97-959b-d1fec5e4156b", "tenantid": "od.balasore"},
+            {"id": "1eee9e3d-2caf-481c-af86-4772518d904c", "tenantid": "od.balasore"},
+            {"id": "8737cbf0-cc44-48a4-8e9c-d6417f2596bb", "tenantid": "od.balasore"},
+            {"id": "cde2db94-3405-480b-993b-4e6355f322ba", "tenantid": "od.balasore"},
+            {"id": "7579062e-169b-4dc4-b1d3-5f936b2719de", "tenantid": "od.balasore"},
+            {"id": "e7f0a2c1-2c01-4390-ba9c-bdf957d2afba", "tenantid": "od.boudhgarh"},
+            {"id": "3ab1e22a-141a-469a-8fe6-7c77d99ab693", "tenantid": "od.padampur"},
+            {"id": "cf95c4d5-8787-4249-ae2d-03aa48499f2d", "tenantid": "od.padampur"},
+            {"id": "4287ff20-83be-45b6-ba5c-4de17453e2bc", "tenantid": "od.padampur"},
+            {"id": "fd3b98b6-1c47-497a-8dad-5068854dd437", "tenantid": "od.padampur"},
+            {"id": "c0fea4db-9e0f-4559-be82-3f881e1c43fc", "tenantid": "od.padampur"},
+            {"id": "ba5f257c-5c81-4be5-abde-e640af0f6609", "tenantid": "od.boudhgarh"},
+            {"id": "3bec52cc-bd0e-4150-bfc9-ed7a7ff5dd37", "tenantid": "od.boudhgarh"},
+            {"id": "0ca31410-7dc2-4533-bb5a-8a65bfd796fc", "tenantid": "od.bhadrak"},
+            {"id": "3510271b-5cb1-4196-bc73-fa14cfd65a65", "tenantid": "od.bhadrak"},
+            {"id": "17a2f474-a8ab-4f19-98fd-7a4d0361ff8f", "tenantid": "od.balangir"},
+            {"id": "e544d710-aa90-4039-b7ef-eb9ccfab7af2", "tenantid": "od.balangir"},
+            {"id": "54d92561-b4bf-4900-b8a8-8031d02ebaca", "tenantid": "od.balangir"},
+            {"id": "3cc5485b-ef40-4a74-9cb3-1ce831b7038e", "tenantid": "od.padampur"},
+            {"id": "b0f59eff-9c3e-4f49-aecd-e14827aea0fc", "tenantid": "od.padampur"},
+            {"id": "ea234b7f-859a-44af-9914-c2f9b416568a", "tenantid": "od.padampur"},
+            {"id": "3796bd72-b2b2-4efa-aa6b-7754926384e0", "tenantid": "od.padampur"},
+            {"id": "697ff1a9-e571-43c9-9060-d371b8786e22", "tenantid": "od.padampur"},
+            {"id": "28b4c6db-fe67-471b-9c68-c83c0886e912", "tenantid": "od.padampur"},
+            {"id": "ce4f74d0-e9e5-433e-a327-e51f2bb75c01", "tenantid": "od.padampur"},
+            {"id": "71c048da-4ef7-4be4-92f6-27a9a15b27d6", "tenantid": "od.balangir"},
+            {"id": "c0a1576a-040f-427c-ba62-7904d231e78a", "tenantid": "od.balangir"},
+            {"id": "5a62c99b-da73-4423-8d1b-13536ec3c3b0", "tenantid": "od.balangir"},
+            {"id": "5a4f3226-6ef1-4e84-aa3f-0648b736e672", "tenantid": "od.balangir"},
+            {"id": "9ab33ba8-fbfd-4e2f-bc51-9904f6468099", "tenantid": "od.balangir"},
+            {"id": "eb0474d4-c10e-40c0-8cbd-d91939556123", "tenantid": "od.balangir"},
+            {"id": "0d054b6e-728d-44ef-a7ee-1cf28e9ebcba", "tenantid": "od.balangir"},
+            {"id": "2feb351d-7962-4823-942c-c645d7eba106", "tenantid": "od.balangir"},
+            {"id": "6690d6fa-77bb-4c9b-baa6-0a3267391bb6", "tenantid": "od.balangir"},
+            {"id": "f248b861-8385-4b0d-9aea-55e4c6c68ee4", "tenantid": "od.balangir"},
+            {"id": "6e67f4b2-3dbf-4011-9afe-a690ce1b4992", "tenantid": "od.balangir"},
+            {"id": "1ebbce02-9ef8-4021-81b1-4ff0c1f1c76b", "tenantid": "od.balangir"},
+            {"id": "ee65d1bb-f6f4-47a0-bca2-d7dad40e169d", "tenantid": "od.balangir"},
+            {"id": "3c21738f-165a-4a8f-b1e8-e96eb8e69d4d", "tenantid": "od.balangir"},
+            {"id": "b8948fa9-72c0-4e05-af1e-93acde123255", "tenantid": "od.padampur"},
+            {"id": "651944a4-df5d-452c-8200-68dd1bd61df0", "tenantid": "od.padampur"},
+            {"id": "6b089e76-0846-4a0f-9956-435bdaf6447c", "tenantid": "od.padampur"},
+            {"id": "524f1110-2492-4fda-8d15-8c046fc366c8", "tenantid": "od.balangir"},
+            {"id": "271cd846-bffe-4f4c-b1bf-9ff6c729464d", "tenantid": "od.balangir"},
+            {"id": "ac5e145e-9bc5-48ac-ba87-4ee548808676", "tenantid": "od.balangir"},
+            {"id": "f2305aa9-5c28-4621-a306-23f29deea8a4", "tenantid": "od.balangir"},
+            {"id": "eca47fc2-e861-4f7f-8b42-152f6a870dcc", "tenantid": "od.balangir"},
+            {"id": "56cfd3ac-93b7-4eed-994e-c22487a3d91c", "tenantid": "od.balangir"},
+            {"id": "dfeddfdf-c840-4d22-9b4b-13999e86cf8d", "tenantid": "od.balangir"},
+            {"id": "0efcf4cb-9dd6-4f99-98f3-c9abbd07dc70", "tenantid": "od.balangir"},
+            {"id": "c31c9693-15f9-4b94-ba9f-afb6885796c4", "tenantid": "od.balangir"},
+            {"id": "0ac164c4-40e6-49c7-a158-fa06e4b4cb67", "tenantid": "od.balangir"},
+            {"id": "aaac9b97-5dda-4696-83eb-d41bfd342ff2", "tenantid": "od.balangir"},
+            {"id": "65549931-9406-42c4-98a7-5715b0fb5c19", "tenantid": "od.balangir"},
+            {"id": "d2f66dec-3520-4f80-b0ce-37275944ff66", "tenantid": "od.balangir"},
+            {"id": "018e3117-779b-4de8-8378-0ebe994de90b", "tenantid": "od.dhenkanal"},
+            {"id": "e3d63f11-c38e-41d8-b11c-ce0cffe121ce", "tenantid": "od.kotpad"},
+            {"id": "961c21cf-8d5f-4a21-8f31-0a09e192c2a7", "tenantid": "od.kotpad"},
+            {"id": "a601c225-a2e6-4460-bf19-e8ee834b1e2d", "tenantid": "od.kotpad"},
+            {"id": "bf3bdac1-92da-4e3d-98eb-a01f1ed0a88d", "tenantid": "od.kotpad"},
+            {"id": "1fa5b73c-c5b3-41ed-b1ea-f00e898b0719", "tenantid": "od.kotpad"},
+            {"id": "835f8a18-83ae-4178-8fbe-ac37a60b30ed", "tenantid": "od.kotpad"},
+            {"id": "bfef506d-3077-4524-99f8-23c0ece9475b", "tenantid": "od.kotpad"},
+            {"id": "b22da4b2-130b-4bea-8d48-c419fce990b0", "tenantid": "od.kotpad"},
+            {"id": "9410623e-d549-4da0-9709-2119bd193854", "tenantid": "od.padampur"},
+            {"id": "30a5d15d-9805-4dd7-88de-4aa4bd14e648", "tenantid": "od.padampur"},
+            {"id": "f1aeacf5-2ca8-4664-a8b8-b82c25f0a821", "tenantid": "od.padampur"},
+            {"id": "3056011f-d2fb-4c05-a454-c1233c160f12", "tenantid": "od.kotpad"},
+            {"id": "9e830020-c324-44f9-b775-4964240a5d65", "tenantid": "od.kotpad"},
+            {"id": "a5cd036e-809f-4c61-8b3c-e4607d404f64", "tenantid": "od.kotpad"},
+            {"id": "c7b7e20a-4d9d-47c6-bef9-3ac91d4cf94c", "tenantid": "od.kotpad"},
+            {"id": "154fe2d2-340f-449c-b354-eafba7848264", "tenantid": "od.padampur"},
+            {"id": "03554fb6-cb98-4ff8-bf4f-cafcda06992a", "tenantid": "od.padampur"},
+            {"id": "a2445c1d-9711-4239-b809-e78d7328397f", "tenantid": "od.padampur"},
+            {"id": "40015af4-c1d4-410d-ae78-2b3524220480", "tenantid": "od.padampur"},
+            {"id": "a5468dce-4234-4131-8a93-12232b2d79cc", "tenantid": "od.paradeep"},
+            {"id": "e93aee2e-fcf6-4e70-a296-b362e3619185", "tenantid": "od.paradeep"},
+            {"id": "56b56907-23b1-47b7-b136-160157c045d4", "tenantid": "od.paradeep"},
+            {"id": "602fcea8-2717-4e98-9f7e-c3042e105d6d", "tenantid": "od.paradeep"},
+            {"id": "4e5c0fc6-9bd2-48f8-a320-ca5d2b331376", "tenantid": "od.paradeep"},
+            {"id": "c849682f-0fab-4e6e-b484-b0cfd15270b3", "tenantid": "od.paradeep"},
+            {"id": "08ca1d18-ec55-43db-8385-fa74a56a5b78", "tenantid": "od.paradeep"},
+            {"id": "96cfbdf9-7677-4362-8f50-bd755bbb0c20", "tenantid": "od.paradeep"},
+            {"id": "e128e4ad-10da-4061-9888-6bea7fcb9e21", "tenantid": "od.paradeep"},
+            {"id": "0c41e8b1-7c26-408a-8dac-8c14476f8c22", "tenantid": "od.paradeep"},
+            {"id": "e4a7a43e-8737-4bdd-adee-d636b25ef72e", "tenantid": "od.paradeep"},
+            {"id": "2bd55edf-09a9-4a3a-b8a0-ef63448c6319", "tenantid": "od.paradeep"},
+            {"id": "1610078d-e10b-4b0d-a78d-0ed26261c8ea", "tenantid": "od.paradeep"},
+            {"id": "7aeca68d-a388-449e-a06e-05e506946383", "tenantid": "od.paradeep"},
+            {"id": "a2fff63e-0812-4f33-b3bd-f023f0dafc51", "tenantid": "od.paradeep"},
+            {"id": "52eaf507-650e-4633-be33-0404193d56b3", "tenantid": "od.paradeep"},
+            {"id": "3e7ca78e-33f3-4026-9a24-e8e16ea1e034", "tenantid": "od.paradeep"},
+            {"id": "64475b84-a04a-40aa-846d-cf4f3e7ce7a9", "tenantid": "od.paradeep"},
+            {"id": "4c77a534-1814-41aa-b2ba-c13e2c836660", "tenantid": "od.paradeep"},
+            {"id": "f9932039-6d02-49eb-97fa-ad8b84a92bce", "tenantid": "od.paradeep"},
+            {"id": "1481f97a-278e-4159-a9e4-f65707748cba", "tenantid": "od.paradeep"},
+            {"id": "2a1cdf60-8cd4-4207-aad9-d70a8718b14e", "tenantid": "od.paradeep"},
+            {"id": "5850f245-d641-447f-8acd-a4477326dfd3", "tenantid": "od.paradeep"},
+            {"id": "74ac982f-34ea-4648-abc5-be4e72b91a45", "tenantid": "od.paradeep"},
+            {"id": "92084e88-1396-41e5-960b-6099141db26b", "tenantid": "od.paradeep"},
+            {"id": "bca9f810-c355-4c33-aefa-cb7ae7d36639", "tenantid": "od.paradeep"},
+            {"id": "ed586af2-5e01-4698-859d-1b9e8e49cfae", "tenantid": "od.paradeep"},
+            {"id": "b0c49069-3a77-4361-84d9-ba5f1938b412", "tenantid": "od.rourkela"},
+            {"id": "842a64e4-b1e0-40ac-81ff-b94af8b777a1", "tenantid": "od.rourkela"}
+        ]
+        print("reindex : start")
+        producer = KafkaProducer(bootstrap_servers=os.getenv('KAFKA_SERVER'))
+        for pi in payment_inst:
+            payment_inst_details = search_payment_instruction_by_id(pi.get('id'), pi.get('tenantid'))
+            payment_inst_details['paDetails'] = None
+            payment_inst_details['piType'] = 'ORIGINAL'
+            payment_inst_details['parentPiNumber'] = ''
+            payment_inst_details['piErrorResp'] = ''
+            request = {}
+            request['RequestInfo'] = get_request_info()
+            request['paymentInstruction'] = payment_inst_details
+            json_data = json.dumps(request).encode('utf-8')
+            producer.send(os.getenv('KAFKA_UPDATE_MUKTA_PI_INDEX_TOPIC'), json_data)
+            producer.flush()
+        producer.close()
+        print("reindex : end")
+    except Exception as e:
+        print("reindex : error {}".format(str(e)))
+        traceback.print_exc()
+
 if __name__ == '__main__':
-    process_pi()
+    # process_pi()
+    reindex()
 
 
 
