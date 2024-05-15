@@ -436,6 +436,8 @@ def migrate_payment_instruction(disbursement, payment_instruction, pi_object, be
             "status_message": "INITIATED"
         }
 
+        disbursement['transaction_id'] = payment_instruction['jitBillNo']
+
         for idx, beneficiary in enumerate(payment_instruction['beneficiaryDetails']):
             beneficiary['id'] = str(uuid.uuid4())
             beneficiary['piId'] = payment_instruction.get('id')
@@ -448,7 +450,7 @@ def migrate_payment_instruction(disbursement, payment_instruction, pi_object, be
 
         insert_payment_instruction_db(payment_instruction, payment_instruction_copy, cursor, connection)
         push_pi_data_for_indexer(payment_instruction)
-        # call_on_disburse_update_api(disbursement)
+        call_on_disburse_update_api(disbursement)
 
     except Exception as e:
         print("create_payment_instruction : error {}".format(str(e)))
@@ -746,7 +748,7 @@ def process_successful_pi(processed_pi, benf_account_map, cursor, connection):
 def call_on_disburse_update_api(disburse):
     try:
         program_service_host = os.getenv('PROGRAM_SERVICE_HOST')
-        program_disburse_update = os.getenv('PROGRAM_DISBURSE_UPDATE')
+        program_disburse_update = os.getenv('PROGRAM_ON_DISBURSE_CREATE')
 
         api_url = f"{program_service_host}/{program_disburse_update}"
         headers = {
@@ -792,8 +794,9 @@ def process_initiated_inprogress_pis_for_fail(pis_to_fail_inprogress, payments_t
 
             if len(disbursements) > 0:
                 for disburse in disbursements:
-                    print('process_initiated_inprogress_pis_for_fail_disburse {}'.format(disburse.get('id')))
-                    update_disburse_to_fail(disburse)
+                    if disburse['status']['status_code'] == 'INITIATED' or disburse['status']['status_code'] == 'INPROGRESS':
+                        print('process_initiated_inprogress_pis_for_fail_disburse {}'.format(disburse.get('id')))
+                        update_disburse_to_fail(disburse)
     except Exception as e:
         print("process_initiated_inprogress_pis_for_fail : error {}".format(str(e)))
         traceback.print_exc()
@@ -854,7 +857,7 @@ def update_disburse_to_fail(disburse):
                 'status_code': 'FAILED',
                 'status_message': 'FAILED'
             }
-            # call_on_disburse_update_api(disburse)
+            call_on_disburse_update_api(disburse)
     except Exception as e:
         print("update_disburse_to_fail : error {}".format(str(e)))
         traceback.print_exc()
@@ -929,12 +932,12 @@ def process_pi():
     # Create a cursor object
     cursor = connection.cursor()
 
-    process_successful_pi(processed_pi, benf_account_map, cursor, connection)
+    # process_successful_pi(processed_pi, benf_account_map, cursor, connection)
     in_progress = in_progress_pi.keys()
     success = processed_pi.keys()
     payments_to_be_fail = set(in_progress) - set(success)
     process_initiated_inprogress_pis_for_fail(in_progress_pi, payments_to_be_fail, cursor, connection)
-    store_sanction_amounts_for_backup(processed_pi, in_progress_pi, cursor, connection)
+    # store_sanction_amounts_for_backup(processed_pi, in_progress_pi, cursor, connection)
 
 if __name__ == '__main__':
     process_pi()
