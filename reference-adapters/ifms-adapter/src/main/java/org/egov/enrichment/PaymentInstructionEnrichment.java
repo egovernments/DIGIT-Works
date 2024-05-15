@@ -943,22 +943,22 @@ public class PaymentInstructionEnrichment {
         String jitCurrBillNo = lastPI.getPaDetails().get(0).getPaBillRefNumber();
         HashMap<String, Beneficiary> lastPIBeneficiaryMap = new HashMap<>();
         for(Beneficiary beneficiary:lastPI.getBeneficiaryDetails()){
-            lastPIBeneficiaryMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
+            lastPIBeneficiaryMap.put(beneficiary.getBeneficiaryNumber(),beneficiary);
         }
         HashMap<String, Beneficiary> originalPIBeneficiaryMap = new HashMap<>();
         for(Beneficiary beneficiary:originalPI.getBeneficiaryDetails()){
-            originalPIBeneficiaryMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
+            originalPIBeneficiaryMap.put(beneficiary.getBeneficiaryNumber(),beneficiary);
         }
         for(Beneficiary beneficiary:paymentInstructionFromDisbursement.getBeneficiaryDetails()){
             CORBeneficiaryDetails beneficiaryForCor = CORBeneficiaryDetails.builder()
                     .benefId(beneficiary.getBeneficiaryNumber())
                     .jitCurBillRefNo(jitCurrBillNo)
-                    .orgAccountNo(originalPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[0])
-                    .orgIfsc(originalPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[1])
+                    .orgAccountNo(originalPIBeneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getBankAccountId().split("@")[0])
+                    .orgIfsc(originalPIBeneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getBankAccountId().split("@")[1])
                     .correctedAccountNo(beneficiary.getBankAccountId().split("@")[0])
                     .correctedIfsc(beneficiary.getBankAccountId().split("@")[1])
-                    .curAccountNo(lastPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[0])
-                    .curIfsc(lastPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[1])
+                    .curAccountNo(lastPIBeneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getBankAccountId().split("@")[0])
+                    .curIfsc(lastPIBeneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getBankAccountId().split("@")[1])
                     .build();
             beneficiaryList.add(beneficiaryForCor);
         }
