@@ -932,12 +932,12 @@ def process_pi():
     # Create a cursor object
     cursor = connection.cursor()
 
-    # process_successful_pi(processed_pi, benf_account_map, cursor, connection)
+    process_successful_pi(processed_pi, benf_account_map, cursor, connection)
     in_progress = in_progress_pi.keys()
     success = processed_pi.keys()
     payments_to_be_fail = set(in_progress) - set(success)
     process_initiated_inprogress_pis_for_fail(in_progress_pi, payments_to_be_fail, cursor, connection)
-    # store_sanction_amounts_for_backup(processed_pi, in_progress_pi, cursor, connection)
+    store_sanction_amounts_for_backup(processed_pi, in_progress_pi, cursor, connection)
 
 if __name__ == '__main__':
     process_pi()
