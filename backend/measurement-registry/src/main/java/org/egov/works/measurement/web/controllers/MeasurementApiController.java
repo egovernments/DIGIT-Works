@@ -39,9 +39,9 @@ public class MeasurementApiController {
         if (criteria != null) {
             List<Measurement> measurements = measurementRegistry.searchMeasurements(criteria, body);
             response.setMeasurements(measurements);
-            return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
