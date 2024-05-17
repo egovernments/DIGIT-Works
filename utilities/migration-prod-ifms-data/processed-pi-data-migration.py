@@ -1115,9 +1115,150 @@ def reindex():
         print("reindex : error {}".format(str(e)))
         traceback.print_exc()
 
+def mukta_disburse_search(payment_number):
+    try:
+        print("disbursement search for : ", payment_number)
+        mukta_adapter_host = os.getenv('MUKTA_ADAPTER_HOST')
+        mukta_disburse_search = os.getenv('MUKTA_DISBURSE_SEARCH')
+
+        api_url = f"{mukta_adapter_host}/{mukta_disburse_search}"
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        request = {
+            "RequestInfo": get_request_info(),
+            "criteria": {
+                "payment_number": payment_number
+            }
+        }
+
+        response = requests.post(api_url, json=request, headers=headers)
+        disbursements = []
+        if response.status_code == 200:
+            response_data = response.json()
+            # Assuming your response is stored in the variable 'response_data'
+            disbursements.extend(response_data.get('disbursements', []))
+        else:
+            print(f"Failed to fetch data from the API. Status code: {response.status_code}")
+            print(response.text)
+        return disbursements
+
+    except Exception as e:
+        print("mukta_disburse_search : error {}".format(str(e)))
+        traceback.print_exc()
+
+
+def db_update_queries(id):
+    try:
+        print("db_update_queries start for: ", id)
+        # Connect to PostgreSQL
+        connection = connect_to_database()
+        # Create a cursor object
+        cursor = connection.cursor()
+
+        # Update queries
+        queries = [
+            "UPDATE jit_payment_inst_details SET pistatus = 'FAILED' WHERE id = %s",
+            "UPDATE jit_beneficiary_details SET paymentstatus = 'Payment Failed' WHERE piid = %s",
+            "UPDATE eg_program_disburse SET status = 'FAILED', status_message = 'FAILED' WHERE id = %s",
+            "UPDATE eg_program_disburse SET status = 'FAILED', status_message = 'FAILED' WHERE parent_id = %s",
+            "UPDATE ifix.eg_program_disburse SET status = 'FAILED', status_message = 'FAILED' WHERE id = %s",
+            "UPDATE ifix.eg_program_disburse SET status = 'FAILED', status_message = 'FAILED' WHERE parent_id = %s"
+        ]
+
+        for query in queries:
+            cursor.execute(query, (id,))
+
+        connection.commit()
+        print("db_update_queries : updates successful")
+        return True
+    except Exception as e:
+        print("db_update_queries : error {}".format(str(e)))
+        traceback.print_exc()
+        return False
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+def modify_disburse(disburse):
+    try:
+        print("modify_disburse : start")
+
+        disburse['status'] = {
+            'status_code': 'FAILED',
+            'status_message': 'FAILED'
+        }
+        disburse['additional_details'] = {
+            'piStatus': 'FAILED',
+        }
+        for child in disburse['children']:
+            child['status'] = {
+                'status_code': 'FAILED',
+                'status_message': 'FAILED'
+            }
+            child['additional_details'] = {
+                'beneficiaryStatus': 'Payment Failed',
+            }
+    except Exception as e:
+        print("modify_disburse : error {}".format(str(e)))
+        traceback.print_exc()
+
+def call_mukta_adapter_on_disburse_update_api(disburse):
+    try:
+        print("update status start for : ", disburse['target_id'])
+
+        mukta_adapter_host = os.getenv('MUKTA_ADAPTER_HOST')
+        mukta_on_disburse_update = os.getenv('MUKTA_ON_DISBURSE_UPDATE')
+
+        api_url = f"{mukta_adapter_host}/{mukta_on_disburse_update}"
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        request = {
+            "signature": None,
+            "header": {
+                "message_id": disburse['id'],
+                "message_ts": "1708428280",
+                "message_type": "on-disburse",
+                "action": "update",
+                "sender_id": os.getenv('MUKTA_ON_DISBURSE_UPDATE_SENDER_ID'),
+                "receiver_id": os.getenv('MUKTA_ON_DISBURSE_UPDATE_RECEIVER_ID')
+            },
+            "message": disburse
+        }
+        response = requests.post(api_url, json=request, headers=headers)
+        if response.status_code == 200:
+            print(f"Disbursement status updated for payment number: {disburse['target_id']}")
+        else:
+            print(f"Failed to update disburse for {disburse['target_id']} from the API. Status code: {response.status_code}")
+            print(response.text)
+    except Exception as e:
+        print("search_disburse_from_program_service : error {}".format(str(e)))
+        raise e
+
+def update_status():
+    try:
+        print("update_status : start")
+        payment_numbers = [
+            {"EP/KT/2023-24/03/22/000760"}
+        ]
+        for payment_number in payment_numbers:
+            disbursements = mukta_disburse_search(payment_number)
+            disburse = disbursements[0]
+            db_update_queries(disburse.id)
+            modify_disburse(disburse)
+            call_mukta_adapter_on_disburse_update_api(disburse)
+
+    except Exception as e:
+        print("update_status : error {}".format(str(e)))
+        traceback.print_exc()
+
+
 if __name__ == '__main__':
     # process_pi()
-    reindex()
+    # reindex()
+    update_status()
 
 
 
