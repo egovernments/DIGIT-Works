@@ -1146,7 +1146,7 @@ def mukta_disburse_search(transaction_id):
     except Exception as e:
         print("mukta_disburse_search : error {}".format(str(e)))
         traceback.print_exc()
-
+        return []
 
 def db_update_queries(id):
     try:
