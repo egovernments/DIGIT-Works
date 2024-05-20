@@ -1115,9 +1115,9 @@ def reindex():
         print("reindex : error {}".format(str(e)))
         traceback.print_exc()
 
-def mukta_disburse_search(payment_number):
+def mukta_disburse_search(transaction_id):
     try:
-        print("disbursement search for : ", payment_number)
+        print("disbursement search for : ", transaction_id)
         mukta_adapter_host = os.getenv('MUKTA_ADAPTER_HOST')
         mukta_disburse_search = os.getenv('MUKTA_DISBURSE_SEARCH')
 
@@ -1128,7 +1128,7 @@ def mukta_disburse_search(payment_number):
         request = {
             "RequestInfo": get_request_info(),
             "criteria": {
-                "payment_number": payment_number
+                "transaction_id": transaction_id
             }
         }
 
@@ -1189,17 +1189,18 @@ def modify_disburse(disburse):
             'status_code': 'FAILED',
             'status_message': 'FAILED'
         }
-        disburse['additional_details'] = {
-            'piStatus': 'FAILED',
-        }
+        # Update only piStatus in additional_details
+        if 'additional_details' in disburse and disburse['additional_details'] is not None:
+            disburse['additional_details']['piStatus'] = 'FAILED'
+
         for child in disburse['children']:
             child['status'] = {
                 'status_code': 'FAILED',
                 'status_message': 'FAILED'
             }
-            child['additional_details'] = {
-                'beneficiaryStatus': 'Payment Failed',
-            }
+            if 'additional_details' in child and child['additional_details'] is not None:
+                child['additional_details']['beneficiaryStatus'] = 'Payment Failed'
+
     except Exception as e:
         print("modify_disburse : error {}".format(str(e)))
         traceback.print_exc()
@@ -1240,12 +1241,11 @@ def call_mukta_adapter_on_disburse_update_api(disburse):
 def update_status():
     try:
         print("update_status : start")
-        payment_numbers = [
-            {"EP/KT/2023-24/03/22/000760"}
+        transaction_ids = [
+            "PI-KT/2023-24/000836"
         ]
-        for payment_number in payment_numbers:
-            disbursements = mukta_disburse_search(payment_number)
-            disburse = disbursements[0]
+        for transaction_id in transaction_ids:
+            disburse = mukta_disburse_search(transaction_id)
             db_update_queries(disburse.id)
             modify_disburse(disburse)
             call_mukta_adapter_on_disburse_update_api(disburse)
