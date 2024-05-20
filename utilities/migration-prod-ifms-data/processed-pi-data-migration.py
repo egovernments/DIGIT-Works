@@ -1245,10 +1245,14 @@ def update_status():
             "PI-KT/2023-24/000836"
         ]
         for transaction_id in transaction_ids:
-            disburse = mukta_disburse_search(transaction_id)
-            db_update_queries(disburse.id)
-            modify_disburse(disburse)
-            call_mukta_adapter_on_disburse_update_api(disburse)
+            disbursement = mukta_disburse_search(transaction_id)
+            if disbursement:
+                disburse = disbursement[0]
+                if db_update_queries(disburse['id']):
+                    modify_disburse(disburse)
+                    call_mukta_adapter_on_disburse_update_api(disburse)
+            else:
+                print(f"No disbursements found for transaction_id: {transaction_id}")
 
     except Exception as e:
         print("update_status : error {}".format(str(e)))
