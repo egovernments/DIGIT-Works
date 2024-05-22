@@ -106,36 +106,15 @@ public class ContractService {
 
     public List<Contract> getContracts(ContractCriteria contractCriteria) {
 
-        //get lineItems from db
-        log.info("get lineItems from db");
-        List<LineItems> lineItems = lineItemsRepository.getLineItems(contractCriteria);
-
-        //collect lineItems for each contract
-        Map<String, List<LineItems>> lineItemsMap = lineItems.stream().collect(Collectors.groupingBy(LineItems::getContractId));
-
-        //get contract ids from lineItems
-        if (contractCriteria.getIds() == null || contractCriteria.getIds().isEmpty()) {
-            contractCriteria.setIds(new ArrayList<>(lineItemsMap.keySet()));
-        } else contractCriteria.getIds().addAll(lineItemsMap.keySet());
-
         //get contracts from db
         log.info("get contracts from db");
         List<Contract> contracts = contractRepository.getContracts(contractCriteria);
 
-        log.info("enrich contract with lineItems");
-        //filtering : contracts which have a lineItem from db
-        List<Contract> filteredContracts = new ArrayList<>();
-        for (Contract contract : contracts) {
-            if (lineItemsMap.containsKey(contract.getId())) {
-                contract.setLineItems(lineItemsMap.get(contract.getId()));
-                filteredContracts.add(contract);
-            }
-        }
 
         //set total contracts and  sorting order count in pagination object
-        contractCriteria.getPagination().setTotalCount(filteredContracts.size());
+        contractCriteria.getPagination().setTotalCount(contracts.size());
 
-        return filteredContracts;
+        return contracts;
     }
 
 }
