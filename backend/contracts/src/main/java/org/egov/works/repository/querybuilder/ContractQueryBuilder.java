@@ -15,13 +15,14 @@ import java.util.*;
 @Component
 public class ContractQueryBuilder {
 
-    private static final String CONTRACT_SELECT_QUERY = " SELECT contract.id AS id, " +
+    private static final  String CONTRACT_SELECT_QUERY = " SELECT " +
+            "contract.id AS contractId, " +
             "contract.contract_number AS contractNumber, " +
             "contract.supplement_number AS supplementNumber, " +
             "contract.version_number AS versionNumber, " +
             "contract.old_uuid AS oldUuid, " +
             "contract.business_service AS businessService, " +
-            "contract.tenant_id AS tenantId, " +
+            "contract.tenant_id AS contractTenantId, " +
             "contract.wf_status AS wfStatus, " +
             "contract.executing_authority AS executingAuthority, " +
             "contract.contract_type AS contractType, " +
@@ -32,12 +33,12 @@ public class ContractQueryBuilder {
             "contract.org_id AS orgId, " +
             "contract.start_date AS startDate, " +
             "contract.end_date AS endDate, " +
-            "contract.status AS status, " +
-            "contract.additional_details AS additionalDetails, " +
-            "contract.created_by AS createdBy, " +
-            "contract.last_modified_by AS lastModifiedBy, " +
-            "contract.created_time AS createdTime, " +
-            "contract.last_modified_time AS lastModifiedTime, " +
+            "contract.status AS contractStatus, " +
+            "contract.additional_details AS contractAdditionalDetails, " +
+            "contract.created_by AS contractCreatedBy, " +
+            "contract.last_modified_by AS contractLastModifiedBy, " +
+            "contract.created_time AS contractCreatedTime, " +
+            "contract.last_modified_time AS contractLastModifiedTime, " +
             "contract.issue_date AS issueDate, " +
             "contract.completion_period AS completionPeriod, " +
 
@@ -46,16 +47,49 @@ public class ContractQueryBuilder {
             "document.document_type AS docDocumentType, " +
             "document.document_uid AS docDocumentUid, " +
             "document.status AS docStatus, " +
-            "document.contract_id AS docContractIid, " +
+            "document.contract_id AS docContractId, " +
             "document.additional_details AS docAdditionalDetails, " +
             "document.created_by AS docCreatedBy, " +
             "document.last_modified_by AS docLastModifiedBy, " +
             "document.created_time AS docCreatedTime, " +
-            "document.last_modified_time AS docLastModifiedTime " +
+            "document.last_modified_time AS docLastModifiedTime, " +
+
+            "lineItems.id AS lineItemId, " +
+            "lineItems.estimate_id AS estimateId, " +
+            "lineItems.estimate_line_item_id AS estimateLineItemId, " +
+            "lineItems.contract_line_item_ref AS contractLineItemRef, " +
+            "lineItems.contract_id AS lineItemContractId, " +
+            "lineItems.tenant_id AS lineItemTenantId, " +
+            "lineItems.unit_rate AS unitRate, " +
+            "lineItems.no_of_unit AS noOfUnit, " +
+            "lineItems.status AS lineItemStatus, " +
+            "lineItems.additional_details AS lineItemAdditionalDetails, " +
+            "lineItems.created_by AS lineItemCreatedBy, " +
+            "lineItems.last_modified_by AS lineItemLastModifiedBy, " +
+            "lineItems.created_time AS lineItemCreatedTime, " +
+            "lineItems.last_modified_time AS lineItemLastModifiedTime, " +
+
+
+            "amountBreakups.id AS amtId, " +
+            "amountBreakups.estimate_amount_breakup_id AS amtEstimateAmountBreakupId, " +
+            "amountBreakups.line_item_id AS amtLineItemId, " +
+            "amountBreakups.amount AS amtAmount, " +
+            "amountBreakups.status AS amtStatus, " +
+            "amountBreakups.additional_details AS amtAdditionalDetails, " +
+            "amountBreakups.created_by AS amtCreatedBy, " +
+            "amountBreakups.last_modified_by AS amtLastModifiedBy, " +
+            "amountBreakups.created_time AS amtCreatedTime, " +
+            "amountBreakups.last_modified_time AS amtLastModifiedTime " +
+
             "FROM eg_wms_contract AS contract " +
+            "LEFT JOIN eg_wms_contract_documents AS document " +
+            "ON contract.id = document.contract_id " +
+            "LEFT JOIN eg_wms_contract_line_items AS lineItems " +
+            "ON contract.id = lineItems.contract_id " +
             "LEFT JOIN " +
-            "eg_wms_contract_documents as document " +
-            "ON (contract.id=document.contract_id) ";
+            "eg_wms_contract_amount_breakups as amountBreakups " +
+            "ON lineItems.id=amountBreakups.line_item_id ";
+
     @Autowired
     private ContractServiceConfiguration config;
 
