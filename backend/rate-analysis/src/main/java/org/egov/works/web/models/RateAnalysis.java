@@ -1,0 +1,132 @@
+package org.egov.works.web.models;
+
+import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import org.egov.works.web.models.LineItem;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Data;
+import lombok.Builder;
+
+/**
+ * RateAnalysis
+ */
+@Validated
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-22T17:59:35.524035+05:30[Asia/Kolkata]")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class RateAnalysis   {
+        @JsonProperty("id")
+
+          @Valid
+                private UUID id = null;
+
+        @JsonProperty("tenantId")
+
+        @Size(min=2,max=64)         private String tenantId = null;
+
+        @JsonProperty("sorCode")
+
+        @Size(min=2,max=64)         private String sorCode = null;
+
+        @JsonProperty("sorId")
+
+        @Size(min=2,max=64)         private String sorId = null;
+
+        @JsonProperty("sorType")
+
+        @Size(min=2,max=64)         private String sorType = null;
+
+        @JsonProperty("sorSubType")
+
+        @Size(min=2,max=64)         private String sorSubType = null;
+
+        @JsonProperty("sorVariant")
+
+        @Size(min=2,max=64)         private String sorVariant = null;
+
+        @JsonProperty("isBasicVariant")
+
+                private Boolean isBasicVariant = null;
+
+        @JsonProperty("uom")
+
+                private String uom = null;
+
+        @JsonProperty("quantity")
+
+          @Valid
+                private BigDecimal quantity = null;
+
+        @JsonProperty("description")
+
+                private String description = null;
+
+            /**
+            * Gets or Sets status
+            */
+            public enum StatusEnum {
+                        ACTIVE("ACTIVE"),
+                        
+                        INACTIVE("INACTIVE");
+            
+            private String value;
+            
+            StatusEnum(String value) {
+            this.value = value;
+            }
+            
+            @Override
+            @JsonValue
+            public String toString() {
+            return String.valueOf(value);
+            }
+            
+            @JsonCreator
+            public static StatusEnum fromValue(String text) {
+            for (StatusEnum b : StatusEnum.values()) {
+            if (String.valueOf(b.value).equals(text)) {
+            return b;
+            }
+            }
+            return null;
+            }
+            }        @JsonProperty("status")
+
+                private StatusEnum status = null;
+
+        @JsonProperty("effectiveFrom")
+
+                private String effectiveFrom = null;
+
+        @JsonProperty("analysisQuantity")
+
+          @Valid
+                private BigDecimal analysisQuantity = null;
+
+        @JsonProperty("lineItems")
+          @Valid
+                private List<LineItem> lineItems = null;
+
+
+        public RateAnalysis addLineItemsItem(LineItem lineItemsItem) {
+            if (this.lineItems == null) {
+            this.lineItems = new ArrayList<>();
+            }
+        this.lineItems.add(lineItemsItem);
+        return this;
+        }
+
+}
