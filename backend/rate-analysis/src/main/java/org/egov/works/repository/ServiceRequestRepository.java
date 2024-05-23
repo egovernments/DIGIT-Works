@@ -12,7 +12,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
-import static org.egov.works.config.ServiceConstants.*;
+import static org.egov.works.config.ServiceConstants.EXTERNAL_SERVICE_EXCEPTION;
+import static org.egov.works.config.ServiceConstants.SEARCHER_SERVICE_EXCEPTION;
 
 @Repository
 @Slf4j
@@ -35,11 +36,11 @@ public class ServiceRequestRepository {
         Object response = null;
         try {
             response = restTemplate.postForObject(uri.toString(), request, Map.class);
-        }catch(HttpClientErrorException e) {
-            log.error(EXTERNAL_SERVICE_EXCEPTION,e);
+        } catch (HttpClientErrorException e) {
+            log.error(EXTERNAL_SERVICE_EXCEPTION, e);
             throw new ServiceCallException(e.getResponseBodyAsString());
-        }catch(Exception e) {
-            log.error(SEARCHER_SERVICE_EXCEPTION,e);
+        } catch (Exception e) {
+            log.error(SEARCHER_SERVICE_EXCEPTION, e);
         }
 
         return response;

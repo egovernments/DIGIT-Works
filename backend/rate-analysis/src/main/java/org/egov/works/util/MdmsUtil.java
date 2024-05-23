@@ -1,12 +1,11 @@
 package org.egov.works.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.works.config.Configuration;
+import digit.models.coremodels.mdms.*;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.mdms.model.*;
-
+import org.egov.works.config.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -16,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.works.config.ServiceConstants.*;
+import static org.egov.works.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM_MDMS;
 
 @Slf4j
 @Component
@@ -32,10 +31,8 @@ public class MdmsUtil {
     private Configuration configs;
 
 
-
-
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
-                                                                                List<String> masterNameList) {
+                                                             List<String> masterNameList) {
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
@@ -45,8 +42,8 @@ public class MdmsUtil {
         try {
             response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
             mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
-        }catch(Exception e) {
-            log.error(ERROR_WHILE_FETCHING_FROM_MDMS,e);
+        } catch (Exception e) {
+            log.error(ERROR_WHILE_FETCHING_FROM_MDMS, e);
         }
 
         return mdmsResponse.getMdmsRes();
@@ -56,7 +53,7 @@ public class MdmsUtil {
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,
                                            String moduleName, List<String> masterNameList) {
         List<MasterDetail> masterDetailList = new ArrayList<>();
-        for(String masterName: masterNameList) {
+        for (String masterName : masterNameList) {
             MasterDetail masterDetail = new MasterDetail();
             masterDetail.setName(masterName);
             masterDetailList.add(masterDetail);
