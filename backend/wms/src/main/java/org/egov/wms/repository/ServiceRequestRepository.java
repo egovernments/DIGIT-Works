@@ -7,7 +7,6 @@ import org.egov.tracer.model.ServiceCallException;
 import org.egov.wms.util.ESAuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
