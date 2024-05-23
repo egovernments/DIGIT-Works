@@ -53,7 +53,7 @@ config:
   - name: "builds/digit-works/backend/works-management-service"
     build:
       - work-dir: "backend/wms"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "works-management-service"
   
   - name: "builds/digit-works/backend/organisation"
