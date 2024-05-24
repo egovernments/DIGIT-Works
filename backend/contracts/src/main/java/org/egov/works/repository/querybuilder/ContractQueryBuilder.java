@@ -140,6 +140,14 @@ public class ContractQueryBuilder {
             addToPreparedStatement(preparedStmtList, orgIds);
         }
 
+        List<String> estimateIds = criteria.getEstimateIds();
+        if (estimateIds != null && !estimateIds.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" lineItems.estimate_id IN (").append(createQuery(estimateIds)).append(")");
+            addToPreparedStatement(preparedStmtList, estimateIds);
+        }
+
+
         if (StringUtils.isNotBlank(criteria.getContractType()) && criteria.getContractType()!=null) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" contract.contract_type=? ");
