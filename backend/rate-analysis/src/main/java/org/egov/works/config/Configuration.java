@@ -40,6 +40,9 @@ public class Configuration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
+    @Value("${egov.rate.analysis.job.number.name}")
+    private String rateAnalysisJobNumberName;
+
 
     //Workflow Config
     @Value("${egov.workflow.host}")
@@ -62,6 +65,12 @@ public class Configuration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
 
+    @Value("${egov.mdms.v2.host}")
+    private String mdmsV2Host;
+
+    @Value("${egov.mdms.v2.search.endpoint}")
+    private String mdmsV2EndPoint;
+
 
     //HRMS
     @Value("${egov.hrms.host}")
@@ -82,4 +91,15 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    // Works Sor Type
+    @Value("${works.sor.type}")
+    private String worksSorType;
+
+    // Kafka Topics
+    @Value("${rate.analysis.job.create.topic}")
+    private String rateAnalysisJobCreateTopic;
+
+    @Value("${rate.analysis.job.update.topic}")
+    private String rateAnalysisJobUpdateTopic;
 }

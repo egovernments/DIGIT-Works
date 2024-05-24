@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
@@ -21,12 +22,12 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class JobSchedulerResponse {
-    @JsonProperty("responseInfo")
+    @JsonProperty("ResponseInfo")
 
     @Valid
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty("scheduledJobs")
+    @JsonProperty("ScheduledJobs")
     @Valid
     private List<ScheduledJob> scheduledJobs = null;
 

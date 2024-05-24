@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.Configuration;
+import org.egov.works.web.models.MdmsResponseV2;
+import org.egov.works.web.models.MdmsSearchCriteriaV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -29,6 +31,20 @@ public class MdmsUtil {
 
     @Autowired
     private Configuration configs;
+
+    public MdmsResponseV2 fetchSorsFromMdms(MdmsSearchCriteriaV2 mdmsSearchCriteria) {
+        MdmsResponseV2 mdmsResponse = new MdmsResponseV2();
+        StringBuilder uri = new StringBuilder();
+        uri.append(configs.getMdmsV2Host()).append(configs.getMdmsV2EndPoint());
+        Object response = new HashMap<>();
+        try {
+            response = restTemplate.postForObject(uri.toString(), mdmsSearchCriteria, Map.class);
+            mdmsResponse = mapper.convertValue(response, MdmsResponseV2.class);
+        } catch (Exception e) {
+            log.error(ERROR_WHILE_FETCHING_FROM_MDMS, e);
+        }
+        return mdmsResponse;
+    }
 
 
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,

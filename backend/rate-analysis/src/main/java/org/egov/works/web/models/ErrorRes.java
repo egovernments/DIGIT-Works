@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.kafka.common.requests.ResponseHeader;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;

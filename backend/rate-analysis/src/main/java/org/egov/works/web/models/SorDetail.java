@@ -27,7 +27,7 @@ public class SorDetail {
 
     @JsonProperty("status")
 
-    private String status = null;
+    private StatusEnum status = null;
 
     @JsonProperty("failureReason")
 

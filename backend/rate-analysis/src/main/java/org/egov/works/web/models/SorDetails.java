@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class SorDetails {
 
     @JsonProperty("effectiveFrom")
 
-    private String effectiveFrom = null;
+    private BigDecimal effectiveFrom = null;
 
 
     public SorDetails addSorCodesItem(String sorCodesItem) {

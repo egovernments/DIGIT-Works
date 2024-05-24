@@ -46,5 +46,7 @@ public class ServiceConstants {
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
 
-
+    public static final String WORKS_SOR_SCHEMA_CODE = "WORKS-SOR.SOR";
+    public static final String SOR_CODE_JSON_KEY = "id";
+    public static final String SOR_TYPE_JSON_KEY = "sorType";
 }

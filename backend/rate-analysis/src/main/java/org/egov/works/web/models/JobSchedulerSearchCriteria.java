@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -18,17 +19,17 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class JobSchedulerSearchCriteria {
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
 
     @Valid
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("searchCriteria")
+    @JsonProperty("SearchCriteria")
 
     @Valid
     private SearchCriteria searchCriteria = null;
 
-    @JsonProperty("pagination")
+    @JsonProperty("Pagination")
 
     @Valid
     private Pagination pagination = null;
