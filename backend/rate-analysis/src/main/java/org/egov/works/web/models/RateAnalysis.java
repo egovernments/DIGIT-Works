@@ -26,67 +26,58 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class RateAnalysis {
-    @JsonProperty("id")
 
+    @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("tenantId")
-
     @Size(min = 2, max = 64)
     private String tenantId = null;
 
     @JsonProperty("sorCode")
-
     @Size(min = 2, max = 64)
     private String sorCode = null;
 
     @JsonProperty("sorId")
-
     @Size(min = 2, max = 64)
     private String sorId = null;
 
     @JsonProperty("sorType")
-
     @Size(min = 2, max = 64)
     private String sorType = null;
 
     @JsonProperty("sorSubType")
-
     @Size(min = 2, max = 64)
     private String sorSubType = null;
 
     @JsonProperty("sorVariant")
-
     @Size(min = 2, max = 64)
     private String sorVariant = null;
 
     @JsonProperty("isBasicVariant")
-
     private Boolean isBasicVariant = null;
 
     @JsonProperty("uom")
-
     private String uom = null;
 
     @JsonProperty("quantity")
-
     @Valid
     private BigDecimal quantity = null;
 
     @JsonProperty("description")
-
     private String description = null;
+
     @JsonProperty("status")
-
     private StatusEnum status = null;
+
     @JsonProperty("effectiveFrom")
-
     private String effectiveFrom = null;
-    @JsonProperty("analysisQuantity")
 
+    @JsonProperty("analysisQuantity")
     @Valid
     private BigDecimal analysisQuantity = null;
+
     @JsonProperty("lineItems")
     @Valid
     private List<LineItem> lineItems = null;
@@ -108,7 +99,7 @@ public class RateAnalysis {
 
         INACTIVE("INACTIVE");
 
-        private String value;
+        private final String value;
 
         StatusEnum(String value) {
             this.value = value;

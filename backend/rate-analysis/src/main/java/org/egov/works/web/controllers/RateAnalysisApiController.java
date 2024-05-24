@@ -4,7 +4,9 @@ package org.egov.works.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.egov.works.web.models.*;
+import org.egov.works.web.models.AnalysisRequest;
+import org.egov.works.web.models.RateAnalysisResponse;
+import org.egov.works.web.models.RatesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ public class RateAnalysisApiController {
         this.request = request;
     }
 
-    @RequestMapping(value = "/rate-analysis/v1/_calculate", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/_calculate", method = RequestMethod.POST)
     public ResponseEntity<RateAnalysisResponse> rateAnalysisV1CalculatePost(@Valid @RequestBody AnalysisRequest body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
@@ -44,7 +46,7 @@ public class RateAnalysisApiController {
         return new ResponseEntity<RateAnalysisResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @RequestMapping(value = "/rate-analysis/v1/_create", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<RatesResponse> rateAnalysisV1CreatePost(@Valid @RequestBody AnalysisRequest body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {

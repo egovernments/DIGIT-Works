@@ -24,10 +24,10 @@ import static org.egov.works.config.ServiceConstants.*;
 public class UserUtil {
 
     @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
     private Configuration configs;
@@ -76,11 +76,11 @@ public class UserUtil {
         if (users != null) {
             users.forEach(map -> {
                         map.put(CREATED_DATE, dateTolong((String) map.get(CREATED_DATE), format1));
-                        if ((String) map.get(LAST_MODIFIED_DATE) != null)
+                        if (map.get(LAST_MODIFIED_DATE) != null)
                             map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
-                        if ((String) map.get(DOB) != null)
+                        if (map.get(DOB) != null)
                             map.put(DOB, dateTolong((String) map.get(DOB), dobFormat));
-                        if ((String) map.get(PWD_EXPIRY_DATE) != null)
+                        if (map.get(PWD_EXPIRY_DATE) != null)
                             map.put(PWD_EXPIRY_DATE, dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
                     }
             );

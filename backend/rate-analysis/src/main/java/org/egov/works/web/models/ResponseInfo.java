@@ -21,35 +21,31 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class ResponseInfo {
+
     @JsonProperty("apiId")
     @NotNull
-
     @Size(max = 128)
     private String apiId = null;
 
     @JsonProperty("ver")
     @NotNull
-
     @Size(max = 32)
     private String ver = null;
 
     @JsonProperty("ts")
     @NotNull
-
     private Long ts = null;
 
     @JsonProperty("resMsgId")
-
     @Size(max = 256)
     private String resMsgId = null;
 
     @JsonProperty("msgId")
-
     @Size(max = 256)
     private String msgId = null;
+
     @JsonProperty("status")
     @NotNull
-
     private StatusEnum status = null;
 
     /**
@@ -60,7 +56,7 @@ public class ResponseInfo {
 
         FAILED("FAILED");
 
-        private String value;
+        private final String value;
 
         StatusEnum(String value) {
             this.value = value;
