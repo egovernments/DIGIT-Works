@@ -21,15 +21,15 @@ public class Pagination {
     @JsonProperty("limit")
 
     @DecimalMax("100")
-    private Double limit = 10d;
+    private Integer limit = null;
 
     @JsonProperty("offSet")
 
-    private Double offSet = 0d;
+    private Integer offSet = null;
 
     @JsonProperty("totalCount")
 
-    private Double totalCount = null;
+    private Integer totalCount = null;
 
     @JsonProperty("sortBy")
 

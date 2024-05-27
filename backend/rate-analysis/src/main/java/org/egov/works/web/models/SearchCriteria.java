@@ -2,6 +2,7 @@ package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,7 @@ import java.util.UUID;
 @Builder
 public class SearchCriteria {
     @JsonProperty("tenantId")
-
+    @NotNull
     private String tenantId = null;
 
     @JsonProperty("jobIds")
@@ -32,7 +33,7 @@ public class SearchCriteria {
 
     @JsonProperty("ids")
     @Valid
-    private List<UUID> ids = null;
+    private List<String> ids = null;
 
 
     public SearchCriteria addJobIdsItem(String jobIdsItem) {
@@ -40,14 +41,6 @@ public class SearchCriteria {
             this.jobIds = new ArrayList<>();
         }
         this.jobIds.add(jobIdsItem);
-        return this;
-    }
-
-    public SearchCriteria addIdsItem(UUID idsItem) {
-        if (this.ids == null) {
-            this.ids = new ArrayList<>();
-        }
-        this.ids.add(idsItem);
         return this;
     }
 

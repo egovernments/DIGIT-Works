@@ -34,7 +34,7 @@ public class SchedulerEnrichment {
         List<SorDetail> sorDetails = enrichSorDetails(jobScheduler, sorIdToSorCodeMap);
 
         ScheduledJob scheduledJob = ScheduledJob.builder()
-                .id(UUID.randomUUID())
+                .id(UUID.randomUUID().toString())
                 .jobId(jobNumbers.get(0))
                 .rateEffectiveFrom(jobScheduler.getEffectiveFrom())
                 .tenantId(tenantId)
@@ -59,21 +59,23 @@ public class SchedulerEnrichment {
         log.info("Enriching Sor Details");
         List<SorDetail> sorDetails = new ArrayList<>();
         for (String sorId : jobScheduler.getSorIds()) {
+            SorDetail sorDetail;
             if (sorIdToSorCodeMap.containsKey(sorId)) {
-                SorDetail sorDetail = SorDetail.builder()
+                sorDetail = SorDetail.builder()
+                        .id(UUID.randomUUID().toString())
                         .sorId(sorId)
                         .sorCode(sorIdToSorCodeMap.get(sorId))
                         .status(StatusEnum.SCHEDULED)
                         .build();
-                sorDetails.add(sorDetail);
             } else {
-                SorDetail sorDetail = SorDetail.builder()
+                sorDetail = SorDetail.builder()
+                        .id(UUID.randomUUID().toString())
                         .sorId(sorId)
                         .status(StatusEnum.FAILED)
                         .failureReason("SOR not found")
                         .build();
-                sorDetails.add(sorDetail);
             }
+            sorDetails.add(sorDetail);
         }
         return sorDetails;
     }

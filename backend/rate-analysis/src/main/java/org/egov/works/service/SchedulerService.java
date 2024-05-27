@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.Configuration;
 import org.egov.works.enrichment.SchedulerEnrichment;
 import org.egov.works.kafka.RateAnalysisProducer;
+import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.works.util.MdmsUtil;
 import org.egov.works.validators.SchedulerValidator;
 import org.egov.works.web.models.*;
@@ -25,14 +26,16 @@ public class SchedulerService {
     private final Configuration configuration;
     private final SchedulerEnrichment schedulerEnrichment;
     private final RateAnalysisProducer rateAnalysisProducer;
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    public SchedulerService(SchedulerValidator schedulerValidator, MdmsUtil mdmsUtil, Configuration configuration, SchedulerEnrichment schedulerEnrichment, RateAnalysisProducer rateAnalysisProducer) {
+    public SchedulerService(SchedulerValidator schedulerValidator, MdmsUtil mdmsUtil, Configuration configuration, SchedulerEnrichment schedulerEnrichment, RateAnalysisProducer rateAnalysisProducer, ServiceRequestRepository serviceRequestRepository) {
         this.schedulerValidator = schedulerValidator;
         this.mdmsUtil = mdmsUtil;
         this.configuration = configuration;
         this.schedulerEnrichment = schedulerEnrichment;
         this.rateAnalysisProducer = rateAnalysisProducer;
+        this.serviceRequestRepository = serviceRequestRepository;
     }
 
     public List<ScheduledJob> createScheduledJobs(JobSchedulerRequest jobSchedulerRequest) {
@@ -128,5 +131,10 @@ public class SchedulerService {
                 .build();
 
         //TODO: Call rate analysis create
+    }
+
+    public List<ScheduledJob> searchScheduledJobs(JobSchedulerSearchCriteria jobSchedulerSearchCriteria) {
+        log.info("Searching Scheduled Jobs");
+        return serviceRequestRepository.getScheduledJobs(jobSchedulerSearchCriteria);
     }
 }

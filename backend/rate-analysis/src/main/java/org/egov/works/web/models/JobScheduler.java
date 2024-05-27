@@ -27,20 +27,18 @@ public class JobScheduler {
     @JsonProperty("id")
 
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("tenantId")
-
     @Size(min = 2, max = 64)
+    @NotNull
     private String tenantId = null;
 
     @JsonProperty("effectiveFrom")
     @NotNull
-
     @Valid
     private BigDecimal effectiveFrom = null;
 
     @JsonProperty("sorIds")
-
     private Set<String> sorIds = null;
 }

@@ -26,7 +26,7 @@ public class ScheduledJob {
     @JsonProperty("id")
 
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("tenantId")
 

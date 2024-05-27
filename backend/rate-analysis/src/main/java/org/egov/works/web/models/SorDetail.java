@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.UUID;
+
 /**
  * SorDetail
  */
@@ -17,6 +19,9 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class SorDetail {
+    @JsonProperty("id")
+    private String id = null;
+
     @JsonProperty("sorId")
 
     private String sorId = null;

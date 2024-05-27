@@ -2,6 +2,7 @@ package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,17 +21,17 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 public class JobSchedulerSearchCriteria {
     @JsonProperty("RequestInfo")
-
+    @NotNull
     @Valid
     private RequestInfo requestInfo = null;
 
     @JsonProperty("SearchCriteria")
-
+    @NotNull
     @Valid
     private SearchCriteria searchCriteria = null;
 
     @JsonProperty("Pagination")
-
+    @NotNull
     @Valid
     private Pagination pagination = null;
 

@@ -21,13 +21,11 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 public class JobSchedulerRequest {
     @JsonProperty("RequestInfo")
-
     @Valid
     @NotNull
     private RequestInfo requestInfo = null;
 
     @JsonProperty("Schedule")
-
     @Valid
     @NotNull
     private JobScheduler schedule = null;

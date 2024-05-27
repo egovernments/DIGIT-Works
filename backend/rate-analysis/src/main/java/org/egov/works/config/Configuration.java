@@ -102,4 +102,10 @@ public class Configuration {
 
     @Value("${rate.analysis.job.update.topic}")
     private String rateAnalysisJobUpdateTopic;
+
+    @Value("${rate.analysis.default.offset}")
+    private Integer defaultOffset;
+
+    @Value("${rate.analysis.default.limit}")
+    private Integer defaultLimit;
 }

@@ -40,7 +40,10 @@ public class RateAnalysisSchedulerApiController {
     }
 
     @RequestMapping(value = "scheduler/_search", method = RequestMethod.POST)
-    public ResponseEntity<JobSchedulerResponse> rateAnalysisV1SchedulerSearchPost(@Valid @RequestBody JobSchedulerSearchCriteria body) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<JobSchedulerResponse> rateAnalysisV1SchedulerSearchPost(@Valid @RequestBody JobSchedulerSearchCriteria jobSchedulerSearchCriteria) {
+        List<ScheduledJob> scheduledJobs = schedulerService.searchScheduledJobs(jobSchedulerSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(jobSchedulerSearchCriteria.getRequestInfo(), true);
+        JobSchedulerResponse jobSchedulerResponse = JobSchedulerResponse.builder().responseInfo(responseInfo).scheduledJobs(scheduledJobs).build();
+        return new ResponseEntity<>(jobSchedulerResponse, HttpStatus.OK);
     }
 }
