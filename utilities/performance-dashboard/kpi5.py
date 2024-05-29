@@ -1,6 +1,7 @@
-from kpi2 import getProjectsFromLastFinancialYear
 import os
+
 from es_client import search_es
+from kpi2 import getProjectsFromLastFinancialYear
 
 DAY_EPOCH_TIME = os.getenv('DAY_EPOCH_TIME')
 
@@ -34,6 +35,13 @@ def getEstimateDetailByProjectId(tenantId, projectId):
                         "term": {
                             "Data.tenantId.keyword": {
                                 "value": tenantId
+                            }
+                        }
+                    },
+                    {
+                        "term": {
+                            "Data.wfStatus.keyword": {
+                                "value": "APPROVED"
                             }
                         }
                     },
@@ -164,6 +172,7 @@ def getTimeFromHistory(history, status):
 
 def calculate_kpi5(cursor, tenantId):
     projectDataMap = {}
+    totalCount = 0
     count = 0
     projects = getProjectsFromLastFinancialYear(tenantId)
     for project in projects:
@@ -185,6 +194,7 @@ def calculate_kpi5(cursor, tenantId):
         if len(contracts) > 0 and len(estimates) > 0:
             contract = contracts[0]
             estimate = estimates[0]
+            totalCount += 1
 
             projectDataMap[projectNumber]['contractNumber'] = contract.get('contractNumber')
             projectDataMap[projectNumber]['estimateNumber'] = estimate.get('estimateNumber')
@@ -200,5 +210,5 @@ def calculate_kpi5(cursor, tenantId):
                 projectDataMap[projectNumber]['kpi5'] = 1
 
     print(projectDataMap)
-    print(count)
+    print(count / totalCount)
     return projectDataMap

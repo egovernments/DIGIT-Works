@@ -1,25 +1,24 @@
-import os
-
 from kpi2 import getProjectsFromLastFinancialYear
 from kpi5 import getContractDetailByProjectId
+import os
 from kpi5 import getTimeFromHistory, getEstimateDetailByProjectId
 
 DAY_EPOCH_TIME = os.getenv('DAY_EPOCH_TIME')
 """
- KPI: Submitted draft Work Orders for 100% of projects to ME within 30 days from Technical Sanction and Administrative Approval 
- KRA: At least 75% of the projects had no time overrun
-    FORMULA: "Step 1: For each project, check [Y/N]: 
-(Date of draft WO submission to ME) - (Date of Administrative Approval) ≤ 30
+ KPI: Work Order was verified and sent for approval for 100% of the final list of projects within 5 days from Administrative Approval 
+ KRA: At least 75% of projects included in yearly MUKTA action plan were completed during the financial year
+    FORMULA: "Step 1: For each project, check [Y/N]:
+(Date of WO verified) - (Date of AA) ≤ 5
 
 Step 2: Calculate the percentage of success: 
-(Count of 'Y')*100/(Total count of projects)"
+(Count of 'Y')*100/(Total count)"
 """
 
 
-def calculate_kpi8(cursor, tenantId):
+def calculate_kpi12(cursor, tenantId):
     projectDataMap = {}
-    totalCount = 0
     count = 0
+    totalCount = 0
     projects = getProjectsFromLastFinancialYear(tenantId)
     for project in projects:
         projectNumber = project.get('projectNumber')
@@ -32,7 +31,7 @@ def calculate_kpi8(cursor, tenantId):
                 'contractCreatedTime': None,
                 'estimateCreatedTime': None,
                 'kpi8': 0,
-                'workOrderAcceptedTime': None,
+                'workOrderVerifiedTime': None,
                 'estimateApprovedTime': None,
             }
         contracts = getContractDetailByProjectId(tenantId, project.get('projectNumber'))
@@ -48,11 +47,11 @@ def calculate_kpi8(cursor, tenantId):
             projectDataMap[projectNumber]['estimateCreatedTime'] = estimate.get('auditDetails').get('createdTime')
             projectDataMap[projectNumber]['estimateApprovedTime'] = getTimeFromHistory(estimate.get('history'),
                                                                                        'APPROVE')
-            projectDataMap[projectNumber]['workOrderAcceptedTime'] = getTimeFromHistory(contract.get('history'),
-                                                                                        'ACCEPT')
-            if projectDataMap[projectNumber]['workOrderAcceptedTime'] is not None and projectDataMap[projectNumber][
+            projectDataMap[projectNumber]['workOrderVerifiedTime'] = getTimeFromHistory(contract.get('history'),
+                                                                                        'VERIFY_AND_FORWARD')
+            if projectDataMap[projectNumber]['workOrderVerifiedTime'] is not None and projectDataMap[projectNumber][
                 'estimateApprovedTime'] is not None:
-                if (projectDataMap[projectNumber]['workOrderAcceptedTime'] - projectDataMap[projectNumber][
+                if (projectDataMap[projectNumber]['workOrderVerifiedTime'] - projectDataMap[projectNumber][
                     'estimateApprovedTime']) <= 30 * int(DAY_EPOCH_TIME):
                     count += 1
                     projectDataMap[projectNumber]['kpi8'] = 1
