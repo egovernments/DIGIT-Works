@@ -2,6 +2,7 @@
 All notable changes to this module will be documented in this file.
 
 ## 1.0.2 - 2024-03-04
+
 - Added user Id list changes in Individual search
 
 
