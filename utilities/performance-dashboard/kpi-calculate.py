@@ -13,7 +13,7 @@ from kpi2 import calculate_KPI2
 from kpi5 import calculate_kpi5
 from kpi6 import calculate_kpi6
 from kpi7 import calculate_kpi7
-from kpi8 import calculate_kpi8
+from kpi10 import calculate_kpi10
 from kpi12 import calculate_kpi12
 import warnings
 load_dotenv('.env')

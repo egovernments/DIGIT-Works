@@ -1,0 +1,240 @@
+{
+  "od.testing": [
+    "WRK_EE",
+    "ADM_EO",
+    "WRK_DEE",
+    "WRK_JE",
+    "WRK_AE",
+    "WRK_AEE",
+    "WRK_PC",
+    "WRK_IE",
+    "ACC_AO",
+    "ADM_DEO"
+  ],
+  "od.athagarh": [
+    "WRK_ACCE",
+    "ADM_EO",
+    "WRK_IE",
+    "WRK_JE",
+    "WRK_ME",
+    "WRK_PC"
+  ],
+  "od.berhampur": [
+    "WRK_JE",
+    "WRK_PC",
+    "WRK_ACCE",
+    "ADM_MC",
+    "WRK_EE",
+    "WRK_AE",
+    "WRK_DEE",
+    "WRK_AEE",
+    "WRK_IE"
+  ],
+  "od.kesinga": [
+    "WRK_PC",
+    "WRK_IE",
+    "WRK_ME",
+    "ADM_EO",
+    "WRK_ACCE"
+  ],
+  "od.jatni": [
+    "WRK_PC",
+    "ADM_DEO",
+    "WRK_ACCE",
+    "WRK_AE",
+    "WRK_JE",
+    "WRK_IE",
+    "WRK_AEE",
+    "WRK_EE",
+    "ADM_EO"
+  ],
+  "od.chatrapur": [
+    "WRK_JE",
+    "WRK_IE",
+    "WRK_ACCE",
+    "WRK_ME",
+    "WRK_PC",
+    "ADM_EO"
+  ],
+  "od.puri": [
+    "WRK_DEE",
+    "WRK_JE",
+    "WRK_IE",
+    "WRK_AE",
+    "WRK_PC",
+    "WRK_ACCE",
+    "WRK_ME",
+    "WRK_AEE",
+    "ADM_EO"
+  ],
+  "od.hinjilicut": [
+    "ADM_EO",
+    "WRK_ACCE",
+    "WRK_ME",
+    "WRK_JE",
+    "WRK_IE",
+    "WRK_PC"
+  ],
+  "od.sambalpur": [
+    "WRK_IE",
+    "WRK_PC",
+    "ADM_DMC",
+    "WRK_ACCE",
+    "WRK_AEE"
+  ],
+  "od.balasore": [
+    "WRK_AE",
+    "WRK_EE",
+    "WRK_IE",
+    "ADM_EO",
+    "WRK_ACCE",
+    "WRK_PC"
+  ],
+  "od.padampur": [
+    "WRK_ME",
+    "WRK_IE",
+    "WRK_JE",
+    "WRK_ACCE",
+    "WRK_PC",
+    "ADM_EO"
+  ],
+  "od.jharsuguda": [
+    "WRK_PC",
+    "ADM_EO",
+    "WRK_DEE",
+    "WRK_AE",
+    "WRK_IE",
+    "WRK_JE",
+    "WRK_ACCE"
+  ],
+  "od.dhenkanal": [
+    "WRK_ME",
+    "WRK_PC",
+    "ADM_DEO",
+    "ADM_EO",
+    "WRK_CE",
+    "WRK_EE",
+    "WRK_ACCE",
+    "WRK_JE",
+    "ADM_EO",
+    "WRK_IE",
+    "WRK_AE"
+  ],
+  "od.jeypore": [
+    "WRK_PC",
+    "WRK_JE",
+    "WRK_AE",
+    "WRK_IE",
+    "WRK_ACCE",
+    "ADM_EO",
+    "WRK_AEE"
+  ],
+  "od.bhadrak": [
+    "ADM_EO",
+    "WRK_JE",
+    "WRK_AE",
+    "WRK_ME",
+    "WRK_IE",
+    "WRK_PC",
+    "WRK_ACCE"
+  ],
+  "od.balangir": [
+    "ADM_EO",
+    "WRK_ACCE",
+    "WRK_PC",
+    "WRK_JE",
+    "WRK_ME",
+    "WRK_IE"
+  ],
+  "od.baripada": [
+    "WRK_IE",
+    "WRK_PC",
+    "WRK_ACCE",
+    "ADM_EO",
+    "WRK_ME",
+    "WRK_JE"
+  ],
+  "od.bhubaneswar": [
+    "WRK_EE",
+    "WRK_JE",
+    "WRK_AEE",
+    "WRK_PC",
+    "WRK_IE",
+    "ADM_DMC"
+  ],
+  "od.cuttack": [
+    "WRK_PC",
+    "WRK_ACCE",
+    "WRK_AEE",
+    "WRK_IE",
+    "ADM_DMC",
+    "WRK_DEE",
+    "WRK_JE",
+    "WRK_AE",
+    "WRK_EE"
+  ],
+  "od.jajpur": [
+    "WRK_IE",
+    "WRK_ME",
+    "WRK_JE",
+    "WRK_PC",
+    "WRK_ACCE",
+    "ADM_EO"
+  ],
+  "od.rourkela": [
+    "WRK_IE",
+    "WRK_AE",
+    "WRK_JE",
+    "WRK_AEE",
+    "ADM_DMC",
+    "WRK_ACCE",
+    "ADM_ADMC",
+    "WRK_PC",
+    "WRK_EE"
+  ],
+  "od.phulbani": [
+    "WRK_PC",
+    "WRK_JE",
+    "WRK_IE",
+    "WRK_ACCE",
+    "ADM_EO",
+    "ADM_EO",
+    "ADM_EO",
+    "WRK_ME"
+  ],
+  "od.kotpad": [
+    "WRK_PC",
+    "ADM_EO",
+    "WRK_IE",
+    "WRK_ME",
+    "WRK_JE",
+    "WRK_ACCE"
+  ],
+  "od.paradeep": [
+    "ADM_EO",
+    "WRK_JE",
+    "WRK_ME",
+    "WRK_PC",
+    "WRK_ME",
+    "ADM_EO",
+    "WRK_IE",
+    "WRK_ACCE"
+  ],
+  "od.boudhgarh": [
+    "WRK_AEE",
+    "WRK_IE",
+    "WRK_JE",
+    "WRK_ACCE",
+    "ADM_EO",
+    "ADM_EO",
+    "WRK_PC"
+  ],
+  "od.keonjhargarh": [
+    "ADM_EO",
+    "WRK_ME",
+    "WRK_PC",
+    "WRK_IE",
+    "WRK_JE",
+    "WRK_ACCE"
+  ]
+}
