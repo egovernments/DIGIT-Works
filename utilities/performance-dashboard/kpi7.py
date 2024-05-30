@@ -1,4 +1,5 @@
 import os
+
 from es_client import search_es
 from kpi5 import getTimeFromHistory
 
@@ -13,6 +14,8 @@ DAY_EPOCH_TIME = os.getenv('DAY_EPOCH_TIME')
 Step 2: Calculate the percentage of success: 
 (Count of 'Y')*100/(Total count)"
 """
+
+
 def getMusterRollsForEachTenant(tenantId):
     query = {
         "from": 0,
