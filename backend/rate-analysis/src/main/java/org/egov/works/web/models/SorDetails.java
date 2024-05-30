@@ -22,23 +22,21 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class SorDetails {
+
     @JsonProperty("tenantId")
     @NotNull
-
     @Size(min = 2, max = 64)
     private String tenantId = null;
 
     @JsonProperty("sorCodes")
-
+    @NotNull
     private List<String> sorCodes = null;
 
     @JsonProperty("sorId")
     @NotNull
-
     private List<String> sorId = new ArrayList<>();
 
     @JsonProperty("effectiveFrom")
-
     private String effectiveFrom = null;
 
 

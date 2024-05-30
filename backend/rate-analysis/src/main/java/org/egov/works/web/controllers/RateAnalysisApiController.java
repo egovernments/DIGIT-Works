@@ -4,6 +4,7 @@ package org.egov.works.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.egov.works.service.RateAnalysisService;
 import org.egov.works.web.models.AnalysisRequest;
 import org.egov.works.web.models.RateAnalysisResponse;
 import org.egov.works.web.models.RatesResponse;
@@ -26,28 +27,28 @@ public class RateAnalysisApiController {
 
     private final HttpServletRequest request;
 
+    private final RateAnalysisService rateAnalysisService;
+
     @Autowired
-    public RateAnalysisApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public RateAnalysisApiController(ObjectMapper objectMapper, HttpServletRequest request, RateAnalysisService rateAnalysisService) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.rateAnalysisService = rateAnalysisService;
     }
 
     @RequestMapping(value = "/v1/_calculate", method = RequestMethod.POST)
-    public ResponseEntity<RateAnalysisResponse> rateAnalysisV1CalculatePost(@Valid @RequestBody AnalysisRequest body) {
+    public ResponseEntity<RateAnalysisResponse> rateAnalysisV1CalculatePost(@Valid @RequestBody AnalysisRequest analysisRequest) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<RateAnalysisResponse>(objectMapper.readValue("{  \"rateAnalysis\" : [ {    \"isBasicVariant\" : true,    \"quantity\" : 1,    \"description\" : \"description\",    \"sorVariant\" : \"NA\",    \"sorSubType\" : \"Earth Works\",    \"lineItems\" : [ {      \"additionalDetials\" : { },      \"targetId\" : \"SOR00102\",      \"id\" : \"8d7d883e-c840-4d6a-9938-44760759f1ac\",      \"type\" : \"SOR\",      \"amountDetails\" : [ {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      }, {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      } ]    }, {      \"additionalDetials\" : { },      \"targetId\" : \"SOR00102\",      \"id\" : \"8d7d883e-c840-4d6a-9938-44760759f1ac\",      \"type\" : \"SOR\",      \"amountDetails\" : [ {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      }, {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      } ]    } ],    \"uom\" : \"Cubic Meter\",    \"sorType\" : \"Works\",    \"analysisQuantity\" : 100,    \"tenantId\" : \"pb.jalandhar OR dwss\",    \"sorId\" : \"123432-234jsd-23823d-12bdqq\",    \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",    \"effectiveFrom\" : \"effectiveFrom\",    \"sorCode\" : \"SOR00101\",    \"status\" : \"ACTIVE\"  }, {    \"isBasicVariant\" : true,    \"quantity\" : 1,    \"description\" : \"description\",    \"sorVariant\" : \"NA\",    \"sorSubType\" : \"Earth Works\",    \"lineItems\" : [ {      \"additionalDetials\" : { },      \"targetId\" : \"SOR00102\",      \"id\" : \"8d7d883e-c840-4d6a-9938-44760759f1ac\",      \"type\" : \"SOR\",      \"amountDetails\" : [ {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      }, {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      } ]    }, {      \"additionalDetials\" : { },      \"targetId\" : \"SOR00102\",      \"id\" : \"8d7d883e-c840-4d6a-9938-44760759f1ac\",      \"type\" : \"SOR\",      \"amountDetails\" : [ {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      }, {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      } ]    } ],    \"uom\" : \"Cubic Meter\",    \"sorType\" : \"Works\",    \"analysisQuantity\" : 100,    \"tenantId\" : \"pb.jalandhar OR dwss\",    \"sorId\" : \"123432-234jsd-23823d-12bdqq\",    \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",    \"effectiveFrom\" : \"effectiveFrom\",    \"sorCode\" : \"SOR00101\",    \"status\" : \"ACTIVE\"  } ],  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}", RateAnalysisResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<RateAnalysisResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            return new ResponseEntity<RateAnalysisResponse>(rateAnalysisService.calculateRate(analysisRequest), HttpStatus.OK) ;
+//                return new ResponseEntity<RateAnalysisResponse>(objectMapper.readValue("{  \"rateAnalysis\" : [ {    \"isBasicVariant\" : true,    \"quantity\" : 1,    \"description\" : \"description\",    \"sorVariant\" : \"NA\",    \"sorSubType\" : \"Earth Works\",    \"lineItems\" : [ {      \"additionalDetials\" : { },      \"targetId\" : \"SOR00102\",      \"id\" : \"8d7d883e-c840-4d6a-9938-44760759f1ac\",      \"type\" : \"SOR\",      \"amountDetails\" : [ {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      }, {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      } ]    }, {      \"additionalDetials\" : { },      \"targetId\" : \"SOR00102\",      \"id\" : \"8d7d883e-c840-4d6a-9938-44760759f1ac\",      \"type\" : \"SOR\",      \"amountDetails\" : [ {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      }, {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      } ]    } ],    \"uom\" : \"Cubic Meter\",    \"sorType\" : \"Works\",    \"analysisQuantity\" : 100,    \"tenantId\" : \"pb.jalandhar OR dwss\",    \"sorId\" : \"123432-234jsd-23823d-12bdqq\",    \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",    \"effectiveFrom\" : \"effectiveFrom\",    \"sorCode\" : \"SOR00101\",    \"status\" : \"ACTIVE\"  }, {    \"isBasicVariant\" : true,    \"quantity\" : 1,    \"description\" : \"description\",    \"sorVariant\" : \"NA\",    \"sorSubType\" : \"Earth Works\",    \"lineItems\" : [ {      \"additionalDetials\" : { },      \"targetId\" : \"SOR00102\",      \"id\" : \"8d7d883e-c840-4d6a-9938-44760759f1ac\",      \"type\" : \"SOR\",      \"amountDetails\" : [ {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      }, {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      } ]    }, {      \"additionalDetials\" : { },      \"targetId\" : \"SOR00102\",      \"id\" : \"8d7d883e-c840-4d6a-9938-44760759f1ac\",      \"type\" : \"SOR\",      \"amountDetails\" : [ {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      }, {        \"amount\" : 98765,        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"heads\" : \"CA.9\",        \"type\" : \"FIXED\"      } ]    } ],    \"uom\" : \"Cubic Meter\",    \"sorType\" : \"Works\",    \"analysisQuantity\" : 100,    \"tenantId\" : \"pb.jalandhar OR dwss\",    \"sorId\" : \"123432-234jsd-23823d-12bdqq\",    \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",    \"effectiveFrom\" : \"effectiveFrom\",    \"sorCode\" : \"SOR00101\",    \"status\" : \"ACTIVE\"  } ],  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}", RateAnalysisResponse.class), HttpStatus.OK);
         }
 
         return new ResponseEntity<RateAnalysisResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
-    public ResponseEntity<RatesResponse> rateAnalysisV1CreatePost(@Valid @RequestBody AnalysisRequest body) {
+    public ResponseEntity<RatesResponse> rateAnalysisV1CreatePost(@Valid @RequestBody AnalysisRequest analysisRequest) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {

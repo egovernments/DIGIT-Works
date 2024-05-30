@@ -46,5 +46,10 @@ public class ServiceConstants {
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
 
+    public static final String FILTER_START = "[?(";
+    public static final String FILTER_END = "')]";
+    public static final String ID_FILTER = "@.sorId=='";
+    public static final String FILTER_OR_CONSTANT = "'||";
+
 
 }

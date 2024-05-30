@@ -26,7 +26,7 @@ public class AmountDetail {
 
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("type")
     private TypeEnum type = null;
@@ -42,9 +42,9 @@ public class AmountDetail {
      * Amount Detail Type
      */
     public enum TypeEnum {
-        PERCENTAGE("PERCENTAGE"),
+        PERCENTAGE("percentage"),
 
-        FIXED("FIXED");
+        FIXED("fixed");
 
         private final String value;
 
