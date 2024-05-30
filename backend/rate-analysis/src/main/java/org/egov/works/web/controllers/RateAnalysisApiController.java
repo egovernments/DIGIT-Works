@@ -4,6 +4,7 @@ package org.egov.works.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.egov.works.service.RateAnalysisService;
 import org.egov.works.web.models.AnalysisRequest;
 import org.egov.works.web.models.RateAnalysisResponse;
@@ -37,7 +38,7 @@ public class RateAnalysisApiController {
     }
 
     @RequestMapping(value = "/v1/_calculate", method = RequestMethod.POST)
-    public ResponseEntity<RateAnalysisResponse> rateAnalysisV1CalculatePost(@Valid @RequestBody AnalysisRequest analysisRequest) {
+    public ResponseEntity<RateAnalysisResponse> rateAnalysisV1CalculatePost(@Valid @RequestBody @NotNull AnalysisRequest analysisRequest) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             return new ResponseEntity<RateAnalysisResponse>(rateAnalysisService.calculateRate(analysisRequest), HttpStatus.OK) ;

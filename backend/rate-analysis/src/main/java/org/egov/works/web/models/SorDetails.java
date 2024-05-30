@@ -1,6 +1,7 @@
 package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -33,11 +34,11 @@ public class SorDetails {
     private List<String> sorCodes = null;
 
     @JsonProperty("sorId")
-    @NotNull
     private List<String> sorId = new ArrayList<>();
 
     @JsonProperty("effectiveFrom")
-    private String effectiveFrom = null;
+    @NotNull
+    private String effectiveFrom;
 
 
     public SorDetails addSorCodesItem(String sorCodesItem) {
