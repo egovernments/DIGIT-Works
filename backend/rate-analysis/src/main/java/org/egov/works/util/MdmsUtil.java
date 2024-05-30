@@ -55,6 +55,10 @@ public class MdmsUtil {
         Map<String, SorComposition> sorIdToCompositionMap = sorCompositions.stream().collect(Collectors.toMap(e -> e.getSorId(), e -> e));
 //        Map<String, Object> sorIdToCompositionMap =  jsonArray.stream().collect(Collectors
 //                .toMap(e -> JsonPath.read(e, "$.sorId"), e -> e) );
+        if (sorIdToCompositionMap.size() != analysisRequest.getSorDetails().getSorCodes().size()) {
+            analysisRequest.getSorDetails().getSorCodes().remove(sorIdToCompositionMap.keySet());
+            throw new CustomException("SOR_COMPOSITION_NOT_FOUND", "Sor composition not found for SOR codes :: " + analysisRequest.getSorDetails().getSorCodes());
+        }
         return sorIdToCompositionMap;
 
     }
@@ -74,7 +78,12 @@ public class MdmsUtil {
             Rates  rates = mapper.convertValue(object, Rates.class);
             ratesList.add(rates);
         }
-        return ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
+        Map<String, List<Rates>> ratesMap = ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
+        if (ratesMap.keySet().size() != basicSorIds.size()) {
+            basicSorIds.remove(ratesMap.keySet());
+            throw new CustomException("RATES_NOT_FOUND", "Rates not found for the following SOR ids :: " + basicSorIds);
+        }
+        return ratesMap;
 
     }
 

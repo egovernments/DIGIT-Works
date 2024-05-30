@@ -23,6 +23,7 @@ public class EnrichmentUtil {
     }
 
     public LineItem createLineItem(BasicSorDetail basicSorDetail, Rates rates) {
+        //TODO add sor details in rates
         return LineItem.builder()
                 .id(UUID.randomUUID().toString())
                 .targetId(basicSorDetail.getSorId())

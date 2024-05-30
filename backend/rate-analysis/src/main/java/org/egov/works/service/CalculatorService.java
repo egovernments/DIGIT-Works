@@ -44,7 +44,6 @@ public class CalculatorService {
                         .id(UUID.randomUUID().toString())
                         .targetId(additionalCharges.getApplicableOn())
                         .type(EXTRACHARGES)
-                        //TODO check how to multiply additional charges with quantity
                         .amountDetails(Collections.singletonList(AmountDetail.builder().type(additionalCharges.getCalculationType())
                                 .amount(additionalCharges.getFigure())
                                 .build()))

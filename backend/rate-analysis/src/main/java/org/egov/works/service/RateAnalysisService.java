@@ -21,6 +21,7 @@ public class RateAnalysisService {
     }
 
     public RateAnalysisResponse calculateRate(AnalysisRequest analysisRequest) {
+        //TODO add exception handling
         Map<String, SorComposition> sorIdCompositionMap = mdmsUtil.fetchSorComposition(analysisRequest);
         Map<String, List<Rates>> basicRatesMap = mdmsUtil.fetchBasicRates(analysisRequest, sorIdCompositionMap);
         List<RateAnalysis> rateAnalysis = calculatorService.calculateRateAnalysis(analysisRequest, sorIdCompositionMap, basicRatesMap);
