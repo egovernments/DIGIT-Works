@@ -37,26 +37,30 @@ def calculate_kpi8(cursor, tenantId):
             }
         contracts = getContractDetailByProjectId(tenantId, project.get('projectNumber'))
         estimates = getEstimateDetailByProjectId(tenantId, project.get('id'))
-        if len(contracts) > 0 and len(estimates) > 0:
-            contract = contracts[0]
-            estimate = estimates[0]
+        if len(estimates) > 0:
             totalCount += 1
+            if len(contracts) > 0:
+                contract = contracts[0]
+                estimate = estimates[0]
 
-            projectDataMap[projectNumber]['contractNumber'] = contract.get('contractNumber')
-            projectDataMap[projectNumber]['estimateNumber'] = estimate.get('estimateNumber')
-            projectDataMap[projectNumber]['contractCreatedTime'] = contract.get('auditDetails').get('createdTime')
-            projectDataMap[projectNumber]['estimateCreatedTime'] = estimate.get('auditDetails').get('createdTime')
-            projectDataMap[projectNumber]['estimateApprovedTime'] = getTimeFromHistory(estimate.get('history'),
-                                                                                       'APPROVE')
-            projectDataMap[projectNumber]['workOrderAcceptedTime'] = getTimeFromHistory(contract.get('history'),
-                                                                                        'ACCEPT')
-            if projectDataMap[projectNumber]['workOrderAcceptedTime'] is not None and projectDataMap[projectNumber][
-                'estimateApprovedTime'] is not None:
-                if (projectDataMap[projectNumber]['workOrderAcceptedTime'] - projectDataMap[projectNumber][
-                    'estimateApprovedTime']) <= 30 * int(DAY_EPOCH_TIME):
-                    count += 1
-                    projectDataMap[projectNumber]['kpi8'] = 1
+                projectDataMap[projectNumber]['contractNumber'] = contract.get('contractNumber')
+                projectDataMap[projectNumber]['estimateNumber'] = estimate.get('estimateNumber')
+                projectDataMap[projectNumber]['contractCreatedTime'] = contract.get('auditDetails').get('createdTime')
+                projectDataMap[projectNumber]['estimateCreatedTime'] = estimate.get('auditDetails').get('createdTime')
+                projectDataMap[projectNumber]['estimateApprovedTime'] = getTimeFromHistory(estimate.get('history'),
+                                                                                           'APPROVE')
+                projectDataMap[projectNumber]['workOrderAcceptedTime'] = getTimeFromHistory(contract.get('history'),
+                                                                                            'ACCEPT')
+                if projectDataMap[projectNumber]['workOrderAcceptedTime'] is not None and projectDataMap[projectNumber][
+                    'estimateApprovedTime'] is not None:
+                    if (projectDataMap[projectNumber]['workOrderAcceptedTime'] - projectDataMap[projectNumber][
+                        'estimateApprovedTime']) <= 30 * int(DAY_EPOCH_TIME):
+                        count += 1
+                        projectDataMap[projectNumber]['kpi8'] = 1
 
     print(projectDataMap)
     print(count / totalCount)
+    projectDataMap['kpi8'] = count / totalCount
+    projectDataMap['pos'] = count
+    projectDataMap['neg'] = totalCount - count
     return projectDataMap

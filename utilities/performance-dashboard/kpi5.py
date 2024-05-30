@@ -191,24 +191,28 @@ def calculate_kpi5(cursor, tenantId):
             }
         contracts = getContractDetailByProjectId(tenantId, project.get('projectNumber'))
         estimates = getEstimateDetailByProjectId(tenantId, project.get('id'))
-        if len(contracts) > 0 and len(estimates) > 0:
-            contract = contracts[0]
-            estimate = estimates[0]
+        if len(estimates) > 0:
             totalCount += 1
+            if len(contracts) > 0:
+                contract = contracts[0]
+                estimate = estimates[0]
 
-            projectDataMap[projectNumber]['contractNumber'] = contract.get('contractNumber')
-            projectDataMap[projectNumber]['estimateNumber'] = estimate.get('estimateNumber')
-            projectDataMap[projectNumber]['contractCreatedTime'] = contract.get('auditDetails').get('createdTime')
-            projectDataMap[projectNumber]['estimateCreatedTime'] = estimate.get('auditDetails').get('createdTime')
-            projectDataMap[projectNumber]['estimateApprovedTime'] = getTimeFromHistory(estimate.get('history'),
-                                                                                       'APPROVE')
-            projectDataMap[projectNumber]['workOrderInitiatedTime'] = getTimeFromHistory(contract.get('history'),
-                                                                                         'CREATE')
-            if (projectDataMap[projectNumber]['workOrderInitiatedTime'] - projectDataMap[projectNumber][
-                'estimateApprovedTime']) <= 7 * int(DAY_EPOCH_TIME):
-                count += 1
-                projectDataMap[projectNumber]['kpi5'] = 1
+                projectDataMap[projectNumber]['contractNumber'] = contract.get('contractNumber')
+                projectDataMap[projectNumber]['estimateNumber'] = estimate.get('estimateNumber')
+                projectDataMap[projectNumber]['contractCreatedTime'] = contract.get('auditDetails').get('createdTime')
+                projectDataMap[projectNumber]['estimateCreatedTime'] = estimate.get('auditDetails').get('createdTime')
+                projectDataMap[projectNumber]['estimateApprovedTime'] = getTimeFromHistory(estimate.get('history'),
+                                                                                           'APPROVE')
+                projectDataMap[projectNumber]['workOrderInitiatedTime'] = getTimeFromHistory(contract.get('history'),
+                                                                                             'CREATE')
+                if (projectDataMap[projectNumber]['workOrderInitiatedTime'] - projectDataMap[projectNumber][
+                    'estimateApprovedTime']) <= 7 * int(DAY_EPOCH_TIME):
+                    count += 1
+                    projectDataMap[projectNumber]['kpi5'] = 1
 
     print(projectDataMap)
     print(count / totalCount)
+    projectDataMap['kpi5'] = count / totalCount
+    projectDataMap['pos'] = count
+    projectDataMap['neg'] = totalCount - count
     return projectDataMap

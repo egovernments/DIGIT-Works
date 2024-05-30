@@ -74,6 +74,7 @@ def getBillsForEachTenant(tenantId):
 def calculate_kpi6(cursor, tenantId):
     bills_map = {}
     count = 0
+    totalCount = 0
     bills = getBillsForEachTenant(tenantId)
     for bill in bills:
         bill_number = bill.get('billNumber')
@@ -88,7 +89,7 @@ def calculate_kpi6(cursor, tenantId):
                 'billVerificationTime': getTimeFromHistory(bill.get('history', []), 'VERIFY_AND_FORWARD'),
                 'billSubmissionTime': getTimeFromHistory(bill.get('history', []), 'SUBMIT')
             }
-
+        totalCount += 1
         if bills_map[bill_number]['billVerificationTime'] is not None and bills_map[bill_number][
             'billSubmissionTime'] is not None:
             bill_verification_time = bills_map[bill_number]['billVerificationTime']
@@ -99,4 +100,8 @@ def calculate_kpi6(cursor, tenantId):
 
     print(bills_map)
     print(count)
+    print(totalCount)
+    bills_map['kpi6'] = count / totalCount
+    bills_map['pos'] = count
+    bills_map['neg'] = totalCount - count
     return bills_map

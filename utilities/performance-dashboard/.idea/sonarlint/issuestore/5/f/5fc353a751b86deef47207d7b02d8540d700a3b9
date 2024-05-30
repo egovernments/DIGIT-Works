@@ -1,0 +1,6 @@
+
+lpython:S1172".Remove the unused function parameter "cursor".(¡òãµJ$0456a514-f016-4204-879c-d3e3c3f2f2dc
+œpython:S117"_Rename this local variable "projectDataMap" to match the regular expression ^[_a-z][a-z0-9_]*$.(íŒš¹J$d8ba59e9-84a9-48d8-bf03-113f6542976d
+ python:S117"^Rename this local variable "projectNumber" to match the regular expression ^[_a-z][a-z0-9_]*$.(òƒÀ§üÿÿÿÿJ$8ddf36ab-23e2-430c-b904-60888d2af7e9
+‘python:S117"TRename this parameter "tenantId" to match the regular expression ^[_a-z][a-z0-9_]*$.(¡òãµJ$848a6727-999e-460f-aeec-d8e55e8fd2e8
+˜python:S117"[Rename this local variable "totalCount" to match the regular expression ^[_a-z][a-z0-9_]*$.(«©Á›J$71379952-2947-4d26-b870-b19ef8eb3801

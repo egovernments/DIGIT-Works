@@ -67,6 +67,7 @@ def getMusterRollsForEachTenant(tenantId):
 def calculate_kpi7(cursor, tenantId):
     muster_roll_data_map = {}
     count = 0
+    totalCount = 0
     muster_rolls = getMusterRollsForEachTenant(tenantId)
     for muster_roll in muster_rolls:
         muster_roll_number = muster_roll.get('musterRollNumber')
@@ -80,6 +81,7 @@ def calculate_kpi7(cursor, tenantId):
                 'musterRollApprovedTime': getTimeFromHistory(muster_roll.get('history'), 'APPROVE')
             }
 
+        totalCount += 1
         musterRollCreatedTime = muster_roll_data_map[muster_roll_number].get('musterRollCreatedTime')
         musterRollApprovedTime = muster_roll_data_map[muster_roll_number].get('musterRollApprovedTime')
         if musterRollCreatedTime is not None and musterRollApprovedTime is not None:
@@ -87,4 +89,8 @@ def calculate_kpi7(cursor, tenantId):
                 count += 1
                 muster_roll_data_map[muster_roll_number]['kpi7'] = 1
     print(count)
+    print(totalCount)
+    muster_roll_data_map['kpi7'] = count / totalCount
+    muster_roll_data_map['pos'] = count
+    muster_roll_data_map['neg'] = totalCount - count
     return muster_roll_data_map

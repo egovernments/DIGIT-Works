@@ -1,0 +1,38 @@
+
+bpython:S1192;"JDefine a constant instead of duplicating this literal "pg.citya" 24 times.(¨Ÿû˜
+qpython:S1542 "TRename function "getRequestInfo" to match the regular expression ^[a-z_][a-z0-9_]*$.(è¯Î°ùÿÿÿÿ
+lpython:S1542Ç"SRename function "getListOfULBs" to match the regular expression ^[a-z_][a-z0-9_]*$.(Ì‹ƒ„
+qpython:S117Ë"TRename this parameter "fromDate" to match the regular expression ^[_a-z][a-z0-9_]*$.(×¥óÿÿÿÿÿ
+qpython:S117Ë"TRename this parameter "tenantId" to match the regular expression ^[_a-z][a-z0-9_]*$.(×¥óÿÿÿÿÿ
+opython:S117Ë"RRename this parameter "toDate" to match the regular expression ^[_a-z][a-z0-9_]*$.(×¥óÿÿÿÿÿ
+}python:S1542Ë"_Rename function "getProjectListBetweenDate" to match the regular expression ^[a-z_][a-z0-9_]*$.(×¥óÿÿÿÿÿ
+Npython:S1172×"0Remove the unused function parameter "tenantId".(Î§ŞÅùÿÿÿÿ
+qpython:S117×"TRename this parameter "tenantId" to match the regular expression ^[_a-z][a-z0-9_]*$.(Î§ŞÅùÿÿÿÿ
+6python:S3626ğ"Remove this redundant return.(ÙãŞŸ
+„python:S1542×"fRename function "getProjectsFromLastFinancialYear" to match the regular expression ^[a-z_][a-z0-9_]*$.(Î§ŞÅùÿÿÿÿ
+Jpython:S1481í",Remove the unused local variable "response".(¢›ĞÅşÿÿÿÿ
+ppython:S1542ò"WRename function "getMusterRollList" to match the regular expression ^[a-z_][a-z0-9_]*$.(Ù‡‘—
+jpython:S1542õ"QRename function "getBillList" to match the regular expression ^[a-z_][a-z0-9_]*$.(Ò‘ü”
+rpython:S117ø"URename this parameter "projectId" to match the regular expression ^[_a-z][a-z0-9_]*$.(ñŒ›“ûÿÿÿÿ
+zpython:S1542ø"\Rename function "getEstimateByProjectId" to match the regular expression ^[a-z_][a-z0-9_]*$.(ñŒ›“ûÿÿÿÿ
+Ipython:S1172“"0Remove the unused function parameter "estimate".(±ÂÜê
+6python:S3626¯"Remove this redundant return.(ÙãŞŸ
+ppython:S1542“"WRename function "getContractDetail" to match the regular expression ^[a-z_][a-z0-9_]*$.(±ÂÜê
+Rpython:S905®":Remove or refactor this statement; it has no side effects.(¿³îÛ
+„python:S1542²"fRename function "getActualDateOfProjectCompletion" to match the regular expression ^[a-z_][a-z0-9_]*$.(ıŸ€Ÿúÿÿÿÿ
+lpython:S117¾"TRename this parameter "tenantId" to match the regular expression ^[_a-z][a-z0-9_]*$.(¼æ¾ß
+6python:S3626Å"Remove this redundant return.(ÙãŞŸ
+lpython:S1542¾"SRename function "calculateKPI1" to match the regular expression ^[a-z_][a-z0-9_]*$.(¼æ¾ß
+qpython:S117Í"YRename this local variable "tenantId" to match the regular expression ^[_a-z][a-z0-9_]*$.(ıÿÀ×
+6python:S3626ä"Remove this redundant return.(ÙãŞŸ
+qpython:S1542È"SRename function "calculateKPI2" to match the regular expression ^[a-z_][a-z0-9_]*$.(…§ş‹øÿÿÿÿ
+<python:S125Ï"Remove this commented out code.(¿î¤•üÿÿÿÿ
+qpython:S1542ç"SRename function "calculateKPI3" to match the regular expression ^[a-z_][a-z0-9_]*$.(¼°½ßùÿÿÿÿ
+qpython:S1542ë"SRename function "calculateKPI4" to match the regular expression ^[a-z_][a-z0-9_]*$.(¥¿¨ıÿÿÿÿ
+qpython:S1542ï"SRename function "calculateKPI5" to match the regular expression ^[a-z_][a-z0-9_]*$.(Ú¯Õ¿ÿÿÿÿÿ
+lpython:S1542ó"SRename function "calculateKPI6" to match the regular expression ^[a-z_][a-z0-9_]*$.(Íí×ß
+lpython:S1542÷"SRename function "calculateKPI7" to match the regular expression ^[a-z_][a-z0-9_]*$.(„ØÖâ
+lpython:S1542ü"SRename function "calculateKPI8" to match the regular expression ^[a-z_][a-z0-9_]*$.(üñäò
+qpython:S1542€"SRename function "calculateKPI9" to match the regular expression ^[a-z_][a-z0-9_]*$.(“£Ğ—ÿÿÿÿÿ
+lpython:S1542„"TRename function "calculateKPI10" to match the regular expression ^[a-z_][a-z0-9_]*$.(öè+
+mpython:S1542ˆ"TRename function "calculateKPI11" to match the regular expression ^[a-z_][a-z0-9_]*$.(àÃº›

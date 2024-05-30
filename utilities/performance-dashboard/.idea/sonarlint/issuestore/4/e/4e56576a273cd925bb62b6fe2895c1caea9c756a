@@ -1,0 +1,9 @@
+
+˜python:S117"VRename this parameter "billAmount" to match the regular expression ^[_a-z][a-z0-9_]*$.(íÕ˜´úÿÿÿÿJ$122bc211-613f-4922-baec-e18b5f0ad93e
+žpython:S117"\Rename this parameter "contractedAmount" to match the regular expression ^[_a-z][a-z0-9_]*$.(íÕ˜´úÿÿÿÿJ$d4771857-0147-4c67-b8df-2031d266c4b2
+žpython:S1542"[Rename function "getIsProjectCompleted" to match the regular expression ^[a-z_][a-z0-9_]*$.(íÕ˜´úÿÿÿÿJ$01aff1ec-1104-44f7-b9d6-f44956055f03
+Žpython:S117"QRename this parameter "kpiId" to match the regular expression ^[_a-z][a-z0-9_]*$.(¥®”ÒJ$84eca3a4-5bdb-4b9e-9ef8-b14c88465077
+‘python:S117"TRename this parameter "tenantId" to match the regular expression ^[_a-z][a-z0-9_]*$.(¥®”ÒJ$df2c63c3-8508-492c-aa3e-80e8ba1d9b53
+“python:S1542"URename function "writeDataToFile" to match the regular expression ^[a-z_][a-z0-9_]*$.(¥®”ÒJ$6c767284-4ed6-4369-8370-3ce6edf80677
+˜python:S117"VRename this parameter "folderPath" to match the regular expression ^[_a-z][a-z0-9_]*$.(ÝÃ‚òüÿÿÿÿJ$11a98fcd-c6eb-4ed1-a8e2-c973299eeadd
+ python:S1542"]Rename function "createFolderIfNotExists" to match the regular expression ^[a-z_][a-z0-9_]*$.(ÝÃ‚òüÿÿÿÿJ$c00fc18a-1976-4e63-87cf-ac647ae93e2f

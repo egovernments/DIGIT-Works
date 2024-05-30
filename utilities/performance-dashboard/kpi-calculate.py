@@ -10,6 +10,11 @@ import urllib3
 
 from kpi1 import calculate_KPI1
 from kpi2 import calculate_KPI2
+from kpi5 import calculate_kpi5
+from kpi6 import calculate_kpi6
+from kpi7 import calculate_kpi7
+from kpi8 import calculate_kpi8
+from kpi12 import calculate_kpi12
 import warnings
 load_dotenv('.env')
 
@@ -23,6 +28,31 @@ tenantIds = ["od.testing"]
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 warnings.filterwarnings("ignore", message="Connecting to 'https://localhost:9200' using TLS with verify_certs=False is insecure")
 
+designation_map = {
+  "WRK_EE": "Executive Engineer",
+  "WRK_DEE": "Deputy Executive Engineer",
+  "WRK_AEE": "Assistant Executive Engineer",
+  "WRK_ME": "Municipal Engineer",
+  "WRK_CE": "City Engineer",
+  "WRK_AE": "Assistant Engineer",
+  "WRK_JE": "Junior Engineer",
+  "WRK_RI": "Revenue Inspector",
+  "WRK_AM": "Ameen",
+  "WRK_DA": "Dealing Assistant",
+  "WRK_PC": "Program Coordinator (MUKTA)",
+  "WRK_IE": "Implementation Expert (MUKTA)",
+  "WRK_ACCE": "Account Expert (MUKTA)",
+  "ACC_AO": "Accounts Officer",
+  "ACC_JAO": "Junior Accounts Officer",
+  "ADM_MC": "Commissioner",
+  "ADM_ADMC": "Additional Commissioner",
+  "ADM_DMC": "Deputy Commissioner",
+  "ADM_AMC": "Assistant Commissioner",
+  "ADM_EO": "Executive Officer",
+  "ADM_AEO": "Assistant Executive Officer",
+  "Tax_WO": "Ward Officer",
+  "ADM_DEO": "Data Entry Operator"
+}
 def connect_to_database():
     return psycopg2.connect(
         host=DB_HOST, port=DB_PORT, database=DB_NAME, user=DB_USER, password=DB_PASSWORD
@@ -303,6 +333,48 @@ def getContractDetail(estimate):
     return
 
 
+def getHrmsDetails(tenantID):
+    # get hrms details from API
+    hrms_host = os.getenv('HRMS_HOST')
+    hrms_search = os.getenv('HRMS_SEARCH')
+    api_url = f"{hrms_host}/{hrms_search}"
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    queryParam = {
+        "tenantId": tenantID
+    }
+    request = {
+        "RequestInfo": getRequestInfo(),
+    }
+
+    response = requests.post(api_url, json=request, params=queryParam, headers=headers)
+    hrmsDetails = []
+    if response.status_code == 200:
+        response_data = response.json()
+        # Assuming your response is stored in the variable 'response_data'
+        hrmsDetails.extend(response_data.get('Employees', []))
+        return hrmsDetails
+    else:
+        print(f"Failed to fetch data from the API. Status code: {response.status_code}")
+        print(response.text)
+
+def get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg):
+    return {
+  "program": "Mukta",
+  "start_date": "2023-01-01T00:00:00Z",
+  "end_date": "2023-12-31T23:59:59Z",
+  "district": District,
+  "ulb": District + " Municipal Corporation",
+  "kra": kra,
+  "kpi": kpi,
+  "designation": designation_map[designation],
+  "employee_name": name,
+  "score": kpi_score * 100,
+  "total_count": pos + neg,
+  "positive_count": pos,
+  "negative_count": neg
+}
 def getActualDateOfProjectCompletion(project):
     # get project details from API
     # get estimate detils from DB based on project
@@ -364,8 +436,25 @@ def calculateKPI4():
     return
 
 # Work Order was issued for 100% of the final list of projects within 7 days from Administrative Approval 
-def calculateKPI5():
-    return
+def calculateKPI5(cursor, tenantId, hrmsDetails):
+    designations = ['WRK_ME', 'WRK_EE', 'WRK_AEE']
+    District = tenantId.split('.')[1]
+    kpi = "Work Order was issued for 100% of the final list of projects within 7 days from Administrative Approval "
+    kra = "At least 75% of projects included in yearly MUKTA action plan were completed during the financial year"
+    kpi_5_users = []
+    kpi5 = calculate_kpi5(cursor, tenantId)
+    pos = kpi5.get('pos')
+    neg = kpi5.get('neg')
+    kpi5_score = kpi5.get('kpi5')
+    for employee in hrmsDetails:
+        designation = employee.get('assignments').get(0).get('designation')
+        name = employee.get('user').get('name')
+        if designation in designations:
+            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi5_score,pos, neg)
+            kpi_5_users.append(kpi_obj)
+
+
+
 
 # Vendor payment requests verified within 2 days after submission from JE/IE/AEE
 def calculateKPI6():
@@ -399,5 +488,11 @@ if __name__ == '__main__':
     # Create a cursor object
     cursor = connection.cursor()
     for tenantId in tenantIds:
-        calculate_KPI1(cursor, tenantId)
+        hrmsDetails = getHrmsDetails(tenantId)
+        calculateKPI5(cursor, tenantId, hrmsDetails)
+        kpi6 = calculate_kpi6(cursor, tenantId)
+        kpi7 = calculate_kpi7(cursor, tenantId)
+        kpi8 = calculate_kpi8(cursor, tenantId)
+        kpi12 = calculate_kpi12(cursor, tenantId)
+        # calculate_KPI1(cursor, tenantId)
         # calculate_KPI2(cursor)

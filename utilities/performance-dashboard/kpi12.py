@@ -30,32 +30,36 @@ def calculate_kpi12(cursor, tenantId):
                 'projectCreatedTime': project.get('auditDetails').get('createdTime'),
                 'contractCreatedTime': None,
                 'estimateCreatedTime': None,
-                'kpi8': 0,
+                'kpi12': 0,
                 'workOrderVerifiedTime': None,
                 'estimateApprovedTime': None,
             }
         contracts = getContractDetailByProjectId(tenantId, project.get('projectNumber'))
         estimates = getEstimateDetailByProjectId(tenantId, project.get('id'))
-        if len(contracts) > 0 and len(estimates) > 0:
-            contract = contracts[0]
-            estimate = estimates[0]
+        if len(estimates) > 0:
             totalCount += 1
+            if len(contracts) > 0:
+                contract = contracts[0]
+                estimate = estimates[0]
 
-            projectDataMap[projectNumber]['contractNumber'] = contract.get('contractNumber')
-            projectDataMap[projectNumber]['estimateNumber'] = estimate.get('estimateNumber')
-            projectDataMap[projectNumber]['contractCreatedTime'] = contract.get('auditDetails').get('createdTime')
-            projectDataMap[projectNumber]['estimateCreatedTime'] = estimate.get('auditDetails').get('createdTime')
-            projectDataMap[projectNumber]['estimateApprovedTime'] = getTimeFromHistory(estimate.get('history'),
-                                                                                       'APPROVE')
-            projectDataMap[projectNumber]['workOrderVerifiedTime'] = getTimeFromHistory(contract.get('history'),
-                                                                                        'VERIFY_AND_FORWARD')
-            if projectDataMap[projectNumber]['workOrderVerifiedTime'] is not None and projectDataMap[projectNumber][
-                'estimateApprovedTime'] is not None:
-                if (projectDataMap[projectNumber]['workOrderVerifiedTime'] - projectDataMap[projectNumber][
-                    'estimateApprovedTime']) <= 30 * int(DAY_EPOCH_TIME):
-                    count += 1
-                    projectDataMap[projectNumber]['kpi8'] = 1
+                projectDataMap[projectNumber]['contractNumber'] = contract.get('contractNumber')
+                projectDataMap[projectNumber]['estimateNumber'] = estimate.get('estimateNumber')
+                projectDataMap[projectNumber]['contractCreatedTime'] = contract.get('auditDetails').get('createdTime')
+                projectDataMap[projectNumber]['estimateCreatedTime'] = estimate.get('auditDetails').get('createdTime')
+                projectDataMap[projectNumber]['estimateApprovedTime'] = getTimeFromHistory(estimate.get('history'),
+                                                                                           'APPROVE')
+                projectDataMap[projectNumber]['workOrderVerifiedTime'] = getTimeFromHistory(contract.get('history'),
+                                                                                            'VERIFY_AND_FORWARD')
+                if projectDataMap[projectNumber]['workOrderVerifiedTime'] is not None and projectDataMap[projectNumber][
+                    'estimateApprovedTime'] is not None:
+                    if (projectDataMap[projectNumber]['workOrderVerifiedTime'] - projectDataMap[projectNumber][
+                        'estimateApprovedTime']) <= 5 * int(DAY_EPOCH_TIME):
+                        count += 1
+                        projectDataMap[projectNumber]['kpi12'] = 1
 
     print(projectDataMap)
     print(count / totalCount)
+    projectDataMap['kpi12'] = count / totalCount
+    projectDataMap['pos'] = count
+    projectDataMap['neg'] = totalCount - count
     return projectDataMap
