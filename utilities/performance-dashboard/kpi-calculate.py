@@ -6,9 +6,10 @@ import datetime
 import os
 from dotenv import load_dotenv
 from urllib.parse import urlencode
-from elasticsearch import Elasticsearch
 import urllib3
-from kpi2 import calculateKPI2
+
+from kpi1 import calculate_KPI1
+from kpi2 import calculate_KPI2
 import warnings
 load_dotenv('.env')
 
@@ -314,21 +315,23 @@ def getActualDateOfProjectCompletion(project):
 
 
 # ULB disbursed 100% payments within stipulated timeframe*
-def calculateKPI1():
+def calculateKPI1(cursor, tenantId):
     # start execution for each ULB
     # get list of projects from API
     # get list of muster roll from API
     # for each muster roll get bill details
+    calculate_KPI1(cursor, tenantId)
+
     return
 
 # At least 75% of projects included in the ULB MUKTA action plan were completed during the financial year
-def processKPI2Execution(cursor):
+def calculateKPI2(cursor):
     # get list of projects from API for each ULB and last financial year
     # call getDateOfProjectCompletion to get end date of project completion
     # get executive officer details from DB contract table
     # Don't count those project for which bill is not created
     for tenantId in tenantIds:
-        calculateKPI2(cursor, tenantId)
+        calculate_KPI2(cursor, tenantId)
         # projects = getProjectListBetweenDate(tenantId, 1680307200000, 1711929599000, cursor)
         # projects = getproject
         # projects = [
@@ -395,4 +398,6 @@ if __name__ == '__main__':
     connection = connect_to_database()
     # Create a cursor object
     cursor = connection.cursor()
-    processKPI2Execution(cursor)
+    for tenantId in tenantIds:
+        calculate_KPI1(cursor, tenantId)
+        # calculate_KPI2(cursor)

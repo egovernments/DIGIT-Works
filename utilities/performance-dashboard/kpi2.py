@@ -180,7 +180,7 @@ def getBillsByProjectId(tenantId, projectId):
         sumOfBillAmount = response['aggregations']['billAmount']['value']
     return [bills, sumOfBillAmount]
 
-def calculateKPI2(curser, tenantId):
+def calculate_KPI2(curser, tenantId):
     projectsDataMap = {}
     projects = getProjectsFromLastFinancialYear(tenantId)
     print(projects)

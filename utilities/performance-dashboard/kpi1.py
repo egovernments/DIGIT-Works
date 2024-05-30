@@ -11,7 +11,6 @@
 '''
 
 import os
-
 from es_client import search_es
 def getWageBills(tenantId):
     query = {
@@ -79,17 +78,16 @@ def getWageBills(tenantId):
             hasMoreRecords = False
     return bills
 
-def getMusterRollById(musterRollIds):
+def getMusterRolls(tenantId):
     query = {
         "from": 0,
         "size": 100,
-
         "query": {
             "bool": {
                 "must": [
                     {
                         "terms": {
-                            "Data.id.keyword": musterRollIds
+                            "Data.tenantId.keyword": tenantId
                         }
                     }
                 ]
@@ -105,18 +103,30 @@ def getMusterRollById(musterRollIds):
         if response and 'hits' in response and len(response.get('hits', {}).get('hits', [])) > 0:
             hasMoreRecords = True
             query['from'] = query['from'] + len(response.get('hits', {}).get('hits', []))
-            for bill_hit in response.get('hits', {}).get('hits', []):
-                bill = bill_hit.get('_source', {}).get('Data', {})
-                musterRolls.append(bill)
+            for musterRollHits in response.get('hits', {}).get('hits', []):
+                musterRoll = musterRollHits.get('_source', {}).get('Data', {})
+                musterRolls.append(musterRoll)
         else:
             hasMoreRecords = False
     return musterRolls
 
 
-def processKPI1(curser, tenantId):
+def calculate_KPI1(curser, tenantId):
+    musterRollDetails = getMusterRolls(tenantId)
+    musterRollBillMap = {}
     bills = getWageBills(tenantId)
-    musterRollIds = set([bill.get('additionalDetails', {}).get('referenceId') for bill in bills])
-    musterRollDetails = getMusterRollById(musterRollIds)
+    for musterRoll in musterRollDetails:
+        if musterRoll.get('musterRollNumber') not in musterRollBillMap:
+            musterRollBillMap[musterRoll.get('musterRollNumber')] ={
+                'id': musterRoll.get('id'),
+                'projectNumber': musterRoll.get('additionalDetails', {}).get('projectId', None),
+                'isBillCreate': False,
+                'isPaymentCompleted': False,
+                'isPaymentCompletedOnTime': False
+            }
+        for bill in bills:
+
+
 
 
     return
