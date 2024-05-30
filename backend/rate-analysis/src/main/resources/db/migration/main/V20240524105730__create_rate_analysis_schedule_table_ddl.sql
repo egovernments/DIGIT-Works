@@ -12,7 +12,7 @@ CREATE TABLE eg_rate_analysis_schedule
 );
 
 CREATE TABLE eg_rate_analysis_schedule_details
-(migrate.sh
+(
     id                VARCHAR(256) PRIMARY KEY NOT NULL,
     sorId             VARCHAR(256),
     ratesJobId        VARCHAR(256),
