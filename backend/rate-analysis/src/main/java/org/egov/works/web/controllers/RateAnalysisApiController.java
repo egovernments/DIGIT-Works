@@ -38,7 +38,7 @@ public class RateAnalysisApiController {
     }
 
     @RequestMapping(value = "/v1/_calculate", method = RequestMethod.POST)
-    public ResponseEntity<RateAnalysisResponse> rateAnalysisV1CalculatePost(@Valid @RequestBody @NotNull AnalysisRequest analysisRequest) {
+    public ResponseEntity<RateAnalysisResponse> rateAnalysisV1CalculatePost(@Valid @RequestBody AnalysisRequest analysisRequest) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             return new ResponseEntity<RateAnalysisResponse>(rateAnalysisService.calculateRate(analysisRequest), HttpStatus.OK) ;
