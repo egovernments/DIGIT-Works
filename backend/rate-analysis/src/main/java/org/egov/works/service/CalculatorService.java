@@ -6,6 +6,8 @@ import org.egov.works.util.EnrichmentUtil;
 import org.egov.works.web.models.*;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import static org.egov.works.web.models.LineItem.TypeEnum.EXTRACHARGES;
@@ -36,7 +38,8 @@ public class CalculatorService {
 
                 LineItem lineItem = enrichmentUtil.createLineItem(basicSorDetail, rate, sorMap.get(basicSorDetail.getSorId()));
                 for (AmountDetail amountDetail : lineItem.getAmountDetails()) {
-                    amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getQuantity()));
+                    BigDecimal sorQuantity = sorMap.get(basicSorDetail.getSorId()).get("quantity").decimalValue();
+                    amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getQuantity()).divide(sorQuantity, 4, RoundingMode.HALF_UP));
                 }
                 lineItems.add(lineItem);
             }
