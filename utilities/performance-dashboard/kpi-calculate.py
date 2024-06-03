@@ -16,6 +16,7 @@ from kpi7 import calculate_kpi7
 from kpi10 import calculate_kpi10
 from kpi12 import calculate_kpi12
 import warnings
+
 load_dotenv('.env')
 
 DB_HOST = os.getenv('DB_HOST')
@@ -26,33 +27,36 @@ DB_PASSWORD = os.getenv('DB_PASSWORD')
 
 tenantIds = ["od.testing"]
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-warnings.filterwarnings("ignore", message="Connecting to 'https://localhost:9200' using TLS with verify_certs=False is insecure")
+warnings.filterwarnings("ignore",
+                        message="Connecting to 'https://localhost:9200' using TLS with verify_certs=False is insecure")
 
 designation_map = {
-  "WRK_EE": "Executive Engineer",
-  "WRK_DEE": "Deputy Executive Engineer",
-  "WRK_AEE": "Assistant Executive Engineer",
-  "WRK_ME": "Municipal Engineer",
-  "WRK_CE": "City Engineer",
-  "WRK_AE": "Assistant Engineer",
-  "WRK_JE": "Junior Engineer",
-  "WRK_RI": "Revenue Inspector",
-  "WRK_AM": "Ameen",
-  "WRK_DA": "Dealing Assistant",
-  "WRK_PC": "Program Coordinator (MUKTA)",
-  "WRK_IE": "Implementation Expert (MUKTA)",
-  "WRK_ACCE": "Account Expert (MUKTA)",
-  "ACC_AO": "Accounts Officer",
-  "ACC_JAO": "Junior Accounts Officer",
-  "ADM_MC": "Commissioner",
-  "ADM_ADMC": "Additional Commissioner",
-  "ADM_DMC": "Deputy Commissioner",
-  "ADM_AMC": "Assistant Commissioner",
-  "ADM_EO": "Executive Officer",
-  "ADM_AEO": "Assistant Executive Officer",
-  "Tax_WO": "Ward Officer",
-  "ADM_DEO": "Data Entry Operator"
+    "WRK_EE": "Executive Engineer",
+    "WRK_DEE": "Deputy Executive Engineer",
+    "WRK_AEE": "Assistant Executive Engineer",
+    "WRK_ME": "Municipal Engineer",
+    "WRK_CE": "City Engineer",
+    "WRK_AE": "Assistant Engineer",
+    "WRK_JE": "Junior Engineer",
+    "WRK_RI": "Revenue Inspector",
+    "WRK_AM": "Ameen",
+    "WRK_DA": "Dealing Assistant",
+    "WRK_PC": "Program Coordinator",
+    "WRK_IE": "Implementation Expert",
+    "WRK_ACCE": "Account Expert",
+    "ACC_AO": "Accounts Officer",
+    "ACC_JAO": "Junior Accounts Officer",
+    "ADM_MC": "Commissioner",
+    "ADM_ADMC": "Additional Commissioner",
+    "ADM_DMC": "Deputy Commissioner",
+    "ADM_AMC": "Assistant Commissioner",
+    "ADM_EO": "Executive Officer",
+    "ADM_AEO": "Assistant Executive Officer",
+    "Tax_WO": "Ward Officer",
+    "ADM_DEO": "Data Entry Operator"
 }
+
+
 def connect_to_database():
     return psycopg2.connect(
         host=DB_HOST, port=DB_PORT, database=DB_NAME, user=DB_USER, password=DB_PASSWORD
@@ -226,13 +230,15 @@ def getRequestInfo():
         }
     }
 
+
 def getListOfULBs():
     # call mdms to get list of ULBs
     return
 
+
 def getProjectListBetweenDate(tenantId, fromDate, toDate, cursor):
     # call project search API for each ULB
-    query  = '''Select id, tenantid as tenantId, projectnumber as projectNumber, createdtime as createdTime, lastmodifiedtime as lastModifiedTime  from project where tenantid = %s and createdtime BETWEEN %s AND %s;'''
+    query = '''Select id, tenantid as tenantId, projectnumber as projectNumber, createdtime as createdTime, lastmodifiedtime as lastModifiedTime  from project where tenantid = %s and createdtime BETWEEN %s AND %s;'''
     cursor.execute(query, (tenantId, fromDate, toDate))
     # Fetch all rows from the executed query
     rows = cursor.fetchall()
@@ -242,38 +248,41 @@ def getProjectListBetweenDate(tenantId, fromDate, toDate, cursor):
     formatted_data = [dict(zip(colnames, row)) for row in rows]
     return formatted_data
 
+
 def getProjectsFromLastFinancialYear(es, tenantId):
     query = {
         "bool": {
-          "must": [
-            {
-              "term": {
-                "Data.tenantId.keyword": {
-                  "value": "od.testing"
+            "must": [
+                {
+                    "term": {
+                        "Data.tenantId.keyword": {
+                            "value": "od.testing"
+                        }
+                    }
+                },
+                {
+                    "range": {
+                        "Data.auditDetails.createdTime": {
+                            "gte": 1680307200000,
+                            "lte": 1711929599000
+                        }
+                    }
                 }
-              }
-            },
-            {
-              "range": {
-                "Data.auditDetails.createdTime": {
-                  "gte": 1680307200000,
-                  "lte": 1711929599000
-                }
-              }
-            }
-          ]
+            ]
         }
-      }
+    }
     response = es.search(index=os.getenv('PROJECT_INDEX'), body=query, size=10000)
 
-
     return
+
 
 def getMusterRollList():
     return
 
+
 def getBillList():
     return
+
 
 def getEstimateByProjectId(tenant_id, projectId):
     try:
@@ -301,6 +310,7 @@ def getEstimateByProjectId(tenant_id, projectId):
     except Exception as e:
         print("search_payment_instruction_from_ifms_adapter : error {}".format(str(e)))
         raise e
+
 
 def getContractDetail(estimate):
     # get contract details from API
@@ -359,22 +369,28 @@ def getHrmsDetails(tenantID):
         print(f"Failed to fetch data from the API. Status code: {response.status_code}")
         print(response.text)
 
+
 def get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg):
+    desig = None
+    if designation is not None:
+        desig = designation_map[designation]
     return {
-  "program": "Mukta",
-  "start_date": "2023-01-01T00:00:00Z",
-  "end_date": "2023-12-31T23:59:59Z",
-  "district": District,
-  "ulb": District + " Municipal Corporation",
-  "kra": kra,
-  "kpi": kpi,
-  "designation": designation_map[designation],
-  "employee_name": name,
-  "score": kpi_score * 100,
-  "total_count": pos + neg,
-  "positive_count": pos,
-  "negative_count": neg
-}
+        "program": "Mukta",
+        "start_date": "2023-01-01T00:00:00Z",
+        "end_date": "2023-12-31T23:59:59Z",
+        "district": District,
+        "ulb": District + " Municipal Corporation",
+        "kra": kra,
+        "kpi": kpi,
+        "designation": desig,
+        "employee_name": name,
+        "score": kpi_score * 100,
+        "total_count": pos + neg,
+        "positive_count": pos,
+        "negative_count": neg
+    }
+
+
 def getActualDateOfProjectCompletion(project):
     # get project details from API
     # get estimate detils from DB based on project
@@ -395,6 +411,7 @@ def calculateKPI1(cursor, tenantId):
     calculate_KPI1(cursor, tenantId)
 
     return
+
 
 # At least 75% of projects included in the ULB MUKTA action plan were completed during the financial year
 def calculateKPI2(cursor):
@@ -427,60 +444,147 @@ def calculateKPI2(cursor):
         #     print(projectEndDate)
     return
 
+
 # At least 75% of the proposed projects had no time overrun
 def calculateKPI3():
     return
+
 
 # Vendor payment approved within 2 working days of receiving verified request from ME.
 def calculateKPI4():
     return
 
-# Work Order was issued for 100% of the final list of projects within 7 days from Administrative Approval 
+
+# Work Order was issued for 100% of the final list of projects within 7 days from Administrative Approval
 def calculateKPI5(cursor, tenantId, hrmsDetails):
     designations = ['WRK_ME', 'WRK_EE', 'WRK_AEE']
     District = tenantId.split('.')[1]
     kpi = "Work Order was issued for 100% of the final list of projects within 7 days from Administrative Approval "
     kra = "At least 75% of projects included in yearly MUKTA action plan were completed during the financial year"
-    kpi_5_users = []
-    kpi5 = calculate_kpi5(cursor, tenantId)
-    pos = kpi5.get('pos')
-    neg = kpi5.get('neg')
-    kpi5_score = kpi5.get('kpi5')
+    kpi_users = []
+    kpis = calculate_kpi5(cursor, tenantId)
+    pos = kpis.get('pos')
+    neg = kpis.get('neg')
+    kpi_score = kpis.get('kpi5')
     for employee in hrmsDetails:
-        designation = employee.get('assignments').get(0).get('designation')
+        designation = employee['assignments'][0]['designation']
         name = employee.get('user').get('name')
         if designation in designations:
-            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi5_score,pos, neg)
-            kpi_5_users.append(kpi_obj)
+            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg)
+            kpi_users.append(kpi_obj)
 
+    if len(kpi_users) == 0:
+        kpi_users.append(get_kpi_obj(District, kra, kpi, None, None, kpi_score, pos, neg))
 
+    return kpi_users
 
 
 # Vendor payment requests verified within 2 days after submission from JE/IE/AEE
-def calculateKPI6():
-    return
+def calculateKPI6(cursor, tenantId, hrmsDetails):
+    designations = ['WRK_ME', 'WRK_EE', 'WRK_AEE']
+    District = tenantId.split('.')[1]
+    kpi = "Vendor payment requests verified within 2 days after submission from JE/IE/AEE"
+    kra = "100% payments were completed within the stipulated timeframe"
+    kpi_users = []
+    kpis = calculate_kpi6(cursor, tenantId)
+    pos = kpis.get('pos')
+    neg = kpis.get('neg')
+    kpi_score = kpis.get('kpi6')
+    for employee in hrmsDetails:
+        designation = employee['assignments'][0]['designation']
+        name = employee.get('user').get('name')
+        if designation in designations:
+            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg)
+            kpi_users.append(kpi_obj)
+
+    if len(kpi_users) == 0:
+        kpi_users.append(get_kpi_obj(District, kra, kpi, None, None, kpi_score, pos, neg))
+
+    return kpi_users
 
 # Muster roll approved within 3 days of submission
-def calculateKPI7():
-    return
+def calculateKPI7(cursor, tenantId, hrmsDetails):
+    designations = ['WRK_ME', 'WRK_EE', 'WRK_AE']
+    District = tenantId.split('.')[1]
+    kpi = "Muster roll approved within 3 days of submission"
+    kra = "100% payments were completed within the stipulated timeframe"
+    kpi_users = []
+    kpis = calculate_kpi7(cursor, tenantId)
+    pos = kpis.get('pos')
+    neg = kpis.get('neg')
+    kpi_score = kpis.get('kpi7')
+    for employee in hrmsDetails:
+        designation = employee['assignments'][0]['designation']
+        name = employee.get('user').get('name')
+        if designation in designations:
+            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg)
+            kpi_users.append(kpi_obj)
+
+    if len(kpi_users) == 0:
+        kpi_users.append(get_kpi_obj(District, kra, kpi, None, None, kpi_score, pos, neg))
+
+    return kpi_users
 
 
 # All outstanding muster rolls approved and vendor bills submitted within 3 days of project completion
 def calculateKPI8():
     return
 
+
 # Vendor payment requests submitted within 3 days of project work completion
 def calculateKPI9():
     return
 
-# Submitted draft Work Orders for 100% of projects to ME within 30 days from Technical Sanction and Administrative Approval 
-def calculateKPI10():
-    return
+
+# Submitted draft Work Orders for 100% of projects to ME within 30 days from Technical Sanction and Administrative Approval
+def calculateKPI10(cursor, tenantId, hrmsDetails):
+    designations = ['WRK_PC']
+    District = tenantId.split('.')[1]
+    kpi = "Submitted draft Work Orders for 100% of projects to ME within 30 days from Technical Sanction and Administrative Approval "
+    kra = "At least 75% of the projects had no time overrun"
+    kpi_users = []
+    kpis = calculate_kpi10(cursor, tenantId)
+    pos = kpis.get('pos')
+    neg = kpis.get('neg')
+    kpi_score = kpis.get('kpi10')
+    for employee in hrmsDetails:
+        designation = employee['assignments'][0]['designation']
+        name = employee.get('user').get('name')
+        if designation in designations:
+            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg)
+            kpi_users.append(kpi_obj)
+
+    if len(kpi_users) == 0:
+        kpi_users.append(get_kpi_obj(District, kra, kpi, None, None, kpi_score, pos, neg))
+
+    return kpi_users
+
 
 # At least 75% of all projects had no time overrun
 def calculateKPI11():
     return
 
+def calculateKPI12(cursor, tenantId, hrmsDetails):
+    designations = ['WRK_ME', 'WRK_EE', 'WRK_AEE']
+    District = tenantId.split('.')[1]
+    kpi = "Work Order was verified and sent for approval for 100% of the final list of projects within 5 days from Administrative Approval "
+    kra = "At least 75% of projects included in yearly MUKTA action plan were completed during the financial year"
+    kpi_users = []
+    kpis = calculate_kpi12(cursor, tenantId)
+    pos = kpis.get('pos')
+    neg = kpis.get('neg')
+    kpi_score = kpis.get('kpi12')
+    for employee in hrmsDetails:
+        designation = employee['assignments'][0]['designation']
+        name = employee.get('user').get('name')
+        if designation in designations:
+            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg)
+            kpi_users.append(kpi_obj)
+
+    if len(kpi_users) == 0:
+        kpi_users.append(get_kpi_obj(District, kra, kpi, None, None, kpi_score, pos, neg))
+
+    return kpi_users
 
 if __name__ == '__main__':
     # Connect to PostgreSQL
@@ -489,10 +593,11 @@ if __name__ == '__main__':
     cursor = connection.cursor()
     for tenantId in tenantIds:
         hrmsDetails = getHrmsDetails(tenantId)
-        calculateKPI5(cursor, tenantId, hrmsDetails)
-        kpi6 = calculate_kpi6(cursor, tenantId)
-        kpi7 = calculate_kpi7(cursor, tenantId)
-        kpi8 = calculate_kpi8(cursor, tenantId)
-        kpi12 = calculate_kpi12(cursor, tenantId)
+        kpi5 = calculateKPI5(cursor, tenantId, hrmsDetails)
+        kpi6 = calculateKPI6(cursor, tenantId, hrmsDetails)
+        kpi7 = calculateKPI7(cursor, tenantId, hrmsDetails)
+        kpi10 = calculateKPI10(cursor, tenantId, hrmsDetails)
+        kpi12 = calculateKPI12(cursor, tenantId, hrmsDetails)
+        print(kpi10)
         # calculate_KPI1(cursor, tenantId)
         # calculate_KPI2(cursor)
