@@ -1,5 +1,6 @@
 package org.egov.works.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.works.web.models.*;
 import org.springframework.stereotype.Component;
@@ -22,12 +23,13 @@ public class EnrichmentUtil {
                 .build();
     }
 
-    public LineItem createLineItem(BasicSorDetail basicSorDetail, Rates rates) {
+    public LineItem createLineItem(BasicSorDetail basicSorDetail, Rates rates, JsonNode jsonNode) {
         //TODO add sor details in rates
         return LineItem.builder()
                 .id(UUID.randomUUID().toString())
                 .targetId(basicSorDetail.getSorId())
                 .amountDetails(rates.getAmountDetails())
+                .additionalDetails(jsonNode)
                 .build();
     }
 

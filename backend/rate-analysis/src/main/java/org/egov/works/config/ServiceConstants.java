@@ -48,7 +48,8 @@ public class ServiceConstants {
 
     public static final String FILTER_START = "[?(";
     public static final String FILTER_END = "')]";
-    public static final String ID_FILTER = "@.sorId=='";
+    public static final String SOR_ID_FILTER = "@.sorId=='";
+    public static final String ID_FILTER = "@.id=='";
     public static final String FILTER_OR_CONSTANT = "'||";
 
 

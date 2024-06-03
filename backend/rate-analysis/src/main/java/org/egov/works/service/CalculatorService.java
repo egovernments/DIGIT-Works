@@ -1,5 +1,6 @@
 package org.egov.works.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.works.util.EnrichmentUtil;
 import org.egov.works.web.models.*;
@@ -20,8 +21,8 @@ public class CalculatorService {
     }
 
     public List<RateAnalysis> calculateRateAnalysis(AnalysisRequest analysisRequest,
-                                              Map<String, SorComposition> sorIdCompositionMap,
-                                              Map<String, List<Rates>> basicRatesMap) {
+                                                    Map<String, SorComposition> sorIdCompositionMap,
+                                                    Map<String, List<Rates>> basicRatesMap, Map<String, JsonNode> sorMap) {
         List<RateAnalysis> rateAnalysisList = new ArrayList<>();
         for(String worksSorId : analysisRequest.getSorDetails().getSorCodes()) {
             SorComposition sorComposition = sorIdCompositionMap.get(worksSorId);
@@ -33,7 +34,7 @@ public class CalculatorService {
                 //TODO sort and get rates
                 Rates rate = ratesList.get(0);
 
-                LineItem lineItem = enrichmentUtil.createLineItem(basicSorDetail, rate);
+                LineItem lineItem = enrichmentUtil.createLineItem(basicSorDetail, rate, sorMap.get(basicSorDetail.getSorId()));
                 for (AmountDetail amountDetail : lineItem.getAmountDetails()) {
                     amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getQuantity()));
                 }

@@ -1,5 +1,6 @@
 package org.egov.works.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.works.util.MdmsUtil;
 import org.egov.works.web.models.*;
@@ -21,10 +22,11 @@ public class RateAnalysisService {
     }
 
     public RateAnalysisResponse calculateRate(AnalysisRequest analysisRequest) {
-        //TODO add exception handling
         Map<String, SorComposition> sorIdCompositionMap = mdmsUtil.fetchSorComposition(analysisRequest);
         Map<String, List<Rates>> basicRatesMap = mdmsUtil.fetchBasicRates(analysisRequest, sorIdCompositionMap);
-        List<RateAnalysis> rateAnalysis = calculatorService.calculateRateAnalysis(analysisRequest, sorIdCompositionMap, basicRatesMap);
+        Map<String, JsonNode> sorMap = mdmsUtil.fetchSor(analysisRequest, sorIdCompositionMap);
+        List<RateAnalysis> rateAnalysis = calculatorService.calculateRateAnalysis(analysisRequest, sorIdCompositionMap,
+                basicRatesMap, sorMap);
         RateAnalysisResponse rateAnalysisResponse = RateAnalysisResponse.builder()
                 .rateAnalysis(rateAnalysis).responseInfo(new ResponseInfo()).build();
         return rateAnalysisResponse;

@@ -1,6 +1,7 @@
 package org.egov.works.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.mdms.*;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class MdmsUtil {
     private Configuration configs;
 
     public Map<String, SorComposition> fetchSorComposition(AnalysisRequest analysisRequest) {
-            String filter = getfilter(analysisRequest.getSorDetails().getSorCodes());
+            String filter = getfilter(analysisRequest.getSorDetails().getSorCodes(), false);
             Map<String, Map<String, JSONArray>> sorComposition = fetchMdmsData(analysisRequest.getRequestInfo(),
                     analysisRequest.getSorDetails().getTenantId(), "WORKS-SOR",
                     Collections.singletonList("Composition"), filter);
@@ -69,7 +70,7 @@ public class MdmsUtil {
         for (SorComposition sorComposition : sorIdToCompositionMap.values()) {
             basicSorIds.addAll(sorComposition.getBasicSorDetails().stream().map(BasicSorDetail::getSorId).toList());
         }
-        String filter = getfilter(basicSorIds.stream().toList());
+        String filter = getfilter(basicSorIds.stream().toList(), false);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(analysisRequest.getRequestInfo(),
                 analysisRequest.getSorDetails().getTenantId(), "WORKS-SOR",
                 Collections.singletonList("Rates"), filter);
@@ -87,10 +88,31 @@ public class MdmsUtil {
 
     }
 
-    private String getfilter(List<String> sorIds) {
-        StringBuilder filterBuilder = new StringBuilder(FILTER_START).append(ID_FILTER).append(sorIds.get(0));
+    public Map<String, JsonNode> fetchSor(AnalysisRequest analysisRequest, Map<String, SorComposition> sorIdToCompositionMap) {
+        Set<String> basicSorIds = new HashSet<>();
+
+        for (SorComposition sorComposition : sorIdToCompositionMap.values()) {
+            basicSorIds.addAll(sorComposition.getBasicSorDetails().stream().map(BasicSorDetail::getSorId).toList());
+        }
+        String filter = getfilter(basicSorIds.stream().toList(), true);
+        Map<String, Map<String, JSONArray>> sor = fetchMdmsData(analysisRequest.getRequestInfo(),
+                analysisRequest.getSorDetails().getTenantId(), "WORKS-SOR",
+                Collections.singletonList("SOR"), filter);
+        JSONArray jsonArray = sor.get("WORKS-SOR").get("SOR");
+        Map<String, JsonNode> sorMap = new HashMap<>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonNode jsonNode = mapper.convertValue(jsonArray.get(i), JsonNode.class);
+            String id = jsonNode.get("id").asText();
+            sorMap.put(id, jsonNode);
+        }
+        return sorMap;
+    }
+
+    private String getfilter(List<String> sorIds, boolean isSOR) {
+        String filterBy = isSOR ? ID_FILTER : SOR_ID_FILTER;
+        StringBuilder filterBuilder = new StringBuilder(FILTER_START).append(filterBy).append(sorIds.get(0));
         for(int i = 1; i < sorIds.size(); i++) {
-            filterBuilder.append(FILTER_OR_CONSTANT).append(ID_FILTER);
+            filterBuilder.append(FILTER_OR_CONSTANT).append(filterBy);
             filterBuilder.append(sorIds.get(i));
         }
         filterBuilder.append(FILTER_END);
