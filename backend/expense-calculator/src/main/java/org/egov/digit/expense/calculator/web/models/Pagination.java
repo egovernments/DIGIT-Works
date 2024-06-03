@@ -25,8 +25,8 @@ import lombok.NoArgsConstructor;
 public class Pagination {
 	@JsonProperty("limit")
 
-//	@DecimalMax("100")
-	private Integer limit = null;
+	@DecimalMax("100")
+	private Integer limit = 10;
 
 	@JsonProperty("offset")
 
