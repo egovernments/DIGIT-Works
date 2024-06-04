@@ -12,10 +12,12 @@
 import os
 
 from es_client import search_es
-from common import getIsProjectCompleted, writeDataToFile
+from common import getIsProjectCompleted, writeDataToFile, getKpiDetails, getAssigneeByDesignation, getHRMSIDMap, \
+    getInitialKpiObject
 
+KPI_ID = 'KPI2'
 
-def getProjectsFromLastFinancialYear(tenantId):
+def getProjectsFromLastFinancialYear(tenantId, fromDate, toDate):
     query = {
         "from": 0,
         "size": 100,
@@ -39,19 +41,19 @@ def getProjectsFromLastFinancialYear(tenantId):
                 {
                   "range": {
                     "Data.auditDetails.createdTime": {
-                      "gte": int(os.getenv('PROJECTS_FROM_DATE')),
-                      "lte": int(os.getenv('PROJECTS_TO_DATE'))
+                      "gte": fromDate,
+                      "lte": toDate
                     }
                   }
                 },
-                # TODO: Remove after testing
-                {
-                  "terms": {
-                    "Data.projectNumber.keyword": [
-                      "PJ/2023-24/000188"
-                    ]
-                  }
-                }
+                # # TODO: Remove after testing
+                # {
+                #   "terms": {
+                #     "Data.projectNumber.keyword": [
+                #       "PJ/2023-24/000188"
+                #     ]
+                #   }
+                # }
               ]
             }
         }
@@ -94,13 +96,13 @@ def getContractDetailByProjectId(tenantId, projectId):
                             }
                         }
                     },
-                    {
-                        "term": {
-                            "Data.status.keyword": {
-                                "value": "ACTIVE"
-                            }
-                        }
-                    },
+                    # {
+                    #     "term": {
+                    #         "Data.status.keyword": {
+                    #             "value": "ACTIVE"
+                    #         }
+                    #     }
+                    # },
                     {
                         "term": {
                             "Data.additionalDetails.projectId.keyword": {
@@ -180,10 +182,71 @@ def getBillsByProjectId(tenantId, projectId):
         sumOfBillAmount = response['aggregations']['billAmount']['value']
     return [bills, sumOfBillAmount]
 
-def calculate_KPI2(curser, tenantId):
+def processBillDetails(tenantId, projectDataMap, hrmsDetails):
+    kpiDetail = getKpiDetails(KPI_ID)
+    hrmsEmployeeIdUsrDetailMap = getAssigneeByDesignation(hrmsDetails, kpiDetail['designations'])
+    hrmsIds = list(hrmsEmployeeIdUsrDetailMap.keys())
+    hasDirectEmployees = False
+    contractIdUserMap = {}
+    kraByEmployeeIdMap = {}
+    if len(hrmsIds) > 0:
+        hasDirectEmployees = True
+
+    if not hasDirectEmployees:
+        hrmsEmployeeIdUsrDetailMap = getHRMSIDMap(hrmsDetails)
+        if len(projectDataMap.keys()) > 0:
+            for projectId in projectDataMap:
+                print('projectId : ', projectId)
+                inchargeId = projectDataMap[projectId].get('officerInChargeId', None)
+                print('inchargeId : ', inchargeId)
+                if inchargeId is not None and inchargeId not in contractIdUserMap:
+                    contractIdUserMap[projectDataMap[projectId]['contractNumber']] = inchargeId
+
+    for hrmsId in hrmsIds:
+        kraByEmployeeIdMap[hrmsId] = getInitialKpiObject(tenantId, hrmsEmployeeIdUsrDetailMap[hrmsId]['designation'],
+                                                         hrmsEmployeeIdUsrDetailMap[hrmsId]['name'], kpiDetail['id'])
+
+    for projectId in projectDataMap:
+        print('Processing project : ' + projectId)
+        projectObj = projectDataMap[projectId]
+        if hasDirectEmployees:
+            print('Process according to hrms user')
+            for hrmsId in hrmsIds:
+                kraByEmployeeIdMap[hrmsId]['total_count'] += 1
+                if projectObj.get('isProjectCompletedOnTime'):
+                    kraByEmployeeIdMap[hrmsId]['positive_count'] += 1
+                else:
+                    kraByEmployeeIdMap[hrmsId]['negative_count'] += 1
+        else:
+            print('Process according to contract user')
+            contractNumber = projectObj.get('contractNumber', None)
+            if contractNumber is None:
+                continue
+            if contractNumber not in contractIdUserMap:
+                continue
+            officerInchargeId = contractIdUserMap[projectObj.get('contractNumber', None)]
+            if officerInchargeId is not None:
+                print('Process according to contract user')
+                if officerInchargeId not in kraByEmployeeIdMap and officerInchargeId in hrmsEmployeeIdUsrDetailMap:
+                    kraByEmployeeIdMap[officerInchargeId] = getInitialKpiObject(tenantId,
+                                                                                hrmsEmployeeIdUsrDetailMap[
+                                                                                    officerInchargeId]['designation'],
+                                                                                hrmsEmployeeIdUsrDetailMap[
+                                                                                    officerInchargeId]['name'],
+                                                                                kpiDetail['id'])
+                if officerInchargeId in kraByEmployeeIdMap:
+                    kraByEmployeeIdMap[officerInchargeId]['total_count'] += 1
+                    if projectObj.get('isProjectCompletedOnTime'):
+                        kraByEmployeeIdMap[officerInchargeId]['positive_count'] += 1
+                    else:
+                        kraByEmployeeIdMap[officerInchargeId]['negative_count'] += 1
+            else:
+                print('Officer incharge not found for projectId: ', projectId)
+
+    return kraByEmployeeIdMap
+
+def calculate_KPI2(curser, tenantId, projects, hrmsDetails):
     projectsDataMap = {}
-    projects = getProjectsFromLastFinancialYear(tenantId)
-    print(projects)
     for project in projects:
         projectMap = {}
         if project.get('projectNumber') not in projectsDataMap:
@@ -207,9 +270,8 @@ def calculate_KPI2(curser, tenantId):
             contract = contracts[0]
             projectMap['contractId'] = contract.get('id')
             projectMap['contractNumber'] = contract.get('contractNumber')
-            projectMap['assigneeUserId'] = contract.get('assigneeUserId')
-            projectMap['contractedAmount'] = contract.get('totalContractedAmount')
-            projectMap['officerInChargeId'] = contract.get('additionalDetails', {}).get('assigneeUserId')
+            projectMap['contractedAmount'] = contract.get('contractedAmount', 0)
+            projectMap['officerInChargeId'] = contract.get('additionalDetails', {}).get('officerInChargeId', None)
             bills = []
             sumOfBillAmount = 0
             [bills, sumOfBillAmount] = getBillsByProjectId(tenantId, project.get('projectNumber'))
@@ -223,7 +285,13 @@ def calculate_KPI2(curser, tenantId):
         projectsDataMap[project.get('projectNumber')] = projectMap
 
     print(projectsDataMap)
-    #todo: get user details and assign to that
-    writeDataToFile(tenantId=tenantId, kpiId='kpi2', data = projectsDataMap)
 
-    return
+    kraByEmployeeIdMap = processBillDetails(tenantId, projectsDataMap, hrmsDetails)
+    kpi2Response = []
+    for employeeId in kraByEmployeeIdMap:
+        if kraByEmployeeIdMap[employeeId]['total_count'] > 0:
+            score = (kraByEmployeeIdMap[employeeId]['positive_count'] / kraByEmployeeIdMap[employeeId][
+                'total_count']) * 100
+            kraByEmployeeIdMap[employeeId]['score'] = round(score, 2)
+            kpi2Response.append(kraByEmployeeIdMap[employeeId])
+    return kpi2Response
