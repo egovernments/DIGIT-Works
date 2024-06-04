@@ -5,6 +5,7 @@ import urllib3
 import os
 import json
 from dotenv import load_dotenv
+import uuid
 
 load_dotenv('.env')
 # Suppress warnings related to unverified HTTPS requests
@@ -41,3 +42,10 @@ def search_es(index_name, query):
     response.raise_for_status()
 
     return response.json()
+def push_data_to_es(data, index_name):
+    for i, record in enumerate(data):
+        url = f"{ES_URL}/{index_name}/_create/{uuid.uuid4()}"
+        headers = {"Content-Type": "application/json"}
+        auth = HTTPBasicAuth(ES_USERNAME, ES_PASSWORD)
+        response = requests.post(url, headers=headers, auth=auth, data=json.dumps(record), verify=False)  # Push each record to the ES index
+        response.raise_for_status()  # Check for HTTP request errors

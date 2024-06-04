@@ -16,7 +16,7 @@ Step 2: Calculate the percentage of success:
 """
 
 
-def getMusterRollsForEachTenant(tenantId):
+def getMusterRollsForEachTenant(tenantId, projectIds):
     query = {
         "from": 0,
         "size": 100,
@@ -43,6 +43,11 @@ def getMusterRollsForEachTenant(tenantId):
                                 "value": "ACTIVE"
                             }
                         }
+                    },
+                    {
+                        "terms": {
+                            "Data.additionalDetails.projectId.keyword": projectIds
+                        }
                     }
                 ]
             }
@@ -64,13 +69,15 @@ def getMusterRollsForEachTenant(tenantId):
     return muster_rolls
 
 
-def calculate_kpi7(cursor, tenantId):
+def calculate_kpi7(cursor, tenantId, projectIds):
     muster_roll_data_map = {}
     count = 0
     totalCount = 0
-    muster_rolls = getMusterRollsForEachTenant(tenantId)
+    muster_rolls = getMusterRollsForEachTenant(tenantId, projectIds)
     for muster_roll in muster_rolls:
         muster_roll_number = muster_roll.get('musterRollNumber')
+        print("Processing KPI7 for muster roll number: ", muster_roll_number)
+        projectId= muster_roll.get('additionalDetails').get('projectId')
         if muster_roll_data_map.get(muster_roll_number) is None:
             muster_roll_data_map[muster_roll_number] = {
                 'musterRollNumber': muster_roll_number,
@@ -88,9 +95,9 @@ def calculate_kpi7(cursor, tenantId):
             if (musterRollApprovedTime - musterRollCreatedTime) <= 3 * int(DAY_EPOCH_TIME):
                 count += 1
                 muster_roll_data_map[muster_roll_number]['kpi7'] = 1
-    print(count)
-    print(totalCount)
+
     muster_roll_data_map['kpi7'] = count / totalCount
     muster_roll_data_map['pos'] = count
     muster_roll_data_map['neg'] = totalCount - count
+    print("KPI 7: ", muster_roll_data_map['kpi7'] * 100)
     return muster_roll_data_map
