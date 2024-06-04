@@ -15,7 +15,7 @@ Step 2: Calculate the percentage of success: (Count of 'Y')*100/(Total count)"
 """
 
 
-def getBillsForEachTenant(tenantId):
+def getBillsForEachTenant(tenantId, projectIds):
     PURCHASE_BILL_BUSINESS_SERVICE = os.getenv('PURCHASE_BILL_BUSINESS_SERVICE')
     query = {
         "from": 0,
@@ -50,6 +50,11 @@ def getBillsForEachTenant(tenantId):
                                 "value": PURCHASE_BILL_BUSINESS_SERVICE
                             }
                         }
+                    },
+                    {
+                        "terms": {
+                            "Data.additionalDetails.projectId.keyword": projectIds
+                        }
                     }
                 ]
             }
@@ -71,13 +76,15 @@ def getBillsForEachTenant(tenantId):
     return bills
 
 
-def calculate_kpi6(cursor, tenantId):
+def calculate_kpi6(cursor, tenantId, projectIds):
     bills_map = {}
     count = 0
     totalCount = 0
-    bills = getBillsForEachTenant(tenantId)
+    bills = getBillsForEachTenant(tenantId, projectIds)
     for bill in bills:
         bill_number = bill.get('billNumber')
+        print("Processing KPI 6 for bill: ", bill_number)
+        projectId = bill.get('additionalDetails', {}).get('projectId')
         if bills_map.get(bill_number) is None:
             bills_map[bill_number] = {
                 'billNumber': bill_number,
@@ -90,18 +97,15 @@ def calculate_kpi6(cursor, tenantId):
                 'billSubmissionTime': getTimeFromHistory(bill.get('history', []), 'SUBMIT')
             }
         totalCount += 1
-        if bills_map[bill_number]['billVerificationTime'] is not None and bills_map[bill_number][
-            'billSubmissionTime'] is not None:
+        if bills_map[bill_number]['billVerificationTime'] is not None and bills_map[bill_number]['billSubmissionTime'] is not None:
             bill_verification_time = bills_map[bill_number]['billVerificationTime']
             bill_submission_time = bills_map[bill_number]['billSubmissionTime']
             if bill_verification_time - bill_submission_time < 2 * int(DAY_EPOCH_TIME):
                 count += 1
                 bills_map[bill_number]['kpi6'] += 1
 
-    print(bills_map)
-    print(count)
-    print(totalCount)
     bills_map['kpi6'] = count / totalCount
     bills_map['pos'] = count
     bills_map['neg'] = totalCount - count
+    print("KPI 6: ", bills_map['kpi6'] * 100)
     return bills_map

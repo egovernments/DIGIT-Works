@@ -170,14 +170,17 @@ def getTimeFromHistory(history, status):
     return None
 
 
-def calculate_kpi5(cursor, tenantId):
+def calculate_kpi5(cursor, tenantId, projectIds):
     projectDataMap = {}
+    fromDate = int(os.getenv('PROJECTS_FROM_DATE'))
+    toDate = int(os.getenv('PROJECTS_TO_DATE'))
     totalCount = 0
     count = 0
-    projects = getProjectsFromLastFinancialYear(tenantId)
+    projects = getProjectsFromLastFinancialYear(tenantId, fromDate, toDate)
     for project in projects:
+        print("Processing Kpi5 for project: ", project.get('projectNumber'))
         projectNumber = project.get('projectNumber')
-        if projectDataMap.get(projectNumber) is None:
+        if projectDataMap.get(projectNumber) is None and projectNumber in projectIds:
             projectDataMap[projectNumber] = {
                 'projectId': projectNumber,
                 'contractNumber': None,
@@ -210,9 +213,8 @@ def calculate_kpi5(cursor, tenantId):
                     count += 1
                     projectDataMap[projectNumber]['kpi5'] = 1
 
-    print(projectDataMap)
-    print(count / totalCount)
     projectDataMap['kpi5'] = count / totalCount
     projectDataMap['pos'] = count
     projectDataMap['neg'] = totalCount - count
+    print("Kpi5: ", projectDataMap['kpi5'] * 100, "%" )
     return projectDataMap

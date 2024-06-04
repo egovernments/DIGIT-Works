@@ -15,14 +15,17 @@ Step 2: Calculate the percentage of success:
 """
 
 
-def calculate_kpi12(cursor, tenantId):
+def calculate_kpi12(cursor, tenantId, projectIds):
     projectDataMap = {}
     count = 0
     totalCount = 0
-    projects = getProjectsFromLastFinancialYear(tenantId)
+    fromDate = int(os.getenv('PROJECTS_FROM_DATE'))
+    toDate = int(os.getenv('PROJECTS_TO_DATE'))
+    projects = getProjectsFromLastFinancialYear(tenantId, fromDate, toDate)
     for project in projects:
         projectNumber = project.get('projectNumber')
-        if projectDataMap.get(projectNumber) is None:
+        print("Processing KPI12 for projectNumber: ", projectNumber)
+        if projectDataMap.get(projectNumber) is None and projectNumber in projectIds:
             projectDataMap[projectNumber] = {
                 'projectId': projectNumber,
                 'contractNumber': None,
@@ -57,9 +60,8 @@ def calculate_kpi12(cursor, tenantId):
                         count += 1
                         projectDataMap[projectNumber]['kpi12'] = 1
 
-    print(projectDataMap)
-    print(count / totalCount)
     projectDataMap['kpi12'] = count / totalCount
     projectDataMap['pos'] = count
     projectDataMap['neg'] = totalCount - count
+    print("Kpi12: ", projectDataMap['kpi12'] * 100, "%")
     return projectDataMap

@@ -9,7 +9,7 @@ from urllib.parse import urlencode
 import urllib3
 
 from common import writeDataToFile
-from kpi1 import calculate_KPI1
+from kpi1 import calculate_KPI1, getKpiDetails, getAssigneeByDesignation, getInitialKpiObject
 from kpi2 import calculate_KPI2, getProjectsFromLastFinancialYear
 from kpi3 import calculate_KPI3
 from kpi4 import calculate_KPI4
@@ -18,6 +18,7 @@ from kpi6 import calculate_kpi6
 from kpi7 import calculate_kpi7
 from kpi10 import calculate_kpi10
 from kpi12 import calculate_kpi12
+from es_client import push_data_to_es
 import warnings
 
 load_dotenv('.env')
@@ -33,6 +34,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 warnings.filterwarnings("ignore",
                         message="Connecting to 'https://localhost:9200' using TLS with verify_certs=False is insecure")
 
+KPI_INDEX = os.getenv('KPI_INDEX')
 designation_map = {
     "WRK_EE": "Executive Engineer",
     "WRK_DEE": "Deputy Executive Engineer",
@@ -347,73 +349,105 @@ def calculateKPI4(cursor, tenantId, projectIds, hrmsDetails, projectDataMap):
 
 
 # Work Order was issued for 100% of the final list of projects within 7 days from Administrative Approval
-def calculateKPI5(cursor, tenantId, hrmsDetails):
-    designations = ['WRK_ME', 'WRK_EE', 'WRK_AEE']
-    District = tenantId.split('.')[1]
-    kpi = "Work Order was issued for 100% of the final list of projects within 7 days from Administrative Approval "
-    kra = "At least 75% of projects included in yearly MUKTA action plan were completed during the financial year"
+def calculateKPI5(cursor, tenantId, hrmsDetails, projectIds):
+    kpiDetail = getKpiDetails("KPI5")
+    hrmsEmployeeIdUsrDetailMap = getAssigneeByDesignation(hrmsDetails, kpiDetail['designations'])
+    hrmsIds = list(hrmsEmployeeIdUsrDetailMap.keys())
+    kraByEmployeeIdMap = {}
+    for hrmsId in hrmsIds:
+        kraByEmployeeIdMap[hrmsId] = getInitialKpiObject(tenantId, hrmsEmployeeIdUsrDetailMap[hrmsId]['designation'], hrmsEmployeeIdUsrDetailMap[hrmsId]['name'], kpiDetail['id'])
     kpi_users = []
-    kpis = calculate_kpi5(cursor, tenantId)
+    kpis = calculate_kpi5(cursor, tenantId, projectIds)
     pos = kpis.get('pos')
     neg = kpis.get('neg')
     kpi_score = kpis.get('kpi5')
-    for employee in hrmsDetails:
-        designation = employee['assignments'][0]['designation']
-        name = employee.get('user').get('name')
-        if designation in designations:
-            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg)
-            kpi_users.append(kpi_obj)
+    for kpi in kraByEmployeeIdMap:
+        kraByEmployeeIdMap[kpi]['score'] = round(kpi_score * 100, 2)
+        kraByEmployeeIdMap[kpi]['positive_count'] = pos
+        kraByEmployeeIdMap[kpi]['negative_count'] = neg
+        kraByEmployeeIdMap[kpi]['total_count'] = pos + neg
+        kpi_users.append(kraByEmployeeIdMap[kpi])
 
     if len(kpi_users) == 0:
-        kpi_users.append(get_kpi_obj(District, kra, kpi, None, None, kpi_score, pos, neg))
+        invalid_kpi = getInitialKpiObject(tenantId, None, None, kpiDetail['id'])
+        invalid_kpi['score'] = round(kpi_score * 100, 2)
+        invalid_kpi['positive_count'] = pos
+        invalid_kpi['negative_count'] = neg
+        invalid_kpi['total_count'] = pos + neg
+        kpi_users.append(invalid_kpi)
 
+    print("Pushing data to ES for KPI5")
+    push_data_to_es(kpi5, KPI_INDEX)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI5', data=kpi_users)
     return kpi_users
 
 
 # Vendor payment requests verified within 2 days after submission from JE/IE/AEE
-def calculateKPI6(cursor, tenantId, hrmsDetails):
-    designations = ['WRK_ME', 'WRK_EE', 'WRK_AEE']
-    District = tenantId.split('.')[1]
-    kpi = "Vendor payment requests verified within 2 days after submission from JE/IE/AEE"
-    kra = "100% payments were completed within the stipulated timeframe"
+def calculateKPI6(cursor, tenantId, hrmsDetails, projectIds):
+    kpiDetail = getKpiDetails("KPI6")
+    hrmsEmployeeIdUsrDetailMap = getAssigneeByDesignation(hrmsDetails, kpiDetail['designations'])
+    hrmsIds = list(hrmsEmployeeIdUsrDetailMap.keys())
+    kraByEmployeeIdMap = {}
+    for hrmsId in hrmsIds:
+        kraByEmployeeIdMap[hrmsId] = getInitialKpiObject(tenantId, hrmsEmployeeIdUsrDetailMap[hrmsId]['designation'],
+                                                         hrmsEmployeeIdUsrDetailMap[hrmsId]['name'], kpiDetail['id'])
     kpi_users = []
-    kpis = calculate_kpi6(cursor, tenantId)
+    kpis = calculate_kpi6(cursor, tenantId, projectIds)
     pos = kpis.get('pos')
     neg = kpis.get('neg')
     kpi_score = kpis.get('kpi6')
-    for employee in hrmsDetails:
-        designation = employee['assignments'][0]['designation']
-        name = employee.get('user').get('name')
-        if designation in designations:
-            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg)
-            kpi_users.append(kpi_obj)
+    for kpi in kraByEmployeeIdMap:
+        kraByEmployeeIdMap[kpi]['score'] = round(kpi_score * 100, 2)
+        kraByEmployeeIdMap[kpi]['positive_count'] = pos
+        kraByEmployeeIdMap[kpi]['negative_count'] = neg
+        kraByEmployeeIdMap[kpi]['total_count'] = pos + neg
+        kpi_users.append(kraByEmployeeIdMap[kpi])
 
     if len(kpi_users) == 0:
-        kpi_users.append(get_kpi_obj(District, kra, kpi, None, None, kpi_score, pos, neg))
+        invalid_kpi = getInitialKpiObject(tenantId, None, None, kpiDetail['id'])
+        invalid_kpi['score'] = round(kpi_score * 100, 2)
+        invalid_kpi['positive_count'] = pos
+        invalid_kpi['negative_count'] = neg
+        invalid_kpi['total_count'] = pos + neg
+        kpi_users.append(invalid_kpi)
 
+    print("Pushing data to ES for KPI6")
+    push_data_to_es(kpi5, KPI_INDEX)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI6', data=kpi_users)
     return kpi_users
 
 # Muster roll approved within 3 days of submission
-def calculateKPI7(cursor, tenantId, hrmsDetails):
-    designations = ['WRK_ME', 'WRK_EE', 'WRK_AE']
-    District = tenantId.split('.')[1]
-    kpi = "Muster roll approved within 3 days of submission"
-    kra = "100% payments were completed within the stipulated timeframe"
+def calculateKPI7(cursor, tenantId, hrmsDetails, projectIds):
+    kpiDetail = getKpiDetails("KPI7")
+    hrmsEmployeeIdUsrDetailMap = getAssigneeByDesignation(hrmsDetails, kpiDetail['designations'])
+    hrmsIds = list(hrmsEmployeeIdUsrDetailMap.keys())
+    kraByEmployeeIdMap = {}
+    for hrmsId in hrmsIds:
+        kraByEmployeeIdMap[hrmsId] = getInitialKpiObject(tenantId, hrmsEmployeeIdUsrDetailMap[hrmsId]['designation'],
+                                                         hrmsEmployeeIdUsrDetailMap[hrmsId]['name'], kpiDetail['id'])
     kpi_users = []
-    kpis = calculate_kpi7(cursor, tenantId)
+    kpis = calculate_kpi7(cursor, tenantId, projectIds)
     pos = kpis.get('pos')
     neg = kpis.get('neg')
     kpi_score = kpis.get('kpi7')
-    for employee in hrmsDetails:
-        designation = employee['assignments'][0]['designation']
-        name = employee.get('user').get('name')
-        if designation in designations:
-            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg)
-            kpi_users.append(kpi_obj)
+    for kpi in kraByEmployeeIdMap:
+        kraByEmployeeIdMap[kpi]['score'] = round(kpi_score * 100, 2)
+        kraByEmployeeIdMap[kpi]['positive_count'] = pos
+        kraByEmployeeIdMap[kpi]['negative_count'] = neg
+        kraByEmployeeIdMap[kpi]['total_count'] = pos + neg
+        kpi_users.append(kraByEmployeeIdMap[kpi])
 
     if len(kpi_users) == 0:
-        kpi_users.append(get_kpi_obj(District, kra, kpi, None, None, kpi_score, pos, neg))
+        invalid_kpi = getInitialKpiObject(tenantId, None, None, kpiDetail['id'])
+        invalid_kpi['score'] = round(kpi_score * 100, 2)
+        invalid_kpi['positive_count'] = pos
+        invalid_kpi['negative_count'] = neg
+        invalid_kpi['total_count'] = pos + neg
+        kpi_users.append(invalid_kpi)
 
+    print("Pushing data to ES for KPI7")
+    push_data_to_es(kpi5, KPI_INDEX)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI7', data=kpi_users)
     return kpi_users
 
 
@@ -428,26 +462,37 @@ def calculateKPI9():
 
 
 # Submitted draft Work Orders for 100% of projects to ME within 30 days from Technical Sanction and Administrative Approval
-def calculateKPI10(cursor, tenantId, hrmsDetails):
-    designations = ['WRK_PC']
-    District = tenantId.split('.')[1]
-    kpi = "Submitted draft Work Orders for 100% of projects to ME within 30 days from Technical Sanction and Administrative Approval "
-    kra = "At least 75% of the projects had no time overrun"
+def calculateKPI10(cursor, tenantId, hrmsDetails, projectIds):
+    kpiDetail = getKpiDetails("KPI10")
+    hrmsEmployeeIdUsrDetailMap = getAssigneeByDesignation(hrmsDetails, kpiDetail['designations'])
+    hrmsIds = list(hrmsEmployeeIdUsrDetailMap.keys())
+    kraByEmployeeIdMap = {}
+    for hrmsId in hrmsIds:
+        kraByEmployeeIdMap[hrmsId] = getInitialKpiObject(tenantId, hrmsEmployeeIdUsrDetailMap[hrmsId]['designation'],
+                                                         hrmsEmployeeIdUsrDetailMap[hrmsId]['name'], kpiDetail['id'])
     kpi_users = []
-    kpis = calculate_kpi10(cursor, tenantId)
+    kpis = calculate_kpi10(cursor, tenantId, projectIds)
     pos = kpis.get('pos')
     neg = kpis.get('neg')
     kpi_score = kpis.get('kpi10')
-    for employee in hrmsDetails:
-        designation = employee['assignments'][0]['designation']
-        name = employee.get('user').get('name')
-        if designation in designations:
-            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg)
-            kpi_users.append(kpi_obj)
+    for kpi in kraByEmployeeIdMap:
+        kraByEmployeeIdMap[kpi]['score'] = round(kpi_score * 100, 2)
+        kraByEmployeeIdMap[kpi]['positive_count'] = pos
+        kraByEmployeeIdMap[kpi]['negative_count'] = neg
+        kraByEmployeeIdMap[kpi]['total_count'] = pos + neg
+        kpi_users.append(kraByEmployeeIdMap[kpi])
 
     if len(kpi_users) == 0:
-        kpi_users.append(get_kpi_obj(District, kra, kpi, None, None, kpi_score, pos, neg))
+        invalid_kpi = getInitialKpiObject(tenantId, None, None, kpiDetail['id'])
+        invalid_kpi['score'] = round(kpi_score * 100, 2)
+        invalid_kpi['positive_count'] = pos
+        invalid_kpi['negative_count'] = neg
+        invalid_kpi['total_count'] = pos + neg
+        kpi_users.append(invalid_kpi)
 
+    print("Pushing data to ES for KPI10")
+    push_data_to_es(kpi5, KPI_INDEX)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI10', data=kpi_users)
     return kpi_users
 
 
@@ -455,26 +500,36 @@ def calculateKPI10(cursor, tenantId, hrmsDetails):
 def calculateKPI11():
     return
 
-def calculateKPI12(cursor, tenantId, hrmsDetails):
-    designations = ['WRK_ME', 'WRK_EE', 'WRK_AEE']
-    District = tenantId.split('.')[1]
-    kpi = "Work Order was verified and sent for approval for 100% of the final list of projects within 5 days from Administrative Approval "
-    kra = "At least 75% of projects included in yearly MUKTA action plan were completed during the financial year"
+def calculateKPI12(cursor, tenantId, hrmsDetails, projectIds):
+    kpiDetail = getKpiDetails("KPI12")
+    hrmsEmployeeIdUsrDetailMap = getAssigneeByDesignation(hrmsDetails, kpiDetail['designations'])
+    hrmsIds = list(hrmsEmployeeIdUsrDetailMap.keys())
+    kraByEmployeeIdMap = {}
+    for hrmsId in hrmsIds:
+        kraByEmployeeIdMap[hrmsId] = getInitialKpiObject(tenantId, hrmsEmployeeIdUsrDetailMap[hrmsId]['designation'],
+                                                         hrmsEmployeeIdUsrDetailMap[hrmsId]['name'], kpiDetail['id'])
     kpi_users = []
-    kpis = calculate_kpi12(cursor, tenantId)
+    kpis = calculate_kpi12(cursor, tenantId, projectIds)
     pos = kpis.get('pos')
     neg = kpis.get('neg')
     kpi_score = kpis.get('kpi12')
-    for employee in hrmsDetails:
-        designation = employee['assignments'][0]['designation']
-        name = employee.get('user').get('name')
-        if designation in designations:
-            kpi_obj = get_kpi_obj(District, kra, kpi, designation, name, kpi_score, pos, neg)
-            kpi_users.append(kpi_obj)
+    for kpi in kraByEmployeeIdMap:
+        kraByEmployeeIdMap[kpi]['score'] = round(kpi_score * 100, 2)
+        kraByEmployeeIdMap[kpi]['positive_count'] = pos
+        kraByEmployeeIdMap[kpi]['negative_count'] = neg
+        kraByEmployeeIdMap[kpi]['total_count'] = pos + neg
+        kpi_users.append(kraByEmployeeIdMap[kpi])
 
     if len(kpi_users) == 0:
-        kpi_users.append(get_kpi_obj(District, kra, kpi, None, None, kpi_score, pos, neg))
-
+        invalid_kpi = getInitialKpiObject(tenantId, None, None, kpiDetail['id'])
+        invalid_kpi['score'] = round(kpi_score * 100, 2)
+        invalid_kpi['positive_count'] = pos
+        invalid_kpi['negative_count'] = neg
+        invalid_kpi['total_count'] = pos + neg
+        kpi_users.append(invalid_kpi)
+    print("Pushing data to ES for KPI12")
+    push_data_to_es(kpi5, KPI_INDEX)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI12', data=kpi_users)
     return kpi_users
 
 if __name__ == '__main__':
@@ -490,9 +545,9 @@ if __name__ == '__main__':
         projectDataMap = calculateKPI2(cursor, tenantId, projects, hrmsDetails)
         calculateKPI3(cursor, tenantId, projects, hrmsDetails, projectDataMap)
         calculateKPI4(cursor, tenantId, projectIds, hrmsDetails, projectDataMap)
-        # kpi5 = calculateKPI5(cursor, tenantId, hrmsDetails)
-        # kpi6 = calculateKPI6(cursor, tenantId, hrmsDetails)
-        # kpi7 = calculateKPI7(cursor, tenantId, hrmsDetails)
-        # kpi10 = calculateKPI10(cursor, tenantId, hrmsDetails)
-        # kpi12 = calculateKPI12(cursor, tenantId, hrmsDetails)
+        calculateKPI5(cursor, tenantId, hrmsDetails, projectIds)
+        calculateKPI6(cursor, tenantId, hrmsDetails, projectIds)
+        calculateKPI7(cursor, tenantId, hrmsDetails, projectIds)
+        calculateKPI10(cursor, tenantId, hrmsDetails, projectIds)
+        calculateKPI12(cursor, tenantId, hrmsDetails, projectIds)
         # print(kpi10)
