@@ -8,8 +8,9 @@ from dotenv import load_dotenv
 from urllib.parse import urlencode
 import urllib3
 
+from common import writeDataToFile
 from kpi1 import calculate_KPI1
-from kpi2 import calculate_KPI2
+from kpi2 import calculate_KPI2, getProjectsFromLastFinancialYear
 from kpi5 import calculate_kpi5
 from kpi6 import calculate_kpi6
 from kpi7 import calculate_kpi7
@@ -249,100 +250,6 @@ def getProjectListBetweenDate(tenantId, fromDate, toDate, cursor):
     return formatted_data
 
 
-def getProjectsFromLastFinancialYear(es, tenantId):
-    query = {
-        "bool": {
-            "must": [
-                {
-                    "term": {
-                        "Data.tenantId.keyword": {
-                            "value": "od.testing"
-                        }
-                    }
-                },
-                {
-                    "range": {
-                        "Data.auditDetails.createdTime": {
-                            "gte": 1680307200000,
-                            "lte": 1711929599000
-                        }
-                    }
-                }
-            ]
-        }
-    }
-    response = es.search(index=os.getenv('PROJECT_INDEX'), body=query, size=10000)
-
-    return
-
-
-def getMusterRollList():
-    return
-
-
-def getBillList():
-    return
-
-
-def getEstimateByProjectId(tenant_id, projectId):
-    try:
-        estimate_service_host = os.getenv('ESTIMATE_HOST')
-        estimate_search = os.getenv('ESTIMATE_SEARCH')
-        query = urlencode("projectId={projectId}&tenantId={tenant_id}".format(projectId=projectId, tenant_id=tenant_id))
-        api_url = f"{estimate_service_host}/{estimate_search}?{query}"
-        headers = {
-            'Content-Type': 'application/json'
-        }
-        request = {
-            "RequestInfo": getRequestInfo()
-        }
-
-        response = requests.post(api_url, json=request, headers=headers)
-        estimates = []
-        if response.status_code == 200:
-            response_data = response.json()
-            # Assuming your response is stored in the variable 'response_data'
-            estimates.extend(response_data.get('estimates', []))
-        else:
-            print(f"Failed to fetch data from the API. Status code: {response.status_code}")
-            print(response.text)
-        return estimates
-    except Exception as e:
-        print("search_payment_instruction_from_ifms_adapter : error {}".format(str(e)))
-        raise e
-
-
-def getContractDetail(estimate):
-    # get contract details from API
-    try:
-        contract_service_host = os.getenv('CONTRACT_HOST')
-        contract_search = os.getenv('CONTRACT_SEARCH')
-        api_url = f"{contract_service_host}/{contract_search}"
-        headers = {
-            'Content-Type': 'application/json'
-        }
-        request = {
-            "RequestInfo": getRequestInfo(),
-
-        }
-
-        response = requests.post(api_url, json=request, headers=headers)
-        estimates = []
-        if response.status_code == 200:
-            response_data = response.json()
-            # Assuming your response is stored in the variable 'response_data'
-            estimates.extend(response_data.get('estimates', []))
-        else:
-            print(f"Failed to fetch data from the API. Status code: {response.status_code}")
-            print(response.text)
-        return estimates
-    except Exception as e:
-        print("search_payment_instruction_from_ifms_adapter : error {}".format(str(e)))
-        raise e
-    estimateIds
-    return
-
-
 def getHrmsDetails(tenantID):
     # get hrms details from API
     hrms_host = os.getenv('HRMS_HOST')
@@ -403,45 +310,20 @@ def getActualDateOfProjectCompletion(project):
 
 
 # ULB disbursed 100% payments within stipulated timeframe*
-def calculateKPI1(cursor, tenantId):
-    # start execution for each ULB
-    # get list of projects from API
-    # get list of muster roll from API
-    # for each muster roll get bill details
-    calculate_KPI1(cursor, tenantId)
-
+def calculateKPI1(cursor, tenantId, projectIds, hrmsDetails):
+    print('Calculating KPI1 for tenantId : ', tenantId )
+    employeeDetailsWithKRA1 = calculate_KPI1(cursor, tenantId, projectIds, hrmsDetails)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI1', data=employeeDetailsWithKRA1)
+    print('Finished calculating KPI1 for tenantId : ', tenantId )
     return
 
 
 # At least 75% of projects included in the ULB MUKTA action plan were completed during the financial year
-def calculateKPI2(cursor):
-    # get list of projects from API for each ULB and last financial year
-    # call getDateOfProjectCompletion to get end date of project completion
-    # get executive officer details from DB contract table
-    # Don't count those project for which bill is not created
-    for tenantId in tenantIds:
-        calculate_KPI2(cursor, tenantId)
-        # projects = getProjectListBetweenDate(tenantId, 1680307200000, 1711929599000, cursor)
-        # projects = getproject
-        # projects = [
-        #     {
-        #         "id": "746126ee-95e1-428d-9b7d-8da66a2349e9",
-        #         "tenantId": "od.testing",
-        #         "projectNumber": "PJ/2023-24/05/000053",
-        #         "createdTime": 1683885907565,
-        #         "lastModifiedTime": 1683885907565
-        #     }
-        # ]
-        # for project in projects:
-        #     estimates = getEstimateByProjectId(project.get('tenantId'), project.get('id'))
-        #     estimates = getEstimateByProjectId(project.get('tenantId'), project.get('id'))
-        #     if (estimates is None or len(estimates) == 0):
-        #         # get contract details from DB based on estimate
-        #         estimate = estimates[0]
-        #         getContractDetails(estimate)
-        #     projectEndDate = getActualDateOfProjectCompletion(project, cursor)
-        #     # get estimate detils from DB based on project
-        #     print(projectEndDate)
+def calculateKPI2(cursor, tenantId, projects, hrmsDetails):
+    print('Calculating KPI2 for tenantId : ', tenantId )
+    employeeDetailsWithKRA2 = calculate_KPI2(cursor, tenantId, projects, hrmsDetails)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI1', data=employeeDetailsWithKRA2)
+
     return
 
 
@@ -593,11 +475,13 @@ if __name__ == '__main__':
     cursor = connection.cursor()
     for tenantId in tenantIds:
         hrmsDetails = getHrmsDetails(tenantId)
-        kpi5 = calculateKPI5(cursor, tenantId, hrmsDetails)
-        kpi6 = calculateKPI6(cursor, tenantId, hrmsDetails)
-        kpi7 = calculateKPI7(cursor, tenantId, hrmsDetails)
-        kpi10 = calculateKPI10(cursor, tenantId, hrmsDetails)
-        kpi12 = calculateKPI12(cursor, tenantId, hrmsDetails)
-        print(kpi10)
-        # calculate_KPI1(cursor, tenantId)
-        # calculate_KPI2(cursor)
+        projects = getProjectsFromLastFinancialYear(tenantId=tenantId, fromDate=int(os.getenv('PROJECTS_FROM_DATE')), toDate=int(os.getenv('PROJECTS_TO_DATE')))
+        projectIds = [project.get('projectNumber') for project in projects]
+        calculateKPI1(cursor, tenantId, projectIds, hrmsDetails)
+        # calculateKPI2(cursor, tenantId, projects, hrmsDetails)
+        # kpi5 = calculateKPI5(cursor, tenantId, hrmsDetails)
+        # kpi6 = calculateKPI6(cursor, tenantId, hrmsDetails)
+        # kpi7 = calculateKPI7(cursor, tenantId, hrmsDetails)
+        # kpi10 = calculateKPI10(cursor, tenantId, hrmsDetails)
+        # kpi12 = calculateKPI12(cursor, tenantId, hrmsDetails)
+        # print(kpi10)
