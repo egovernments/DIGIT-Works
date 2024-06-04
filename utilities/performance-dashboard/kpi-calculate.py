@@ -21,6 +21,9 @@ from kpi12 import calculate_kpi12
 from es_client import push_data_to_es
 import warnings
 
+from kpi8 import calculate_KPI8
+from kpi9 import calculate_KPI9
+
 load_dotenv('.env')
 
 DB_HOST = os.getenv('DB_HOST')
@@ -452,12 +455,20 @@ def calculateKPI7(cursor, tenantId, hrmsDetails, projectIds):
 
 
 # All outstanding muster rolls approved and vendor bills submitted within 3 days of project completion
-def calculateKPI8():
+def calculateKPI8(cursor, tenantId, projectIds, hrmsDetails):
+    print('Calculating KPI8 for tenantId : ', tenantId)
+    employeeDetailsWithKPI8 = calculate_KPI8(cursor, tenantId, projectIds, hrmsDetails)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI8', data=employeeDetailsWithKPI8)
+    print('Finished calculating KPI8 for tenantId : ', tenantId)
     return
 
 
 # Vendor payment requests submitted within 3 days of project work completion
-def calculateKPI9():
+def calculateKPI9(cursor, tenantId, hrmsDetails, projectIds):
+    print('Calculating KPI9 for tenantId : ', tenantId)
+    employeeDetailsWithKPI9 = calculate_KPI9(cursor, tenantId, projectIds, hrmsDetails)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI9', data=employeeDetailsWithKPI9)
+    print('Finished calculating KPI9 for tenantId : ', tenantId)
     return
 
 
@@ -548,6 +559,8 @@ if __name__ == '__main__':
         calculateKPI5(cursor, tenantId, hrmsDetails, projectIds)
         calculateKPI6(cursor, tenantId, hrmsDetails, projectIds)
         calculateKPI7(cursor, tenantId, hrmsDetails, projectIds)
+        calculateKPI8(cursor, tenantId, projectIds, hrmsDetails)
+        calculateKPI9(cursor, tenantId, hrmsDetails, projectIds)
         calculateKPI10(cursor, tenantId, hrmsDetails, projectIds)
         calculateKPI12(cursor, tenantId, hrmsDetails, projectIds)
         # print(kpi10)
