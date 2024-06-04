@@ -260,18 +260,24 @@ def calculate_KPI2(curser, tenantId, projects, hrmsDetails):
                 'officerInChargeId': None,
                 'contractedAmount': 0,
                 'contractId': None,
-                'contractNumber': None
+                'contractNumber': None,
+                 'contractEndDate': None
             }
         else:
             projectMap = projectsDataMap[project.get('projectNumber')]
-        print(project)
+        print('Calculating for project : ' + project.get('projectNumber'))
+        print('Fetching contract details')
         contracts = getContractDetailByProjectId(tenantId, project.get('projectNumber'))
         if contracts and len(contracts) > 0:
             contract = contracts[0]
             projectMap['contractId'] = contract.get('id')
             projectMap['contractNumber'] = contract.get('contractNumber')
-            projectMap['contractedAmount'] = contract.get('contractedAmount', 0)
+            projectMap['contractedAmount'] = contract.get('contractedAmount', contract.get('totalContractedAmount', 0))
             projectMap['officerInChargeId'] = contract.get('additionalDetails', {}).get('officerInChargeId', None)
+            issueDate = contract.get('issueDate', None)
+            completionPeriod = contract.get('completionPeriod', None)
+            if issueDate is not None and completionPeriod is not None:
+                projectMap['contractEndDate'] = issueDate + (completionPeriod * 24 * 60 * 60 * 1000)
             bills = []
             sumOfBillAmount = 0
             [bills, sumOfBillAmount] = getBillsByProjectId(tenantId, project.get('projectNumber'))
@@ -284,14 +290,11 @@ def calculate_KPI2(curser, tenantId, projects, hrmsDetails):
                         projectMap['isProjectCompletedOnTime'] = True
         projectsDataMap[project.get('projectNumber')] = projectMap
 
-    print(projectsDataMap)
-
     kraByEmployeeIdMap = processBillDetails(tenantId, projectsDataMap, hrmsDetails)
     kpi2Response = []
     for employeeId in kraByEmployeeIdMap:
         if kraByEmployeeIdMap[employeeId]['total_count'] > 0:
-            score = (kraByEmployeeIdMap[employeeId]['positive_count'] / kraByEmployeeIdMap[employeeId][
-                'total_count']) * 100
+            score = (kraByEmployeeIdMap[employeeId]['positive_count'] / kraByEmployeeIdMap[employeeId]['total_count']) * 100
             kraByEmployeeIdMap[employeeId]['score'] = round(score, 2)
             kpi2Response.append(kraByEmployeeIdMap[employeeId])
-    return kpi2Response
+    return [projectsDataMap, kpi2Response]

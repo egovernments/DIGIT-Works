@@ -1,5 +1,6 @@
 import os
 import json
+import time
 
 def getIsProjectCompleted(contractedAmount, billAmount):
 
@@ -100,3 +101,6 @@ def getInitialKpiObject(tenantId, designation, employeeName, kpiId):
         "positive_count": 0,
         "negative_count": 0
     }
+
+def current_milli_time():
+    return round(time.time() * 1000)

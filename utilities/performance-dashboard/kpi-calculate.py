@@ -11,6 +11,8 @@ import urllib3
 from common import writeDataToFile
 from kpi1 import calculate_KPI1
 from kpi2 import calculate_KPI2, getProjectsFromLastFinancialYear
+from kpi3 import calculate_KPI3
+from kpi4 import calculate_KPI4
 from kpi5 import calculate_kpi5
 from kpi6 import calculate_kpi6
 from kpi7 import calculate_kpi7
@@ -312,8 +314,8 @@ def getActualDateOfProjectCompletion(project):
 # ULB disbursed 100% payments within stipulated timeframe*
 def calculateKPI1(cursor, tenantId, projectIds, hrmsDetails):
     print('Calculating KPI1 for tenantId : ', tenantId )
-    employeeDetailsWithKRA1 = calculate_KPI1(cursor, tenantId, projectIds, hrmsDetails)
-    writeDataToFile(tenantId=tenantId, kpiId='KPI1', data=employeeDetailsWithKRA1)
+    employeeDetailsWithKPI1 = calculate_KPI1(cursor, tenantId, projectIds, hrmsDetails)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI1', data=employeeDetailsWithKPI1)
     print('Finished calculating KPI1 for tenantId : ', tenantId )
     return
 
@@ -321,19 +323,26 @@ def calculateKPI1(cursor, tenantId, projectIds, hrmsDetails):
 # At least 75% of projects included in the ULB MUKTA action plan were completed during the financial year
 def calculateKPI2(cursor, tenantId, projects, hrmsDetails):
     print('Calculating KPI2 for tenantId : ', tenantId )
-    employeeDetailsWithKRA2 = calculate_KPI2(cursor, tenantId, projects, hrmsDetails)
-    writeDataToFile(tenantId=tenantId, kpiId='KPI1', data=employeeDetailsWithKRA2)
-
-    return
+    [projectsDataMap, employeeDetailsWithKPI] = calculate_KPI2(cursor, tenantId, projects, hrmsDetails)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI2', data=employeeDetailsWithKPI)
+    return projectsDataMap
 
 
 # At least 75% of the proposed projects had no time overrun
-def calculateKPI3():
+def calculateKPI3(cursor, tenantId, projects, hrmsDetails, projectDataMap):
+    print('Calculating KPI3 for tenantId : ', tenantId )
+    employeeDetailsWithKRA3 = calculate_KPI3(cursor, tenantId, projects, hrmsDetails, projectDataMap)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI3', data=employeeDetailsWithKRA3)
+    print('Finished calculating KPI3 for tenantId : ', tenantId )
     return
 
 
 # Vendor payment approved within 2 working days of receiving verified request from ME.
-def calculateKPI4():
+def calculateKPI4(cursor, tenantId, projectIds, hrmsDetails, projectDataMap):
+    print('Calculating KPI4 for tenantId : ', tenantId)
+    employeeDetailsWithKPI4 = calculate_KPI4(cursor, tenantId, projectIds, hrmsDetails, projectDataMap)
+    writeDataToFile(tenantId=tenantId, kpiId='KPI4', data=employeeDetailsWithKPI4)
+    print('Finished calculating KPI4 for tenantId : ', tenantId)
     return
 
 
@@ -478,7 +487,9 @@ if __name__ == '__main__':
         projects = getProjectsFromLastFinancialYear(tenantId=tenantId, fromDate=int(os.getenv('PROJECTS_FROM_DATE')), toDate=int(os.getenv('PROJECTS_TO_DATE')))
         projectIds = [project.get('projectNumber') for project in projects]
         calculateKPI1(cursor, tenantId, projectIds, hrmsDetails)
-        # calculateKPI2(cursor, tenantId, projects, hrmsDetails)
+        projectDataMap = calculateKPI2(cursor, tenantId, projects, hrmsDetails)
+        calculateKPI3(cursor, tenantId, projects, hrmsDetails, projectDataMap)
+        calculateKPI4(cursor, tenantId, projectIds, hrmsDetails, projectDataMap)
         # kpi5 = calculateKPI5(cursor, tenantId, hrmsDetails)
         # kpi6 = calculateKPI6(cursor, tenantId, hrmsDetails)
         # kpi7 = calculateKPI7(cursor, tenantId, hrmsDetails)
