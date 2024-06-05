@@ -248,6 +248,7 @@ def processBillDetails(tenantId, projectDataMap, hrmsDetails):
 def calculate_KPI2(curser, tenantId, projects, hrmsDetails):
     projectsDataMap = {}
     for project in projects:
+        print('Processing project for KPI2 : ' + project.get('projectNumber'))
         projectMap = {}
         if project.get('projectNumber') not in projectsDataMap:
              projectMap = {

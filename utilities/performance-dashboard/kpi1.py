@@ -244,6 +244,7 @@ def calculate_KPI1(curser, tenantId, projectIds, hrmsDetails):
     contractIds = set()
     bills = getWageBills(tenantId, projectIds)
     for musterRoll in musterRollDetails:
+        print("Processing KPI1 for musterRollNumber: ", musterRoll.get('musterRollNumber'))
         if musterRoll.get('musterRollNumber') not in musterRollBillMap:
             musterRollBillMap[musterRoll.get('musterRollNumber')] ={
                 'id': musterRoll.get('id'),

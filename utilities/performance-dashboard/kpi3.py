@@ -38,7 +38,7 @@ def processProjects(tenantId, projectDataMap, hrmsDetails):
                                                          hrmsEmployeeIdUsrDetailMap[hrmsId]['name'], kpiDetail['id'])
 
     for projectId in projectDataMap:
-        print('Processing project : ' + projectId)
+        print('Processing project for KPI3 for : ' + projectId)
         projectObj = projectDataMap[projectId]
         if projectObj.get('isProjectCompleted') is False:
             continue

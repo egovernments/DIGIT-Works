@@ -320,6 +320,8 @@ def getActualDateOfProjectCompletion(project):
 def calculateKPI1(cursor, tenantId, projectIds, hrmsDetails):
     print('Calculating KPI1 for tenantId : ', tenantId )
     employeeDetailsWithKPI1 = calculate_KPI1(cursor, tenantId, projectIds, hrmsDetails)
+    print("Pushing data to ES for KPI1")
+    push_data_to_es(employeeDetailsWithKPI1, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI1', data=employeeDetailsWithKPI1)
     print('Finished calculating KPI1 for tenantId : ', tenantId )
     return
@@ -329,6 +331,8 @@ def calculateKPI1(cursor, tenantId, projectIds, hrmsDetails):
 def calculateKPI2(cursor, tenantId, projects, hrmsDetails):
     print('Calculating KPI2 for tenantId : ', tenantId )
     [projectsDataMap, employeeDetailsWithKPI] = calculate_KPI2(cursor, tenantId, projects, hrmsDetails)
+    print("Pushing data to ES for KPI2")
+    push_data_to_es(employeeDetailsWithKPI, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI2', data=employeeDetailsWithKPI)
     return projectsDataMap
 
@@ -337,6 +341,8 @@ def calculateKPI2(cursor, tenantId, projects, hrmsDetails):
 def calculateKPI3(cursor, tenantId, projects, hrmsDetails, projectDataMap):
     print('Calculating KPI3 for tenantId : ', tenantId )
     employeeDetailsWithKRA3 = calculate_KPI3(cursor, tenantId, projects, hrmsDetails, projectDataMap)
+    print("Pushing data to ES for KPI3")
+    push_data_to_es(employeeDetailsWithKRA3, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI3', data=employeeDetailsWithKRA3)
     print('Finished calculating KPI3 for tenantId : ', tenantId )
     return
@@ -346,6 +352,8 @@ def calculateKPI3(cursor, tenantId, projects, hrmsDetails, projectDataMap):
 def calculateKPI4(cursor, tenantId, projectIds, hrmsDetails, projectDataMap):
     print('Calculating KPI4 for tenantId : ', tenantId)
     employeeDetailsWithKPI4 = calculate_KPI4(cursor, tenantId, projectIds, hrmsDetails, projectDataMap)
+    print("Pushing data to ES for KPI4")
+    push_data_to_es(employeeDetailsWithKPI4, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI4', data=employeeDetailsWithKPI4)
     print('Finished calculating KPI4 for tenantId : ', tenantId)
     return
@@ -380,7 +388,7 @@ def calculateKPI5(cursor, tenantId, hrmsDetails, projectIds):
         kpi_users.append(invalid_kpi)
 
     print("Pushing data to ES for KPI5")
-    push_data_to_es(kpi5, KPI_INDEX)
+    push_data_to_es(kpi_users, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI5', data=kpi_users)
     return kpi_users
 
@@ -415,7 +423,7 @@ def calculateKPI6(cursor, tenantId, hrmsDetails, projectIds):
         kpi_users.append(invalid_kpi)
 
     print("Pushing data to ES for KPI6")
-    push_data_to_es(kpi5, KPI_INDEX)
+    push_data_to_es(kpi_users, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI6', data=kpi_users)
     return kpi_users
 
@@ -449,7 +457,7 @@ def calculateKPI7(cursor, tenantId, hrmsDetails, projectIds):
         kpi_users.append(invalid_kpi)
 
     print("Pushing data to ES for KPI7")
-    push_data_to_es(kpi5, KPI_INDEX)
+    push_data_to_es(kpi_users, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI7', data=kpi_users)
     return kpi_users
 
@@ -502,7 +510,7 @@ def calculateKPI10(cursor, tenantId, hrmsDetails, projectIds):
         kpi_users.append(invalid_kpi)
 
     print("Pushing data to ES for KPI10")
-    push_data_to_es(kpi5, KPI_INDEX)
+    push_data_to_es(kpi_users, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI10', data=kpi_users)
     return kpi_users
 
@@ -539,7 +547,7 @@ def calculateKPI12(cursor, tenantId, hrmsDetails, projectIds):
         invalid_kpi['total_count'] = pos + neg
         kpi_users.append(invalid_kpi)
     print("Pushing data to ES for KPI12")
-    push_data_to_es(kpi5, KPI_INDEX)
+    push_data_to_es(kpi_users, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI12', data=kpi_users)
     return kpi_users
 

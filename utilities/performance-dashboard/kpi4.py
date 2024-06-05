@@ -46,7 +46,7 @@ def processBills(tenantId, billsMap, hrmsDetails, projectDataMap):
                                                          hrmsEmployeeIdUsrDetailMap[hrmsId]['name'], kpiDetail['id'])
 
     for billId in billsMap:
-        print('Processing project : ' + billId)
+        print('Processing bill for KPI4 : ' + billId)
         billObj = billsMap[billId]
 
         if hasDirectEmployees:
