@@ -104,7 +104,10 @@ def calculate_kpi6(cursor, tenantId, projectIds):
                 count += 1
                 bills_map[bill_number]['kpi6'] += 1
 
-    bills_map['kpi6'] = count / totalCount
+    if totalCount > 0:
+        bills_map['kpi6'] = count / totalCount
+    else:
+        bills_map['kpi6'] = 0
     bills_map['pos'] = count
     bills_map['neg'] = totalCount - count
     print("KPI 6: ", bills_map['kpi6'] * 100)

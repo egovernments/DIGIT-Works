@@ -96,7 +96,10 @@ def calculate_kpi7(cursor, tenantId, projectIds):
                 count += 1
                 muster_roll_data_map[muster_roll_number]['kpi7'] = 1
 
-    muster_roll_data_map['kpi7'] = count / totalCount
+    if totalCount > 0:
+        muster_roll_data_map['kpi7'] = count / totalCount
+    else:
+        muster_roll_data_map['kpi7'] = 0
     muster_roll_data_map['pos'] = count
     muster_roll_data_map['neg'] = totalCount - count
     print("KPI 7: ", muster_roll_data_map['kpi7'] * 100)

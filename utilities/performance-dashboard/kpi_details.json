@@ -1,86 +1,86 @@
 [
   {
     "id": "KPI1",
-    "kpi_name": "ULB disbursed 100% payments within stipulated timeframe*",
+    "kpi_name": "Wage payment timeliness",
     "description": "ULB disbursed 100% payments within stipulated timeframe*",
-    "kra": "100% payments were completed within the stipulated timeframe",
+    "kra": "Payments done on time",
     "designations": ["ADM_EO"]
   },
   {
     "id": "KPI2",
-    "kpi_name": "At least 75% of projects included in the ULB MUKTA action plan were completed during the financial year",
+    "kpi_name": "Project completion within financial year",
     "description": "At least 75% of projects included in the ULB MUKTA action plan were completed during the financial year",
-    "kra": "At least 75% of projects included in yearly MUKTA action plan were completed during the financial year",
+    "kra": "Projects completed on time",
     "designations": ["ADM_EO"]
   },
   {
     "id": "KPI3",
-    "kpi_name": "At least 75% of the proposed projects had no time overrun",
+    "kpi_name": "Project completion timeliness",
     "description": "At least 75% of the proposed projects had no time overrun",
-    "kra": "At least 75% of the projects had no time overrun",
+    "kra": "Projects with no time overrun",
     "designations": ["ADM_EO"]
   },
   {
     "id": "KPI4",
-    "kpi_name": "Vendor payment approved within 2 working days of receiving verified request from ME.",
+    "kpi_name": "Vendor payment approval timeliness",
     "description": "Vendor payment approved within 2 working days of receiving verified request from ME.",
-    "kra": "100% payments were completed within the stipulated timeframe",
+    "kra": "Payments done on time",
     "designations": ["ADM_EO"]
   },
   {
     "id": "KPI5",
-    "kpi_name": "Work Order was issued for 100% of the final list of projects within 7 days from Administrative Approval",
+    "kpi_name": "Work order issue timeliness",
     "description": "Work Order was issued for 100% of the final list of projects within 7 days from Administrative Approval",
-    "kra": "At least 75% of projects included in yearly MUKTA action plan were completed during the financial year",
+    "kra": "Projects completed on time",
     "designations": ["WRK_ME", "WRK_EE", "WRK_AEE"]
   },
   {
     "id": "KPI6",
-    "kpi_name": "Vendor payment requests verified within 2 days after submission from JE/IE/AEE",
+    "kpi_name": "Vendor payment verification timeliness",
     "description": "Vendor payment requests verified within 2 days after submission from JE/IE/AEE",
-    "kra": "100% payments were completed within the stipulated timeframe",
+    "kra": "Payments done on time",
     "designations": ["WRK_ME", "WRK_EE", "WRK_AEE"]
   },
   {
     "id": "KPI7",
-    "kpi_name": "Vendor payment approved within 2 working days of receiving verified request from ME.",
+    "kpi_name": "Vendor payment approval timeliness",
     "description": "Vendor payment approved within 2 working days of receiving verified request from ME.",
-    "kra": "100% payments were completed within the stipulated timeframe",
+    "kra": "Payments done on time",
     "designations": ["WRK_JE" , "WRK_IE" , "WRK_AE"]
   },
   {
     "id": "KPI8",
-    "kpi_name": "Vendor payment requests verified within 2 days after submission from JE/IE/AEE",
+    "kpi_name": "Vendor payment verification timeliness",
     "description": "Vendor payment requests verified within 2 days after submission from JE/IE/AEE",
-    "kra": "100% payments were completed within the stipulated timeframe",
+    "kra": "Payments done on time",
     "designations": ["WRK_JE" , "WRK_IE" , "WRK_AE"]
   },
   {
     "id": "KPI9",
-    "kpi_name": "Vendor payment requests submitted within 3 days of project work completion",
+    "kpi_name": "Vendor bill submission timeliness",
     "description": "Vendor payment requests submitted within 3 days of project work completion",
-    "kra": "At least 75% of projects included in yearly MUKTA action plan were completed during the financial year",
+    "kra": "Projects completed on time",
     "designations": ["WRK_JE", "WRK_IE", "WRK_AEE"]
   },
   {
     "id": "KPI10",
-    "kpi_name": "Submitted draft Work Orders for 100% of projects to ME within 30 days from Technical Sanction and Administrative Approval ",
+    "kpi_name": "Work order submission timeliness",
     "description": "Submitted draft Work Orders for 100% of projects to ME within 30 days from Technical Sanction and Administrative Approval ",
-    "kra": "At least 75% of the projects had no time overrun",
+    "kra": "Projects with no time overrun",
     "designations": ["WRK_PC"]
   },
   {
     "id": "KPI11",
-    "kpi_name": "At least 75% of all projects had no time overrun",
+    "kpi_name": "IA project completion timeliness",
     "description": "At least 75% of all projects had no time overrun",
-    "kra": "At least 75% of the projects had no time overrun",
+    "kra": "Projects with no time overrun",
     "designations": ["WRK_IE"]
   },
   {
     "id": "KPI12",
-    "kpi_name": "Work Order was verified and sent for approval for 100% of the final list of projects within 5 days from Administrative Approval ",
+    "kpi_name": "Work order verification timeliness",
     "description": "Work Order was verified and sent for approval for 100% of the final list of projects within 5 days from Administrative Approval ",
-    "kra": "At least 75% of projects included in yearly MUKTA action plan were completed during the financial year",
+    "kra": "Projects completed on time",
     "designations": ["WRK_ME", "WRK_EE", "WRK_AEE"]
   }
 

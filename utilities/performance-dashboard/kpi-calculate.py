@@ -32,7 +32,32 @@ DB_NAME = os.getenv('DB_NAME')
 DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 
-tenantIds = ["od.testing"]
+tenantIds = ["od.testing",
+             "od.athagarh",
+             "od.berhampur",
+             "od.kesinga",
+             "od.jatni",
+             "od.chatrapur",
+             "od.puri",
+             "od.hinjilicut",
+             "od.balasore",
+             "od.sambalpur",
+             "od.padampur",
+             "od.jharsuguda",
+             "od.dhenkanal",
+             "od.bhadrak",
+             "od.jeypore",
+             "od.balangir",
+             "od.baripada",
+             "od.bhubaneswar",
+             "od.cuttack",
+             "od.jajpur",
+             "od.rourkela",
+             "od.phulbani",
+             "od.kotpad",
+             "od.paradeep",
+             "od.boudhgarh",
+             "od.keonjhargarh"]
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 warnings.filterwarnings("ignore",
                         message="Connecting to 'https://localhost:9200' using TLS with verify_certs=False is insecure")
@@ -318,18 +343,18 @@ def getActualDateOfProjectCompletion(project):
 
 # ULB disbursed 100% payments within stipulated timeframe*
 def calculateKPI1(cursor, tenantId, projectIds, hrmsDetails):
-    print('Calculating KPI1 for tenantId : ', tenantId )
+    print('Calculating KPI1 for tenantId : ', tenantId)
     employeeDetailsWithKPI1 = calculate_KPI1(cursor, tenantId, projectIds, hrmsDetails)
     print("Pushing data to ES for KPI1")
     push_data_to_es(employeeDetailsWithKPI1, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI1', data=employeeDetailsWithKPI1)
-    print('Finished calculating KPI1 for tenantId : ', tenantId )
+    print('Finished calculating KPI1 for tenantId : ', tenantId)
     return
 
 
 # At least 75% of projects included in the ULB MUKTA action plan were completed during the financial year
 def calculateKPI2(cursor, tenantId, projects, hrmsDetails):
-    print('Calculating KPI2 for tenantId : ', tenantId )
+    print('Calculating KPI2 for tenantId : ', tenantId)
     [projectsDataMap, employeeDetailsWithKPI] = calculate_KPI2(cursor, tenantId, projects, hrmsDetails)
     print("Pushing data to ES for KPI2")
     push_data_to_es(employeeDetailsWithKPI, KPI_INDEX)
@@ -339,12 +364,12 @@ def calculateKPI2(cursor, tenantId, projects, hrmsDetails):
 
 # At least 75% of the proposed projects had no time overrun
 def calculateKPI3(cursor, tenantId, projects, hrmsDetails, projectDataMap):
-    print('Calculating KPI3 for tenantId : ', tenantId )
+    print('Calculating KPI3 for tenantId : ', tenantId)
     employeeDetailsWithKRA3 = calculate_KPI3(cursor, tenantId, projects, hrmsDetails, projectDataMap)
     print("Pushing data to ES for KPI3")
     push_data_to_es(employeeDetailsWithKRA3, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI3', data=employeeDetailsWithKRA3)
-    print('Finished calculating KPI3 for tenantId : ', tenantId )
+    print('Finished calculating KPI3 for tenantId : ', tenantId)
     return
 
 
@@ -366,7 +391,8 @@ def calculateKPI5(cursor, tenantId, hrmsDetails, projectIds):
     hrmsIds = list(hrmsEmployeeIdUsrDetailMap.keys())
     kraByEmployeeIdMap = {}
     for hrmsId in hrmsIds:
-        kraByEmployeeIdMap[hrmsId] = getInitialKpiObject(tenantId, hrmsEmployeeIdUsrDetailMap[hrmsId]['designation'], hrmsEmployeeIdUsrDetailMap[hrmsId]['name'], kpiDetail['id'])
+        kraByEmployeeIdMap[hrmsId] = getInitialKpiObject(tenantId, hrmsEmployeeIdUsrDetailMap[hrmsId]['designation'],
+                                                         hrmsEmployeeIdUsrDetailMap[hrmsId]['name'], kpiDetail['id'])
     kpi_users = []
     kpis = calculate_kpi5(cursor, tenantId, projectIds)
     pos = kpis.get('pos')
@@ -427,6 +453,7 @@ def calculateKPI6(cursor, tenantId, hrmsDetails, projectIds):
     writeDataToFile(tenantId=tenantId, kpiId='KPI6', data=kpi_users)
     return kpi_users
 
+
 # Muster roll approved within 3 days of submission
 def calculateKPI7(cursor, tenantId, hrmsDetails, projectIds):
     kpiDetail = getKpiDetails("KPI7")
@@ -466,6 +493,7 @@ def calculateKPI7(cursor, tenantId, hrmsDetails, projectIds):
 def calculateKPI8(cursor, tenantId, projectIds, hrmsDetails):
     print('Calculating KPI8 for tenantId : ', tenantId)
     employeeDetailsWithKPI8 = calculate_KPI8(cursor, tenantId, projectIds, hrmsDetails)
+    push_data_to_es(employeeDetailsWithKPI8, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI8', data=employeeDetailsWithKPI8)
     print('Finished calculating KPI8 for tenantId : ', tenantId)
     return
@@ -475,6 +503,8 @@ def calculateKPI8(cursor, tenantId, projectIds, hrmsDetails):
 def calculateKPI9(cursor, tenantId, hrmsDetails, projectIds):
     print('Calculating KPI9 for tenantId : ', tenantId)
     employeeDetailsWithKPI9 = calculate_KPI9(cursor, tenantId, projectIds, hrmsDetails)
+    print("Pushing data to ES for KPI9")
+    push_data_to_es(employeeDetailsWithKPI9, KPI_INDEX)
     writeDataToFile(tenantId=tenantId, kpiId='KPI9', data=employeeDetailsWithKPI9)
     print('Finished calculating KPI9 for tenantId : ', tenantId)
     return
@@ -519,6 +549,7 @@ def calculateKPI10(cursor, tenantId, hrmsDetails, projectIds):
 def calculateKPI11():
     return
 
+
 def calculateKPI12(cursor, tenantId, hrmsDetails, projectIds):
     kpiDetail = getKpiDetails("KPI12")
     hrmsEmployeeIdUsrDetailMap = getAssigneeByDesignation(hrmsDetails, kpiDetail['designations'])
@@ -551,6 +582,7 @@ def calculateKPI12(cursor, tenantId, hrmsDetails, projectIds):
     writeDataToFile(tenantId=tenantId, kpiId='KPI12', data=kpi_users)
     return kpi_users
 
+
 if __name__ == '__main__':
     # Connect to PostgreSQL
     connection = connect_to_database()
@@ -558,7 +590,8 @@ if __name__ == '__main__':
     cursor = connection.cursor()
     for tenantId in tenantIds:
         hrmsDetails = getHrmsDetails(tenantId)
-        projects = getProjectsFromLastFinancialYear(tenantId=tenantId, fromDate=int(os.getenv('PROJECTS_FROM_DATE')), toDate=int(os.getenv('PROJECTS_TO_DATE')))
+        projects = getProjectsFromLastFinancialYear(tenantId=tenantId, fromDate=int(os.getenv('PROJECTS_FROM_DATE')),
+                                                    toDate=int(os.getenv('PROJECTS_TO_DATE')))
         projectIds = [project.get('projectNumber') for project in projects]
         calculateKPI1(cursor, tenantId, projectIds, hrmsDetails)
         projectDataMap = calculateKPI2(cursor, tenantId, projects, hrmsDetails)
