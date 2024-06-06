@@ -81,7 +81,7 @@ public class SchedulerEnrichment {
     public SorDetails getSorDetailsRequestForRateAnalysis(ScheduledJob scheduledJob) {
         return SorDetails.builder()
                 .tenantId(scheduledJob.getTenantId())
-                .effectiveFrom(scheduledJob.getRateEffectiveFrom())
+//                .effectiveFrom(scheduledJob.getRateEffectiveFrom())
                 .build();
     }
 
