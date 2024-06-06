@@ -30,14 +30,13 @@ public class RateAnalysisValidator {
             throw new CustomException(errorMap);
 
     }
-    public void validateNewRates(Map<String, List<Rates>> oldRatesMap, List<Rates> newRates) {
+    public void validateNewRates(Map<String, Rates> oldRatesMap, List<Rates> newRates) {
 //        Map<String, String> errorMap = new HashMap<>();
         for (Rates rates : newRates) {
             if (!oldRatesMap.containsKey(rates.getSorId())) {
                 log.info("Previous rates not found for sorId " + rates.getSorId());
             } else {
-                List<Rates> oldRates = oldRatesMap.get(rates.getSorId());
-                Rates oldRate = oldRates.get(0);
+                Rates oldRate = oldRatesMap.get(rates.getSorId());
                 if (oldRate.getValidFrom().compareTo(rates.getValidFrom()) > 0) {
                     log.error("Effective from date cannot be less than previous effective from date");
                     newRates.remove(rates);

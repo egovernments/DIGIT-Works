@@ -31,6 +31,8 @@ public class MdmsUtil {
 
     @Autowired
     private Configuration configs;
+    @Autowired
+    private CommonUtil commonUtil;
 
       public MdmsResponseV2 fetchSorsFromMdms(MdmsSearchCriteriaV2 mdmsSearchCriteria) {
         MdmsResponseV2 mdmsResponse = new MdmsResponseV2();
@@ -67,7 +69,7 @@ public class MdmsUtil {
         //TODO fetch correct composition
         Map<String, SorComposition> sorIdToCompositionMap1 = new HashMap<>();
         for (Map.Entry<String, List<SorComposition>> entry : sorIdToCompositionMap.entrySet()) {
-            sorIdToCompositionMap1.put(entry.getKey(), entry.getValue().get(0));
+            sorIdToCompositionMap1.put(entry.getKey(), commonUtil.getApplicableSorComposition(entry.getValue(), System.currentTimeMillis()));
         }
 //        Map<String, Object> sorIdToCompositionMap =  jsonArray.stream().collect(Collectors
 //                .toMap(e -> JsonPath.read(e, "$.sorId"), e -> e) );
@@ -127,7 +129,7 @@ public class MdmsUtil {
         return sorMap;
     }
 
-    public Map<String, List<Rates>> fetchWorksRates(AnalysisRequest analysisRequest) {
+    public Map<String, Rates> fetchWorksRates(AnalysisRequest analysisRequest) {
         String filter = getfilter(analysisRequest.getSorDetails().getSorCodes(), false);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(analysisRequest.getRequestInfo(),
                 analysisRequest.getSorDetails().getTenantId(), "WORKS-SOR",
@@ -138,7 +140,11 @@ public class MdmsUtil {
             ratesList.add(rates);
         }
         Map<String, List<Rates>> ratesMap = ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
-        return ratesMap;
+        Map<String, Rates> rateMap = new HashMap<>();
+        for (Map.Entry<String, List<Rates>> entry : ratesMap.entrySet()) {
+            rateMap.put(entry.getKey(), commonUtil.getApplicatbleRate(entry.getValue(), System.currentTimeMillis()));
+        }
+        return rateMap;
     }
 
     private String getfilter(List<String> sorIds, boolean isSOR) {

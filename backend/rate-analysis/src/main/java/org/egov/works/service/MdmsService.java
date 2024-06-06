@@ -29,19 +29,23 @@ public class MdmsService {
         this.configs = configs;
     }
 
-    public void createRevisedRates(List<Rates> revisedRates, Map<String, List<Rates>> oldRatesMap, RequestInfo requestInfo) {
-        List<Mdms> mdmsData = fetchOldMdms(revisedRates, requestInfo);
+    public void createRevisedRates(List<Rates> revisedRates, Map<String, Rates> oldRatesMap, RequestInfo requestInfo) {
+        List<Mdms> mdmsData = fetchOldMdms(oldRatesMap, requestInfo);
         Map<String, List<Mdms>> mdmsMap = mdmsData.stream()
                 .collect(Collectors.groupingBy(mdms -> mdms.getUniqueIdentifier().split("\\.")[0]));
         for (Rates rates : revisedRates) {
             createRates(rates, requestInfo);
             if (oldRatesMap.containsKey(rates.getSorId())) {
                 Mdms mdms = mdmsMap.get(rates.getSorId()).get(0);
-//                if (mdms.getData() instanceof ObjectNode) {
-                    ((ObjectNode) mdms.getData()).replace("validTo", mapper.valueToTree(rates.getValidFrom()));
-                    updateRates(mdms, requestInfo);
-                    log.info("Previous rates updated succesfully");
-//                }
+                ObjectNode objectNode = (ObjectNode) mdms.getData();
+                if (objectNode.has("validTo")) {
+                    objectNode.replace("validTo", mapper.valueToTree(rates.getValidFrom()));
+                } else {
+                    objectNode.put("validTo", mapper.valueToTree(rates.getValidFrom()));
+                }
+                mdms.setData(objectNode);
+                updateRates(mdms, requestInfo);
+                log.info("Previous rates updated succesfully");
 
             }
         }
@@ -60,8 +64,8 @@ public class MdmsService {
         Object response = restRepo.fetchResult(uri, mdmsRequest);
     }
 
-    List<Mdms> fetchOldMdms(List<Rates> revisedRates, RequestInfo requestInfo) {
-        Set<String> uniqueIdentifiers = revisedRates.stream().map(rates -> rates.getSorId()+"."+rates.getValidFrom())
+    List<Mdms> fetchOldMdms(Map<String, Rates> oldRatesMap, RequestInfo requestInfo) {
+        Set<String> uniqueIdentifiers = oldRatesMap.values().stream().map(rates -> rates.getSorId()+"."+rates.getValidFrom())
                 .collect(java.util.stream.Collectors.toSet());
         MdmsCriteriaV2 mdmsCriteriaV2 = MdmsCriteriaV2.builder()
                 .schemaCode("WORKS-SOR.RATES").uniqueIdentifiers(uniqueIdentifiers).build();

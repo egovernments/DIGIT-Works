@@ -3,6 +3,7 @@ package org.egov.works.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.works.util.CommonUtil;
 import org.egov.works.util.EnrichmentUtil;
 import org.egov.works.web.models.*;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,12 @@ public class CalculatorService {
 
     private final EnrichmentUtil enrichmentUtil;
     private final ObjectMapper mapper;
+    private final CommonUtil commonUtil;
 
-    public CalculatorService(EnrichmentUtil enrichmentUtil, ObjectMapper mapper) {
+    public CalculatorService(EnrichmentUtil enrichmentUtil, ObjectMapper mapper, CommonUtil commonUtil) {
         this.enrichmentUtil = enrichmentUtil;
         this.mapper = mapper;
+        this.commonUtil = commonUtil;
     }
 
     public List<RateAnalysis> calculateRateAnalysis(AnalysisRequest analysisRequest,
@@ -49,13 +52,11 @@ public class CalculatorService {
                     lineItem.setAdditionalDetails(additonalDetailsMap);
 
                 } else {
-                    //TODO sort and get rates
-                    rate = ratesList.get(0);
+                    rate = commonUtil.getApplicatbleRate(ratesList, Long.parseLong(analysisRequest.getSorDetails().getEffectiveFrom()));
                     lineItem = enrichmentUtil.createLineItem(basicSorDetail, rate, sorMap.get(basicSorDetail.getSorId()));
                     for (AmountDetail amountDetail : lineItem.getAmountDetails()) {
                         BigDecimal sorQuantity = sorMap.get(basicSorDetail.getSorId()).get("quantity").decimalValue();
                         if (isCreate) {
-                            //TODO query for perUnitQty
                             amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getPerUnitQty()));
                         } else {
                             amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getQuantity())

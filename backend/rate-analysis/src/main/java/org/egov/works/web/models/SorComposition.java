@@ -44,10 +44,10 @@ public class SorComposition {
     private Boolean active = null;
 
     @JsonProperty("effectiveFrom")
-    private BigDecimal effectiveFrom = null;
+    private String effectiveFrom = null;
 
     @JsonProperty("effectiveTo")
-    private BigDecimal effectiveTo = null;
+    private String effectiveTo = null;
 
     @JsonProperty("basicSorDetails")
     private List<BasicSorDetail> basicSorDetails = null;

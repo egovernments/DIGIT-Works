@@ -57,7 +57,7 @@ public class RateAnalysisService {
                 basicRatesMap, sorMap, true);
 
         List<Rates> calculatedrates = enrichmentService.enrichRates(rateAnalysis);
-        Map<String, List<Rates>> worksRatesMap = mdmsUtil.fetchWorksRates(analysisRequest);
+        Map<String, Rates> worksRatesMap = mdmsUtil.fetchWorksRates(analysisRequest);
         rateAnalysisValidator.validateNewRates(worksRatesMap, calculatedrates);
         mdmsService.createRevisedRates(calculatedrates, worksRatesMap, analysisRequest.getRequestInfo());
 
