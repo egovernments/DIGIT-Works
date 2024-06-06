@@ -66,7 +66,6 @@ def calculate_kpi10(cursor, tenantId, projectIds):
         projectDataMap['kpi10'] = count / totalCount
     else:
         projectDataMap['kpi10'] = 0
-    projectDataMap['kpi10'] = count / totalCount
     projectDataMap['pos'] = count
     projectDataMap['neg'] = totalCount - count
     print("Kpi10: ", projectDataMap['kpi10'] * 100, "%")
