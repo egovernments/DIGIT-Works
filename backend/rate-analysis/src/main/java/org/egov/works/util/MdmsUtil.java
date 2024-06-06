@@ -63,14 +63,19 @@ public class MdmsUtil {
             throw new CustomException("MDMS_PARSE_EXCEPTION", "Error while parsing mdms response");
         }
 //        List<SorComposition> sorCompositions = mapper.convertValue(sorComposition.get("WORKS-SOR").get("Composition"), List.class);
-        Map<String, SorComposition> sorIdToCompositionMap = sorCompositions.stream().collect(Collectors.toMap(e -> e.getSorId(), e -> e));
+        Map<String, List<SorComposition>> sorIdToCompositionMap = sorCompositions.stream().collect(Collectors.groupingBy(e -> e.getSorId()));
+        //TODO fetch correct composition
+        Map<String, SorComposition> sorIdToCompositionMap1 = new HashMap<>();
+        for (Map.Entry<String, List<SorComposition>> entry : sorIdToCompositionMap.entrySet()) {
+            sorIdToCompositionMap1.put(entry.getKey(), entry.getValue().get(0));
+        }
 //        Map<String, Object> sorIdToCompositionMap =  jsonArray.stream().collect(Collectors
 //                .toMap(e -> JsonPath.read(e, "$.sorId"), e -> e) );
         if (sorIdToCompositionMap.size() != analysisRequest.getSorDetails().getSorCodes().size()) {
             analysisRequest.getSorDetails().getSorCodes().remove(sorIdToCompositionMap.keySet());
             throw new CustomException("SOR_COMPOSITION_NOT_FOUND", "Sor composition not found for SOR codes :: " + analysisRequest.getSorDetails().getSorCodes());
         }
-        return sorIdToCompositionMap;
+        return sorIdToCompositionMap1;
 
     }
 
@@ -90,10 +95,10 @@ public class MdmsUtil {
             ratesList.add(rates);
         }
         Map<String, List<Rates>> ratesMap = ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
-        if (ratesMap.keySet().size() != basicSorIds.size()) {
-            basicSorIds.remove(ratesMap.keySet());
-            throw new CustomException("RATES_NOT_FOUND", "Rates not found for the following SOR ids :: " + basicSorIds);
-        }
+//        if (ratesMap.keySet().size() != basicSorIds.size()) {
+//            basicSorIds.remove(ratesMap.keySet());
+//            throw new CustomException("RATES_NOT_FOUND", "Rates not found for the following SOR ids :: " + basicSorIds);
+//        }
         return ratesMap;
 
     }
@@ -115,7 +120,25 @@ public class MdmsUtil {
             String id = jsonNode.get("id").asText();
             sorMap.put(id, jsonNode);
         }
+        if (sorMap.keySet().size() != basicSorIds.size()) {
+            basicSorIds.removeAll(sorMap.keySet());
+            throw new CustomException("SOR_NOT_FOUND", "Sor not found for the following SOR ids :: " + basicSorIds);
+        }
         return sorMap;
+    }
+
+    public Map<String, List<Rates>> fetchWorksRates(AnalysisRequest analysisRequest) {
+        String filter = getfilter(analysisRequest.getSorDetails().getSorCodes(), false);
+        Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(analysisRequest.getRequestInfo(),
+                analysisRequest.getSorDetails().getTenantId(), "WORKS-SOR",
+                Collections.singletonList("Rates"), filter);
+        List<Rates> ratesList = new ArrayList<>();
+        for(Object object : sorRates.get("WORKS-SOR").get("Rates")) {
+            Rates  rates = mapper.convertValue(object, Rates.class);
+            ratesList.add(rates);
+        }
+        Map<String, List<Rates>> ratesMap = ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
+        return ratesMap;
     }
 
     private String getfilter(List<String> sorIds, boolean isSOR) {
@@ -132,7 +155,7 @@ public class MdmsUtil {
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
                                                              List<String> masterNameList, String filter) {
         StringBuilder uri = new StringBuilder();
-        uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
+        uri.append(configs.getMdmsHost()).append(configs.getMdmsV1EndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList, filter);
         Object response = new HashMap<>();
         Integer rate = 0;
@@ -145,7 +168,6 @@ public class MdmsUtil {
         }
 
         return mdmsResponse.getMdmsRes();
-        //log.info(ulbToCategoryListMap.toString());
     }
 
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,
@@ -154,7 +176,6 @@ public class MdmsUtil {
         for (String masterName : masterNameList) {
             MasterDetail masterDetail = new MasterDetail();
             masterDetail.setName(masterName);
-            //TODO remove commenting
             masterDetail.setFilter(filter);
             masterDetailList.add(masterDetail);
         }

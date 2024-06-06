@@ -35,6 +35,10 @@ public class RateAnalysis {
     @Size(min = 2, max = 64)
     private String tenantId = null;
 
+    @JsonProperty("compositionId")
+    @Size(min = 2, max = 64)
+    private String compositionId = null;
+
     @JsonProperty("sorCode")
 
     @Size(min = 2, max = 64)

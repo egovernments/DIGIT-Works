@@ -1,10 +1,12 @@
 package org.egov.works.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.works.util.EnrichmentUtil;
 import org.egov.works.web.models.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,14 +19,18 @@ import static org.egov.works.web.models.LineItem.TypeEnum.EXTRACHARGES;
 public class CalculatorService {
 
     private final EnrichmentUtil enrichmentUtil;
+    private final ObjectMapper mapper;
 
-    public CalculatorService(EnrichmentUtil enrichmentUtil) {
+    public CalculatorService(EnrichmentUtil enrichmentUtil, ObjectMapper mapper) {
         this.enrichmentUtil = enrichmentUtil;
+        this.mapper = mapper;
     }
 
     public List<RateAnalysis> calculateRateAnalysis(AnalysisRequest analysisRequest,
                                                     Map<String, SorComposition> sorIdCompositionMap,
-                                                    Map<String, List<Rates>> basicRatesMap, Map<String, JsonNode> sorMap) {
+                                                    Map<String, List<Rates>> basicRatesMap,
+                                                    Map<String, JsonNode> sorMap,
+                                                    boolean isCreate) {
         List<RateAnalysis> rateAnalysisList = new ArrayList<>();
         for(String worksSorId : analysisRequest.getSorDetails().getSorCodes()) {
             SorComposition sorComposition = sorIdCompositionMap.get(worksSorId);
@@ -33,27 +39,62 @@ public class CalculatorService {
             for(BasicSorDetail basicSorDetail : sorComposition.getBasicSorDetails()) {
 
                 List<Rates> ratesList = basicRatesMap.get(basicSorDetail.getSorId());
-                //TODO sort and get rates
-                Rates rate = ratesList.get(0);
+                Rates rate = null;
+                LineItem lineItem;
+                if (CollectionUtils.isEmpty(ratesList)) {
+                    rate = Rates.builder().build();
+                    lineItem = enrichmentUtil.createLineItem(basicSorDetail, rate, sorMap.get(basicSorDetail.getSorId()));
+                    Map<String, Object> additonalDetailsMap = mapper.convertValue(lineItem.getAdditionalDetails(), Map.class);
+                    additonalDetailsMap.put("definedQuantity", basicSorDetail.getQuantity());
+                    lineItem.setAdditionalDetails(additonalDetailsMap);
 
-                LineItem lineItem = enrichmentUtil.createLineItem(basicSorDetail, rate, sorMap.get(basicSorDetail.getSorId()));
-                for (AmountDetail amountDetail : lineItem.getAmountDetails()) {
-                    BigDecimal sorQuantity = sorMap.get(basicSorDetail.getSorId()).get("quantity").decimalValue();
-                    amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getQuantity()).divide(sorQuantity, 4, RoundingMode.HALF_UP));
+                } else {
+                    //TODO sort and get rates
+                    rate = ratesList.get(0);
+                    lineItem = enrichmentUtil.createLineItem(basicSorDetail, rate, sorMap.get(basicSorDetail.getSorId()));
+                    for (AmountDetail amountDetail : lineItem.getAmountDetails()) {
+                        BigDecimal sorQuantity = sorMap.get(basicSorDetail.getSorId()).get("quantity").decimalValue();
+                        if (isCreate) {
+                            //TODO query for perUnitQty
+                            amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getPerUnitQty()));
+                        } else {
+                            amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getQuantity())
+                                    .divide(sorQuantity, 4, RoundingMode.HALF_UP));
+                        }
+
+                    }
+                    Map<String, Object> additonalDetailsMap = mapper.convertValue(lineItem.getAdditionalDetails(), Map.class);
+                    additonalDetailsMap.put("definedQuantity", basicSorDetail.getQuantity());
+                    additonalDetailsMap.put("rate", rate);
+
+                    lineItem.setAdditionalDetails(additonalDetailsMap);
                 }
+
                 lineItems.add(lineItem);
             }
+            LineItem additionalChargesLineItem = new LineItem();
+            additionalChargesLineItem.setType(EXTRACHARGES);
+            additionalChargesLineItem.setAmountDetails(new ArrayList<>());
+            Map<String, List<String>> stringListMap = new HashMap<>();
             for (AdditionalCharges additionalCharges : sorComposition.getAdditionalCharges()) {
-                LineItem lineItem  = LineItem.builder()
-                        .id(UUID.randomUUID().toString())
-                        .targetId(additionalCharges.getApplicableOn())
-                        .type(EXTRACHARGES)
-                        .amountDetails(Collections.singletonList(AmountDetail.builder().type(additionalCharges.getCalculationType())
-                                .amount(additionalCharges.getFigure())
-                                .build()))
+
+                AmountDetail amountDetail = AmountDetail.builder()
+                        .type(additionalCharges.getCalculationType())
+                        .heads(additionalCharges.getApplicableOn())
+                        .amount(additionalCharges.getFigure())
                         .build();
-                lineItems.add(lineItem);
+                additionalChargesLineItem.getAmountDetails().add(amountDetail);
+                if (stringListMap.containsKey(additionalCharges.getApplicableOn())) {
+                    stringListMap.get(additionalCharges.getApplicableOn()).add(additionalCharges.getDescription());
+
+                } else {
+                    stringListMap.put(additionalCharges.getApplicableOn(), Collections.singletonList(additionalCharges.getDescription()));
+                }
+
             }
+            additionalChargesLineItem.setAdditionalDetails(stringListMap);
+
+            lineItems.add(additionalChargesLineItem);
             rateAnalysis.setLineItems(lineItems);
             rateAnalysisList.add(rateAnalysis);
         }

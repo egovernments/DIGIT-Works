@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 @Data
 @Import({TracerConfiguration.class})
@@ -29,8 +31,24 @@ public class Configuration {
     @Value("${egov.mdms.v2.host}")
     private String mdmsHost;
 
+    @Value("${egov.mdms.v1.search.endpoint}")
+    private String mdmsV1EndPoint;
+
     @Value("${egov.mdms.v2.search.endpoint}")
-    private String mdmsEndPoint;
+    private String mdmsV2EndPoint;
+
+    @Value("${egov.mdms.v2.create.endpoint}")
+    private String createEndPoint;
+
+    @Value("${egov.mdms.v2.update.endpoint}")
+    private String updateEndPoint;
+
+    //Labour Cess Configuration
+    @Value("${labour.cess.head.code}")
+    private String labourCessHeadCode;
+
+    @Value("${labour.cess.rate}")
+    private BigDecimal labourCessRate;
 
 
     //SMSNotification
