@@ -41,6 +41,7 @@ public class SchedulerService {
     public List<ScheduledJob> createScheduledJobs(JobSchedulerRequest jobSchedulerRequest) {
         log.info("Creating Scheduled Jobs");
         schedulerValidator.validateSchedulerRequest(jobSchedulerRequest);
+        // Fetch SORs from MDMS
         Map<String, String> sorIdToSorCodeMap = getSorIdToSorCodeMapFromMdms(jobSchedulerRequest);
         List<ScheduledJob> scheduledJobs = schedulerEnrichment.enrichScheduledJobs(jobSchedulerRequest, sorIdToSorCodeMap);
         JobScheduledRequest jobScheduledRequest = JobScheduledRequest.builder()
