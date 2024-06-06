@@ -24,22 +24,21 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class LineItem {
-
     @JsonProperty("id")
     @Valid
     private String id = null;
 
     @JsonProperty("type")
+
     private TypeEnum type = null;
-
     @JsonProperty("targetId")
-    private String targetId = null;
 
+    private String targetId = null;
     @JsonProperty("amountDetails")
     @Valid
     private List<AmountDetail> amountDetails = null;
-
     @JsonProperty("additionalDetails")
+
     private Object additionalDetails = null;
 
     public LineItem addAmountDetailsItem(AmountDetail amountDetailsItem) {
@@ -61,7 +60,7 @@ public class LineItem {
 
         EXTRACHARGES("EXTRACHARGES");
 
-        private final String value;
+        private String value;
 
         TypeEnum(String value) {
             this.value = value;

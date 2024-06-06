@@ -17,6 +17,9 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class SorDetail {
+    @JsonProperty("id")
+    private String id = null;
+
     @JsonProperty("sorId")
 
     private String sorId = null;
@@ -27,7 +30,7 @@ public class SorDetail {
 
     @JsonProperty("status")
 
-    private String status = null;
+    private StatusEnum status = null;
 
     @JsonProperty("failureReason")
 

@@ -3,21 +3,25 @@ package org.egov.works.web.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-/**
- * Sorting order
- */
-public enum Order {
-    ASC("ASC"), DESC("DESC");
+public enum StatusEnum {
+    IN_PROGRESS("IN PROGRESS"),
+
+    SCHEDULED("SCHEDULED"),
+
+    FAILED("FAILED"),
+
+    SUCCESSFUL("SUCCESSFUL"),
+    ;
 
     private String value;
 
-    Order(String value) {
+    StatusEnum(String value) {
         this.value = value;
     }
 
     @JsonCreator
-    public static Order fromValue(String text) {
-        for (Order b : Order.values()) {
+    public static StatusEnum fromValue(String text) {
+        for (StatusEnum b : StatusEnum.values()) {
             if (String.valueOf(b.value).equals(text)) {
                 return b;
             }

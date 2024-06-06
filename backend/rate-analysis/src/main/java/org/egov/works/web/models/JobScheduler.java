@@ -11,9 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 
 /**
  * JobScheduler
@@ -26,32 +24,19 @@ import java.util.UUID;
 @Builder
 public class JobScheduler {
     @JsonProperty("id")
-
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("tenantId")
-
     @Size(min = 2, max = 64)
+    @NotNull
     private String tenantId = null;
 
     @JsonProperty("effectiveFrom")
     @NotNull
-
     @Valid
-    private BigDecimal effectiveFrom = null;
+    private Long effectiveFrom = null;
 
     @JsonProperty("sorIds")
-
-    private List<String> sorIds = null;
-
-
-    public JobScheduler addSorIdsItem(String sorIdsItem) {
-        if (this.sorIds == null) {
-            this.sorIds = new ArrayList<>();
-        }
-        this.sorIds.add(sorIdsItem);
-        return this;
-    }
-
+    private Set<String> sorIds = null;
 }

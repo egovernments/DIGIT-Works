@@ -52,5 +52,9 @@ public class ServiceConstants {
     public static final String ID_FILTER = "@.id=='";
     public static final String FILTER_OR_CONSTANT = "'||";
 
+     public static final String WORKS_SOR_SCHEMA_CODE = "WORKS-SOR.SOR";
+    public static final String SOR_CODE_JSON_KEY = "id";
+    public static final String SOR_TYPE_JSON_KEY = "sorType";
+
 
 }

@@ -1,11 +1,10 @@
 package org.egov.works.web.controllers;
 
 import jakarta.validation.Valid;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.service.SchedulerService;
-import org.egov.works.web.models.JobScheduler;
-import org.egov.works.web.models.JobSchedulerRequest;
-import org.egov.works.web.models.JobSchedulerResponse;
-import org.egov.works.web.models.JobSchedulerSearchCriteria;
+import org.egov.works.util.ResponseInfoFactory;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,24 +15,34 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
+
 @Controller
-@RequestMapping("/rate-analysis/v1/")
+@RequestMapping("/v1/")
 public class RateAnalysisSchedulerApiController {
 
     private final SchedulerService schedulerService;
+    private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public RateAnalysisSchedulerApiController(SchedulerService schedulerService) {
+    public RateAnalysisSchedulerApiController(SchedulerService schedulerService, ResponseInfoFactory responseInfoFactory) {
         this.schedulerService = schedulerService;
+        this.responseInfoFactory = responseInfoFactory;
     }
+
     @RequestMapping(value = "scheduler/_create", method = RequestMethod.POST)
     public ResponseEntity<JobSchedulerResponse> rateAnalysisV1SchedulerCreatePost(@Valid @RequestBody JobSchedulerRequest jobSchedulerRequest) {
-        List<JobScheduler> jobSchedulers = schedulerService.createScheduler(jobSchedulerRequest);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        List<ScheduledJob> scheduledJobs = schedulerService.createScheduledJobs(jobSchedulerRequest);
+        org.egov.common.contract.response.ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(jobSchedulerRequest.getRequestInfo(), true);
+        JobSchedulerResponse jobSchedulerResponse = JobSchedulerResponse.builder().responseInfo(responseInfo).scheduledJobs(scheduledJobs).build();
+        return new ResponseEntity<>(jobSchedulerResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "scheduler/_search", method = RequestMethod.POST)
-    public ResponseEntity<JobSchedulerResponse> rateAnalysisV1SchedulerSearchPost(@Valid @RequestBody JobSchedulerSearchCriteria body) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<JobSchedulerResponse> rateAnalysisV1SchedulerSearchPost(@Valid @RequestBody JobSchedulerSearchCriteria jobSchedulerSearchCriteria) {
+        List<ScheduledJob> scheduledJobs = schedulerService.searchScheduledJobs(jobSchedulerSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(jobSchedulerSearchCriteria.getRequestInfo(), true);
+        JobSchedulerResponse jobSchedulerResponse = JobSchedulerResponse.builder().responseInfo(responseInfo).scheduledJobs(scheduledJobs).build();
+        return new ResponseEntity<>(jobSchedulerResponse, HttpStatus.OK);
     }
 }
+

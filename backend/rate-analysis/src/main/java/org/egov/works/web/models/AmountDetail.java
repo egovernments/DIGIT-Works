@@ -23,18 +23,18 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class AmountDetail {
-
     @JsonProperty("id")
+
     @Valid
-    private String id = null;
-
+    private UUID id = null;
     @JsonProperty("type")
+
     private TypeEnum type = null;
-
     @JsonProperty("heads")
-    private String heads = null;
 
+    private String heads = null;
     @JsonProperty("amount")
+
     @Valid
     private BigDecimal amount = null;
 
@@ -42,11 +42,11 @@ public class AmountDetail {
      * Amount Detail Type
      */
     public enum TypeEnum {
-        PERCENTAGE("percentage"),
+        PERCENTAGE("PERCENTAGE"),
 
-        FIXED("fixed");
+        FIXED("FIXED");
 
-        private final String value;
+        private String value;
 
         TypeEnum(String value) {
             this.value = value;

@@ -2,6 +2,7 @@ package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,14 +20,14 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class JobSchedulerRequest {
-    @JsonProperty("requestInfo")
-
+    @JsonProperty("RequestInfo")
     @Valid
+    @NotNull
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("schedule")
-
+    @JsonProperty("Schedule")
     @Valid
+    @NotNull
     private JobScheduler schedule = null;
 
 

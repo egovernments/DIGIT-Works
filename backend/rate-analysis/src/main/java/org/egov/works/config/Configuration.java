@@ -15,6 +15,15 @@ import org.springframework.stereotype.Component;
 @Getter
 public class Configuration {
 
+    //Idgen Config
+    @Value("${egov.idgen.host}")
+    private String idGenHost;
+
+    @Value("${egov.idgen.path}")
+    private String idGenPath;
+
+    @Value("${egov.rate.analysis.job.number.name}")
+    private String rateAnalysisJobNumberName;
 
     //MDMS
     @Value("${egov.mdms.v2.host}")
@@ -27,4 +36,21 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    // Works Sor Type
+    @Value("${works.sor.type}")
+    private String worksSorType;
+
+    // Kafka Topics
+    @Value("${rate.analysis.job.create.topic}")
+    private String rateAnalysisJobCreateTopic;
+
+    @Value("${rate.analysis.job.update.topic}")
+    private String rateAnalysisJobUpdateTopic;
+
+    @Value("${rate.analysis.default.offset}")
+    private Integer defaultOffset;
+
+    @Value("${rate.analysis.default.limit}")
+    private Integer defaultLimit;
 }

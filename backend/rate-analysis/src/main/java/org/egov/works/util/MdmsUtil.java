@@ -9,10 +9,7 @@ import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.Configuration;
-import org.egov.works.web.models.AnalysisRequest;
-import org.egov.works.web.models.BasicSorDetail;
-import org.egov.works.web.models.Rates;
-import org.egov.works.web.models.SorComposition;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -35,6 +32,19 @@ public class MdmsUtil {
     @Autowired
     private Configuration configs;
 
+      public MdmsResponseV2 fetchSorsFromMdms(MdmsSearchCriteriaV2 mdmsSearchCriteria) {
+        MdmsResponseV2 mdmsResponse = new MdmsResponseV2();
+        StringBuilder uri = new StringBuilder();
+        uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
+        Object response = new HashMap<>();
+        try {
+            response = restTemplate.postForObject(uri.toString(), mdmsSearchCriteria, Map.class);
+            mdmsResponse = mapper.convertValue(response, MdmsResponseV2.class);
+        } catch (Exception e) {
+            log.error(ERROR_WHILE_FETCHING_FROM_MDMS, e);
+        }
+        return mdmsResponse;
+    }
     public Map<String, SorComposition> fetchSorComposition(AnalysisRequest analysisRequest) {
             String filter = getfilter(analysisRequest.getSorDetails().getSorCodes(), false);
             Map<String, Map<String, JSONArray>> sorComposition = fetchMdmsData(analysisRequest.getRequestInfo(),

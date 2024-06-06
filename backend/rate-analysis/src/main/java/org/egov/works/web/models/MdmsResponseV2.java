@@ -7,27 +7,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.response.ResponseInfo;
-import org.springframework.validation.annotation.Validated;
 
-/**
- * RatesResponse
- */
-@Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-05-22T17:59:35.524035+05:30[Asia/Kolkata]")
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RatesResponse {
-    @JsonProperty("responseInfo")
+public class MdmsResponseV2 {
 
+    @JsonProperty("ResponseInfo")
     @Valid
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty("rates")
-
-    @Valid
-    private Rates rates = null;
-
-
+    @JsonProperty("mdms")
+    private List<Mdms> mdms = null;
 }
