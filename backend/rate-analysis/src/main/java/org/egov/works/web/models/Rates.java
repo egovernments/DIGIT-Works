@@ -27,7 +27,7 @@ public class Rates {
     @JsonProperty("id")
 
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("tenantId")
 
@@ -40,50 +40,43 @@ public class Rates {
     private String sorCode = null;
 
     @JsonProperty("sorId")
-
     @Size(min = 2, max = 64)
     private String sorId = null;
 
     @JsonProperty("sorType")
-
     @Size(min = 2, max = 64)
     private String sorType = null;
 
     @JsonProperty("sorSubType")
-
     @Size(min = 2, max = 64)
     private String sorSubType = null;
 
     @JsonProperty("sorVariant")
-
     @Size(min = 2, max = 64)
     private String sorVariant = null;
 
     @JsonProperty("isBasicVariant")
-
     private Boolean isBasicVariant = null;
 
     @JsonProperty("uom")
-
     private String uom = null;
 
     @JsonProperty("quantity")
-
     @Valid
     private BigDecimal quantity = null;
 
     @JsonProperty("description")
-
     private String description = null;
 
     @JsonProperty("rate")
-
     @Valid
     private BigDecimal rate = null;
 
-    @JsonProperty("effectiveFrom")
+    @JsonProperty("validFrom")
+    private String validFrom = null;
 
-    private String effectiveFrom = null;
+    @JsonProperty("validTo")
+    private String validTo = null;
 
     @JsonProperty("amountDetails")
     @Valid
