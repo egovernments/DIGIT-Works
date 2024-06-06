@@ -40,7 +40,7 @@ public class SorDetails {
 
     @JsonProperty("effectiveFrom")
 
-    private Long effectiveFrom = null;
+    private String effectiveFrom = null;
 
 
     public SorDetails addSorCodesItem(String sorCodesItem) {

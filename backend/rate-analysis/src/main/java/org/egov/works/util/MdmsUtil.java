@@ -35,7 +35,7 @@ public class MdmsUtil {
       public MdmsResponseV2 fetchSorsFromMdms(MdmsSearchCriteriaV2 mdmsSearchCriteria) {
         MdmsResponseV2 mdmsResponse = new MdmsResponseV2();
         StringBuilder uri = new StringBuilder();
-        uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
+        uri.append(configs.getMdmsHost()).append(configs.getMdmsV1EndPoint());
         Object response = new HashMap<>();
         try {
             response = restTemplate.postForObject(uri.toString(), mdmsSearchCriteria, Map.class);

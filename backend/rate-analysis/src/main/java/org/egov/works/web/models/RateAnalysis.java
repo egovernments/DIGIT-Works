@@ -85,7 +85,7 @@ public class RateAnalysis {
     private StatusEnum status = null;
     @JsonProperty("effectiveFrom")
 
-    private Long effectiveFrom = null;
+    private String effectiveFrom = null;
     @JsonProperty("analysisQuantity")
 
     @Valid

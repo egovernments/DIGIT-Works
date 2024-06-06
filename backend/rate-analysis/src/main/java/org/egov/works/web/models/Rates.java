@@ -81,9 +81,9 @@ public class Rates {
     @Valid
     private BigDecimal rate = null;
 
-    @JsonProperty("effectiveFrom")
+    @JsonProperty("validFrom")
 
-    private String effectiveFrom = null;
+    private String validFrom = null;
 
     @JsonProperty("amountDetails")
     @Valid
