@@ -32,7 +32,7 @@ DB_NAME = os.getenv('DB_NAME')
 DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 
-tenantIds = ["od.testing",
+tenantIds = [# "od.testing",
              "od.athagarh",
              "od.berhampur",
              "od.kesinga",
@@ -584,10 +584,12 @@ def calculateKPI12(cursor, tenantId, hrmsDetails, projectIds):
 
 
 if __name__ == '__main__':
-    # Connect to PostgreSQL
-    connection = connect_to_database()
-    # Create a cursor object
-    cursor = connection.cursor()
+    # # Connect to PostgreSQL
+    # connection = connect_to_database()
+    # # Create a cursor object
+    # cursor = connection.cursor()
+    # Commenting db connection because there are no use as of now
+    cursor = None
     for tenantId in tenantIds:
         hrmsDetails = getHrmsDetails(tenantId)
         projects = getProjectsFromLastFinancialYear(tenantId=tenantId, fromDate=int(os.getenv('PROJECTS_FROM_DATE')),
