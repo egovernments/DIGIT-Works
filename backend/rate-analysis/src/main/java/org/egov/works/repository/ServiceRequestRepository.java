@@ -26,9 +26,9 @@ import static org.egov.works.config.ServiceConstants.SEARCHER_SERVICE_EXCEPTION;
 @Slf4j
 public class ServiceRequestRepository {
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     private SchedulerQueryBuilder schedulerQueryBuilder;
 

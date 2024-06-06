@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum Order {
     ASC("ASC"), DESC("DESC");
 
-    private String value;
+    private final String value;
 
     Order(String value) {
         this.value = value;

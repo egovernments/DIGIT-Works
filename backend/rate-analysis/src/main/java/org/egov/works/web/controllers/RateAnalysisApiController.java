@@ -32,7 +32,7 @@ public class RateAnalysisApiController {
         this.request = request;
     }
 
-    @RequestMapping(value = "/rate-analysis/v1/_calculate", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/_calculate", method = RequestMethod.POST)
     public ResponseEntity<RateAnalysisResponse> rateAnalysisV1CalculatePost(@Valid @RequestBody AnalysisRequest body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
@@ -46,7 +46,7 @@ public class RateAnalysisApiController {
         return new ResponseEntity<RateAnalysisResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @RequestMapping(value = "/rate-analysis/v1/_create", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<RatesResponse> rateAnalysisV1CreatePost(@Valid @RequestBody AnalysisRequest body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
