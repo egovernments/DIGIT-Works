@@ -27,15 +27,17 @@ public class SchedulerService {
     private final SchedulerEnrichment schedulerEnrichment;
     private final RateAnalysisProducer rateAnalysisProducer;
     private final ServiceRequestRepository serviceRequestRepository;
+    private final RateAnalysisService rateAnalysisService;
 
     @Autowired
-    public SchedulerService(SchedulerValidator schedulerValidator, MdmsUtil mdmsUtil, Configuration configuration, SchedulerEnrichment schedulerEnrichment, RateAnalysisProducer rateAnalysisProducer, ServiceRequestRepository serviceRequestRepository) {
+    public SchedulerService(SchedulerValidator schedulerValidator, MdmsUtil mdmsUtil, Configuration configuration, SchedulerEnrichment schedulerEnrichment, RateAnalysisProducer rateAnalysisProducer, ServiceRequestRepository serviceRequestRepository, RateAnalysisService rateAnalysisService) {
         this.schedulerValidator = schedulerValidator;
         this.mdmsUtil = mdmsUtil;
         this.configuration = configuration;
         this.schedulerEnrichment = schedulerEnrichment;
         this.rateAnalysisProducer = rateAnalysisProducer;
         this.serviceRequestRepository = serviceRequestRepository;
+        this.rateAnalysisService = rateAnalysisService;
     }
 
     public List<ScheduledJob> createScheduledJobs(JobSchedulerRequest jobSchedulerRequest) {
@@ -109,7 +111,7 @@ public class SchedulerService {
             if (sorDetail.getStatus().equals(StatusEnum.SCHEDULED)) {
                 sorDetail.setStatus(StatusEnum.IN_PROGRESS);
                 try {
-                    callRateAnalysisCreate(sorDetail, requestInfo, sorDetails);
+                    callRateAnalysisCreate(sorDetail, requestInfo, sorDetails, scheduledJob.getRateEffectiveFrom());
                     sorDetail.setStatus(StatusEnum.SUCCESSFUL);
                 } catch (Exception e) {
                     log.error("Error while processing Rate Analysis Job for SOR: " + sorDetail.getSorId());
@@ -123,15 +125,17 @@ public class SchedulerService {
         rateAnalysisProducer.push(configuration.getRateAnalysisJobUpdateTopic(), jobScheduledRequest);
     }
 
-    private void callRateAnalysisCreate(SorDetail sorDetail, RequestInfo requestInfo, SorDetails sorDetails) {
+    private void callRateAnalysisCreate(SorDetail sorDetail, RequestInfo requestInfo, SorDetails sorDetails, Long rateEffectiveFrom) {
         log.info("Calling Rate Analysis Create for SOR: " + sorDetail.getSorId());
         sorDetails.setSorId(Collections.singletonList(sorDetail.getSorId()));
+        sorDetails.setSorCodes(Collections.singletonList(sorDetail.getSorCode()));
+        sorDetails.setEffectiveFrom(String.valueOf(rateEffectiveFrom));
         AnalysisRequest analysisRequest = AnalysisRequest.builder()
                 .requestInfo(requestInfo)
                 .sorDetails(sorDetails)
                 .build();
 
-        //TODO: Call rate analysis create
+        rateAnalysisService.createRateAnalysis(analysisRequest);
     }
 
     public List<ScheduledJob> searchScheduledJobs(JobSchedulerSearchCriteria jobSchedulerSearchCriteria) {

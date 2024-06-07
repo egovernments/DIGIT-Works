@@ -36,7 +36,7 @@ public class SchedulerEnrichment {
                 .jobId(jobNumbers.get(0))
                 .rateEffectiveFrom(jobScheduler.getEffectiveFrom())
                 .tenantId(tenantId)
-                .noOfSorScheduled(jobScheduler.getSorIds().size())
+                .noOfSorScheduled(sorDetails.size())
                 .status(StatusEnum.SCHEDULED)
                 .sorDetails(sorDetails)
                 .auditDetails(auditDetails)
@@ -56,7 +56,8 @@ public class SchedulerEnrichment {
     private List<SorDetail> enrichSorDetails(JobScheduler jobScheduler, Map<String, String> sorIdToSorCodeMap) {
         log.info("Enriching Sor Details");
         List<SorDetail> sorDetails = new ArrayList<>();
-        for (String sorId : jobScheduler.getSorIds()) {
+        if(jobScheduler.getSorIds() != null) {
+            for (String sorId : jobScheduler.getSorIds()) {
             SorDetail sorDetail;
             if (sorIdToSorCodeMap.containsKey(sorId)) {
                 sorDetail = SorDetail.builder()
@@ -74,6 +75,17 @@ public class SchedulerEnrichment {
                         .build();
             }
             sorDetails.add(sorDetail);
+        }
+        }else{
+            for(String id: sorIdToSorCodeMap.keySet()){
+                SorDetail sorDetail = SorDetail.builder()
+                        .id(UUID.randomUUID().toString())
+                        .sorId(id)
+                        .sorCode(sorIdToSorCodeMap.get(id))
+                        .status(StatusEnum.SCHEDULED)
+                        .build();
+                sorDetails.add(sorDetail);
+            }
         }
         return sorDetails;
     }
