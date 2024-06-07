@@ -89,7 +89,9 @@ public class CalculatorService {
                     stringListMap.get(additionalCharges.getApplicableOn()).add(additionalCharges.getDescription());
 
                 } else {
-                    stringListMap.put(additionalCharges.getApplicableOn(), Collections.singletonList(additionalCharges.getDescription()));
+                    List<String> descriptions = new ArrayList<>();
+                    descriptions.add(additionalCharges.getDescription());
+                    stringListMap.put(additionalCharges.getApplicableOn(), descriptions);
                 }
 
             }
