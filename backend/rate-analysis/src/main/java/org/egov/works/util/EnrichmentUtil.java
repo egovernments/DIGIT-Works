@@ -50,6 +50,8 @@ public class EnrichmentUtil {
             rateAnalysis.setSorType(worksSor.get("sorType").asText());
             rateAnalysis.setUom(worksSor.get("uom").asText());
             rateAnalysis.setDescription(worksSor.get("description").asText());
+            rateAnalysis.setQuantity(BigDecimal.valueOf(worksSor.get("quantity").asDouble()));
+            rateAnalysis.setStatus(RateAnalysis.StatusEnum.ACTIVE);
         }
     }
 
