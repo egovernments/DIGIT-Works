@@ -20,11 +20,11 @@ public class RateAnalysisValidator {
     public void validateRevisionOfRates(AnalysisRequest analysisRequest, Map<String, SorComposition> sorIdCompositionMap,
                                         Map<String, List<Rates>> basicRatesMap, Map<String, JsonNode> sorMap) {
         Map<String, String> errorMap = new HashMap<>();
-        for (String sorId : sorMap.keySet()) {
-            if (sorMap.get(sorId).get("sorType").asText().equals("W") ) {
-                errorMap.put("BASIC_SOR_ONLY", sorId + " is not basic Sor");
-            }
-        }
+//        for (String sorId : sorMap.keySet()) {
+//            if (sorMap.get(sorId).get("sorType").asText().equals("W") ) {
+//                errorMap.put("BASIC_SOR_ONLY", sorId + " is not basic Sor");
+//            }
+//        }
 
         if (!CollectionUtils.isEmpty(errorMap))
             throw new CustomException(errorMap);
@@ -33,7 +33,7 @@ public class RateAnalysisValidator {
     public void validateNewRates(Map<String, Rates> oldRatesMap, List<Rates> newRates) {
 //        Map<String, String> errorMap = new HashMap<>();
         for (Rates rates : newRates) {
-            if (!oldRatesMap.containsKey(rates.getSorId())) {
+            if (!oldRatesMap.containsKey(rates.getSorId()) || oldRatesMap.get(rates.getSorId()) == null) {
                 log.info("Previous rates not found for sorId " + rates.getSorId());
             } else {
                 Rates oldRate = oldRatesMap.get(rates.getSorId());

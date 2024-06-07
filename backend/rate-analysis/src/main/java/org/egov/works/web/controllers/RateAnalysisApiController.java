@@ -23,15 +23,12 @@ import java.util.List;
 @RequestMapping("")
 public class RateAnalysisApiController {
 
-    private final ObjectMapper objectMapper;
-
     private final HttpServletRequest request;
 
     private final RateAnalysisService rateAnalysisService;
 
     @Autowired
-    public RateAnalysisApiController(ObjectMapper objectMapper, HttpServletRequest request, RateAnalysisService rateAnalysisService) {
-        this.objectMapper = objectMapper;
+    public RateAnalysisApiController(HttpServletRequest request, RateAnalysisService rateAnalysisService) {
         this.request = request;
         this.rateAnalysisService = rateAnalysisService;
     }

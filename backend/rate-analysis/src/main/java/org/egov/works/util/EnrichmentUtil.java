@@ -36,9 +36,10 @@ public class EnrichmentUtil {
                 .additionalDetails(sorDetails)
                 .build();
     }
-    public void enrichRates(Rates rates, String sorId, String validFrom) {
-        rates.setSorId(sorId);
+    public void enrichRates(Rates rates, RateAnalysis rateAnalysis, String validFrom) {
+        rates.setSorId(rateAnalysis.getSorCode());
         rates.setValidFrom(String.valueOf(validFrom));
+        rates.setTenantId(rateAnalysis.getTenantId());
 
     }
 

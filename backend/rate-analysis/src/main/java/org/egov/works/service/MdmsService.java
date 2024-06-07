@@ -30,7 +30,7 @@ public class MdmsService {
     }
 
     public void createRevisedRates(List<Rates> revisedRates, Map<String, Rates> oldRatesMap, RequestInfo requestInfo) {
-        List<Mdms> mdmsData = fetchOldMdms(oldRatesMap, requestInfo);
+        List<Mdms> mdmsData = fetchOldMdms(oldRatesMap, requestInfo, revisedRates.get(0).getTenantId());
         Map<String, List<Mdms>> mdmsMap = mdmsData.stream()
                 .collect(Collectors.groupingBy(mdms -> mdms.getUniqueIdentifier().split("\\.")[0]));
         for (Rates rates : revisedRates) {
@@ -64,13 +64,15 @@ public class MdmsService {
         Object response = restRepo.fetchResult(uri, mdmsRequest);
     }
 
-    List<Mdms> fetchOldMdms(Map<String, Rates> oldRatesMap, RequestInfo requestInfo) {
-        Set<String> uniqueIdentifiers = oldRatesMap.values().stream().map(rates -> rates.getSorId()+"."+rates.getValidFrom())
+    List<Mdms> fetchOldMdms(Map<String, Rates> oldRatesMap, RequestInfo requestInfo, String tenantId) {
+        Set<String> uniqueIdentifiers = oldRatesMap.values().stream().filter(rates -> rates != null).map(rates -> rates.getSorId()+"."+rates.getValidFrom())
                 .collect(java.util.stream.Collectors.toSet());
         MdmsCriteriaV2 mdmsCriteriaV2 = MdmsCriteriaV2.builder()
-                .schemaCode("WORKS-SOR.RATES").uniqueIdentifiers(uniqueIdentifiers).build();
+                .schemaCode("WORKS-SOR.RATES").tenantId(tenantId).uniqueIdentifiers(uniqueIdentifiers).build();
         StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getMdmsV2EndPoint());
-        Object response = restRepo.fetchResult(uri, mdmsCriteriaV2);
+        MdmsCriteriaReqV2 mdmsCriteriaReqV2 = MdmsCriteriaReqV2.builder()
+                .mdmsCriteria(mdmsCriteriaV2).requestInfo(requestInfo).build();
+        Object response = restRepo.fetchResult(uri, mdmsCriteriaReqV2);
         MdmsResponseV2 mdmsResponseV2 = mapper.convertValue(response, MdmsResponseV2.class);
 
 

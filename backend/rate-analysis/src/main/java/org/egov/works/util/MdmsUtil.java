@@ -66,7 +66,6 @@ public class MdmsUtil {
         }
 //        List<SorComposition> sorCompositions = mapper.convertValue(sorComposition.get("WORKS-SOR").get("Composition"), List.class);
         Map<String, List<SorComposition>> sorIdToCompositionMap = sorCompositions.stream().collect(Collectors.groupingBy(e -> e.getSorId()));
-        //TODO fetch correct composition
         Map<String, SorComposition> sorIdToCompositionMap1 = new HashMap<>();
         for (Map.Entry<String, List<SorComposition>> entry : sorIdToCompositionMap.entrySet()) {
             sorIdToCompositionMap1.put(entry.getKey(), commonUtil.getApplicableSorComposition(entry.getValue(), Long.parseLong(analysisRequest.getSorDetails().getEffectiveFrom())));

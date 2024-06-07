@@ -73,8 +73,6 @@ public class RateAnalysis {
     private String uom = null;
 
     @JsonProperty("quantity")
-
-    @Valid
     private BigDecimal quantity = null;
 
     @JsonProperty("description")

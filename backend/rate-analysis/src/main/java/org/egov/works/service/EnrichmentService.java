@@ -33,7 +33,9 @@ public class EnrichmentService {
                     if (amountDetailMap.containsKey(amountDetail.getHeads())) {
                         amountDetailMap.get(amountDetail.getHeads()).add(amountDetail);
                     } else {
-                        amountDetailMap.put(amountDetail.getHeads(), Collections.singletonList(amountDetail));
+                        List<AmountDetail> amountDetails = new ArrayList<>();
+                        amountDetails.add(amountDetail);
+                        amountDetailMap.put(amountDetail.getHeads(), amountDetails);
                     }
                 }
             }
@@ -77,7 +79,7 @@ public class EnrichmentService {
                 rate = rate.add(amountDetail.getAmount());
             }
             rates.setRate(rate);
-            enrichmentUtil.enrichRates(rates, rateAnalysis.getSorCode(), rateAnalysis.getEffectiveFrom());
+            enrichmentUtil.enrichRates(rates, rateAnalysis, rateAnalysis.getEffectiveFrom());
             ratesList.add(rates);
         }
         return ratesList;
