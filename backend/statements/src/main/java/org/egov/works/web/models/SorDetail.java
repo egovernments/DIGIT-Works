@@ -41,6 +41,8 @@ public class SorDetail {
     @JsonProperty("lineItems")
     @Valid
     private List<BasicSor> lineItems = null;
+    @JsonProperty("tenantId")
+    private String tenantId=null;
 
 
     public SorDetail addAmountDetailsItem(BasicSorDetails basicSorDetailsItem) {

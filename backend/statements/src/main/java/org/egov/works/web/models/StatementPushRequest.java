@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
-
 @Validated
 @Data
 @AllArgsConstructor
@@ -23,5 +21,5 @@ public class StatementPushRequest {
     private RequestInfo requestInfo = null;
     @JsonProperty("statement")
     @Valid
-    private List<Statement> statement = null;
+    private Statement statement = null;
 }

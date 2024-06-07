@@ -12,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 @Validated
@@ -34,7 +33,7 @@ public class SearchCriteria {
     @NotNull
 
     @Valid
-    private UUID referenceId = null;
+    private String referenceId = null;
 
 
     public SearchCriteria addStatementIdItem(String statementIdItem) {

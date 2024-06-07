@@ -1,13 +1,21 @@
 package org.egov.works.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.config.StatementConfiguration;
 import org.egov.works.kafka.Producer;
+import org.egov.works.repository.StatementRepository;
+import org.egov.works.util.StatementServiceUtil;
 import org.egov.works.validator.StatementValidator;
+import org.egov.works.web.models.Statement;
 import org.egov.works.web.models.StatementCreateRequest;
 import org.egov.works.web.models.StatementPushRequest;
+import org.egov.works.web.models.StatementSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -21,22 +29,40 @@ public class AnalysisStatementService {
     private Producer producer;
     @Autowired
     private StatementConfiguration statementConfiguration;
+    @Autowired
+    private StatementRepository statementRepository;
+    @Autowired
+    private StatementServiceUtil statementServiceUtil;
 
 public StatementPushRequest createAnalysisStatement(StatementCreateRequest statementCreateRequest){
     log.info("AnalysisStatementService::createAnalysisStatement");
     statementValidator.validateStatementOnCreate(statementCreateRequest);
-    StatementPushRequest statementPushRequest= enrichmentService.enrichStatementPushRequest(statementCreateRequest);
-    if(statementPushRequest!=null){
-        producer.push(statementConfiguration.getSaveAnalysisStatementTopic(),statementPushRequest);
+    StatementPushRequest statementPushRequest= new StatementPushRequest();
+    List<Statement> statementList=new ArrayList<>();
+    Boolean isCreate=statementServiceUtil.checkIfCreateOperation(statementCreateRequest, statementList);
+   // if(statementPushRequest.getStatement()!=null){
+        if(isCreate){
+            statementPushRequest= enrichmentService.enrichStatementPushRequest(statementCreateRequest);
+            producer.push(statementConfiguration.getSaveAnalysisStatementTopic(),statementPushRequest);
+        }else{
+            statementPushRequest= enrichmentService.enrichStatementPushRequestForUpdate(statementCreateRequest,statementList);
+            producer.push(statementConfiguration.getUpdateAnalysisStatementTopic(),statementPushRequest);
+        }
 
+    if(statementPushRequest.getStatement()==null){
+        log.error("Statement Push Request Not Created Successfully");
+        throw new CustomException("STATEMENT_PUSH_REQUEST_ERROR","Statement Push Request Not Created Successfully");
     }
     return statementPushRequest;
 
 }
 
-/*public List<StatementResponse> searchStatement(StatementSearchCriteria statementSearchCriteria){
+public List<Statement> searchStatement(StatementSearchCriteria statementSearchCriteria){
+    statementValidator.validateStatementSearchCriteria(statementSearchCriteria);
+    log.info("get statement from db");
+   return statementRepository.getStatement(statementSearchCriteria.getSearchCriteria());
 
 
-}*/
+}
 
 }

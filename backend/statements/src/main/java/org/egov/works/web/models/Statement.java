@@ -3,6 +3,7 @@ package org.egov.works.web.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import digit.models.coremodels.AuditDetails;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -80,6 +81,13 @@ public class Statement {
     @JsonProperty("sorDetails")
     @Valid
     private List<SorDetail> sorDetails = null;
+
+    @JsonProperty("auditDetails")
+    @Valid
+    private AuditDetails auditDetails = null;
+
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
 
     public Statement addAmountDetailsItem(BasicSorDetails basicSorDetailsItem) {

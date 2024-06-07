@@ -34,21 +34,24 @@ public class MdmsUtil {
     private StatementConfiguration configs;
 
     private final ServiceRequestRepository serviceRequestRepository;
+    private final CommonUtil commonUtil;
 
     private static final String FILTER_START = "[?(";
     private static final String FILTER_END = "')]";
-    private static final String COMPOSITION_FILTER_CODE = "@.sorId=='";
+    private static final String COMPOSITION_RATE_FILTER_CODE = "@.sorId=='";
+    private static final String COMPOSITION_SOR_FILTER_CODE = "@.id=='";
     private static final String OR_ADDITIONAL_FILTER = "'||";
     public static final String MDMS_SOR_MASTER_NAME = "SOR";
     private static final String SOR_FILTER_CODE = "@.id=='%s'";
 
     @Autowired
-    private MdmsUtil(RestTemplate restTemplate,ObjectMapper mapper,StatementConfiguration configs,ServiceRequestRepository serviceRequestRepository){
+    private MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, StatementConfiguration configs, ServiceRequestRepository serviceRequestRepository, CommonUtil commonUtil){
         this.restTemplate=restTemplate;
         this.configs=configs;
         this.mapper=mapper;
         this.serviceRequestRepository=serviceRequestRepository;
 
+        this.commonUtil = commonUtil;
     }
 
 
@@ -66,10 +69,10 @@ public class MdmsUtil {
         return mdmsResponse;
     }
 
-    public Map<String, SorComposition> fetchSorComposition(RequestInfo requestInfo,Set<String> sorIdSet, String tenantId) {
+    public Map<String, SorComposition> fetchSorComposition(RequestInfo requestInfo,Set<String> sorIdSet, String tenantId,Long createdTime) {
 
 
-        String filter = getfilter(new ArrayList<>(sorIdSet));
+        String filter = getfilter(new ArrayList<>(sorIdSet),Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorComposition = fetchMdmsData(requestInfo,
                 configs.getStateLevelTenantId(), "WORKS-SOR",
                 Collections.singletonList("Composition"), filter);
@@ -85,29 +88,41 @@ public class MdmsUtil {
         } catch (JsonProcessingException e) {
             throw new CustomException("MDMS_PARSE_EXCEPTION", "Error while parsing mdms response");
         }
-        Map<String, SorComposition> sorIdToCompositionMap = sorCompositions.stream().collect(Collectors.toMap(e -> e.getSorId(), e -> e));
+        Map<String, List<SorComposition>> sorIdToCompositionMap = sorCompositions.stream().collect(Collectors.groupingBy(e -> e.getSorId()));
 
-        return sorIdToCompositionMap;
+        Map<String, SorComposition> sorIdToCompositionMap1 = new HashMap<>();
+        for (Map.Entry<String, List<SorComposition>> entry : sorIdToCompositionMap.entrySet()) {
+            sorIdToCompositionMap1.put(entry.getKey(), commonUtil.getApplicableSorComposition(entry.getValue(), createdTime));
+        }
+
+       /* if (sorIdToCompositionMap.size() != sorIdSet.size()) {
+            analysisRequest.getSorDetails().getSorCodes().remove(sorIdToCompositionMap.keySet());
+            throw new CustomException("SOR_COMPOSITION_NOT_FOUND", "Sor composition not found for SOR codes :: " + analysisRequest.getSorDetails().getSorCodes());
+        }*/
+        return sorIdToCompositionMap1;
+
+
 
     }
 
-    private String getfilter(List<String> sorIds) {
-        StringBuilder filterBuilder = new StringBuilder(FILTER_START).append(COMPOSITION_FILTER_CODE).append(sorIds.get(0));
-        for(int i = 1; i < sorIds.size(); i++) {
-            filterBuilder.append(OR_ADDITIONAL_FILTER).append(COMPOSITION_FILTER_CODE);
-            filterBuilder.append(sorIds.get(i));
+    private String getfilter(List<String> sorIds, Boolean isSorRequest) {
+        StringBuilder filterBuilder = new StringBuilder(FILTER_START);
+        Iterator<String> sorIdsIterator = sorIds.iterator();
+        while (sorIdsIterator.hasNext()) {
+            String sorIdOrRateFilter = String.format(Boolean.TRUE.equals(isSorRequest)? COMPOSITION_SOR_FILTER_CODE:COMPOSITION_RATE_FILTER_CODE, sorIdsIterator.next());
+            filterBuilder.append(sorIdOrRateFilter);
+            if(sorIdsIterator.hasNext()){
+                filterBuilder.append(OR_ADDITIONAL_FILTER);
+            }
         }
         filterBuilder.append(FILTER_END);
+
         return filterBuilder.toString();
     }
 
-    public Map<String, List<Rates>> fetchBasicRates(RequestInfo requestInfo, String tenantId, Map<String, SorComposition> sorIdToCompositionMap) {
-        Set<String> basicSorIds = new HashSet<>();
+    public Map<String, List<Rates>> fetchBasicRates(RequestInfo requestInfo, String tenantId, List<String> sorsList) {
 
-        for (SorComposition sorComposition : sorIdToCompositionMap.values()) {
-            basicSorIds.addAll(sorComposition.getBasicSorDetails().stream().map(SorCompositionBasicSorDetail::getSorId).toList());
-        }
-        String filter = getfilter(basicSorIds.stream().toList());
+        String filter = getfilter(sorsList,Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
                 tenantId, "WORKS-SOR",
                 Collections.singletonList("Rates"), filter);
@@ -118,6 +133,37 @@ public class MdmsUtil {
         }
         return ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
 
+    }
+    public Map<String, Sor> fetchSorData(RequestInfo requestInfo, String tenantId, List<String> sorsList, Boolean isSorRequest) {
+
+        String filter = getfilter(sorsList,isSorRequest);
+        Map <String, Sor> sorIdToSorMap= new HashMap<>();
+        Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
+                tenantId, "WORKS-SOR",
+                Collections.singletonList("SOR"), filter);
+       // List<Sor> sorList = new ArrayList<>();
+        for(Object object : sorRates.get("WORKS-SOR").get("SOR")) {
+            Sor  sor = mapper.convertValue(object, Sor.class);
+            sorIdToSorMap.put(sor.getId(),sor);
+           // sorList.add(sor);
+        }
+
+        return sorIdToSorMap;
+
+    }
+
+    public Map<String, List<Rates>> fetchRateForNonWorksSor(String basicSorIds, RequestInfo requestInfo,String tenantId){
+
+        String filter = getfilter(Arrays.asList(basicSorIds),Boolean.TRUE);
+        Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
+                tenantId, "WORKS-SOR",
+                Collections.singletonList("Rates"), filter);
+        List<Rates> ratesList = new ArrayList<>();
+        for(Object object : sorRates.get("WORKS-SOR").get("Rates")) {
+            Rates  rates = mapper.convertValue(object, Rates.class);
+            ratesList.add(rates);
+        }
+        return ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
     }
 
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
