@@ -43,15 +43,15 @@
   },
   {
     "id": "KPI7",
-    "kpi_name": "Vendor payment approval timeliness",
-    "description": "Vendor payment approved within 2 working days of receiving verified request from ME.",
+    "kpi_name": "Muster roll approval timeliness",
+    "description": "Muster roll approved within 3 days of submission",
     "kra": "Payments done on time",
     "designations": ["WRK_JE" , "WRK_IE" , "WRK_AE"]
   },
   {
     "id": "KPI8",
-    "kpi_name": "Vendor payment verification timeliness",
-    "description": "Vendor payment requests verified within 2 days after submission from JE/IE/AEE",
+    "kpi_name": "Outstanding payment clearance after project completion",
+    "description": "All outstanding muster rolls approved and vendor bills submitted within 3 days of project completion",
     "kra": "Payments done on time",
     "designations": ["WRK_JE" , "WRK_IE" , "WRK_AE"]
   },

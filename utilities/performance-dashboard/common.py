@@ -99,7 +99,8 @@ def getInitialKpiObject(tenantId, designation, employeeName, kpiId):
         "score": 0,
         "total_count": 0,
         "positive_count": 0,
-        "negative_count": 0
+        "negative_count": 0,
+        "created_time": current_milli_time()
     }
 
 def current_milli_time():

@@ -200,10 +200,10 @@ def calculate_KPI8(curser, tenantId, projectIds, hrmsDetails):
                     projectDetailMap[projectId]['billCreatedBeforeProjectCompletion'] = False
 
     kraByEmployeeIdMap = processProjectDetails(tenantId, projectDetailMap, projectContractMap, hrmsDetails)
-    kra9Response = []
+    kra8Response = []
     for employeeId in kraByEmployeeIdMap:
         if kraByEmployeeIdMap[employeeId]['total_count'] > 0:
             score = (kraByEmployeeIdMap[employeeId]['positive_count'] / kraByEmployeeIdMap[employeeId]['total_count']) * 100
             kraByEmployeeIdMap[employeeId]['score'] = round(score, 2)
-            kra9Response.append(kraByEmployeeIdMap[employeeId])
-    return kra9Response
+            kra8Response.append(kraByEmployeeIdMap[employeeId])
+    return kra8Response
