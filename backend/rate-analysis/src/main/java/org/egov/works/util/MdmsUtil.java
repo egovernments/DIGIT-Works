@@ -69,7 +69,7 @@ public class MdmsUtil {
         //TODO fetch correct composition
         Map<String, SorComposition> sorIdToCompositionMap1 = new HashMap<>();
         for (Map.Entry<String, List<SorComposition>> entry : sorIdToCompositionMap.entrySet()) {
-            sorIdToCompositionMap1.put(entry.getKey(), commonUtil.getApplicableSorComposition(entry.getValue(), System.currentTimeMillis()));
+            sorIdToCompositionMap1.put(entry.getKey(), commonUtil.getApplicableSorComposition(entry.getValue(), Long.parseLong(analysisRequest.getSorDetails().getEffectiveFrom())));
         }
 //        Map<String, Object> sorIdToCompositionMap =  jsonArray.stream().collect(Collectors
 //                .toMap(e -> JsonPath.read(e, "$.sorId"), e -> e) );
@@ -142,7 +142,7 @@ public class MdmsUtil {
         Map<String, List<Rates>> ratesMap = ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
         Map<String, Rates> rateMap = new HashMap<>();
         for (Map.Entry<String, List<Rates>> entry : ratesMap.entrySet()) {
-            rateMap.put(entry.getKey(), commonUtil.getApplicatbleRate(entry.getValue(), System.currentTimeMillis()));
+            rateMap.put(entry.getKey(), commonUtil.getApplicatbleRate(entry.getValue(), Long.parseLong(analysisRequest.getSorDetails().getEffectiveFrom())));
         }
         return rateMap;
     }
