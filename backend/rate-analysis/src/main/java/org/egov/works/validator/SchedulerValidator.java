@@ -34,11 +34,7 @@ public class SchedulerValidator {
         ZonedDateTime startOfDay = currentDate.atStartOfDay(ZoneId.systemDefault());
         Long startOfDayMillis = Long.valueOf(startOfDay.toInstant().toEpochMilli());
 
-        // Get the end of the current day
-        ZonedDateTime endOfDay = currentDate.plusDays(1).atStartOfDay(ZoneId.systemDefault()).minusNanos(1);
-        Long endOfDayMillis = Long.valueOf(endOfDay.toInstant().toEpochMilli());
-
         // Check if the epoch time falls within the range of start and end of the current day
-        return effectiveFrom.compareTo(startOfDayMillis) >= 0 && effectiveFrom.compareTo(endOfDayMillis) <= 0;
+        return effectiveFrom.compareTo(startOfDayMillis) >= 0;
     }
 }
