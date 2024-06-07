@@ -111,6 +111,7 @@ public class MdmsUtil {
         for (SorComposition sorComposition : sorIdToCompositionMap.values()) {
             basicSorIds.addAll(sorComposition.getBasicSorDetails().stream().map(BasicSorDetail::getSorId).toList());
         }
+        basicSorIds.addAll(analysisRequest.getSorDetails().getSorCodes());
         String filter = getfilter(basicSorIds.stream().toList(), true);
         Map<String, Map<String, JSONArray>> sor = fetchMdmsData(analysisRequest.getRequestInfo(),
                 analysisRequest.getSorDetails().getTenantId(), "WORKS-SOR",

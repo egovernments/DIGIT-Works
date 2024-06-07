@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -39,6 +40,17 @@ public class EnrichmentUtil {
         rates.setSorId(sorId);
         rates.setValidFrom(String.valueOf(validFrom));
 
+    }
+
+    public void enrichRateAnalysis(List<RateAnalysis> rateAnalysisList, Map<String, JsonNode> sorMap) {
+        for (RateAnalysis rateAnalysis : rateAnalysisList) {
+            JsonNode worksSor = sorMap.get(rateAnalysis.getSorCode());
+            rateAnalysis.setSorSubType(worksSor.get("sorSubType").asText());
+            rateAnalysis.setSorVariant(worksSor.get("sorVariant").asText());
+            rateAnalysis.setSorType(worksSor.get("sorType").asText());
+            rateAnalysis.setUom(worksSor.get("uom").asText());
+            rateAnalysis.setDescription(worksSor.get("description").asText());
+        }
     }
 
 }
