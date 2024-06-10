@@ -32,7 +32,7 @@ public class RateAnalysisSchedulerApiController {
     @RequestMapping(value = "scheduler/_create", method = RequestMethod.POST)
     public ResponseEntity<JobSchedulerResponse> rateAnalysisV1SchedulerCreatePost(@Valid @RequestBody JobSchedulerRequest jobSchedulerRequest) {
         List<ScheduledJob> scheduledJobs = schedulerService.createScheduledJobs(jobSchedulerRequest);
-        org.egov.common.contract.response.ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(jobSchedulerRequest.getRequestInfo(), true);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(jobSchedulerRequest.getRequestInfo(), true);
         JobSchedulerResponse jobSchedulerResponse = JobSchedulerResponse.builder().responseInfo(responseInfo).scheduledJobs(scheduledJobs).build();
         return new ResponseEntity<>(jobSchedulerResponse, HttpStatus.OK);
     }
