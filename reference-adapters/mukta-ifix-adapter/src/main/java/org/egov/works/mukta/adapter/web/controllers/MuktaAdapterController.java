@@ -5,7 +5,7 @@ import org.egov.works.mukta.adapter.service.DisbursementService;
 import org.egov.works.mukta.adapter.service.PaymentInstructionService;
 import org.egov.works.mukta.adapter.util.ResponseInfoFactory;
 import org.egov.works.mukta.adapter.web.models.*;
-import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
+import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.jit.PIResponse;
 import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +66,14 @@ public class MuktaAdapterController {
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(disbursementSearchRequest.getRequestInfo(), true);
         PIResponse paymentInstructionResponse = PIResponse.builder().paymentInstructions(paymentInstructions).responseInfo(responseInfo).build();
         return ResponseEntity.ok(paymentInstructionResponse);
+    }
+
+    // TODO: Remove this after dev
+    @RequestMapping(path = "/manual/payment-create", method = RequestMethod.POST)
+    public ResponseEntity<Object> paymentCreate(@RequestBody @Valid BillSearchRequest billSearchRequest){
+        List<Payment> payments = paymentInstructionService.processCreatePayment(billSearchRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(), true);
+        PaymentResponse paymentResponse = PaymentResponse.builder().responseInfo(responseInfo).payments(payments).build();
+        return ResponseEntity.ok(paymentResponse);
     }
 }
