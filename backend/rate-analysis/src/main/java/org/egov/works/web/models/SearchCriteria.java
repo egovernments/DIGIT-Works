@@ -23,7 +23,6 @@ import java.util.List;
 @Builder
 public class SearchCriteria {
     @JsonProperty("tenantId")
-    @NotNull
     private String tenantId = null;
 
     @JsonProperty("jobIds")
