@@ -61,8 +61,14 @@ public class ServiceRequestRepository {
         return response;
     }
 
+    /**
+     * Fetches Scheduled Jobs
+     *
+     * @param jobSchedulerSearchCriteria The JobSchedulerSearchCriteria
+     * @return List of Scheduled Jobs
+     */
     public List<ScheduledJob> getScheduledJobs(JobSchedulerSearchCriteria jobSchedulerSearchCriteria) {
-        log.info("Fetching Scheduled Jobs");
+        log.info("ServiceRequestRepository:getScheduledJobs");
         List<Object> preparedStmtList = new ArrayList<>();
         String query = schedulerQueryBuilder.getJobSchedulerSearchQuery(jobSchedulerSearchCriteria, preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), schedulerRowMapper);

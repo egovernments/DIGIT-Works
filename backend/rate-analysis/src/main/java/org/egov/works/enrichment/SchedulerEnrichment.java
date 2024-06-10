@@ -22,8 +22,15 @@ public class SchedulerEnrichment {
         this.configuration = configuration;
     }
 
+    /**
+     * Enriches Scheduled Jobs
+     *
+     * @param jobSchedulerRequest The JobSchedulerRequest
+     * @param sorIdToSorCodeMap   The Map of SOR Id to SOR Code
+     * @return List of Scheduled Jobs
+     */
     public List<ScheduledJob> enrichScheduledJobs(JobSchedulerRequest jobSchedulerRequest, Map<String, String> sorIdToSorCodeMap) {
-        log.info("Enriching Scheduled Jobs");
+        log.info("SchedulerEnrichment:enrichScheduledJobs");
         RequestInfo requestInfo = jobSchedulerRequest.getRequestInfo();
         JobScheduler jobScheduler = jobSchedulerRequest.getSchedule();
         String tenantId = jobScheduler.getTenantId();
@@ -53,8 +60,15 @@ public class SchedulerEnrichment {
                 .build();
     }
 
+    /**
+     * Enriches SOR Details
+     *
+     * @param jobScheduler       The JobScheduler
+     * @param sorIdToSorCodeMap The Map of SOR Id to SOR Code
+     * @return List of SOR Details
+     */
     private List<SorDetail> enrichSorDetails(JobScheduler jobScheduler, Map<String, String> sorIdToSorCodeMap) {
-        log.info("Enriching Sor Details");
+        log.info("SchedulerEnrichment:enrichSorDetails");
         List<SorDetail> sorDetails = new ArrayList<>();
         if(jobScheduler.getSorIds() != null) {
             for (String sorId : jobScheduler.getSorIds()) {
@@ -97,7 +111,13 @@ public class SchedulerEnrichment {
                 .build();
     }
 
+    /**
+     * Enriches Scheduled Jobs Status and Enriches Audit Details
+     *
+     * @param scheduledJob The ScheduledJob
+     */
     public void enrichScheduledJobsStatusAndEnrichAuditDetails(ScheduledJob scheduledJob) {
+        log.info("SchedulerEnrichment:enrichScheduledJobsStatusAndEnrichAuditDetails");
         for (SorDetail sorDetail : scheduledJob.getSorDetails()) {
             if (sorDetail.getStatus().equals(StatusEnum.FAILED)) {
                 scheduledJob.setStatus(StatusEnum.FAILED);

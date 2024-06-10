@@ -15,21 +15,36 @@ import java.time.ZonedDateTime;
 @Slf4j
 public class SchedulerValidator {
 
+    /**
+     * Validates the JobSchedulerRequest
+     *
+     * @param jobSchedulerRequest The JobSchedulerRequest
+     */
     public void validateSchedulerRequest(JobSchedulerRequest jobSchedulerRequest) {
-        log.info("Validating JobSchedulerRequest");
+        log.info("SchedulerValidator: validateSchedulerRequest");
         validateJobScheduler(jobSchedulerRequest.getSchedule());
         log.info("JobSchedulerRequest validated successfully");
     }
-
+    /**
+     * Validates the JobScheduler
+     * @param schedule The JobScheduler
+     */
     private void validateJobScheduler(JobScheduler schedule) {
-        log.info("Validating JobScheduler");
+        log.info("SchedulerValidator: validateJobScheduler");
         //validating date range
         if (!validateEffectiveFromDateToCurrentDay(schedule.getEffectiveFrom())) {
             throw new CustomException("INVALID_SCHEDULER_REQUEST", "Effective from date should be of the current day");
         }
     }
 
+    /**
+     * Validates the effective from date to the current day
+     *
+     * @param effectiveFrom The effective from date
+     * @return True if the effective from date is valid, false otherwise
+     */
     private boolean validateEffectiveFromDateToCurrentDay(Long effectiveFrom) {
+        log.info("SchedulerValidator: validateEffectiveFromDateToCurrentDay");
         // Get the start of the current day
         LocalDate currentDate = LocalDate.now();
         ZonedDateTime startOfDay = currentDate.atStartOfDay(ZoneId.systemDefault());

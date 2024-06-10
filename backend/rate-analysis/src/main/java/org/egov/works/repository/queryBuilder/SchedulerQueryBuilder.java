@@ -1,5 +1,6 @@
 package org.egov.works.repository.queryBuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.works.config.Configuration;
 import org.egov.works.web.models.JobSchedulerSearchCriteria;
@@ -14,7 +15,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 @Component
-@Service
+@Slf4j
 public class SchedulerQueryBuilder {
 
     private final Configuration configuration;
@@ -41,7 +42,14 @@ public class SchedulerQueryBuilder {
             query.append(" AND ");
         }
     }
+
+    /**
+     * @param jobSchedulerSearchCriteria
+     * @param preparedStmtList
+     * @return
+     */
     public String getJobSchedulerSearchQuery(JobSchedulerSearchCriteria jobSchedulerSearchCriteria, List<Object> preparedStmtList) {
+        log.info("SchedulerQueryBuilder:getJobSchedulerSearchQuery");
         StringBuilder query = new StringBuilder(JOB_SCHEDULER_SEARCH_QUERY);
         SearchCriteria searchCriteria = jobSchedulerSearchCriteria.getSearchCriteria();
         Pagination pagination = jobSchedulerSearchCriteria.getPagination();

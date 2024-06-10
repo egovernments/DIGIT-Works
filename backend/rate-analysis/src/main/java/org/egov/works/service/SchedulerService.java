@@ -40,6 +40,12 @@ public class SchedulerService {
         this.rateAnalysisService = rateAnalysisService;
     }
 
+    /**
+     * Creates Scheduled Jobs
+     *
+     * @param jobSchedulerRequest The JobSchedulerRequest
+     * @return List of Scheduled Jobs
+     */
     public List<ScheduledJob> createScheduledJobs(JobSchedulerRequest jobSchedulerRequest) {
         log.info("Creating Scheduled Jobs");
         schedulerValidator.validateSchedulerRequest(jobSchedulerRequest);
@@ -54,6 +60,11 @@ public class SchedulerService {
         return scheduledJobs;
     }
 
+    /**
+     *
+     * @param jobSchedulerRequest
+     * @return Map of SOR Id to SOR Code
+     */
     private Map<String, String> getSorIdToSorCodeMapFromMdms(JobSchedulerRequest jobSchedulerRequest) {
         log.info("Fetching SORs from MDMS");
         Map<String, String> sorIdToSorCodeMap = new HashMap<>();
@@ -70,7 +81,12 @@ public class SchedulerService {
         return sorIdToSorCodeMap;
     }
 
+    /**
+     * @param jobSchedulerRequest
+     * @return List of SORs
+     */
     private List<Mdms> getSorsForSorIds(JobSchedulerRequest jobSchedulerRequest) {
+        log.info("SchedulerService: getSorsForSorIds");
         int limit = 20;
         int offset = 0;
         List<Mdms> mdmsList = new ArrayList<>();
@@ -98,9 +114,13 @@ public class SchedulerService {
         }
         return mdmsList;
     }
-
+    /**
+     * Creates Scheduled Jobs from Consumer
+     *
+     * @param jobScheduledRequest The JobScheduledRequest
+     */
     public void createScheduledJobsFromConsumer(JobScheduledRequest jobScheduledRequest) {
-        log.info("Creating Scheduled Jobs from Consumer");
+        log.info("SchedulerService: createScheduledJobsFromConsumer");
         jobScheduledRequest.getScheduledJobs().setStatus(StatusEnum.IN_PROGRESS);
         RequestInfo requestInfo = jobScheduledRequest.getRequestInfo();
         ScheduledJob scheduledJob = jobScheduledRequest.getScheduledJobs();
@@ -123,11 +143,20 @@ public class SchedulerService {
             }
         }
         schedulerEnrichment.enrichScheduledJobsStatusAndEnrichAuditDetails(scheduledJob);
+        log.info("Pushing Rate Analysis Job for update");
         rateAnalysisProducer.push(configuration.getRateAnalysisJobUpdateTopic(), jobScheduledRequest);
     }
 
+    /**
+     * Calls Rate Analysis Create
+     *
+     * @param sorDetail          The SorDetail
+     * @param requestInfo        The RequestInfo
+     * @param sorDetails         The SorDetails
+     * @param rateEffectiveFrom  The Rate Effective From
+     */
     private void callRateAnalysisCreate(SorDetail sorDetail, RequestInfo requestInfo, SorDetails sorDetails, Long rateEffectiveFrom) {
-        log.info("Calling Rate Analysis Create for SOR: " + sorDetail.getSorId());
+        log.info("SchedulerService: callRateAnalysisCreate");
         sorDetails.setSorId(Collections.singletonList(sorDetail.getSorId()));
         sorDetails.setSorCodes(Collections.singletonList(sorDetail.getSorCode()));
         sorDetails.setEffectiveFrom(String.valueOf(rateEffectiveFrom));
@@ -136,11 +165,18 @@ public class SchedulerService {
                 .sorDetails(sorDetails)
                 .build();
 
+        log.info("Creating Rate Analysis");
         rateAnalysisService.createRateAnalysis(analysisRequest);
     }
 
+    /**
+     * Searches Scheduled Jobs
+     *
+     * @param jobSchedulerSearchCriteria The JobSchedulerSearchCriteria
+     * @return List of Scheduled Jobs
+     */
     public List<ScheduledJob> searchScheduledJobs(JobSchedulerSearchCriteria jobSchedulerSearchCriteria) {
-        log.info("Searching Scheduled Jobs");
+        log.info("SchedulerService: searchScheduledJobs");
         return serviceRequestRepository.getScheduledJobs(jobSchedulerSearchCriteria);
     }
 }
