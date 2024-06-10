@@ -48,7 +48,7 @@ public class SchedulerValidator {
         // Get the start of the current day
         LocalDate currentDate = LocalDate.now();
         ZonedDateTime startOfDay = currentDate.atStartOfDay(ZoneId.systemDefault());
-        Long startOfDayMillis = Long.valueOf(startOfDay.toInstant().toEpochMilli());
+        Long startOfDayMillis = startOfDay.toInstant().toEpochMilli();
 
         // Check if the epoch time falls within the range of start and end of the current day
         return effectiveFrom.compareTo(startOfDayMillis) >= 0;
