@@ -58,5 +58,10 @@ public class ServiceConstants {
 
     public static final String RATE_ANALYSIS_SCHEDULE_DETAILS_ID= "rateAnalysisScheduleDetailsId";
 
+    public static final String WORKS_SOR_KEY = "WORKS-SOR";
+    public static final String RATES_KEY = "Rates";
+    public static final String SOR_KEY = "SOR";
+    public static final String COMPOSITION_KEY = "Composition";
+
 
 }
