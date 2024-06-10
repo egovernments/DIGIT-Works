@@ -104,13 +104,6 @@ public class SchedulerEnrichment {
         return sorDetails;
     }
 
-    public SorDetails getSorDetailsRequestForRateAnalysis(ScheduledJob scheduledJob) {
-        return SorDetails.builder()
-                .tenantId(scheduledJob.getTenantId())
-//                .effectiveFrom(scheduledJob.getRateEffectiveFrom())
-                .build();
-    }
-
     /**
      * Enriches Scheduled Jobs Status and Enriches Audit Details
      *

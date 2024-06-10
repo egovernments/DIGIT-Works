@@ -124,7 +124,6 @@ public class SchedulerService {
         jobScheduledRequest.getScheduledJobs().setStatus(StatusEnum.IN_PROGRESS);
         RequestInfo requestInfo = jobScheduledRequest.getRequestInfo();
         ScheduledJob scheduledJob = jobScheduledRequest.getScheduledJobs();
-        SorDetails sorDetails = schedulerEnrichment.getSorDetailsRequestForRateAnalysis(scheduledJob);
 
         log.info("Pushing Rate Analysis Job for processing");
         for (SorDetail sorDetail : scheduledJob.getSorDetails()) {
@@ -132,7 +131,7 @@ public class SchedulerService {
                 sorDetail.setStatus(StatusEnum.IN_PROGRESS);
                 //Calling Rate Analysis Create, in case of error it will mark the status as FAILED
                 try {
-                    callRateAnalysisCreate(sorDetail, requestInfo, sorDetails, scheduledJob.getRateEffectiveFrom());
+                    callRateAnalysisCreate(sorDetail, requestInfo, scheduledJob.getRateEffectiveFrom(), scheduledJob.getTenantId());
                     sorDetail.setStatus(StatusEnum.SUCCESSFUL);
                 } catch (Exception e) {
                     log.error("Error while processing Rate Analysis Job for SOR: {}", sorDetail.getSorId());
@@ -152,14 +151,16 @@ public class SchedulerService {
      *
      * @param sorDetail          The SorDetail
      * @param requestInfo        The RequestInfo
-     * @param sorDetails         The SorDetails
      * @param rateEffectiveFrom  The Rate Effective From
      */
-    private void callRateAnalysisCreate(SorDetail sorDetail, RequestInfo requestInfo, SorDetails sorDetails, Long rateEffectiveFrom) {
+    private void callRateAnalysisCreate(SorDetail sorDetail, RequestInfo requestInfo, Long rateEffectiveFrom, String tenantId) {
         log.info("SchedulerService: callRateAnalysisCreate");
-        sorDetails.setSorId(Collections.singletonList(sorDetail.getSorId()));
-        sorDetails.setSorCodes(Collections.singletonList(sorDetail.getSorCode()));
-        sorDetails.setEffectiveFrom(String.valueOf(rateEffectiveFrom));
+        SorDetails sorDetails = SorDetails.builder()
+                                .tenantId(tenantId)
+                                .sorId(Collections.singletonList(sorDetail.getSorId()))
+                                .sorCodes(Collections.singletonList(sorDetail.getSorCode()))
+                                .effectiveFrom(String.valueOf(rateEffectiveFrom))
+                                .build();
         AnalysisRequest analysisRequest = AnalysisRequest.builder()
                 .requestInfo(requestInfo)
                 .sorDetails(sorDetails)
