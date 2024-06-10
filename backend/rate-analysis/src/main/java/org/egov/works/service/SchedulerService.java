@@ -135,7 +135,7 @@ public class SchedulerService {
                     callRateAnalysisCreate(sorDetail, requestInfo, sorDetails, scheduledJob.getRateEffectiveFrom());
                     sorDetail.setStatus(StatusEnum.SUCCESSFUL);
                 } catch (Exception e) {
-                    log.error("Error while processing Rate Analysis Job for SOR: " + sorDetail.getSorId());
+                    log.error("Error while processing Rate Analysis Job for SOR: {}", sorDetail.getSorId());
                     log.error("Error: ", e);
                     sorDetail.setStatus(StatusEnum.FAILED);
                     sorDetail.setFailureReason(e.getMessage());
