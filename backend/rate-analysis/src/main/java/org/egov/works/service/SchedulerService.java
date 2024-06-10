@@ -87,8 +87,8 @@ public class SchedulerService {
      */
     private List<Mdms> getSorsForSorIds(JobSchedulerRequest jobSchedulerRequest) {
         log.info("SchedulerService: getSorsForSorIds");
-        int limit = 20;
-        int offset = 0;
+        int limit = configuration.getDefaultLimit();
+        int offset = configuration.getDefaultOffset();
         List<Mdms> mdmsList = new ArrayList<>();
         while (true) {
             MdmsCriteriaV2 mdmsCriteria = MdmsCriteriaV2.builder()

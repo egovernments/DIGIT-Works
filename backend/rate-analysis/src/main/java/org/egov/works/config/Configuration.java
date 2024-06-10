@@ -71,4 +71,10 @@ public class Configuration {
 
     @Value("${rate.analysis.default.limit}")
     private Integer defaultLimit;
+
+    @Value("${sor.default.limit}")
+    private Integer sorDefaultLimit;
+
+    @Value("${sor.default.offset}")
+    private Integer sorDefaultOffset;
 }
