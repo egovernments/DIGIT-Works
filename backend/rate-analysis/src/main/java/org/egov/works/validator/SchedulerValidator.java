@@ -23,6 +23,7 @@ public class SchedulerValidator {
 
     private void validateJobScheduler(JobScheduler schedule) {
         log.info("Validating JobScheduler");
+        //validating date range
         if (!validateEffectiveFromDateToCurrentDay(schedule.getEffectiveFrom())) {
             throw new CustomException("INVALID_SCHEDULER_REQUEST", "Effective from date should be of the current day");
         }

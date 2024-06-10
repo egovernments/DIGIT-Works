@@ -29,7 +29,7 @@ public class RateAnalysisConsumer {
         try {
             JobScheduledRequest jobScheduledRequest = objectMapper.convertValue(jobCreateRecord, JobScheduledRequest.class);
             if (jobScheduledRequest != null && jobScheduledRequest.getRequestInfo() != null && jobScheduledRequest.getScheduledJobs() != null) {
-                log.info("Processing job create request for record: " + jobCreateRecord);
+                log.info("Processing job create request for record");
                 schedulerService.createScheduledJobsFromConsumer(jobScheduledRequest);
             }
         } catch (Exception e) {

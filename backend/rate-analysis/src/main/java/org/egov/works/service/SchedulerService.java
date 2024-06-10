@@ -110,6 +110,7 @@ public class SchedulerService {
         for (SorDetail sorDetail : scheduledJob.getSorDetails()) {
             if (sorDetail.getStatus().equals(StatusEnum.SCHEDULED)) {
                 sorDetail.setStatus(StatusEnum.IN_PROGRESS);
+                //Calling Rate Analysis Create, in case of error it will mark the status as FAILED
                 try {
                     callRateAnalysisCreate(sorDetail, requestInfo, sorDetails, scheduledJob.getRateEffectiveFrom());
                     sorDetail.setStatus(StatusEnum.SUCCESSFUL);
