@@ -5,11 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.ServiceCallException;
-import org.egov.works.repository.queryBuilder.SchedulerQueryBuilder;
-import org.egov.works.repository.rowMapper.SchedulerRowMapper;
+import org.egov.works.repository.QueryBuilder.SchedulerQueryBuilder;
+import org.egov.works.repository.RowMapper.SchedulerRowMapper;
 import org.egov.works.web.models.JobSchedulerSearchCriteria;
 import org.egov.works.web.models.ScheduledJob;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
@@ -71,6 +72,6 @@ public class ServiceRequestRepository {
         log.info("ServiceRequestRepository:getScheduledJobs");
         List<Object> preparedStmtList = new ArrayList<>();
         String query = schedulerQueryBuilder.getJobSchedulerSearchQuery(jobSchedulerSearchCriteria, preparedStmtList);
-        return jdbcTemplate.query(query, preparedStmtList.toArray(), schedulerRowMapper);
+        return jdbcTemplate.query(query, new ArgumentPreparedStatementSetter(preparedStmtList.toArray()), schedulerRowMapper);
     }
 }

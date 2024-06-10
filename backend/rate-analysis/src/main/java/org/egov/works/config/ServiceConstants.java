@@ -56,5 +56,7 @@ public class ServiceConstants {
     public static final String SOR_CODE_JSON_KEY = "id";
     public static final String SOR_TYPE_JSON_KEY = "sorType";
 
+    public static final String RATE_ANALYSIS_SCHEDULE_DETAILS_ID= "rateAnalysisScheduleDetailsId";
+
 
 }

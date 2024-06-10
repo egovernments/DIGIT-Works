@@ -91,11 +91,11 @@ public class SchedulerEnrichment {
             sorDetails.add(sorDetail);
         }
         }else{
-            for(String id: sorIdToSorCodeMap.keySet()){
+            for(Map.Entry<String, String> entry: sorIdToSorCodeMap.entrySet()){
                 SorDetail sorDetail = SorDetail.builder()
                         .id(UUID.randomUUID().toString())
-                        .sorId(id)
-                        .sorCode(sorIdToSorCodeMap.get(id))
+                        .sorId(entry.getKey())
+                        .sorCode(sorIdToSorCodeMap.get(entry.getKey()))
                         .status(StatusEnum.SCHEDULED)
                         .build();
                 sorDetails.add(sorDetail);

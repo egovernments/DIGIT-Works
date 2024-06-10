@@ -1,4 +1,4 @@
-package org.egov.works.repository.queryBuilder;
+package org.egov.works.repository.QueryBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +9,6 @@ import org.egov.works.web.models.Pagination;
 import org.egov.works.web.models.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class SchedulerQueryBuilder {
             " rasd.id as rateAnalysisScheduleDetailsId, rasd.sorId as rateAnalysisScheduleDetailsSorId, rasd.ratesJobId as rateAnalysisScheduleDetailsRatesJobId, rasd.sorCode as rateAnalysisScheduleDetailsSorCode, rasd.status as rateAnalysisScheduleDetailsStatus," +
             " rasd.failureReason as rateAnalysisScheduleDetailsFailuerReason, rasd.additionaldetails as rateAnalysisScheduleDetailsAdditionalDetails From eg_rate_analysis_schedule ras INNER JOIN eg_rate_analysis_schedule_details rasd ON rasd.ratesjobid = ras.id";
 
-    private static String WRAPPER_QUERY = "SELECT * FROM " +
+    private static final String WRAPPER_QUERY = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY rateAnalysisSchedule{sortBy} {orderBy}) offset_ FROM " +
             "({})" +
             " result) result_offset " +

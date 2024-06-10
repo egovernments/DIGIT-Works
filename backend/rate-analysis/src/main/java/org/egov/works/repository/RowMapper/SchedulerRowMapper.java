@@ -1,4 +1,4 @@
-package org.egov.works.repository.rowMapper;
+package org.egov.works.repository.RowMapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+
+import static org.egov.works.config.ServiceConstants.RATE_ANALYSIS_SCHEDULE_DETAILS_ID;
 
 @Component
 public class SchedulerRowMapper implements ResultSetExtractor<List<ScheduledJob>> {
@@ -55,9 +57,9 @@ public class SchedulerRowMapper implements ResultSetExtractor<List<ScheduledJob>
 
             // Create SorDetail object
             SorDetail sorDetail = new SorDetail();
-            if(!sorDetailsIds.contains(rs.getString("rateAnalysisScheduleDetailsId"))){
-                sorDetailsIds.add(rs.getString("rateAnalysisScheduleDetailsId"));
-                sorDetail.setId(rs.getString("rateAnalysisScheduleDetailsId"));
+            if(!sorDetailsIds.contains(rs.getString(RATE_ANALYSIS_SCHEDULE_DETAILS_ID))){
+                sorDetailsIds.add(rs.getString(RATE_ANALYSIS_SCHEDULE_DETAILS_ID));
+                sorDetail.setId(rs.getString(RATE_ANALYSIS_SCHEDULE_DETAILS_ID));
                 sorDetail.setSorId(rs.getString("rateAnalysisScheduleDetailsSorId"));
                 sorDetail.setSorCode(rs.getString("rateAnalysisScheduleDetailsSorCode"));
                 sorDetail.setStatus(StatusEnum.valueOf(rs.getString("rateAnalysisScheduleDetailsStatus")));
