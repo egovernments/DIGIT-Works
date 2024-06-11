@@ -36,7 +36,7 @@ private final RestTemplate restTemplate;
 
     public Boolean isValidEstimate( StatementRequest statementRequest , RequestInfo requestInfo){
 
-        EstimateResponse estimateResponse=getEstimate(statementRequest,requestInfo);
+        EstimateResponse estimateResponse=getEstimate(statementRequest.getId(), statementRequest.getTenantId(),requestInfo);
         return (estimateResponse!=null &&!estimateResponse.getEstimates().isEmpty());
     }
     private StringBuilder getSearchURLWithParams(String tenantId, Set<String> estimateIds) {
@@ -49,11 +49,9 @@ private final RestTemplate restTemplate;
         return url;
     }
 
-    public EstimateResponse getEstimate(StatementRequest statementRequest, RequestInfo requestInfo) {
+    public EstimateResponse getEstimate(String estimateId, String tenantId, RequestInfo requestInfo) {
     log.info("EstimateUtil::getEstimate");
     Set<String> estimateIdSet= new HashSet<>();
-        String estimateId= statementRequest.getId();
-        String tenantId= statementRequest.getTenantId();
         estimateIdSet.add(estimateId);
         StringBuilder url = getSearchURLWithParams(tenantId, estimateIdSet);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();

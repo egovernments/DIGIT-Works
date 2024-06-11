@@ -77,4 +77,18 @@ public class StatementConfiguration {
     private String saveAnalysisStatementTopic;
     @Value("${update.analysis.statement.topic}")
     private String updateAnalysisStatementTopic;
+
+    // Measurement Service Host
+    @Value("${works.measurement.host}")
+    private String measurementHost;
+
+    @Value("${works.measurement.search.endpoint}")
+    private String measurementSearchEndpoint;
+
+    //Contract Service Host
+    @Value("${works.contract.host}")
+    private String contractHost;
+
+    @Value("${works.contract.search.endpoint}")
+    private String contractSearchEndpoint;
 }

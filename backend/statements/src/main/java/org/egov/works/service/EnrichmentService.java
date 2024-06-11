@@ -51,7 +51,7 @@ public class EnrichmentService {
         StatementPushRequest statementPushRequest;
         StatementRequest statementRequest = statementCreateRequest.getStatementRequest();
         RequestInfo requestInfo = statementCreateRequest.getRequestInfo();
-        EstimateResponse estimateResponse = estimateUtil.getEstimate(statementCreateRequest.getStatementRequest(), statementCreateRequest.getRequestInfo());
+        EstimateResponse estimateResponse = estimateUtil.getEstimate(statementRequest.getId(), statementRequest.getTenantId(), statementCreateRequest.getRequestInfo());
         if (estimateResponse == null && estimateResponse.getEstimates().isEmpty()) {
             throw new CustomException(ESTIMATE_RESPONSE_NULL_EMPTY_CODE, ESTIMATE_RESPONSE_NULL_EMPTY_MSG);
         }
