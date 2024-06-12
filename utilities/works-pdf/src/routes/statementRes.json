@@ -1,0 +1,227 @@
+{
+  "responseInfo": {
+    "apiId": "Rainmaker",
+    "ver": null,
+    "ts": null,
+    "resMsgId": "uief87324",
+    "msgId": "1686229830654|en_IN",
+    "status": "successful"
+  },
+  "statement": [
+    {
+      "id": "d88fb0ed-695f-481d-9cdf-8be3e30d1c00",
+      "tenantId": "od.testing",
+      "targetId": "a7933603-8254-467f-9ae8-4976ca876ffe",
+      "statementType": "ANALYSIS",
+      "basicSorDetails": null,
+      "sorDetails": [
+        {
+          "id": "f13f38ff-9b06-4e93-80b3-7d52cb47fce9",
+          "statementId": "d88fb0ed-695f-481d-9cdf-8be3e30d1c00",
+          "sorId": "SOR_000206",
+          "basicSorDetails": [
+            {
+              "id": "6dda1ab0-c558-422b-9442-d709e9fc89eb",
+              "amount": 7069197.731635,
+              "type": "L",
+              "quantity": null,
+              "rate": null,
+              "name": null,
+              "unit": null
+            },
+            {
+              "id": "8c72b967-c3e8-419a-9d3b-ba5a0a49720b",
+              "amount": 726715.72702924,
+              "type": "M",
+              "quantity": null,
+              "rate": null,
+              "name": null,
+              "unit": null
+            }
+          ],
+          "lineItems": [
+            {
+              "id": "c42587a6-8cf3-491c-9419-3047e6f81471",
+              "sorId": "SOR_000437",
+              "sorType": "L",
+              "referenceId": "f13f38ff-9b06-4e93-80b3-7d52cb47fce9",
+              "amountDetails": [
+                {
+                  "id": "dc6d13c7-b69b-419d-ba28-8e24fd649d1b",
+                  "amount": 7069197.731635,
+                  "type": "L",
+                  "quantity": 500.049355,
+                  "rate": 14137,
+                  "name": "Operator for Heavy construction Machineries",
+                  "unit": "NOs"
+                }
+              ]
+            },
+            {
+              "id": "df220fa1-8626-4725-bef8-d275ee71d756",
+              "sorId": "SOR_000183",
+              "sorType": "M",
+              "referenceId": "f13f38ff-9b06-4e93-80b3-7d52cb47fce9",
+              "amountDetails": [
+                {
+                  "id": "cb81ee26-aba3-41e8-8c5b-dbfe24996dbe",
+                  "amount": 726715.72702924,
+                  "type": "M",
+                  "quantity": 400.039484,
+                  "rate": 1816.61,
+                  "name": "Paver Finisher Mechanical",
+                  "unit": "HOUR"
+                }
+              ]
+            }
+          ],
+          "tenantId": "od.testing"
+        },
+        {
+          "id": "0f76f9f8-4d9e-4cc5-a9d3-97c0797955db",
+          "statementId": "d88fb0ed-695f-481d-9cdf-8be3e30d1c00",
+          "sorId": "SOR_000252",
+          "basicSorDetails": [
+            {
+              "id": "249ed4ad-6b92-43d5-a9e8-5ba5872a7575",
+              "amount": 71304.271285,
+              "type": "L",
+              "quantity": null,
+              "rate": null,
+              "name": null,
+              "unit": null
+            },
+            {
+              "id": "c3196603-bb3a-4276-90a8-2f6ad71e450f",
+              "amount": 7330.10128084,
+              "type": "M",
+              "quantity": null,
+              "rate": null,
+              "name": null,
+              "unit": null
+            }
+          ],
+          "lineItems": [
+            {
+              "id": "99949d3c-bf71-49bd-874c-197ca844a717",
+              "sorId": "SOR_000437",
+              "sorType": "L",
+              "referenceId": "0f76f9f8-4d9e-4cc5-a9d3-97c0797955db",
+              "amountDetails": [
+                {
+                  "id": "14f837f8-ce45-49ea-8465-efd51312ae9e",
+                  "amount": 71304.271285,
+                  "type": "L",
+                  "quantity": 5.043805,
+                  "rate": 14137,
+                  "name": "Operator for Heavy construction Machineries",
+                  "unit": "NOs"
+                }
+              ]
+            },
+            {
+              "id": "f99b31c5-3169-40ff-9b98-9d935622d1f2",
+              "sorId": "SOR_000183",
+              "sorType": "M",
+              "referenceId": "0f76f9f8-4d9e-4cc5-a9d3-97c0797955db",
+              "amountDetails": [
+                {
+                  "id": "6ebfbc94-8637-42fd-aa25-8c4965478301",
+                  "amount": 7330.10128084,
+                  "type": "M",
+                  "quantity": 4.035044,
+                  "rate": 1816.61,
+                  "name": "Paver Finisher Mechanical",
+                  "unit": "HOUR"
+                }
+              ]
+            }
+          ],
+          "tenantId": "od.testing"
+        },
+        {
+          "id": "d08bead4-8e78-4313-a73a-8bc01fdf29a4",
+          "statementId": "d88fb0ed-695f-481d-9cdf-8be3e30d1c00",
+          "sorId": "SOR_000200",
+          "basicSorDetails": [
+            {
+              "id": "c3100d0b-c767-461f-8ec4-4adff416ed24",
+              "amount": 568913.651108,
+              "type": "L",
+              "quantity": null,
+              "rate": null,
+              "name": null,
+              "unit": null
+            },
+            {
+              "id": "0a4c943f-8308-411d-9734-cbd70a510db5",
+              "amount": 73105.62550324,
+              "type": "M",
+              "quantity": null,
+              "rate": null,
+              "name": null,
+              "unit": null
+            }
+          ],
+          "lineItems": [
+            {
+              "id": "87c45e5e-98ae-4117-8c76-8c223161023b",
+              "sorId": "SOR_000437",
+              "sorType": "L",
+              "referenceId": "d08bead4-8e78-4313-a73a-8bc01fdf29a4",
+              "amountDetails": [
+                {
+                  "id": "e55af44e-539a-474e-807b-ef2227d884ca",
+                  "amount": 568913.651108,
+                  "type": "L",
+                  "quantity": 40.242884,
+                  "rate": 14137,
+                  "name": "Operator for Heavy construction Machineries",
+                  "unit": "NOs"
+                }
+              ]
+            },
+            {
+              "id": "ad22440c-f72f-4d60-acbc-6b159582ffeb",
+              "sorId": "SOR_000183",
+              "sorType": "M",
+              "referenceId": "d08bead4-8e78-4313-a73a-8bc01fdf29a4",
+              "amountDetails": [
+                {
+                  "id": "1d04d06d-c04e-4548-a6d8-7052ccfd9cdb",
+                  "amount": 73105.62550324,
+                  "type": "M",
+                  "quantity": 40.242884,
+                  "rate": 1816.61,
+                  "name": "Paver Finisher Mechanical",
+                  "unit": "HOUR"
+                }
+              ]
+            }
+          ],
+          "tenantId": "od.testing"
+        },
+        {
+          "id": "9131f89b-005b-47e0-a8cb-c9ac82d7817c",
+          "statementId": "d88fb0ed-695f-481d-9cdf-8be3e30d1c00",
+          "sorId": "SOR_000100",
+          "basicSorDetails": [
+            {
+              "id": null,
+              "amount": null,
+              "type": "M",
+              "quantity": 2,
+              "rate": null,
+              "name": null,
+              "unit": "CUM"
+            }
+          ],
+          "lineItems": [],
+          "tenantId": "od.testing"
+        }
+      ],
+      "auditDetails": null,
+      "additionalDetails": null
+    }
+  ]
+}
