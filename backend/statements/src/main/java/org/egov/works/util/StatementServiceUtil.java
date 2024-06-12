@@ -45,7 +45,7 @@ public class StatementServiceUtil {
                 .build();
         statementList.addAll(statementRepository.getStatement(searchCriteria));
 
-        return !statementList.isEmpty();
+        return statementList.isEmpty();
 
 
 

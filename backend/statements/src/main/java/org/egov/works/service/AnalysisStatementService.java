@@ -34,35 +34,34 @@ public class AnalysisStatementService {
     @Autowired
     private StatementServiceUtil statementServiceUtil;
 
-public StatementPushRequest createAnalysisStatement(StatementCreateRequest statementCreateRequest){
-    log.info("AnalysisStatementService::createAnalysisStatement");
-    statementValidator.validateStatementOnCreate(statementCreateRequest);
-    StatementPushRequest statementPushRequest= new StatementPushRequest();
-    List<Statement> statementList=new ArrayList<>();
-    Boolean isCreate=statementServiceUtil.checkIfCreateOperation(statementCreateRequest, statementList);
-   // if(statementPushRequest.getStatement()!=null){
-        if(isCreate){
-            statementPushRequest= enrichmentService.enrichStatementPushRequest(statementCreateRequest);
-            producer.push(statementConfiguration.getSaveAnalysisStatementTopic(),statementPushRequest);
-        }else{
-            statementPushRequest= enrichmentService.enrichStatementPushRequestForUpdate(statementCreateRequest,statementList);
-            producer.push(statementConfiguration.getUpdateAnalysisStatementTopic(),statementPushRequest);
+    public StatementPushRequest createAnalysisStatement(StatementCreateRequest statementCreateRequest) {
+        log.info("AnalysisStatementService::createAnalysisStatement");
+        statementValidator.validateStatementOnCreate(statementCreateRequest);
+        StatementPushRequest statementPushRequest ;
+        List<Statement> statementList = new ArrayList<>();
+        Boolean isCreate = statementServiceUtil.checkIfCreateOperation(statementCreateRequest, statementList);
+            if (isCreate) {
+                statementPushRequest = enrichmentService.enrichStatementPushRequest(statementCreateRequest);
+                producer.push(statementConfiguration.getSaveAnalysisStatementTopic(), statementPushRequest);
+            } else {
+                statementPushRequest = enrichmentService.enrichStatementPushRequestForUpdate(statementCreateRequest, statementList.get(0));
+                producer.push(statementConfiguration.getUpdateAnalysisStatementTopic(), statementPushRequest);
+            }
+            if(statementPushRequest.getStatement()==null){
+            log.error("Statement Push Request Not Created Successfully");
+            throw new CustomException("STATEMENT_PUSH_REQUEST_ERROR", "Statement Push Request Not Created Successfully");
+        }
+            return statementPushRequest;
+
         }
 
-    if(statementPushRequest.getStatement()==null){
-        log.error("Statement Push Request Not Created Successfully");
-        throw new CustomException("STATEMENT_PUSH_REQUEST_ERROR","Statement Push Request Not Created Successfully");
+
+        public List<Statement> searchStatement (StatementSearchCriteria statementSearchCriteria){
+            statementValidator.validateStatementSearchCriteria(statementSearchCriteria);
+            log.info("get statement from db");
+            return statementRepository.getStatement(statementSearchCriteria.getSearchCriteria());
+
+
+        }
+
     }
-    return statementPushRequest;
-
-}
-
-public List<Statement> searchStatement(StatementSearchCriteria statementSearchCriteria){
-    statementValidator.validateStatementSearchCriteria(statementSearchCriteria);
-    log.info("get statement from db");
-   return statementRepository.getStatement(statementSearchCriteria.getSearchCriteria());
-
-
-}
-
-}

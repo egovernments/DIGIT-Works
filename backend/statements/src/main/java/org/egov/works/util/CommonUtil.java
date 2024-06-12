@@ -1,6 +1,7 @@
 package org.egov.works.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.Rates;
 import org.egov.works.web.models.SorComposition;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,8 @@ import java.util.List;
 public class CommonUtil {
 
     public Rates getApplicatbleRate(List<Rates> ratesList, Long givenTime) {
+        if(ratesList!=null && !ratesList.isEmpty()){
+
          Comparator<Rates> comparator = (o1, o2) -> {
              String validFrom1 = o1.getValidFrom();
              String validFrom2 = o2.getValidFrom();
@@ -30,7 +33,9 @@ public class CommonUtil {
             }
         }
         return null; // Or throw an exception if no valid rate is found
-
+        }else{
+            throw new CustomException("NO_RATES_FOUND","No rates present ");
+        }
     }
 
     private static long parseTime(String timeStr) {
