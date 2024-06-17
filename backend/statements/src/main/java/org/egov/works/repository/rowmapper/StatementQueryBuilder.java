@@ -20,9 +20,9 @@ public class StatementQueryBuilder {
             "statement.additional_details AS additionalDetails, statement.createdtime AS createdTime, statement.createdby AS createdBy, " +
             "statement.lastmodifiedtime AS lastModifiedTime, statement.lastmodifiedby AS lastModifiedBy, sorDetails.id AS sorDetailsId, " +
             "sorDetails.tenantid AS sorDetailsTenantId, sorDetails.statement_id AS statementId, sorDetails.sorid AS sorId, " +
-            "sorDetails.basic_sor_details AS sorDetailsBasicSorDetails, sorDetails.additional_details as additionalDetails, lineItems.id AS lineItemId, lineItems.tenantid AS lineItemsTenantId, " +
+            "sorDetails.basic_sor_details AS sorDetailsBasicSorDetails, sorDetails.additional_details as sorAdditionalDetails, lineItems.id AS lineItemId, lineItems.tenantid AS lineItemsTenantId, " +
             "lineItems.sorid AS lineItemsSorId, lineItems.sortype AS lineItemSorType, lineItems.reference_id AS lineItemIdReferenceId, " +
-            "lineItems.basic_sor_details AS lineItemsBasicSorDetails, lineItems.additional_details as additionalDetails " +
+            "lineItems.basic_sor_details AS lineItemsBasicSorDetails, lineItems.additional_details as lineItemAdditionalDetails " +
             "FROM eg_statement AS statement " +
             LEFT_JOIN +
             "eg_statement_sor_details AS sorDetails " +

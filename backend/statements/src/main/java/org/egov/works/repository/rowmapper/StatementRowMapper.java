@@ -55,7 +55,6 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             if(basicSorDetails!=null){
 
                 try {
-                    // Assuming you have an ObjectMapper instance for JSON conversion
                     ObjectMapper objectMapper = new ObjectMapper();
                     basicSorDetailsList = objectMapper.readValue(basicSorDetails, ArrayList.class);
                 } catch (Exception e) {
@@ -74,7 +73,7 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             if (!statementMap.containsKey(id)) {
                 statementMap.put(id, statement);
             }
-            //one-to-many mapping
+
             addSorDetails(rs, sorDetailMap, statementMap.get(id));
 
 
@@ -91,14 +90,13 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
         if(basicSorDetails!=null){
 
             try {
-                // Assuming you have an ObjectMapper instance for JSON conversion
                 ObjectMapper objectMapper = new ObjectMapper();
                 basicSorDetailsList = objectMapper.readValue(basicSorDetails, ArrayList.class);
             } catch (Exception e) {
                 throw new SQLException("Error converting JSONB to POJO", e);
             }
         }
-        JsonNode additionalDetails = getAdditionalDetail("additionalDetails", rs);
+        JsonNode additionalDetails = getAdditionalDetail("sorAdditionalDetails", rs);
         SorDetail sorDetail = SorDetail.builder()
                 .id(sorDetailId)
                 .statementId(rs.getString("statementId"))
@@ -134,14 +132,13 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
         List<BasicSorDetails >basicSorDetailsList = new ArrayList<>();
         if(lineItemsBasicSorDetails!=null){
             try {
-                // Assuming you have an ObjectMapper instance for JSON conversion
                 ObjectMapper objectMapper = new ObjectMapper();
                 basicSorDetailsList = objectMapper.readValue(lineItemsBasicSorDetails, ArrayList.class);
             } catch (Exception e) {
                 throw new SQLException("Error converting JSONB to POJO", e);
             }
         }
-        JsonNode additionalDetails = getAdditionalDetail("additionalDetails", rs);
+        JsonNode additionalDetails = getAdditionalDetail("lineItemAdditionalDetails", rs);
         BasicSor basicSor = BasicSor.builder()
                 .id(basicSorLineItemId)
                 .sorType(rs.getString("lineItemSorType"))
