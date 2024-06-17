@@ -51,7 +51,7 @@ public class StatementValidator {
         validateTenantId(statementRequest,requestInfo);
         validateRequestInfo(requestInfo);
         validateStatementRequest(statementRequest);
-        validateEstimate(statementRequest,requestInfo);
+       // validateEstimate(statementRequest,requestInfo);
 
     }
     public void validateStatementSearchCriteria(StatementSearchCriteria statementSearchCriteria){
@@ -146,7 +146,7 @@ public class StatementValidator {
 
     }
 
-    public void validateEstimate(StatementRequest statementRequest, RequestInfo requestInfo) {
+   /* public void validateEstimate(StatementRequest statementRequest, RequestInfo requestInfo) {
         log.info("StatementValidator::validateEstimate");
         Boolean isValidEstimate = estimateUtil.isValidEstimate(statementRequest,requestInfo);
         if(!isValidEstimate){
@@ -154,7 +154,7 @@ public class StatementValidator {
 
         }
 
-    }
+    }*/
 
     private void validateRequestInfo(RequestInfo requestInfo) {
         log.info("EstimateServiceValidator::validateRequestInfo");

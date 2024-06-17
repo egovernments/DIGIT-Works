@@ -58,7 +58,7 @@ public class AnalysisStatementService {
 
         public List<Statement> searchStatement (StatementSearchCriteria statementSearchCriteria){
             statementValidator.validateStatementSearchCriteria(statementSearchCriteria);
-            log.info("get statement from db");
+            log.info("Get statement from db");
             return statementRepository.getStatement(statementSearchCriteria.getSearchCriteria());
 
 

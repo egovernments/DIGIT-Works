@@ -102,6 +102,7 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
                 .statementId(rs.getString("statementId"))
                 .tenantId(rs.getString("sorDetailsTenantId"))
                 .sorId(rs.getString("sorId"))
+                .isActive(rs.getBoolean("isActive"))
                 .basicSorDetails(basicSorDetailsList)
                 .additionalDetails(additionalDetails)
                 .build();

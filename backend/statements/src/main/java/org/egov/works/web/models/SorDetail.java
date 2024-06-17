@@ -44,6 +44,9 @@ public class SorDetail {
     @JsonProperty("tenantId")
     private String tenantId=null;
 
+    @JsonProperty("isActive")
+    private Boolean isActive;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 

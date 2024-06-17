@@ -8,7 +8,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.ServiceCallException;
 import org.egov.works.config.StatementConfiguration;
 import org.egov.works.web.models.EstimateResponse;
-import org.egov.works.web.models.StatementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -34,11 +33,11 @@ private final RestTemplate restTemplate;
     }
 
 
-    public Boolean isValidEstimate( StatementRequest statementRequest , RequestInfo requestInfo){
+   /* public Boolean isValidEstimate( StatementRequest statementRequest , RequestInfo requestInfo){
 
         EstimateResponse estimateResponse=getEstimate(statementRequest,requestInfo);
         return (estimateResponse!=null &&!estimateResponse.getEstimates().isEmpty());
-    }
+    }*/
     private StringBuilder getSearchURLWithParams(String tenantId, Set<String> estimateIds) {
         StringBuilder url = new StringBuilder(statementConfiguration.getEstimateHost());
         url.append(statementConfiguration.getEstimateSearchEndpoint());
@@ -49,11 +48,9 @@ private final RestTemplate restTemplate;
         return url;
     }
 
-    public EstimateResponse getEstimate(StatementRequest statementRequest, RequestInfo requestInfo) {
-    log.info("EstimateUtil::getEstimate");
-    Set<String> estimateIdSet= new HashSet<>();
-        String estimateId= statementRequest.getId();
-        String tenantId= statementRequest.getTenantId();
+    public EstimateResponse getEstimate(String estimateId, String tenantId, RequestInfo requestInfo) {
+        log.info("EstimateUtil::getEstimate");
+        Set<String> estimateIdSet= new HashSet<>();
         estimateIdSet.add(estimateId);
         StringBuilder url = getSearchURLWithParams(tenantId, estimateIdSet);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
