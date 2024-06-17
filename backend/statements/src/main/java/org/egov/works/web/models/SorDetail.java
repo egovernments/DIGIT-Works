@@ -44,6 +44,9 @@ public class SorDetail {
     @JsonProperty("tenantId")
     private String tenantId=null;
 
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
+
 
     public SorDetail addAmountDetailsItem(BasicSorDetails basicSorDetailsItem) {
         if (this.basicSorDetails == null) {

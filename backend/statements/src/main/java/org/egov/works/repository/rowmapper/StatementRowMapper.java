@@ -2,8 +2,8 @@ package org.egov.works.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.BasicSor;
 import org.egov.works.web.models.BasicSorDetails;
@@ -46,7 +46,7 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             Long createdtime = rs.getLong("createdTime");
             Long lastmodifiedtime = rs.getLong("lastModifiedTime");
 
-            AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
+           AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
                     .build();
 
@@ -98,13 +98,14 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
                 throw new SQLException("Error converting JSONB to POJO", e);
             }
         }
-
+        JsonNode additionalDetails = getAdditionalDetail("additionalDetails", rs);
         SorDetail sorDetail = SorDetail.builder()
                 .id(sorDetailId)
                 .statementId(rs.getString("statementId"))
                 .tenantId(rs.getString("sorDetailsTenantId"))
                 .sorId(rs.getString("sorId"))
                 .basicSorDetails(basicSorDetailsList)
+                .additionalDetails(additionalDetails)
                 .build();
 
 
@@ -140,13 +141,14 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
                 throw new SQLException("Error converting JSONB to POJO", e);
             }
         }
-
+        JsonNode additionalDetails = getAdditionalDetail("additionalDetails", rs);
         BasicSor basicSor = BasicSor.builder()
                 .id(basicSorLineItemId)
                 .sorType(rs.getString("lineItemSorType"))
                 .sorId(rs.getString("lineItemsSorId"))
                 .referenceId(rs.getString("lineItemIdReferenceId"))
-                .amountDetails(basicSorDetailsList)
+                .basicSorDetails(basicSorDetailsList)
+                .additionalDetails(additionalDetails)
                 .build();
 
 

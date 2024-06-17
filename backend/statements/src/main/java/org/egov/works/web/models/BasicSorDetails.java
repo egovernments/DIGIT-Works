@@ -37,18 +37,9 @@ public class BasicSorDetails {
     @Valid
     private BigDecimal quantity = null;
 
-    @JsonProperty("rate")
 
-    @Valid
-    private BigDecimal rate = null;
 
-    @JsonProperty("name")
-    @Valid
-    private String name;
 
-    @JsonProperty("unit")
-    @Valid
-    private String uom;
 
 
 }

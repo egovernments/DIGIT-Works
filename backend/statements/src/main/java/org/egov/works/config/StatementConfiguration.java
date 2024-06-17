@@ -27,20 +27,7 @@ public class StatementConfiguration {
     private String mdmsEndPoint;
 
 
-    //HRMS
-    @Value("${egov.hrms.host}")
-    private String hrmsHost;
 
-    @Value("${egov.hrms.search.endpoint}")
-    private String hrmsEndPoint;
-
-
-    //URLShortening
-    @Value("${egov.url.shortner.host}")
-    private String urlShortnerHost;
-
-    @Value("${egov.url.shortner.endpoint}")
-    private String urlShortnerEndpoint;
 
 
     @Value("${state.level.tenant.id}")
@@ -52,12 +39,6 @@ public class StatementConfiguration {
 
     @Value("${works.estimate.search.endpoint}")
     private String estimateSearchEndpoint;
-
-    //Rate Analysis Calculate
-    @Value("${works.rate-analysis.host}")
-    private String rateAnalysisHost;
-    @Value("${works.rate-analysis.calculate.endpoint}")
-    private String rateAnalysisCalculateEndpoint;
 
     @Value("${egov.mdms.v2.host}")
     private String mdmsV2Host;

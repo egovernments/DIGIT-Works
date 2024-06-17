@@ -1,0 +1,2 @@
+ALTER TABLE eg_statement_sor_details ADD COLUMN additional_details JSONB;
+ALTER TABLE eg_statement_sor_line_items ADD COLUMN additional_details JSONB;

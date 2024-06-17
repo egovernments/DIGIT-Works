@@ -1,6 +1,7 @@
 package org.egov.works.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.StatementConfiguration;
@@ -120,7 +121,7 @@ public class EnrichmentService {
                     .toList();
 
 
-            digit.models.coremodels.AuditDetails auditDetails = statementServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), statement,false);
+            AuditDetails auditDetails = statementServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), statement,false);
             statement.setAuditDetails(auditDetails);
 
             Map<String, List<EstimateDetail>> sorIdToEstimateDetailMap = new HashMap<>();
@@ -153,7 +154,7 @@ public class EnrichmentService {
                     .build();
             return statementPushRequest;
         }else {
-            throw new CustomException("INVALID_ESTIMATE_DETAILS","Estimate is null or estimate details is empty");
+            throw new CustomException("INVALID_ESTIMATE_DETAILS","Estimate Details object is null or estimate details is empty");
         }
 
 
@@ -172,7 +173,7 @@ public class EnrichmentService {
                 .targetId(estimate.getId())
                 .statementType(Statement.StatementTypeEnum.ANALYSIS)
                 .build();
-        digit.models.coremodels.AuditDetails auditDetails = statementServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), statement,true);
+        AuditDetails auditDetails = statementServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), statement,true);
         statement.setAuditDetails(auditDetails);
 
         enrichSorDetailsAndBasicSorDetails(statement, estimate, sorIdCompositionMap, basicSorRates,
@@ -213,7 +214,7 @@ public class EnrichmentService {
                         lineItems.add(basicSor);
 
                         // Update cumulative amounts and quantities
-                        for (BasicSorDetails detail : basicSor.getAmountDetails()) {
+                        for (BasicSorDetails detail : basicSor.getBasicSorDetails()) {
                             String type = detail.getType();
                             cumulativeAmounts.put(type, cumulativeAmounts.getOrDefault(type, BigDecimal.ZERO).add(detail.getAmount()));
                             cumulativeQuantities.put(type, cumulativeQuantities.getOrDefault(type, BigDecimal.ZERO).add(detail.getQuantity()));
@@ -233,6 +234,12 @@ public class EnrichmentService {
                         basicSorDetails.add(detail);
                     }
 
+                    List<Rates> ratesList = basicSorRates.get(sorId);
+                    Map<String,Object> additionalDetailsMap= new HashMap<>();
+                    Sor sor = sorDescriptionMap.get(sorId);
+                    Rates rates  = commonUtil.getApplicatbleRate(ratesList, createdTime);
+                    additionalDetailsMap.put("sorDetails",sor);
+                    additionalDetailsMap.put("rateDetails",rates);
 
                     // Create a SorDetail for each worksSor
                     SorDetail sorDetail = SorDetail.builder()
@@ -241,6 +248,7 @@ public class EnrichmentService {
                             .tenantId(estimate.getTenantId())
                             .basicSorDetails(basicSorDetails)
                             .statementId(statement.getId())
+                            .additionalDetails(additionalDetailsMap)
                             .build();
 
                     lineItems.forEach(basicSor -> {
@@ -254,16 +262,20 @@ public class EnrichmentService {
                 }else{
                     List<BasicSorDetails> basicSorDetails = new ArrayList<>();
                     BasicSorDetails basicSorDetail= new BasicSorDetails();
+                    Map<String,Object> additionalDetailsMap= new HashMap<>();
+                    Sor sor= sorDescriptionMap.get(sorId);
+                    additionalDetailsMap.put("sorDetails", sor);
+                    computeBasicSorDetailsForNonWorksSorInEstimate(sorId,sorIdToEstimateDetailQuantityMap,basicSorDetail,createdTime,sorDescriptionMap,basicSorRates,additionalDetailsMap);
 
-                    computeBasicSorDetailsForNonWorksSorInEstimate(sorId,sorIdToEstimateDetailQuantityMap,basicSorDetail,createdTime,sorDescriptionMap,basicSorRates);
                     basicSorDetails.add(basicSorDetail);
                     SorDetail sorDetail= SorDetail.builder()
                             .id(UUID.randomUUID().toString())
                             .sorId(sorId)
                             .statementId(statement.getId())
                             .tenantId(estimate.getTenantId())
-                            .lineItems(new ArrayList<>())
+                            //.lineItems(new ArrayList<>())
                             .basicSorDetails(basicSorDetails)
+                            .additionalDetails(additionalDetailsMap)
                             .build();
                     if(!isCreate){
                         sorDetails.addAll(statement.getSorDetails());
@@ -388,11 +400,12 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
                                   Long estimateCreatedTime,Map<String,Sor> sorDescriptionMap) {
 
         List<Rates> ratesList = basicSorRates.get(basicSorId);
+        Map<String,Object> additionalDetailsMap= new HashMap<>();
 
-        /*Rates rates  = commonUtil.getApplicatbleRate(ratesList, estimateCreatedTime);
-        BigDecimal basicRate = rates.getRate();*/
-        BigDecimal basicRate = BigDecimal.ONE;
-        List<BasicSorDetails> amountDetails = new ArrayList<>();
+        Rates rates  = commonUtil.getApplicatbleRate(ratesList, estimateCreatedTime);
+        BigDecimal basicRate = rates.getRate();
+        /*BigDecimal basicRate = BigDecimal.ONE;*/
+        List<BasicSorDetails> basicSorDetailsList = new ArrayList<>();
 
         BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(worksSor);
         BigDecimal quantity = (basicSorQuantity.divide(analysisQuantity)).multiply(quantityDefinedInEstimate);
@@ -400,30 +413,39 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
         Sor sor= sorDescriptionMap.get(basicSorId);
         BasicSorDetails basicSorDetails = BasicSorDetails.builder()
                 .id(UUID.randomUUID().toString())
-                .uom(sor.getUom())
+               // .uom(sor.getUom())
                 .type(sor.getSorType())
-                .rate(basicRate)
+                //.rate(basicRate)
                 .quantity(quantity)
-                .name(sor.getDescription())
+               // .name(sor.getDescription())
                 .amount(amount)
                 .build();
-        amountDetails.add(basicSorDetails);
+        additionalDetailsMap.put("sorDetails",sor);
+        additionalDetailsMap.put("rateDetails",rates);
+
+        basicSorDetailsList.add(basicSorDetails);
         basicSor.setId(UUID.randomUUID().toString());
         basicSor.setSorId(basicSorId);
         basicSor.setSorType(sor.getSorType());
-        basicSor.setAmountDetails(amountDetails);
+        basicSor.setBasicSorDetails(basicSorDetailsList);
+        basicSor.setAdditionalDetails(additionalDetailsMap);
+
+
     }
 
   private void  computeBasicSorDetailsForNonWorksSorInEstimate( String sorId,Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap,
                                                                 BasicSorDetails basicSorDetail,Long createdTime,
-                                                                Map<String,Sor> sorDescriptionMap,Map<String, List<Rates>> basicSorRates){
+                                                                Map<String,Sor> sorDescriptionMap,Map<String, List<Rates>> basicSorRates,Map<String,Object> additionalDetailsMap){
       BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(sorId);
       Rates rate = commonUtil.getApplicatbleRate(basicSorRates.get(sorId),createdTime);
+      BigDecimal basicRate = rate.getRate();
+      additionalDetailsMap.put("rateDetails", rate);
+      BigDecimal amount = quantityDefinedInEstimate.multiply(basicRate);
       Sor sor= sorDescriptionMap.get(sorId);
       basicSorDetail.setQuantity(quantityDefinedInEstimate);
-      basicSorDetail.setUom(sor.getUom());
+      basicSorDetail.setAmount(amount);
       basicSorDetail.setType(sor.getSorType());
-      basicSorDetail.setName(sor.getDescription());
+      basicSorDetail.setId(UUID.randomUUID().toString());
   }
 
 }

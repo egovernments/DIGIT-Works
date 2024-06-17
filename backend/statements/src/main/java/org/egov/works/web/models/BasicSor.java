@@ -1,6 +1,8 @@
 package org.egov.works.web.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -71,16 +73,21 @@ public class BasicSor {
     @JsonProperty("referenceId")
     private String referenceId=null;
 
-    @JsonProperty("amountDetails")
+
+    @JsonProperty("basicSorDetails")
     @Valid
-    private List<BasicSorDetails> amountDetails = null;
+    private List<BasicSorDetails> basicSorDetails = null;
+
+    @JsonProperty("additionalDetails")
+
+    private Object additionalDetails = null;
 
 
-    public BasicSor addAmountDetailsItem(BasicSorDetails amountDetailsItem) {
-        if (this.amountDetails == null) {
-            this.amountDetails = new ArrayList<>();
+    public BasicSor addBasicSorDetailsItem(BasicSorDetails basicSorDetailsItem) {
+        if (this.basicSorDetails == null) {
+            this.basicSorDetails = new ArrayList<>();
         }
-        this.amountDetails.add(amountDetailsItem);
+        this.basicSorDetails.add(basicSorDetailsItem);
         return this;
     }
 
