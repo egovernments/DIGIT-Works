@@ -120,17 +120,12 @@ public class EnrichmentService {
                     .filter(ed -> ESTIMATE_DETAIL_SOR_CATEGORY.equals(ed.getCategory()) &&
                             !sorIdsInSorDetails.contains(ed.getSorId()))
                     .toList();
-            if(filteredEstimateDetails.isEmpty()){
-                log.info("No new estimate details present in estimate response");
-                AuditDetails auditDetails = statementServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), statement,false);
-                statement.setAuditDetails(auditDetails);
-                return StatementPushRequest.builder().requestInfo(requestInfo).statement(statement).build();
-            }
-
-
             AuditDetails auditDetails = statementServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), statement,false);
             statement.setAuditDetails(auditDetails);
-
+            if(filteredEstimateDetails.isEmpty()){
+                log.info("No new estimate details present in estimate response");
+                return StatementPushRequest.builder().requestInfo(requestInfo).statement(statement).build();
+            }
             Map<String, List<EstimateDetail>> sorIdToEstimateDetailMap = new HashMap<>();
             Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap = new HashMap<>();
             Set<String> uniqueIdentifiers = new HashSet<>();
