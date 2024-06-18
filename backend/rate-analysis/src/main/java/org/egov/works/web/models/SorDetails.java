@@ -29,16 +29,15 @@ public class SorDetails {
     private String tenantId = null;
 
     @JsonProperty("sorCodes")
-
+    @NotNull
     private List<String> sorCodes = null;
 
     @JsonProperty("sorId")
-    @NotNull
 
     private List<String> sorId = new ArrayList<>();
 
     @JsonProperty("effectiveFrom")
-
+    @NotNull
     private String effectiveFrom = null;
 
 

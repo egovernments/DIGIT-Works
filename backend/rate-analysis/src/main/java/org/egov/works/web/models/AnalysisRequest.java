@@ -2,6 +2,7 @@ package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,12 +21,12 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 public class AnalysisRequest {
     @JsonProperty("RequestInfo")
-
+    @NotNull
     @Valid
     private RequestInfo requestInfo = null;
 
     @JsonProperty("sorDetails")
-
+    @NotNull
     @Valid
     private SorDetails sorDetails = null;
 

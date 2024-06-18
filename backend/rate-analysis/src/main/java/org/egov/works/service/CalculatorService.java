@@ -3,6 +3,7 @@ package org.egov.works.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.util.CommonUtil;
 import org.egov.works.util.EnrichmentUtil;
 import org.egov.works.web.models.*;
@@ -47,8 +48,12 @@ public class CalculatorService {
                 List<Rates> ratesList = basicRatesMap.get(basicSorDetail.getSorId());
                 Rates rate = null;
                 LineItem lineItem;
-                if (CollectionUtils.isEmpty(ratesList)) {
-                    rate = Rates.builder().build();
+                if (!ratesList.isEmpty())
+                    rate = commonUtil.getApplicatbleRate(ratesList, Long.parseLong(analysisRequest.getSorDetails().getEffectiveFrom()));
+
+                if (rate == null) {
+                    if (isCreate)
+                        throw new CustomException("NO_RATES_FOUND", "Rate not found for the sor id :: " + basicSorDetail.getSorId());
                     lineItem = enrichmentUtil.createLineItem(basicSorDetail, rate, sorMap.get(basicSorDetail.getSorId()));
                     Map<String, Object> additonalDetailsMap = mapper.convertValue(lineItem.getAdditionalDetails(), Map.class);
                     additonalDetailsMap.put("definedQuantity", basicSorDetail.getQuantity());

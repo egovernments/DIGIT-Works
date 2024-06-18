@@ -32,7 +32,7 @@ public class EnrichmentUtil {
                 .id(UUID.randomUUID().toString())
                 .type(LineItem.TypeEnum.SOR)
                 .targetId(basicSorDetail.getSorId())
-                .amountDetails(rates.getAmountDetails())
+                .amountDetails(rates != null ? rates.getAmountDetails() : null)
                 .additionalDetails(sorDetails)
                 .build();
     }
