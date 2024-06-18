@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -288,7 +289,7 @@ public class EnrichmentService {
                 List<BasicSorDetails> basicSorDetails = new ArrayList<>();
                 for (Map.Entry<String, BigDecimal> entry : cumulativeAmounts.entrySet()) {
                     String type = entry.getKey();
-                    BigDecimal amount = entry.getValue();
+                    BigDecimal amount = entry.getValue().setScale(2, RoundingMode.HALF_UP);
                     BasicSorDetails detail = BasicSorDetails.builder()
                             .id(UUID.randomUUID().toString())
                             .amount(amount)
@@ -382,8 +383,9 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
         Sor sor= sorDescriptionMap.get(basicSorId);
         BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(worksSor);
 
-        BigDecimal quantity = (basicSorQuantity.divide(analysisQuantity)).multiply(quantityDefinedInEstimate).divide(sor.getQuantity());
-        BigDecimal amount = quantity.multiply(basicRate);
+        BigDecimal quantity = (basicSorQuantity.divide(analysisQuantity, 4, RoundingMode.HALF_UP))
+                .multiply(quantityDefinedInEstimate).divide(sor.getQuantity(),4,RoundingMode.HALF_UP);
+        BigDecimal amount = quantity.multiply(basicRate).setScale(2, RoundingMode.HALF_UP);
 
         BasicSorDetails basicSorDetails = BasicSorDetails.builder()
                 .id(UUID.randomUUID().toString())
