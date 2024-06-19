@@ -60,12 +60,13 @@ public class CalculatorService {
                     lineItem.setAdditionalDetails(additonalDetailsMap);
 
                 } else {
-                    rate = commonUtil.getApplicatbleRate(ratesList, Long.parseLong(analysisRequest.getSorDetails().getEffectiveFrom()));
+//                    rate = commonUtil.getApplicatbleRate(ratesList, Long.parseLong(analysisRequest.getSorDetails().getEffectiveFrom()));
                     lineItem = enrichmentUtil.createLineItem(basicSorDetail, rate, sorMap.get(basicSorDetail.getSorId()));
                     for (AmountDetail amountDetail : lineItem.getAmountDetails()) {
                         BigDecimal sorQuantity = sorMap.get(basicSorDetail.getSorId()).get("quantity").decimalValue();
                         if (isCreate) {
-                            amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getPerUnitQty()));
+                            amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail
+                                    .getQuantity()).divide(sorQuantity, 4, RoundingMode.HALF_UP));
                         } else {
                             amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getQuantity())
                                     .divide(sorQuantity, 4, RoundingMode.HALF_UP));

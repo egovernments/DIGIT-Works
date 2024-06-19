@@ -56,11 +56,11 @@ public class MdmsService {
 
         Mdms createMdmsData = Mdms.builder()
                 .tenantId(rates.getTenantId())
-                .schemaCode("WORKS-SOR.RATES")
+                .schemaCode("WORKS-SOR.Rates")
                 .data(mapper.valueToTree(rates)).build();
         MdmsRequest mdmsRequest = MdmsRequest.builder()
                 .requestInfo(requestInfo).mdms(createMdmsData).build();
-        StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getCreateEndPoint()).append("WORKS-SOR.RATES");
+        StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getCreateEndPoint()).append("WORKS-SOR.Rates");
         Object response = restRepo.fetchResult(uri, mdmsRequest);
     }
 
@@ -68,7 +68,7 @@ public class MdmsService {
         Set<String> uniqueIdentifiers = oldRatesMap.values().stream().filter(rates -> rates != null).map(rates -> rates.getSorId()+"."+rates.getValidFrom())
                 .collect(java.util.stream.Collectors.toSet());
         MdmsCriteriaV2 mdmsCriteriaV2 = MdmsCriteriaV2.builder()
-                .schemaCode("WORKS-SOR.RATES").tenantId(tenantId).uniqueIdentifiers(uniqueIdentifiers).build();
+                .schemaCode("WORKS-SOR.Rates").tenantId(tenantId).uniqueIdentifiers(uniqueIdentifiers).build();
         StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getMdmsV2EndPoint());
         MdmsCriteriaReqV2 mdmsCriteriaReqV2 = MdmsCriteriaReqV2.builder()
                 .mdmsCriteria(mdmsCriteriaV2).requestInfo(requestInfo).build();

@@ -4,6 +4,7 @@ package org.egov.works.repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.egov.works.repository.QueryBuilder.SchedulerQueryBuilder;
 import org.egov.works.repository.RowMapper.SchedulerRowMapper;
@@ -57,6 +58,7 @@ public class ServiceRequestRepository {
             throw new ServiceCallException(e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error(SEARCHER_SERVICE_EXCEPTION, e);
+            throw new CustomException(EXTERNAL_SERVICE_EXCEPTION, EXTERNAL_SERVICE_EXCEPTION);
         }
 
         return response;
