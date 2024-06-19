@@ -66,10 +66,10 @@ public class CalculatorService {
                         BigDecimal sorQuantity = sorMap.get(basicSorDetail.getSorId()).get("quantity").decimalValue();
                         if (isCreate) {
                             amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail
-                                    .getQuantity()).divide(sorQuantity, 4, RoundingMode.HALF_UP));
+                                    .getQuantity()).divide(sorQuantity, 2, RoundingMode.HALF_UP));
                         } else {
                             amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getQuantity())
-                                    .divide(sorQuantity, 4, RoundingMode.HALF_UP));
+                                    .divide(sorQuantity, 2, RoundingMode.HALF_UP));
                         }
 
                     }

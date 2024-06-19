@@ -70,7 +70,7 @@ public class RateAnalysisValidator {
 
     }
     public void validateNewRates(Map<String, Rates> oldRatesMap, List<Rates> newRates) {
-//        Map<String, String> errorMap = new HashMap<>();
+        Map<String, String> errorMap = new HashMap<>();
         for (Rates rates : newRates) {
             if (!oldRatesMap.containsKey(rates.getSorId()) || oldRatesMap.get(rates.getSorId()) == null) {
                 log.info("Previous rates not found for sorId " + rates.getSorId());
@@ -79,18 +79,17 @@ public class RateAnalysisValidator {
                 if (oldRate.getValidFrom().compareTo(rates.getValidFrom()) > 0) {
                     log.error("Effective from date cannot be less than previous effective from date");
                     newRates.remove(rates);
-                    continue;
-//                    errorMap.put("EFFECTIVE_FROM_ERROR", "Effective from date cannot be less than previous effective from date for sorId :: " + rates.getSorId());
+                    errorMap.put("EFFECTIVE_FROM_ERROR", "Effective from date cannot be less than previous effective from date for sorId :: " + rates.getSorId());
                 }
                 if (oldRate.getRate().equals(rates.getRate())) {
                     log.error("Previous rate same as new rate");
                     newRates.remove(rates);
-//                    errorMap.put("RATE_SAME", "Previous rate same as new rate for sorId :: " + rates.getSorId());
+                    errorMap.put("RATE_SAME", "Previous rate same as new rate for sorId :: " + rates.getSorId());
                 }
             }
         }
-//        if (!CollectionUtils.isEmpty(errorMap))
-//            throw new CustomException(errorMap);
+        if (!CollectionUtils.isEmpty(errorMap))
+            throw new CustomException(errorMap);
     }
 
 

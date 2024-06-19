@@ -59,12 +59,12 @@ public class RateAnalysisService {
         List<RateAnalysis> rateAnalysis = calculatorService.calculateRateAnalysis(analysisRequest, sorIdCompositionMap,
                 basicRatesMap, sorMap, true);
 
-        List<Rates> calculatedrates = enrichmentService.enrichRates(rateAnalysis);
+        List<Rates> calculatedRates = enrichmentService.enrichRates(rateAnalysis);
         Map<String, Rates> worksRatesMap = mdmsUtil.fetchWorksRates(analysisRequest);
-        rateAnalysisValidator.validateNewRates(worksRatesMap, calculatedrates);
-        mdmsService.createRevisedRates(calculatedrates, worksRatesMap, analysisRequest.getRequestInfo());
+        rateAnalysisValidator.validateNewRates(worksRatesMap, calculatedRates);
+        mdmsService.createRevisedRates(calculatedRates, worksRatesMap, analysisRequest.getRequestInfo());
 
-        return calculatedrates;
+        return calculatedRates;
     }
 
 }
