@@ -9,4 +9,7 @@ public class ErrorConfiguration {
     public static final String SOR_NOT_FOUND_KEY = "SOR_NOT_FOUND";
     public static final String SOR_NOT_FOUND_VALUE = "Sor not found for the following SOR ids :: ";
 
+    public static final String TENANT_ID_NOT_FOUND_CODE = "TENANT_ID_NOT_FOUND";
+    public static final String TENANT_ID_NOT_FOUND_MSG = " Tenant Id is Not found.";
+
 }

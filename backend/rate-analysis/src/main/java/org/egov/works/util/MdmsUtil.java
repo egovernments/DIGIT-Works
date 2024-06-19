@@ -55,14 +55,15 @@ public class MdmsUtil {
                     Collections.singletonList(COMPOSITION_KEY), filter);
 
 
-        JSONArray jsonArray = sorComposition.get(WORKS_SOR_KEY).get(COMPOSITION_KEY);
+        JSONArray jsonArray;
         List<SorComposition> sorCompositions = null;
         try {
+            jsonArray = sorComposition.get(WORKS_SOR_KEY).get(COMPOSITION_KEY);
             sorCompositions = mapper.readValue(
                     jsonArray.toString(),
                     mapper.getTypeFactory().constructCollectionType(List.class, SorComposition.class)
             );
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             throw new CustomException(MDMS_PARSE_EXCEPTION_KEY, MDMS_PARSE_EXCEPTION_VALUE);
         }
 //        List<SorComposition> sorCompositions = mapper.convertValue(sorComposition.get("WORKS-SOR").get("Composition"), List.class);

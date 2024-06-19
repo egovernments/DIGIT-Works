@@ -36,6 +36,7 @@ public class RateAnalysisService {
     }
 
     public RateAnalysisResponse calculateRate(AnalysisRequest analysisRequest) {
+        rateAnalysisValidator.validateTenantId(analysisRequest.getSorDetails().getTenantId(), analysisRequest.getRequestInfo());
         Map<String, SorComposition> sorIdCompositionMap = mdmsUtil.fetchSorComposition(analysisRequest);
         Map<String, List<Rates>> basicRatesMap = mdmsUtil.fetchBasicRates(analysisRequest, sorIdCompositionMap);
         Map<String, JsonNode> sorMap = mdmsUtil.fetchSor(analysisRequest, sorIdCompositionMap);
@@ -50,6 +51,7 @@ public class RateAnalysisService {
     }
 
     public List<Rates> createRateAnalysis(AnalysisRequest analysisRequest) {
+        rateAnalysisValidator.validateTenantId(analysisRequest.getSorDetails().getTenantId(), analysisRequest.getRequestInfo());
         Map<String, SorComposition> sorIdCompositionMap = mdmsUtil.fetchSorComposition(analysisRequest);
         Map<String, List<Rates>> basicRatesMap = mdmsUtil.fetchBasicRates(analysisRequest, sorIdCompositionMap);
         Map<String, JsonNode> sorMap = mdmsUtil.fetchSor(analysisRequest, sorIdCompositionMap);

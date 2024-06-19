@@ -63,5 +63,8 @@ public class ServiceConstants {
     public static final String SOR_KEY = "SOR";
     public static final String COMPOSITION_KEY = "Composition";
 
+    public static final String MDMS_TENANTS_MASTER_NAME = "tenants";
+    public static final String MDMS_TENANT_MODULE_NAME = "tenant";
+
 
 }

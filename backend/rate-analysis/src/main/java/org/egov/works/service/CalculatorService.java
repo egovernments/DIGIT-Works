@@ -48,7 +48,7 @@ public class CalculatorService {
                 List<Rates> ratesList = basicRatesMap.get(basicSorDetail.getSorId());
                 Rates rate = null;
                 LineItem lineItem;
-                if (!ratesList.isEmpty())
+                if (!CollectionUtils.isEmpty(ratesList))
                     rate = commonUtil.getApplicatbleRate(ratesList, Long.parseLong(analysisRequest.getSorDetails().getEffectiveFrom()));
 
                 if (rate == null) {
