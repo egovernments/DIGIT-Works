@@ -40,9 +40,10 @@ public class EnrichmentUtil {
                 .build();
     }
 
-    public SorDetail getEnrichedSorDetail() {
+    public SorDetail getEnrichedSorDetail(String statementId) {
         return SorDetail.builder()
                 .id(UUID.randomUUID().toString())
+                .statementId(statementId)
                 .build();
     }
 

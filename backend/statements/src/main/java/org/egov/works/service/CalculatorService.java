@@ -1,6 +1,7 @@
 package org.egov.works.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.measurement.Measure;
 import org.egov.works.util.EnrichmentUtil;
 import org.egov.works.web.models.*;
@@ -22,15 +23,16 @@ public class CalculatorService {
     public void calculateUtilizationForWorksSor(Map<String, SorComposition>  sorIdToCompositionMap,
                                                     EstimateDetail estimateDetail, Map<String, List<Rates>> basicSorRateMap,
                                                     Map<String, BasicSorDetails> typeToBasicSorDetailsMap, Sor sor,
-                                                    Measure measure) {
+                                                    Measure measure, Map<String, Sor> sorIdToSorMap) {
         if (sorIdToCompositionMap.get(estimateDetail.getSorId()) != null) {
             List<SorCompositionBasicSorDetail> sorCompositionBasicSorDetails = sorIdToCompositionMap.get(estimateDetail.getSorId()).getBasicSorDetails();
             for (SorCompositionBasicSorDetail sorCompositionBasicSorDetail : sorCompositionBasicSorDetails) {
                 if (basicSorRateMap.containsKey(sorCompositionBasicSorDetail.getSorId())) {
                     Rates rates = basicSorRateMap.get(sorCompositionBasicSorDetail.getSorId()).get(0); //TODO fetch correct rates
                     BigDecimal quantity = measure.getCumulativeValue().multiply(sorCompositionBasicSorDetail.getQuantity())
-                            .divide(sorIdToCompositionMap.get(estimateDetail.getSorId()).getQuantity());
-                    calculateAmount(rates, typeToBasicSorDetailsMap, sor, quantity, estimateDetail.getIsDeduction());
+                            .divide(sorIdToCompositionMap.get(estimateDetail.getSorId()).getQuantity())
+                            .divide(sorIdToSorMap.get(sorCompositionBasicSorDetail.getSorId()).getQuantity());
+                    calculateAmount(rates, typeToBasicSorDetailsMap, sorIdToSorMap.get(sorCompositionBasicSorDetail.getSorId()), quantity, estimateDetail.getIsDeduction());
                 } else {
                     log.error("No rates found for basicSorId : " + sorCompositionBasicSorDetail.getSorId());
                 }
@@ -45,9 +47,11 @@ public class CalculatorService {
                                                 String sorId) {
         if (basicSorRateMap.containsKey(sorId)) {
             Rates rates = basicSorRateMap.get(sorId).get(0); //TODO fetch correct rates
-            calculateAmount(rates, typeToBasicSorDetailsMap, sor, measure.getCumulativeValue(), estimateDetail.getIsDeduction());
+            BigDecimal quantity = measure.getCumulativeValue().divide(sor.getQuantity());
+            calculateAmount(rates, typeToBasicSorDetailsMap, sor, quantity, estimateDetail.getIsDeduction());
         } else {
             log.error("No rates found for basicSorId : " + sorId);
+            throw new CustomException("NO_RATES_FOUND_FOR_BASIC_SOR", "No rates found for basicSorId : " + sorId);
         }
 
     }

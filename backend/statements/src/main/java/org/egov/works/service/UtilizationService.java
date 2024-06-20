@@ -54,10 +54,11 @@ public class UtilizationService {
                         .tenantId(statementCreateRequest.getStatementRequest().getTenantId())
                         .build())
                 .build());
+        StatementPushRequest pushRequest = StatementPushRequest.builder().statement(statement).build();
         if (previousStatements.isEmpty())
-            producer.push(statementConfiguration.getSaveAnalysisStatementTopic(), statement);
+            producer.push(statementConfiguration.getSaveAnalysisStatementTopic(), pushRequest);
         else
-            producer.push(statementConfiguration.getUpdateAnalysisStatementTopic(), statement);
+            producer.push(statementConfiguration.getUpdateAnalysisStatementTopic(), pushRequest);
         return statement;
     }
 

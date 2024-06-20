@@ -40,11 +40,11 @@ public class UtilizationEnrichmentService {
                 .collect(Collectors.toMap(LineItems::getContractLineItemRef, LineItems::getEstimateLineItemId));
         Map<String, EstimateDetail> estimateDetailIdToEstimateDetailMap = estimate.getEstimateDetails().stream()
                 .collect(Collectors.toMap(EstimateDetail::getId, Function.identity()));
-        List<String> sorIds = estimate.getEstimateDetails().stream().filter(estimateDetail -> estimateDetail.getCategory()
+        List<String> sorIdsFromEstimateDetail = estimate.getEstimateDetails().stream().filter(estimateDetail -> estimateDetail.getCategory()
                 .equalsIgnoreCase("SOR")).map(EstimateDetail::getSorId).collect(Collectors.toList());
 
         Map<String, Sor> sorIdToSorMap = mdmsUtil.fetchSorData(statementCreateRequest.getRequestInfo(),
-                statementCreateRequest.getStatementRequest().getTenantId(), sorIds, Boolean.TRUE);
+                statementCreateRequest.getStatementRequest().getTenantId(), sorIdsFromEstimateDetail, Boolean.TRUE);
         Set<String> worksSorIds = sorIdToSorMap.values().stream().filter(sor -> sor.getSorType()
                         .equalsIgnoreCase("W")).map(Sor::getId).collect(Collectors.toSet());
         Map<String, SorComposition> sorIdToCompositionMap = null;
@@ -63,6 +63,11 @@ public class UtilizationEnrichmentService {
                 .map(SorCompositionBasicSorDetail::getSorId)
                 .collect(Collectors.toSet());
 
+        Map<String, Sor> basicSorIdFromCompositionToSorMap = mdmsUtil.fetchSorData(statementCreateRequest.getRequestInfo(),
+                statementCreateRequest.getStatementRequest().getTenantId(), new ArrayList<>(basicSorIds), Boolean.TRUE);
+
+        sorIdToSorMap.putAll(basicSorIdFromCompositionToSorMap);
+
         Map<String, List<Rates>> basicSorRateMap = mdmsUtil.fetchRateForNonWorksSor(new ArrayList<>(basicSorIds),
                 statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId());
 
@@ -72,7 +77,8 @@ public class UtilizationEnrichmentService {
         statement.setBasicSorDetails(basicSorDetails);
 
         List<SorDetail> sorDetails = getSorDetails(sorIdToSorMap, sorIdToCompositionMap,
-                estimateDetailIdToEstimateDetailMap, contractLineItemRefToEstDetailIdMap, measureList, basicSorRateMap);
+                estimateDetailIdToEstimateDetailMap, contractLineItemRefToEstDetailIdMap, measureList, basicSorRateMap,
+                statement.getId());
         statement.setSorDetails(sorDetails);
 
         return statement;
@@ -97,7 +103,7 @@ public class UtilizationEnrichmentService {
                 }
                 if (sor.getSorType().equalsIgnoreCase("W")) {
                     calculatorService.calculateUtilizationForWorksSor(sorIdToCompositionMap, estimateDetail,
-                            basicSorRateMap, typeToBasicSorDetailsMap, sor, measure);
+                            basicSorRateMap, typeToBasicSorDetailsMap, sor, measure, sorIdToSorMap);
                 } else {
                     calculatorService.calculateUtilizationForBasicSor(estimateDetail, basicSorRateMap, typeToBasicSorDetailsMap,
                             sor, measure, estimateDetail.getSorId());
@@ -111,7 +117,7 @@ public class UtilizationEnrichmentService {
     List<SorDetail> getSorDetails(Map<String, Sor> sorIdToSorMap, Map<String, SorComposition> sorIdToCompositionMap,
                                     Map<String, EstimateDetail> estimateDetailIdToEstimateDetailMap,
                                     Map<String, String> contractLineItemRefToEstDetailIdMap,
-                                    List<Measure> measureList, Map<String, List<Rates>> basicSorRateMap) {
+                                    List<Measure> measureList, Map<String, List<Rates>> basicSorRateMap, String statementId) {
 
 
         List<SorDetail> sorDetails = new ArrayList<>();
@@ -122,14 +128,14 @@ public class UtilizationEnrichmentService {
             if (!estimateDetail.getCategory().equalsIgnoreCase("SOR")) {
                 continue;
             }
-            SorDetail sorDetail = enrichmentUtil.getEnrichedSorDetail();
+            SorDetail sorDetail = enrichmentUtil.getEnrichedSorDetail(statementId);
             sorDetail.setSorId(estimateDetail.getSorId());
             Sor sor = sorIdToSorMap.get(estimateDetail.getSorId());
 
             Map<String, BasicSorDetails> typeToBasicSorDetailsMap = new HashMap<>();
             if (sor.getSorType().equalsIgnoreCase("W")) {
                 calculatorService.calculateUtilizationForWorksSor(sorIdToCompositionMap, estimateDetail,
-                        basicSorRateMap, typeToBasicSorDetailsMap, sor, measure);
+                        basicSorRateMap, typeToBasicSorDetailsMap, sor, measure, sorIdToSorMap);
             } else {
                 calculatorService.calculateUtilizationForBasicSor(estimateDetail, basicSorRateMap, typeToBasicSorDetailsMap,
                         sor, measure, estimateDetail.getSorId());
@@ -137,7 +143,7 @@ public class UtilizationEnrichmentService {
             sorDetail.setBasicSorDetails(typeToBasicSorDetailsMap.values().stream().collect(Collectors.toList()));
 
             List<BasicSor> lineItems = getLineItems(estimateDetail.getSorId(), sorIdToSorMap, sorIdToCompositionMap,
-                    estimateDetail, measure, basicSorRateMap, sorDetail.getSorId());
+                    estimateDetail, measure, basicSorRateMap, sorDetail.getId());
 
             sorDetail.setLineItems(lineItems);
 
@@ -148,7 +154,7 @@ public class UtilizationEnrichmentService {
         }
 
 
-        return null;
+        return sorDetails;
     }
 
     List<BasicSor> getLineItems(String sorId, Map<String, Sor> sorIdToSorMap, Map<String, SorComposition> sorIdToCompositionMap,
@@ -161,7 +167,8 @@ public class UtilizationEnrichmentService {
                 lineItems.add(getBasicSorLineItem(estimateDetail, measure, basicSorRateMap, sorIdToSorMap.get(compositionBasicSorDetail.getSorId()), referenceId, quantity));
             }
         } else {
-            lineItems.add(getBasicSorLineItem(estimateDetail, measure, basicSorRateMap, sorIdToSorMap.get(sorId), referenceId, measure.getCumulativeValue()));
+            BigDecimal quantity = measure.getCumulativeValue().divide(sorIdToSorMap.get(sorId).getQuantity());
+            lineItems.add(getBasicSorLineItem(estimateDetail, measure, basicSorRateMap, sorIdToSorMap.get(sorId), referenceId, quantity));
         }
         return lineItems;
     }

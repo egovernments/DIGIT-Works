@@ -158,7 +158,7 @@ public class MdmsUtil {
 
     public Map<String, List<Rates>> fetchRateForNonWorksSor(List<String> basicSorIds, RequestInfo requestInfo,String tenantId){
 
-        String filter = getfilter(basicSorIds.stream().collect(Collectors.toSet()), Boolean.TRUE);
+        String filter = getfilter(basicSorIds.stream().collect(Collectors.toSet()), Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
                 tenantId, "WORKS-SOR",
                 Collections.singletonList("Rates"), filter);

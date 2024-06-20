@@ -1,6 +1,7 @@
 package org.egov.works.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.Rates;
 import org.egov.works.web.models.SorComposition;
 import org.springframework.stereotype.Component;
@@ -59,7 +60,7 @@ public class CommonUtil {
                 return sorComposition;
             }
         }
-        return null; // Or throw an exception if no valid rate is found
+        throw new CustomException("SOR_COMPOSITION_NOT_FOUND", "Sor composition with given effective time not found for SOR codes :: " + sorCompositions.get(0).getSorId());
     }
 
 }
