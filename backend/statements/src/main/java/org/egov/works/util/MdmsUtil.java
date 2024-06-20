@@ -156,6 +156,19 @@ public class MdmsUtil {
 
     }
 
+    public Map<String, List<Rates>> fetchRateForNonWorksSor(List<String> basicSorIds, RequestInfo requestInfo,String tenantId){
+
+        String filter = getfilter(basicSorIds.stream().collect(Collectors.toSet()), Boolean.TRUE);
+        Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
+                tenantId, "WORKS-SOR",
+                Collections.singletonList("Rates"), filter);
+        List<Rates> ratesList = new ArrayList<>();
+        for(Object object : sorRates.get("WORKS-SOR").get("Rates")) {
+            Rates  rates = mapper.convertValue(object, Rates.class);
+            ratesList.add(rates);
+        }
+        return ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
+    }
 
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
                                                              List<String> masterNameList, String filter) {
