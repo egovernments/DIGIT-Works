@@ -15,7 +15,6 @@ import LocationDropdownWrapper from './LocationDropdownWrapper';
 import WorkflowStatusFilter from './WorkflowStatusFilter';
 import ApiDropdown from './ApiDropdown';
 const RenderFormFields = ({data,...props}) => {
-  
     const { t } = useTranslation();
     const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors, apiDetails} = props
     
@@ -324,7 +323,7 @@ const RenderFormFields = ({data,...props}) => {
       <React.Fragment>
         {fields?.map((item, index) => {
           return (
-            <LabelFieldPair key={index}>
+            <LabelFieldPair key={index} style={item.hideInForm ? {"display":"none"}:{}}>
                 { item.label && (
                   <CardLabel style={{...props.labelStyle,marginBottom:"0.4rem"}}>
                     {t(item.label)}{ item?.isMandatory ? " * " : null }

@@ -35,7 +35,12 @@ public class EstimateRequestBuilderTest {
                 .sorId("sor id")
                 .category("OVERHEAD").name("GST")
                 .amountDetail(amountDetails).build();
+        EstimateDetail estimateDetail1 = EstimateDetail.builder()
+                .sorId("sor id")
+                .category("SOR").name("xx").uom("KG").unitRate(100.0)
+                .amountDetail(amountDetails).build();
         estimateDetails.add(estimateDetail);
+        estimateDetails.add(estimateDetail1);
 
         Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").build();
 

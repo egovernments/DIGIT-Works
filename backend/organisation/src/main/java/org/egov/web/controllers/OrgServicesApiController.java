@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-15T14:49:42.141+05:30")
@@ -57,9 +58,9 @@ public class OrgServicesApiController {
             @ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType,
             @ApiParam(value = "") @Valid @RequestBody OrgSearchRequest body) {
 
-        List<Organisation> organisations = orgService.searchOrganisation(body.getRequestInfo(), body.getSearchCriteria());
+        List<Organisation> organisations = Collections.emptyList();
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        Integer count = orgService.countAllOrganisations(body.getSearchCriteria());
+        Integer count = 0;
         OrgServiceResponse orgServiceResponse = OrgServiceResponse.builder().responseInfo(responseInfo).organisations(organisations).totalCount(count).build();
         return new ResponseEntity<OrgServiceResponse>(orgServiceResponse, HttpStatus.OK);
     }

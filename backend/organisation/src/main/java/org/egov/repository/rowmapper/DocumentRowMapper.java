@@ -21,8 +21,12 @@ import java.util.Map;
 @Repository
 public class DocumentRowMapper implements ResultSetExtractor<List<Document>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public DocumentRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Document> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -30,29 +34,28 @@ public class DocumentRowMapper implements ResultSetExtractor<List<Document>> {
 
         while (rs.next()) {
 
-            String document_Id = rs.getString("document_Id");
-            String document_orgId = rs.getString("document_orgId");
-            String document_orgFuncId = rs.getString("document_orgFuncId");
-            String document_documentType = rs.getString("document_documentType");
-            String document_fileStore = rs.getString("document_fileStore");
-            String document_documentUid = rs.getString("document_documentUid");
-            boolean document_active = rs.getBoolean("document_active");
-            JsonNode document_additionalDetails = getAdditionalDetail("document_additionalDetails", rs);
+            String documentId = rs.getString("document_Id");
+            String documentOrgId = rs.getString("document_orgId");
+            String documentOrgFuncId = rs.getString("document_orgFuncId");
+            String documentDocumentType = rs.getString("document_documentType");
+            String documentFileStore = rs.getString("document_fileStore");
+            String documentDocumentUid = rs.getString("document_documentUid");
+            boolean documentActive = rs.getBoolean("document_active");
+            JsonNode documentAdditionalDetails = getAdditionalDetail("document_additionalDetails", rs);
 
             Document document = Document.builder()
-                    .id(document_Id)
-                    .orgId(document_orgId)
-                    .orgFunctionId(document_orgFuncId)
-                    .documentType(document_documentType)
-                    .fileStore(document_fileStore)
-                    .documentUid(document_documentUid)
-                    .isActive(document_active)
-                    .additionalDetails(document_additionalDetails)
+                    .id(documentId)
+                    .orgId(documentOrgId)
+                    .orgFunctionId(documentOrgFuncId)
+                    .documentType(documentDocumentType)
+                    .fileStore(documentFileStore)
+                    .documentUid(documentDocumentUid)
+                    .isActive(documentActive)
+                    .additionalDetails(documentAdditionalDetails)
                     .build();
 
-            if (!documentMap.containsKey(document_Id)) {
-                documentMap.put(document_Id, document);
-            }
+
+            documentMap.computeIfAbsent(documentId, k -> document);
         }
 
         return new ArrayList<>(documentMap.values());

@@ -38,10 +38,8 @@ public class StaffServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
 
         String tenantId = staffPermissionListFromRequest.get(0).getTenantId();
-        //split the tenantId
-        String rootTenantId = tenantId.split("\\.")[0];
 
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
 
         //validate request-info
         log.info("validate request info coming from api request");

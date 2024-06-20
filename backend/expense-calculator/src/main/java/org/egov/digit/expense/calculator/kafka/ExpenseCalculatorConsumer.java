@@ -16,14 +16,18 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ExpenseCalculatorConsumer {
 
+	private final ExpenseCalculatorConfiguration configs;
+	private final ExpenseCalculatorService expenseCalculatorService;
+	private final ObjectMapper objectMapper;
+	private final ExpenseCalculatorProducer producer;
+
 	@Autowired
-	private ExpenseCalculatorConfiguration configs;
-	@Autowired
-	private ExpenseCalculatorService expenseCalculatorService;
-	@Autowired
-	private ObjectMapper objectMapper;
-	@Autowired
-	private ExpenseCalculatorProducer producer;
+	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, ExpenseCalculatorProducer producer) {
+		this.configs = configs;
+		this.expenseCalculatorService = expenseCalculatorService;
+		this.objectMapper = objectMapper;
+		this.producer = producer;
+	}
 
 	@KafkaListener(topics = {"${expense.calculator.consume.topic}"})
 	public void listen(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
@@ -39,7 +43,6 @@ public class ExpenseCalculatorConsumer {
 					.exception(exception)
 					.build();
 			producer.push(configs.getCalculatorErrorTopic(),error);
-			//throw new RuntimeException(exception);
 		}
 	}
 }

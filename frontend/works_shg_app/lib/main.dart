@@ -22,6 +22,7 @@ import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/blocs/my_bills/my_bills_inbox_bloc.dart';
 import 'package:works_shg_app/blocs/work_orders/decline_work_order.dart';
+import 'package:works_shg_app/data/init_client.dart';
 import 'package:works_shg_app/data/repositories/attendance_mdms.dart';
 import 'package:works_shg_app/data/repositories/common_repository/common_repository.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
@@ -40,6 +41,7 @@ import 'blocs/attendance/attendance_hours_mdms.dart';
 import 'blocs/attendance/create_attendance_register.dart';
 import 'blocs/attendance/create_attendee.dart';
 import 'blocs/attendance/de_enroll_attendee.dart';
+import 'blocs/attendance/individual_wms_search.dart';
 import 'blocs/attendance/muster_submission_mdms.dart';
 import 'blocs/attendance/search_projects/search_individual_project.dart';
 import 'blocs/auth/auth.dart';
@@ -54,6 +56,10 @@ import 'blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'blocs/my_bills/search_my_bills.dart';
 import 'blocs/organisation/org_financial_bloc.dart';
 import 'blocs/organisation/org_search_bloc.dart';
+import 'blocs/time_extension_request/create_time_extension_request.dart';
+import 'blocs/time_extension_request/my_service_requests_bloc.dart';
+import 'blocs/time_extension_request/service_requests_config.dart';
+import 'blocs/time_extension_request/valid_time_extension.dart';
 import 'blocs/user/user_search.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_bank_create.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_create_bloc.dart';
@@ -130,8 +136,7 @@ class _MainApplicationState extends State<MainApplication> {
     super.dispose();
   }
 
-  static void downloadCallback(
-      String id, DownloadTaskStatus status, int progress) {
+  static void downloadCallback(String id, int status, int progress) {
     final SendPort send =
         IsolateNameServer.lookupPortByName('downloader_send_port')!;
 
@@ -168,13 +173,14 @@ class _MainApplicationState extends State<MainApplication> {
   @override
   Widget build(BuildContext context) {
     Client client = Client();
+    InitClient initClient = InitClient();
 
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) => AppInitializationBloc(
             const AppInitializationState(),
-            MdmsRepository(client.init()),
+            MdmsRepository(initClient.init()),
           )..add(const AppInitializationSetupEvent(selectedLang: 'en_IN')),
           lazy: false,
         ),
@@ -225,6 +231,10 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => ORGFinanceBloc()),
         BlocProvider(create: (context) => MusterRollPDFBloc()),
         BlocProvider(create: (context) => WorkOrderPDFBloc()),
+        BlocProvider(create: (context) => ValidTimeExtCreationsSearchBloc()),
+        BlocProvider(create: (context) => CreateTimeExtensionRequestBloc()),
+        BlocProvider(create: (context) => ServiceRequestsConfigBloc()),
+        BlocProvider(create: (context) => SearchMyServiceRequestsBloc()),
         BlocProvider(
             create: (context) => WageSeekerMDMSBloc(
                 const WageSeekerMDMSState.initial(),
@@ -233,6 +243,9 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(
             create: (context) =>
                 IndividualSearchBloc(const IndividualSearchState.initial())),
+        BlocProvider(
+            create: (context) => IndividualWMSSearchBloc(
+                const IndividualWMSSearchState.initial())),
         BlocProvider(
             create: (context) => SkillsBloc(const SkillsBlocState.initial(),
                 AttendanceMDMSRepository(client.init()))),
@@ -261,12 +274,16 @@ class _MainApplicationState extends State<MainApplication> {
                                 null)
                         ? (context) => LocalizationBloc(
                               const LocalizationState.initial(),
-                              LocalizationRepository(client.init()),
+                              LocalizationRepository(initClient.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
                                 module:
                                     'rainmaker-common,rainmaker-common-masters,rainmaker-${appInitState.stateInfoListModel?.code}',
-                                tenantId: appInitState.initMdmsModel!.tenant!
-                                    .tenantListModel!.first.code
+                                tenantId: appInitState
+                                    .initMdmsModel!
+                                    .commonMastersModel!
+                                    .stateInfoListModel!
+                                    .first
+                                    .code
                                     .toString(),
                                 locale: appInitState.digitRowCardItems!
                                     .firstWhere((e) => e.isSelected)
@@ -274,7 +291,7 @@ class _MainApplicationState extends State<MainApplication> {
                               ))
                         : (context) => LocalizationBloc(
                               const LocalizationState.initial(),
-                              LocalizationRepository(client.init()),
+                              LocalizationRepository(initClient.init()),
                             ),
                     child: MaterialApp.router(
                       title: 'MUKTA CBO App',

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/organisation/org_search_bloc.dart';
+import 'package:works_shg_app/data/init_client.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../blocs/localization/localization.dart';
@@ -34,7 +35,7 @@ class _AuthenticatedPageWrapper extends State<AuthenticatedPageWrapper> {
   @override
   Widget build(BuildContext context) {
     Client client = Client();
-
+    InitClient initClient = InitClient();
     return Scaffold(
       body: MultiBlocProvider(
         providers: [
@@ -46,7 +47,7 @@ class _AuthenticatedPageWrapper extends State<AuthenticatedPageWrapper> {
         child: BlocProvider(
           create: (context) => LocalizationBloc(
             const LocalizationState.initial(),
-            LocalizationRepository(client.init()),
+            LocalizationRepository(initClient.init()),
           )..add(LocalizationEvent.onLoadLocalization(
               module: 'rainmaker-attendencemgmt',
               tenantId: GlobalVariables

@@ -5,7 +5,6 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +23,9 @@ public class EstimateDetail {
 
     @JsonProperty("id")
     private String id = null;
+
+    @JsonProperty("previousLineItemId")
+    private String previousLineItemId = null;
 
     @JsonProperty("unitRate")
     private Double unitRate = null;

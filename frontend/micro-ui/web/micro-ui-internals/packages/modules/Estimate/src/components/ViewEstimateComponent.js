@@ -31,22 +31,30 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
     
 
     //here make a contract search based on the estimateNumber
-    const { isLoading: isLoadingContracts, data: contract } = Digit.Hooks.contracts.useContractSearch({
+    let { isLoading: isLoadingContracts, data: contract } = Digit.Hooks.contracts.useContractSearch({
         tenantId, filters: { tenantId, estimateIds: [applicationDetails?.applicationData?.id] },config:{
-        enabled: (!isLoading &&  applicationDetails?.applicationData?.wfStatus === "APPROVED") ? true : false
+        enabled: (!isLoading &&  applicationDetails?.applicationData?.wfStatus === "APPROVED") ? true : false, cacheTime:0
     }})
+
+    //fetching all work orders for a particular estimate
+    let allContract = contract;
+    contract = contract?.[0];
+    //getting the object which will be in workflow, as 1:1:1 mapping is there, one one inworkflow workorder will be there for one estimate
+    let inWorkflowContract = allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.[0]
     
 
     useEffect(() => {
         let isUserContractCreator = loggedInUserRoles?.includes("WORK_ORDER_CREATOR");
-        if (applicationDetails?.applicationData?.wfStatus === "APPROVED" && isUserContractCreator){
+        if (applicationDetails?.applicationData?.wfStatus === "APPROVED" && isUserContractCreator && !(actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT"))){
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_CONTRACT"
             }]))
         }
-        
+        //checking if any work order is inworflow, if it is then view contract will be shown otherwise create contract
+        let isCreateContractallowed = allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.length > 0
+
         //if contract is already there just remove the prevState and push View contract state
-        if(contract?.contractNumber) {
+        if(contract?.contractNumber && isCreateContractallowed) {
             setActionsMenu((prevState => [{
                 name: "VIEW_CONTRACT"
             }]))
@@ -71,7 +79,7 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
             history.push(`/${window.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&estimateNumber=${estimateNumber}`);
         }
         if (option?.name === "VIEW_CONTRACT") {
-            history.push(`/${window.contextPath}/employee/contracts/contract-details?tenantId=${tenantId}&workOrderNumber=${contract?.contractNumber}`);
+            history.push(`/${window.contextPath}/employee/contracts/contract-details?tenantId=${tenantId}&workOrderNumber=${inWorkflowContract?.contractNumber}`);
         }
     }
 

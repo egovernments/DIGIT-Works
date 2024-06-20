@@ -1,23 +1,28 @@
 package org.egov.service;
 
+import ch.qos.logback.core.BasicStatusManager;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.common.models.project.Project;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.RegisterEnrichment;
 import org.egov.enrichment.StaffEnrichmentService;
-import org.egov.kafka.Producer;
+import org.egov.common.producer.Producer;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +56,8 @@ public class AttendanceRegisterService {
 
     @Autowired
     private StaffEnrichmentService staffEnrichmentService;
+    @Autowired
+    private IndividualServiceUtil individualServiceUtil;
 
     /**
      * Create Attendance register
@@ -99,8 +106,10 @@ public class AttendanceRegisterService {
             /*
                Make sure response register list should contain only those register for which logged-in is associated.
             */
-            String uuid = requestInfoWrapper.getRequestInfo().getUserInfo().getUuid();
-            Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(uuid);
+            Long userId = requestInfoWrapper.getRequestInfo().getUserInfo().getId();
+
+            String individualId = individualServiceUtil.getIndividualDetailsFromUserId(userId,requestInfoWrapper.getRequestInfo(), searchCriteria.getTenantId()).get(0).getId();
+            Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(individualId);
             updateSearchCriteriaAndFetchAndFilterRegisters(registers, searchCriteria, resultAttendanceRegisters);
         }
         return resultAttendanceRegisters;
@@ -279,7 +288,7 @@ public class AttendanceRegisterService {
         log.info("Fetched attendance registers for update request");
 
         //Validate Update attendance register request against attendance registers fetched from database
-        attendanceServiceValidator.validateUpdateAgainstDB(attendanceRegisterRequest, attendanceRegistersFromDB);
+        attendanceServiceValidator.validateUpdateAgainstDB(attendanceRegisterRequest, attendanceRegistersFromDB, attendanceServiceConfiguration.getRegisterFirstStaffInsertEnabled());
 
         registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, attendanceRegistersFromDB);
         log.info("Enriched with register Number, Ids and AuditDetails");
@@ -287,6 +296,42 @@ public class AttendanceRegisterService {
         log.info("Pushed update attendance register request to kafka");
 
         return attendanceRegisterRequest;
+    }
+
+    public void updateAttendanceRegister(RequestInfoWrapper requestInfoWrapper, List<Project> projects) {
+        if(!CollectionUtils.isEmpty(projects)) {
+            List<AttendanceRegister> updatedRegisters = new ArrayList<>();
+            projects.forEach(project -> {
+                BigDecimal projectStartDate = BigDecimal.valueOf(project.getStartDate());
+                BigDecimal projectEndDate = BigDecimal.valueOf(project.getEndDate());
+                log.info("Fetching register from db for project : " + project.getId());
+                List<AttendanceRegister> registers = searchAttendanceRegister(
+                        requestInfoWrapper,
+                        AttendanceRegisterSearchCriteria.builder().referenceId(project.getId()).tenantId(project.getTenantId()).build()
+                );
+                if(CollectionUtils.isEmpty(registers)) return;
+
+                registers.forEach(attendanceRegister -> {
+                    Boolean isUpdated = false;
+                    if(attendanceRegister.getEndDate().compareTo(projectEndDate) < 0) {
+                        // update register end date to project end date
+                        attendanceRegister.setEndDate(projectEndDate);
+                        isUpdated = true;
+                    }
+                    if(isUpdated) updatedRegisters.add(attendanceRegister);
+                });
+                if(!updatedRegisters.isEmpty()) {
+                    AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequest.builder()
+                            .attendanceRegister(updatedRegisters)
+                            .requestInfo(requestInfoWrapper.getRequestInfo())
+                            .build();
+                    registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, updatedRegisters);
+                    log.info("Pushing update attendance register request to kafka");
+                    producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
+                    log.info("Pushed update attendance register request to kafka");
+                }
+            });
+        }
     }
 
     public List<AttendanceRegister> getAttendanceRegisters(RequestInfoWrapper requestInfoWrapper, List<String> registerIds, String tenantId) {
@@ -317,6 +362,44 @@ public class AttendanceRegisterService {
             registerIds.add(String.valueOf(attendanceRegister.getId()));
         }
         return registerIds;
+    }
+
+    /**
+     * Validate and update the end date of Attendance register as per revised contract
+     * @param requestInfo
+     * @param tenantId
+     * @param referenceId
+     * @param endDate
+     */
+    public void updateEndDateForRevisedContract(RequestInfo requestInfo, String tenantId, String referenceId, BigDecimal endDate) {
+        AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId(tenantId)
+                .referenceId(referenceId)
+                .limit(attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit())
+                .offset(attendanceServiceConfiguration.getAttendanceRegisterDefaultOffset()).build();
+
+
+        List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(attendanceRegisterSearchCriteria);
+
+        if (attendanceRegisters != null && !attendanceRegisters.isEmpty()) {
+            for (AttendanceRegister attendanceRegister : attendanceRegisters) {
+                int comparisonResult = endDate.compareTo(attendanceRegister.getEndDate());
+                if (comparisonResult < 0) {
+                    throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
+                }
+
+                attendanceRegister.setEndDate(endDate);
+                AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequest.builder()
+                        .attendanceRegister(Collections.singletonList(attendanceRegister)).
+                        requestInfo(requestInfo).build();
+
+                registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, Collections.singletonList(attendanceRegister));
+                producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
+            }
+        }else {
+            throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND", "Attendance registers not found for the referenceId");
+        }
+
     }
 
 }

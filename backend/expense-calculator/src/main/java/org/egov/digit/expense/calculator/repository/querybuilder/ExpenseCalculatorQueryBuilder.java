@@ -1,6 +1,5 @@
 package org.egov.digit.expense.calculator.repository.querybuilder;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchCriteria;
@@ -12,13 +11,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class ExpenseCalculatorQueryBuilder {
 
-    @Autowired
-    private ExpenseCalculatorConfiguration config;
+    private final ExpenseCalculatorConfiguration config;
 
 
     private static final String FETCH_MUSTER_NUM_QUERY = "SELECT musterroll_number FROM eg_works_calculation ";
@@ -38,7 +35,12 @@ public class ExpenseCalculatorQueryBuilder {
 
     private static final String BILL_COUNT_QUERY = "SELECT COUNT(*) FROM eg_works_calculation ";
 
+    private static final String TENANT_ID_CLAUSE = " tenant_id=? ";
 
+    @Autowired
+    public ExpenseCalculatorQueryBuilder(ExpenseCalculatorConfiguration config) {
+        this.config = config;
+    }
 
 
     public String getMusterRollsOfContract(String contractId, String billType, String tenantId, List<String> billIds, List<Object> preparedStmtList) {
@@ -52,7 +54,7 @@ public class ExpenseCalculatorQueryBuilder {
 
         if (StringUtils.isNotBlank(tenantId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" tenant_id=? ");
+            queryBuilder.append(TENANT_ID_CLAUSE);
             preparedStmtList.add(tenantId);
         }
 
@@ -83,7 +85,7 @@ public class ExpenseCalculatorQueryBuilder {
 
         if (StringUtils.isNotBlank(tenantId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" tenant_id=? ");
+            queryBuilder.append(TENANT_ID_CLAUSE);
             preparedStmtList.add(tenantId);
         }
         return queryBuilder.toString();
@@ -94,7 +96,7 @@ public class ExpenseCalculatorQueryBuilder {
 
         if (StringUtils.isNotBlank(tenantId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" tenant_id=? ");
+            queryBuilder.append(TENANT_ID_CLAUSE);
             preparedStmtList.add(tenantId);
         }
         
@@ -113,7 +115,7 @@ public class ExpenseCalculatorQueryBuilder {
 
         if (StringUtils.isNotBlank(tenantId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" tenant_id=? ");
+            queryBuilder.append(TENANT_ID_CLAUSE);
             preparedStmtList.add(tenantId);
         }
         if (!CollectionUtils.isEmpty(projectNumbers)) {
@@ -134,7 +136,7 @@ public class ExpenseCalculatorQueryBuilder {
 
         if (StringUtils.isNotBlank(calculatorSearchCriteria.getTenantId())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" tenant_id=? ");
+            queryBuilder.append(TENANT_ID_CLAUSE);
             preparedStmtList.add(calculatorSearchCriteria.getTenantId());
         }
 
@@ -261,14 +263,11 @@ public class ExpenseCalculatorQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+        ids.forEach(preparedStmtList::add);
     }
 
     public String getSearchCountQueryString(CalculatorSearchRequest calculatorSearchRequest, List<Object> preparedStmtList,boolean isCountQuery) {
-        String query = getBillIds(calculatorSearchRequest,preparedStmtList,isCountQuery);
-        return query;
+        return getBillIds(calculatorSearchRequest,preparedStmtList,isCountQuery);
     }
 
 }

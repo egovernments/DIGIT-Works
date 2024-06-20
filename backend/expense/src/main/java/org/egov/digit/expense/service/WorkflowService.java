@@ -30,14 +30,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WorkflowService {
 
-    @Autowired
-    private Configuration serviceConfiguration;
+    private final Configuration serviceConfiguration;
+
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public WorkflowService(Configuration serviceConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     /* Call the workflow service with the given action and update the status
      * return the updated status of the application
@@ -70,7 +74,6 @@ public class WorkflowService {
         processInstance.setModuleName("expense");
         processInstance.setTenantId(contract.getTenantId());
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
-        /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComments());
 
         if (!CollectionUtils.isEmpty(workflow.getAssignes())) {

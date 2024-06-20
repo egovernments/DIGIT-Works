@@ -1,16 +1,20 @@
 package org.egov.digit.expense.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.digit.expense.config.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.digit.expense.config.Constants;
+import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.mdms.model.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,23 +24,23 @@ import java.util.Map;
 @Component
 public class MdmsUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-    @Autowired
-    private Configuration configs;
+    private final Configuration configs;
 
+	@Autowired
+	public MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
+		this.restTemplate = restTemplate;
+		this.mapper = mapper;
+		this.configs = configs;
+	}
 
-
-
-    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
-                                                                                List<String> masterNameList) {
+    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, BillRequest billRequest) {
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
-        MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, moduleName, masterNameList);
+        MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId);
         Object response = new HashMap<>();
         MdmsResponse mdmsResponse = new MdmsResponse();
         try {
@@ -46,36 +50,78 @@ public class MdmsUtil {
             log.error("Exception occurred while fetching category lists from mdms: ",e);
         }
 
-
-		log.info(mdmsResponse.toString());
-        return mdmsResponse.getMdmsRes();
-        //log.info(ulbToCategoryListMap.toString());
+		Long createdTime = billRequest.getBill().getAuditDetails() != null ? billRequest.getBill().getAuditDetails().getCreatedTime() : Instant.now().toEpochMilli();
+		Map<String, Map<String, JSONArray>> mdmsRes = filterMdmsResponseByDate(createdTime, mdmsResponse.getMdmsRes());
+		log.info(mdmsRes.toString());
+        return mdmsRes;
     }
+	public Map<String, Map<String, JSONArray>> filterMdmsResponseByDate(Long createdTime, Map<String, Map<String, JSONArray>> mdmsRes) {
+		Map<String, Map<String, JSONArray>> filteredMdmsRes = new HashMap<>();
+		for (Map.Entry<String, Map<String, JSONArray>> entry : mdmsRes.entrySet()) {
+			Map<String, JSONArray> moduleMap = entry.getValue();
+			Map<String, JSONArray> filteredModuleMap = new HashMap<>();
+			for (Map.Entry<String, JSONArray> moduleEntry : moduleMap.entrySet()) {
+				String moduleName = moduleEntry.getKey();
+				JSONArray filteredModuleArray = filterMdmsArrayByDate(createdTime, moduleEntry.getValue());
+				filteredModuleMap.put(moduleName, filteredModuleArray);
+			}
+			filteredMdmsRes.put(entry.getKey(), filteredModuleMap);
+		}
+		return filteredMdmsRes;
+	}
 
+	private JSONArray filterMdmsArrayByDate(Long createdTime, JSONArray moduleArray) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		JSONArray filteredModuleArray = new JSONArray();
+		for (Object o : moduleArray) {
+			JsonNode moduleJsonNode = objectMapper.valueToTree(o);
+			if (moduleJsonNode.has(Constants.EFFECTIVE_FROM_FIELD_MDMS) && moduleJsonNode.has(Constants.EFFECTIVE_TO_FIELD_MDMS)) {
+				Long effectiveFrom = moduleJsonNode.get(Constants.EFFECTIVE_FROM_FIELD_MDMS).asLong();
+				Long effectiveTo = moduleJsonNode.get(Constants.EFFECTIVE_TO_FIELD_MDMS).asLong();
+				Boolean isActive = moduleJsonNode.get(Constants.ACTIVE_FIELD_MDMS).asBoolean();
+				if ((moduleJsonNode.get(Constants.EFFECTIVE_TO_FIELD_MDMS).isNull() && effectiveFrom <= createdTime && isActive) ||
+						(!moduleJsonNode.get(Constants.EFFECTIVE_TO_FIELD_MDMS).isNull() && effectiveFrom <= createdTime && effectiveTo >= createdTime)) {
+					filteredModuleArray.add(o);
+				}
+			} else {
+				filteredModuleArray.add(o);
+			}
+		}
+		return filteredModuleArray;
+	}
 	/**
 	 * prepares Master Data request
 	 * 
 	 * @param tenantId
-	 * @param moduleName
-	 * @param masterNames
 	 * @param requestInfo
 	 * @return
 	 */
-	public MdmsCriteriaReq prepareMdMsRequest(RequestInfo requestInfo, String tenantId, String moduleName,
-			List<String> masterNames) {
+	public MdmsCriteriaReq prepareMdMsRequest(RequestInfo requestInfo, String tenantId) {
 
-		List<MasterDetail> masterDetails = new ArrayList<>();
-		masterNames.forEach(name -> {
-			masterDetails.add(MasterDetail.builder().name(name).build());
-		});
+		// Criteria for tenant module
+		List<MasterDetail> tenantMasterDetails = new ArrayList<>();
+		Constants.TENANT_MDMS_MASTER_NAMES.forEach(name ->
+			tenantMasterDetails.add(MasterDetail.builder().name(name).build())
+		);
 
-		ModuleDetail moduleDetail = ModuleDetail.builder()
-				.moduleName(moduleName)
-				.masterDetails(masterDetails)
+		ModuleDetail tenantModuleDetail = ModuleDetail.builder()
+				.moduleName(Constants.TENANT_MODULE_NAME)
+				.masterDetails(tenantMasterDetails)
 				.build();
-		
+
+		// Criteria for Expense module
+		List<MasterDetail> expenseMasterDetails = new ArrayList<>();
+		Constants.EXPENSE_MDMS_MASTER_NAMES.forEach(name ->
+			expenseMasterDetails.add(MasterDetail.builder().name(name).build())
+		);
+		ModuleDetail expenseModuleDetail = ModuleDetail.builder()
+				.moduleName(Constants.EXPENSE_MODULE_NAME)
+				.masterDetails(expenseMasterDetails)
+				.build();
+
 		List<ModuleDetail> moduleDetails = new ArrayList<>();
-		moduleDetails.add(moduleDetail);
+		moduleDetails.add(tenantModuleDetail);
+		moduleDetails.add(expenseModuleDetail);
 		
 		MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
 				.tenantId(tenantId)

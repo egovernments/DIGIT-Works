@@ -1,7 +1,6 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.egov.web.models.Document;
 import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;

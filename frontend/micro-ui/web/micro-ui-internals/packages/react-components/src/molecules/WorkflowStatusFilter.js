@@ -1,6 +1,7 @@
 import React, { Fragment,useEffect,useState } from "react";
 import CheckBox from "../atoms/CheckBox";
 import { Loader } from "../atoms/Loader";
+import CardLabel from "../atoms/CardLabel";
 
 const WorkflowStatusFilter = ({ props, t, populators, formData,inboxResponse }) => {
 //from inbox response get the statusMap and show the relevant statuses
@@ -26,6 +27,12 @@ const WorkflowStatusFilter = ({ props, t, populators, formData,inboxResponse }) 
 
   return (
     <>
+
+{ statusMap&&statusMap.length>0&&populators?.componentLabel && (
+                  <CardLabel style={{...props.labelStyle,marginBottom:"0.4rem"}}>
+                    {t(populators?.componentLabel)}{ populators?.isMandatory ? " * " : null }
+                  </CardLabel>) 
+                }
         {statusMap?.map((row) => {
         return (
           <CheckBox

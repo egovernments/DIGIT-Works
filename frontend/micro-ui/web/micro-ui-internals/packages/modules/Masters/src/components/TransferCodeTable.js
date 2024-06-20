@@ -5,6 +5,7 @@ import { AddIcon, DeleteIcon, TextInput, CardLabelError, Loader, Dropdown, Heade
 
 const TransferCodeTable = (props) => {
     const { t, register, errors , setValue, getValues, onSelect, formData, control, formState, onChange, unregister } = props
+    
     const isMandatory = props?.props?.isMandatory
     const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
     const [sessionFormData] = orgSession;
@@ -113,6 +114,10 @@ const TransferCodeTable = (props) => {
         })
     }
 
+    const setIFSC = (arg,name) => {
+        setValue(name,arg.target.value.toUpperCase())
+    }
+
     const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey = "name", options = []) => {
 
         const { isLoading, data } = Digit.Hooks.useCustomMDMS(
@@ -193,7 +198,7 @@ const TransferCodeTable = (props) => {
                             name={`${formFieldName}.${row.key}.value`} 
                             selected={formData && formData[formFieldName] ? formData[formFieldName][`${formFieldName}.${row.key}.value`] : undefined}
                             inputRef={register({ required: isMandatory, pattern: getPatterns(row.key)})}
-                            onChange={onChange}
+                            onChange={(arg)=>setIFSC(arg,`${formFieldName}.${row.key}.value`)}
                         />
                     </div>
                     <div style={errorContainerStyles}>

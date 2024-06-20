@@ -27,7 +27,6 @@ public class AmountBreakupRepository {
     public List<AmountBreakup> getAmountBreakups(ContractCriteria contractCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getAmountBreakupSearchQuery(contractCriteria, preparedStmtList);
-        List<AmountBreakup> amountBreakups = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        return amountBreakups;
+        return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
     }
 }

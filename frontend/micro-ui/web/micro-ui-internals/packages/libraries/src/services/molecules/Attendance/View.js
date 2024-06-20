@@ -9,10 +9,23 @@ const attendanceTypes = {
 
 const getWeekDates = (data) => {
   let weekDates = {}
+  const dayTimes = {
+    "mon":data?.startDate,
+    "sun":data?.endDate,
+    "tue":data?.startDate + (86400000*1),
+    "wed":data?.startDate + (86400000*2),
+    "thu":data?.startDate + (86400000*3),
+    "fri":data?.startDate + (86400000*4),
+    "sat":data?.startDate + (86400000*5),
+    "sun":data?.endDate
+  }
+  const weekTimes = Object.keys(dayTimes).map(key => {
+    return dayTimes[key]
+  })
   if(data?.individualEntries?.length > 0) {
-    const attendanceEntry = data?.individualEntries[0]?.attendanceEntries
-    attendanceEntry.forEach(item => {
-      weekDates[`${Digit.DateUtils.getDayfromTimeStamp(item?.time)}`] = Digit.DateUtils.ConvertTimestampToDate(item?.time, 'MMM d')
+    // const attendanceEntry = data?.individualEntries[1]?.attendanceEntries
+    weekTimes?.forEach(item => {
+      weekDates[`${Digit.DateUtils.getDayfromTimeStamp(item)}`] = Digit.DateUtils.ConvertTimestampToDate(item, 'MMM d')
     })
   }
   return weekDates
@@ -20,7 +33,7 @@ const getWeekDates = (data) => {
 
 const getWeekAttendance = (data) => {
   let weekAttendance = {}
-  if(data.length > 0) {
+  if(data?.length > 0) {
     data.forEach(item => {
       weekAttendance[`${Digit.DateUtils.getDayfromTimeStamp(item?.time)}`] = attendanceTypes[item.attendance]
     })

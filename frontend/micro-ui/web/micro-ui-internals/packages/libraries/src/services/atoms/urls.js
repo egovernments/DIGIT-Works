@@ -45,6 +45,7 @@ const Urls = {
     download_pdf: "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
     createProject: "/project/v1/_create",
     searchProject: "/project/v1/_search",
+    wmsSearchProject: "/wms/project/_search",
     updateProject: "/project/v1/_update",
   },
 
@@ -87,13 +88,17 @@ const Urls = {
     obps_Reciept_Search: "/collection-services/payments/_search",
     billAmendmentSearch: "/billing-service/amendment/_search",
     getBulkPdfRecordsDetails: "/pdf-service/v1/_getBulkPdfRecordsDetails",
-    createPayment: "/expense/payment/v1/_create"
+    createPayment: "/expense/payment/v1/_create",
+    ifms_funds_search : "/ifms/funds/v1/_search"
   },
 expense:{
   createPayment: "/expense/payment/v1/_create",
-  searchPayment: "/expense/payment/v1/_search",
+  searchPayment: "/ifms/pi/v1/_search",
   updatePayment: "/expense/payment/v1/_update",
-  regenerate : '/egov-pdf/bill/_generate'
+  regenerate : '/egov-pdf/bill/_generate',
+  searchPaymentWMS:"/wms/ifms-pi/_search",
+  updatePI:"/ifms/pi/v1/_create",
+  searchPA:"/expense/payment/v1/_search"
 
 },
   pt: {
@@ -228,6 +233,7 @@ expense:{
   wageseeker: {
     create: "/individual/v1/_create",
     search: "/individual/v1/_search",
+    wmssearch: "/wms/individual/_search",
     update: "/individual/v1/_update",
     delete: "/individual/v1/_delete",
   },
@@ -269,6 +275,11 @@ expense:{
   calculator: {
     expenseBill: "/expense-calculator/v1/_estimate",
   },
+
+  measurement : {
+    search : "/measurement-service/v1/_search",
+    update : "/measurement-service/v1/_update"
+  }
 };
 
 export default Urls;

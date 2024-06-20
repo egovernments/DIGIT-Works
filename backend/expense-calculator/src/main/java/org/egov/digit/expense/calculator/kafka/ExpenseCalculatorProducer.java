@@ -12,8 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ExpenseCalculatorProducer {
 
+	private final CustomKafkaTemplate<String, Object> kafkaTemplate;
+
 	@Autowired
-	private CustomKafkaTemplate<String, Object> kafkaTemplate;
+	public ExpenseCalculatorProducer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
+		this.kafkaTemplate = kafkaTemplate;
+	}
 
 	public void push(String topic, Object value) {
 		kafkaTemplate.send(topic, value);

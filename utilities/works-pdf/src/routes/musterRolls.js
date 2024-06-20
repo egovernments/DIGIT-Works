@@ -92,12 +92,8 @@ router.post(
                     msgId = msgId.split("|")
                     lang = msgId.length == 2 ? msgId[1] : lang;
                 }
-                let params = {
-                    "locale": lang,
-                    "module": "rainmaker-common,rainmaker-common-masters",
-                    "tenantId": tenantId.split(".")[0]
-                }
-                let localizations = await search_localization(localizationReq, params);
+                let module = "rainmaker-common,rainmaker-common-masters";
+                let localizations = await search_localization(localizationReq, lang, module,tenantId );
                 if (localizations?.data?.messages?.length) {
                     localizations.data.messages.forEach(localObj => {
                         localizationMap[localObj.code] = localObj.message;

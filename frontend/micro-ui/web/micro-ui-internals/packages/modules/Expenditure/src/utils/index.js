@@ -1,11 +1,10 @@
 
 const setDefaultDocs = (bill) => {
-  console.log(bill);
   const documentsObj = {}
   bill?.additionalDetails?.documents.forEach((doc,idx) => {
     
     if(doc?.documentType === "OTHERS") {
-      documentsObj["doc_others_name"] = doc?.additionalDetails?.fileName
+      documentsObj["doc_others_name"] = doc?.additionalDetails?.otherCategoryName
     }
 
      documentsObj[`doc_${doc.documentType}`.toLowerCase()] = [
@@ -43,7 +42,7 @@ const setMaterialCost = (bill) => {
 
 const setDeductionTableData = (bill,charges,t) => {
   const deductions = bill?.billDetails?.[0]?.lineItems?.filter(row=>row?.type==="DEDUCTION").map((row,idx)=>{
-    const chargesObject = charges.filter(charge => charge.code === row.headCode)
+    const chargesObject = charges.filter(charge => charge.code === row.headCode)?.[0]
     return {
       "percentage": chargesObject?.calculationType==="percentage"?`${chargesObject.value} ${t("WORKS_PERCENT")}`:`${t("EXP_FIXED")}`,
       "amount": row?.amount,
@@ -56,10 +55,11 @@ const setDeductionTableData = (bill,charges,t) => {
   })
   
   if(deductions.length>0) return [null,...deductions]
-  else return [null]
+  else return undefined;
 }
 
-export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract,  docConfigData, billData, setIsFormReady,charges}) => {
+export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract,  docConfigData, billData, setIsFormReady,charges,org}) => {
+  
   const bill = billData?.bills?.[0]
   if(!sessionFormData?.basicDetails_workOrderNumber || !sessionFormData.basicDetails_projectID || !sessionFormData.basicDetails_projectDesc || !sessionFormData.basicDetails_location) {  
     configs.defaultValues.billDetails_billDate = isModify ? Digit.DateUtils.ConvertTimestampToDate(bill?.billDate, 'yyyy-MM-dd') : findCurrentDate(); 
@@ -71,8 +71,8 @@ export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isMo
       String(
           `${t(Digit.Utils.locale.getCityLocale(tenantId))}, ${t(Digit.Utils.locale.getMohallaLocale(contract?.additionalDetails?.ward, tenantId))}`
       )  : t("NA"); 
-    configs.defaultValues.invoiceDetails_vendor =  isModify ? { code: '1cb24e53-bfd6-4840-aa90-7b849b367f47', name: "IFSC test org", orgNumber: "ORG-000216"} : ""
-    configs.defaultValues.invoiceDetails_invoiceNumber = bill?.referenceId ? bill?.referenceId?.split("_")?.[1] : "";
+    configs.defaultValues.invoiceDetails_vendor =  isModify ? { code: org?.id, name: org?.name, orgNumber: org?.orgNumber} : ""
+    configs.defaultValues.invoiceDetails_invoiceNumber = bill?.additionalDetails?.invoiceNumber || ""
     configs.defaultValues.invoiceDetails_invoiceDate = bill?.billDate ? Digit.DateUtils.ConvertTimestampToDate(bill?.billDate, 'yyyy-MM-dd') : ""
 
     if(isModify) {

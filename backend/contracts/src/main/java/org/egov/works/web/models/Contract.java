@@ -1,6 +1,5 @@
 package org.egov.works.web.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.ProcessInstance;
@@ -37,6 +36,18 @@ public class Contract {
     @JsonProperty("contractNumber")
     @Size(min = 1, max = 64)
     private String contractNumber = null;
+
+    @JsonProperty("supplementNumber")
+    private String supplementNumber = null;
+
+    @JsonProperty("versionNumber")
+    private Long versionNumber = null;
+
+    @JsonProperty("oldUuid")
+    private String oldUuid = null;
+
+    @JsonProperty("businessService")
+    private String businessService = null;
 
     @JsonProperty("tenantId")
     @NotNull

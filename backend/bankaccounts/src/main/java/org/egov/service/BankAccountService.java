@@ -103,6 +103,13 @@ public class BankAccountService {
     //TODO
     public BankAccountRequest updateBankAccount(BankAccountRequest bankAccountRequest) {
         log.info("BankAccountService::updateBankAccount");
+        bankAccountValidator.validateBankAccountOnUpdate(bankAccountRequest);
+        enrichmentService.enrichBankAccountOnUpdate(bankAccountRequest);
+
+        encryptionService.encrypt(bankAccountRequest, BANK_ACCOUNT_ENCRYPT_KEY);
+
+        bankAccountProducer.push(configuration.getUpdateBankAccountTopic(), bankAccountRequest);
+
         return bankAccountRequest;
     }
 }
