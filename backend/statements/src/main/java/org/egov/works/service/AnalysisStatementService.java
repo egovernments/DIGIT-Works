@@ -59,7 +59,11 @@ public class AnalysisStatementService {
         public List<Statement> searchStatement (StatementSearchCriteria statementSearchCriteria){
             statementValidator.validateStatementSearchCriteria(statementSearchCriteria);
             log.info("Get statement from db");
-            return statementRepository.getStatement(statementSearchCriteria.getSearchCriteria());
+            List<Statement> statementList=statementRepository.getStatement(statementSearchCriteria.getSearchCriteria());
+            if(statementList.isEmpty())
+                throw new CustomException("NO_STATEMENT_FOUND","No Analysis Statement Present for this estimateId:: "+statementSearchCriteria.getSearchCriteria().getReferenceId());
+            return statementList;
+
 
 
         }
