@@ -42,7 +42,7 @@ public class SchedulerValidator {
      * @param effectiveFrom The effective from date
      * @return True if the effective from date is valid, false otherwise
      */
-    private boolean validateEffectiveFromDateToCurrentDay(Long effectiveFrom) {
+    public boolean validateEffectiveFromDateToCurrentDay(Long effectiveFrom) {
         log.info("SchedulerValidator: validateEffectiveFromDateToCurrentDay");
         // Get the start of the current day
         LocalDate currentDate = LocalDate.now();

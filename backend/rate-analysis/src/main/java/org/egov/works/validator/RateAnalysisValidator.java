@@ -27,10 +27,12 @@ public class RateAnalysisValidator {
 
     private final ObjectMapper mapper;
     private final MdmsUtil mdmsUtil;
+    private final SchedulerValidator schedulerValidator;
 
-    public RateAnalysisValidator(ObjectMapper mapper, MdmsUtil mdmsUtil) {
+    public RateAnalysisValidator(ObjectMapper mapper, MdmsUtil mdmsUtil, SchedulerValidator schedulerValidator) {
         this.mapper = mapper;
         this.mdmsUtil = mdmsUtil;
+        this.schedulerValidator = schedulerValidator;
     }
 
     public void validateTenantId( String tenantId, RequestInfo requestInfo) {
@@ -64,6 +66,10 @@ public class RateAnalysisValidator {
 //                errorMap.put("BASIC_SOR_ONLY", sorId + " is not basic Sor");
 //            }
 //        }
+        if (!schedulerValidator.validateEffectiveFromDateToCurrentDay(Long.parseLong(analysisRequest.getSorDetails().getEffectiveFrom()))) {
+            log.error("Effective from date cannot be less than current date");
+            errorMap.put("EFFECTIVE_FROM_ERROR", "Effective from date cannot be less than current date");
+        }
 
         if (!CollectionUtils.isEmpty(errorMap))
             throw new CustomException(errorMap);
