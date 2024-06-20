@@ -1,27 +1,71 @@
 package org.egov.works.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.works.config.StatementConfiguration;
+import org.egov.works.kafka.Producer;
+import org.egov.works.repository.StatementRepository;
+import org.egov.works.services.common.models.contract.Contract;
+import org.egov.works.services.common.models.measurement.Measurement;
 import org.egov.works.validator.StatementValidator;
-import org.egov.works.web.models.Statement;
-import org.egov.works.web.models.StatementCreateRequest;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
 public class UtilizationService {
 
     private final StatementValidator statementValidator;
+    private final FetcherService fetcherService;
+    private final UtilizationEnrichmentService utilizationEnrichmentService;
+    private final Producer producer;
+    private final StatementConfiguration statementConfiguration;
+    private final StatementRepository statementRepository;
 
     @Autowired
-    public UtilizationService(StatementValidator statementValidator) {
+    public UtilizationService(StatementValidator statementValidator, FetcherService fetcherService, UtilizationEnrichmentService utilizationEnrichmentService, Producer producer, StatementConfiguration statementConfiguration, StatementRepository statementRepository) {
         this.statementValidator = statementValidator;
+        this.fetcherService = fetcherService;
+        this.utilizationEnrichmentService = utilizationEnrichmentService;
+        this.producer = producer;
+        this.statementConfiguration = statementConfiguration;
+        this.statementRepository = statementRepository;
     }
 
-    public void utilizationMethod(StatementCreateRequest statementCreateRequest) {
+    public Statement utilizationCreate(StatementCreateRequest statementCreateRequest) {
         log.info("UtilizationService::utilizationService");
         statementValidator.validateTenantId(statementCreateRequest.getStatementRequest(), statementCreateRequest.getRequestInfo());
+        String tenantId = statementCreateRequest.getStatementRequest().getTenantId();
+        Measurement measurement = fetcherService.fetchAndValidateMeasurements(statementCreateRequest
+                .getStatementRequest().getId(), tenantId, statementCreateRequest.getRequestInfo());
+        Contract contract = fetcherService.fetchAndValidateContracts(measurement.getReferenceId(),
+                tenantId, statementCreateRequest.getRequestInfo());
+        Estimate estimate = fetcherService.fetchAndValidateEstimates(contract.getLineItems().get(0).getEstimateId(),
+                tenantId, statementCreateRequest.getRequestInfo());
+        Statement statement = utilizationEnrichmentService.createUtilizationStatement(statementCreateRequest,
+                measurement, contract, estimate);
 
+        List<Statement> previousStatements = searchStatement(StatementSearchCriteria.builder()
+                .requestInfo(statementCreateRequest.getRequestInfo())
+                .searchCriteria(SearchCriteria.builder()
+                        .referenceId(statementCreateRequest.getStatementRequest().getId())
+                        .tenantId(statementCreateRequest.getStatementRequest().getTenantId())
+                        .build())
+                .build());
+        if (previousStatements.isEmpty())
+            producer.push(statementConfiguration.getSaveAnalysisStatementTopic(), statement);
+        else
+            producer.push(statementConfiguration.getUpdateAnalysisStatementTopic(), statement);
+        return statement;
+    }
+
+
+    public List<Statement> searchStatement(StatementSearchCriteria statementSearchCriteria){
+        statementValidator.validateStatementSearchCriteria(statementSearchCriteria);
+        log.info("get statement from db");
+        return statementRepository.getStatement(statementSearchCriteria.getSearchCriteria());
 
     }
 

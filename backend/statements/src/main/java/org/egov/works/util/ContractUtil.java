@@ -28,6 +28,7 @@ public class ContractUtil {
 
     public List<Contract> fetchContracts(String contractNumber, String tenantId, RequestInfo requestInfo) {
         ContractCriteria contractCriteria = ContractCriteria.builder()
+                .requestInfo(requestInfo)
                 .tenantId(tenantId)
                 .contractNumber(contractNumber)
                 .build();

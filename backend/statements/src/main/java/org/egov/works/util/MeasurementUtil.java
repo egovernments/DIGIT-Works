@@ -8,10 +8,12 @@ import org.egov.works.services.common.models.measurement.Measurement;
 import org.egov.works.services.common.models.measurement.MeasurementCriteria;
 import org.egov.works.services.common.models.measurement.MeasurementResponse;
 import org.egov.works.services.common.models.measurement.MeasurementSearchRequest;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
+@Component
 public class MeasurementUtil {
 
     private final ServiceRequestRepository restRepo;

@@ -23,7 +23,7 @@ import java.util.List;
 
 
 @Controller
-@RequestMapping("/v1/")
+@RequestMapping("/v1/analysis")
 public class StatementApiController {
 
     @Autowired
@@ -45,7 +45,7 @@ public class StatementApiController {
     }
 
 
-    @RequestMapping(value = "analysis/_create", method = RequestMethod.POST)
+    @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<StatementResponse> statementV1AnalysisCreatePost( @Valid @RequestBody StatementCreateRequest body) {
         StatementPushRequest statementPushRequest = analysisStatementService.createAnalysisStatement(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(statementPushRequest.getRequestInfo(), true);
@@ -53,7 +53,7 @@ public class StatementApiController {
         return new ResponseEntity<>(statementResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "analysis/_search", method = RequestMethod.POST)
+    @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<StatementResponse> statementV1AnalysisSearchPost( @Valid @RequestBody StatementSearchCriteria body) {
         List<Statement> statementList= analysisStatementService.searchStatement(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);

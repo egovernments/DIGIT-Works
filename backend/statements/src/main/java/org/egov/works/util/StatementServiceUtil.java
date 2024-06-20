@@ -2,6 +2,7 @@ package org.egov.works.util;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.works.config.StatementConfiguration;
 import org.egov.works.repository.StatementRepository;
 import org.egov.works.web.models.SearchCriteria;
@@ -25,13 +26,13 @@ public class StatementServiceUtil {
         this.statementRepository = statementRepository;
     }
 
-    public digit.models.coremodels.AuditDetails getAuditDetails(String by , Statement statement, Boolean isCreate){
+    public AuditDetails getAuditDetails(String by , Statement statement, Boolean isCreate){
 
         Long time = System.currentTimeMillis();
         if (Boolean.TRUE.equals(isCreate))
-            return digit.models.coremodels.AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
+            return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
         else
-            return digit.models.coremodels.AuditDetails.builder().createdBy(statement.getAuditDetails().getCreatedBy()).lastModifiedBy(by)
+            return AuditDetails.builder().createdBy(statement.getAuditDetails().getCreatedBy()).lastModifiedBy(by)
                     .createdTime(statement.getAuditDetails().getCreatedTime()).lastModifiedTime(time).build();
 
     }

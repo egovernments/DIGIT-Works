@@ -37,10 +37,10 @@ public class MdmsUtil {
     private final CommonUtil commonUtil;
 
     private static final String FILTER_START = "[?(";
-    private static final String FILTER_END = "')]";
-    private static final String COMPOSITION_RATE_FILTER_CODE = "@.sorId=='";
-    private static final String COMPOSITION_SOR_FILTER_CODE = "@.id=='";
-    private static final String OR_ADDITIONAL_FILTER = "'||";
+    private static final String FILTER_END = ")]";
+    private static final String COMPOSITION_RATE_FILTER_CODE = "@.sorId==''";
+    private static final String COMPOSITION_SOR_FILTER_CODE = "@.id==''";
+    private static final String OR_ADDITIONAL_FILTER = "||";
     public static final String MDMS_SOR_MASTER_NAME = "SOR";
     private static final String SOR_FILTER_CODE = "@.id=='%s'";
 
@@ -72,7 +72,7 @@ public class MdmsUtil {
     public Map<String, SorComposition> fetchSorComposition(RequestInfo requestInfo,Set<String> sorIdSet, String tenantId,Long createdTime) {
 
 
-        String filter = getfilter(new ArrayList<>(sorIdSet),Boolean.FALSE);
+        String filter = getfilter(sorIdSet,Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorComposition = fetchMdmsData(requestInfo,
                 configs.getStateLevelTenantId(), "WORKS-SOR",
                 Collections.singletonList("Composition"), filter);
@@ -105,16 +105,20 @@ public class MdmsUtil {
 
     }
 
-    private String getfilter(List<String> sorIds, Boolean isSorRequest) {
+    private String getfilter(Set<String> sorIds, Boolean isSorRequest) {
         StringBuilder filterBuilder = new StringBuilder(FILTER_START);
         Iterator<String> sorIdsIterator = sorIds.iterator();
         while (sorIdsIterator.hasNext()) {
-            String sorIdOrRateFilter = String.format(Boolean.TRUE.equals(isSorRequest)? COMPOSITION_SOR_FILTER_CODE:COMPOSITION_RATE_FILTER_CODE, sorIdsIterator.next());
-            filterBuilder.append(sorIdOrRateFilter);
+            String sorId= sorIdsIterator.next();
+            String sorIdOrRateFilter = Boolean.TRUE.equals(isSorRequest)? COMPOSITION_SOR_FILTER_CODE:COMPOSITION_RATE_FILTER_CODE;
+            // Replace the placeholder in the template with the actual sorId
+            String formattedFilter = sorIdOrRateFilter.replace("''", "'" + sorId + "'");
+            filterBuilder.append(formattedFilter);
             if(sorIdsIterator.hasNext()){
                 filterBuilder.append(OR_ADDITIONAL_FILTER);
             }
         }
+        String ratesFilter =  FILTER_START + filterBuilder + FILTER_END;
         filterBuilder.append(FILTER_END);
 
         return filterBuilder.toString();
@@ -122,7 +126,7 @@ public class MdmsUtil {
 
     public Map<String, List<Rates>> fetchBasicRates(RequestInfo requestInfo, String tenantId, List<String> sorsList) {
 
-        String filter = getfilter(sorsList,Boolean.FALSE);
+        String filter = getfilter(sorsList.stream().collect(Collectors.toSet()), Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
                 tenantId, "WORKS-SOR",
                 Collections.singletonList("Rates"), filter);
@@ -136,7 +140,7 @@ public class MdmsUtil {
     }
     public Map<String, Sor> fetchSorData(RequestInfo requestInfo, String tenantId, List<String> sorsList, Boolean isSorRequest) {
 
-        String filter = getfilter(sorsList,isSorRequest);
+        String filter = getfilter(sorsList.stream().collect(Collectors.toSet()), isSorRequest);
         Map <String, Sor> sorIdToSorMap= new HashMap<>();
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
                 tenantId, "WORKS-SOR",
@@ -152,9 +156,9 @@ public class MdmsUtil {
 
     }
 
-    public Map<String, List<Rates>> fetchRateForNonWorksSor(String basicSorIds, RequestInfo requestInfo,String tenantId){
+    public Map<String, List<Rates>> fetchRateForNonWorksSor(List<String> basicSorIds, RequestInfo requestInfo,String tenantId){
 
-        String filter = getfilter(Arrays.asList(basicSorIds),Boolean.TRUE);
+        String filter = getfilter(basicSorIds.stream().collect(Collectors.toSet()), Boolean.TRUE);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
                 tenantId, "WORKS-SOR",
                 Collections.singletonList("Rates"), filter);

@@ -1,6 +1,7 @@
 package org.egov.works.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.egov.common.contract.models.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -122,7 +123,7 @@ public class EnrichmentService {
                 .targetId(estimate.getId())
                 .statementType(Statement.StatementTypeEnum.ANALYSIS)
                 .build();
-        digit.models.coremodels.AuditDetails auditDetails = statementServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), statement,true);
+        AuditDetails auditDetails = statementServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), statement,true);
         statement.setAuditDetails(auditDetails);
 
         enrichSorDetailsAndBasicSorDetails(requestInfo,statement, estimate, worksSorId, sorIdCompositionMap, basicSorRates,
@@ -327,7 +328,7 @@ public class EnrichmentService {
                                                                Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap,BasicSorDetails basicSorDetail,RequestInfo requestInfo,String tenantId,Long createdTime){
         String sorId=estimateDetail.getSorId();
       BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(sorId);
-      Map<String, List<Rates>> basicSorRates = mdmsUtil.fetchRateForNonWorksSor(sorId,requestInfo,tenantId);
+      Map<String, List<Rates>> basicSorRates = mdmsUtil.fetchRateForNonWorksSor(Collections.singletonList(sorId),requestInfo,tenantId);
       //Rate rate = commonUtil.getApplicatbleRate(basicSorRates.get(sorId),createdTime);
       basicSorDetail.setQuantity(quantityDefinedInEstimate);
       basicSorDetail.setUom(basicSorDescriptionMap.get(sorId).get("uom"));
