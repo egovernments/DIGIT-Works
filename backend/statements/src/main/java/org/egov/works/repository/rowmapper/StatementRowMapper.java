@@ -46,7 +46,7 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             Long createdtime = rs.getLong("createdTime");
             Long lastmodifiedtime = rs.getLong("lastModifiedTime");
 
-            AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
+           AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
                     .build();
 
@@ -55,7 +55,6 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             if(basicSorDetails!=null){
 
                 try {
-                    // Assuming you have an ObjectMapper instance for JSON conversion
                     ObjectMapper objectMapper = new ObjectMapper();
                     basicSorDetailsList = objectMapper.readValue(basicSorDetails, ArrayList.class);
                 } catch (Exception e) {
@@ -74,7 +73,7 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             if (!statementMap.containsKey(id)) {
                 statementMap.put(id, statement);
             }
-            //one-to-many mapping
+
             addSorDetails(rs, sorDetailMap, statementMap.get(id));
 
 
@@ -91,20 +90,21 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
         if(basicSorDetails!=null){
 
             try {
-                // Assuming you have an ObjectMapper instance for JSON conversion
                 ObjectMapper objectMapper = new ObjectMapper();
                 basicSorDetailsList = objectMapper.readValue(basicSorDetails, ArrayList.class);
             } catch (Exception e) {
                 throw new SQLException("Error converting JSONB to POJO", e);
             }
         }
-
+        JsonNode additionalDetails = getAdditionalDetail("sorAdditionalDetails", rs);
         SorDetail sorDetail = SorDetail.builder()
                 .id(sorDetailId)
                 .statementId(rs.getString("statementId"))
                 .tenantId(rs.getString("sorDetailsTenantId"))
                 .sorId(rs.getString("sorId"))
+                .isActive(rs.getBoolean("isActive"))
                 .basicSorDetails(basicSorDetailsList)
+                .additionalDetails(additionalDetails)
                 .build();
 
 
@@ -121,7 +121,8 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             sorDetailList.add(sorDetail);
             statement.setSorDetails(sorDetailList);
         } else {
-            statement.getSorDetails().add(sorDetail);
+            if(!Objects.equals(sorDetail.getId(), sorDetailId))
+                statement.getSorDetails().add(sorDetail);
         }
     }
 
@@ -133,20 +134,20 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
         List<BasicSorDetails >basicSorDetailsList = new ArrayList<>();
         if(lineItemsBasicSorDetails!=null){
             try {
-                // Assuming you have an ObjectMapper instance for JSON conversion
                 ObjectMapper objectMapper = new ObjectMapper();
                 basicSorDetailsList = objectMapper.readValue(lineItemsBasicSorDetails, ArrayList.class);
             } catch (Exception e) {
                 throw new SQLException("Error converting JSONB to POJO", e);
             }
         }
-
+        JsonNode additionalDetails = getAdditionalDetail("lineItemAdditionalDetails", rs);
         BasicSor basicSor = BasicSor.builder()
                 .id(basicSorLineItemId)
                 .sorType(rs.getString("lineItemSorType"))
                 .sorId(rs.getString("lineItemsSorId"))
                 .referenceId(rs.getString("lineItemIdReferenceId"))
-                .amountDetails(basicSorDetailsList)
+                .basicSorDetails(basicSorDetailsList)
+                .additionalDetails(additionalDetails)
                 .build();
 
 

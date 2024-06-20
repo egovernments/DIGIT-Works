@@ -119,6 +119,13 @@ config:
         image-name: "measurement-registry"
       - work-dir: "backend/measurement-registry/src/main/resources/db"
         image-name: "measurement-registry-db"
+  - name: "builds/digit-works/backend/statements"
+    build:
+      - work-dir: "backend/statements"
+        dockerfile: "build/maven-java17/Dockerfile"
+        image-name: "statements"
+      - work-dir: "backend/statements/src/main/resources/db"
+        image-name: "statements-db"
 
   - name: "builds/digit-works/backend/statements"
     build:
