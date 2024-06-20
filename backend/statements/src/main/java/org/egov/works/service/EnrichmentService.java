@@ -224,6 +224,7 @@ public class EnrichmentService {
 
         Map<String, Object> additionalDetailsMap= new HashMap<>();
         additionalDetailsMap.put("estimateNumber",estimate.getEstimateNumber());
+        additionalDetailsMap.put("projectId",estimate.getProjectId());
 
         Statement statement = Statement.builder()
                 .id(UUID.randomUUID().toString())
