@@ -7,7 +7,6 @@ All notable changes to this module will be documented in this file.
 - Upgraded PostgresSQL Driver version to 42.7.1
 - Upgraded Flyway base image version to 10.7.1 for DB Migration
 
-
 ## 1.0.1 - 2024-03-04
 
 - Implemented Offline Enabled Functionality in Attendance Module
