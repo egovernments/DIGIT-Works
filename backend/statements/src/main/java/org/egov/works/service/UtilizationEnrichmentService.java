@@ -1,6 +1,7 @@
 package org.egov.works.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.contract.Contract;
 import org.egov.works.services.common.models.contract.LineItems;
 import org.egov.works.services.common.models.measurement.Measure;
@@ -68,7 +69,7 @@ public class UtilizationEnrichmentService {
 
         sorIdToSorMap.putAll(basicSorIdFromCompositionToSorMap);
 
-        Map<String, List<Rates>> basicSorRateMap = mdmsUtil.fetchRateForNonWorksSor(new ArrayList<>(basicSorIds),
+        Map<String, List<Rates>> basicSorRateMap = mdmsUtil.fetchRateForNonWorksSor(new ArrayList<>(sorIdToSorMap.keySet()),
                 statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId());
 
         List<BasicSorDetails> basicSorDetails = getBasicSorDetailsList(sorIdToSorMap, sorIdToCompositionMap,
@@ -78,7 +79,7 @@ public class UtilizationEnrichmentService {
 
         List<SorDetail> sorDetails = getSorDetails(sorIdToSorMap, sorIdToCompositionMap,
                 estimateDetailIdToEstimateDetailMap, contractLineItemRefToEstDetailIdMap, measureList, basicSorRateMap,
-                statement.getId());
+                statement.getId(), statementCreateRequest.getStatementRequest().getTenantId());
         statement.setSorDetails(sorDetails);
 
         return statement;
@@ -117,7 +118,8 @@ public class UtilizationEnrichmentService {
     List<SorDetail> getSorDetails(Map<String, Sor> sorIdToSorMap, Map<String, SorComposition> sorIdToCompositionMap,
                                     Map<String, EstimateDetail> estimateDetailIdToEstimateDetailMap,
                                     Map<String, String> contractLineItemRefToEstDetailIdMap,
-                                    List<Measure> measureList, Map<String, List<Rates>> basicSorRateMap, String statementId) {
+                                    List<Measure> measureList, Map<String, List<Rates>> basicSorRateMap, String statementId,
+                                  String tenantId) {
 
 
         List<SorDetail> sorDetails = new ArrayList<>();
@@ -128,9 +130,10 @@ public class UtilizationEnrichmentService {
             if (!estimateDetail.getCategory().equalsIgnoreCase("SOR")) {
                 continue;
             }
-            SorDetail sorDetail = enrichmentUtil.getEnrichedSorDetail(statementId);
-            sorDetail.setSorId(estimateDetail.getSorId());
             Sor sor = sorIdToSorMap.get(estimateDetail.getSorId());
+            Rates rates = basicSorRateMap.get(estimateDetail.getSorId()).get(0);// TODO fetch correct rates
+            SorDetail sorDetail = enrichmentUtil.getEnrichedSorDetail(statementId, tenantId, sor, rates);
+
 
             Map<String, BasicSorDetails> typeToBasicSorDetailsMap = new HashMap<>();
             if (sor.getSorType().equalsIgnoreCase("W")) {
@@ -146,7 +149,6 @@ public class UtilizationEnrichmentService {
                     estimateDetail, measure, basicSorRateMap, sorDetail.getId());
 
             sorDetail.setLineItems(lineItems);
-
 
             sorDetails.add(sorDetail);
 
@@ -177,15 +179,14 @@ public class UtilizationEnrichmentService {
                                  Sor sor, String referenceId, BigDecimal quantity) {
 
         Map<String, BasicSorDetails> typeToBasicSorDetailsMap = new HashMap<>();
-        calculatorService.calculateUtilizationForBasicSor1(estimateDetail.getIsDeduction(), basicSorRateMap, typeToBasicSorDetailsMap,
+        if (!basicSorRateMap.containsKey(sor.getId()))
+            throw new CustomException("RATES_NOT_FOUND", "Rates not found for given SOR :: " + sor.getId());
+
+        Rates rates = basicSorRateMap.get(sor.getId()).get(0);
+        calculatorService.calculateUtilizationForBasicSor1(estimateDetail.getIsDeduction(), rates, typeToBasicSorDetailsMap,
                 sor, quantity);
         List<BasicSorDetails> basicSorDetails = typeToBasicSorDetailsMap.values().stream().collect(Collectors.toList());
-        BasicSor lineItem = BasicSor.builder()
-                .sorId(sor.getId())
-                .sorType(sor.getSorType())
-                .amountDetails(basicSorDetails)
-                .referenceId(referenceId).build();
-        return lineItem;
+        return enrichmentUtil.getEnrichedLineItem(sor, basicSorDetails, referenceId, rates);
 
     }
 

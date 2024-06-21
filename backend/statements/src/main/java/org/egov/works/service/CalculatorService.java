@@ -56,13 +56,11 @@ public class CalculatorService {
 
     }
 
-    public void calculateUtilizationForBasicSor1(boolean isDeduction, Map<String, List<Rates>> basicSorRateMap,
+    public void calculateUtilizationForBasicSor1(boolean isDeduction, Rates rates,
                                                  Map<String, BasicSorDetails> typeToBasicSorDetailsMap, Sor sor,
                                                  BigDecimal quantity) {
-        if (basicSorRateMap.containsKey(sor.getId())) {
-            Rates rates = basicSorRateMap.get(sor.getId()).get(0);
-            calculateAmount(rates, typeToBasicSorDetailsMap, sor, quantity, isDeduction);
-        }
+
+        calculateAmount(rates, typeToBasicSorDetailsMap, sor, quantity, isDeduction);
     }
 
 //    private void calculateAmount1(Rates rates, Map<String, BasicSorDetails> typeToBasicSorDetailsMap, Sor sor,)

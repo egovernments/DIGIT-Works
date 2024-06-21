@@ -84,8 +84,8 @@ public class EnrichmentService {
             }
 
             uniqueIdentifiers.addAll(basicSorIds);
-            Map<String,Sor> sorDescriptionMap = mdmsUtil.fetchSorData(requestInfo,configuration.getStateLevelTenantId(),uniqueIdentifiers,true);
-            Map<String, List<Rates>> sorRates = mdmsUtil.fetchBasicRates(requestInfo, estimate.getTenantId(), uniqueIdentifiers);
+            Map<String,Sor> sorDescriptionMap = mdmsUtil.fetchSorData(requestInfo,configuration.getStateLevelTenantId(),new ArrayList<>(uniqueIdentifiers),true);
+            Map<String, List<Rates>> sorRates = mdmsUtil.fetchBasicRates(requestInfo, estimate.getTenantId(), new ArrayList<>(uniqueIdentifiers));
            statementPushRequest = createStatementPushRequest(estimate, sorIdToEstimateDetailMap, requestInfo,
                                                       sorIdCompositionMap, sorIdToEstimateDetailQuantityMap,sorRates,sorDescriptionMap,estimateDetailList);
 
@@ -146,8 +146,8 @@ public class EnrichmentService {
             }
 
             uniqueIdentifiers.addAll(basicSorIds);
-            Map<String,Sor> sorDescriptionMap = mdmsUtil.fetchSorData(requestInfo,configuration.getStateLevelTenantId(),uniqueIdentifiers,true);
-            Map<String, List<Rates>> sorRates = mdmsUtil.fetchBasicRates(requestInfo, estimate.getTenantId(), uniqueIdentifiers);
+            Map<String,Sor> sorDescriptionMap = mdmsUtil.fetchSorData(requestInfo,configuration.getStateLevelTenantId(),new ArrayList<>(uniqueIdentifiers),true);
+            Map<String, List<Rates>> sorRates = mdmsUtil.fetchBasicRates(requestInfo, estimate.getTenantId(), new ArrayList<>(uniqueIdentifiers));
             enrichSorDetailsAndBasicSorDetails(statement, estimate, sorIdCompositionMap, sorRates,
                     Boolean.FALSE, sorIdToEstimateDetailQuantityMap, sorDescriptionMap,filteredEstimateDetails);
             return StatementPushRequest.builder()

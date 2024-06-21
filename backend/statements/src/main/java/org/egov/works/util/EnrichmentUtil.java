@@ -2,12 +2,12 @@ package org.egov.works.util;
 
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.works.web.models.BasicSorDetails;
-import org.egov.works.web.models.SorDetail;
-import org.egov.works.web.models.Statement;
-import org.egov.works.web.models.StatementCreateRequest;
+import org.egov.works.web.models.*;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -40,11 +40,32 @@ public class EnrichmentUtil {
                 .build();
     }
 
-    public SorDetail getEnrichedSorDetail(String statementId) {
+    public SorDetail getEnrichedSorDetail(String statementId, String tenantId, Sor sor, Rates rates) {
         return SorDetail.builder()
                 .id(UUID.randomUUID().toString())
+                .tenantId(tenantId)
                 .statementId(statementId)
+                .sorId(sor.getId())
+                .additionalDetails(getAdditionalDetails(sor, rates))
                 .build();
+    }
+
+    public BasicSor getEnrichedLineItem(Sor sor, List<BasicSorDetails> basicSorDetails, String referenceId, Rates rates) {
+
+        return BasicSor.builder()
+                .id(UUID.randomUUID().toString())
+                .sorId(sor.getId())
+                .sorType(sor.getSorType())
+                .basicSorDetails(basicSorDetails)
+                .referenceId(referenceId)
+                .additionalDetails(getAdditionalDetails(sor, rates)).build();
+    }
+
+    private Object getAdditionalDetails(Sor sor, Rates rates) {
+        Map<String, Object> additionalDetails = new HashMap<>();
+        additionalDetails.put("sorDetails", sor);
+        additionalDetails.put("rateDetails", rates);
+        return additionalDetails;
     }
 
 }
