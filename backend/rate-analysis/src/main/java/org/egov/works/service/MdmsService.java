@@ -8,7 +8,9 @@ import org.egov.works.config.Configuration;
 import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.works.web.models.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +37,7 @@ public class MdmsService {
                 .collect(Collectors.groupingBy(mdms -> mdms.getUniqueIdentifier().split("\\.")[0]));
         for (Rates rates : revisedRates) {
             createRates(rates, requestInfo);
-            if (oldRatesMap.containsKey(rates.getSorId())) {
+            if (oldRatesMap.containsKey(rates.getSorId()) && oldRatesMap.get(rates.getSorId()) != null) {
                 Mdms mdms = mdmsMap.get(rates.getSorId()).get(0);
                 ObjectNode objectNode = (ObjectNode) mdms.getData();
                 if (objectNode.has("validTo")) {
@@ -67,6 +69,8 @@ public class MdmsService {
     List<Mdms> fetchOldMdms(Map<String, Rates> oldRatesMap, RequestInfo requestInfo, String tenantId) {
         Set<String> uniqueIdentifiers = oldRatesMap.values().stream().filter(rates -> rates != null).map(rates -> rates.getSorId()+"."+rates.getValidFrom())
                 .collect(java.util.stream.Collectors.toSet());
+        if (CollectionUtils.isEmpty(uniqueIdentifiers))
+            return new ArrayList<>();
         MdmsCriteriaV2 mdmsCriteriaV2 = MdmsCriteriaV2.builder()
                 .schemaCode("WORKS-SOR.Rates").tenantId(tenantId).uniqueIdentifiers(uniqueIdentifiers).build();
         StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getMdmsV2EndPoint());
