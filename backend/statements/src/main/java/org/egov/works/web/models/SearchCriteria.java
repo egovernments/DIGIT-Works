@@ -35,6 +35,10 @@ public class SearchCriteria {
     @Valid
     private String referenceId = null;
 
+    @JsonProperty("statementType")
+    private Statement.StatementTypeEnum statementType = null;
+
+
 
     public SearchCriteria addStatementIdItem(String statementIdItem) {
         if (this.statementId == null) {

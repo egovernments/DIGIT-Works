@@ -52,6 +52,11 @@ public class StatementQueryBuilder {
             queryBuilder.append(" statement.tenantid=? ");
             preparedStmtList.add(searchCriteria.getTenantId());
         }
+        if (searchCriteria.getStatementType() != null ) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" statement.statement_type=? ");
+            preparedStmtList.add(searchCriteria.getStatementType().toString());
+        }
         if (StringUtils.isNotBlank(searchCriteria.getReferenceId())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" statement.target_id=? ");

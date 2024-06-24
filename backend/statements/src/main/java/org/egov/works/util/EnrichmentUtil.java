@@ -13,13 +13,15 @@ import java.util.UUID;
 @Component
 public class EnrichmentUtil {
 
-    public Statement getEnrichedStatement(StatementCreateRequest statementCreateRequest) {
+    public Statement getEnrichedStatement(StatementCreateRequest statementCreateRequest, String measurementNumber,
+                                          String projectId) {
 
        return Statement.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(statementCreateRequest.getStatementRequest().getTenantId())
                 .targetId(statementCreateRequest.getStatementRequest().getId())
                 .statementType(Statement.StatementTypeEnum.UTILIZATION)
+               .additionalDetails(getStatementAdditionalDetails(measurementNumber, projectId))
                 .auditDetails(getNewAuditDetails(statementCreateRequest.getRequestInfo()))
                 .build();
 
@@ -44,6 +46,7 @@ public class EnrichmentUtil {
         return SorDetail.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(tenantId)
+                .isActive(true)
                 .statementId(statementId)
                 .sorId(sor.getId())
                 .additionalDetails(getAdditionalDetails(sor, rates))
@@ -65,6 +68,12 @@ public class EnrichmentUtil {
         Map<String, Object> additionalDetails = new HashMap<>();
         additionalDetails.put("sorDetails", sor);
         additionalDetails.put("rateDetails", rates);
+        return additionalDetails;
+    }
+    private Object getStatementAdditionalDetails(String measurementNumber, String projectId) {
+        Map<String, Object> additionalDetails = new HashMap<>();
+        additionalDetails.put("measurementNumber", measurementNumber);
+        additionalDetails.put("projectId", projectId);
         return additionalDetails;
     }
 

@@ -23,13 +23,13 @@ public class CalculatorService {
     public void calculateUtilizationForWorksSor(Map<String, SorComposition>  sorIdToCompositionMap,
                                                     EstimateDetail estimateDetail, Map<String, List<Rates>> basicSorRateMap,
                                                     Map<String, BasicSorDetails> typeToBasicSorDetailsMap, Sor sor,
-                                                    Measure measure, Map<String, Sor> sorIdToSorMap) {
+                                                    Measure measure, Map<String, Sor> sorIdToSorMap, Map<String, BigDecimal> sorIdToCummValueMap) {
         if (sorIdToCompositionMap.get(estimateDetail.getSorId()) != null) {
             List<SorCompositionBasicSorDetail> sorCompositionBasicSorDetails = sorIdToCompositionMap.get(estimateDetail.getSorId()).getBasicSorDetails();
             for (SorCompositionBasicSorDetail sorCompositionBasicSorDetail : sorCompositionBasicSorDetails) {
                 if (basicSorRateMap.containsKey(sorCompositionBasicSorDetail.getSorId())) {
                     Rates rates = basicSorRateMap.get(sorCompositionBasicSorDetail.getSorId()).get(0); //TODO fetch correct rates
-                    BigDecimal quantity = measure.getCumulativeValue().multiply(sorCompositionBasicSorDetail.getQuantity())
+                    BigDecimal quantity = sorIdToCummValueMap.get(estimateDetail.getSorId()).multiply(sorCompositionBasicSorDetail.getQuantity())
                             .divide(sorIdToCompositionMap.get(estimateDetail.getSorId()).getQuantity())
                             .divide(sorIdToSorMap.get(sorCompositionBasicSorDetail.getSorId()).getQuantity());
                     calculateAmount(rates, typeToBasicSorDetailsMap, sorIdToSorMap.get(sorCompositionBasicSorDetail.getSorId()), quantity, estimateDetail.getIsDeduction());
@@ -44,10 +44,10 @@ public class CalculatorService {
 
     public void calculateUtilizationForBasicSor(EstimateDetail estimateDetail, Map<String, List<Rates>> basicSorRateMap,
                                                 Map<String, BasicSorDetails> typeToBasicSorDetailsMap, Sor sor, Measure measure,
-                                                String sorId) {
+                                                String sorId, Map<String, BigDecimal> sorIdToCummValueMap) {
         if (basicSorRateMap.containsKey(sorId)) {
             Rates rates = basicSorRateMap.get(sorId).get(0); //TODO fetch correct rates
-            BigDecimal quantity = measure.getCumulativeValue().divide(sor.getQuantity());
+            BigDecimal quantity = sorIdToCummValueMap.get(sorId).divide(sor.getQuantity());
             calculateAmount(rates, typeToBasicSorDetailsMap, sor, quantity, estimateDetail.getIsDeduction());
         } else {
             log.error("No rates found for basicSorId : " + sorId);

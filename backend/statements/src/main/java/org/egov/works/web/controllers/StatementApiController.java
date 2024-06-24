@@ -53,6 +53,7 @@ public class StatementApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<StatementResponse> statementV1AnalysisSearchPost( @Valid @RequestBody StatementSearchCriteria body) {
+        body.getSearchCriteria().setStatementType(Statement.StatementTypeEnum.ANALYSIS);
         List<Statement> statementList= analysisStatementService.searchStatement(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         StatementResponse statementResponse= StatementResponse.builder().responseInfo(responseInfo).statement(statementList).build();

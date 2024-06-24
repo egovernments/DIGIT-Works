@@ -2,6 +2,7 @@ package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class StatementSearchCriteria {
     @JsonProperty("searchCriteria")
 
     @Valid
+    @NotNull
     private SearchCriteria searchCriteria = null;
 
 
