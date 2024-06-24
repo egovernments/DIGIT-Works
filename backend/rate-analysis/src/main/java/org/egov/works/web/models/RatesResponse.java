@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 /**
  * RatesResponse
  */
@@ -27,7 +29,7 @@ public class RatesResponse {
     @JsonProperty("rates")
 
     @Valid
-    private Rates rates = null;
+    private List<Rates> rates = null;
 
 
 }
