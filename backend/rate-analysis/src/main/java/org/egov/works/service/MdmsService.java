@@ -1,5 +1,6 @@
 package org.egov.works.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,8 @@ public class MdmsService {
         Mdms createMdmsData = Mdms.builder()
                 .tenantId(rates.getTenantId())
                 .schemaCode("WORKS-SOR.Rates")
-                .data(mapper.valueToTree(rates)).build();
+                .isActive(true)
+                .data(mapper.convertValue(rates, JsonNode.class)).build();
         MdmsRequest mdmsRequest = MdmsRequest.builder()
                 .requestInfo(requestInfo).mdms(createMdmsData).build();
         StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getCreateEndPoint()).append("WORKS-SOR.Rates");

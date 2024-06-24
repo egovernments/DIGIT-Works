@@ -70,11 +70,12 @@ public class EnrichmentService {
             }
             if (labourCessAmountDetail == null) {
                 labourCessAmountDetail = AmountDetail.builder().amount(amountForLabourCess).type(AmountDetail.TypeEnum.PERCENTAGE).heads(configs.getLabourCessHeadCode()).build();
+                finalAmountDetails.add(labourCessAmountDetail);
             } else {
                 labourCessAmountDetail.setAmount(labourCessAmountDetail.getAmount().add(amountForLabourCess));
             }
 
-            finalAmountDetails.add(labourCessAmountDetail);
+
             Rates rates = Rates.builder().sorCode(rateAnalysis.getSorCode()).sorId(rateAnalysis.getSorId())
                     .amountDetails(finalAmountDetails).build();
             BigDecimal rate = BigDecimal.valueOf(0.0);
