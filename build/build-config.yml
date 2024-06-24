@@ -125,15 +125,7 @@ config:
         dockerfile: "build/maven-java17/Dockerfile"
         image-name: "statements"
       - work-dir: "backend/statements/src/main/resources/db"
-        image-name: "statements-db"
-
-  - name: "builds/digit-works/backend/statements"
-    build:
-      - work-dir: "backend/statements"
-        dockerfile: "build/maven-java17/Dockerfile"
-        image-name: "statements"
-      - work-dir: "backend/statements/src/main/resources/db"
-        image-name: "statements-db"     
+        image-name: "statements-db"    
 
   # utilities
   - name: "builds/digit-works/utilities/egov-pdf"
