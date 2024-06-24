@@ -252,10 +252,13 @@ public class EnrichmentService {
 
         List<SorDetail> sorDetails = new ArrayList<>();
         Long createdTime=estimate.getAuditDetails().getCreatedTime();
+        // Extract sorId from EstimateDetail into a set
+        Set<String> sorIdsInEstimateDetails = estimateDetailList.stream()
+                .map(EstimateDetail::getSorId)
+                .collect(Collectors.toSet());
 
-        for (EstimateDetail estimateDetail : estimateDetailList) {
+        for (String sorId : sorIdsInEstimateDetails) {
             List<BasicSor> lineItems = new ArrayList<>();
-            String sorId=estimateDetail.getSorId();
             SorComposition sorComposition = sorIdCompositionMap.get(sorId);
             Map<String,Object> additionalDetailsMap= new HashMap<>();
             Sor sor= sorDescriptionMap.get(sorId);
