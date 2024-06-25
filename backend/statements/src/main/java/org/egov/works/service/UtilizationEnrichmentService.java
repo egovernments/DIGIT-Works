@@ -220,6 +220,55 @@ public class UtilizationEnrichmentService {
 
     }
 
+    public void enrichPreviousIds(Statement previousStatement, Statement currentStatement) {
+        if (previousStatement == null || currentStatement == null) {
+            return;
+        }
+
+        // Create a map for quick lookup of SorDetail by sorId from the previous statement
+        Map<String, SorDetail> sorDetailMap = new HashMap<>();
+        if (previousStatement.getSorDetails() != null) {
+            for (SorDetail sorDetail : previousStatement.getSorDetails()) {
+                if (sorDetail.getSorId() != null) {
+                    sorDetailMap.put(sorDetail.getSorId(), sorDetail);
+                }
+            }
+        }
+
+        // Iterate through the current statement's sorDetails and update their fields based on sorId
+        if (currentStatement.getSorDetails() != null) {
+            for (SorDetail currentSorDetail : currentStatement.getSorDetails()) {
+                SorDetail previousSorDetail = sorDetailMap.get(currentSorDetail.getSorId());
+
+                if (previousSorDetail != null) {
+                    currentSorDetail.setId(previousSorDetail.getId());
+
+                    // Create a map for quick lookup of BasicSor by sorId from the previous sorDetail's lineItems
+                    Map<String, BasicSor> lineItemsMap = new HashMap<>();
+                    if (previousSorDetail.getLineItems() != null) {
+                        for (BasicSor previousLineItem : previousSorDetail.getLineItems()) {
+                            if (previousLineItem.getSorId() != null) {
+                                lineItemsMap.put(previousLineItem.getSorId(), previousLineItem);
+                            }
+                        }
+                    }
+
+                    // Iterate through the current sorDetail's lineItems and update their fields based on sorId
+                    if (currentSorDetail.getLineItems() != null) {
+                        for (BasicSor currentLineItem : currentSorDetail.getLineItems()) {
+                            BasicSor previousLineItem = lineItemsMap.get(currentLineItem.getSorId());
+
+                            if (previousLineItem != null) {
+                                currentLineItem.setId(previousLineItem.getId());
+                                currentLineItem.setReferenceId(previousLineItem.getReferenceId());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 
 
