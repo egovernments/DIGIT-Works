@@ -511,9 +511,8 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
             BasicSorDetails detail2 = objectMapper.convertValue(newBasicSorDetailsList.get(i),BasicSorDetails.class);
 
             if (detail1.getType().equals(detail2.getType())) {
-                if (!detail1.getAmount().equals(detail2.getAmount()) ||
-                        !detail1.getQuantity().equals(detail2.getQuantity())) {
-                    // If amounts or quantities differ, update the id and add to updated list
+                if (!detail1.getAmount().equals(detail2.getAmount())) {
+                    // If amounts  differ, update the id and add to updated list
                     detail2.setId(detail1.getId());
                     updatedDetails.add(detail2);
                     hasDifferences = true;
