@@ -84,12 +84,10 @@ public class RateAnalysisValidator {
                 Rates oldRate = oldRatesMap.get(rates.getSorId());
                 if (oldRate.getValidFrom().compareTo(rates.getValidFrom()) > 0) {
                     log.error("Effective from date cannot be less than previous effective from date");
-                    newRates.remove(rates);
                     errorMap.put("EFFECTIVE_FROM_ERROR", "Effective from date cannot be less than previous effective from date for sorId :: " + rates.getSorId());
                 }
                 if (oldRate.getRate().equals(rates.getRate())) {
                     log.error("Previous rate same as new rate");
-                    newRates.remove(rates);
                     errorMap.put("RATE_SAME", "Previous rate same as new rate for sorId :: " + rates.getSorId());
                 }
             }

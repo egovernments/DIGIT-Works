@@ -66,6 +66,8 @@ public class MdmsService {
                 .requestInfo(requestInfo).mdms(createMdmsData).build();
         StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getCreateEndPoint()).append("WORKS-SOR.Rates");
         Object response = restRepo.fetchResult(uri, mdmsRequest);
+        MdmsResponseV2 mdmmsresponse = mapper.convertValue(response, MdmsResponseV2.class);
+        rates.setId(mdmmsresponse.getMdms().get(0).getId());
     }
 
     List<Mdms> fetchOldMdms(Map<String, Rates> oldRatesMap, RequestInfo requestInfo, String tenantId) {
