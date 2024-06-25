@@ -55,10 +55,13 @@ public class UtilizationService {
                         .build())
                 .build());
         StatementPushRequest pushRequest = StatementPushRequest.builder().statement(statement).build();
-        if (previousStatements.isEmpty())
+        if (previousStatements.isEmpty()) {
             producer.push(statementConfiguration.getSaveAnalysisStatementTopic(), pushRequest);
-        else
+        }
+        else {
+            utilizationEnrichmentService.enrichPreviousIds(previousStatements.get(0), statement);
             producer.push(statementConfiguration.getUpdateAnalysisStatementTopic(), pushRequest);
+        }
         return statement;
     }
 

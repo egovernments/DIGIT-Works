@@ -76,6 +76,7 @@ public class CalculatorService {
                 currentAmount = currentAmount.add(rates.getRate().multiply(quantity));
             }
             typeToBasicSorDetailsMap.get(sor.getSorType()).setAmount(currentAmount);
+            typeToBasicSorDetailsMap.get(sor.getSorType()).setQuantity(typeToBasicSorDetailsMap.get(sor.getSorType()).getQuantity().add(quantity));
         } else {
             BasicSorDetails basicSorDetails = enrichmentUtil.getEnrichedBasicSorDetails(sor.getSorType());
             if (isDeduction) {
@@ -84,6 +85,7 @@ public class CalculatorService {
                 basicSorDetails.setAmount(rates.getRate().multiply(quantity));
             }
             basicSorDetails.setAmount(rates.getRate().multiply(quantity));
+            basicSorDetails.setQuantity(quantity);
             typeToBasicSorDetailsMap.put(sor.getSorType(), basicSorDetails);
         }
     }
