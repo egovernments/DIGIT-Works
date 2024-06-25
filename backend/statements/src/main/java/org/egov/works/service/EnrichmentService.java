@@ -154,7 +154,7 @@ public class EnrichmentService {
             for (BasicSorDetails detail : existingStatementSorDetailsMap.get(sorId).getBasicSorDetails()) {
                 String type = detail.getType();
                 cumulativeAmounts.put(type, cumulativeAmounts.getOrDefault(type, BigDecimal.ZERO).add(detail.getAmount()));
-                cumulativeQuantities.put(type, cumulativeQuantities.getOrDefault(type, BigDecimal.ZERO).add(detail.getQuantity()));
+                //cumulativeQuantities.put(type, cumulativeQuantities.getOrDefault(type, BigDecimal.ZERO).add(detail.getQuantity()));
             }
             // Update cumulative amounts and quantities
 
