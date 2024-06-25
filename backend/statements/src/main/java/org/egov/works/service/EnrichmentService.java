@@ -41,8 +41,6 @@ public class EnrichmentService {
     @Autowired
     private CommonUtil commonUtil;
 
-    @Autowired
-    private static ObjectMapper objectMapper;
 
 
     private static final String OR_ADDITIONAL_FILTER = " || ";
@@ -508,6 +506,7 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
 
         // Compare each element in the lists
         for (int i = 0; i < existingBasicSorDetailsList.size(); i++) {
+            ObjectMapper objectMapper= new ObjectMapper();
             BasicSorDetails detail1 = objectMapper.convertValue(existingBasicSorDetailsList.get(i), BasicSorDetails.class);
             BasicSorDetails detail2 = objectMapper.convertValue(newBasicSorDetailsList.get(i),BasicSorDetails.class);
 
