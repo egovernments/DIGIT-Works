@@ -1,5 +1,6 @@
 package org.egov.works.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
@@ -39,6 +40,8 @@ public class EnrichmentService {
     private StatementServiceUtil statementServiceUtil;
     @Autowired
     private CommonUtil commonUtil;
+
+    private static ObjectMapper objectMapper;
 
 
     private static final String OR_ADDITIONAL_FILTER = " || ";
@@ -504,8 +507,8 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
 
         // Compare each element in the lists
         for (int i = 0; i < existingBasicSorDetailsList.size(); i++) {
-            BasicSorDetails detail1 = existingBasicSorDetailsList.get(i);
-            BasicSorDetails detail2 = newBasicSorDetailsList.get(i);
+            BasicSorDetails detail1 = objectMapper.convertValue(existingBasicSorDetailsList.get(i), BasicSorDetails.class);
+            BasicSorDetails detail2 = objectMapper.convertValue(newBasicSorDetailsList.get(i),BasicSorDetails.class);
 
             if (detail1.getType().equals(detail2.getType())) {
                 if (!detail1.getAmount().equals(detail2.getAmount()) ||
