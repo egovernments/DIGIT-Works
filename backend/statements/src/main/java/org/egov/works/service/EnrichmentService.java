@@ -41,6 +41,7 @@ public class EnrichmentService {
     @Autowired
     private CommonUtil commonUtil;
 
+    @Autowired
     private static ObjectMapper objectMapper;
 
 
