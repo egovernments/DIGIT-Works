@@ -1,5 +1,6 @@
 package org.egov.works.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
@@ -151,7 +152,12 @@ public class EnrichmentService {
                 SorDetail existingSorDetail = existingStatementSorDetailsMap.get(sorId);
                 existingSorDetail.setIsActive(Boolean.FALSE);
             }
-            for (BasicSorDetails detail : existingStatementSorDetailsMap.get(sorId).getBasicSorDetails()) {
+            ObjectMapper objectMapper= new ObjectMapper();
+            List<BasicSorDetails> basicSorDetailsList = objectMapper.convertValue(
+                    existingStatementSorDetailsMap.get(sorId).getBasicSorDetails(),
+                    new TypeReference<List<BasicSorDetails>>() {}
+            );
+            for (BasicSorDetails detail :basicSorDetailsList) {
                 String type = detail.getType();
                 cumulativeAmounts.put(type, cumulativeAmounts.getOrDefault(type, BigDecimal.ZERO).add(detail.getAmount()));
                 //cumulativeQuantities.put(type, cumulativeQuantities.getOrDefault(type, BigDecimal.ZERO).add(detail.getQuantity()));
