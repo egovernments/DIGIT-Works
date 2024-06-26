@@ -43,7 +43,7 @@ app.use(config.app.contextPath + "/download/deviationStatement", deviationStatem
 app.use(config.app.contextPath + "/download/measurementBook", measurementBookRouter);
 app.use(config.app.contextPath + "/download/detailedEstimate", detailedEstimateRouter);
 app.use(config.app.contextPath + "/download/analysisStatement", rateAnalysisStatement);
-app.use(config.app.contextPath + "/download/analysisUtilization", rateAnalysisUtilization);
+app.use(config.app.contextPath + "/download/utilizationStatement", rateAnalysisUtilization);
 
 
 

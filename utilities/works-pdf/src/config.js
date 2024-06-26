@@ -38,7 +38,7 @@ module.exports = {
     measurement_template: process.env.MEASUREMENT_TEMPLATE || "measurement-book",
     detailedEstimate_template: process.env.DETAILED_ESTIMATE_TEMPLATE || "detailed-estimate",
     rateAnalysisStatement_template: process.env.RATE_ANALYSIS_TEMPLATE || "analysis-statement",
-    rateAnalysisUtilization_template: process.env.RATE_ANALYSIS_TEMPLATE || "analysis-utilization",
+    rateAnalysisUtilization_template: process.env.RATE_ANALYSIS_TEMPLATE || "utilization-statement",
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
