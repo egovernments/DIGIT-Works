@@ -16,7 +16,7 @@ function renderError(res, errorMessage, errorCode) {
 
 }
 
-router.post("/rate-analysis-utilization", asyncMiddleware(async function (req, res, next) {
+router.post("/analysis-utilization", asyncMiddleware(async function (req, res, next) {
     const requestInfo = req.body;
     const tenantId = req.query.tenantId;
     const referenceId = req.query.referenceId;

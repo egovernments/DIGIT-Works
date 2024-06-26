@@ -42,8 +42,8 @@ app.use(config.app.contextPath + "/bill", groupBills);
 app.use(config.app.contextPath + "/download/deviationStatement", deviationStatementRouter);
 app.use(config.app.contextPath + "/download/measurementBook", measurementBookRouter);
 app.use(config.app.contextPath + "/download/detailedEstimate", detailedEstimateRouter);
-app.use(config.app.contextPath + "/download/rateAnalysisStatement", rateAnalysisStatement);
-app.use(config.app.contextPath + "/download/rateAnalysisUtilization", rateAnalysisUtilization);
+app.use(config.app.contextPath + "/download/analysisStatement", rateAnalysisStatement);
+app.use(config.app.contextPath + "/download/analysisUtilization", rateAnalysisUtilization);
 
 
 
