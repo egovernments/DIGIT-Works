@@ -30,6 +30,7 @@ public class ContractUtil {
         ContractCriteria contractCriteria = ContractCriteria.builder()
                 .requestInfo(requestInfo)
                 .tenantId(tenantId)
+                .status("ACTIVE")
                 .contractNumber(contractNumber)
                 .build();
         StringBuilder url = getContractSearchUrl();

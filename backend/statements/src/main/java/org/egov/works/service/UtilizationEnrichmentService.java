@@ -48,11 +48,20 @@ public class UtilizationEnrichmentService {
         Map<String, Sor> sorIdToSorMap = mdmsUtil.fetchSorData(statementCreateRequest.getRequestInfo(),
                 statementCreateRequest.getStatementRequest().getTenantId(), sorIdsFromEstimateDetail, Boolean.TRUE);
         Set<String> worksSorIds = sorIdToSorMap.values().stream().filter(sor -> sor.getSorType()
-                        .equalsIgnoreCase("W")).map(Sor::getId).collect(Collectors.toSet());
+                .equalsIgnoreCase("W")).map(Sor::getId).collect(Collectors.toSet());
         Map<String, SorComposition> sorIdToCompositionMap = null;
-        if (!worksSorIds.isEmpty())
+        Set<String> basicSorIds =new HashSet<>();
+        Map<String, Sor> basicSorIdFromCompositionToSorMap = new HashMap<>();
+        if (!worksSorIds.isEmpty()) {
             sorIdToCompositionMap = mdmsUtil.fetchSorComposition(statementCreateRequest.getRequestInfo()
-                , worksSorIds, statementCreateRequest.getStatementRequest().getTenantId(), measurement.getAuditDetails().getCreatedTime());
+                    , worksSorIds, statementCreateRequest.getStatementRequest().getTenantId(), measurement.getAuditDetails().getCreatedTime());
+            basicSorIds = sorIdToCompositionMap.values().stream()
+                    .flatMap(sorComposition -> sorComposition.getBasicSorDetails().stream())
+                    .map(SorCompositionBasicSorDetail::getSorId)
+                    .collect(Collectors.toSet());
+            basicSorIdFromCompositionToSorMap = mdmsUtil.fetchSorData(statementCreateRequest.getRequestInfo(),
+                    statementCreateRequest.getStatementRequest().getTenantId(), new ArrayList<>(basicSorIds), Boolean.TRUE);
+        }
 
 //        Set<String> basicSorIds = new HashSet<>();
 //        for (Map.Entry<String, SorComposition> entry : sorIdToCompositionMap.entrySet()) {
@@ -60,14 +69,6 @@ public class UtilizationEnrichmentService {
 //            basicSorIds.addAll(sorCompositionBasicSorDetails.stream().map(sorCompositionBasicSorDetail -> sorCompositionBasicSorDetail.getSorId()).collect(Collectors.toSet()));
 //        }
 //        Set<String> basicSorIds = sorIdToCompositionMap.values().stream().map(sorComposition -> sorComposition.getBasicSorDetails().stream().map(sorCompositionBasicSorDetail -> sorCompositionBasicSorDetail.getSorId()).collect(Collectors.toSet()));
-
-        Set<String> basicSorIds = sorIdToCompositionMap.values().stream()
-                .flatMap(sorComposition -> sorComposition.getBasicSorDetails().stream())
-                .map(SorCompositionBasicSorDetail::getSorId)
-                .collect(Collectors.toSet());
-
-        Map<String, Sor> basicSorIdFromCompositionToSorMap = mdmsUtil.fetchSorData(statementCreateRequest.getRequestInfo(),
-                statementCreateRequest.getStatementRequest().getTenantId(), new ArrayList<>(basicSorIds), Boolean.TRUE);
 
         sorIdToSorMap.putAll(basicSorIdFromCompositionToSorMap);
 

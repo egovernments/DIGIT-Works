@@ -195,7 +195,6 @@ public class MdmsUtil {
         for (String masterName : masterNameList) {
             MasterDetail masterDetail = new MasterDetail();
             masterDetail.setName(masterName);
-            //TODO remove commenting
             masterDetail.setFilter(filter);
             masterDetailList.add(masterDetail);
         }

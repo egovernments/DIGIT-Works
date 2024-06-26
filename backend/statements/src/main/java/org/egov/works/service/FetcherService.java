@@ -40,7 +40,6 @@ public class FetcherService {
 
     Contract fetchAndValidateContracts(String contractNumber, String tenantId, RequestInfo requestInfo) {
         List<Contract> contracts = contractUtil.fetchContracts(contractNumber, tenantId, requestInfo);
-        //TODO fetch current contract
         utilizationValidator.validateContracts(contracts);
 
         return contracts.get(0);
@@ -49,7 +48,6 @@ public class FetcherService {
     Estimate fetchAndValidateEstimates(String id, String tenantId, RequestInfo requestInfo) {
         EstimateResponse estimateResponse = estimateUtil.getEstimate(id, tenantId, requestInfo);
         utilizationValidator.validateEstimates(estimateResponse.getEstimates());
-        //TODO fetch current estimate
         return estimateResponse.getEstimates().get(0);
     }
 

@@ -45,6 +45,7 @@ private final RestTemplate restTemplate;
         url.append("?tenantId=");
         url.append(tenantId);
         url.append("&ids=");
+        url.append("&status=ACTIVE");
         url.append(String.join(", ", estimateIds));
         return url;
     }
