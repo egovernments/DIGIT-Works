@@ -209,6 +209,7 @@ public class EnrichmentService {
         // Iterate over each sorDetails
         for (SorDetail sorDetail : statement.getSorDetails()) {
             log.info("Processing SorDetail with ID: {}", sorDetail.getSorId());
+            if (sorDetail.getIsActive().equals(Boolean.TRUE)) {
             if (sorDetail.getBasicSorDetails() == null || sorDetail.getBasicSorDetails().isEmpty()) {
                 log.info("BasicSorDetails are empty or null for SorDetail ID: {}", sorDetail.getSorId());
                 continue;
@@ -239,6 +240,9 @@ public class EnrichmentService {
                 if (basicSorDetail.getAmount() != null) {
                     cumulativeData.setAmount(cumulativeData.getAmount().add(basicSorDetail.getAmount()));
                 }
+            }
+        }else{
+                log.info(" SorDetail with ID: {} is inactive", sorDetail.getSorId());
             }
         }
 
