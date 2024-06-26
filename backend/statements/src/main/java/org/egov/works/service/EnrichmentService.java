@@ -1,5 +1,6 @@
 package org.egov.works.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
@@ -135,7 +136,7 @@ public class EnrichmentService {
                 // Update line items if necessary
                 List<BasicSor> existingBasicSorList = existingSorDetail.getLineItems();
                 List<BasicSor> newBasicSorList = newSorDetail.getLineItems();
-                if (!areBasicSorDetailsOfLineItemsEqual(existingBasicSorList, newBasicSorList)) {
+                if (newBasicSorList!=null &&!areBasicSorDetailsOfLineItemsEqual(existingBasicSorList, newBasicSorList)) {
                     existingSorDetail.setLineItems(new ArrayList<>(newBasicSorList));
                 }
             }
@@ -151,7 +152,12 @@ public class EnrichmentService {
                 SorDetail existingSorDetail = existingStatementSorDetailsMap.get(sorId);
                 existingSorDetail.setIsActive(Boolean.FALSE);
             }
-            for (BasicSorDetails detail : existingStatementSorDetailsMap.get(sorId).getBasicSorDetails()) {
+            ObjectMapper objectMapper= new ObjectMapper();
+            List<BasicSorDetails> basicSorDetailsList = objectMapper.convertValue(
+                    existingStatementSorDetailsMap.get(sorId).getBasicSorDetails(),
+                    new TypeReference<List<BasicSorDetails>>() {}
+            );
+            for (BasicSorDetails detail :basicSorDetailsList) {
                 String type = detail.getType();
                 cumulativeAmounts.put(type, cumulativeAmounts.getOrDefault(type, BigDecimal.ZERO).add(detail.getAmount()));
                 //cumulativeQuantities.put(type, cumulativeQuantities.getOrDefault(type, BigDecimal.ZERO).add(detail.getQuantity()));
@@ -209,6 +215,7 @@ public class EnrichmentService {
         // Iterate over each sorDetails
         for (SorDetail sorDetail : statement.getSorDetails()) {
             log.info("Processing SorDetail with ID: {}", sorDetail.getSorId());
+            if (sorDetail.getIsActive().equals(Boolean.TRUE)) {
             if (sorDetail.getBasicSorDetails() == null || sorDetail.getBasicSorDetails().isEmpty()) {
                 log.info("BasicSorDetails are empty or null for SorDetail ID: {}", sorDetail.getSorId());
                 continue;
@@ -239,6 +246,9 @@ public class EnrichmentService {
                 if (basicSorDetail.getAmount() != null) {
                     cumulativeData.setAmount(cumulativeData.getAmount().add(basicSorDetail.getAmount()));
                 }
+            }
+        }else{
+                log.info(" SorDetail with ID: {} is inactive", sorDetail.getSorId());
             }
         }
 

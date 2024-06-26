@@ -11,6 +11,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.config.StatementConfiguration;
 import org.egov.works.util.EstimateUtil;
 import org.egov.works.util.MdmsUtil;
+import org.egov.works.web.models.Statement;
 import org.egov.works.web.models.StatementCreateRequest;
 import org.egov.works.web.models.StatementRequest;
 import org.egov.works.web.models.StatementSearchCriteria;
@@ -86,6 +87,11 @@ public class StatementValidator {
             log.error("Reference Id  is mandatory");
             throw new CustomException("REFERENCE_ID_ERROR", "Reference Id is  mandatory for Statement search");
         }
+        if(statementSearchCriteria.getSearchCriteria().getStatementType().equals(Statement.StatementTypeEnum.ANALYSIS)){
+            validateEstimate(statementSearchCriteria.getSearchCriteria().getReferenceId(),
+                    statementSearchCriteria.getSearchCriteria().getTenantId(),
+                    statementSearchCriteria.getRequestInfo());
+        }
 
 
     }
@@ -146,15 +152,15 @@ public class StatementValidator {
 
     }
 
-   /* public void validateEstimate(StatementRequest statementRequest, RequestInfo requestInfo) {
+    public void validateEstimate(String estimateId,String tenantId, RequestInfo requestInfo) {
         log.info("StatementValidator::validateEstimate");
-        Boolean isValidEstimate = estimateUtil.isValidEstimate(statementRequest,requestInfo);
+        Boolean isValidEstimate = estimateUtil.isValidEstimate(estimateId,tenantId,requestInfo);
         if(!isValidEstimate){
             throw new CustomException(INVALID_ESTIMATE_CODE, INVALID_ESTIMATE_MSG);
 
         }
 
-    }*/
+    }
 
     private void validateRequestInfo(RequestInfo requestInfo) {
         log.info("EstimateServiceValidator::validateRequestInfo");

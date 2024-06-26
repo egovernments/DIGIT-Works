@@ -8,7 +8,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.ServiceCallException;
 import org.egov.works.config.StatementConfiguration;
 import org.egov.works.web.models.EstimateResponse;
-import org.egov.works.web.models.StatementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -34,9 +33,9 @@ private final RestTemplate restTemplate;
     }
 
 
-    public Boolean isValidEstimate( StatementRequest statementRequest , RequestInfo requestInfo){
+    public Boolean isValidEstimate( String estimateId,String tenantId, RequestInfo requestInfo){
 
-        EstimateResponse estimateResponse=getEstimate(statementRequest.getId(), statementRequest.getTenantId(),requestInfo);
+        EstimateResponse estimateResponse=getEstimate(estimateId, tenantId,requestInfo);
         return (estimateResponse!=null &&!estimateResponse.getEstimates().isEmpty());
     }
     private StringBuilder getSearchURLWithParams(String tenantId, Set<String> estimateIds) {
