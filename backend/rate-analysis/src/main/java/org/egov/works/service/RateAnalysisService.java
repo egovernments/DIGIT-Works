@@ -36,6 +36,7 @@ public class RateAnalysisService {
     }
 
     public RateAnalysisResponse calculateRate(AnalysisRequest analysisRequest) {
+        log.info("Calculate rate request");
         rateAnalysisValidator.validateTenantId(analysisRequest.getSorDetails().getTenantId(), analysisRequest.getRequestInfo());
         Map<String, SorComposition> sorIdCompositionMap = mdmsUtil.fetchSorComposition(analysisRequest);
         Map<String, List<Rates>> basicRatesMap = mdmsUtil.fetchBasicRates(analysisRequest, sorIdCompositionMap);
@@ -47,10 +48,12 @@ public class RateAnalysisService {
                 .rateAnalysis(rateAnalysis)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(analysisRequest.getRequestInfo(), true))
                 .build();
+        log.info("Calculate rate request finished");
         return rateAnalysisResponse;
     }
 
     public List<Rates> createRateAnalysis(AnalysisRequest analysisRequest) {
+        log.info("Create rate request");
         rateAnalysisValidator.validateTenantId(analysisRequest.getSorDetails().getTenantId(), analysisRequest.getRequestInfo());
         Map<String, SorComposition> sorIdCompositionMap = mdmsUtil.fetchSorComposition(analysisRequest);
         Map<String, List<Rates>> basicRatesMap = mdmsUtil.fetchBasicRates(analysisRequest, sorIdCompositionMap);
@@ -63,7 +66,7 @@ public class RateAnalysisService {
         Map<String, Rates> worksRatesMap = mdmsUtil.fetchWorksRates(analysisRequest);
         rateAnalysisValidator.validateNewRates(worksRatesMap, calculatedRates);
         mdmsService.createRevisedRates(calculatedRates, worksRatesMap, analysisRequest.getRequestInfo());
-
+        log.info("Create rate request finished");
         return calculatedRates;
     }
 

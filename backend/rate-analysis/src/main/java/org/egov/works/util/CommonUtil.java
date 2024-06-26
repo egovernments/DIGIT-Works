@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.egov.works.config.ErrorConfiguration.SOR_COMPOSITION_NOT_FOUND_TIME_KEY;
+import static org.egov.works.config.ErrorConfiguration.SOR_COMPOSITION_NOT_FOUND_TIME_MSG;
+
 @Component
 @Slf4j
 public class CommonUtil {
@@ -61,7 +64,7 @@ public class CommonUtil {
             }
         }
 
-        throw new CustomException("SOR_COMPOSITION_NOT_FOUND", "Sor composition with given effective time not found for SOR codes :: " + sorCompositions.get(0).getSorId());
+        throw new CustomException(SOR_COMPOSITION_NOT_FOUND_TIME_KEY, SOR_COMPOSITION_NOT_FOUND_TIME_MSG + sorCompositions.get(0).getSorId());
     }
 
 }

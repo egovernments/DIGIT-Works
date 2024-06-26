@@ -16,10 +16,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
-import static org.egov.works.config.ErrorConfiguration.TENANT_ID_NOT_FOUND_CODE;
-import static org.egov.works.config.ErrorConfiguration.TENANT_ID_NOT_FOUND_MSG;
-import static org.egov.works.config.ServiceConstants.MDMS_TENANTS_MASTER_NAME;
-import static org.egov.works.config.ServiceConstants.MDMS_TENANT_MODULE_NAME;
+import static org.egov.works.config.ErrorConfiguration.*;
+import static org.egov.works.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -45,7 +43,7 @@ public class RateAnalysisValidator {
             JsonNode currNode = mapper.readTree(node);
             for (JsonNode tenantNode : currNode) {
                 // Assuming each item in the array has a "code" field
-                String tenantIdFromMdms = tenantNode.get("code").asText();
+                String tenantIdFromMdms = tenantNode.get(CODE_KEY).asText();
                 validTenantSet.add(tenantIdFromMdms);
             }
         } catch (JsonProcessingException e) {
@@ -68,7 +66,7 @@ public class RateAnalysisValidator {
 //        }
         if (!schedulerValidator.validateEffectiveFromDateToCurrentDay(Long.parseLong(analysisRequest.getSorDetails().getEffectiveFrom()))) {
             log.error("Effective from date cannot be less than current date");
-            errorMap.put("EFFECTIVE_FROM_ERROR", "Effective from date cannot be less than current date");
+            errorMap.put(EFFECTIVE_FROM_ERROR_KEY, EFFECTIVE_FROM_ERROR_MSG);
         }
 
         if (!CollectionUtils.isEmpty(errorMap))
@@ -84,11 +82,11 @@ public class RateAnalysisValidator {
                 Rates oldRate = oldRatesMap.get(rates.getSorId());
                 if (oldRate.getValidFrom().compareTo(rates.getValidFrom()) > 0) {
                     log.error("Effective from date cannot be less than previous effective from date");
-                    errorMap.put("EFFECTIVE_FROM_ERROR", "Effective from date cannot be less than previous effective from date for sorId :: " + rates.getSorId());
+                    errorMap.put(EFFECTIVE_FROM_PREVIOUS_ERROR_KEY, EFFECTIVE_FROM_PREVIOUS_ERROR_MSG + rates.getSorId());
                 }
                 if (oldRate.getRate().equals(rates.getRate())) {
                     log.error("Previous rate same as new rate");
-                    errorMap.put("RATE_SAME", "Previous rate same as new rate for sorId :: " + rates.getSorId());
+                    errorMap.put(RATE_SAME_KEY, RATE_SAME_MSG + rates.getSorId());
                 }
             }
         }

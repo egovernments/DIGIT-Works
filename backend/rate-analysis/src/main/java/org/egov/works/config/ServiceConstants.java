@@ -66,5 +66,18 @@ public class ServiceConstants {
     public static final String MDMS_TENANTS_MASTER_NAME = "tenants";
     public static final String MDMS_TENANT_MODULE_NAME = "tenant";
 
+    public static final String DEFINED_QUANTITY = "definedQuantity";
+    public static final String QUANTITY = "quantity";
+    public static final String RATE_KEY = "rate";
+    public static final String VALID_TO_KEY = "validTo";
+    public static final String RATES_SCHEMA_CODE = "WORKS-SOR.Rates";
+    public static final String NAN_KEY = "NaN";
+    public static final String SOR_SUB_TYPE = "sorSubType";
+    public static final String SOR_VARIANT = "sorVariant";
+    public static final String SOR_TYPE = "sorType";
+    public static final String UOM = "uom";
+    public static final String DESCRIPTION_KEY = "description";
+    public static final String CODE_KEY = "code";
+
 
 }
