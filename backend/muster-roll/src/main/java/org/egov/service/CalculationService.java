@@ -14,7 +14,6 @@ import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -74,6 +73,7 @@ public class CalculationService {
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         String tenantId = musterRoll.getTenantId();
         Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, tenantId);
+        Object mdmsV2Data = mdmsUtils.mDMSV2CallMuster(musterRollRequest, tenantId);
 
 
         //fetch the log events for all individuals in a muster roll
@@ -204,7 +204,7 @@ public class CalculationService {
 						.findFirst().orElse(null);
 
 				if (individual != null /* && bankAccount != null */) {
-					setAdditionalDetails(entry, individualEntriesFromRequest, mdmsData, individual,
+					setAdditionalDetails(entry, individualEntriesFromRequest, mdmsV2Data, individual,
 							bankAccount, isCreate);
 				} else {
 					log.info(
