@@ -52,6 +52,7 @@ public class UtilizationService {
                 .searchCriteria(SearchCriteria.builder()
                         .referenceId(statementCreateRequest.getStatementRequest().getId())
                         .tenantId(statementCreateRequest.getStatementRequest().getTenantId())
+                        .statementType(Statement.StatementTypeEnum.UTILIZATION)
                         .build())
                 .build());
         StatementPushRequest pushRequest = StatementPushRequest.builder().statement(statement).build();
