@@ -42,7 +42,7 @@ public class EnrichmentUtil {
     public void enrichRates(Rates rates, RateAnalysis rateAnalysis, String validFrom) {
         rates.setSorId(rateAnalysis.getSorCode());
         rates.setValidFrom(String.valueOf(validFrom));
-        rates.setValidTo(NAN_KEY);
+//        rates.setValidTo(NAN_KEY);
         rates.setTenantId(rateAnalysis.getTenantId());
     }
 

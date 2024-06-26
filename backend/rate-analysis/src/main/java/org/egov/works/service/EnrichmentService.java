@@ -10,6 +10,7 @@ import org.egov.works.web.models.Rates;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +75,8 @@ public class EnrichmentService {
                 if (!amountDetail.getHeads().equalsIgnoreCase(configs.getLabourCessHeadCode()))
                     amountForLabourCess = amountForLabourCess.add(amountDetail.getAmount());
             }
-            amountForLabourCess = amountForLabourCess.multiply(configs.getLabourCessRate().divide(BigDecimal.valueOf(100)));
+            amountForLabourCess = amountForLabourCess.multiply(configs.getLabourCessRate().divide(BigDecimal.valueOf(100),
+                    2, RoundingMode.HALF_UP));
             // Add the labour cess amount if not already present
             AmountDetail labourCessAmountDetail = null;
             for (AmountDetail amountDetail : finalAmountDetails) {
@@ -92,12 +94,13 @@ public class EnrichmentService {
 
 
             // Create the Rates object and enrich it
-            Rates rates = Rates.builder().sorCode(rateAnalysis.getSorCode()).sorId(rateAnalysis.getSorId())
+            Rates rates = Rates.builder().sorId(rateAnalysis.getSorId())
                     .amountDetails(finalAmountDetails).build();
             BigDecimal rate = BigDecimal.valueOf(0.0);
             for (AmountDetail amountDetail : finalAmountDetails) {
                 rate = rate.add(amountDetail.getAmount());
             }
+            rate = rate.setScale(2, RoundingMode.HALF_UP);
             rates.setRate(rate);
             enrichmentUtil.enrichRates(rates, rateAnalysis, rateAnalysis.getEffectiveFrom());
             ratesList.add(rates);
