@@ -5,7 +5,7 @@ const config = require("../config");
 
 const {asyncMiddleware} = require("../utils/asyncMiddleware");
 const {transformStatementData} = require("../utils/transformStatementData");
-const {search_rateAnalysisStatementDetails, search_localization} = require("../api");
+const {search_rateAnalysisUtilizationDetails, search_localization} = require("../api");
 const {search_projectDetails_by_ID} = require("../api");
 const {create_pdf} = require("../api");
 const get = require("lodash.get");
@@ -16,7 +16,7 @@ function renderError(res, errorMessage, errorCode) {
 
 }
 
-router.post("/rate-analysis-statement", asyncMiddleware(async function (req, res, next) {
+router.post("/rate-analysis-utilization", asyncMiddleware(async function (req, res, next) {
     const requestInfo = req.body;
     const tenantId = req.query.tenantId;
     const referenceId = req.query.referenceId;
@@ -32,7 +32,7 @@ router.post("/rate-analysis-statement", asyncMiddleware(async function (req, res
     let projectData;
     try {
         try {
-            analysisStatement = await search_rateAnalysisStatementDetails(tenantId, requestInfo, referenceId);
+            analysisStatement = await search_rateAnalysisUtilizationDetails(tenantId, requestInfo, referenceId);
         } catch (ex) {
             return renderError(res, "Failed to query details of the rate analysis statement", 500);
         }
@@ -75,7 +75,7 @@ router.post("/rate-analysis-statement", asyncMiddleware(async function (req, res
                 if (ex.response && ex.response.data) console.log(ex.response.data);
             }
             var pdfResponse;
-            const pdfKey = config.pdf.rateAnalysisStatement_template;
+            const pdfKey = config.pdf.rateAnalysisUtilization_template;
             try {
 
                 pdfResponse = await create_pdf(
