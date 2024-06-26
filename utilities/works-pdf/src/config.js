@@ -61,7 +61,7 @@ module.exports = {
     filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
     expense_calculator: process.env.EXPENSE_CALCULATOR_SERVICE_HOST || 'http://localhost:8093',
     measurements: process.env.EGOV_MEASUREMENT_HOST || 'http://localhost:8099',
-    statements: process.env.RATE_ANALYSIS_STATEMENTS_HOST || 'http://localhost:8100'
+    statements: process.env.RATE_ANALYSIS_STATEMENTS_HOST || 'https://unified-qa.digit.org/'
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
