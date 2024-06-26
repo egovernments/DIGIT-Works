@@ -43,7 +43,7 @@ public class UtilizationService {
         Contract contract = fetcherService.fetchAndValidateContracts(measurement.getReferenceId(),
                 tenantId, statementCreateRequest.getRequestInfo());
         Estimate estimate = fetcherService.fetchAndValidateEstimates(contract.getLineItems().get(0).getEstimateId(),
-                tenantId, statementCreateRequest.getRequestInfo());
+                tenantId, statementCreateRequest.getRequestInfo(), Statement.StatementTypeEnum.UTILIZATION.toString());
         Statement statement = utilizationEnrichmentService.createUtilizationStatement(statementCreateRequest,
                 measurement, contract, estimate);
 

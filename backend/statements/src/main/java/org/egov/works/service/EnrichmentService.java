@@ -55,7 +55,8 @@ public class EnrichmentService {
         StatementPushRequest statementPushRequest;
         StatementRequest statementRequest = statementCreateRequest.getStatementRequest();
         RequestInfo requestInfo = statementCreateRequest.getRequestInfo();
-        EstimateResponse estimateResponse = estimateUtil.getEstimate(statementRequest.getId(), statementRequest.getTenantId(), statementCreateRequest.getRequestInfo());
+        EstimateResponse estimateResponse = estimateUtil.getEstimate(statementRequest.getId(), statementRequest.getTenantId(),
+                Statement.StatementTypeEnum.ANALYSIS.toString(), statementCreateRequest.getRequestInfo());
         if (estimateResponse == null || estimateResponse.getEstimates().isEmpty()) {
             throw new CustomException(ESTIMATE_RESPONSE_NULL_EMPTY_CODE, ESTIMATE_RESPONSE_NULL_EMPTY_MSG);
         }
@@ -386,7 +387,6 @@ public class EnrichmentService {
                         .statementId(statement.getId())
                         .tenantId(estimate.getTenantId())
                         .isActive(Boolean.TRUE)
-                        //.lineItems(new ArrayList<>())
                         .basicSorDetails(basicSorDetails)
                         .additionalDetails(additionalDetailsMap)
                         .build();

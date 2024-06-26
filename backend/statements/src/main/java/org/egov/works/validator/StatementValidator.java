@@ -83,13 +83,13 @@ public class StatementValidator {
             log.error("Tenant is mandatory");
             throw new CustomException("TENANT_ID", "Tenant is mandatory for Statement search");
         }
-        if (statementSearchCriteria.getSearchCriteria().getReferenceId()== null){
+        if (statementSearchCriteria.getSearchCriteria().getReferenceId()== null || statementSearchCriteria.getSearchCriteria().getReferenceId().isEmpty() ){
             log.error("Reference Id  is mandatory");
             throw new CustomException("REFERENCE_ID_ERROR", "Reference Id is  mandatory for Statement search");
         }
         if(statementSearchCriteria.getSearchCriteria().getStatementType().equals(Statement.StatementTypeEnum.ANALYSIS)){
             validateEstimate(statementSearchCriteria.getSearchCriteria().getReferenceId(),
-                    statementSearchCriteria.getSearchCriteria().getTenantId(),
+                    statementSearchCriteria.getSearchCriteria().getTenantId(),statementSearchCriteria.getSearchCriteria().getStatementType().toString(),
                     statementSearchCriteria.getRequestInfo());
         }
 
@@ -152,9 +152,9 @@ public class StatementValidator {
 
     }
 
-    public void validateEstimate(String estimateId,String tenantId, RequestInfo requestInfo) {
+    public void validateEstimate(String estimateId, String tenantId, String  statementType, RequestInfo requestInfo) {
         log.info("StatementValidator::validateEstimate");
-        Boolean isValidEstimate = estimateUtil.isValidEstimate(estimateId,tenantId,requestInfo);
+        Boolean isValidEstimate = estimateUtil.isValidEstimate(estimateId,tenantId,statementType,requestInfo);
         if(!isValidEstimate){
             throw new CustomException(INVALID_ESTIMATE_CODE, INVALID_ESTIMATE_MSG);
 

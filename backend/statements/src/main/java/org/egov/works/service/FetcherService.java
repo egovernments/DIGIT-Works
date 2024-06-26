@@ -45,8 +45,8 @@ public class FetcherService {
         return contracts.get(0);
     }
 
-    Estimate fetchAndValidateEstimates(String id, String tenantId, RequestInfo requestInfo) {
-        EstimateResponse estimateResponse = estimateUtil.getEstimate(id, tenantId, requestInfo);
+    Estimate fetchAndValidateEstimates(String id, String tenantId, RequestInfo requestInfo,String statementType) {
+        EstimateResponse estimateResponse = estimateUtil.getEstimate(id, tenantId,statementType, requestInfo);
         utilizationValidator.validateEstimates(estimateResponse.getEstimates());
         return estimateResponse.getEstimates().get(0);
     }
