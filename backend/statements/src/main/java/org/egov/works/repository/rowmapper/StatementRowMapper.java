@@ -114,6 +114,7 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
         } else {
             sorDetail = sorDetailMap.get(sorDetailId);
         }
+
         addBasicSorLineItems(rs,basicSorLineItemsMap,sorDetail);
 
         if (statement.getSorDetails() == null || statement.getSorDetails().isEmpty()) {
@@ -159,9 +160,7 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
         }
 
         if (sorDetail.getLineItems() == null || sorDetail.getLineItems().isEmpty()) {
-            List<BasicSor> basicSorList = new LinkedList<>();
-            basicSorList.add(basicSor);
-            sorDetail.setLineItems(basicSorList);
+            log.info("NO_LINE_ITEMS_PRESENT","For Basic Sor No line items is present");
         } else {
             sorDetail.getLineItems().add(basicSor);
         }
