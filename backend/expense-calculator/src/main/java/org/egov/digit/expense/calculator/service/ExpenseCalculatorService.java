@@ -21,27 +21,7 @@ import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
 import org.egov.digit.expense.calculator.util.MdmsUtils;
 import org.egov.digit.expense.calculator.util.ProjectUtil;
 import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValidator;
-import org.egov.digit.expense.calculator.web.models.ApplicableCharge;
-import org.egov.digit.expense.calculator.web.models.Bill;
-import org.egov.digit.expense.calculator.web.models.BillMapper;
-import org.egov.digit.expense.calculator.web.models.BillMetaRecords;
-import org.egov.digit.expense.calculator.web.models.BillResponse;
-import org.egov.digit.expense.calculator.web.models.BusinessService;
-import org.egov.digit.expense.calculator.web.models.Calculation;
-import org.egov.digit.expense.calculator.web.models.CalculationRequest;
-import org.egov.digit.expense.calculator.web.models.CalculatorSearchCriteria;
-import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
-import org.egov.digit.expense.calculator.web.models.Contract;
-import org.egov.digit.expense.calculator.web.models.Criteria;
-import org.egov.digit.expense.calculator.web.models.HeadCode;
-import org.egov.digit.expense.calculator.web.models.LabourCharge;
-import org.egov.digit.expense.calculator.web.models.MusterRoll;
-import org.egov.digit.expense.calculator.web.models.MusterRollRequest;
-import org.egov.digit.expense.calculator.web.models.Payer;
-import org.egov.digit.expense.calculator.web.models.PurchaseBill;
-import org.egov.digit.expense.calculator.web.models.PurchaseBillRequest;
-import org.egov.digit.expense.calculator.web.models.Workflow;
-import org.egov.digit.expense.calculator.web.models.CalcEstimate;
+import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -100,11 +80,11 @@ public class ExpenseCalculatorService {
         Criteria criteria = calculationRequest.getCriteria();
 
         if (criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) {
-            // Fetch wage seeker skills from MDMS
-            List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId());
             // Fetch all the approved muster rolls for provided muster Ids
             List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo, criteria, false);
-            return wageSeekerBillGeneratorService.calculateEstimates(requestInfo, criteria.getTenantId(), musterRolls, labourCharges);
+            // Fetch wage seeker skills from MDMS
+            List<SorDetail> sorDetails = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
+            return wageSeekerBillGeneratorService.calculateEstimates(requestInfo, criteria.getTenantId(), musterRolls, sorDetails);
         } else {
             List<Bill> bills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId());
             //TODO: Add check for empty bill list here and send back a response
@@ -235,14 +215,15 @@ public class ExpenseCalculatorService {
 
     private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo) {
         log.info("Create wage bill for musterRollIds :"+criteria.getMusterRollId() );
-        // Fetch wage seeker skills from MDMS
-        List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId());
         // Fetch musterRolls for given muster roll IDs
         List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo,criteria,true);
+        // Fetch wage seeker skills from MDMS
+//        List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
+        List<SorDetail> sorDetails = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
         // Contract project mapping
         Map<String, String> contractProjectMapping = getContractProjectMapping(musterRolls);
         metaInfo.putAll(contractProjectMapping);
-        return wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,musterRolls,labourCharges,metaInfo);
+        return wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,musterRolls,sorDetails,metaInfo);
     }
 
     private List<Bill> createSupervisionBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo) {
@@ -304,8 +285,8 @@ public class ExpenseCalculatorService {
         Map<String, String> context = new HashMap<>();
         context.putAll(contractProjectMapping);
         // Fetch wage seeker skills from MDMS
-        List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, musterRoll.getTenantId());
-        List<Bill> wageSeekerBills = wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,Collections.singletonList(musterRoll),labourCharges,context);
+        List<SorDetail> sorDetails = fetchMDMSDataForLabourCharges(requestInfo, musterRoll.getTenantId(), Collections.singletonList(musterRoll));
+        List<Bill> wageSeekerBills = wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,Collections.singletonList(musterRoll),sorDetails,context);
         BillResponse billResponse = null;
         Workflow workflow = Workflow.builder()
                             .action(WF_SUBMIT_ACTION_CONSTANT)
@@ -343,17 +324,51 @@ public class ExpenseCalculatorService {
         return billUtils.postUpdateBill(requestInfo, bill, workflow);
     }
 
-    private List<LabourCharge> fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String tenantId){
+    private List<SorDetail> fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String tenantId, List<MusterRoll> musterRolls){
         log.info("Fetch wage seeker skills MDMS");
-        Object mdmsData = mdmsUtils.fetchMDMSDataForLabourCharges(requestInfo, tenantId);
-        List<Object> labourChargesJson = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_LABOUR_CHARGES);
-        List<LabourCharge> labourCharges = new ArrayList<>();
-        for(Object obj : labourChargesJson){
-            LabourCharge labourCharge = mapper.convertValue(obj, LabourCharge.class);
-            labourCharges.add(labourCharge);
+//        Object mdmsData = mdmsUtils.fetchMDMSDataForLabourCharges(requestInfo, tenantId);
+        List<String> sorList = getLabourSorFromMusterRolls(musterRolls);
+        if (sorList.isEmpty()) {
+            throw new CustomException("SOR_NOT_FOUND", "No sor found in additional details of muster roll");
         }
+        Object sorFromMDMSV2 = mdmsUtils.getLabourSorFromMDMSV2(requestInfo, tenantId, sorList, false);
+        List<Object> sorListJson = commonUtil.readJSONPathValue(sorFromMDMSV2, JSON_PATH_FOR_SOR);
+        List<SorDetail> sorDetails = new ArrayList<>();
+        for(Object obj : sorListJson){
+            SorDetail sorDetail = mapper.convertValue(obj, SorDetail.class);
+            sorDetails.add(sorDetail);
+        }
+        List<String> sorIds = sorDetails.stream().map(SorDetail::getId).collect(Collectors.toList());
+        if (sorIds.isEmpty()) {
+            throw new CustomException("NO_SOR_FOUND", "No sor found in mdms");
+        }
+        Object ratesFromMDMV2 = mdmsUtils.getLabourSorFromMDMSV2(requestInfo, tenantId, sorIds, true);
+        List<Object> rateListJson = commonUtil.readJSONPathValue(ratesFromMDMV2, JSON_PATH_FOR_RATES);
+        List<RateDetail> rateDetails = new ArrayList<>();
+        for(Object obj : rateListJson){
+            RateDetail rateDetail = mapper.convertValue(obj, RateDetail.class);
+            rateDetails.add(rateDetail);
+        }
+        for (RateDetail rateDetail : rateDetails) {
+            for (SorDetail sorDetail : sorDetails) {
+                if (rateDetail.getSorId().equalsIgnoreCase(sorDetail.getId())) {
+                    if (sorDetail.getRateDetails() == null) {
+                        sorDetail.setRateDetails(new ArrayList<>());
+                        sorDetail.getRateDetails().add(rateDetail);
+                    } else {
+                        sorDetail.getRateDetails().add(rateDetail);
+                    }
+                }
+            }
+        }
+//        List<Object> labourChargesJson = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_LABOUR_CHARGES);
+//        List<LabourCharge> labourCharges = new ArrayList<>();
+//        for(Object obj : labourChargesJson){
+//            LabourCharge labourCharge = mapper.convertValue(obj, LabourCharge.class);
+//            labourCharges.add(labourCharge);
+//        }
         log.info("Wage seeker skills fetched from MDMS");
-        return labourCharges;
+        return sorDetails;
     }
 
     public List<MusterRoll> fetchApprovedMusterRolls(RequestInfo requestInfo, Criteria criteria, boolean onlyApproved) {
@@ -443,6 +458,21 @@ public class ExpenseCalculatorService {
         }
         log.info("Business Service fetched from MDMS");
         return businessServices;
+    }
+
+    private List<String> getLabourSorFromMusterRolls (List<MusterRoll> musterRolls) {
+        List<IndividualEntry> individualEntries = musterRolls.stream().map(musterRoll -> musterRoll.getIndividualEntries()).flatMap(List::stream).collect(Collectors.toList());
+//        List<String> sorList = individualEntries.stream().filter(individualEntries -> individualEntries.getAdditionalDetails() != null && individualEntries.getAdditionalDetails().get("sor") != null).map(individualEntries -> (String) individualEntries.getAdditionalDetails().get("sor")).collect(Collectors.toList());
+        return individualEntries.stream() // Stream<IndividualEntry>
+                        .filter(entry -> {
+                            Map<String, Object> additionalDetails = (Map<String, Object>) entry.getAdditionalDetails(); // Cast to Map<String, Object>
+                            return additionalDetails != null && additionalDetails.get("skillCode") != null;
+                        })
+                        .map(entry -> {
+                            Map<String, Object> additionalDetails = (Map<String, Object>) entry.getAdditionalDetails(); // Cast to Map<String, Object>
+                            return (String) additionalDetails.get("skillCode");
+                        })
+                        .collect(Collectors.toList());
     }
     
 }

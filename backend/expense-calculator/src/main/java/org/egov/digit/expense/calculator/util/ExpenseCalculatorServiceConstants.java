@@ -57,4 +57,14 @@ public class ExpenseCalculatorServiceConstants {
     public static final String DOCUMENTS_CONSTANT = "documents";
     public static final String LINEITEM_STATUS_ACTIVE = "ACTIVE";
     public static final String LINEITEM_STATUS_INACTIVE = "INACTIVE";
+    public static final String FILTER_START = "[?(";
+    public static final String FILTER_END = "')]";
+    public static final String ID_SEARCH_CONSTANT = "@.id=='";
+    public static final String ID_SEARCH_CONSTANT_RATE = "@.sorId=='";
+    public static final String FILTER_OR_CONSTANT = "'||";
+    public static final String WORKS_SOR_CONSTANT = "WORKS-SOR";
+    public static final String SOR_CONSTANT = "SOR";
+    public static final String RATES_CONSTANT = "Rates";
+    public static final String JSON_PATH_FOR_SOR = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + SOR_CONSTANT;
+    public static final String JSON_PATH_FOR_RATES = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + RATES_CONSTANT;
 }
