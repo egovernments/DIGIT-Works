@@ -137,7 +137,7 @@ public class EnrichmentService {
                 // Update line items if necessary
                 List<BasicSor> existingBasicSorList = existingSorDetail.getLineItems();
                 List<BasicSor> newBasicSorList = newSorDetail.getLineItems();
-                if (existingBasicSorList!=null && newBasicSorList!=null &&!areBasicSorDetailsOfLineItemsEqual(existingBasicSorList, newBasicSorList)) {
+                if (newBasicSorList!=null &&!areBasicSorDetailsOfLineItemsEqual(existingBasicSorList, newBasicSorList)) {
                     existingSorDetail.setLineItems(new ArrayList<>(newBasicSorList));
                 }
             }
@@ -478,6 +478,9 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
 
 
     private static boolean areBasicSorDetailsOfLineItemsEqual(List<BasicSor> existingBasicSorList, List<BasicSor> newBasicSorList) {
+        if(existingBasicSorList==null){
+            return false;
+        }
         // Compare size
         if (existingBasicSorList.size() != newBasicSorList.size()) {
             return false;
