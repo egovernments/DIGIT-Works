@@ -44,6 +44,10 @@ public class Rates {
     @Size(min = 2, max = 64)
     private String sorId = null;
 
+    @JsonProperty("compositionId")
+    @Size(min = 2, max = 64)
+    private String compositionId = null;
+
     @JsonProperty("description")
 
     private String description = null;
