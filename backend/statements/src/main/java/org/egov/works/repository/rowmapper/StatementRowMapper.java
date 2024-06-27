@@ -122,7 +122,7 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             sorDetailList.add(sorDetail);
             statement.setSorDetails(sorDetailList);
         } else {
-            if(!Objects.equals(sorDetail.getId(), sorDetailId))
+           // if(!Objects.equals(sorDetail.getId(), sorDetailId))
                 statement.getSorDetails().add(sorDetail);
         }
     }
