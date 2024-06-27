@@ -495,6 +495,8 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
             return false;
         }
 
+        // Create a list to store updated details
+        List<BasicSor> updatedDetails = new ArrayList<>();
         boolean hasDifferences = false;
 
         // Compare each element
@@ -506,9 +508,15 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
                 if (!areBasicSorDetailsEqual(existingBasicSor.getBasicSorDetails(), newBasicSor.getBasicSorDetails())) {
                     // Update the basicSorDetails of existingBasicSor
                     existingBasicSor.setBasicSorDetails(newBasicSor.getBasicSorDetails());
+                    updatedDetails.add(existingBasicSor);
                     hasDifferences = true;
                 }
             }
+        }
+        // If there were differences, update the new list with changes
+        if (hasDifferences) {
+            existingBasicSorList.clear();
+            existingBasicSorList.addAll(updatedDetails);
         }
 
         return !hasDifferences;
