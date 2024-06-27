@@ -20,7 +20,7 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class StatementSearchCriteria {
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
 
     @Valid
     private RequestInfo requestInfo = null;

@@ -437,6 +437,9 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
         Sor sor= sorDescriptionMap.get(basicSorId);
         BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(worksSor);
 
+        if(quantityDefinedInEstimate.compareTo(BigDecimal.ZERO)<0){
+            quantityDefinedInEstimate=quantityDefinedInEstimate.multiply(BigDecimal.valueOf(-1));
+        }
         BigDecimal quantity = (basicSorQuantity.divide(analysisQuantity, 4, RoundingMode.HALF_UP))
                 .multiply(quantityDefinedInEstimate).divide(sor.getQuantity(),4,RoundingMode.HALF_UP);
         BigDecimal amount = quantity.multiply(basicRate).setScale(2, RoundingMode.HALF_UP);
@@ -468,6 +471,9 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
                                                                 Map<String,Sor> sorDescriptionMap,Map<String, List<Rates>> basicSorRates,Map<String,Object> additionalDetailsMap){
       log.info("EnrichmentSerivce :: computeBasicSorDetailsForNonWorksSorInEstimate");
       BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(sorId);
+      if(quantityDefinedInEstimate.compareTo(BigDecimal.ZERO)<0){
+          quantityDefinedInEstimate=quantityDefinedInEstimate.multiply(BigDecimal.valueOf(-1));
+      }
       Rates rate = commonUtil.getApplicatbleRate(basicSorRates.get(sorId),createdTime);
       BigDecimal basicRate = rate.getRate();
       Sor sor= sorDescriptionMap.get(sorId);
