@@ -43,7 +43,7 @@ module.exports = {
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
     host: HOST,
-    contextPath: process.env.CONTEXT_PATH || "/egov-pdf",
+    contextPath: process.env.CONTEXT_PATH || "/works-pdf",
   },
   host: {
     mdms: process.env.EGOV_MDMS_HOST || 'http://localhost:8083',

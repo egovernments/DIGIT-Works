@@ -96,14 +96,14 @@ router.post("/utilization-statement", asyncMiddleware(async function (req, res, 
 
             } catch (ex) {
 
-                return renderError(res, "Failed to generate PDF for detailed estimate", 500);
+                return renderError(res, "Failed to generate PDF for utilization statement", 500);
 
             }
         } else {
 
             return renderError(
                 res,
-                "There is no estimate created using this estimate number",
+                "There is no utilization created using this estimate number",
                 404
             );
 

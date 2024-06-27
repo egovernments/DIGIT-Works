@@ -96,14 +96,14 @@ router.post("/analysis-statement", asyncMiddleware(async function (req, res, nex
 
             } catch (ex) {
 
-                return renderError(res, "Failed to generate PDF for detailed estimate", 500);
+                return renderError(res, "Failed to generate PDF for analysis statement", 500);
 
             }
         } else {
 
             return renderError(
                 res,
-                "There is no estimate created using this estimate number",
+                "There is no statement created using this estimate id",
                 404
             );
 
