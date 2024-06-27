@@ -159,10 +159,13 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             basicSor = basicSorLineItemsMap.get(basicSorLineItemId);
         }
 
-        if (sorDetail.getLineItems() == null || sorDetail.getLineItems().isEmpty()) {
-            log.info("NO_LINE_ITEMS_PRESENT","For Basic Sor No line items is present");
+        if(basicSor.getId()!=null || basicSor.getReferenceId()!=null){
+          if (sorDetail.getLineItems() == null || sorDetail.getLineItems().isEmpty()) {
+           // log.info("NO_LINE_ITEMS_PRESENT","For Basic Sor No line items is present");
+            sorDetail.setLineItems(Collections.singletonList(basicSor));
         } else {
             sorDetail.getLineItems().add(basicSor);
+        }
         }
     }
 
