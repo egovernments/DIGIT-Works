@@ -138,9 +138,10 @@ public class EnrichmentService {
                 List<BasicSor> existingBasicSorList = existingSorDetail.getLineItems();
                 List<BasicSor> newBasicSorList = newSorDetail.getLineItems();
                 if (newBasicSorList!=null &&!areBasicSorDetailsOfLineItemsEqual(existingBasicSorList, newBasicSorList)) {
-                        newBasicSorList.stream()
+                    log.info("Updated Basic Sor Line Items object in existing statement");
+                      /*  newBasicSorList.stream()
                                 .forEach(basicSor -> basicSor.setReferenceId(existingSorDetail.getId()));
-                    existingSorDetail.setLineItems(new ArrayList<>(newBasicSorList));
+                    existingSorDetail.setLineItems(new ArrayList<>(newBasicSorList));*/
                 }
             }
         }
