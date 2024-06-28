@@ -32,6 +32,15 @@ public class SearchCriteria {
     @Valid
     private List<String> ids = null;
 
+    @JsonProperty("status")
+    private StatusEnum status = null;
+
+    @JsonProperty("effectiveFromDate")
+    private Long effectiveFromDate = null;
+
+    @JsonProperty("effectiveToDate")
+    private Long effectiveToDate = null;
+
 
     public SearchCriteria addJobIdsItem(String jobIdsItem) {
         if (this.jobIds == null) {
