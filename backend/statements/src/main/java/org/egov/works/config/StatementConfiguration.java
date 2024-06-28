@@ -72,4 +72,17 @@ public class StatementConfiguration {
 
     @Value("${works.contract.search.endpoint}")
     private String contractSearchEndpoint;
+
+    //Workflow Service Host
+    @Value("${egov.workflow.host}")
+    private String wfHost;
+
+    @Value("${egov.workflow.processinstance.search.path}")
+    private String wfProcessInstanceSearchPath;
+
+    @Value("${estimate.workflow.business.service}")
+    private String estimateWFBusinessService;
+
+    @Value("${estimate.workflow.module.name}")
+    private String estimateWFModuleName;
 }
