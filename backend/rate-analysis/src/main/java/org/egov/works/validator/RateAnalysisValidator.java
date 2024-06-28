@@ -38,6 +38,9 @@ public class RateAnalysisValidator {
         Set<String> validTenantSet = new HashSet<>();
         List<String> masterList = Collections.singletonList(MDMS_TENANTS_MASTER_NAME);
         Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(requestInfo, tenantId, MDMS_TENANT_MODULE_NAME, masterList, null);
+        if (CollectionUtils.isEmpty(response)) {
+            throw new CustomException(TENANT_ID_NOT_FOUND_CODE, tenantId + TENANT_ID_NOT_FOUND_MSG);
+        }
         String node = response.get(MDMS_TENANT_MODULE_NAME).get(MDMS_TENANTS_MASTER_NAME).toString();
         try {
             JsonNode currNode = mapper.readTree(node);
