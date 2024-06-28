@@ -496,7 +496,7 @@ async function search_rateAnalysisStatementDetails(tenantId, requestinfo, refere
   const url = new URL(search_endpoint, config.host.statements);
   requestinfo = requestinfo.RequestInfo;
   const data = {
-    requestInfo: requestinfo,
+    RequestInfo: requestinfo,
     searchCriteria: {
       tenantId: tenantId,
       referenceId: referenceId
@@ -510,7 +510,7 @@ async function search_rateAnalysisUtilizationDetails(tenantId, requestinfo, refe
   const url = new URL(search_endpoint, config.host.statements);
   requestinfo = requestinfo.RequestInfo;
   const data = {
-    requestInfo: requestinfo,
+    RequestInfo: requestinfo,
     searchCriteria: {
       tenantId: tenantId,
       referenceId: referenceId
