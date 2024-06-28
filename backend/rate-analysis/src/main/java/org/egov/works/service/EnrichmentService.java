@@ -75,8 +75,8 @@ public class EnrichmentService {
                 if (!amountDetail.getHeads().equalsIgnoreCase(configs.getLabourCessHeadCode()))
                     amountForLabourCess = amountForLabourCess.add(amountDetail.getAmount());
             }
-            amountForLabourCess = amountForLabourCess.multiply(configs.getLabourCessRate().divide(BigDecimal.valueOf(100),
-                    2, RoundingMode.HALF_UP));
+            amountForLabourCess = amountForLabourCess.multiply(configs.getLabourCessRate()).divide(BigDecimal.valueOf(100),
+                    2, RoundingMode.HALF_UP);
             // Add the labour cess amount if not already present
             AmountDetail labourCessAmountDetail = null;
             for (AmountDetail amountDetail : finalAmountDetails) {

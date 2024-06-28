@@ -90,7 +90,8 @@ public class CalculatorService {
                         BigDecimal sorQuantity = sorMap.get(basicSorDetail.getSorId()).get(QUANTITY).decimalValue();
                         if (isCreate) {
                             amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail
-                                    .getQuantity()).divide(sorQuantity, 2, RoundingMode.HALF_UP));
+                                    .getQuantity()).divide(sorComposition.getQuantity(), 2, RoundingMode.HALF_UP)
+                                    .divide(sorQuantity, 2, RoundingMode.HALF_UP));
                         } else {
                             amountDetail.setAmount(amountDetail.getAmount().multiply(basicSorDetail.getQuantity())
                                     .divide(sorQuantity, 2, RoundingMode.HALF_UP));
@@ -112,11 +113,14 @@ public class CalculatorService {
             additionalChargesLineItem.setAmountDetails(new ArrayList<>());
             Map<String, List<String>> stringListMap = new HashMap<>();
             for (AdditionalCharges additionalCharges : sorComposition.getAdditionalCharges()) {
-
+                BigDecimal divideForCreate = BigDecimal.ONE;
+                if (isCreate) {
+                    divideForCreate = sorComposition.getQuantity();
+                }
                 AmountDetail amountDetail = AmountDetail.builder()
                         .type(additionalCharges.getCalculationType())
                         .heads(additionalCharges.getApplicableOn())
-                        .amount(additionalCharges.getFigure())
+                        .amount(additionalCharges.getFigure().divide(divideForCreate, 2, RoundingMode.HALF_UP))
                         .build();
                 additionalChargesLineItem.getAmountDetails().add(amountDetail);
                 if (stringListMap.containsKey(additionalCharges.getApplicableOn())) {
