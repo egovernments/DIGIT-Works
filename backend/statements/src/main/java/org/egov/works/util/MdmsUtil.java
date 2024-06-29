@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,19 +57,6 @@ public class MdmsUtil {
     }
 
 
-    public MdmsResponseV2 fetchSorsFromMdms(MdmsSearchCriteriaV2 mdmsSearchCriteria) {
-        MdmsResponseV2 mdmsResponse = new MdmsResponseV2();
-        StringBuilder uri = new StringBuilder();
-        uri.append(configs.getMdmsV2Host()).append(configs.getMdmsSearchEndPoint());
-        Object response = new HashMap<>();
-        try {
-            response = restTemplate.postForObject(uri.toString(), mdmsSearchCriteria, Map.class);
-            mdmsResponse = mapper.convertValue(response, MdmsResponseV2.class);
-        } catch (Exception e) {
-            log.error(ERROR_WHILE_FETCHING_FROM_MDMS, e);
-        }
-        return mdmsResponse;
-    }
 
     public Map<String, SorComposition> fetchSorComposition(RequestInfo requestInfo,Set<String> sorIdSet, String tenantId,Long createdTime) {
 
@@ -124,9 +113,9 @@ public class MdmsUtil {
         return filterBuilder.toString();
     }
 
-    public Map<String, List<Rates>> fetchBasicRates(RequestInfo requestInfo, String tenantId, List<String> sorsList) {
+    public Map<String, Rates> fetchBasicRates(RequestInfo requestInfo, String tenantId, List<String> sorsList) {
 
-        String filter = getfilter(sorsList.stream().collect(Collectors.toSet()), Boolean.FALSE);
+        String filter = getfilter(new HashSet<>(sorsList), Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
                 tenantId, "WORKS-SOR",
                 Collections.singletonList("Rates"), filter);
@@ -135,7 +124,22 @@ public class MdmsUtil {
             Rates  rates = mapper.convertValue(object, Rates.class);
             ratesList.add(rates);
         }
-        return ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
+
+        Map<String ,List<Rates>> sorIdToRatesMap= ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
+        Long currentEpochTime=  LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)*1000;
+
+
+        Map<String, Rates> sorIdToRatesMap1 = sorIdToRatesMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> {
+                            List<Rates> listOfRates = entry.getValue();
+
+                            return commonUtil.getApplicatbleRate(listOfRates, currentEpochTime);
+                        }
+                ));
+
+        return sorIdToRatesMap1;
 
     }
     public Map<String, Sor> fetchSorData(RequestInfo requestInfo, String tenantId, List<String> sorsList, Boolean isSorRequest) {
