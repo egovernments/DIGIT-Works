@@ -103,7 +103,7 @@ public class EnrichmentService {
                 Rates rate=sorRates.get(sorId);
                 Set<String> compositionIdSet= new HashSet<>();
                 compositionIdSet.add(rate.getCompositionId());
-                sorIdCompositionMap = mdmsUtil.fetchSorComposition(requestInfo, compositionIdSet, statementRequest.getTenantId(),currentEpochTime);
+                sorIdCompositionMap = mdmsUtil.fetchSorCompositionBasedOnCompositionId(requestInfo, compositionIdSet, statementRequest.getTenantId(),currentEpochTime);
 
             }
 

@@ -42,6 +42,7 @@ public class MdmsUtil {
     private static final String FILTER_END = ")]";
     private static final String COMPOSITION_RATE_FILTER_CODE = "@.sorId==''";
     private static final String COMPOSITION_SOR_FILTER_CODE = "@.id==''";
+    private static final String COMPOSITION_ID_FILTER_CODE="@.compositionId==''";
     private static final String OR_ADDITIONAL_FILTER = "||";
     public static final String MDMS_SOR_MASTER_NAME = "SOR";
     private static final String SOR_FILTER_CODE = "@.id=='%s'";
@@ -57,11 +58,55 @@ public class MdmsUtil {
     }
 
 
-
+    //TODO  Need to remove this method as now we are fetching the composition based on compositonId
     public Map<String, SorComposition> fetchSorComposition(RequestInfo requestInfo,Set<String> sorIdSet, String tenantId,Long createdTime) {
 
 
         String filter = getfilter(sorIdSet,Boolean.FALSE);
+        Map<String, Map<String, JSONArray>> sorComposition = fetchMdmsData(requestInfo,
+                configs.getStateLevelTenantId(), "WORKS-SOR",
+                Collections.singletonList("Composition"), filter);
+
+
+        JSONArray jsonArray = sorComposition.get("WORKS-SOR").get("Composition");
+        List<SorComposition> sorCompositions = null;
+        try {
+            sorCompositions = mapper.readValue(
+                    jsonArray.toString(),
+                    mapper.getTypeFactory().constructCollectionType(List.class, SorComposition.class)
+            );
+        } catch (JsonProcessingException e) {
+            throw new CustomException("MDMS_PARSE_EXCEPTION", "Error while parsing mdms response");
+        }
+        Map<String, List<SorComposition>> sorIdToCompositionMap = sorCompositions.stream().collect(Collectors.groupingBy(e -> e.getSorId()));
+
+        Map<String, SorComposition> sorIdToCompositionMap1 = new HashMap<>();
+        for (Map.Entry<String, List<SorComposition>> entry : sorIdToCompositionMap.entrySet()) {
+            sorIdToCompositionMap1.put(entry.getKey(), commonUtil.getApplicableSorComposition(entry.getValue(), createdTime));
+        }
+
+       /* if (sorIdToCompositionMap.size() != sorIdSet.size()) {
+            analysisRequest.getSorDetails().getSorCodes().remove(sorIdToCompositionMap.keySet());
+            throw new CustomException("SOR_COMPOSITION_NOT_FOUND", "Sor composition not found for SOR codes :: " + analysisRequest.getSorDetails().getSorCodes());
+        }*/
+        return sorIdToCompositionMap1;
+
+
+
+    }
+
+    /**
+     * This method is used to fetch the SorComposition based on the composition Id
+     * @param requestInfo
+     * @param compositionId
+     * @param tenantId
+     * @param createdTime
+     * @return
+     */
+    public Map<String, SorComposition> fetchSorCompositionBasedOnCompositionId(RequestInfo requestInfo,Set<String> compositionId, String tenantId,Long createdTime) {
+
+
+        String filter = getfilterForSorComposition(compositionId);
         Map<String, Map<String, JSONArray>> sorComposition = fetchMdmsData(requestInfo,
                 configs.getStateLevelTenantId(), "WORKS-SOR",
                 Collections.singletonList("Composition"), filter);
@@ -108,6 +153,30 @@ public class MdmsUtil {
             }
         }
         String ratesFilter =  FILTER_START + filterBuilder + FILTER_END;
+        filterBuilder.append(FILTER_END);
+
+        return filterBuilder.toString();
+    }
+
+    /**
+     * Create filter for fetching Sor Composition
+     * @param sorIds
+     * @return
+     */
+    private String getfilterForSorComposition(Set<String> sorIds) {
+        StringBuilder filterBuilder = new StringBuilder(FILTER_START);
+        Iterator<String> sorIdsIterator = sorIds.iterator();
+        while (sorIdsIterator.hasNext()) {
+            String sorId= sorIdsIterator.next();
+            String sorIdOrRateFilter =  COMPOSITION_ID_FILTER_CODE;
+            // Replace the placeholder in the template with the actual sorId
+            String formattedFilter = sorIdOrRateFilter.replace("''", "'" + sorId + "'");
+            filterBuilder.append(formattedFilter);
+            if(sorIdsIterator.hasNext()){
+                filterBuilder.append(OR_ADDITIONAL_FILTER);
+            }
+        }
+       // String ratesFilter =  FILTER_START + filterBuilder + FILTER_END;
         filterBuilder.append(FILTER_END);
 
         return filterBuilder.toString();
@@ -221,50 +290,6 @@ public class MdmsUtil {
     }
 
 
-
- /*   public Object mdmsCallV2ForSorComposition(RequestInfo requestInfo,Set<String> sorIdSet, String tenantId){
-
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestV2(requestInfo,tenantId,sorIdSet);
-        return serviceRequestRepository.fetchResult(getMdmsSearchUrlV2(),mdmsCriteriaReq);
-    }*/
-
-/*    *//**
-     * Returns the url for mdms search v2 endpoint
-     *
-     * @return url for mdms search v2 endpoint
-     *//*
-    public StringBuilder getMdmsSearchUrlV2() {
-        return new StringBuilder().append(configs.getMdmsV2Host()).append(configs.getMdmsV2EndPoint());
-    }*/
-/*    public MdmsCriteriaReq getMDMSRequestV2(RequestInfo requestInfo , String  tenantId , Set<String> sorIds){
-        log.info("MDMSUtils::getMDMSRequestV2");
-        ModuleDetail compositionSorIdModuleDetail = getSorCompositonModuleRequestData(sorIds);
-        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(compositionSorIdModuleDetail)).tenantId(tenantId).build();
-        return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
-    }*/
-
- /*   private ModuleDetail getSorCompositonModuleRequestData(Set<String> sorIds) {
-        log.info("MDMSUtils::getSorIdModuleRequestData");
-        List<MasterDetail> compostionSorIdMasterDetails = new ArrayList<>();
-        MasterDetail compositionMasterDetails;
-        StringBuilder sorStringBuilder = new StringBuilder();
-        Iterator<String> sorIterator = sorIds.iterator();
-        while (sorIterator.hasNext()) {
-            String sorIdRateFilter = String.format( RATES_FILTER_CODE, sorIterator.next());
-            sorStringBuilder.append(sorIdRateFilter);
-            if(sorIterator.hasNext()){
-                sorStringBuilder.append(OR_ADDITIONAL_FILTER);
-            }
-        }
-        String ratesFilter =  FILTER_START + sorStringBuilder + FILTER_END;
-        compositionMasterDetails = MasterDetail.builder().name(MDMS_COMPOSITION_MASTER_NAME)
-                .filter(ratesFilter).build();
-
-        compostionSorIdMasterDetails.add(compositionMasterDetails);
-
-        return ModuleDetail.builder().masterDetails(compostionSorIdMasterDetails)
-                .moduleName(configs.getSorCompositionSearchModuleName()).build();
-    }*/
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
                                                                                 List<String> masterNameList) {
         StringBuilder uri = new StringBuilder();
