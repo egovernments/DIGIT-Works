@@ -15,6 +15,8 @@ public class ErrorConfiguration {
     public static final String STATEMENT_REQUEST_EMPTY_MSG="Statement Request is mandatory";
     public static final String ESTIMATE_ID_NOT_PASSED_CODE="ESTIMATE_ID_NOT_PASSED";
     public static final String ESTIMATE_ID_NOT_PASSED_MSG="Estimate Id is Mandatory";
+    public static final String NO_SOR_PRESENT_CODE="NO_SOR_PRESENT";
+    public static final String NO_SOR_PRESENT_MSG="Estimate does not contain any estimate details whose category is SOR";
 
 
 
