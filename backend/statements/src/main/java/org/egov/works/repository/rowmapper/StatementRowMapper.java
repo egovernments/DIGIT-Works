@@ -122,8 +122,11 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             sorDetailList.add(sorDetail);
             statement.setSorDetails(sorDetailList);
         } else {
-            if(!Objects.equals(sorDetail.getId(), sorDetailId))
+            // Check if sorDetail's id is already present
+            SorDetail finalSorDetail = sorDetail;
+            if (sorDetail.getId() != null && statement.getSorDetails().stream().noneMatch(sd -> sd.getId().equals(finalSorDetail.getId()))) {
                 statement.getSorDetails().add(sorDetail);
+            }
         }
     }
 
@@ -159,10 +162,13 @@ public class StatementRowMapper implements ResultSetExtractor<List<Statement>> {
             basicSor = basicSorLineItemsMap.get(basicSorLineItemId);
         }
 
-        if (sorDetail.getLineItems() == null || sorDetail.getLineItems().isEmpty()) {
-            log.info("NO_LINE_ITEMS_PRESENT","For Basic Sor No line items is present");
+        if(basicSor.getId()!=null || basicSor.getReferenceId()!=null){
+          if (sorDetail.getLineItems() == null || sorDetail.getLineItems().isEmpty()) {
+           // log.info("NO_LINE_ITEMS_PRESENT","For Basic Sor No line items is present");
+              sorDetail.setLineItems(new ArrayList<>(Collections.singletonList(basicSor)));
         } else {
             sorDetail.getLineItems().add(basicSor);
+        }
         }
     }
 

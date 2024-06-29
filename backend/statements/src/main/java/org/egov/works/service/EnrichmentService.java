@@ -137,8 +137,11 @@ public class EnrichmentService {
                 // Update line items if necessary
                 List<BasicSor> existingBasicSorList = existingSorDetail.getLineItems();
                 List<BasicSor> newBasicSorList = newSorDetail.getLineItems();
-                if (existingBasicSorList!=null && newBasicSorList!=null &&!areBasicSorDetailsOfLineItemsEqual(existingBasicSorList, newBasicSorList)) {
-                    existingSorDetail.setLineItems(new ArrayList<>(newBasicSorList));
+                if (newBasicSorList!=null &&!areBasicSorDetailsOfLineItemsEqual(existingBasicSorList, newBasicSorList)) {
+                    log.info("Updated Basic Sor Line Items object in existing statement");
+                      /*  newBasicSorList.stream()
+                                .forEach(basicSor -> basicSor.setReferenceId(existingSorDetail.getId()));
+                    existingSorDetail.setLineItems(new ArrayList<>(newBasicSorList));*/
                 }
             }
         }
@@ -433,6 +436,9 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
         Sor sor= sorDescriptionMap.get(basicSorId);
         BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(worksSor);
 
+        if(quantityDefinedInEstimate.compareTo(BigDecimal.ZERO)<0){
+            quantityDefinedInEstimate=quantityDefinedInEstimate.multiply(BigDecimal.valueOf(-1));
+        }
         BigDecimal quantity = (basicSorQuantity.divide(analysisQuantity, 4, RoundingMode.HALF_UP))
                 .multiply(quantityDefinedInEstimate).divide(sor.getQuantity(),4,RoundingMode.HALF_UP);
         BigDecimal amount = quantity.multiply(basicRate).setScale(2, RoundingMode.HALF_UP);
@@ -464,6 +470,9 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
                                                                 Map<String,Sor> sorDescriptionMap,Map<String, List<Rates>> basicSorRates,Map<String,Object> additionalDetailsMap){
       log.info("EnrichmentSerivce :: computeBasicSorDetailsForNonWorksSorInEstimate");
       BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(sorId);
+      if(quantityDefinedInEstimate.compareTo(BigDecimal.ZERO)<0){
+          quantityDefinedInEstimate=quantityDefinedInEstimate.multiply(BigDecimal.valueOf(-1));
+      }
       Rates rate = commonUtil.getApplicatbleRate(basicSorRates.get(sorId),createdTime);
       BigDecimal basicRate = rate.getRate();
       Sor sor= sorDescriptionMap.get(sorId);
@@ -478,11 +487,16 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
 
 
     private static boolean areBasicSorDetailsOfLineItemsEqual(List<BasicSor> existingBasicSorList, List<BasicSor> newBasicSorList) {
+        if(existingBasicSorList==null){
+            return false;
+        }
         // Compare size
         if (existingBasicSorList.size() != newBasicSorList.size()) {
             return false;
         }
 
+        // Create a list to store updated details
+        List<BasicSor> updatedDetails = new ArrayList<>();
         boolean hasDifferences = false;
 
         // Compare each element
@@ -494,9 +508,15 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
                 if (!areBasicSorDetailsEqual(existingBasicSor.getBasicSorDetails(), newBasicSor.getBasicSorDetails())) {
                     // Update the basicSorDetails of existingBasicSor
                     existingBasicSor.setBasicSorDetails(newBasicSor.getBasicSorDetails());
+                    updatedDetails.add(existingBasicSor);
                     hasDifferences = true;
                 }
             }
+        }
+        // If there were differences, update the new list with changes
+        if (hasDifferences) {
+            existingBasicSorList.clear();
+            existingBasicSorList.addAll(updatedDetails);
         }
 
         return !hasDifferences;
