@@ -80,9 +80,6 @@ public class Rates {
     @JsonProperty("validTo")
     private String validTo = null;
 
-    @JsonProperty("compositionId")
-    private String compositionId = null;
-
     @JsonProperty("amountDetails")
     @Valid
     private List<AmountDetail> amountDetails = null;
