@@ -1,6 +1,7 @@
 package org.egov.works.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.contract.Contract;
 import org.egov.works.services.common.models.contract.LineItems;
@@ -8,6 +9,7 @@ import org.egov.works.services.common.models.measurement.Measure;
 import org.egov.works.services.common.models.measurement.Measurement;
 import org.egov.works.util.EnrichmentUtil;
 import org.egov.works.util.MdmsUtil;
+import org.egov.works.util.WorkflowUtil;
 import org.egov.works.web.models.*;
 import org.springframework.stereotype.Component;
 
@@ -23,16 +25,18 @@ public class UtilizationEnrichmentService {
     private final EnrichmentUtil enrichmentUtil;
     private final MdmsUtil mdmsUtil;
     private final CalculatorService calculatorService;
+    private final WorkflowUtil workflowUtil;
 
-    public UtilizationEnrichmentService(EnrichmentUtil enrichmentUtil, MdmsUtil mdmsUtil, CalculatorService calculatorService) {
+    public UtilizationEnrichmentService(EnrichmentUtil enrichmentUtil, MdmsUtil mdmsUtil, CalculatorService calculatorService, WorkflowUtil workflowUtil) {
         this.enrichmentUtil = enrichmentUtil;
         this.mdmsUtil = mdmsUtil;
         this.calculatorService = calculatorService;
+        this.workflowUtil = workflowUtil;
     }
 
     public Statement createUtilizationStatement(StatementCreateRequest statementCreateRequest,
                                                 Measurement measurement, Contract contract, Estimate estimate) {
-
+        RequestInfo requestInfo = statementCreateRequest.getRequestInfo();
         Statement statement = enrichmentUtil.getEnrichedStatement(statementCreateRequest,
                 measurement.getMeasurementNumber(), estimate.getProjectId());
 //        Map<String, Measure> measureLineItemIdToMeasureMap = measurement.getMeasures().stream()
@@ -53,6 +57,8 @@ public class UtilizationEnrichmentService {
         Set<String> basicSorIds =new HashSet<>();
         Map<String, Sor> basicSorIdFromCompositionToSorMap = new HashMap<>();
         if (!worksSorIds.isEmpty()) {
+//            Map<String, List<Rates>> sorRateMap = mdmsUtil.fetchRateForNonWorksSor(new ArrayList<>(worksSorIds),
+//                    statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId());
             sorIdToCompositionMap = mdmsUtil.fetchSorComposition(statementCreateRequest.getRequestInfo()
                     , worksSorIds, statementCreateRequest.getStatementRequest().getTenantId(), measurement.getAuditDetails().getCreatedTime());
             basicSorIds = sorIdToCompositionMap.values().stream()
@@ -82,10 +88,10 @@ public class UtilizationEnrichmentService {
                 estimateDetailIdToEstimateDetailMap, contractLineItemRefToEstDetailIdMap, measureList, sorRateMap, sorIdToCummValueMap);
 
         statement.setBasicSorDetails(basicSorDetails);
-
+        Long timeForEstimateSubmission = workflowUtil.getProcessInstance(requestInfo, estimate);
         List<SorDetail> sorDetails = getSorDetails(sorIdToSorMap, sorIdToCompositionMap,
                 estimateDetailIdToEstimateDetailMap, contractLineItemRefToEstDetailIdMap, measureList, sorRateMap,
-                statement.getId(), statementCreateRequest.getStatementRequest().getTenantId(), sorIdToCummValueMap);
+                statement.getId(), statementCreateRequest.getStatementRequest().getTenantId(), sorIdToCummValueMap, timeForEstimateSubmission);
         statement.setSorDetails(sorDetails);
 
         return statement;
@@ -131,7 +137,7 @@ public class UtilizationEnrichmentService {
                                     Map<String, EstimateDetail> estimateDetailIdToEstimateDetailMap,
                                     Map<String, String> contractLineItemRefToEstDetailIdMap,
                                     List<Measure> measureList, Map<String, List<Rates>> basicSorRateMap, String statementId,
-                                  String tenantId, Map<String, BigDecimal> sorIdToCummValueMap) {
+                                  String tenantId, Map<String, BigDecimal> sorIdToCummValueMap, Long timeForEstimateSubmission) {
 
 
         List<SorDetail> sorDetails = new ArrayList<>();
@@ -148,7 +154,7 @@ public class UtilizationEnrichmentService {
             if (alreadyComputeSor.contains(estimateDetail.getSorId()))
                 continue;
             alreadyComputeSor.add(estimateDetail.getSorId());
-            Rates rates = basicSorRateMap.get(estimateDetail.getSorId()).get(0);// TODO fetch correct rates
+            Rates rates = getApplicatbleRate(basicSorRateMap.get(estimateDetail.getSorId()), timeForEstimateSubmission);
             SorDetail sorDetail = enrichmentUtil.getEnrichedSorDetail(statementId, tenantId, sor, rates);
 
 
@@ -173,6 +179,37 @@ public class UtilizationEnrichmentService {
         return sorDetails;
     }
 
+    public Rates getApplicatbleRate(List<Rates> ratesList, Long givenTime) {
+         Comparator<Rates> comparator = (o1, o2) -> {
+             String validFrom1 = o1.getValidFrom();
+             String validFrom2 = o2.getValidFrom();
+             return validFrom1.compareTo(validFrom2);
+         };
+
+        Collections.sort(ratesList, comparator.reversed());
+        for (Rates rate : ratesList) {
+            long validFrom = parseTime(rate.getValidFrom());
+            long validTo = parseTime(rate.getValidTo(), Long.MAX_VALUE); // Default to Long.MAX_VALUE if not valid
+
+            if (givenTime >= validFrom && givenTime <= validTo) {
+                return rate;
+            }
+        }
+
+        throw new CustomException("RATE_NOT_FOUND", "No valid rate found for given time");
+    }
+
+    private static long parseTime(String timeStr) {
+        return parseTime(timeStr, Long.MIN_VALUE); // Default to Long.MIN_VALUE if not valid
+    }
+
+    private static long parseTime(String timeStr, long defaultValue) {
+        try {
+            return Long.parseLong(timeStr);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
     List<BasicSor> getLineItems(String sorId, Map<String, Sor> sorIdToSorMap, Map<String, SorComposition> sorIdToCompositionMap,
                                 EstimateDetail estimateDetail,
                                 Measure measure, Map<String, List<Rates>> basicSorRateMap, String referenceId,

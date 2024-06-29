@@ -57,6 +57,9 @@ public class Rates {
     @JsonProperty("isBasicVariant")
     private Boolean isBasicVariant = null;
 
+    @JsonProperty("compositionId")
+    private String compositionId = null;
+
     @JsonProperty("uom")
     private String uom = null;
 
@@ -83,6 +86,7 @@ public class Rates {
     @JsonProperty("amountDetails")
     @Valid
     private List<AmountDetail> amountDetails = null;
+
 
 
     public Rates addAmountDetailsItem(AmountDetail amountDetailsItem) {
