@@ -155,7 +155,8 @@ public class UtilizationEnrichmentService {
                 continue;
             alreadyComputeSor.add(estimateDetail.getSorId());
             Rates rates = getApplicatbleRate(basicSorRateMap.get(estimateDetail.getSorId()), timeForEstimateSubmission);
-            SorDetail sorDetail = enrichmentUtil.getEnrichedSorDetail(statementId, tenantId, sor, rates);
+            SorDetail sorDetail = enrichmentUtil.getEnrichedSorDetail(statementId, tenantId, sor, rates,
+                    sorIdToCummValueMap.get(estimateDetail.getSorId()));
 
 
             Map<String, BasicSorDetails> typeToBasicSorDetailsMap = new HashMap<>();

@@ -5,6 +5,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.web.models.*;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,14 +43,14 @@ public class EnrichmentUtil {
                 .build();
     }
 
-    public SorDetail getEnrichedSorDetail(String statementId, String tenantId, Sor sor, Rates rates) {
+    public SorDetail getEnrichedSorDetail(String statementId, String tenantId, Sor sor, Rates rates, BigDecimal consumedQuantity) {
         return SorDetail.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(tenantId)
                 .isActive(true)
                 .statementId(statementId)
                 .sorId(sor.getId())
-                .additionalDetails(getAdditionalDetails(sor, rates))
+                .additionalDetails(getAdditionalDetails(sor, rates, consumedQuantity))
                 .build();
     }
 
@@ -61,13 +62,15 @@ public class EnrichmentUtil {
                 .sorType(sor.getSorType())
                 .basicSorDetails(basicSorDetails)
                 .referenceId(referenceId)
-                .additionalDetails(getAdditionalDetails(sor, rates)).build();
+                .additionalDetails(getAdditionalDetails(sor, rates, null)).build();
     }
 
-    private Object getAdditionalDetails(Sor sor, Rates rates) {
+    private Object getAdditionalDetails(Sor sor, Rates rates, BigDecimal consumedQuantity) {
         Map<String, Object> additionalDetails = new HashMap<>();
         additionalDetails.put("sorDetails", sor);
         additionalDetails.put("rateDetails", rates);
+        if (consumedQuantity != null)
+            additionalDetails.put("consumedQuantity", consumedQuantity);
         return additionalDetails;
     }
     private Object getStatementAdditionalDetails(String measurementNumber, String projectId) {
