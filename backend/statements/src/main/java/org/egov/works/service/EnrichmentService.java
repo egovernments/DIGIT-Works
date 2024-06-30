@@ -571,17 +571,22 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
                     .map(BasicSor::getSorId)
                     .collect(Collectors.toSet());
 
-           // iterate through existingBasicSorList and update accordingly
+            // Then, iterate through existingBasicSorList and update accordingly
             List<BasicSor> finalList = existingBasicSorList.stream()
-                    .filter(existingBasicSor -> updatedSorIds.contains(existingBasicSor.getSorId()))
                     .map(existingBasicSor -> {
-                        // Find corresponding updated detail if available
-                        Optional<BasicSor> updatedDetail = updatedDetails.stream()
-                                .filter(newBasicSor -> newBasicSor.getSorId().equals(existingBasicSor.getSorId()))
-                                .findFirst();
+                        // Check if sorId is in updatedSorIds
+                        if (!updatedSorIds.contains(existingBasicSor.getSorId())) {
+                            // If not present in updatedSorIds, add existingBasicSor directly
+                            return existingBasicSor;
+                        } else {
+                            // If present, find corresponding updated detail if available
+                            Optional<BasicSor> updatedDetail = updatedDetails.stream()
+                                    .filter(newBasicSor -> newBasicSor.getSorId().equals(existingBasicSor.getSorId()))
+                                    .findFirst();
 
-                        // If updated detail found, update and return, otherwise return existing
-                        return updatedDetail.orElse(existingBasicSor);
+                            // Return updatedDetail if found, otherwise existingBasicSor
+                            return updatedDetail.orElse(existingBasicSor);
+                        }
                     })
                     .toList();
 
