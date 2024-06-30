@@ -566,8 +566,30 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
         }
         // If there were differences, update the new list with changes
         if (hasDifferences) {
+            // First, create a set of sorIds from updatedDetails for quick lookup
+            Set<String> updatedSorIds = updatedDetails.stream()
+                    .map(BasicSor::getSorId)
+                    .collect(Collectors.toSet());
+
+           // iterate through existingBasicSorList and update accordingly
+            List<BasicSor> finalList = existingBasicSorList.stream()
+                    .filter(existingBasicSor -> updatedSorIds.contains(existingBasicSor.getSorId()))
+                    .map(existingBasicSor -> {
+                        // Find corresponding updated detail if available
+                        Optional<BasicSor> updatedDetail = updatedDetails.stream()
+                                .filter(newBasicSor -> newBasicSor.getSorId().equals(existingBasicSor.getSorId()))
+                                .findFirst();
+
+                        // If updated detail found, update and return, otherwise return existing
+                        return updatedDetail.orElse(existingBasicSor);
+                    })
+                    .toList();
+
+            // Finally, update existingBasicSorList with the finalList
             existingBasicSorList.clear();
-            existingBasicSorList.addAll(updatedDetails);
+            existingBasicSorList.addAll(finalList);
+
+
         }
 
         return !hasDifferences;
