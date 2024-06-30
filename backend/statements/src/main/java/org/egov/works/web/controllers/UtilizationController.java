@@ -49,7 +49,7 @@ public class UtilizationController {
 
         StatementResponse statementResponse = StatementResponse.builder()
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true))
-                .statement(Collections.singletonList(utilizationService.utilizationCreate(body))).build() ;
+                .statement(Collections.singletonList(utilizationService.utilizationCreate(body, null))).build() ;
         return new ResponseEntity<StatementResponse>(statementResponse, HttpStatus.OK);
 
     }

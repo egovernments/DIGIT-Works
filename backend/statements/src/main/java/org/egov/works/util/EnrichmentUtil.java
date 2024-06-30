@@ -77,4 +77,26 @@ public class EnrichmentUtil {
         return additionalDetails;
     }
 
+    public StatementSearchCriteria getSearchRequest(StatementCreateRequest statementCreateRequest) {
+        return StatementSearchCriteria.builder()
+                .requestInfo(statementCreateRequest.getRequestInfo())
+                .searchCriteria(SearchCriteria.builder()
+                        .referenceId(statementCreateRequest.getStatementRequest().getId())
+                        .tenantId(statementCreateRequest.getStatementRequest().getTenantId())
+                        .statementType(Statement.StatementTypeEnum.UTILIZATION)
+                        .build())
+                .build();
+    }
+
+    public StatementCreateRequest getStatementCreateRequest(RequestInfo requestInfo, String id, String tenantId) {
+        StatementRequest statementRequest = StatementRequest.builder()
+                .id(id)
+                .tenantId(tenantId)
+                .build();
+        return StatementCreateRequest.builder()
+                .requestInfo(requestInfo)
+                .statementRequest(statementRequest)
+                .build();
+    }
+
 }

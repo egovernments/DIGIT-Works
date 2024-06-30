@@ -85,4 +85,7 @@ public class StatementConfiguration {
 
     @Value("${estimate.workflow.module.name}")
     private String estimateWFModuleName;
+
+    @Value("${utilization.error.topic}")
+    private String utilizationErrorTopic;
 }
