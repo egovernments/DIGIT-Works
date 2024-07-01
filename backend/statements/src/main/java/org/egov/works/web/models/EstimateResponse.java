@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
-
+import org.egov.works.services.common.models.estimate.Estimate;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;

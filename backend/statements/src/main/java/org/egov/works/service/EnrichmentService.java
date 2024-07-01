@@ -7,6 +7,9 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.StatementConfiguration;
+import org.egov.works.services.common.models.estimate.Estimate;
+import org.egov.works.services.common.models.estimate.EstimateDetail;
+import org.egov.works.services.common.models.estimate.EstimateResponse;
 import org.egov.works.util.CommonUtil;
 import org.egov.works.util.EstimateUtil;
 import org.egov.works.util.MdmsUtil;
@@ -51,21 +54,22 @@ public class EnrichmentService {
     private static final String FILTER_START = "[?(";
     private static final String FILTER_END = ")]";
 
-    public StatementPushRequest enrichStatementPushRequest(StatementCreateRequest statementCreateRequest) {
+    public StatementPushRequest enrichStatementPushRequest(StatementCreateRequest statementCreateRequest, Estimate estimate) {
         log.info("EnrichmentService::enrichStatementRequest");
         StatementPushRequest statementPushRequest;
         StatementRequest statementRequest = statementCreateRequest.getStatementRequest();
         RequestInfo requestInfo = statementCreateRequest.getRequestInfo();
-        EstimateResponse estimateResponse = estimateUtil.getEstimate(statementRequest.getId(), statementRequest.getTenantId(),
-                Statement.StatementTypeEnum.ANALYSIS.toString(), statementCreateRequest.getRequestInfo());
-        if (estimateResponse == null || estimateResponse.getEstimates().isEmpty()) {
-            throw new CustomException(ESTIMATE_RESPONSE_NULL_EMPTY_CODE, ESTIMATE_RESPONSE_NULL_EMPTY_MSG);
+        if(estimate==null){
+            EstimateResponse estimateResponse = estimateUtil.getEstimate(statementRequest.getId(), statementRequest.getTenantId(),
+                    Statement.StatementTypeEnum.ANALYSIS.toString(), statementCreateRequest.getRequestInfo());
+            if (estimateResponse == null || estimateResponse.getEstimates().isEmpty()) {
+                throw new CustomException(ESTIMATE_RESPONSE_NULL_EMPTY_CODE, ESTIMATE_RESPONSE_NULL_EMPTY_MSG);
+            }
+            return enrichStatementPushRequestWithDetails(estimateResponse.getEstimates().get(0),requestInfo,statementRequest);
+        }else{
+            return enrichStatementPushRequestWithDetails(estimate,requestInfo,statementRequest);
         }
 
-
-        Estimate estimate = estimateResponse.getEstimates().get(0);
-
-        return enrichStatementPushRequestWithDetails(estimate,requestInfo,statementRequest);
     }
 
     /**
@@ -143,10 +147,10 @@ public class EnrichmentService {
      * @param existingStatement
      * @return
      */
-    public StatementPushRequest enrichStatementPushRequestForUpdate(StatementCreateRequest statementCreateRequest, Statement existingStatement) {
+    public StatementPushRequest enrichStatementPushRequestForUpdate(StatementCreateRequest statementCreateRequest, Statement existingStatement, Estimate estimate) {
         log.info("EnrichmentService::enrichStatementPushRequestForUpdate");
 
-        StatementPushRequest updatedStatementPushRequest = enrichStatementPushRequest(statementCreateRequest);
+        StatementPushRequest updatedStatementPushRequest = enrichStatementPushRequest(statementCreateRequest,estimate);
 
         // Map to hold existing SorDetails by sorId
         Map<String, SorDetail> existingStatementSorDetailsMap = new HashMap<>();
@@ -187,8 +191,9 @@ public class EnrichmentService {
         Map<String, BigDecimal> cumulativeQuantities = new HashMap<>();
 
 
-        // Mark sorDetails in the existing statement as inactive if not present in the new statement
+
         for (String sorId : existingStatementSorDetailsMap.keySet()) {
+            // Mark sorDetails in the existing statement as inactive if not present in the new statement
             if (!newStatementSorIds.contains(sorId)) {
                 SorDetail existingSorDetail = existingStatementSorDetailsMap.get(sorId);
                 existingSorDetail.setIsActive(Boolean.FALSE);
@@ -226,13 +231,16 @@ public class EnrichmentService {
         // Convert the map back to a list and update the statement
         List<SorDetail> updatedSorDetailsList = new ArrayList<>(existingStatementSorDetailsMap.values());
         existingStatement.setSorDetails(updatedSorDetailsList);
+        existingStatement.setBasicSorDetails(updatedStatementPushRequest.getStatement().getBasicSorDetails());
 
         // Set audit details
         AuditDetails auditDetails = statementServiceUtil.getAuditDetails(statementCreateRequest.getRequestInfo().getUserInfo().getUuid(), existingStatement, false);
         existingStatement.setAuditDetails(auditDetails);
 
+        // Removing all the
+        existingStatement.getBasicSorDetails().clear();
         //Cummulative BasicSorDetails on Parent Level
-        accumulateBasicSorDetails(existingStatement);
+      //  accumulateBasicSorDetails(existingStatement);
 
         // Update the StatementPushRequest with the updated Statement object
         updatedStatementPushRequest.setStatement(existingStatement);
@@ -388,24 +396,8 @@ public class EnrichmentService {
                             .build();
                     basicSorDetails.add(detail);
                 }
-
-                Rates rates = basicSorRates.get(sorId);
-                Map<String,Object> basicSoradditionalDetailsMap= new HashMap<>();
-                Sor sorDescription = sorDescriptionMap.get(sorId);
-                //Rates rates  = commonUtil.getApplicatbleRate(ratesList, createdTime);
-                //
-                BigDecimal sorQuantity = BigDecimal.ZERO;
-                if(sorIdToEstimateDetailQuantityMap.get(sorId).compareTo(BigDecimal.ZERO)<0){
-                    sorQuantity =sorIdToEstimateDetailQuantityMap.get(sorId).multiply(BigDecimal.valueOf(-1));
-                }else{
-                    sorQuantity=sorIdToEstimateDetailQuantityMap.get(sorId);
-                }
-
-                BigDecimal estimatedAmount = rates.getRate().multiply(sorQuantity).setScale(2, RoundingMode.HALF_UP);
-                basicSoradditionalDetailsMap.put("sorDetails",sorDescription);
-                basicSoradditionalDetailsMap.put("rateDetails",rates);
-                basicSoradditionalDetailsMap.put("estimatedQuantity",sorQuantity);
-                basicSoradditionalDetailsMap.put("estimatedAmount",estimatedAmount);
+                //Set Additional Details in Sor Details Object
+                Map<String, Object> basicSoradditionalDetailsMap = getBasicSoradditionalDetailsMap(basicSorRates, sorIdToEstimateDetailQuantityMap, sorDescriptionMap, sorId);
 
                 // Create a SorDetail for each worksSor
                 SorDetail sorDetail = SorDetail.builder()
@@ -452,6 +444,48 @@ public class EnrichmentService {
 
         statement.setSorDetails(sorDetails);
         accumulateBasicSorDetails(statement);
+    }
+
+    /**
+     * This method is used to set the additional Details on SorDetails level
+     * @param basicSorRates
+     * @param sorIdToEstimateDetailQuantityMap
+     * @param sorDescriptionMap
+     * @param sorId
+     * @return
+     */
+    private static  Map<String, Object> getBasicSoradditionalDetailsMap(Map<String, Rates> basicSorRates, Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap,
+                                                                        Map<String, Sor> sorDescriptionMap, String sorId) {
+        log.info("EnrichmentService:: getBasicSoradditionalDetailsMap");
+        Rates rates = basicSorRates.get(sorId);
+        Map<String,Object> basicSoradditionalDetailsMap= new HashMap<>();
+        Sor sorDescription = sorDescriptionMap.get(sorId);
+
+        BigDecimal sorQuantity = BigDecimal.ZERO;
+        if(sorIdToEstimateDetailQuantityMap.get(sorId).compareTo(BigDecimal.ZERO)<0){
+            sorQuantity = sorIdToEstimateDetailQuantityMap.get(sorId).multiply(BigDecimal.valueOf(-1));
+        }else{
+            sorQuantity= sorIdToEstimateDetailQuantityMap.get(sorId);
+        }
+        BigDecimal labourCessAmount = null;
+        for(AmountDetail amountDetail:rates.getAmountDetails()){
+
+                if (amountDetail.getHeads().contains("LC")) {
+                    labourCessAmount=amountDetail.getAmount().multiply(sorQuantity);
+                    break; // Exit the loop once found
+                }else{
+                    log.error("No Labour Cess found for this sor :: {}",sorId);
+                }
+
+        }
+
+        BigDecimal estimatedAmount = rates.getRate().multiply(sorQuantity).setScale(2, RoundingMode.HALF_UP);
+        basicSoradditionalDetailsMap.put("sorDetails",sorDescription);
+        basicSoradditionalDetailsMap.put("rateDetails",rates);
+        basicSoradditionalDetailsMap.put("estimatedQuantity",sorQuantity);
+        basicSoradditionalDetailsMap.put("estimatedAmount",estimatedAmount);
+        basicSoradditionalDetailsMap.put("labourCessAmount",labourCessAmount);
+        return basicSoradditionalDetailsMap;
     }
 
 

@@ -7,7 +7,7 @@ import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.ServiceCallException;
 import org.egov.works.config.StatementConfiguration;
-import org.egov.works.web.models.EstimateResponse;
+import org.egov.works.services.common.models.estimate.EstimateResponse;
 import org.egov.works.web.models.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -60,10 +60,6 @@ private final RestTemplate restTemplate;
         StringBuilder url = getSearchURLWithParams(tenantId,statementType, estimateIdSet);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         EstimateResponse fetchEstimates = fetchResult(url, requestInfoWrapper);
-//        if(response.getResponseInfo().getStatus().equals(HttpStatus.OK)){
-//
-//        }
-
         return fetchEstimates;
     }
     public EstimateResponse fetchResult(StringBuilder uri, Object request) {

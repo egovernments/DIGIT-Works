@@ -6,6 +6,7 @@ import org.egov.works.services.common.models.measurement.Measure;
 import org.egov.works.util.CommonUtil;
 import org.egov.works.util.EnrichmentUtil;
 import org.egov.works.web.models.*;
+import  org.egov.works.services.common.models.estimate.EstimateDetail;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,9 +25,9 @@ public class CalculatorService {
     }
 
     public void calculateUtilizationForWorksSor(Map<String, SorComposition>  sorIdToCompositionMap,
-                                                    EstimateDetail estimateDetail, Map<String, List<Rates>> basicSorRateMap,
-                                                    Map<String, BasicSorDetails> typeToBasicSorDetailsMap, Sor sor,
-                                                    Measure measure, Map<String, Sor> sorIdToSorMap,
+                                               EstimateDetail estimateDetail, Map<String, List<Rates>> basicSorRateMap,
+                                                Map<String, BasicSorDetails> typeToBasicSorDetailsMap, Sor sor,
+                                                Measure measure, Map<String, Sor> sorIdToSorMap,
                                                 Map<String, BigDecimal> sorIdToCummValueMap, Long timeForEstimateSubmission) {
         if (sorIdToCompositionMap.get(estimateDetail.getSorId()) != null) {
             List<SorCompositionBasicSorDetail> sorCompositionBasicSorDetails = sorIdToCompositionMap.get(estimateDetail.getSorId()).getBasicSorDetails();

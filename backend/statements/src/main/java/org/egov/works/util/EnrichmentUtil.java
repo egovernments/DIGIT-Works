@@ -106,4 +106,15 @@ public class EnrichmentUtil {
                 .build();
     }
 
+    public StatementCreateRequest getAnalysisStatementCreateRequest(RequestInfo requestInfo, String id, String tenantId) {
+        StatementRequest statementRequest = StatementRequest.builder()
+                .id(id)
+                .tenantId(tenantId)
+                .build();
+        return StatementCreateRequest.builder()
+                .requestInfo(requestInfo)
+                .statementRequest(statementRequest)
+                .build();
+    }
+
 }

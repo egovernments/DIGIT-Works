@@ -5,6 +5,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.config.StatementConfiguration;
 import org.egov.works.kafka.Producer;
 import org.egov.works.repository.StatementRepository;
+import org.egov.works.services.common.models.estimate.Estimate;
 import org.egov.works.util.StatementServiceUtil;
 import org.egov.works.validator.StatementValidator;
 import org.egov.works.web.models.Statement;
@@ -34,17 +35,17 @@ public class AnalysisStatementService {
     @Autowired
     private StatementServiceUtil statementServiceUtil;
 
-    public StatementPushRequest createAnalysisStatement(StatementCreateRequest statementCreateRequest) {
+    public StatementPushRequest createAnalysisStatement(StatementCreateRequest statementCreateRequest, Estimate estimate) {
         log.info("AnalysisStatementService::createAnalysisStatement");
         statementValidator.validateStatementOnCreate(statementCreateRequest);
         StatementPushRequest statementPushRequest ;
         List<Statement> statementList = new ArrayList<>();
         Boolean isCreate = statementServiceUtil.checkIfCreateOperation(statementCreateRequest, statementList);
             if (isCreate) {
-                statementPushRequest = enrichmentService.enrichStatementPushRequest(statementCreateRequest);
+                statementPushRequest = enrichmentService.enrichStatementPushRequest(statementCreateRequest,estimate);
                 producer.push(statementConfiguration.getSaveAnalysisStatementTopic(), statementPushRequest);
             } else {
-                statementPushRequest = enrichmentService.enrichStatementPushRequestForUpdate(statementCreateRequest, statementList.get(0));
+                statementPushRequest = enrichmentService.enrichStatementPushRequestForUpdate(statementCreateRequest, statementList.get(0),estimate);
                 producer.push(statementConfiguration.getUpdateAnalysisStatementTopic(), statementPushRequest);
             }
             if(statementPushRequest.getStatement()==null){

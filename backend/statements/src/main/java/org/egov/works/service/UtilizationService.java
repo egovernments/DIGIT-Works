@@ -5,6 +5,7 @@ import org.egov.works.config.StatementConfiguration;
 import org.egov.works.kafka.Producer;
 import org.egov.works.repository.StatementRepository;
 import org.egov.works.services.common.models.contract.Contract;
+import org.egov.works.services.common.models.estimate.Estimate;
 import org.egov.works.services.common.models.measurement.Measurement;
 import org.egov.works.util.EnrichmentUtil;
 import org.egov.works.validator.StatementValidator;

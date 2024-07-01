@@ -1,22 +1,66 @@
 package org.egov.works.kafka;
 
 
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.works.config.StatementConfiguration;
+import org.egov.works.service.AnalysisStatementService;
+import org.egov.works.services.common.models.estimate.Estimate;
+import org.egov.works.services.common.models.estimate.EstimateRequest;
+import org.egov.works.util.EnrichmentUtil;
+import org.egov.works.web.models.StatementCreateRequest;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-
+@Slf4j
 @Component
 public class Consumer {
 
-    /*
-    * Uncomment the below line to start consuming record from kafka.topics.consumer
-    * Value of the variable kafka.topics.consumer should be overwritten in application.properties
-    */
-    //@KafkaListener(topics = {"kafka.topics.consumer"})
-    public void listen(final HashMap<String, Object> record) {
+    private final ObjectMapper mapper;
+    private final EnrichmentUtil enrichmentUtil;
+    private final AnalysisStatementService analysisStatementService;
+    private final Producer producer;
+    private final StatementConfiguration configs;
 
-        //TODO
+    public Consumer(ObjectMapper mapper, EnrichmentUtil enrichmentUtil, AnalysisStatementService analysisStatementService, Producer producer, StatementConfiguration configs) {
+        this.mapper = mapper;
+        this.enrichmentUtil = enrichmentUtil;
+        this.analysisStatementService = analysisStatementService;
+        this.producer = producer;
+        this.configs = configs;
+    }
+
+
+    /**
+     * This method is will consume update and create topic of estimate and will create the
+     * analysis statement
+     * @param message
+     * @param topic
+     */
+    @KafkaListener(topics = {"${estimate.kafka.create.topic}","${estimate.kafka.update.topic}"})
+    public void listen(final String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        log.info("Creating/Updating Analysis statement");
+        EstimateRequest estimateRequest = mapper.convertValue(message, EstimateRequest.class);
+        Estimate estimate=estimateRequest.getEstimate();
+        if(estimate!=null){
+            StatementCreateRequest statementCreateRequest = enrichmentUtil
+                    .getAnalysisStatementCreateRequest(estimateRequest.getRequestInfo(), estimate.getId(),
+                            estimate.getTenantId());
+            try {
+                log.info("Inside Analysis Statement Consumer for creating statement with request ::{}",statementCreateRequest);
+                analysisStatementService.createAnalysisStatement(statementCreateRequest, estimate);
+            } catch (Exception e) {
+                log.error("Error while creating analysis statement for estimate :: {}", estimate.getId(), e);
+                producer.push(configs.getAnalysisStatementErrorTopic(), estimate);
+            }
+        }else{
+            log.error("Estimate Not present in the request :: {}",estimateRequest);
+        }
+
+
+
+
 
     }
 }

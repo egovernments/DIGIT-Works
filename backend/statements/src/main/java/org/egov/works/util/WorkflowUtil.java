@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.StatementConfiguration;
 import org.egov.works.repository.ServiceRequestRepository;
-import org.egov.works.web.models.Estimate;
+import org.egov.works.services.common.models.estimate.Estimate;
 import org.egov.works.web.models.ProcessInstance;
 import org.egov.works.web.models.ProcessInstanceResponse;
 import org.egov.works.web.models.RequestInfoWrapper;

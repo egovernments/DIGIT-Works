@@ -88,4 +88,12 @@ public class StatementConfiguration {
 
     @Value("${utilization.error.topic}")
     private String utilizationErrorTopic;
+
+    @Value("${estimate.kafka.create.topic}")
+    private String estimateCreateTopic;
+    @Value("${estimate.kafka.update.topic}")
+    private String estimateUpdateTopic;
+    @Value("${analysis.statement.error.topic}")
+    private String analysisStatementErrorTopic;
+
 }
