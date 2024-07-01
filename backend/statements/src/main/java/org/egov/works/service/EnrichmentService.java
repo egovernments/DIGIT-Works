@@ -238,7 +238,7 @@ public class EnrichmentService {
         existingStatement.setAuditDetails(auditDetails);
 
         // Removing all the
-        existingStatement.getBasicSorDetails().clear();
+       // existingStatement.getBasicSorDetails().clear();
         //Cummulative BasicSorDetails on Parent Level
       //  accumulateBasicSorDetails(existingStatement);
 
