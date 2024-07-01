@@ -43,14 +43,15 @@ public class EnrichmentUtil {
                 .build();
     }
 
-    public SorDetail getEnrichedSorDetail(String statementId, String tenantId, Sor sor, Rates rates, BigDecimal consumedQuantity) {
+    public SorDetail getEnrichedSorDetail(String statementId, String tenantId, Sor sor, Rates rates,
+                                          BigDecimal consumedQuantity, BigDecimal consumedAmount) {
         return SorDetail.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(tenantId)
                 .isActive(true)
                 .statementId(statementId)
                 .sorId(sor.getId())
-                .additionalDetails(getAdditionalDetails(sor, rates, consumedQuantity))
+                .additionalDetails(getAdditionalDetails(sor, rates, consumedQuantity, consumedAmount))
                 .build();
     }
 
@@ -62,15 +63,17 @@ public class EnrichmentUtil {
                 .sorType(sor.getSorType())
                 .basicSorDetails(basicSorDetails)
                 .referenceId(referenceId)
-                .additionalDetails(getAdditionalDetails(sor, rates, null)).build();
+                .additionalDetails(getAdditionalDetails(sor, rates, null, null)).build();
     }
 
-    private Object getAdditionalDetails(Sor sor, Rates rates, BigDecimal consumedQuantity) {
+    private Object getAdditionalDetails(Sor sor, Rates rates, BigDecimal consumedQuantity, BigDecimal consumedAmount) {
         Map<String, Object> additionalDetails = new HashMap<>();
         additionalDetails.put("sorDetails", sor);
         additionalDetails.put("rateDetails", rates);
-        if (consumedQuantity != null)
+        if (consumedQuantity != null) {
             additionalDetails.put("consumedQuantity", consumedQuantity);
+            additionalDetails.put("consumedAmount", consumedAmount);
+        }
         return additionalDetails;
     }
     private Object getStatementAdditionalDetails(String measurementNumber, String projectId) {
