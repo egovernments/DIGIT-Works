@@ -32,7 +32,8 @@ public class CommonUtil {
                 return rate;
             }
         }
-        return null; // Or throw an exception if no valid rate is found
+        throw new CustomException("RATE_NOT_FOUND", "No valid rate found for given time");
+//        return null; // Or throw an exception if no valid rate is found
         }else{
             throw new CustomException("NO_RATES_FOUND","No rates present ");
         }

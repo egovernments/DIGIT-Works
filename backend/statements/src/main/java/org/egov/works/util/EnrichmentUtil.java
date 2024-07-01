@@ -71,6 +71,7 @@ public class EnrichmentUtil {
         additionalDetails.put("sorDetails", sor);
         additionalDetails.put("rateDetails", rates);
         if (consumedQuantity != null) {
+            consumedAmount.setScale(4, BigDecimal.ROUND_HALF_UP);
             additionalDetails.put("consumedQuantity", consumedQuantity);
             additionalDetails.put("consumedAmount", consumedAmount);
         }
