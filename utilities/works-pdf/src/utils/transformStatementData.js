@@ -10,7 +10,9 @@ const transformStatementData = (data, project) => {
         const measurementBookNumber = statement.additionalDetails.measurementNumber;
         const ProjectID  = project.projectNumber;
         const ProjectName = project.name;
-        const ProjectLocation =  project.address.locality + " , " + project.address.boundary + " , " + project.address.city;
+        const locality =  project.address.locality;
+        const  boundary = project.address.boundary;
+        const city = project.address.city;
         const ProjectDescription = project.description;
 
             statement["sorDetails"].forEach(sorDetail => {
@@ -74,7 +76,9 @@ const transformStatementData = (data, project) => {
                 ProjectID,
                 ProjectName,
                 ProjectDescription,
-                ProjectLocation,
+                locality,
+                boundary,
+                city,
                 estimateNumber,
                 tenantId
             }));

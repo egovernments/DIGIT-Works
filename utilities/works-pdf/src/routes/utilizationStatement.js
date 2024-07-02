@@ -9,6 +9,7 @@ const {search_rateAnalysisUtilizationDetails, search_localization} = require("..
 const {search_projectDetails_by_ID} = require("../api");
 const {create_pdf} = require("../api");
 const get = require("lodash.get");
+const {getLocalizationByKey, getCityLocalizationPrefix} = require("../utils/localization");
 
 function renderError(res, errorMessage, errorCode) {
     if (errorCode == undefined) errorCode = 500;
@@ -24,6 +25,27 @@ function sortData(data, order) {
         const indexB = order.indexOf(b.sorType);
         return indexA - indexB;
     });
+}
+
+
+function updateLocalization(pdfData, localizationMaps, tenantId) {
+    if (pdfData.city) {
+        pdfData.city = pdfData.city.toUpperCase();
+        cityKey = "TENANT_TENANTS_" + pdfData.city.split(".").join("_");
+        pdfData.city = getLocalizationByKey(cityKey, localizationMaps);
+    }
+    if (pdfData.locality) {
+        let localityKey = getCityLocalizationPrefix(tenantId);
+        localityKey = localityKey + "_ADMIN_" + pdfData.locality;
+        pdfData.locality = getLocalizationByKey(localityKey, localizationMaps);
+    }
+    if (pdfData.ward) {
+        let boundaryKey = getCityLocalizationPrefix(tenantId);
+        boundaryKey = boundaryKey + "_ADMIN_" + pdfData.ward;
+        pdfData.ward = getLocalizationByKey(boundaryKey, localizationMaps);
+    }
+
+    return pdfData;
 }
 
 router.post("/utilization-statement", asyncMiddleware(async function (req, res, next) {
@@ -69,13 +91,14 @@ router.post("/utilization-statement", asyncMiddleware(async function (req, res, 
                     msgId = msgId.split("|")
                     lang = msgId.length == 2 ? msgId[1] : lang;
                 }
-                let module = "rainmaker-statement";
+                let module = "rainmaker-statement,rainmaker-common";
                 let localizations = await search_localization(localizationReq, lang, module,tenantId );
                 localizations.data.messages.forEach(localObj => {
                     localizationMap[localObj.code] = localObj.message;
                 });
 
                 AnalysisStatement.data.forEach(data => {
+                    data = updateLocalization(data, localizationMap, tenantId);
                     if(localizationMap[data.sorType]){
                         data.sorType = localizationMap[data.sorType];
                     }
