@@ -47,27 +47,26 @@ public class EnrichmentService {
     private CommonUtil commonUtil;
 
 
-
     private static final String OR_ADDITIONAL_FILTER = " || ";
     public static final String MDMS_SOR_MASTER_NAME = "SOR";
     private static final String SOR_FILTER_CODE = "@.id=='%s'";
     private static final String FILTER_START = "[?(";
     private static final String FILTER_END = ")]";
 
-    public StatementPushRequest enrichStatementPushRequest(StatementCreateRequest statementCreateRequest, Estimate estimate) {
+    public StatementPushRequest enrichStatementPushRequest(StatementCreateRequest statementCreateRequest, Estimate estimate, Boolean isCreate) {
         log.info("EnrichmentService::enrichStatementRequest");
         StatementPushRequest statementPushRequest;
         StatementRequest statementRequest = statementCreateRequest.getStatementRequest();
         RequestInfo requestInfo = statementCreateRequest.getRequestInfo();
-        if(estimate==null){
+        if (estimate == null) {
             EstimateResponse estimateResponse = estimateUtil.getEstimate(statementRequest.getId(), statementRequest.getTenantId(),
                     Statement.StatementTypeEnum.ANALYSIS.toString(), statementCreateRequest.getRequestInfo());
             if (estimateResponse == null || estimateResponse.getEstimates().isEmpty()) {
                 throw new CustomException(ESTIMATE_RESPONSE_NULL_EMPTY_CODE, ESTIMATE_RESPONSE_NULL_EMPTY_MSG);
             }
-            return enrichStatementPushRequestWithDetails(estimateResponse.getEstimates().get(0),requestInfo,statementRequest);
-        }else{
-            return enrichStatementPushRequestWithDetails(estimate,requestInfo,statementRequest);
+            return enrichStatementPushRequestWithDetails(estimateResponse.getEstimates().get(0), requestInfo, statementRequest, isCreate);
+        } else {
+            return enrichStatementPushRequestWithDetails(estimate, requestInfo, statementRequest, isCreate);
         }
 
     }
@@ -75,12 +74,13 @@ public class EnrichmentService {
     /**
      * This method is used to fetch the Sor Rates , Sor Composition
      * And Sor description and then create statement push request
+     *
      * @param estimate
      * @param requestInfo
      * @param statementRequest
-     * @return
+     * @return statementPusRequest
      */
-    public StatementPushRequest enrichStatementPushRequestWithDetails(Estimate estimate,RequestInfo requestInfo,StatementRequest statementRequest){
+    public StatementPushRequest enrichStatementPushRequestWithDetails(Estimate estimate, RequestInfo requestInfo, StatementRequest statementRequest, Boolean isCreate) {
         Map<String, List<EstimateDetail>> sorIdToEstimateDetailMap = new HashMap<>();
         Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap = new HashMap<>();
         if (null != estimate && !estimate.getEstimateDetails().isEmpty()) {
@@ -88,10 +88,13 @@ public class EnrichmentService {
                     .filter(ed -> ESTIMATE_DETAIL_SOR_CATEGORY.equals(ed.getCategory()) &&
                             ed.isActive())
                     .toList();
-            if(filteredActiveEstimateDetails.isEmpty()){
+
+            // If no valid details found and not in create mode, return null
+            if (filteredActiveEstimateDetails.isEmpty() && !isCreate) {
+                return null;
+            } else if (filteredActiveEstimateDetails.isEmpty()) {
                 throw new CustomException(NO_SOR_PRESENT_CODE, NO_SOR_PRESENT_MSG);
             }
-
             Set<String> uniqueIdentifiers = new HashSet<>();
             Set<String> basicSorIds = new HashSet<>();
             for (EstimateDetail estimateDetail : filteredActiveEstimateDetails) {
@@ -101,11 +104,11 @@ public class EnrichmentService {
                 sorIdToEstimateDetailQuantityMap.merge(estimateDetail.getSorId(), quantity, BigDecimal::add);
             }
             Map<String, Rates> sorRates = mdmsUtil.fetchBasicRates(requestInfo, estimate.getTenantId(), new ArrayList<>(uniqueIdentifiers));
-            Map<String, SorComposition> sorIdCompositionMap= new LinkedHashMap<>();
-            Long currentEpochTime=  LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)*1000;
-            for(String sorId:uniqueIdentifiers){
-                Rates rate=sorRates.get(sorId);
-                Set<String> compositionIdSet= new HashSet<>();
+            Map<String, SorComposition> sorIdCompositionMap = new LinkedHashMap<>();
+            Long currentEpochTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000;
+            for (String sorId : uniqueIdentifiers) {
+                Rates rate = sorRates.get(sorId);
+                Set<String> compositionIdSet = new HashSet<>();
                 compositionIdSet.add(rate.getCompositionId());
                 // Fetch SorComposition for the current compositionIdSet
                 Map<String, SorComposition> fetchedMap = mdmsUtil.fetchSorCompositionBasedOnCompositionId(requestInfo, compositionIdSet, statementRequest.getTenantId(), currentEpochTime);
@@ -114,9 +117,6 @@ public class EnrichmentService {
 
 
             }
-
-
-
             if (sorIdCompositionMap != null && !sorIdCompositionMap.isEmpty()) {
                 for (SorComposition sorComposition : sorIdCompositionMap.values()) {
                     basicSorIds.addAll(sorComposition.getBasicSorDetails().stream().map(SorCompositionBasicSorDetail::getSorId).toList());
@@ -125,14 +125,14 @@ public class EnrichmentService {
                     // Put the basicSorRates data in sorRates map object
                     basicSorRates.forEach((key, value) -> sorRates.putIfAbsent(key, value));
                 }
-            }else{
-                throw new CustomException("COMPOSITION_NOT_PRESENT","For Sor Ids mapped in the estimate detail no Sor Composition is present");
+            } else {
+                throw new CustomException("COMPOSITION_NOT_PRESENT", "For Sor Ids mapped in the estimate detail no Sor Composition is present");
             }
             uniqueIdentifiers.addAll(basicSorIds);
 
             Map<String, Sor> sorDescriptionMap = mdmsUtil.fetchSorData(requestInfo, configuration.getStateLevelTenantId(), new ArrayList<>(uniqueIdentifiers), true);
 
-            return  createStatementPushRequest(estimate, sorIdToEstimateDetailMap, requestInfo,
+            return createStatementPushRequest(estimate, sorIdToEstimateDetailMap, requestInfo,
                     sorIdCompositionMap, sorIdToEstimateDetailQuantityMap, sorRates, sorDescriptionMap, filteredActiveEstimateDetails);
 
 
@@ -147,12 +147,18 @@ public class EnrichmentService {
      * @param existingStatement
      * @return
      */
-    public StatementPushRequest enrichStatementPushRequestForUpdate(StatementCreateRequest statementCreateRequest, Statement existingStatement, Estimate estimate) {
+    public StatementPushRequest enrichStatementPushRequestForUpdate(StatementCreateRequest statementCreateRequest, Statement existingStatement, Estimate estimate, Boolean isCreate) {
         log.info("EnrichmentService::enrichStatementPushRequestForUpdate");
 
-        StatementPushRequest updatedStatementPushRequest = enrichStatementPushRequest(statementCreateRequest,estimate);
+        StatementPushRequest updatedStatementPushRequest = enrichStatementPushRequest(statementCreateRequest, estimate, isCreate);
 
-        // Map to hold existing SorDetails by sorId
+        if (updatedStatementPushRequest == null) {
+            return checkAndUpdateStatementPushRequest(existingStatement);
+        }
+
+        // Map to hold existing SorDetails by sorId and also check
+        // if updatedStatementPushRequest is null then
+        //Update SorDetails as inActive.
         Map<String, SorDetail> existingStatementSorDetailsMap = new HashMap<>();
         for (SorDetail sorDetail : existingStatement.getSorDetails()) {
             existingStatementSorDetailsMap.put(sorDetail.getSorId(), sorDetail);
@@ -178,7 +184,7 @@ public class EnrichmentService {
                 // Update line items if necessary
                 List<BasicSor> existingBasicSorList = existingSorDetail.getLineItems();
                 List<BasicSor> newBasicSorList = newSorDetail.getLineItems();
-                if (newBasicSorList!=null &&!areBasicSorDetailsOfLineItemsEqual(existingBasicSorList, newBasicSorList)) {
+                if (newBasicSorList != null && !areBasicSorDetailsOfLineItemsEqual(existingBasicSorList, newBasicSorList)) {
                     log.info("Updated Basic Sor Line Items object in existing statement");
                       /*  newBasicSorList.stream()
                                 .forEach(basicSor -> basicSor.setReferenceId(existingSorDetail.getId()));
@@ -191,19 +197,19 @@ public class EnrichmentService {
         Map<String, BigDecimal> cumulativeQuantities = new HashMap<>();
 
 
-
         for (String sorId : existingStatementSorDetailsMap.keySet()) {
             // Mark sorDetails in the existing statement as inactive if not present in the new statement
             if (!newStatementSorIds.contains(sorId)) {
                 SorDetail existingSorDetail = existingStatementSorDetailsMap.get(sorId);
                 existingSorDetail.setIsActive(Boolean.FALSE);
             }
-            ObjectMapper objectMapper= new ObjectMapper();
+            ObjectMapper objectMapper = new ObjectMapper();
             List<BasicSorDetails> basicSorDetailsList = objectMapper.convertValue(
                     existingStatementSorDetailsMap.get(sorId).getBasicSorDetails(),
-                    new TypeReference<List<BasicSorDetails>>() {}
+                    new TypeReference<List<BasicSorDetails>>() {
+                    }
             );
-            for (BasicSorDetails detail :basicSorDetailsList) {
+            for (BasicSorDetails detail : basicSorDetailsList) {
                 String type = detail.getType();
                 cumulativeAmounts.put(type, cumulativeAmounts.getOrDefault(type, BigDecimal.ZERO).add(detail.getAmount()));
                 //cumulativeQuantities.put(type, cumulativeQuantities.getOrDefault(type, BigDecimal.ZERO).add(detail.getQuantity()));
@@ -227,7 +233,6 @@ public class EnrichmentService {
         }
 
 
-
         // Convert the map back to a list and update the statement
         List<SorDetail> updatedSorDetailsList = new ArrayList<>(existingStatementSorDetailsMap.values());
         existingStatement.setSorDetails(updatedSorDetailsList);
@@ -238,14 +243,40 @@ public class EnrichmentService {
         existingStatement.setAuditDetails(auditDetails);
 
         // Removing all the
-       // existingStatement.getBasicSorDetails().clear();
+        // existingStatement.getBasicSorDetails().clear();
         //Cummulative BasicSorDetails on Parent Level
-      //  accumulateBasicSorDetails(existingStatement);
+        //  accumulateBasicSorDetails(existingStatement);
 
         // Update the StatementPushRequest with the updated Statement object
         updatedStatementPushRequest.setStatement(existingStatement);
 
         return updatedStatementPushRequest;
+    }
+
+    /**
+     * This method is used to update all the SOR Details object status as In-Active
+     * in existingStatement if all the SORS are removed from the estimate
+     *
+     * @param existingStatement
+     * @return statementPushRequest
+     */
+    private static StatementPushRequest checkAndUpdateStatementPushRequest(Statement existingStatement) {
+        log.info("SORS_REMOVED", "Sor mapped in estimate are removed");
+        List<SorDetail> updatedSorDetail = new ArrayList<>();
+        for (SorDetail sorDetail : existingStatement.getSorDetails()) {
+            sorDetail.setIsActive(Boolean.FALSE);
+            updatedSorDetail.add(sorDetail);
+        }
+        // Remove All Sor Details and basicSorDetails from statement
+        //And set updateSorDetail
+        existingStatement.getSorDetails().clear();
+        existingStatement.getBasicSorDetails().clear();
+        existingStatement.setSorDetails(updatedSorDetail);
+
+        StatementPushRequest statementPushRequest = new StatementPushRequest();
+        statementPushRequest.setStatement(existingStatement);
+
+        return statementPushRequest;
     }
 
 
@@ -265,38 +296,38 @@ public class EnrichmentService {
         for (SorDetail sorDetail : statement.getSorDetails()) {
             log.info("Processing SorDetail with ID: {}", sorDetail.getSorId());
             if (sorDetail.getIsActive().equals(Boolean.TRUE)) {
-            if (sorDetail.getBasicSorDetails() == null || sorDetail.getBasicSorDetails().isEmpty()) {
-                log.info("BasicSorDetails are empty or null for SorDetail ID: {}", sorDetail.getSorId());
-                continue;
-            }
-
-            for (Object obj : sorDetail.getBasicSorDetails()) {
-                BasicSorDetails basicSorDetail;
-                if (obj instanceof BasicSorDetails) {
-                    basicSorDetail = (BasicSorDetails) obj;
-                } else if (obj instanceof LinkedHashMap) {
-                    basicSorDetail = convertMapToBasicSorDetails((LinkedHashMap<?, ?>) obj);
-                } else {
-                    log.info("Unrecognized object type: {}", obj.getClass().getName());
-                    continue; // Skip unrecognized types
+                if (sorDetail.getBasicSorDetails() == null || sorDetail.getBasicSorDetails().isEmpty()) {
+                    log.info("BasicSorDetails are empty or null for SorDetail ID: {}", sorDetail.getSorId());
+                    continue;
                 }
 
-                String type = basicSorDetail.getType();
-                if (!cumulativeDataMap.containsKey(type)) {
-                    cumulativeDataMap.put(type, new BasicSorDetails());
-                }
-                BasicSorDetails cumulativeData = cumulativeDataMap.get(type);
+                for (Object obj : sorDetail.getBasicSorDetails()) {
+                    BasicSorDetails basicSorDetail;
+                    if (obj instanceof BasicSorDetails) {
+                        basicSorDetail = (BasicSorDetails) obj;
+                    } else if (obj instanceof LinkedHashMap) {
+                        basicSorDetail = convertMapToBasicSorDetails((LinkedHashMap<?, ?>) obj);
+                    } else {
+                        log.info("Unrecognized object type: {}", obj.getClass().getName());
+                        continue; // Skip unrecognized types
+                    }
 
-                cumulativeData.setType(type);
+                    String type = basicSorDetail.getType();
+                    if (!cumulativeDataMap.containsKey(type)) {
+                        cumulativeDataMap.put(type, new BasicSorDetails());
+                    }
+                    BasicSorDetails cumulativeData = cumulativeDataMap.get(type);
 
-                if (cumulativeData.getAmount() == null) {
-                    cumulativeData.setAmount(BigDecimal.ZERO);
+                    cumulativeData.setType(type);
+
+                    if (cumulativeData.getAmount() == null) {
+                        cumulativeData.setAmount(BigDecimal.ZERO);
+                    }
+                    if (basicSorDetail.getAmount() != null) {
+                        cumulativeData.setAmount(cumulativeData.getAmount().add(basicSorDetail.getAmount()));
+                    }
                 }
-                if (basicSorDetail.getAmount() != null) {
-                    cumulativeData.setAmount(cumulativeData.getAmount().add(basicSorDetail.getAmount()));
-                }
-            }
-        }else{
+            } else {
                 log.info(" SorDetail with ID: {} is inactive", sorDetail.getSorId());
             }
         }
@@ -310,16 +341,20 @@ public class EnrichmentService {
     }
 
 
-
     private StatementPushRequest createStatementPushRequest(Estimate estimate, Map<String, List<EstimateDetail>> sorIdToEstimateDetailMap, RequestInfo requestInfo,
                                                             Map<String, SorComposition> sorIdCompositionMap, Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap,
-                                                            Map<String, Rates> basicSorRates, Map<String,Sor> sorDescriptionMap,List<EstimateDetail> estimateDetailList) {
+                                                            Map<String, Rates> basicSorRates, Map<String, Sor> sorDescriptionMap, List<EstimateDetail> estimateDetailList) {
 
         log.info("EnrichmentService::createStatementPushRequest");
 
-        Map<String, Object> additionalDetailsMap= new HashMap<>();
-        additionalDetailsMap.put("estimateNumber",estimate.getEstimateNumber());
-        additionalDetailsMap.put("projectId",estimate.getProjectId());
+        Map<String, Object> additionalDetailsMap = new HashMap<>();
+        if ("REVISION-ESTIMATE".equals(estimate.getBusinessService())) {
+            additionalDetailsMap.put("estimateNumber", estimate.getRevisionNumber());
+        } else {
+            additionalDetailsMap.put("estimateNumber", estimate.getEstimateNumber());
+        }
+
+        additionalDetailsMap.put("projectId", estimate.getProjectId());
 
         Statement statement = Statement.builder()
                 .id(UUID.randomUUID().toString())
@@ -328,11 +363,11 @@ public class EnrichmentService {
                 .statementType(Statement.StatementTypeEnum.ANALYSIS)
                 .additionalDetails(additionalDetailsMap)
                 .build();
-        AuditDetails auditDetails = statementServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), statement,true);
+        AuditDetails auditDetails = statementServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), statement, true);
         statement.setAuditDetails(auditDetails);
 
         enrichSorDetailsAndBasicSorDetails(statement, estimate, sorIdCompositionMap, basicSorRates,
-                Boolean.TRUE, sorIdToEstimateDetailQuantityMap, sorDescriptionMap,estimateDetailList);
+                Boolean.TRUE, sorIdToEstimateDetailQuantityMap, sorDescriptionMap, estimateDetailList);
         StatementPushRequest statementPushRequest = StatementPushRequest.builder()
                 .requestInfo(requestInfo)
                 .statement(statement)
@@ -343,10 +378,10 @@ public class EnrichmentService {
 
     private void enrichSorDetailsAndBasicSorDetails(Statement statement, Estimate estimate, Map<String, SorComposition> sorIdCompositionMap,
                                                     Map<String, Rates> basicSorRates, Boolean isCreate,
-                                                    Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap,  Map<String,Sor> sorDescriptionMap,List<EstimateDetail> estimateDetailList) {
+                                                    Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap, Map<String, Sor> sorDescriptionMap, List<EstimateDetail> estimateDetailList) {
 
         List<SorDetail> sorDetails = new ArrayList<>();
-        Long createdTime=estimate.getAuditDetails().getCreatedTime();
+        Long createdTime = estimate.getAuditDetails().getCreatedTime();
         // Extract sorId from EstimateDetail into a set
         Set<String> sorIdsInEstimateDetails = estimateDetailList.stream()
                 .map(EstimateDetail::getSorId)
@@ -355,12 +390,12 @@ public class EnrichmentService {
         for (String sorId : sorIdsInEstimateDetails) {
             List<BasicSor> lineItems = new ArrayList<>();
             SorComposition sorComposition = sorIdCompositionMap.get(sorId);
-            Map<String,Object> additionalDetailsMap= new HashMap<>();
-            Sor sor= sorDescriptionMap.get(sorId);
+            Map<String, Object> additionalDetailsMap = new HashMap<>();
+            Sor sor = sorDescriptionMap.get(sorId);
             additionalDetailsMap.put("sorDetails", sor);
-            if (sor.getSorType().equals(configuration.getWorksSorType()))  {
-                if(sorComposition == null)
-                    throw new CustomException("COMPOSITION_NOT_FOUND","Sor Composition not present for sorId:"+ sor.getId());
+            if (sor.getSorType().equals(configuration.getWorksSorType())) {
+                if (sorComposition == null)
+                    throw new CustomException("COMPOSITION_NOT_FOUND", "Sor Composition not present for sorId:" + sor.getId());
                 BigDecimal analysisQuantity = sorComposition.getQuantity();
                 List<SorCompositionBasicSorDetail> sorCompositionBasicSorDetails = sorComposition.getBasicSorDetails();
 
@@ -414,18 +449,18 @@ public class EnrichmentService {
                     basicSor.setReferenceId(sorDetail.getId());
                 });
                 sorDetail.setLineItems(lineItems);
-                if(!isCreate){
+                if (!isCreate) {
                     sorDetails.addAll(statement.getSorDetails());
                 }
                 sorDetails.add(sorDetail);
-            }else{
+            } else {
                 List<BasicSorDetails> basicSorDetails = new ArrayList<>();
-                BasicSorDetails basicSorDetail= new BasicSorDetails();
-                computeBasicSorDetailsForNonWorksSorInEstimate(sorId,sorIdToEstimateDetailQuantityMap,basicSorDetail,createdTime,sorDescriptionMap,basicSorRates,additionalDetailsMap);
+                BasicSorDetails basicSorDetail = new BasicSorDetails();
+                computeBasicSorDetailsForNonWorksSorInEstimate(sorId, sorIdToEstimateDetailQuantityMap, basicSorDetail, createdTime, sorDescriptionMap, basicSorRates, additionalDetailsMap);
 
                 basicSorDetails.add(basicSorDetail);
 
-                SorDetail sorDetail= SorDetail.builder()
+                SorDetail sorDetail = SorDetail.builder()
                         .id(UUID.randomUUID().toString())
                         .sorId(sorId)
                         .statementId(statement.getId())
@@ -434,7 +469,7 @@ public class EnrichmentService {
                         .basicSorDetails(basicSorDetails)
                         .additionalDetails(additionalDetailsMap)
                         .build();
-                if(!isCreate){
+                if (!isCreate) {
                     sorDetails.addAll(statement.getSorDetails());
                 }
                 sorDetails.add(sorDetail);
@@ -448,43 +483,44 @@ public class EnrichmentService {
 
     /**
      * This method is used to set the additional Details on SorDetails level
+     *
      * @param basicSorRates
      * @param sorIdToEstimateDetailQuantityMap
      * @param sorDescriptionMap
      * @param sorId
      * @return
      */
-    private static  Map<String, Object> getBasicSoradditionalDetailsMap(Map<String, Rates> basicSorRates, Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap,
-                                                                        Map<String, Sor> sorDescriptionMap, String sorId) {
+    private static Map<String, Object> getBasicSoradditionalDetailsMap(Map<String, Rates> basicSorRates, Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap,
+                                                                       Map<String, Sor> sorDescriptionMap, String sorId) {
         log.info("EnrichmentService:: getBasicSoradditionalDetailsMap");
         Rates rates = basicSorRates.get(sorId);
-        Map<String,Object> basicSoradditionalDetailsMap= new HashMap<>();
+        Map<String, Object> basicSoradditionalDetailsMap = new HashMap<>();
         Sor sorDescription = sorDescriptionMap.get(sorId);
 
         BigDecimal sorQuantity = BigDecimal.ZERO;
-        if(sorIdToEstimateDetailQuantityMap.get(sorId).compareTo(BigDecimal.ZERO)<0){
+        if (sorIdToEstimateDetailQuantityMap.get(sorId).compareTo(BigDecimal.ZERO) < 0) {
             sorQuantity = sorIdToEstimateDetailQuantityMap.get(sorId).multiply(BigDecimal.valueOf(-1));
-        }else{
-            sorQuantity= sorIdToEstimateDetailQuantityMap.get(sorId);
+        } else {
+            sorQuantity = sorIdToEstimateDetailQuantityMap.get(sorId);
         }
         BigDecimal labourCessAmount = null;
-        for(AmountDetail amountDetail:rates.getAmountDetails()){
+        for (AmountDetail amountDetail : rates.getAmountDetails()) {
 
-                if (amountDetail.getHeads().contains("LC")) {
-                    labourCessAmount=amountDetail.getAmount().multiply(sorQuantity);
-                    break; // Exit the loop once found
-                }else{
-                    log.error("No Labour Cess found for this sor :: {}",sorId);
-                }
+            if (amountDetail.getHeads().contains("LC")) {
+                labourCessAmount = amountDetail.getAmount().multiply(sorQuantity);
+                break; // Exit the loop once found
+            } else {
+                log.error("No Labour Cess found for this sor :: {}", sorId);
+            }
 
         }
 
         BigDecimal estimatedAmount = rates.getRate().multiply(sorQuantity).setScale(2, RoundingMode.HALF_UP);
-        basicSoradditionalDetailsMap.put("sorDetails",sorDescription);
-        basicSoradditionalDetailsMap.put("rateDetails",rates);
-        basicSoradditionalDetailsMap.put("estimatedQuantity",sorQuantity);
-        basicSoradditionalDetailsMap.put("estimatedAmount",estimatedAmount);
-        basicSoradditionalDetailsMap.put("labourCessAmount",labourCessAmount);
+        basicSoradditionalDetailsMap.put("sorDetails", sorDescription);
+        basicSoradditionalDetailsMap.put("rateDetails", rates);
+        basicSoradditionalDetailsMap.put("estimatedQuantity", sorQuantity);
+        basicSoradditionalDetailsMap.put("estimatedAmount", estimatedAmount);
+        basicSoradditionalDetailsMap.put("labourCessAmount", labourCessAmount);
         return basicSoradditionalDetailsMap;
     }
 
@@ -502,41 +538,39 @@ public class EnrichmentService {
     }
 
 
-
-
-private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal basicSorQuantity,
+    private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal basicSorQuantity,
                                   BigDecimal analysisQuantity, Map<String, Rates> basicSorRates,
                                   Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap, String worksSor,
-                                  Long estimateCreatedTime,Map<String,Sor> sorDescriptionMap) {
+                                  Long estimateCreatedTime, Map<String, Sor> sorDescriptionMap) {
 
         Rates rates = basicSorRates.get(basicSorId);
-        Map<String,Object> additionalDetailsMap= new HashMap<>();
+        Map<String, Object> additionalDetailsMap = new HashMap<>();
 
         //Rates rates  = commonUtil.getApplicatbleRate(ratesList, estimateCreatedTime);
         BigDecimal basicRate = rates.getRate();
         /*BigDecimal basicRate = BigDecimal.ONE;*/
         List<BasicSorDetails> basicSorDetailsList = new ArrayList<>();
-        Sor sor= sorDescriptionMap.get(basicSorId);
+        Sor sor = sorDescriptionMap.get(basicSorId);
         BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(worksSor);
 
-        if(quantityDefinedInEstimate.compareTo(BigDecimal.ZERO)<0){
-            quantityDefinedInEstimate=quantityDefinedInEstimate.multiply(BigDecimal.valueOf(-1));
+        if (quantityDefinedInEstimate.compareTo(BigDecimal.ZERO) < 0) {
+            quantityDefinedInEstimate = quantityDefinedInEstimate.multiply(BigDecimal.valueOf(-1));
         }
         BigDecimal quantity = (basicSorQuantity.divide(analysisQuantity, 4, RoundingMode.HALF_UP))
-                .multiply(quantityDefinedInEstimate).divide(sor.getQuantity(),4,RoundingMode.HALF_UP);
+                .multiply(quantityDefinedInEstimate).divide(sor.getQuantity(), 4, RoundingMode.HALF_UP);
         BigDecimal amount = quantity.multiply(basicRate).setScale(2, RoundingMode.HALF_UP);
 
         BasicSorDetails basicSorDetails = BasicSorDetails.builder()
                 .id(UUID.randomUUID().toString())
-               // .uom(sor.getUom())
+                // .uom(sor.getUom())
                 .type(sor.getSorType())
                 //.rate(basicRate)
                 .quantity(quantity)
-               // .name(sor.getDescription())
+                // .name(sor.getDescription())
                 .amount(amount)
                 .build();
-        additionalDetailsMap.put("sorDetails",sor);
-        additionalDetailsMap.put("rateDetails",rates);
+        additionalDetailsMap.put("sorDetails", sor);
+        additionalDetailsMap.put("rateDetails", rates);
 
         basicSorDetailsList.add(basicSorDetails);
         basicSor.setId(UUID.randomUUID().toString());
@@ -548,32 +582,32 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
 
     }
 
-  private void  computeBasicSorDetailsForNonWorksSorInEstimate( String sorId,Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap,
-                                                                BasicSorDetails basicSorDetail,Long createdTime,
-                                                                Map<String,Sor> sorDescriptionMap,Map<String, Rates> basicSorRates,Map<String,Object> additionalDetailsMap){
-      log.info("EnrichmentSerivce :: computeBasicSorDetailsForNonWorksSorInEstimate");
-      BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(sorId);
-      if(quantityDefinedInEstimate.compareTo(BigDecimal.ZERO)<0){
-          quantityDefinedInEstimate=quantityDefinedInEstimate.multiply(BigDecimal.valueOf(-1));
-      }
-      Rates rate = basicSorRates.get(sorId);
-      BigDecimal basicRate = rate.getRate();
-      Sor sor= sorDescriptionMap.get(sorId);
-      additionalDetailsMap.put("rateDetails", rate);
-      BigDecimal amount = quantityDefinedInEstimate.multiply(basicRate).divide(sor.getQuantity());
+    private void computeBasicSorDetailsForNonWorksSorInEstimate(String sorId, Map<String, BigDecimal> sorIdToEstimateDetailQuantityMap,
+                                                                BasicSorDetails basicSorDetail, Long createdTime,
+                                                                Map<String, Sor> sorDescriptionMap, Map<String, Rates> basicSorRates, Map<String, Object> additionalDetailsMap) {
+        log.info("EnrichmentSerivce :: computeBasicSorDetailsForNonWorksSorInEstimate");
+        BigDecimal quantityDefinedInEstimate = sorIdToEstimateDetailQuantityMap.get(sorId);
+        if (quantityDefinedInEstimate.compareTo(BigDecimal.ZERO) < 0) {
+            quantityDefinedInEstimate = quantityDefinedInEstimate.multiply(BigDecimal.valueOf(-1));
+        }
+        Rates rate = basicSorRates.get(sorId);
+        BigDecimal basicRate = rate.getRate();
+        Sor sor = sorDescriptionMap.get(sorId);
+        additionalDetailsMap.put("rateDetails", rate);
+        BigDecimal amount = quantityDefinedInEstimate.multiply(basicRate).divide(sor.getQuantity());
 
-      additionalDetailsMap.put("estimatedQuantity",quantityDefinedInEstimate);
-      additionalDetailsMap.put("estimatedAmount",amount);
+        additionalDetailsMap.put("estimatedQuantity", quantityDefinedInEstimate);
+        additionalDetailsMap.put("estimatedAmount", amount);
 
-      basicSorDetail.setQuantity(quantityDefinedInEstimate);
-      basicSorDetail.setAmount(amount);
-      basicSorDetail.setType(sor.getSorType());
-      basicSorDetail.setId(UUID.randomUUID().toString());
-  }
+        basicSorDetail.setQuantity(quantityDefinedInEstimate);
+        basicSorDetail.setAmount(amount);
+        basicSorDetail.setType(sor.getSorType());
+        basicSorDetail.setId(UUID.randomUUID().toString());
+    }
 
 
     private static boolean areBasicSorDetailsOfLineItemsEqual(List<BasicSor> existingBasicSorList, List<BasicSor> newBasicSorList) {
-        if(existingBasicSorList==null){
+        if (existingBasicSorList == null) {
             return false;
         }
         // Compare size
@@ -634,6 +668,7 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
 
         return !hasDifferences;
     }
+
     // Helper method to compare basicSorDetails lists
     private static boolean areBasicSorDetailsEqual(List<BasicSorDetails> existingBasicSorDetailsList, List<BasicSorDetails> newBasicSorDetailsList) {
         // If sizes differ, they are not equal
@@ -649,9 +684,9 @@ private void computeLineItems(BasicSor basicSor, String basicSorId, BigDecimal b
 
         // Compare each element in the lists
         for (int i = 0; i < existingBasicSorDetailsList.size(); i++) {
-            ObjectMapper objectMapper= new ObjectMapper();
+            ObjectMapper objectMapper = new ObjectMapper();
             BasicSorDetails detail1 = objectMapper.convertValue(existingBasicSorDetailsList.get(i), BasicSorDetails.class);
-            BasicSorDetails detail2 = objectMapper.convertValue(newBasicSorDetailsList.get(i),BasicSorDetails.class);
+            BasicSorDetails detail2 = objectMapper.convertValue(newBasicSorDetailsList.get(i), BasicSorDetails.class);
 
             if (detail1.getType().equals(detail2.getType())) {
                 if (!detail1.getAmount().equals(detail2.getAmount())) {

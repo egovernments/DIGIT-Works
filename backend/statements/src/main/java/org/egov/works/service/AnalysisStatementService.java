@@ -42,10 +42,10 @@ public class AnalysisStatementService {
         List<Statement> statementList = new ArrayList<>();
         Boolean isCreate = statementServiceUtil.checkIfCreateOperation(statementCreateRequest, statementList);
             if (isCreate) {
-                statementPushRequest = enrichmentService.enrichStatementPushRequest(statementCreateRequest,estimate);
+                statementPushRequest = enrichmentService.enrichStatementPushRequest(statementCreateRequest,estimate,Boolean.TRUE);
                 producer.push(statementConfiguration.getSaveAnalysisStatementTopic(), statementPushRequest);
             } else {
-                statementPushRequest = enrichmentService.enrichStatementPushRequestForUpdate(statementCreateRequest, statementList.get(0),estimate);
+                statementPushRequest = enrichmentService.enrichStatementPushRequestForUpdate(statementCreateRequest, statementList.get(0),estimate,Boolean.FALSE);
                 producer.push(statementConfiguration.getUpdateAnalysisStatementTopic(), statementPushRequest);
             }
             if(statementPushRequest.getStatement()==null){
