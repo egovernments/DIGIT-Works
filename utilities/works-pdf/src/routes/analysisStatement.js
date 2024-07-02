@@ -16,6 +16,15 @@ function renderError(res, errorMessage, errorCode) {
 
 }
 
+const desiredOrder = ["Material", "Labour", "Machinery"];
+
+function sortData(data, order) {
+    return data.sort((a, b) => {
+        const indexA = order.indexOf(a.sorType);
+        const indexB = order.indexOf(b.sorType);
+        return indexA - indexB;
+    });
+}
 router.post("/analysis-statement", asyncMiddleware(async function (req, res, next) {
     const requestInfo = req.body;
     const tenantId = req.query.tenantId;
@@ -70,6 +79,8 @@ router.post("/analysis-statement", asyncMiddleware(async function (req, res, nex
                         data.sorType = localizationMap[data.sorType];
                     }
                 })
+
+                AnalysisStatement.data = sortData(AnalysisStatement.data, desiredOrder);
             }
             catch (ex) {
                 if (ex.response && ex.response.data) console.log(ex.response.data);
