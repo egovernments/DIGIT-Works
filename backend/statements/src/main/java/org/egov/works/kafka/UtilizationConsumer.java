@@ -4,6 +4,7 @@ package org.egov.works.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.config.StatementConfiguration;
 import org.egov.works.service.UtilizationService;
 import org.egov.works.services.common.models.measurement.Measurement;
@@ -16,6 +17,9 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+
+import static org.egov.works.config.ErrorConfiguration.CONVERSION_ERROR_KEY;
+import static org.egov.works.config.ErrorConfiguration.CONVERSION_ERROR_VALUE;
 
 @Component
 @Slf4j
@@ -43,7 +47,13 @@ public class UtilizationConsumer {
     @KafkaListener(topics = {"${measurement.kafka.create.topic}","${measurement.kafka.update.topic}"})
     public void listen(final String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("Creating/Updating Utilization statement");
-        MeasurementRequest measurementRequest = mapper.convertValue(message, MeasurementRequest.class);
+        MeasurementRequest measurementRequest = new MeasurementRequest();
+        try {
+            measurementRequest = mapper.readValue(message, MeasurementRequest.class);
+        }catch (Exception e) {
+            log.info("Error while creating utilization statement for measurement :: " + message, e);
+            throw new CustomException(CONVERSION_ERROR_KEY, CONVERSION_ERROR_VALUE + message);
+        }
         for (Measurement measurement : measurementRequest.getMeasurements()) {
             StatementCreateRequest statementCreateRequest = enrichmentUtil
                     .getStatementCreateRequest(measurementRequest.getRequestInfo(), measurement.getId(),
