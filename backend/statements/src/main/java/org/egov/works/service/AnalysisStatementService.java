@@ -61,9 +61,6 @@ public class AnalysisStatementService {
             statementValidator.validateStatementSearchCriteria(statementSearchCriteria);
             log.info("Get statement from db");
             List<Statement> statementList=statementRepository.getStatement(statementSearchCriteria.getSearchCriteria());
-            if(statementList==null|| statementList.isEmpty() ){
-                throw new CustomException("NO_STATEMENT_FOUND","No statement present for the provided reference Id");
-            }
             return statementList;
 
         }
