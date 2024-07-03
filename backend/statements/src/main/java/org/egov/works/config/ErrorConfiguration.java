@@ -19,7 +19,7 @@ public class ErrorConfiguration {
     public static final String NO_SOR_PRESENT_MSG="Estimate does not contain any estimate details whose category is SOR";
     public static final String CONVERSION_ERROR_KEY = "CONVERSION_ERROR";
     public static final String CONVERSION_ERROR_VALUE = "Error while creating utilization statement for measurement :: ";
-
+    public static final String ANALYSIS_CONVERSION_ERROR_VALUE = "Error while creating analysis statement for estimate :: ";
 
 
 }

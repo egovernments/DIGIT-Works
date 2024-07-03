@@ -100,7 +100,8 @@ public class EnrichmentService {
             for (EstimateDetail estimateDetail : filteredActiveEstimateDetails) {
                 uniqueIdentifiers.add(estimateDetail.getSorId());
                 sorIdToEstimateDetailMap.computeIfAbsent(estimateDetail.getSorId(), k -> new ArrayList<>()).add(estimateDetail);
-                BigDecimal quantity = estimateDetail.getIsDeduction() ? estimateDetail.getQuantity().multiply(BigDecimal.valueOf(-1)) : estimateDetail.getQuantity();
+                BigDecimal quantity = estimateDetail.getIsDeduction() ? BigDecimal.valueOf(estimateDetail.getNoOfunit()).multiply(BigDecimal.valueOf(-1))
+                        : BigDecimal.valueOf(estimateDetail.getNoOfunit());
                 sorIdToEstimateDetailQuantityMap.merge(estimateDetail.getSorId(), quantity, BigDecimal::add);
             }
             Map<String, Rates> sorRates = mdmsUtil.fetchBasicRates(requestInfo, estimate.getTenantId(), new ArrayList<>(uniqueIdentifiers));

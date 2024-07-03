@@ -3,6 +3,7 @@ package org.egov.works.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.config.StatementConfiguration;
 import org.egov.works.service.AnalysisStatementService;
 import org.egov.works.services.common.models.estimate.Estimate;
@@ -13,6 +14,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
+
+import static org.egov.works.config.ErrorConfiguration.*;
+
 @Slf4j
 @Component
 public class Consumer {
@@ -41,7 +45,13 @@ public class Consumer {
     @KafkaListener(topics = {"${estimate.kafka.create.topic}","${estimate.kafka.update.topic}"})
     public void listen(final String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("Creating/Updating Analysis statement");
-        EstimateRequest estimateRequest = mapper.convertValue(message, EstimateRequest.class);
+        EstimateRequest estimateRequest = new EstimateRequest();
+        try {
+            estimateRequest =mapper.convertValue(message, EstimateRequest.class);
+        }catch (Exception e) {
+            log.info("Error while creating utilization statement for measurement :: {}", message, e);
+            throw new CustomException(CONVERSION_ERROR_KEY, ANALYSIS_CONVERSION_ERROR_VALUE + message);
+        }
         Estimate estimate=estimateRequest.getEstimate();
         if(estimate!=null){
             StatementCreateRequest statementCreateRequest = enrichmentUtil
