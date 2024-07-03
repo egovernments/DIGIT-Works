@@ -111,13 +111,13 @@ public class SchedulerEnrichment {
      */
     public void enrichScheduledJobsStatusAndEnrichAuditDetails(ScheduledJob scheduledJob) {
         log.info("SchedulerEnrichment:enrichScheduledJobsStatusAndEnrichAuditDetails");
-        for (SorDetail sorDetail : scheduledJob.getSorDetails()) {
-            if (sorDetail.getStatus().equals(StatusEnum.FAILED)) {
-                scheduledJob.setStatus(StatusEnum.FAILED);
-                break;
-            }
-        }
-
+//        for (SorDetail sorDetail : scheduledJob.getSorDetails()) {
+//            if (sorDetail.getStatus().equals(StatusEnum.FAILED)) {
+//                scheduledJob.setStatus(StatusEnum.FAILED);
+//                break;
+//            }
+//        }
+        scheduledJob.setStatus(StatusEnum.COMPLETED);
         scheduledJob.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
     }
 }

@@ -122,6 +122,7 @@ public class SchedulerService {
     public void createScheduledJobsFromConsumer(JobScheduledRequest jobScheduledRequest) {
         log.info("SchedulerService: createScheduledJobsFromConsumer");
         jobScheduledRequest.getScheduledJobs().setStatus(StatusEnum.IN_PROGRESS);
+        rateAnalysisProducer.push(configuration.getRateAnalysisJobUpdateTopic(), jobScheduledRequest);
         RequestInfo requestInfo = jobScheduledRequest.getRequestInfo();
         ScheduledJob scheduledJob = jobScheduledRequest.getScheduledJobs();
 
