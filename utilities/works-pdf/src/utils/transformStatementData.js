@@ -11,7 +11,7 @@ const transformStatementData = (data, project) => {
         const ProjectID  = project.projectNumber;
         const ProjectName = project.name;
         const locality =  project.address.locality;
-        const  boundary = project.address.boundary;
+        const  ward = project.address.boundary;
         const city = project.address.city;
         const ProjectDescription = project.description;
 
@@ -77,7 +77,7 @@ const transformStatementData = (data, project) => {
                 ProjectName,
                 ProjectDescription,
                 locality,
-                boundary,
+                ward,
                 city,
                 estimateNumber,
                 tenantId
