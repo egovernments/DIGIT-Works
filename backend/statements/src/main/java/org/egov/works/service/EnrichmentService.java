@@ -95,6 +95,7 @@ public class EnrichmentService {
             } else if (filteredActiveEstimateDetails.isEmpty()) {
                 throw new CustomException(NO_SOR_PRESENT_CODE, NO_SOR_PRESENT_MSG);
             }
+
             Set<String> uniqueIdentifiers = new HashSet<>();
             Set<String> basicSorIds = new HashSet<>();
             for (EstimateDetail estimateDetail : filteredActiveEstimateDetails) {
@@ -104,6 +105,7 @@ public class EnrichmentService {
                         : BigDecimal.valueOf(estimateDetail.getNoOfunit());
                 sorIdToEstimateDetailQuantityMap.merge(estimateDetail.getSorId(), quantity, BigDecimal::add);
             }
+           // Map<String, Sor> sorDescriptionMapForSorMappedInEstimate = mdmsUtil.fetchSorData(requestInfo, configuration.getStateLevelTenantId(), new ArrayList<>(uniqueIdentifiers), true);
             Map<String, Rates> sorRates = mdmsUtil.fetchBasicRates(requestInfo, estimate.getTenantId(), new ArrayList<>(uniqueIdentifiers));
             Map<String, SorComposition> sorIdCompositionMap = new LinkedHashMap<>();
             Long currentEpochTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000;
@@ -118,6 +120,7 @@ public class EnrichmentService {
 
 
             }
+
             if (sorIdCompositionMap != null && !sorIdCompositionMap.isEmpty()) {
                 for (SorComposition sorComposition : sorIdCompositionMap.values()) {
                     basicSorIds.addAll(sorComposition.getBasicSorDetails().stream().map(SorCompositionBasicSorDetail::getSorId).toList());
@@ -127,7 +130,7 @@ public class EnrichmentService {
                     basicSorRates.forEach((key, value) -> sorRates.putIfAbsent(key, value));
                 }
             } else {
-                throw new CustomException("COMPOSITION_NOT_PRESENT", "For Sor Ids mapped in the estimate detail no Sor Composition is present");
+                log.info("COMPOSITION_NOT_PRESENT ::: For Sor Ids mapped in the estimate detail no Sor Composition is present: {}", uniqueIdentifiers.toString());
             }
             uniqueIdentifiers.addAll(basicSorIds);
 
@@ -394,9 +397,9 @@ public class EnrichmentService {
             Map<String, Object> additionalDetailsMap = new HashMap<>();
             Sor sor = sorDescriptionMap.get(sorId);
             additionalDetailsMap.put("sorDetails", sor);
-            if (sor.getSorType().equals(configuration.getWorksSorType())) {
-                if (sorComposition == null)
-                    throw new CustomException("COMPOSITION_NOT_FOUND", "Sor Composition not present for sorId:" + sor.getId());
+            if (sor.getSorType().equals(configuration.getWorksSorType()) && sorComposition != null) {
+                /*if (sorComposition == null)
+                    throw new CustomException("COMPOSITION_NOT_FOUND", "Sor Composition not present for sorId:" + sor.getId());*/
                 BigDecimal analysisQuantity = sorComposition.getQuantity();
                 List<SorCompositionBasicSorDetail> sorCompositionBasicSorDetails = sorComposition.getBasicSorDetails();
 
@@ -548,7 +551,11 @@ public class EnrichmentService {
         Map<String, Object> additionalDetailsMap = new HashMap<>();
 
         //Rates rates  = commonUtil.getApplicatbleRate(ratesList, estimateCreatedTime);
-        BigDecimal basicRate = rates.getRate();
+        BigDecimal basicRate= BigDecimal.ZERO;
+        if(rates!=null)
+        {            basicRate = rates.getRate();
+        }
+
         /*BigDecimal basicRate = BigDecimal.ONE;*/
         List<BasicSorDetails> basicSorDetailsList = new ArrayList<>();
         Sor sor = sorDescriptionMap.get(basicSorId);
@@ -579,6 +586,7 @@ public class EnrichmentService {
         basicSor.setSorType(sor.getSorType());
         basicSor.setBasicSorDetails(basicSorDetailsList);
         basicSor.setAdditionalDetails(additionalDetailsMap);
+
 
 
     }

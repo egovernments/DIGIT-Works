@@ -6,6 +6,8 @@ import org.egov.works.web.models.Rates;
 import org.egov.works.web.models.SorComposition;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -32,7 +34,13 @@ public class CommonUtil {
                 return rate;
             }
         }
-        throw new CustomException("RATE_NOT_FOUND", "No valid rate found for given time");
+        return Rates.builder()
+                .rate(BigDecimal.ZERO)
+                .sorId(ratesList.get(0).getSorId())
+                .tenantId(ratesList.get(0).getTenantId())
+                .amountDetails( new ArrayList<>())
+                .build();
+       // throw new CustomException("RATE_NOT_FOUND", "No valid rate found for given time");
 //        return null; // Or throw an exception if no valid rate is found
         }else{
             throw new CustomException("NO_RATES_FOUND","No rates present ");
