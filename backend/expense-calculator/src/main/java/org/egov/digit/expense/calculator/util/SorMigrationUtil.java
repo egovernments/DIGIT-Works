@@ -129,6 +129,10 @@ public class SorMigrationUtil {
                         } catch (JsonProcessingException e) {
                             throw new CustomException("PARSING_ERROR", "error while parsing additionalDetails" + e);
                         }
+                        if(additionalDetailsMap.get("skillCode")==null){
+                            continue;
+                        }
+                            
                         if (sorMapping.containsKey(additionalDetailsMap.get("skillCode").toString())) {
                             additionalDetailsMap.put("skillCode", sorMapping.get(additionalDetailsMap.get("skillCode").toString()));
                         } else {
