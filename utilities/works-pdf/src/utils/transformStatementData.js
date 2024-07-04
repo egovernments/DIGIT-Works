@@ -10,7 +10,7 @@ const transformStatementData = (data, project) => {
         const measurementBookNumber = statement.additionalDetails.measurementNumber;
         const ProjectID  = project.projectNumber;
         const ProjectName = project.name;
-        const locality =  project.address.locality;
+        const locality =  project.additionalDetails && project.additionalDetails.locality != null ? project.additionalDetails.locality : project.address.locality;
         const  ward = project.address.boundary;
         const city = project.address.city;
         const ProjectDescription = project.description;
