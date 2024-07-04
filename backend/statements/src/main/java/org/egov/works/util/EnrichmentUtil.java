@@ -74,6 +74,14 @@ public class EnrichmentUtil {
             consumedAmount.setScale(4, BigDecimal.ROUND_HALF_UP);
             additionalDetails.put("consumedQuantity", consumedQuantity);
             additionalDetails.put("consumedAmount", consumedAmount);
+            BigDecimal labourCessAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
+            for (AmountDetail amountDetail : rates.getAmountDetails()) {
+                if (amountDetail.getHeads().contains("LC")){
+                    labourCessAmount = amountDetail.getAmount().multiply(consumedQuantity);
+                    break;
+                }
+            }
+            additionalDetails.put("labourCessAmount", labourCessAmount);
         }
         return additionalDetails;
     }

@@ -60,6 +60,7 @@ public class UtilizationConsumer {
                             measurement.getTenantId());
             try {
                 utilizationService.utilizationCreate(statementCreateRequest, measurement);
+                log.info("Successfully created utilization statement for measurement :: " + measurement.getId());
             } catch (Exception e) {
                 log.error("Error while creating utilization statement for measurement :: " + measurement.getId(), e);
                 producer.push(configs.getUtilizationErrorTopic(), measurement);
