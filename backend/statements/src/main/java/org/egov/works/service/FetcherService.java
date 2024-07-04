@@ -32,7 +32,7 @@ public class FetcherService {
         this.utilizationValidator = utilizationValidator;
     }
 
-    Measurement fetchAndValidateMeasurements(String id, String tenantId, RequestInfo requestInfo) {
+    public Measurement fetchAndValidateMeasurements(String id, String tenantId, RequestInfo requestInfo) {
         List<Measurement> measurements = measurementUtil.fetchMeasurements(id, tenantId, requestInfo);
         utilizationValidator.validateMeasurements(measurements);
         return measurements.get(0);

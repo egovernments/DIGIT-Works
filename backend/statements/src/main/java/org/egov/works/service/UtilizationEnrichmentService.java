@@ -61,11 +61,18 @@ public class UtilizationEnrichmentService {
         Map<String, SorComposition> sorIdToCompositionMap = null;
         Set<String> basicSorIds =new HashSet<>();
         Map<String, Sor> basicSorIdFromCompositionToSorMap = new HashMap<>();
+        Map<String, List<Rates>> worksRatesMap = new HashMap<>();
         if (!worksSorIds.isEmpty()) {
+            worksRatesMap = mdmsUtil.fetchRateForSor(new ArrayList<>(worksSorIds),
+                    statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId());
+            Set<String> compositionIds = worksRatesMap.values().stream()
+                    .flatMap(List::stream)
+                    .map(Rates::getCompositionId)
+                    .collect(Collectors.toSet());
 //            Map<String, List<Rates>> sorRateMap = mdmsUtil.fetchRateForNonWorksSor(new ArrayList<>(worksSorIds),
 //                    statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId());
-            sorIdToCompositionMap = mdmsUtil.fetchSorComposition(statementCreateRequest.getRequestInfo()
-                    , worksSorIds, statementCreateRequest.getStatementRequest().getTenantId(), measurement.getAuditDetails().getCreatedTime());
+            sorIdToCompositionMap = mdmsUtil.fetchSorCompositionBasedOnCompositionId(statementCreateRequest.getRequestInfo()
+                    , compositionIds, statementCreateRequest.getStatementRequest().getTenantId(), measurement.getAuditDetails().getCreatedTime());
             basicSorIds = sorIdToCompositionMap.values().stream()
                     .flatMap(sorComposition -> sorComposition.getBasicSorDetails().stream())
                     .map(SorCompositionBasicSorDetail::getSorId)
@@ -83,7 +90,7 @@ public class UtilizationEnrichmentService {
 
         sorIdToSorMap.putAll(basicSorIdFromCompositionToSorMap);
 
-        Map<String, List<Rates>> sorRateMap = mdmsUtil.fetchRateForNonWorksSor(new ArrayList<>(sorIdToSorMap.keySet()),
+        Map<String, List<Rates>> sorRateMap = mdmsUtil.fetchRateForSor(new ArrayList<>(sorIdToSorMap.keySet()),
                 statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId());
 
         Map<String, BigDecimal> sorIdToCummValueMap = getSorToCummValueMap(measureList, estimateDetailIdToEstimateDetailMap,

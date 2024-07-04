@@ -66,7 +66,7 @@ public class UtilizationService {
 
 
     public List<Statement> searchStatement(StatementSearchCriteria statementSearchCriteria){
-        statementValidator.validateStatementSearchCriteria(statementSearchCriteria);
+//        statementValidator.validateStatementSearchCriteria(statementSearchCriteria);
         log.info("get statement from db");
         return statementRepository.getStatement(statementSearchCriteria.getSearchCriteria());
 

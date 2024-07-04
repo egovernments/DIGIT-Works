@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.StatementConfiguration;
+import org.egov.works.service.FetcherService;
 import org.egov.works.util.EstimateUtil;
 import org.egov.works.util.MdmsUtil;
 import org.egov.works.web.models.Statement;
@@ -32,14 +33,16 @@ public class StatementValidator {
     private StatementConfiguration statementConfiguration;
 
     private EstimateUtil estimateUtil;
+    private FetcherService fetcherService;
 
     @Autowired
-    public StatementValidator(MdmsUtil mdmsUtil,ObjectMapper objectMapper,
-                              StatementConfiguration statementConfiguration,EstimateUtil estimateUtil){
+    public StatementValidator(MdmsUtil mdmsUtil, ObjectMapper objectMapper,
+                              StatementConfiguration statementConfiguration, EstimateUtil estimateUtil, FetcherService fetcherService){
         this.mdmsUtil=mdmsUtil;
         this.objectMapper=objectMapper;
         this.statementConfiguration=statementConfiguration;
         this.estimateUtil=estimateUtil;
+        this.fetcherService = fetcherService;
     }
 
     public void validateStatementOnCreate(StatementCreateRequest statementCreateRequest){
@@ -91,6 +94,9 @@ public class StatementValidator {
             validateEstimate(statementSearchCriteria.getSearchCriteria().getReferenceId(),
                     statementSearchCriteria.getSearchCriteria().getTenantId(),statementSearchCriteria.getSearchCriteria().getStatementType().toString(),
                     statementSearchCriteria.getRequestInfo());
+        } else if (statementSearchCriteria.getSearchCriteria().getStatementType().equals(Statement.StatementTypeEnum.UTILIZATION)) {
+            fetcherService.fetchAndValidateMeasurements(statementSearchCriteria.getSearchCriteria().getReferenceId(),
+                    statementSearchCriteria.getSearchCriteria().getTenantId(), statementSearchCriteria.getRequestInfo());
         }
 
 

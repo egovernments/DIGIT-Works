@@ -229,7 +229,7 @@ public class MdmsUtil {
 
     }
 
-    public Map<String, List<Rates>> fetchRateForNonWorksSor(List<String> basicSorIds, RequestInfo requestInfo,String tenantId){
+    public Map<String, List<Rates>> fetchRateForSor(List<String> basicSorIds, RequestInfo requestInfo, String tenantId){
 
         String filter = getfilter(basicSorIds.stream().collect(Collectors.toSet()), Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
