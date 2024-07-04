@@ -53,7 +53,8 @@ public class UtilizationService {
                 measurement, contract, estimate);
 
         List<Statement> previousStatements = searchStatement(enrichmentUtil.getSearchRequest(statementCreateRequest));
-        StatementPushRequest pushRequest = StatementPushRequest.builder().statement(statement).build();
+        StatementPushRequest pushRequest = StatementPushRequest.builder().requestInfo(statementCreateRequest.getRequestInfo())
+                .statement(statement).build();
         if (previousStatements.isEmpty()) {
             producer.push(statementConfiguration.getSaveAnalysisStatementTopic(), pushRequest);
         }
