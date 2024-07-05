@@ -60,6 +60,8 @@ const transformStatementData = (data, project) => {
                 if(!sorTypeToSorMap.has(value.type)){
                     sorTypeToSorMap.set(value.type, []);
                 }
+                value.amount = parseFloat(value.amount.toFixed(2));
+                value.quantity = parseFloat(value.quantity.toFixed(4));
                 value.Sno = sorTypeToSorMap.get(value.type).length + 1;
                 sorTypeToSorMap.get(value.type).push(value);
             }
