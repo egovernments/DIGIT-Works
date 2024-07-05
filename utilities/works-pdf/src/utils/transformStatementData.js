@@ -2,7 +2,8 @@ const e = require("express");
 const { logger } = require("../logger");
 
 function formatInLakh(totalAmount) {
-    let amount = totalAmount.toFixed(2); // Ensure two decimal places
+    // Ensure totalAmount is a number
+    let amount = Number(totalAmount).toFixed(2); // Ensure two decimal places
     let parts = amount.split("."); // Split the amount into whole and decimal parts
     let wholePart = parts[0];
     let decimalPart = parts.length > 1 ? "." + parts[1] : "";
@@ -72,7 +73,6 @@ const transformStatementData = (data, project) => {
                 if(!sorTypeToSorMap.has(value.type)){
                     sorTypeToSorMap.set(value.type, []);
                 }
-                value.amount = formatInLakh(value.amount);
                 value.quantity = parseFloat(value.quantity.toFixed(4));
                 value.Sno = sorTypeToSorMap.get(value.type).length + 1;
                 sorTypeToSorMap.get(value.type).push(value);
@@ -99,7 +99,8 @@ const transformStatementData = (data, project) => {
             resultArray.forEach(result => {
                 var totalAmount = 0;
                 result.amountDetails.forEach(amountDetail => {
-                    totalAmount += amountDetail.amount;
+                    totalAmount += parseFloat(amountDetail.amount);
+                    amountDetail.amount = formatInLakh(amountDetail.amount);
                 })
                 result.totalEstimatedAmount = formatInLakh(totalAmount);
             })
