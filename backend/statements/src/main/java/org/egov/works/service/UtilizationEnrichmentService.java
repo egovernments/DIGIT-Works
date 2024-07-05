@@ -285,6 +285,7 @@ public class UtilizationEnrichmentService {
         if (previousStatement == null || currentStatement == null) {
             return;
         }
+        currentStatement.setId(previousStatement.getId());
 
         // Create a map for quick lookup of SorDetail by sorId from the previous statement
         Map<String, SorDetail> sorDetailMap = new HashMap<>();
@@ -303,6 +304,7 @@ public class UtilizationEnrichmentService {
 
                 if (previousSorDetail != null) {
                     currentSorDetail.setId(previousSorDetail.getId());
+                    currentSorDetail.setStatementId(previousSorDetail.getStatementId());
 
                     // Create a map for quick lookup of BasicSor by sorId from the previous sorDetail's lineItems
                     Map<String, BasicSor> lineItemsMap = new HashMap<>();
@@ -322,9 +324,13 @@ public class UtilizationEnrichmentService {
                             if (previousLineItem != null) {
                                 currentLineItem.setId(previousLineItem.getId());
                                 currentLineItem.setReferenceId(previousLineItem.getReferenceId());
+                            } else {
+                                currentLineItem.setReferenceId(currentSorDetail.getId());
                             }
                         }
                     }
+                } else {
+                    currentSorDetail.setStatementId(currentStatement.getId());
                 }
             }
         }
