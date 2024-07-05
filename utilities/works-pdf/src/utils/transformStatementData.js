@@ -1,6 +1,18 @@
 const e = require("express");
 const { logger } = require("../logger");
 
+function formatInLakh(totalAmount) {
+    let amount = totalAmount.toFixed(2); // Ensure two decimal places
+    let parts = amount.split("."); // Split the amount into whole and decimal parts
+    let wholePart = parts[0];
+    let decimalPart = parts.length > 1 ? "." + parts[1] : "";
+
+    // Regular expression to insert commas for lakhs
+    wholePart = wholePart.replace(/\B(?=(\d{2})+(?!\d))/g, ",").replace(/^(\d+),/, '$1,');
+
+    return wholePart + decimalPart;
+}
+
 const transformStatementData = (data, project) => {
     try {
         const sorMap = new Map();
@@ -60,7 +72,7 @@ const transformStatementData = (data, project) => {
                 if(!sorTypeToSorMap.has(value.type)){
                     sorTypeToSorMap.set(value.type, []);
                 }
-                value.amount = parseFloat(value.amount.toFixed(2));
+                value.amount = formatInLakh(value.amount);
                 value.quantity = parseFloat(value.quantity.toFixed(4));
                 value.Sno = sorTypeToSorMap.get(value.type).length + 1;
                 sorTypeToSorMap.get(value.type).push(value);
@@ -89,7 +101,7 @@ const transformStatementData = (data, project) => {
                 result.amountDetails.forEach(amountDetail => {
                     totalAmount += amountDetail.amount;
                 })
-                result.totalEstimatedAmount = totalAmount.toFixed(2);;
+                result.totalEstimatedAmount = formatInLakh(totalAmount);
             })
             const AnalysisStatement = {
                 "data": resultArray
