@@ -2,6 +2,7 @@ package org.egov.works.repository.QueryBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.config.Configuration;
 import org.egov.works.web.models.JobSchedulerSearchCriteria;
 import org.egov.works.web.models.Order;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 
 @Component
@@ -68,6 +71,31 @@ public class SchedulerQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append("ras.jobid IN (").append(createQuery(searchCriteria.getJobIds())).append(")");
             addToPreparedStatement(preparedStmtList, searchCriteria.getJobIds());
+        }
+
+        if(searchCriteria.getStatus() != null){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append("ras.jobstatus = ?");
+            preparedStmtList.add(searchCriteria.getStatus().name());
+        }
+
+        if (searchCriteria.getEffectiveFromDate() != null) {
+            addClauseIfRequired(query, preparedStmtList);
+
+            //If user does not specify toDate, take today's date as toDate by default.
+            if (searchCriteria.getEffectiveToDate() == null) {
+                searchCriteria.setEffectiveToDate(Instant.now().toEpochMilli());
+            }
+
+            query.append(" ras.createdtime BETWEEN ? AND ?");
+            preparedStmtList.add(searchCriteria.getEffectiveFromDate());
+            preparedStmtList.add(searchCriteria.getEffectiveToDate());
+
+        } else {
+            //if only toDate is provided as parameter without fromDate parameter, throw an exception.
+            if (searchCriteria.getEffectiveToDate() != null) {
+                throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify EffectiveToDate without a EffectiveFromDate");
+            }
         }
         return addPaginationWrapper(query, pagination, preparedStmtList);
     }
