@@ -87,7 +87,7 @@ const transformStatementData = (data, project) => {
                 result.amountDetails.forEach(amountDetail => {
                     totalAmount += amountDetail.amount;
                 })
-                result.totalEstimatedAmount = totalAmount;
+                result.totalEstimatedAmount = totalAmount.toFixed(2);;
             })
             const AnalysisStatement = {
                 "data": resultArray
