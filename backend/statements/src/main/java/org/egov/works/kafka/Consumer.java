@@ -45,11 +45,11 @@ public class Consumer {
     @KafkaListener(topics = {"${estimate.kafka.create.topic}","${estimate.kafka.update.topic}"})
     public void listen(final String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("Creating/Updating Analysis statement");
-        EstimateRequest estimateRequest = new EstimateRequest();
+        EstimateRequest estimateRequest;
         try {
-            estimateRequest =mapper.convertValue(message, EstimateRequest.class);
+            estimateRequest =mapper.readValue(message, EstimateRequest.class);
         }catch (Exception e) {
-            log.info("Error while creating utilization statement for measurement :: {}", message, e);
+            log.info("Error while creating analysis statement for estimate :: {}", message, e);
             throw new CustomException(CONVERSION_ERROR_KEY, ANALYSIS_CONVERSION_ERROR_VALUE + message);
         }
         Estimate estimate=estimateRequest.getEstimate();
