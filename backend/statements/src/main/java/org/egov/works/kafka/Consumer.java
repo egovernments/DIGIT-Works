@@ -18,6 +18,9 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.egov.works.config.ErrorConfiguration.*;
 
 @Slf4j
@@ -64,7 +67,15 @@ public class Consumer {
                             estimate.getTenantId());
             try {
                 log.info("Inside Analysis Statement Consumer for creating statement with request ::{}",statementCreateRequest);
-                analysisStatementService.createAnalysisStatement(statementCreateRequest, estimate);
+                List<String> actionList= Arrays.asList("RE-SUBMIT","SUBMIT","DRAFT");
+
+                if(actionList.contains(estimateRequest.getWorkflow().getAction()))
+                {
+                    analysisStatementService.createAnalysisStatement(statementCreateRequest, estimate);
+                }else{
+                    log.info("Estimate application is not in edit or submit state");
+                }
+
             } catch (Exception e) {
                 log.error("Error while creating analysis statement for estimate :: {}", estimate.getId(), e);
                 producer.push(configs.getAnalysisStatementErrorTopic(), estimate);
@@ -72,7 +83,6 @@ public class Consumer {
         }else{
             log.error("Estimate Not present in the request :: {}",estimateRequest);
         }
-
     }
 
     @KafkaListener(topics = {"${measurement.kafka.create.topic}","${measurement.kafka.update.topic}"})
