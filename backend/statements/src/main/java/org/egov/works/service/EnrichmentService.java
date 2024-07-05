@@ -352,7 +352,7 @@ public class EnrichmentService {
         log.info("EnrichmentService::createStatementPushRequest");
 
         Map<String, Object> additionalDetailsMap = new HashMap<>();
-        if ("REVISION-ESTIMATE".equals(estimate.getBusinessService())) {
+        if (estimate.getRevisionNumber()!=null) {
             additionalDetailsMap.put("estimateNumber", estimate.getRevisionNumber());
         } else {
             additionalDetailsMap.put("estimateNumber", estimate.getEstimateNumber());
