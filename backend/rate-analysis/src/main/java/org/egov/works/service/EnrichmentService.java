@@ -1,5 +1,6 @@
 package org.egov.works.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.works.config.Configuration;
 import org.egov.works.util.EnrichmentUtil;
@@ -22,10 +23,12 @@ public class EnrichmentService {
 
     private final Configuration configs;
     private final EnrichmentUtil enrichmentUtil;
+    private final ObjectMapper mapper;
 
-    public EnrichmentService(Configuration configs, EnrichmentUtil enrichmentUtil) {
+    public EnrichmentService(Configuration configs, EnrichmentUtil enrichmentUtil, ObjectMapper mapper) {
         this.configs = configs;
         this.enrichmentUtil = enrichmentUtil;
+        this.mapper = mapper;
     }
 
     /**
@@ -45,6 +48,10 @@ public class EnrichmentService {
             for (LineItem lineItem : rateAnalysis.getLineItems()) {
                 for (AmountDetail amountDetail : lineItem.getAmountDetails()) {
                     // If the heads already exists in the map, add the AmountDetail to the existing list
+                    Map<String, Object> additonalDetailsMap = mapper.convertValue(lineItem.getAdditionalDetails(), Map.class);
+                    if(isHeadsMisMatch(amountDetail.getHeads(), additonalDetailsMap.get("sorType").toString())) {
+                        continue;
+                    }
                     if (amountDetailMap.containsKey(amountDetail.getHeads())) {
                         amountDetailMap.get(amountDetail.getHeads()).add(amountDetail);
                     } else {
@@ -89,7 +96,7 @@ public class EnrichmentService {
                 labourCessAmountDetail = AmountDetail.builder().amount(amountForLabourCess).type(AmountDetail.TypeEnum.PERCENTAGE).heads(configs.getLabourCessHeadCode()).build();
                 finalAmountDetails.add(labourCessAmountDetail);
             } else {
-                labourCessAmountDetail.setAmount(labourCessAmountDetail.getAmount().add(amountForLabourCess));
+                labourCessAmountDetail.setAmount(amountForLabourCess);
             }
 
 
@@ -107,5 +114,16 @@ public class EnrichmentService {
         }
         return ratesList;
     }
+
+    private boolean isHeadsMisMatch(String heads, String sorType) {
+        if (sorType.equalsIgnoreCase("L") && (heads.contains("MA") || heads.contains("MHA")))
+            return true;
+        if (sorType.equalsIgnoreCase("E") && (heads.contains("MA") || heads.contains("LA")))
+            return true;
+        if (sorType.equalsIgnoreCase("M") && (heads.contains("MHA") || heads.contains("LA")))
+            return true;
+        return false;
+    }
+
 
 }
