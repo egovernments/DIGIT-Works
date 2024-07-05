@@ -20,9 +20,9 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.works.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM_MDMS;
-
-;
+;import static org.egov.works.config.ErrorConfiguration.MDMS_PARSE_EXCEPTION_KEY;
+import static org.egov.works.config.ErrorConfiguration.MDMS_PARSE_EXCEPTION_MSG;
+import static org.egov.works.config.ServiceConstants.*;
 
 @Slf4j
 @Component
@@ -64,11 +64,11 @@ public class MdmsUtil {
 
         String filter = getfilter(sorIdSet,Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorComposition = fetchMdmsData(requestInfo,
-                configs.getStateLevelTenantId(), "WORKS-SOR",
-                Collections.singletonList("Composition"), filter);
+                configs.getStateLevelTenantId(), WORKS_SOR_KEY,
+                Collections.singletonList(MDMS_COMPOSITION_MASTER_NAME), filter);
 
 
-        JSONArray jsonArray = sorComposition.get("WORKS-SOR").get("Composition");
+        JSONArray jsonArray = sorComposition.get(WORKS_SOR_KEY).get(MDMS_COMPOSITION_MASTER_NAME);
         List<SorComposition> sorCompositions = null;
         try {
             sorCompositions = mapper.readValue(
@@ -76,7 +76,7 @@ public class MdmsUtil {
                     mapper.getTypeFactory().constructCollectionType(List.class, SorComposition.class)
             );
         } catch (JsonProcessingException e) {
-            throw new CustomException("MDMS_PARSE_EXCEPTION", "Error while parsing mdms response");
+            throw new CustomException(MDMS_PARSE_EXCEPTION_KEY, MDMS_PARSE_EXCEPTION_MSG);
         }
         Map<String, List<SorComposition>> sorIdToCompositionMap = sorCompositions.stream().collect(Collectors.groupingBy(e -> e.getSorId()));
 
@@ -108,11 +108,11 @@ public class MdmsUtil {
 
         String filter = getfilterForSorComposition(compositionId);
         Map<String, Map<String, JSONArray>> sorComposition = fetchMdmsData(requestInfo,
-                configs.getStateLevelTenantId(), "WORKS-SOR",
-                Collections.singletonList("Composition"), filter);
+                configs.getStateLevelTenantId(), WORKS_SOR_KEY,
+                Collections.singletonList(MDMS_COMPOSITION_MASTER_NAME), filter);
 
 
-        JSONArray jsonArray = sorComposition.get("WORKS-SOR").get("Composition");
+        JSONArray jsonArray = sorComposition.get(WORKS_SOR_KEY).get(MDMS_COMPOSITION_MASTER_NAME);
         List<SorComposition> sorCompositions = null;
         try {
             sorCompositions = mapper.readValue(
@@ -120,7 +120,7 @@ public class MdmsUtil {
                     mapper.getTypeFactory().constructCollectionType(List.class, SorComposition.class)
             );
         } catch (JsonProcessingException e) {
-            throw new CustomException("MDMS_PARSE_EXCEPTION", "Error while parsing mdms response");
+            throw new CustomException(MDMS_PARSE_EXCEPTION_KEY, MDMS_PARSE_EXCEPTION_MSG);
         }
         Map<String, List<SorComposition>> sorIdToCompositionMap = sorCompositions.stream().collect(Collectors.groupingBy(e -> e.getSorId()));
 
@@ -186,10 +186,10 @@ public class MdmsUtil {
 
         String filter = getfilter(new HashSet<>(sorsList), Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
-                tenantId, "WORKS-SOR",
-                Collections.singletonList("Rates"), filter);
+                tenantId, WORKS_SOR_KEY,
+                Collections.singletonList(RATES_MASTER), filter);
         List<Rates> ratesList = new ArrayList<>();
-        for(Object object : sorRates.get("WORKS-SOR").get("Rates")) {
+        for(Object object : sorRates.get(WORKS_SOR_KEY).get(RATES_MASTER)) {
             Rates  rates = mapper.convertValue(object, Rates.class);
             ratesList.add(rates);
         }
@@ -216,10 +216,10 @@ public class MdmsUtil {
         String filter = getfilter(sorsList.stream().collect(Collectors.toSet()), isSorRequest);
         Map <String, Sor> sorIdToSorMap= new HashMap<>();
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
-                tenantId, "WORKS-SOR",
-                Collections.singletonList("SOR"), filter);
+                tenantId, WORKS_SOR_KEY,
+                Collections.singletonList(SOR), filter);
        // List<Sor> sorList = new ArrayList<>();
-        for(Object object : sorRates.get("WORKS-SOR").get("SOR")) {
+        for(Object object : sorRates.get(WORKS_SOR_KEY).get(SOR)) {
             Sor  sor = mapper.convertValue(object, Sor.class);
             sorIdToSorMap.put(sor.getId(),sor);
            // sorList.add(sor);
@@ -233,10 +233,10 @@ public class MdmsUtil {
 
         String filter = getfilter(basicSorIds.stream().collect(Collectors.toSet()), Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
-                tenantId, "WORKS-SOR",
-                Collections.singletonList("Rates"), filter);
+                tenantId, WORKS_SOR_KEY,
+                Collections.singletonList(RATES_MASTER), filter);
         List<Rates> ratesList = new ArrayList<>();
-        for(Object object : sorRates.get("WORKS-SOR").get("Rates")) {
+        for(Object object : sorRates.get(WORKS_SOR_KEY).get(RATES_MASTER)) {
             Rates  rates = mapper.convertValue(object, Rates.class);
             ratesList.add(rates);
         }

@@ -11,6 +11,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+import static org.egov.works.config.ErrorConfiguration.*;
+
 @Component
 @Slf4j
 public class UtilizationValidator {
@@ -25,19 +27,19 @@ public class UtilizationValidator {
 
     public void validateMeasurements(List<Measurement> measurements) {
         if (CollectionUtils.isEmpty(measurements)) {
-            throw new CustomException("MEASUREMENTS_NOT_FOUND", "Measurements not found");
+            throw new CustomException(MEASUREMENTS_NOT_FOUND_KEY, MEASUREMENTS_NOT_FOUND_MSG);
         }
     }
 
     public void validateContracts(List<Contract> contracts) {
         if (CollectionUtils.isEmpty(contracts)) {
-            throw new CustomException("CONTRACTS_NOT_FOUND", "Contracts not found");
+            throw new CustomException(CONTRACTS_NOT_FOUND_KEY, CONTRACTS_NOT_FOUND_MSG);
         }
     }
 
     public void validateEstimates(List<Estimate> estimates) {
         if (CollectionUtils.isEmpty(estimates)) {
-            throw new CustomException("ESTIMATES_NOT_FOUND", "Estimates not found");
+            throw new CustomException(ESTIMATES_NOT_FOUND_KEY, ESTIMATES_NOT_FOUND_MSG);
         }
     }
 }

@@ -14,6 +14,9 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.works.config.ErrorConfiguration.NO_RATES_FOUND_FOR_BASIC_SOR_KEY;
+import static org.egov.works.config.ErrorConfiguration.NO_RATES_FOUND_FOR_BASIC_SOR_MSG;
+
 @Service
 @Slf4j
 public class CalculatorService {
@@ -59,7 +62,7 @@ public class CalculatorService {
             calculateAmount(rates, typeToBasicSorDetailsMap, sor, quantity);
         } else {
             log.error("No rates found for basicSorId : " + sorId);
-            throw new CustomException("NO_RATES_FOUND_FOR_BASIC_SOR", "No rates found for basicSorId : " + sorId);
+            throw new CustomException(NO_RATES_FOUND_FOR_BASIC_SOR_KEY, NO_RATES_FOUND_FOR_BASIC_SOR_MSG + sorId);
         }
 
     }

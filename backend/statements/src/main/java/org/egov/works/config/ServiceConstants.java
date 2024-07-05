@@ -58,6 +58,9 @@ public class ServiceConstants {
     public static final String NON_SOR= "NON-SOR";
     public static final String SOR= "SOR";
     public static final String MDMS_COMPOSITION_MASTER_NAME = "Composition";
+    public static final String WORKS_SOR_KEY = "WORKS-SOR";
+    public static final String RATES_MASTER = "Rates";
+    public static final String WORKS_TYPE = "W";
 }
 
 
