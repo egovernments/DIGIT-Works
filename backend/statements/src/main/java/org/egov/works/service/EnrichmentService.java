@@ -245,9 +245,7 @@ public class EnrichmentService {
         // Set audit details
         AuditDetails auditDetails = statementServiceUtil.getAuditDetails(statementCreateRequest.getRequestInfo().getUserInfo().getUuid(), existingStatement, false);
         existingStatement.setAuditDetails(auditDetails);
-
-        // Removing all the
-        // existingStatement.getBasicSorDetails().clear();
+        existingStatement.setAdditionalDetails(updatedStatementPushRequest.getStatement().getAdditionalDetails());
         //Cummulative BasicSorDetails on Parent Level
         //  accumulateBasicSorDetails(existingStatement);
 
