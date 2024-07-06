@@ -197,12 +197,13 @@ public class EnrichmentService {
                 existingStatementSorDetailsMap.put(sorId,existingSorDetail);
             }
         }
-        // Track cumulative amounts for each sorType
-        Map<String, BigDecimal> cumulativeAmounts = new HashMap<>();
-        Map<String, BigDecimal> cumulativeQuantities = new HashMap<>();
+
+       // Map<String, BigDecimal> cumulativeQuantities = new HashMap<>();
 
 
         for (String sorId : existingStatementSorDetailsMap.keySet()) {
+            // Track cumulative amounts for each sorType
+            Map<String, BigDecimal> cumulativeAmounts = new HashMap<>();
             // Mark sorDetails in the existing statement as inactive if not present in the new statement
             if (!newStatementSorIds.contains(sorId)) {
                 SorDetail existingSorDetail = existingStatementSorDetailsMap.get(sorId);
@@ -217,6 +218,7 @@ public class EnrichmentService {
             for (BasicSorDetails detail : basicSorDetailsList) {
                 String type = detail.getType();
                 cumulativeAmounts.put(type, cumulativeAmounts.getOrDefault(type, BigDecimal.ZERO).add(detail.getAmount()));
+
                 //cumulativeQuantities.put(type, cumulativeQuantities.getOrDefault(type, BigDecimal.ZERO).add(detail.getQuantity()));
             }
             // Update cumulative amounts and quantities
