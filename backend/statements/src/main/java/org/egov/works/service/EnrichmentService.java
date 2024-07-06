@@ -181,9 +181,10 @@ public class EnrichmentService {
                 // Update existingSorDetail with newSorDetail if they differ
                 SorDetail existingSorDetail = existingStatementSorDetailsMap.get(sorId);
                 existingSorDetail.setAdditionalDetails(newSorDetail.getAdditionalDetails());
-                if (!areBasicSorDetailsEqual(existingSorDetail.getBasicSorDetails(), newSorDetail.getBasicSorDetails())) {
+                existingSorDetail.setBasicSorDetails(new ArrayList<>(newSorDetail.getBasicSorDetails()));
+               /* if (!areBasicSorDetailsEqual(existingSorDetail.getBasicSorDetails(), newSorDetail.getBasicSorDetails())) {
                     existingSorDetail.setBasicSorDetails(new ArrayList<>(newSorDetail.getBasicSorDetails()));
-                }
+                }*/
 
                 // Update line items if necessary
                 List<BasicSor> existingBasicSorList = existingSorDetail.getLineItems();
