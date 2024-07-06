@@ -208,6 +208,7 @@ public class EnrichmentService {
             if (!newStatementSorIds.contains(sorId)) {
                 SorDetail existingSorDetail = existingStatementSorDetailsMap.get(sorId);
                 existingSorDetail.setIsActive(Boolean.FALSE);
+                existingStatementSorDetailsMap.put(sorId,existingSorDetail);
             }
             ObjectMapper objectMapper = new ObjectMapper();
             List<BasicSorDetails> basicSorDetailsList = objectMapper.convertValue(
@@ -243,14 +244,14 @@ public class EnrichmentService {
         // Convert the map back to a list and update the statement
         List<SorDetail> updatedSorDetailsList = new ArrayList<>(existingStatementSorDetailsMap.values());
         existingStatement.setSorDetails(updatedSorDetailsList);
-        existingStatement.setBasicSorDetails(updatedStatementPushRequest.getStatement().getBasicSorDetails());
+        //existingStatement.setBasicSorDetails(updatedStatementPushRequest.getStatement().getBasicSorDetails());
 
         // Set audit details
         AuditDetails auditDetails = statementServiceUtil.getAuditDetails(statementCreateRequest.getRequestInfo().getUserInfo().getUuid(), existingStatement, false);
         existingStatement.setAuditDetails(auditDetails);
         existingStatement.setAdditionalDetails(updatedStatementPushRequest.getStatement().getAdditionalDetails());
         //Cummulative BasicSorDetails on Parent Level
-        //  accumulateBasicSorDetails(existingStatement);
+          accumulateBasicSorDetails(existingStatement);
 
         // Update the StatementPushRequest with the updated Statement object
         updatedStatementPushRequest.setStatement(existingStatement);
@@ -508,16 +509,13 @@ public class EnrichmentService {
         } else {
             sorQuantity = sorIdToEstimateDetailQuantityMap.get(sorId);
         }
-        BigDecimal labourCessAmount = null;
+        BigDecimal labourCessAmount = BigDecimal.ZERO;
         for (AmountDetail amountDetail : rates.getAmountDetails()) {
 
             if (amountDetail.getHeads().contains("LC")) {
                 labourCessAmount = amountDetail.getAmount().multiply(sorQuantity);
                 break; // Exit the loop once found
-            } else {
-                log.error("No Labour Cess found for this sor :: {}", sorId);
             }
-
         }
 
         BigDecimal estimatedAmount = rates.getRate().multiply(sorQuantity).setScale(2, RoundingMode.HALF_UP);
