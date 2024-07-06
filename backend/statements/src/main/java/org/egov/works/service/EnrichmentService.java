@@ -194,6 +194,7 @@ public class EnrichmentService {
                                 .forEach(basicSor -> basicSor.setReferenceId(existingSorDetail.getId()));
                     existingSorDetail.setLineItems(new ArrayList<>(newBasicSorList));*/
                 }
+                existingStatementSorDetailsMap.put(sorId,existingSorDetail);
             }
         }
         // Track cumulative amounts for each sorType
