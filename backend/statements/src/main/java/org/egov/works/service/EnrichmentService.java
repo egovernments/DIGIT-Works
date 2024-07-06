@@ -189,6 +189,7 @@ public class EnrichmentService {
                 // Update line items if necessary
                 List<BasicSor> existingBasicSorList = existingSorDetail.getLineItems();
                 List<BasicSor> newBasicSorList = newSorDetail.getLineItems();
+
                 if (newBasicSorList != null && !areBasicSorDetailsOfLineItemsEqual(existingBasicSorList, newBasicSorList)) {
                     log.info("Updated Basic Sor Line Items object in existing statement");
                       /*  newBasicSorList.stream()
@@ -625,7 +626,8 @@ public class EnrichmentService {
         }
 
         // Create a list to store updated details
-        List<BasicSor> updatedDetails = new ArrayList<>();
+        List<BasicSorDetails> updatedDetails = new ArrayList<>();
+        List<BasicSor> updatedBasicSorList= new ArrayList<>();
         boolean hasDifferences = false;
 
         // Compare each element
@@ -634,18 +636,29 @@ public class EnrichmentService {
             BasicSor newBasicSor = newBasicSorList.get(i);
 
             if (existingBasicSor.getSorId().equals(newBasicSor.getSorId())) {
-                if (!areBasicSorDetailsEqual(existingBasicSor.getBasicSorDetails(), newBasicSor.getBasicSorDetails())) {
+                updatedDetails.addAll(newBasicSor.getBasicSorDetails());
+                BasicSor updatedBasicSor= new BasicSor();
+                updatedBasicSor.setBasicSorDetails(updatedDetails);
+                updatedBasicSor.setSorType(existingBasicSor.getSorType());
+                updatedBasicSor.setId(existingBasicSor.getId());
+                updatedBasicSor.setAdditionalDetails(newBasicSor.getAdditionalDetails());
+                updatedBasicSor.setReferenceId(existingBasicSor.getReferenceId());
+                updatedBasicSor.setSorId(existingBasicSor.getSorId());
+                updatedBasicSorList.add(updatedBasicSor);
+
+                hasDifferences = true;
+               /* if (!areBasicSorDetailsEqual(existingBasicSor.getBasicSorDetails(), newBasicSor.getBasicSorDetails())) {
                     // Update the basicSorDetails of existingBasicSor
                     existingBasicSor.setBasicSorDetails(newBasicSor.getBasicSorDetails());
                     updatedDetails.add(existingBasicSor);
                     hasDifferences = true;
-                }
+                }*/
             }
         }
         // If there were differences, update the new list with changes
         if (hasDifferences) {
             // First, create a set of sorIds from updatedDetails for quick lookup
-            Set<String> updatedSorIds = updatedDetails.stream()
+            Set<String> updatedSorIds = updatedBasicSorList.stream()
                     .map(BasicSor::getSorId)
                     .collect(Collectors.toSet());
 
@@ -658,7 +671,7 @@ public class EnrichmentService {
                             return existingBasicSor;
                         } else {
                             // If present, find corresponding updated detail if available
-                            Optional<BasicSor> updatedDetail = updatedDetails.stream()
+                            Optional<BasicSor> updatedDetail = updatedBasicSorList.stream()
                                     .filter(newBasicSor -> newBasicSor.getSorId().equals(existingBasicSor.getSorId()))
                                     .findFirst();
 
