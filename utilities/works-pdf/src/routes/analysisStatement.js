@@ -9,7 +9,7 @@ const {search_rateAnalysisStatementDetails, search_localization} = require("../a
 const {search_projectDetails_by_ID} = require("../api");
 const {create_pdf} = require("../api");
 const get = require("lodash.get");
-const {getCityLocalizationPrefix, getLocalizationByKey} = require("../utils/localization");
+const {getCityLocalizationPrefix, getLocalizationByKey, getStateLocalizationModule, getCityLocalizationModule} = require("../utils/localization");
 
 function renderError(res, errorMessage, errorCode) {
     if (errorCode == undefined) errorCode = 500;
@@ -91,7 +91,10 @@ router.post("/analysis-statement", asyncMiddleware(async function (req, res, nex
                     msgId = msgId.split("|")
                     lang = msgId.length == 2 ? msgId[1] : lang;
                 }
-                let module = "rainmaker-statement,rainmaker-common";
+                let stateLocalizationModule = getStateLocalizationModule(tenantId);
+                let cityLocalizationModule = getCityLocalizationModule(tenantId);
+
+                let module = ["rainmaker-statement", stateLocalizationModule, cityLocalizationModule].join(",");
                 let localizations = await search_localization(localizationReq, lang, module,tenantId );
                 localizations.data.messages.forEach(localObj => {
                     localizationMap[localObj.code] = localObj.message;
