@@ -15,6 +15,7 @@ import org.egov.works.util.EstimateUtil;
 import org.egov.works.util.MdmsUtil;
 import org.egov.works.util.StatementServiceUtil;
 import org.egov.works.web.models.*;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -195,9 +196,6 @@ public class EnrichmentService {
                     log.info("Updated Basic Sor Line Items object in existing statement");
 
                     updatedBasicSorList.addAll(existingBasicSorList);
-                      /*  newBasicSorList.stream()
-                                .forEach(basicSor -> basicSor.setReferenceId(existingSorDetail.getId()));
-                    existingSorDetail.setLineItems(new ArrayList<>(newBasicSorList));*/
                     // Set updatedBasicSorList to existingSorDetail after updates
                     existingSorDetail.setLineItems(updatedBasicSorList);
                 }
@@ -631,34 +629,25 @@ public class EnrichmentService {
             return false;
         }
 
-        // Create a list to store updated details
-        List<BasicSorDetails> updatedDetails = new ArrayList<>();
         List<BasicSor> updatedBasicSorList= new ArrayList<>();
         boolean hasDifferences = false;
 
-        // Compare each element
-        for (int i = 0; i < existingBasicSorList.size(); i++) {
-            BasicSor existingBasicSor = existingBasicSorList.get(i);
-            BasicSor newBasicSor = newBasicSorList.get(i);
+        // Create a map for newBasicSorList
+        Map<String, BasicSor> newBasicSorMap = new HashMap<>();
+        for (BasicSor basicSor : newBasicSorList) {
+            newBasicSorMap.put(basicSor.getSorId(), basicSor);
+        }
 
-            if (existingBasicSor.getSorId().equals(newBasicSor.getSorId())) {
-                updatedDetails.addAll(newBasicSor.getBasicSorDetails());
-                BasicSor updatedBasicSor= new BasicSor();
-                updatedBasicSor.setBasicSorDetails(updatedDetails);
-                updatedBasicSor.setSorType(existingBasicSor.getSorType());
-                updatedBasicSor.setId(existingBasicSor.getId());
-                updatedBasicSor.setAdditionalDetails(newBasicSor.getAdditionalDetails());
-                updatedBasicSor.setReferenceId(existingBasicSor.getReferenceId());
-                updatedBasicSor.setSorId(existingBasicSor.getSorId());
+        for (BasicSor existingBasicSor : existingBasicSorList) {
+            String sorId = existingBasicSor.getSorId();
+            if (newBasicSorMap.containsKey(sorId)) {
+                BasicSor newBasicSor = newBasicSorMap.get(sorId);
+
+                BasicSor updatedBasicSor = getBasicSor(existingBasicSor, newBasicSor);
+
                 updatedBasicSorList.add(updatedBasicSor);
-
                 hasDifferences = true;
-               /* if (!areBasicSorDetailsEqual(existingBasicSor.getBasicSorDetails(), newBasicSor.getBasicSorDetails())) {
-                    // Update the basicSorDetails of existingBasicSor
-                    existingBasicSor.setBasicSorDetails(newBasicSor.getBasicSorDetails());
-                    updatedDetails.add(existingBasicSor);
-                    hasDifferences = true;
-                }*/
+
             }
         }
         // If there were differences, update the new list with changes
@@ -695,6 +684,18 @@ public class EnrichmentService {
         }
 
         return !hasDifferences;
+    }
+
+    private static  BasicSor getBasicSor(BasicSor existingBasicSor, BasicSor newBasicSor) {
+        List<BasicSorDetails> updatedDetails = new ArrayList<>(newBasicSor.getBasicSorDetails());
+        BasicSor updatedBasicSor = new BasicSor();
+        updatedBasicSor.setBasicSorDetails(updatedDetails);
+        updatedBasicSor.setSorType(existingBasicSor.getSorType());
+        updatedBasicSor.setId(existingBasicSor.getId());
+        updatedBasicSor.setAdditionalDetails(newBasicSor.getAdditionalDetails());
+        updatedBasicSor.setReferenceId(existingBasicSor.getReferenceId());
+        updatedBasicSor.setSorId(existingBasicSor.getSorId());
+        return updatedBasicSor;
     }
 
     // Helper method to compare basicSorDetails lists
