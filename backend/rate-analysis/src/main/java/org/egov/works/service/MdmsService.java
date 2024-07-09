@@ -112,11 +112,11 @@ public class MdmsService {
         if(previousValidFrom.equals(currentValidFrom)){
             previousRates.setIsActive(false);
         }else{
-            Long currentValidFromLong = Long.parseLong(currentValidFrom);
+            long currentValidFromLong = Long.parseLong(currentValidFrom);
             LocalDateTime currentDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(currentValidFromLong), ZoneId.systemDefault());
             LocalDateTime endOfPreviousDay = currentDateTime.toLocalDate().minusDays(1).atTime(LocalTime.of(23, 59, 59));
-            Long endOfPreviousDayEpochTime = endOfPreviousDay.toEpochSecond(ZoneOffset.UTC);
-            previousData = ((ObjectNode) previousData).put("validTo", endOfPreviousDayEpochTime.toString());
+            long endOfPreviousDayEpochTime = endOfPreviousDay.toEpochSecond(ZoneOffset.UTC);
+            previousData = ((ObjectNode) previousData).put("validTo", Long.toString(endOfPreviousDayEpochTime));
             previousRates.setData(previousData);
         }
         MdmsRequest updateMdmsRequest = MdmsRequest.builder()
