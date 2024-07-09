@@ -79,5 +79,7 @@ public class ServiceConstants {
     public static final String DESCRIPTION_KEY = "description";
     public static final String CODE_KEY = "code";
 
+    public static final String ERROR_WHILE_UPDATING_MDMS = "Exception occurred while updating mdms data: ";
+
 
 }

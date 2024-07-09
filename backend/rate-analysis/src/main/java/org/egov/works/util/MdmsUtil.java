@@ -35,6 +35,17 @@ public class MdmsUtil {
     @Autowired
     private CommonUtil commonUtil;
 
+    public void updateMdmsData(MdmsRequest mdmsRequest){
+        StringBuilder uri = new StringBuilder();
+        uri.append(configs.getMdmsHost()).append(configs.getUpdateEndPoint()).append(mdmsRequest.getMdms().getSchemaCode());
+        Object response = new HashMap<>();
+        try {
+            response = restTemplate.postForObject(uri.toString(), mdmsRequest, Map.class);
+        } catch (Exception e) {
+            log.error(ERROR_WHILE_UPDATING_MDMS, e);
+        }
+    }
+
       public MdmsResponseV2 fetchSorsFromMdms(MdmsSearchCriteriaV2 mdmsSearchCriteria) {
         MdmsResponseV2 mdmsResponse = new MdmsResponseV2();
         StringBuilder uri = new StringBuilder();

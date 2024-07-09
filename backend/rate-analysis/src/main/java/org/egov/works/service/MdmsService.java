@@ -7,10 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.Configuration;
 import org.egov.works.repository.ServiceRequestRepository;
+import org.egov.works.util.MdmsUtil;
 import org.egov.works.web.models.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +29,14 @@ public class MdmsService {
     private final ObjectMapper mapper;
     private final ServiceRequestRepository restRepo;
     private final Configuration configs;
+    private final MdmsUtil mdmsUtil;
 
-    public MdmsService(ObjectMapper mapper, ServiceRequestRepository restRepo, Configuration configs) {
+    public MdmsService(ObjectMapper mapper, ServiceRequestRepository restRepo, Configuration configs, MdmsUtil mdmsUtil) {
 
         this.mapper = mapper;
         this.restRepo = restRepo;
         this.configs = configs;
+        this.mdmsUtil = mdmsUtil;
     }
 
     public void createRevisedRates(List<Rates> revisedRates, Map<String, Rates> oldRatesMap, RequestInfo requestInfo) {
@@ -98,8 +102,27 @@ public class MdmsService {
     }
 
 
-
-
-
-
+    public void updateMdmsDataForRatesAndComposition(MdmsRequest mdmsRequest, Mdms previousRates) {
+        log.info("RateAnalysisService: updateMdmsDataForRatesAndComposition");
+        Mdms currentMdms = mdmsRequest.getMdms();
+        JsonNode currentData = currentMdms.getData();
+        JsonNode previousData = previousRates.getData();
+        String currentValidFrom = currentData.get("validFrom").asText();
+        String previousValidFrom = previousData.get("validFrom").asText();
+        if(previousValidFrom.equals(currentValidFrom)){
+            previousRates.setIsActive(false);
+        }else{
+            Long currentValidFromLong = Long.parseLong(currentValidFrom);
+            LocalDateTime currentDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(currentValidFromLong), ZoneId.systemDefault());
+            LocalDateTime endOfPreviousDay = currentDateTime.toLocalDate().minusDays(1).atTime(LocalTime.of(23, 59, 59));
+            Long endOfPreviousDayEpochTime = endOfPreviousDay.toEpochSecond(ZoneOffset.UTC);
+            previousData = ((ObjectNode) previousData).put("validTo", endOfPreviousDayEpochTime.toString());
+            previousRates.setData(previousData);
+        }
+        MdmsRequest updateMdmsRequest = MdmsRequest.builder()
+                        .requestInfo(mdmsRequest.getRequestInfo())
+                                .mdms(previousRates)
+                                        .build();
+        mdmsUtil.updateMdmsData(updateMdmsRequest);
+    }
 }

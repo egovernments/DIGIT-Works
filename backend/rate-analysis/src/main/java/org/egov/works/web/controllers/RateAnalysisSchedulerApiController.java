@@ -2,12 +2,10 @@ package org.egov.works.web.controllers;
 
 import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.works.kafka.RateAnalysisProducer;
 import org.egov.works.service.SchedulerService;
 import org.egov.works.util.ResponseInfoFactory;
-import org.egov.works.web.models.JobSchedulerRequest;
-import org.egov.works.web.models.JobSchedulerResponse;
-import org.egov.works.web.models.JobSchedulerSearchCriteria;
-import org.egov.works.web.models.ScheduledJob;
+import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +23,13 @@ public class RateAnalysisSchedulerApiController {
 
     private final SchedulerService schedulerService;
     private final ResponseInfoFactory responseInfoFactory;
+    private final RateAnalysisProducer rateAnalysisProducer;
 
     @Autowired
-    public RateAnalysisSchedulerApiController(SchedulerService schedulerService, ResponseInfoFactory responseInfoFactory) {
+    public RateAnalysisSchedulerApiController(SchedulerService schedulerService, ResponseInfoFactory responseInfoFactory, RateAnalysisProducer rateAnalysisProducer) {
         this.schedulerService = schedulerService;
         this.responseInfoFactory = responseInfoFactory;
+        this.rateAnalysisProducer = rateAnalysisProducer;
     }
 
     @RequestMapping(value = "scheduler/_create", method = RequestMethod.POST)
@@ -46,6 +46,12 @@ public class RateAnalysisSchedulerApiController {
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(jobSchedulerSearchCriteria.getRequestInfo(), true);
         JobSchedulerResponse jobSchedulerResponse = JobSchedulerResponse.builder().responseInfo(responseInfo).scheduledJobs(scheduledJobs).build();
         return new ResponseEntity<>(jobSchedulerResponse, HttpStatus.OK);
+    }
+
+    // TODO: Remove this test controller after testing
+    @RequestMapping(value = "scheduler/_test", method = RequestMethod.POST)
+    public void rateAnalysisV1SchedulerTestPost(@Valid @RequestBody MdmsRequest mdmsRequest) {
+        rateAnalysisProducer.push("save-mdms-data", mdmsRequest);
     }
 }
 

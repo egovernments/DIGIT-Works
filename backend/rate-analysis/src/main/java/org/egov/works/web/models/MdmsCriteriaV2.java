@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.Map;
 import java.util.Set;
 
 @Builder
@@ -27,6 +28,12 @@ public class MdmsCriteriaV2 {
 
     @JsonProperty("schemaCode")
     private String schemaCode = null;
+
+    @JsonProperty("filters")
+    private Map<String, String> filterMap = null;
+
+    @JsonProperty("isActive")
+    private Boolean isActive = null;
 
     @JsonProperty("offset")
     private Integer offset;

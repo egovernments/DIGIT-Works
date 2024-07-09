@@ -2,8 +2,11 @@ package org.egov.works.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.works.config.Configuration;
+import org.egov.works.service.RateAnalysisService;
 import org.egov.works.service.SchedulerService;
 import org.egov.works.web.models.JobScheduledRequest;
+import org.egov.works.web.models.MdmsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -16,11 +19,15 @@ public class RateAnalysisConsumer {
 
     private final ObjectMapper objectMapper;
     private final SchedulerService schedulerService;
+    private final Configuration configuration;
+    private final RateAnalysisService rateAnalysisService;
 
     @Autowired
-    public RateAnalysisConsumer(ObjectMapper objectMapper, SchedulerService schedulerService) {
+    public RateAnalysisConsumer(ObjectMapper objectMapper, SchedulerService schedulerService, Configuration configuration, RateAnalysisService rateAnalysisService) {
         this.objectMapper = objectMapper;
         this.schedulerService = schedulerService;
+        this.configuration = configuration;
+        this.rateAnalysisService = rateAnalysisService;
     }
 
     @KafkaListener(topics = {"${rate.analysis.job.create.topic}"})
@@ -34,6 +41,21 @@ public class RateAnalysisConsumer {
             }
         } catch (Exception e) {
             log.error("Error while processing job create request for record: " + jobCreateRecord);
+            log.error("Error: ", e);
+        }
+    }
+
+    @KafkaListener(topics = {"${egov.mdms.data.save.topic}"})
+    public void listenMdms(final Map<String, Object> mdmsRecord) {
+        log.info("Received record for mdms save: " + mdmsRecord);
+        try {
+            MdmsRequest mdmsRequest = objectMapper.convertValue(mdmsRecord, MdmsRequest.class);
+            if(mdmsRequest != null && mdmsRequest.getRequestInfo() != null && mdmsRequest.getMdms() != null && mdmsRequest.getMdms().getSchemaCode().equals(configuration.getRatesSchemaCode())) {
+                log.info("Processing mdms save request for record");
+                rateAnalysisService.updateMdmsDataForRatesAndComposition(mdmsRequest);
+            }
+        } catch (Exception e) {
+            log.error("Error while processing mdms save request for record: " + mdmsRecord);
             log.error("Error: ", e);
         }
     }

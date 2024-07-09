@@ -9,8 +9,10 @@ import org.egov.works.validator.RateAnalysisValidator;
 import org.egov.works.web.models.*;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -70,4 +72,42 @@ public class RateAnalysisService {
         return calculatedRates;
     }
 
+    public void updateMdmsDataForRatesAndComposition(MdmsRequest mdmsRequest) {
+        log.info("RateAnalysisService: updateMdmsDataForRatesAndComposition");
+        Mdms previousRates = fetchPreviousSorRates(mdmsRequest);
+        if(previousRates != null){
+            mdmsService.updateMdmsDataForRatesAndComposition(mdmsRequest, previousRates);
+        }
+    }
+
+    public Mdms fetchPreviousSorRates(MdmsRequest mdmsRequest){
+        log.info("RateAnalysisService: fetchPreviousSorRates");
+        Mdms currentMdms = mdmsRequest.getMdms();
+        JsonNode data = currentMdms.getData();
+        String sorId = data.get("sorId").asText();
+        Map<String, String> sorIdFilterMap = new HashMap<>();
+        sorIdFilterMap.put("sorId", sorId);
+        MdmsCriteriaV2 mdmsCriteriaV2 = MdmsCriteriaV2.builder()
+                .schemaCode(currentMdms.getSchemaCode())
+                .tenantId(currentMdms.getTenantId())
+                .isActive(true)
+                .filterMap(sorIdFilterMap)
+                .build();
+        MdmsSearchCriteriaV2 mdmsSearchCriteriaV2 = MdmsSearchCriteriaV2.builder()
+                .mdmsCriteria(mdmsCriteriaV2)
+                .requestInfo(mdmsRequest.getRequestInfo())
+                .build();
+        MdmsResponseV2 mdmsResponseV2 = mdmsUtil.fetchSorsFromMdms(mdmsSearchCriteriaV2);
+        List<Mdms> mdmsList = mdmsResponseV2.getMdms();
+        if(mdmsList != null && !mdmsList.isEmpty()){
+            for(Mdms mdms1: mdmsList){
+                if(Objects.equals(mdms1.getId(), currentMdms.getId())){
+                    continue;
+                }else{
+                    return mdms1;
+                }
+            }
+        }
+        return null;
+    }
 }
