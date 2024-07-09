@@ -637,7 +637,7 @@ public class PaymentInstructionService {
         msgCallbackHeader.setMessageType(MessageType.DISBURSE);
         msgCallbackHeader.setAction(Action.SEARCH);
         DisburseSearch disburseSearch = DisburseSearch.builder()
-                .targetId(paymentInstruction.getMuktaReferenceId())
+                .ids(Collections.singletonList(paymentInstruction.getId()))
                 .locationCode(paymentInstruction.getTenantId())
                 .pagination(PaginationForDisburse.builder().sortBy("created_time").sortOrder(PaginationForDisburse.SortOrder.DESC).build())
                 .build();
@@ -647,22 +647,22 @@ public class PaymentInstructionService {
                 .build();
         DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
         List<Disbursement> disbursements = disbursementResponse.getDisbursements();
-        Disbursement disbursement = null;
-        if(isRevised){
-            for(Disbursement disbursement1: disbursements){
-                if(disbursement1.getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
-                    disbursement = disbursement1;
-                    break;
-                }
-            }
-            if(disbursement == null){
-                throw new CustomException("DISBURSEMENT_NOT_FOUND","Disbursement not found for revised PI");
-            }
-        }else{
-            if (disbursements != null && !disbursements.isEmpty()) {
-                disbursement = disbursements.get(0);
-            }
-        }
+        Disbursement disbursement = disbursements.get(0);
+//        if(isRevised){
+//            for(Disbursement disbursement1: disbursements){
+//                if(disbursement1.getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
+//                    disbursement = disbursement1;
+//                    break;
+//                }
+//            }
+//            if(disbursement == null){
+//                throw new CustomException("DISBURSEMENT_NOT_FOUND","Disbursement not found for revised PI");
+//            }
+//        }else{
+//            if (disbursements != null && !disbursements.isEmpty()) {
+//                disbursement = disbursements.get(0);
+//            }
+//        }
         piEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursement);
         piEnrichment.setAddtionaInfoForDisbursement(paymentInstruction, disbursement);
         msgCallbackHeader.setAction(Action.UPDATE);
@@ -670,7 +670,7 @@ public class PaymentInstructionService {
         try {
             DisbursementRequest disbursementRequest = DisbursementRequest.builder()
                     .header(msgCallbackHeader)
-                    .message(disbursements.get(0))
+                    .message(disbursement)
                     .build();
             programServiceUtil.callOnDisburse(disbursementRequest);
         }catch (Exception e){

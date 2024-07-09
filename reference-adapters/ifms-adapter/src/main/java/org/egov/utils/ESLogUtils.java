@@ -7,6 +7,8 @@ import org.egov.config.Constants;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.config.JITAuthValues;
 import org.egov.enc.SymmetricEncryptionService;
+import org.egov.kafka.IfmsAdapterProducer;
+import org.egov.web.models.ErrorRes;
 import org.egov.web.models.bankaccount.BankAccountResponse;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.jit.JITErrorRequestLog;
@@ -19,6 +21,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -38,6 +41,9 @@ public class ESLogUtils {
 
     @Autowired
     private JITAuthValues jitAuthValues;
+
+    @Autowired
+    private IfmsAdapterProducer ifmsAdapterProducer;
 
     public @Valid JITRequestLog saveAuthenticateRequest(String request, String authResponse) {
         JITRequestLog jitRequestLog = null;
@@ -61,6 +67,8 @@ public class ESLogUtils {
             }
         } catch (Exception e) {
             log.info("Exception in saveJitRequestLogsToES : "+ e.getMessage());
+            ErrorRes errorRes = ErrorRes.builder().message(e.getMessage()).objects(Collections.singletonList(jitRequestLog)).build();
+            ifmsAdapterProducer.push(config.getIfixAdapterESErrorQueueTopic(), errorRes);
         }
         return jitRequestLog;
     }
@@ -86,7 +94,9 @@ public class ESLogUtils {
                 log.info("Request logged of jit request and response in ES");
             }
         } catch (Exception e) {
-            log.info("Exception in saveJitRequestLogsToES : "+ e.getMessage());
+            log.error("Exception in saveJitRequestLogsToES : "+ e.getMessage());
+            ErrorRes errorRes = ErrorRes.builder().message(e.getMessage()).objects(Collections.singletonList(jitErrorRequestLog)).build();
+            ifmsAdapterProducer.push(config.getIfixAdapterESErrorQueueTopic(), errorRes);
         }
         return jitErrorRequestLog;
     }
@@ -115,7 +125,9 @@ public class ESLogUtils {
                 log.info("Request logged of jit request and response in ES");
             }
         } catch (Exception e) {
-            log.info("Exception in saveJitRequestLogsToES : "+ e.getMessage());
+            log.error("Exception in saveJitRequestLogsToES : "+ e.getMessage());
+            ErrorRes errorRes = ErrorRes.builder().message(e.getMessage()).objects(Collections.singletonList(jitRequestLog)).build();
+            ifmsAdapterProducer.push(config.getIfixAdapterESErrorQueueTopic(), errorRes);
         }
         return jitRequestLog;
 	}
@@ -150,7 +162,9 @@ public class ESLogUtils {
             }
 
         } catch (Exception e) {
-            log.info("Exception in saveErrorResponseLogsToES : "+ e.getMessage());
+            log.error("Exception in saveErrorResponseLogsToES : "+ e.getMessage());
+            ErrorRes errorRes = ErrorRes.builder().message(e.getMessage()).objects(Collections.singletonList(jitErrorRequestLog)).build();
+            ifmsAdapterProducer.push(config.getIfixAdapterESErrorQueueTopic(), errorRes);
         }
         return jitErrorRequestLog;
     }
@@ -189,6 +203,7 @@ public class ESLogUtils {
             log.info("Elasticsearch query executed." + response);
         } catch (Exception e) {
             log.error("Exception occurred while executing query in indexer : ", e);
+            throw e;
         }
         return response;
     }

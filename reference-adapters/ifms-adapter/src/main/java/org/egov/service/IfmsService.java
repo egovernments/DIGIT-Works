@@ -87,18 +87,6 @@ public class IfmsService {
         try {
             decryptedResponse = callServiceAPI(jitRequest);
 //            decryptedResponse = loadCustomResponse(jitRequest.getServiceId().toString());
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            String message = e.toString();
-            if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
-                try {
-                    getAuthDetailsFromIFMS();
-                    decryptedResponse = callServiceAPI(jitRequest);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            } else {
-                throw new RuntimeException(e);
-            }
         } catch (Exception e) {
             String message = e.toString();
             if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
@@ -119,7 +107,6 @@ public class IfmsService {
         JITResponse decryptedResponse = null;
         Map<String, String> payload = new HashMap<>();
         try {
-            // Call the specific service API
             payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
             String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
             decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
