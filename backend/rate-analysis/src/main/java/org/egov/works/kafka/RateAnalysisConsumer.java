@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.works.config.Configuration;
 import org.egov.works.service.RateAnalysisService;
 import org.egov.works.service.SchedulerService;
+import org.egov.works.validator.SchedulerValidator;
 import org.egov.works.web.models.JobScheduledRequest;
 import org.egov.works.web.models.MdmsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,15 @@ public class RateAnalysisConsumer {
     private final SchedulerService schedulerService;
     private final Configuration configuration;
     private final RateAnalysisService rateAnalysisService;
+    private final SchedulerValidator schedulerValidator;
 
     @Autowired
-    public RateAnalysisConsumer(ObjectMapper objectMapper, SchedulerService schedulerService, Configuration configuration, RateAnalysisService rateAnalysisService) {
+    public RateAnalysisConsumer(ObjectMapper objectMapper, SchedulerService schedulerService, Configuration configuration, RateAnalysisService rateAnalysisService, SchedulerValidator schedulerValidator) {
         this.objectMapper = objectMapper;
         this.schedulerService = schedulerService;
         this.configuration = configuration;
         this.rateAnalysisService = rateAnalysisService;
+        this.schedulerValidator = schedulerValidator;
     }
 
     @KafkaListener(topics = {"${rate.analysis.job.create.topic}"})
@@ -35,7 +38,8 @@ public class RateAnalysisConsumer {
         log.info("Received record for job creation: " + jobCreateRecord);
         try {
             JobScheduledRequest jobScheduledRequest = objectMapper.convertValue(jobCreateRecord, JobScheduledRequest.class);
-            if (jobScheduledRequest != null && jobScheduledRequest.getRequestInfo() != null && jobScheduledRequest.getScheduledJobs() != null) {
+            Boolean isValid = schedulerValidator.validateJobScheduledRequest(jobScheduledRequest);
+            if (jobScheduledRequest.getRequestInfo() != null && jobScheduledRequest.getScheduledJobs() != null && Boolean.FALSE.equals(isValid)) {
                 log.info("Processing job create request for record");
                 schedulerService.createScheduledJobsFromConsumer(jobScheduledRequest);
             }

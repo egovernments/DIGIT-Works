@@ -2,8 +2,11 @@ package org.egov.works.validator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.service.RedisService;
+import org.egov.works.web.models.JobScheduledRequest;
 import org.egov.works.web.models.JobScheduler;
 import org.egov.works.web.models.JobSchedulerRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -13,6 +16,13 @@ import java.time.ZonedDateTime;
 @Component
 @Slf4j
 public class SchedulerValidator {
+
+    private final RedisService redisService;
+
+    @Autowired
+    public SchedulerValidator(RedisService redisService) {
+        this.redisService = redisService;
+    }
 
     /**
      * Validates the JobSchedulerRequest
@@ -51,5 +61,15 @@ public class SchedulerValidator {
 
         // Check if the epoch time falls within the range of start and end of the current day
         return effectiveFrom.compareTo(startOfDayMillis) >= 0;
+    }
+
+    public Boolean validateJobScheduledRequest(JobScheduledRequest jobScheduledRequest) {
+        log.info("SchedulerValidator: validateJobScheduledRequest");
+        String jobId = jobScheduledRequest.getScheduledJobs().getJobId();
+        if (Boolean.TRUE.equals(redisService.isJobPresentInCache(jobId))) {
+            return true;
+        }
+        redisService.setCacheForJob(jobId);
+        return false;
     }
 }

@@ -80,6 +80,6 @@ public class ServiceConstants {
     public static final String CODE_KEY = "code";
 
     public static final String ERROR_WHILE_UPDATING_MDMS = "Exception occurred while updating mdms data: ";
-
+    public static final String JOB_REDIS_KEY = "SCHEDULE_JOB_{jobId}";
 
 }
