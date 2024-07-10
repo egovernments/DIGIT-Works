@@ -104,10 +104,13 @@ public class MdmsUtil {
                 analysisRequest.getSorDetails().getTenantId(), WORKS_SOR_KEY,
                 Collections.singletonList(RATES_KEY), filter);
         List<Rates> ratesList = new ArrayList<>();
-        for(Object object : sorRates.get(WORKS_SOR_KEY).get(RATES_KEY)) {
-            Rates  rates = mapper.convertValue(object, Rates.class);
-            ratesList.add(rates);
+        if (sorRates.containsKey(WORKS_SOR_KEY) && sorRates.get(WORKS_SOR_KEY).containsKey(RATES_KEY)) {
+            for(Object object : sorRates.get(WORKS_SOR_KEY).get(RATES_KEY)) {
+                Rates  rates = mapper.convertValue(object, Rates.class);
+                ratesList.add(rates);
+            }
         }
+
         Map<String, List<Rates>> ratesMap = ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
 //        if (ratesMap.keySet().size() != basicSorIds.size()) {
 //            basicSorIds.remove(ratesMap.keySet());
