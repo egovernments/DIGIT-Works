@@ -47,7 +47,8 @@ public class EnrichmentUtil {
         rates.setTenantId(rateAnalysis.getTenantId());
     }
 
-    public void enrichRateAnalysis(List<RateAnalysis> rateAnalysisList, Map<String, JsonNode> sorMap) {
+    public void enrichRateAnalysis(List<RateAnalysis> rateAnalysisList, Map<String, JsonNode> sorMap, Map<String,
+            SorComposition> sorIdCompositionMap) {
         for (RateAnalysis rateAnalysis : rateAnalysisList) {
             JsonNode worksSor = sorMap.get(rateAnalysis.getSorCode());
             rateAnalysis.setSorSubType(worksSor.get(SOR_SUB_TYPE).asText());
@@ -57,6 +58,7 @@ public class EnrichmentUtil {
             rateAnalysis.setDescription(worksSor.get(DESCRIPTION_KEY).asText());
             rateAnalysis.setQuantity(BigDecimal.valueOf(worksSor.get(QUANTITY).asDouble()));
             rateAnalysis.setStatus(RateAnalysis.StatusEnum.ACTIVE);
+            rateAnalysis.setEffectiveFrom(sorIdCompositionMap.get(rateAnalysis.getSorCode()).getEffectiveFrom());
         }
     }
 
