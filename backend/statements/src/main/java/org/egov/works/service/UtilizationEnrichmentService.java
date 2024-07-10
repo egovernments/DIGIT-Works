@@ -277,7 +277,7 @@ public class UtilizationEnrichmentService {
         for (Measure measure : measureList) {
             String estimateDetailId = contractLineItemRefToEstDetailIdMap.get(measure.getTargetId());
             EstimateDetail estimateDetail = estimateDetailIdToEstimateDetailMap.get(estimateDetailId);
-            BigDecimal quantity = estimateDetail.getIsDeduction() ? measure.getCumulativeValue().multiply(BigDecimal.valueOf(-1)) : measure.getCumulativeValue();
+            BigDecimal quantity = estimateDetail.getIsDeduction() ? measure.getCurrentValue().multiply(BigDecimal.valueOf(-1)) : measure.getCumulativeValue();
             if (estimateDetail.getCategory().equalsIgnoreCase(SOR))
                 sorToCummValueMap.merge(estimateDetail.getSorId(), quantity, BigDecimal::add);
         }
