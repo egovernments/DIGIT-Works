@@ -46,6 +46,7 @@ public class UtilizationEnrichmentService {
     public Statement createUtilizationStatement(StatementCreateRequest statementCreateRequest,
                                                 Measurement measurement, Contract contract, Estimate estimate) {
         RequestInfo requestInfo = statementCreateRequest.getRequestInfo();
+        Long timeForEstimateSubmission = workflowUtil.getProcessInstance(requestInfo, estimate);
         Statement statement = enrichmentUtil.getEnrichedStatement(statementCreateRequest,
                 measurement.getMeasurementNumber(), estimate.getProjectId());
 //        Map<String, Measure> measureLineItemIdToMeasureMap = measurement.getMeasures().stream()
@@ -73,10 +74,14 @@ public class UtilizationEnrichmentService {
                     .flatMap(List::stream)
                     .map(Rates::getCompositionId)
                     .collect(Collectors.toSet());
+            if (compositionIds.size() != worksSorIds.size()) {
+                throw new CustomException(COMPOSITION_NOT_FOUND_IN_RATES_KEY, COMPOSITION_NOT_FOUND_IN_RATES_MSG);
+            }
 //            Map<String, List<Rates>> sorRateMap = mdmsUtil.fetchRateForNonWorksSor(new ArrayList<>(worksSorIds),
 //                    statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId());
             sorIdToCompositionMap = mdmsUtil.fetchSorCompositionBasedOnCompositionId(statementCreateRequest.getRequestInfo()
-                    , compositionIds, statementCreateRequest.getStatementRequest().getTenantId(), measurement.getAuditDetails().getCreatedTime());
+                    , compositionIds, statementCreateRequest.getStatementRequest().getTenantId(),
+                    timeForEstimateSubmission, true);
             basicSorIds = sorIdToCompositionMap.values().stream()
                     .flatMap(sorComposition -> sorComposition.getBasicSorDetails().stream())
                     .map(SorCompositionBasicSorDetail::getSorId)
@@ -100,7 +105,7 @@ public class UtilizationEnrichmentService {
         Map<String, BigDecimal> sorIdToCummValueMap = getSorToCummValueMap(measureList, estimateDetailIdToEstimateDetailMap,
                 contractLineItemRefToEstDetailIdMap);
 
-        Long timeForEstimateSubmission = workflowUtil.getProcessInstance(requestInfo, estimate);
+
         List<BasicSorDetails> basicSorDetails = getBasicSorDetailsList(sorIdToSorMap, sorIdToCompositionMap,
                 estimateDetailIdToEstimateDetailMap, contractLineItemRefToEstDetailIdMap, measureList, sorRateMap,
                 sorIdToCummValueMap, timeForEstimateSubmission);

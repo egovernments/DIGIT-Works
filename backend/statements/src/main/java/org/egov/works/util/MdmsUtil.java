@@ -20,8 +20,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
-;import static org.egov.works.config.ErrorConfiguration.MDMS_PARSE_EXCEPTION_KEY;
-import static org.egov.works.config.ErrorConfiguration.MDMS_PARSE_EXCEPTION_MSG;
+import static org.egov.works.config.ErrorConfiguration.*;
 import static org.egov.works.config.ServiceConstants.*;
 
 @Slf4j
@@ -57,44 +56,6 @@ public class MdmsUtil {
         this.commonUtil = commonUtil;
     }
 
-
-    //TODO  Need to remove this method as now we are fetching the composition based on compositonId
-    public Map<String, SorComposition> fetchSorComposition(RequestInfo requestInfo,Set<String> sorIdSet, String tenantId,Long createdTime) {
-
-
-        String filter = getfilter(sorIdSet,Boolean.FALSE);
-        Map<String, Map<String, JSONArray>> sorComposition = fetchMdmsData(requestInfo,
-                configs.getStateLevelTenantId(), WORKS_SOR_KEY,
-                Collections.singletonList(MDMS_COMPOSITION_MASTER_NAME), filter);
-
-
-        JSONArray jsonArray = sorComposition.get(WORKS_SOR_KEY).get(MDMS_COMPOSITION_MASTER_NAME);
-        List<SorComposition> sorCompositions = null;
-        try {
-            sorCompositions = mapper.readValue(
-                    jsonArray.toString(),
-                    mapper.getTypeFactory().constructCollectionType(List.class, SorComposition.class)
-            );
-        } catch (JsonProcessingException e) {
-            throw new CustomException(MDMS_PARSE_EXCEPTION_KEY, MDMS_PARSE_EXCEPTION_MSG);
-        }
-        Map<String, List<SorComposition>> sorIdToCompositionMap = sorCompositions.stream().collect(Collectors.groupingBy(e -> e.getSorId()));
-
-        Map<String, SorComposition> sorIdToCompositionMap1 = new HashMap<>();
-        for (Map.Entry<String, List<SorComposition>> entry : sorIdToCompositionMap.entrySet()) {
-            sorIdToCompositionMap1.put(entry.getKey(), commonUtil.getApplicableSorComposition(entry.getValue(), createdTime));
-        }
-
-       /* if (sorIdToCompositionMap.size() != sorIdSet.size()) {
-            analysisRequest.getSorDetails().getSorCodes().remove(sorIdToCompositionMap.keySet());
-            throw new CustomException("SOR_COMPOSITION_NOT_FOUND", "Sor composition not found for SOR codes :: " + analysisRequest.getSorDetails().getSorCodes());
-        }*/
-        return sorIdToCompositionMap1;
-
-
-
-    }
-
     /**
      * This method is used to fetch the SorComposition based on the composition Id
      * @param requestInfo
@@ -103,7 +64,8 @@ public class MdmsUtil {
      * @param createdTime
      * @return
      */
-    public Map<String, SorComposition> fetchSorCompositionBasedOnCompositionId(RequestInfo requestInfo,Set<String> compositionId, String tenantId,Long createdTime) {
+    public Map<String, SorComposition> fetchSorCompositionBasedOnCompositionId(RequestInfo requestInfo,Set<String> compositionId,
+                                                                               String tenantId,Long createdTime, boolean isUtilization) {
 
 
         String filter = getfilterForSorComposition(compositionId);
@@ -126,13 +88,13 @@ public class MdmsUtil {
 
         Map<String, SorComposition> sorIdToCompositionMap1 = new HashMap<>();
         for (Map.Entry<String, List<SorComposition>> entry : sorIdToCompositionMap.entrySet()) {
-            sorIdToCompositionMap1.put(entry.getKey(), commonUtil.getApplicableSorComposition(entry.getValue(), createdTime));
+            sorIdToCompositionMap1.put(entry.getKey(), commonUtil.getApplicableSorComposition(entry.getValue(),
+                    createdTime, isUtilization));
         }
 
-       /* if (sorIdToCompositionMap.size() != sorIdSet.size()) {
-            analysisRequest.getSorDetails().getSorCodes().remove(sorIdToCompositionMap.keySet());
-            throw new CustomException("SOR_COMPOSITION_NOT_FOUND", "Sor composition not found for SOR codes :: " + analysisRequest.getSorDetails().getSorCodes());
-        }*/
+        if (isUtilization && sorIdToCompositionMap.size() != compositionId.size()) {
+            throw new CustomException(COMPOSITION_NOT_FOUND_IN_RATES_KEY, COMPOSITION_NOT_FOUND_IN_RATES_MSG);
+        }
         return sorIdToCompositionMap1;
 
 

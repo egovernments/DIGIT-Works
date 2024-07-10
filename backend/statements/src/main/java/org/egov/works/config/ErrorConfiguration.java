@@ -38,6 +38,8 @@ public class ErrorConfiguration {
     public static final String NO_RATES_FOUND_MSG = "No rates present ";
     public static final String SOR_COMPOSITION_NOT_FOUND_KEY = "SOR_COMPOSITION_NOT_FOUND";
     public static final String SOR_COMPOSITION_NOT_FOUND_MSG = "Sor composition with given effective time not found for SOR codes :: ";
+    public static final String COMPOSITION_NOT_FOUND_IN_RATES_KEY = "COMPOSITION_NOT_FOUND_IN_RATES";
+    public static final String COMPOSITION_NOT_FOUND_IN_RATES_MSG = "statements could not be generated because rate analysis for one or more SORs is missing.";
 
 
 }

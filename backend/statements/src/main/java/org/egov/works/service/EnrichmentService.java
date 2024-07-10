@@ -115,7 +115,8 @@ public class EnrichmentService {
                 Set<String> compositionIdSet = new HashSet<>();
                 compositionIdSet.add(rate.getCompositionId());
                 // Fetch SorComposition for the current compositionIdSet
-                Map<String, SorComposition> fetchedMap = mdmsUtil.fetchSorCompositionBasedOnCompositionId(requestInfo, compositionIdSet, statementRequest.getTenantId(), currentEpochTime);
+                Map<String, SorComposition> fetchedMap = mdmsUtil.fetchSorCompositionBasedOnCompositionId(requestInfo,
+                        compositionIdSet, statementRequest.getTenantId(), currentEpochTime, false);
                 // Add fetchedMap entries to sorIdCompositionMap
                 sorIdCompositionMap.putAll(fetchedMap);
 

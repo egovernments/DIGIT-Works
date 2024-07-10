@@ -61,7 +61,7 @@ public class CommonUtil {
         }
     }
 
-    public SorComposition getApplicableSorComposition(List<SorComposition> sorCompositions, Long time) {
+    public SorComposition getApplicableSorComposition(List<SorComposition> sorCompositions, Long time, boolean isUtilization) {
         Comparator<SorComposition> comparator = (o1, o2) -> {
            String validFrom1 = o1.getEffectiveFrom();
            String validFrom2 = o2.getEffectiveFrom();
@@ -75,7 +75,9 @@ public class CommonUtil {
                 return sorComposition;
             }
         }
-        throw new CustomException(SOR_COMPOSITION_NOT_FOUND_KEY, SOR_COMPOSITION_NOT_FOUND_MSG + sorCompositions.get(0).getSorId());
+        if (isUtilization)
+            throw new CustomException(SOR_COMPOSITION_NOT_FOUND_KEY, SOR_COMPOSITION_NOT_FOUND_MSG + sorCompositions.get(0).getSorId());
+        return null;
     }
 
 }
