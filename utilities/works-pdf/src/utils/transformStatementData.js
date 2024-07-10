@@ -70,12 +70,14 @@ const transformStatementData = (data, project) => {
             });
             const sorTypeToSorMap = new Map();
             for(let value of sorMap.values()){
-                if(!sorTypeToSorMap.has(value.type)){
-                    sorTypeToSorMap.set(value.type, []);
+                if(value.type != "W"){
+                    if(!sorTypeToSorMap.has(value.type)){
+                        sorTypeToSorMap.set(value.type, []);
+                    }
+                    value.quantity = value.quantity.toFixed(4);
+                    value.Sno = sorTypeToSorMap.get(value.type).length + 1;
+                    sorTypeToSorMap.get(value.type).push(value);
                 }
-                value.quantity = value.quantity.toFixed(4);
-                value.Sno = sorTypeToSorMap.get(value.type).length + 1;
-                sorTypeToSorMap.get(value.type).push(value);
             }
         const sorTypeMap = {
             "W": "WRK_WORKS",
