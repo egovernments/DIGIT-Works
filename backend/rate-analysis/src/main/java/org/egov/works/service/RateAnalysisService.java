@@ -45,7 +45,7 @@ public class RateAnalysisService {
         Map<String, JsonNode> sorMap = mdmsUtil.fetchSor(analysisRequest, sorIdCompositionMap);
         List<RateAnalysis> rateAnalysis = calculatorService.calculateRateAnalysis(analysisRequest, sorIdCompositionMap,
                 basicRatesMap, sorMap, false);
-        enrichmentUtil.enrichRateAnalysis(rateAnalysis, sorMap);
+        enrichmentUtil.enrichRateAnalysis(rateAnalysis, sorMap, sorIdCompositionMap);
         RateAnalysisResponse rateAnalysisResponse = RateAnalysisResponse.builder()
                 .rateAnalysis(rateAnalysis)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(analysisRequest.getRequestInfo(), true))
