@@ -62,6 +62,9 @@ public class Configuration {
     @Value("${works.mdms.data.rates.schema.code}")
     private String ratesSchemaCode;
 
+    @Value("${works.mdms.data.composition.schema.code}")
+    private String compositionSchemaCode;
+
     // Kafka Topics
     @Value("${rate.analysis.job.create.topic}")
     private String rateAnalysisJobCreateTopic;
