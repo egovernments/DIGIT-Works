@@ -105,10 +105,11 @@ public class MdmsService {
     public void updateMdmsDataForRatesAndComposition(MdmsRequest mdmsRequest, Mdms previousRates) {
         log.info("RateAnalysisService: updateMdmsDataForRatesAndComposition");
         Mdms currentMdms = mdmsRequest.getMdms();
+        String schemaCode = currentMdms.getSchemaCode();
         JsonNode currentData = currentMdms.getData();
         JsonNode previousData = previousRates.getData();
-        String currentValidFrom = currentData.get("validFrom").asText();
-        String previousValidFrom = previousData.get("validFrom").asText();
+        String currentValidFrom = currentData.get(schemaCode.equals(configs.getRatesSchemaCode())? "validFrom": "effectiveFrom").asText();
+        String previousValidFrom = previousData.get(schemaCode.equals(configs.getRatesSchemaCode())? "validFrom": "effectiveFrom").asText();
         if(previousValidFrom.equals(currentValidFrom)){
             previousRates.setIsActive(false);
         }else{
@@ -116,7 +117,7 @@ public class MdmsService {
             LocalDateTime currentDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(currentValidFromLong), ZoneId.systemDefault());
             LocalDateTime endOfPreviousDay = currentDateTime.toLocalDate().minusDays(1).atTime(LocalTime.of(23, 59, 59));
             long endOfPreviousDayEpochTime = endOfPreviousDay.toEpochSecond(ZoneOffset.UTC);
-            previousData = ((ObjectNode) previousData).put("validTo", Long.toString(endOfPreviousDayEpochTime));
+            previousData = ((ObjectNode) previousData).put(schemaCode.equals(configs.getRatesSchemaCode())? "validTo": "effectiveTo", Long.toString(endOfPreviousDayEpochTime));
             previousRates.setData(previousData);
         }
         MdmsRequest updateMdmsRequest = MdmsRequest.builder()
