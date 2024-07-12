@@ -50,7 +50,8 @@ public class EstimateServiceUtil {
         StringBuilder url = getSearchURLWithParams(tenantId, estimateIds);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         List<Estimate> fetchEstimates = fetchResult(url, requestInfoWrapper);
-        return fetchEstimates.stream().filter(e -> Status.ACTIVE.equals(e.getStatus())).collect(Collectors.toList());
+        // return fetchEstimates.stream().filter(e -> Status.ACTIVE.equals(e.getStatus())).collect(Collectors.toList());
+        return fetchEstimates;
     }
 
     public List<Estimate> fetchResult(StringBuilder uri, Object request) {
