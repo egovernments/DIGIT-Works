@@ -142,7 +142,7 @@ router.post("/analysis-statement", asyncMiddleware(async function (req, res, nex
             return renderError(
                 res,
                 "There is no statement created using this estimate id",
-                404
+                500
             );
 
         }

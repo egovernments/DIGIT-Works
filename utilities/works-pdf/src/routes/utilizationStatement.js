@@ -142,7 +142,7 @@ router.post("/utilization-statement", asyncMiddleware(async function (req, res, 
             return renderError(
                 res,
                 "There is no utilization created using this estimate number",
-                404
+                500
             );
 
         }
