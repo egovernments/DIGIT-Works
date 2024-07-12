@@ -69,7 +69,7 @@ router.post("/analysis-statement", asyncMiddleware(async function (req, res, nex
         }
         var statementData = analysisStatement.data.statement;
         if (statementData.length <= 0) {
-            return renderError(res, "Statement Not Found", 500);
+            return renderError(res, "Statement Not Found", 404);
         }
         try {
             const projectId = statementData[0].additionalDetails.projectId;
@@ -142,7 +142,7 @@ router.post("/analysis-statement", asyncMiddleware(async function (req, res, nex
             return renderError(
                 res,
                 "There is no statement created using this estimate id",
-                500
+                404
             );
 
         }

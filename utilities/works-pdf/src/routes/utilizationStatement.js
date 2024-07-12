@@ -66,11 +66,11 @@ router.post("/utilization-statement", asyncMiddleware(async function (req, res, 
         try {
             analysisStatement = await search_rateAnalysisUtilizationDetails(tenantId, requestInfo, referenceId);
         } catch (ex) {
-            return renderError(res, "Failed to query details of the rate analysis statement", 500);
+            return renderError(res, "Failed to query details of the rate analysis statement", 400);
         }
         var statementData = analysisStatement.data.statement;
         if (statementData.length <= 0) {
-            return renderError(res, "Statement Not Found", 500);
+            return renderError(res, "Statement Not Found", 404);
         }
         try {
             const projectId = statementData[0].additionalDetails.projectId;
@@ -142,7 +142,7 @@ router.post("/utilization-statement", asyncMiddleware(async function (req, res, 
             return renderError(
                 res,
                 "There is no utilization created using this estimate number",
-                500
+                404
             );
 
         }
