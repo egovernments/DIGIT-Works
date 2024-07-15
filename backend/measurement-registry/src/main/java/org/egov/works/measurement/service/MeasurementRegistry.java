@@ -83,7 +83,7 @@ public class MeasurementRegistry {
         MeasurementResponse response = measurementRegistryUtil.makeUpdateResponse(measurementRegistrationRequest.getMeasurements(),measurementRegistrationRequest);
 
         // Push the response to the MBRegistryProducer
-        MBRegistryProducer.push(MBRegistryConfiguration.getUpdateTopic(), response);
+        MBRegistryProducer.push(MBRegistryConfiguration.getUpdateTopic(), measurementRegistrationRequest);
 
         return response;
     }
