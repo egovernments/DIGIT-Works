@@ -128,9 +128,7 @@ public class SorMigrationUtil {
                             String addDetails = mapper.writeValueAsString(individualEntry.getAdditionalDetails());
                             additionalDetailsMap = mapper.readValue(addDetails, new TypeReference<Map<String, Object>>() {
                             });
-                        } catch (JsonProcessingException e) {
-                            throw new CustomException("PARSING_ERROR", "error while parsing additionalDetails" + e);
-                        }
+
                         if(additionalDetailsMap.get("skillCode")==null){
                             continue;
                         }
@@ -141,7 +139,11 @@ public class SorMigrationUtil {
                             log.error("Skill code {} not found in sor mapping", additionalDetailsMap.get("skillCode"));
                             throw new CustomException("SKILL_CODE_NOT_FOUND", "Skill code not found in sor mapping");
                         }
+                        } catch (JsonProcessingException e) {
+                            continue;
+                        }
                         individualEntry.setAdditionalDetails(mapper.convertValue(additionalDetailsMap, Object.class));
+
                     }
                     musterRoll.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                     musterRoll.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
