@@ -69,7 +69,8 @@ public class UtilizationEnrichmentService {
         Map<String, List<Rates>> worksRatesMap = new HashMap<>();
         if (!worksSorIds.isEmpty()) {
             worksRatesMap = mdmsUtil.fetchRateForSor(new ArrayList<>(worksSorIds),
-                    statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId());
+                    statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId(),
+                    timeForEstimateSubmission);
             Set<String> compositionIds = worksRatesMap.values().stream()
                     .flatMap(List::stream)
                     .map(Rates::getCompositionId)
@@ -100,7 +101,8 @@ public class UtilizationEnrichmentService {
         sorIdToSorMap.putAll(basicSorIdFromCompositionToSorMap);
 
         Map<String, List<Rates>> sorRateMap = mdmsUtil.fetchRateForSor(new ArrayList<>(sorIdToSorMap.keySet()),
-                statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId());
+                statementCreateRequest.getRequestInfo(), statementCreateRequest.getStatementRequest().getTenantId(),
+                timeForEstimateSubmission);
 
         Map<String, BigDecimal> sorIdToCummValueMap = getSorToCummValueMap(measureList, estimateDetailIdToEstimateDetailMap,
                 contractLineItemRefToEstDetailIdMap);

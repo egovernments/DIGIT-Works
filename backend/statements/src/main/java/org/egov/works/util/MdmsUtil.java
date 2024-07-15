@@ -191,7 +191,7 @@ public class MdmsUtil {
 
     }
 
-    public Map<String, List<Rates>> fetchRateForSor(List<String> basicSorIds, RequestInfo requestInfo, String tenantId){
+    public Map<String, List<Rates>> fetchRateForSor(List<String> basicSorIds, RequestInfo requestInfo, String tenantId, Long timeForEstimateSubmission){
 
         String filter = getfilter(basicSorIds.stream().collect(Collectors.toSet()), Boolean.FALSE);
         Map<String, Map<String, JSONArray>> sorRates = fetchMdmsData(requestInfo,
@@ -202,7 +202,12 @@ public class MdmsUtil {
             Rates  rates = mapper.convertValue(object, Rates.class);
             ratesList.add(rates);
         }
-        return ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
+        Map<String, List<Rates>> ratesListMap=ratesList.stream().collect(Collectors.groupingBy(Rates::getSorId));
+        for(Map.Entry<String, List<Rates>> entry : ratesListMap.entrySet()){
+            Rates rates = commonUtil.getApplicatbleRate(entry.getValue(), timeForEstimateSubmission);
+            ratesListMap.put(entry.getKey(), Collections.singletonList(rates));
+        }
+        return ratesListMap;
     }
 
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
