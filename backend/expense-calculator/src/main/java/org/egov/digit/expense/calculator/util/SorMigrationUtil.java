@@ -139,7 +139,7 @@ public class SorMigrationUtil {
                             log.error("Skill code {} not found in sor mapping", additionalDetailsMap.get("skillCode"));
                             throw new CustomException("SKILL_CODE_NOT_FOUND", "Skill code not found in sor mapping");
                         }
-                        } catch (JsonProcessingException e) {
+                        } catch (Exception e) {
                             continue;
                         }
                         individualEntry.setAdditionalDetails(mapper.convertValue(additionalDetailsMap, Object.class));
