@@ -189,15 +189,20 @@ public class SorMigrationUtil {
                     continue;
                 }*/
                 try {
-                    for (Skill skill : individual.getSkills()) {
-                        String labourCode = skill.getLevel() + "." + skill.getType();
-                        if (sorMapping.containsKey(labourCode)) {
-                            skill.setType(sorMapping.get(labourCode));
-                            skill.setLevel(sorMapping.get(labourCode));
-                        } else {
-                            log.error("Labour code {} not found in sor mapping", labourCode);
-                            throw new CustomException("SKILL_CODE_NOT_FOUND", "Labour code not found in sor mapping");
+                     for (Skill skill : individual.getSkills()) {
+                        if (!skill.getLevel().startsWith("SOR_0") || !skill.getLevel().contains("SOR_0")){
+                            String labourCode = skill.getLevel() + "." + skill.getType();
+                            if (sorMapping.containsKey(labourCode)) {
+                                skill.setType(sorMapping.get(labourCode));
+                                skill.setLevel(sorMapping.get(labourCode));
+                            } else {
+                                log.error("Labour code {} not found in sor mapping", labourCode);
+                               // throw new CustomException("SKILL_CODE_NOT_FOUND", "Labour code not found in sor mapping");
+                            }
+                        }else{
+                            log.info("Already Migrated");
                         }
+
                     }
                     individual.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                     individual.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
