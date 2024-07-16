@@ -30,8 +30,8 @@ public class RedisService {
             String object = objectMapper.writeValueAsString(json);
             redisTemplate.opsForValue().set(key, object);
         } catch (JsonProcessingException e) {
-            log.error("Error while serializing job object to JSON", e);
-            throw new CustomException("SERIALIZATION_ERROR", "Error while serializing job object to JSON");
+            log.error("Error while serializing object to JSON", e);
+            throw new CustomException("SERIALIZATION_ERROR", "Error while serializing object to JSON");
         } catch (Exception e) {
             log.error("Error while pushing data to Redis", e);
             throw new CustomException("REDIS_ERROR", "Error while pushing data to Redis");
