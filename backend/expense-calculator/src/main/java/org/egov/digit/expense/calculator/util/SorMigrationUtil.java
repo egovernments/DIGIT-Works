@@ -182,12 +182,12 @@ public class SorMigrationUtil {
                 log.error("No individuals found for tenantId {}", tenantId);
             }
             for (Individual individual : individualResponse.getIndividual()) {
-                String MIGRATE_SEARCH_QUERY = "SELECT is_migration_successful FROM eg_sor_migration WHERE id = '" + individual.getId() + "'";
+               /* String MIGRATE_SEARCH_QUERY = "SELECT is_migration_successful FROM eg_sor_migration WHERE id = '" + individual.getId() + "'";
                 List<Map<String, Object>> isMigrated = jdbcTemplate.queryForList(MIGRATE_SEARCH_QUERY);
                 if (!CollectionUtils.isEmpty(isMigrated) && isMigrated.get(0).get("is_migration_successful").equals(true)) {
                     log.info("Individual already migrated for id :: " + individual.getId());
                     continue;
-                }
+                }*/
                 try {
                     for (Skill skill : individual.getSkills()) {
                         String labourCode = skill.getLevel() + "." + skill.getType();
