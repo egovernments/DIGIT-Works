@@ -92,6 +92,7 @@ public class SorMigrationUtil {
                     break;
                 case "individualAgain":
                     migrateIndividualAgain(requestInfo, tenantId, sorMigrationMapping);
+                    break;
                 default:
                     throw new CustomException("INVALID_SOR_TYPE", "Invalid sor type");
             }
