@@ -80,7 +80,7 @@ public class SorMigrationUtil {
         List<Object> tenantRes = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_TENANTS_VERIFICATION);
         for (Object tenantIdRes : tenantRes) {
             String tenantId = tenantIdRes.toString();
-            if (!tenantId.equalsIgnoreCase("od.testing"))
+            if (tenantId.equalsIgnoreCase("od"))
                 continue;
             log.info("Migrating sor for tenantId {}", tenantId);
             switch (key) {
