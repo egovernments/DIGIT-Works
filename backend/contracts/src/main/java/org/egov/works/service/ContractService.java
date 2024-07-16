@@ -49,12 +49,17 @@ public class ContractService {
 
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private RedisService redisService;
 
     public ContractResponse createContract(ContractRequest contractRequest) {
         log.info("Create contract");
         contractServiceValidator.validateCreateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnCreate(contractRequest);
         workflowService.updateWorkflowStatus(contractRequest);
+        if(contractServiceConfiguration.getIsRedisNeeded()){
+            setCacheContract(contractRequest.getContract());
+        }
         contractProducer.push(contractServiceConfiguration.getCreateContractTopic(), contractRequest);
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);
@@ -70,6 +75,9 @@ public class ContractService {
         contractEnrichment.enrichContractOnUpdate(contractRequest);
         workflowService.updateWorkflowStatus(contractRequest);
         contractEnrichment.enrichPreviousContractLineItems(contractRequest);
+        if(contractServiceConfiguration.getIsRedisNeeded()){
+            setCacheContract(contractRequest.getContract());
+        }
         contractProducer.push(contractServiceConfiguration.getUpdateContractTopic(), contractRequest);
         try {
             notificationService.sendNotification(contractRequest);
@@ -96,12 +104,31 @@ public class ContractService {
         log.info("Enrich requested search criteria");
         contractEnrichment.enrichSearchContractRequest(contractCriteria);
 
+        if(contractServiceConfiguration.getIsRedisNeeded() && contractCriteria.getId() != null){
+            log.info("get contract from cache");
+            try {
+                Contract contract = redisService.getCache(contractCriteria.getId(), Contract.class);
+                if(contract != null){
+                    return Collections.singletonList(contract);
+                }
+            }catch (Exception e) {
+                log.error("Exception while getting cache: " + e);
+            }
+        }
         //get contracts from db
         log.info("get enriched contracts list");
         List<Contract> contracts = getContracts(contractCriteria);
 
         log.info("Contracts searched");
         return contracts;
+    }
+
+    private void setCacheContract(Contract contract){
+        try {
+            redisService.setCache(contract.getId(), contract);
+        }catch (Exception e){
+            log.error("Exception while setting cache: " + e);
+        }
     }
 
     public List<Contract> getContracts(ContractCriteria contractCriteria) {

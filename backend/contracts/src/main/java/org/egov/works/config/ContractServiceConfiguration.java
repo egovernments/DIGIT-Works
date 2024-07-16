@@ -204,6 +204,9 @@ public class ContractServiceConfiguration {
     @Value("${contract.revision.measurement.validation}")
     private Boolean isMeasurementValidationRequired;
 
+    @Value("${spring.data.redis.needed}")
+    private Boolean isRedisNeeded;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
