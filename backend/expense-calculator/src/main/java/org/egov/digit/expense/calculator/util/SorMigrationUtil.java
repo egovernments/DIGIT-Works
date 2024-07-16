@@ -253,7 +253,7 @@ public class SorMigrationUtil {
 //                            skill.setLevel(sorMapping.get(labourCode));
                         } else {
                             log.error("Unable to update individual again");
-                            throw new CustomException("SKILL_CODE_NOT_FOUND", "Labour code not found in sor mapping");
+                            //throw new CustomException("SKILL_CODE_NOT_FOUND", "Labour code not found in sor mapping");
                         }
                     }
                     individual.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
