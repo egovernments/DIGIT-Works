@@ -65,7 +65,7 @@ router.post("/analysis-statement", asyncMiddleware(async function (req, res, nex
         try {
             analysisStatement = await search_rateAnalysisStatementDetails(tenantId, requestInfo, referenceId);
         } catch (ex) {
-            return renderError(res, "Failed to query details of the rate analysis statement", 500);
+            return renderError(res, "Failed to query details of the rate analysis statement", 204);
         }
         var statementData = analysisStatement.data.statement;
         if (statementData.length <= 0) {
@@ -75,7 +75,7 @@ router.post("/analysis-statement", asyncMiddleware(async function (req, res, nex
             const projectId = statementData[0].additionalDetails.projectId;
             project = await search_projectDetails_by_ID(tenantId, requestInfo, projectId);
         } catch (ex) {
-            return renderError(res, "Failed to get project details", 500);
+            return renderError(res, "Failed to get project details", 204);
         }
         projectData = project.data.Project[0];
         projectBoundary = projectData.address.boundary;
@@ -134,7 +134,7 @@ router.post("/analysis-statement", asyncMiddleware(async function (req, res, nex
 
             } catch (ex) {
 
-                return renderError(res, "Failed to generate PDF for analysis statement", 500);
+                return renderError(res, "Failed to generate PDF for analysis statement", 406);
 
             }
         } else {
@@ -147,7 +147,7 @@ router.post("/analysis-statement", asyncMiddleware(async function (req, res, nex
 
         }
     } catch (ex) {
-        return renderError(res, "Failed to transform analysis statement", 500);
+        return renderError(res, "Failed to transform analysis statement", 406);
     }
 }))
 
