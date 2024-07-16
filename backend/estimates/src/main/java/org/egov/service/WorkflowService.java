@@ -1,15 +1,16 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.RequestInfoWrapper;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.workflow.*;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.EstimateServiceConstant;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +141,7 @@ public class WorkflowService {
             if (CollectionUtils.isEmpty(processInstanceResponse.getProcessInstances()) || processInstanceResponse.getProcessInstances().size() != estimateNumbers.size())
                 throw new CustomException("WORKFLOW_NOT_FOUND", "The workflow object is not found");
 
-            Map<String, org.egov.web.models.Workflow> businessIdToWorkflow = getWorkflow(processInstanceResponse.getProcessInstances());
+            Map<String, Workflow> businessIdToWorkflow = getWorkflow(processInstanceResponse.getProcessInstances());
 
             tenantSpecificWrappers.forEach(estimateWrapper ->
                 estimateWrapper.setWorkflow(businessIdToWorkflow.get(estimateWrapper.getEstimate().getEstimateNumber()))
@@ -177,7 +178,7 @@ public class WorkflowService {
     private ProcessInstance getProcessInstanceForEstimate(EstimateRequest request) {
         log.info("WorkflowService::getProcessInstanceForEstimate");
         Estimate estimate = request.getEstimate();
-        org.egov.web.models.Workflow workflow = request.getWorkflow();
+        Workflow workflow = request.getWorkflow();
 
         ProcessInstance processInstance = new ProcessInstance();
         if(estimate.getBusinessService() != null && estimate.getBusinessService().equals(serviceConfiguration.getRevisionEstimateBusinessService())){
@@ -189,13 +190,13 @@ public class WorkflowService {
         processInstance.setModuleName(serviceConfiguration.getEstimateWFModuleName());
         processInstance.setTenantId(estimate.getTenantId());
         processInstance.setBusinessService(serviceConfiguration.getEstimateWFBusinessService());
-        processInstance.setComment(workflow.getComment());
+        processInstance.setComment(workflow.getComments());
 
 
-        if (!CollectionUtils.isEmpty(workflow.getAssignees())) {
+        if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
             List<User> users = new ArrayList<>();
 
-            workflow.getAssignees().forEach(uuid -> {
+            workflow.getAssignes().forEach(uuid -> {
                 User user = new User();
                 user.setUuid(uuid);
                 users.add(user);
@@ -213,9 +214,9 @@ public class WorkflowService {
      * @param processInstances
      */
 
-    public Map<String, org.egov.web.models.Workflow> getWorkflow(List<ProcessInstance> processInstances) {
+    public Map<String, Workflow> getWorkflow(List<ProcessInstance> processInstances) {
         log.info("WorkflowService::getWorkflow");
-        Map<String, org.egov.web.models.Workflow> businessIdToWorkflow = new HashMap<>();
+        Map<String, Workflow> businessIdToWorkflow = new HashMap<>();
 
         processInstances.forEach(processInstance -> {
             List<String> userIds = null;
@@ -224,10 +225,10 @@ public class WorkflowService {
                 userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
             }
 
-            org.egov.web.models.Workflow workflow = org.egov.web.models.Workflow.builder()
+            Workflow workflow = Workflow.builder()
                     .action(processInstance.getAction())
-                    .assignees(userIds)
-                    .comment(processInstance.getComment())
+                    .assignes(userIds)
+                    .comments(processInstance.getComment())
                     /*.verificationDocuments(processInstance.getDocuments())*/
                     .build();
 
