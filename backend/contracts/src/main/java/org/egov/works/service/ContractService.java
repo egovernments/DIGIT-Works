@@ -57,7 +57,7 @@ public class ContractService {
         contractServiceValidator.validateCreateContractRequest(contractRequest);
         contractEnrichment.enrichContractOnCreate(contractRequest);
         workflowService.updateWorkflowStatus(contractRequest);
-        if(contractServiceConfiguration.getIsRedisNeeded()){
+        if(Boolean.TRUE.equals(contractServiceConfiguration.getIsRedisNeeded())){
             setCacheContract(contractRequest.getContract());
         }
         contractProducer.push(contractServiceConfiguration.getCreateContractTopic(), contractRequest);
@@ -75,7 +75,7 @@ public class ContractService {
         contractEnrichment.enrichContractOnUpdate(contractRequest);
         workflowService.updateWorkflowStatus(contractRequest);
         contractEnrichment.enrichPreviousContractLineItems(contractRequest);
-        if(contractServiceConfiguration.getIsRedisNeeded()){
+        if(Boolean.TRUE.equals(contractServiceConfiguration.getIsRedisNeeded())){
             setCacheContract(contractRequest.getContract());
         }
         contractProducer.push(contractServiceConfiguration.getUpdateContractTopic(), contractRequest);
@@ -104,7 +104,7 @@ public class ContractService {
         log.info("Enrich requested search criteria");
         contractEnrichment.enrichSearchContractRequest(contractCriteria);
 
-        if(contractServiceConfiguration.getIsRedisNeeded() && contractCriteria.getId() != null){
+        if(Boolean.TRUE.equals(contractServiceConfiguration.getIsRedisNeeded()) && contractCriteria.getId() != null){
             log.info("get contract from cache");
             try {
                 Contract contract = redisService.getCache(contractCriteria.getId(), Contract.class);
@@ -112,7 +112,7 @@ public class ContractService {
                     return Collections.singletonList(contract);
                 }
             }catch (Exception e) {
-                log.error("Exception while getting cache: " + e);
+                log.error("Exception while getting cache: {}", e);
             }
         }
         //get contracts from db
