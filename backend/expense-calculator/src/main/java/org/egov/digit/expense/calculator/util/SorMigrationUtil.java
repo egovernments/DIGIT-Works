@@ -80,6 +80,8 @@ public class SorMigrationUtil {
         List<Object> tenantRes = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_TENANTS_VERIFICATION);
         for (Object tenantIdRes : tenantRes) {
             String tenantId = tenantIdRes.toString();
+            if (!tenantId.equalsIgnoreCase("od.testing"))
+                continue;
             log.info("Migrating sor for tenantId {}", tenantId);
             switch (key) {
                 case "musterRoll":
@@ -116,12 +118,12 @@ public class SorMigrationUtil {
 
             for (MusterRoll musterRoll : musterRollResponse.getMusterRolls()) {
                 try {
-                    String isMigratedQuery = "SELECT is_migration_successful FROM eg_sor_migration WHERE id = '" + musterRoll.getId() + "'";
-                    List<Map<String, Object>> isMigrated = jdbcTemplate.queryForList(isMigratedQuery);
-                    if (!CollectionUtils.isEmpty(isMigrated) && isMigrated.get(0).get("is_migration_successful").equals(true)) {
-                        log.info("Sor already migrated for id :: " + musterRoll.getId());
-                        continue;
-                    }
+//                    String isMigratedQuery = "SELECT is_migration_successful FROM eg_sor_migration WHERE id = '" + musterRoll.getId() + "'";
+//                    List<Map<String, Object>> isMigrated = jdbcTemplate.queryForList(isMigratedQuery);
+//                    if (!CollectionUtils.isEmpty(isMigrated) && isMigrated.get(0).get("is_migration_successful").equals(true)) {
+//                        log.info("Sor already migrated for id :: " + musterRoll.getId());
+//                        continue;
+//                    }
                     for (IndividualEntry individualEntry : musterRoll.getIndividualEntries()) {
                         Map<String, Object> additionalDetailsMap;
                         try {
