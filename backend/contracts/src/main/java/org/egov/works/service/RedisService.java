@@ -45,7 +45,7 @@ public class RedisService {
             if (objectJson != null) {
                 return objectMapper.readValue(objectJson, type);
             } else {
-                log.warn("No cache found for key: " + key);
+                log.warn("No cache found for key: {}", key);
                 return null;
             }
         } catch (JsonProcessingException e) {
