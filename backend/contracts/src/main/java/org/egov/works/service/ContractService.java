@@ -51,6 +51,8 @@ public class ContractService {
     private NotificationService notificationService;
     @Autowired
     private RedisService redisService;
+    private static final String CONTRACT_REDIS_KEY = "CONTRACT_{id}";
+
 
     public ContractResponse createContract(ContractRequest contractRequest) {
         log.info("Create contract");
@@ -107,7 +109,8 @@ public class ContractService {
         if(Boolean.TRUE.equals(contractServiceConfiguration.getIsRedisNeeded()) && contractCriteria.getId() != null){
             log.info("get contract from cache");
             try {
-                Contract contract = redisService.getCache(contractCriteria.getId(), Contract.class);
+                String key = getContractRedisKey(contractCriteria.getId());
+                Contract contract = redisService.getCache(key, Contract.class);
                 if(contract != null){
                     return Collections.singletonList(contract);
                 }
@@ -125,7 +128,8 @@ public class ContractService {
 
     private void setCacheContract(Contract contract){
         try {
-            redisService.setCache(contract.getId(), contract);
+            String key = getContractRedisKey(contract.getId());
+            redisService.setCache(key, contract);
         }catch (Exception e){
             log.error("Exception while setting cache: " + e);
         }
@@ -163,6 +167,9 @@ public class ContractService {
         contractCriteria.getPagination().setTotalCount(filteredContracts.size());
 
         return filteredContracts;
+    }
+     private String getContractRedisKey(String id) {
+        return CONTRACT_REDIS_KEY.replace("{id}", id);
     }
 
 }

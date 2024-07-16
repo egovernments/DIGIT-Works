@@ -16,7 +16,6 @@ public class RedisService {
     private static final Logger log = LoggerFactory.getLogger(RedisService.class);
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
-    private static final String CONTRACT_REDIS_KEY = "CONTRACT_{id}";
 
     @Autowired
     public RedisService(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper) {
@@ -24,9 +23,8 @@ public class RedisService {
         this.objectMapper = objectMapper;
     }
 
-    public void setCache(String id, Object json) {
+    public void setCache(String key, Object json) {
         try {
-            String key = getContractRedisKey(id);
             String object = objectMapper.writeValueAsString(json);
             redisTemplate.opsForValue().set(key, object);
         } catch (JsonProcessingException e) {
@@ -38,9 +36,8 @@ public class RedisService {
         }
     }
 
-    public <T> T getCache(String id, Class<T> type) {
+    public <T> T getCache(String key, Class<T> type) {
         try {
-            String key = getContractRedisKey(id);
             String objectJson = (String) redisTemplate.opsForValue().get(key);
             if (objectJson != null) {
                 return objectMapper.readValue(objectJson, type);
@@ -57,8 +54,5 @@ public class RedisService {
         }
     }
 
-    private String getContractRedisKey(String id) {
-        return CONTRACT_REDIS_KEY.replace("{id}", id);
-    }
 
 }
