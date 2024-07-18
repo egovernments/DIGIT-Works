@@ -21,6 +21,10 @@ public class EstimateServiceConfiguration {
 
     @Value("${app.timezone}")
     private String timeZone;
+
+    @Value("${spring.data.redis.enabled}")
+    private Boolean isRedisEnabled;
+
     //Idgen Config
     @Value("${egov.idgen.host}")
     private String idGenHost;

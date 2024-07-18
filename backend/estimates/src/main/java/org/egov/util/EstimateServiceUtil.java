@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
+import org.egov.web.models.EstimateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 @Component
 @Slf4j
@@ -37,5 +39,11 @@ public class EstimateServiceUtil {
         log.info("EstimateServiceValidator::isRevisionEstimate");
         Estimate estimate = request.getEstimate();
         return estimate.getBusinessService() != null && estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService());
+    }
+
+    public Boolean isSearchByIdsOnly(EstimateSearchCriteria searchCriteria) {
+        if (!CollectionUtils.isEmpty(searchCriteria.getIds()))
+            return true;
+        return false;
     }
 }

@@ -14,6 +14,7 @@ import org.egov.web.models.EstimateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,9 +35,12 @@ public class EstimateService {
 
     private final NotificationService notificationService;
     private final EstimateServiceUtil estimateServiceUtil;
+    private final RedisService redisService;
+
+    private static final String ESTIMATE_REDIS_KEY = "ESTIMATE_{id}";
 
     @Autowired
-    public EstimateService(EstimateServiceConfiguration serviceConfiguration, EstimateProducer producer, EstimateServiceValidator serviceValidator, EnrichmentService enrichmentService, EstimateRepository estimateRepository, WorkflowService workflowService, NotificationService notificationService, EstimateServiceUtil estimateServiceUtil) {
+    public EstimateService(EstimateServiceConfiguration serviceConfiguration, EstimateProducer producer, EstimateServiceValidator serviceValidator, EnrichmentService enrichmentService, EstimateRepository estimateRepository, WorkflowService workflowService, NotificationService notificationService, EstimateServiceUtil estimateServiceUtil, RedisService redisService) {
         this.serviceConfiguration = serviceConfiguration;
         this.producer = producer;
         this.serviceValidator = serviceValidator;
@@ -45,6 +49,7 @@ public class EstimateService {
         this.workflowService = workflowService;
         this.notificationService = notificationService;
         this.estimateServiceUtil = estimateServiceUtil;
+        this.redisService = redisService;
     }
 
     /**
@@ -59,6 +64,8 @@ public class EstimateService {
         serviceValidator.validateEstimateOnCreate(estimateRequest);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);
+        if (Boolean.TRUE.equals(serviceConfiguration.getIsRedisEnabled()))
+            redisService.setCache(getEstimateRedisKey(estimateRequest.getEstimate().getId()), estimateRequest.getEstimate());
         producer.push(serviceConfiguration.getSaveEstimateTopic(), estimateRequest);
         return estimateRequest;
     }
@@ -74,6 +81,12 @@ public class EstimateService {
         log.info("EstimateService::searchEstimate");
         serviceValidator.validateEstimateOnSearch(requestInfoWrapper, searchCriteria);
         enrichmentService.enrichEstimateOnSearch(searchCriteria);
+        if (Boolean.TRUE.equals(serviceConfiguration.getIsRedisEnabled())
+                && estimateServiceUtil.isSearchByIdsOnly(searchCriteria) ) {
+            List<Estimate> estimates = getEstimatesFromRedis(searchCriteria.getIds());
+            if (estimates.size() == searchCriteria.getIds().size())
+                return estimates;
+        }
         return estimateRepository.getEstimate(searchCriteria);
     }
 
@@ -101,6 +114,8 @@ public class EstimateService {
         if(Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(estimateRequest))){
             updateWfStatusOfPreviousEstimate(estimateRequest);
         }
+        if (Boolean.TRUE.equals(serviceConfiguration.getIsRedisEnabled()))
+            redisService.setCache(getEstimateRedisKey(estimateRequest.getEstimate().getId()), estimateRequest.getEstimate());
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), estimateRequest);
         try{
             notificationService.sendNotification(estimateRequest);
@@ -121,5 +136,20 @@ public class EstimateService {
                 producer.push(serviceConfiguration.getUpdateEstimateTopic(), oldEstimateRequest);
             }
         }
+    }
+
+    private List<Estimate> getEstimatesFromRedis(List<String> ids) {
+        log.info("EstimateService::getEstimatesFromRedis");
+        List<Estimate> estimates = new ArrayList<>();
+        for (String id : ids) {
+            Estimate estimate = redisService.getCache(getEstimateRedisKey(id), Estimate.class);
+            if (estimate != null)
+                estimates.add(estimate);
+        }
+        return estimates;
+    }
+
+    private String getEstimateRedisKey(String id) {
+        return ESTIMATE_REDIS_KEY.replace("{id}", id);
     }
 }
