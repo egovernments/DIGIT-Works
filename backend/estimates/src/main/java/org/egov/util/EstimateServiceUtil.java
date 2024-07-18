@@ -41,8 +41,8 @@ public class EstimateServiceUtil {
         return estimate.getBusinessService() != null && estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService());
     }
 
-    public Boolean isSearchByIdsOnly(EstimateSearchCriteria searchCriteria) {
-        if (!CollectionUtils.isEmpty(searchCriteria.getIds()))
+    public Boolean isCacheSearchRequired(EstimateSearchCriteria searchCriteria) {
+        if (Boolean.TRUE.equals(config.getIsCachingEnabled()) && !CollectionUtils.isEmpty(searchCriteria.getIds()))
             return true;
         return false;
     }

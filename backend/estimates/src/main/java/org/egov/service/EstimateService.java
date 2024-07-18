@@ -84,8 +84,7 @@ public class EstimateService {
         serviceValidator.validateEstimateOnSearch(requestInfoWrapper, searchCriteria);
         enrichmentService.enrichEstimateOnSearch(searchCriteria);
         List<Estimate> estimates = new ArrayList<>();
-        if (Boolean.TRUE.equals(serviceConfiguration.getIsCachingEnabled())
-                && estimateServiceUtil.isSearchByIdsOnly(searchCriteria) ) {
+        if (estimateServiceUtil.isCacheSearchRequired(searchCriteria) ) {
             estimates = getEstimatesFromRedis(searchCriteria.getIds());
             if (estimates.size() == searchCriteria.getIds().size()) {
                 return estimates;
