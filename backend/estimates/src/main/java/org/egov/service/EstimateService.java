@@ -64,7 +64,7 @@ public class EstimateService {
         serviceValidator.validateEstimateOnCreate(estimateRequest);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);
-        if (Boolean.TRUE.equals(serviceConfiguration.getIsRedisEnabled()))
+        if (Boolean.TRUE.equals(serviceConfiguration.getIsCachingEnabled()))
             redisService.setCache(getEstimateRedisKey(estimateRequest.getEstimate().getId()), estimateRequest.getEstimate());
         producer.push(serviceConfiguration.getSaveEstimateTopic(), estimateRequest);
         return estimateRequest;
@@ -81,7 +81,7 @@ public class EstimateService {
         log.info("EstimateService::searchEstimate");
         serviceValidator.validateEstimateOnSearch(requestInfoWrapper, searchCriteria);
         enrichmentService.enrichEstimateOnSearch(searchCriteria);
-        if (Boolean.TRUE.equals(serviceConfiguration.getIsRedisEnabled())
+        if (Boolean.TRUE.equals(serviceConfiguration.getIsCachingEnabled())
                 && estimateServiceUtil.isSearchByIdsOnly(searchCriteria) ) {
             List<Estimate> estimates = getEstimatesFromRedis(searchCriteria.getIds());
             if (estimates.size() == searchCriteria.getIds().size())
@@ -114,7 +114,7 @@ public class EstimateService {
         if(Boolean.TRUE.equals(estimateServiceUtil.isRevisionEstimate(estimateRequest))){
             updateWfStatusOfPreviousEstimate(estimateRequest);
         }
-        if (Boolean.TRUE.equals(serviceConfiguration.getIsRedisEnabled()))
+        if (Boolean.TRUE.equals(serviceConfiguration.getIsCachingEnabled()))
             redisService.setCache(getEstimateRedisKey(estimateRequest.getEstimate().getId()), estimateRequest.getEstimate());
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), estimateRequest);
         try{
