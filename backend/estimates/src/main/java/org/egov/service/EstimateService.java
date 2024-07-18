@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @Slf4j
 public class EstimateService {
@@ -81,13 +83,18 @@ public class EstimateService {
         log.info("EstimateService::searchEstimate");
         serviceValidator.validateEstimateOnSearch(requestInfoWrapper, searchCriteria);
         enrichmentService.enrichEstimateOnSearch(searchCriteria);
+        List<Estimate> estimates = new ArrayList<>();
         if (Boolean.TRUE.equals(serviceConfiguration.getIsCachingEnabled())
                 && estimateServiceUtil.isSearchByIdsOnly(searchCriteria) ) {
-            List<Estimate> estimates = getEstimatesFromRedis(searchCriteria.getIds());
-            if (estimates.size() == searchCriteria.getIds().size())
+            estimates = getEstimatesFromRedis(searchCriteria.getIds());
+            if (estimates.size() == searchCriteria.getIds().size()) {
                 return estimates;
+            } else {
+                searchCriteria.getIds().removeAll(estimates.stream().map(Estimate::getId).collect(toList()));
+            }
         }
-        return estimateRepository.getEstimate(searchCriteria);
+        estimates.addAll(estimateRepository.getEstimate(searchCriteria));
+        return estimates;
     }
 
     /**
