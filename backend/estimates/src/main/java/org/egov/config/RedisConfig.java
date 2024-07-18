@@ -22,7 +22,7 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int redisPort;
 
-    @Value("${spring.data.redis.timeout}")
+    @Value("${redis.expiry.time}")
     private int redisTimeout;
 
     @Bean
