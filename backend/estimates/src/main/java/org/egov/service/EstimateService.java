@@ -141,6 +141,8 @@ public class EstimateService {
                 Estimate oldEstimate = estimateList.get(0);
                 oldEstimate.setStatus(Estimate.StatusEnum.INACTIVE);
                 EstimateRequest oldEstimateRequest = EstimateRequest.builder().requestInfo(estimateRequest.getRequestInfo()).estimate(oldEstimate).build();
+                if (Boolean.TRUE.equals(serviceConfiguration.getIsCachingEnabled()))
+                    redisService.setCache(getEstimateRedisKey(oldEstimate.getId()), oldEstimate);
                 producer.push(serviceConfiguration.getUpdateEstimateTopic(), oldEstimateRequest);
             }
         }
