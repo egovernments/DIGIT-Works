@@ -204,7 +204,7 @@ public class ContractServiceConfiguration {
     @Value("${contract.revision.measurement.validation}")
     private Boolean isMeasurementValidationRequired;
 
-    @Value("${spring.data.redis.needed}")
+    @Value("${is.caching.enabled}")
     private Boolean isRedisNeeded;
 
     @PostConstruct
