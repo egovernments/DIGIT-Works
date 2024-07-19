@@ -12,6 +12,7 @@ import org.egov.works.validator.ContractServiceValidator;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,14 +106,17 @@ public class ContractService {
         //Enrich requested search criteria
         log.info("Enrich requested search criteria");
         contractEnrichment.enrichSearchContractRequest(contractCriteria);
-
-        if(Boolean.TRUE.equals(contractServiceConfiguration.getIsRedisNeeded()) && contractCriteria.getId() != null){
+        List<Contract> contracts = new ArrayList<>();
+        if(Boolean.TRUE.equals(contractServiceConfiguration.getIsRedisNeeded()) && !CollectionUtils.isEmpty(contractCriteria.getIds())){
             log.info("get contract from cache");
             try {
-                String key = getContractRedisKey(contractCriteria.getId());
-                Contract contract = redisService.getCache(key, Contract.class);
-                if(contract != null){
-                    return Collections.singletonList(contract);
+                contracts = getContractsFromCache(contractCriteria.getIds());
+                if(contracts.size() == contractCriteria.getIds().size()){
+                    log.info("Contracts searched");
+                    return contracts;
+                }else{
+                    log.info("Contracts not found in cache");
+                    contractCriteria.getIds().removeAll(contracts.stream().map(Contract::getId).collect(Collectors.toList()));
                 }
             }catch (Exception e) {
                 log.error("Exception while getting cache: {}", e);
@@ -120,9 +124,21 @@ public class ContractService {
         }
         //get contracts from db
         log.info("get enriched contracts list");
-        List<Contract> contracts = getContracts(contractCriteria);
+        contracts.addAll(getContracts(contractCriteria));
 
         log.info("Contracts searched");
+        return contracts;
+    }
+
+    private List<Contract> getContractsFromCache(List<String> ids) {
+        List<Contract> contracts = new ArrayList<>();
+        for (String id : ids) {
+            String key = getContractRedisKey(id);
+            Contract contract = redisService.getCache(key, Contract.class);
+            if (contract != null) {
+                contracts.add(contract);
+            }
+        }
         return contracts;
     }
 
