@@ -90,6 +90,8 @@ public class EstimateService {
                 return estimates;
             } else {
                 searchCriteria.getIds().removeAll(estimates.stream().map(Estimate::getId).collect(toList()));
+                if (searchCriteria.getIds().isEmpty())
+                    return estimates;
             }
         }
         estimates.addAll(estimateRepository.getEstimate(searchCriteria));
