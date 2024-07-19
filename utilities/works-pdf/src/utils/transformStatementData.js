@@ -103,6 +103,7 @@ const transformStatementData = (data, project) => {
                 result.amountDetails.forEach(amountDetail => {
                     totalAmount += parseFloat(amountDetail.amount);
                     amountDetail.amount = formatInLakh(amountDetail.amount);
+                    amountDetail.rate = formatInLakh(amountDetail.rate);
                 })
                 result.totalEstimatedAmount = formatInLakh(totalAmount);
             })
