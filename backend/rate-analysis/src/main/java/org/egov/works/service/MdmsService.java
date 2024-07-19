@@ -108,13 +108,12 @@ public class MdmsService {
         String schemaCode = currentMdms.getSchemaCode();
         JsonNode currentData = currentMdms.getData();
         JsonNode previousData = previousRates.getData();
-        String currentValidFrom = currentData.get(schemaCode.equals(configs.getRatesSchemaCode())? "validFrom": "effectiveFrom").asText();
-        String previousValidFrom = previousData.get(schemaCode.equals(configs.getRatesSchemaCode())? "validFrom": "effectiveFrom").asText();
-        if(previousValidFrom.equals(currentValidFrom)){
+        Long currentValidFrom = currentData.get(schemaCode.equals(configs.getRatesSchemaCode())? "validFrom": "effectiveFrom").asLong();
+        Long previousValidFrom = previousData.get(schemaCode.equals(configs.getRatesSchemaCode())? "validFrom": "effectiveFrom").asLong();
+        if(previousValidFrom.equals(currentValidFrom) || currentValidFrom < previousValidFrom){
             previousRates.setIsActive(false);
         }else{
-            long currentValidFromLong = Long.parseLong(currentValidFrom);
-            LocalDateTime currentDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(currentValidFromLong), ZoneId.systemDefault());
+            LocalDateTime currentDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(currentValidFrom), ZoneId.systemDefault());
             LocalDateTime endOfPreviousDay = currentDateTime.toLocalDate().minusDays(1).atTime(LocalTime.of(23, 59, 59));
             long endOfPreviousDayEpochTime = endOfPreviousDay.toEpochSecond(ZoneOffset.UTC);
             previousData = ((ObjectNode) previousData).put(schemaCode.equals(configs.getRatesSchemaCode())? "validTo": "effectiveTo", Long.toString(endOfPreviousDayEpochTime));

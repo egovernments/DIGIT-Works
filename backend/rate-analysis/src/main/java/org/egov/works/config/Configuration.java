@@ -65,6 +65,9 @@ public class Configuration {
     @Value("${works.mdms.data.composition.schema.code}")
     private String compositionSchemaCode;
 
+    @Value("${works.is.mdms.consumer.needed}")
+    private Boolean isMdmsConsumerNeeded;
+
     // Kafka Topics
     @Value("${rate.analysis.job.create.topic}")
     private String rateAnalysisJobCreateTopic;
