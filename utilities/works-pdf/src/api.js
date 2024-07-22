@@ -205,6 +205,7 @@ async function search_localization(request, lang, module, tenantId) {
 
 async function create_pdf(tenantId, key, data, requestinfo) {
   var oj = Object.assign(requestinfo, data);
+  console.log(Object.assign(requestinfo, data))
   return await axios({
     responseType: "stream",
     method: "post",
@@ -490,6 +491,57 @@ async function search_measurementBookDetails(tenantId, requestinfo,contractNumbe
   });
 }
 
+async function search_rateAnalysisStatementDetails(tenantId, requestinfo, referenceId) {
+  const search_endpoint = config.paths.analysis_statement_search;
+  const url = new URL(search_endpoint, config.host.statements);
+  requestinfo = requestinfo.RequestInfo;
+  const data = {
+    RequestInfo: requestinfo,
+    searchCriteria: {
+      tenantId: tenantId,
+      referenceId: referenceId
+    }
+  };
+
+  return await axios.post(url.href, data);
+}
+async function search_rateAnalysisUtilizationDetails(tenantId, requestinfo, referenceId) {
+  const search_endpoint = config.paths.analysis_utilization_search;
+  const url = new URL(search_endpoint, config.host.statements);
+  requestinfo = requestinfo.RequestInfo;
+  const data = {
+    RequestInfo: requestinfo,
+    searchCriteria: {
+      tenantId: tenantId,
+      referenceId: referenceId
+    }
+  };
+
+  return await axios.post(url.href, data);
+}
+
+async function search_projectDetails_by_ID(tenantId, requestinfo, projectId) {
+  var params = {
+    tenantId: tenantId,
+    limit: 1,
+    offset: 0
+  };
+
+  var searchEndpoint = config.paths.projectDetails_search;
+  var data = {
+    "Projects": [{
+      "tenantId": tenantId,
+      "id": projectId
+    }]
+  }
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.projectDetails, searchEndpoint),
+    data: Object.assign(requestinfo, data),
+    params,
+  });
+}
+
 module.exports = {
   pool,
   create_pdf,
@@ -514,5 +566,8 @@ module.exports = {
   create_eg_payments_excel,
   reset_eg_payments_excel,
   exec_query_eg_payments_excel,
-  search_measurementBookDetails
+  search_measurementBookDetails,
+  search_rateAnalysisStatementDetails,
+  search_projectDetails_by_ID,
+  search_rateAnalysisUtilizationDetails
 };
