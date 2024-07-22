@@ -12,8 +12,8 @@ import org.egov.common.models.core.Role;
 import org.egov.util.OrganisationConstant;
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.*;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
