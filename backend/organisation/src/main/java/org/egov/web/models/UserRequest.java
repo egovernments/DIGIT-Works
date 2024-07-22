@@ -10,8 +10,8 @@ import lombok.*;
 import org.egov.common.models.core.Role;
 import org.egov.util.OrganisationConstant;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;

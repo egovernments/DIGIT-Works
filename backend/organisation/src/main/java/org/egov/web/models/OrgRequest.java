@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
  * OrgRequest
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-15T14:49:42.141+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-15T14:49:42.141+05:30")
 
 @Data
 @AllArgsConstructor

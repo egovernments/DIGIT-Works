@@ -246,7 +246,7 @@ public class IndividualService {
         log.info("IndividualService::Individual Exists");
         IndividualSearchRequest searchRequest = getIndividualSearchRequest(requestInfo);
         if (isCreate) {
-            searchRequest.getIndividual().setMobileNumber(contactDetails.getContactMobileNumber());
+            searchRequest.getIndividual().setMobileNumber(Collections.singletonList(contactDetails.getContactMobileNumber()));
         } else {
             searchRequest.getIndividual().setId(Collections.singletonList(contactDetails.getIndividualId()));
         }
@@ -350,7 +350,7 @@ public class IndividualService {
                 LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response;
                 return mapper.convertValue(responseMap, IndividualBulkResponse.class);
             } else {
-                return new IndividualBulkResponse(ResponseInfo.builder().build(), new ArrayList<>());
+                return new IndividualBulkResponse(ResponseInfo.builder().build(), 0L, new ArrayList<>());
             }
         }
         catch (Exception e) {
