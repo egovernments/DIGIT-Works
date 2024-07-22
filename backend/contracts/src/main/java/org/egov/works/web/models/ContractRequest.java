@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * ContractRequest
@@ -25,6 +26,7 @@ public class ContractRequest {
 
     @JsonProperty("contract")
     @Valid
+    @NotNull
     private Contract contract = null;
 
     @JsonProperty("workflow")
