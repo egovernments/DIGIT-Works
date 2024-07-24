@@ -328,6 +328,7 @@ public class SorMigrationUtil {
                     log.error("Error migrating individual for id {}", individual.getId(), e);
                 }
             }
+            offset = offset + limit;
         } while (!individualResponse.getIndividual().isEmpty()) ;
     }
 }
