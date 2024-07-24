@@ -292,7 +292,9 @@ public class SorMigrationUtil {
         int offset = configs.getDefaultOffset();
         int limit = configs.getDefaultLimit();
         StringBuilder updateUrl = new StringBuilder(individualHost).append(individualUpdateContextPath);
+        boolean error = false;
         do {
+            error = false;
             StringBuilder searchUrl = new StringBuilder(individualHost).append(individualContextPath)
                     .append("?tenantId=").append(tenantId).append("&offset=").append(offset).append("&limit=").append(limit);
             IndividualSearchRequest search = IndividualSearchRequest.builder().requestInfo(requestInfo).individual(IndividualSearch.builder().build()).build();
@@ -302,6 +304,8 @@ public class SorMigrationUtil {
                 individualObject = restRepo.fetchResult(searchUrl, search);
             } catch (Exception e) {
                 log.error("Error fetching individual for offset {}", offset);
+                error = true;
+                offset = offset + limit;
                 continue;
             }
             individualResponse = mapper.convertValue(individualObject, IndividualBulkResponse.class);
@@ -329,6 +333,6 @@ public class SorMigrationUtil {
                 }
             }
             offset = offset + limit;
-        } while (!individualResponse.getIndividual().isEmpty()) ;
+        } while (!individualResponse.getIndividual().isEmpty() || error == true) ;
     }
 }
