@@ -55,6 +55,8 @@ public class SorMigrationUtil {
     private String individualUpdateContextPath;
     @Value("${individual.update.topic}")
     private String individualUpdateTopic;
+    @Value("${is.testing}")
+    private boolean isTesting;
 
 
     public SorMigrationUtil(ServiceRequestRepository restRepo, ExpenseCalculatorConfiguration configs, ObjectMapper mapper, MdmsUtils mdmsUtils, CommonUtil commonUtil, ExpenseCalculatorProducer producer, JdbcTemplate jdbcTemplate) {
@@ -83,7 +85,10 @@ public class SorMigrationUtil {
         List<Object> tenantRes = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_TENANTS_VERIFICATION);
         for (Object tenantIdRes : tenantRes) {
             String tenantId = tenantIdRes.toString();
-            if (tenantId.equalsIgnoreCase("od"))
+            //TODO remove this when running in prod
+//            if (tenantId.equalsIgnoreCase("od"))
+//                continue;
+            if (isTesting && !tenantId.equalsIgnoreCase("od.testing"))
                 continue;
             log.info("Migrating sor for tenantId {}", tenantId);
             switch (key) {
@@ -302,9 +307,11 @@ public class SorMigrationUtil {
                 for (Identifier identifier : individualRequest.getIndividual().getIdentifiers()){
                     if (identifier.getIdentifierType().equalsIgnoreCase("AADHAAR")) {
                         identifier.setIdentifierId(RandomStringUtils.randomNumeric(12));
-                        identifier.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-                        identifier.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                    } else {
+                        identifier.setIdentifierId(individual.getId());
                     }
+                    identifier.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                    identifier.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                 }
                 try {
                     Object response = restRepo.fetchResult(updateUrl, individualRequest);
