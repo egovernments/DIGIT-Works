@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.*;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
@@ -50,6 +51,8 @@ public class SorMigrationUtil {
     private String individualHost;
     @Value("${individual.context.path}")
     private String individualContextPath;
+    @Value("${individual.update.context.path}")
+    private String individualUpdateContextPath;
     @Value("${individual.update.topic}")
     private String individualUpdateTopic;
 
@@ -92,6 +95,9 @@ public class SorMigrationUtil {
                     break;
                 case "individualAgain":
                     migrateIndividualAgain(requestInfo, tenantId, sorMigrationMapping);
+                    break;
+                case "encryptionIndividual":
+                    migrateIndividualAgainAndAgain(requestInfo, tenantId);
                     break;
                 default:
                     throw new CustomException("INVALID_SOR_TYPE", "Invalid sor type");
@@ -274,5 +280,39 @@ public class SorMigrationUtil {
             offset = offset + limit;
         } while (individualResponse.getIndividual().size() > 0) ;
 
+    }
+    private void migrateIndividualAgainAndAgain(RequestInfo requestInfo, String tenantId) {
+        IndividualBulkResponse individualResponse;
+        int offset = configs.getDefaultOffset();
+        int limit = configs.getDefaultLimit();
+        StringBuilder updateUrl = new StringBuilder(individualHost).append(individualUpdateContextPath);
+        do {
+            StringBuilder searchUrl = new StringBuilder(individualHost).append(individualContextPath)
+                    .append("?tenantId=").append(tenantId).append("&offset=").append(offset).append("&limit=").append(limit);
+            IndividualSearchRequest search = IndividualSearchRequest.builder().requestInfo(requestInfo).individual(IndividualSearch.builder().build()).build();
+            Object individualObject = restRepo.fetchResult(searchUrl, search);
+            individualResponse = mapper.convertValue(individualObject, IndividualBulkResponse.class);
+            if (individualResponse.getIndividual().size() == 0 && offset == 0) {
+                log.error("No individuals found for tenantId {}", tenantId);
+            }
+            for (Individual individual : individualResponse.getIndividual()) {
+                individual.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                individual.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                IndividualRequest individualRequest = IndividualRequest.builder().individual(individual).requestInfo(requestInfo).build();
+                for (Identifier identifier : individualRequest.getIndividual().getIdentifiers()){
+                    if (identifier.getIdentifierType().equalsIgnoreCase("AADHAAR")) {
+                        identifier.setIdentifierId(RandomStringUtils.randomNumeric(12));
+                        identifier.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                        identifier.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                    }
+                }
+                try {
+                    Object response = restRepo.fetchResult(updateUrl, individualRequest);
+                    log.info("Migrated individual for individual id {}", individual.getId());
+                } catch (Exception e) {
+                    log.error("Error migrating individual for id {}", individual.getId(), e);
+                }
+            }
+        } while (individualResponse.getIndividual().size() > 0) ;
     }
 }
