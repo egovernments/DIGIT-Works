@@ -21,6 +21,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -295,7 +296,14 @@ public class SorMigrationUtil {
             StringBuilder searchUrl = new StringBuilder(individualHost).append(individualContextPath)
                     .append("?tenantId=").append(tenantId).append("&offset=").append(offset).append("&limit=").append(limit);
             IndividualSearchRequest search = IndividualSearchRequest.builder().requestInfo(requestInfo).individual(IndividualSearch.builder().build()).build();
-            Object individualObject = restRepo.fetchResult(searchUrl, search);
+            Object individualObject;
+            individualResponse = IndividualBulkResponse.builder().individual(new ArrayList<>()).build();
+            try {
+                individualObject = restRepo.fetchResult(searchUrl, search);
+            } catch (Exception e) {
+                log.error("Error fetching individual for offset {}", offset);
+                continue;
+            }
             individualResponse = mapper.convertValue(individualObject, IndividualBulkResponse.class);
             if (individualResponse.getIndividual().size() == 0 && offset == 0) {
                 log.error("No individuals found for tenantId {}", tenantId);
@@ -320,6 +328,6 @@ public class SorMigrationUtil {
                     log.error("Error migrating individual for id {}", individual.getId(), e);
                 }
             }
-        } while (individualResponse.getIndividual().size() > 0) ;
+        } while (!individualResponse.getIndividual().isEmpty()) ;
     }
 }
