@@ -2,7 +2,6 @@ package org.egov.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.Document;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.Identifier;
 import org.postgresql.util.PGobject;
@@ -22,8 +21,12 @@ import java.util.Map;
 @Repository
 public class TaxIdentifierRowMapper implements ResultSetExtractor<List<Identifier>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public TaxIdentifierRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Identifier> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -31,25 +34,24 @@ public class TaxIdentifierRowMapper implements ResultSetExtractor<List<Identifie
 
         while (rs.next()) {
 
-            String taxIdentifier_Id = rs.getString("taxIdentifier_Id");
-            String taxIdentifier_orgId = rs.getString("taxIdentifier_orgId");
-            String taxIdentifier_type = rs.getString("taxIdentifier_type");
-            String taxIdentifier_value = rs.getString("taxIdentifier_value");
-            boolean taxIdentifier_active = rs.getBoolean("taxIdentifier_active");
-            JsonNode taxIdentifier_additionalDetails = getAdditionalDetail("taxIdentifier_additionalDetails", rs);
+            String taxIdentifierId = rs.getString("taxIdentifier_Id");
+            String taxIdentifierOrgId = rs.getString("taxIdentifier_orgId");
+            String taxIdentifierType = rs.getString("taxIdentifier_type");
+            String taxIdentifierValue = rs.getString("taxIdentifier_value");
+            boolean taxIdentifierActive = rs.getBoolean("taxIdentifier_active");
+            JsonNode taxIdentifierAdditionalDetails = getAdditionalDetail("taxIdentifier_additionalDetails", rs);
 
             Identifier identifier = Identifier.builder()
-                    .id(taxIdentifier_Id)
-                    .orgId(taxIdentifier_orgId)
-                    .type(taxIdentifier_type)
-                    .value(taxIdentifier_value)
-                    .isActive(taxIdentifier_active)
-                    .additionalDetails(taxIdentifier_additionalDetails)
+                    .id(taxIdentifierId)
+                    .orgId(taxIdentifierOrgId)
+                    .type(taxIdentifierType)
+                    .value(taxIdentifierValue)
+                    .isActive(taxIdentifierActive)
+                    .additionalDetails(taxIdentifierAdditionalDetails)
                     .build();
 
-            if (!identifierMap.containsKey(taxIdentifier_Id)) {
-                identifierMap.put(taxIdentifier_Id, identifier);
-            }
+
+            identifierMap.computeIfAbsent(taxIdentifierId, id -> identifier);
         }
 
         return new ArrayList<>(identifierMap.values());

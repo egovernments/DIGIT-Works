@@ -167,7 +167,7 @@ export const createProjectConfigMUKTA = {
               "label": "PROJECT_ESTIMATED_COST_IN_RS",
               "isMandatory": false,
               "key": "noSubProject_estimatedCostInRs",
-              "type": "text",
+              "type": "amount",
               "disable": false,
               "preProcess": {
                   "convertStringToRegEx": [
@@ -175,6 +175,7 @@ export const createProjectConfigMUKTA = {
                   ]
               },
               "populators": {
+                "prefix":"₹ ",
                   "name": "noSubProject_estimatedCostInRs",
                   "error": "PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST",
                   "validation": {

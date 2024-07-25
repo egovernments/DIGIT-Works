@@ -37,7 +37,9 @@ public class CommonUtil {
             if (node.findValue(findValueOf) != null  && StringUtils.isNotBlank(node.findValue(findValueOf).textValue())) {
                 return Optional.of(node.findValue(findValueOf).textValue());
             }
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+            log.error(ignore.toString());
+        }
         return Optional.empty();
     }
 }

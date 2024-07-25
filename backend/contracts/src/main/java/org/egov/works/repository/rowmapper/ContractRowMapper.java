@@ -36,6 +36,10 @@ public class ContractRowMapper implements ResultSetExtractor<List<Contract>> {
         while (rs.next()) {
             String id = rs.getString("id");
             String contractNumber = rs.getString("contractNumber");
+            String supplementNumber = rs.getString("supplementNumber");
+            Long versionNumber = rs.getLong("versionNumber");
+            String oldUuid = rs.getString("oldUuid");
+            String businessService = rs.getString("businessService");
             String tenantId = rs.getString("tenantId");
             String wfStatus = rs.getString("wfStatus");
             String executingAuthority = rs.getString("executingAuthority");
@@ -64,6 +68,10 @@ public class ContractRowMapper implements ResultSetExtractor<List<Contract>> {
             Contract contract = Contract.builder()
                     .id(id)
                     .contractNumber(contractNumber)
+                    .supplementNumber(supplementNumber)
+                    .versionNumber(versionNumber)
+                    .oldUuid(oldUuid)
+                    .businessService(businessService)
                     .tenantId(tenantId)
                     .wfStatus(wfStatus)
                     .executingAuthority(executingAuthority)

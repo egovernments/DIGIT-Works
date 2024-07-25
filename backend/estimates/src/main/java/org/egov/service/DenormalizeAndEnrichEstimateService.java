@@ -21,14 +21,18 @@ import java.util.List;
 @Slf4j
 public class DenormalizeAndEnrichEstimateService {
 
-    @Autowired
-    private ProjectUtil projectUtil;
+    private final ProjectUtil projectUtil;
+
+    private final WorkflowService workflowService;
+
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    public DenormalizeAndEnrichEstimateService(ProjectUtil projectUtil, WorkflowService workflowService, ObjectMapper objectMapper) {
+        this.projectUtil = projectUtil;
+        this.workflowService = workflowService;
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * Denormalize the project details by calling to project service and enrich the same

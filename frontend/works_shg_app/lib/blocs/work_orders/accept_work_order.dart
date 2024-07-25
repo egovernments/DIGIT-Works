@@ -28,7 +28,6 @@ class AcceptWorkOrderBloc
     try {
       emit(const AcceptWorkOrderState.loading());
 
-      ContractsModel contractsModel = ContractsModel();
       DateTime startOfToday = DateTime(
           DateTime.now().year, DateTime.now().month, DateTime.now().day);
       int startOfTodayTimestamp = startOfToday.millisecondsSinceEpoch;
@@ -38,7 +37,7 @@ class AcceptWorkOrderBloc
       };
 
       ContractsModel acceptedContracts =
-          await MyWorksRepository(client.init()).acceptOrDeclineWorkOrder(
+          await MyWorksRepository(client.init()).updateOrCreateContract(
               url: Urls.workServices.updateWorkOrder,
               body: {
                 "contract": contract,

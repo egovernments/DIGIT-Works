@@ -1,6 +1,7 @@
 import { format, toDate } from "date-fns";
 
 export const ConvertTimestampToDate = (timestamp, dateFormat = "d-MMM-yyyy") => {
+  
   return timestamp ? format(toDate(timestamp), dateFormat) : null;
 };
 
@@ -35,7 +36,7 @@ export const ConvertEpochToTimeInHours = (dateEpoch) => {
   const dateFromApi = new Date(dateEpoch);
   let hour = dateFromApi.getHours();
   let min = dateFromApi.getMinutes();
-  let period = hour > 12 ? "PM" : "AM";
+  let period = hour >= 12 ? "PM" : "AM";
   hour = hour > 12 ? hour - 12 : hour;
   hour = (hour > 9 ? "" : "0") + hour;
   min = (min > 9 ? "" : "0") + min;

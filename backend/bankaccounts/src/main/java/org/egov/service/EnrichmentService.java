@@ -94,4 +94,25 @@ public class EnrichmentService {
         }
 
     }
+    
+    /**
+     * Enrich update Bank Account with audit details
+     *
+     * @param bankAccountRequest
+     */
+    public void enrichBankAccountOnUpdate(BankAccountRequest bankAccountRequest) {
+        log.info("EnrichmentService::enrichBankAccountOnUpdate");
+        RequestInfo requestInfo = bankAccountRequest.getRequestInfo();
+        List<BankAccount> bankAccountList = bankAccountRequest.getBankAccounts();
+        String userUuid = "dmgfUUId";//TODO-remove
+        if (requestInfo != null
+                && requestInfo.getUserInfo() != null
+                && StringUtils.isNotBlank(requestInfo.getUserInfo().getUuid())) {
+            userUuid = requestInfo.getUserInfo().getUuid();
+        }
+        //TODO: deactivate existing documents and set new ones from update
+        bankAccountUtil.setAuditDetailsForBankAccount(userUuid, bankAccountList, Boolean.TRUE);
+        
+
+    }
 }

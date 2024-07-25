@@ -35,11 +35,10 @@ class AttendanceLogCreateBloc
       await Future.delayed(const Duration(seconds: 2));
       if (attendanceRegistersModel != null) {
         emit(const AttendanceLogCreateState.loaded());
-      } else {
-        emit(const AttendanceLogCreateState.error());
       }
     } on DioError catch (e) {
-      emit(const AttendanceLogCreateState.error());
+      emit(AttendanceLogCreateState.error(
+          e.response?.data['Errors'][0]['code']));
     }
   }
 
@@ -61,7 +60,8 @@ class AttendanceLogCreateBloc
         emit(const AttendanceLogCreateState.loaded());
       }
     } on DioError catch (e) {
-      emit(const AttendanceLogCreateState.error());
+      emit(AttendanceLogCreateState.error(
+          e.response?.data['Errors'][0]['code']));
     }
   }
 }
@@ -80,5 +80,5 @@ class AttendanceLogCreateState with _$AttendanceLogCreateState {
   const factory AttendanceLogCreateState.initial() = _Initial;
   const factory AttendanceLogCreateState.loading() = _Loading;
   const factory AttendanceLogCreateState.loaded() = _Loaded;
-  const factory AttendanceLogCreateState.error() = _Error;
+  const factory AttendanceLogCreateState.error(String? error) = _Error;
 }

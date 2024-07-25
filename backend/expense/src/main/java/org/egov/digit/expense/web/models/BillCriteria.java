@@ -50,6 +50,9 @@ public class BillCriteria {
 	@JsonProperty("statusNot")
 	private String statusNot;
 
+	@JsonProperty("isPaymentStatusNull")
+	private Boolean isPaymentStatusNull;
+
 	public BillCriteria addIdsItem(String idsItem) {
 		if (this.ids == null) {
 			this.ids = new HashSet<>();

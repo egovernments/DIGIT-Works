@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class EnrichmentServiceTest {
+class EnrichmentServiceTest {
 
     @InjectMocks
     private EnrichmentService enrichmentService;
@@ -57,7 +57,7 @@ public class EnrichmentServiceTest {
         idGenResponseSuccess();
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
-        assertEquals(musterRollRequest.getMusterRoll().getMusterRollNumber(),"MR/2022-23/01/05/000131");
+        assertEquals("MR/2022-23/01/05/000131", musterRollRequest.getMusterRoll().getMusterRollNumber());
     }
 
     @Test
@@ -82,8 +82,13 @@ public class EnrichmentServiceTest {
         List<IdResponse> idResponses = new ArrayList<>();
         idResponses.add(idResponse);
         IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
-        when(idGenRepository.getId(eq(MusterRollRequestBuilderTest.builder().getRequestInfo()), eq("pb"), eq(null), eq(""), eq(1)))
-                .thenReturn(idGenerationResponse);
+        when(idGenRepository.getId(
+                MusterRollRequestBuilderTest.builder().getRequestInfo(),
+                "pb.amritsar",
+                null,
+                "",
+                1
+        )).thenReturn(idGenerationResponse);
     }
 
 
@@ -91,7 +96,7 @@ public class EnrichmentServiceTest {
         //MOCK Idgen Response
         List<IdResponse> idResponses = new ArrayList<>();
         IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
-        lenient().when(idGenRepository.getId(eq(MusterRollRequestBuilderTest.builder().getRequestInfo()), eq("pb"), eq(null), eq(""), eq(1)))
+        lenient().when(idGenRepository.getId(eq(MusterRollRequestBuilderTest.builder().getRequestInfo()), eq("pb.amritsar"), eq(null), eq(""), eq(1)))
                 .thenReturn(idGenerationResponse);
     }
 

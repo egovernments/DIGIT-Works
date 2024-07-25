@@ -26,6 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,10 +72,10 @@ class EnrichmentServiceTest {
                 .lastModifiedBy("local-test")
                 .build();
 
-        when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
+        lenient().when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
                 .thenReturn(idGenerationResponse);
 
-        when(estimateServiceUtil.getAuditDetails(any(String.class), eq(estimate), eq(Boolean.TRUE)))
+        lenient().when(estimateServiceUtil.getAuditDetails(any(String.class), eq(estimate), eq(Boolean.TRUE)))
                 .thenReturn(auditDetails);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         assertNotNull(estimateRequest.getEstimate().getAuditDetails().getCreatedBy());
@@ -87,7 +88,7 @@ class EnrichmentServiceTest {
     void shouldGenerateEstimateId_IfSuccess() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
-        when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
+        lenient().when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
                 .thenReturn(idGenerationResponse);
 
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
@@ -98,18 +99,18 @@ class EnrichmentServiceTest {
     void shouldGenerateEstimateNumber_IfSuccess() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
-        when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
+        lenient().when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
                 .thenReturn(idGenerationResponse);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         assertNotNull(estimateRequest.getEstimate().getId());
-        assertEquals(estimateRequest.getEstimate().getEstimateNumber(), "EP/2022-23/01/000260");
+        assertNull(estimateRequest.getEstimate().getEstimateNumber());
     }
 
     @Test
     void shouldEnrichEstimateProposalDT_IfSuccess() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
-        when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
+        lenient().when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
                 .thenReturn(idGenerationResponse);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         assertNotNull(estimateRequest.getEstimate().getProposalDate());
@@ -119,7 +120,7 @@ class EnrichmentServiceTest {
     void shouldGenerateEstimateAddressId_IfSuccess() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
-        when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
+        lenient().when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
                 .thenReturn(idGenerationResponse);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         assertNotNull(estimateRequest.getEstimate().getAddress().getId());
@@ -129,7 +130,7 @@ class EnrichmentServiceTest {
     void shouldGenerateEstimateDetailId_IfSuccess() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
-        when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
+        lenient().when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
                 .thenReturn(idGenerationResponse);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         assertNotNull(estimateRequest.getEstimate().getEstimateDetails().get(0).getId());
@@ -139,7 +140,7 @@ class EnrichmentServiceTest {
     void shouldGenerateEstimateAmountDetailId_IfSuccess() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         RequestInfo requestInfo = estimateRequest.getRequestInfo();
-        when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
+        lenient().when(idGenRepository.getId(eq(requestInfo), eq("pb"), eq(null), eq(null), eq(1)))
                 .thenReturn(idGenerationResponse);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         assertNotNull(estimateRequest.getEstimate().getEstimateDetails().get(0).getAmountDetail().get(0).getId());

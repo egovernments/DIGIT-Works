@@ -11,7 +11,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.util.TimeZone;
 
 @Component
@@ -35,6 +34,12 @@ public class ContractServiceConfiguration {
     @Value("${works.contract.service.code}")
     private String serviceCode;
 
+    // Muster-roll config
+    @Value("${works.muster.roll.host}")
+    private String musterRollSearchHost;
+    @Value("${works.muster.roll.search.endpoint}")
+    private String musterRollSearchEndpoint;
+
     //Attendance Config
     @Value("${egov.attendance.host}")
     private String attendanceHost;
@@ -52,11 +57,18 @@ public class ContractServiceConfiguration {
     @Value("${egov.idgen.contract.number.name}")
     private String idgenContractNumberName;
 
+    @Value("${egov.idgen.supplement.number.name}")
+    private String idgenSupplementNumberName;
+
     //Workflow Config
     @Value("${contract.workflow.module.name}")
     private String contractWFModuleName;
+
     @Value("${contract.workflow.business.service}")
     private String contractWFBusinessService;
+
+    @Value("${contract.workflow.revision.business.service}")
+    private String contractRevisionWFBusinessService;
 
     @Value("${egov.workflow.host}")
     private String wfHost;
@@ -91,6 +103,9 @@ public class ContractServiceConfiguration {
     @Value("${contract.kafka.update.topic}")
     private String updateContractTopic;
 
+    @Value("${contracts.revision.topic}")
+    private String updateTimeExtensionTopic;
+
     //attendance service register search config
     @Value("${contract.default.offset}")
     private Integer contractDefaultOffset;
@@ -107,6 +122,12 @@ public class ContractServiceConfiguration {
 
     @Value("${works.estimate.search.endpoint}")
     private String estimateEndpoint;
+
+    @Value("${works.measurement.service.host}")
+    private String measurementBookHost;
+
+    @Value("${works.measurement.service.search.endpoint}")
+    private String measurementBookSearchEndpoint;
 
     //Project Service
     @Value("${works.project.host}")
@@ -132,9 +153,12 @@ public class ContractServiceConfiguration {
     @Value("${works.contract.search.endpoint}")
     private String contractEndpoint;
 
-//    @Value("${contract.document.id.verification.required}")
-//    private String documentIdVerificationRequired;
+    //Filestore service
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
 
+    @Value("${egov.filestore.endpoint}")
+    private String fileStoreEndpoint;
 
     //SMS notification
     @Value("${notification.sms.enabled}")
@@ -172,6 +196,13 @@ public class ContractServiceConfiguration {
 
     @Value("${contract.duedate.period}")
     private String contractDueDatePeriod;
+
+    // Contract Revision configuration
+    @Value("${contract.revision.max.limit}")
+    private Integer contractRevisionMaxLimit;
+
+    @Value("${contract.revision.measurement.validation}")
+    private Boolean isMeasurementValidationRequired;
 
     @PostConstruct
     public void initialize() {

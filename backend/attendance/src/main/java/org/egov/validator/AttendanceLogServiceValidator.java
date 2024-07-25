@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendeeSearchCriteria;
 import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
@@ -16,6 +17,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
 import java.util.*;
@@ -39,6 +41,9 @@ public class AttendanceLogServiceValidator {
 
     @Autowired
     private AttendanceServiceConfiguration config;
+
+    @Autowired
+    private IndividualServiceUtil individualServiceUtil;
 
     public void validateCreateAttendanceLogRequest(AttendanceLogRequest attendanceLogRequest) {
         log.info("Validate attendance log create request");
@@ -348,7 +353,8 @@ public class AttendanceLogServiceValidator {
 
         String userUUID = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
-        validateLoggedInUser(userUUID, registerId);
+        String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceLogRequest.getRequestInfo().getUserInfo().getId(), attendanceLogRequest.getRequestInfo(), attendanceLogRequest.getAttendance().get(0).getTenantId()).get(0).getId();
+        validateLoggedInUser(individualId, registerId);
         log.info("User ["+userUUID+"] validation is done for register ["+registerId+"]");
     }
 
@@ -359,19 +365,22 @@ public class AttendanceLogServiceValidator {
         // Verify given parameters
         validateSearchAttendanceLogParameters(requestInfoWrapper, searchCriteria);
 
-        // Fetch register for given Id
-        List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(searchCriteria.getRegisterId());
+        if(!StringUtils.isBlank(searchCriteria.getRegisterId())) {
+            // Fetch register for given Id
+            List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(searchCriteria.getRegisterId());
 
-        if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
-            throw new CustomException("INVALID_REGISTERID", "Register Not found ");
+            if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
+                throw new CustomException("INVALID_REGISTERID", "Register Not found ");
+            }
+
+            // Verify TenantId association with register
+            validateTenantIdAssociationWithRegisterId(attendanceRegisters.get(0), searchCriteria.getTenantId());
+
+            // Verify the Logged-in user is associated to the given register.
+            String individualId = individualServiceUtil.getIndividualDetailsFromUserId(requestInfoWrapper.getRequestInfo().getUserInfo().getId(), requestInfoWrapper.getRequestInfo(), searchCriteria.getTenantId()).get(0).getId();
+
+            validateLoggedInUser(individualId, searchCriteria.getRegisterId());
         }
-
-        // Verify TenantId association with register
-        validateTenantIdAssociationWithRegisterId(attendanceRegisters.get(0), searchCriteria.getTenantId());
-
-        // Verify the Logged-in user is associated to the given register.
-        validateLoggedInUser(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid(), searchCriteria.getRegisterId());
-
         log.info("Attendance log search request validated successfully");
     }
 
@@ -389,9 +398,9 @@ public class AttendanceLogServiceValidator {
             log.error("Attendance log search, Tenant is mandatory");
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
-        if (StringUtils.isBlank(searchCriteria.getRegisterId())) {
-            log.error("Attendance log search, RegisterId is mandatory");
-            throw new CustomException("REGISTER_ID", "RegisterId is mandatory");
+        if (StringUtils.isBlank(searchCriteria.getRegisterId()) && CollectionUtils.isEmpty(searchCriteria.getClientReferenceId())) {
+            log.error("Attendance log search, RegisterId or ClientReferenceId is mandatory");
+            throw new CustomException("REGISTER_ID_OR_CLIENT_REFERENCE_ID", "RegisterId or ClientReferenceId is mandatory");
         }
 
         // Throw exception if required parameters are missing

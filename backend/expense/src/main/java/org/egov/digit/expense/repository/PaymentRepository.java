@@ -16,14 +16,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class PaymentRepository {
 	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
 	
-	@Autowired
-	private PaymentQueryBuilder queryBuilder;
+	private final PaymentQueryBuilder queryBuilder;
 	
+	private final PaymentRowMapper paymentBillRowMapper;
+
 	@Autowired
-	private PaymentRowMapper paymentBillRowMapper;
+	public PaymentRepository(JdbcTemplate jdbcTemplate, PaymentQueryBuilder queryBuilder, PaymentRowMapper paymentBillRowMapper) {
+		this.jdbcTemplate = jdbcTemplate;
+		this.queryBuilder = queryBuilder;
+		this.paymentBillRowMapper = paymentBillRowMapper;
+	}
 
 	public List<Payment> search(@Valid PaymentSearchRequest paymentSearchRequest) {
 
