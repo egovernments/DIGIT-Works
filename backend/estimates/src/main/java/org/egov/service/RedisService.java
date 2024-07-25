@@ -43,9 +43,9 @@ public class RedisService {
                 log.info("No cache found for key: {}", key);
             }
         } catch (JsonProcessingException e) {
-            log.error("Error while deserializing JSON to object", e);
+            log.error("Error while deserializing JSON to object. Key: {}, Type: {}", key, type.getName(), e);
         } catch (Exception e) {
-            log.error("Error while fetching data from Redis", e);
+            log.error("Error while fetching data from Redis. Key: {}", key, e);
         }
         return null;
     }
