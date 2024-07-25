@@ -1,0 +1,146 @@
+{
+  "SOR_000700": [
+    {
+      "figure": 33.0,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000279": [
+    {
+      "figure": 33.0,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000284": [
+    {
+      "figure": 33.0,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000703": [
+    {
+      "figure": 33.0,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000259": [
+    {
+      "figure": 33.0,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000264": [
+    {
+      "figure": 33.0,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000269": [
+    {
+      "figure": 33.0,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000270": [
+    {
+      "figure": 33.0,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000274": [
+    {
+      "figure": 33.0,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000407": [
+    {
+      "figure": 41.9,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000706": [
+    {
+      "figure": 41.9,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000410": [
+    {
+      "figure": 41.9,
+      "description": "Scaffolding Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000430": [
+    {
+      "figure": 0.27,
+      "description": "Extra Material Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000431": [
+    {
+      "figure": 0.27,
+      "description": "Extra Material Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000730": [
+    {
+      "figure": 0.27,
+      "description": "Extra Material Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000386": [
+    {
+      "figure": 6.6,
+      "description": "Bitumen Painting Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000387": [
+    {
+      "figure": 6.6,
+      "description": "Bitumen Painting Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ],
+  "SOR_000737": [
+    {
+      "figure": 6.6,
+      "description": "Bitumen Painting Charges",
+      "applicableOn": null,
+      "calculationType": null
+    }
+  ]
+}

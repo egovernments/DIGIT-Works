@@ -1,0 +1,8377 @@
+{
+  "SOR_000547": {
+    "sorId": "SOR_000547",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 98.9247,
+        "perUnitQty": 98.9247
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.0538,
+        "perUnitQty": 0.0538
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.3226,
+        "perUnitQty": 0.3226
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.2151,
+        "perUnitQty": 0.2151
+      }
+    ]
+  },
+  "SOR_000548": {
+    "sorId": "SOR_000548",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 49.4624,
+        "perUnitQty": 49.4624
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.0269,
+        "perUnitQty": 0.0269
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1075,
+        "perUnitQty": 0.1075
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.2151,
+        "perUnitQty": 0.2151
+      }
+    ]
+  },
+  "SOR_000699": {
+    "sorId": "SOR_000699",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000700": {
+    "sorId": "SOR_000700",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000701": {
+    "sorId": "SOR_000701",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  },
+  "SOR_000278": {
+    "sorId": "SOR_000278",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000071",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000279": {
+    "sorId": "SOR_000279",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000071",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000280": {
+    "sorId": "SOR_000280",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000071",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  },
+  "SOR_000283": {
+    "sorId": "SOR_000283",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000071",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.672,
+        "perUnitQty": 0.672
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000284": {
+    "sorId": "SOR_000284",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000071",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.672,
+        "perUnitQty": 0.672
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000285": {
+    "sorId": "SOR_000285",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000071",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.672,
+        "perUnitQty": 0.672
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  },
+  "SOR_000702": {
+    "sorId": "SOR_000702",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000071",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.501,
+        "perUnitQty": 0.501
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000703": {
+    "sorId": "SOR_000703",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000071",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.501,
+        "perUnitQty": 0.501
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000704": {
+    "sorId": "SOR_000704",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000071",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.501,
+        "perUnitQty": 0.501
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  },
+  "SOR_000258": {
+    "sorId": "SOR_000258",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000259": {
+    "sorId": "SOR_000259",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000260": {
+    "sorId": "SOR_000260",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  },
+  "SOR_000263": {
+    "sorId": "SOR_000263",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000264": {
+    "sorId": "SOR_000264",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000265": {
+    "sorId": "SOR_000265",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  },
+  "SOR_000268": {
+    "sorId": "SOR_000268",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.672,
+        "perUnitQty": 0.672
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000269": {
+    "sorId": "SOR_000269",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.672,
+        "perUnitQty": 0.672
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000270": {
+    "sorId": "SOR_000270",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.672,
+        "perUnitQty": 0.672
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  },
+  "SOR_000273": {
+    "sorId": "SOR_000273",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.501,
+        "perUnitQty": 0.501
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000274": {
+    "sorId": "SOR_000274",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.501,
+        "perUnitQty": 0.501
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000275": {
+    "sorId": "SOR_000275",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000027",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.501,
+        "perUnitQty": 0.501
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  },
+  "SOR_000406": {
+    "sorId": "SOR_000406",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000026",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.24,
+        "perUnitQty": 0.24
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.858,
+        "perUnitQty": 0.858
+      },
+      {
+        "sorId": "SOR_000322",
+        "quantity": 2.12,
+        "perUnitQty": 2.12
+      },
+      {
+        "sorId": "SOR_000297",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.175,
+        "perUnitQty": 0.175
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      }
+    ]
+  },
+  "SOR_000407": {
+    "sorId": "SOR_000407",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000026",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.24,
+        "perUnitQty": 0.24
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.858,
+        "perUnitQty": 0.858
+      },
+      {
+        "sorId": "SOR_000322",
+        "quantity": 2.12,
+        "perUnitQty": 2.12
+      },
+      {
+        "sorId": "SOR_000297",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.175,
+        "perUnitQty": 0.175
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      }
+    ]
+  },
+  "SOR_000705": {
+    "sorId": "SOR_000705",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000026",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.24,
+        "perUnitQty": 0.24
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.572,
+        "perUnitQty": 0.572
+      },
+      {
+        "sorId": "SOR_000322",
+        "quantity": 2.12,
+        "perUnitQty": 2.12
+      },
+      {
+        "sorId": "SOR_000297",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.175,
+        "perUnitQty": 0.175
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      }
+    ]
+  },
+  "SOR_000706": {
+    "sorId": "SOR_000706",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000026",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.24,
+        "perUnitQty": 0.24
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.572,
+        "perUnitQty": 0.572
+      },
+      {
+        "sorId": "SOR_000322",
+        "quantity": 2.12,
+        "perUnitQty": 2.12
+      },
+      {
+        "sorId": "SOR_000297",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.175,
+        "perUnitQty": 0.175
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      }
+    ]
+  },
+  "SOR_000409": {
+    "sorId": "SOR_000409",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000026",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.24,
+        "perUnitQty": 0.24
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.429,
+        "perUnitQty": 0.429
+      },
+      {
+        "sorId": "SOR_000322",
+        "quantity": 2.12,
+        "perUnitQty": 2.12
+      },
+      {
+        "sorId": "SOR_000297",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.175,
+        "perUnitQty": 0.175
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      }
+    ]
+  },
+  "SOR_000410": {
+    "sorId": "SOR_000410",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000026",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.24,
+        "perUnitQty": 0.24
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.429,
+        "perUnitQty": 0.429
+      },
+      {
+        "sorId": "SOR_000322",
+        "quantity": 2.12,
+        "perUnitQty": 2.12
+      },
+      {
+        "sorId": "SOR_000297",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.175,
+        "perUnitQty": 0.175
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      }
+    ]
+  },
+  "SOR_000413": {
+    "sorId": "SOR_000413",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000309",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.71,
+        "perUnitQty": 0.71
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      }
+    ]
+  },
+  "SOR_000415": {
+    "sorId": "SOR_000415",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000309",
+        "quantity": 0.71,
+        "perUnitQty": 0.71
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.71,
+        "perUnitQty": 0.71
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.71,
+        "perUnitQty": 0.71
+      }
+    ]
+  },
+  "SOR_000707": {
+    "sorId": "SOR_000707",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000779",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.34,
+        "perUnitQty": 0.34
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.2156,
+        "perUnitQty": 1.2156
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      }
+    ]
+  },
+  "SOR_000708": {
+    "sorId": "SOR_000708",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000779",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.34,
+        "perUnitQty": 0.34
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.9724,
+        "perUnitQty": 0.9724
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      }
+    ]
+  },
+  "SOR_000709": {
+    "sorId": "SOR_000709",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000779",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.34,
+        "perUnitQty": 0.34
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.8151,
+        "perUnitQty": 0.8151
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      }
+    ]
+  },
+  "SOR_000710": {
+    "sorId": "SOR_000710",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000779",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.34,
+        "perUnitQty": 0.34
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.6078,
+        "perUnitQty": 0.6078
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      }
+    ]
+  },
+  "SOR_000711": {
+    "sorId": "SOR_000711",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000780",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.24,
+        "perUnitQty": 0.24
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.858,
+        "perUnitQty": 0.858
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000297",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.25,
+        "perUnitQty": 0.25
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 2.47,
+        "perUnitQty": 2.47
+      }
+    ]
+  },
+  "SOR_000712": {
+    "sorId": "SOR_000712",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000780",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.24,
+        "perUnitQty": 0.24
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.6864,
+        "perUnitQty": 0.6864
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000297",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.25,
+        "perUnitQty": 0.25
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 2.47,
+        "perUnitQty": 2.47
+      }
+    ]
+  },
+  "SOR_000713": {
+    "sorId": "SOR_000713",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000780",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.24,
+        "perUnitQty": 0.24
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.572,
+        "perUnitQty": 0.572
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000297",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.25,
+        "perUnitQty": 0.25
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 2.47,
+        "perUnitQty": 2.47
+      }
+    ]
+  },
+  "SOR_000714": {
+    "sorId": "SOR_000714",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000780",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.24,
+        "perUnitQty": 0.24
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.429,
+        "perUnitQty": 0.429
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000297",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.25,
+        "perUnitQty": 0.25
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 2.47,
+        "perUnitQty": 2.47
+      }
+    ]
+  },
+  "SOR_000715": {
+    "sorId": "SOR_000715",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000781",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.17,
+        "perUnitQty": 0.17
+      },
+      {
+        "sorId": "SOR_000309",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.52,
+        "perUnitQty": 0.52
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.52,
+        "perUnitQty": 0.52
+      }
+    ]
+  },
+  "SOR_000716": {
+    "sorId": "SOR_000716",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000781",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.17,
+        "perUnitQty": 0.17
+      },
+      {
+        "sorId": "SOR_000309",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.52,
+        "perUnitQty": 0.52
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.52,
+        "perUnitQty": 0.52
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      }
+    ]
+  },
+  "SOR_000122": {
+    "sorId": "SOR_000122",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      }
+    ]
+  },
+  "SOR_000123": {
+    "sorId": "SOR_000123",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.384,
+        "perUnitQty": 0.384
+      }
+    ]
+  },
+  "SOR_000124": {
+    "sorId": "SOR_000124",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.215,
+        "perUnitQty": 0.215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.215,
+        "perUnitQty": 0.215
+      }
+    ]
+  },
+  "SOR_000125": {
+    "sorId": "SOR_000125",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.516,
+        "perUnitQty": 0.516
+      }
+    ]
+  },
+  "SOR_000126": {
+    "sorId": "SOR_000126",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.21,
+        "perUnitQty": 0.21
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.23,
+        "perUnitQty": 0.23
+      }
+    ]
+  },
+  "SOR_000127 (No code required)": {
+    "sorId": "SOR_000127 (No code required)",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.528,
+        "perUnitQty": 0.528
+      }
+    ]
+  },
+  "SOR_000129": {
+    "sorId": "SOR_000129",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.3353,
+        "perUnitQty": 0.3353
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.3353,
+        "perUnitQty": 0.3353
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.4024,
+        "perUnitQty": 0.4024
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.4024,
+        "perUnitQty": 0.4024
+      }
+    ]
+  },
+  "SOR_000130": {
+    "sorId": "SOR_000130",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.4465,
+        "perUnitQty": 0.4465
+      }
+    ]
+  },
+  "SOR_000717": {
+    "sorId": "SOR_000717",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000001",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1236,
+        "perUnitQty": 0.1236
+      }
+    ]
+  },
+  "SOR_000718": {
+    "sorId": "SOR_000718",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000002",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1236,
+        "perUnitQty": 0.1236
+      }
+    ]
+  },
+  "SOR_000719": {
+    "sorId": "SOR_000719",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.2144,
+        "perUnitQty": 0.2144
+      }
+    ]
+  },
+  "SOR_000720": {
+    "sorId": "SOR_000720",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.2881,
+        "perUnitQty": 0.2881
+      }
+    ]
+  },
+  "SOR_000721": {
+    "sorId": "SOR_000721",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000002",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.533,
+        "perUnitQty": 0.533
+      }
+    ]
+  },
+  "SOR_000722": {
+    "sorId": "SOR_000722",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000010",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.625,
+        "perUnitQty": 0.625
+      }
+    ]
+  },
+  "SOR_000723": {
+    "sorId": "SOR_000723",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000014",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.69,
+        "perUnitQty": 0.69
+      }
+    ]
+  },
+  "SOR_000724": {
+    "sorId": "SOR_000724",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000012",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.69,
+        "perUnitQty": 0.69
+      }
+    ]
+  },
+  "SOR_000725": {
+    "sorId": "SOR_000725",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000008",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.625,
+        "perUnitQty": 0.625
+      }
+    ]
+  },
+  "SOR_000726": {
+    "sorId": "SOR_000726",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000006",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.625,
+        "perUnitQty": 0.625
+      }
+    ]
+  },
+  "SOR_000484": {
+    "sorId": "SOR_000484",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0806,
+        "perUnitQty": 0.0806
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1344,
+        "perUnitQty": 0.1344
+      }
+    ]
+  },
+  "SOR_000487": {
+    "sorId": "SOR_000487",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1075,
+        "perUnitQty": 0.1075
+      }
+    ]
+  },
+  "SOR_000490": {
+    "sorId": "SOR_000490",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000317",
+        "quantity": 0.0269,
+        "perUnitQty": 0.0269
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0538,
+        "perUnitQty": 0.0538
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1075,
+        "perUnitQty": 0.1075
+      }
+    ]
+  },
+  "SOR_000497": {
+    "sorId": "SOR_000497",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0806,
+        "perUnitQty": 0.0806
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1344,
+        "perUnitQty": 0.1344
+      },
+      {
+        "sorId": "SOR_000292",
+        "quantity": 0.0269,
+        "perUnitQty": 0.0269
+      }
+    ]
+  },
+  "SOR_000500": {
+    "sorId": "SOR_000500",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1505,
+        "perUnitQty": 0.1505
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0161,
+        "perUnitQty": 0.0161
+      }
+    ]
+  },
+  "SOR_000503": {
+    "sorId": "SOR_000503",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.5,
+        "perUnitQty": 1.5
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1,
+        "perUnitQty": 0.1
+      }
+    ]
+  },
+  "SOR_000506": {
+    "sorId": "SOR_000506",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000294",
+        "quantity": 1.5,
+        "perUnitQty": 1.5
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.5,
+        "perUnitQty": 1.5
+      }
+    ]
+  },
+  "SOR_000509": {
+    "sorId": "SOR_000509",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.3763,
+        "perUnitQty": 0.3763
+      }
+    ]
+  },
+  "SOR_000512": {
+    "sorId": "SOR_000512",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0914,
+        "perUnitQty": 0.0914
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1505,
+        "perUnitQty": 0.1505
+      }
+    ]
+  },
+  "SOR_000515": {
+    "sorId": "SOR_000515",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1183,
+        "perUnitQty": 0.1183
+      }
+    ]
+  },
+  "SOR_000518": {
+    "sorId": "SOR_000518",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1075,
+        "perUnitQty": 0.1075
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1613,
+        "perUnitQty": 0.1613
+      }
+    ]
+  },
+  "SOR_000521": {
+    "sorId": "SOR_000521",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1398,
+        "perUnitQty": 0.1398
+      }
+    ]
+  },
+  "SOR_000727": {
+    "sorId": "SOR_000727",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.4134,
+        "perUnitQty": 1.4134
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.5901,
+        "perUnitQty": 1.5901
+      }
+    ]
+  },
+  "SOR_000728": {
+    "sorId": "SOR_000728",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000068",
+        "quantity": 0.1269,
+        "perUnitQty": 0.1269
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.0081,
+        "perUnitQty": 0.0081
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0054,
+        "perUnitQty": 0.0054
+      }
+    ]
+  },
+  "SOR_000729": {
+    "sorId": "SOR_000729",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000068",
+        "quantity": 0.2508,
+        "perUnitQty": 0.2508
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.0161,
+        "perUnitQty": 0.0161
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0108,
+        "perUnitQty": 0.0108
+      }
+    ]
+  },
+  "SOR_000430": {
+    "sorId": "SOR_000430",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000068",
+        "quantity": 0.2006,
+        "perUnitQty": 0.2006
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.0108,
+        "perUnitQty": 0.0108
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0081,
+        "perUnitQty": 0.0081
+      }
+    ]
+  },
+  "SOR_000431": {
+    "sorId": "SOR_000431",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000068",
+        "quantity": 0.2006,
+        "perUnitQty": 0.2006
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.0111,
+        "perUnitQty": 0.0111
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0083,
+        "perUnitQty": 0.0083
+      }
+    ]
+  },
+  "SOR_000730": {
+    "sorId": "SOR_000730",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000068",
+        "quantity": 0.2006,
+        "perUnitQty": 0.2006
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.0116,
+        "perUnitQty": 0.0116
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0087,
+        "perUnitQty": 0.0087
+      }
+    ]
+  },
+  "SOR_000570": {
+    "sorId": "SOR_000570",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000030",
+        "quantity": 0.125,
+        "perUnitQty": 0.125
+      },
+      {
+        "sorId": "SOR_000338",
+        "quantity": 0.1344,
+        "perUnitQty": 0.1344
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1075,
+        "perUnitQty": 0.1075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0108,
+        "perUnitQty": 0.0108
+      }
+    ]
+  },
+  "SOR_000606": {
+    "sorId": "SOR_000606",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000034",
+        "quantity": 0.25,
+        "perUnitQty": 0.25
+      },
+      {
+        "sorId": "SOR_000338",
+        "quantity": 0.022,
+        "perUnitQty": 0.022
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.022,
+        "perUnitQty": 0.022
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.01,
+        "perUnitQty": 0.01
+      }
+    ]
+  },
+  "SOR_000610": {
+    "sorId": "SOR_000610",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000035",
+        "quantity": 0.125,
+        "perUnitQty": 0.125
+      },
+      {
+        "sorId": "SOR_000338",
+        "quantity": 0.054,
+        "perUnitQty": 0.054
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.054,
+        "perUnitQty": 0.054
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.01,
+        "perUnitQty": 0.01
+      }
+    ]
+  },
+  "SOR_000618": {
+    "sorId": "SOR_000618",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000036",
+        "quantity": 0.25,
+        "perUnitQty": 0.25
+      },
+      {
+        "sorId": "SOR_000338",
+        "quantity": 0.052,
+        "perUnitQty": 0.052
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.052,
+        "perUnitQty": 0.052
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.01,
+        "perUnitQty": 0.01
+      }
+    ]
+  },
+  "SOR_000558": {
+    "sorId": "SOR_000558",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000338",
+        "quantity": 0.0538,
+        "perUnitQty": 0.0538
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0538,
+        "perUnitQty": 0.0538
+      },
+      {
+        "sorId": "SOR_000029",
+        "quantity": 0.075,
+        "perUnitQty": 0.075
+      }
+    ]
+  },
+  "SOR_000562": {
+    "sorId": "SOR_000562",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000338",
+        "quantity": 0.0538,
+        "perUnitQty": 0.0538
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0538,
+        "perUnitQty": 0.0538
+      },
+      {
+        "sorId": "SOR_000032",
+        "quantity": 0.054,
+        "perUnitQty": 0.054
+      }
+    ]
+  },
+  "SOR_000566": {
+    "sorId": "SOR_000566",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000338",
+        "quantity": 0.0538,
+        "perUnitQty": 0.0538
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0538,
+        "perUnitQty": 0.0538
+      },
+      {
+        "sorId": "SOR_000072",
+        "quantity": 0.084,
+        "perUnitQty": 0.084
+      }
+    ]
+  },
+  "SOR_000679": {
+    "sorId": "SOR_000679",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000783",
+        "quantity": 0.8,
+        "perUnitQty": 0.8
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.007,
+        "perUnitQty": 0.007
+      }
+    ]
+  },
+  "SOR_000418": {
+    "sorId": "SOR_000418",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0108,
+        "perUnitQty": 0.0108
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.0081,
+        "perUnitQty": 0.0081
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0054,
+        "perUnitQty": 0.0054
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0054,
+        "perUnitQty": 0.0054
+      }
+    ]
+  },
+  "SOR_000422": {
+    "sorId": "SOR_000422",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0161,
+        "perUnitQty": 0.0161
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.0108,
+        "perUnitQty": 0.0108
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0081,
+        "perUnitQty": 0.0081
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0095,
+        "perUnitQty": 0.0095
+      }
+    ]
+  },
+  "SOR_000423": {
+    "sorId": "SOR_000423",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0161,
+        "perUnitQty": 0.0161
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.0111,
+        "perUnitQty": 0.0111
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0083,
+        "perUnitQty": 0.0083
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0097,
+        "perUnitQty": 0.0097
+      }
+    ]
+  },
+  "SOR_000731": {
+    "sorId": "SOR_000731",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000072",
+        "quantity": 0.084,
+        "perUnitQty": 0.084
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.036,
+        "perUnitQty": 0.036
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.036,
+        "perUnitQty": 0.036
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.007,
+        "perUnitQty": 0.007
+      }
+    ]
+  },
+  "SOR_000732": {
+    "sorId": "SOR_000732",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000073",
+        "quantity": 0.125,
+        "perUnitQty": 0.125
+      },
+      {
+        "sorId": "SOR_000318",
+        "quantity": 0.054,
+        "perUnitQty": 0.054
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.054,
+        "perUnitQty": 0.054
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.01,
+        "perUnitQty": 0.01
+      }
+    ]
+  },
+  "SOR_000362": {
+    "sorId": "SOR_000362",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0358,
+        "perUnitQty": 0.0358
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      }
+    ]
+  },
+  "SOR_000363": {
+    "sorId": "SOR_000363",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0358,
+        "perUnitQty": 0.0358
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.1442,
+        "perUnitQty": 0.1442
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0206,
+        "perUnitQty": 0.0206
+      }
+    ]
+  },
+  "SOR_000733": {
+    "sorId": "SOR_000733",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0358,
+        "perUnitQty": 0.0358
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.147,
+        "perUnitQty": 0.147
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      }
+    ]
+  },
+  "SOR_000366": {
+    "sorId": "SOR_000366",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0543,
+        "perUnitQty": 0.0543
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      }
+    ]
+  },
+  "SOR_000367": {
+    "sorId": "SOR_000367",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0543,
+        "perUnitQty": 0.0543
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.1442,
+        "perUnitQty": 0.1442
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0206,
+        "perUnitQty": 0.0206
+      }
+    ]
+  },
+  "SOR_000734": {
+    "sorId": "SOR_000734",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0543,
+        "perUnitQty": 0.0543
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.147,
+        "perUnitQty": 0.147
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      }
+    ]
+  },
+  "SOR_000370": {
+    "sorId": "SOR_000370",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0744,
+        "perUnitQty": 0.0744
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.11,
+        "perUnitQty": 0.11
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.11,
+        "perUnitQty": 0.11
+      }
+    ]
+  },
+  "SOR_000371": {
+    "sorId": "SOR_000371",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0744,
+        "perUnitQty": 0.0744
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0206,
+        "perUnitQty": 0.0206
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.1648,
+        "perUnitQty": 0.1648
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1133,
+        "perUnitQty": 0.1133
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1133,
+        "perUnitQty": 0.1133
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0744,
+        "perUnitQty": 0.0744
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.168,
+        "perUnitQty": 0.168
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1155,
+        "perUnitQty": 0.1155
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1155,
+        "perUnitQty": 0.1155
+      }
+    ]
+  },
+  "SOR_000374": {
+    "sorId": "SOR_000374",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.057,
+        "perUnitQty": 0.057
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.11,
+        "perUnitQty": 0.11
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.11,
+        "perUnitQty": 0.11
+      }
+    ]
+  },
+  "SOR_000375": {
+    "sorId": "SOR_000375",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.057,
+        "perUnitQty": 0.057
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0206,
+        "perUnitQty": 0.0206
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.1648,
+        "perUnitQty": 0.1648
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1133,
+        "perUnitQty": 0.1133
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1133,
+        "perUnitQty": 0.1133
+      }
+    ]
+  },
+  "SOR_000735": {
+    "sorId": "SOR_000735",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.057,
+        "perUnitQty": 0.057
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.168,
+        "perUnitQty": 0.168
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1155,
+        "perUnitQty": 0.1155
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1155,
+        "perUnitQty": 0.1155
+      }
+    ]
+  },
+  "SOR_000378": {
+    "sorId": "SOR_000378",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.043,
+        "perUnitQty": 0.043
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.018,
+        "perUnitQty": 0.018
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.11,
+        "perUnitQty": 0.11
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.11,
+        "perUnitQty": 0.11
+      }
+    ]
+  },
+  "SOR_000379": {
+    "sorId": "SOR_000379",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.043,
+        "perUnitQty": 0.043
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.018,
+        "perUnitQty": 0.018
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0206,
+        "perUnitQty": 0.0206
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.1648,
+        "perUnitQty": 0.1648
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1133,
+        "perUnitQty": 0.1133
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1133,
+        "perUnitQty": 0.1133
+      }
+    ]
+  },
+  "SOR_000736": {
+    "sorId": "SOR_000736",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.043,
+        "perUnitQty": 0.043
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.018,
+        "perUnitQty": 0.018
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.168,
+        "perUnitQty": 0.168
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1155,
+        "perUnitQty": 0.1155
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.1155,
+        "perUnitQty": 0.1155
+      }
+    ]
+  },
+  "SOR_000386": {
+    "sorId": "SOR_000386",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0644,
+        "perUnitQty": 0.0644
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.15,
+        "perUnitQty": 0.15
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.04,
+        "perUnitQty": 0.04
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0644,
+        "perUnitQty": 0.0644
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.15,
+        "perUnitQty": 0.15
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.04,
+        "perUnitQty": 0.04
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      }
+    ]
+  },
+  "SOR_000387": {
+    "sorId": "SOR_000387",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0644,
+        "perUnitQty": 0.0644
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1545,
+        "perUnitQty": 0.1545
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.0412,
+        "perUnitQty": 0.0412
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0206,
+        "perUnitQty": 0.0206
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0644,
+        "perUnitQty": 0.0644
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1545,
+        "perUnitQty": 0.1545
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.0412,
+        "perUnitQty": 0.0412
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0206,
+        "perUnitQty": 0.0206
+      }
+    ]
+  },
+  "SOR_000737": {
+    "sorId": "SOR_000737",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0644,
+        "perUnitQty": 0.0644
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1575,
+        "perUnitQty": 0.1575
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.042,
+        "perUnitQty": 0.042
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      }
+    ]
+  },
+  "SOR_000390": {
+    "sorId": "SOR_000390",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0114,
+        "perUnitQty": 0.0114
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.027,
+        "perUnitQty": 0.027
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.027,
+        "perUnitQty": 0.027
+      }
+    ]
+  },
+  "SOR_000391": {
+    "sorId": "SOR_000391",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0114,
+        "perUnitQty": 0.0114
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.0278,
+        "perUnitQty": 0.0278
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0278,
+        "perUnitQty": 0.0278
+      }
+    ]
+  },
+  "SOR_000738": {
+    "sorId": "SOR_000738",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0114,
+        "perUnitQty": 0.0114
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.0284,
+        "perUnitQty": 0.0284
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0284,
+        "perUnitQty": 0.0284
+      }
+    ]
+  },
+  "SOR_000394": {
+    "sorId": "SOR_000394",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.0075,
+        "perUnitQty": 0.0075
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0271,
+        "perUnitQty": 0.0271
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      }
+    ]
+  },
+  "SOR_000395": {
+    "sorId": "SOR_000395",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.0075,
+        "perUnitQty": 0.0075
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0271,
+        "perUnitQty": 0.0271
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.1442,
+        "perUnitQty": 0.1442
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0206,
+        "perUnitQty": 0.0206
+      }
+    ]
+  },
+  "SOR_000739": {
+    "sorId": "SOR_000739",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.0075,
+        "perUnitQty": 0.0075
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0271,
+        "perUnitQty": 0.0271
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.147,
+        "perUnitQty": 0.147
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      }
+    ]
+  },
+  "SOR_000398": {
+    "sorId": "SOR_000398",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.0075,
+        "perUnitQty": 0.0075
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0372,
+        "perUnitQty": 0.0372
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      }
+    ]
+  },
+  "SOR_000399": {
+    "sorId": "SOR_000399",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.0075,
+        "perUnitQty": 0.0075
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0372,
+        "perUnitQty": 0.0372
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.1442,
+        "perUnitQty": 0.1442
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0206,
+        "perUnitQty": 0.0206
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0515,
+        "perUnitQty": 0.0515
+      }
+    ]
+  },
+  "SOR_000740": {
+    "sorId": "SOR_000740",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.0075,
+        "perUnitQty": 0.0075
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0372,
+        "perUnitQty": 0.0372
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.147,
+        "perUnitQty": 0.147
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      }
+    ]
+  },
+  "SOR_000402": {
+    "sorId": "SOR_000402",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.009,
+        "perUnitQty": 0.009
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.043,
+        "perUnitQty": 0.043
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.009,
+        "perUnitQty": 0.009
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.11,
+        "perUnitQty": 0.11
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.11,
+        "perUnitQty": 0.11
+      }
+    ]
+  },
+  "SOR_000403": {
+    "sorId": "SOR_000403",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.006,
+        "perUnitQty": 0.006
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0286,
+        "perUnitQty": 0.0286
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.006,
+        "perUnitQty": 0.006
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.13,
+        "perUnitQty": 0.13
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.11,
+        "perUnitQty": 0.11
+      }
+    ]
+  },
+  "SOR_000404": {
+    "sorId": "SOR_000404",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.0055,
+        "perUnitQty": 0.0055
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0257,
+        "perUnitQty": 0.0257
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.054,
+        "perUnitQty": 0.054
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.108,
+        "perUnitQty": 0.108
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.162,
+        "perUnitQty": 0.162
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.012,
+        "perUnitQty": 0.012
+      }
+    ]
+  },
+  "SOR_000741": {
+    "sorId": "SOR_000741",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0644,
+        "perUnitQty": 0.0644
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1575,
+        "perUnitQty": 0.1575
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.042,
+        "perUnitQty": 0.042
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.0525,
+        "perUnitQty": 0.0525
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.021,
+        "perUnitQty": 0.021
+      }
+    ]
+  },
+  "SOR_000434": {
+    "sorId": "SOR_000434",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000008",
+        "quantity": 0.023,
+        "perUnitQty": 0.023
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.012,
+        "perUnitQty": 0.012
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0858,
+        "perUnitQty": 0.0858
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.03,
+        "perUnitQty": 0.03
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.13,
+        "perUnitQty": 0.13
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.11,
+        "perUnitQty": 0.11
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.22,
+        "perUnitQty": 0.22
+      }
+    ]
+  },
+  "SOR_000435": {
+    "sorId": "SOR_000435",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000008",
+        "quantity": 0.023,
+        "perUnitQty": 0.023
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.012,
+        "perUnitQty": 0.012
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0858,
+        "perUnitQty": 0.0858
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0345,
+        "perUnitQty": 0.0345
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.1495,
+        "perUnitQty": 0.1495
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1265,
+        "perUnitQty": 0.1265
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.253,
+        "perUnitQty": 0.253
+      },
+      {
+        "sorId": "SOR_000040",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      }
+    ]
+  },
+  "SOR_000742": {
+    "sorId": "SOR_000742",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.55,
+        "perUnitQty": 0.55
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      }
+    ]
+  },
+  "SOR_000743": {
+    "sorId": "SOR_000743",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000040",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.5775,
+        "perUnitQty": 0.5775
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      }
+    ]
+  },
+  "SOR_000744": {
+    "sorId": "SOR_000744",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000042",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      }
+    ]
+  },
+  "SOR_000745": {
+    "sorId": "SOR_000745",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000042",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      }
+    ]
+  },
+  "SOR_000746": {
+    "sorId": "SOR_000746",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000046",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      }
+    ]
+  },
+  "SOR_000747": {
+    "sorId": "SOR_000747",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000046",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      }
+    ]
+  },
+  "SOR_000748": {
+    "sorId": "SOR_000748",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000048",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      }
+    ]
+  },
+  "SOR_000749": {
+    "sorId": "SOR_000749",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000048",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      }
+    ]
+  },
+  "SOR_000750": {
+    "sorId": "SOR_000750",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000050",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      }
+    ]
+  },
+  "SOR_000751": {
+    "sorId": "SOR_000751",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000050",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      }
+    ]
+  },
+  "SOR_000752": {
+    "sorId": "SOR_000752",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000052",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      }
+    ]
+  },
+  "SOR_000753": {
+    "sorId": "SOR_000753",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000052",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      }
+    ]
+  },
+  "SOR_000754": {
+    "sorId": "SOR_000754",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000053",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      }
+    ]
+  },
+  "SOR_000755": {
+    "sorId": "SOR_000755",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000053",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.2268,
+        "perUnitQty": 0.2268
+      }
+    ]
+  },
+  "SOR_000756": {
+    "sorId": "SOR_000756",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000054",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      }
+    ]
+  },
+  "SOR_000757": {
+    "sorId": "SOR_000757",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000784",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1857,
+        "perUnitQty": 0.1857
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.216,
+        "perUnitQty": 0.216
+      }
+    ]
+  },
+  "SOR_000758": {
+    "sorId": "SOR_000758",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000040",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.76,
+        "perUnitQty": 0.76
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      }
+    ]
+  },
+  "SOR_000759": {
+    "sorId": "SOR_000759",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000040",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.798,
+        "perUnitQty": 0.798
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      }
+    ]
+  },
+  "SOR_000760": {
+    "sorId": "SOR_000760",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000042",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      }
+    ]
+  },
+  "SOR_000761": {
+    "sorId": "SOR_000761",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000042",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      }
+    ]
+  },
+  "SOR_000762": {
+    "sorId": "SOR_000762",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000046",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      }
+    ]
+  },
+  "SOR_000763": {
+    "sorId": "SOR_000763",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000046",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      }
+    ]
+  },
+  "SOR_000764": {
+    "sorId": "SOR_000764",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000045",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      }
+    ]
+  },
+  "SOR_000765": {
+    "sorId": "SOR_000765",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000045",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      }
+    ]
+  },
+  "SOR_000766": {
+    "sorId": "SOR_000766",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000048",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      }
+    ]
+  },
+  "SOR_000767": {
+    "sorId": "SOR_000767",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000048",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      }
+    ]
+  },
+  "SOR_000768": {
+    "sorId": "SOR_000768",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000049",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      }
+    ]
+  },
+  "SOR_000769": {
+    "sorId": "SOR_000769",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000049",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      }
+    ]
+  },
+  "SOR_000770": {
+    "sorId": "SOR_000770",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000049",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      }
+    ]
+  },
+  "SOR_000771": {
+    "sorId": "SOR_000771",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000049",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      }
+    ]
+  },
+  "SOR_000772": {
+    "sorId": "SOR_000772",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000052",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      }
+    ]
+  },
+  "SOR_000773": {
+    "sorId": "SOR_000773",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000052",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      }
+    ]
+  },
+  "SOR_000774": {
+    "sorId": "SOR_000774",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000053",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.325,
+        "perUnitQty": 0.325
+      }
+    ]
+  },
+  "SOR_000775": {
+    "sorId": "SOR_000775",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000053",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.0715,
+        "perUnitQty": 0.0715
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.015,
+        "perUnitQty": 0.015
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.066,
+        "perUnitQty": 0.066
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3412,
+        "perUnitQty": 0.3412
+      }
+    ]
+  },
+  "SOR_000201": {
+    "sorId": "SOR_000201",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000057",
+        "quantity": 0.0012,
+        "perUnitQty": 0.0012
+      },
+      {
+        "sorId": "SOR_000060",
+        "quantity": 0.0038,
+        "perUnitQty": 0.0038
+      },
+      {
+        "sorId": "SOR_000062",
+        "quantity": 0.6222,
+        "perUnitQty": 0.6222
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.0127,
+        "perUnitQty": 0.0127
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.3056,
+        "perUnitQty": 0.3056
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3056,
+        "perUnitQty": 0.3056
+      }
+    ]
+  },
+  "SOR_000202": {
+    "sorId": "SOR_000202",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000057",
+        "quantity": 0.0015,
+        "perUnitQty": 0.0015
+      },
+      {
+        "sorId": "SOR_000060",
+        "quantity": 0.0045,
+        "perUnitQty": 0.0045
+      },
+      {
+        "sorId": "SOR_000062",
+        "quantity": 0.7467,
+        "perUnitQty": 0.7467
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.0152,
+        "perUnitQty": 0.0152
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.3667,
+        "perUnitQty": 0.3667
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.3667,
+        "perUnitQty": 0.3667
+      }
+    ]
+  },
+  "SOR_000205": {
+    "sorId": "SOR_000205",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000059",
+        "quantity": 0.0046,
+        "perUnitQty": 0.0046
+      },
+      {
+        "sorId": "SOR_000057",
+        "quantity": 0.0008,
+        "perUnitQty": 0.0008
+      },
+      {
+        "sorId": "SOR_000065",
+        "quantity": 0.13,
+        "perUnitQty": 0.13
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.007,
+        "perUnitQty": 0.007
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.55,
+        "perUnitQty": 0.55
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.55,
+        "perUnitQty": 0.55
+      }
+    ]
+  },
+  "SOR_000206": {
+    "sorId": "SOR_000206",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000061",
+        "quantity": 0.0055,
+        "perUnitQty": 0.0055
+      },
+      {
+        "sorId": "SOR_000057",
+        "quantity": 0.0009,
+        "perUnitQty": 0.0009
+      },
+      {
+        "sorId": "SOR_000065",
+        "quantity": 0.156,
+        "perUnitQty": 0.156
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.0084,
+        "perUnitQty": 0.0084
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.66,
+        "perUnitQty": 0.66
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.66,
+        "perUnitQty": 0.66
+      }
+    ]
+  },
+  "SOR_000209": {
+    "sorId": "SOR_000209",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000061",
+        "quantity": 0.0027,
+        "perUnitQty": 0.0027
+      },
+      {
+        "sorId": "SOR_000063",
+        "quantity": 0.126,
+        "perUnitQty": 0.126
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.0033,
+        "perUnitQty": 0.0033
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.05,
+        "perUnitQty": 0.05
+      }
+    ]
+  },
+  "SOR_000210": {
+    "sorId": "SOR_000210",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000061",
+        "quantity": 0.0052,
+        "perUnitQty": 0.0052
+      },
+      {
+        "sorId": "SOR_000065",
+        "quantity": 0.3619,
+        "perUnitQty": 0.3619
+      },
+      {
+        "sorId": "SOR_000062",
+        "quantity": 0.1905,
+        "perUnitQty": 0.1905
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.0109,
+        "perUnitQty": 0.0109
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.6548,
+        "perUnitQty": 0.6548
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.6548,
+        "perUnitQty": 0.6548
+      }
+    ]
+  },
+  "SOR_000211": {
+    "sorId": "SOR_000211",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000061",
+        "quantity": 0.0062,
+        "perUnitQty": 0.0062
+      },
+      {
+        "sorId": "SOR_000062",
+        "quantity": 0.4343,
+        "perUnitQty": 0.4343
+      },
+      {
+        "sorId": "SOR_000064",
+        "quantity": 0.2286,
+        "perUnitQty": 0.2286
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.013,
+        "perUnitQty": 0.013
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.7857,
+        "perUnitQty": 0.7857
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.7857,
+        "perUnitQty": 0.7857
+      }
+    ]
+  },
+  "SOR_000214": {
+    "sorId": "SOR_000214",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000059",
+        "quantity": 0.0053,
+        "perUnitQty": 0.0053
+      },
+      {
+        "sorId": "SOR_000065",
+        "quantity": 0.2692,
+        "perUnitQty": 0.2692
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.0088,
+        "perUnitQty": 0.0088
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.1603,
+        "perUnitQty": 0.1603
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.1603,
+        "perUnitQty": 0.1603
+      }
+    ]
+  },
+  "SOR_000215": {
+    "sorId": "SOR_000215",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000061",
+        "quantity": 0.0064,
+        "perUnitQty": 0.0064
+      },
+      {
+        "sorId": "SOR_000065",
+        "quantity": 0.3231,
+        "perUnitQty": 0.3231
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.0106,
+        "perUnitQty": 0.0106
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.1923,
+        "perUnitQty": 0.1923
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.1923,
+        "perUnitQty": 0.1923
+      }
+    ]
+  },
+  "SOR_000218": {
+    "sorId": "SOR_000218",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000059",
+        "quantity": 0.004,
+        "perUnitQty": 0.004
+      },
+      {
+        "sorId": "SOR_000057",
+        "quantity": 0.0011,
+        "perUnitQty": 0.0011
+      },
+      {
+        "sorId": "SOR_000065",
+        "quantity": 0.4218,
+        "perUnitQty": 0.4218
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.0103,
+        "perUnitQty": 0.0103
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.5649,
+        "perUnitQty": 0.5649
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.5649,
+        "perUnitQty": 0.5649
+      }
+    ]
+  },
+  "SOR_000219": {
+    "sorId": "SOR_000219",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000061",
+        "quantity": 0.0048,
+        "perUnitQty": 0.0048
+      },
+      {
+        "sorId": "SOR_000057",
+        "quantity": 0.0014,
+        "perUnitQty": 0.0014
+      },
+      {
+        "sorId": "SOR_000065",
+        "quantity": 0.5061,
+        "perUnitQty": 0.5061
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.0124,
+        "perUnitQty": 0.0124
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.6778,
+        "perUnitQty": 0.6778
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.6778,
+        "perUnitQty": 0.6778
+      }
+    ]
+  },
+  "SOR_000223": {
+    "sorId": "SOR_000223",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000057",
+        "quantity": 0.0015,
+        "perUnitQty": 0.0015
+      },
+      {
+        "sorId": "SOR_000059",
+        "quantity": 0.0045,
+        "perUnitQty": 0.0045
+      },
+      {
+        "sorId": "SOR_000062",
+        "quantity": 0.7467,
+        "perUnitQty": 0.7467
+      },
+      {
+        "sorId": "SOR_000067",
+        "quantity": 0.0152,
+        "perUnitQty": 0.0152
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.3667,
+        "perUnitQty": 0.3667
+      },
+      {
+        "sorId": "SOR_000294",
+        "quantity": 0.3667,
+        "perUnitQty": 0.3667
+      }
+    ]
+  },
+  "SOR_000148": {
+    "sorId": "SOR_000148",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000015",
+        "quantity": 0.96,
+        "perUnitQty": 0.96
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.48,
+        "perUnitQty": 0.48
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 2.29,
+        "perUnitQty": 2.29
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.18,
+        "perUnitQty": 0.18
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.8,
+        "perUnitQty": 1.8
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.4,
+        "perUnitQty": 1.4
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.7,
+        "perUnitQty": 0.7
+      }
+    ]
+  },
+  "SOR_000150": {
+    "sorId": "SOR_000150",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000015",
+        "quantity": 0.96,
+        "perUnitQty": 0.96
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.48,
+        "perUnitQty": 0.48
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.72,
+        "perUnitQty": 1.72
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.18,
+        "perUnitQty": 0.18
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.8,
+        "perUnitQty": 1.8
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.4,
+        "perUnitQty": 1.4
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.7,
+        "perUnitQty": 0.7
+      }
+    ]
+  },
+  "SOR_000152": {
+    "sorId": "SOR_000152",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000008",
+        "quantity": 0.9,
+        "perUnitQty": 0.9
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.45,
+        "perUnitQty": 0.45
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 3.23,
+        "perUnitQty": 3.23
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.4,
+        "perUnitQty": 1.4
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.8,
+        "perUnitQty": 1.8
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.4,
+        "perUnitQty": 1.4
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.68,
+        "perUnitQty": 0.68
+      }
+    ]
+  },
+  "SOR_000153": {
+    "sorId": "SOR_000153",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000008",
+        "quantity": 0.9,
+        "perUnitQty": 0.9
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.45,
+        "perUnitQty": 0.45
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 3.23,
+        "perUnitQty": 3.23
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.61,
+        "perUnitQty": 1.61
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 2.07,
+        "perUnitQty": 2.07
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.61,
+        "perUnitQty": 1.61
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.782,
+        "perUnitQty": 0.782
+      }
+    ]
+  },
+  "SOR_000160": {
+    "sorId": "SOR_000160",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000015",
+        "quantity": 0.9,
+        "perUnitQty": 0.9
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.45,
+        "perUnitQty": 0.45
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 4.29,
+        "perUnitQty": 4.29
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.68,
+        "perUnitQty": 0.68
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.8,
+        "perUnitQty": 1.8
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.4,
+        "perUnitQty": 1.4
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.4,
+        "perUnitQty": 1.4
+      }
+    ]
+  },
+  "SOR_000161": {
+    "sorId": "SOR_000161",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000015",
+        "quantity": 0.9,
+        "perUnitQty": 0.9
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.45,
+        "perUnitQty": 0.45
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 4.29,
+        "perUnitQty": 4.29
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.782,
+        "perUnitQty": 0.782
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 2.07,
+        "perUnitQty": 2.07
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.61,
+        "perUnitQty": 1.61
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.61,
+        "perUnitQty": 1.61
+      }
+    ]
+  },
+  "SOR_000168": {
+    "sorId": "SOR_000168",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000004",
+        "quantity": 0.0169,
+        "perUnitQty": 0.0169
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.0169,
+        "perUnitQty": 0.0169
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1208,
+        "perUnitQty": 0.1208
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.1,
+        "perUnitQty": 0.1
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.33,
+        "perUnitQty": 0.33
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.03,
+        "perUnitQty": 0.03
+      }
+    ]
+  },
+  "SOR_000169": {
+    "sorId": "SOR_000169",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000004",
+        "quantity": 0.0169,
+        "perUnitQty": 0.0169
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.0169,
+        "perUnitQty": 0.0169
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1208,
+        "perUnitQty": 0.1208
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.115,
+        "perUnitQty": 0.115
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.3795,
+        "perUnitQty": 0.3795
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0345,
+        "perUnitQty": 0.0345
+      }
+    ]
+  },
+  "SOR_000172": {
+    "sorId": "SOR_000172",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000008",
+        "quantity": 0.018,
+        "perUnitQty": 0.018
+      },
+      {
+        "sorId": "SOR_000004",
+        "quantity": 0.018,
+        "perUnitQty": 0.018
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.018,
+        "perUnitQty": 0.018
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1287,
+        "perUnitQty": 0.1287
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.165,
+        "perUnitQty": 0.165
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.528,
+        "perUnitQty": 0.528
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.48,
+        "perUnitQty": 0.48
+      }
+    ]
+  },
+  "SOR_000173": {
+    "sorId": "SOR_000173",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000008",
+        "quantity": 0.018,
+        "perUnitQty": 0.018
+      },
+      {
+        "sorId": "SOR_000004",
+        "quantity": 0.018,
+        "perUnitQty": 0.018
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.018,
+        "perUnitQty": 0.018
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.1287,
+        "perUnitQty": 0.1287
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.1898,
+        "perUnitQty": 0.1898
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.6072,
+        "perUnitQty": 0.6072
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.552,
+        "perUnitQty": 0.552
+      }
+    ]
+  },
+  "SOR_000185": {
+    "sorId": "SOR_000185",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000010",
+        "quantity": 0.54,
+        "perUnitQty": 0.54
+      },
+      {
+        "sorId": "SOR_000006",
+        "quantity": 0.36,
+        "perUnitQty": 0.36
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.45,
+        "perUnitQty": 0.45
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 2.8,
+        "perUnitQty": 2.8
+      },
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.06,
+        "perUnitQty": 0.06
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.1,
+        "perUnitQty": 0.1
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000098",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      },
+      {
+        "sorId": "SOR_000099",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      }
+    ]
+  },
+  "SOR_000186": {
+    "sorId": "SOR_000186",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000010",
+        "quantity": 0.54,
+        "perUnitQty": 0.54
+      },
+      {
+        "sorId": "SOR_000006",
+        "quantity": 0.36,
+        "perUnitQty": 0.36
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.45,
+        "perUnitQty": 0.45
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 2.8,
+        "perUnitQty": 2.8
+      },
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.069,
+        "perUnitQty": 0.069
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.115,
+        "perUnitQty": 0.115
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.5295,
+        "perUnitQty": 1.5295
+      },
+      {
+        "sorId": "SOR_000098",
+        "quantity": 0.46,
+        "perUnitQty": 0.46
+      },
+      {
+        "sorId": "SOR_000099",
+        "quantity": 0.46,
+        "perUnitQty": 0.46
+      }
+    ]
+  },
+  "SOR_000189": {
+    "sorId": "SOR_000189",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000010",
+        "quantity": 0.54,
+        "perUnitQty": 0.54
+      },
+      {
+        "sorId": "SOR_000006",
+        "quantity": 0.36,
+        "perUnitQty": 0.36
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.45,
+        "perUnitQty": 0.45
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 3.4733,
+        "perUnitQty": 3.4733
+      },
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.0573,
+        "perUnitQty": 0.0573
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.1,
+        "perUnitQty": 0.1
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.3333,
+        "perUnitQty": 1.3333
+      },
+      {
+        "sorId": "SOR_000098",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      },
+      {
+        "sorId": "SOR_000099",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      }
+    ]
+  },
+  "SOR_000190": {
+    "sorId": "SOR_000190",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000010",
+        "quantity": 0.54,
+        "perUnitQty": 0.54
+      },
+      {
+        "sorId": "SOR_000006",
+        "quantity": 0.36,
+        "perUnitQty": 0.36
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.45,
+        "perUnitQty": 0.45
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 3.4733,
+        "perUnitQty": 3.4733
+      },
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.0659,
+        "perUnitQty": 0.0659
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.115,
+        "perUnitQty": 0.115
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.5333,
+        "perUnitQty": 1.5333
+      },
+      {
+        "sorId": "SOR_000098",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      },
+      {
+        "sorId": "SOR_000099",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      }
+    ]
+  },
+  "SOR_000193": {
+    "sorId": "SOR_000193",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000010",
+        "quantity": 0.54,
+        "perUnitQty": 0.54
+      },
+      {
+        "sorId": "SOR_000006",
+        "quantity": 0.36,
+        "perUnitQty": 0.36
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.45,
+        "perUnitQty": 0.45
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 4.0333,
+        "perUnitQty": 4.0333
+      },
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.0573,
+        "perUnitQty": 0.0573
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.1,
+        "perUnitQty": 0.1
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.3333,
+        "perUnitQty": 1.3333
+      },
+      {
+        "sorId": "SOR_000098",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      },
+      {
+        "sorId": "SOR_000099",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      }
+    ]
+  },
+  "SOR_000194": {
+    "sorId": "SOR_000194",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000010",
+        "quantity": 0.54,
+        "perUnitQty": 0.54
+      },
+      {
+        "sorId": "SOR_000006",
+        "quantity": 0.36,
+        "perUnitQty": 0.36
+      },
+      {
+        "sorId": "SOR_000002",
+        "quantity": 0.45,
+        "perUnitQty": 0.45
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 4.0333,
+        "perUnitQty": 4.0333
+      },
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.0659,
+        "perUnitQty": 0.0659
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.115,
+        "perUnitQty": 0.115
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.5333,
+        "perUnitQty": 1.5333
+      },
+      {
+        "sorId": "SOR_000098",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      },
+      {
+        "sorId": "SOR_000099",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      }
+    ]
+  },
+  "SOR_000197": {
+    "sorId": "SOR_000197",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000023",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000056",
+        "quantity": 0.8,
+        "perUnitQty": 0.8
+      },
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.044,
+        "perUnitQty": 0.044
+      },
+      {
+        "sorId": "SOR_000336",
+        "quantity": 0.3,
+        "perUnitQty": 0.3
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.8,
+        "perUnitQty": 0.8
+      }
+    ]
+  },
+  "SOR_000198": {
+    "sorId": "SOR_000198",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000023",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000056",
+        "quantity": 0.8,
+        "perUnitQty": 0.8
+      },
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.0462,
+        "perUnitQty": 0.0462
+      },
+      {
+        "sorId": "SOR_000336",
+        "quantity": 0.315,
+        "perUnitQty": 0.315
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.84,
+        "perUnitQty": 0.84
+      }
+    ]
+  },
+  "SOR_000776": {
+    "sorId": "SOR_000776",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000788",
+        "quantity": 3.5,
+        "perUnitQty": 3.5
+      },
+      {
+        "sorId": "SOR_000789",
+        "quantity": 1.8773,
+        "perUnitQty": 1.8773
+      },
+      {
+        "sorId": "SOR_000792",
+        "quantity": 5.1012,
+        "perUnitQty": 5.1012
+      },
+      {
+        "sorId": "SOR_000793",
+        "quantity": 10.4785,
+        "perUnitQty": 10.4785
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.273,
+        "perUnitQty": 0.273
+      },
+      {
+        "sorId": "SOR_000336",
+        "quantity": 0.273,
+        "perUnitQty": 0.273
+      }
+    ]
+  },
+  "SOR_000638": {
+    "sorId": "SOR_000638",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000087",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000335",
+        "quantity": 0.0538,
+        "perUnitQty": 0.0538
+      },
+      {
+        "sorId": "SOR_000337",
+        "quantity": 0.1075,
+        "perUnitQty": 0.1075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.2151,
+        "perUnitQty": 0.2151
+      }
+    ]
+  },
+  "SOR_000777": {
+    "sorId": "SOR_000777",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000794",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000785",
+        "quantity": 2.4606,
+        "perUnitQty": 2.4606
+      },
+      {
+        "sorId": "SOR_000786",
+        "quantity": 1.9685,
+        "perUnitQty": 1.9685
+      },
+      {
+        "sorId": "SOR_000787",
+        "quantity": 1.9685,
+        "perUnitQty": 1.9685
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 4.9213,
+        "perUnitQty": 4.9213
+      }
+    ]
+  },
+  "SOR_000650": {
+    "sorId": "SOR_000650",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000057",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000335",
+        "quantity": 17.8571,
+        "perUnitQty": 17.8571
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 17.8571,
+        "perUnitQty": 17.8571
+      }
+    ]
+  },
+  "SOR_000652": {
+    "sorId": "SOR_000652",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000060",
+        "quantity": 0.0354,
+        "perUnitQty": 0.0354
+      },
+      {
+        "sorId": "SOR_000795",
+        "quantity": 1.0638,
+        "perUnitQty": 1.0638
+      },
+      {
+        "sorId": "SOR_000335",
+        "quantity": 1.0638,
+        "perUnitQty": 1.0638
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 1.0638,
+        "perUnitQty": 1.0638
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.5319,
+        "perUnitQty": 0.5319
+      },
+      {
+        "sorId": "SOR_000315",
+        "quantity": 0.5319,
+        "perUnitQty": 0.5319
+      }
+    ]
+  },
+  "SOR_000524": {
+    "sorId": "SOR_000524",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0027,
+        "perUnitQty": 0.0027
+      }
+    ]
+  },
+  "SOR_000525": {
+    "sorId": "SOR_000525",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0032,
+        "perUnitQty": 0.0032
+      }
+    ]
+  },
+  "SOR_000551": {
+    "sorId": "SOR_000551",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.53,
+        "perUnitQty": 0.53
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 0.53,
+        "perUnitQty": 0.53
+      }
+    ]
+  },
+  "SOR_000477": {
+    "sorId": "SOR_000477",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.028,
+        "perUnitQty": 0.028
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.6944,
+        "perUnitQty": 0.6944
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.0056,
+        "perUnitQty": 0.0056
+      },
+      {
+        "sorId": "SOR_000097",
+        "quantity": 0.0333,
+        "perUnitQty": 0.0333
+      },
+      {
+        "sorId": "SOR_000104",
+        "quantity": 0.0667,
+        "perUnitQty": 0.0667
+      },
+      {
+        "sorId": "SOR_000017",
+        "quantity": 1.21,
+        "perUnitQty": 1.21
+      },
+      {
+        "sorId": "SOR_000104",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      },
+      {
+        "sorId": "SOR_000003",
+        "quantity": 0.3,
+        "perUnitQty": 0.3
+      }
+    ]
+  },
+  "SOR_000478": {
+    "sorId": "SOR_000478",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.028,
+        "perUnitQty": 0.028
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.6944,
+        "perUnitQty": 0.6944
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.0056,
+        "perUnitQty": 0.0056
+      },
+      {
+        "sorId": "SOR_000097",
+        "quantity": 0.0333,
+        "perUnitQty": 0.0333
+      },
+      {
+        "sorId": "SOR_000104",
+        "quantity": 0.0667,
+        "perUnitQty": 0.0667
+      },
+      {
+        "sorId": "SOR_000018",
+        "quantity": 1.21,
+        "perUnitQty": 1.21
+      },
+      {
+        "sorId": "SOR_000104",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      },
+      {
+        "sorId": "SOR_000003",
+        "quantity": 0.2933,
+        "perUnitQty": 0.2933
+      }
+    ]
+  },
+  "SOR_000479": {
+    "sorId": "SOR_000479",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.028,
+        "perUnitQty": 0.028
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.6944,
+        "perUnitQty": 0.6944
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.0056,
+        "perUnitQty": 0.0056
+      },
+      {
+        "sorId": "SOR_000097",
+        "quantity": 0.0333,
+        "perUnitQty": 0.0333
+      },
+      {
+        "sorId": "SOR_000104",
+        "quantity": 0.0667,
+        "perUnitQty": 0.0667
+      },
+      {
+        "sorId": "SOR_000018",
+        "quantity": 1.21,
+        "perUnitQty": 1.21
+      },
+      {
+        "sorId": "SOR_000104",
+        "quantity": 0.4,
+        "perUnitQty": 0.4
+      },
+      {
+        "sorId": "SOR_000003",
+        "quantity": 0.2933,
+        "perUnitQty": 0.2933
+      }
+    ]
+  },
+  "SOR_000778": {
+    "sorId": "SOR_000778",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000299",
+        "quantity": 0.0016,
+        "perUnitQty": 0.0016
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.0333,
+        "perUnitQty": 0.0333
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 0.0067,
+        "perUnitQty": 0.0067
+      },
+      {
+        "sorId": "SOR_000118",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      },
+      {
+        "sorId": "SOR_000097",
+        "quantity": 0.02,
+        "perUnitQty": 0.02
+      },
+      {
+        "sorId": "SOR_000104",
+        "quantity": 0.01,
+        "perUnitQty": 0.01
+      },
+      {
+        "sorId": "SOR_000112",
+        "quantity": 0.04,
+        "perUnitQty": 0.04
+      },
+      {
+        "sorId": "SOR_000004",
+        "quantity": 0.448,
+        "perUnitQty": 0.448
+      },
+      {
+        "sorId": "SOR_000005",
+        "quantity": 0.16,
+        "perUnitQty": 0.16
+      },
+      {
+        "sorId": "SOR_000791",
+        "quantity": 0.672,
+        "perUnitQty": 0.672
+      },
+      {
+        "sorId": "SOR_000790",
+        "quantity": 0.06,
+        "perUnitQty": 0.06
+      }
+    ]
+  },
+  "SOR_000796": {
+    "sorId": "SOR_000796",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000797": {
+    "sorId": "SOR_000797",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000798": {
+    "sorId": "SOR_000798",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  },
+  "SOR_000799": {
+    "sorId": "SOR_000799",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000800": {
+    "sorId": "SOR_000800",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000801": {
+    "sorId": "SOR_000801",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.0,
+        "perUnitQty": 1.0
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  },
+  "SOR_000802": {
+    "sorId": "SOR_000802",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.672,
+        "perUnitQty": 0.672
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000803": {
+    "sorId": "SOR_000803",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.672,
+        "perUnitQty": 0.672
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000804": {
+    "sorId": "SOR_000804",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 1.33,
+        "perUnitQty": 1.33
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000805": {
+    "sorId": "SOR_000805",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.501,
+        "perUnitQty": 0.501
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000806": {
+    "sorId": "SOR_000806",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.501,
+        "perUnitQty": 0.501
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.35,
+        "perUnitQty": 0.35
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.05,
+        "perUnitQty": 1.05
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.14,
+        "perUnitQty": 0.14
+      }
+    ]
+  },
+  "SOR_000807": {
+    "sorId": "SOR_000807",
+    "sorType": "W",
+    "type": "SOR",
+    "quantity": 1.0,
+    "active": true,
+    "effectiveFrom": true,
+    "basicSorDetails": [
+      {
+        "sorId": "SOR_000808",
+        "quantity": 350.0,
+        "perUnitQty": 350.0
+      },
+      {
+        "sorId": "SOR_000069",
+        "quantity": 0.28,
+        "perUnitQty": 0.28
+      },
+      {
+        "sorId": "SOR_000021",
+        "quantity": 0.501,
+        "perUnitQty": 0.501
+      },
+      {
+        "sorId": "SOR_000334",
+        "quantity": 0.4025,
+        "perUnitQty": 0.4025
+      },
+      {
+        "sorId": "SOR_000314",
+        "quantity": 1.2075,
+        "perUnitQty": 1.2075
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 1.6215,
+        "perUnitQty": 1.6215
+      },
+      {
+        "sorId": "SOR_000291",
+        "quantity": 1.41,
+        "perUnitQty": 1.41
+      },
+      {
+        "sorId": "SOR_000290",
+        "quantity": 0.161,
+        "perUnitQty": 0.161
+      }
+    ]
+  }
+}
