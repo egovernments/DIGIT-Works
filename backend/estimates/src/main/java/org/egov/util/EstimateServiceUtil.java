@@ -42,8 +42,6 @@ public class EstimateServiceUtil {
     }
 
     public Boolean isCacheSearchRequired(EstimateSearchCriteria searchCriteria) {
-        if (Boolean.TRUE.equals(config.getIsCachingEnabled()) && !CollectionUtils.isEmpty(searchCriteria.getIds()))
-            return true;
-        return false;
+        return Boolean.TRUE.equals(config.getIsCachingEnabled()) && !CollectionUtils.isEmpty(searchCriteria.getIds());
     }
 }
