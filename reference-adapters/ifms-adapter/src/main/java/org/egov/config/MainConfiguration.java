@@ -54,15 +54,15 @@ public class MainConfiguration {
         return objectMapper;
     }
 
-   @Bean
-   @Primary
-   public RestTemplate restTemplate(TracerProperties tracerProperties) {
-       SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-       requestFactory.setOutputStreaming(false);
-       RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
-       restTemplate.setInterceptors(Collections.singletonList(new RestTemplateLoggingInterceptor(tracerProperties)));
-       return restTemplate;
-   }
+    @Bean
+    @Primary
+    public RestTemplate restTemplate(TracerProperties tracerProperties) {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setOutputStreaming(false);
+        RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
+        restTemplate.setInterceptors(Collections.singletonList(new RestTemplateLoggingInterceptor(tracerProperties)));
+        return restTemplate;
+    }
 
     /**
      * It will disable ssl certification check
