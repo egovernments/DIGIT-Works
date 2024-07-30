@@ -274,8 +274,10 @@ public class ContractEnrichment {
         List<LineItems> refinedLineItems = new ArrayList<>();
         for(String providedEstimateId : providedEstimateIds) {
             for (LineItems providedLineItem : providedLineItemsListMap.get(providedEstimateId)){
-                if (providedLineItem.getEstimateLineItemId() == null && !refinedLineItems.stream()
-                        .map(LineItems::getEstimateId).collect(Collectors.toSet()).contains(providedEstimateId)) {
+                if (providedLineItem.getEstimateLineItemId() == null) {
+                    if(refinedLineItems.stream().map(LineItems::getEstimateId).collect(Collectors.toSet()).contains(providedEstimateId)) {
+                        continue;
+                    }
                     Estimate fetchedEstimate = fetchedEstimateListMap.get(providedEstimateId).get(0);
                     for (EstimateDetail fetchedEstimateDetail : fetchedEstimate.getEstimateDetails()) {
 
