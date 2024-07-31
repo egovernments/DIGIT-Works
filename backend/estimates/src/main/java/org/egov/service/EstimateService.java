@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -84,8 +86,8 @@ public class EstimateService {
         serviceValidator.validateEstimateOnSearch(requestInfoWrapper, searchCriteria);
         enrichmentService.enrichEstimateOnSearch(searchCriteria);
         List<Estimate> estimates = new ArrayList<>();
-        if (estimateServiceUtil.isCacheSearchRequired(searchCriteria) ) {
-            estimates = getEstimatesFromRedis(searchCriteria.getIds());
+        if (Boolean.TRUE.equals(estimateServiceUtil.isCacheSearchRequired(searchCriteria))) {
+            estimates = getEstimatesFromRedis(new HashSet<>(searchCriteria.getIds()));
             if (estimates.size() == searchCriteria.getIds().size()) {
                 return estimates;
             } else {
@@ -148,7 +150,7 @@ public class EstimateService {
         }
     }
 
-    private List<Estimate> getEstimatesFromRedis(List<String> ids) {
+    private List<Estimate> getEstimatesFromRedis(Set<String> ids) {
         log.info("EstimateService::getEstimatesFromRedis");
         List<Estimate> estimates = new ArrayList<>();
         for (String id : ids) {

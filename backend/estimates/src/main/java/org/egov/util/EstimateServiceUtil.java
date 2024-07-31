@@ -10,6 +10,7 @@ import org.egov.web.models.EstimateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Component
 @Slf4j
@@ -41,7 +42,15 @@ public class EstimateServiceUtil {
         return estimate.getBusinessService() != null && estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService());
     }
 
-    public Boolean isCacheSearchRequired(EstimateSearchCriteria searchCriteria) {
-        return Boolean.TRUE.equals(config.getIsCachingEnabled()) && !CollectionUtils.isEmpty(searchCriteria.getIds());
+    public boolean isCacheSearchRequired(EstimateSearchCriteria searchCriteria) {
+        return config.getIsCachingEnabled() && !CollectionUtils.isEmpty(searchCriteria.getIds()) &&
+                StringUtils.isEmpty(searchCriteria.getEstimateNumber()) &&
+                StringUtils.isEmpty(searchCriteria.getExecutingDepartment()) &&
+                StringUtils.isEmpty(searchCriteria.getBusinessService()) &&
+                StringUtils.isEmpty(searchCriteria.getProjectId()) &&
+                StringUtils.isEmpty(searchCriteria.getReferenceNumber()) &&
+                StringUtils.isEmpty(searchCriteria.getOldUuid()) &&
+                StringUtils.isEmpty(searchCriteria.getRevisionNumber()) &&
+                StringUtils.isEmpty(searchCriteria.getWfStatus());
     }
 }
