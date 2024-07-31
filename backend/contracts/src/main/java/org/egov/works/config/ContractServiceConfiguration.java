@@ -204,6 +204,9 @@ public class ContractServiceConfiguration {
     @Value("${contract.revision.measurement.validation}")
     private Boolean isMeasurementValidationRequired;
 
+    @Value("${is.caching.enabled}")
+    private Boolean isCachingEnabled;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));

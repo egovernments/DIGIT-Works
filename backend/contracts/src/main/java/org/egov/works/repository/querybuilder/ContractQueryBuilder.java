@@ -68,7 +68,6 @@ public class ContractQueryBuilder {
             query.append(" contract.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
-
         if (StringUtils.isNotBlank(criteria.getContractNumber())) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" contract.contract_number=? ");
