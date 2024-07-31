@@ -739,10 +739,14 @@ public class PaymentInstructionEnrichment {
         }else{
             HashMap<String,String> muktaRefIdToBeneficiaryNumberMap = new HashMap<>();
             for(Beneficiary beneficiary:lastPi.getBeneficiaryDetails()){
-                muktaRefIdToBeneficiaryNumberMap.put(beneficiary.getMuktaReferenceId(),beneficiary.getBeneficiaryNumber());
+                for(BenfLineItems lineItem:beneficiary.getBenfLineItems()){
+                    muktaRefIdToBeneficiaryNumberMap.put(lineItem.getLineItemId(),beneficiary.getBeneficiaryNumber());
+                }
             }
             for(Beneficiary beneficiary:beneficiaryList){
-                beneficiary.setBeneficiaryNumber(muktaRefIdToBeneficiaryNumberMap.get(beneficiary.getMuktaReferenceId()));
+                for(BenfLineItems lineItem:beneficiary.getBenfLineItems()) {
+                    beneficiary.setBeneficiaryNumber(muktaRefIdToBeneficiaryNumberMap.get(lineItem.getLineItemId()));
+                }
                 beneficiary.setPiId(piId);
             }
             parentPiNumber = lastPi.getJitBillNo();
@@ -865,7 +869,7 @@ public class PaymentInstructionEnrichment {
                         .id(benfId)
                         .beneficiaryId(beneficiaryId)
                         .tenantId(disbursement.getLocationCode())
-                        .muktaReferenceId(disbursementDetail.getTargetId())
+                        .muktaReferenceId(disbursement.getTargetId())
                         .bankAccountId(disbursementDetail.getAccountCode())
                         .amount(disbursementDetail.getNetAmount())
                         .benfLineItems(benfLineItems)
@@ -939,22 +943,22 @@ public class PaymentInstructionEnrichment {
         String jitCurrBillNo = lastPI.getPaDetails().get(0).getPaBillRefNumber();
         HashMap<String, Beneficiary> lastPIBeneficiaryMap = new HashMap<>();
         for(Beneficiary beneficiary:lastPI.getBeneficiaryDetails()){
-            lastPIBeneficiaryMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
+            lastPIBeneficiaryMap.put(beneficiary.getBeneficiaryNumber(),beneficiary);
         }
         HashMap<String, Beneficiary> originalPIBeneficiaryMap = new HashMap<>();
         for(Beneficiary beneficiary:originalPI.getBeneficiaryDetails()){
-            originalPIBeneficiaryMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
+            originalPIBeneficiaryMap.put(beneficiary.getBeneficiaryNumber(),beneficiary);
         }
         for(Beneficiary beneficiary:paymentInstructionFromDisbursement.getBeneficiaryDetails()){
             CORBeneficiaryDetails beneficiaryForCor = CORBeneficiaryDetails.builder()
                     .benefId(beneficiary.getBeneficiaryNumber())
                     .jitCurBillRefNo(jitCurrBillNo)
-                    .orgAccountNo(originalPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[0])
-                    .orgIfsc(originalPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[1])
+                    .orgAccountNo(originalPIBeneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getBankAccountId().split("@")[0])
+                    .orgIfsc(originalPIBeneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getBankAccountId().split("@")[1])
                     .correctedAccountNo(beneficiary.getBankAccountId().split("@")[0])
                     .correctedIfsc(beneficiary.getBankAccountId().split("@")[1])
-                    .curAccountNo(lastPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[0])
-                    .curIfsc(lastPIBeneficiaryMap.get(beneficiary.getMuktaReferenceId()).getBankAccountId().split("@")[1])
+                    .curAccountNo(lastPIBeneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getBankAccountId().split("@")[0])
+                    .curIfsc(lastPIBeneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getBankAccountId().split("@")[1])
                     .build();
             beneficiaryList.add(beneficiaryForCor);
         }
@@ -979,7 +983,9 @@ public class PaymentInstructionEnrichment {
     private HashMap<String, Beneficiary> getMuktaRefIdToBenefPayementStatusMap(PaymentInstruction paymentInstruction) {
         HashMap<String, Beneficiary> muktaRefIdToBenefPayementStatusMap = new HashMap<>();
         for(Beneficiary beneficiary:paymentInstruction.getBeneficiaryDetails()){
-            muktaRefIdToBenefPayementStatusMap.put(beneficiary.getMuktaReferenceId(),beneficiary);
+            for(BenfLineItems lineItem:beneficiary.getBenfLineItems()){
+                muktaRefIdToBenefPayementStatusMap.put(lineItem.getLineItemId(),beneficiary);
+            }
         }
         return muktaRefIdToBenefPayementStatusMap;
     }

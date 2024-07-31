@@ -21,6 +21,10 @@ public class EstimateServiceConfiguration {
 
     @Value("${app.timezone}")
     private String timeZone;
+
+    @Value("${is.caching.enabled}")
+    private Boolean isCachingEnabled;
+
     //Idgen Config
     @Value("${egov.idgen.host}")
     private String idGenHost;

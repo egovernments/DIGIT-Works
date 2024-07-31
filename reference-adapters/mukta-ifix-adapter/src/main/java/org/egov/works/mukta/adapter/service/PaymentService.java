@@ -131,7 +131,7 @@ public class PaymentService {
      * @param bill
      * @return
      */
-    private PaymentRequest getPaymentRequest(RequestInfo requestInfo, Bill bill) {
+    public PaymentRequest getPaymentRequest(RequestInfo requestInfo, Bill bill) {
 
         List<PaymentBillDetail> paymentBillDetails = new ArrayList<>();
         // loop to add list of bill details
@@ -185,7 +185,7 @@ public class PaymentService {
      * @param paymentRequest
      * @return
      */
-    private @Valid List<Payment> createPayment(Object paymentRequest) {
+    public @Valid List<Payment> createPayment(Object paymentRequest) {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getBillHost()).append(config.getPaymentCreateEndpoint());
         Object response = new HashMap<>();
@@ -260,7 +260,7 @@ public class PaymentService {
      * @param payment The payment
      * @param requestInfo The request info
      */
-    private void updatePaymentStatusForPartial(Payment payment, RequestInfo requestInfo) {
+    public void updatePaymentStatusForPartial(Payment payment, RequestInfo requestInfo) {
         try {
             log.info("Updating payment status for partial.");
             boolean updatePaymentStatus = updatePaymentBills(payment);
@@ -325,7 +325,7 @@ public class PaymentService {
      * Returns the status code to payment status map
      * @return The status code to payment status map
      */
-    private EnumMap<StatusCode, PaymentStatus> getStatusCodeToPaymentStatusMap() {
+    public EnumMap<StatusCode, PaymentStatus> getStatusCodeToPaymentStatusMap() {
         EnumMap<StatusCode,PaymentStatus> statusCodePaymentStatusHashMap = new EnumMap<>(StatusCode.class);
         statusCodePaymentStatusHashMap.put(StatusCode.INITIATED, PaymentStatus.INITIATED);
         statusCodePaymentStatusHashMap.put(StatusCode.INPROCESS, PaymentStatus.INITIATED);

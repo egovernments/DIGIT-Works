@@ -48,9 +48,10 @@ public class PaymentInstructionService {
     private final ObjectMapper objectMapper;
     private final DisbursementValidator disbursementValidator;
     private final PaymentService paymentService;
+    private final RedisService redisService;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator, RedisService redisService) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -64,6 +65,7 @@ public class PaymentInstructionService {
         this.objectMapper = objectMapper;
         this.paymentService = paymentService;
         this.disbursementValidator = disbursementValidator;
+        this.redisService = redisService;
     }
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
@@ -86,11 +88,7 @@ public class PaymentInstructionService {
             DisbursementRequest encriptedDisbursementRequest = DisbursementRequest.builder().message(encriptedDisbursement).header(msgHeader).build();
             muktaAdaptorProducer.push(muktaAdaptorConfig.getDisburseCreateTopic(), encriptedDisbursementRequest);
             updatePIIndex(paymentRequest.getRequestInfo(),pi,isRevised);
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            redisService.setCacheForDisbursement(encriptedDisbursement);
             programServiceUtil.callProgramServiceDisbursement(disbursementRequest);
             paymentService.updatePaymentStatus(paymentRequest.getPayment(),disbursement, paymentRequest.getRequestInfo());
             log.info("Pushing disbursement request to the kafka topic");
@@ -107,6 +105,7 @@ public class PaymentInstructionService {
                 pi.setPiStatus(PIStatus.FAILED);
                 pi.setPiErrorResp(e.getMessage());
                 updatePIIndex(paymentRequest.getRequestInfo(), pi,isRevised);
+                redisService.setCacheForDisbursement(encriptedDisbursement);
             }
             log.error("Exception occurred in : PaymentInstructionService:processDisbursementCreate " + e);
             throw new CustomException(Error.DISBURSEMENT_CREATION_FAILED, e.getMessage());
@@ -300,5 +299,30 @@ public class PaymentInstructionService {
         }catch (Exception e){
             log.error("Exception occurred in : PaymentInstructionService:updatePiForIndexer " + e);
         }
+    }
+
+    public List<Payment> processCreatePayment(BillSearchRequest billSearchRequest) {
+        List<Bill> bills = billUtils.fetchBillsData(billSearchRequest);
+        List<Payment> totalPayments = new ArrayList<>();
+        if (bills == null || bills.isEmpty()) {
+            throw new CustomException(Error.BILLS_NOT_FOUND, Error.BILLS_NOT_FOUND_MESSAGE);
+        }
+        for(Bill bill: bills){
+            String wfStatus = bill.getWfStatus();
+            if (bill.getPaymentStatus() == null && wfStatus != null && wfStatus.equalsIgnoreCase(Constants.APPROVED_STATUS)) {
+                PaymentRequest paymentRequest = paymentService.getPaymentRequest(billSearchRequest.getRequestInfo(), bill);
+                log.info("Payment request: " + paymentRequest);
+                // Payment create call
+                List<Payment> payments = paymentService.createPayment(paymentRequest);
+                totalPayments.addAll(payments);
+                if (payments.isEmpty()) {
+                    log.error("Error creating Payment for bill number : " + bill.getBillNumber());
+                }
+            }else{
+                log.error("Bill is not in approved status or payment status is already present for bill number : " + bill.getBillNumber());
+                throw new CustomException("BILL_NOT_APPROVED", "Bill is not in approved status or payment status is already present for bill number : " + bill.getBillNumber());
+            }
+        }
+        return totalPayments;
     }
 }

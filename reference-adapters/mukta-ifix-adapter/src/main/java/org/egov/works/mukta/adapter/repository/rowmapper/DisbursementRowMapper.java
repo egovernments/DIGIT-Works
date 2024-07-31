@@ -49,7 +49,7 @@ public class DisbursementRowMapper implements ResultSetExtractor<List<Disburseme
                 JsonNode disburseIndividual = getAdditionalDetail(rs, "disburseIndividual");
                 BigDecimal disburseNetAmount = rs.getBigDecimal("disburseNetAmount");
                 BigDecimal disburseGrossAmount = rs.getBigDecimal("disburseGrossAmount");
-                Long disburseCreatedTime = rs.getLong("disburseCreatedTime");
+                Long disburseCreatedTime = rs.getLong("disbursecreatedtime");
                 String disburseCreatedBy = rs.getString("disburseCreatedBy");
                 Long disburseLastModifiedTime = rs.getLong("disburseLastModifiedTime");
                 String disburseLastModifiedBy = rs.getString("disburseLastModifiedBy");

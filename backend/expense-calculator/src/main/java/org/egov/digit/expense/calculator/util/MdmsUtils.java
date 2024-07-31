@@ -17,11 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
 
@@ -219,6 +215,43 @@ public class MdmsUtils {
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(wageSeekerSkillsModuleDetail);
         return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
+    }
+
+    public Object getLabourSorFromMDMSV2(RequestInfo requestInfo, String tenantId, List<String> sorList, Boolean isRate) {
+        String filter = getFilterFromSorList(sorList, isRate);
+
+        MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, isRate ? RATES_CONSTANT : SOR_CONSTANT, tenantId, filter);
+
+        return serviceRequestRepository.fetchResult(getMDMSV2SearchUrl(), MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build());
+    }
+
+
+    private MdmsCriteria getMdmsCriteria (RequestInfo requestInfo, String masterName, String tenantId, String filter) {
+        return MdmsCriteria.builder().tenantId(tenantId)
+                .moduleDetails(Collections.singletonList(ModuleDetail.builder()
+                        .moduleName(WORKS_SOR_CONSTANT)
+                        .masterDetails(Collections.singletonList(MasterDetail.builder()
+                                .name(masterName)
+                                .filter(filter)
+                                .build()))
+                        .build()))
+                .build();
+
+    }
+
+    String getFilterFromSorList(List<String> sorList, Boolean isRate) {
+        String idConstant = isRate ? ID_SEARCH_CONSTANT_RATE : ID_SEARCH_CONSTANT;
+        StringBuilder filterString = new StringBuilder(FILTER_START).append(idConstant).append(sorList.get(0));
+        for (int i = 1; i < sorList.size(); i++) {
+            filterString.append(FILTER_OR_CONSTANT);
+            filterString.append(idConstant).append(sorList.get(i));
+        }
+        filterString.append(FILTER_END);
+        return filterString.toString();
+    }
+
+    public StringBuilder getMDMSV2SearchUrl() {
+        return new StringBuilder().append(config.getMdmsV2Host()).append(config.getMdmsV2EndPoint());
     }
 
 }
