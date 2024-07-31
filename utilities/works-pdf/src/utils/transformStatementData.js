@@ -2,15 +2,14 @@ const e = require("express");
 const { logger } = require("../logger");
 
 function formatInLakh(totalAmount) {
-    // Ensure totalAmount is a number and format it to two decimal places
-    let amount = Number(totalAmount).toFixed(2);
+    // Ensure totalAmount is a number
+    let amount = Number(totalAmount).toFixed(2); // Ensure two decimal places
     let parts = amount.split("."); // Split the amount into whole and decimal parts
     let wholePart = parts[0];
     let decimalPart = parts.length > 1 ? "." + parts[1] : "";
 
-    // Regular expression to insert commas correctly for Indian numbering system
-    wholePart = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Apply comma for thousands
-    wholePart = wholePart.replace(/(\d+)(?=(\d{2})+(?!\d))/g, "$1,"); // Apply comma for lakhs
+    // Regular expression to insert commas for lakhs
+    wholePart = wholePart.replace(/\B(?=(\d{2})+(?!\d))/g, ",").replace(/^(\d+),/, '$1,');
 
     return wholePart + decimalPart;
 }
@@ -102,7 +101,6 @@ const transformStatementData = (data, project) => {
                 result.amountDetails.forEach(amountDetail => {
                     totalAmount += parseFloat(amountDetail.amount);
                     amountDetail.amount = formatInLakh(amountDetail.amount);
-                    amountDetail.rate = formatInLakh(amountDetail.rate);
                 })
                 result.totalEstimatedAmount = formatInLakh(totalAmount);
             })

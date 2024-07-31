@@ -49,9 +49,6 @@ public class ContractCriteria {
     @JsonProperty("ids")
     private List<String> ids = null;
 
-    @JsonProperty("id")
-    private String id = null;
-
     @JsonProperty("estimateIds")
     private List<String> estimateIds = null;
 

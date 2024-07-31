@@ -205,7 +205,7 @@ public class ContractServiceConfiguration {
     private Boolean isMeasurementValidationRequired;
 
     @Value("${is.caching.enabled}")
-    private Boolean isRedisNeeded;
+    private Boolean isCachingEnabled;
 
     @PostConstruct
     public void initialize() {
