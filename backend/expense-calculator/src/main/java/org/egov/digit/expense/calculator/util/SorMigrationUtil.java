@@ -184,6 +184,7 @@ public class SorMigrationUtil {
         IndividualBulkResponse individualResponse;
         int offset = configs.getDefaultOffset();
         int limit = configs.getDefaultLimit();
+        StringBuilder updateUrl = new StringBuilder(individualHost).append(individualUpdateContextPath);
 
         do {
             StringBuilder url = new StringBuilder(individualHost).append(individualContextPath)
@@ -220,10 +221,15 @@ public class SorMigrationUtil {
                     individual.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                     individual.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                     List<Individual> individuals = Collections.singletonList(individual);
-                    producer.push(individualUpdateTopic, individuals);
-                    String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + individual.getId() + "', true);";
-                    jdbcTemplate.update(insertQuery);
-                    log.info("Migrated individual for individual id {}", individual.getId());
+                    IndividualRequest individualRequest = IndividualRequest.builder().individual(individual).requestInfo(requestInfo).build();
+
+                    //producer.push(individualUpdateTopic, individuals);
+
+                        Object response = restRepo.fetchResult(updateUrl, individualRequest);
+                        String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + individual.getId() + "', true);";
+                        jdbcTemplate.update(insertQuery);
+                        log.info("Individual Migrated successfully for individual id {}", individual.getId());
+
                 } catch (Exception e) {
                     log.error("Error migrating individual for id {}", individual.getId(), e);
                     String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + individual.getId() + "', false);";
@@ -241,6 +247,7 @@ public class SorMigrationUtil {
         IndividualBulkResponse individualResponse;
         int offset = configs.getDefaultOffset();
         int limit = configs.getDefaultLimit();
+        StringBuilder updateUrl = new StringBuilder(individualHost).append(individualUpdateContextPath);
 
         do {
             StringBuilder url = new StringBuilder(individualHost).append(individualContextPath)
@@ -272,9 +279,11 @@ public class SorMigrationUtil {
                     individual.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                     individual.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                     List<Individual> individuals = Collections.singletonList(individual);
-                    producer.push(individualUpdateTopic, individuals);
-//                    String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + individual.getId() + "', true);";
-//                    jdbcTemplate.update(insertQuery);
+                    IndividualRequest individualRequest = IndividualRequest.builder().individual(individual).requestInfo(requestInfo).build();
+                   // producer.push(individualUpdateTopic, individuals);
+                    Object response = restRepo.fetchResult(updateUrl, individualRequest);
+                   /* String insertQuery = "INSERT INTO eg_sor_migration(id, is_migration_successful) VALUES ('" + individual.getId() + "', true);";
+                    jdbcTemplate.update(insertQuery);*/
                     log.info("Migrated individual for individual id {}", individual.getId());
                 } catch (Exception e) {
                     log.error("Error migrating individual for id {}", individual.getId(), e);
