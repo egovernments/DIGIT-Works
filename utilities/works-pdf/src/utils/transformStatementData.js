@@ -6,21 +6,19 @@ function formatInLakh(totalAmount) {
     let [integerPart, decimalPart] = amount.split(".");
     let result = "";
     let counter = 0;
-    let first = false;
 
-    // Insert commas for the integer part according to the Indian numbering system
+    // Iterate from the rightmost digit to the leftmost
     for (let i = integerPart.length - 1; i >= 0; i--) {
         result = integerPart[i] + result;
         counter++;
 
-        // Insert commas after the first 3 digits from the right, and then every 2 digits
+        // Determine when to insert a comma
         if (counter === 3 && i !== 0) {
             result = "," + result;
-            counter = 0;
-            first = true;
-        } else if (counter === 2 && i !== 0 && i !== 1 && first) {
+            counter = 0; // Reset counter for subsequent 2-digit groups
+        } else if (counter === 2 && (integerPart.length - i) > 3 && i !== 0) {
             result = "," + result;
-            counter = 0; // Reset counter to offset for next 2-digit group
+            counter = 0; // Reset counter for the next 2-digit group
         }
     }
 
