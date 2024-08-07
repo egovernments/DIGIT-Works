@@ -23,6 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -68,7 +72,7 @@ public class DisbursementService {
     public DisbursementResponse processDisbursementRequest(DisbursementRequest disbursementRequest) {
         PaymentStatus paymentStatus;
         PaymentInstruction lastPI = null;
-        PaymentInstruction originalPI = null;
+        PaymentInstruction lastOriginalPI = null;
         PaymentInstruction paymentInstructionFromDisbursement = null;
         RequestInfo requestInfo = RequestInfo.builder().build();
         Map<String,Map<String,JSONArray>> mdmsData = mdmsUtils.fetchHoaAndSSUDetails(requestInfo,disbursementRequest.getMessage().getLocationCode());
@@ -90,27 +94,38 @@ public class DisbursementService {
             throw new CustomException("INVALID_SANCTION_ID","Sanction Id is invalid for the disbursement Request.");
         }
         if(!paymentInstructions.isEmpty()){
-            for(PaymentInstruction paymentInstruction:paymentInstructions){
-                if(!paymentInstruction.getPiStatus().equals(PIStatus.FAILED) && lastPI == null){
+            for (PaymentInstruction paymentInstruction : paymentInstructions) {
+            if (!paymentInstruction.getPiStatus().equals(PIStatus.FAILED)) {
+                if (lastOriginalPI == null && paymentInstruction.getParentPiNumber() == null) {
+                    lastOriginalPI = paymentInstruction;
+                }
+
+                if (lastPI == null) {
                     lastPI = paymentInstruction;
-                    originalPI = paymentInstruction;
-                }else if(!paymentInstruction.getPiStatus().equals(PIStatus.FAILED)){
-                    originalPI = paymentInstruction;
                 }
             }
+            }
+        }
+
+        boolean isValidForCORPIRequest = false;
+        if(lastOriginalPI != null){
+            isValidForCORPIRequest = isValidForCORPIRequest(disbursementRequest.getMessage(),lastOriginalPI);
         }
         // Check if last PI is in PARTIAL status, if yes then process it for revised PI creation
-        if(lastPI != null && lastPI.getPiStatus().equals(PIStatus.PARTIAL)){
+        if(lastPI != null && lastPI.getPiStatus().equals(PIStatus.PARTIAL) && isValidForCORPIRequest){
             log.info("Payment Instruction is in PARTIAL status, processing it for revised PI.");
             lastPI = encryptionDecryptionUtil.decryptObject(lastPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
-            originalPI = encryptionDecryptionUtil.decryptObject(originalPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
+            lastOriginalPI = encryptionDecryptionUtil.decryptObject(lastOriginalPI, ifmsAdapterConfig.getPaymentInstructionEncryptionKey(), PaymentInstruction.class, requestInfo);
             paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),true,lastPI);
-            paymentStatus = processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,originalPI,sanctionDetails.get(0));
+            paymentStatus = processDisbursementForRevisedPICreation(paymentInstructionFromDisbursement, requestInfo,lastPI,lastOriginalPI,sanctionDetails.get(0));
         }else{
             log.info("Payment Instruction is not in PARTIAL status, processing it for PI creation.");
             disbursementValidator.validatePI(paymentInstructions);
             paymentInstructionFromDisbursement = paymentInstructionEnrichment.enrichPaymentIntsructionsFromDisbursementRequest(disbursementRequest,mdmsData,sanctionDetails.get(0),false,lastPI);
             paymentStatus = processDisbursementForPICreation(disbursementRequest, paymentInstructionFromDisbursement, requestInfo, sanctionDetails);
+            if(lastPI != null){
+                updatePIDateForRevisedPI(paymentInstructionFromDisbursement,lastPI,lastOriginalPI,paymentStatus,requestInfo);
+            }
         }
         try {
             if(paymentStatus.equals(PaymentStatus.FAILED)){
@@ -159,7 +174,7 @@ public class DisbursementService {
 
     /**
      * Process the revised PI creation for the disbursement request.
-     * @param disbursementRequest
+     * @param paymentInstructionFromDisbursement
      * @return
      */
     private PaymentStatus processDisbursementForRevisedPICreation(PaymentInstruction paymentInstructionFromDisbursement, RequestInfo requestInfo, PaymentInstruction lastPI, PaymentInstruction originalPI, SanctionDetail sanctionDetail) {
@@ -352,5 +367,81 @@ public class DisbursementService {
         }
 
         return disbursementResponse;
+    }
+     /**
+     * Method to convert epochDateTimeFormat to LocalDateTime
+     * @param epochTime The epoch time in milliseconds
+     * @return The corresponding LocalDateTime object
+    */
+    private LocalDateTime convertEpochToLocalDateTime(long epochTime) {
+        Instant instant = Instant.ofEpochMilli(epochTime);
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    }
+
+    /**
+     * Method to get the financial year of the given date
+     * @param date The date for which the financial year is needed
+     * @return The financial year in the format "YYYY-YYYY"
+     */
+    private String getFinancialYear(LocalDateTime date){
+
+        int year = date.getYear();
+        int month = date.getMonthValue();
+
+        // Check if the date falls in the current or next financial year
+        int startYear, endYear;
+        if (month < 4) { // Before April, so belongs to the previous financial year
+            startYear = year - 1;
+            endYear = year;
+        } else {
+            startYear = year;
+            endYear = year + 1;
+        }
+
+        return startYear + "-" + endYear;
+    }
+
+    /**
+     * This method validates the 90Days scenario and return true is COR PI request is valid else return false to create new PI
+     * @param disbursement The payment instruction received from the disbursement
+     * @param originalPI The last payment instruction
+     * @return The status of the payment
+     */
+    private boolean isValidForCORPIRequest(Disbursement disbursement, PaymentInstruction originalPI){
+
+        LocalDateTime originalPICreatedDate = convertEpochToLocalDateTime(originalPI.getAuditDetails().getCreatedTime());
+        LocalDateTime corPICreatedDate = convertEpochToLocalDateTime(disbursement.getAuditDetails().getCreatedTime());
+        LocalDateTime failureDate = convertEpochToLocalDateTime(originalPI.getAuditDetails().getLastModifiedTime());  // lastModifiedDate of the originalPI
+        LocalDateTime failureDatePlus90 = failureDate.plusDays(90);
+
+        // Check if financial year of COR PI Request createdDate and OriginalPI createdDate is same
+        if(getFinancialYear(originalPICreatedDate).equals(getFinancialYear(corPICreatedDate))){
+
+            // Check if corPICreatedDate <= (originalPIFailedDate + 90 days)
+            if(corPICreatedDate.isBefore(failureDatePlus90) || corPICreatedDate.isEqual(failureDatePlus90)){
+                // Normal Flow
+                log.info("Payment Instruction is valid for Correction PI Request for same financial year.");
+                return true;
+            }else{
+                // Create New PI
+                log.info("New Payment Instruction is created due to 90 days scenario.");
+                return false;
+            }
+
+        }else{  // If financial year is not same
+
+            // Check if (corPICreatedDate <= (originalPIFailedDate + 90 days)) and corPICreatedDate <= 30th April 23:59:59
+            if((corPICreatedDate.isBefore(failureDatePlus90) || corPICreatedDate.isEqual(failureDatePlus90))
+                    && corPICreatedDate.getMonth().equals(Month.APRIL) && corPICreatedDate.getDayOfMonth() <= 30){
+                // Normal flow
+                log.info("Payment Instruction is valid for Correction PI Request.");
+                return true;
+            }else{
+                // Create new PI
+                log.info("New Payment Instruction is created due to 90 days or 30th April scenario");
+                return false;
+            }
+
+        }
     }
 }

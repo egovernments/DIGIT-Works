@@ -80,13 +80,13 @@ public class IfmsService {
 
     public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
         // Check if the auth token is null or the session has expired
-        if (jitAuthValues.getAuthToken() == null || (System.currentTimeMillis() - jitAuthValues.getLastLogin()) >= config.getIfmsSessionTimeout()){
-            getAuthDetailsFromIFMS();
-        }
+//        if (jitAuthValues.getAuthToken() == null || (System.currentTimeMillis() - jitAuthValues.getLastLogin()) >= config.getIfmsSessionTimeout()){
+//            getAuthDetailsFromIFMS();
+//        }
         JITResponse decryptedResponse = null;
         try {
-            decryptedResponse = callServiceAPI(jitRequest);
-//            decryptedResponse = loadCustomResponse(jitRequest.getServiceId().toString());
+//            decryptedResponse = callServiceAPI(jitRequest);
+            decryptedResponse = loadCustomResponse(jitRequest.getServiceId().toString());
         } catch (Exception e) {
             String message = e.toString();
             if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
