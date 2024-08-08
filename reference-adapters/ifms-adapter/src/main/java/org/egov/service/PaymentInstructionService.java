@@ -647,6 +647,9 @@ public class PaymentInstructionService {
                 .build();
         DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
         List<Disbursement> disbursements = disbursementResponse.getDisbursements();
+        if(disbursements == null || disbursements.isEmpty()){
+            throw new CustomException("DISBURSEMENT_NOT_FOUND","Disbursement not found for PI");
+        }
         Disbursement disbursement = disbursements.get(0);
 //        if(isRevised){
 //            for(Disbursement disbursement1: disbursements){
