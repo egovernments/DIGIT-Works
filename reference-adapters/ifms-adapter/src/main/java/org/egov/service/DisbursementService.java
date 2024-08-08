@@ -425,14 +425,14 @@ public class DisbursementService {
 
         LocalDateTime originalPICreatedDate = convertEpochToLocalDateTime(originalPI.getAuditDetails().getCreatedTime());
         LocalDateTime corPICreatedDate = convertEpochToLocalDateTime(disbursement.getAuditDetails().getCreatedTime());
-        LocalDateTime failureDate = convertEpochToLocalDateTime(originalPI.getAuditDetails().getLastModifiedTime());  // lastModifiedDate of the originalPI
+        LocalDateTime failureDate = convertEpochToLocalDateTime(originalPI.getAuditDetails().getLastModifiedTime());
         LocalDateTime failureDatePlus90 = failureDate.plusDays(90);
 
         // Check if financial year of COR PI Request createdDate and OriginalPI createdDate is same
         if (getFinancialYear(originalPICreatedDate).equals(getFinancialYear(corPICreatedDate))) {
 
             // Check if corPICreatedDate <= (originalPIFailedDate + 90 days)
-            if (corPICreatedDate.isBefore(failureDatePlus90) || corPICreatedDate.isEqual(failureDatePlus90)) {
+            if (!corPICreatedDate.isAfter(failureDatePlus90)) {
                 // Normal Flow
                 log.info("Payment Instruction is valid for Correction PI Request for same financial year.");
                 return true;
@@ -445,8 +445,8 @@ public class DisbursementService {
         } else {  // If financial year is not same
 
             // Check if (corPICreatedDate <= (originalPIFailedDate + 90 days)) and corPICreatedDate <= 30th April 23:59:59
-            if ((corPICreatedDate.isBefore(failureDatePlus90) || corPICreatedDate.isEqual(failureDatePlus90))
-                    && corPICreatedDate.getMonth().equals(Month.APRIL) && corPICreatedDate.getDayOfMonth() <= 30) {
+            LocalDateTime endOfApril = LocalDateTime.of(corPICreatedDate.getYear(), Month.APRIL, 30, 23, 59, 59);
+            if (!corPICreatedDate.isAfter(failureDatePlus90) && !corPICreatedDate.isAfter(endOfApril)) {
                 // Normal flow
                 log.info("Payment Instruction is valid for Correction PI Request.");
                 return true;
@@ -455,7 +455,6 @@ public class DisbursementService {
                 log.info("New Payment Instruction is created due to 90 days or 30th April scenario");
                 return false;
             }
-
         }
     }
 }
