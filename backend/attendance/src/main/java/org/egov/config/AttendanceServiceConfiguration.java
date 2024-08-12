@@ -104,7 +104,7 @@ public class AttendanceServiceConfiguration {
     @Value("${works.individual.search.endpoint}")
     private String individualSearchEndpoint;
 
-    @Value("${attendance.register.first.staff.insert.enabled:true}")
+    @Value("${attendance.register.first.staff.insert.enabled}")
     private Boolean registerFirstStaffInsertEnabled;
 
     //HRMS Service
