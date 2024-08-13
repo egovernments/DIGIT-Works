@@ -29,7 +29,7 @@ public class WorkflowService {
     public List<String> updateWorkflowStatuses(MeasurementServiceRequest measurementServiceRequest) {
         List<String> wfStatusList = new ArrayList<>();
         for (org.egov.works.measurement.web.models.MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {
-            String currWfStatus = workflowUtil.updateWorkflowStatus(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber(), config.getBussinessServiceCode(), measurementService.getWorkflow(), config.getWfModuleName());
+            String currWfStatus = workflowUtil.updateWorkflowStatus(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber(), config.getBussinessServiceCode(), measurementService.getWorkflow(), config.getWfModuleName(), measurementService);
             wfStatusList.add(currWfStatus);
         }
         return  wfStatusList;

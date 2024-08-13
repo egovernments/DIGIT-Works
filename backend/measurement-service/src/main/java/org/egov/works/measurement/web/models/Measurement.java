@@ -1,10 +1,12 @@
 package org.egov.works.measurement.web.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
+import org.egov.common.contract.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -73,6 +75,11 @@ public class Measurement {
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
+
+    @JsonProperty("processInstance")
+    @Valid
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ProcessInstance processInstance = null;
 
     public Measurement addMeasuresItem(Measure measuresItem) {
         if (this.measures == null) {
