@@ -9,7 +9,6 @@ import org.egov.common.contract.request.User;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.EstimateServiceConstant;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +73,7 @@ public class WorkflowService {
         State state = callWorkFlow(workflowRequest);
         estimateRequest.getEstimate().setWfStatus(state.getState());
         estimateRequest.getEstimate().setStatus(Estimate.StatusEnum.fromValue(state.getApplicationStatus()));
+        estimateRequest.getEstimate().setProcessInstances(processInstance);
         return state.getApplicationStatus();
     }
 

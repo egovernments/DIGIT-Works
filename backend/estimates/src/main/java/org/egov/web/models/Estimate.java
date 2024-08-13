@@ -1,6 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import digit.models.coremodels.AuditDetails;
@@ -106,6 +107,7 @@ public class Estimate {
 
     @JsonProperty("ProcessInstances")
     @Valid
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private ProcessInstance processInstances = null;
 
 
