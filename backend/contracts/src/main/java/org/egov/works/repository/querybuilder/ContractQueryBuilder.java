@@ -1,5 +1,6 @@
 package org.egov.works.repository.querybuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
@@ -13,6 +14,7 @@ import java.time.Instant;
 import java.util.*;
 
 @Component
+@Slf4j
 public class ContractQueryBuilder {
 
     private static final  String CONTRACT_SELECT_QUERY = " SELECT " +
@@ -89,6 +91,12 @@ public class ContractQueryBuilder {
             "LEFT JOIN " +
             "eg_wms_contract_amount_breakups as amountBreakups " +
             "ON lineItems.id=amountBreakups.line_item_id ";
+
+    private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY ORDERBYCOLUMN [] , contractId) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
 
     @Autowired
     private ContractServiceConfiguration config;
@@ -179,11 +187,7 @@ public class ContractQueryBuilder {
             }
         }
 
-        addOrderByClause(query, criteria);
-
-        addLimitAndOffset(query, criteria, preparedStmtList);
-
-        return query.toString();
+        return addPaginationWrapper(query.toString(), preparedStmtList, criteria);
     }
 
     private void addOrderByClause(StringBuilder queryBuilder, ContractCriteria criteria) {
@@ -207,9 +211,46 @@ public class ContractQueryBuilder {
             queryBuilder.append(pagination.getOrder().name());
         }
         else{
-            criteria.getPagination().setOrder(Pagination.OrderEnum.ASC);
-            queryBuilder.append(Pagination.OrderEnum.ASC);
+            criteria.getPagination().setOrder(Pagination.OrderEnum.DESC);
+            queryBuilder.append(Pagination.OrderEnum.DESC);
         }
+    }
+
+    private String addPaginationWrapper(String query, List<Object> preparedStmtList,
+                                       ContractCriteria criteria) {
+        log.info("ContractQueryBuilder::addPaginationWrapper");
+        int limit = config.getContractDefaultLimit();
+        int offset = config.getContractDefaultOffset();
+        String wrapperQuery = PAGINATION_WRAPPER;
+        Pagination pagination = criteria.getPagination();
+        Set<String> sortableColumns = new HashSet<>(Arrays.asList("id","contractNumber","totalContractedamount","securityDeposit"
+                ,"agreementDate","defectLiabilityPeriod","startDate","endDate","createdTime","lastModifiedTime"));
+
+        if (pagination.getSortBy() != null && !pagination.getSortBy().isEmpty() && sortableColumns.contains(pagination.getSortBy()))
+            wrapperQuery = wrapperQuery.replace( "ORDERBYCOLUMN", pagination.getSortBy());
+        else
+            wrapperQuery = wrapperQuery.replace("ORDERBYCOLUMN", "startDate");
+
+        if (criteria.getPagination().getOrder() == Pagination.OrderEnum.ASC)
+            wrapperQuery = wrapperQuery.replace("[]", "ASC");
+        else
+            wrapperQuery = wrapperQuery.replace("[]", "DESC");
+
+        String finalQuery = wrapperQuery.replace("{}", query);
+
+        if (criteria.getPagination().getLimit() != null) {
+            if (pagination.getLimit() <= config.getContractMaxLimit())
+                limit = pagination.getLimit();
+            else
+                limit = config.getContractMaxLimit();
+        }
+
+        if (pagination.getOffSet() != null)
+            offset = pagination.getOffSet();
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit + offset);
+        return finalQuery;
     }
 
     private void addLimitAndOffset(StringBuilder queryBuilder, ContractCriteria criteria, List<Object> preparedStmtList) {
