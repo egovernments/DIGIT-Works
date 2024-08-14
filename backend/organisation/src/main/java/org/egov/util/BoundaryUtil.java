@@ -2,10 +2,10 @@ package org.egov.util;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
