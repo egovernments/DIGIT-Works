@@ -27,7 +27,6 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Function;
@@ -425,7 +424,7 @@ public class DisbursementService {
 
         LocalDateTime originalPICreatedDate = convertEpochToLocalDateTime(originalPI.getAuditDetails().getCreatedTime());
         LocalDateTime corPICreatedDate = convertEpochToLocalDateTime(disbursement.getAuditDetails().getCreatedTime());
-        LocalDateTime failureDatePlus90 = originalPICreatedDate.plusDays(90);
+        LocalDateTime failureDatePlus90 = originalPICreatedDate.plusDays(ifmsAdapterConfig.getOriginalExpireDays());
 
         // Check if financial year of COR PI Request createdDate and OriginalPI createdDate is same
         if (getFinancialYear(originalPICreatedDate).equals(getFinancialYear(corPICreatedDate))) {
@@ -444,7 +443,7 @@ public class DisbursementService {
         } else {  // If financial year is not same
 
             // Check if (corPICreatedDate <= (originalPIFailedDate + 90 days)) and corPICreatedDate <= 30th April 23:59:59
-            LocalDateTime endOfApril = LocalDateTime.of(corPICreatedDate.getYear(), Month.APRIL, 30, 23, 59, 59);
+            LocalDateTime endOfApril = LocalDateTime.of(corPICreatedDate.getYear(), ifmsAdapterConfig.getOriginalExpireFinancialYearMonth(), ifmsAdapterConfig.getOriginalExpireFinancialYearDate(), 23, 59, 59);
             if (!corPICreatedDate.isAfter(failureDatePlus90) && !corPICreatedDate.isAfter(endOfApril)) {
                 // Normal flow
                 log.info("Payment Instruction is valid for Correction PI Request.");
