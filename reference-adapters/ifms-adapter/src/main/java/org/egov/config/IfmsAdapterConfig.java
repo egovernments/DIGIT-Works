@@ -2,7 +2,6 @@ package org.egov.config;
 
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -188,6 +187,15 @@ public class IfmsAdapterConfig {
     private String ifmsJitMockEnabledTenants;
 
     private String[] ifmsMockEnabledTenantsIds;
+
+    @Value("${original.pi.expire.days}")
+    private Integer originalExpireDays;
+
+    @Value("${original.pi.expire.financial.year.date}")
+    private Integer originalExpireFinancialYearDate;
+
+    @Value("${original.pi.expire.financial.year.month}")
+    private Integer originalExpireFinancialYearMonth;
 
     @PostConstruct
     public void init() {
