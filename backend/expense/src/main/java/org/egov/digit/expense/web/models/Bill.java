@@ -1,25 +1,23 @@
 package org.egov.digit.expense.web.models;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
-import org.egov.common.contract.models.AuditDetails;
-import org.egov.digit.expense.web.models.enums.PaymentStatus;
-import org.egov.digit.expense.web.models.enums.Status;
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.workflow.ProcessInstance;
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.Status;
+import org.springframework.validation.annotation.Validated;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Object which holds the info about the expense details
@@ -108,6 +106,9 @@ public class Bill {
 	@JsonProperty("wfStatus")
 	@Size(min = 2, max = 64)
 	private String wfStatus;
+
+	@JsonProperty("processInstance")
+	private ProcessInstance processInstance;
 	
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
 
