@@ -425,8 +425,7 @@ public class DisbursementService {
 
         LocalDateTime originalPICreatedDate = convertEpochToLocalDateTime(originalPI.getAuditDetails().getCreatedTime());
         LocalDateTime corPICreatedDate = convertEpochToLocalDateTime(disbursement.getAuditDetails().getCreatedTime());
-        LocalDateTime failureDate = convertEpochToLocalDateTime(originalPI.getAuditDetails().getLastModifiedTime());
-        LocalDateTime failureDatePlus90 = failureDate.plusDays(90);
+        LocalDateTime failureDatePlus90 = originalPICreatedDate.plusDays(90);
 
         // Check if financial year of COR PI Request createdDate and OriginalPI createdDate is same
         if (getFinancialYear(originalPICreatedDate).equals(getFinancialYear(corPICreatedDate))) {
