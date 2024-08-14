@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Constants;
+import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.PIRepository;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.utils.BillUtils;
@@ -41,7 +42,32 @@ public class FailureDetailsService {
     private PIRepository piRepository;
     @Autowired
     private PIUtils piUtils;
+    @Autowired
+    private IfmsAdapterConfig ifmsAdapterConfig;
 
+    public void updateMockFailureDetails(RequestInfo requestInfo) {
+        try {
+            if (ifmsAdapterConfig.getIfmsJitMockEnabled() && ifmsAdapterConfig.getIfmsMockEnabledTenantsIds().length != 0) {
+                log.info("FailureDetailsService::updateMockFailureDetails");
+                JITRequest jitFDRequest = getFailedPayload();
+                for (int idx = 0; idx < ifmsAdapterConfig.getIfmsMockEnabledTenantsIds().length; idx++) {
+                    JITResponse fdResponse = ifmsService.sendRequest(ifmsAdapterConfig.getIfmsMockEnabledTenantsIds()[idx], jitFDRequest);
+                    if (fdResponse != null && fdResponse.getErrorMsg() == null) {
+                        for (Object failedPI: fdResponse.getData()) {
+                            JsonNode node = objectMapper.valueToTree(failedPI);
+                            JsonNode benef = node.get("benfDtls");
+                            if (benef != null && benef.isArray() && !benef.isEmpty()) {
+                                processPiForFailedTransaction(node, requestInfo, null, JITServiceId.FD);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.info("Exception in FailureDetailsService:updateMockFailureDetails : " + e.getMessage());
+        }
+
+    }
     public void updateFailureDetails(RequestInfo requestInfo) {
         try {
             JITRequest jitFDRequest = getFailedPayload();

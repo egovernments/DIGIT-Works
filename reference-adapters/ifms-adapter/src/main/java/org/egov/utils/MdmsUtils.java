@@ -170,6 +170,11 @@ public class MdmsUtils {
 				.build();
 	}
 
+	/**
+	 * Fetch data from mdms-v2
+	 * @param searchRequest
+	 * @return
+	 */
 	public MdmsResponseV2 fetchFromMDMSV2V2(Object searchRequest) {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V2EndPoint());

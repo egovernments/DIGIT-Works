@@ -60,6 +60,8 @@ public class Scheduler {
                 pdService.updatePDStatus(schedulerRequest.getRequestInfo());
                 break;
             case FD:
+                // Call mock FD service data sync API first
+                failureDetailsService.updateMockFailureDetails(schedulerRequest.getRequestInfo());
                 failureDetailsService.updateFailureDetails(schedulerRequest.getRequestInfo());
                 break;
             case FTPS:
