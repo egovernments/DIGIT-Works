@@ -67,7 +67,7 @@ public class PDService {
             JITResponse jitResponse = null;
             log.info("Calling ifms service.");
             try {
-                jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
+                jitResponse = ifmsService.sendRequest(paymentInstruction.getTenantId(),  JITRequest.builder()
                         .serviceId(JITServiceId.PD).params(pdRequest).build());
             }catch (Exception e){
                 log.info("Exception occurred while fetching PD from ifms." + e);

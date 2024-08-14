@@ -70,7 +70,7 @@ public class PISService {
             JITResponse pisResponse = null;
             log.info("Calling ifms service.");
             try {
-                pisResponse = ifmsService.sendRequestToIFMS(jitRequest);
+                pisResponse = ifmsService.sendRequest(paymentInstruction.getTenantId(), jitRequest);
             }catch (Exception e){
                 log.info("Exception occurred while fetching PIS from ifms." + e);
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PIS_ERROR;

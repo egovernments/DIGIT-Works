@@ -1,14 +1,15 @@
 package org.egov.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.service.MockTestService;
 import org.egov.service.PaymentInstructionService;
 import org.egov.service.VirtualAllotmentService;
-import org.egov.web.models.jit.PaymentInstruction;
+import org.egov.web.models.jit.JITResponse;
 import org.egov.web.models.jit.SchedulerRequest;
-import org.egov.web.models.bill.PaymentRequest;
 import org.egov.service.IfmsService;
 import org.egov.utils.AuthenticationUtils;
 import org.egov.utils.JitRequestUtils;
+import org.egov.web.models.mock.MockRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,8 @@ public class TestController {
 
     @Autowired
     private ResourceLoader resourceLoader;
+    @Autowired
+    private MockTestService mockTestService;
 
     @RequestMapping(path = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<Object> login(@RequestBody Object object) {
@@ -83,6 +86,17 @@ public class TestController {
         try {
             virtualAllotmentService.generateVirtualAllotment(schedulerRequest.getRequestInfo());
             ResponseEntity<Object> responseEntity = new ResponseEntity<>("Generated", HttpStatus.OK);
+            return responseEntity;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @RequestMapping(path = "/mock_response", method = RequestMethod.POST)
+    public ResponseEntity<Object> createPaymentInstruction(@RequestBody MockRequest mockRequest) {
+        try {
+            JITResponse jitResponse = mockTestService.getMockResponse(mockRequest.getTenantId(), mockRequest.getJitRequest());
+            ResponseEntity<Object> responseEntity = new ResponseEntity<>(jitResponse, HttpStatus.OK);
             return responseEntity;
         } catch (Exception e) {
             throw new RuntimeException(e);

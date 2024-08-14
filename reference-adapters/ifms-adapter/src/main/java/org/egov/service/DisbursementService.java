@@ -192,8 +192,8 @@ public class DisbursementService {
             savePiInDatabase(paymentInstructionFromDisbursement, sanctionDetail, PaymentStatus.INITIATED, requestInfo);
 
             try {
-                JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
-                if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
+                JITResponse jitResponse = ifmsService.sendRequest(originalPI.getTenantId(),jitRequest);
+                if(jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()){
                     paymentStatus = PaymentStatus.INITIATED;
                     try {
                         Object piResponseNode = jitResponse.getData().get(0);
@@ -300,7 +300,7 @@ public class DisbursementService {
         savePiInDatabase(paymentInstructionFromDisbursement, sanctionDetails.get(0), PaymentStatus.INITIATED, requestInfo);
         try {
             log.info("Calling IFMS for JIT");
-            JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
+            JITResponse jitResponse = ifmsService.sendRequest(disbursementRequest.getMessage().getLocationCode(), jitRequest);
             log.info("IFMS response for JIT : " + jitResponse);
             if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                 paymentStatus = PaymentStatus.INITIATED;
