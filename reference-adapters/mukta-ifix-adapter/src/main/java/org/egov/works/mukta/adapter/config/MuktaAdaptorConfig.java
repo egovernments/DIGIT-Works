@@ -88,6 +88,9 @@ public class MuktaAdaptorConfig {
     @Value("${ifms.pi.index.enrich.topic}")
     private String ifmsPiEnrichmentTopic;
 
+    @Value("${mukta.ifix.adapter.error.queue.topic}")
+    private String muktaIfixAdapterErrorQueueTopic;
+
     @Value("${egov.program.service.host}")
     private String programServiceHost;
     @Value("${program.service.disbursement.create.endpoint}")
