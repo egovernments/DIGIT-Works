@@ -146,7 +146,7 @@ public class DisbursementService {
                     .params(corRequest)
                     .build();
             try {
-                JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
+                JITResponse jitResponse = ifmsService.sendRequest(originalPI.getTenantId(),jitRequest);
                 if(jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()){
                     paymentStatus = PaymentStatus.INITIATED;
                     try {
@@ -257,7 +257,7 @@ public class DisbursementService {
         JITRequest jitRequest = paymentInstructionEnrichment.getJitPaymentInstructionRequestForIFMS(paymentInstructionFromDisbursement);
         try {
             log.info("Calling IFMS for JIT");
-            JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
+            JITResponse jitResponse = ifmsService.sendRequest(disbursementRequest.getMessage().getLocationCode(), jitRequest);
             log.info("IFMS response for JIT : " + jitResponse);
             if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                 paymentStatus = PaymentStatus.INITIATED;

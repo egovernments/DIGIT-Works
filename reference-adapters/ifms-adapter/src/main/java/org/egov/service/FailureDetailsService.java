@@ -220,7 +220,7 @@ public class FailureDetailsService {
 
             JITResponse jitResponse = null;
             try {
-                jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder().serviceId(JITServiceId.FTPS).params(ftpsRequest).build());
+                jitResponse = ifmsService.sendRequest(pi.getTenantId(), JITRequest.builder().serviceId(JITServiceId.FTPS).params(ftpsRequest).build());
             } catch (Exception e) {
                 log.info("Exception occurred while fetching FTPS from ifms." + e);
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_ERROR;
@@ -333,7 +333,7 @@ public class FailureDetailsService {
                     .build();
             JITResponse jitResponse = null;
             try {
-                jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
+                jitResponse = ifmsService.sendRequest(pi.getTenantId(), JITRequest.builder()
                         .serviceId(JITServiceId.FTFPS).params(ftfpsRequest).build());
             } catch (Exception e) {
                 log.info("Exception occurred while fetching FTFPS from ifms." + e);

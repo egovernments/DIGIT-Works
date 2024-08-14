@@ -22,6 +22,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -66,6 +68,9 @@ public class IfmsService {
     @Autowired
     private ESLogUtils esLogUtils;
 
+    @Autowired
+    private MockTestService mockTestService;
+
     public Map<String, String> getKeys() throws NoSuchAlgorithmException {
         Map<String, String> keyMap = new HashMap<>();
         String encryptedAppKey = authenticationUtils.genEncryptedAppKey();
@@ -76,6 +81,15 @@ public class IfmsService {
         keyMap.put("encodedAppKey", encodedAppKey);
         System.out.println("\n\n==================keyMap : ============== \n" + keyMap);
         return  keyMap;
+    }
+
+    public JITResponse sendRequest(String tenantId, JITRequest jitRequest) {
+        if (config.getIfmsJitMockEnabled() && config.getIfmsMockEnabledTenantsIds().length != 0
+                && !StringUtils.isEmpty(tenantId) && Arrays.asList(config.getIfmsMockEnabledTenantsIds()).contains(tenantId)) {
+            return mockTestService.getMockResponse(tenantId, jitRequest);
+        } else {
+            return sendRequestToIFMS(jitRequest);
+        }
     }
 
     public JITResponse sendRequestToIFMS(JITRequest jitRequest) {

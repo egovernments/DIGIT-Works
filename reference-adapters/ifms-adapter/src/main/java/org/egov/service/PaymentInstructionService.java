@@ -156,7 +156,7 @@ public class PaymentInstructionService {
                 JITRequest jitPiRequest = piEnrichment.getJitPaymentInstructionRequestForIFMS(piRequest);
                 try {
                     log.info("Payment instruction data is populated, creating jit request based on PI.");
-                    JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
+                    JITResponse jitResponse = ifmsService.sendRequest(paymentRequest.getTenantId(), jitPiRequest);
                     log.info("Jit response for create PI : " + jitResponse);
                     if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                         paymentStatus = PaymentStatus.INITIATED;
@@ -274,7 +274,7 @@ public class PaymentInstructionService {
             // GET failure pi JIT request data from PI
             JITRequest jitPiRequest = piEnrichment.getCorRequest(paymentRequest, paymentInstruction, originalPi, lastRevisedPi);
             try {
-                JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
+                JITResponse jitResponse = ifmsService.sendRequest(paymentRequest.getTenantId(), jitPiRequest);
                 if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                     paymentStatus = PaymentStatus.INITIATED;
                     jitApiRespStatus = JitRespStatusForPI.STATUS_LOG_COR_SUCCESS;
