@@ -10,7 +10,6 @@ import org.egov.kafka.OrganizationProducer;
 import org.egov.repository.OrganisationRepository;
 import org.egov.service.OrganisationEnrichmentService;
 import org.egov.service.OrganisationService;
-import org.egov.service.UserService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.OrgRequest;
@@ -91,8 +90,6 @@ class OrganisationApiControllerTest {
     @MockBean
     private Configuration configuration;
 
-    @MockBean
-    private UserService userService;
 
     @Test
     @DisplayName("Organisation request should pass with API Operation CREATE")
