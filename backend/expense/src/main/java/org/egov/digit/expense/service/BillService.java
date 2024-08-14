@@ -1,10 +1,6 @@
 package org.egov.digit.expense.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.contract.workflow.ProcessInstance;
@@ -16,17 +12,16 @@ import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
 import org.egov.digit.expense.util.WorkflowUtil;
-import org.egov.digit.expense.web.models.Bill;
-import org.egov.digit.expense.web.models.BillCriteria;
-import org.egov.digit.expense.web.models.BillRequest;
-import org.egov.digit.expense.web.models.BillResponse;
-import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.digit.expense.web.validators.BillValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -77,7 +72,7 @@ public class BillService {
 		
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
-			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
+			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 			try {
 				if (billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.SUPERVISION"))
@@ -114,7 +109,7 @@ public class BillService {
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
-			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
+			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 		}
 		try {
