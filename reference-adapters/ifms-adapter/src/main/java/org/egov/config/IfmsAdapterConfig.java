@@ -188,13 +188,13 @@ public class IfmsAdapterConfig {
 
     private String[] ifmsMockEnabledTenantsIds;
 
-    @Value("${original.expire.days}")
+    @Value("${original.pi.expire.days}")
     private Integer originalExpireDays;
 
-    @Value("${original.expire.financial.year.date}")
+    @Value("${original.pi.expire.financial.year.date}")
     private Integer originalExpireFinancialYearDate;
 
-    @Value("${original.expire.financial.year.month}")
+    @Value("${original.pi.expire.financial.year.month}")
     private Integer originalExpireFinancialYearMonth;
 
     @PostConstruct
