@@ -48,7 +48,7 @@ public class FunctionTestBuilder {
                 .applicationNumber("app-no-1")
                 .type("VEN.CMS")
                 .category("VEN.CW")
-                .propertyClass("A")
+                .propertyClass("NA")
                 .validFrom(BigDecimal.valueOf(System.currentTimeMillis()))
                 .validTo(BigDecimal.valueOf(System.currentTimeMillis()))
                 .applicationStatus(ApplicationStatus.ACTIVE)
