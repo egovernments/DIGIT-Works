@@ -2,6 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class OrgSearchRequest {
     private RequestInfo requestInfo = null;
 
     @JsonProperty("SearchCriteria")
+    @Valid
     private OrgSearchCriteria searchCriteria = null;
 
     @JsonProperty("Pagination")

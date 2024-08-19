@@ -66,6 +66,8 @@ public class Organisation {
 
     @JsonProperty("contactDetails")
     @Valid
+    @NotNull
+    @Size(min = 1)
     private List<ContactDetails> contactDetails = null;//no, as of now,it'll be only one
 
     @JsonProperty("identifiers")
