@@ -227,10 +227,21 @@ public class ContractQueryBuilder {
         Set<String> sortableColumns = new HashSet<>(Arrays.asList("id","contractNumber","totalContractedamount","securityDeposit"
                 ,"agreementDate","defectLiabilityPeriod","startDate","endDate","createdTime","lastModifiedTime"));
 
-        if (pagination.getSortBy() != null && !pagination.getSortBy().isEmpty() && sortableColumns.contains(pagination.getSortBy()))
-            wrapperQuery = wrapperQuery.replace( "ORDERBYCOLUMN", pagination.getSortBy());
-        else
+        if (pagination.getSortBy() != null && !pagination.getSortBy().isEmpty() && sortableColumns.contains(pagination.getSortBy())) {
+            if (pagination.getSortBy().equals("id")) {
+                wrapperQuery = wrapperQuery.replace("ORDERBYCOLUMN", "contractId");
+
+            } else if (pagination.getSortBy().equals("createdTime")) {
+                wrapperQuery = wrapperQuery.replace("ORDERBYCOLUMN", "contractCreatedTime");
+            } else if (pagination.getSortBy().equals("lastModifiedTime")) {
+                wrapperQuery = wrapperQuery.replace("ORDERBYCOLUMN", "contractLastModifiedTime");
+            } else {
+                wrapperQuery = wrapperQuery.replace( "ORDERBYCOLUMN", pagination.getSortBy());
+            }
+        } else {
             wrapperQuery = wrapperQuery.replace("ORDERBYCOLUMN", "startDate");
+        }
+
 
         if (criteria.getPagination().getOrder() == Pagination.OrderEnum.ASC)
             wrapperQuery = wrapperQuery.replace("[]", "ASC");
