@@ -2,6 +2,9 @@ package org.egov.web.models;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
@@ -25,9 +28,13 @@ import lombok.NoArgsConstructor;
 public class OrgRequest {
 
 	@JsonProperty("RequestInfo")
+	@NotNull
 	private RequestInfo requestInfo = null;
 
 	@JsonProperty("organisations")
+	@Valid
+	@NotNull
+	@Size(min = 1)
 	private List<Organisation> organisations = null;
 
 }
