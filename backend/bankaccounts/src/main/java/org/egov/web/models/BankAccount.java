@@ -48,6 +48,8 @@ public class BankAccount {
 
     @JsonProperty("bankAccountDetails")
     @Valid
+    @NotNull
+    @Size(min = 1)
     private List<BankAccountDetails> bankAccountDetails = null;
 
     @JsonProperty("additionalFields")

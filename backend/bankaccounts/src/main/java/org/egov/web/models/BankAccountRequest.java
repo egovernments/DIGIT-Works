@@ -1,6 +1,8 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,10 +25,13 @@ import java.util.List;
 public class BankAccountRequest {
 
     @JsonProperty("RequestInfo")
+    @NotNull
     @Valid
     private RequestInfo requestInfo = null;
 
     @JsonProperty("bankAccounts")
+    @NotNull
+    @Size(min = 1)
     @Valid
     private List<BankAccount> bankAccounts = null;
 

@@ -2,6 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,10 +29,12 @@ public class BankBranchIdentifier {
     private String id = null;
 
     @JsonProperty("type")
+    @NotNull
     @Size(min = 2, max = 64)
     private String type = null;
 
     @JsonProperty("code")
+    @NotNull
     @Size(min = 2, max = 64)
     private String code = null;
 
