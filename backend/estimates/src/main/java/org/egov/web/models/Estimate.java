@@ -3,6 +3,7 @@ package org.egov.web.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.workflow.ProcessInstance;
@@ -35,6 +36,7 @@ public class Estimate {
 
     @JsonProperty("tenantId")
     @Size(min = 2,max = 64)
+    @NotNull
     private String tenantId = null;
 
     @JsonProperty("estimateNumber")
@@ -88,6 +90,7 @@ public class Estimate {
     private String executingDepartment = null;
 
     @JsonProperty("address")
+    @Valid
     private Address address = null;
 
 //    @JsonProperty("totalEstimateAmount")

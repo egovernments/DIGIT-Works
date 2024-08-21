@@ -2,6 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import jakarta.validation.constraints.Size;
@@ -16,9 +17,11 @@ import java.util.List;
 public class EstimateSearchCriteria {
 
     @JsonProperty("ids")
+    @Size(max = 10)
     private List<String> ids;
 
     @JsonProperty("tenantId")
+    @NotNull
     private String tenantId = null;//mand
 
     @JsonProperty("estimateNumber")
