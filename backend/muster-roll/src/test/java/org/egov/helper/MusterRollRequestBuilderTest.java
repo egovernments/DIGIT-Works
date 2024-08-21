@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 public class MusterRollRequestBuilderTest {
@@ -45,7 +46,7 @@ public class MusterRollRequestBuilderTest {
     }
 
     public MusterRollRequest withMusterForCreateException(){
-        MusterRoll musterRoll = MusterRoll.builder().tenantId("pb.amritsar").startDate(new BigDecimal("1669919400000")).endDate(new BigDecimal("1670697000000")).build();
+        MusterRoll musterRoll = MusterRoll.builder().tenantId("pb.amritsar").startDate(new BigDecimal("1669919400000")).endDate(new BigDecimal("1670697000000")).registerId(UUID.randomUUID().toString()).build();
         this.builder = MusterRollRequest.builder().musterRoll(musterRoll).requestInfo(getRequestInfo()).build();
         return this.builder;
     }
