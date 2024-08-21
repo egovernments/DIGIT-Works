@@ -18,6 +18,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.egov.common.models.project.AddressType.CORRESPONDENCE;
+
 @Slf4j
 public class EstimateRequestBuilderTest {
 
@@ -46,7 +48,7 @@ public class EstimateRequestBuilderTest {
         estimateDetails.add(estimateDetail);
         estimateDetails.add(estimateDetail1);
 
-        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").build();
+        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").type(CORRESPONDENCE).build();
 
         Estimate estimate = Estimate.builder().tenantId("pb.amritsar")
                 .projectId("95ba2d55-b7a4-41e2-8598-19a83d63c9a4")
@@ -78,7 +80,7 @@ public class EstimateRequestBuilderTest {
                 .amountDetail(amountDetails).build();
         estimateDetails.add(estimateDetail);
 
-        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").build();
+        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").type(CORRESPONDENCE).build();
 
         Estimate estimate = Estimate.builder().tenantId("pb.amritsar")
                 .name("School Construction")
@@ -105,7 +107,7 @@ public class EstimateRequestBuilderTest {
                 .build();
         estimateDetails.add(estimateDetail);
 
-        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").build();
+        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").type(CORRESPONDENCE).build();
 
         Estimate estimate = Estimate.builder().tenantId("pb.amritsar")
                 .projectId("95ba2d55-b7a4-41e2-8598-19a83d63c9a4")
