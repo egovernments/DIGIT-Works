@@ -1,6 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
@@ -26,10 +27,12 @@ import jakarta.validation.constraints.NotNull;
 public class MusterRollRequest {
     @JsonProperty("RequestInfo")
     @NotNull(message = "Request info is mandatory")
+    @Valid
     private RequestInfo requestInfo = null;
 
     @JsonProperty("musterRoll")
     @NotNull(message = "Muster Roll is mandatory")
+    @Valid
     private MusterRoll musterRoll = null;
 
     @JsonProperty("workflow")

@@ -1,6 +1,8 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.egov.works.services.common.models.musterroll.Status;
 
@@ -18,6 +20,8 @@ public class MusterRollSearchCriteria {
     private List<String> ids;
 
     @JsonProperty("tenantId")
+    @NotNull
+    @Size(min = 2, max = 64)
     private String tenantId;
 
     @JsonProperty("musterRollNumber")
