@@ -3,7 +3,6 @@ package org.egov.service;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.models.individual.Individual;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendanceRegister;
@@ -16,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -56,7 +57,7 @@ public class OrganisationContactDetailsStaffUpdateService {
             grantPermission(attendanceRegisterList, newContacts, orgContactUpdateDiff.getRequestInfo());
             revokePermission(attendanceRegisterList, oldContact.getIndividualId(), orgContactUpdateDiff.getRequestInfo());
 
-            if(CollectionUtils.isEmpty(attendanceRegisterList)){
+                if (CollectionUtils.isEmpty(attendanceRegisterList) || attendanceRegisterList.size() < configuration.getAttendanceRegisterDefaultLimit()) {
                 break;
             }else{
                 offSet += configuration.getAttendanceRegisterDefaultLimit();
