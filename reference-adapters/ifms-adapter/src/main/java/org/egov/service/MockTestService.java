@@ -14,6 +14,7 @@ import org.egov.web.models.mdmsV2.MdmsResponseV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 @Service
@@ -85,6 +86,8 @@ public class MockTestService {
         Map<?, ?> jitRequestMap = new HashMap<>();
         if (jitRequest.getParams() instanceof Map) {
             jitRequestMap = (Map<?, ?>) jitRequest.getParams();
+        } else if (jitRequest.getParams() instanceof Object) {
+            jitRequestMap = convertObjectToMap(jitRequest.getParams());
         } else {
             throw new RuntimeException("Invalid Request");
         }
@@ -122,6 +125,25 @@ public class MockTestService {
         }
 
         return mdmsCriteriaNode;
+    }
+
+    public static Map<String, Object> convertObjectToMap(Object obj) {
+        Map<String, Object> map = new HashMap<>();
+
+        // Get all fields of the class, including private ones
+        Field[] fields = obj.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true); // to access private fields
+            try {
+                // Put field name and value in the map
+                map.put(field.getName(), field.get(obj));
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Failed to access field: " + field.getName(), e);
+            }
+        }
+
+        return map;
     }
 
     private void applyVAFilter(Map<?, ?> jitRequestMap, ObjectNode mdmsCriteriaNode) {
