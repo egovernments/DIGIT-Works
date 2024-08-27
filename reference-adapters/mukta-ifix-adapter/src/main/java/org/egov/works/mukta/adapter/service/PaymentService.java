@@ -10,17 +10,17 @@ import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.util.BillUtils;
 import org.egov.works.mukta.adapter.util.MdmsUtil;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
-import org.egov.works.mukta.adapter.web.models.Pagination;
-import org.egov.works.mukta.adapter.web.models.bill.*;
-import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
-import org.egov.works.mukta.adapter.web.models.enums.ReferenceStatus;
+import org.egov.works.mukta.adapter.web.models.PaymentRequest;
 import org.egov.works.mukta.adapter.web.models.enums.Status;
 import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
+import org.egov.works.services.common.models.expense.*;
+import org.egov.works.services.common.models.expense.enums.PaymentStatus;
+import org.egov.works.services.common.models.expense.enums.ReferenceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 
 @Slf4j

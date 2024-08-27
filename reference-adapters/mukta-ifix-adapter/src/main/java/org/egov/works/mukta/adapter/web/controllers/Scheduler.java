@@ -6,13 +6,13 @@ import org.egov.works.mukta.adapter.service.DisbursementService;
 import org.egov.works.mukta.adapter.service.PaymentInstructionService;
 import org.egov.works.mukta.adapter.service.PaymentService;
 import org.egov.works.mukta.adapter.util.ResponseInfoFactory;
-import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
+import org.egov.works.mukta.adapter.web.models.PaymentRequest;
 import org.egov.works.mukta.adapter.web.models.enums.JITServiceId;
 import org.egov.works.mukta.adapter.web.models.jit.SchedulerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.Objects;
 
 

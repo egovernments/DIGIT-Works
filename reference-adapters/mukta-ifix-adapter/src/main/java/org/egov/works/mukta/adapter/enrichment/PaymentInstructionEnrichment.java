@@ -4,26 +4,28 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.JsonObject;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
 import org.egov.common.models.individual.Individual;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.util.EncryptionDecryptionUtil;
 import org.egov.works.mukta.adapter.web.models.Disbursement;
+import org.egov.works.mukta.adapter.web.models.PaymentRequest;
 import org.egov.works.mukta.adapter.web.models.Status;
-import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
-import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.enums.*;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
 import org.egov.works.mukta.adapter.web.models.jit.BenfLineItems;
 import org.egov.works.mukta.adapter.web.models.jit.PADetails;
 import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
-import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
+import org.egov.works.services.common.models.bankaccounts.BankAccount;
+import org.egov.works.services.common.models.expense.Bill;
+import org.egov.works.services.common.models.expense.BillDetail;
+import org.egov.works.services.common.models.expense.LineItem;
+import org.egov.works.services.common.models.expense.Party;
+import org.egov.works.services.common.models.organization.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,7 +82,7 @@ public class PaymentInstructionEnrichment {
      * @param tenantId The tenant id
      * @return The beneficiary
      */
-    private Beneficiary getBeneficiariesFromLineItem(LineItem lineItem, Party payee, Map<String, JsonNode> headCodeMap, String tenantId,Bill bill) {
+    private Beneficiary getBeneficiariesFromLineItem(LineItem lineItem, Party payee, Map<String, JsonNode> headCodeMap, String tenantId, Bill bill) {
         log.info("Started executing getBeneficiariesFromLineItem");
         String beneficiaryId = payee.getIdentifier();
         ObjectNode additionalDetails = objectMapper.createObjectNode();
@@ -154,7 +156,7 @@ public class PaymentInstructionEnrichment {
      * @param headCodeCategoryMap The head code category map
      * @return The disbursement
      */
-    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations, PaymentRequest paymentRequest, JsonNode ssuNode, Map<String,String> headCodeCategoryMap,Boolean isRevised) {
+    public Disbursement enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations, PaymentRequest paymentRequest, JsonNode ssuNode, Map<String,String> headCodeCategoryMap, Boolean isRevised) {
         log.info("Started executing enrichBankaccountOnBeneficiary");
         String programCode = ssuNode.get("programCode").asText();
         boolean isAnyDisbursementFailed = false;
@@ -315,7 +317,7 @@ public class PaymentInstructionEnrichment {
                 additionalDetails.put("beneficiaryType",BeneficiaryType.IND.toString());
             }
             if (organisation != null) {
-                piIndividual.setAddress(organisation.getOrgAddress().get(0).getAddressLine1() == null ? organisation.getOrgAddress().get(0).getCity() : organisation.getOrgAddress().get(0).getAddressLine1());
+                piIndividual.setAddress(organisation.getOrgAddress().get(0).getBuildingName() == null ? organisation.getOrgAddress().get(0).getCity() : organisation.getOrgAddress().get(0).getBuildingName());
                 piIndividual.setPhone(organisation.getContactDetails().get(0).getContactMobileNumber());
                 piIndividual.setEmail(organisation.getContactDetails().get(0).getContactEmail());
                 piIndividual.setPin(organisation.getOrgAddress().get(0).getPincode());

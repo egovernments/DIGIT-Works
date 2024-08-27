@@ -11,7 +11,7 @@ import org.egov.common.models.individual.Gender;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.constants.Error;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 @Getter
 @Setter

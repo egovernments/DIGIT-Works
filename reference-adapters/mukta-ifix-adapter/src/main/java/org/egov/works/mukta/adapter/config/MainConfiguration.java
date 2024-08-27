@@ -2,6 +2,7 @@ package org.egov.works.mukta.adapter.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import org.egov.tracer.config.TracerConfiguration;
 import org.egov.tracer.config.TracerProperties;
 import org.egov.tracer.http.RestTemplateLoggingInterceptor;
@@ -14,7 +15,6 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.TimeZone;
 
