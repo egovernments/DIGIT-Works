@@ -444,7 +444,7 @@ public class DisbursementService {
 
             // Check if (corPICreatedDate <= (originalPIFailedDate + 90 days)) and corPICreatedDate <= 30th April 23:59:59
             LocalDateTime endOfApril = LocalDateTime.of(corPICreatedDate.getYear(), ifmsAdapterConfig.getOriginalExpireFinancialYearMonth(), ifmsAdapterConfig.getOriginalExpireFinancialYearDate(), 23, 59, 59);
-            if (!corPICreatedDate.isAfter(failureDatePlus90) && !corPICreatedDate.isAfter(endOfApril)) {
+            if (!corPICreatedDate.isAfter(endOfApril)) {
                 // Normal flow
                 log.info("Payment Instruction is valid for Correction PI Request.");
                 return true;
