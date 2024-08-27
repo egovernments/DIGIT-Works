@@ -1,5 +1,7 @@
 package org.egov.digit.expense.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -108,6 +110,7 @@ public class Bill {
 	private String wfStatus;
 
 	@JsonProperty("processInstance")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private ProcessInstance processInstance;
 	
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
