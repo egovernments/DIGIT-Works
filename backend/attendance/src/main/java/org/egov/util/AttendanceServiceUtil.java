@@ -106,6 +106,9 @@ public class AttendanceServiceUtil {
                         )
                         .collect(Collectors.toList());
 
+                if(filteredEntryLog.isEmpty() || filteredExitLog.isEmpty()){
+                    continue;
+                }
                 BigDecimal entryTime = filteredEntryLog.get(0).getTime();
                 BigDecimal exitTime = filteredExitLog.get(0).getTime();
 
