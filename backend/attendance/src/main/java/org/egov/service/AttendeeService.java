@@ -6,6 +6,7 @@ import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendeeEnrichmentService;
 import org.egov.kafka.Producer;
 import org.egov.repository.AttendeeRepository;
+import org.egov.util.AttendanceServiceUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.validator.AttendeeServiceValidator;
@@ -44,6 +45,9 @@ public class AttendeeService {
 
     @Autowired
     private Producer producer;
+
+    @Autowired
+    private AttendanceServiceUtil attendanceServiceUtil;
 
 
     /**
@@ -144,6 +148,9 @@ public class AttendeeService {
         //enrichment call by passing attendee request and data from db call
         log.info("enriching delete attendee request");
         attendeeEnrichmentService.enrichAttendeeOnDelete(attendeeDeleteRequest, attendeeListFromDB);
+
+        //Check if attendance logs are present for the individual for the provided de-ernollement date period or not
+        attendanceServiceUtil. checkAttendanceLogsForIndividual(attendeeDeleteRequest);
 
         //push to producer
         log.info("attendee objects updated via producer");
