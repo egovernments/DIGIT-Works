@@ -110,13 +110,7 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>enc-client</artifactId>
-            <version>2.0.5-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.egov.services</groupId>
-                    <artifactId>tracer</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>2.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.egov.works</groupId>
