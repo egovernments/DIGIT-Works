@@ -25,6 +25,7 @@ import org.egov.works.services.common.models.expense.Bill;
 import org.egov.works.services.common.models.expense.BillDetail;
 import org.egov.works.services.common.models.expense.LineItem;
 import org.egov.works.services.common.models.expense.Party;
+import org.egov.works.services.common.models.expense.enums.PaymentStatus;
 import org.egov.works.services.common.models.organization.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -189,7 +190,7 @@ public class PaymentInstructionEnrichment {
                 log.error("Bank account or individual or organisation not found for individual/organisation beneficiary. -> "+piBeneficiary.getBeneficiaryId());
             }
             for (LineItem lineItem : piBeneficiary.getLineItems()) {
-                if (lineItem.getStatus().equals(org.egov.works.mukta.adapter.web.models.enums.Status.ACTIVE) &&
+                if (lineItem.getStatus().equals(org.egov.works.services.common.models.expense.enums.Status.ACTIVE) &&
                         (lineItem.getPaymentStatus() == null || !lineItem.getPaymentStatus().equals(PaymentStatus.SUCCESSFUL))) {
                     Disbursement disbursementForLineItem = enrichDisbursementForEachLineItem(bankAccount, individual, organisation, lineItem, auditDetails,programCode,headCodeCategoryMap, piBeneficiary.getBeneficiaryId());
                     disbursements.add(disbursementForLineItem);
