@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.sql.Array;
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,7 +78,7 @@ public class AttendanceServiceUtil {
         long startOfWeekEpoch = startOfWeek.atStartOfDay(ZoneOffset.UTC).toEpochSecond() * 1000;
         long endOfWeekEpoch = endOfWeek.atTime(LocalTime.MAX).atZone(ZoneOffset.UTC).toEpochSecond() * 1000;
         AttendanceLogSearchCriteria searchCriteria = AttendanceLogSearchCriteria.builder()
-                .individualIds((List<String>) individualIds)
+                .individualIds(new ArrayList<>(individualIds))
                 .registerId(registerId)
                 .fromTime(BigDecimal.valueOf(startOfWeekEpoch))
                 .toTime(BigDecimal.valueOf(endOfWeekEpoch))
@@ -86,6 +88,7 @@ public class AttendanceServiceUtil {
 
 
         if (null != attendanceLogs && !attendanceLogs.isEmpty()) {
+            log.info("ATTENDANCE_LOGS_FETCHED","Attendance Logs fetched for the individuals");
             // Filter attendanceLogs based on individualIds and active status
             for (String individualId : individualIds) {
                 List<AttendanceLog> filteredEntryLog = attendanceLogs.stream()
