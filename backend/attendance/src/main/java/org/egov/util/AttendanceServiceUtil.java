@@ -109,7 +109,7 @@ public class AttendanceServiceUtil {
                 BigDecimal entryTime = filteredEntryLog.get(0).getTime();
                 BigDecimal exitTime = filteredExitLog.get(0).getTime();
 
-                if (isDateGreaterThanOrEqualTo(deenrollementDate, entryTime.longValue()) &&
+                if (isDateGreaterThanOrEqualTo(deenrollementDate, entryTime.longValue()) ||
                         isDateGreaterThanOrEqualTo(exitTime.longValue(), deenrollementDate)) {
                     throw new CustomException("ATTENDANCE_ALREADY_MARKED", "Today's attendance for the selected wage seeker:" + individualId + "is marked as present. " +
                             "Please update the attendance record before dis-engaging the wage seeker.");
