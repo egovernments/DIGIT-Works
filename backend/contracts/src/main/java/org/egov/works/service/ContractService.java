@@ -24,6 +24,8 @@ public class ContractService {
 
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
+    @Autowired
+    private ContractServiceValidator contractServiceValidator;
 
     @Autowired
     private ContractServiceConfiguration contractServiceConfiguration;
