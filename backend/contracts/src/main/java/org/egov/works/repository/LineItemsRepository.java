@@ -15,14 +15,18 @@ import java.util.List;
 @Repository
 @Slf4j
 public class LineItemsRepository {
-    @Autowired
-    private LineItemsRowMapper rowMapper;
+    private final LineItemsRowMapper rowMapper;
+
+    private final LineItemsQueryBuilder queryBuilder;
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private LineItemsQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public LineItemsRepository(LineItemsRowMapper rowMapper, LineItemsQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+        this.rowMapper = rowMapper;
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public List<LineItems> getLineItems(ContractCriteria contractCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();

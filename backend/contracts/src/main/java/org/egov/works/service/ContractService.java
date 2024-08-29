@@ -23,9 +23,6 @@ import java.util.stream.Collectors;
 public class ContractService {
 
     @Autowired
-    private ContractServiceValidator contractServiceValidator;
-
-    @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
     @Autowired
