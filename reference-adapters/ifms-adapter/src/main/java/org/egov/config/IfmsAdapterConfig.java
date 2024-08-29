@@ -1,12 +1,12 @@
 package org.egov.config;
 
+import jakarta.annotation.PostConstruct;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 
 @Configuration
 @Component

@@ -8,7 +8,6 @@ import lombok.*;
 import org.egov.common.data.query.annotations.Exclude;
 import org.egov.web.models.enums.BeneficiaryPaymentStatus;
 import org.egov.web.models.enums.BeneficiaryType;
-import org.egov.web.models.enums.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.util.List;

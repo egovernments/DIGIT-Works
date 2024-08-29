@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.utils.EncryptionDecryptionUtil;
 import org.egov.web.models.bankaccount.*;
+import org.egov.works.services.common.models.bankaccounts.BankAccount;
+import org.egov.works.services.common.models.bankaccounts.BankAccountDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

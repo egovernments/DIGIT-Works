@@ -9,8 +9,6 @@ import org.egov.config.Constants;
 import org.egov.repository.PIRepository;
 import org.egov.utils.BillUtils;
 import org.egov.utils.PIUtils;
-import org.egov.web.models.bill.Payment;
-import org.egov.web.models.bill.PaymentRequest;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
