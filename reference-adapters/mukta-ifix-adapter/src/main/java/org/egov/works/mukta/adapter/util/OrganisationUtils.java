@@ -61,10 +61,10 @@ public class OrganisationUtils {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getOrganisationHost()).append(config.getOrganisationSearchEndPoint());
         Object response = new HashMap<>();
-        OrgResponse orgResponse = new OrgResponse();
+        OrgServiceResponse orgResponse = new OrgServiceResponse();
         try {
             response = restTemplate.postForObject(uri.toString(), bankAccountRequest, Map.class);
-            orgResponse = mapper.convertValue(response, OrgResponse.class);
+            orgResponse = mapper.convertValue(response, OrgServiceResponse.class);
             log.info("Organisation details fetched.");
         } catch (Exception e) {
             log.error("Exception occurred while fetching organisation getOrganisationsById:getOrganisations: ", e);
