@@ -58,6 +58,9 @@ public class IfmsAdapterConfig {
     @Value("${egov.mdms.v2.v2.search.endpoint}")
     private String mdmsV2V2EndPoint;
 
+    @Value("${egov.mdms.v2.v1.search.endpoint}")
+    private String mdmsV2V1EndPoint;
+
     // bill
     @Value("${egov.bill.host}")
     private String billHost;
