@@ -21,7 +21,6 @@ public class PaymentRequest {
 
   @JsonProperty("payment")
   @jakarta.validation.Valid
-  @NotNull
   private Payment payment;
 
     @JsonProperty("referenceId")
