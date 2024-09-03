@@ -115,7 +115,7 @@ config:
   - name: "builds/digit-works/backend/measurement-registry"
     build:
       - work-dir: "backend/measurement-registry"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "measurement-registry"
       - work-dir: "backend/measurement-registry/src/main/resources/db"
         image-name: "measurement-registry-db"
