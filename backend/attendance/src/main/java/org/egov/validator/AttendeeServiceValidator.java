@@ -40,16 +40,14 @@ public class AttendeeServiceValidator {
 
     private final AttendanceServiceConfiguration config;
 
-    private final ProjectStaffUtil projectStaffUtil;
 
     @Autowired
-    public AttendeeServiceValidator(MDMSUtils mdmsUtils, IndividualServiceUtil individualServiceUtil, HRMSUtil hrmsUtil, StaffService staffService, AttendanceServiceConfiguration config, ProjectStaffUtil projectStaffUtil) {
+    public AttendeeServiceValidator(MDMSUtils mdmsUtils, IndividualServiceUtil individualServiceUtil, HRMSUtil hrmsUtil, StaffService staffService, AttendanceServiceConfiguration config) {
         this.mdmsUtils = mdmsUtils;
         this.individualServiceUtil = individualServiceUtil;
         this.hrmsUtil = hrmsUtil;
         this.staffService = staffService;
         this.config = config;
-        this.projectStaffUtil = projectStaffUtil;
     }
 
     public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
@@ -411,8 +409,6 @@ public class AttendeeServiceValidator {
         //creating a register Id to First Staff Map
         Map<String, StaffPermission> registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId,registerIds);
 
-        //fetching a register Id to Project Id Map
-        Map<String, String > registerIdVsProjectIdMap = projectStaffUtil.getregisterIdVsProjectIdMap(tenantId, registerIds, requestInfo);
 
         //Fetching all the attendees's uuids for hrms search
         List<String> userUuids = attendeeCreateRequest.getAttendees().stream()

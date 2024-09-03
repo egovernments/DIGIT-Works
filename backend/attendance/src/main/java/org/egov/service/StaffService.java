@@ -139,7 +139,7 @@ public class StaffService {
 
         // db call to get staff data
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).tenantId(tenantId).build();
-        List<StaffPermission> staffPermissionListFromDB = getAllStaff(staffSearchCriteria);
+        List<StaffPermission> staffPermissionListFromDB = staffRepository.getAllStaff(staffSearchCriteria);
 
 
         //validator call by passing staff request and the data from db call
@@ -153,12 +153,6 @@ public class StaffService {
         producer.push(serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
         log.info("staff present in Delete StaffPermission request are deenrolled from the register");
         return staffPermissionRequest;
-    }
-
-    public List<StaffPermission> getAllStaff(StaffSearchCriteria staffSearchCriteria) {
-        List<StaffPermission> staffPermissionListFromDB = staffRepository.getAllStaff(staffSearchCriteria);
-        log.info("size of staffPermission list received from DB : " + staffPermissionListFromDB.size());
-        return staffPermissionListFromDB;
     }
 
     private List<String> extractRegisterIdsFromRequest(StaffPermissionRequest staffPermissionRequest) {

@@ -13,6 +13,7 @@ import org.egov.enrichment.StaffEnrichmentService;
 import org.egov.common.producer.Producer;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
+import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.util.ResponseInfoFactory;
@@ -40,7 +41,7 @@ public class AttendanceRegisterService {
     private final RegisterEnrichment registerEnrichment;
 
 
-    private final StaffService staffService;
+    private final StaffRepository staffRepository;
 
     private final RegisterRepository registerRepository;
 
@@ -50,13 +51,13 @@ public class AttendanceRegisterService {
     private final IndividualServiceUtil individualServiceUtil;
 
     @Autowired
-    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffService staffService, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil) {
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil) {
         this.attendanceServiceValidator = attendanceServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.producer = producer;
         this.attendanceServiceConfiguration = attendanceServiceConfiguration;
         this.registerEnrichment = registerEnrichment;
-        this.staffService = staffService;
+        this.staffRepository = staffRepository;
         this.registerRepository = registerRepository;
         this.attendeeRepository = attendeeRepository;
         this.staffEnrichmentService = staffEnrichmentService;
@@ -245,7 +246,7 @@ public class AttendanceRegisterService {
         } else {
             staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIdsToSearch).build();
         }
-        return staffService.getAllStaff(staffSearchCriteria);
+        return staffRepository.getAllStaff(staffSearchCriteria);
     }
 
     /* Returns list of user roles */
@@ -262,7 +263,7 @@ public class AttendanceRegisterService {
         List<String> individualIds = new ArrayList<>();
         individualIds.add(uuid);
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().individualIds(individualIds).build();
-        List<StaffPermission> staffMembers = staffService.getAllStaff(staffSearchCriteria);
+        List<StaffPermission> staffMembers = staffRepository.getAllStaff(staffSearchCriteria);
         return staffMembers.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
     }
 

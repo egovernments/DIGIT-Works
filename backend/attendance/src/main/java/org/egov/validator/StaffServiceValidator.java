@@ -27,12 +27,10 @@ public class StaffServiceValidator {
 
     private final MDMSUtils mdmsUtils;
 
-    private final AttendanceRegisterService attendanceRegisterService;
 
     @Autowired
-    public StaffServiceValidator(MDMSUtils mdmsUtils, AttendanceRegisterService attendanceRegisterService) {
+    public StaffServiceValidator(MDMSUtils mdmsUtils) {
         this.mdmsUtils = mdmsUtils;
-        this.attendanceRegisterService = attendanceRegisterService;
     }
 
 
