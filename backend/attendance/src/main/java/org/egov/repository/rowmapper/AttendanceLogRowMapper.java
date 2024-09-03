@@ -29,7 +29,7 @@ public class AttendanceLogRowMapper implements ResultSetExtractor<List<Attendanc
     private final ObjectMapper mapper;
 
     @Autowired
-    public AttendanceLogRowMapper(ObjectMapper mapper) {
+    public AttendanceLogRowMapper(@Qualifier("objectMapper") ObjectMapper mapper) {
         this.mapper = mapper;
     }
 

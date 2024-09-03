@@ -21,10 +21,12 @@ import java.util.UUID;
 @Slf4j
 public class AttendanceLogEnrichment {
     private final AttendanceServiceUtil attendanceServiceUtil;
+    private final AttendanceServiceConfiguration config;
 
     @Autowired
-    public AttendanceLogEnrichment(AttendanceServiceUtil attendanceServiceUtil) {
+    public AttendanceLogEnrichment(AttendanceServiceUtil attendanceServiceUtil, AttendanceServiceConfiguration config) {
         this.attendanceServiceUtil = attendanceServiceUtil;
+        this.config = config;
     }
 
     public void enrichAttendanceLogCreateRequest(AttendanceLogRequest attendanceLogRequest) {

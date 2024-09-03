@@ -28,7 +28,7 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
     private final ObjectMapper mapper;
 
     @Autowired
-    public RegisterRowMapper(ObjectMapper mapper) {
+    public RegisterRowMapper(@Qualifier("objectMapper") ObjectMapper mapper) {
         this.mapper = mapper;
     }
 

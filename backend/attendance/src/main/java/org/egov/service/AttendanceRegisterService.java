@@ -32,29 +32,36 @@ import java.util.stream.Collectors;
 public class AttendanceRegisterService {
     private final AttendanceServiceValidator attendanceServiceValidator;
 
+    private final ResponseInfoFactory responseInfoFactory;
+
     private final Producer producer;
 
     private final AttendanceServiceConfiguration attendanceServiceConfiguration;
 
     private final RegisterEnrichment registerEnrichment;
 
+
+    private final StaffRepository staffRepository;
+
     private final RegisterRepository registerRepository;
 
     private final AttendeeRepository attendeeRepository;
 
+    private final StaffEnrichmentService staffEnrichmentService;
     private final IndividualServiceUtil individualServiceUtil;
-    private final StaffRepository staffRepository;
 
     @Autowired
-    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, IndividualServiceUtil individualServiceUtil, StaffRepository staffRepository) {
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil) {
         this.attendanceServiceValidator = attendanceServiceValidator;
+        this.responseInfoFactory = responseInfoFactory;
         this.producer = producer;
         this.attendanceServiceConfiguration = attendanceServiceConfiguration;
         this.registerEnrichment = registerEnrichment;
+        this.staffRepository = staffRepository;
         this.registerRepository = registerRepository;
         this.attendeeRepository = attendeeRepository;
+        this.staffEnrichmentService = staffEnrichmentService;
         this.individualServiceUtil = individualServiceUtil;
-        this.staffRepository = staffRepository;
     }
 
     /**
@@ -258,6 +265,13 @@ public class AttendanceRegisterService {
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().individualIds(individualIds).build();
         List<StaffPermission> staffMembers = staffRepository.getAllStaff(staffSearchCriteria);
         return staffMembers.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
+    }
+
+    /* Get all registers associated for the logged in attendee  */
+    private Set<String> fetchRegistersAssociatedToLoggedInAttendeeUser(String uuid) {
+        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().individualIds(Collections.singletonList(uuid)).build();
+        List<IndividualEntry> attendees = attendeeRepository.getAttendees(attendeeSearchCriteria);
+        return attendees.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
     }
 
     /**

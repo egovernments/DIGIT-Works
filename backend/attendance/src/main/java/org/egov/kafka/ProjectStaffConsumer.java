@@ -32,17 +32,21 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProjectStaffConsumer {
 
-    @Autowired
-    private  ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+
+    private final ProjectStaffUtil projectStaffUtil;
+
+    private final IndividualServiceUtil individualServiceUtil;
+
+    private final AttendanceServiceConfiguration config;
 
     @Autowired
-    private ProjectStaffUtil projectStaffUtil;
-
-    @Autowired
-    private IndividualServiceUtil individualServiceUtil;
-
-    @Autowired
-    private AttendanceServiceConfiguration config;
+    public ProjectStaffConsumer(ObjectMapper objectMapper, ProjectStaffUtil projectStaffUtil, IndividualServiceUtil individualServiceUtil, AttendanceServiceConfiguration config) {
+        this.objectMapper = objectMapper;
+        this.projectStaffUtil = projectStaffUtil;
+        this.individualServiceUtil = individualServiceUtil;
+        this.config = config;
+    }
 
     @KafkaListener(topics = "${project.staff.attendance.topic}")
     public void bulkStaffCreate(Map<String, Object> consumerRecord,

@@ -30,13 +30,20 @@ import static java.lang.Long.parseLong;
 @Slf4j
 public class IndividualServiceUtil {
 
+    private final ServiceRequestRepository serviceRequestRepository;
+
     private final AttendanceServiceConfiguration config;
+
+    private final ObjectMapper mapper;
+
     private final RestTemplate restTemplate;
     private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     @Autowired
-    public IndividualServiceUtil(AttendanceServiceConfiguration config, RestTemplate restTemplate, MultiStateInstanceUtil multiStateInstanceUtil) {
+    public IndividualServiceUtil(ServiceRequestRepository serviceRequestRepository, AttendanceServiceConfiguration config, @Qualifier("objectMapper") ObjectMapper mapper, RestTemplate restTemplate, MultiStateInstanceUtil multiStateInstanceUtil) {
+        this.serviceRequestRepository = serviceRequestRepository;
         this.config = config;
+        this.mapper = mapper;
         this.restTemplate = restTemplate;
         this.multiStateInstanceUtil = multiStateInstanceUtil;
     }
@@ -92,8 +99,8 @@ public class IndividualServiceUtil {
 
     public List<Individual> getIndividualDetailsFromUserId(Long userId, RequestInfo requestInfo, String tenantId) {
         String uri = getSearchURLWithParams(multiStateInstanceUtil.getStateLevelTenant(tenantId)).toUriString();
-        List<Long> userIdList = userId != null ? Collections.singletonList(userId) : null;
-        IndividualSearch individualSearch = IndividualSearch.builder().userId(userIdList).build();
+        List<Long> userIds = Collections.singletonList(userId);
+        IndividualSearch individualSearch = IndividualSearch.builder().userId(userIds).build();
         IndividualSearchRequest individualSearchRequest = IndividualSearchRequest.builder()
                 .requestInfo(requestInfo).individual(individualSearch).build();
 

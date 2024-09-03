@@ -3,6 +3,7 @@ package org.egov.service;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendanceRegister;
@@ -39,15 +40,17 @@ public class OrganisationContactDetailsStaffUpdateService {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(orgContactUpdateDiff.getRequestInfo()).build();
         String tenantId = orgContactUpdateDiff.getTenantId();
         Set<ContactDetails> oldContacts = orgContactUpdateDiff.getOldContacts();
+        int offSet = 0;
 
         for(ContactDetails oldContact : oldContacts) {
-            AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria =
-                    AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(oldContact.getIndividualId()).limit(configuration.getAttendanceRegisterMaxLimit()).build();
+            while (true){
+                AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria =
+                    AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(oldContact.getIndividualId()).limit(configuration.getAttendanceRegisterDefaultLimit()).offset(offSet).build();
             List<AttendanceRegister> attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
             if(CollectionUtils.isEmpty(attendanceRegisterList)) {
                 try {
                     String userUuid = individualServiceUtil.getIndividualDetails(Collections.singletonList(oldContact.getIndividualId()), requestInfoWrapper.getRequestInfo(), tenantId).get(0).getUserUuid();
-                    attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(userUuid).limit(configuration.getAttendanceRegisterMaxLimit()).build();
+                    attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(userUuid).limit(configuration.getAttendanceRegisterDefaultLimit()).offset(offSet).build();
                     attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
                 }catch (Exception e){
                     log.error(e.toString());
@@ -56,6 +59,13 @@ public class OrganisationContactDetailsStaffUpdateService {
             Set<ContactDetails> newContacts = orgContactUpdateDiff.getNewContacts();
             grantPermission(attendanceRegisterList, newContacts, orgContactUpdateDiff.getRequestInfo());
             revokePermission(attendanceRegisterList, oldContact.getIndividualId(), orgContactUpdateDiff.getRequestInfo());
+
+            if (CollectionUtils.isEmpty(attendanceRegisterList) || attendanceRegisterList.size() < configuration.getAttendanceRegisterDefaultLimit()) {
+                break;
+            }else{
+                offSet += configuration.getAttendanceRegisterDefaultLimit();
+            }
+            }
         }
     }
 

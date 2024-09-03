@@ -2,6 +2,7 @@ package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.StaffService;
 import org.egov.util.ResponseInfoFactory;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Controller
@@ -24,12 +24,18 @@ import jakarta.validation.Valid;
 public class StaffApiController {
 
 
+    private final ObjectMapper objectMapper;
+
+    private final HttpServletRequest request;
+
     private final StaffService staffService;
 
     private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public StaffApiController(StaffService staffService, ResponseInfoFactory responseInfoFactory) {
+    public StaffApiController(ObjectMapper objectMapper, HttpServletRequest request, StaffService staffService, ResponseInfoFactory responseInfoFactory) {
+        this.objectMapper = objectMapper;
+        this.request = request;
         this.staffService = staffService;
         this.responseInfoFactory = responseInfoFactory;
     }
@@ -40,7 +46,7 @@ public class StaffApiController {
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
         StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo)
                 .staff(enrichedRequest.getStaff()).build();
-        return new ResponseEntity<>(staffPermissionResponse, HttpStatus.OK);
+        return new ResponseEntity<StaffPermissionResponse>(staffPermissionResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_delete", method = RequestMethod.POST)
@@ -49,7 +55,7 @@ public class StaffApiController {
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
         StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo)
                 .staff(enrichedRequest.getStaff()).build();
-        return new ResponseEntity<>(staffPermissionResponse, HttpStatus.OK);
+        return new ResponseEntity<StaffPermissionResponse>(staffPermissionResponse, HttpStatus.OK);
     }
 
 }

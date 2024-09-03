@@ -24,6 +24,8 @@ import java.util.Map;
 public class AttendeeService {
     private final AttendeeServiceValidator attendeeServiceValidator;
 
+    private final ResponseInfoFactory responseInfoFactory;
+
     private final AttendeeRepository attendeeRepository;
 
     private final AttendanceRegisterService attendanceRegisterService;
@@ -37,8 +39,9 @@ public class AttendeeService {
     private final Producer producer;
 
     @Autowired
-    public AttendeeService(AttendeeServiceValidator attendeeServiceValidator, AttendeeRepository attendeeRepository, AttendanceRegisterService attendanceRegisterService, AttendanceServiceValidator attendanceServiceValidator, AttendeeEnrichmentService attendeeEnrichmentService, AttendanceServiceConfiguration attendanceServiceConfiguration, Producer producer) {
+    public AttendeeService(AttendeeServiceValidator attendeeServiceValidator, ResponseInfoFactory responseInfoFactory, AttendeeRepository attendeeRepository, AttendanceRegisterService attendanceRegisterService, AttendanceServiceValidator attendanceServiceValidator, AttendeeEnrichmentService attendeeEnrichmentService, AttendanceServiceConfiguration attendanceServiceConfiguration, Producer producer) {
         this.attendeeServiceValidator = attendeeServiceValidator;
+        this.responseInfoFactory = responseInfoFactory;
         this.attendeeRepository = attendeeRepository;
         this.attendanceRegisterService = attendanceRegisterService;
         this.attendanceServiceValidator = attendanceServiceValidator;

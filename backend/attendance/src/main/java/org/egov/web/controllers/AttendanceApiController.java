@@ -4,6 +4,7 @@ package org.egov.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
+import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.AttendanceRegisterService;
 import org.egov.util.ResponseInfoFactory;
@@ -17,15 +18,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T14:44:21.051+05:30")
 
 @Controller
 @RequestMapping("/v1")
 public class AttendanceApiController {
+
+    private final ObjectMapper objectMapper;
+
+    private final HttpServletRequest request;
 
     private final ResponseInfoFactory responseInfoCreator;
 
@@ -33,7 +36,9 @@ public class AttendanceApiController {
     private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public AttendanceApiController(ResponseInfoFactory responseInfoCreator, AttendanceRegisterService attendanceRegisterService, ResponseInfoFactory responseInfoFactory) {
+    public AttendanceApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoFactory responseInfoCreator, AttendanceRegisterService attendanceRegisterService, ResponseInfoFactory responseInfoFactory) {
+        this.objectMapper = objectMapper;
+        this.request = request;
         this.responseInfoCreator = responseInfoCreator;
         this.attendanceRegisterService = attendanceRegisterService;
         this.responseInfoFactory = responseInfoFactory;

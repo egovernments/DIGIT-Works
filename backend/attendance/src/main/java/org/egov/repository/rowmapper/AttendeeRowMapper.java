@@ -24,7 +24,7 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
     private final ObjectMapper mapper;
 
     @Autowired
-    public AttendeeRowMapper(ObjectMapper mapper) {
+    public AttendeeRowMapper(@Qualifier("objectMapper") ObjectMapper mapper) {
         this.mapper = mapper;
     }
 

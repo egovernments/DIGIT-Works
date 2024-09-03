@@ -42,10 +42,9 @@ package org.egov.web.models.Hrms;
 
 import digit.models.coremodels.AuditDetails;
 import lombok.*;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Validated
 @EqualsAndHashCode(exclude = {"auditDetails"})
@@ -57,20 +56,20 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class DepartmentalTest {
 
-	@SafeHtml
+	
 	private String id;
 
-	@SafeHtml
+	
 	@NotNull
 	private String test;
 
 	@NotNull
 	private Long yearOfPassing;
 
-	@SafeHtml
+	
 	private String remarks;
 
-	@SafeHtml
+	
 	private String tenantId;
 	
 	private AuditDetails auditDetails;
