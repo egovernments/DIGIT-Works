@@ -24,6 +24,7 @@ import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValid
 import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.contract.Contract;
+import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
 import org.egov.works.services.common.models.musterroll.MusterRollRequest;
 import org.springframework.beans.factory.annotation.Autowired;
