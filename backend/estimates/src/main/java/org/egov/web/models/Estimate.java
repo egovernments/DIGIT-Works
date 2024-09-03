@@ -90,7 +90,6 @@ public class Estimate {
     private String executingDepartment = null;
 
     @JsonProperty("address")
-    @Valid
     private Address address = null;
 
 //    @JsonProperty("totalEstimateAmount")
