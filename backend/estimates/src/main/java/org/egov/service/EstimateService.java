@@ -71,6 +71,7 @@ public class EstimateService {
         if (Boolean.TRUE.equals(serviceConfiguration.getIsCachingEnabled()))
             redisService.setCache(getEstimateRedisKey(estimateRequest.getEstimate().getId()), estimateRequest.getEstimate());
         producer.push(serviceConfiguration.getSaveEstimateTopic(), estimateRequest);
+        estimateRequest.getEstimate().setProcessInstances(null);
         return estimateRequest;
     }
 
@@ -127,6 +128,7 @@ public class EstimateService {
         if (Boolean.TRUE.equals(serviceConfiguration.getIsCachingEnabled()))
             redisService.setCache(getEstimateRedisKey(estimateRequest.getEstimate().getId()), estimateRequest.getEstimate());
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), estimateRequest);
+        estimateRequest.getEstimate().setProcessInstances(null);
         try{
             notificationService.sendNotification(estimateRequest);
         }catch (Exception e){
