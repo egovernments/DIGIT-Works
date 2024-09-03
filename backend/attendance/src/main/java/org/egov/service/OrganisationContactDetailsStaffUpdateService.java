@@ -8,10 +8,10 @@ import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
-import org.egov.web.models.Organisation.ContactDetails;
-import org.egov.web.models.Organisation.OrgContactUpdateDiff;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
+import org.egov.works.services.common.models.organization.ContactDetails;
+import org.egov.works.services.common.models.organization.OrgContactUpdateDiff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -39,7 +39,7 @@ public class OrganisationContactDetailsStaffUpdateService {
     public void updateStaffPermissionsForContactDetails(OrgContactUpdateDiff orgContactUpdateDiff) {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(orgContactUpdateDiff.getRequestInfo()).build();
         String tenantId = orgContactUpdateDiff.getTenantId();
-        List<ContactDetails> oldContacts = orgContactUpdateDiff.getOldContacts();
+        Set<ContactDetails> oldContacts = orgContactUpdateDiff.getOldContacts();
         int offSet = 0;
 
         for(ContactDetails oldContact : oldContacts) {
@@ -56,7 +56,7 @@ public class OrganisationContactDetailsStaffUpdateService {
                     log.error(e.toString());
                 }
             }
-            List<ContactDetails> newContacts = orgContactUpdateDiff.getNewContacts();
+            Set<ContactDetails> newContacts = orgContactUpdateDiff.getNewContacts();
             grantPermission(attendanceRegisterList, newContacts, orgContactUpdateDiff.getRequestInfo());
             revokePermission(attendanceRegisterList, oldContact.getIndividualId(), orgContactUpdateDiff.getRequestInfo());
 
@@ -87,7 +87,7 @@ public class OrganisationContactDetailsStaffUpdateService {
         log.info("Revoked permission for: " + individualOrUserId + " on " + attendanceRegisters.size() + " registers.");
     }
 
-    private void grantPermission(List<AttendanceRegister> attendanceRegisters, List<ContactDetails> newContacts, RequestInfo requestInfo) {
+    private void grantPermission(List<AttendanceRegister> attendanceRegisters, Set<ContactDetails> newContacts, RequestInfo requestInfo) {
         if(attendanceRegisters.isEmpty()) {
             log.info("No attendance registers to grant permission on");
             return;
