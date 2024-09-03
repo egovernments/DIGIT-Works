@@ -34,6 +34,11 @@ public class AttendanceServiceConfiguration {
     private String mdmsHost;
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+    //MDMS V2
+    @Value("${egov.mdms.v2.host}")
+    private String mdmsV2Host;
+    @Value("${egov.mdms.v2.search.endpoint}")
+    private String mdmsV2EndPoint;
     //Topic
     @Value("${attendance.register.kafka.create.topic}")
     private String saveAttendanceRegisterTopic;

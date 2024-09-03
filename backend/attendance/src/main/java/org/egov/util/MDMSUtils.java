@@ -56,7 +56,7 @@ public class MDMSUtils {
     }
 
     public StringBuilder getMdmsSearchUrl() {
-        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+        return new StringBuilder().append(config.getMdmsV2Host()).append(config.getMdmsV2EndPoint());
     }
 
     private ModuleDetail getTenantModuleRequestData() {
