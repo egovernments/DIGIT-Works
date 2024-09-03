@@ -6,6 +6,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.config.Configuration;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.bankaccounts.Order;
+import org.egov.works.services.common.models.bankaccounts.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -17,8 +19,7 @@ import java.util.List;
 @Slf4j
 public class BankAccountQueryBuilder {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
 
 
     private static final String FETCH_BANK_ACCOUNT_QUERY = "SELECT bankAcct.*," +
@@ -58,6 +59,11 @@ public class BankAccountQueryBuilder {
             "WHERE offset_ > ? AND offset_ <= ?";
 
     private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+    @Autowired
+    public BankAccountQueryBuilder(Configuration config) {
+        this.config = config;
+    }
 
     private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
         if (values.isEmpty())

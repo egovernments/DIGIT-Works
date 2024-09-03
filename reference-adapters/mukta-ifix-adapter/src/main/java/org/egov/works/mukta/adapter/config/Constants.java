@@ -64,4 +64,6 @@ public class Constants {
     public static final String CITIZEN_LOWER = "Citizen";
     public static final String DISBURSEMENT_ENCRYPT = "DisbursementEncrypt";
     public static final String ACCOUNT_TYPE = "accountType";
+    public static final String DISBURSE_REDIS_KEY = "DISBURSE_{uuid}";
+    public static final String PAYMENT_REDIS_KEY = "PAYMENT_{uuid}";
 }

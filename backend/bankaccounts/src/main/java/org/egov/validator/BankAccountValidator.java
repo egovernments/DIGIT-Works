@@ -25,15 +25,19 @@ import static org.egov.util.BankAccountConstant.ORG;
 @Slf4j
 public class BankAccountValidator {
 
-    @Autowired
-    private IndividualUtil individualUtil;
+    private final IndividualUtil individualUtil;
 
-    @Autowired
-    private OrganisationUtil organisationUtil;
+    private final OrganisationUtil organisationUtil;
 
     public static final String jsonPathForInds = "$.Individual.*.id";
 
     public static final String jsonPathForOrgs = "$.organisations.*.id";
+
+    @Autowired
+    public BankAccountValidator(IndividualUtil individualUtil, OrganisationUtil organisationUtil) {
+        this.individualUtil = individualUtil;
+        this.organisationUtil = organisationUtil;
+    }
 
     /**
      * validate the search bank account

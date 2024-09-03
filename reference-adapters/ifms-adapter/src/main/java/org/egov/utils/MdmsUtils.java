@@ -7,6 +7,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.mdms.model.*;
 import org.egov.repository.ServiceRequestRepository;
+import org.egov.web.models.mdmsV2.MdmsResponseV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -169,4 +170,22 @@ public class MdmsUtils {
 				.build();
 	}
 
+	/**
+	 * Fetch data from mdms-v2
+	 * @param searchRequest
+	 * @return
+	 */
+	public MdmsResponseV2 fetchFromMDMSV2V2(Object searchRequest) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V2EndPoint());
+		Object response = new HashMap<>();
+		MdmsResponseV2 mdmsResponse = new MdmsResponseV2();
+		try {
+			response = restTemplate.postForObject(uri.toString(), searchRequest, Map.class);
+			mdmsResponse = mapper.convertValue(response, MdmsResponseV2.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
+		return mdmsResponse;
+	}
 }

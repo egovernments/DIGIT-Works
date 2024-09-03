@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @Component
@@ -26,6 +26,10 @@ public class MusterRollServiceConfiguration {
     private String mdmsHost;
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+    @Value("${egov.mdms.v2.host}")
+    private String mdmsV2Host;
+    @Value("${egov.mdms.v2.search.endpoint}")
+    private String mdmsV2EndPoint;
 
     //Idgen Config
     @Value("${egov.idgen.host}")

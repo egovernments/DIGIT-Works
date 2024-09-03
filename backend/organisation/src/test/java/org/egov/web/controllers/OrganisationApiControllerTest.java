@@ -10,7 +10,6 @@ import org.egov.kafka.OrganizationProducer;
 import org.egov.repository.OrganisationRepository;
 import org.egov.service.OrganisationEnrichmentService;
 import org.egov.service.OrganisationService;
-import org.egov.service.UserService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.OrgRequest;
@@ -42,7 +41,7 @@ import org.junit.jupiter.api.Test;
 //import org.springframework.test.web.servlet.MockMvc;
 //import org.springframework.test.web.servlet.MvcResult;
 //
-//import javax.servlet.http.HttpServletRequest;
+//import jakarta.servlet.http.HttpServletRequest;
 //
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.mockito.ArgumentMatchers.eq;
@@ -91,8 +90,6 @@ class OrganisationApiControllerTest {
     @MockBean
     private Configuration configuration;
 
-    @MockBean
-    private UserService userService;
 
     @Test
     @DisplayName("Organisation request should pass with API Operation CREATE")

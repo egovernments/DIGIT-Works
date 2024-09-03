@@ -22,6 +22,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -66,6 +68,9 @@ public class IfmsService {
     @Autowired
     private ESLogUtils esLogUtils;
 
+    @Autowired
+    private MockTestService mockTestService;
+
     public Map<String, String> getKeys() throws NoSuchAlgorithmException {
         Map<String, String> keyMap = new HashMap<>();
         String encryptedAppKey = authenticationUtils.genEncryptedAppKey();
@@ -78,6 +83,15 @@ public class IfmsService {
         return  keyMap;
     }
 
+    public JITResponse sendRequest(String tenantId, JITRequest jitRequest) {
+        if (config.getIfmsJitMockEnabled() && config.getIfmsMockEnabledTenantsIds().length != 0
+                && !StringUtils.isEmpty(tenantId) && Arrays.asList(config.getIfmsMockEnabledTenantsIds()).contains(tenantId)) {
+            return mockTestService.getMockResponse(tenantId, jitRequest);
+        } else {
+            return sendRequestToIFMS(jitRequest);
+        }
+    }
+
     public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
         // Check if the auth token is null or the session has expired
         if (jitAuthValues.getAuthToken() == null || (System.currentTimeMillis() - jitAuthValues.getLastLogin()) >= config.getIfmsSessionTimeout()){
@@ -87,18 +101,6 @@ public class IfmsService {
         try {
             decryptedResponse = callServiceAPI(jitRequest);
 //            decryptedResponse = loadCustomResponse(jitRequest.getServiceId().toString());
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            String message = e.toString();
-            if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
-                try {
-                    getAuthDetailsFromIFMS();
-                    decryptedResponse = callServiceAPI(jitRequest);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            } else {
-                throw new RuntimeException(e);
-            }
         } catch (Exception e) {
             String message = e.toString();
             if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
@@ -119,7 +121,6 @@ public class IfmsService {
         JITResponse decryptedResponse = null;
         Map<String, String> payload = new HashMap<>();
         try {
-            // Call the specific service API
             payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
             String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
             decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);

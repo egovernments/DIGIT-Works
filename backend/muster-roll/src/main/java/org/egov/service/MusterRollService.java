@@ -2,7 +2,7 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +24,7 @@ import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.web.models.MusterRollSearchCriteria;
-import org.egov.web.models.Status;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -195,6 +195,8 @@ public class MusterRollService {
         //fetch MDMS data for muster - skill level
         String tenantId = existingMusterRoll.getTenantId();
         Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, tenantId);
+        Object mdmsV2Data = mdmsUtils.mDMSV2CallMuster(musterRollRequest, tenantId);
+
 
         //fetch the update additionalDetails from the request and persist it for verification
         if (!isComputeAttendance) {
@@ -202,7 +204,7 @@ public class MusterRollService {
             existingMusterRoll.setAdditionalDetails(additionalDetails);
         }
 
-        enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll,mdmsData);
+        enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll,mdmsV2Data);
         if (isComputeAttendance) {
             RequestInfo requestInfo = musterRollRequest.getRequestInfo();
             musterRollValidator.isValidUser(existingMusterRoll, requestInfo);

@@ -1,10 +1,10 @@
 package org.egov.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.UserDetailResponse;
-import digit.models.coremodels.user.Role;
-import digit.models.coremodels.user.User;
-import digit.models.coremodels.user.enums.UserType;
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
+import org.egov.common.contract.user.UserDetailResponse;
+import org.egov.common.contract.user.enums.UserType;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
@@ -21,20 +21,17 @@ import java.util.List;
 @Component
 public class UserUtil {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+    private final ServiceRequestRepository serviceRequestRepository;
+
+    private final Configuration configs;
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private Configuration configs;
-
-
-    @Autowired
-    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration configs) {
         this.mapper = mapper;
         this.serviceRequestRepository = serviceRequestRepository;
+        this.configs = configs;
     }
 
     /**
@@ -113,11 +110,10 @@ public class UserUtil {
      */
     public void addUserDefaultFields(String mobileNumber, String tenantId, User userInfo, UserType userType) {
         Role role = getCitizenRole(tenantId);
-        userInfo.setRoles(Collections.singleton(role));
-        userInfo.setType(userType);
-        userInfo.setUsername(mobileNumber);
+        userInfo.setRoles(Collections.singletonList(role));
+        userInfo.setType(userType.toString());
+        userInfo.setUserName(mobileNumber);
         userInfo.setTenantId(getStateLevelTenant(tenantId));
-        userInfo.setActive(true);
     }
 
     /**

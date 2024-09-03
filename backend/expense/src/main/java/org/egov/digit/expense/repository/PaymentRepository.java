@@ -3,7 +3,7 @@ package org.egov.digit.expense.repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.digit.expense.repository.querybuilder.PaymentQueryBuilder;
 import org.egov.digit.expense.repository.rowmapper.PaymentRowMapper;

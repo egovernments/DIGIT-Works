@@ -20,6 +20,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,20 +30,16 @@ import static java.lang.Long.parseLong;
 @Slf4j
 public class IndividualServiceUtil {
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final AttendanceServiceConfiguration config;
+    private final RestTemplate restTemplate;
+    private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     @Autowired
-    private AttendanceServiceConfiguration config;
-
-    @Autowired
-    @Qualifier("objectMapper")
-    private ObjectMapper mapper;
-
-    @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
-    private MultiStateInstanceUtil multiStateInstanceUtil;
+    public IndividualServiceUtil(AttendanceServiceConfiguration config, RestTemplate restTemplate, MultiStateInstanceUtil multiStateInstanceUtil) {
+        this.config = config;
+        this.restTemplate = restTemplate;
+        this.multiStateInstanceUtil = multiStateInstanceUtil;
+    }
 
     public List<String> fetchIndividualIds(List<String> individualIds, RequestInfo requestInfo, String tenantId) {
 
@@ -95,7 +92,8 @@ public class IndividualServiceUtil {
 
     public List<Individual> getIndividualDetailsFromUserId(Long userId, RequestInfo requestInfo, String tenantId) {
         String uri = getSearchURLWithParams(multiStateInstanceUtil.getStateLevelTenant(tenantId)).toUriString();
-        IndividualSearch individualSearch = IndividualSearch.builder().userId(userId).build();
+        List<Long> userIdList = userId != null ? Collections.singletonList(userId) : null;
+        IndividualSearch individualSearch = IndividualSearch.builder().userId(userIdList).build();
         IndividualSearchRequest individualSearchRequest = IndividualSearchRequest.builder()
                 .requestInfo(requestInfo).individual(individualSearch).build();
 

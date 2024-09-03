@@ -22,7 +22,7 @@ config:
   - name: "builds/digit-works/backend/attendance"
     build:
       - work-dir: "backend/attendance"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "attendance"
       - work-dir: "backend/attendance/src/main/resources/db"
         image-name: "attendance-db"
@@ -38,14 +38,14 @@ config:
   - name: "builds/digit-works/backend/muster-roll"
     build:
       - work-dir: "backend/muster-roll"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "muster-roll"
       - work-dir: "backend/muster-roll/src/main/resources/db"
         image-name: "muster-roll-db"
   - name: "builds/digit-works/backend/estimates"
     build:
       - work-dir: "backend/estimates"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "estimates"
       - work-dir: "backend/estimates/src/main/resources/db"
         image-name: "estimates-db"
@@ -53,13 +53,13 @@ config:
   - name: "builds/digit-works/backend/works-management-service"
     build:
       - work-dir: "backend/wms"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "works-management-service"
   
   - name: "builds/digit-works/backend/organisation"
     build:
       - work-dir: "backend/organisation"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "organisation"
       - work-dir: "backend/organisation/src/main/resources/db"
         image-name: "organisation-db"
@@ -67,7 +67,7 @@ config:
   - name: "builds/digit-works/backend/contracts"
     build:
       - work-dir: "backend/contracts"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "contracts"
       - work-dir: "backend/contracts/src/main/resources/db"
         image-name: "contracts-db"
@@ -75,7 +75,7 @@ config:
   - name: "builds/digit-works/backend/bankaccounts"
     build:
       - work-dir: "backend/bankaccounts"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "bankaccounts"
       - work-dir: "backend/bankaccounts/src/main/resources/db"
         image-name: "bankaccounts-db"
@@ -91,7 +91,7 @@ config:
   - name: "builds/digit-works/backend/expense-calculator"
     build:
       - work-dir: "backend/expense-calculator"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "expense-calculator"
       - work-dir: "backend/expense-calculator/src/main/resources/db"
         image-name: "expense-calculator-db"
@@ -99,7 +99,7 @@ config:
   - name: "builds/digit-works/backend/expense"
     build:
       - work-dir: "backend/expense"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "expense"
       - work-dir: "backend/expense/src/main/resources/db"
         image-name: "expense-db"
@@ -115,10 +115,25 @@ config:
   - name: "builds/digit-works/backend/measurement-registry"
     build:
       - work-dir: "backend/measurement-registry"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "measurement-registry"
       - work-dir: "backend/measurement-registry/src/main/resources/db"
         image-name: "measurement-registry-db"
+
+  - name: "builds/digit-works/backend/rate-analysis"
+    build:
+      - work-dir: "backend/rate-analysis"
+        dockerfile: "build/maven-java17/Dockerfile"
+        image-name: "rate-analysis"
+      - work-dir: "backend/rate-analysis/src/main/resources/db"
+        image-name: "rate-analysis-db"
+  - name: "builds/digit-works/backend/statements"
+    build:
+      - work-dir: "backend/statements"
+        dockerfile: "build/maven-java17/Dockerfile"
+        image-name: "statements"
+      - work-dir: "backend/statements/src/main/resources/db"
+        image-name: "statements-db"      
 
   # utilities
   - name: "builds/digit-works/utilities/egov-pdf"

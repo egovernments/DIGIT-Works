@@ -41,11 +41,11 @@ public class BillUtils {
 
     private BillResponse postBill(RequestInfo requestInfo, Bill bill, Workflow workflow, StringBuilder url) {
         // Update workflow object because in expense service it's using core service workflow
-        digit.models.coremodels.Workflow expenseWorkflow1 = digit.models.coremodels.Workflow.builder()
+        Workflow expenseWorkflow1 = Workflow.builder()
                 .action(workflow.getAction())
-                .assignes(workflow.getAssignees())
-                .verificationDocuments(workflow.getDocuments())
-                .comments(workflow.getComment())
+                .assignees(workflow.getAssignees())
+                .documents(workflow.getDocuments())
+                .comment(workflow.getComment())
                 .build();
         BillCalculatorRequestInfoWrapper requestInfoWrapper = BillCalculatorRequestInfoWrapper.builder()
                 .requestInfo(requestInfo)

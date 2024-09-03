@@ -1,10 +1,13 @@
 package org.egov.works.mukta.adapter.validators;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.repository.DisbursementRepository;
+import org.egov.works.mukta.adapter.service.RedisService;
 import org.egov.works.mukta.adapter.web.models.*;
 import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
 import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
@@ -18,10 +21,12 @@ import java.util.*;
 @Slf4j
 public class DisbursementValidator {
     private final DisbursementRepository disbursementRepository;
+    private final RedisService redisService;
 
     @Autowired
-    public DisbursementValidator(DisbursementRepository disbursementRepository) {
+    public DisbursementValidator(DisbursementRepository disbursementRepository, RedisService redisService) {
         this.disbursementRepository = disbursementRepository;
+        this.redisService = redisService;
     }
     /**
      * Validates the disbursement request
@@ -136,20 +141,24 @@ public class DisbursementValidator {
      */
     private void validateDisbursementFromDB(Disbursement disbursement) {
         log.info("Validating disbursement from db");
-        DisbursementSearchCriteria disbursementSearchCriteria = DisbursementSearchCriteria.builder()
-                .ids(Collections.singletonList(disbursement.getId()))
-                .build();
-        DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
-                .requestInfo(RequestInfo.builder().build())
-                .criteria(disbursementSearchCriteria)
-                .pagination(Pagination.builder().build())
-                .build();
-        List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
-        if(disbursements == null || disbursements.isEmpty()){
-            throw new CustomException(Error.DISBURSEMENT_NOT_FOUND, Error.DISBURSEMENT_NOT_FOUND_IN_DB_MESSAGE);
+        Disbursement disbursementFromDB = redisService.getDisbursementFromCache(disbursement.getId());
+
+        if(disbursementFromDB == null){
+            DisbursementSearchCriteria disbursementSearchCriteria = DisbursementSearchCriteria.builder()
+                    .ids(Collections.singletonList(disbursement.getId()))
+                    .build();
+            DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
+                    .requestInfo(RequestInfo.builder().build())
+                    .criteria(disbursementSearchCriteria)
+                    .pagination(Pagination.builder().build())
+                    .build();
+            List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
+            if(disbursements == null || disbursements.isEmpty()){
+                throw new CustomException(Error.DISBURSEMENT_NOT_FOUND, Error.DISBURSEMENT_NOT_FOUND_IN_DB_MESSAGE);
+            }
+            //Validating disbursement From DB
+            disbursementFromDB = disbursements.get(0);
         }
-        //Validating disbursement From DB
-        Disbursement disbursementFromDB = disbursements.get(0);
         if(!disbursementFromDB.getTargetId().equals(disbursement.getTargetId())){
             throw new CustomException(Error.TARGET_ID_NOT_MATCHED, Error.TARGET_ID_NOT_MATCHED_MESSAGE);
         }
@@ -198,6 +207,25 @@ public class DisbursementValidator {
         }
         if(disbursement.getStatus() == null || disbursement.getStatus().getStatusCode() == null){
             throw new CustomException(Error.INVALID_REQUEST, Error.DISBURSEMENT_STATUS_NOT_FOUND);
+        }
+    }
+
+    public Boolean isDisbursementCreated(PaymentRequest paymentRequest) {
+        Object payment = redisService.getPaymentFromCache(Constants.PAYMENT_REDIS_KEY.replace("{uuid}", paymentRequest.getPayment().getId()));
+        if(payment == null){
+            redisService.setCacheForPayment(paymentRequest.getPayment());
+            DisbursementSearchCriteria searchCriteria = DisbursementSearchCriteria.builder()
+                    .paymentNumber(paymentRequest.getPayment().getPaymentNumber())
+                    .build();
+            DisbursementSearchRequest disbursementSearchRequest = DisbursementSearchRequest.builder()
+                    .requestInfo(paymentRequest.getRequestInfo())
+                    .criteria(searchCriteria)
+                    .pagination(Pagination.builder().build())
+                    .build();
+            List<Disbursement> disbursements = disbursementRepository.searchDisbursement(disbursementSearchRequest);
+            return !disbursements.isEmpty();
+        }else{
+            return true;
         }
     }
 }

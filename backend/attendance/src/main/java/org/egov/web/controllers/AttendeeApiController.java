@@ -18,31 +18,29 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/attendee/v1")
 public class AttendeeApiController {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final AttendeeService attendeeService;
+
+    private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private AttendeeService attendeeService;
-
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    public AttendeeApiController(AttendeeService attendeeService, ResponseInfoFactory responseInfoFactory) {
+        this.attendeeService = attendeeService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<AttendeeCreateResponse> createAttendee(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendeeCreateRequest attendeeCreateRequest) {
         AttendeeCreateRequest enrichedRequest = attendeeService.createAttendee(attendeeCreateRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeCreateRequest.getRequestInfo(), true);
         AttendeeCreateResponse attendeeCreateResponse = AttendeeCreateResponse.builder().responseInfo(responseInfo).attendees(enrichedRequest.getAttendees()).build();
-        return new ResponseEntity<AttendeeCreateResponse>(attendeeCreateResponse, HttpStatus.OK);
+        return new ResponseEntity<>(attendeeCreateResponse, HttpStatus.OK);
     }
 
 
@@ -51,7 +49,7 @@ public class AttendeeApiController {
         AttendeeDeleteRequest enrichedRequest = attendeeService.deleteAttendee(attendeeDeleteRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeDeleteRequest.getRequestInfo(), true);
         AttendeeDeleteResponse attendeeDeleteResponse = AttendeeDeleteResponse.builder().responseInfo(responseInfo).attendees(enrichedRequest.getAttendees()).build();
-        return new ResponseEntity<AttendeeDeleteResponse>(attendeeDeleteResponse, HttpStatus.OK);
+        return new ResponseEntity<>(attendeeDeleteResponse, HttpStatus.OK);
     }
 
 }

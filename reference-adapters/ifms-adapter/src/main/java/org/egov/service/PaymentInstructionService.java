@@ -156,7 +156,7 @@ public class PaymentInstructionService {
                 JITRequest jitPiRequest = piEnrichment.getJitPaymentInstructionRequestForIFMS(piRequest);
                 try {
                     log.info("Payment instruction data is populated, creating jit request based on PI.");
-                    JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
+                    JITResponse jitResponse = ifmsService.sendRequest(paymentRequest.getTenantId(), jitPiRequest);
                     log.info("Jit response for create PI : " + jitResponse);
                     if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                         paymentStatus = PaymentStatus.INITIATED;
@@ -274,7 +274,7 @@ public class PaymentInstructionService {
             // GET failure pi JIT request data from PI
             JITRequest jitPiRequest = piEnrichment.getCorRequest(paymentRequest, paymentInstruction, originalPi, lastRevisedPi);
             try {
-                JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
+                JITResponse jitResponse = ifmsService.sendRequest(paymentRequest.getTenantId(), jitPiRequest);
                 if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                     paymentStatus = PaymentStatus.INITIATED;
                     jitApiRespStatus = JitRespStatusForPI.STATUS_LOG_COR_SUCCESS;
@@ -637,7 +637,7 @@ public class PaymentInstructionService {
         msgCallbackHeader.setMessageType(MessageType.DISBURSE);
         msgCallbackHeader.setAction(Action.SEARCH);
         DisburseSearch disburseSearch = DisburseSearch.builder()
-                .targetId(paymentInstruction.getMuktaReferenceId())
+                .ids(Collections.singletonList(paymentInstruction.getId()))
                 .locationCode(paymentInstruction.getTenantId())
                 .pagination(PaginationForDisburse.builder().sortBy("created_time").sortOrder(PaginationForDisburse.SortOrder.DESC).build())
                 .build();
@@ -647,22 +647,25 @@ public class PaymentInstructionService {
                 .build();
         DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
         List<Disbursement> disbursements = disbursementResponse.getDisbursements();
-        Disbursement disbursement = null;
-        if(isRevised){
-            for(Disbursement disbursement1: disbursements){
-                if(disbursement1.getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
-                    disbursement = disbursement1;
-                    break;
-                }
-            }
-            if(disbursement == null){
-                throw new CustomException("DISBURSEMENT_NOT_FOUND","Disbursement not found for revised PI");
-            }
-        }else{
-            if (disbursements != null && !disbursements.isEmpty()) {
-                disbursement = disbursements.get(0);
-            }
+        if(disbursements == null || disbursements.isEmpty()){
+            throw new CustomException("DISBURSEMENT_NOT_FOUND","Disbursement not found for PI");
         }
+        Disbursement disbursement = disbursements.get(0);
+//        if(isRevised){
+//            for(Disbursement disbursement1: disbursements){
+//                if(disbursement1.getStatus().getStatusCode().equals(StatusCode.PARTIAL)){
+//                    disbursement = disbursement1;
+//                    break;
+//                }
+//            }
+//            if(disbursement == null){
+//                throw new CustomException("DISBURSEMENT_NOT_FOUND","Disbursement not found for revised PI");
+//            }
+//        }else{
+//            if (disbursements != null && !disbursements.isEmpty()) {
+//                disbursement = disbursements.get(0);
+//            }
+//        }
         piEnrichment.setStatusOfDisbursementForPI(paymentInstruction, disbursement);
         piEnrichment.setAddtionaInfoForDisbursement(paymentInstruction, disbursement);
         msgCallbackHeader.setAction(Action.UPDATE);
@@ -670,7 +673,7 @@ public class PaymentInstructionService {
         try {
             DisbursementRequest disbursementRequest = DisbursementRequest.builder()
                     .header(msgCallbackHeader)
-                    .message(disbursements.get(0))
+                    .message(disbursement)
                     .build();
             programServiceUtil.callOnDisburse(disbursementRequest);
         }catch (Exception e){

@@ -4,14 +4,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Identifier;
+import org.egov.common.models.individual.Individual;
+import org.egov.common.models.individual.Skill;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.bankaccounts.BankAccount;
+import org.egov.works.services.common.models.bankaccounts.BankAccountDetails;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -73,8 +79,8 @@ public class MusterRollServiceUtil {
 	 */
 	public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode,
 			Individual matchedIndividual, BankAccount bankAccount, boolean isCreate) {
-		final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "."
-				+ MASTER_WAGER_SEEKER_SKILLS + ".*";
+		final String jsonPathForWorksMuster = "$.MdmsRes." + "WORKS-SOR" + "."
+				+ "SOR" + ".*";
 		List<LinkedHashMap<String, String>> musterRes = null;
 
 		try {
@@ -89,7 +95,7 @@ public class MusterRollServiceUtil {
 		String skillValue = "";
 		if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
 			for (LinkedHashMap<String, String> codeValueMap : musterRes) {
-				if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
+				if (codeValueMap.get("id").equalsIgnoreCase(skillCode)) {
 					skillValue = codeValueMap.get("name");
 					break;
 				}
@@ -146,15 +152,15 @@ public class MusterRollServiceUtil {
 		if (!isCreate && !CollectionUtils.isEmpty(matchedIndividual.getSkills())) {
 			List<String> skillList = new ArrayList<>();
 			for (Skill skill : matchedIndividual.getSkills()) {
-				skillList.add(skill.getLevel() + "." + skill.getType());
+				skillList.add(skill.getLevel());
 			}
 			additionalDetails.put(SKILL_CODE, skillList);
 		}
 	}
 
 	public void updateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode) {
-		final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "."
-				+ MASTER_WAGER_SEEKER_SKILLS + ".*";
+		final String jsonPathForWorksMuster = "$.MdmsRes." + "WORKS-SOR" + "."
+				+ "SOR" + ".*";
 		List<LinkedHashMap<String, String>> musterRes = null;
 
 		try {
@@ -169,7 +175,7 @@ public class MusterRollServiceUtil {
 		String skillValue = "";
 		if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
 			for (LinkedHashMap<String, String> codeValueMap : musterRes) {
-				if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
+				if (codeValueMap.get("id").equalsIgnoreCase(skillCode)) {
 					skillValue = codeValueMap.get("name");
 					break;
 				}

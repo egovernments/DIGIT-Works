@@ -126,7 +126,7 @@ public class VirtualAllotmentService {
 
             log.info("Calling ifms service.");
             JITRequest vaRequest = vaEnrichment.constructVARequest(hoaNode, ssuNode, lastExecuted);
-            JITResponse vaResponse = ifmsService.sendRequestToIFMS(vaRequest);
+            JITResponse vaResponse = ifmsService.sendRequest(tenantId, vaRequest);
 
             if (vaResponse.getErrorMsg() == null) {
                 List<Object> vaResponseList = vaResponse.getData();

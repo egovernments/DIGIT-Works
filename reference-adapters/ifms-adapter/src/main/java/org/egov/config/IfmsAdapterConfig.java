@@ -1,9 +1,12 @@
 package org.egov.config;
 
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Configuration
 @Component
@@ -47,6 +50,13 @@ public class IfmsAdapterConfig {
 
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+
+    // MDMS-v2
+    @Value("${egov.mdms.v2.host}")
+    private String mdmsV2Host;
+
+    @Value("${egov.mdms.v2.v2.search.endpoint}")
+    private String mdmsV2V2EndPoint;
 
     // bill
     @Value("${egov.bill.host}")
@@ -160,4 +170,37 @@ public class IfmsAdapterConfig {
 
     @Value("${ifms.session.timeout}")
     private Long ifmsSessionTimeout;
+
+    @Value("${ifix.adapter.error.queue.topic}")
+    private String ifixAdapterErrorQueueTopic;
+
+    @Value("${ifix.adapter.es.error.queue.topic}")
+    private String ifixAdapterESErrorQueueTopic;
+  
+    @Value("${ifms.jit.mock.enabled}")
+    private Boolean ifmsJitMockEnabled;
+
+    @Value("${ifms.jit.mock.mdms.master.name}")
+    private String ifmsJitMockMdmsMasterName;
+
+    @Value("${ifms.jit.mock.enabled.tenants}")
+    private String ifmsJitMockEnabledTenants;
+
+    private String[] ifmsMockEnabledTenantsIds;
+
+    @Value("${original.pi.expire.days}")
+    private Integer originalExpireDays;
+
+    @Value("${original.pi.expire.financial.year.date}")
+    private Integer originalExpireFinancialYearDate;
+
+    @Value("${original.pi.expire.financial.year.month}")
+    private Integer originalExpireFinancialYearMonth;
+
+    @PostConstruct
+    public void init() {
+        if (ifmsJitMockEnabled && !StringUtils.isEmpty(ifmsJitMockEnabledTenants)) {
+            ifmsMockEnabledTenantsIds = ifmsJitMockEnabledTenants.split(",");
+        }
+    }
 }

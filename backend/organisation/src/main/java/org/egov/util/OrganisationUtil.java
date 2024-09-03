@@ -1,7 +1,7 @@
 package org.egov.util;
 
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.web.models.Function;
 import org.egov.web.models.Organisation;
 import org.springframework.stereotype.Component;
