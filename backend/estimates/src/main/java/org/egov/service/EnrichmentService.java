@@ -6,7 +6,7 @@ import org.egov.common.contract.idgen.IdGenerationResponse;
 import org.egov.common.contract.idgen.IdResponse;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.models.project.Address;
+import org.egov.works.services.common.models.common.Address;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.EstimateRepository;
 import org.egov.repository.IdGenRepository;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.models.project.Address;
+import org.egov.works.services.common.models.common.Address;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AmountDetail;
 import org.egov.web.models.Estimate;

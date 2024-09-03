@@ -7,7 +7,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.common.models.project.Address;
+import org.egov.works.services.common.models.common.Address;
 import org.egov.web.models.*;
 import org.springframework.core.io.ClassPathResource;
 
@@ -48,7 +48,7 @@ public class EstimateRequestBuilderTest {
         estimateDetails.add(estimateDetail);
         estimateDetails.add(estimateDetail1);
 
-        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").type(CORRESPONDENCE).build();
+        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").build();
 
         Estimate estimate = Estimate.builder().tenantId("pb.amritsar")
                 .projectId("95ba2d55-b7a4-41e2-8598-19a83d63c9a4")
@@ -80,7 +80,7 @@ public class EstimateRequestBuilderTest {
                 .amountDetail(amountDetails).build();
         estimateDetails.add(estimateDetail);
 
-        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").type(CORRESPONDENCE).build();
+        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").build();
 
         Estimate estimate = Estimate.builder().tenantId("pb.amritsar")
                 .name("School Construction")
@@ -107,7 +107,7 @@ public class EstimateRequestBuilderTest {
                 .build();
         estimateDetails.add(estimateDetail);
 
-        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").type(CORRESPONDENCE).build();
+        Address address = Address.builder().city("Bangalore").pincode("560108").tenantId("pb.amritsar").build();
 
         Estimate estimate = Estimate.builder().tenantId("pb.amritsar")
                 .projectId("95ba2d55-b7a4-41e2-8598-19a83d63c9a4")
