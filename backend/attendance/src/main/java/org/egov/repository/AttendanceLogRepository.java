@@ -22,19 +22,25 @@ import org.springframework.util.CollectionUtils;
 
 @Repository
 @Slf4j
-public class AttendanceLogRepository {
+public class AttendanceLogRepository extends GenericRepository<AttendanceLog> {
     private final AttendanceLogRowMapper rowMapper;
-
     private final AttendanceLogQueryBuilder queryBuilder;
-
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public AttendanceLogRepository(AttendanceLogRowMapper rowMapper, AttendanceLogQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+    protected AttendanceLogRepository(
+            Producer producer,
+            NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+            RedisTemplate<String, Object> redisTemplate,
+            SelectQueryBuilder selectQueryBuilder,
+            AttendanceLogRowMapper rowMapper,
+            JdbcTemplate jdbcTemplate) {
+        super(producer, namedParameterJdbcTemplate, redisTemplate, selectQueryBuilder, null, Optional.of("abc"));
         this.rowMapper = rowMapper;
-        this.queryBuilder = queryBuilder;
+        this.queryBuilder = new AttendanceLogQueryBuilder();
         this.jdbcTemplate = jdbcTemplate;
     }
+
 
     public List<AttendanceLog> getAttendanceLogs(AttendanceLogSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();

@@ -16,12 +16,8 @@ import java.util.UUID;
 @Service
 public class AttendeeEnrichmentService {
 
-    private final AttendanceServiceUtil attendanceServiceUtil;
-
     @Autowired
-    public AttendeeEnrichmentService(AttendanceServiceUtil attendanceServiceUtil) {
-        this.attendanceServiceUtil = attendanceServiceUtil;
-    }
+    private AttendanceServiceUtil attendanceServiceUtil;
 
     public void enrichAttendeeOnCreate(AttendeeCreateRequest attendeeCreateRequest) {
         RequestInfo requestInfo = attendeeCreateRequest.getRequestInfo();

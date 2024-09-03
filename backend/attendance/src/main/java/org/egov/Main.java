@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"org.egov", "org.egov.web.controllers", "org.egov.config"})
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         SpringApplication.run(Main.class, args);
     }
 

@@ -31,15 +31,11 @@ import static org.egov.util.AttendanceServiceConstants.*;
 @Slf4j
 public class AttendeeServiceValidator {
 
-    private final MDMSUtils mdmsUtils;
-
-    private final IndividualServiceUtil individualServiceUtil;
+    @Autowired
+    private MDMSUtils mdmsUtils;
 
     @Autowired
-    public AttendeeServiceValidator(MDMSUtils mdmsUtils, IndividualServiceUtil individualServiceUtil) {
-        this.mdmsUtils = mdmsUtils;
-        this.individualServiceUtil = individualServiceUtil;
-    }
+    private IndividualServiceUtil individualServiceUtil;
 
     @Autowired
     private HRMSUtil hrmsUtil;

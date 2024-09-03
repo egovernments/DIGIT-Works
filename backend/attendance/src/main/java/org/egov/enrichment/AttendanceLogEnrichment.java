@@ -20,12 +20,10 @@ import java.util.UUID;
 @Component
 @Slf4j
 public class AttendanceLogEnrichment {
-    private final AttendanceServiceUtil attendanceServiceUtil;
-
     @Autowired
-    public AttendanceLogEnrichment(AttendanceServiceUtil attendanceServiceUtil) {
-        this.attendanceServiceUtil = attendanceServiceUtil;
-    }
+    private AttendanceServiceUtil attendanceServiceUtil;
+    @Autowired
+    private AttendanceServiceConfiguration config;
 
     public void enrichAttendanceLogCreateRequest(AttendanceLogRequest attendanceLogRequest) {
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();

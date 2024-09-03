@@ -22,17 +22,13 @@ import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 @Slf4j
 public class MDMSUtils {
 
-    private final ServiceRequestRepository serviceRequestRepository;
-
-    private final AttendanceServiceConfiguration config;
-
-    public static final String filterCode = "$.*.code";
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    public MDMSUtils(ServiceRequestRepository serviceRequestRepository, AttendanceServiceConfiguration config) {
-        this.serviceRequestRepository = serviceRequestRepository;
-        this.config = config;
-    }
+    private AttendanceServiceConfiguration config;
+
+    public static final String filterCode = "$.*.code";
 
     public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
@@ -56,7 +52,7 @@ public class MDMSUtils {
     }
 
     public StringBuilder getMdmsSearchUrl() {
-        return new StringBuilder().append(config.getMdmsV2Host()).append(config.getMdmsV2EndPoint());
+        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
     }
 
     private ModuleDetail getTenantModuleRequestData() {

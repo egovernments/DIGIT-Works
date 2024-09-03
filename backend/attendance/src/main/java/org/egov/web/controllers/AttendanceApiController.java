@@ -4,6 +4,7 @@ package org.egov.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
+import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.AttendanceRegisterService;
 import org.egov.util.ResponseInfoFactory;
@@ -17,27 +18,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import java.util.List;
 
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T14:44:21.051+05:30")
 
 @Controller
 @RequestMapping("/v1")
 public class AttendanceApiController {
 
-    private final ResponseInfoFactory responseInfoCreator;
-
-    private final AttendanceRegisterService attendanceRegisterService;
-    private final ResponseInfoFactory responseInfoFactory;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public AttendanceApiController(ResponseInfoFactory responseInfoCreator, AttendanceRegisterService attendanceRegisterService, ResponseInfoFactory responseInfoFactory) {
-        this.responseInfoCreator = responseInfoCreator;
-        this.attendanceRegisterService = attendanceRegisterService;
-        this.responseInfoFactory = responseInfoFactory;
-    }
+    private HttpServletRequest request;
+
+    @Autowired
+    private ResponseInfoFactory responseInfoCreator;
+
+    @Autowired
+    private AttendanceRegisterService attendanceRegisterService;
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> createAttendanceRegister(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendanceRegisterRequest attendanceRegisterRequest) {

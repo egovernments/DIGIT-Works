@@ -2,6 +2,7 @@ package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.AttendeeService;
 import org.egov.util.ResponseInfoFactory;
@@ -18,29 +19,30 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/attendee/v1")
 public class AttendeeApiController {
 
-    private final AttendeeService attendeeService;
-
-    private final ResponseInfoFactory responseInfoFactory;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public AttendeeApiController(AttendeeService attendeeService, ResponseInfoFactory responseInfoFactory) {
-        this.attendeeService = attendeeService;
-        this.responseInfoFactory = responseInfoFactory;
-    }
+    private HttpServletRequest request;
+
+    @Autowired
+    private AttendeeService attendeeService;
+
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<AttendeeCreateResponse> createAttendee(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendeeCreateRequest attendeeCreateRequest) {
         AttendeeCreateRequest enrichedRequest = attendeeService.createAttendee(attendeeCreateRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeCreateRequest.getRequestInfo(), true);
         AttendeeCreateResponse attendeeCreateResponse = AttendeeCreateResponse.builder().responseInfo(responseInfo).attendees(enrichedRequest.getAttendees()).build();
-        return new ResponseEntity<>(attendeeCreateResponse, HttpStatus.OK);
+        return new ResponseEntity<AttendeeCreateResponse>(attendeeCreateResponse, HttpStatus.OK);
     }
 
 
@@ -49,7 +51,7 @@ public class AttendeeApiController {
         AttendeeDeleteRequest enrichedRequest = attendeeService.deleteAttendee(attendeeDeleteRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeDeleteRequest.getRequestInfo(), true);
         AttendeeDeleteResponse attendeeDeleteResponse = AttendeeDeleteResponse.builder().responseInfo(responseInfo).attendees(enrichedRequest.getAttendees()).build();
-        return new ResponseEntity<>(attendeeDeleteResponse, HttpStatus.OK);
+        return new ResponseEntity<AttendeeDeleteResponse>(attendeeDeleteResponse, HttpStatus.OK);
     }
 
 }

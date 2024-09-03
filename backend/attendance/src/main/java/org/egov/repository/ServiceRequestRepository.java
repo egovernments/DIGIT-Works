@@ -16,15 +16,12 @@ import java.util.Map;
 @Slf4j
 public class ServiceRequestRepository {
 
-    private final ObjectMapper mapper;
-
-    private final RestTemplate restTemplate;
+    @Autowired
+    @Qualifier("objectMapper")
+    private ObjectMapper mapper;
 
     @Autowired
-    public ServiceRequestRepository(ObjectMapper mapper, RestTemplate restTemplate) {
-        this.mapper = mapper;
-        this.restTemplate = restTemplate;
-    }
+    private RestTemplate restTemplate;
 
 
     public Object fetchResult(StringBuilder uri, Object request) {

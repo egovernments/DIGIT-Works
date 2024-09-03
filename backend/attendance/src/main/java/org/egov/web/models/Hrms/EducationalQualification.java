@@ -42,7 +42,6 @@ package org.egov.web.models.Hrms;
 
 import digit.models.coremodels.AuditDetails;
 import lombok.*;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -57,27 +56,27 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class EducationalQualification {
 
-	@SafeHtml
+	
 	private String id;
 
-	@SafeHtml
+	
 	@NotNull
 	private String qualification;
 
-	@SafeHtml
+	
 	@NotNull
 	private String stream;
 
 	@NotNull
 	private Long yearOfPassing;
 
-	@SafeHtml
+	
 	private String university;
 
-	@SafeHtml
+	
 	private  String remarks;
 
-	@SafeHtml
+	
 	private  String tenantId;
 
 	private AuditDetails auditDetails;

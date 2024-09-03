@@ -13,18 +13,14 @@ import java.util.List;
 
 @Repository
 public class AttendeeRepository {
-    private final AttendeeRowMapper attendeeRowMapper;
-
-    private final AttendeeQueryBuilder queryBuilder;
-
-    private final JdbcTemplate jdbcTemplate;
+    @Autowired
+    private AttendeeRowMapper attendeeRowMapper;
 
     @Autowired
-    public AttendeeRepository(AttendeeRowMapper attendeeRowMapper, AttendeeQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
-        this.attendeeRowMapper = attendeeRowMapper;
-        this.queryBuilder = queryBuilder;
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    private AttendeeQueryBuilder queryBuilder;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     public List<IndividualEntry> getAttendees(AttendeeSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();

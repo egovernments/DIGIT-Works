@@ -2,6 +2,7 @@ package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.AttendanceLogConfiguration;
 import org.egov.common.producer.Producer;
@@ -18,20 +19,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/log/v1")
 public class AttendanceLogApiController {
 
 
-    private final AttendanceLogService attendanceLogService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public AttendanceLogApiController(AttendanceLogService attendanceLogService) {
-        this.attendanceLogService = attendanceLogService;
-    }
+    private HttpServletRequest request;
+
+    @Autowired
+    private AttendanceLogService attendanceLogService;
 
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
@@ -48,7 +50,7 @@ public class AttendanceLogApiController {
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<AttendanceLogResponse> attendanceLogV1CreatePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendanceLogRequest attendanceLogRequest) {
         AttendanceLogResponse attendanceLogResponse = attendanceLogService.createAttendanceLog(attendanceLogRequest);
-        return new ResponseEntity<>(attendanceLogResponse, HttpStatus.OK);
+        return new ResponseEntity<AttendanceLogResponse>(attendanceLogResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/bulk/_create", method = RequestMethod.POST)
@@ -59,15 +61,22 @@ public class AttendanceLogApiController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseInfoFactory.createResponseInfoFromRequestInfo(attendanceLogRequest.getRequestInfo(), true));
     }
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
-    public ResponseEntity<AttendanceLogResponse> attendanceLogV1SearchPOST(@Valid @ModelAttribute AttendanceLogSearchCriteria searchCriteria, @ApiParam(value = "") @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-        AttendanceLogResponse attendanceLogResponse = attendanceLogService.searchAttendanceLog(requestInfoWrapper, searchCriteria);
-        return new ResponseEntity<>(attendanceLogResponse, HttpStatus.OK);
+    public ResponseEntity<AttendanceLogResponse> attendanceLogV1SearchPOST(@Valid @ModelAttribute AttendanceLogSearchCriteria searchCriteria, @ApiParam(value = "") @Valid @RequestBody AttendanceLogSearchRequest attendanceLogSearchRequest) {
+        AttendanceLogResponse attendanceLogResponse = attendanceLogService.searchAttendanceLog(
+                RequestInfoWrapper.builder()
+                        .requestInfo(attendanceLogSearchRequest.getRequestInfo())
+                        .build(),
+                attendanceLogSearchRequest.getAttendanceLogSearchCriteria() != null
+                        ? attendanceLogSearchRequest.getAttendanceLogSearchCriteria()
+                        : searchCriteria
+        );
+        return new ResponseEntity<AttendanceLogResponse>(attendanceLogResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_update", method = RequestMethod.POST)
     public ResponseEntity<AttendanceLogResponse> attendanceLogV1UpdatePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendanceLogRequest attendanceLogRequest) {
         AttendanceLogResponse attendanceLogResponse = attendanceLogService.updateAttendanceLog(attendanceLogRequest);
-        return new ResponseEntity<>(attendanceLogResponse, HttpStatus.OK);
+        return new ResponseEntity<AttendanceLogResponse>(attendanceLogResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/bulk/_update", method = RequestMethod.POST)

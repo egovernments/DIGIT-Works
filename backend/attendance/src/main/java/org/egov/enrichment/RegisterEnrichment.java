@@ -26,20 +26,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RegisterEnrichment {
 
-    private final AttendanceServiceUtil attendanceServiceUtil;
-    private final IdGenRepository idGenRepository;
-    private final AttendanceServiceConfiguration config;
-    private final IndividualServiceUtil individualServiceUtil;
-    private final MultiStateInstanceUtil multiStateInstanceUtil;
-
     @Autowired
-    public RegisterEnrichment(AttendanceServiceUtil attendanceServiceUtil, IdGenRepository idGenRepository, AttendanceServiceConfiguration config, IndividualServiceUtil individualServiceUtil, MultiStateInstanceUtil multiStateInstanceUtil) {
-        this.attendanceServiceUtil = attendanceServiceUtil;
-        this.idGenRepository = idGenRepository;
-        this.config = config;
-        this.individualServiceUtil = individualServiceUtil;
-        this.multiStateInstanceUtil = multiStateInstanceUtil;
-    }
+    private AttendanceServiceUtil attendanceServiceUtil;
+    @Autowired
+    private IdGenRepository idGenRepository;
+    @Autowired
+    private AttendanceServiceConfiguration config;
+    @Autowired
+    private IndividualServiceUtil individualServiceUtil;
+    @Autowired
+    private MultiStateInstanceUtil multiStateInstanceUtil;
 
     /* Enrich Attendance Register on Create Request */
     public void enrichRegisterOnCreate(AttendanceRegisterRequest attendanceRegisterRequest) {

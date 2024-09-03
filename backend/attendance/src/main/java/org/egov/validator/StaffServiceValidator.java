@@ -25,12 +25,11 @@ import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 @Slf4j
 public class StaffServiceValidator {
 
-    private final MDMSUtils mdmsUtils;
+    @Autowired
+    private MDMSUtils mdmsUtils;
 
     @Autowired
-    public StaffServiceValidator(MDMSUtils mdmsUtils) {
-        this.mdmsUtils = mdmsUtils;
-    }
+    private AttendanceRegisterService attendanceRegisterService;
 
 
     public void validateMDMSAndRequestInfoForStaff(StaffPermissionRequest request) {

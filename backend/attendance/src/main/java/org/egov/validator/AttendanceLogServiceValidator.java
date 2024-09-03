@@ -27,27 +27,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AttendanceLogServiceValidator {
 
-    private final StaffRepository attendanceStaffRepository;
-
-    private final RegisterRepository attendanceRegisterRepository;
-
-    private final AttendeeRepository attendanceAttendeeRepository;
-
-    private final AttendanceLogRepository attendanceLogRepository;
-
-    private final AttendanceServiceConfiguration config;
-
-    private final IndividualServiceUtil individualServiceUtil;
+    @Autowired
+    private StaffRepository attendanceStaffRepository;
 
     @Autowired
-    public AttendanceLogServiceValidator(StaffRepository attendanceStaffRepository, RegisterRepository attendanceRegisterRepository, AttendeeRepository attendanceAttendeeRepository, AttendanceLogRepository attendanceLogRepository, AttendanceServiceConfiguration config, IndividualServiceUtil individualServiceUtil) {
-        this.attendanceStaffRepository = attendanceStaffRepository;
-        this.attendanceRegisterRepository = attendanceRegisterRepository;
-        this.attendanceAttendeeRepository = attendanceAttendeeRepository;
-        this.attendanceLogRepository = attendanceLogRepository;
-        this.config = config;
-        this.individualServiceUtil = individualServiceUtil;
-    }
+    private RegisterRepository attendanceRegisterRepository;
+
+    @Autowired
+    private AttendeeRepository attendanceAttendeeRepository;
+
+    @Autowired
+    private AttendanceLogRepository attendanceLogRepository;
+
+    @Autowired
+    private AttendanceServiceConfiguration config;
+
+    @Autowired
+    private IndividualServiceUtil individualServiceUtil;
 
     public void validateCreateAttendanceLogRequest(AttendanceLogRequest attendanceLogRequest) {
         log.info("Validate attendance log create request");

@@ -2,6 +2,7 @@ package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.StaffService;
 import org.egov.util.ResponseInfoFactory;
@@ -16,23 +17,24 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/staff/v1")
 public class StaffApiController {
 
 
-    private final StaffService staffService;
-
-    private final ResponseInfoFactory responseInfoFactory;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public StaffApiController(StaffService staffService, ResponseInfoFactory responseInfoFactory) {
-        this.staffService = staffService;
-        this.responseInfoFactory = responseInfoFactory;
-    }
+    private HttpServletRequest request;
+
+    @Autowired
+    private StaffService staffService;
+
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<StaffPermissionResponse> createStaff(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody StaffPermissionRequest staffPermissionRequest) {
@@ -40,7 +42,7 @@ public class StaffApiController {
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
         StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo)
                 .staff(enrichedRequest.getStaff()).build();
-        return new ResponseEntity<>(staffPermissionResponse, HttpStatus.OK);
+        return new ResponseEntity<StaffPermissionResponse>(staffPermissionResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_delete", method = RequestMethod.POST)
@@ -49,7 +51,7 @@ public class StaffApiController {
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
         StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo)
                 .staff(enrichedRequest.getStaff()).build();
-        return new ResponseEntity<>(staffPermissionResponse, HttpStatus.OK);
+        return new ResponseEntity<StaffPermissionResponse>(staffPermissionResponse, HttpStatus.OK);
     }
 
 }

@@ -16,18 +16,14 @@ import java.util.List;
 @Slf4j
 public class RegisterRepository {
 
-    private final RegisterRowMapper rowMapper;
-
-    private final RegisterQueryBuilder queryBuilder;
-
-    private final JdbcTemplate jdbcTemplate;
+    @Autowired
+    private RegisterRowMapper rowMapper;
 
     @Autowired
-    public RegisterRepository(RegisterRowMapper rowMapper, RegisterQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
-        this.rowMapper = rowMapper;
-        this.queryBuilder = queryBuilder;
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    private RegisterQueryBuilder queryBuilder;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     public List<AttendanceRegister> getRegister(AttendanceRegisterSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
