@@ -24,17 +24,21 @@ import javax.validation.Valid;
 public class StaffApiController {
 
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+
+    private final HttpServletRequest request;
+
+    private final StaffService staffService;
+
+    private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private StaffService staffService;
-
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    public StaffApiController(ObjectMapper objectMapper, HttpServletRequest request, StaffService staffService, ResponseInfoFactory responseInfoFactory) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+        this.staffService = staffService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<StaffPermissionResponse> createStaff(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody StaffPermissionRequest staffPermissionRequest) {

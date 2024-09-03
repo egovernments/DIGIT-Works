@@ -29,35 +29,39 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class AttendanceRegisterService {
-    @Autowired
-    private AttendanceServiceValidator attendanceServiceValidator;
+    private final AttendanceServiceValidator attendanceServiceValidator;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    private final ResponseInfoFactory responseInfoFactory;
 
-    @Autowired
-    private Producer producer;
+    private final Producer producer;
 
-    @Autowired
-    private AttendanceServiceConfiguration attendanceServiceConfiguration;
+    private final AttendanceServiceConfiguration attendanceServiceConfiguration;
 
-    @Autowired
-    private RegisterEnrichment registerEnrichment;
+    private final RegisterEnrichment registerEnrichment;
 
 
-    @Autowired
-    private StaffService staffService;
+    private final StaffService staffService;
+
+    private final RegisterRepository registerRepository;
+
+    private final AttendeeRepository attendeeRepository;
+
+    private final StaffEnrichmentService staffEnrichmentService;
+    private final IndividualServiceUtil individualServiceUtil;
 
     @Autowired
-    private RegisterRepository registerRepository;
-
-    @Autowired
-    private AttendeeRepository attendeeRepository;
-
-    @Autowired
-    private StaffEnrichmentService staffEnrichmentService;
-    @Autowired
-    private IndividualServiceUtil individualServiceUtil;
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffService staffService, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil) {
+        this.attendanceServiceValidator = attendanceServiceValidator;
+        this.responseInfoFactory = responseInfoFactory;
+        this.producer = producer;
+        this.attendanceServiceConfiguration = attendanceServiceConfiguration;
+        this.registerEnrichment = registerEnrichment;
+        this.staffService = staffService;
+        this.registerRepository = registerRepository;
+        this.attendeeRepository = attendeeRepository;
+        this.staffEnrichmentService = staffEnrichmentService;
+        this.individualServiceUtil = individualServiceUtil;
+    }
 
     /**
      * Create Attendance register

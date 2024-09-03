@@ -31,22 +31,26 @@ import static org.egov.util.AttendanceServiceConstants.*;
 @Slf4j
 public class AttendeeServiceValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+    private final MDMSUtils mdmsUtils;
+
+    private final IndividualServiceUtil individualServiceUtil;
+
+    private final HRMSUtil hrmsUtil;
+    private final StaffService staffService;
+
+    private final AttendanceServiceConfiguration config;
+
+    private final ProjectStaffUtil projectStaffUtil;
 
     @Autowired
-    private IndividualServiceUtil individualServiceUtil;
-
-    @Autowired
-    private HRMSUtil hrmsUtil;
-    @Autowired
-    private StaffService staffService;
-
-    @Autowired
-    private AttendanceServiceConfiguration config;
-
-    @Autowired
-    private ProjectStaffUtil projectStaffUtil;
+    public AttendeeServiceValidator(MDMSUtils mdmsUtils, IndividualServiceUtil individualServiceUtil, HRMSUtil hrmsUtil, StaffService staffService, AttendanceServiceConfiguration config, ProjectStaffUtil projectStaffUtil) {
+        this.mdmsUtils = mdmsUtils;
+        this.individualServiceUtil = individualServiceUtil;
+        this.hrmsUtil = hrmsUtil;
+        this.staffService = staffService;
+        this.config = config;
+        this.projectStaffUtil = projectStaffUtil;
+    }
 
     public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();

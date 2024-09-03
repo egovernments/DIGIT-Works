@@ -22,13 +22,17 @@ import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 @Slf4j
 public class MDMSUtils {
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
 
-    @Autowired
-    private AttendanceServiceConfiguration config;
+    private final AttendanceServiceConfiguration config;
 
     public static final String filterCode = "$.*.code";
+
+    @Autowired
+    public MDMSUtils(ServiceRequestRepository serviceRequestRepository, AttendanceServiceConfiguration config) {
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+    }
 
     public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);

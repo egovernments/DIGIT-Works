@@ -26,19 +26,23 @@ import java.util.List;
 @RequestMapping("/v1")
 public class AttendanceApiController {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+
+    private final HttpServletRequest request;
+
+    private final ResponseInfoFactory responseInfoCreator;
+
+    private final AttendanceRegisterService attendanceRegisterService;
+    private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private ResponseInfoFactory responseInfoCreator;
-
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    public AttendanceApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoFactory responseInfoCreator, AttendanceRegisterService attendanceRegisterService, ResponseInfoFactory responseInfoFactory) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+        this.responseInfoCreator = responseInfoCreator;
+        this.attendanceRegisterService = attendanceRegisterService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> createAttendanceRegister(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendanceRegisterRequest attendanceRegisterRequest) {

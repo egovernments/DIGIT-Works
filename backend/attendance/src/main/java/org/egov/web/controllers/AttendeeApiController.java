@@ -25,17 +25,21 @@ import javax.validation.Valid;
 @RequestMapping("/attendee/v1")
 public class AttendeeApiController {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+
+    private final HttpServletRequest request;
+
+    private final AttendeeService attendeeService;
+
+    private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private AttendeeService attendeeService;
-
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    public AttendeeApiController(ObjectMapper objectMapper, HttpServletRequest request, AttendeeService attendeeService, ResponseInfoFactory responseInfoFactory) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+        this.attendeeService = attendeeService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<AttendeeCreateResponse> createAttendee(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendeeCreateRequest attendeeCreateRequest) {

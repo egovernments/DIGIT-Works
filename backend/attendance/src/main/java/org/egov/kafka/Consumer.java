@@ -25,12 +25,16 @@ import java.util.Map;
 @Slf4j
 public class Consumer {
 
+    private final ObjectMapper objectMapper;
+    private final OrganisationContactDetailsStaffUpdateService organisationContactDetailsStaffUpdateService;
+    private final AttendanceRegisterService attendanceRegisterService;
+
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private OrganisationContactDetailsStaffUpdateService organisationContactDetailsStaffUpdateService;
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
+    public Consumer(ObjectMapper objectMapper, OrganisationContactDetailsStaffUpdateService organisationContactDetailsStaffUpdateService, AttendanceRegisterService attendanceRegisterService) {
+        this.objectMapper = objectMapper;
+        this.organisationContactDetailsStaffUpdateService = organisationContactDetailsStaffUpdateService;
+        this.attendanceRegisterService = attendanceRegisterService;
+    }
 
     @KafkaListener(topics = "${organisation.contact.details.update.topic}")
     public void updateAttendanceStaff(Map<String, Object> consumerRecord,

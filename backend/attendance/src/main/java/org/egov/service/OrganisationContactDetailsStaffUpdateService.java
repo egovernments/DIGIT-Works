@@ -22,15 +22,19 @@ import java.util.*;
 @Service
 public class OrganisationContactDetailsStaffUpdateService {
 
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
-    @Autowired
-    private StaffService staffService;
-    @Autowired
-    private IndividualServiceUtil individualServiceUtil;
+    private final AttendanceRegisterService attendanceRegisterService;
+    private final StaffService staffService;
+    private final IndividualServiceUtil individualServiceUtil;
+
+    private final AttendanceServiceConfiguration configuration;
 
     @Autowired
-    private AttendanceServiceConfiguration configuration;
+    public OrganisationContactDetailsStaffUpdateService(AttendanceRegisterService attendanceRegisterService, StaffService staffService, IndividualServiceUtil individualServiceUtil, AttendanceServiceConfiguration configuration) {
+        this.attendanceRegisterService = attendanceRegisterService;
+        this.staffService = staffService;
+        this.individualServiceUtil = individualServiceUtil;
+        this.configuration = configuration;
+    }
 
     public void updateStaffPermissionsForContactDetails(OrgContactUpdateDiff orgContactUpdateDiff) {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(orgContactUpdateDiff.getRequestInfo()).build();

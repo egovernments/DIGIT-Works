@@ -19,8 +19,7 @@ import java.util.List;
 @Slf4j
 public class RegisterQueryBuilder {
 
-    @Autowired
-    private AttendanceServiceConfiguration config;
+    private final AttendanceServiceConfiguration config;
 
     private static final String ATTENDANCE_REGISTER_SELECT_QUERY = " SELECT reg.id, " +
             "reg.tenantid, " +
@@ -49,6 +48,11 @@ public class RegisterQueryBuilder {
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
+
+    @Autowired
+    public RegisterQueryBuilder(AttendanceServiceConfiguration config) {
+        this.config = config;
+    }
 
 
     public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
