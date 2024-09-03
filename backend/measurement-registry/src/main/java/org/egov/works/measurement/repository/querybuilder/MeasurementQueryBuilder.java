@@ -18,12 +18,6 @@ import java.util.List;
 public class MeasurementQueryBuilder {
 
     @Autowired
-    private MeasurementQueryBuilder QueryUtil;
-
-    @Autowired
-    private Pagination pagination;
-
-    @Autowired
     private MBRegistryConfiguration config;
 
 
