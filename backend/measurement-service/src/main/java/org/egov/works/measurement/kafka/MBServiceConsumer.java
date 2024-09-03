@@ -23,12 +23,12 @@ import java.util.List;
 public class MBServiceConsumer {
     private final ObjectMapper mapper;
 
-    final
-    RestTemplate restTemplate;
-    final
-    MBServiceProducer MBServiceProducer;
-    final
-    MBServiceConfiguration MBServiceConfiguration;
+
+    private final RestTemplate restTemplate;
+
+    private final MBServiceProducer MBServiceProducer;
+
+    private final MBServiceConfiguration MBServiceConfiguration;
 
     @Autowired
     public MBServiceConsumer(ObjectMapper mapper, RestTemplate restTemplate, MBServiceProducer MBServiceProducer, MBServiceConfiguration MBServiceConfiguration) {
