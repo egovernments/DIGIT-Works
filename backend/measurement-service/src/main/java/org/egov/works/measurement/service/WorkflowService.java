@@ -21,11 +21,16 @@ import static org.egov.works.measurement.config.ServiceConstants.REJECT_ACTION;
 @Slf4j
 public class WorkflowService {
 
-    @Autowired
-    private WorkflowUtil workflowUtil;
+    private final WorkflowUtil workflowUtil;
+
+    private final MBServiceConfiguration config;
 
     @Autowired
-    private MBServiceConfiguration config;
+    public WorkflowService(WorkflowUtil workflowUtil, MBServiceConfiguration config) {
+        this.workflowUtil = workflowUtil;
+        this.config = config;
+    }
+
     public List<String> updateWorkflowStatuses(MeasurementServiceRequest measurementServiceRequest) {
         List<String> wfStatusList = new ArrayList<>();
         for (org.egov.works.measurement.web.models.MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {

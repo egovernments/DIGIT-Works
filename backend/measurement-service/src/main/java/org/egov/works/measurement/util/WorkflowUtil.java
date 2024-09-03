@@ -23,14 +23,18 @@ import static org.egov.works.measurement.config.ServiceConstants.*;
 @Service
 public class WorkflowUtil {
 
-    @Autowired
-    private ServiceRequestRepository repository;
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
+
+    private final MBServiceConfiguration configs;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private MBServiceConfiguration configs;
+    public WorkflowUtil(ServiceRequestRepository repository, ObjectMapper mapper, MBServiceConfiguration configs) {
+        this.repository = repository;
+        this.mapper = mapper;
+        this.configs = configs;
+    }
 
 
     public List<String> getActions (RequestInfo requestInfo, String tenantId, String businessId) {

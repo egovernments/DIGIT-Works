@@ -12,16 +12,16 @@ import java.util.List;
 
 @Component
 public class MeasurementRegistryUtil {
+    private final MBServiceConfiguration MBServiceConfiguration;
+    private final MeasurementServiceUtil measurementServiceUtil;
+    private final RestTemplate restTemplate;
+
     @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
-    private MBServiceConfiguration MBServiceConfiguration;
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-    @Autowired
-    private MeasurementServiceUtil measurementServiceUtil;
-    @Autowired
-    private RestTemplate restTemplate;
+    public MeasurementRegistryUtil(MBServiceConfiguration MBServiceConfiguration, MeasurementServiceUtil measurementServiceUtil, RestTemplate restTemplate) {
+        this.MBServiceConfiguration = MBServiceConfiguration;
+        this.measurementServiceUtil = measurementServiceUtil;
+        this.restTemplate = restTemplate;
+    }
 
     public ResponseEntity<MeasurementResponse> createMeasurements(MeasurementServiceRequest body){
         List<Measurement> measurementList = measurementServiceUtil.convertToMeasurementList(body.getMeasurements());
