@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.workflow.ProcessInstance;
-import org.egov.common.models.project.Address;
 import org.egov.common.models.project.Project;
+import org.egov.works.services.common.models.common.Address;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;
@@ -90,6 +90,7 @@ public class Estimate {
     private String executingDepartment = null;
 
     @JsonProperty("address")
+    @NotNull
     private Address address = null;
 
 //    @JsonProperty("totalEstimateAmount")
