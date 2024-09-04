@@ -110,6 +110,7 @@ public class ContractService {
                 contracts = getContractsFromCache(new HashSet<>(contractCriteria.getIds()));
                 if(contracts.size() == contractCriteria.getIds().size()){
                     log.info("Contracts searched");
+                    contractCriteria.getPagination().setTotalCount(contracts.size());
                     return contracts;
                 }else{
                     log.info("Contracts not found in cache");
@@ -125,6 +126,9 @@ public class ContractService {
         log.info("get enriched contracts list");
         contracts.addAll(getContracts(contractCriteria));
 
+        if(contracts.size() > contractCriteria.getPagination().getTotalCount()){
+            contractCriteria.getPagination().setTotalCount(contracts.size());
+        }
         log.info("Contracts searched");
         return contracts;
     }
@@ -158,7 +162,8 @@ public class ContractService {
 
 
         //set total contracts and  sorting order count in pagination object
-        contractCriteria.getPagination().setTotalCount(contracts.size());
+        Integer count = contractRepository.getContractCount(contractCriteria);
+        contractCriteria.getPagination().setTotalCount(count);
 
         return contracts;
     }

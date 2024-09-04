@@ -98,11 +98,34 @@ public class ContractQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
+    private static final String LEFT_JOIN = "LEFT JOIN ";
+
+    private static final String CONTRACT_COUNT_QUERY = "SELECT distinct(contract.id) " +
+            "FROM eg_wms_contract AS contract " +
+            LEFT_JOIN +
+            "eg_wms_contract_documents AS document " +
+            "ON (contract.id = document.contract_id) " +
+            LEFT_JOIN+
+            "eg_wms_contract_line_items AS lineItems " +
+            "ON (contract.id = lineItems.contract_id) " +
+            LEFT_JOIN +
+            "eg_wms_contract_amount_breakups AS amountBreakups " +
+            "ON (lineItems.id=amountBreakups.line_item_id) ";
+
+    private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+
     @Autowired
     private ContractServiceConfiguration config;
 
-    public String getContractSearchQuery(ContractCriteria criteria, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(CONTRACT_SELECT_QUERY);
+    public String getContractSearchQuery(ContractCriteria criteria, List<Object> preparedStmtList, Boolean isCountNeeded) {
+        StringBuilder query = null;
+
+        if(Boolean.FALSE.equals(isCountNeeded)){
+            query = new StringBuilder(CONTRACT_SELECT_QUERY);
+        }else{
+            query = new StringBuilder(CONTRACT_COUNT_QUERY);
+        }
 
         List<String> ids = criteria.getIds();
         if (ids != null && !ids.isEmpty()) {
@@ -187,9 +210,17 @@ public class ContractQueryBuilder {
             }
         }
 
-        return addPaginationWrapper(query.toString(), preparedStmtList, criteria);
+        return Boolean.FALSE.equals(isCountNeeded)? addPaginationWrapper(query.toString(), preparedStmtList, criteria): query.toString();
     }
 
+    public String getSearchCountQueryString(ContractCriteria criteria, List<Object> preparedStmtList) {
+        log.info("EstimateQueryBuilder::getSearchCountQueryString");
+        String query = getContractSearchQuery(criteria, preparedStmtList,true);
+        if (query != null)
+            return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
+    }
     private void addOrderByClause(StringBuilder queryBuilder, ContractCriteria criteria) {
 
         Pagination pagination = criteria.getPagination();

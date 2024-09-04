@@ -32,8 +32,20 @@ public class ContractRepository {
 
     public List<Contract> getContracts(ContractCriteria contractCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getContractSearchQuery(contractCriteria, preparedStmtList);
+        String query = queryBuilder.getContractSearchQuery(contractCriteria, preparedStmtList,false);
         return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+    }
+
+    public Integer getContractCount(ContractCriteria contractCriteria) {
+        log.info("ContractRepository::getContractCount");
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getSearchCountQueryString(contractCriteria, preparedStmtList);
+
+        if(query == null) {
+            return 0;
+        }
+
+        return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
     }
     public List<Contract> getActiveContractsFromDB(ContractRequest contractRequest) {
         Pagination pagination = Pagination.builder()
