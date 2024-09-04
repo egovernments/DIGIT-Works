@@ -46,7 +46,7 @@ public class Function {
     private String category = null;
 
     @JsonProperty("class")
-    @Size(min = 2, max = 64)
+    @Size(min = 1, max = 64)
     private String propertyClass = null;
 
     @JsonProperty("validFrom")
