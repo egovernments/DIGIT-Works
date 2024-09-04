@@ -47,6 +47,14 @@ public class MeasurementQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
+    private static final String MEASUREMENT_COUNT_QUERY = "SELECT distinct(m.id) " +
+            "FROM eg_mb_measurements m " +
+            "INNER JOIN eg_mb_measurement_details md ON m.id = md.referenceId " +
+            "INNER JOIN eg_mb_measurement_measures mm ON md.id = mm.id "+
+            "LEFT JOIN eg_mb_measurement_documents dc ON m.id = dc.referenceId ";
+
+    private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
 
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
         if (preparedStmtList.isEmpty()) {
@@ -56,8 +64,14 @@ public class MeasurementQueryBuilder {
         }
     }
 
-    public String getMeasurementSearchQuery(MeasurementCriteria criteria, List<Object> preparedStmtList, MeasurementSearchRequest measurementSearchRequest) {
-        StringBuilder query = new StringBuilder(BASE_MEASUREMENT_QUERY);
+    public String getMeasurementSearchQuery(MeasurementCriteria criteria, List<Object> preparedStmtList, MeasurementSearchRequest measurementSearchRequest, boolean isCountNeeded) {
+        StringBuilder query = null;
+
+        if(isCountNeeded) {
+            query = new StringBuilder(MEASUREMENT_COUNT_QUERY);
+        } else {
+            query = new StringBuilder(BASE_MEASUREMENT_QUERY);
+        }
 
         boolean tenantIdProvided = !ObjectUtils.isEmpty(criteria.getTenantId());
 
@@ -99,7 +113,7 @@ public class MeasurementQueryBuilder {
             preparedStmtList.add(criteria.getIsActive());
         }
 
-        return addPaginationWrapper(query, measurementSearchRequest.getPagination(), preparedStmtList);
+        return isCountNeeded? query.toString(): addPaginationWrapper(query, measurementSearchRequest.getPagination(), preparedStmtList);
     }
 
 
@@ -155,5 +169,14 @@ public class MeasurementQueryBuilder {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });
+    }
+
+    public String getSearchCountQueryString(MeasurementCriteria criteria, List<Object> preparedStmtList, MeasurementSearchRequest measurementSearchRequest) {
+        log.info("EstimateQueryBuilder::getSearchCountQueryString");
+        String query = getMeasurementSearchQuery(criteria, preparedStmtList, measurementSearchRequest, true);
+        if (query != null)
+            return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
     }
 }

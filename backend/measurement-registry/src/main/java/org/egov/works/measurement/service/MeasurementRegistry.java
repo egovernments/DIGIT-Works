@@ -104,6 +104,9 @@ public class MeasurementRegistry {
         return measurements;
     }
 
+    public Integer getMeasurementCount(MeasurementCriteria searchCriteria) {
+        return serviceRequestRepository.getCount(searchCriteria);
+    }
 
     private void handleNullPagination(MeasurementSearchRequest body){
         if (body.getPagination() == null) {
