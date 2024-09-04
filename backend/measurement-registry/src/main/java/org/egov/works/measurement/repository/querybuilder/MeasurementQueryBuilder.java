@@ -39,7 +39,6 @@ public class MeasurementQueryBuilder {
             "INNER JOIN eg_mb_measurement_measures mm ON md.id = mm.id "+
             "LEFT JOIN eg_mb_measurement_documents dc ON m.id = dc.referenceId ";
 
-    private final String ORDER_BY_CREATED_TIME = "ORDER BY m.createdtime DESC";
 
     private static String WRAPPER_QUERY = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY {sortBy} {orderBy}) offset_ FROM " +
