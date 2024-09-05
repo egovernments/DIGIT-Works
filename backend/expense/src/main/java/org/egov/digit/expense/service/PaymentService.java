@@ -18,18 +18,7 @@ import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.PaymentRepository;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
-import org.egov.digit.expense.web.models.Bill;
-import org.egov.digit.expense.web.models.BillDetail;
-import org.egov.digit.expense.web.models.BillRequest;
-import org.egov.digit.expense.web.models.BillSearchRequest;
-import org.egov.digit.expense.web.models.LineItem;
-import org.egov.digit.expense.web.models.Payment;
-import org.egov.digit.expense.web.models.PaymentBill;
-import org.egov.digit.expense.web.models.PaymentBillDetail;
-import org.egov.digit.expense.web.models.PaymentLineItem;
-import org.egov.digit.expense.web.models.PaymentRequest;
-import org.egov.digit.expense.web.models.PaymentResponse;
-import org.egov.digit.expense.web.models.PaymentSearchRequest;
+import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
 import org.egov.digit.expense.web.validators.PaymentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,11 +94,15 @@ public class PaymentService {
     	
         log.info("PaymentService::search");
         List<Payment> payments = paymentRepository.search(paymentSearchRequest);
+        Integer count = paymentRepository.count(paymentSearchRequest);
+        Pagination pagination = paymentSearchRequest.getPagination();
+        pagination.setTotalCount(count);
         /*
          * TODO enrich bills if required, can be done from UI only when needed
          */
         return PaymentResponse.builder()
                 .payments(payments)
+                .pagination(pagination)
                 .responseInfo(
                         responseInfoFactory.createResponseInfoFromRequestInfo(paymentSearchRequest.getRequestInfo(), true))
                 .build();

@@ -1,5 +1,6 @@
 package org.egov.digit.expense.service;
 
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -145,6 +146,8 @@ public class BillService {
 
 		log.info("Search repository using billCriteria");
 		List<Bill> bills = billRepository.search(billSearchRequest);
+		Integer totalBills = billRepository.searchCount(billSearchRequest);
+		billSearchRequest.getPagination().setTotalCount(totalBills);
 
 		ResponseInfo responseInfo = responseInfoFactory.
 		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
