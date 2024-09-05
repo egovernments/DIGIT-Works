@@ -114,6 +114,7 @@ public class MeasurementRegistry {
             body.getPagination().setLimit(null);
             body.getPagination().setOffSet(null);
             body.getPagination().setOrder(Pagination.OrderEnum.DESC);
+            body.getPagination().setSortBy("createdtime");
         }
     }
 
