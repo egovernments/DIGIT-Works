@@ -10,7 +10,7 @@ RUN flutter clean
 RUN flutter pub get
 RUN flutter build web
 # Create runtime image
-FROM nginx:mainline-alpine
+FROM nginx:1-alpine3.20
 ENV WEB_DIR=/var/web/works-shg-app
 #RUN mkdir -p ${WEB_DIR}
 COPY --from=build /app/build/web/ ${WEB_DIR}/
