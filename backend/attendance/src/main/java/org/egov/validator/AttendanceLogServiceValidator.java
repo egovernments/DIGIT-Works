@@ -18,7 +18,11 @@ import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,6 +64,9 @@ public class AttendanceLogServiceValidator {
         // Verify given attendance log against register params
         validateAttendanceLogsAgainstRegisterParams(attendanceLogRequest);
 
+        // Check if the attendance of an individual is marked for a same day in different project
+        checkAttendeeIsMappedToAnotherRegisterOrNot(attendanceLogRequest, Boolean.FALSE);
+
         // Verify if individuals are part of the given register and individuals were active during given attendance log time.
         validateAttendees(attendanceLogRequest);
 
@@ -71,14 +78,14 @@ public class AttendanceLogServiceValidator {
     private void validateMultipleTenantIds(AttendanceLogRequest attendanceLogRequest) {
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
         Set<String> tenantIds = new HashSet<>();
-        for(AttendanceLog attendanceLog : attendanceLogs){
+        for (AttendanceLog attendanceLog : attendanceLogs) {
             String tenantId = attendanceLog.getTenantId();
-            if(tenantIds.isEmpty()){
+            if (tenantIds.isEmpty()) {
                 tenantIds.add(tenantId);
-            }else{
-                if(!tenantIds.contains(tenantId)){
+            } else {
+                if (!tenantIds.contains(tenantId)) {
                     log.error("Attendance logs should below to same tenantId");
-                    throw new CustomException("MULTIPLE_TENANTIDS","Attendance logs should belong to same tenantId");
+                    throw new CustomException("MULTIPLE_TENANTIDS", "Attendance logs should belong to same tenantId");
                 }
             }
         }
@@ -87,14 +94,14 @@ public class AttendanceLogServiceValidator {
     private void validateMultipleRegisterIds(AttendanceLogRequest attendanceLogRequest) {
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
         Set<String> registerIds = new HashSet<>();
-        for(AttendanceLog attendanceLog : attendanceLogs){
+        for (AttendanceLog attendanceLog : attendanceLogs) {
             String registerId = attendanceLog.getRegisterId();
-            if(registerIds.isEmpty()){
+            if (registerIds.isEmpty()) {
                 registerIds.add(registerId);
-            }else{
-                if(!registerIds.contains(registerId)){
+            } else {
+                if (!registerIds.contains(registerId)) {
                     log.error("Attendance logs should below to same registerId");
-                    throw new CustomException("MULTIPLE_REGISTERIDS","Attendance logs should belong to same registerId");
+                    throw new CustomException("MULTIPLE_REGISTERIDS", "Attendance logs should belong to same registerId");
                 }
             }
         }
@@ -119,6 +126,10 @@ public class AttendanceLogServiceValidator {
         // Verify given attendance log against register params
         validateAttendanceLogsAgainstRegisterParams(attendanceLogRequest);
 
+        // Check if the attendance of an individual is marked for a same day in different project
+        checkAttendeeIsMappedToAnotherRegisterOrNot(attendanceLogRequest, Boolean.TRUE);
+
+
         // Verify if individuals are part of the given register and individuals were active during given attendance log time.
         validateAttendees(attendanceLogRequest);
 
@@ -128,7 +139,7 @@ public class AttendanceLogServiceValidator {
         log.info("Attendance log update request validation done");
     }
 
-    private void validateAttendanceLogsAgainstRegisterParams(AttendanceLogRequest attendanceLogRequest){
+    private void validateAttendanceLogsAgainstRegisterParams(AttendanceLogRequest attendanceLogRequest) {
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
         String tenantId = attendanceLogRequest.getAttendance().get(0).getTenantId();
 
@@ -136,7 +147,7 @@ public class AttendanceLogServiceValidator {
         List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(registerId);
 
         // Check existence of register
-        checkRegisterExistence(attendanceRegisters,registerId);
+        checkRegisterExistence(attendanceRegisters, registerId);
 
         AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
 
@@ -144,33 +155,33 @@ public class AttendanceLogServiceValidator {
         checkRegisterStatus(attendanceRegister);
 
         // Check register association with tenantId
-        validateTenantIdAssociationWithRegisterId(attendanceRegister,tenantId);
+        validateTenantIdAssociationWithRegisterId(attendanceRegister, tenantId);
 
         // Check attendance log time against register start and end date
-        validateAttendanceLogTimeWithRegisterStartEndDate(attendanceRegister,attendanceLogRequest);
+        validateAttendanceLogTimeWithRegisterStartEndDate(attendanceRegister, attendanceLogRequest);
 
-        log.info("Attendance log verification against register params are done. RegisterId ["+registerId+"]");
+        log.info("Attendance log verification against register params are done. RegisterId [" + registerId + "]");
     }
 
     private void checkRegisterStatus(AttendanceRegister attendanceRegister) {
-        if(Status.INACTIVE.equals(attendanceRegister.getStatus())){
+        if (Status.INACTIVE.equals(attendanceRegister.getStatus())) {
             String registerId = attendanceRegister.getId();
-            log.error("Register ["+registerId+"] is inactive");
-            throw new CustomException("INACTIVE_REGISTER", "Given RegisterId ["+registerId+"] is inactive");
+            log.error("Register [" + registerId + "] is inactive");
+            throw new CustomException("INACTIVE_REGISTER", "Given RegisterId [" + registerId + "] is inactive");
         }
     }
 
-    private void checkRegisterExistence(List<AttendanceRegister> attendanceRegisters,String registerId) {
+    private void checkRegisterExistence(List<AttendanceRegister> attendanceRegisters, String registerId) {
         if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
-            log.error("Register ["+registerId+"] does not exists");
-            throw new CustomException("REGISTER_NOT_FOUND", "Given RegisterId ["+registerId+"] does not exists");
+            log.error("Register [" + registerId + "] does not exists");
+            throw new CustomException("REGISTER_NOT_FOUND", "Given RegisterId [" + registerId + "] does not exists");
         }
     }
 
-    private void validateTenantIdAssociationWithRegisterId(AttendanceRegister attendanceRegister,String tenantId) {
-        if(!tenantId.equals(attendanceRegister.getTenantId())){
-            log.error("TenantId ["+tenantId+"] is not associated with register ["+attendanceRegister.getId()+"]");
-            throw new CustomException("INVALID_TENANTID", "TenantId ["+tenantId+"] is not associated with register ["+attendanceRegister.getId()+"]");
+    private void validateTenantIdAssociationWithRegisterId(AttendanceRegister attendanceRegister, String tenantId) {
+        if (!tenantId.equals(attendanceRegister.getTenantId())) {
+            log.error("TenantId [" + tenantId + "] is not associated with register [" + attendanceRegister.getId() + "]");
+            throw new CustomException("INVALID_TENANTID", "TenantId [" + tenantId + "] is not associated with register [" + attendanceRegister.getId() + "]");
         }
     }
 
@@ -182,33 +193,34 @@ public class AttendanceLogServiceValidator {
         return attendanceRegisterRepository.getRegister(searchCriteria);
     }
 
-    private void validateAttendanceLogTimeWithRegisterStartEndDate(AttendanceRegister attendanceRegister,AttendanceLogRequest attendanceLogRequest) {
+    private void validateAttendanceLogTimeWithRegisterStartEndDate(AttendanceRegister attendanceRegister, AttendanceLogRequest attendanceLogRequest) {
         Instant registerStartTime = Instant.ofEpochMilli(attendanceRegister.getStartDate().longValue());
 
         Instant registerEndTime = null;
-        if(attendanceRegister.getEndDate() != null)
+        if (attendanceRegister.getEndDate() != null)
             registerEndTime = Instant.ofEpochMilli(attendanceRegister.getEndDate().longValue());
 
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
 
-        if(registerEndTime != null){
-            for(AttendanceLog attendanceLog : attendanceLogs){
+        if (registerEndTime != null) {
+            for (AttendanceLog attendanceLog : attendanceLogs) {
                 Instant instantAttendanceAttendeeLogTime = Instant.ofEpochMilli(attendanceLog.getTime().longValue());
-                if(!(instantAttendanceAttendeeLogTime.compareTo(registerStartTime) >=0 && instantAttendanceAttendeeLogTime.compareTo(registerEndTime) <=0)){
-                    log.error("Attendance time ["+instantAttendanceAttendeeLogTime+"] is invalid for register ["+attendanceRegister.getId()+"]");
-                    throw new CustomException("INVALID_ATTENDANCE_TIME", "Attendance time ["+instantAttendanceAttendeeLogTime+"] is invalid for register ["+attendanceRegister.getId()+"]");
+                if (!(instantAttendanceAttendeeLogTime.compareTo(registerStartTime) >= 0 && instantAttendanceAttendeeLogTime.compareTo(registerEndTime) <= 0)) {
+                    log.error("Attendance time [" + instantAttendanceAttendeeLogTime + "] is invalid for register [" + attendanceRegister.getId() + "]");
+                    throw new CustomException("INVALID_ATTENDANCE_TIME", "Attendance time [" + instantAttendanceAttendeeLogTime + "] is invalid for register [" + attendanceRegister.getId() + "]");
                 }
             }
-        }else{
-            for(AttendanceLog attendanceLog : attendanceLogs){
+        } else {
+            for (AttendanceLog attendanceLog : attendanceLogs) {
                 Instant instantAttendanceAttendeeLogTime = Instant.ofEpochMilli(attendanceLog.getTime().longValue());
-                if(!(instantAttendanceAttendeeLogTime.compareTo(registerStartTime) >=0)){
-                    log.error("Attendance time ["+instantAttendanceAttendeeLogTime+"] is invalid for register ["+attendanceRegister.getId()+"]");
-                    throw new CustomException("INVALID_ATTENDANCE_TIME", "Attendance time ["+instantAttendanceAttendeeLogTime+"] is invalid for register ["+attendanceRegister.getId()+"]");
+                if (!(instantAttendanceAttendeeLogTime.compareTo(registerStartTime) >= 0)) {
+                    log.error("Attendance time [" + instantAttendanceAttendeeLogTime + "] is invalid for register [" + attendanceRegister.getId() + "]");
+                    throw new CustomException("INVALID_ATTENDANCE_TIME", "Attendance time [" + instantAttendanceAttendeeLogTime + "] is invalid for register [" + attendanceRegister.getId() + "]");
                 }
             }
         }
     }
+
     private void validateDocumentIds(AttendanceLogRequest attendanceLogRequest) {
         if ("TRUE".equalsIgnoreCase(config.getDocumentIdVerificationRequired())) {
             //TODO
@@ -226,12 +238,12 @@ public class AttendanceLogServiceValidator {
         Set<String> fetchedAttendanceLogIds = fetchedAttendanceLogList.stream().map(e -> String.valueOf(e.getId())).collect(Collectors.toSet());
         for (String providedAttendanceLogId : providedAttendanceLogIds) {
             if (!fetchedAttendanceLogIds.contains(providedAttendanceLogId)) {
-                log.error("Provided attendance id ["+providedAttendanceLogId+"] is invalid for register ["+registerId+"]");
-                throw new CustomException("ATTENDANCE_LOG", "Provided attendance id ["+providedAttendanceLogId+"] is invalid for register ["+registerId+"]");
+                log.error("Provided attendance id [" + providedAttendanceLogId + "] is invalid for register [" + registerId + "]");
+                throw new CustomException("ATTENDANCE_LOG", "Provided attendance id [" + providedAttendanceLogId + "] is invalid for register [" + registerId + "]");
             }
         }
 
-        log.info("Attendance Log Ids are validated successfully for register ["+registerId+"]");
+        log.info("Attendance Log Ids are validated successfully for register [" + registerId + "]");
     }
 
     private List<AttendanceLog> fetchAttendanceLogsByIds(List<String> ids) {
@@ -242,14 +254,14 @@ public class AttendanceLogServiceValidator {
 
     private void validateAttendees(AttendanceLogRequest attendanceLogRequest) {
 
-        /*
-            For now, we are validating attendees on below basis.
-            1. Verify that each attendee is associated to given register.
-            2. Make the entry in attendance log table only if attendee was active during the given attendance time.
+                /*
+                    For now, we are validating attendees on below basis.
+                    1. Verify that each attendee is associated to given register.
+                    2. Make the entry in attendance log table only if attendee was active during the given attendance time.
 
-            Future:
-            Once Individual service will be available will integrate it for further validation.
-         */
+                    Future:
+                    Once Individual service will be available will integrate it for further validation.
+                 */
 
 
         if ("TRUE".equalsIgnoreCase(config.getIndividualServiceIntegrationRequired())) {
@@ -263,7 +275,8 @@ public class AttendanceLogServiceValidator {
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
         List<IndividualEntry> fetchAttendanceAttendeeLst = fetchAllAttendeesEnrolledInARegister(registerId);
 
-        log.info("All attendees are fetched successfully for register ["+registerId+"]");
+        log.info("All attendees are fetched successfully for register [" + registerId + "]");
+
 
         // Convert the fetched Attendee List into a Map with individualId as key and corresponding Attendee list as value.
         Map<String, List<IndividualEntry>> attendanceAttendeeListMap = fetchAttendanceAttendeeLst
@@ -272,7 +285,188 @@ public class AttendanceLogServiceValidator {
 
         // Identify unassociated(Attendees not associated with given register) and ineligible attendees
         identifyUnassociatedAndIneligibleAttendees(attendanceLogRequest, attendanceAttendeeListMap);
-        log.info("Attendee validation is done for register ["+registerId+"]");
+
+
+        log.info("Attendee validation is done for register [" + registerId + "]");
+    }
+
+    /**
+     * This method is used to check if the same individual is mapped to
+     * another register and his/her attendance is logged for the same day
+     * or not
+     *
+     * @param attendanceLogRequest
+     */
+    private void checkAttendeeIsMappedToAnotherRegisterOrNot(AttendanceLogRequest attendanceLogRequest, Boolean isUpdate) {
+        List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
+
+
+        Map<String, List<AttendanceLog>> attendanceLogMap = attendanceLogs.stream().
+                collect(Collectors.groupingBy(AttendanceLog::getIndividualId));
+
+        Map<String, List<String>> requestAttendanceLogsByDay = createAttendanceMap(attendanceLogs);
+
+        for (Map.Entry<String, List<String>> entry : requestAttendanceLogsByDay.entrySet()) {
+            String[] keyParts = entry.getKey().split("_");
+            String individualId = keyParts[0];
+            Map<String, List<String>> fetchedAttendanceLogsByDay = new HashMap<>();
+            boolean checkAttendeeMappedToAnotherRegister = false;
+            if (!fetchAllTheAttendanceLogsForIndividual(individualId).isEmpty()) {
+                checkAttendeeMappedToAnotherRegister = true;
+                List<AttendanceLog> fetchAttendeeListMappedWithAnotherRegister = fetchAllTheAttendanceLogsForIndividual(individualId);
+
+                fetchedAttendanceLogsByDay = createAttendanceMap(fetchAttendeeListMappedWithAnotherRegister);
+            }
+
+
+            if (checkAttendeeMappedToAnotherRegister) {
+                identifyAttendeeMappedInAnotherRegisterForASameDay(entry, fetchedAttendanceLogsByDay, individualId, isUpdate);
+            }
+        }
+    }
+
+
+    private Map<String, List<String>> createAttendanceMap(List<AttendanceLog> attendanceLogs) {
+        // Create a map to store entry and exit times grouped by day
+        Map<String, List<String>> attendanceByDay = new HashMap<>();
+        List<AttendanceLog> attendanceList=attendanceLogs.stream()
+                .filter(x -> x.getType().contains("EXIT"))
+                .collect(Collectors.toList());
+        for (AttendanceLog record : attendanceList) {
+            String individualId = record.getIndividualId();
+            long timeMillis = record.getTime().longValue();
+            Date time = new Date(timeMillis);
+
+            // Format the date to get the day
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String day = dateFormat.format(time);
+
+            // Group entry and exit times by day
+            attendanceByDay.computeIfAbsent(individualId + "_" + day, k -> new ArrayList<>())
+                    .add(record.getType() + " at " + new SimpleDateFormat("HH:mm:ss").format(time) + " in register " + record.getRegisterId());
+        }
+        return attendanceByDay;
+    }
+
+    /**
+     * @param individualId
+     * @return List of all the Attendance Logs  entries for a particular individual
+     */
+    public List<AttendanceLog> fetchAllTheAttendanceLogsForIndividual(String individualId) {
+        AttendanceLogSearchCriteria searchCriteria = AttendanceLogSearchCriteria
+                .builder()
+                .individualIds(Collections.singletonList(individualId))
+                .status(Status.ACTIVE)
+                .build();
+        return attendanceLogRepository.getAttendanceLogsBasedOnIndividualId(searchCriteria);
+    }
+
+
+    /**
+     * This method is used to check the attendance time passed in the attendance logs request of a particular individual
+     * with all the attendance time which we get from the oepn search of attendance log on the individual id
+     *
+     * @param requestedAttendanceLogsByDay
+     * @param fetchedLogsByDay
+     */
+    private void identifyAttendeeMappedInAnotherRegisterForASameDay(Map.Entry<String, List<String>> requestedAttendanceLogsByDay,
+                                                                    Map<String, List<String>> fetchedLogsByDay, String individualId, Boolean isUpdate) {
+        log.info("AttendanceLogServiceValidator:: identifyAttendeeMappedInAnotherRegisterForASameDay");
+        Map<String, List<String>> mapFromEntry = new HashMap<>();
+        mapFromEntry.put(requestedAttendanceLogsByDay.getKey(), requestedAttendanceLogsByDay.getValue());
+        Map<String, String> entryAndExitTime = new HashMap<>();
+
+
+        mapFromEntry.forEach((key, value) -> {
+            List<String> value2 = fetchedLogsByDay.get(key);
+            String[] keyparts = key.split("_");
+            String day = keyparts[1];
+            String requestRegisterId;
+
+            log.info("Fetch Entry And Exit Time for requested attendance logs");
+            String requestAttendanceRegisterID =  fetchEntryAndExitTimeAndRegisterId(mapFromEntry.get(key), entryAndExitTime);
+            if (value2 != null) {
+                List<Map<String, String>> listOfAttendanceMap = new ArrayList<>();
+                Map<String, String> entryAndExitTimeForFetchedAttedance = new HashMap<>();
+                if (!value2.isEmpty()) {
+                    String registerId=null;
+                    for (String entryInfo : value2) {
+                        String exitTime = entryInfo.substring(entryInfo.indexOf("at") + 3);
+                        String id=entryInfo.substring(entryInfo.indexOf("register") + "register".length()).trim();
+                        if (!requestAttendanceRegisterID.equals(id)) {
+                            registerId = id;
+                            entryAndExitTimeForFetchedAttedance.put(registerId, exitTime);
+                            listOfAttendanceMap.add(entryAndExitTimeForFetchedAttedance);
+                        }
+
+                    }
+                    validateAttendanceWithExistingOne(entryAndExitTime, listOfAttendanceMap, individualId, day, isUpdate,registerId,requestAttendanceRegisterID);
+                } else {
+                    log.info("No Existing Attendance Logs found");
+                }
+
+            } else {
+                log.info("No Existing Attendance Logs found ");
+            }
+
+        });
+    }
+
+    private void validateAttendanceWithExistingOne(Map<String, String> entryAndExitTime, List<Map<String, String>> listOfAttendanceMap, String individualId,
+                                                   String day, Boolean isUpdate,String registerId, String requestAttendanceRegisterID) {
+        if (!listOfAttendanceMap.isEmpty()) {
+            for (Map<String, String> entryMap : listOfAttendanceMap) {
+                if (!isUpdate || !requestAttendanceRegisterID.equals(registerId)) {
+                    if (!entryMap.get(registerId).contains("09:00:00")) {
+                        if (entryAndExitTime.get(requestAttendanceRegisterID).contains("09:00:00")) {
+                            log.info("Logging Attendance for " + "[" + individualId + "] " +
+                                    "on this day :" + day + "with this as exit time " + entryAndExitTime.get(requestAttendanceRegisterID));
+                        } else {
+                            log.error("Attedance is already marked for " + "[" + individualId + "] " +
+                                    "on this day :" + day + "with this as exit time" + entryMap.get(registerId));
+                            throw new CustomException("ATTENDANCE_FOR_SAME_DAY", "Attedance is already marked for " + "[" + individualId + "] " +
+                                    "on this day :" + day + "with this as exit time" + entryMap.get(registerId));
+                        }
+
+                    } else {
+                        log.info("Logging Attendance for individual" + "[" + individualId + "] " +
+                                "on this day :" + day + "with this as exit time" + entryAndExitTime.get(requestAttendanceRegisterID));
+                    }
+                } else
+                    log.info("Logging Attendance with Update Api call as no existing attendance logs with same register id is found " + "[" + individualId + "] " +
+                            "on this day :" + day + "with this as exit time" + entryAndExitTime.get(requestAttendanceRegisterID));
+
+            }
+
+
+        }
+        log.info("Logging Attendance as there is no existing attendance logs for this individual " + "[" + individualId + "] " +
+                "on this day :" + day);
+    }
+
+
+    private String fetchEntryAndExitTimeAndRegisterId(List<String> attendanceByDay, Map<String, String> entryAndExitTime) {
+        String exitTime = null;
+        String requestRegisterId=null;
+        if (!attendanceByDay.isEmpty()) {
+            for (String entryInfo : attendanceByDay) {
+                requestRegisterId = entryInfo.substring(entryInfo.indexOf("register") + "register".length()).trim();
+                //entryAndExitTime.put("REGISTER_ID", registerId);
+              /*  if (entryInfo.contains("ENTRY")) {
+                    entryTime = entryInfo.substring(entryInfo.indexOf("at") + 3);
+                    entryAndExitTime.put("ENTRY", entryTime);
+                } else*/
+                if (entryInfo.contains("EXIT")) {
+                    exitTime = entryInfo.substring(entryInfo.indexOf("at") + 3);
+                    entryAndExitTime.put(requestRegisterId, exitTime);
+                }
+
+            }
+        } else {
+            log.info("Attendance Map is empty");
+        }
+        return requestRegisterId;
+
     }
 
     private void identifyUnassociatedAndIneligibleAttendees(AttendanceLogRequest attendanceLogRequest, Map<String, List<IndividualEntry>> attendanceAttendeeListMap) {
@@ -287,7 +481,7 @@ public class AttendanceLogServiceValidator {
                 for (IndividualEntry attendee : lst) {
                     Instant instantAttendanceAttendeeLogTime = Instant.ofEpochMilli(attendanceLog.getTime().longValue());
                     Instant instantEnrollmentDate = Instant.ofEpochMilli(attendee.getEnrollmentDate().longValue());
-                    if (attendee.getDenrollmentDate()==null) {
+                    if (attendee.getDenrollmentDate() == null) {
                         if (instantAttendanceAttendeeLogTime.compareTo(instantEnrollmentDate) >= 0) {
                             eligibleAttendanceAttendeeIdSet.add(attendee.getIndividualId());
                         }
@@ -307,8 +501,8 @@ public class AttendanceLogServiceValidator {
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
 
         if (!unassociatedAttendees.isEmpty()) {
-            log.error("Attendees are not enrolled against register ["+registerId+"]");
-            throw new CustomException("UNENROLLED_ATTENDEES", "Attendees are not enrolled against register ["+registerId+"]");
+            log.error("Attendees are not enrolled against register [" + registerId + "]");
+            throw new CustomException("UNENROLLED_ATTENDEES", "Attendees are not enrolled against register [" + registerId + "]");
         }
 
         //find ineligible list
@@ -320,8 +514,8 @@ public class AttendanceLogServiceValidator {
         }
 
         if (!inEligibleAttendanceAttendeeIdSet.isEmpty()) {
-            log.error("Attendees are ineligible for given date range for register ["+registerId+"]");
-            throw new CustomException("INELIGIBLE_ATTENDEES", "Attendees are ineligible for given date range for register ["+registerId+"]");
+            log.error("Attendees are ineligible for given date range for register [" + registerId + "]");
+            throw new CustomException("INELIGIBLE_ATTENDEES", "Attendees are ineligible for given date range for register [" + registerId + "]");
         }
     }
 
@@ -335,13 +529,13 @@ public class AttendanceLogServiceValidator {
     }
 
     private void validateLoggedInUser(AttendanceLogRequest attendanceLogRequest) {
-        /*
-            For now, we are validating logged-in user on below basis.
-            1. Logged-in user should be active user for provided register_id. Query eg_wms_attendance_staff table for same.
+                /*
+                    For now, we are validating logged-in user on below basis.
+                    1. Logged-in user should be active user for provided register_id. Query eg_wms_attendance_staff table for same.
 
-            Future
-            Once Staff service will be available will integrate it for further validation.
-         */
+                    Future
+                    Once Staff service will be available will integrate it for further validation.
+                 */
 
         if ("TRUE".equalsIgnoreCase(config.getStaffServiceIntegrationRequired())) {
             //TODO
@@ -354,7 +548,7 @@ public class AttendanceLogServiceValidator {
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
         String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceLogRequest.getRequestInfo().getUserInfo().getId(), attendanceLogRequest.getRequestInfo(), attendanceLogRequest.getAttendance().get(0).getTenantId()).get(0).getId();
         validateLoggedInUser(individualId, registerId);
-        log.info("User ["+userUUID+"] validation is done for register ["+registerId+"]");
+        log.info("User [" + userUUID + "] validation is done for register [" + registerId + "]");
     }
 
     public void validateSearchAttendanceLogRequest(RequestInfoWrapper requestInfoWrapper, AttendanceLogSearchCriteria searchCriteria) {
@@ -411,7 +605,6 @@ public class AttendanceLogServiceValidator {
     }
 
 
-
     private void validateLoggedInUser(String userUUID, String registerId) {
         StaffSearchCriteria searchCriteria = StaffSearchCriteria
                 .builder()
@@ -420,8 +613,8 @@ public class AttendanceLogServiceValidator {
                 .build();
         List<StaffPermission> attendanceStaff = attendanceStaffRepository.getActiveStaff(searchCriteria);
         if (attendanceStaff == null || attendanceStaff.isEmpty()) {
-            log.error("User ["+userUUID+"] is not authorised for register ["+registerId+"]");
-            throw new CustomException("UNAUTHORISED_USER", "User ["+userUUID+"] is not authorised for register ["+registerId+"]");
+            log.error("User [" + userUUID + "] is not authorised for register [" + registerId + "]");
+            throw new CustomException("UNAUTHORISED_USER", "User [" + userUUID + "] is not authorised for register [" + registerId + "]");
         }
     }
 
@@ -453,7 +646,7 @@ public class AttendanceLogServiceValidator {
         validateAttendanceLogParameters(attendanceLogRequest.getAttendance(), errorMap);
 
         // Throw exception if required parameters are missing
-        if (!errorMap.isEmpty()){
+        if (!errorMap.isEmpty()) {
             log.error("Attendance log request validation failed");
             throw new CustomException(errorMap);
         }
@@ -474,7 +667,7 @@ public class AttendanceLogServiceValidator {
                 log.error("Attendance registerid is mandatory");
                 errorMap.put("ATTENDANCE.REGISTERID", "Attendance registerid is mandatory");
             }
-            if (StringUtils.isBlank(attendeeLog.getIndividualId() )) {
+            if (StringUtils.isBlank(attendeeLog.getIndividualId())) {
                 log.error("Attendance indidualid is mandatory");
                 errorMap.put("ATTENDANCE.INDIVIDUALID", "Attendance indidualid is mandatory");
             }
