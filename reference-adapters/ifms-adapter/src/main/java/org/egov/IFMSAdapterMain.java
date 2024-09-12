@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 
 @Import({TracerConfiguration.class})
 @SpringBootApplication
-@ComponentScan(basePackages = {"org.egov.config", "org.egov.kafka"})
+//@ComponentScan(basePackages = {"org.egov.config", "org.egov.kafka", "org.egov", "org.egov.web"})
 public class IFMSAdapterMain {
 
     public static void main(String args[]) {
