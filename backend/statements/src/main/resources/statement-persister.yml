@@ -1,0 +1,292 @@
+serviceMaps:
+  serviceName: statement
+  mappings:
+  - version: 1.0
+    name: statement
+    description: Persists statement details in eg_statement table
+    fromTopic: save-analysis-statement
+    isTransaction: true
+    isAuditEnabled: true
+    module: STATEMENT
+    objecIdJsonPath: $.id
+    tenantIdJsonPath: $.tenantId
+    transactionCodeJsonPath: $.id
+    auditAttributeBasePath: $.statement
+    queryMaps:
+    - query: INSERT INTO eg_statement(id,tenantid,target_id,statement_type,basic_sor_details,createdby,lastmodifiedby,createdtime,lastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?);
+      basePath: $.statement
+      jsonMaps:
+      - jsonPath: $.statement.id
+      - jsonPath: $.statement.tenantId
+      - jsonPath: $.statement.targetId
+      - jsonPath: $.statement.statementType
+      - jsonPath: $.statement.basicSorDetails
+        type: JSON
+        dbType: JSONB
+      - jsonPath: $.statement.auditDetails.createdBy
+
+      - jsonPath: $.statement.auditDetails.lastModifiedBy
+
+      - jsonPath: $.statement.auditDetails.createdTime
+
+      - jsonPath: $.statement.auditDetails.lastModifiedTime
+
+
+    - query: INSERT INTO eg_statement_sor_details(id,tenantid,statement_id,sorid,basic_sor_details) VALUES (?,?,?,?,?);
+      basePath: $.statement.sorDetails.*
+      jsonMaps:
+      - jsonPath: $.sorDetails.*.id
+      - jsonPath: $.sorDetails.*.tenantId
+      - jsonPath: $.statement.id
+      - jsonPath: $.sorDetails.*.sorId
+      - jsonPath: $.sorDetails.*.basicSorDetails
+        type: JSON
+        dbType: JSONB
+
+    - query: INSERT INTO eg_statement_sor_line_items(id,tenantid,sorid,sortype,reference_id,basic_sor_details) VALUES (?,?,?,?,?,?);
+      basePath: $.statement.sorDetails.*.lineItems.*
+      jsonMaps:
+      - jsonPath: $.lineItems.*.id
+      - jsonPath: $.statement.tenantId
+      - jsonPath: $.lineItems.*.sorId
+      - jsonPath: $.lineItems.*.sorType
+      - jsonPath: $.lineItems.*.referenceId
+      - jsonPath: $.lineItems.*.amountDetails
+        type: JSON
+        dbType: JSONB
+
+
+# # serviceMaps:
+# #  serviceName: statement
+# #  mappings:
+# #  - version: 1.0
+# #    name: statement
+# #    description: Persists statement details in eg_statement table
+# #    fromTopic: save-analysis-statement
+# #    isTransaction: true
+# #    isAuditEnabled: true
+# #    module: STATEMENT
+# #    objecIdJsonPath: $.id
+# #    tenantIdJsonPath: $.tenantId
+# #    transactionCodeJsonPath: $.id
+# #    auditAttributeBasePath: $.statement.*
+# #    queryMaps:
+# #     - query: INSERT INTO eg_statement(id,tenantid,target_id,statement_type,basic_sor_details) VALUES (?,?,?,?,?);
+# #       basePath: $.statement.*
+# #       jsonMaps:
+# #        - jsonPath: $.statement.*.id
+
+# #        - jsonPath: $.statement.*.tenantId
+
+# #        - jsonPath: $.statement.*.targetId
+
+# #        - jsonPath: $.statement.*.statementType
+
+# #        - jsonPath: $.statement.*.basicSorDetails
+# #          type: JSON
+# #          dbType: JSONB
+
+       
+
+# #       #  - jsonPath: $.statement.createdBy
+
+# #       #  - jsonPath: $.statement.lastModifiedBy
+
+# #       #  - jsonPath: $.statement.createdTime
+
+# #       #  - jsonPath: $.statement.lastModifiedTime
+
+
+# #     - query: INSERT INTO eg_statement_sor_details(id,tenantid,statement_id,sorid,basic_sor_details) VALUES (?,?,?,?,?);
+# #       basePath: $.statement.*.sorDetails.*
+# #       jsonMaps:
+# #        - jsonPath: $.sorDetails.*.id
+
+# #        - jsonPath: $.sorDetails.*.tenantId
+
+# #        - jsonPath: $.sorDetails.*.statementId
+
+# #        - jsonPath: $.sorDetails.*.sorId
+
+# #        - jsonPath: $.sorDetails.*.basicSorDetails
+# #          type: JSON
+# #          dbType: JSONB
+
+# #       #  - jsonPath: $.sorDetails.*.createdtime
+
+# #       #  - jsonPath: $.sorDetails.*.createdby
+        
+
+# #       #  - jsonPath: $.sorDetails.*.lastmodifiedtime
+
+# #       #  - jsonPath: $.sorDetails.*.lastmodifiedby
+
+
+# #     - query: INSERT INTO eg_statement_sor_line_items(id,tenantid,sorid,sortype,reference_id,basic_sor_details) VALUES (?,?,?,?,?,?);
+# #       basePath: $.statement.*.sorDetails.*.lineItems.*
+# #       jsonMaps:
+# #        - jsonPath: $.lineItems.*.id
+
+# #        - jsonPath: $.sorDetails.[*].tenantId
+
+# #        - jsonPath: $.lineItems.*.sorId
+
+# #        - jsonPath: $.lineItems.*.sorType
+
+# #        - jsonPath: $.lineItems.*.referenceId
+
+# #        - jsonPath: $.lineItems.*.amountDetails
+# #          type: JSON
+# #          dbType: JSONB
+
+# #       #  - jsonPath: $.sorDetails.*.createdtime
+
+# #       #  - jsonPath: $.sorDetails.*.createdby
+        
+
+# #       #  - jsonPath: $.sorDetails.*.lastmodifiedtime
+
+# #       #  - jsonPath: $.sorDetails.*.lastmodifiedby
+
+
+# serviceMaps:
+#  serviceName: statement
+#  mappings:
+#  - version: 1.0
+#    name: statement
+#    description: Persists statement details in eg_statement table
+#    fromTopic: save-analysis-statement
+#    isTransaction: true
+#    isAuditEnabled: true
+#    module: STATEMENT
+#    objecIdJsonPath: $.statement[*].id
+#    tenantIdJsonPath: $.statement[*].tenantId
+#    transactionCodeJsonPath: $.statement[*].id
+#    auditAttributeBasePath: $.statement[*].*
+#    queryMaps:
+#     - query: INSERT INTO eg_statement(id, tenantid, target_id, statement_type, basic_sor_details) VALUES (?,?,?,?,?);
+#       basePath: $.statement[*]
+#       jsonMaps:
+#        - jsonPath: $.id
+#        - jsonPath: $.tenantId
+#        - jsonPath: $.targetId
+#        - jsonPath: $.statementType
+#        - jsonPath: $.basicSorDetails
+#          type: JSON
+#          dbType: JSONB
+
+#     - query: INSERT INTO eg_statement_sor_details(id, tenantid, statement_id, sorid, basic_sor_details) VALUES (?,?,?,?,?);
+#       basePath: $.statement[*].sorDetails[*]
+#       jsonMaps:
+#        - jsonPath: $.id
+#        - jsonPath: $.tenantId
+#        - jsonPath: $.statementId
+#        - jsonPath: $.sorId
+#        - jsonPath: $.basicSorDetails
+#          type: JSON
+#          dbType: JSONB
+
+#     - query: INSERT INTO eg_statement_sor_line_items(id, tenantid, sorid, sortype, reference_id, basic_sor_details) VALUES (?,?,?,?,?,?);
+#       basePath: $.statement[*].sorDetails[*].lineItems[*]
+#       jsonMaps:
+#        - jsonPath: $.id
+#        - jsonPath: $.statement[*].tenantId
+#        - jsonPath: $.sorId
+#        - jsonPath: $.sorType
+#        - jsonPath: $.referenceId
+#        - jsonPath: $.amountDetails
+#          type: JSON
+#          dbType: JSONB
+
+
+# serviceMaps:
+#  serviceName: statement
+#  mappings:
+#  - version: 1.0
+#    name: statement
+#    description: Persists statement details in eg_statement table
+#    fromTopic: save-analysis-statement
+#    isTransaction: true
+#    isAuditEnabled: true
+#    module: STATEMENT
+#    objecIdJsonPath: $.id
+#    tenantIdJsonPath: $.tenantId
+#    transactionCodeJsonPath: $.id
+#    auditAttributeBasePath: $.statement
+#    queryMaps:
+#     - query: INSERT INTO eg_statement(id,tenantid,target_id,statement_type,basic_sor_details) VALUES (?,?,?,?,?);
+#       basePath: $.statement.
+#       jsonMaps:
+#        - jsonPath: $.statement.id
+
+#        - jsonPath: $.statement.tenantId
+
+#        - jsonPath: $.statement.targetId
+
+#        - jsonPath: $.statement.statementType
+
+#        - jsonPath: $.statement.basicSorDetails
+#          type: JSON
+#          dbType: JSONB
+
+       
+
+#       #  - jsonPath: $.statement.createdBy
+
+#       #  - jsonPath: $.statement.lastModifiedBy
+
+#       #  - jsonPath: $.statement.createdTime
+
+#       #  - jsonPath: $.statement.lastModifiedTime
+
+
+#     - query: INSERT INTO eg_statement_sor_details(id,tenantid,statement_id,sorid,basic_sor_details) VALUES (?,?,?,?,?);
+#       basePath: $.statement.sorDetails.*
+#       jsonMaps:
+#        - jsonPath: $.sorDetails.*.id
+
+#        - jsonPath: $.sorDetails.*.tenantId
+
+#        - jsonPath: $.statement.id
+
+#        - jsonPath: $.sorDetails.*.sorId
+
+#        - jsonPath: $.sorDetails.*.basicSorDetails
+#          type: JSON
+#          dbType: JSONB
+
+#       #  - jsonPath: $.sorDetails.*.createdtime
+
+#       #  - jsonPath: $.sorDetails.*.createdby
+        
+
+#       #  - jsonPath: $.sorDetails.*.lastmodifiedtime
+
+#       #  - jsonPath: $.sorDetails.*.lastmodifiedby
+
+
+#     - query: INSERT INTO eg_statement_sor_line_items(id,tenantid,sorid,sortype,reference_id,basic_sor_details) VALUES (?,?,?,?,?,?);
+#       basePath: $.statement.sorDetails.*.lineItems.*
+#       jsonMaps:
+#        - jsonPath: $.lineItems.*.id
+
+#        - jsonPath: $.statement.tenantId
+
+#        - jsonPath: $.lineItems.*.sorId
+
+#        - jsonPath: $.lineItems.*.sorType
+
+#        - jsonPath: $.lineItems.*.referenceId
+
+#        - jsonPath: $.lineItems.*.amountDetails
+#          type: JSON
+#          dbType: JSONB
+
+#       #  - jsonPath: $.sorDetails.*.createdtime
+
+#       #  - jsonPath: $.sorDetails.*.createdby
+        
+
+#       #  - jsonPath: $.sorDetails.*.lastmodifiedtime
+
+#       #  - jsonPath: $.sorDetails.*.lastmodifiedby
