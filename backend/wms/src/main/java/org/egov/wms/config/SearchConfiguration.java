@@ -78,4 +78,16 @@ public class SearchConfiguration {
 
 	@Value("${es.search.default.sort.order}")
 	private String defaultSortOrder;
+
+	@Value("${egov.idgen.host}")
+	private String idGenHost;
+
+	@Value("${egov.idgen.path}")
+	private String idGenPath;
+
+	@Value("${egov.idgen.report.id.name}")
+	private String reportIdName;
+
+	@Value("${wms.kafka.report.topic}")
+	private String reportTopic;
 }
