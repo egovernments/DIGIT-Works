@@ -18,6 +18,7 @@ import org.egov.wms.web.model.Job.ReportJob;
 import org.egov.wms.web.model.Job.ReportRequest;
 import org.egov.wms.web.model.Job.ReportSearchRequest;
 import org.egov.wms.web.model.WMSSearchRequest;
+import org.egov.works.services.common.models.expense.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
@@ -125,7 +126,28 @@ public class WMSReportService {
 
     public List<ReportJob> searchReports(ReportSearchRequest reportSearchRequest) {
         log.info("WMSReportService: searchReports");
+        enrichReportRequestOnSearch(reportSearchRequest);
         return reportRepository.getReportJobs(reportSearchRequest);
+    }
+
+    private void enrichReportRequestOnSearch(ReportSearchRequest reportSearchRequest) {
+        log.info("WMSReportService: enrichReportRequestOnSearch");
+        Pagination pagination = reportSearchRequest.getPagination();
+        if (pagination == null) {
+            pagination = Pagination.builder().limit(searchConfiguration.getReportDefaultLimit()).offSet(searchConfiguration.getReportDefaultOffset()).order(Pagination.OrderEnum.DESC).sortBy("createdtime").build();
+            reportSearchRequest.setPagination(pagination);
+        }
+        if(pagination.getLimit() == null)
+            pagination.setLimit(searchConfiguration.getReportDefaultLimit());
+
+        if(pagination.getOffSet() == null)
+            pagination.setOffSet(searchConfiguration.getReportDefaultOffset());
+
+        if(pagination.getOrder() == null)
+            pagination.setOrder(Pagination.OrderEnum.DESC);
+
+        if(pagination.getSortBy() == null)
+            pagination.setSortBy("createdtime");
     }
 
     public Integer getReportSearchCount(ReportSearchRequest reportSearchRequest) {
