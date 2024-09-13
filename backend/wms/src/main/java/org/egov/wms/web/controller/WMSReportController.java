@@ -8,7 +8,7 @@ import org.egov.tracer.config.TracerConfiguration;
 import org.egov.wms.service.WMSReportService;
 import org.egov.wms.util.ResponseInfoFactory;
 import org.egov.wms.web.model.Job.*;
-import org.egov.wms.web.model.WMSSearchRequest;
+import org.egov.works.services.common.models.expense.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class WMSReportController {
         this.responseInfoFactory = responseInfoFactory;
     }
 
-    @PostMapping(value = "/{REPORT_NAME}")
+    @PostMapping(value = "/{REPORT_NAME}/_create")
     public ResponseEntity<ReportResponse> generateReport(@PathVariable("REPORT_NAME") String reportName, @RequestBody ReportRequest reportRequest) {
         ReportJob reportJob = wmsReportService.processReportGeneration(reportName, reportRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(reportRequest.getRequestInfo(), true);
@@ -39,11 +39,14 @@ public class WMSReportController {
         return ResponseEntity.ok(reportResponse);
     }
 
-    @PostMapping(value = "/_search")
-    public ResponseEntity<ReportSearchResponse> searchReports(@RequestBody ReportSearchRequest reportSearchRequest) {
+    @PostMapping(value = "/{REPORT_NAME}/_search")
+    public ResponseEntity<ReportSearchResponse> searchReports(@PathVariable("REPORT_NAME") String reportName,@RequestBody ReportSearchRequest reportSearchRequest) {
         List<ReportJob> reportJobs = wmsReportService.searchReports(reportSearchRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(reportSearchRequest.getRequestInfo(), true);
-        ReportSearchResponse reportResponse = ReportSearchResponse.builder().responseInfo(responseInfo).reportJobs(reportJobs).build();
+        Integer count = wmsReportService.getReportSearchCount(reportSearchRequest);
+        Pagination pagination = reportSearchRequest.getPagination();
+        pagination.setTotalCount(count);
+        ReportSearchResponse reportResponse = ReportSearchResponse.builder().responseInfo(responseInfo).reportJobs(reportJobs).pagination(pagination).build();
         return ResponseEntity.ok(reportResponse);
     }
 }

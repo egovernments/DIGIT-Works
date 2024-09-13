@@ -1,7 +1,11 @@
 package org.egov.wms.repository.builder;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.wms.config.SearchConfiguration;
 import org.egov.wms.web.model.Job.ReportSearchCriteria;
+import org.egov.wms.web.model.Job.ReportSearchRequest;
+import org.egov.works.services.common.models.expense.Pagination;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -21,8 +25,31 @@ public class ReportQueryBuilder {
             "last_modified_time AS reportLastModifiedTime " +
             "FROM job_report";
 
-    public String getReportJobQuery(ReportSearchCriteria reportSearchCriteria, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(REPORT_JOB_QUERY);
+    private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY report{sortBy} {orderBy}) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
+
+    private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+    private static final String REPORT_JOB_COUNT_QUERY = "SELECT distinct(id) " +
+            "FROM job_report";
+    private final SearchConfiguration searchConfiguration;
+
+    public ReportQueryBuilder(SearchConfiguration searchConfiguration) {
+        this.searchConfiguration = searchConfiguration;
+    }
+
+    public String getReportJobQuery(ReportSearchRequest reportSearchRequest, List<Object> preparedStmtList, boolean isCountNeeded) {
+        log.info("EstimateQueryBuilder::getEstimateQuery");
+        ReportSearchCriteria reportSearchCriteria = reportSearchRequest.getReportSearchCriteria();
+        StringBuilder query = null;
+        if (isCountNeeded) {
+            query = new StringBuilder(REPORT_JOB_COUNT_QUERY);
+        } else {
+            query = new StringBuilder(REPORT_JOB_QUERY);
+        }
         if(reportSearchCriteria.getId() != null) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" id = ?");
@@ -46,7 +73,9 @@ public class ReportQueryBuilder {
             query.append(" status = ?");
             preparedStmtList.add(reportSearchCriteria.getStatus());
         }
-
+        if(Boolean.FALSE.equals(isCountNeeded)){
+            return addPaginationWrapper(query, reportSearchRequest.getPagination(), preparedStmtList);
+        }
         return query.toString();
     }
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
@@ -59,5 +88,52 @@ public class ReportQueryBuilder {
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
         preparedStmtList.addAll(ids);
+    }
+
+    public String addPaginationWrapper(StringBuilder query, Pagination pagination, List<Object> preparedStmtList) {
+        String paginatedQuery = addOrderByClause(pagination);
+
+        int limit = pagination != null && pagination.getLimit() != null ? pagination.getLimit() : searchConfiguration.getReportDefaultLimit();
+        int offset = pagination != null && pagination.getOffSet() != null? pagination.getOffSet() : searchConfiguration.getReportDefaultOffset();
+
+        String finalQuery = paginatedQuery.replace("{}", query);
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit + offset);
+
+        return finalQuery;
+    }
+
+
+    private String addOrderByClause(Pagination pagination) {
+
+        String paginationWrapper = PAGINATION_WRAPPER;
+        if(pagination == null)
+            return paginationWrapper.replace("{sortBy}", "CreatedTime").replace("{orderBy}", Pagination.OrderEnum.DESC.name());
+
+        if ( pagination.getSortBy() != null && StringUtils.isNotBlank(pagination.getSortBy())) {
+            paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
+        }
+        else{
+            paginationWrapper=paginationWrapper.replace("{sortBy}", "CreatedTime");
+        }
+
+        if (pagination.getOrder() != null) {
+            paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
+        }
+        else{
+            paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.DESC.name());
+        }
+
+        return paginationWrapper;
+    }
+
+    public String getSearchCountQueryString(ReportSearchRequest reportSearchRequest, List<Object> preparedStmtList) {
+        log.info("EstimateQueryBuilder::getSearchCountQueryString");
+        String query = getReportJobQuery(reportSearchRequest, preparedStmtList,true);
+        if (query != null)
+            return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
     }
 }
