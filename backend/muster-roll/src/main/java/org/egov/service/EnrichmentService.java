@@ -13,6 +13,7 @@ import org.egov.repository.IdGenRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.expense.Pagination;
 import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -201,6 +202,11 @@ public class EnrichmentService {
         if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getMusterMaxLimit())
             searchCriteria.setLimit(config.getMusterMaxLimit());
 
+        if (searchCriteria.getSortBy() == null)
+            searchCriteria.setSortBy("createdTime");
+
+        if (searchCriteria.getOrder() == null)
+            searchCriteria.setOrder(Pagination.OrderEnum.DESC);
     }
 
     /**

@@ -161,7 +161,7 @@ public class MusterRollService {
         }
 
         List<MusterRoll> musterRollList = musterRollRepository.getMusterRoll(searchCriteria,registerIds);
-        int count = !CollectionUtils.isEmpty(musterRollList) ? musterRollList.size() : 0;
+        int count = musterRollRepository.getMusterRollCount(searchCriteria,registerIds);
         List<MusterRoll> filteredMusterRollList = musterRollList;
 
         //apply the limit and offset

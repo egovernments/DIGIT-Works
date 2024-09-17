@@ -35,7 +35,18 @@ public class MusterRollRepository {
      */
     public List<MusterRoll> getMusterRoll(MusterRollSearchCriteria searchCriteria,List<String> registerIds) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getMusterSearchQuery(searchCriteria, preparedStmtList, registerIds);
+        String query = queryBuilder.getMusterSearchQuery(searchCriteria, preparedStmtList, registerIds,false);
         return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+    }
+
+    /**
+     * Fetch the record count from DB based on the search criteria
+     * @param searchCriteria
+     * @return
+     */
+    public Integer getMusterRollCount(MusterRollSearchCriteria searchCriteria,List<String> registerIds) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getSearchCountQueryString(searchCriteria, preparedStmtList, registerIds);
+        return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.egov.works.services.common.models.expense.Pagination;
 import org.egov.works.services.common.models.musterroll.Status;
 
 import java.math.BigDecimal;
@@ -53,5 +54,11 @@ public class MusterRollSearchCriteria {
 
     @JsonProperty("offset")
     private Integer offset;
+
+    @JsonProperty("sortBy")
+    private String sortBy;
+
+    @JsonProperty("order")
+    private Pagination.OrderEnum order;
 
 }
