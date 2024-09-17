@@ -6,6 +6,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.egov.wms.web.model.workflow.ProcessInstanceSearchCriteria;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,6 +17,9 @@ import lombok.Data;
 
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class WMSSearchCriteria {
 
 

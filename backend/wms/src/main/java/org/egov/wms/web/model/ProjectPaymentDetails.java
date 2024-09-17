@@ -18,10 +18,10 @@ public class ProjectPaymentDetails {
     private String projectNumber;
 
     @JsonProperty("estimatedAmount")
-    private Integer estimatedAmount;
+    private Double estimatedAmount;
 
     @JsonProperty("total")
-    private Integer total;
+    private Double total;
 
     @JsonProperty("paymentDetails")
     private List<PaymentDetailsByBillType> paymentDetails;
