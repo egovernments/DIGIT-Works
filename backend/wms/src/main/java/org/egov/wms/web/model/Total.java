@@ -15,7 +15,7 @@ import java.util.List;
 public class Total {
 
     @JsonProperty("estimatedAmount")
-    private Integer estimatedAmount;
+    private Double estimatedAmount;
 
     @JsonProperty("paymentDetails")
     private List<PaymentDetailsByBillType> paymentDetailsByBillType;
