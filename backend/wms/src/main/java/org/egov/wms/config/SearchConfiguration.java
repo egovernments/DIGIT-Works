@@ -90,4 +90,16 @@ public class SearchConfiguration {
 
 	@Value("${wms.kafka.report.topic}")
 	private String reportTopic;
+
+	@Value("${egov.filestore.host}")
+	private String fileStoreHost;
+
+	@Value("${egov.filestore.path}")
+	private String fileStoreEndpoint;
+
+	@Value("${report.search.pagination.default.limit}")
+	private Integer reportDefaultLimit;
+
+	@Value("${report.search.pagination.default.offset}")
+	private Integer reportDefaultOffset;
 }
