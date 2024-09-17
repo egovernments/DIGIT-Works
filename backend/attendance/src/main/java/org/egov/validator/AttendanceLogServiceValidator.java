@@ -3,6 +3,7 @@ package org.egov.validator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendeeSearchCriteria;
@@ -299,7 +300,20 @@ public class AttendanceLogServiceValidator {
      */
     private void checkAttendeeIsMappedToAnotherRegisterOrNot(AttendanceLogRequest attendanceLogRequest, Boolean isUpdate) {
         List<AttendanceLog> attendanceLogs = attendanceLogRequest.getAttendance();
+        Set<String> uniqueIndividualIds = attendanceLogs.stream()
+                .map(AttendanceLog::getIndividualId) // Extract individualId
+                .collect(Collectors.toSet());
+        List<String> uniqueIndividualIdsList = new ArrayList<>(uniqueIndividualIds);
+        List<String> errorMessageList= new ArrayList<>();
 
+        List<Individual> individualDetailList= individualServiceUtil.getIndividualDetails(uniqueIndividualIdsList,
+                attendanceLogRequest.getRequestInfo(),attendanceLogs.get(0).getTenantId());
+
+        if(individualDetailList.isEmpty()){
+            throw new CustomException("INDIVIDUAL_SEARCH_RESPONSE_IS_EMPTY", "Individuals not found");
+        }
+        Map<String, Individual> individualDetailMap=individualDetailList.stream()
+                .collect(Collectors.toMap(Individual::getId,individual -> individual));
 
         Map<String, List<AttendanceLog>> attendanceLogMap = attendanceLogs.stream().
                 collect(Collectors.groupingBy(AttendanceLog::getIndividualId));
@@ -320,9 +334,18 @@ public class AttendanceLogServiceValidator {
 
 
             if (checkAttendeeMappedToAnotherRegister) {
-                identifyAttendeeMappedInAnotherRegisterForASameDay(entry, fetchedAttendanceLogsByDay, individualId, isUpdate);
+                identifyAttendeeMappedInAnotherRegisterForASameDay(entry, fetchedAttendanceLogsByDay, individualId, isUpdate,individualDetailMap,errorMessageList);
             }
+
         }
+        if(!errorMessageList.isEmpty()){
+            String concatenatedErrorMessage = errorMessageList.stream()
+                    .collect(Collectors.joining("|| "));
+            Map<String, String> errorMap= new HashMap<>();
+            errorMap.put("ATTENDANCE_ALREADY_MARKED",concatenatedErrorMessage);
+            throw new CustomException(errorMap);
+        }
+
     }
 
 
@@ -370,7 +393,8 @@ public class AttendanceLogServiceValidator {
      * @param fetchedLogsByDay
      */
     private void identifyAttendeeMappedInAnotherRegisterForASameDay(Map.Entry<String, List<String>> requestedAttendanceLogsByDay,
-                                                                    Map<String, List<String>> fetchedLogsByDay, String individualId, Boolean isUpdate) {
+                                                                    Map<String, List<String>> fetchedLogsByDay, String individualId,
+                                                                    Boolean isUpdate,Map<String, Individual> individualDetailMap,List<String> errorMessageList) {
         log.info("AttendanceLogServiceValidator:: identifyAttendeeMappedInAnotherRegisterForASameDay");
         Map<String, List<String>> mapFromEntry = new HashMap<>();
         mapFromEntry.put(requestedAttendanceLogsByDay.getKey(), requestedAttendanceLogsByDay.getValue());
@@ -400,7 +424,7 @@ public class AttendanceLogServiceValidator {
                         }
 
                     }
-                    validateAttendanceWithExistingOne(entryAndExitTime, listOfAttendanceMap, individualId, day, isUpdate,registerId,requestAttendanceRegisterID);
+                    validateAttendanceWithExistingOne(entryAndExitTime, listOfAttendanceMap, individualId, day, isUpdate,registerId,requestAttendanceRegisterID,individualDetailMap,errorMessageList);
                 } else {
                     log.info("No Existing Attendance Logs found");
                 }
@@ -413,7 +437,8 @@ public class AttendanceLogServiceValidator {
     }
 
     private void validateAttendanceWithExistingOne(Map<String, String> entryAndExitTime, List<Map<String, String>> listOfAttendanceMap, String individualId,
-                                                   String day, Boolean isUpdate,String registerId, String requestAttendanceRegisterID) {
+                                                   String day, Boolean isUpdate,String registerId, String requestAttendanceRegisterID,
+                                                   Map<String, Individual> individualDetailMap, List<String> errorMessageList) {
         if (!listOfAttendanceMap.isEmpty()) {
             for (Map<String, String> entryMap : listOfAttendanceMap) {
                 if (!isUpdate || !requestAttendanceRegisterID.equals(registerId)) {
@@ -422,10 +447,15 @@ public class AttendanceLogServiceValidator {
                             log.info("Logging Attendance for " + "[" + individualId + "] " +
                                     "on this day :" + day + "with this as exit time " + entryAndExitTime.get(requestAttendanceRegisterID));
                         } else {
-                            log.error("Attedance is already marked for " + "[" + individualId + "] " +
-                                    "on this day :" + day + "with this as exit time" + entryMap.get(registerId));
-                            throw new CustomException("ATTENDANCE_FOR_SAME_DAY", "Attedance is already marked for " + "[" + individualId + "] " +
-                                    "on this day :" + day + "with this as exit time" + entryMap.get(registerId));
+                           Individual individual= individualDetailMap.get(individualId);
+                            log.error("Attedance is already marked for " + "[" + individual.getIndividualId() + " ::" +individual.getName()+ "] " +
+                                    "on this day : " + day + " with this as exit time" + entryMap.get(registerId));
+
+
+                            errorMessageList.add("Attedance is already marked for " + "[" + individual.getIndividualId() + " ::" +individual.getName()+ "] " +
+                                    "on this day : " + day + " with this as exit time" + entryMap.get(registerId));
+                          /*  throw new CustomException("ATTENDANCE_FOR_SAME_DAY", "Attedance is already marked for " + "[" + individualId + "] " +
+                                    "on this day :" + day + "with this as exit time" + entryMap.get(registerId));*/
                         }
 
                     } else {
