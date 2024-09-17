@@ -346,7 +346,7 @@ public class WMSSearchService {
     }
 
 
-    private StringBuilder getURI(String indexName, String endpoint){
+    public StringBuilder getURI(String indexName, String endpoint){
         StringBuilder uri = new StringBuilder(config.getIndexServiceHost());
         uri.append(indexName);
         uri.append(endpoint);

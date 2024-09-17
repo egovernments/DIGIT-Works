@@ -16,12 +16,12 @@ public class PaymentDetailsByBillType {
     private String billType;
 
     @JsonProperty("total")
-    private Integer total;
+    private Double total;
 
     @JsonProperty("paidAmount")
-    private Integer paidAmount;
+    private Double paidAmount;
 
     @JsonProperty("remainingAmount")
-    private Integer remainingAmount;
+    private Double remainingAmount;
 
 }

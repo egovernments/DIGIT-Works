@@ -20,4 +20,7 @@ public class AggsResponse {
     @JsonProperty("projects")
     private List<ProjectPaymentDetails> projectPaymentDetails;
 
+    @JsonProperty("afterKey")
+    private String afterKey;
+
 }
