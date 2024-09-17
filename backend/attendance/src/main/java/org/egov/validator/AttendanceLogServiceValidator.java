@@ -342,7 +342,7 @@ public class AttendanceLogServiceValidator {
             String concatenatedErrorMessage = errorMessageList.stream()
                     .collect(Collectors.joining("|| "));
             Map<String, String> errorMap= new HashMap<>();
-            errorMap.put("ATTENDANCE_ALREADY_MARKED",concatenatedErrorMessage);
+            errorMap.put("SAME_DAY_ATTENDANCE_ERROR",concatenatedErrorMessage);
             throw new CustomException(errorMap);
         }
 
