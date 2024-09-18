@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.data.query.builder.SelectQueryBuilder;
 import org.egov.common.data.repository.GenericRepository;
 import org.egov.common.producer.Producer;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.querybuilder.AttendanceLogQueryBuilder;
 import org.egov.repository.rowmapper.AttendanceLogRowMapper;
 import org.egov.web.models.AttendanceLog;
@@ -34,10 +35,11 @@ public class AttendanceLogRepository extends GenericRepository<AttendanceLog> {
             RedisTemplate<String, Object> redisTemplate,
             SelectQueryBuilder selectQueryBuilder,
             AttendanceLogRowMapper rowMapper,
+            AttendanceServiceConfiguration config,
             JdbcTemplate jdbcTemplate) {
         super(producer, namedParameterJdbcTemplate, redisTemplate, selectQueryBuilder, null, Optional.of("abc"));
         this.rowMapper = rowMapper;
-        this.queryBuilder = new AttendanceLogQueryBuilder();
+        this.queryBuilder = new AttendanceLogQueryBuilder(config);
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -46,10 +48,19 @@ public class AttendanceLogRepository extends GenericRepository<AttendanceLog> {
         List<Object> preparedStmtList = new ArrayList<>();
         if(!StringUtils.isBlank(searchCriteria.getRegisterId())) log.info("Fetching Attendance Log list. RegisterId ["+searchCriteria.getRegisterId()+"]");
         if(!CollectionUtils.isEmpty(searchCriteria.getClientReferenceId())) log.info("Fetching Attendance Log list. ClientReferenceIds "+searchCriteria.getClientReferenceId());
-        String query = queryBuilder.getAttendanceLogSearchQuery(searchCriteria, preparedStmtList);
+        String query = queryBuilder.getAttendanceLogSearchQuery(searchCriteria, preparedStmtList,false);
         log.info("Query build successfully");
         List<AttendanceLog> attendanceLogList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         log.info("Fetched Attendance Log list");
         return attendanceLogList;
+    }
+
+    public Integer getAttendanceLogCount(AttendanceLogSearchCriteria searchCriteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getSearchCountQueryString(searchCriteria, preparedStmtList);
+        log.info("Query build successfully");
+        Integer count = jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+        log.info("Fetched Attendance Log count");
+        return count;
     }
 }

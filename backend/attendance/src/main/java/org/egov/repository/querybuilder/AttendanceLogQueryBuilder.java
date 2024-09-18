@@ -1,8 +1,11 @@
 package org.egov.repository.querybuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceLogSearchCriteria;
+import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -12,6 +15,8 @@ import java.util.List;
 
 @Component
 public class AttendanceLogQueryBuilder {
+
+    private final AttendanceServiceConfiguration config;
 
     private static final String ATTENDANCE_LOG_SELECT_QUERY = " SELECT log.id as logid, " +
             "log.individual_id as logIndividualId, " +
@@ -46,9 +51,32 @@ public class AttendanceLogQueryBuilder {
             "eg_wms_attendance_document AS doc " +
             "ON (log.id=doc.attendance_log_id) ";
 
+    private final String paginationWrapper = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY logLastModifiedTime DESC , logid) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
 
-    public String getAttendanceLogSearchQuery(AttendanceLogSearchCriteria criteria, List<Object> preparedStmtList) {
+    private static final String ATTENDANCE_LOG_COUNT_QUERY = "SELECT distinct(log.id) "+
+            "FROM eg_wms_attendance_log AS log " +
+            "LEFT JOIN " +
+            "eg_wms_attendance_document AS doc " +
+            "ON (log.id=doc.attendance_log_id) ";
+
+    private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+    @Autowired
+    public AttendanceLogQueryBuilder(AttendanceServiceConfiguration config) {
+        this.config = config;
+    }
+
+
+    public String getAttendanceLogSearchQuery(AttendanceLogSearchCriteria criteria, List<Object> preparedStmtList, boolean isCount) {
         StringBuilder query = new StringBuilder(ATTENDANCE_LOG_SELECT_QUERY);
+
+        if(isCount) {
+            query = new StringBuilder(ATTENDANCE_LOG_COUNT_QUERY);
+        }
 
         List<String> ids = criteria.getIds();
         if (ids != null && !ids.isEmpty()) {
@@ -108,9 +136,11 @@ public class AttendanceLogQueryBuilder {
             preparedStmtList.add(criteria.getStatus().toString());
         }
 
-        addOrderByClause(query, criteria);
+        if (!isCount) {
+            addOrderByClause(query, criteria);
+            return addPaginationWrapper(query.toString(), preparedStmtList, criteria);
+        }
 
-        addLimitAndOffset(query, criteria, preparedStmtList);
 
         return query.toString();
     }
@@ -119,6 +149,8 @@ public class AttendanceLogQueryBuilder {
 
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
+            queryBuilder.append(" ORDER BY log.lastmodifiedtime ");
+        }else{
             queryBuilder.append(" ORDER BY log.lastmodifiedtime ");
         }
 
@@ -160,5 +192,35 @@ public class AttendanceLogQueryBuilder {
 //        });
 
         preparedStmtList.addAll(ids);
+    }
+
+    private String addPaginationWrapper(String query,List<Object> preparedStmtList,
+                                        AttendanceLogSearchCriteria criteria){
+        int limit = config.getAttendanceLogDefaultLimit();
+        int offset = config.getAttendanceLogDefaultOffset();
+
+        String finalQuery = paginationWrapper.replace("{}",query);
+
+        if(criteria.getLimit()!=null && criteria.getLimit()<=config.getAttendanceLogMaxLimit())
+            limit = criteria.getLimit();
+
+        if(criteria.getLimit()!=null && criteria.getLimit()>config.getAttendanceLogMaxLimit())
+            limit = config.getAttendanceLogMaxLimit();
+
+        if(criteria.getOffset()!=null)
+            offset = criteria.getOffset();
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit+offset);
+
+        return finalQuery;
+    }
+
+    public String getSearchCountQueryString(AttendanceLogSearchCriteria criteria, List<Object> preparedStmtList) {
+        String query = getAttendanceLogSearchQuery(criteria, preparedStmtList,true);
+        if (query != null)
+            return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
     }
 }

@@ -49,16 +49,25 @@ public class RegisterQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
+    private static final String REGISTER_COUNT_QUERY = "SELECT distinct(reg.id) "+
+            "FROM eg_wms_attendance_register reg ";
+
+    private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+
     @Autowired
     public RegisterQueryBuilder(AttendanceServiceConfiguration config) {
         this.config = config;
     }
 
 
-    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
+    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean isCountQuery) {
 
         log.info("Search criteria of attendance search : " + searchCriteria.toString());
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
+        if(isCountQuery) {
+            query = new StringBuilder(REGISTER_COUNT_QUERY);
+        }
 
         if(!ObjectUtils.isEmpty(searchCriteria.getStaffId())) {
             query.append(JOIN_STAFF);
@@ -151,9 +160,12 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(attendeeId);
         }
 
-        addOrderByClause(query, searchCriteria);
-        //addLimitAndOffset(query, searchCriteria, preparedStmtList);
-        return addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
+       if(!isCountQuery) {
+            addOrderByClause(query, searchCriteria);
+            return addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
+        }
+
+        return query.toString();
     }
 
     private String addPaginationWrapper(String query,List<Object> preparedStmtList,
@@ -226,5 +238,14 @@ public class RegisterQueryBuilder {
         } else {
             query.append(" AND ");
         }
+    }
+
+    public String getSearchCountQueryString(AttendanceRegisterSearchCriteria criteria, List<Object> preparedStmtList) {
+        log.info("EstimateQueryBuilder::getSearchCountQueryString");
+        String query = getAttendanceRegisterSearchQuery(criteria, preparedStmtList,true);
+        if (query != null)
+            return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
     }
 }

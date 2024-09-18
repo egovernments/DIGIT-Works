@@ -76,11 +76,24 @@ public class AttendanceLogService {
         attendanceLogEnricher.enrichAttendanceLogSearchRequest(requestInfoWrapper.getRequestInfo(), searchCriteria);
         //Fetch attendance logs from registry
         List<AttendanceLog> attendanceLogs = attendanceLogRepository.getAttendanceLogs(searchCriteria);
+        //Get pagination object
+        Pagination pagination = getPaginationObjectForLog(searchCriteria);
         // Create the response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogs).build();
+        AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogs).pagination(pagination).build();
         log.info("Attendance log response created for register ["+searchCriteria.getRegisterId()+"]");
         return attendanceLogResponse;
+    }
+
+    private Pagination getPaginationObjectForLog(AttendanceLogSearchCriteria searchCriteria) {
+        Integer count = attendanceLogRepository.getAttendanceLogCount(searchCriteria);
+        return Pagination.builder()
+                .limit(searchCriteria.getLimit())
+                .offset(searchCriteria.getOffset())
+                .sortBy(searchCriteria.getSortBy().name())
+                .order(searchCriteria.getSortOrder().name())
+                .totalCount(count)
+                .build();
     }
 
     /**
