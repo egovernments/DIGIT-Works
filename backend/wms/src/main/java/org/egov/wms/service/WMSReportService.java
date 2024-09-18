@@ -66,11 +66,9 @@ public class WMSReportService {
         RequestInfo requestInfo = reportRequest.getRequestInfo();
         ReportJob reportJob = reportRequest.getJobRequest();
         String tenantId = reportJob.getTenantId();
-        AggregationResponse aggregationResponse = null;
-        AggregationRequest aggregationRequest = wmsReportEnrichment.enrichAggregationRequestFromReportRequest(reportRequest);
 
         try {
-            aggregationResponse = reportController.getPaymentTracker(aggregationRequest).getBody();
+            AggregationResponse aggregationResponse = getAggregationResponse(reportRequest);
             ByteArrayResource excelFile = generateExcelFromObject(aggregationResponse.getAggsResponse());
             String fileStoreId = fileStoreUtil.uploadFileAndGetFileStoreId(tenantId, excelFile);
             reportJob.setFileStoreId(fileStoreId);
@@ -83,6 +81,12 @@ public class WMSReportService {
         reportJob.setAuditDetails(wmsReportEnrichment.getAuditDetails(requestInfo.getUserInfo().getUuid(), reportJob.getAuditDetails(), false));
 
         wmsProducer.push(searchConfiguration.getReportTopic(), reportRequest);
+    }
+
+    private AggregationResponse getAggregationResponse(ReportRequest reportRequest) {
+        AggregationRequest aggregationRequest = wmsReportEnrichment.enrichAggregationRequestFromReportRequest(reportRequest);
+
+        return reportController.getPaymentTracker(aggregationRequest).getBody();
     }
 
     private ByteArrayResource generateExcelFromObject(AggsResponse aggsResponse) {
