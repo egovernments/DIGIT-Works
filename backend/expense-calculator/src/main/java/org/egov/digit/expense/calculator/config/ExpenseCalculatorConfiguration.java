@@ -198,4 +198,12 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${expense.billing.search.max.limit}")
 	private Integer maxLimit;
 
+	@Value("${works.estimate.host}")
+	private String estimateHost;
+
+	@Value("${works.estimate.search.endpoint}")
+	private String estimateEndpoint;
+
+	@Value("${expense.billing.bill.index}")
+	private String billIndexTopic;
 }
