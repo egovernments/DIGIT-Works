@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.egov.wms.util.WMSConstants.SEARCH_PATH;
+
 @Service
 @Slf4j
 public class ReportService {
@@ -49,14 +51,14 @@ public class ReportService {
         SearchQueryConfiguration searchQueryConfiguration = mdmsUtil.getConfigFromMDMS(searchRequest, PAYMENT_TRACKER);
         Map<String, Object> reportQuery = reportESQueryBuilder.getReportEsQuery(aggregationRequest, searchRequest, PAYMENT_TRACKER);
 
-//        StringBuilder uri = wmsSearchService.getURI(searchQueryConfiguration.getIndex(), SEARCH_PATH);
-//        Object result = serviceRequestRepository.fetchESResult(uri, reportQuery);
-        Object elasticResponse;
-        try {
-            elasticResponse = mapper.readValue(new File("../wms/src/main/resources/elastic_response_sample.json"), Object.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        StringBuilder uri = wmsSearchService.getURI(searchQueryConfiguration.getIndex(), SEARCH_PATH);
+        Object result = serviceRequestRepository.fetchESResult(uri, reportQuery);
+//        Object elasticResponse;
+//        try {
+//            elasticResponse = mapper.readValue(new File("../wms/src/main/resources/elastic_response_sample.json"), Object.class);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
         try {
             String q = mapper.writeValueAsString(reportQuery);
@@ -68,7 +70,7 @@ public class ReportService {
         log.info("Inside Payment Tracker Report");
         AggsResponse aggsResponse;
         try {
-            aggsResponse = elasticResponseMapper.mapElasticResponse(elasticResponse);
+            aggsResponse = elasticResponseMapper.mapElasticResponse(result);
         }
         catch (Exception e){
             e.printStackTrace();

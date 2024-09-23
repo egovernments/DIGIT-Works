@@ -101,7 +101,7 @@ public class ReportESQueryBuilder {
         Map<String, Object> afterTerms = new HashMap<>();
         afterTerms.put("terms", aggregationRequest.getAggregationSearchCriteria().getAfterKey());
 
-        after.put("project", afterTerms); // Project ID after which results should be returned
+        after.put("project", aggregationRequest.getAggregationSearchCriteria().getAfterKey()); // Project ID after which results should be returned
         composite.put("after", after);
 
 // Creating sub-aggregations for billType similar to the "Total" aggregation
