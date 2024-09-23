@@ -116,7 +116,7 @@ public class ReportService {
 
             // Extract projectNumber and totalEstimatedAmount
             String projectNumber = (String) additionalDetailsMap.get("projectNumber");
-            double totalEstimatedAmount = (double) additionalDetailsMap.get("totalEstimatedAmount");
+            Double totalEstimatedAmount = Double.parseDouble((String) additionalDetailsMap.get("totalEstimatedAmount"));
 
             // Put it in the map
             projectEstimateMap.put(projectNumber, totalEstimatedAmount);
