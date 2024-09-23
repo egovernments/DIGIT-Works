@@ -121,7 +121,14 @@ public class ReportService {
 
             // Extract projectNumber and totalEstimatedAmount
             String projectNumber = (String) additionalDetailsMap.get("projectNumber");
-            Double totalEstimatedAmount = Double.parseDouble((String) additionalDetailsMap.get("totalEstimatedAmount"));
+            Double totalEstimatedAmount;
+            if ( additionalDetailsMap.get("totalEstimatedAmount") instanceof Double) {
+                totalEstimatedAmount = (Double) additionalDetailsMap.get("totalEstimatedAmount");
+            } else if (additionalDetailsMap.get("totalEstimatedAmount")  instanceof Integer) {
+                totalEstimatedAmount = ((Integer) additionalDetailsMap.get("totalEstimatedAmount")).doubleValue();
+            } else {
+                throw new IllegalArgumentException("Unsupported type: " + additionalDetailsMap.get("totalEstimatedAmount").getClass().getName());
+            }
 
             // Put it in the map
             projectEstimateMap.put(projectNumber, totalEstimatedAmount);
