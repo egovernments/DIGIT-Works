@@ -522,7 +522,7 @@ public class ExpenseCalculatorService {
         additionalDetails.put("projectNumber", project.getProjectNumber());
         additionalDetails.put("ward", project.getAddress().getBoundary());
         additionalDetails.put("projectDescription", project.getDescription());
-        additionalDetails.put("projectStartDate", project.getAuditDetails().getCreatedTime());
+        additionalDetails.put("projectCreatedDate", project.getAuditDetails().getCreatedTime());
 
         bill.setAdditionalDetails(additionalDetails);
     }
