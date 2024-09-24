@@ -2,6 +2,7 @@ package org.egov.wms.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.wms.config.SearchConfiguration;
 import org.egov.wms.repository.ServiceRequestRepository;
 import org.egov.wms.repository.builder.ReportESQueryBuilder;
 import org.egov.wms.repository.rowMapper.ElasticResponseMapper;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.egov.wms.util.WMSConstants.SEARCH_PATH;
+
 @Service
 @Slf4j
 public class ReportService {
@@ -30,10 +33,11 @@ public class ReportService {
     private final ElasticResponseMapper elasticResponseMapper;
     private final WMSSearchService wmsSearchService;
     private final ServiceRequestRepository serviceRequestRepository;
+    private final SearchConfiguration configuration;
     public static final String PAYMENT_TRACKER = "payment-tracker";
     public static final String ESTIMATE = "estimate";
 
-    public ReportService(ValidatorDefaultImplementation validatorDefaultImplementation, MDMSUtil mdmsUtil, ReportESQueryBuilder reportESQueryBuilder, ObjectMapper mapper, ElasticResponseMapper elasticResponseMapper, WMSSearchService wmsSearchService, ServiceRequestRepository serviceRequestRepository) {
+    public ReportService(ValidatorDefaultImplementation validatorDefaultImplementation, MDMSUtil mdmsUtil, ReportESQueryBuilder reportESQueryBuilder, ObjectMapper mapper, ElasticResponseMapper elasticResponseMapper, WMSSearchService wmsSearchService, ServiceRequestRepository serviceRequestRepository, SearchConfiguration configuration) {
         this.validatorDefaultImplementation = validatorDefaultImplementation;
         this.mdmsUtil = mdmsUtil;
         this.reportESQueryBuilder = reportESQueryBuilder;
@@ -41,22 +45,25 @@ public class ReportService {
         this.elasticResponseMapper = elasticResponseMapper;
         this.wmsSearchService = wmsSearchService;
         this.serviceRequestRepository = serviceRequestRepository;
+        this.configuration = configuration;
     }
 
     public AggsResponse getPaymentTracker(AggregationRequest aggregationRequest) {
-        WMSSearchRequest searchRequest = getSearchRequest(aggregationRequest, aggregationRequest.getAggregationSearchCriteria().getModuleSearchCriteria());
+        WMSSearchRequest searchRequest = getSearchRequest(aggregationRequest,
+                aggregationRequest.getAggregationSearchCriteria().getModuleSearchCriteria(),
+                aggregationRequest.getAggregationSearchCriteria().getLimit());
         validatorDefaultImplementation.validateSearchCriteria(searchRequest, PAYMENT_TRACKER);
         SearchQueryConfiguration searchQueryConfiguration = mdmsUtil.getConfigFromMDMS(searchRequest, PAYMENT_TRACKER);
         Map<String, Object> reportQuery = reportESQueryBuilder.getReportEsQuery(aggregationRequest, searchRequest, PAYMENT_TRACKER);
 
-//        StringBuilder uri = wmsSearchService.getURI(searchQueryConfiguration.getIndex(), SEARCH_PATH);
-//        Object result = serviceRequestRepository.fetchESResult(uri, reportQuery);
-        Object elasticResponse;
-        try {
-            elasticResponse = mapper.readValue(new File("../wms/src/main/resources/elastic_response_sample.json"), Object.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        StringBuilder uri = wmsSearchService.getURI(searchQueryConfiguration.getIndex(), SEARCH_PATH);
+        Object result = serviceRequestRepository.fetchESResult(uri, reportQuery);
+//        Object elasticResponse;
+//        try {
+//            elasticResponse = mapper.readValue(new File("../wms/src/main/resources/elastic_response_sample.json"), Object.class);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
         try {
             String q = mapper.writeValueAsString(reportQuery);
@@ -68,7 +75,7 @@ public class ReportService {
         log.info("Inside Payment Tracker Report");
         AggsResponse aggsResponse;
         try {
-            aggsResponse = elasticResponseMapper.mapElasticResponse(elasticResponse);
+            aggsResponse = elasticResponseMapper.mapElasticResponse(result);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -97,8 +104,9 @@ public class ReportService {
         for (int i = 0; i < aggsResponse.getProjectPaymentDetails().size(); i++) {
             ProjectPaymentDetails projectPaymentDetails = aggsResponse.getProjectPaymentDetails().get(i);
             String projectNumber = projectPaymentDetails.getProjectNumber();
-            double totalEstimatedAmount = projectIdEstimateMap.get(projectNumber);
-            projectPaymentDetails.setTotal(totalEstimatedAmount);
+
+            Double totalEstimatedAmount = projectIdEstimateMap.get(projectNumber);
+            projectPaymentDetails.setEstimatedAmount(totalEstimatedAmount);
         }
     }
 
@@ -114,7 +122,14 @@ public class ReportService {
 
             // Extract projectNumber and totalEstimatedAmount
             String projectNumber = (String) additionalDetailsMap.get("projectNumber");
-            double totalEstimatedAmount = (double) additionalDetailsMap.get("totalEstimatedAmount");
+            Double totalEstimatedAmount;
+            if ( additionalDetailsMap.get("totalEstimatedAmount") instanceof Double) {
+                totalEstimatedAmount = (Double) additionalDetailsMap.get("totalEstimatedAmount");
+            } else if (additionalDetailsMap.get("totalEstimatedAmount")  instanceof Integer) {
+                totalEstimatedAmount = ((Integer) additionalDetailsMap.get("totalEstimatedAmount")).doubleValue();
+            } else {
+                throw new IllegalArgumentException("Unsupported type: " + additionalDetailsMap.get("totalEstimatedAmount").getClass().getName());
+            }
 
             // Put it in the map
             projectEstimateMap.put(projectNumber, totalEstimatedAmount);
@@ -137,17 +152,18 @@ public class ReportService {
         HashMap<String, Object> moduleSearchCriteria = new HashMap<>();
         moduleSearchCriteria.put("projectId", projectNumbers);
 
-        return getSearchRequest(aggregationRequest, moduleSearchCriteria);
+
+        return getSearchRequest(aggregationRequest, moduleSearchCriteria, configuration.getMaxSearchLimit().intValue());
     }
 
-    WMSSearchRequest getSearchRequest(AggregationRequest aggregationRequest, HashMap <String, Object> moduleSearchCriteria) {
+    WMSSearchRequest getSearchRequest(AggregationRequest aggregationRequest, HashMap <String, Object> moduleSearchCriteria, Integer limit) {
         return WMSSearchRequest
                 .builder()
                 .RequestInfo(aggregationRequest.getRequestInfo())
                 .inbox(WMSSearchCriteria.builder()
                         .tenantId(aggregationRequest.getAggregationSearchCriteria().getTenantId())
                         .moduleSearchCriteria(moduleSearchCriteria)
-                        .limit(aggregationRequest.getAggregationSearchCriteria().getLimit())
+                        .limit(limit)
                         .offset(0)
                         .build())
                 .build();

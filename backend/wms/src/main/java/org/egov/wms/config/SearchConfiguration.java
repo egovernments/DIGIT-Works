@@ -102,4 +102,7 @@ public class SearchConfiguration {
 
 	@Value("${report.search.pagination.default.offset}")
 	private Integer reportDefaultOffset;
+
+	@Value("${wms.kafka.report.update.topic}")
+	private String reportUpdateTopic;
 }

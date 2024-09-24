@@ -70,12 +70,14 @@ public class WMSReportEnrichment {
             pagination.setSortBy("createdtime");
     }
 
-    public AggregationRequest enrichAggregationRequestFromReportRequest(ReportRequest reportRequest) {
+    public AggregationRequest enrichAggregationRequestFromReportRequest(ReportRequest reportRequest, String afterKey) {
         log.info("WMSReportService: enrichAggregationRequestFromReportRequest");
         ReportJob reportJob = reportRequest.getJobRequest();
         AggregationSearchCriteria aggregationSearchCriteria = AggregationSearchCriteria.builder()
                 .moduleSearchCriteria((HashMap<String, Object>) reportJob.getRequestPayload())
                 .tenantId(reportJob.getTenantId())
+                .limit(searchConfiguration.getReportDefaultLimit())
+                .afterKey(afterKey == null ? "" : afterKey)
                 .build();
 
         return AggregationRequest.builder()

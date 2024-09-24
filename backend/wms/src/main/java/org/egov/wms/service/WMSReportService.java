@@ -37,16 +37,17 @@ public class WMSReportService {
     private final ReportRepository reportRepository;
     private final FileStoreUtil fileStoreUtil;
     private final WMSReportEnrichment wmsReportEnrichment;
-    private final ReportController reportController;
+    private final ReportService reportService;
+
 
     @Autowired
-    public WMSReportService(SearchConfiguration searchConfiguration, WMSProducer wmsProducer, ReportRepository reportRepository, FileStoreUtil fileStoreUtil, WMSReportEnrichment wmsReportEnrichment, ReportController reportController) {
+    public WMSReportService(SearchConfiguration searchConfiguration, WMSProducer wmsProducer, ReportRepository reportRepository, FileStoreUtil fileStoreUtil, WMSReportEnrichment wmsReportEnrichment, ReportService reportService) {
         this.searchConfiguration = searchConfiguration;
         this.wmsProducer = wmsProducer;
         this.reportRepository = reportRepository;
         this.fileStoreUtil = fileStoreUtil;
         this.wmsReportEnrichment = wmsReportEnrichment;
-        this.reportController = reportController;
+        this.reportService = reportService;
     }
 
     public ReportJob processReportGeneration(String reportName, ReportRequest reportRequest) {
@@ -68,8 +69,8 @@ public class WMSReportService {
         String tenantId = reportJob.getTenantId();
 
         try {
-            AggregationResponse aggregationResponse = getAggregationResponse(reportRequest);
-            ByteArrayResource excelFile = generateExcelFromObject(aggregationResponse.getAggsResponse());
+            AggsResponse aggregationResponse = getAggregationResponse(reportRequest);
+            ByteArrayResource excelFile = generateExcelFromObject(aggregationResponse);
             String fileStoreId = fileStoreUtil.uploadFileAndGetFileStoreId(tenantId, excelFile);
             reportJob.setFileStoreId(fileStoreId);
             reportJob.setStatus(JobStatus.COMPLETED);
@@ -80,13 +81,27 @@ public class WMSReportService {
 
         reportJob.setAuditDetails(wmsReportEnrichment.getAuditDetails(requestInfo.getUserInfo().getUuid(), reportJob.getAuditDetails(), false));
 
-        wmsProducer.push(searchConfiguration.getReportTopic(), reportRequest);
+        wmsProducer.push(searchConfiguration.getReportUpdateTopic(), reportRequest);
     }
 
-    private AggregationResponse getAggregationResponse(ReportRequest reportRequest) {
-        AggregationRequest aggregationRequest = wmsReportEnrichment.enrichAggregationRequestFromReportRequest(reportRequest);
+    private AggsResponse getAggregationResponse(ReportRequest reportRequest) {
+        AggsResponse aggsResponse = null;
+        AggsResponse aggResponse = null;
+        String afterKey = null;
+        do {
+            AggregationRequest aggregationRequest = wmsReportEnrichment.enrichAggregationRequestFromReportRequest(reportRequest, afterKey);
+            aggResponse = reportService.getPaymentTracker(aggregationRequest);
+            if(aggsResponse == null){
+                aggsResponse = aggResponse;
+            }else{
+                if (aggResponse != null){
+                    aggsResponse.getProjectPaymentDetails().addAll(aggResponse.getProjectPaymentDetails());
+                    afterKey = aggResponse.getAfterKey();
+                }
+            }
+        }while (aggResponse != null && aggResponse.getAfterKey() != null);
 
-        return reportController.getPaymentTracker(aggregationRequest).getBody();
+        return aggsResponse;
     }
 
     private ByteArrayResource generateExcelFromObject(AggsResponse aggsResponse) {
@@ -94,7 +109,7 @@ public class WMSReportService {
         List<String> headers = Arrays.asList("Project Id", "Estimated amount","Wage amount paid","Purchase amount paid", "Supervision amount paid", "Total amount paid");
         Map<String, Integer> headerIndexMap = new HashMap<>();
         headerIndexMap.put("EXPENSE.PURCHASE", 3);
-        headerIndexMap.put("EXPENSE.WAGE", 2);
+        headerIndexMap.put("EXPENSE.WAGES", 2);
         headerIndexMap.put("EXPENSE.SUPERVISION", 4);
         byte[] excelBytes = null;
         // Logic to generate excel from object
@@ -109,12 +124,15 @@ public class WMSReportService {
 
         for(ProjectPaymentDetails projectPaymentDetail: aggsResponse.getProjectPaymentDetails()){
             Row row = sheet.createRow(sheet.getLastRowNum() + 1);
-            row.createCell(0).setCellValue(projectPaymentDetail.getProjectNumber());
-            row.createCell(1).setCellValue(projectPaymentDetail.getEstimatedAmount());
-            row.createCell(headerIndexMap.get(projectPaymentDetail.getPaymentDetails().get(0).getBillType())).setCellValue(projectPaymentDetail.getPaymentDetails().get(0).getPaidAmount());
-            row.createCell(headerIndexMap.get(projectPaymentDetail.getPaymentDetails().get(1).getBillType())).setCellValue(projectPaymentDetail.getPaymentDetails().get(1).getPaidAmount());
-            row.createCell(headerIndexMap.get(projectPaymentDetail.getPaymentDetails().get(2).getBillType())).setCellValue(projectPaymentDetail.getPaymentDetails().get(2).getPaidAmount());
-            row.createCell(5).setCellValue(projectPaymentDetail.getTotal());
+            row.createCell(0).setCellValue(projectPaymentDetail.getProjectNumber() == null ? "" : projectPaymentDetail.getProjectNumber());
+            row.createCell(1).setCellValue(projectPaymentDetail.getEstimatedAmount() == null ? 0.0 : projectPaymentDetail.getEstimatedAmount());
+            row.createCell(2).setCellValue(0.0);
+            row.createCell(3).setCellValue(0.0);
+            row.createCell(4).setCellValue(0.0);
+            for(PaymentDetailsByBillType paymentDetailsByBillType: projectPaymentDetail.getPaymentDetails()){
+                row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType())).setCellValue(paymentDetailsByBillType.getPaidAmount() == null ? 0.0 : paymentDetailsByBillType.getPaidAmount());
+            }
+            row.createCell(5).setCellValue(projectPaymentDetail.getTotal() == null ? 0.0 : projectPaymentDetail.getTotal());
         }
 
         try {
