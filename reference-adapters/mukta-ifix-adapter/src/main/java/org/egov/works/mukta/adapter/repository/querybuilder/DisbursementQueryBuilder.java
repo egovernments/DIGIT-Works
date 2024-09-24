@@ -71,6 +71,12 @@ public class DisbursementQueryBuilder {
             query.append(" code.type = ? ");
             preparedStmtList.add(disbursementSearchCriteria.getType());
         }
+
+        if(disbursementSearchCriteria.getTenantId() != null){
+            query.append(AND_CLAUSE);
+            query.append(" code.location_code = ? ");
+            preparedStmtList.add(disbursementSearchCriteria.getTenantId());
+        }
         if(isPaginationRequired){
             return addPaginationWrapper(query,disbursementSearchRequest.getPagination(),preparedStmtList);
         }
