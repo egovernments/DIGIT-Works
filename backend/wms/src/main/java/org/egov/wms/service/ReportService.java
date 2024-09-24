@@ -104,8 +104,9 @@ public class ReportService {
         for (int i = 0; i < aggsResponse.getProjectPaymentDetails().size(); i++) {
             ProjectPaymentDetails projectPaymentDetails = aggsResponse.getProjectPaymentDetails().get(i);
             String projectNumber = projectPaymentDetails.getProjectNumber();
-            double totalEstimatedAmount = projectIdEstimateMap.get(projectNumber);
-            projectPaymentDetails.setTotal(totalEstimatedAmount);
+
+            Double totalEstimatedAmount = projectIdEstimateMap.get(projectNumber);
+            projectPaymentDetails.setEstimatedAmount(totalEstimatedAmount);
         }
     }
 
