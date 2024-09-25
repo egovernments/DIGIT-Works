@@ -211,7 +211,7 @@ def prepare_data_for_composition(data):
             sor_comp_obj['type'] = 'SOR'
             sor_comp_obj['quantity'] = basic_sor.get('WORKS_SOR_COMP_QTY')
             sor_comp_obj['active'] = True
-            sor_comp_obj['effectiveFrom'] = True
+            sor_comp_obj['effectiveFrom'] = '1696118400000'
             sor_comp_obj['basicSorDetails'] = []
             sor_composition_map[basic_sor.get('WORKS_SOR_CODE')] = sor_comp_obj
         sor_child = {
@@ -288,7 +288,7 @@ def get_sor_composition():
     # Get the current working directory
     current_directory = os.getcwd()
     # Path to your Excel file
-    file_name = 'Rate_analysis_for_composition.xlsx'
+    file_name = 'Rate_analysis_for_composition_prod.xlsx'
     # Combine the directory and file name to get the full file path
     file_path = os.path.join(current_directory, file_name)
     excel_file = file_path
@@ -530,7 +530,7 @@ def prepare_data_for_composition_uat(data):
             sor_comp_obj['type'] = 'SOR'
             sor_comp_obj['quantity'] = basic_sor.get('WORKS_SOR_COMP_QTY')
             sor_comp_obj['active'] = True
-            sor_comp_obj['effectiveFrom'] = '1711909800000'
+            sor_comp_obj['effectiveFrom'] = '1696118400000'
             sor_comp_obj['basicSorDetails'] = []
             sor_comp_obj['additionalCharges'] = []
             sor_composition_map[basic_sor.get('WORKS_SOR_CODE')] = sor_comp_obj
@@ -547,8 +547,7 @@ def prepare_data_for_composition_uat(data):
 
 if __name__ == '__main__':
     works_sor_compositions = []
-    # sor_compositions = get_sor_composition()
+    sor_compositions = get_sor_composition()
     # extra_charges = get_extra_charges()
-    sor_compositions = get_sor_composition_uat()
     extra_charges = {}
     generate_sor_composition(sor_compositions, extra_charges)
