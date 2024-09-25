@@ -87,8 +87,8 @@ public class SorMigrationUtil {
         for (Object tenantIdRes : tenantRes) {
             String tenantId = tenantIdRes.toString();
             //TODO remove this when running in prod
-//            if (tenantId.equalsIgnoreCase("od"))
-//                continue;
+            if (tenantId.equalsIgnoreCase("od"))
+                continue;
             if (isTesting && !tenantId.equalsIgnoreCase("od.testing"))
                 continue;
             log.info("Migrating sor for tenantId {}", tenantId);
