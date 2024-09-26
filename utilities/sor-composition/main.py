@@ -213,6 +213,7 @@ def prepare_data_for_composition(data):
             sor_comp_obj['active'] = True
             sor_comp_obj['effectiveFrom'] = '1696118400000'
             sor_comp_obj['basicSorDetails'] = []
+            sor_comp_obj['additionalCharges'] = []
             sor_composition_map[basic_sor.get('WORKS_SOR_CODE')] = sor_comp_obj
         sor_child = {
             "sorId": basic_sor.get('SOR_CODE'),
