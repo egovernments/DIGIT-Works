@@ -93,6 +93,7 @@ public class WMSReportService {
             aggResponse = reportService.getPaymentTracker(aggregationRequest);
             if(aggsResponse == null){
                 aggsResponse = aggResponse;
+                afterKey = aggResponse.getAfterKey();
             }else{
                 if (aggResponse != null){
                     aggsResponse.getProjectPaymentDetails().addAll(aggResponse.getProjectPaymentDetails());
@@ -106,6 +107,9 @@ public class WMSReportService {
 
     private ByteArrayResource generateExcelFromObject(AggsResponse aggsResponse) {
         log.info("WMSService: generateExcelFromObject");
+        if (aggsResponse == null || aggsResponse.getProjectPaymentDetails() == null || aggsResponse.getProjectPaymentDetails().isEmpty()){
+            throw new CustomException("NO_DATA_FOUND", "No data found for the given criteria");
+        }
         List<String> headers = Arrays.asList("Project Id", "Estimated amount","Wage amount paid","Purchase amount paid", "Supervision amount paid", "Total amount paid");
         Map<String, Integer> headerIndexMap = new HashMap<>();
         headerIndexMap.put("EXPENSE.PURCHASE", 3);
