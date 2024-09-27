@@ -136,7 +136,7 @@ public class AttendanceLogQueryBuilder {
             preparedStmtList.add(criteria.getStatus().toString());
         }
 
-        if (!isCount) {
+        if (!isCount && isPaginationRequired(criteria)) {
             addOrderByClause(query, criteria);
             return addPaginationWrapper(query.toString(), preparedStmtList, criteria);
         }
@@ -222,5 +222,18 @@ public class AttendanceLogQueryBuilder {
             return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
         else
             return query;
+    }
+
+    private Boolean isPaginationRequired(AttendanceLogSearchCriteria criteria) {
+        if((criteria.getIds() == null || criteria.getIds().isEmpty())
+                && (criteria.getClientReferenceId() == null || criteria.getClientReferenceId().isEmpty())
+                && StringUtils.isEmpty(criteria.getRegisterId())
+                && (criteria.getIndividualIds() == null || criteria.getIndividualIds().isEmpty())
+                && criteria.getFromTime() == null
+                && criteria.getToTime() == null
+                && criteria.getStatus() == null) {
+            return true;
+        }
+        return false;
     }
 }

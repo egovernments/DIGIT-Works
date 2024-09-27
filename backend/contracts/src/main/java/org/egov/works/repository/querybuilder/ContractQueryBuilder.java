@@ -102,15 +102,9 @@ public class ContractQueryBuilder {
 
     private static final String CONTRACT_COUNT_QUERY = "SELECT distinct(contract.id) " +
             "FROM eg_wms_contract AS contract " +
-            LEFT_JOIN +
-            "eg_wms_contract_documents AS document " +
-            "ON (contract.id = document.contract_id) " +
             LEFT_JOIN+
             "eg_wms_contract_line_items AS lineItems " +
-            "ON (contract.id = lineItems.contract_id) " +
-            LEFT_JOIN +
-            "eg_wms_contract_amount_breakups AS amountBreakups " +
-            "ON (lineItems.id=amountBreakups.line_item_id) ";
+            "ON (contract.id = lineItems.contract_id) ";
 
     private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
 

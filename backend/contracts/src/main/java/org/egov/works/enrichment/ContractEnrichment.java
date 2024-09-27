@@ -411,7 +411,7 @@ public class ContractEnrichment {
         if (pagination.getLimit() != null && pagination.getLimit().compareTo(config.getContractMaxLimit())>0)
             pagination.setLimit(config.getContractMaxLimit());
 
-        if (pagination.getSortBy() == null || pagination.getSortBy().isEmpty())
+        if (StringUtils.isEmpty(pagination.getSortBy()))
             pagination.setSortBy("startDate");
 
         if (pagination.getOrder() == null)

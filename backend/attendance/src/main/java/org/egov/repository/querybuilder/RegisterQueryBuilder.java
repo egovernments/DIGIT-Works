@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
+import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,7 +161,7 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(attendeeId);
         }
 
-       if(!isCountQuery) {
+       if(!isCountQuery && isPaginationRequired(searchCriteria)) {
             addOrderByClause(query, searchCriteria);
             return addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
         }
@@ -247,5 +248,21 @@ public class RegisterQueryBuilder {
             return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
         else
             return query;
+    }
+
+    private Boolean isPaginationRequired(AttendanceRegisterSearchCriteria criteria) {
+        if((criteria.getIds() == null || criteria.getIds().isEmpty())
+                && StringUtils.isEmpty(criteria.getAttendeeId())
+                && StringUtils.isEmpty(criteria.getRegisterNumber())
+                && StringUtils.isEmpty(criteria.getStaffId())
+                && StringUtils.isEmpty(criteria.getReferenceId())
+                && StringUtils.isEmpty(criteria.getServiceCode())
+                && StringUtils.isEmpty(criteria.getName())
+                && criteria.getFromDate() == null
+                && criteria.getToDate() == null
+                && criteria.getStatus() == null) {
+            return true;
+        }
+        return false;
     }
 }
