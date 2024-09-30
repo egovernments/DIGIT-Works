@@ -1,5 +1,7 @@
 package org.egov.wms.repository.builder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.wms.web.model.AggregationRequest;
 import org.egov.wms.web.model.WMSSearchRequest;
@@ -16,9 +18,10 @@ public class ReportESQueryBuilder {
 
 
     private final WMSSearchQueryBuilder wmsSearchQueryBuilder;
-
-    public ReportESQueryBuilder(WMSSearchQueryBuilder wmsSearchQueryBuilder) {
+    private final ObjectMapper mapper;
+    public ReportESQueryBuilder(WMSSearchQueryBuilder wmsSearchQueryBuilder, ObjectMapper mapper) {
         this.wmsSearchQueryBuilder = wmsSearchQueryBuilder;
+        this.mapper = mapper;
     }
 
     public Map<String, Object> getReportEsQuery(AggregationRequest aggregationRequest, WMSSearchRequest wmsSearchRequest, String module) {
@@ -32,8 +35,34 @@ public class ReportESQueryBuilder {
 
     private void addAggregationQuery(AggregationRequest aggregationRequest, Map<String, Object> finalQueryBody) {
         finalQueryBody.replace("size", 0);
+        Object shouldQuery = createShouldQuery(aggregationRequest);
+        Map<String, Object> map = (Map<String, Object>)finalQueryBody.get("query");
+        Map<String, Object> innerMap =  (Map<String, Object>)map.get("bool");
+        innerMap.put("should", shouldQuery);
         Object aggsQuery = createAggsQuery(aggregationRequest);
         finalQueryBody.put("aggs", aggsQuery);
+    }
+
+    private Object createShouldQuery(AggregationRequest aggregationRequest) {
+        Object shouldQuery = null;
+        try {
+            shouldQuery = mapper.readValue("[\n" +
+                    "        { \"term\": { \"Data.paymentStatus.keyword\": \"FAILED\" } },\n" +
+                    "        { \"term\": { \"Data.paymentStatus.keyword\": \"SUCCESSFUL\" } },\n" +
+                    "        { \"term\": { \"Data.paymentStatus.keyword\": \"PARTIAL\" } },\n" +
+                    "        {\n" +
+                    "          \"bool\": {\n" +
+                    "            \"must\": [\n" +
+                    "              { \"term\": { \"Data.paymentStatus.keyword\": \"INITIATED\" } },\n" +
+                    "              { \"range\": { \"Data.totalPaidAmount\": { \"gt\": 0 } } }\n" +
+                    "            ]\n" +
+                    "          }\n" +
+                    "        }\n" +
+                    "      ]", Object.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return shouldQuery;
     }
 
     private Object createAggsQuery(AggregationRequest aggregationRequest) {
