@@ -25,9 +25,11 @@ public class AggregationSearchCriteria{
     private HashMap<String,Object> moduleSearchCriteria;
     
     @JsonProperty("after_key")
+    @NotNull
     private String afterKey;
 
     @JsonProperty("limit")
     @Max(value = 300)
+    @NotNull
     private Integer limit;
 }

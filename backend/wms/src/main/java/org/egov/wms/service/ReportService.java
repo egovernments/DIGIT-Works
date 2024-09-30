@@ -10,11 +10,8 @@ import org.egov.wms.util.MDMSUtil;
 import org.egov.wms.validator.ValidatorDefaultImplementation;
 import org.egov.wms.web.model.*;
 import org.egov.wms.web.model.V2.SearchQueryConfiguration;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,15 +53,6 @@ public class ReportService {
         SearchQueryConfiguration searchQueryConfiguration = mdmsUtil.getConfigFromMDMS(searchRequest, PAYMENT_TRACKER);
         Map<String, Object> reportQuery = reportESQueryBuilder.getReportEsQuery(aggregationRequest, searchRequest, PAYMENT_TRACKER);
 
-        StringBuilder uri = wmsSearchService.getURI(searchQueryConfiguration.getIndex(), SEARCH_PATH);
-        Object result = serviceRequestRepository.fetchESResult(uri, reportQuery);
-//        Object elasticResponse;
-//        try {
-//            elasticResponse = mapper.readValue(new File("../wms/src/main/resources/elastic_response_sample.json"), Object.class);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-
         try {
             String q = mapper.writeValueAsString(reportQuery);
             log.info("Query: "+q);
@@ -72,6 +60,10 @@ public class ReportService {
         catch (Exception e){
             e.printStackTrace();
         }
+
+        StringBuilder uri = wmsSearchService.getURI(searchQueryConfiguration.getIndex(), SEARCH_PATH);
+        Object result = serviceRequestRepository.fetchESResult(uri, reportQuery);
+
         log.info("Inside Payment Tracker Report");
         AggsResponse aggsResponse;
         try {
@@ -81,20 +73,13 @@ public class ReportService {
             e.printStackTrace();
             return null;
         }
-
         // From the aggsResponse fetch all the projectNumbers present in projectPaymentDetails
         List<String> projectNumbers = getProjectNumbers(aggsResponse);
 
-
-
-
-        WMSSearchResponse response = wmsSearchService.getInboxResponse(getSearchRequestForEstimate(aggregationRequest, projectNumbers), ESTIMATE);
-
-        Map<String, Double> projectIdEstimateMap = getProjectEstimateMap(response);
-
-        enrichAggsResponse(aggsResponse, projectIdEstimateMap);
-
         // Search the estimate index and fetch all the estimates with the projectNumbers
+        WMSSearchResponse response = wmsSearchService.getInboxResponse(getSearchRequestForEstimate(aggregationRequest, projectNumbers), ESTIMATE);
+        Map<String, Double> projectIdEstimateMap = getProjectEstimateMap(response);
+        enrichAggsResponse(aggsResponse, projectIdEstimateMap);
 
         return aggsResponse;
     }
