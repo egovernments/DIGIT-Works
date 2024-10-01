@@ -197,6 +197,12 @@ public class EnrichmentUtil {
 
         if (pagination.getLimit() != null && pagination.getLimit().compareTo(config.getMaxSearchLimit()) > 0)
             pagination.setLimit(config.getMaxSearchLimit());
+
+        if (pagination.getSortBy() == null)
+            pagination.setSortBy("billdate");
+
+        if (pagination.getOrder() == null)
+            pagination.setOrder(Pagination.OrderEnum.ASC);
     }
 
     private Pagination getPagination(BillSearchRequest billSearchRequest) {

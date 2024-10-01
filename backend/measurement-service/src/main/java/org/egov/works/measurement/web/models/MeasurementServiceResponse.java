@@ -32,6 +32,9 @@ public class MeasurementServiceResponse   {
     @Valid
     private List<MeasurementService> measurements = null;
 
+    @JsonProperty("pagination")
+    private Pagination pagination = null;
+
 
     public MeasurementServiceResponse addMeasurementsItem(MeasurementService measurementsItem) {
         if (this.measurements == null) {

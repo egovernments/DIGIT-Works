@@ -410,6 +410,12 @@ public class ContractEnrichment {
 
         if (pagination.getLimit() != null && pagination.getLimit().compareTo(config.getContractMaxLimit())>0)
             pagination.setLimit(config.getContractMaxLimit());
+
+        if (StringUtils.isEmpty(pagination.getSortBy()))
+            pagination.setSortBy("startDate");
+
+        if (pagination.getOrder() == null)
+            pagination.setOrder(Pagination.OrderEnum.DESC);
     }
 
     private Pagination getPagination(ContractCriteria contractCriteria) {
