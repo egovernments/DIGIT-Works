@@ -106,7 +106,10 @@ public class Constants {
 					+ " AND li.tenantid=paymentbd.tenantid ";
 
 	public static final String PAYMENT_COUNT_QUERY = "SELECT distinct(payment.id) " +
-			"FROM eg_expense_payment payment ";
+			"FROM eg_expense_payment payment "
+
+			+ INNER_JOIN + " eg_expense_payment_bill paymentbill ON paymentbill.paymentid = payment.id"
+					+ " AND paymentbill.tenantid = payment.tenantid ";
 			
 	
 	public static final Set<String> SORTABLE_BILL_COLUMNS = Collections.unmodifiableSet(
