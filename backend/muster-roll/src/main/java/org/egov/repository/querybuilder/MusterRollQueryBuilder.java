@@ -28,13 +28,7 @@ public class MusterRollQueryBuilder {
             "ON (attn.attendance_summary_id=ind.id) ";
 
     private static final String MUSTER_ROLL_COUNT_QUERY = "SELECT distinct(muster.id) " +
-            "FROM eg_wms_muster_roll AS muster " +
-            "LEFT JOIN " +
-            "eg_wms_attendance_summary AS ind " +
-            "ON (muster.id=ind.muster_roll_id) " +
-            "LEFT JOIN " +
-            "eg_wms_attendance_entries AS attn " +
-            "ON (attn.attendance_summary_id=ind.id) ";
+            "FROM eg_wms_muster_roll AS muster ";
 
     private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY {sortBy} {orderBy}) offset_ FROM " +

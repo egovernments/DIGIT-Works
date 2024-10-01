@@ -47,10 +47,7 @@ public class MeasurementQueryBuilder {
             "WHERE offset_ > ? AND offset_ <= ?";
 
     private static final String MEASUREMENT_COUNT_QUERY = "SELECT distinct(m.id) " +
-            "FROM eg_mb_measurements m " +
-            "INNER JOIN eg_mb_measurement_details md ON m.id = md.referenceId " +
-            "INNER JOIN eg_mb_measurement_measures mm ON md.id = mm.id "+
-            "LEFT JOIN eg_mb_measurement_documents dc ON m.id = dc.referenceId ";
+            "FROM eg_mb_measurements m ";
 
     private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
 
