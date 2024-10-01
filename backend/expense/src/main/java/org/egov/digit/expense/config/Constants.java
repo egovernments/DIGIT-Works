@@ -106,16 +106,7 @@ public class Constants {
 					+ " AND li.tenantid=paymentbd.tenantid ";
 
 	public static final String PAYMENT_COUNT_QUERY = "SELECT distinct(payment.id) " +
-			"FROM eg_expense_payment payment "
-
-			+ INNER_JOIN + " eg_expense_payment_bill paymentbill ON paymentbill.paymentid = payment.id"
-					+ " AND paymentbill.tenantid = payment.tenantid "
-
-			+ INNER_JOIN + " eg_expense_payment_billdetail paymentbd ON paymentbd.paymentbillid = paymentbill.id"
-					+ " AND paymentbd.tenantid = paymentbill.tenantid "
-
-			+ INNER_JOIN + " eg_expense_payment_lineitem li ON li.paymentbilldetailid = paymentbd.id"
-					+ " AND li.tenantid=paymentbd.tenantid ";
+			"FROM eg_expense_payment payment ";
 			
 	
 	public static final Set<String> SORTABLE_BILL_COLUMNS = Collections.unmodifiableSet(
@@ -158,13 +149,5 @@ public class Constants {
 	public static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
 
 	public static final String BILL_COUNT_QUERY = "SELECT distinct(bill.id) " +
-             "FROM eg_expense_bill bill "
-
-			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYER ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
-
-			+ INNER_JOIN + " EG_EXPENSE_BILLDETAIL BD ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
-
-			+ INNER_JOIN + " EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
-
-			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
+             "FROM eg_expense_bill bill ";
 }
