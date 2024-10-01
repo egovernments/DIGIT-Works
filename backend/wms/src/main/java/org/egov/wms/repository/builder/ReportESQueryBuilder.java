@@ -1,6 +1,9 @@
 package org.egov.wms.repository.builder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.wms.config.SearchConfiguration;
 import org.egov.wms.web.model.AggregationRequest;
 import org.egov.wms.web.model.WMSSearchRequest;
 import org.springframework.stereotype.Component;
@@ -10,15 +13,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.wms.util.WMSConstants.SHOULD_QUERY;
+
 @Component
 @Slf4j
 public class ReportESQueryBuilder {
 
 
     private final WMSSearchQueryBuilder wmsSearchQueryBuilder;
-
-    public ReportESQueryBuilder(WMSSearchQueryBuilder wmsSearchQueryBuilder) {
+    private final ObjectMapper mapper;
+    private final SearchConfiguration configs;
+    public ReportESQueryBuilder(WMSSearchQueryBuilder wmsSearchQueryBuilder, ObjectMapper mapper, SearchConfiguration configs) {
         this.wmsSearchQueryBuilder = wmsSearchQueryBuilder;
+        this.mapper = mapper;
+        this.configs = configs;
     }
 
     public Map<String, Object> getReportEsQuery(AggregationRequest aggregationRequest, WMSSearchRequest wmsSearchRequest, String module) {
@@ -32,11 +40,27 @@ public class ReportESQueryBuilder {
 
     private void addAggregationQuery(AggregationRequest aggregationRequest, Map<String, Object> finalQueryBody) {
         finalQueryBody.replace("size", 0);
+        Object shouldQuery = createShouldQuery(aggregationRequest);
+        Map<String, Object> map = (Map<String, Object>)finalQueryBody.get("query");
+        Map<String, Object> innerMap =  (Map<String, Object>)map.get("bool");
+        innerMap.put("should", shouldQuery);
         Object aggsQuery = createAggsQuery(aggregationRequest);
         finalQueryBody.put("aggs", aggsQuery);
     }
 
+    private Object createShouldQuery(AggregationRequest aggregationRequest) {
+        Object shouldQuery = null;
+        try {
+            shouldQuery = mapper.readValue(SHOULD_QUERY, Object.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return shouldQuery;
+    }
+
     private Object createAggsQuery(AggregationRequest aggregationRequest) {
+        if (aggregationRequest.getAggregationSearchCriteria().getLimit() == null)
+            aggregationRequest.getAggregationSearchCriteria().setLimit(configs.getReportDefaultLimit());
         Map<String, Object> buckets_path = new HashMap<>();
         buckets_path.put("total_amount", "total_amount");
         buckets_path.put("paid_amount", "paid_amount");
@@ -75,9 +99,6 @@ public class ReportESQueryBuilder {
         Total.put("terms", terms);
         Total.put("aggs", innerAggs);
 
-
-
-
         // Creating sources for composite aggregation (projectId keyword field)
         Map<String, Object> projectField = new HashMap<>();
         projectField.put("field", "Data.additionalDetails.projectId.keyword");
@@ -102,7 +123,9 @@ public class ReportESQueryBuilder {
         afterTerms.put("terms", aggregationRequest.getAggregationSearchCriteria().getAfterKey());
 
         after.put("project", aggregationRequest.getAggregationSearchCriteria().getAfterKey()); // Project ID after which results should be returned
-        composite.put("after", after);
+        if (aggregationRequest.getAggregationSearchCriteria().getAfterKey() != null) {
+            after.put("after", afterTerms);
+        }
 
 // Creating sub-aggregations for billType similar to the "Total" aggregation
         Map<String, Object> billTypeTerms = new HashMap<>();
