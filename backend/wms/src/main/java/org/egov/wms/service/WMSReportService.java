@@ -38,16 +38,18 @@ public class WMSReportService {
     private final FileStoreUtil fileStoreUtil;
     private final WMSReportEnrichment wmsReportEnrichment;
     private final ReportService reportService;
+    private final RedisService redisService;
 
 
     @Autowired
-    public WMSReportService(SearchConfiguration searchConfiguration, WMSProducer wmsProducer, ReportRepository reportRepository, FileStoreUtil fileStoreUtil, WMSReportEnrichment wmsReportEnrichment, ReportService reportService) {
+    public WMSReportService(SearchConfiguration searchConfiguration, WMSProducer wmsProducer, ReportRepository reportRepository, FileStoreUtil fileStoreUtil, WMSReportEnrichment wmsReportEnrichment, ReportService reportService, RedisService redisService) {
         this.searchConfiguration = searchConfiguration;
         this.wmsProducer = wmsProducer;
         this.reportRepository = reportRepository;
         this.fileStoreUtil = fileStoreUtil;
         this.wmsReportEnrichment = wmsReportEnrichment;
         this.reportService = reportService;
+        this.redisService = redisService;
     }
 
     public ReportJob processReportGeneration(String reportName, ReportRequest reportRequest) {
@@ -167,5 +169,20 @@ public class WMSReportService {
     public Integer getReportSearchCount(ReportSearchRequest reportSearchRequest) {
         log.info("WMSReportService: getReportSearchCount");
         return reportRepository.getReportJobsCount(reportSearchRequest);
+    }
+
+    public Boolean validateJobScheduledRequest(ReportRequest reportRequest) {
+        log.info("SchedulerValidator: validateJobScheduledRequest");
+        try {
+            String jobId = reportRequest.getJobRequest().getReportNumber();
+        if (Boolean.TRUE.equals(redisService.isJobPresentInCache(jobId))) {
+            return true;
+        }
+        redisService.setCacheForJob(jobId);
+        return false;
+        }catch (Exception e) {
+            log.error("Error while calling redis service", e);
+            throw new CustomException("REDIS_ERROR", "Error while calling redis service");
+        }
     }
 }

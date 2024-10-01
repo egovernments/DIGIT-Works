@@ -88,7 +88,7 @@ public class SearchConfiguration {
 	@Value("${egov.idgen.report.id.name}")
 	private String reportIdName;
 
-	@Value("${wms.kafka.report.topic}")
+	@Value("${wms.kafka.report.create.topic}")
 	private String reportTopic;
 
 	@Value("${egov.filestore.host}")
