@@ -153,12 +153,5 @@ public class RegisterEnrichment {
         if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getAttendanceRegisterMaxLimit())
             searchCriteria.setLimit(config.getAttendanceRegisterMaxLimit());
 
-        if(searchCriteria.getSortBy() == null){
-            searchCriteria.setSortBy(AttendanceRegisterSearchCriteria.SortBy.lastModifiedTime);
-        }
-
-        if(searchCriteria.getSortOrder() == null){
-            searchCriteria.setSortOrder(AttendanceRegisterSearchCriteria.SortOrder.DESC);
-        }
     }
 }

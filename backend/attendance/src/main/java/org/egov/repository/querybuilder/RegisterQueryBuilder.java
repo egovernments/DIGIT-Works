@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
-import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,25 +49,16 @@ public class RegisterQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
-    private static final String REGISTER_COUNT_QUERY = "SELECT distinct(reg.id) "+
-            "FROM eg_wms_attendance_register reg ";
-
-    private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
-
-
     @Autowired
     public RegisterQueryBuilder(AttendanceServiceConfiguration config) {
         this.config = config;
     }
 
 
-    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean isCountQuery) {
+    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
 
         log.info("Search criteria of attendance search : " + searchCriteria.toString());
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
-        if(isCountQuery) {
-            query = new StringBuilder(REGISTER_COUNT_QUERY);
-        }
 
         if(!ObjectUtils.isEmpty(searchCriteria.getStaffId())) {
             query.append(JOIN_STAFF);
@@ -161,12 +151,9 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(attendeeId);
         }
 
-       if(!isCountQuery && isPaginationRequired(searchCriteria)) {
-            addOrderByClause(query, searchCriteria);
-            return addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
-        }
-
-        return query.toString();
+        addOrderByClause(query, searchCriteria);
+        //addLimitAndOffset(query, searchCriteria, preparedStmtList);
+        return addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
     }
 
     private String addPaginationWrapper(String query,List<Object> preparedStmtList,
@@ -239,30 +226,5 @@ public class RegisterQueryBuilder {
         } else {
             query.append(" AND ");
         }
-    }
-
-    public String getSearchCountQueryString(AttendanceRegisterSearchCriteria criteria, List<Object> preparedStmtList) {
-        log.info("EstimateQueryBuilder::getSearchCountQueryString");
-        String query = getAttendanceRegisterSearchQuery(criteria, preparedStmtList,true);
-        if (query != null)
-            return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
-        else
-            return query;
-    }
-
-    private Boolean isPaginationRequired(AttendanceRegisterSearchCriteria criteria) {
-        if((criteria.getIds() == null || criteria.getIds().isEmpty())
-                && StringUtils.isEmpty(criteria.getAttendeeId())
-                && StringUtils.isEmpty(criteria.getRegisterNumber())
-                && StringUtils.isEmpty(criteria.getStaffId())
-                && StringUtils.isEmpty(criteria.getReferenceId())
-                && StringUtils.isEmpty(criteria.getServiceCode())
-                && StringUtils.isEmpty(criteria.getName())
-                && criteria.getFromDate() == null
-                && criteria.getToDate() == null
-                && criteria.getStatus() == null) {
-            return true;
-        }
-        return false;
     }
 }

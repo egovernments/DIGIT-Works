@@ -1,6 +1,5 @@
 package org.egov.web.models;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
@@ -27,10 +26,6 @@ public class AttendanceLogResponse {
     @JsonProperty("attendance")
     @Valid
     private List<AttendanceLog> attendance = null;
-
-    @JsonProperty("pagination")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Pagination pagination = null;
 
 
     public AttendanceLogResponse addAttendanceItem(AttendanceLog attendanceItem) {

@@ -31,17 +31,11 @@ public class RegisterRepository {
 
     public List<AttendanceRegister> getRegister(AttendanceRegisterSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList,false);
+        String query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList);
         log.info("Query of get register : " + query);
         log.info("preparedStmtList of get register : " + preparedStmtList.toString());
         List<AttendanceRegister> attendanceRegisterList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return attendanceRegisterList;
-    }
-
-    public Integer getRegisterCount(AttendanceRegisterSearchCriteria searchCriteria) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getSearchCountQueryString(searchCriteria, preparedStmtList);
-        return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
     }
 
 }

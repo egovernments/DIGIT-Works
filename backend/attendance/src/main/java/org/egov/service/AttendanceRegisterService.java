@@ -19,7 +19,6 @@ import org.egov.util.IndividualServiceUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.web.models.*;
-import org.egov.works.services.common.models.bankaccounts.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -406,17 +405,6 @@ public class AttendanceRegisterService {
             throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND", "Attendance registers not found for the referenceId");
         }
 
-    }
-
-    public Pagination getPaginationObject(AttendanceRegisterSearchCriteria criteria){
-        Integer totalCount = registerRepository.getRegisterCount(criteria);
-        return Pagination.builder()
-                .limit(criteria.getLimit())
-                .offset(criteria.getOffset())
-                .totalCount(totalCount)
-                .sortBy(criteria.getSortBy().name())
-                .order(criteria.getSortOrder().name())
-                .build();
     }
 
 }

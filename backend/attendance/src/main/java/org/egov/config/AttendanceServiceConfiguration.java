@@ -81,14 +81,14 @@ public class AttendanceServiceConfiguration {
 
     //attendance service log search config
 
-    @Value("${attendance.service.log.default.offset}")
-    private Integer attendanceLogDefaultOffset;
+    //@Value("${attendance.service.log.default.offset}")
+    //private Integer attendanceLogDefaultOffset;
 
-    @Value("${attendance.service.log.default.limit}")
-    private Integer attendanceLogDefaultLimit;
+    //@Value("${attendance.service.log.default.limit}")
+    //private Integer attendanceLogDefaultLimit;
 
-    @Value("${attendance.service.log.search.max.limit}")
-    private Integer attendanceLogMaxLimit;
+    //@Value("${attendance.service.log.search.max.limit}")
+    //private Integer attendanceLogMaxLimit;
 
     //attendance service register search config
     @Value("${attendance.register.default.offset}")
