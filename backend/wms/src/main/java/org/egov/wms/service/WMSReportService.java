@@ -97,7 +97,7 @@ public class WMSReportService {
                 aggsResponse = aggResponse;
                 afterKey = aggResponse.getAfterKey();
             }else{
-                if (aggResponse != null){
+                if (aggResponse != null && !aggResponse.getProjectPaymentDetails().isEmpty()){
                     aggsResponse.getProjectPaymentDetails().addAll(aggResponse.getProjectPaymentDetails());
                     afterKey = aggResponse.getAfterKey();
                 }
@@ -182,7 +182,7 @@ public class WMSReportService {
         return false;
         }catch (Exception e) {
             log.error("Error while calling redis service", e);
-            throw new CustomException("REDIS_ERROR", "Error while calling redis service");
+            return false;
         }
     }
 }
