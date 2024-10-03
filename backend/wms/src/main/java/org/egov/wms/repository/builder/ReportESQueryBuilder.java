@@ -44,6 +44,7 @@ public class ReportESQueryBuilder {
         Map<String, Object> map = (Map<String, Object>)finalQueryBody.get("query");
         Map<String, Object> innerMap =  (Map<String, Object>)map.get("bool");
         innerMap.put("should", shouldQuery);
+        innerMap.put("minimum_should_match", 1);
         Object aggsQuery = createAggsQuery(aggregationRequest);
         finalQueryBody.put("aggs", aggsQuery);
     }
@@ -119,24 +120,16 @@ public class ReportESQueryBuilder {
 
 // Adding the 'after' key for pagination (optional, depending on requirement)
         Map<String, Object> after = new HashMap<>();
-        Map<String, Object> afterTerms = new HashMap<>();
-        afterTerms.put("terms", aggregationRequest.getAggregationSearchCriteria().getAfterKey());
 
         after.put("project", aggregationRequest.getAggregationSearchCriteria().getAfterKey()); // Project ID after which results should be returned
         if (aggregationRequest.getAggregationSearchCriteria().getAfterKey() != null) {
-            after.put("after", afterTerms);
+            composite.put("after", after);
         }
 
 // Creating sub-aggregations for billType similar to the "Total" aggregation
         Map<String, Object> billTypeTerms = new HashMap<>();
         billTypeTerms.put("field", "Data.businessService.keyword");
         billTypeTerms.put("size", aggregationRequest.getAggregationSearchCriteria().getLimit()); // Limit the billType terms aggregation
-
-//// Sub-aggregations for total_amount, paid_amount, failed_amount within billType
-//        Map<String, Object> billTypeInnerAggs = new HashMap<>();
-//        billTypeInnerAggs.put("total_amount", total_amount);  // Reusing total_amount from the "Total" section
-//        billTypeInnerAggs.put("paid_amount", paid_amount);    // Reusing paid_amount from the "Total" section
-//        billTypeInnerAggs.put("failed_amount", failed_amount); // Reusing failed_amount from the "Total" section
 
 // Aggregating billType terms with sub-aggregations
         Map<String, Object> billType = new HashMap<>();
@@ -152,13 +145,10 @@ public class ReportESQueryBuilder {
         projects.put("composite", composite);
         projects.put("aggs", projectAggs);
 
-// Final Projects object (as part of your final query)
+// Final Projects object (as part of final query)
         Map<String, Object> aggs = new HashMap<>();
         aggs.put("Projects", projects);
         aggs.put("Total", Total);
-
-
-// You can now merge this `aggs` map with the Total object if needed, to complete your final aggregation query.
 
 
 
