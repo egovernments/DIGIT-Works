@@ -39,8 +39,8 @@ public class ElasticResponseMapper {
         aggsResponse.setProjectPaymentDetails(projectPaymentDetailsList);
 
         // Set afterKey
-        String afterKey = rootNode.get("aggregations").get("Projects").get("after_key").get("project").asText();
-        aggsResponse.setAfterKey(afterKey);
+        if (rootNode.get("aggregations").get("Projects").has("after_key"))
+            aggsResponse.setAfterKey(rootNode.get("aggregations").get("Projects").get("after_key").get("project").asText());
 
         return aggsResponse;
     }

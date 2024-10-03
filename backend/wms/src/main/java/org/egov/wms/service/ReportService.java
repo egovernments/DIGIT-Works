@@ -54,14 +54,6 @@ public class ReportService {
         SearchQueryConfiguration searchQueryConfiguration = mdmsUtil.getConfigFromMDMS(searchRequest, PAYMENT_TRACKER);
         Map<String, Object> reportQuery = reportESQueryBuilder.getReportEsQuery(aggregationRequest, searchRequest, PAYMENT_TRACKER);
 
-        try {
-            String q = mapper.writeValueAsString(reportQuery);
-            log.info("Query: "+q);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
         StringBuilder uri = wmsSearchService.getURI(searchQueryConfiguration.getIndex(), SEARCH_PATH);
         Object result = serviceRequestRepository.fetchESResult(uri, reportQuery);
 
