@@ -71,7 +71,7 @@ public class ReportQueryBuilder {
         if(reportSearchCriteria.getStatus() != null) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" status = ?");
-            preparedStmtList.add(reportSearchCriteria.getStatus());
+            preparedStmtList.add(reportSearchCriteria.getStatus().toString());
         }
         if(Boolean.FALSE.equals(isCountNeeded)){
             return addPaginationWrapper(query, reportSearchRequest.getPagination(), preparedStmtList);
