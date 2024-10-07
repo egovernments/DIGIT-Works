@@ -57,6 +57,7 @@ public class UserIndividualMigrationUtil {
             String individualUuid = (String) orgContactDetail.get("id");
             String contact_mobile_number = (String) orgContactDetail.get("contact_mobile_number");
             String tenant_id = (String) orgContactDetail.get("tenant_id");
+            String org_id=(String) orgContactDetail.get("org_id");
             if (tenant_id.contains("."))
                 tenant_id = tenant_id.split("\\.")[0];
             Map<String, String> encryptRequestMap = new HashMap<>();
@@ -65,8 +66,11 @@ public class UserIndividualMigrationUtil {
             log.info("Calling for encryption");
             Map<String, String> encryptedValues = encryptionDecryptionUtil(encryptRequestMap, true);
             String encryptedMobileNumber = encryptedValues.get("contact_mobile_number");
+            log.info("Setting encrypted mobile number  in org_contact_details table :: "+individualUuid);
+            String organisationInsertQuery = "UPDATE eg_org_contact_detail set contact_mobile_number='"+encryptedMobileNumber+"' where org_id='"+org_id+"';";
+            jdbcTemplate.update(organisationInsertQuery);
 
-            log.info("Encrypted response :: " + encryptedMobileNumber);
+          /*  log.info("Encrypted response :: " + encryptedMobileNumber);
             String userDetailsQuery =  "SELECT userdata.title, userdata.salutation, userdata.dob, userdata.locale, userdata.username, userdata" +
                     ".password, userdata.pwdexpirydate,  userdata.mobilenumber, userdata.altcontactnumber, userdata.emailid, userdata.createddate, userdata" +
                     ".lastmodifieddate,  userdata.createdby, userdata.lastmodifiedby, userdata.active, userdata.name, userdata.gender, userdata.pan, userdata.aadhaarnumber, userdata" +
@@ -123,7 +127,7 @@ public class UserIndividualMigrationUtil {
 
             log.info("Setting individualUuid in org_contact_details table :: "+individualUuid);
             String organisationInsertQuery = "UPDATE eg_org_contact_detail set individual_id='"+individualUuid+"' where contact_mobile_number='"+contact_mobile_number+"';";
-            jdbcTemplate.update(organisationInsertQuery);
+            jdbcTemplate.update(organisationInsertQuery);*/
         }
         log.info("Ending migration....");
     }
