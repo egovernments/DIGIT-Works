@@ -194,13 +194,13 @@ def process_bill(bill, tenant_id, request_info):
             "RequestInfo": request_info,
             "bill": bill
         }
-        publish_to_kafka(bill_request, 'expense-bill-index-topic')
-        publish_to_kafka(bill_request, 'expense-bill-update')
+        publish_to_kafka(bill_request, os.getenv('EXPENSE_BILL_INDEX_TOPIC'))
+        publish_to_kafka(bill_request, os.getenv('EXPENSE_BILL_UPDATE_TOPIC'))
 
 
 
 def publish_to_kafka(data, topic):
-    producer = KafkaProducer(bootstrap_servers='localhost:9092')
+    producer = KafkaProducer(bootstrap_servers=os.getenv('KAFKA_SERVER'))
 
     # Convert data to JSON before publishing
     json_data = json.dumps(data).encode('utf-8')
@@ -378,7 +378,7 @@ def process_pis(pi, tenant_id, request_info):
                     "paymentInstruction": pi
                 }
 
-                publish_to_kafka(pi_request, 'mukta-ifix-pi-index-enrich')
+                publish_to_kafka(pi_request, os.getenv('MUKTA_PI_INDEX_TOPIC'))
 
 
 def check_if_done_pi(pi, cursor, connection):
