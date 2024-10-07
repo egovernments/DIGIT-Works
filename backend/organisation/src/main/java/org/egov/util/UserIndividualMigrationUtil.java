@@ -47,7 +47,7 @@ public class UserIndividualMigrationUtil {
     public void migrate(RequestInfo requestInfo) {
         log.info("Starting migration");
 
-        String contactDetailsQuery = "SELECT id, tenant_id, org_id, contact_name, contact_mobile_number, contact_email, individual_id FROM eg_org_contact_detail WHERE contact_mobile_number not like '%269701%';";
+        String contactDetailsQuery = "SELECT id, tenant_id, org_id, contact_name, contact_mobile_number, contact_email, individual_id FROM eg_org_contact_detail WHERE contact_name not like '%269701%' and contact_email IS NOT NULL;";
 
         List<Map<String,Object>> orgContactDetails = jdbcTemplate.queryForList(contactDetailsQuery);
 
