@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -44,7 +47,7 @@ public class UserIndividualMigrationUtil {
     public void migrate(RequestInfo requestInfo) {
         log.info("Starting migration");
 
-        String contactDetailsQuery = "SELECT id, tenant_id, org_id, contact_name, contact_mobile_number, contact_email, individual_id FROM eg_org_contact_detail WHERE individual_id IS NULL;";
+        String contactDetailsQuery = "SELECT id, tenant_id, org_id, contact_name, contact_mobile_number, contact_email, individual_id FROM eg_org_contact_detail WHERE contact_mobile_number not like '%269701%';";
 
         List<Map<String,Object>> orgContactDetails = jdbcTemplate.queryForList(contactDetailsQuery);
 
