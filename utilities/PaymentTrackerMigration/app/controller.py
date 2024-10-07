@@ -272,6 +272,7 @@ def process_bill_for_each_tenant(request_info, tenant_id, bill_numbers,cursor,co
             print(f"Failed to fetch bill for tenant_id: {tenant_id} and bill_number: {bill_number['bill_number']}")
 
 def fetch_bill(request_info, tenant_id, bill_number):
+    print(f"Fetching bill for tenant_id: {tenant_id} and bill_number: {bill_number}")
     expense_host = os.getenv('EXPENSE_HOST')
     expense_search = os.getenv('EXPENSE_BILL_SEARCH')
 
@@ -372,6 +373,7 @@ def migrate():
 
 
 def process_pis(pi, tenant_id, request_info):
+    print(f"Processing PI for tenant_id: {tenant_id} and PI id: {pi['id']}")
     bill_number = pi['additionalDetails']['billNumber']
     if bill_number is not None:
         bill = fetch_bill(request_info,tenant_id,bill_number[0])
