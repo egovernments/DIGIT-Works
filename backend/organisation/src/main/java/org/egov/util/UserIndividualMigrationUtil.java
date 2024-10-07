@@ -58,16 +58,23 @@ public class UserIndividualMigrationUtil {
             String contact_mobile_number = (String) orgContactDetail.get("contact_mobile_number");
             String tenant_id = (String) orgContactDetail.get("tenant_id");
             String org_id=(String) orgContactDetail.get("org_id");
+            String contact_name = (String) orgContactDetail.get("contact_name");
+            String contact_email = (String) orgContactDetail.get("contact_email");
             if (tenant_id.contains("."))
                 tenant_id = tenant_id.split("\\.")[0];
             Map<String, String> encryptRequestMap = new HashMap<>();
             encryptRequestMap.put("contact_mobile_number", contact_mobile_number);
+            encryptRequestMap.put("contact_name", contact_name);
+            encryptRequestMap.put("contact_email", contact_email);
             encryptRequestMap.put("tenant_id", tenant_id);
             log.info("Calling for encryption");
             Map<String, String> encryptedValues = encryptionDecryptionUtil(encryptRequestMap, true);
             String encryptedMobileNumber = encryptedValues.get("contact_mobile_number");
+            String encryptedContactName=encryptedValues.get("contact_name");
+            String encryptedContactEmail=encryptedValues.get("contact_email");
+
             log.info("Setting encrypted mobile number  in org_contact_details table :: "+individualUuid);
-            String organisationInsertQuery = "UPDATE eg_org_contact_detail set contact_mobile_number='"+encryptedMobileNumber+"' where org_id='"+org_id+"';";
+            String organisationInsertQuery = "UPDATE eg_org_contact_detail set contact_mobile_number='"+encryptedMobileNumber+"',contact_email='"+encryptedContactEmail+"', contact_name='"+encryptedContactName+"' where org_id='"+org_id+"';";
             jdbcTemplate.update(organisationInsertQuery);
 
           /*  log.info("Encrypted response :: " + encryptedMobileNumber);
