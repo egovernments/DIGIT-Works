@@ -184,11 +184,11 @@ def process_bill(bill, tenant_id, request_info):
         project_id = estimate['projectId']
         project = fetch_project_details(project_id, tenant_id, request_info)
         additional_details = bill.get('additionalDetails', {})
-        additional_details['projectId'] = project['projectNumber']
-        additional_details['projectName'] = project['name']
-        additional_details['ward'] = project['address']['boundary']
-        additional_details['projectDescription'] = project['description']
-        additional_details['projectCreatedDate'] = project['auditDetails']['createdTime']
+        additional_details['projectId'] = project.get('projectNumber', 'N/A')
+        additional_details['projectName'] = project.get('name', 'N/A')
+        additional_details['ward'] = project.get('address', {}).get('boundary', 'N/A')
+        additional_details['projectDescription'] = project.get('description', 'N/A')
+        additional_details['projectCreatedDate'] = project.get('auditDetails', {}).get('createdTime', 'N/A')
         bill['additionalDetails'] = additional_details
         bill_request = {
             "RequestInfo": request_info,
