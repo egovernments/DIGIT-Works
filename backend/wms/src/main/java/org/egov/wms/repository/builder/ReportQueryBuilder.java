@@ -8,6 +8,7 @@ import org.egov.wms.web.model.Job.ReportSearchRequest;
 import org.egov.works.services.common.models.expense.Pagination;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
@@ -72,6 +73,17 @@ public class ReportQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" status = ?");
             preparedStmtList.add(reportSearchCriteria.getStatus().toString());
+        }
+        if(reportSearchCriteria.getScheduledFrom() != null){
+            addClauseIfRequired(query, preparedStmtList);
+
+            if(reportSearchCriteria.getScheduledTo() == null){
+                reportSearchCriteria.setScheduledTo(Instant.now().toEpochMilli());
+            }
+
+            query.append(" created_time BETWEEN ? AND ?");
+            preparedStmtList.add(reportSearchCriteria.getScheduledFrom());
+            preparedStmtList.add(reportSearchCriteria.getScheduledTo());
         }
         if(Boolean.FALSE.equals(isCountNeeded)){
             return addPaginationWrapper(query, reportSearchRequest.getPagination(), preparedStmtList);

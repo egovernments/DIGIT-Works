@@ -3,6 +3,8 @@ package org.egov.wms.web.model.Job;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
@@ -20,4 +22,10 @@ public class ReportSearchCriteria {
 
     @JsonProperty("status")
     private JobStatus status;
+
+    @JsonProperty("scheduledFrom")
+    private Long scheduledFrom;
+
+    @JsonProperty("scheduledTo")
+    private Long scheduledTo;
 }
