@@ -183,7 +183,7 @@ def process_bill(bill, tenant_id, request_info):
         estimate = fetch_estimate(estimate_id, tenant_id, request_info)
         project_id = estimate['projectId']
         project = fetch_project_details(project_id, tenant_id, request_info)
-        additional_details = bill['additionalDetails']
+        additional_details = bill.get('additionalDetails', {})
         additional_details['projectId'] = project['projectNumber']
         additional_details['projectName'] = project['name']
         additional_details['ward'] = project['address']['boundary']
