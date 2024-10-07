@@ -183,12 +183,20 @@ def process_bill(bill, tenant_id, request_info):
         estimate = fetch_estimate(estimate_id, tenant_id, request_info)
         project_id = estimate['projectId']
         project = fetch_project_details(project_id, tenant_id, request_info)
-        additional_details = bill.get('additionalDetails', {})
+        # Ensure additional_details is not None; if it's None, initialize as an empty dictionary
+        additional_details = bill.get('additionalDetails')
+
+        if additional_details is None:
+            additional_details = {}
+
+        # Now safely assign the values
         additional_details['projectId'] = project.get('projectNumber', 'N/A')
         additional_details['projectName'] = project.get('name', 'N/A')
         additional_details['ward'] = project.get('address', {}).get('boundary', 'N/A')
         additional_details['projectDescription'] = project.get('description', 'N/A')
         additional_details['projectCreatedDate'] = project.get('auditDetails', {}).get('createdTime', 'N/A')
+
+        # Ensure the modified additional_details is saved back to the bill dictionary
         bill['additionalDetails'] = additional_details
         bill_request = {
             "RequestInfo": request_info,
