@@ -3,7 +3,7 @@ import os
 import psycopg2
 import requests
 from dotenv import load_dotenv
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from kafka import KafkaProducer
 import json
 from psycopg2 import connect
@@ -366,7 +366,7 @@ def migrate():
                 bill_numbers = get_bill_numbers_for_tenant(tenant_id, cursor)
                 # bill_numbers = get_dummy_bill_numbers()
                 process_bill_for_each_tenant(request_info, tenant_id,bill_numbers,cursor, connection)
-
+            return jsonify({"message": "Migration successful!"}), 200
         except Exception as e:
             return {"error": str(e)}, 500
 
@@ -465,7 +465,7 @@ def migrate_pi():
             print(tenant_ids)
             for tenant_id in tenant_ids:
                 process_pi_for_tenant(request_info, tenant_id, connection, cursor)
-
+            return jsonify({"message": "Migration successful!"}), 200
         except Exception as e:
             return {"error": str(e)}, 500
 
