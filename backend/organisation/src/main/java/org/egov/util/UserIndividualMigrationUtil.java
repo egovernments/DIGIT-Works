@@ -62,20 +62,10 @@ public class UserIndividualMigrationUtil {
             String contact_email = (String) orgContactDetail.get("contact_email");
             if (tenant_id.contains("."))
                 tenant_id = tenant_id.split("\\.")[0];
-            Map<String, String> encryptRequestMap = new HashMap<>();
-            encryptRequestMap.put("contact_mobile_number", contact_mobile_number);
-            encryptRequestMap.put("contact_name", contact_name);
-            encryptRequestMap.put("contact_email", contact_email);
-            encryptRequestMap.put("tenant_id", tenant_id);
-            log.info("Calling for encryption");
-            Map<String, String> encryptedValues = encryptionDecryptionUtil(encryptRequestMap, true);
-            String encryptedMobileNumber = encryptedValues.get("contact_mobile_number");
-            String encryptedContactName=encryptedValues.get("contact_name");
-            String encryptedContactEmail=encryptedValues.get("contact_email");
+            setEncryptedContactNumber(contact_mobile_number, contact_name, contact_email, tenant_id, individualUuid, org_id);
+            setEncryptedContactName(contact_mobile_number, contact_name, contact_email, tenant_id, individualUuid, org_id);
+            setEncryptedContactEmail(contact_mobile_number, contact_name, contact_email, tenant_id, individualUuid, org_id);
 
-            log.info("Setting encrypted mobile number  in org_contact_details table :: "+individualUuid);
-            String organisationInsertQuery = "UPDATE eg_org_contact_detail set contact_mobile_number='"+encryptedMobileNumber+"',contact_email='"+encryptedContactEmail+"', contact_name='"+encryptedContactName+"' where org_id='"+org_id+"';";
-            jdbcTemplate.update(organisationInsertQuery);
 
           /*  log.info("Encrypted response :: " + encryptedMobileNumber);
             String userDetailsQuery =  "SELECT userdata.title, userdata.salutation, userdata.dob, userdata.locale, userdata.username, userdata" +
@@ -138,6 +128,49 @@ public class UserIndividualMigrationUtil {
         }
         log.info("Ending migration....");
     }
+
+    private void setEncryptedContactNumber(String contact_mobile_number, String contact_name, String contact_email, String tenant_id, String individualUuid, String org_id) {
+        Map<String, String> encryptRequestMap = new HashMap<>();
+        encryptRequestMap.put("contact_mobile_number", contact_mobile_number);
+        encryptRequestMap.put("contact_name", contact_name);
+        encryptRequestMap.put("contact_email", contact_email);
+        encryptRequestMap.put("tenant_id", tenant_id);
+        log.info("Calling for encryption");
+        Map<String, String> encryptedValues = encryptionDecryptionUtil(encryptRequestMap, true);
+        String encryptedMobileNumber = encryptedValues.get("contact_mobile_number");
+
+        log.info("Setting encrypted mobile number  in org_contact_details table :: "+ individualUuid);
+        String organisationInsertQuery = "UPDATE eg_org_contact_detail set contact_mobile_number='"+encryptedMobileNumber+"' where org_id='"+ org_id +"';";
+        jdbcTemplate.update(organisationInsertQuery);
+    }
+    private void setEncryptedContactName(String contact_mobile_number, String contact_name, String contact_email, String tenant_id, String individualUuid, String org_id) {
+        Map<String, String> encryptRequestMap = new HashMap<>();
+
+        encryptRequestMap.put("contact_name", contact_name);
+        encryptRequestMap.put("tenant_id", tenant_id);
+        log.info("Calling for encryption");
+        Map<String, String> encryptedValues = encryptionDecryptionUtilContactName(encryptRequestMap, true);
+
+        String encryptedContactName=encryptedValues.get("contact_name");
+
+
+        log.info("Setting encrypted name  in org_contact_details table :: "+ individualUuid);
+        String organisationInsertQuery = "UPDATE eg_org_contact_detail set  contact_name='"+encryptedContactName+"' where org_id='"+ org_id +"';";
+        jdbcTemplate.update(organisationInsertQuery);
+    }
+    private void setEncryptedContactEmail(String contact_mobile_number, String contact_name, String contact_email, String tenant_id, String individualUuid, String org_id) {
+        Map<String, String> encryptRequestMap = new HashMap<>();
+        encryptRequestMap.put("contact_email", contact_email);
+        encryptRequestMap.put("tenant_id", tenant_id);
+        log.info("Calling for encryption");
+        Map<String, String> encryptedValues = encryptionDecryptionUtilContactEmail(encryptRequestMap, true);
+        String encryptedContactEmail=encryptedValues.get("contact_email");
+
+        log.info("Setting encrypted email  in org_contact_details table :: "+ individualUuid);
+        String organisationInsertQuery = "UPDATE eg_org_contact_detail set contact_email='"+encryptedContactEmail+"' where org_id='"+ org_id +"';";
+        jdbcTemplate.update(organisationInsertQuery);
+    }
+
     private Role populateRole(Map<String, Object> userDetail)  {
         String code = (String) userDetail.get("role_code");
         if (code == null) {
@@ -189,6 +222,90 @@ public class UserIndividualMigrationUtil {
         log.info("Successfully mapped encryption service");
         return encryptedOrDecryptedMap;
     }
+
+    private Map<String, String> encryptionDecryptionUtilContactEmail(Map<String, String> encryptionDecryptionMap, Boolean isEncryption) {
+        JsonNode request = null;
+        StringBuilder uri = new StringBuilder();
+        Map<String,Object> encryptionRequestMap = new HashMap<>();
+        Map<String, List<Object>> requestMap = new HashMap<>();
+
+        if (isEncryption == true){
+            log.info("Encrypting mobile number");
+            uri.append(config.getEncryptionHost()).append(config.getEncryptionEndpoint());
+            Map<String,String> valueMap = new HashMap<>();
+            valueMap.put("contact_email",encryptionDecryptionMap.get("contact_email"));
+            encryptionRequestMap.put("tenantId",encryptionDecryptionMap.get("tenant_id"));
+            encryptionRequestMap.put("type","Normal");
+            encryptionRequestMap.put("value",valueMap);
+
+            requestMap.put("encryptionRequests",Collections.singletonList(encryptionRequestMap));
+
+        }else {
+            log.info("Decrypting Encrypted values");
+            uri.append(config.getEncryptionHost()).append(config.getDecryptionEndpoint());
+            request = mapper.createObjectNode()
+                    .put("mobilenumber",encryptionDecryptionMap.get("mobilenumber"))
+                    .put("name",encryptionDecryptionMap.get("name"))
+                    .put("emailid",encryptionDecryptionMap.get("emailid"))
+                    .put("username",encryptionDecryptionMap.get("username"));
+            requestMap = mapper.convertValue(request,Map.class);
+        }
+        Object response = fetchResult(uri, requestMap);
+        log.info("Got response from encryption service");
+        JsonNode responseMap = mapper.valueToTree(response);
+        JsonNode encryptedOrDecryptedValue = null;
+        if (responseMap.isArray()) {
+            encryptedOrDecryptedValue = responseMap.get(0);
+        }else {
+            encryptedOrDecryptedValue = responseMap;
+        }
+        Map<String,String> encryptedOrDecryptedMap = mapper.convertValue(encryptedOrDecryptedValue, Map.class);
+        log.info("Successfully mapped encryption service");
+        return encryptedOrDecryptedMap;
+    }
+
+    private Map<String, String> encryptionDecryptionUtilContactName(Map<String, String> encryptionDecryptionMap, Boolean isEncryption) {
+        JsonNode request = null;
+        StringBuilder uri = new StringBuilder();
+        Map<String,Object> encryptionRequestMap = new HashMap<>();
+        Map<String, List<Object>> requestMap = new HashMap<>();
+
+        if (isEncryption == true){
+            log.info("Encrypting mobile number");
+            uri.append(config.getEncryptionHost()).append(config.getEncryptionEndpoint());
+            Map<String,String> valueMap = new HashMap<>();
+            valueMap.put("contact_name",encryptionDecryptionMap.get("contact_name"));
+            encryptionRequestMap.put("tenantId",encryptionDecryptionMap.get("tenant_id"));
+            encryptionRequestMap.put("type","Normal");
+            encryptionRequestMap.put("value",valueMap);
+
+            requestMap.put("encryptionRequests",Collections.singletonList(encryptionRequestMap));
+
+        }else {
+            log.info("Decrypting Encrypted values");
+            uri.append(config.getEncryptionHost()).append(config.getDecryptionEndpoint());
+            request = mapper.createObjectNode()
+                    .put("mobilenumber",encryptionDecryptionMap.get("mobilenumber"))
+                    .put("name",encryptionDecryptionMap.get("name"))
+                    .put("emailid",encryptionDecryptionMap.get("emailid"))
+                    .put("username",encryptionDecryptionMap.get("username"));
+            requestMap = mapper.convertValue(request,Map.class);
+        }
+        Object response = fetchResult(uri, requestMap);
+        log.info("Got response from encryption service");
+        JsonNode responseMap = mapper.valueToTree(response);
+        JsonNode encryptedOrDecryptedValue = null;
+        if (responseMap.isArray()) {
+            encryptedOrDecryptedValue = responseMap.get(0);
+        }else {
+            encryptedOrDecryptedValue = responseMap;
+        }
+        Map<String,String> encryptedOrDecryptedMap = mapper.convertValue(encryptedOrDecryptedValue, Map.class);
+        log.info("Successfully mapped encryption service");
+        return encryptedOrDecryptedMap;
+    }
+
+
     public Object fetchResult(StringBuilder uri, Object request) {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         Object response = null;
