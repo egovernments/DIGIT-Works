@@ -62,7 +62,7 @@ public class UserIndividualMigrationUtil {
             String contact_email = (String) orgContactDetail.get("contact_email");
             if (tenant_id.contains("."))
                 tenant_id = tenant_id.split("\\.")[0];
-            setEncryptedContactNumber(contact_mobile_number, contact_name, contact_email, tenant_id, individualUuid, org_id);
+            //setEncryptedContactNumber(contact_mobile_number, contact_name, contact_email, tenant_id, individualUuid, org_id);
             setEncryptedContactName(contact_mobile_number, contact_name, contact_email, tenant_id, individualUuid, org_id);
             setEncryptedContactEmail(contact_mobile_number, contact_name, contact_email, tenant_id, individualUuid, org_id);
 
