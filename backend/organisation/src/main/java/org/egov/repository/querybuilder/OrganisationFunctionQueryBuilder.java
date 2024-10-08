@@ -67,8 +67,8 @@ public class OrganisationFunctionQueryBuilder {
 
         if (StringUtils.isNotBlank(searchCriteria.getTenantId())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" org.tenant_id=? ");
-            preparedStmtList.add(searchCriteria.getTenantId());
+            queryBuilder.append(" org.tenant_id LIKE ? ");
+            preparedStmtList.add('%' + searchCriteria.getTenantId() + '%');
         }
 
         if (StringUtils.isNotBlank(searchCriteria.getName())) {
