@@ -25,6 +25,9 @@ public class ReportJob {
     @JsonProperty("reportName")
     private String reportName;
 
+    @JsonProperty("noOfProjects")
+    private Integer noOfProjects;
+
     @JsonProperty("status")
     private JobStatus status;
 

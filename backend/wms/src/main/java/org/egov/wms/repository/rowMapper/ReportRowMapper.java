@@ -46,6 +46,7 @@ public class ReportRowMapper implements ResultSetExtractor<List<ReportJob>> {
                         .tenantId(rs.getString("reportTenantId"))
                         .reportNumber(rs.getString("reportNumber"))
                         .reportName(rs.getString("reportName"))
+                        .noOfProjects(rs.getInt("noOfProjects"))
                         .status(JobStatus.fromValue(rs.getString("reportStatus")))
                         .fileStoreId(rs.getString("reportFileStoreId"))
                         .build();
