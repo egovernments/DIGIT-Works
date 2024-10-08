@@ -17,6 +17,7 @@ import java.util.List;
 public class ReportQueryBuilder {
     private static final String REPORT_JOB_QUERY = "SELECT id AS reportId, tenant_id AS reportTenantId, " +
             "report_number AS reportNumber, report_name AS reportName, " +
+            "no_of_projects AS noOfProjects, " +
             "status AS reportStatus, request_payload AS reportRequestPayload, " +
             "additional_details AS reportAdditionalDetails, " +
             "file_store_id AS reportFileStoreId," +

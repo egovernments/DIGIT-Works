@@ -72,6 +72,7 @@ public class WMSReportService {
 
         try {
             AggsResponse aggregationResponse = getAggregationResponse(reportRequest);
+            reportJob.setNoOfProjects(aggregationResponse.getProjectPaymentDetails().size());
             ByteArrayResource excelFile = generateExcelFromObject(aggregationResponse);
             String fileStoreId = fileStoreUtil.uploadFileAndGetFileStoreId(tenantId, excelFile);
             reportJob.setFileStoreId(fileStoreId);
