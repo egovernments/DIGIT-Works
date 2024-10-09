@@ -1,5 +1,9 @@
--- Create index on "id" column
-CREATE INDEX IF NOT EXISTS idx_job_report_id ON job_report(id);
+CREATE INDEX IF NOT EXISTS idx_job_report_tenant_id ON job_report(tenant_id);
 
--- Create index on "report_number" column
-CREATE INDEX IF NOT EXISTS idx_job_report_report_number ON job_report(report_number);
+CREATE INDEX IF NOT EXISTS idx_job_report_tenant_status
+    ON job_report(tenant_id, status);
+
+-- Create a composite index on tenant_id, status, and created_time columns
+CREATE INDEX IF NOT EXISTS idx_job_report_tenant_status_time
+    ON job_report(tenant_id, status, created_time);
+
