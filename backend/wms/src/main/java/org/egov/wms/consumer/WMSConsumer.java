@@ -33,8 +33,8 @@ public class WMSConsumer {
             ReportRequest reportRequest = objectMapper.readValue(message, ReportRequest.class);
             if(reportRequest.getJobRequest() != null && reportRequest.getRequestInfo() != null){
                 log.info("Consumed record: " + reportRequest.getJobRequest().getId());
-                wmsReportService.validateJobScheduledRequest(reportRequest);
-                wmsReportService.processReportGenerationAfterConsumptionFromTopic(reportRequest);
+                if(wmsReportService.validateJobScheduledRequest(reportRequest))
+                    wmsReportService.processReportGenerationAfterConsumptionFromTopic(reportRequest);
             }
         }catch (Exception e){
             log.error("Exception in WMSConsumer: " + e);

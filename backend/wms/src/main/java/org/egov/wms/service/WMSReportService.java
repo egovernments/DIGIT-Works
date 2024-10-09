@@ -177,13 +177,13 @@ public class WMSReportService {
         try {
             String jobId = reportRequest.getJobRequest().getReportNumber();
         if (Boolean.TRUE.equals(redisService.isJobPresentInCache(jobId))) {
-            return true;
+            return false;
         }
         redisService.setCacheForJob(jobId);
-        return false;
+        return true;
         }catch (Exception e) {
             log.error("Error while calling redis service", e);
-            return false;
+            throw new CustomException("REDIS_ERROR", "Error while calling redis service");
         }
     }
 }
