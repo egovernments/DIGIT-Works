@@ -102,4 +102,10 @@ public class SearchConfiguration {
 
 	@Value("${report.search.pagination.default.offset}")
 	private Integer reportDefaultOffset;
+
+	@Value("${wms.payment.tracker.module}")
+	private String paymentTrackerModule;
+
+	@Value("${wms.estimate.module}")
+	private String estimateModule;
 }

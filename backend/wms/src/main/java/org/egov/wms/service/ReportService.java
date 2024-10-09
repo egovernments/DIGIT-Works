@@ -31,8 +31,6 @@ public class ReportService {
     private final WMSSearchService wmsSearchService;
     private final ServiceRequestRepository serviceRequestRepository;
     private final SearchConfiguration configuration;
-    public static final String PAYMENT_TRACKER = "payment-tracker";
-    public static final String ESTIMATE = "estimate";
 
     public ReportService(ValidatorDefaultImplementation validatorDefaultImplementation, MDMSUtil mdmsUtil, ReportESQueryBuilder reportESQueryBuilder, ObjectMapper mapper, ElasticResponseMapper elasticResponseMapper, WMSSearchService wmsSearchService, ServiceRequestRepository serviceRequestRepository, SearchConfiguration configuration) {
         this.validatorDefaultImplementation = validatorDefaultImplementation;
@@ -49,9 +47,9 @@ public class ReportService {
         WMSSearchRequest searchRequest = getSearchRequest(aggregationRequest,
                 aggregationRequest.getAggregationSearchCriteria().getModuleSearchCriteria(),
                 aggregationRequest.getAggregationSearchCriteria().getLimit());
-        validatorDefaultImplementation.validateSearchCriteria(searchRequest, PAYMENT_TRACKER);
-        SearchQueryConfiguration searchQueryConfiguration = mdmsUtil.getConfigFromMDMS(searchRequest, PAYMENT_TRACKER);
-        Map<String, Object> reportQuery = reportESQueryBuilder.getReportEsQuery(aggregationRequest, searchRequest, PAYMENT_TRACKER);
+        validatorDefaultImplementation.validateSearchCriteria(searchRequest, configuration.getPaymentTrackerModule());
+        SearchQueryConfiguration searchQueryConfiguration = mdmsUtil.getConfigFromMDMS(searchRequest, configuration.getPaymentTrackerModule());
+        Map<String, Object> reportQuery = reportESQueryBuilder.getReportEsQuery(aggregationRequest, searchRequest, configuration.getPaymentTrackerModule());
 
         StringBuilder uri = wmsSearchService.getURI(searchQueryConfiguration.getIndex(), SEARCH_PATH);
         Object result = serviceRequestRepository.fetchESResult(uri, reportQuery);
@@ -69,7 +67,7 @@ public class ReportService {
         List<String> projectNumbers = getProjectNumbers(aggsResponse);
 
         // Search the estimate index and fetch all the estimates with the projectNumbers
-        WMSSearchResponse response = wmsSearchService.getInboxResponse(getSearchRequestForEstimate(aggregationRequest, projectNumbers), ESTIMATE);
+        WMSSearchResponse response = wmsSearchService.getInboxResponse(getSearchRequestForEstimate(aggregationRequest, projectNumbers), configuration.getEstimateModule());
         Map<String, Double> projectIdEstimateMap = getProjectEstimateMap(response);
         enrichAggsResponse(aggsResponse, projectIdEstimateMap);
 
