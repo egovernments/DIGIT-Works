@@ -9,15 +9,17 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.wms.config.SearchConfiguration;
+import org.egov.wms.enrichment.WMSReportEnrichment;
 import org.egov.wms.producer.WMSProducer;
 import org.egov.wms.repository.ReportRepository;
 import org.egov.wms.util.FileStoreUtil;
 import org.egov.wms.util.IdgenUtil;
+import org.egov.wms.web.controller.ReportController;
+import org.egov.wms.web.model.*;
 import org.egov.wms.web.model.Job.JobStatus;
 import org.egov.wms.web.model.Job.ReportJob;
 import org.egov.wms.web.model.Job.ReportRequest;
 import org.egov.wms.web.model.Job.ReportSearchRequest;
-import org.egov.wms.web.model.WMSSearchRequest;
 import org.egov.works.services.common.models.expense.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -25,54 +27,42 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
 public class WMSReportService {
-    private final IdgenUtil idgenUtil;
     private final SearchConfiguration searchConfiguration;
     private final WMSProducer wmsProducer;
     private final ReportRepository reportRepository;
     private final FileStoreUtil fileStoreUtil;
+    private final WMSReportEnrichment wmsReportEnrichment;
+    private final ReportService reportService;
+    private final RedisService redisService;
+
 
     @Autowired
-    public WMSReportService(IdgenUtil idgenUtil, SearchConfiguration searchConfiguration, WMSProducer wmsProducer, ReportRepository reportRepository, FileStoreUtil fileStoreUtil) {
-        this.idgenUtil = idgenUtil;
+    public WMSReportService(SearchConfiguration searchConfiguration, WMSProducer wmsProducer, ReportRepository reportRepository, FileStoreUtil fileStoreUtil, WMSReportEnrichment wmsReportEnrichment, ReportService reportService, RedisService redisService) {
         this.searchConfiguration = searchConfiguration;
         this.wmsProducer = wmsProducer;
         this.reportRepository = reportRepository;
         this.fileStoreUtil = fileStoreUtil;
+        this.wmsReportEnrichment = wmsReportEnrichment;
+        this.reportService = reportService;
+        this.redisService = redisService;
     }
 
     public ReportJob processReportGeneration(String reportName, ReportRequest reportRequest) {
         log.info("Report generation started for reportName: " + reportName);
-        enrichReportRequest(reportName, reportRequest);
+        wmsReportEnrichment.enrichReportRequest(reportName, reportRequest);
         log.info("Report Request Enriched: " + reportRequest.getJobRequest().getReportNumber());
         wmsProducer.push(searchConfiguration.getReportTopic(), reportRequest);
         return reportRequest.getJobRequest();
     }
 
-    private void enrichReportRequest(String reportName, ReportRequest reportRequest) {
-        log.info("Enriching reportRequest for reportName: " + reportName);
-        List<String> reportIds = idgenUtil.getIdList(reportRequest.getRequestInfo(), reportRequest.getJobRequest().getTenantId(), searchConfiguration.getReportIdName(), null, 1);
-        reportRequest.getJobRequest().setId(UUID.randomUUID().toString());
-        reportRequest.getJobRequest().setReportName(reportName);
-        reportRequest.getJobRequest().setReportNumber(reportIds.get(0));
-        reportRequest.getJobRequest().setStatus(JobStatus.INITIATED);
-        String userId = reportRequest.getRequestInfo().getUserInfo().getUuid();
-        reportRequest.getJobRequest().setAuditDetails(getAuditDetails(userId, reportRequest.getJobRequest().getAuditDetails(), true));
-    }
 
-     public AuditDetails getAuditDetails(String by, AuditDetails auditDetails, Boolean isCreate) {
-        Long time = System.currentTimeMillis();
-        if (Boolean.TRUE.equals(isCreate))
-            return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
-        else
-            return AuditDetails.builder().createdBy(auditDetails.getCreatedBy()).lastModifiedBy(by)
-                    .createdTime(auditDetails.getCreatedTime()).lastModifiedTime(time).build();
-    }
+
+
 
     public void processReportGenerationAfterConsumptionFromTopic(ReportRequest reportRequest) {
         log.info("processReportGenerationAfterConsumptionFromTopic: " + reportRequest.getJobRequest().getId());
@@ -80,17 +70,54 @@ public class WMSReportService {
         ReportJob reportJob = reportRequest.getJobRequest();
         String tenantId = reportJob.getTenantId();
 
-        ByteArrayResource excelFile = generateExcelFromObject(reportJob);
-        String fileStoreId = fileStoreUtil.uploadFileAndGetFileStoreId(tenantId, excelFile);
-        reportJob.setFileStoreId(fileStoreId);
-        reportJob.setStatus(JobStatus.COMPLETED);
-        reportJob.setAuditDetails(getAuditDetails(requestInfo.getUserInfo().getUuid(), reportJob.getAuditDetails(), false));
+        try {
+            AggsResponse aggregationResponse = getAggregationResponse(reportRequest);
+            reportJob.setNoOfProjects(aggregationResponse.getProjectPaymentDetails().size());
+            ByteArrayResource excelFile = generateExcelFromObject(aggregationResponse);
+            String fileStoreId = fileStoreUtil.uploadFileAndGetFileStoreId(tenantId, excelFile);
+            reportJob.setFileStoreId(fileStoreId);
+            reportJob.setStatus(JobStatus.COMPLETED);
+        }catch (Exception e){
+            log.error("Exception while fetching data from service: " + e);
+            reportJob.setStatus(JobStatus.FAILED);
+        }
 
-        wmsProducer.push(searchConfiguration.getReportTopic(), reportRequest);
+        reportJob.setAuditDetails(wmsReportEnrichment.getAuditDetails(requestInfo.getUserInfo().getUuid(), reportJob.getAuditDetails(), false));
+
+        wmsProducer.push(searchConfiguration.getReportUpdateTopic(), reportRequest);
     }
 
-    private ByteArrayResource generateExcelFromObject(ReportJob reportJob) {
+    private AggsResponse getAggregationResponse(ReportRequest reportRequest) {
+        AggsResponse aggsResponse = null;
+        AggsResponse aggResponse = null;
+        String afterKey = null;
+        do {
+            AggregationRequest aggregationRequest = wmsReportEnrichment.enrichAggregationRequestFromReportRequest(reportRequest, afterKey);
+            aggResponse = reportService.getPaymentTracker(aggregationRequest);
+            if(aggsResponse == null){
+                aggsResponse = aggResponse;
+                afterKey = aggResponse.getAfterKey();
+            }else{
+                if (aggResponse != null && !aggResponse.getProjectPaymentDetails().isEmpty()){
+                    aggsResponse.getProjectPaymentDetails().addAll(aggResponse.getProjectPaymentDetails());
+                    afterKey = aggResponse.getAfterKey();
+                }
+            }
+        }while (aggResponse != null && aggResponse.getAfterKey() != null);
+
+        return aggsResponse;
+    }
+
+    private ByteArrayResource generateExcelFromObject(AggsResponse aggsResponse) {
         log.info("WMSService: generateExcelFromObject");
+        if (aggsResponse == null || aggsResponse.getProjectPaymentDetails() == null || aggsResponse.getProjectPaymentDetails().isEmpty()){
+            throw new CustomException("NO_DATA_FOUND", "No data found for the given criteria");
+        }
+        List<String> headers = Arrays.asList("Project Id", "Estimated amount","Wage amount paid","Purchase amount paid", "Supervision amount paid", "Total amount paid");
+        Map<String, Integer> headerIndexMap = new HashMap<>();
+        headerIndexMap.put("EXPENSE.PURCHASE", 3);
+        headerIndexMap.put("EXPENSE.WAGES", 2);
+        headerIndexMap.put("EXPENSE.SUPERVISION", 4);
         byte[] excelBytes = null;
         // Logic to generate excel from object
         Workbook workbook = new XSSFWorkbook();
@@ -98,13 +125,22 @@ public class WMSReportService {
         // Logic to write data to excel sheet
         Row headerRow = sheet.createRow(0);
         // Logic to write header row
-        headerRow.createCell(0).setCellValue("Report Number");
-        headerRow.createCell(1).setCellValue("Report Name");
+        for(int i = 0;i < headers.size(); i++){
+            headerRow.createCell(i).setCellValue(headers.get(i));
+        }
 
-        Row dataRow = sheet.createRow(1);
-        // Logic to write data row
-        dataRow.createCell(0).setCellValue(reportJob.getReportNumber());
-        dataRow.createCell(1).setCellValue(reportJob.getReportName());
+        for(ProjectPaymentDetails projectPaymentDetail: aggsResponse.getProjectPaymentDetails()){
+            Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+            row.createCell(0).setCellValue(projectPaymentDetail.getProjectNumber() == null ? "" : projectPaymentDetail.getProjectNumber());
+            row.createCell(1).setCellValue(projectPaymentDetail.getEstimatedAmount() == null ? 0.0 : projectPaymentDetail.getEstimatedAmount());
+            row.createCell(2).setCellValue(0.0);
+            row.createCell(3).setCellValue(0.0);
+            row.createCell(4).setCellValue(0.0);
+            for(PaymentDetailsByBillType paymentDetailsByBillType: projectPaymentDetail.getPaymentDetails()){
+                row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType())).setCellValue(paymentDetailsByBillType.getPaidAmount() == null ? 0.0 : paymentDetailsByBillType.getPaidAmount());
+            }
+            row.createCell(5).setCellValue(projectPaymentDetail.getTotal() == null ? 0.0 : projectPaymentDetail.getTotal());
+        }
 
         try {
              // Write the workbook to ByteArrayOutputStream
@@ -126,32 +162,28 @@ public class WMSReportService {
 
     public List<ReportJob> searchReports(ReportSearchRequest reportSearchRequest) {
         log.info("WMSReportService: searchReports");
-        enrichReportRequestOnSearch(reportSearchRequest);
+        wmsReportEnrichment.enrichReportRequestOnSearch(reportSearchRequest);
         return reportRepository.getReportJobs(reportSearchRequest);
     }
 
-    private void enrichReportRequestOnSearch(ReportSearchRequest reportSearchRequest) {
-        log.info("WMSReportService: enrichReportRequestOnSearch");
-        Pagination pagination = reportSearchRequest.getPagination();
-        if (pagination == null) {
-            pagination = Pagination.builder().limit(searchConfiguration.getReportDefaultLimit()).offSet(searchConfiguration.getReportDefaultOffset()).order(Pagination.OrderEnum.DESC).sortBy("createdtime").build();
-            reportSearchRequest.setPagination(pagination);
-        }
-        if(pagination.getLimit() == null)
-            pagination.setLimit(searchConfiguration.getReportDefaultLimit());
-
-        if(pagination.getOffSet() == null)
-            pagination.setOffSet(searchConfiguration.getReportDefaultOffset());
-
-        if(pagination.getOrder() == null)
-            pagination.setOrder(Pagination.OrderEnum.DESC);
-
-        if(pagination.getSortBy() == null)
-            pagination.setSortBy("createdtime");
-    }
 
     public Integer getReportSearchCount(ReportSearchRequest reportSearchRequest) {
         log.info("WMSReportService: getReportSearchCount");
         return reportRepository.getReportJobsCount(reportSearchRequest);
+    }
+
+    public Boolean validateJobScheduledRequest(ReportRequest reportRequest) {
+        log.info("SchedulerValidator: validateJobScheduledRequest");
+        try {
+            String jobId = reportRequest.getJobRequest().getReportNumber();
+        if (Boolean.TRUE.equals(redisService.isJobPresentInCache(jobId))) {
+            return true;
+        }
+        redisService.setCacheForJob(jobId);
+        return false;
+        }catch (Exception e) {
+            log.error("Error while calling redis service", e);
+            return false;
+        }
     }
 }

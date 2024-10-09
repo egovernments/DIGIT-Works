@@ -3,6 +3,7 @@ CREATE TABLE IF Not Exists job_report (
     tenant_id                   character varying(64) NOT NULL,  -- Corresponds to "tenantId"
     report_number               character varying(128),          -- Corresponds to "reportNumber"
     report_name                 character varying(140),          -- Corresponds to "reportName"
+    no_of_projects              integer,                         -- Corresponds to "noOfProjects"
     status                      character varying(64),           -- Corresponds to "status" (enum stored as string)
     request_payload             JSONB,                           -- Corresponds to "requestPayload"
     additional_details          JSONB,                           -- Corresponds to "additionalDetails"

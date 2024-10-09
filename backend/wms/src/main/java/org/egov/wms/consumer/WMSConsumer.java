@@ -26,13 +26,14 @@ public class WMSConsumer {
     }
 
 
-    @KafkaListener(topics = {"${wms.kafka.report.topic}"})
+    @KafkaListener(topics = {"${wms.kafka.report.create.topic}"})
     public void listen(final String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
             log.info("Consuming record from Kafka topic: " + topic);
             ReportRequest reportRequest = objectMapper.readValue(message, ReportRequest.class);
             if(reportRequest.getJobRequest() != null && reportRequest.getRequestInfo() != null){
                 log.info("Consumed record: " + reportRequest.getJobRequest().getId());
+                wmsReportService.validateJobScheduledRequest(reportRequest);
                 wmsReportService.processReportGenerationAfterConsumptionFromTopic(reportRequest);
             }
         }catch (Exception e){

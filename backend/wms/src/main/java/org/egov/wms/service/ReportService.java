@@ -9,6 +9,7 @@ import org.egov.wms.repository.rowMapper.ElasticResponseMapper;
 import org.egov.wms.util.MDMSUtil;
 import org.egov.wms.validator.ValidatorDefaultImplementation;
 import org.egov.wms.web.model.*;
+import org.egov.wms.web.model.Job.ReportRequest;
 import org.egov.wms.web.model.V2.SearchQueryConfiguration;
 import org.springframework.stereotype.Service;
 
@@ -143,6 +144,5 @@ public class ReportService {
                         .build())
                 .build();
     }
-
 
 }
