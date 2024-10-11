@@ -37,6 +37,7 @@ public class WMSReportEnrichment {
         reportRequest.getJobRequest().setId(UUID.randomUUID().toString());
         reportRequest.getJobRequest().setReportName(reportName);
         reportRequest.getJobRequest().setReportNumber(reportIds.get(0));
+        reportRequest.getJobRequest().setNoOfProjects(0);
         reportRequest.getJobRequest().setStatus(JobStatus.INITIATED);
         String userId = reportRequest.getRequestInfo().getUserInfo().getUuid();
         reportRequest.getJobRequest().setAuditDetails(getAuditDetails(userId, reportRequest.getJobRequest().getAuditDetails(), true));
