@@ -18,11 +18,15 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class AttendanceRegisterConsumer {
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
+    private final AttendanceRegisterService attendanceRegisterService;
+
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    public AttendanceRegisterConsumer(AttendanceRegisterService attendanceRegisterService, ObjectMapper objectMapper) {
+        this.attendanceRegisterService = attendanceRegisterService;
+        this.objectMapper = objectMapper;
+    }
 
     @KafkaListener(topics = "${project.management.system.kafka.update.topic}")
     public void projectUpdate(Map<String, Object> consumerRecord,

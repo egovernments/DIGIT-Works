@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.egov.common.contract.models.RequestInfoWrapper;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.workflow.*;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
 import org.egov.digit.expense.web.models.Bill;
@@ -17,13 +20,6 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import digit.models.coremodels.BusinessService;
-import digit.models.coremodels.BusinessServiceResponse;
-import digit.models.coremodels.ProcessInstance;
-import digit.models.coremodels.ProcessInstanceRequest;
-import digit.models.coremodels.ProcessInstanceResponse;
-import digit.models.coremodels.RequestInfoWrapper;
-import digit.models.coremodels.Workflow;
 import lombok.extern.slf4j.Slf4j;
 
 @Service

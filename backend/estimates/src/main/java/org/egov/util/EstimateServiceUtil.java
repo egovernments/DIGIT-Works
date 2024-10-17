@@ -1,8 +1,8 @@
 package org.egov.util;
 
 
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.egov.common.contract.user.UserDetailResponse;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import digit.models.coremodels.UserDetailResponse;
 
 @Component
 public class UserUtil {

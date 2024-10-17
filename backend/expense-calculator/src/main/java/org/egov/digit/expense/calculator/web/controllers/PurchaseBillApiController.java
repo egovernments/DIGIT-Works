@@ -2,8 +2,8 @@ package org.egov.digit.expense.calculator.web.controllers;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-17T16:59:23.221+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-17T16:59:23.221+05:30[Asia/Kolkata]")
 @Controller
 @RequestMapping("/purchase")
 public class PurchaseBillApiController {

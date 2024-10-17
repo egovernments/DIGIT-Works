@@ -3,13 +3,13 @@ package org.egov.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceEntry;
 import org.egov.web.models.IndividualEntry;
 import org.egov.web.models.MusterRoll;
-import org.egov.web.models.Status;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;

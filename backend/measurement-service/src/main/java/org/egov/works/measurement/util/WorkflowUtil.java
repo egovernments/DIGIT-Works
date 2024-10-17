@@ -9,6 +9,7 @@ import org.egov.common.contract.workflow.*;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
+import org.egov.works.measurement.web.models.MeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -23,14 +24,18 @@ import static org.egov.works.measurement.config.ServiceConstants.*;
 @Service
 public class WorkflowUtil {
 
-    @Autowired
-    private ServiceRequestRepository repository;
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
+
+    private final MBServiceConfiguration configs;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private MBServiceConfiguration configs;
+    public WorkflowUtil(ServiceRequestRepository repository, ObjectMapper mapper, MBServiceConfiguration configs) {
+        this.repository = repository;
+        this.mapper = mapper;
+        this.configs = configs;
+    }
 
 
     public List<String> getActions (RequestInfo requestInfo, String tenantId, String businessId) {
@@ -90,13 +95,14 @@ public class WorkflowUtil {
      * @param wfModuleName
      * @return
      */
-    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId, String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
+    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId, String businessId, String businessServiceCode, Workflow workflow, String wfModuleName, MeasurementService measurementService) {
         if (workflow.getAction().equals(SAVE_AS_DRAFT_ACTION) && (workflow.getAssignes() == null ||  workflow.getAssignes().isEmpty())){
             workflow.setAssignes(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
         }
         ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId, businessServiceCode, workflow, wfModuleName);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
+        measurementService.setProcessInstance(processInstance);
         return state.getApplicationStatus();
     }
 

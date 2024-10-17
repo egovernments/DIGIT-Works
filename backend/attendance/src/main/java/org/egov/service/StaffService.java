@@ -22,33 +22,37 @@ import java.util.*;
 @Service
 @Slf4j
 public class StaffService {
-    @Autowired
-    private StaffServiceValidator staffServiceValidator;
+    private final StaffServiceValidator staffServiceValidator;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    private final ResponseInfoFactory responseInfoFactory;
 
-    @Autowired
-    private StaffEnrichmentService staffEnrichmentService;
+    private final StaffEnrichmentService staffEnrichmentService;
 
-    @Autowired
-    private StaffRepository staffRepository;
+    private final StaffRepository staffRepository;
 
-    @Autowired
-    private RegisterRepository registerRepository;
+    private final RegisterRepository registerRepository;
 
 
-    @Autowired
-    private Producer producer;
+    private final Producer producer;
+
+    private final AttendanceServiceConfiguration serviceConfiguration;
+
+    private final AttendanceRegisterService attendanceRegisterService;
+
+    private final AttendanceServiceValidator attendanceServiceValidator;
 
     @Autowired
-    private AttendanceServiceConfiguration serviceConfiguration;
-
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
-
-    @Autowired
-    private AttendanceServiceValidator attendanceServiceValidator;
+    public StaffService(StaffServiceValidator staffServiceValidator, ResponseInfoFactory responseInfoFactory, StaffEnrichmentService staffEnrichmentService, StaffRepository staffRepository, RegisterRepository registerRepository, Producer producer, AttendanceServiceConfiguration serviceConfiguration, AttendanceRegisterService attendanceRegisterService, AttendanceServiceValidator attendanceServiceValidator) {
+        this.staffServiceValidator = staffServiceValidator;
+        this.responseInfoFactory = responseInfoFactory;
+        this.staffEnrichmentService = staffEnrichmentService;
+        this.staffRepository = staffRepository;
+        this.registerRepository = registerRepository;
+        this.producer = producer;
+        this.serviceConfiguration = serviceConfiguration;
+        this.attendanceRegisterService = attendanceRegisterService;
+        this.attendanceServiceValidator = attendanceServiceValidator;
+    }
 
 
     /**
@@ -135,7 +139,7 @@ public class StaffService {
 
         // db call to get staff data
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).tenantId(tenantId).build();
-        List<StaffPermission> staffPermissionListFromDB = getAllStaff(staffSearchCriteria);
+        List<StaffPermission> staffPermissionListFromDB = staffRepository.getAllStaff(staffSearchCriteria);
 
 
         //validator call by passing staff request and the data from db call
@@ -149,12 +153,6 @@ public class StaffService {
         producer.push(serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
         log.info("staff present in Delete StaffPermission request are deenrolled from the register");
         return staffPermissionRequest;
-    }
-
-    public List<StaffPermission> getAllStaff(StaffSearchCriteria staffSearchCriteria) {
-        List<StaffPermission> staffPermissionListFromDB = staffRepository.getAllStaff(staffSearchCriteria);
-        log.info("size of staffPermission list received from DB : " + staffPermissionListFromDB.size());
-        return staffPermissionListFromDB;
     }
 
     private List<String> extractRegisterIdsFromRequest(StaffPermissionRequest staffPermissionRequest) {

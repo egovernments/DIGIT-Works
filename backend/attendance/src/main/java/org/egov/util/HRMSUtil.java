@@ -20,20 +20,24 @@ import java.util.List;
 public class HRMSUtil {
 
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
 
-    @Autowired
-    private AttendanceServiceConfiguration config;
+    private final AttendanceServiceConfiguration config;
 
-    @Autowired
-    private ServiceRequestClient serviceRequestClient;
+    private final ServiceRequestClient serviceRequestClient;
 
-    @Autowired
-    @Qualifier("objectMapper")
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     private String HRMS_EMPLOYEE_JSONPATH = "$.Employees.*";
+
+    @Autowired
+    public HRMSUtil(ServiceRequestRepository serviceRequestRepository, AttendanceServiceConfiguration config, ServiceRequestClient serviceRequestClient, @Qualifier("objectMapper") ObjectMapper mapper) {
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+        this.serviceRequestClient = serviceRequestClient;
+        this.mapper = mapper;
+    }
+
     /**
      * Gets the Employee for the given list of uuids and tenantId of employees
      * @param tenantId

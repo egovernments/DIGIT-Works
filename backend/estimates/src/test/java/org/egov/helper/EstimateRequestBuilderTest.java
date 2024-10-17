@@ -2,17 +2,23 @@ package org.egov.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.works.services.common.models.common.Address;
 import org.egov.web.models.*;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.egov.common.models.project.AddressType.CORRESPONDENCE;
 
 @Slf4j
 public class EstimateRequestBuilderTest {
@@ -54,7 +60,7 @@ public class EstimateRequestBuilderTest {
 
         List<String> assignees = new ArrayList<>();
         assignees.add("88ba2d55-b7a4-41e2-8598-19a83d63c9a9");
-        Workflow workflow = Workflow.builder().action("CREATE").assignees(assignees).build();
+        Workflow workflow = Workflow.builder().action("CREATE").assignes(assignees).build();
 
         this.estimateRequest = EstimateRequest.builder()
                 .requestInfo(getRequestInfo())
@@ -85,7 +91,7 @@ public class EstimateRequestBuilderTest {
 
         List<String> assignees = new ArrayList<>();
         assignees.add("88ba2d55-b7a4-41e2-8598-19a83d63c9a9");
-        Workflow workflow = Workflow.builder().action("CREATE").assignees(assignees).build();
+        Workflow workflow = Workflow.builder().action("CREATE").assignes(assignees).build();
 
         this.estimateRequest = EstimateRequest.builder()
                 .requestInfo(getRequestInfo())
@@ -113,7 +119,7 @@ public class EstimateRequestBuilderTest {
 
         List<String> assignees = new ArrayList<>();
         assignees.add("88ba2d55-b7a4-41e2-8598-19a83d63c9a9");
-        Workflow workflow = Workflow.builder().action("CREATE").assignees(assignees).build();
+        Workflow workflow = Workflow.builder().action("CREATE").assignes(assignees).build();
 
         this.estimateRequest = EstimateRequest.builder()
                 .requestInfo(getRequestInfo())
@@ -143,8 +149,11 @@ public class EstimateRequestBuilderTest {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/EstimateMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+
+            ClassPathResource resource = new ClassPathResource("src/test/resources/EstimateMDMSData.json");
+            String absoluteFilePath = resource.getPath();
+            byte[] bytes = Files.readAllBytes(Paths.get(absoluteFilePath));
+            String exampleRequest = new String(bytes, StandardCharsets.UTF_8);
             mdmsResponse = objectMapper.readValue(exampleRequest, Object.class);
         } catch (Exception exception) {
             log.error("EstimateServiceTest::getMdmsResponse::Exception while parsing mdms json");
@@ -158,8 +167,10 @@ public class EstimateRequestBuilderTest {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/projectSearch.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            ClassPathResource resource = new ClassPathResource("src/test/resources/projectSearch.json");
+            String absoluteFilePath = resource.getPath();
+            byte[] bytes = Files.readAllBytes(Paths.get(absoluteFilePath));
+            String exampleRequest = new String(bytes, StandardCharsets.UTF_8);
             projectResponse = objectMapper.readValue(exampleRequest, Object.class);
         } catch (Exception exception) {
             log.error("EstimateServiceTest::getProjectSearchResponse::Exception while parsing project search response json");

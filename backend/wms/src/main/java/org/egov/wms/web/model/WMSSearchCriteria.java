@@ -2,9 +2,9 @@ package org.egov.wms.web.model;
 
 import java.util.HashMap;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.wms.web.model.workflow.ProcessInstanceSearchCriteria;
 

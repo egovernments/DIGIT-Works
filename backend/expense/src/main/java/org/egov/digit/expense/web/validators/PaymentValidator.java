@@ -10,8 +10,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.egov.digit.expense.repository.PaymentRepository;
 import org.egov.digit.expense.service.BillService;
-import org.egov.digit.expense.service.PaymentService;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillDetail;
@@ -34,11 +34,15 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class PaymentValidator {
 
-	@Autowired
-	private BillService billService;
+	private final BillService billService;
+
+	private final PaymentRepository paymentRepository;
 
 	@Autowired
-	private PaymentService paymentService;
+	public PaymentValidator(BillService billService, PaymentRepository paymentRepository) {
+		this.billService = billService;
+		this.paymentRepository = paymentRepository;
+	}
 
 	public List<Payment> validateUpdateRequest(PaymentRequest paymentRequest) {
 
@@ -53,7 +57,7 @@ public class PaymentValidator {
 		}
 		
 		PaymentSearchRequest searchRequest = getPaymentSearchRequest(paymentRequest);
-		List<Payment> payments = paymentService.search(searchRequest).getPayments();
+		List<Payment> payments = paymentRepository.search(searchRequest);
 		if(CollectionUtils.isEmpty(payments))
 			throw new CustomException("EG_EXPENSE_PAYMENT_UPDATE_ERROR", "Payment id is invalid");
 		
@@ -115,7 +119,7 @@ public class PaymentValidator {
 		// While creating new payment it will check, is payment is already created for that bill, if yes then don't create payment
 		if (isCreate) {
 			PaymentSearchRequest paymentSearchRequest = preparePaymentCriteriaFromPaymentRequest(paymentRequest, billIds);
-			List<Payment> payments = paymentService.search(paymentSearchRequest).getPayments();
+			List<Payment> payments = paymentRepository.search(paymentSearchRequest);
 			if (!payments.isEmpty())
 				throw new CustomException("EG_PAYMENT_DUPLICATE_PAYMENT_ERROR",
 						"Payment can not be generated for the same bills");

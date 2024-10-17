@@ -29,34 +29,38 @@ import static org.egov.works.measurement.config.ServiceConstants.*;
 @Slf4j
 public class MeasurementServiceValidator {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private ContractUtil contractUtil;
+    private final ContractUtil contractUtil;
 
-    @Autowired
-    private MBServiceConfiguration MBServiceConfiguration;
+    private final MBServiceConfiguration MBServiceConfiguration;
 
-    @Autowired
-    private WorkflowService workflowService;
+    private final WorkflowService workflowService;
 
-    @Autowired
-    private WorkflowUtil workflowUtil;
+    private final WorkflowUtil workflowUtil;
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
 
 
-    @Autowired
-    private MeasurementRegistryUtil measurementRegistryUtil;
+    private final MeasurementRegistryUtil measurementRegistryUtil;
+
+    private final MeasurementServiceUtil measurementServiceUtil;
+    private final MdmsUtil mdmsUtil;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    private MeasurementServiceUtil measurementServiceUtil;
-    @Autowired
-    private MdmsUtil mdmsUtil;
-    @Autowired
-    private ObjectMapper objectMapper;
+    public MeasurementServiceValidator(JdbcTemplate jdbcTemplate, ContractUtil contractUtil, MBServiceConfiguration MBServiceConfiguration, WorkflowService workflowService, WorkflowUtil workflowUtil, ServiceRequestRepository serviceRequestRepository, MeasurementRegistryUtil measurementRegistryUtil, MeasurementServiceUtil measurementServiceUtil, MdmsUtil mdmsUtil, ObjectMapper objectMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.contractUtil = contractUtil;
+        this.MBServiceConfiguration = MBServiceConfiguration;
+        this.workflowService = workflowService;
+        this.workflowUtil = workflowUtil;
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.measurementRegistryUtil = measurementRegistryUtil;
+        this.measurementServiceUtil = measurementServiceUtil;
+        this.mdmsUtil = mdmsUtil;
+        this.objectMapper = objectMapper;
+    }
 
 
     public void validateTenantId(MeasurementServiceRequest measurementRequest){

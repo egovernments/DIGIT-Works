@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.service.OrganisationContactDetailsStaffUpdateService;
 import org.egov.service.StaffService;
-import org.egov.web.models.Organisation.OrgContactUpdateDiff;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
+import org.egov.works.services.common.models.organization.OrgContactUpdateDiff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -25,12 +25,16 @@ import java.util.Map;
 @Slf4j
 public class Consumer {
 
+    private final ObjectMapper objectMapper;
+    private final OrganisationContactDetailsStaffUpdateService organisationContactDetailsStaffUpdateService;
+    private final AttendanceRegisterService attendanceRegisterService;
+
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private OrganisationContactDetailsStaffUpdateService organisationContactDetailsStaffUpdateService;
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
+    public Consumer(ObjectMapper objectMapper, OrganisationContactDetailsStaffUpdateService organisationContactDetailsStaffUpdateService, AttendanceRegisterService attendanceRegisterService) {
+        this.objectMapper = objectMapper;
+        this.organisationContactDetailsStaffUpdateService = organisationContactDetailsStaffUpdateService;
+        this.attendanceRegisterService = attendanceRegisterService;
+    }
 
     @KafkaListener(topics = "${organisation.contact.details.update.topic}")
     public void updateAttendanceStaff(Map<String, Object> consumerRecord,

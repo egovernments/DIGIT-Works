@@ -1,31 +1,21 @@
 package org.egov.validator;
 
-import digit.models.coremodels.mdms.MasterDetail;
-import digit.models.coremodels.mdms.MdmsCriteria;
-import digit.models.coremodels.mdms.MdmsCriteriaReq;
-import digit.models.coremodels.mdms.ModuleDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
 import org.egov.helper.MDMSTestBuilder;
 import org.egov.helper.OrganisationRequestTestBuilder;
-import org.egov.helper.OrganisationTestBuilder;
 import org.egov.repository.OrganisationRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.BoundaryUtil;
 import org.egov.util.MDMSUtil;
 import org.egov.web.models.OrgRequest;
-import org.egov.web.models.Organisation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;

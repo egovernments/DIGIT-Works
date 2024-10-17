@@ -1,11 +1,11 @@
 package org.egov.digit.expense.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.common.contract.models.RequestInfoWrapper;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.workflow.*;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
 import org.egov.digit.expense.web.models.Bill;
@@ -15,16 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import digit.models.coremodels.BusinessService;
-import digit.models.coremodels.BusinessServiceResponse;
-import digit.models.coremodels.ProcessInstance;
-import digit.models.coremodels.ProcessInstanceRequest;
-import digit.models.coremodels.ProcessInstanceResponse;
-import digit.models.coremodels.RequestInfoWrapper;
-import digit.models.coremodels.State;
-import digit.models.coremodels.Workflow;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class WorkflowUtil {
@@ -90,12 +83,13 @@ public class WorkflowUtil {
     * @param workflowReq
     * @return
     */
-    public State callWorkFlow(ProcessInstanceRequest workflowRequest) {
+    public State callWorkFlow(ProcessInstanceRequest workflowRequest, BillRequest billRequest) {
     	
         ProcessInstanceResponse response;
         StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
         Object optional = repository.fetchResult(url, workflowRequest);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+        billRequest.getBill().setProcessInstance(response.getProcessInstances().get(0));
         return response.getProcessInstances().get(0).getState();
     }
     
@@ -133,7 +127,7 @@ public class WorkflowUtil {
 			}
     	
     	ProcessInstance processInstance = ProcessInstance.builder()
-    			.documents(workflowFromRequest.getVerificationDocuments())
+    			.documents(workflowFromRequest.getDocuments())
     			.moduleName(configs.getExpenseWorkflowModuleName())
     			.businessService(bill.getBusinessService())
     			.comment(workflowFromRequest.getComments())
@@ -144,7 +138,7 @@ public class WorkflowUtil {
     			.build();
     	
     	return ProcessInstanceRequest.builder()
-    			.processInstances(Arrays.asList(processInstance))
+    			.processInstances(Collections.singletonList(processInstance))
     			.requestInfo(billRequest.getRequestInfo())
     			.build();
     }

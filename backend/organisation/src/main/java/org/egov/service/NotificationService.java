@@ -1,10 +1,9 @@
 package org.egov.service;
 
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.RequestInfoWrapper;
-import digit.models.coremodels.SMSRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
 import org.egov.kafka.OrganizationProducer;
@@ -12,6 +11,7 @@ import org.egov.repository.OrganisationRepository;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.util.OrganisationConstant;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.estimate.SMSRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

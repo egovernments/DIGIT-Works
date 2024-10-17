@@ -1,0 +1,63 @@
+@startuml
+title Organisation Update Sequence Diagram
+actor user as "User" order 0 #ddff41
+participant Organisation  order 1 #4Ff2AF
+participant MDMS  order 2 #4Ff2AF
+participant Boundary  order 3 #4Ff2AF
+participant Idgen  order 4 #4Ff2AF
+participant Individual order 5 #4Ff2AF
+participant Encryption order 6 #4Ff2AF
+queue KAFKA as "KAFKA" order 7 #4Ff2AF
+participant Persister order 8 #4Ff2AF
+participant Indexer order 9 #4Ff2AF
+database DB as "PostgreSQL" order 10 #4Ff2AF
+participant ES order 11 #4Ff2AF
+
+user -> Organisation: call /organisation/v1/_update API
+activate user #Fafd30
+activate Organisation #00ad00
+Organisation -> DB: Fetched Organisation details by ID
+note over Organisation, MDMS: Check if Organisation exists in DB\n If organisation not exists then \nreturn 400 With invalid organisation
+
+Organisation -> MDMS: Search master details \nrequired for validation
+activate MDMS #008390
+MDMS -> Organisation: Return Master details
+deactivate MDMS
+Organisation -> Boundary: Search boundary based on request
+activate Boundary #A08390
+Boundary --> Organisation: Boundary details
+deactivate Boundary
+Organisation -> Organisation: Validate request
+note right: Validate MDMS & Boundary data.
+Organisation -> Organisation: Enrich Request
+note right: Add UUID and Audit Details in request
+
+Organisation -> Individual: Query for Individual details by mobile number
+activate Individual #008390
+Individual --> Organisation: Individual details
+deactivate Individual
+note over Organisation, MDMS: If any change in Individual details then \nIf Individual exists, It will call _update API \nelse it will call _create API.
+Organisation -> Individual: call individual/v1/_create \n Or /individual/v1/_update API
+activate Individual #008390
+Individual --> Organisation: Return 202: Individual details
+deactivate Individual
+
+Organisation -> Encryption: call _encrypt: send Organisation details
+activate Encryption #F1aF0F
+Encryption -> Organisation: Return 200: Organisation details with encrypted values
+deactivate Encryption
+Organisation -> KAFKA: Push organisation request to <b>update-org</b> topic
+Organisation -> user: [202]: Organisation updated response
+deactivate Organisation
+deactivate user
+
+group Save to DB & ES: [async]
+    Persister --> KAFKA: Listen for <b>update-org</b> topic
+    Persister -> DB: Consume records and save to database
+
+    Indexer --> KAFKA: Listen for <b>update-org</b> topic
+    Indexer -> ES: Consume records and save to ES
+end
+
+
+@enduml

@@ -1,14 +1,16 @@
 package org.egov.works.service;
 
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.RequestInfoWrapper;
-import digit.models.coremodels.SMSRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.kafka.ContractProducer;
+import org.egov.works.repository.ContractRepository;
 import org.egov.works.repository.ServiceRequestRepository;
+import org.egov.works.services.common.models.estimate.Estimate;
+import org.egov.works.services.common.models.estimate.SMSRequest;
 import org.egov.works.util.*;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,34 +26,21 @@ import static org.egov.works.util.ContractServiceConstants.*;
 @Slf4j
 public class NotificationService {
 
-    @Autowired
-    private ContractProducer contractProducer;
+    private final ContractProducer contractProducer;
 
-    @Autowired
-    private ServiceRequestRepository repository;
+    private final ServiceRequestRepository repository;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private ContractServiceConfiguration config;
+    private final ContractServiceConfiguration config;
 
-    @Autowired
-    private HRMSUtils hrmsUtils;
+    private final HRMSUtils hrmsUtils;
 
-    @Autowired
-    private EstimateServiceUtil estimateServiceUtil;
+    private final EstimateServiceUtil estimateServiceUtil;
 
-    @Autowired
-    private ProjectServiceUtil projectServiceUtil;
-
-    @Autowired
-    private LocationServiceUtil locationServiceUtil;
-
-   @Autowired
-   private OrgUtils organisationServiceUtil;
-   @Autowired
-   private ContractService contractService;
+    private final ProjectServiceUtil projectServiceUtil;
+   private final OrgUtils organisationServiceUtil;
+   private final ContractRepository contractRepository;
 
    private static final String SMS_NOT_FOUND = "SMS content has not been configured for this case";
    private static final String MOBILE_NUMBERS = "mobileNumbers";
@@ -61,6 +50,19 @@ public class NotificationService {
    private static final String PROJECT_ID = "projectId";
    private static final String PROJECT_ID_REPLACEMENT_STRING =  "{projectid}";
    private static final String WORK_ORDER_NO_REPLACEMENT_STRING = "{workorderno}";
+
+    @Autowired
+    public NotificationService(ContractProducer contractProducer, ServiceRequestRepository repository, RestTemplate restTemplate, ContractServiceConfiguration config, HRMSUtils hrmsUtils, EstimateServiceUtil estimateServiceUtil, ProjectServiceUtil projectServiceUtil , OrgUtils organisationServiceUtil, ContractRepository contractRepository) {
+        this.contractProducer = contractProducer;
+        this.repository = repository;
+        this.restTemplate = restTemplate;
+        this.config = config;
+        this.hrmsUtils = hrmsUtils;
+        this.estimateServiceUtil = estimateServiceUtil;
+        this.projectServiceUtil = projectServiceUtil;
+        this.organisationServiceUtil = organisationServiceUtil;
+        this.contractRepository = contractRepository;
+    }
 
     /**
      * Sends notification by putting the sms content onto the core-sms topic
@@ -130,7 +132,7 @@ public class NotificationService {
                 .pagination(pagination)
                 .build();
 
-        List<Contract> contractsFromDB = contractService.getContracts(contractCriteria);
+        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
         Contract originalContractFromDB = contractsFromDB.stream().filter(contract -> (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE))).collect(Collectors.toList()).get(0);
         log.info("Getting officer-in-charge for contract :: " + originalContractFromDB.getContractNumber());
         String officerInChargeUuid = originalContractFromDB.getAuditDetails().getCreatedBy();

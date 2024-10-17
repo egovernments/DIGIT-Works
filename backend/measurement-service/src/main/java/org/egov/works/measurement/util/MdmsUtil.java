@@ -21,20 +21,24 @@ import static org.egov.works.measurement.config.ServiceConstants.ERROR_WHILE_FET
 @Component
 public class MdmsUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    private final ObjectMapper mapper;
+
+    private final MBServiceConfiguration configs;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private MBServiceConfiguration configs;
+    public MdmsUtil(RestTemplate restTemplate, ObjectMapper mapper, MBServiceConfiguration configs) {
+        this.restTemplate = restTemplate;
+        this.mapper = mapper;
+        this.configs = configs;
+    }
 
 
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
                                                              List<String> masterNameList) {
         StringBuilder uri = new StringBuilder();
-        uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
+        uri.append(configs.getMdmsV2Host()).append(configs.getMdmsV2EndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
         Object response = new HashMap<>();
         MdmsResponse mdmsResponse = new MdmsResponse();

@@ -2,9 +2,9 @@ package org.egov.works.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.AmountBreakup;
 import org.egov.works.web.models.LineItems;
@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -25,8 +24,12 @@ import java.util.*;
 @Slf4j
 public class LineItemsRowMapper implements ResultSetExtractor<List<LineItems>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public LineItemsRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<LineItems> extractData(ResultSet rs) throws SQLException, DataAccessException {

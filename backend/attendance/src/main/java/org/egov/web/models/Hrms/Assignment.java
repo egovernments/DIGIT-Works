@@ -43,10 +43,9 @@ package org.egov.web.models.Hrms;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
 import lombok.*;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Validated
 @EqualsAndHashCode(exclude = {"auditDetails"})
@@ -58,16 +57,16 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class Assignment {
 
-	@SafeHtml
+
 	private String id;
 
 	private Long position;
 
-	@SafeHtml
+	
 	@NotNull
 	private String designation;
 
-	@SafeHtml
+	
 	@NotNull
 	private String department;
 
@@ -76,13 +75,13 @@ public class Assignment {
 
 	private Long toDate;
 
-	@SafeHtml
+	
 	private String govtOrderNumber;
 
-	@SafeHtml
+	
 	private String tenantid;
 
-	@SafeHtml
+	
 	private  String reportingTo;
 
 	@JsonProperty("isHOD")

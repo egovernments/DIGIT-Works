@@ -7,6 +7,7 @@ import java.util.Set;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.util.QueryBuilderUtils;
+import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.Pagination;
 import org.egov.digit.expense.web.models.PaymentCriteria;
 import org.egov.digit.expense.web.models.PaymentSearchRequest;
@@ -28,11 +29,16 @@ public class PaymentQueryBuilder {
 		this.configs = configs;
 	}
 
-	public String getPaymentQuery(PaymentSearchRequest paymentSearchRequest, List<Object> preparedStatementValues) {
+	public String getPaymentQuery(PaymentSearchRequest paymentSearchRequest, List<Object> preparedStatementValues, boolean isCountRequired) {
 
 		PaymentCriteria paymentCriteria = paymentSearchRequest.getPaymentCriteria();
 		
-		StringBuilder paymentSearchQuery = new StringBuilder(Constants.PAYMENT_QUERY);
+		StringBuilder paymentSearchQuery = null;
+		if (isCountRequired) {
+			paymentSearchQuery = new StringBuilder(Constants.PAYMENT_COUNT_QUERY);
+		} else {
+			paymentSearchQuery = new StringBuilder(Constants.PAYMENT_QUERY);
+		}
 		builderUtils.addClauseIfRequired(preparedStatementValues, paymentSearchQuery);
 
 		paymentSearchQuery.append(" payment.tenantId = ? ");
@@ -75,7 +81,7 @@ public class PaymentQueryBuilder {
 			paymentSearchQuery.append("payment.id IN (").append(builderUtils.createQuery(ids)).append(")");
 			builderUtils.addToPreparedStatement(preparedStatementValues, ids);
 		}
-		return addPaginationWrapper(paymentSearchQuery, paymentSearchRequest.getPagination(), preparedStatementValues);
+		return isCountRequired? paymentSearchQuery.toString() :addPaginationWrapper(paymentSearchQuery, paymentSearchRequest.getPagination(), preparedStatementValues);
 	}
 	
 
@@ -115,4 +121,12 @@ public class PaymentQueryBuilder {
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
+
+	public String getSearchCountQueryString(PaymentSearchRequest paymentSearchRequest, List<Object> preparedStmtList) {
+        String query = getPaymentQuery(paymentSearchRequest, preparedStmtList,true);
+        if (query != null)
+            return Constants.COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
+    }
 }

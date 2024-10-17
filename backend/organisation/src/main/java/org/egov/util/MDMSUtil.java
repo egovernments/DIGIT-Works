@@ -1,15 +1,13 @@
 package org.egov.util;
 
-import digit.models.coremodels.mdms.MasterDetail;
-import digit.models.coremodels.mdms.MdmsCriteria;
-import digit.models.coremodels.mdms.MdmsCriteriaReq;
-import digit.models.coremodels.mdms.ModuleDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.web.models.OrgRequest;
-import org.egov.web.models.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

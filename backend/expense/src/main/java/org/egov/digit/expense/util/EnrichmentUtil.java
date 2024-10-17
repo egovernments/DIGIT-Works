@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.web.models.Bill;
@@ -26,7 +27,6 @@ import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import digit.models.coremodels.AuditDetails;
 
 import static org.egov.digit.expense.config.Constants.GENDER;
 
@@ -197,6 +197,12 @@ public class EnrichmentUtil {
 
         if (pagination.getLimit() != null && pagination.getLimit().compareTo(config.getMaxSearchLimit()) > 0)
             pagination.setLimit(config.getMaxSearchLimit());
+
+        if (pagination.getSortBy() == null)
+            pagination.setSortBy("billdate");
+
+        if (pagination.getOrder() == null)
+            pagination.setOrder(Pagination.OrderEnum.ASC);
     }
 
     private Pagination getPagination(BillSearchRequest billSearchRequest) {

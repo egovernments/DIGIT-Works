@@ -1,7 +1,6 @@
 package org.egov.validator;
 
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.mdms.MdmsCriteriaReq;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;

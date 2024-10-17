@@ -18,14 +18,18 @@ import static org.egov.works.util.ContractServiceConstants.CRITERIA;
 @Slf4j
 public class MeasurementUtil {
 
-    @Autowired
-    private ServiceRequestRepository restRepo;
+    private final ServiceRequestRepository restRepo;
+
+    private final ObjectMapper mapper;
+
+    private final ContractServiceConfiguration config;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private ContractServiceConfiguration config;
+    public MeasurementUtil(ServiceRequestRepository restRepo, ObjectMapper mapper, ContractServiceConfiguration config) {
+        this.restRepo = restRepo;
+        this.mapper = mapper;
+        this.config = config;
+    }
 
     public Object getMeasurementDetails(ContractRequest contractRequest) {
         log.info("MeasurementUtils::getMeasurementDetails");
