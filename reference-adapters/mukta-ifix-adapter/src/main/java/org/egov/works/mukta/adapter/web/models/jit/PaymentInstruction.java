@@ -87,7 +87,6 @@ public class PaymentInstruction {
     private List<TransactionDetails> transactionDetails;
 
     @JsonProperty("paDetails")
-    @Exclude
     private List<PADetails> paDetails;
 
     @JsonProperty("piStatusLogs")

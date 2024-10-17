@@ -1,0 +1,348 @@
+{
+  "took": 62,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": {
+      "value": 113,
+      "relation": "eq"
+    },
+    "max_score": null,
+    "hits": []
+  },
+  "aggregations": {
+    "Total": {
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0,
+      "buckets": [
+        {
+          "key": "EXPENSE.PURCHASE",
+          "doc_count": 109,
+          "total_amount": {
+            "value": 100235795
+          },
+          "paid_amount": {
+            "value": 11648
+          },
+          "failed_amount": {
+            "value": 100224147
+          }
+        },
+        {
+          "key": "EXPENSE.WAGES",
+          "doc_count": 4,
+          "total_amount": {
+            "value": 2045
+          },
+          "paid_amount": {
+            "value": 0
+          },
+          "failed_amount": {
+            "value": 2045
+          }
+        }
+      ]
+    },
+    "Projects": {
+      "after_key": {
+        "project": "PJ/2023-24/03/003151"
+      },
+      "buckets": [
+        {
+          "key": {
+            "project": "PJ/2023-24/01/002810"
+          },
+          "doc_count": 3,
+          "billType": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "EXPENSE.PURCHASE",
+                "doc_count": 3,
+                "total_amount": {
+                  "value": 4294
+                },
+                "paid_amount": {
+                  "value": 1734
+                },
+                "failed_amount": {
+                  "value": 2560
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": {
+            "project": "PJ/2023-24/01/002811"
+          },
+          "doc_count": 1,
+          "billType": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "EXPENSE.PURCHASE",
+                "doc_count": 1,
+                "total_amount": {
+                  "value": 2000
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 2000
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": {
+            "project": "PJ/2023-24/01/002813"
+          },
+          "doc_count": 1,
+          "billType": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "EXPENSE.PURCHASE",
+                "doc_count": 1,
+                "total_amount": {
+                  "value": 1100
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 1100
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": {
+            "project": "PJ/2023-24/01/002815"
+          },
+          "doc_count": 12,
+          "billType": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "EXPENSE.PURCHASE",
+                "doc_count": 12,
+                "total_amount": {
+                  "value": 16387
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 16387
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": {
+            "project": "PJ/2023-24/03/003118"
+          },
+          "doc_count": 2,
+          "billType": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "EXPENSE.PURCHASE",
+                "doc_count": 1,
+                "total_amount": {
+                  "value": 5000
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 5000
+                }
+              },
+              {
+                "key": "EXPENSE.WAGES",
+                "doc_count": 1,
+                "total_amount": {
+                  "value": 828
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 828
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": {
+            "project": "PJ/2023-24/03/003147"
+          },
+          "doc_count": 4,
+          "billType": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "EXPENSE.PURCHASE",
+                "doc_count": 3,
+                "total_amount": {
+                  "value": 300
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 300
+                }
+              },
+              {
+                "key": "EXPENSE.WAGES",
+                "doc_count": 1,
+                "total_amount": {
+                  "value": 10
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 10
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": {
+            "project": "PJ/2023-24/03/003148"
+          },
+          "doc_count": 3,
+          "billType": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "EXPENSE.PURCHASE",
+                "doc_count": 2,
+                "total_amount": {
+                  "value": 4000
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 4000
+                }
+              },
+              {
+                "key": "EXPENSE.WAGES",
+                "doc_count": 1,
+                "total_amount": {
+                  "value": 586
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 586
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": {
+            "project": "PJ/2023-24/03/003149"
+          },
+          "doc_count": 6,
+          "billType": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "EXPENSE.PURCHASE",
+                "doc_count": 6,
+                "total_amount": {
+                  "value": 15000
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 15000
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": {
+            "project": "PJ/2023-24/03/003150"
+          },
+          "doc_count": 1,
+          "billType": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "EXPENSE.WAGES",
+                "doc_count": 1,
+                "total_amount": {
+                  "value": 621
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 621
+                }
+              }
+            ]
+          }
+        },
+        {
+          "key": {
+            "project": "PJ/2023-24/03/003151"
+          },
+          "doc_count": 1,
+          "billType": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "EXPENSE.PURCHASE",
+                "doc_count": 1,
+                "total_amount": {
+                  "value": 4100
+                },
+                "paid_amount": {
+                  "value": 0
+                },
+                "failed_amount": {
+                  "value": 4100
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -55,6 +55,8 @@ config:
       - work-dir: "backend/wms"
         dockerfile: "build/maven-java17/Dockerfile"
         image-name: "works-management-service"
+      - work-dir: "backend/wms/src/main/resources/db"
+        image-name: "works-management-service-db"
   
   - name: "builds/digit-works/backend/organisation"
     build:
