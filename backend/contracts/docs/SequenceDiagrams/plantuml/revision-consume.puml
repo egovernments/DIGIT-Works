@@ -1,0 +1,52 @@
+@startuml
+participant Contracts order 10
+participant Attendance as Attendance order 12
+participant MeasurementBook as MB order 13
+participant Kafka order 14
+participant Persister order 15
+participant DB order 16
+title Consumption of Contract Revisions
+
+== Contract Revision Event published ==
+Contracts -> Kafka: Push revision event
+
+== Consumer ==
+Consumer -> Kafka: Read revision event
+activate Consumer #DarkGreen
+Consumer -> Contracts: Fetch contract
+Contracts --> Consumer: Return latest version \n of the contract
+Consumer -> Consumer: Check if start and end dates of contract \n have changed.
+note over Consumer
+If start and end dates\n have changed
+end note
+Consumer -> Attendance: Update start and end date of register
+activate Attendance #DarkSalmon
+Attendance -> Contracts: Fetch contract
+Contracts --> Attendance: Return latest version of contract
+Attendance -> Attendance: Validate start and end \n dates of contract.
+note over Attendance
+Recorded attendance dates fall within contract period
+end note
+Attendance -> Consumer: 200 OK
+Attendance -> Kafka: Push updated attendance payload
+Persister -> Kafka: Read attendance payload
+Persister -> DB: Persist update
+deactivate Attendance
+
+Consumer -> MB: Update MB
+activate MB #DarkSalmon
+MB -> Contracts: Fetch contract
+Contracts --> MB: Return latest version \n of the contract
+MB -> MB: Check if measurements have been made \n beyond updated period of contract.
+note over MB
+Measurements are within range of new period
+end note
+MB -> MB: Check for line item \n delta (additions or subtractions)
+MB -> Kafka: Push updated MB values
+MB -> Consumer: 200 OK
+deactivate MB
+deactivate Consumer
+
+
+
+@enduml

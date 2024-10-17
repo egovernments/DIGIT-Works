@@ -1,0 +1,76 @@
+TABLE eg_wms_estimate {
+  id                    varying(256) [pk]
+  tenant_id             varying(64) [not null]
+  estimate_number       varying(128) [not null]
+  revision_number       varying(64) [unique]
+  version_number        bigint
+  old_uuid              varying(256)
+  business_service      varying(64)
+  project_id            varying(256) [not null]
+  proposal_date         bigint [not null]
+  status                varying(64) [not null]
+  wf_status             varying(64) [not null]
+  name                  varying [not null]
+  reference_number      varying(140)
+  description           varying
+  executing_department  varying(64) [not null]
+  additional_details    JSONB
+  created_by            varying(256)  [not null]
+  last_modified_by      varying(256)
+  created_time          bigint
+  last_modified_time    bigint
+}
+
+TABLE eg_wms_estimate_detail {
+  id                    varying(256) [pk]
+  tenant_id             varying(64) [not null]
+  estimate_id           varying(256) [not null]
+  old_uuid              varying(256)
+  sor_id                varying(256)
+  category              varying(256)
+  name                  varying
+  description           varying
+  unit_rate             NUMERIC
+  no_of_unit            NUMERIC
+  uom                   varying(256)
+  uom_value             NUMERIC
+  length                NUMERIC
+  width                 NUMERIC
+  height                NUMERIC
+  quantity              NUMERIC
+  is_deduction          boolean
+  is_active             boolean
+  additional_details    JSONB
+}
+
+TABLE eg_wms_estimate_address {
+  id                    varying(256) [pk]
+  tenant_id             varying(64)
+  estimate_id           varying(256) [not null]
+  latitude              NUMERIC
+  longitude             NUMERIC
+  address_number        varying
+  address_line_1        varying [not null]
+  address_line_2        varying
+  landmark              varying
+  city                  varying(256)
+  pin_code              varying(30)
+  detail                varying(256)
+}
+
+TABLE eg_wms_estimate_amount_detail {
+  id                    varying(256) [pk]
+  tenant_id             varying(64) [not null]
+  estimate_detail_id    varying(256) [not null]
+  type                  varying(140)
+  amount                NUMERIC [not null]
+  is_active             boolean
+  additional_details    JSONB
+}
+
+
+Ref: "eg_wms_estimate_detail"."id" < "eg_wms_estimate_amount_detail"."estimate_detail_id"
+
+Ref: "eg_wms_estimate"."id" < "eg_wms_estimate_detail"."estimate_id"
+
+Ref: "eg_wms_estimate"."id" < "eg_wms_estimate_address"."estimate_id"
