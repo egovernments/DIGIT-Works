@@ -8,6 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.wms.config.Constants;
 import org.egov.wms.config.SearchConfiguration;
 import org.egov.wms.enrichment.WMSReportEnrichment;
 import org.egov.wms.producer.WMSProducer;
@@ -113,11 +114,11 @@ public class WMSReportService {
         if (aggsResponse == null || aggsResponse.getProjectPaymentDetails() == null || aggsResponse.getProjectPaymentDetails().isEmpty()){
             throw new CustomException("NO_DATA_FOUND", "No data found for the given criteria");
         }
-        List<String> headers = Arrays.asList("Project Id", "Estimated amount","Wage amount paid","Purchase amount paid", "Supervision amount paid", "Total amount paid");
+        List<String> headers = Constants.PAYMENT_REPORT_HEADERS;
         Map<String, Integer> headerIndexMap = new HashMap<>();
-        headerIndexMap.put("EXPENSE.PURCHASE", 3);
-        headerIndexMap.put("EXPENSE.WAGES", 2);
-        headerIndexMap.put("EXPENSE.SUPERVISION", 4);
+        headerIndexMap.put(Constants.EXPENSE_PURCHASE, 3);
+        headerIndexMap.put(Constants.EXPENSE_WAGE, 2);
+        headerIndexMap.put(Constants.EXPENSE_SUPERVISION, 4);
         byte[] excelBytes = null;
         // Logic to generate excel from object
         Workbook workbook = new XSSFWorkbook();
