@@ -87,6 +87,8 @@ public class MuktaAdaptorConfig {
     private String paymentCreateTopic;
     @Value("${ifms.pi.index.enrich.topic}")
     private String ifmsPiEnrichmentTopic;
+    @Value("${ifms.pi.index.internal.topic}")
+    private String ifmsPiIndexInternalTopic;
 
     @Value("${mukta.ifix.adapter.error.queue.topic}")
     private String muktaIfixAdapterErrorQueueTopic;
@@ -113,4 +115,10 @@ public class MuktaAdaptorConfig {
     //System User
     @Value("${egov.system.user.username}")
     private String systemUserUsername;
+
+    @Value("${works.estimate.host}")
+    private String estimateHost;
+
+    @Value("${works.estimate.search.endpoint}")
+    private String estimateSearchEndpoint;
 }
