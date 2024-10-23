@@ -139,9 +139,12 @@ public class WMSReportService {
             row.createCell(4).setCellValue(0.0); // For Purchase payment successful
             row.createCell(5).setCellValue(0.0); // For Purchase payment failed
             row.createCell(6).setCellValue(0.0); // For Supervision payment successful
+            row.createCell(7).setCellValue(0.0); // For Supervision payment failed
             for(PaymentDetailsByBillType paymentDetailsByBillType: projectPaymentDetail.getPaymentDetails()){
-                row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType())).setCellValue(paymentDetailsByBillType.getPaidAmount() == null ? 0.0 : paymentDetailsByBillType.getPaidAmount());
-                row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType()) + 1).setCellValue(paymentDetailsByBillType.getRemainingAmount() == null ? 0.0 : paymentDetailsByBillType.getRemainingAmount());
+                if (headerIndexMap.get(paymentDetailsByBillType.getBillType()) != null){
+                    row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType())).setCellValue(paymentDetailsByBillType.getPaidAmount() == null ? 0.0 : paymentDetailsByBillType.getPaidAmount());
+                    row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType()) + 1).setCellValue(paymentDetailsByBillType.getRemainingAmount() == null ? 0.0 : paymentDetailsByBillType.getRemainingAmount());
+                }
             }
 //            row.createCell(5).setCellValue(projectPaymentDetail.getTotal() == null ? 0.0 : projectPaymentDetail.getTotal());
         }
