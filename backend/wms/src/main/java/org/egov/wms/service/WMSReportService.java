@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -142,8 +143,15 @@ public class WMSReportService {
             row.createCell(7).setCellValue(0.0); // For Supervision payment failed
             for(PaymentDetailsByBillType paymentDetailsByBillType: projectPaymentDetail.getPaymentDetails()){
                 if (headerIndexMap.get(paymentDetailsByBillType.getBillType()) != null){
-                    row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType())).setCellValue(paymentDetailsByBillType.getPaidAmount() == null ? 0.0 : paymentDetailsByBillType.getPaidAmount());
-                    row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType()) + 1).setCellValue(paymentDetailsByBillType.getRemainingAmount() == null ? 0.0 : paymentDetailsByBillType.getRemainingAmount());
+                    DecimalFormat df = new DecimalFormat("#.00");
+                    if (paymentDetailsByBillType.getPaidAmount() != null){
+                        row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType())).setCellValue(Double.parseDouble(df.format(paymentDetailsByBillType.getPaidAmount())));
+                    }
+                    if (paymentDetailsByBillType.getRemainingAmount() != null){
+                        row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType()) + 1).setCellValue(Double.parseDouble(df.format(paymentDetailsByBillType.getRemainingAmount())));
+                    }
+//                    row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType())).setCellValue(paymentDetailsByBillType.getPaidAmount() == null ? 0.0 : paymentDetailsByBillType.getPaidAmount());
+//                    row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType()) + 1).setCellValue(paymentDetailsByBillType.getRemainingAmount() == null ? 0.0 : paymentDetailsByBillType.getRemainingAmount());
                 }
             }
 //            row.createCell(5).setCellValue(projectPaymentDetail.getTotal() == null ? 0.0 : projectPaymentDetail.getTotal());
