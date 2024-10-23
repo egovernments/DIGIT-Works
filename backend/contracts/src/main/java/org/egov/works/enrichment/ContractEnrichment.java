@@ -1,19 +1,22 @@
 package org.egov.works.enrichment;
 
 
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.ProcessInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.kafka.ContractProducer;
-import org.egov.works.service.ContractService;
+import org.egov.works.repository.ContractRepository;
 import org.egov.works.service.WorkflowService;
+import org.egov.works.services.common.models.estimate.AmountDetail;
+import org.egov.works.services.common.models.estimate.Estimate;
+import org.egov.works.services.common.models.estimate.EstimateDetail;
 import org.egov.works.util.*;
 import org.egov.works.validator.ContractServiceValidator;
 import org.egov.works.web.models.*;
@@ -38,41 +41,42 @@ import static org.egov.works.util.ContractServiceConstants.*;
 @Slf4j
 public class ContractEnrichment {
 
-    @Autowired
-    private IdgenUtil idgenUtil;
+    private final IdgenUtil idgenUtil;
+
+    private final ContractServiceConfiguration config;
+
+    private final ContractRepository contractRepository;
+
+    private final EstimateServiceUtil estimateServiceUtil;
+
+    private final MDMSUtils mdmsUtils;
+
+    private final AttendanceUtils attendanceUtils;
+
+    private final CommonUtil commonUtil;
+
+    private final ObjectMapper mapper;
+
+    private final ContractProducer contractProducer;
+
+    private final WorkflowService workflowService;
+
+    private final ContractServiceValidator contractServiceValidator;
 
     @Autowired
-    private ContractServiceConfiguration config;
-
-    @Autowired
-    private ContractServiceUtil contractServiceUtil;
-
-    @Autowired
-    private EstimateServiceUtil estimateServiceUtil;
-
-    @Autowired
-    private MDMSUtils mdmsUtils;
-
-    @Autowired
-    private AttendanceUtils attendanceUtils;
-
-    @Autowired
-    private CommonUtil commonUtil;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private ContractService contractService;
-
-    @Autowired
-    private ContractProducer contractProducer;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private ContractServiceValidator contractServiceValidator;
+    public ContractEnrichment(IdgenUtil idgenUtil, ContractServiceConfiguration config, ContractRepository contractRepository, EstimateServiceUtil estimateServiceUtil, MDMSUtils mdmsUtils, AttendanceUtils attendanceUtils, CommonUtil commonUtil, ObjectMapper mapper, ContractProducer contractProducer, WorkflowService workflowService, ContractServiceValidator contractServiceValidator) {
+        this.contractRepository = contractRepository;
+        this.idgenUtil = idgenUtil;
+        this.config = config;
+        this.estimateServiceUtil = estimateServiceUtil;
+        this.mdmsUtils = mdmsUtils;
+        this.attendanceUtils = attendanceUtils;
+        this.commonUtil = commonUtil;
+        this.mapper = mapper;
+        this.contractProducer = contractProducer;
+        this.workflowService = workflowService;
+        this.contractServiceValidator = contractServiceValidator;
+    }
 
     public void enrichContractOnCreate(ContractRequest contractRequest){
         Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
@@ -226,7 +230,7 @@ public class ContractEnrichment {
     private void enrichIdsAndAuditDetailsOnUpdate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
         AuditDetails providedAuditDetails = contractRequest.getContract().getAuditDetails();
-        AuditDetails auditDetails = contractServiceUtil.getAuditDetails(contractRequest.getRequestInfo().getUserInfo().getUuid(), providedAuditDetails, false);
+        AuditDetails auditDetails = getAuditDetails(contractRequest.getRequestInfo().getUserInfo().getUuid(), providedAuditDetails, false);
         contract.setAuditDetails(auditDetails);
         for(LineItems lineItem : contract.getLineItems()){
             if(lineItem.getId() == null) {
@@ -259,7 +263,7 @@ public class ContractEnrichment {
         Contract contract = contractRequest.getContract();
         String tenantId = contract.getTenantId();
         List<LineItems> providedLineItems = contract.getLineItems();
-        Set<String> providedEstimateIds = providedLineItems.stream().map(e -> e.getEstimateId()).collect(Collectors.toSet());
+        Set<String> providedEstimateIds = providedLineItems.stream().map(LineItems::getEstimateId).collect(Collectors.toSet());
 
         log.info("Fetch active estimates for provided estimate Ids ["+providedEstimateIds+"]");
         List<Estimate> fetchedActiveEstimates = fetchActiveEstimates(requestInfo,tenantId,providedEstimateIds);
@@ -286,7 +290,7 @@ public class ContractEnrichment {
                                 .name(fetchedEstimateDetail.getName())
                                 .category(fetchedEstimateDetail.getCategory())
                                 .tenantId(fetchedEstimate.getTenantId())
-                                .status(fetchedEstimate.getStatus())
+                                .status(Status.fromValue(fetchedEstimate.getStatus().toString()))
                                 .additionalDetails(fetchedEstimateDetail.getAdditionalDetails())
                                 .build();
 
@@ -333,7 +337,7 @@ public class ContractEnrichment {
     private void enrichIdsAgreementDateAndAuditDetailsOnCreate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
         if (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
-            List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
+            List<Contract> contractsFromDB = contractRepository.getActiveContractsFromDB(contractRequest);
             contract.setOldUuid(contractsFromDB.get(0).getId());
             Long versionNumber = contractsFromDB.get(0).getVersionNumber();
             setVersionNumber(contract, versionNumber);
@@ -351,7 +355,7 @@ public class ContractEnrichment {
             agreementDate = BigDecimal.valueOf(Instant.now().toEpochMilli());
             contract.setAgreementDate(agreementDate);
         }
-        AuditDetails auditDetails = contractServiceUtil.getAuditDetails(contractRequest.getRequestInfo().getUserInfo().getUuid(), null, true);
+        AuditDetails auditDetails = getAuditDetails(contractRequest.getRequestInfo().getUserInfo().getUuid(), null, true);
         contract.setAuditDetails(auditDetails);
         for(LineItems lineItem : contract.getLineItems()){
             lineItem.setId(String.valueOf(UUID.randomUUID()));
@@ -406,6 +410,12 @@ public class ContractEnrichment {
 
         if (pagination.getLimit() != null && pagination.getLimit().compareTo(config.getContractMaxLimit())>0)
             pagination.setLimit(config.getContractMaxLimit());
+
+        if (StringUtils.isEmpty(pagination.getSortBy()))
+            pagination.setSortBy("startDate");
+
+        if (pagination.getOrder() == null)
+            pagination.setOrder(Pagination.OrderEnum.DESC);
     }
 
     private Pagination getPagination(ContractCriteria contractCriteria) {
@@ -420,7 +430,7 @@ public class ContractEnrichment {
         if (contractRequest.getContract().getBusinessService() != null
                 && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
             // Fetch previous contract and create estimateDetailId to contractLineItemRef map
-            Contract previousActiveContract = contractServiceUtil.getActiveContractsFromDB(contractRequest).get(0);
+            Contract previousActiveContract = contractRepository.getActiveContractsFromDB(contractRequest).get(0);
             Map<String, String> estimateDetailIdToContractLineItemRefMap = previousActiveContract.getLineItems()
                     .stream().collect(Collectors.toMap(LineItems::getEstimateLineItemId, LineItems::getContractLineItemRef));
             // Create map of estimateDetailId and prevEstimateDetailId
@@ -447,7 +457,7 @@ public class ContractEnrichment {
         if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)
                 && ACCEPT_ACTION.equalsIgnoreCase(contractRequest.getWorkflow().getAction())) {
             log.info("Setting previous contract statuses inactive");
-            Contract previousActiveContract = contractServiceUtil.getActiveContractsFromDB(contractRequest).get(0);
+            Contract previousActiveContract = contractRepository.getActiveContractsFromDB(contractRequest).get(0);
 
             ContractRequest contractRequestFromDB = ContractRequest.builder()
                     .requestInfo(contractRequest.getRequestInfo())
@@ -469,6 +479,15 @@ public class ContractEnrichment {
             log.info("Pushing updated end date to attendance register end date update topic");
             contractProducer.push(config.getUpdateTimeExtensionTopic(), attendanceContractRevisionRequest);
         }
+    }
+
+    public AuditDetails getAuditDetails(String by, AuditDetails auditDetails, Boolean isCreate) {
+        Long time = System.currentTimeMillis();
+        if (Boolean.TRUE.equals(isCreate))
+            return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
+        else
+            return AuditDetails.builder().createdBy(auditDetails.getCreatedBy()).lastModifiedBy(by)
+                    .createdTime(auditDetails.getCreatedTime()).lastModifiedTime(time).build();
     }
 
 }

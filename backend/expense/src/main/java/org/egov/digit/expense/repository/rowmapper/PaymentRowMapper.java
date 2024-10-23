@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.web.models.Payment;
 import org.egov.digit.expense.web.models.PaymentBill;
 import org.egov.digit.expense.web.models.PaymentBillDetail;
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 
 @Component

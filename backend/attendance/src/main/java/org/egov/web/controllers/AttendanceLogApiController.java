@@ -2,6 +2,7 @@ package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.AttendanceLogConfiguration;
 import org.egov.common.producer.Producer;
@@ -18,34 +19,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/log/v1")
 public class AttendanceLogApiController {
 
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    @Autowired
-    private AttendanceLogService attendanceLogService;
+    private final AttendanceLogService attendanceLogService;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    private final ResponseInfoFactory responseInfoFactory;
 
-    @Autowired
-    private AttendanceLogConfiguration attendanceLogConfiguration;
+    private final AttendanceLogConfiguration attendanceLogConfiguration;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
-    @Autowired
-    private Producer producer;
+    private final Producer producer;
+
+    public AttendanceLogApiController(ObjectMapper objectMapper, HttpServletRequest request, AttendanceLogService attendanceLogService, ResponseInfoFactory responseInfoFactory, AttendanceLogConfiguration attendanceLogConfiguration, HttpServletRequest httpServletRequest, Producer producer) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+        this.attendanceLogService = attendanceLogService;
+        this.responseInfoFactory = responseInfoFactory;
+        this.attendanceLogConfiguration = attendanceLogConfiguration;
+        this.httpServletRequest = httpServletRequest;
+        this.producer = producer;
+    }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<AttendanceLogResponse> attendanceLogV1CreatePOST(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendanceLogRequest attendanceLogRequest) {

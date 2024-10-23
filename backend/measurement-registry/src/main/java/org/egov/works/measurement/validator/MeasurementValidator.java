@@ -8,6 +8,7 @@ import net.minidev.json.JSONArray;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.MBRegistryConfiguration;
+import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.util.MdmsUtil;
 import org.egov.works.measurement.util.MeasurementRegistryUtil;
@@ -37,7 +38,7 @@ public class MeasurementValidator {
     @Autowired
     private MBRegistryConfiguration MBRegistryConfiguration;
     @Autowired
-    private MeasurementRegistry measurementRegistry;
+    private ServiceRequestRepository serviceRequestRepository;
     @Autowired
     private MeasurementRegistryUtil measurementRegistryUtil;
 
@@ -81,7 +82,7 @@ public class MeasurementValidator {
             criteria.setTenantId(measurement.getTenantId());
 
             //Getting list every time because tenantId may vary
-            List<Measurement> existingMeasurementList= measurementRegistry.searchMeasurements(criteria,searchRequest);
+            List<Measurement> existingMeasurementList= serviceRequestRepository.getMeasurements(criteria,searchRequest);
             if (existingMeasurementList.isEmpty()) {
                 throw new CustomException(MEASUREMENT_DATA_NOT_EXIST_CODE, MEASUREMENT_DATA_NOT_EXIST_MSG);
             }

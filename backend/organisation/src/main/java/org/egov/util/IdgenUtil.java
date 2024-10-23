@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.egov.common.contract.idgen.IdGenerationRequest;
+import org.egov.common.contract.idgen.IdGenerationResponse;
+import org.egov.common.contract.idgen.IdRequest;
+import org.egov.common.contract.idgen.IdResponse;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +18,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import digit.models.coremodels.IdGenerationRequest;
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdRequest;
-import digit.models.coremodels.IdResponse;
 
 @Component
 @Slf4j

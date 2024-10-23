@@ -76,10 +76,11 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndPoint;
 
-	@Value("${egov.mdms.v2.host}")
+	// MDMS V2
+	@Value("${egov.mdms.V2.host}")
 	private String mdmsV2Host;
 
-	@Value("${egov.mdms.v2.search.endpoint}")
+	@Value("${egov.mdms.search.V2.endpoint}")
 	private String mdmsV2EndPoint;
 
 	// MusterRoll
@@ -197,4 +198,12 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${expense.billing.search.max.limit}")
 	private Integer maxLimit;
 
+	@Value("${works.estimate.host}")
+	private String estimateHost;
+
+	@Value("${works.estimate.search.endpoint}")
+	private String estimateEndpoint;
+
+	@Value("${expense.billing.bill.index}")
+	private String billIndexTopic;
 }

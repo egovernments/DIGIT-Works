@@ -1,9 +1,9 @@
 package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.EstimateServiceMain;
 import org.egov.TestConfiguration;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.helper.EstimateRequestBuilderTest;

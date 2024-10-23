@@ -23,13 +23,17 @@ import java.util.Map;
 @Slf4j
 public class MeasurementRegistry {
 
-    @Autowired
-    private MeasurementServiceValidator serviceValidator;
+    private final MeasurementServiceValidator serviceValidator;
+
+    private final JdbcTemplate jdbcTemplate;
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    public MeasurementRegistry(MeasurementServiceValidator serviceValidator, JdbcTemplate jdbcTemplate, ServiceRequestRepository serviceRequestRepository) {
+        this.serviceValidator = serviceValidator;
+        this.jdbcTemplate = jdbcTemplate;
+        this.serviceRequestRepository = serviceRequestRepository;
+    }
 
     public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);

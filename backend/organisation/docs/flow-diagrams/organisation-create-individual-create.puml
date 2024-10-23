@@ -1,0 +1,39 @@
+
+@startuml
+title Individual Create/Update while creating Organisation
+actor user as "User" order 0 #ddff41
+participant Organisation  order 1 #4Ff2AF
+participant Individual order 5 #4Ff2AF
+
+activate Organisation #00ad00
+Organisation -> Individual: Query for Individual details by mobile number
+activate Individual #008390
+Individual --> Organisation: Individual details
+deactivate Individual
+alt Individual not found
+    Organisation -> Organisation: Create Individual create request
+    Organisation -> Individual: call individual/v1/_create API
+    activate Individual #008390
+    Individual --> Organisation: Return [202]Success/[400]Error: Response
+    deactivate Individual
+    alt if : Individual returns Success Response
+        Organisation -> Organisation: Enrich Individual ids in request
+    else if : Individual returns Error Response
+        user <-- Organisation: Return 400: Error Response with \n <b>The individual create has failed</b>
+    end
+else Individual exists
+    Organisation -> Organisation: Update Individual details
+    note right: ===Update individual fields \nUpdate individual details \nEnable System user true \nUpdate user roles
+    Organisation -> Individual: Call individual/v1/_update
+    activate Individual #008390
+    Individual --> Organisation: Return 202: Individual details
+    deactivate Individual
+    alt if : Individual returns Success Response
+        Organisation -> Organisation: Enrich Individual ids in request
+    else if : Individual returns Error Response
+        user <-- Organisation: Return 400: Error Response with \n <b>The individual update has failed</b>
+    end
+end
+deactivate Organisation
+
+@enduml

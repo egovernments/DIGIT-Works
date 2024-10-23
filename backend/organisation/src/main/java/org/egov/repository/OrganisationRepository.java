@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.repository.querybuilder.*;
 import org.egov.repository.rowmapper.*;
 import org.egov.service.EncryptionService;
-import org.egov.web.models.Document;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;

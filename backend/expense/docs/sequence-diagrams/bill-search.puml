@@ -1,0 +1,28 @@
+@startuml
+title: Expense service search bill
+actor user as "User" order 0 #ddff41
+participant Expense as "Expense \nService" #4Ff2AF
+database DB as "PostgreSQL" #4Ff2AF
+
+user -> Expense : call /bill/v1/_search API
+activate user #Fafd30
+activate Expense #00ad00
+
+Expense -> Expense: Validate search criteria such as bill ID, status, \nworkflow status, etc.
+alt if no valid criteria provided
+    Expense --> user: [400]: No valid search criteria
+end
+
+Expense -> Expense: Enrich pagination \nin search request
+
+
+Expense -> DB : Search for bills by criteria
+activate DB #008390
+DB --> Expense : Return paginated results from DB
+deactivate DB
+
+Expense -> user : [200]: Return Bill details with \npagination details
+deactivate Expense
+deactivate user
+
+@enduml

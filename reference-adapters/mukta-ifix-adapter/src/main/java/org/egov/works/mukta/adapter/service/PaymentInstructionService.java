@@ -295,7 +295,7 @@ public class PaymentInstructionService {
             }
             indexerRequest.put("RequestInfo", requestInfo);
             indexerRequest.put("paymentInstruction", piObjectNode);
-            muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(),indexerRequest);
+            muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiIndexInternalTopic(),indexerRequest);
         }catch (Exception e){
             log.error("Exception occurred in : PaymentInstructionService:updatePiForIndexer " + e);
         }

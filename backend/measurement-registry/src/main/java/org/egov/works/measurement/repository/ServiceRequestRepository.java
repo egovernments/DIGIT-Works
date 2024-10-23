@@ -42,7 +42,7 @@ public class ServiceRequestRepository {
 
     public ArrayList<Measurement> getMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getMeasurementSearchQuery(searchCriteria, preparedStmtList, measurementSearchRequest);
+        String query = queryBuilder.getMeasurementSearchQuery(searchCriteria, preparedStmtList, measurementSearchRequest,false);
         ArrayList<Measurement> measurementsList = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
         return measurementsList;
     }
@@ -67,5 +67,11 @@ public class ServiceRequestRepository {
         }
 
         return response;
+    }
+
+    public Integer getCount(MeasurementCriteria criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String countQuery = queryBuilder.getSearchCountQueryString(criteria, preparedStmtList, null);
+        return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
     }
 }

@@ -4,15 +4,15 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;

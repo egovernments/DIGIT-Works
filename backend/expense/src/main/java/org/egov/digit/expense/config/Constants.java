@@ -63,8 +63,9 @@ public class Constants {
 
 	public static final List<String> TENANT_MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(TENANT_MASTERNAME));
-	
-	
+
+
+
 	private static final String INNER_JOIN = "INNER JOIN";
 
 	public static final String PAYMENT_QUERY = "SELECT "
@@ -103,6 +104,12 @@ public class Constants {
 			
 			+ INNER_JOIN + " eg_expense_payment_lineitem li ON li.paymentbilldetailid = paymentbd.id"
 					+ " AND li.tenantid=paymentbd.tenantid ";
+
+	public static final String PAYMENT_COUNT_QUERY = "SELECT distinct(payment.id) " +
+			"FROM eg_expense_payment payment "
+
+			+ INNER_JOIN + " eg_expense_payment_bill paymentbill ON paymentbill.paymentid = payment.id"
+					+ " AND paymentbill.tenantid = payment.tenantid ";
 			
 	
 	public static final Set<String> SORTABLE_BILL_COLUMNS = Collections.unmodifiableSet(
@@ -141,6 +148,9 @@ public class Constants {
 			+ INNER_JOIN + " EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
 			
 			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
-	
-	
+
+	public static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+	public static final String BILL_COUNT_QUERY = "SELECT distinct(bill.id) " +
+             "FROM eg_expense_bill bill ";
 }

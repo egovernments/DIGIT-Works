@@ -58,6 +58,13 @@ public class MBRegistryConfiguration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
 
+    // MDMS V2
+    @Value("${egov.mdms.V2.host}")
+    private String mdmsV2Host;
+
+    @Value("${egov.mdms.search.V2.endpoint}")
+    private String mdmsV2EndPoint;
+
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
 

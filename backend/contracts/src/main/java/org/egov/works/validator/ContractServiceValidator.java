@@ -10,6 +10,8 @@ import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.LineItemsRepository;
 import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.works.service.ContractService;
+import org.egov.works.services.common.models.estimate.Estimate;
+import org.egov.works.services.common.models.estimate.EstimateDetail;
 import org.egov.works.util.*;
 import org.egov.works.repository.ContractRepository;
 import org.egov.works.web.models.*;
@@ -31,47 +33,40 @@ import static org.egov.works.util.ContractServiceConstants.*;
 @Slf4j
 public class ContractServiceValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+    private final MDMSUtils mdmsUtils;
+
+    private final HRMSUtils hrmsUtils;
+
+    private final EstimateServiceUtil estimateServiceUtil;
+
+    private final ContractServiceConfiguration config;
+
+    private final LineItemsRepository lineItemsRepository;
+
+    private final ObjectMapper mapper;
+
+    private final ContractRepository contractRepository;
+
+    private final CommonUtil commonUtil;
+
+    private final OrgUtils orgUtils;
+
+    private final MeasurementUtil measurementUtil;
+
 
     @Autowired
-    private HRMSUtils hrmsUtils;
-
-    @Autowired
-    private EstimateServiceUtil estimateServiceUtil;
-
-    @Autowired
-    private ContractServiceConfiguration config;
-
-    @Autowired
-    private LineItemsRepository lineItemsRepository;
-
-    @Autowired
-    private ContractService contractService;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private MDMSDataParser mdmsDataParser;
-
-    @Autowired
-    private ContractRepository contractRepository;
-
-    @Autowired
-    private CommonUtil commonUtil;
-
-    @Autowired
-    private OrgUtils orgUtils;
-
-    @Autowired
-    private ServiceRequestRepository restRepo;
-
-    @Autowired
-    private MeasurementUtil measurementUtil;
-
-    @Autowired
-    private ContractServiceUtil contractServiceUtil;
+    public ContractServiceValidator(OrgUtils orgUtils, MDMSUtils mdmsUtils, HRMSUtils hrmsUtils, EstimateServiceUtil estimateServiceUtil, ContractServiceConfiguration config, LineItemsRepository lineItemsRepository, ObjectMapper mapper, ContractRepository contractRepository, CommonUtil commonUtil, MeasurementUtil measurementUtil) {
+        this.orgUtils = orgUtils;
+        this.mdmsUtils = mdmsUtils;
+        this.hrmsUtils = hrmsUtils;
+        this.estimateServiceUtil = estimateServiceUtil;
+        this.config = config;
+        this.lineItemsRepository = lineItemsRepository;
+        this.mapper = mapper;
+        this.contractRepository = contractRepository;
+        this.commonUtil = commonUtil;
+        this.measurementUtil = measurementUtil;
+    }
 
     public void validateCreateContractRequest(ContractRequest contractRequest) {
         log.info("Validate contract create request");
@@ -298,7 +293,7 @@ public class ContractServiceValidator {
         if (CollectionUtils.isEmpty(contractRequest.getContract().getDocuments())) {
             return;
         }
-        List<String> documentIds = contractRequest.getContract().getDocuments().stream().map(Document::getFileStore).collect(Collectors.toList());
+        List<String> documentIds = contractRequest.getContract().getDocuments().stream().map(Document::getFileStore).toList();
 
         // Make API request to file store service
         String fileStoreResponse = getFileStoreResponse(documentIds, contractRequest.getContract().getTenantId());
@@ -367,9 +362,9 @@ public class ContractServiceValidator {
         }
         ContractCriteria contractCriteria = ContractCriteria.builder().estimateLineItemIds(estimatedLineItemIdsList).build();
         List<LineItems> fetchedLineItems = lineItemsRepository.getLineItems(contractCriteria);
-        List<LineItems> filteredLineItems = fetchedLineItems.stream().filter(e -> e.getStatus().equals(Status.ACTIVE)).collect(Collectors.toList());
+        List<LineItems> filteredLineItems = fetchedLineItems.stream().filter(e -> e.getStatus().equals(Status.ACTIVE)).toList();
         if(!filteredLineItems.isEmpty()){
-            Set<String> collect = filteredLineItems.stream().map(e -> e.getEstimateLineItemId()).collect(Collectors.toSet());
+            Set<String> collect = filteredLineItems.stream().map(LineItems::getEstimateLineItemId).collect(Collectors.toSet());
             log.error("Estimate Line Items "+collect+" are already associated with other contract");
             throw new CustomException("INVALID_ESTIMATELINEITEMID","Estimate Line Items "+collect+" are already associated with other contract");
         }
@@ -666,7 +661,7 @@ public class ContractServiceValidator {
         // Validate if contract number is present
         validateContractNumber(contractRequest);
 
-        List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
+        List<Contract> contractsFromDB = contractRepository.getActiveContractsFromDB(contractRequest);
 
         // Validate if contract is present in DB
         validateContractNumber(contractsFromDB);
@@ -698,7 +693,7 @@ public class ContractServiceValidator {
         // Validate if contract number is present
         validateContractNumber(contractRequest);
 
-        List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
+        List<Contract> contractsFromDB = contractRepository.getActiveContractsFromDB(contractRequest);
 
         // Validate if contract is present in DB
         validateContractNumber(contractsFromDB);
@@ -775,7 +770,7 @@ public class ContractServiceValidator {
     }
 
     public void validateLineItemRef(ContractRequest contractRequest) {
-        List<Contract> contractsFromDB = contractServiceUtil.getActiveContractsFromDB(contractRequest);
+        List<Contract> contractsFromDB = contractRepository.getActiveContractsFromDB(contractRequest);
         Set<String> contractLineItemRef = contractRequest.getContract().getLineItems().stream().map(LineItems::getContractLineItemRef).collect(Collectors.toSet());
         for (LineItems lineItems : contractsFromDB.get(0).getLineItems()) {
             if (!contractLineItemRef.contains(lineItems.getContractLineItemRef())) {

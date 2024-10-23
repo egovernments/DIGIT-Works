@@ -1,0 +1,337 @@
+{
+  "ResponseInfo": {
+    "apiId": "string",
+    "ver": "string",
+    "ts": 0,
+    "resMsgId": "string",
+    "msgId": "string",
+    "status": "SUCCESSFUL"
+  },
+  "aggsResponse": {
+    "total": {
+      "estimatedAmount": 0,
+      "paymentDetails": [
+        {
+          "billType": "EXPENSE.PURCHASE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+        },
+        {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+        },
+        {
+          "billType": "EXPENSE.SUPERVISION",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+        }
+      ]
+    },
+    "projects": [
+      {
+        "projectNumber": "PJ/2023-24/000169",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000170",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000171",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000172",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000173",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000174",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000175",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000176",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000177",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000178",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000179",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      },
+      {
+        "projectNumber": "PJ/2023-24/000180",
+        "estimatedAmount": 2250000,
+        "total": 2250000,
+        "paymentDetails": [
+          {
+            "billType": "EXPENSE.PURCHASE",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          },
+          {
+          "billType": "EXPENSE.WAGE",
+          "total": 1412312,
+          "paidAmount": 1410000,
+          "remainingAmount": 2312
+          },
+          {
+            "billType": "EXPENSE.SUPERVISION",
+            "total": 1412312,
+            "paidAmount": 1410000,
+            "remainingAmount": 2312
+          }
+        ]
+      }
+    ]
+  }
+}

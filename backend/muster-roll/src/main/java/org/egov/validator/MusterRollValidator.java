@@ -1,16 +1,16 @@
 package org.egov.validator;
 
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
 import org.egov.config.MusterRollServiceConfiguration;
-import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -274,7 +274,7 @@ public class MusterRollValidator {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("tenantId",musterRoll.getTenantId())
                 .queryParam("ids",musterRoll.getRegisterId())
-                .queryParam("status",Status.ACTIVE);
+                .queryParam("status", Status.ACTIVE);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
         AttendanceRegisterResponse attendanceRegisterResponse = null;

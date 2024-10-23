@@ -2,10 +2,10 @@ package org.egov.util;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
@@ -60,7 +60,7 @@ public class BoundaryUtil {
                 String jsonString = new JSONObject(responseMap).toString();
 
                 for (String boundary : boundaries) {
-                    String boundaryCodePath = "$..boundary[?(@.code==\"{}\")]";
+                    String boundaryCodePath = "$.Boundary[?(@.code==\"{}\")]";
                     String jsonpath = boundaryCodePath.replace("{}", boundary);
                     DocumentContext context = JsonPath.parse(jsonString);
                     Object boundaryObject = context.read(jsonpath);
@@ -85,11 +85,7 @@ public class BoundaryUtil {
         uri.append(config.getLocationContextPath()).append(config.getLocationEndpoint());
         uri.append("?").append("tenantId=").append(tenantId);
 
-        if (hierarchyTypeCode != null)
-            uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
-
-        uri.append("&").append("boundaryType=").append(boundaryType).append("&").append("codes=")
-                .append(StringUtils.join(boundaries, ','));
+        uri.append("&").append("codes=").append(StringUtils.join(boundaries, ','));
         return uri;
     }
 

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import digit.models.coremodels.AuditDetails;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Schema(description = "A Object which holds the meta about the bill")
 @Validated

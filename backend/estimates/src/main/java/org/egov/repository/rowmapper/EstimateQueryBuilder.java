@@ -38,7 +38,7 @@ public class EstimateQueryBuilder {
             "eg_wms_estimate_amount_detail AS estAmtDetail " +
             "ON (estDetail.id=estAmtDetail.estimate_detail_id) ";
 
-    private static final String ESTIMATE_COUNT_QUERY = "SELECT distinct(est.estimate_number) " +
+    private static final String ESTIMATE_COUNT_QUERY = "SELECT distinct(est.id) " +
             "FROM eg_wms_estimate AS est " +
             LEFT_JOIN +
             "eg_wms_estimate_detail AS estDetail " +

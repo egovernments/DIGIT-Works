@@ -3,14 +3,14 @@ package org.egov.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.ProcessInstanceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.workflow.ProcessInstanceResponse;
+import org.egov.common.models.project.Project;
 import org.egov.util.EstimateServiceConstant;
 import org.egov.util.ProjectUtil;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
-import org.egov.web.models.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
