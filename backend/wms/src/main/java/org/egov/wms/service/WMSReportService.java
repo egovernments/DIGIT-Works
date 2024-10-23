@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -116,13 +117,13 @@ public class WMSReportService {
         }
         List<String> headers = Constants.PAYMENT_REPORT_HEADERS;
         Map<String, Integer> headerIndexMap = new HashMap<>();
-        headerIndexMap.put(Constants.EXPENSE_PURCHASE, 3);
+        headerIndexMap.put(Constants.EXPENSE_PURCHASE, 4);
         headerIndexMap.put(Constants.EXPENSE_WAGE, 2);
-        headerIndexMap.put(Constants.EXPENSE_SUPERVISION, 4);
+        headerIndexMap.put(Constants.EXPENSE_SUPERVISION, 6);
         byte[] excelBytes = null;
         // Logic to generate excel from object
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("reportJobSheet");
+        Sheet sheet = workbook.createSheet("Payment Report");
         // Logic to write data to excel sheet
         Row headerRow = sheet.createRow(0);
         // Logic to write header row
@@ -134,13 +135,26 @@ public class WMSReportService {
             Row row = sheet.createRow(sheet.getLastRowNum() + 1);
             row.createCell(0).setCellValue(projectPaymentDetail.getProjectNumber() == null ? "" : projectPaymentDetail.getProjectNumber());
             row.createCell(1).setCellValue(projectPaymentDetail.getEstimatedAmount() == null ? 0.0 : projectPaymentDetail.getEstimatedAmount());
-            row.createCell(2).setCellValue(0.0);
-            row.createCell(3).setCellValue(0.0);
-            row.createCell(4).setCellValue(0.0);
+            row.createCell(2).setCellValue(0.0); // For Wage payment successful
+            row.createCell(3).setCellValue(0.0); // For Wage payment failed
+            row.createCell(4).setCellValue(0.0); // For Purchase payment successful
+            row.createCell(5).setCellValue(0.0); // For Purchase payment failed
+            row.createCell(6).setCellValue(0.0); // For Supervision payment successful
+            row.createCell(7).setCellValue(0.0); // For Supervision payment failed
             for(PaymentDetailsByBillType paymentDetailsByBillType: projectPaymentDetail.getPaymentDetails()){
-                row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType())).setCellValue(paymentDetailsByBillType.getPaidAmount() == null ? 0.0 : paymentDetailsByBillType.getPaidAmount());
+                if (headerIndexMap.get(paymentDetailsByBillType.getBillType()) != null){
+                    DecimalFormat df = new DecimalFormat("#.00");
+                    if (paymentDetailsByBillType.getPaidAmount() != null){
+                        row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType())).setCellValue(Double.parseDouble(df.format(paymentDetailsByBillType.getPaidAmount())));
+                    }
+                    if (paymentDetailsByBillType.getRemainingAmount() != null){
+                        row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType()) + 1).setCellValue(Double.parseDouble(df.format(paymentDetailsByBillType.getRemainingAmount())));
+                    }
+//                    row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType())).setCellValue(paymentDetailsByBillType.getPaidAmount() == null ? 0.0 : paymentDetailsByBillType.getPaidAmount());
+//                    row.getCell(headerIndexMap.get(paymentDetailsByBillType.getBillType()) + 1).setCellValue(paymentDetailsByBillType.getRemainingAmount() == null ? 0.0 : paymentDetailsByBillType.getRemainingAmount());
+                }
             }
-            row.createCell(5).setCellValue(projectPaymentDetail.getTotal() == null ? 0.0 : projectPaymentDetail.getTotal());
+//            row.createCell(5).setCellValue(projectPaymentDetail.getTotal() == null ? 0.0 : projectPaymentDetail.getTotal());
         }
 
         try {
