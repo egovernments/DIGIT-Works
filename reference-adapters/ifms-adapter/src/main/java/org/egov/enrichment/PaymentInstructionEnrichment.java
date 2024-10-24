@@ -3,9 +3,9 @@ package org.egov.enrichment;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.models.individual.Individual;
@@ -17,11 +17,15 @@ import org.egov.tracer.model.CustomException;
 import org.egov.utils.*;
 import org.egov.web.models.Disbursement;
 import org.egov.web.models.DisbursementRequest;
-import org.egov.web.models.bankaccount.BankAccount;
-import org.egov.web.models.bill.*;
+import org.egov.web.models.bill.PaymentRequest;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
-import org.egov.web.models.organisation.Organisation;
+import org.egov.works.services.common.models.bankaccounts.BankAccount;
+import org.egov.works.services.common.models.expense.Bill;
+import org.egov.works.services.common.models.expense.BillDetail;
+import org.egov.works.services.common.models.expense.LineItem;
+import org.egov.works.services.common.models.expense.Party;
+import org.egov.works.services.common.models.organization.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -331,21 +335,6 @@ public class PaymentInstructionEnrichment {
         return hoaList;
     }
 
-    private List<Beneficiary> getBeneficiaryListFromBill(Bill bill) {
-        List<Beneficiary>  piBeneficiaryList = new ArrayList<>();
-        for (BillDetail billDetail: bill.getBillDetails()) {
-            for (LineItem lineItem: billDetail.getPayableLineItems()) {
-                if (lineItem.getStatus().equals(Status.ACTIVE)) {
-                    Beneficiary piBeneficiary = Beneficiary.builder()
-                            .benefId(billDetail.getPayee().getIdentifier())
-                            .benfAmount(lineItem.getAmount().toString())
-                            .build();
-                    piBeneficiaryList.add(piBeneficiary);
-                }
-            }
-        }
-        return piBeneficiaryList;
-    }
 
     public void enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations) {
         log.info("Started executing enrichBankaccountOnBeneficiary");

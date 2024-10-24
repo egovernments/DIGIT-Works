@@ -5,11 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.web.models.*;
-import org.egov.web.models.bankaccount.BankAccount;
-import org.egov.web.models.bankaccount.BankAccountResponse;
-import org.egov.web.models.bankaccount.BankAccountSearchCriteria;
-import org.egov.web.models.bankaccount.BankAccountSearchRequest;
+import org.egov.works.services.common.models.bankaccounts.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -47,9 +43,9 @@ public class BankAccountUtils {
 		}
 
 		Pagination pagination = Pagination.builder()
-				.limit(bankAccountSearchCriteria.getReferenceId().size())
-				.offSet(0)
-				.order(Pagination.OrderEnum.ASC)
+				.limit((double) bankAccountSearchCriteria.getReferenceId().size())
+				.offSet((double) 0)
+				.order(Order.ASC)
 				.build();
 
 		BankAccountSearchRequest bankAccountSearchRequest = BankAccountSearchRequest.builder()

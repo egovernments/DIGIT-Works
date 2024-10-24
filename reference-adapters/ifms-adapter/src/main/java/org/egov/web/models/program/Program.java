@@ -2,10 +2,10 @@ package org.egov.web.models.program;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.web.models.ExchangeCode;
 
 import javax.validation.constraints.NotNull;

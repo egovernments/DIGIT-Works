@@ -5,15 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.web.models.*;
-import org.egov.web.models.bankaccount.BankAccount;
-import org.egov.web.models.bankaccount.BankAccountResponse;
-import org.egov.web.models.bankaccount.BankAccountSearchCriteria;
-import org.egov.web.models.bankaccount.BankAccountSearchRequest;
-import org.egov.web.models.organisation.OrgResponse;
-import org.egov.web.models.organisation.OrgSearchCriteria;
-import org.egov.web.models.organisation.OrgSearchRequest;
-import org.egov.web.models.organisation.Organisation;
+import org.egov.web.models.enums.Order;
+import org.egov.works.services.common.models.organization.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -51,9 +44,9 @@ public class OrganisationUtils {
 		}
 
 		Pagination pagination = Pagination.builder()
-				.limit(orgSearchCriteria.getId().size())
-				.offSet(0)
-				.order(Pagination.OrderEnum.ASC)
+				.limit((double) orgSearchCriteria.getId().size())
+				.offset((double) 0)
+				.order(Order.ASC)
 				.build();
 
 		OrgSearchRequest orgSearchRequest = OrgSearchRequest.builder()
@@ -69,10 +62,10 @@ public class OrganisationUtils {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getOrganisationHost()).append(config.getOrganisationSearchEndPoint());
 		Object response = new HashMap<>();
-		OrgResponse orgResponse = new OrgResponse();
+		OrgServiceResponse orgResponse = new OrgServiceResponse();
 		try {
 			response = restTemplate.postForObject(uri.toString(), bankAccountRequest, Map.class);
-			orgResponse = mapper.convertValue(response, OrgResponse.class);
+			orgResponse = mapper.convertValue(response, OrgServiceResponse.class);
 			log.info("Organisation details fetched.");
 		} catch (Exception e) {
 			log.error("Exception occurred while fetching organisation getOrganisationsById:getOrganisations: ", e);

@@ -4,10 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.repository.querybuilder.PIQueryBuilder;
 import org.egov.repository.rowmapper.PIRowMapper;
 import org.egov.utils.HelperUtil;
-import org.egov.web.models.Pagination;
-import org.egov.web.models.enums.PIStatus;
-import org.egov.web.models.enums.PaymentStatus;
 import org.egov.web.models.jit.*;
+import org.egov.works.services.common.models.expense.enums.PaymentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -15,13 +13,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import static org.egov.repository.querybuilder.PIQueryBuilder.*;
 
 @Repository
 @Slf4j

@@ -9,10 +9,10 @@ import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import jakarta.annotation.PostConstruct;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.enc.AsymmetricEncryptionService;
 import org.egov.enc.SymmetricEncryptionService;

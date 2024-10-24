@@ -1,12 +1,12 @@
 package org.egov.config;
 
+import jakarta.annotation.PostConstruct;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 
 @Configuration
 @Component
@@ -57,6 +57,9 @@ public class IfmsAdapterConfig {
 
     @Value("${egov.mdms.v2.v2.search.endpoint}")
     private String mdmsV2V2EndPoint;
+
+    @Value("${egov.mdms.v2.v1.search.endpoint}")
+    private String mdmsV2V1EndPoint;
 
     // bill
     @Value("${egov.bill.host}")

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.producer.Producer;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.kafka.IfmsAdapterProducer;
 import org.egov.web.models.ErrorRes;
@@ -24,7 +23,7 @@ import java.util.Map;
 @Slf4j
 public class PIUtils {
     @Autowired
-    Producer producer;
+    IfmsAdapterProducer producer;
     @Autowired
     IfmsAdapterConfig adapterConfig;
     @Autowired

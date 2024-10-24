@@ -8,11 +8,11 @@ import org.egov.service.IfmsService;
 import org.egov.service.PaymentInstructionService;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.BillUtils;
-import org.egov.web.models.bill.Bill;
 import org.egov.web.models.bill.PaymentRequest;
-import org.egov.web.models.enums.PaymentStatus;
-import org.egov.web.models.enums.ReferenceStatus;
 import org.egov.web.models.jit.Beneficiary;
+import org.egov.works.services.common.models.expense.Bill;
+import org.egov.works.services.common.models.expense.enums.PaymentStatus;
+import org.egov.works.services.common.models.expense.enums.ReferenceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

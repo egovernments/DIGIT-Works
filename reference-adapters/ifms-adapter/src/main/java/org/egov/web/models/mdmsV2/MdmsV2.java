@@ -1,12 +1,12 @@
 package org.egov.web.models.mdmsV2;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import digit.models.coremodels.AuditDetails;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

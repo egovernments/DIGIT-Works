@@ -33,7 +33,7 @@ public class MdmsUtils {
 
 	public Map<String,Map<String,JSONArray>> fetchExchangeServers(RequestInfo requestInfo, String tenantId) {
 		StringBuilder uri = new StringBuilder();
-		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V1EndPoint());
 		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, MDMS_EXCHANGE_MODULE_NAME, Arrays.asList(MDMS_EXCHANGE_SERVER_MASTER));
 		Object response = new HashMap<>();
 		MdmsResponse mdmsResponse = new MdmsResponse();
@@ -49,7 +49,7 @@ public class MdmsUtils {
 	}
 	public Map<String, Map<String,JSONArray>> fetchHoaAndSSUDetails(RequestInfo requestInfo, String tenantId) {
 		StringBuilder uri = new StringBuilder();
-		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V1EndPoint());
 		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, Arrays.asList(MDMS_HEAD_OF_ACCOUNT_MASTER, MDMS_SSU_DETAILS_MASTER));
 		Object response = new HashMap<>();
 		MdmsResponse mdmsResponse = new MdmsResponse();
@@ -67,7 +67,7 @@ public class MdmsUtils {
 	public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId,
 			String moduleName, List<String> masterNameList) {
 		StringBuilder uri = new StringBuilder();
-		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V1EndPoint());
 		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, moduleName, masterNameList);
 		Object response = new HashMap<>();
 		MdmsResponse mdmsResponse = new MdmsResponse();
@@ -128,7 +128,7 @@ public class MdmsUtils {
 	public Map<String, Map<String, JSONArray>> fetchMdmsDataWithActiveFilter(RequestInfo requestInfo, String tenantId,
 															 String moduleName, List<String> masterNameList) {
 		StringBuilder uri = new StringBuilder();
-		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V1EndPoint());
 		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequestWithActiveFilter(requestInfo, tenantId, moduleName, masterNameList);
 		Object response = new HashMap<>();
 		MdmsResponse mdmsResponse = new MdmsResponse();

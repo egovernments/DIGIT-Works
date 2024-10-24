@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.common.data.query.annotations.Exclude;
 import org.egov.web.models.enums.PIStatus;
 import org.egov.web.models.enums.PIType;
 
