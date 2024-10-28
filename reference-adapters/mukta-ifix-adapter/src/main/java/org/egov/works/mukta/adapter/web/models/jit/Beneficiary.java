@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.egov.common.data.query.annotations.Exclude;
-import org.egov.works.mukta.adapter.web.models.bill.LineItem;
 import org.egov.works.mukta.adapter.web.models.enums.BeneficiaryPaymentStatus;
 import org.egov.works.mukta.adapter.web.models.enums.BeneficiaryType;
+import org.egov.works.services.common.models.expense.LineItem;
 
 import java.math.BigDecimal;
 import java.util.List;

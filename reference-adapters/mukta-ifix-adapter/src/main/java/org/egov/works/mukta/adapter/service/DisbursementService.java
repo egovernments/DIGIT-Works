@@ -17,11 +17,13 @@ import org.egov.works.mukta.adapter.util.BillUtils;
 import org.egov.works.mukta.adapter.util.UserUtil;
 import org.egov.works.mukta.adapter.validators.DisbursementValidator;
 import org.egov.works.mukta.adapter.web.models.*;
-import org.egov.works.mukta.adapter.web.models.bill.*;
-import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
-import org.egov.works.mukta.adapter.web.models.enums.ReferenceStatus;
 import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
 import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
+import org.egov.works.services.common.models.expense.Payment;
+import org.egov.works.services.common.models.expense.PaymentBill;
+import org.egov.works.services.common.models.expense.PaymentBillDetail;
+import org.egov.works.services.common.models.expense.PaymentLineItem;
+import org.egov.works.services.common.models.expense.enums.PaymentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

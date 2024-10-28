@@ -240,7 +240,7 @@ config:
   - name: "builds/digit-works/reference-adapters/mukta-ifix-adapter"
     build:
       - work-dir: "reference-adapters/mukta-ifix-adapter"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "mukta-ifix-adapter"
       - work-dir: "reference-adapters/mukta-ifix-adapter/src/main/resources/db"
         image-name: "mukta-ifix-adapter-db"

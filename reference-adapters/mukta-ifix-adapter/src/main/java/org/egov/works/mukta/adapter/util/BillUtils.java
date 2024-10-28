@@ -5,14 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.web.models.Pagination;
-import org.egov.works.mukta.adapter.web.models.bill.*;
-import org.egov.works.mukta.adapter.web.models.enums.PaymentStatus;
-import org.egov.works.mukta.adapter.web.models.enums.ReferenceStatus;
+import org.egov.works.mukta.adapter.web.models.PaymentRequest;
+import org.egov.works.services.common.models.expense.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 
 @Component
@@ -87,36 +86,6 @@ public class BillUtils {
         return paymentResponse.getPayments();
     }
 
-    public @Valid Object fetchBillFromCalculator(PaymentRequest paymentRequest, List<String> billNumbers) {
-        RequestInfo requestInfo = paymentRequest.getRequestInfo();
-        String tenantId = paymentRequest.getPayment().getTenantId();
-        Map<String, Object> searchCriteria = new HashMap<>();
-        searchCriteria.put("tenantId", tenantId);
-        searchCriteria.put("billNumbers", billNumbers);
-        Map<String, Object> requestParams = new HashMap<>();
-        requestParams.put("RequestInfo", requestInfo);
-        requestParams.put("searchCriteria", searchCriteria);
-        Pagination pagination = Pagination.builder().limit(billNumbers.size()).offSet(0).build();
-        requestParams.put("pagination", pagination);
-
-        return fetchBillCalculatorData(requestParams);
-    }
-
-    public @Valid Object fetchBillCalculatorData(Object billRequest) {
-        StringBuilder uri = new StringBuilder();
-        uri.append(config.getBillCalculatorHost()).append(config.getBillCalculatorSearchEndpoint());
-        Object response = new HashMap<>();
-        Object billCalcResponse = new Object();
-        try {
-            response = restTemplate.postForObject(uri.toString(), billRequest, Map.class);
-            billCalcResponse = mapper.convertValue(response, Object.class);
-            log.info("Fetched data from bill calculator service.");
-        } catch (Exception e) {
-            log.error("BillUtils:fetchBillCalculatorData - Exception occurred while fetching bill lists from bill calculator service: ", e);
-        }
-
-        return billCalcResponse;
-    }
 
     public @Valid List<Payment> fetchPaymentDetails(RequestInfo requestInfo, String paymentNumber, String tenantId) {
         log.info("Started executing fetchPaymentDetails");
@@ -140,22 +109,6 @@ public class BillUtils {
         }
         log.info("Payment fetched, sending back.");
         return paymentResponse != null? paymentResponse.getPayments() : null;
-    }
-
-    public void updatePaymentStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus, ReferenceStatus referenceStatus) {
-        log.info("Started executing updatePaymentForStatus");
-        paymentRequest.getPayment().setStatus(paymentStatus);
-        paymentRequest.getPayment().setReferenceStatus(referenceStatus);
-        for (PaymentBill bill : paymentRequest.getPayment().getBills()) {
-            bill.setStatus(paymentStatus);
-            for (PaymentBillDetail billDetail : bill.getBillDetails()) {
-                billDetail.setStatus(paymentStatus);
-                for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
-                    lineItem.setStatus(paymentStatus);
-                }
-            }
-        }
-        callPaymentUpdate(paymentRequest);
     }
 
 }
