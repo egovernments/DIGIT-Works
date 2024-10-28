@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Schema(description = "Encapsulates a measurement response")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-09-25T13:42:37.896+05:30[Asia/Calcutta]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-09-25T13:42:37.896+05:30[Asia/Calcutta]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,6 +31,9 @@ public class MeasurementResponse {
     @JsonProperty("measurements")
     @Valid
     private List<Measurement> measurements = null;
+
+    @JsonProperty("pagination")
+    private Pagination pagination = null;
 
 
     public MeasurementResponse addMeasurementsItem(Measurement measurementsItem) {

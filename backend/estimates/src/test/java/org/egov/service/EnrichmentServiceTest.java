@@ -1,9 +1,9 @@
 package org.egov.service;
 
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.idgen.IdGenerationResponse;
+import org.egov.common.contract.idgen.IdResponse;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.helper.EstimateRequestBuilderTest;

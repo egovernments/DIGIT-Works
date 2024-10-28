@@ -42,7 +42,6 @@ package org.egov.web.models.Hrms;
 
 import digit.models.coremodels.AuditDetails;
 import lombok.*;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
@@ -55,23 +54,23 @@ import org.springframework.validation.annotation.Validated;
 @ToString
 public class ServiceHistory {
 
-	@SafeHtml
+	
 	private String id;
 
-	@SafeHtml
+	
 	private String serviceStatus;
 
 	private Long serviceFrom;
 
 	private Long serviceTo;
 
-	@SafeHtml
+	
 	private String orderNo;
 
-	@SafeHtml
+	
 	private String location;
 
-	@SafeHtml
+	
 	private String tenantId;	
 
 	private  Boolean isCurrentPosition;

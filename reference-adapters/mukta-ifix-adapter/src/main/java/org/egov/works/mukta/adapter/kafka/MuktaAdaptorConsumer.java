@@ -2,10 +2,12 @@ package org.egov.works.mukta.adapter.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
+import org.egov.works.mukta.adapter.repository.ServiceRequestRepository;
 import org.egov.works.mukta.adapter.service.DisbursementService;
 import org.egov.works.mukta.adapter.service.PaymentInstructionService;
 import org.egov.works.mukta.adapter.service.PaymentService;
@@ -15,6 +17,8 @@ import org.egov.works.mukta.adapter.validators.DisbursementValidator;
 import org.egov.works.mukta.adapter.web.models.*;
 import org.egov.works.mukta.adapter.web.models.enums.*;
 import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
+import org.egov.works.services.common.models.attendance.RequestInfoWrapper;
+import org.egov.works.services.common.models.estimate.EstimateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -22,6 +26,8 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -36,9 +42,11 @@ public class MuktaAdaptorConsumer {
     private final DisbursementValidator disbursementValidator;
     private final PaymentInstructionEnrichment paymentInstructionEnrichment;
     private final RedisService redisService;
+    private final ServiceRequestRepository restRepo;
+
 
     @Autowired
-    public MuktaAdaptorConsumer(ObjectMapper objectMapper, PaymentInstructionService paymentInstructionService, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, PaymentService paymentService, DisbursementValidator disbursementValidator, PaymentInstructionEnrichment paymentInstructionEnrichment, RedisService redisService) {
+    public MuktaAdaptorConsumer(ObjectMapper objectMapper, PaymentInstructionService paymentInstructionService, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, PaymentService paymentService, DisbursementValidator disbursementValidator, PaymentInstructionEnrichment paymentInstructionEnrichment, RedisService redisService, ServiceRequestRepository restRepo) {
         this.objectMapper = objectMapper;
         this.paymentInstructionService = paymentInstructionService;
         this.programServiceUtil = programServiceUtil;
@@ -48,6 +56,7 @@ public class MuktaAdaptorConsumer {
         this.disbursementValidator = disbursementValidator;
         this.paymentInstructionEnrichment = paymentInstructionEnrichment;
         this.redisService = redisService;
+        this.restRepo = restRepo;
     }
     /**
      * The function listens to the payment create topic and processes the payment request
@@ -105,5 +114,45 @@ public class MuktaAdaptorConsumer {
             paymentService.updatePaymentStatusToFailed(paymentRequest);
             throw new CustomException("Error occurred while processing the consumed save estimate record from topic : " + topic, e.toString());
         }
+    }
+
+    @KafkaListener(topics = {"${ifms.pi.index.internal.topic}"})
+    public void piListener(final String record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        try {
+            log.info("Payment instruction index data received on.");
+            Map<String, Object> indexerRequest = objectMapper.readValue(record, Map.class);
+            RequestInfo requestInfo = objectMapper.convertValue(indexerRequest.get("RequestInfo"), RequestInfo.class);
+            PaymentInstruction pi = objectMapper.convertValue(indexerRequest.get("paymentInstruction"), PaymentInstruction.class);
+            Map<String, Object> additionalDetails = (Map<String, Object>) pi.getAdditionalDetails();
+
+            // fetch estimate from work order
+            String projectNumber = fetchProjectNumber(requestInfo,
+                    ((Map<String, List<Object>>) pi.getAdditionalDetails()).get("referenceIds").get(0).toString(),
+                    pi.getTenantId());
+
+            additionalDetails.put("projectNumber", projectNumber);
+            pi.setAdditionalDetails(additionalDetails);
+            indexerRequest.replace("paymentInstruction", pi);
+            muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(),indexerRequest);
+            log.info("Payment instruction index data received on. " + pi);
+        } catch (Exception e) {
+            log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
+        }
+    }
+
+    private String fetchProjectNumber(RequestInfo requestInfo, String referenceId, String tenantId) {
+        StringBuilder urlWithParams = new StringBuilder(muktaAdaptorConfig.getEstimateHost()+muktaAdaptorConfig.getEstimateSearchEndpoint());
+        urlWithParams.append("?tenantId=").append(tenantId).append("&referenceNumber=").append(referenceId);
+
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+        Object response = restRepo.fetchResult(urlWithParams, requestInfoWrapper);
+        EstimateResponse estimateResponse = null;
+        try {
+            estimateResponse = objectMapper.convertValue(response, EstimateResponse.class);
+        } catch (Exception e) {
+            log.error("Error occurred while fetching project number from Estimate", e);
+            throw new CustomException("Error occurred while fetching project number from Estimate", e.toString());
+        }
+        return estimateResponse.getEstimates().get(0).getReferenceNumber();
     }
 }

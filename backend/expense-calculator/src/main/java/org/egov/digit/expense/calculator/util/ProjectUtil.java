@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
@@ -99,4 +100,42 @@ public class ProjectUtil {
                 .append(serviceConfiguration.getProjectSearchPath()));
     }
 
+    public ProjectResponse getProjectDetails(RequestInfo requestInfo, String tenantId, String projectId) {
+        log.info("ProjectUtil::getProjectDetails");
+
+        StringBuilder uriBuilder = getProjectUrl();
+
+        //added the url param
+        uriBuilder.append("?").append(TENANT_ID).append(EQUAL_TO).append(tenantId)
+                .append(AMPERSAND)
+                .append(OFFSET).append(EQUAL_TO).append(DEFAULT_OFFSET)
+                .append(AMPERSAND)
+                .append(LIMIT).append(EQUAL_TO).append(DEFAULT_LIMIT);
+
+
+        //created the project search request body
+        ObjectNode projectSearchReqNode = mapper.createObjectNode();
+        ArrayNode projectArrayNode = mapper.createArrayNode();
+
+        ObjectNode projectObjNode = mapper.createObjectNode();
+        projectObjNode.put(ID, projectId);
+        projectObjNode.put(TENANT_ID, tenantId);
+
+        projectArrayNode.add(projectObjNode);
+
+        projectSearchReqNode.putPOJO(REQUEST_INFO, requestInfo);
+        projectSearchReqNode.putPOJO(PROJECTS, projectArrayNode);
+
+        log.info("ProjectUtil::search project request -> {}",projectSearchReqNode);
+
+        ProjectResponse projectResponse = null;
+
+        try {
+            Object responseObj = requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
+            projectResponse = mapper.convertValue(responseObj, ProjectResponse.class);
+        } catch (Exception e) {
+            log.error("Exception while fetching from searcher: ", e);
+        }
+        return projectResponse;
+    }
 }

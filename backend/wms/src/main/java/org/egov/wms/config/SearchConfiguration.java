@@ -4,7 +4,7 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @Getter
@@ -78,4 +78,36 @@ public class SearchConfiguration {
 
 	@Value("${es.search.default.sort.order}")
 	private String defaultSortOrder;
+
+	@Value("${egov.idgen.host}")
+	private String idGenHost;
+
+	@Value("${egov.idgen.path}")
+	private String idGenPath;
+
+	@Value("${egov.idgen.report.id.name}")
+	private String reportIdName;
+
+	@Value("${wms.kafka.report.create.topic}")
+	private String reportTopic;
+
+	@Value("${egov.filestore.host}")
+	private String fileStoreHost;
+
+	@Value("${egov.filestore.path}")
+	private String fileStoreEndpoint;
+
+	@Value("${report.search.pagination.default.limit}")
+	private Integer reportDefaultLimit;
+
+	@Value("${report.search.pagination.default.offset}")
+	private Integer reportDefaultOffset;
+
+	@Value("${wms.payment.tracker.module}")
+	private String paymentTrackerModule;
+
+	@Value("${wms.estimate.module}")
+	private String estimateModule;
+	@Value("${wms.kafka.report.update.topic}")
+	private String reportUpdateTopic;
 }

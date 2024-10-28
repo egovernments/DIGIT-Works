@@ -3,10 +3,10 @@ package org.egov.works.measurement.kafka;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.measurement.config.MBServiceConfiguration;
-import org.egov.works.measurement.web.models.ContractCriteria;
-import org.egov.works.measurement.web.models.ContractResponse;
 import org.egov.works.measurement.web.models.Measurement;
 import org.egov.works.measurement.web.models.MeasurementRequest;
+import org.egov.works.services.common.models.contract.ContractCriteria;
+import org.egov.works.services.common.models.contract.ContractResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -14,7 +14,6 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,15 +21,22 @@ import java.util.List;
 
 @Component
 public class MBServiceConsumer {
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+
+    private final RestTemplate restTemplate;
+
+    private final MBServiceProducer MBServiceProducer;
+
+    private final MBServiceConfiguration MBServiceConfiguration;
 
     @Autowired
-    RestTemplate restTemplate;
-    @Autowired
-    MBServiceProducer MBServiceProducer;
-    @Autowired
-    MBServiceConfiguration MBServiceConfiguration;
+    public MBServiceConsumer(ObjectMapper mapper, RestTemplate restTemplate, MBServiceProducer MBServiceProducer, MBServiceConfiguration MBServiceConfiguration) {
+        this.mapper = mapper;
+        this.restTemplate = restTemplate;
+        this.MBServiceProducer = MBServiceProducer;
+        this.MBServiceConfiguration = MBServiceConfiguration;
+    }
 
 
     @KafkaListener(topics = {"${measurement-service.kafka.create.topic}","${measurement-service.kafka.update.topic}"})

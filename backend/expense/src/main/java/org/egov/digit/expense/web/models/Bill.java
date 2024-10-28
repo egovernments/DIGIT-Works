@@ -1,32 +1,32 @@
 package org.egov.digit.expense.web.models;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.egov.digit.expense.web.models.enums.PaymentStatus;
-import org.egov.digit.expense.web.models.enums.Status;
-import org.springframework.validation.annotation.Validated;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.workflow.ProcessInstance;
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.Status;
+import org.springframework.validation.annotation.Validated;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Object which holds the info about the expense details
  */
 @Schema(description = "A Object which holds the info about the expense details")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -108,6 +108,10 @@ public class Bill {
 	@JsonProperty("wfStatus")
 	@Size(min = 2, max = 64)
 	private String wfStatus;
+
+	@JsonProperty("processInstance")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private ProcessInstance processInstance;
 	
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
 
