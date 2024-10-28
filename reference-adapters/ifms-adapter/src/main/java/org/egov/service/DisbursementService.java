@@ -21,6 +21,7 @@ import org.egov.web.models.DisbursementResponse;
 import org.egov.web.models.ErrorRes;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
+import org.egov.works.services.common.models.expense.enums.PaymentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;

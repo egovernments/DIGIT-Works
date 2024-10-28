@@ -1,12 +1,11 @@
 package org.egov.web.models.jit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.common.data.query.annotations.Exclude;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.enums.JitRespStatusForPI;
 
@@ -31,6 +30,6 @@ public class PIStatusLog {
     private Object additionalDetails;
 
     @JsonProperty("auditDetails")
-    @Exclude
+    
     private AuditDetails auditDetails;
 }

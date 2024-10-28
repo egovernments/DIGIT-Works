@@ -9,15 +9,11 @@ import org.egov.config.JITAuthValues;
 import org.egov.enc.SymmetricEncryptionService;
 import org.egov.kafka.IfmsAdapterProducer;
 import org.egov.web.models.ErrorRes;
-import org.egov.web.models.bankaccount.BankAccountResponse;
-import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.jit.JITErrorRequestLog;
 import org.egov.web.models.jit.JITRequest;
 import org.egov.web.models.jit.JITRequestLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
