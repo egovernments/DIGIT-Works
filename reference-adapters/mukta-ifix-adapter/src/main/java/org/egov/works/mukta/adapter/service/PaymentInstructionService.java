@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
+import org.egov.common.models.project.Project;
+import org.egov.common.models.project.ProjectResponse;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
@@ -23,6 +25,8 @@ import org.egov.works.mukta.adapter.web.models.enums.*;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
 import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
 import org.egov.works.services.common.models.bankaccounts.BankAccount;
+import org.egov.works.services.common.models.contract.ContractResponse;
+import org.egov.works.services.common.models.estimate.Estimate;
 import org.egov.works.services.common.models.expense.*;
 import org.egov.works.services.common.models.expense.enums.PaymentStatus;
 import org.egov.works.services.common.models.expense.enums.Status;
@@ -51,9 +55,12 @@ public class PaymentInstructionService {
     private final DisbursementValidator disbursementValidator;
     private final PaymentService paymentService;
     private final RedisService redisService;
+    private final ProjectUtil projectUtil;
+    private final EstimateServiceUtil estimateServiceUtil;
+    private final ContractUtils contractUtils;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator, RedisService redisService) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator, RedisService redisService, ProjectUtil projectUtil, EstimateServiceUtil estimateServiceUtil, ContractUtils contractUtils) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -68,6 +75,9 @@ public class PaymentInstructionService {
         this.paymentService = paymentService;
         this.disbursementValidator = disbursementValidator;
         this.redisService = redisService;
+        this.projectUtil = projectUtil;
+        this.estimateServiceUtil = estimateServiceUtil;
+        this.contractUtils = contractUtils;
     }
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
@@ -326,5 +336,47 @@ public class PaymentInstructionService {
             }
         }
         return totalPayments;
+    }
+
+    public void enrichPiCustomIndex(RequestInfo  requestInfo,  PaymentInstruction pi) {
+        log.info("Process bill for additional details enrichment");
+        Map<String, Object> additionalDetails = (Map<String, Object>) pi.getAdditionalDetails();
+        String referenceId = ((Map<String, List<Object>>) pi.getAdditionalDetails()).get("referenceId").get(0).toString();
+        String workOrderNumber = referenceId.split("_")[0];
+        // fetch estimate from work order
+        ContractResponse contractResponse = contractUtils.fetchContract(requestInfo, pi.getTenantId(), workOrderNumber);
+        if(contractResponse == null || contractResponse.getContracts() == null || contractResponse.getContracts().isEmpty()) {
+            log.error("No contract found for work order number " + workOrderNumber);
+            return;
+        }
+        String estimateId = contractResponse.getContracts().get(0).getLineItems().get(0).getEstimateId();
+        String projectId = estimateServiceUtil.getProjectIdFromEstimate(pi.getTenantId(), estimateId, requestInfo);
+        if(projectId == null || projectId.isEmpty()) {
+            log.error("No estimate found for estimate id " + estimateId);
+            return;
+        }
+
+        ProjectResponse projectResponse = projectUtil.getProjectDetails(requestInfo, pi.getTenantId(), projectId);
+        if(projectResponse == null || projectResponse.getProject() == null) {
+            log.error("No project found for project id " + projectId);
+            return;
+        }
+        Project project = projectResponse.getProject().get(0);
+        enrichAdditionalDetails(pi, project);
+    }
+
+    private void enrichAdditionalDetails(PaymentInstruction pi, Project project) {
+        ObjectNode additionalDetails = objectMapper.createObjectNode();
+        if(pi.getAdditionalDetails() != null){
+            additionalDetails = objectMapper.convertValue(pi.getAdditionalDetails(), ObjectNode.class);
+        }
+
+        additionalDetails.put("projectName", project.getName());
+        additionalDetails.put("projectNumber", project.getProjectNumber());
+        additionalDetails.put("ward", project.getAddress().getBoundary());
+//        additionalDetails.put("projectDescription", project.getDescription());
+//        additionalDetails.put("projectCreatedDate", project.getAuditDetails().getCreatedTime());
+
+        pi.setAdditionalDetails(additionalDetails);
     }
 }

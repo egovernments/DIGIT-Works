@@ -128,4 +128,19 @@ public class MuktaAdaptorConfig {
 
     @Value("${works.estimate.search.endpoint}")
     private String estimateSearchEndpoint;
+
+    // Contract service
+    @Value("${egov.contract.service.host}")
+    private String contractHost;
+
+    @Value("${egov.contract.service.search.endpoint}")
+    private String contractSearchEndPoint;
+
+    // Project service
+    @Value("${project.service.host}")
+    private String projectHost;
+
+    @Value("${project.search.path}")
+    private String projectSearchPath;
+
 }
