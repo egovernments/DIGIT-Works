@@ -122,8 +122,6 @@ public class MuktaAdaptorConsumer {
             RequestInfo requestInfo = objectMapper.convertValue(indexerRequest.get("RequestInfo"), RequestInfo.class);
             PaymentInstruction pi = objectMapper.convertValue(indexerRequest.get("paymentInstruction"), PaymentInstruction.class);
             paymentInstructionService.enrichPiCustomIndex(requestInfo, pi);
-            indexerRequest.replace("paymentInstruction", pi);
-            muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(),indexerRequest);
             log.info("Payment instruction index data received on. " + pi);
         } catch (Exception e) {
             log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
