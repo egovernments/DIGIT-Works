@@ -363,6 +363,7 @@ public class PaymentInstructionService {
         }
         Project project = projectResponse.getProject().get(0);
         enrichAdditionalDetails(pi, project);
+        pushPIToIndex(requestInfo, pi);
     }
 
     private void enrichAdditionalDetails(PaymentInstruction pi, Project project) {
@@ -378,5 +379,29 @@ public class PaymentInstructionService {
 //        additionalDetails.put("projectCreatedDate", project.getAuditDetails().getCreatedTime());
 
         pi.setAdditionalDetails(additionalDetails);
+    }
+
+    public void pushPIToIndex(RequestInfo requestInfo, PaymentInstruction pi) {
+        log.info("Executing PIUtils:updatePiForIndexer");
+        try {
+            Map<String, Object> indexerRequest = new HashMap<>();
+            JsonNode node = objectMapper.valueToTree(pi);
+            ObjectNode piObjectNode = (ObjectNode) node;
+            if (pi.getParentPiNumber() == null || pi.getParentPiNumber().equals("")) {
+                piObjectNode.put("parentPiNumber", "");
+                piObjectNode.put("piType", "ORIGINAL");
+            }
+            else {
+                piObjectNode.put("piType", "REVISED");
+            }
+            if (pi.getPiErrorResp() == null) {
+                piObjectNode.put("piErrorResp", "");
+            }
+            indexerRequest.put("RequestInfo", requestInfo);
+            indexerRequest.put("paymentInstruction", piObjectNode);
+            muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(), indexerRequest);
+        }catch (Exception e){
+            log.error("Exception occurred in : PaymentInstructionService:updatePiForIndexer " + e);
+        }
     }
 }
