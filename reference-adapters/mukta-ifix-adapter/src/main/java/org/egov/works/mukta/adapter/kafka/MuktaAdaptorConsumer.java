@@ -42,11 +42,10 @@ public class MuktaAdaptorConsumer {
     private final DisbursementValidator disbursementValidator;
     private final PaymentInstructionEnrichment paymentInstructionEnrichment;
     private final RedisService redisService;
-    private final ServiceRequestRepository restRepo;
 
 
     @Autowired
-    public MuktaAdaptorConsumer(ObjectMapper objectMapper, PaymentInstructionService paymentInstructionService, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, PaymentService paymentService, DisbursementValidator disbursementValidator, PaymentInstructionEnrichment paymentInstructionEnrichment, RedisService redisService, ServiceRequestRepository restRepo) {
+    public MuktaAdaptorConsumer(ObjectMapper objectMapper, PaymentInstructionService paymentInstructionService, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, PaymentService paymentService, DisbursementValidator disbursementValidator, PaymentInstructionEnrichment paymentInstructionEnrichment, RedisService redisService) {
         this.objectMapper = objectMapper;
         this.paymentInstructionService = paymentInstructionService;
         this.programServiceUtil = programServiceUtil;
@@ -56,7 +55,6 @@ public class MuktaAdaptorConsumer {
         this.disbursementValidator = disbursementValidator;
         this.paymentInstructionEnrichment = paymentInstructionEnrichment;
         this.redisService = redisService;
-        this.restRepo = restRepo;
     }
     /**
      * The function listens to the payment create topic and processes the payment request
@@ -123,15 +121,7 @@ public class MuktaAdaptorConsumer {
             Map<String, Object> indexerRequest = objectMapper.readValue(record, Map.class);
             RequestInfo requestInfo = objectMapper.convertValue(indexerRequest.get("RequestInfo"), RequestInfo.class);
             PaymentInstruction pi = objectMapper.convertValue(indexerRequest.get("paymentInstruction"), PaymentInstruction.class);
-            Map<String, Object> additionalDetails = (Map<String, Object>) pi.getAdditionalDetails();
-
-            // fetch estimate from work order
-            String projectNumber = fetchProjectNumber(requestInfo,
-                    ((Map<String, List<Object>>) pi.getAdditionalDetails()).get("referenceIds").get(0).toString(),
-                    pi.getTenantId());
-
-            additionalDetails.put("projectNumber", projectNumber);
-            pi.setAdditionalDetails(additionalDetails);
+            paymentInstructionService.enrichPiCustomIndex(requestInfo, pi);
             indexerRequest.replace("paymentInstruction", pi);
             muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(),indexerRequest);
             log.info("Payment instruction index data received on. " + pi);
@@ -140,19 +130,4 @@ public class MuktaAdaptorConsumer {
         }
     }
 
-    private String fetchProjectNumber(RequestInfo requestInfo, String referenceId, String tenantId) {
-        StringBuilder urlWithParams = new StringBuilder(muktaAdaptorConfig.getEstimateHost()+muktaAdaptorConfig.getEstimateSearchEndpoint());
-        urlWithParams.append("?tenantId=").append(tenantId).append("&referenceNumber=").append(referenceId);
-
-        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-        Object response = restRepo.fetchResult(urlWithParams, requestInfoWrapper);
-        EstimateResponse estimateResponse = null;
-        try {
-            estimateResponse = objectMapper.convertValue(response, EstimateResponse.class);
-        } catch (Exception e) {
-            log.error("Error occurred while fetching project number from Estimate", e);
-            throw new CustomException("Error occurred while fetching project number from Estimate", e.toString());
-        }
-        return estimateResponse.getEstimates().get(0).getReferenceNumber();
-    }
 }
