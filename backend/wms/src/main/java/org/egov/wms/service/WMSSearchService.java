@@ -1,5 +1,6 @@
 package org.egov.wms.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
@@ -109,6 +110,7 @@ public class WMSSearchService {
           As part of the new inbox, having currentProcessInstance as part of the index is mandated. This has been
           done to avoid having redundant network calls which could hog the performance.
         */
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         items.forEach(item -> {
             if(item.getBusinessObject().containsKey(CURRENT_PROCESS_INSTANCE_CONSTANT)) {
                 // Set process instance object in the native process instance field declared in the model inbox class.
