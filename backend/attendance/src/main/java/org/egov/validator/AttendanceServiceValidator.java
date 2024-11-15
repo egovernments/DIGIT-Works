@@ -136,10 +136,10 @@ public class AttendanceServiceValidator {
             if (registerFromDB.getStaff() != null) {
                 Set<String> staffUserIdsFromDB = registerFromDB.getStaff().stream().map(StaffPermission:: getUserId).collect(Collectors.toSet());
                 String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceRegisterRequest.getRequestInfo().getUserInfo().getId(),attendanceRegisterRequest.getRequestInfo(), registerFromRequest.getTenantId()).get(0).getId();
-                if (!staffUserIdsFromDB.contains(individualId)) {
-                    log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
-                    throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
-                }
+//                if (!staffUserIdsFromDB.contains(individualId)) {
+//                    log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+//                    throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+//                }
             } else if(registerFirstStaffInsertEnabled) {
                 log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
