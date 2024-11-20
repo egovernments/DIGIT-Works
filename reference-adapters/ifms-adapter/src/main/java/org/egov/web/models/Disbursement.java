@@ -1,11 +1,11 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.egov.common.contract.models.AuditDetails;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;

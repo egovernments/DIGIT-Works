@@ -26,10 +26,16 @@ public class BillQueryBuilder {
     }
 
 
-    public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
+    public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList, boolean isCountRequired) {
     	
         BillCriteria criteria=billSearchRequest.getBillCriteria();
-        StringBuilder query = new StringBuilder(Constants.BILL_QUERY);
+        StringBuilder query = null;
+
+        if(isCountRequired) {
+            query = new StringBuilder(Constants.BILL_COUNT_QUERY);
+        } else {
+            query = new StringBuilder(Constants.BILL_QUERY);
+        }
 
         Set<String> billNumbers = criteria.getBillNumbers();
         if(!CollectionUtils.isEmpty(billNumbers)) {
@@ -80,7 +86,7 @@ public class BillQueryBuilder {
             query.append(" bill.paymentstatus IS NULL");
 
         }
-		return addPaginationWrapper(query, billSearchRequest.getPagination(), preparedStmtList);
+		return isCountRequired? query.toString() : addPaginationWrapper(query, billSearchRequest.getPagination(), preparedStmtList);
     }
 
     private String addOrderByClause(Pagination pagination) {
@@ -144,5 +150,13 @@ public class BillQueryBuilder {
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
         preparedStmtList.addAll(ids);
+    }
+
+    public String getSearchCountQueryString(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
+        String query = getBillQuery(billSearchRequest, preparedStmtList,true);
+        if (query != null)
+            return Constants.COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
     }
 }

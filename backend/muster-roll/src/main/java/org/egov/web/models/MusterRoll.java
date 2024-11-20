@@ -1,12 +1,15 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.ProcessInstance;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.workflow.ProcessInstance;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.List;
  * MusterRoll
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
 
 @Getter
 @Setter
@@ -27,12 +30,16 @@ public class MusterRoll {
     private String id = null;
 
     @JsonProperty("tenantId")
+    @NotNull
+    @Size(min = 2, max = 64)
     private String tenantId = null;
 
     @JsonProperty("musterRollNumber")
     private String musterRollNumber = null;
 
     @JsonProperty("registerId")
+    @NotNull
+    @Size(min = 2, max = 256)
     private String registerId = null;
 
     @JsonProperty("status")
@@ -42,6 +49,7 @@ public class MusterRoll {
     private String musterRollStatus = null;
 
     @JsonProperty("startDate")
+    @NotNull
     private BigDecimal startDate = null;
 
     @JsonProperty("endDate")

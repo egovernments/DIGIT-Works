@@ -22,7 +22,7 @@ config:
   - name: "builds/digit-works/backend/attendance"
     build:
       - work-dir: "backend/attendance"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "attendance"
       - work-dir: "backend/attendance/src/main/resources/db"
         image-name: "attendance-db"
@@ -38,14 +38,14 @@ config:
   - name: "builds/digit-works/backend/muster-roll"
     build:
       - work-dir: "backend/muster-roll"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "muster-roll"
       - work-dir: "backend/muster-roll/src/main/resources/db"
         image-name: "muster-roll-db"
   - name: "builds/digit-works/backend/estimates"
     build:
       - work-dir: "backend/estimates"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "estimates"
       - work-dir: "backend/estimates/src/main/resources/db"
         image-name: "estimates-db"
@@ -53,13 +53,15 @@ config:
   - name: "builds/digit-works/backend/works-management-service"
     build:
       - work-dir: "backend/wms"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "works-management-service"
+      - work-dir: "backend/wms/src/main/resources/db"
+        image-name: "works-management-service-db"
   
   - name: "builds/digit-works/backend/organisation"
     build:
       - work-dir: "backend/organisation"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "organisation"
       - work-dir: "backend/organisation/src/main/resources/db"
         image-name: "organisation-db"
@@ -67,7 +69,7 @@ config:
   - name: "builds/digit-works/backend/contracts"
     build:
       - work-dir: "backend/contracts"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "contracts"
       - work-dir: "backend/contracts/src/main/resources/db"
         image-name: "contracts-db"
@@ -75,7 +77,7 @@ config:
   - name: "builds/digit-works/backend/bankaccounts"
     build:
       - work-dir: "backend/bankaccounts"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "bankaccounts"
       - work-dir: "backend/bankaccounts/src/main/resources/db"
         image-name: "bankaccounts-db"
@@ -91,7 +93,7 @@ config:
   - name: "builds/digit-works/backend/expense-calculator"
     build:
       - work-dir: "backend/expense-calculator"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "expense-calculator"
       - work-dir: "backend/expense-calculator/src/main/resources/db"
         image-name: "expense-calculator-db"
@@ -99,7 +101,7 @@ config:
   - name: "builds/digit-works/backend/expense"
     build:
       - work-dir: "backend/expense"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "expense"
       - work-dir: "backend/expense/src/main/resources/db"
         image-name: "expense-db"
@@ -107,7 +109,7 @@ config:
   - name: "builds/digit-works/backend/measurement-service"
     build:
       - work-dir: "backend/measurement-service"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "measurement-service"
       - work-dir: "backend/measurement-service/src/main/resources/db"
         image-name: "measurement-service-db"     
@@ -115,7 +117,7 @@ config:
   - name: "builds/digit-works/backend/measurement-registry"
     build:
       - work-dir: "backend/measurement-registry"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "measurement-registry"
       - work-dir: "backend/measurement-registry/src/main/resources/db"
         image-name: "measurement-registry-db"
@@ -231,14 +233,14 @@ config:
   - name: "builds/digit-works/reference-adapters/ifms-adapter"
     build:
       - work-dir: "reference-adapters/ifms-adapter"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "ifms-adapter"
       - work-dir: "reference-adapters/ifms-adapter/src/main/resources/db"
         image-name: "ifms-adapter-db"
   - name: "builds/digit-works/reference-adapters/mukta-ifix-adapter"
     build:
       - work-dir: "reference-adapters/mukta-ifix-adapter"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "mukta-ifix-adapter"
       - work-dir: "reference-adapters/mukta-ifix-adapter/src/main/resources/db"
         image-name: "mukta-ifix-adapter-db"

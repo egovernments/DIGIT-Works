@@ -1,0 +1,83 @@
+@startuml
+title: Expense service update bill
+actor user as "User" order 0 #ddff41
+participant Expense as "Expense \nService" #4Ff2AF
+participant MDMS #4Ff2AF
+participant Workflow #4Ff2AF
+queue KAFKA as "KAFKA" #4Ff2AF
+participant Persister #4Ff2AF
+participant Indexer #4Ff2AF
+database DB as "PostgreSQL" #4Ff2AF
+participant ES #4Ff2AF
+
+user -> Expense : call /bill/v1/_update API
+activate user #Fafd30
+activate Expense #00ad00
+Expense -> Expense: Validate request
+note right: Perform multiple validations \nfor bill status, amounts, \nworkflow, etc.
+Expense -> Expense: Create payload for bill search
+Expense -> DB : Get bill by ID
+activate DB #008390
+DB --> Expense : Return existing bill
+deactivate DB
+
+Expense -> Expense: Compare and update fields \nwith the request data
+alt Workflow is enabled for business service
+    Expense -> Workflow : Request workflow update
+    Workflow --> Expense : Return updated workflow instance
+end
+
+Expense -> Expense: Enrich updated bill details
+note right: Add audit details, update \nstatus, amounts, etc.
+
+Expense -> KAFKA : Push updated bill data to <b>expense-bill-update</b> topic
+Expense --> user : [202]: Bill updated response
+deactivate Expense
+deactivate user
+
+group Save updated bill to DB & ES: [async]
+    KAFKA -> Persister : Consume updated bill payload
+    Persister -> DB : Save updated bill to DB
+    KAFKA -> Indexer : Consume updated bill payload
+    Indexer -> ES : Save updated bill to ES
+end
+
+==Validations==
+
+Expense -> Expense: Get workflow is required for business serivce
+activate Expense #F1aF0F
+alt if workflow is required and request doesn't have workflow
+    Expense -->user: Return [400]: Workflow is required \n for the given business service
+end
+
+Expense -> DB : Get bill by ID
+activate DB #008390
+DB --> Expense : Return existing bill
+deactivate DB
+alt if bill not found
+    Expense --> user: [400]: Bill not found
+end
+
+Expense -> Expense: Validate bill date and due date
+alt if due date is less than bill date
+    Expense --> user: [400]: Due date must be \ngreater than bill date
+end
+
+Expense -> MDMS : Search master data for validation
+activate MDMS #008390
+note right: Get master data e.g., \nHeadCodes, BusinessService, etc.
+MDMS --> Expense : Return MDMS data
+deactivate MDMS
+
+Expense -> Expense: Validate request with MDMS data
+alt if master data not found or invalid
+    Expense --> user: [400]: Invalid master data \nin the request
+end
+
+note over Expense: Validate total paid amount \nshould not exceed total bill amount
+alt if paid amount exceeds total bill amount
+    Expense --> user: [400]: Paid amount exceeds \ntotal bill amount
+end
+
+deactivate Expense
+@enduml

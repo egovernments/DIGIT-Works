@@ -9,11 +9,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.works.mukta.adapter.web.models.organisation.Identifier;
+import org.egov.common.models.individual.Identifier;
+import org.egov.common.models.individual.Name;
 import org.springframework.validation.annotation.Validated;
 
-import javax.naming.Name;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.List;
  */
 @ApiModel(description = "A representation of an Individual.")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-12-27T11:47:19.561+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-12-27T11:47:19.561+05:30")
 
 @Data
 @NoArgsConstructor

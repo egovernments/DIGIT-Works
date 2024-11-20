@@ -1,5 +1,6 @@
 package org.egov.wms.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
@@ -109,6 +110,7 @@ public class WMSSearchService {
           As part of the new inbox, having currentProcessInstance as part of the index is mandated. This has been
           done to avoid having redundant network calls which could hog the performance.
         */
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         items.forEach(item -> {
             if(item.getBusinessObject().containsKey(CURRENT_PROCESS_INSTANCE_CONSTANT)) {
                 // Set process instance object in the native process instance field declared in the model inbox class.
@@ -140,7 +142,7 @@ public class WMSSearchService {
             e.printStackTrace();
         }
         StringBuilder uri = getURI(indexName, SEARCH_PATH);
-        Object result = serviceRequestRepository.fetchResult(uri, finalQueryBody);
+        Object result = serviceRequestRepository.fetchESResult(uri, finalQueryBody);
         List<WMSSearch> wmsSearchItemsList = parseInboxItemsFromSearchResponse(result, businessServices);
         log.info(result.toString());
         return wmsSearchItemsList;
@@ -175,7 +177,7 @@ public class WMSSearchService {
 
         Map<String, Object> finalQueryBody = queryBuilder.getESQuery(wmsSearchRequest, Boolean.FALSE, module);
         StringBuilder uri = getURI(indexName, COUNT_PATH);
-        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
+        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchESResult(uri, finalQueryBody);
         Integer totalCount = 0;
         if(response.containsKey(COUNT_CONSTANT)){
             totalCount = (Integer) response.get(COUNT_CONSTANT);
@@ -188,7 +190,7 @@ public class WMSSearchService {
     public List<HashMap<String, Object>> getStatusCountMap(WMSSearchRequest wmsSearchRequest, String indexName){
         Map<String, Object> finalQueryBody = queryBuilder.getStatusCountQuery(wmsSearchRequest);
         StringBuilder uri = getURI(indexName, SEARCH_PATH);
-        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
+        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchESResult(uri, finalQueryBody);
         HashMap<String, Object> statusCountMap = parseStatusCountMapFromAggregationResponse(response);
         List<HashMap<String, Object>> transformedStatusMap = transformStatusMap(wmsSearchRequest, statusCountMap);
         return transformedStatusMap;
@@ -331,7 +333,7 @@ public class WMSSearchService {
             wmsSearchRequest.getInbox().getProcessSearchCriteria().setStatus(businessServiceVsUuidsBasedOnSearchCriteria.get(businessService));
             Map<String, Object> finalQueryBody = queryBuilder.getNearingSlaCountQuery(wmsSearchRequest, businessServiceSla, module);
             StringBuilder uri = getURI(indexName, COUNT_PATH);
-            Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
+            Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchESResult(uri, finalQueryBody);
             Integer currentCount = 0;
             if(response.containsKey(COUNT_CONSTANT)){
                 currentCount = (Integer) response.get(COUNT_CONSTANT);
@@ -346,7 +348,7 @@ public class WMSSearchService {
     }
 
 
-    private StringBuilder getURI(String indexName, String endpoint){
+    public StringBuilder getURI(String indexName, String endpoint){
         StringBuilder uri = new StringBuilder(config.getIndexServiceHost());
         uri.append(indexName);
         uri.append(endpoint);

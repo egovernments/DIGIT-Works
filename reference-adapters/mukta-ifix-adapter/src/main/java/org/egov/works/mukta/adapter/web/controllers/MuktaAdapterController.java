@@ -5,9 +5,11 @@ import org.egov.works.mukta.adapter.service.DisbursementService;
 import org.egov.works.mukta.adapter.service.PaymentInstructionService;
 import org.egov.works.mukta.adapter.util.ResponseInfoFactory;
 import org.egov.works.mukta.adapter.web.models.*;
-import org.egov.works.mukta.adapter.web.models.bill.*;
 import org.egov.works.mukta.adapter.web.models.jit.PIResponse;
 import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
+import org.egov.works.services.common.models.expense.BillSearchRequest;
+import org.egov.works.services.common.models.expense.Payment;
+import org.egov.works.services.common.models.expense.PaymentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController

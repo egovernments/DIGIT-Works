@@ -33,33 +33,36 @@ import static org.egov.util.AttendanceServiceConstants.TWO_SESSIONS;
 @Slf4j
 public class ProjectStaffUtil {
 
-    @Autowired
-    private AttendanceServiceConfiguration config;
+    private final AttendanceServiceConfiguration config;
+
+    private final RegisterRepository registerRepository;
+
+    private final ServiceRequestClient serviceRequestClient;
+
+    private final IndividualServiceUtil individualServiceUtil;
+
+    private final AttendanceRegisterService attendanceRegisterService;
+
+    private final StaffService staffService;
+
+    private final HRMSUtil hrmsUtil;
+
+    private final AttendeeService attendeeService;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private RegisterRepository registerRepository;
-
-    @Autowired
-    private ServiceRequestClient serviceRequestClient;
-
-    @Autowired
-    private IndividualServiceUtil individualServiceUtil;
-
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
-
-    @Autowired
-    private StaffService staffService;
-
-    @Autowired
-    private HRMSUtil hrmsUtil;
-
-    @Autowired
-    private AttendeeService attendeeService;
-
-    @Autowired
-    @Qualifier("objectMapper")
-    private ObjectMapper mapper;
+    public ProjectStaffUtil(AttendanceServiceConfiguration config, RegisterRepository registerRepository, ServiceRequestClient serviceRequestClient, IndividualServiceUtil individualServiceUtil, AttendanceRegisterService attendanceRegisterService, StaffService staffService, HRMSUtil hrmsUtil, AttendeeService attendeeService, @Qualifier("objectMapper") ObjectMapper mapper) {
+        this.config = config;
+        this.registerRepository = registerRepository;
+        this.serviceRequestClient = serviceRequestClient;
+        this.individualServiceUtil = individualServiceUtil;
+        this.attendanceRegisterService = attendanceRegisterService;
+        this.staffService = staffService;
+        this.hrmsUtil = hrmsUtil;
+        this.attendeeService = attendeeService;
+        this.mapper = mapper;
+    }
 
     /**
      * Creates a registry for a supervisor based on the provided project staff, request info, and individual.

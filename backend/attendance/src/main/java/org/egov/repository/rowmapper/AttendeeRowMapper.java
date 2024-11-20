@@ -21,9 +21,12 @@ import java.util.*;
 @Component
 public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntry>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    @Qualifier("objectMapper")
-    private ObjectMapper mapper;
+    public AttendeeRowMapper(@Qualifier("objectMapper") ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<IndividualEntry> extractData(ResultSet rs) throws SQLException, DataAccessException {

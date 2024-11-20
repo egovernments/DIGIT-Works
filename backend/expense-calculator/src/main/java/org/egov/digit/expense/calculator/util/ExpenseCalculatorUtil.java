@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.models.project.Project;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.*;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
@@ -16,18 +15,16 @@ import org.egov.digit.expense.calculator.web.models.Bill;
 import org.egov.digit.expense.calculator.web.models.BillCriteria;
 import org.egov.digit.expense.calculator.web.models.BillResponse;
 import org.egov.digit.expense.calculator.web.models.BillSearchRequest;
-import org.egov.digit.expense.calculator.web.models.Contract;
-import org.egov.digit.expense.calculator.web.models.ContractCriteria;
-import org.egov.digit.expense.calculator.web.models.ContractResponse;
 import org.egov.digit.expense.calculator.web.models.HeadCode;
 import org.egov.digit.expense.calculator.web.models.LineItem;
-import org.egov.digit.expense.calculator.web.models.LineItems;
-import org.egov.digit.expense.calculator.web.models.MusterRoll;
-import org.egov.digit.expense.calculator.web.models.MusterRollResponse;
 import org.egov.digit.expense.calculator.web.models.Order;
 import org.egov.digit.expense.calculator.web.models.Pagination;
 import org.egov.tracer.model.CustomException;
-import org.json.JSONObject;
+import org.egov.works.services.common.models.contract.Contract;
+import org.egov.works.services.common.models.contract.ContractCriteria;
+import org.egov.works.services.common.models.contract.ContractResponse;
+import org.egov.works.services.common.models.musterroll.MusterRoll;
+import org.egov.works.services.common.models.musterroll.MusterRollResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -154,7 +151,7 @@ public class ExpenseCalculatorUtil {
 
     public List<Contract> fetchContract(RequestInfo requestInfo, String tenantId, String contractId) {
         StringBuilder url = searchURI(configs.getContractHost(), configs.getContractSearchEndPoint());
-        Pagination pagination = Pagination.builder().limit(100).build();
+        org.egov.works.services.common.models.contract.Pagination pagination = org.egov.works.services.common.models.contract.Pagination.builder().limit(100).build();
         ContractCriteria searchCriteria = ContractCriteria.builder().requestInfo(requestInfo).tenantId(tenantId)
                 .contractNumber(contractId).pagination(pagination).build();
         Object responseObj = restRepo.fetchResult(url, searchCriteria);

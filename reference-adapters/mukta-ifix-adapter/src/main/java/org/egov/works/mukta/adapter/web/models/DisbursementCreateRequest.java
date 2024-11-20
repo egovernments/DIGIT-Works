@@ -6,7 +6,7 @@ import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Builder
 @Getter

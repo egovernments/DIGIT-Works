@@ -1,0 +1,84 @@
+@startuml
+title: Expense service create bill
+actor user as "User" order 0 #ddff41
+participant Expense as "Expense \nService" #4Ff2AF
+participant MDMS #4Ff2AF
+participant IDGen #4Ff2AF
+participant Workflow #4Ff2AF
+'participant Organisation #4Ff2AF
+'participant NotificationService #4Ff2AF
+queue KAFKA as "KAFKA" #4Ff2AF
+participant Persister #4Ff2AF
+participant Indexer #4Ff2AF
+database DB as "PostgreSQL" #4Ff2AF
+participant ES #4Ff2AF
+
+user -> Expense : call /bill/v1/_create API
+activate user #Fafd30
+activate Expense #00ad00
+Expense -> Expense: Validate request
+note right: Perform Mulitple validations e.g.\n Duplicate bill, Master data, \nWorkflow, Bill Amount
+Expense -> IDGen : Request for formatted Id
+activate IDGen #F1aF0F
+note right: Send module name \nbased on Business Service
+IDGen --> Expense : Bill IDs
+deactivate IDGen
+Expense -> Expense: Enrich request
+note right: Enrich Formatted ID, UUIDs \nand Audit details
+alt Workflow is enabled for requested Business Service
+Expense -> Workflow : Request for workflow update
+'alt IF Notification is enabled
+'    Expense -> Organisation : Get CBO Details
+'    Expense -> Expense: Create Notification request
+'    Expense -> KAFKA : Send Notification for successful bill creation to users in case of supervision bills
+'end
+Workflow --> Expense : Return process instance object
+note over Expense, MDMS: Enrich workflow in the bill response
+end
+'user <- NotificationService  : Notification to user
+Expense -> KAFKA : Push Bill data to <b>expense-bill-create</b> topic
+Expense --> user: [202]: Bill created response
+deactivate Expense
+deactivate user
+group Save to DB & ES: [async]
+    KAFKA -> Persister : Consume Bill Payload
+    Persister -> DB : Consume records and save to database
+    KAFKA -> Indexer : Consume Bill Payload
+    Indexer -> ES : Consume records and save to ES
+end
+
+
+==Validations==
+Expense -> Expense: Validate Bill check \nbill already exists
+activate Expense #F1aF0F
+note right: Construct request based on \nbill reference id and business service
+alt If bill already exists
+    Expense -->user: Return [400]: Bill already exists \n for the given reference
+end
+Expense -> Expense: Get workflow is required for business serivce
+alt if workflow is required and request doesn't have workflow
+    Expense -->user: Return [400]: Workflow is required \n for the given business service
+end
+
+note over Expense: Check bill date and due date of request
+alt if due Date is less than bill date
+        Expense -->user: Return [400]: Due date \nshould be greater than bill date
+end
+
+Expense -> MDMS : Search Master details
+activate MDMS #008390
+note right: Get Master details \nHeadCodes, BusinessService Data
+MDMS --> Expense : Return MDMS data
+deactivate MDMS
+Expense -> Expense: Validate request with MDMS data
+alt if Master details not found
+    Expense -->user: Return [400]: Master details not found
+end
+
+note over Expense: Check paid amount is less than bill amount
+alt if paid amount is greater than bill amount
+    Expense -->user: Return [400]: Paid amount \nshould be less than bill amount
+end
+
+deactivate Expense
+@enduml

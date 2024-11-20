@@ -11,8 +11,8 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.config.ServiceConstants;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
-import org.egov.works.measurement.web.models.ContractResponse;
-import org.egov.works.measurement.web.models.EstimateResponse;
+import org.egov.works.services.common.models.contract.ContractResponse;
+import org.egov.works.services.common.models.estimate.EstimateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -30,12 +30,16 @@ import static org.egov.works.measurement.config.ServiceConstants.PROJECT_NUMBER_
 @Slf4j
 public class NotificationUtil {
 
+    private final MBServiceConfiguration config;
+    private final ServiceRequestRepository restRepo;
+    private final ObjectMapper mapper;
+
     @Autowired
-    private  MBServiceConfiguration config;
-    @Autowired
-    private ServiceRequestRepository restRepo;
-    @Autowired
-    private ObjectMapper mapper;
+    public NotificationUtil(MBServiceConfiguration config, ServiceRequestRepository restRepo, ObjectMapper mapper) {
+        this.config = config;
+        this.restRepo = restRepo;
+        this.mapper = mapper;
+    }
 
     public String getProjectNumber(RequestInfo requestInfo, String tenantId, String referenceId) {
         String estimateId = getEstimateId(requestInfo, tenantId, referenceId);

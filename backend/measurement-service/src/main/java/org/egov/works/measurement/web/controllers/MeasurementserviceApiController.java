@@ -18,30 +18,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-09-14T11:43:34.268+05:30[Asia/Calcutta]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-09-14T11:43:34.268+05:30[Asia/Calcutta]")
 @Controller
 @RequestMapping("")
 public class MeasurementserviceApiController {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final MeasurementService measurementService;
 
     @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private MeasurementRegistry service;
-    @Autowired
-    private MeasurementService measurementService;
+    public MeasurementserviceApiController(MeasurementService measurementService) {
+        this.measurementService = measurementService;
+    }
 
 
     @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body) {
         MeasurementServiceResponse measurementServiceResponse = measurementService.handleCreateMeasurementService(body);
-        return new ResponseEntity<MeasurementServiceResponse>(measurementServiceResponse,HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(measurementServiceResponse,HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)

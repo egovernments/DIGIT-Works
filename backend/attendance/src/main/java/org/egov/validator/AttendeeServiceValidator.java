@@ -31,22 +31,24 @@ import static org.egov.util.AttendanceServiceConstants.*;
 @Slf4j
 public class AttendeeServiceValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+    private final MDMSUtils mdmsUtils;
+
+    private final IndividualServiceUtil individualServiceUtil;
+
+    private final HRMSUtil hrmsUtil;
+    private final StaffService staffService;
+
+    private final AttendanceServiceConfiguration config;
+
 
     @Autowired
-    private IndividualServiceUtil individualServiceUtil;
-
-    @Autowired
-    private HRMSUtil hrmsUtil;
-    @Autowired
-    private StaffService staffService;
-
-    @Autowired
-    private AttendanceServiceConfiguration config;
-
-    @Autowired
-    private ProjectStaffUtil projectStaffUtil;
+    public AttendeeServiceValidator(MDMSUtils mdmsUtils, IndividualServiceUtil individualServiceUtil, HRMSUtil hrmsUtil, StaffService staffService, AttendanceServiceConfiguration config) {
+        this.mdmsUtils = mdmsUtils;
+        this.individualServiceUtil = individualServiceUtil;
+        this.hrmsUtil = hrmsUtil;
+        this.staffService = staffService;
+        this.config = config;
+    }
 
     public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
@@ -407,8 +409,6 @@ public class AttendeeServiceValidator {
         //creating a register Id to First Staff Map
         Map<String, StaffPermission> registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId,registerIds);
 
-        //fetching a register Id to Project Id Map
-        Map<String, String > registerIdVsProjectIdMap = projectStaffUtil.getregisterIdVsProjectIdMap(tenantId, registerIds, requestInfo);
 
         //Fetching all the attendees's uuids for hrms search
         List<String> userUuids = attendeeCreateRequest.getAttendees().stream()

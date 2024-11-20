@@ -37,6 +37,13 @@ public class MuktaAdaptorConfig {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
 
+    // MDMS V2
+    @Value("${egov.mdms.v2.host}")
+    private String mdmsV2Host;
+
+    @Value("${egov.mdms.v2.search.endpoint}")
+    private String mdmsV2EndPoint;
+
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
@@ -87,6 +94,8 @@ public class MuktaAdaptorConfig {
     private String paymentCreateTopic;
     @Value("${ifms.pi.index.enrich.topic}")
     private String ifmsPiEnrichmentTopic;
+    @Value("${ifms.pi.index.internal.topic}")
+    private String ifmsPiIndexInternalTopic;
 
     @Value("${mukta.ifix.adapter.error.queue.topic}")
     private String muktaIfixAdapterErrorQueueTopic;
@@ -113,4 +122,25 @@ public class MuktaAdaptorConfig {
     //System User
     @Value("${egov.system.user.username}")
     private String systemUserUsername;
+
+    @Value("${works.estimate.host}")
+    private String estimateHost;
+
+    @Value("${works.estimate.search.endpoint}")
+    private String estimateSearchEndpoint;
+
+    // Contract service
+    @Value("${egov.contract.service.host}")
+    private String contractHost;
+
+    @Value("${egov.contract.service.search.endpoint}")
+    private String contractSearchEndPoint;
+
+    // Project service
+    @Value("${project.service.host}")
+    private String projectHost;
+
+    @Value("${project.search.path}")
+    private String projectSearchPath;
+
 }
