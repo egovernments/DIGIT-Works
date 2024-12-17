@@ -110,7 +110,8 @@ public class BoundaryServiceUtil {
 					+ attendanceServiceConfiguration.getBoundarySearchUrl()
 					+ "?limit=" + localityCodes.size()
 					+ "&offset=0&tenantId=" + tenantId
-					+ "&codes=" + String.join(",", localityCodes)),
+					+ "&codes=" + String.join(",", localityCodes)
+					+ "&includeChildren=" + true),
 				request, // Replace with a generic RequestInfo if required
 				BoundaryResponse.class
 			);
