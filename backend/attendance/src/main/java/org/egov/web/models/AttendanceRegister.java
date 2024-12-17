@@ -62,6 +62,8 @@ public class AttendanceRegister {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
+    @JsonProperty("localityCode")
+    private String localityCode;
 
     public AttendanceRegister addStaffItem(StaffPermission staffItem) {
         if (this.staff == null) {
