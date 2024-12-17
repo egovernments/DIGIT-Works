@@ -66,14 +66,15 @@ public class AttendanceServiceValidator {
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
 
+        //Verify boundary data for creating attendance register
+        boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
+
+
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
 
         //Verify that active attendance register is not already present for provided tenantId, referenceId and serviceCode
         validateAttendanceRegisterAgainstDB(attendanceRegisters);
-
-        //Verify boundary data for creating attendance register
-        boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode);
 
         log.info("Attendance registers validated against DB");
     }

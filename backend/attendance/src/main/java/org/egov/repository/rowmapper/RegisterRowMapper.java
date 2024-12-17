@@ -51,6 +51,7 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
             Long lastmodifiedtime = rs.getLong("lastmodifiedtime");
             String referenceId = rs.getString("referenceid");
             String serviceCode = rs.getString("servicecode");
+            String localityCode = rs.getString("localitycode");
 
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
@@ -70,6 +71,7 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
                     .startDate(startDate)
                     .endDate(endDate)
                     .auditDetails(auditDetails)
+                    .localityCode(localityCode)
                     .build();
 
             if (!attendanceRegisterMap.containsKey(id)) {

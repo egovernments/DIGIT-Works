@@ -15,6 +15,7 @@ import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.BoundaryServiceUtil;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
@@ -49,9 +50,10 @@ public class AttendanceRegisterService {
 
     private final StaffEnrichmentService staffEnrichmentService;
     private final IndividualServiceUtil individualServiceUtil;
+    private final BoundaryServiceUtil boundaryServiceUtil;
 
     @Autowired
-    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil) {
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil) {
         this.attendanceServiceValidator = attendanceServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.producer = producer;
@@ -62,6 +64,7 @@ public class AttendanceRegisterService {
         this.attendeeRepository = attendeeRepository;
         this.staffEnrichmentService = staffEnrichmentService;
         this.individualServiceUtil = individualServiceUtil;
+        this.boundaryServiceUtil = boundaryServiceUtil;
     }
 
     /**
@@ -106,7 +109,7 @@ public class AttendanceRegisterService {
                User having the role to perform open search on attendance register.
             */
             log.info("Searching registers for Superuser or Engineer");
-            fetchAndFilterRegisters(searchCriteria, resultAttendanceRegisters);
+            fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, resultAttendanceRegisters);
         }else{
             /*
                Make sure response register list should contain only those register for which logged-in is associated.
@@ -115,7 +118,7 @@ public class AttendanceRegisterService {
 
             String individualId = individualServiceUtil.getIndividualDetailsFromUserId(userId,requestInfoWrapper.getRequestInfo(), searchCriteria.getTenantId()).get(0).getId();
             Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(individualId);
-            updateSearchCriteriaAndFetchAndFilterRegisters(registers, searchCriteria, resultAttendanceRegisters);
+            updateSearchCriteriaAndFetchAndFilterRegisters(requestInfoWrapper, registers, searchCriteria, resultAttendanceRegisters);
         }
         return resultAttendanceRegisters;
     }
@@ -152,7 +155,7 @@ public class AttendanceRegisterService {
      * @param searchCriteria
      * @param resultAttendanceRegisters
      */
-    public void updateSearchCriteriaAndFetchAndFilterRegisters(Set<String> registers, AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
+    public void updateSearchCriteriaAndFetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,Set<String> registers, AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
 
         if (registers == null || registers.isEmpty()) {
             log.info("Registers are empty or null");
@@ -172,7 +175,7 @@ public class AttendanceRegisterService {
                 }
             }
         }
-        fetchAndFilterRegisters(searchCriteria, resultAttendanceRegisters);
+        fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, resultAttendanceRegisters);
     }
 
     /**
@@ -182,8 +185,18 @@ public class AttendanceRegisterService {
      * @param searchCriteria
      * @param resultAttendanceRegisters
      */
-    private void fetchAndFilterRegisters(AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
+    private void fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
         log.info("Fetching registers based on supplied search criteria");
+
+        if(searchCriteria.isChildrenRequired()) {
+            List<String> localityCodes=boundaryServiceUtil.fetchChildren(
+              requestInfoWrapper,
+              searchCriteria.getLocalityCode(),
+              searchCriteria.getTenantId()
+            );
+
+            searchCriteria.setLocalityCode(localityCodes);
+        }
         // Fetch the all registers based on the supplied search criteria
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
         // Create a map with key as registerId and corresponding register list as value
