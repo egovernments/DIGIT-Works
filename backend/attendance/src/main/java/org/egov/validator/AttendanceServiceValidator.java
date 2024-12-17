@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.BoundaryServiceUtil;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.*;
@@ -30,11 +31,14 @@ public class AttendanceServiceValidator {
     private final RegisterRepository registerRepository;
     private final IndividualServiceUtil individualServiceUtil;
 
+    private final BoundaryServiceUtil boundaryServiceUtil;
+
     @Autowired
-    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil) {
+    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil) {
         this.mdmsUtils = mdmsUtils;
         this.registerRepository = registerRepository;
         this.individualServiceUtil = individualServiceUtil;
+        this.boundaryServiceUtil = boundaryServiceUtil;
     }
 
     /* Validates create Attendance Register request body */
@@ -67,6 +71,10 @@ public class AttendanceServiceValidator {
 
         //Verify that active attendance register is not already present for provided tenantId, referenceId and serviceCode
         validateAttendanceRegisterAgainstDB(attendanceRegisters);
+
+        //Verify boundary data for creating attendance register
+        boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode);
+
         log.info("Attendance registers validated against DB");
     }
 
