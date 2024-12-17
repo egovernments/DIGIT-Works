@@ -2,6 +2,7 @@ package org.egov.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.common.protocol.types.Field;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
@@ -35,6 +36,7 @@ public class RegisterQueryBuilder {
             "reg.lastmodifiedtime, " +
             "reg.referenceid, " +
             "reg.servicecode " +
+            "reg.localitycode " +
             "FROM eg_wms_attendance_register reg ";
 
     private static final String JOIN_STAFF = " JOIN eg_wms_attendance_staff staff ";
@@ -149,6 +151,13 @@ public class RegisterQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" attendee.individual_id = ? ");
             preparedStmtList.add(attendeeId);
+        }
+
+        List<String> localityCodes = searchCriteria.getLocalityCode();
+        if(localityCodes!=null && !localityCodes.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.localitycode IN (").append(createQuery(localityCodes)).append(")");
+            preparedStmtList.addAll(localityCodes);
         }
 
         addOrderByClause(query, searchCriteria);
