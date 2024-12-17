@@ -61,6 +61,12 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("sortOrder")
     private SortOrder sortOrder;
 
+    @JsonProperty("localityCodes")
+    private List<String> localityCode;
+
+    @JsonProperty("isChildrenRequired")
+    private boolean isChildrenRequired;
+
     public enum SortOrder {
         ASC,
         DESC
