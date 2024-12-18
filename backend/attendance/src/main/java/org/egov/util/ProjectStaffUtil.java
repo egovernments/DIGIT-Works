@@ -127,6 +127,8 @@ public class ProjectStaffUtil {
             throw new CustomException("UNABLE_TO_CREATE_ADDITIONAL_DETAILS_OBJECT", "Unable to create Additional Details Object ");
         }
 
+        String localityCode = project.getAddress().getBoundary();
+
         // Create an attendance register for the project
         AttendanceRegister attendanceRegister = AttendanceRegister.builder().tenantId(tenantId)
                 .name(project.getName())
@@ -135,6 +137,7 @@ public class ProjectStaffUtil {
                 .startDate(BigDecimal.valueOf(project.getStartDate()))
                 .endDate(BigDecimal.valueOf(project.getEndDate()))
                 .additionalDetails(additionalDetailsNode)
+                .localityCode(localityCode)
                 .status(Status.ACTIVE)
                 .build();
         AttendanceRegisterRequest request = AttendanceRegisterRequest.builder().attendanceRegister(Collections.singletonList(attendanceRegister)).requestInfo(requestInfo).build();
