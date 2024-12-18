@@ -6,6 +6,7 @@ import org.apache.kafka.common.protocol.types.Field;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.web.models.PaymentStatus;
 import org.egov.web.models.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,6 +38,7 @@ public class RegisterQueryBuilder {
             "reg.referenceid, " +
             "reg.servicecode " +
             "reg.localitycode " +
+            "reg.paymentstatus " +
             "FROM eg_wms_attendance_register reg ";
 
     private static final String JOIN_STAFF = " JOIN eg_wms_attendance_staff staff ";
@@ -159,6 +161,14 @@ public class RegisterQueryBuilder {
             query.append(" reg.localitycode IN (").append(createQuery(localityCodes)).append(")");
             preparedStmtList.addAll(localityCodes);
         }
+
+        if (!ObjectUtils.isEmpty(searchCriteria.getPaymentStatus())) {
+            PaymentStatus paymentStatus = searchCriteria.getPaymentStatus();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.paymentstatus = ? ");
+            preparedStmtList.add(paymentStatus.toString());
+        }
+
 
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);
