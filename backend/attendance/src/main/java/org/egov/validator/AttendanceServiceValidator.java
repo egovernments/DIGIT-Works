@@ -5,11 +5,13 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.project.Project;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.BoundaryServiceUtil;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.util.MDMSUtils;
+import org.egov.util.ProjectStaffUtil;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,13 +34,15 @@ public class AttendanceServiceValidator {
     private final IndividualServiceUtil individualServiceUtil;
 
     private final BoundaryServiceUtil boundaryServiceUtil;
+    private final ProjectStaffUtil projectStaffUtil;
 
     @Autowired
-    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil) {
+    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil, ProjectStaffUtil projectStaffUtil) {
         this.mdmsUtils = mdmsUtils;
         this.registerRepository = registerRepository;
         this.individualServiceUtil = individualServiceUtil;
         this.boundaryServiceUtil = boundaryServiceUtil;
+        this.projectStaffUtil = projectStaffUtil;
     }
 
     /* Validates create Attendance Register request body */
@@ -125,6 +129,12 @@ public class AttendanceServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
+
+        //Verify if Status is PENDINGFORAPPROVAL
+        validateStatus(attendanceRegisters, errorMap);
+
+        //Verify if Project Date ended
+        validateProjectEndDate(request, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -284,5 +294,44 @@ public class AttendanceServiceValidator {
             }
         }
 
+    }
+
+    private void validateStatus(List<AttendanceRegister> attendanceRegisters, Map<String, String> errorMap) {
+        attendanceRegisters.forEach(attendanceRegister -> {
+            if(attendanceRegister.getPaymentStatus()==PaymentStatus.APPROVED){
+                errorMap.put("STATUS_APPROVED", "Cannot update status already approved");
+            }
+        });
+    }
+
+    private void validateProjectEndDate(AttendanceRegisterRequest request, Map<String, String> errorMap) {
+        List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
+
+        attendanceRegisters.forEach(attendanceRegister -> {
+            Object additionalDetails = attendanceRegister.getAdditionalDetails();
+
+
+            if(additionalDetails!=null) {
+                if(additionalDetails instanceof Map<?,?> details) {
+                    if(details.get("projectId")!=null){
+                        String projectId = (String) details.get("projectId");
+                        Project projectsearch = Project.builder().id(projectId).tenantId(attendanceRegister.getTenantId()).build();
+
+                        List<Project> projects=projectStaffUtil.getProject(
+                          attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo()
+                        );
+                        if(projects.isEmpty())
+                            throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+projectId);
+
+                        Project project = projects.get(0);
+                        Long time = System.currentTimeMillis();
+
+                        if(project.getEndDate()<time){
+                            errorMap.put("PROJECT_ENDED_CANNOT_UPDATE", "Project ended cannot update the attendance register");
+                        }
+                    }
+                }
+            }
+        });
     }
 }
