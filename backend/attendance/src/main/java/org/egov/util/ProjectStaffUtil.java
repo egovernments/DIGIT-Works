@@ -51,8 +51,10 @@ public class ProjectStaffUtil {
 
     private final ObjectMapper mapper;
 
+    private final ProjectServiceUtil projectServiceUtil;
+
     @Autowired
-    public ProjectStaffUtil(AttendanceServiceConfiguration config, RegisterRepository registerRepository, ServiceRequestClient serviceRequestClient, IndividualServiceUtil individualServiceUtil, AttendanceRegisterService attendanceRegisterService, StaffService staffService, HRMSUtil hrmsUtil, AttendeeService attendeeService, @Qualifier("objectMapper") ObjectMapper mapper) {
+    public ProjectStaffUtil(AttendanceServiceConfiguration config, RegisterRepository registerRepository, ServiceRequestClient serviceRequestClient, IndividualServiceUtil individualServiceUtil, AttendanceRegisterService attendanceRegisterService, StaffService staffService, HRMSUtil hrmsUtil, AttendeeService attendeeService, ProjectServiceUtil projectServiceUtil, @Qualifier("objectMapper") ObjectMapper mapper) {
         this.config = config;
         this.registerRepository = registerRepository;
         this.serviceRequestClient = serviceRequestClient;
@@ -62,6 +64,7 @@ public class ProjectStaffUtil {
         this.hrmsUtil = hrmsUtil;
         this.attendeeService = attendeeService;
         this.mapper = mapper;
+        this.projectServiceUtil = projectServiceUtil;
     }
 
     /**
@@ -81,7 +84,7 @@ public class ProjectStaffUtil {
 
         // Get the project details
         Project projectsearch = Project.builder().id(projectStaff.getProjectId()).tenantId(tenantId).build();
-        List<Project> projectList = getProject(tenantId,projectsearch,requestInfo);
+        List<Project> projectList = projectServiceUtil.getProject(tenantId,projectsearch,requestInfo);
         if(projectList.isEmpty())
             throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+projectStaff.getProjectId());
 
@@ -213,23 +216,6 @@ public class ProjectStaffUtil {
     /**
      * Gets the Employee for the given list of uuids and tenantId of employees
      * @param tenantId
-     * @param project
-     * @param requestInfo
-     * @return
-     */
-    public List<Project> getProject(String tenantId, Project project, RequestInfo requestInfo){
-
-        StringBuilder url = getProjectURL(tenantId);
-        ProjectRequest projectRequest = ProjectRequest.builder().projects(Collections.singletonList(project)).requestInfo(requestInfo).build();
-        ProjectResponse projectResponse = serviceRequestClient.fetchResult(url,projectRequest,ProjectResponse.class);
-
-        return projectResponse.getProject();
-
-    }
-
-    /**
-     * Gets the Employee for the given list of uuids and tenantId of employees
-     * @param tenantId
      * @param projectStaffSearch
      * @param requestInfo
      * @return
@@ -261,7 +247,6 @@ public class ProjectStaffUtil {
         return registerIdVsProjectId;
     }
 
-
     /**
      * Builds Project Staff search URL
      * @param tenantId
@@ -271,19 +256,6 @@ public class ProjectStaffUtil {
     {
         StringBuilder builder = new StringBuilder(config.getProjectHost());
         builder.append(config.getProjectStaffSearchEndpoint()).append(LIMIT_OFFSET);
-        builder.append("&tenantId=").append(tenantId);
-        return builder;
-    }
-
-    /**
-     * Builds Project search URL
-     * @param tenantId
-     * @return URL
-     */
-    public StringBuilder getProjectURL(String tenantId)
-    {
-        StringBuilder builder = new StringBuilder(config.getProjectHost());
-        builder.append(config.getProjectSearchEndpoint()).append(LIMIT_OFFSET);
         builder.append("&tenantId=").append(tenantId);
         return builder;
     }

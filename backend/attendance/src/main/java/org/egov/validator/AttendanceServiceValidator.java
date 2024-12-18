@@ -8,10 +8,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.project.Project;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.BoundaryServiceUtil;
-import org.egov.util.IndividualServiceUtil;
-import org.egov.util.MDMSUtils;
-import org.egov.util.ProjectStaffUtil;
+import org.egov.util.*;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,8 +18,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
-import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
+import static org.egov.util.AttendanceServiceConstants.*;
 
 @Component
 @Slf4j
@@ -34,15 +30,15 @@ public class AttendanceServiceValidator {
     private final IndividualServiceUtil individualServiceUtil;
 
     private final BoundaryServiceUtil boundaryServiceUtil;
-    private final ProjectStaffUtil projectStaffUtil;
+    private final ProjectServiceUtil projectServiceUtil;
 
     @Autowired
-    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil, ProjectStaffUtil projectStaffUtil) {
+    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil, ProjectServiceUtil projectServiceUtil) {
         this.mdmsUtils = mdmsUtils;
         this.registerRepository = registerRepository;
         this.individualServiceUtil = individualServiceUtil;
         this.boundaryServiceUtil = boundaryServiceUtil;
-        this.projectStaffUtil = projectStaffUtil;
+        this.projectServiceUtil = projectServiceUtil;
     }
 
     /* Validates create Attendance Register request body */
@@ -317,7 +313,7 @@ public class AttendanceServiceValidator {
                         String projectId = (String) details.get("projectId");
                         Project projectsearch = Project.builder().id(projectId).tenantId(attendanceRegister.getTenantId()).build();
 
-                        List<Project> projects=projectStaffUtil.getProject(
+                        List<Project> projects=projectServiceUtil.getProject(
                           attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo()
                         );
                         if(projects.isEmpty())
