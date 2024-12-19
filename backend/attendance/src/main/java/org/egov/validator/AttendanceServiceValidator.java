@@ -132,6 +132,9 @@ public class AttendanceServiceValidator {
         //Verify if Project Date ended
         validateProjectEndDate(request, errorMap);
 
+        //Validate locality Code
+        boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
+
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
