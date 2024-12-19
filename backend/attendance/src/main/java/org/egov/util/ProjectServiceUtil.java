@@ -1,5 +1,6 @@
 package org.egov.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.http.client.ServiceRequestClient;
 import org.egov.common.models.project.Project;
@@ -7,12 +8,15 @@ import org.egov.common.models.project.ProjectRequest;
 import org.egov.common.models.project.ProjectResponse;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.egov.util.AttendanceServiceConstants.LIMIT_OFFSET;
 
+@Component
+@Slf4j
 public class ProjectServiceUtil {
 
 	private final AttendanceServiceConfiguration config;
