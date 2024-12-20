@@ -307,28 +307,22 @@ public class AttendanceServiceValidator {
         List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
 
         attendanceRegisters.forEach(attendanceRegister -> {
-            Object additionalDetails = attendanceRegister.getAdditionalDetails();
+            String referenceId = attendanceRegister.getReferenceId();
 
+            if(referenceId!=null) {
+                Project projectsearch = Project.builder().id(referenceId).tenantId(attendanceRegister.getTenantId()).build();
 
-            if(additionalDetails!=null) {
-                if(additionalDetails instanceof Map<?,?> details) {
-                    if(details.get("projectId")!=null){
-                        String projectId = (String) details.get("projectId");
-                        Project projectsearch = Project.builder().id(projectId).tenantId(attendanceRegister.getTenantId()).build();
+                List<Project> projects=projectServiceUtil.getProject(
+                  attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo()
+                );
+                if(projects.isEmpty())
+                    throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+referenceId);
 
-                        List<Project> projects=projectServiceUtil.getProject(
-                          attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo()
-                        );
-                        if(projects.isEmpty())
-                            throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+projectId);
+                Project project = projects.get(0);
+                Long time = System.currentTimeMillis();
 
-                        Project project = projects.get(0);
-                        Long time = System.currentTimeMillis();
-
-                        if(project.getEndDate()<time){
-                            errorMap.put("PROJECT_ENDED_CANNOT_UPDATE", "Project ended cannot update the attendance register");
-                        }
-                    }
+                if(project.getEndDate()<time){
+                    errorMap.put("PROJECT_ENDED_CANNOT_UPDATE", "Project ended cannot update the attendance register");
                 }
             }
         });
