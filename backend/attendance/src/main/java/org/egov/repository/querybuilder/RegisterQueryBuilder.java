@@ -36,8 +36,8 @@ public class RegisterQueryBuilder {
             "reg.createdtime, " +
             "reg.lastmodifiedtime, " +
             "reg.referenceid, " +
-            "reg.servicecode " +
-            "reg.localitycode " +
+            "reg.servicecode, " +
+            "reg.localitycode, " +
             "reg.paymentstatus " +
             "FROM eg_wms_attendance_register reg ";
 
