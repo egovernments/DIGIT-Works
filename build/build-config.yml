@@ -45,7 +45,7 @@ config:
   - name: "builds/digit-works/backend/health-muster-roll"
     build:
       - work-dir: "backend/muster-roll"
-        dockerfile: "build/maven-java17/Dockerfile"
+        dockerfile: "build/maven/Dockerfile"
         image-name: "health-muster-roll"
       - work-dir: "backend/muster-roll/src/main/resources/db"
         image-name: "health-muster-roll-db"
