@@ -148,6 +148,11 @@
                             url: `/employee/estimate/search-estimate`,
                             roles: [],
                         },
+                        {
+                            text: "WORKS_CREATE_REVISED_ESTIMATE",
+                            url: `/employee/estimate/search-estimate?status=APPROVED`,
+                            roles: [],
+                        },
                     ],
                     label: "ACTION_TEST_ESTIMATE_INBOX",
                     logoIcon: { //Pass the name of the Icon Component as String here and map it in the InboxSearchLinks Component   

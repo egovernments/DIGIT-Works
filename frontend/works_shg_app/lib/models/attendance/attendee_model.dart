@@ -38,6 +38,7 @@ class AttendeesTrackList with _$AttendeesTrackList {
   const factory AttendeesTrackList({
     String? name,
     String? aadhaar,
+    String? gender,
     String? individualGaurdianName,
     String? individualId,
     String? id,

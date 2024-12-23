@@ -61,7 +61,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     values: currentProject?.documents?.map((document) => {
                         if(document?.status !== "INACTIVE") {
                             return {
-                                title: document?.documentType === "Other" ? document?.additionalDetails?.otherCategoryName : t(`PROJECT_${document?.documentType}`),
+                                title: document?.documentType === "OTHERS" ? document?.additionalDetails?.otherCategoryName : t(`PROJECT_${document?.documentType}`),
                                 documentType: document?.documentType,
                                 documentUid: document?.fileStore,
                                 fileStoreId: document?.fileStore,

@@ -2,9 +2,11 @@ import React ,{Fragment}from "react";
 import { CheckSvg } from "./svgindex";
 import PropTypes from "prop-types";
 import BreakLine from "./BreakLine";
+import { useTranslation } from "react-i18next";
+
 
 const CheckBox = ({ onChange, label, value, disable, ref, checked, inputRef, pageType, style, index, isLabelFirst, customLabelMarkup,  ...props }) => {
-  
+  const { t } = useTranslation()
   const userType = pageType || Digit.SessionStorage.get("userType");
   let wrkflwStyle = props.styles;
   if (isLabelFirst) {
@@ -57,10 +59,10 @@ const CheckBox = ({ onChange, label, value, disable, ref, checked, inputRef, pag
           
           {customLabelMarkup ? 
           <>
-            <p>I certify that appropriate amount of work has been completed. Muster roll has been verified against Measurement Book.</p>
+            <p>{t("COMMON_CERTIFY_ONE")}</p>
             <br />
             <p>
-            <b> Note</b>: Once approved Payment Advice will be generated and send to JIT-FS for payment processing.
+            <b> {t("ES_COMMON_NOTE")}</b>{t("COMMON_CERTIFY_TWO")}
             </p>
             </> : label}
         </p>

@@ -12,6 +12,7 @@ class ContractsModel with ContractsModelMappable {
 class Contracts with ContractsMappable {
   String? id;
   String? contractNumber;
+  String? businessService;
   String? tenantId;
   String? wfStatus;
   String? executingAuthority;
@@ -27,35 +28,37 @@ class Contracts with ContractsMappable {
   int? completionPeriod;
   String? status;
   List<LineItems>? lineItems;
+  String? supplementNumber;
   List<Documents>? documents;
   ContractAuditDetails? auditDetails;
   ContractAdditionalDetails? additionalDetails;
   ContractProcessInstance? processInstance;
-  ORGAdditionalDetails? orgAdditionalDetails;
 
-  Contracts(
-      {this.id,
-      this.contractNumber,
-      this.tenantId,
-      this.status,
-      this.endDate,
-      this.startDate,
-      this.agreementDate,
-      this.completionPeriod,
-      this.contractType,
-      this.defectLiabilityPeriod,
-      this.executingAuthority,
-      this.issueDate,
-      this.orgId,
-      this.securityDeposit,
-      this.wfStatus,
-      this.totalContractedAmount,
-      this.lineItems,
-      this.documents,
-      this.processInstance,
-      this.additionalDetails,
-      this.auditDetails,
-      this.orgAdditionalDetails});
+  Contracts({
+    this.id,
+    this.contractNumber,
+    this.tenantId,
+    this.status,
+    this.endDate,
+    this.startDate,
+    this.agreementDate,
+    this.completionPeriod,
+    this.contractType,
+    this.defectLiabilityPeriod,
+    this.executingAuthority,
+    this.issueDate,
+    this.orgId,
+    this.securityDeposit,
+    this.wfStatus,
+    this.totalContractedAmount,
+    this.lineItems,
+    this.documents,
+    this.processInstance,
+    this.additionalDetails,
+    this.auditDetails,
+    this.businessService,
+    this.supplementNumber,
+  });
 }
 
 @MappableClass()
@@ -118,6 +121,7 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
   String? officerInChargeId;
   String? attendanceRegisterNumber;
   String? orgName;
+  String? cboOrgNumber;
   String? projectId;
   String? projectName;
   String? projectDesc;
@@ -133,25 +137,31 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
   List<EstimateDocs>? estimateDocs;
   List<Description?>? termsAndConditions;
   int? completionPeriod;
-  ContractAdditionalDetails(
-      {this.officerInChargeId,
-      this.attendanceRegisterNumber,
-      this.projectId,
-      this.projectType,
-      this.orgName,
-      this.projectName,
-      this.ward,
-      this.locality,
-      this.cboCode,
-      this.cboName,
-      this.estimateDocs,
-      this.estimateNumber,
-      this.totalEstimatedAmount,
-      this.completionPeriod,
-      this.termsAndConditions,
-      this.projectDesc,
-      this.officerInChargeName,
-      this.officerInChargeDesgn});
+  String? timeExtReason;
+  String? timeExt;
+  ContractAdditionalDetails({
+    this.officerInChargeId,
+    this.attendanceRegisterNumber,
+    this.cboOrgNumber,
+    this.projectId,
+    this.projectType,
+    this.orgName,
+    this.projectName,
+    this.ward,
+    this.locality,
+    this.cboCode,
+    this.cboName,
+    this.estimateDocs,
+    this.estimateNumber,
+    this.totalEstimatedAmount,
+    this.completionPeriod,
+    this.termsAndConditions,
+    this.projectDesc,
+    this.officerInChargeName,
+    this.officerInChargeDesgn,
+    this.timeExtReason,
+    this.timeExt,
+  });
 }
 
 @MappableClass()
@@ -220,7 +230,8 @@ class Documents with DocumentsMappable {
 @MappableClass()
 class DocumentAdditionalDetails with DocumentAdditionalDetailsMappable {
   String? fileName;
-  DocumentAdditionalDetails(this.fileName);
+  String? otherCategoryName;
+  DocumentAdditionalDetails(this.fileName, this.otherCategoryName);
 }
 
 @MappableClass()

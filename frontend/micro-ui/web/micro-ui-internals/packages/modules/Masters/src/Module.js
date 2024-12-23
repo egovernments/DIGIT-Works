@@ -13,6 +13,7 @@ import RegisterWageSeeker from "./pages/employee/WageSeeker/RegisterWageSeeker";
 import SearchWageSeeker from "./pages/employee/WageSeeker/SearchWageSeeker";
 import ViewWageSeeker from "./pages/employee/WageSeeker/ViewWageSeeker";
 import ModifyWageSeeker from "./pages/employee/WageSeeker/ModifyWageSeeker/index";
+import SearchWMSWageseeker from "./pages/employee/WageSeeker/SearchWMSWageseeker";
 
 import CreateOrganisation from  "./pages/employee/Organisation/CreateOrganization/index";
 import SearchOrganisation from "./pages/employee/Organisation/SearchOrganisation";
@@ -52,6 +53,7 @@ const componentsToRegister = {
   SearchWageSeeker,
   ViewWageSeeker,
   ModifyWageSeeker,
+  SearchWMSWageseeker,
 
   CreateOrganisation,
   SearchOrganisation,

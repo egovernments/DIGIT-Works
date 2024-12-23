@@ -26,17 +26,23 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 @Component
 @Slf4j
 public class ExpenseCalculatorServiceValidator {
-    @Autowired
-    private MdmsUtils mdmsUtils;
+    private final MdmsUtils mdmsUtils;
 
-    @Autowired
-    private CommonUtil commonUtil;
+    private final CommonUtil commonUtil;
 
+    private final ExpenseCalculatorUtil expenseCalculatorUtil;
+    private static final String PURCHASEBILL_IS_MANDATORY ="PurchaseBill is mandatory";
+    private static final String BILLDETAILS_IS_MANDATORY= "BillDetails is mandatory";
+    private static final String PAYEE_IS_MANDATORY = "Payee is mandatory";
+    private static final String PAYEE_TYPE_IS_MANDATORY = "Payee type is mandatory";
+    private static final String PAYEE_IDENTIFIER_IS_MANDATORY = "Payee identifier is mandatory";
+    private static final String TENANT_ID_IS_MANDATORY = "TenantId is mandatory";
     @Autowired
-    private ExpenseCalculatorUtil expenseCalculatorUtil;
-
-    @Autowired
-    private ExpenseCalculatorConfiguration configs;
+    public ExpenseCalculatorServiceValidator(MdmsUtils mdmsUtils, CommonUtil commonUtil, ExpenseCalculatorUtil expenseCalculatorUtil) {
+        this.mdmsUtils = mdmsUtils;
+        this.commonUtil = commonUtil;
+        this.expenseCalculatorUtil = expenseCalculatorUtil;
+    }
 
 
     public void validateCalculatorEstimateRequest(CalculationRequest calculationRequest){
@@ -68,7 +74,7 @@ public class ExpenseCalculatorServiceValidator {
         // Validate the required params
         validateRequiredParametersForMusterRollRequest(musterRollRequest);
         //Validate request against MDMS
-        validateRequestAgainstMDMS(requestInfo,musterRoll.getTenantId(), configs.getWageBusinessService());
+        validateRequestAgainstMDMS(requestInfo,musterRoll.getTenantId());
         //Validate musterRollId against service
         validateMusterRollIdAgainstService(musterRollRequest);
         log.info("Validation done for muster roll number ["+musterRoll.getMusterRollNumber()+"]");
@@ -83,7 +89,7 @@ public class ExpenseCalculatorServiceValidator {
         // Validate purchase request parameters
         validateCreatePurchaseRequestParameters(purchaseBillRequest);
         //Validate request against MDMS
-        validateRequestAgainstMDMS(requestInfo,bill.getTenantId(),configs.getPurchaseBusinessService());
+        validateRequestAgainstMDMS(requestInfo,bill.getTenantId());
     }
 
     public void validateUpdatePurchaseRequest(PurchaseBillRequest purchaseBillRequest) {
@@ -97,7 +103,7 @@ public class ExpenseCalculatorServiceValidator {
         // Validate purchase request parameters
         validateUpdatePurchaseRequestParameters(purchaseBillRequest);
         //Validate request against MDMS
-        validateRequestAgainstMDMS(requestInfo,bill.getTenantId(),configs.getPurchaseBusinessService());
+        validateRequestAgainstMDMS(requestInfo,bill.getTenantId());
     }
 
     private void validateUpdatePurchaseRequestParameters(PurchaseBillRequest purchaseBillRequest) {
@@ -105,8 +111,8 @@ public class ExpenseCalculatorServiceValidator {
         PurchaseBill purchaseBill = purchaseBillRequest.getBill();
 
         if (purchaseBill == null) {
-            log.error("PurchaseBill is mandatory");
-            throw new CustomException("PURCHASE_BILL", "PurchaseBill is mandatory");
+            log.error(PURCHASEBILL_IS_MANDATORY);
+            throw new CustomException("PURCHASE_BILL", PURCHASEBILL_IS_MANDATORY);
         }
 
         if(StringUtils.isBlank(purchaseBill.getReferenceId()) ) {
@@ -117,31 +123,31 @@ public class ExpenseCalculatorServiceValidator {
 
         List<BillDetail> billDetails = purchaseBill.getBillDetails();
         if(billDetails == null || billDetails.isEmpty()) {
-            log.error("BillDetails is mandatory");
-            throw new CustomException("PURCHASE_BILL.BILL_DETAILS", "BillDetails is mandatory");
+            log.error(BILLDETAILS_IS_MANDATORY);
+            throw new CustomException("PURCHASE_BILL.BILL_DETAILS", BILLDETAILS_IS_MANDATORY);
         }
 
         for(BillDetail billDetail : billDetails) {
             Party payee = billDetail.getPayee();
             if(payee == null) {
-                log.error("Payee is mandatory");
-                throw new CustomException("PURCHASE_BILL.BILL_DETAILS.PAYEE", "Payee is mandatory");
+                log.error(PAYEE_IS_MANDATORY);
+                throw new CustomException("PURCHASE_BILL.BILL_DETAILS.PAYEE", PAYEE_IS_MANDATORY);
             }
 
             if(StringUtils.isBlank(payee.getType()) ) {
-                log.error("Payee type is mandatory");
-                errorMap.put("PURCHASE_BILL.BILL_DETAILS.PAYEE.TYPE", "Payee type is mandatory");
+                log.error(PAYEE_TYPE_IS_MANDATORY);
+                errorMap.put("PURCHASE_BILL.BILL_DETAILS.PAYEE.TYPE", PAYEE_TYPE_IS_MANDATORY);
             }
 
             if(StringUtils.isBlank(payee.getIdentifier())) {
-                log.error("Payee identifier is mandatory");
-                errorMap.put("PURCHASE_BILL.BILL_DETAILS.PAYEE.IDENTIFIER", "Payee identifier is mandatory");
+                log.error(PAYEE_IDENTIFIER_IS_MANDATORY);
+                errorMap.put("PURCHASE_BILL.BILL_DETAILS.PAYEE.IDENTIFIER", PAYEE_IDENTIFIER_IS_MANDATORY);
             }
         }
 
         if (StringUtils.isBlank(purchaseBill.getTenantId())) {
-            log.error("TenantId is mandatory");
-            errorMap.put("PURCHASE_BILL.TENANTID", "TenantId is mandatory");
+            log.error(TENANT_ID_IS_MANDATORY);
+            errorMap.put("PURCHASE_BILL.TENANTID", TENANT_ID_IS_MANDATORY);
         }
 
         if (!errorMap.isEmpty()) {
@@ -155,37 +161,37 @@ public class ExpenseCalculatorServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
         PurchaseBill purchaseBill = purchaseBillRequest.getBill();
         if (purchaseBill == null) {
-            log.error("PurchaseBill is mandatory");
-            throw new CustomException("PURCHASE_BILL", "PurchaseBill is mandatory");
+            log.error(PURCHASEBILL_IS_MANDATORY);
+            throw new CustomException("PURCHASE_BILL", PURCHASEBILL_IS_MANDATORY);
         }
 
         List<BillDetail> billDetails = purchaseBill.getBillDetails();
         if(billDetails == null || billDetails.isEmpty()) {
-            log.error("BillDetails is mandatory");
-            throw new CustomException("PURCHASE_BILL.BILL_DETAILS", "BillDetails is mandatory");
+            log.error(BILLDETAILS_IS_MANDATORY);
+            throw new CustomException("PURCHASE_BILL.BILL_DETAILS", BILLDETAILS_IS_MANDATORY);
         }
 
         for(BillDetail billDetail : billDetails) {
             Party payee = billDetail.getPayee();
             if(payee == null) {
-                log.error("Payee is mandatory");
-                throw new CustomException("PURCHASE_BILL.BILL_DETAILS.PAYEE", "Payee is mandatory");
+                log.error(PAYEE_IS_MANDATORY);
+                throw new CustomException("PURCHASE_BILL.BILL_DETAILS.PAYEE", PAYEE_IS_MANDATORY);
             }
 
             if(StringUtils.isBlank(payee.getType()) ) {
-                log.error("Payee type is mandatory");
-                errorMap.put("PURCHASE_BILL.BILL_DETAILS.PAYEE.TYPE", "Payee type is mandatory");
+                log.error(PAYEE_TYPE_IS_MANDATORY);
+                errorMap.put("PURCHASE_BILL.BILL_DETAILS.PAYEE.TYPE", PAYEE_TYPE_IS_MANDATORY);
             }
 
             if(StringUtils.isBlank(payee.getIdentifier())) {
-                log.error("Payee identifier is mandatory");
-                errorMap.put("PURCHASE_BILL.BILL_DETAILS.PAYEE.IDENTIFIER", "Payee identifier is mandatory");
+                log.error(PAYEE_IDENTIFIER_IS_MANDATORY);
+                errorMap.put("PURCHASE_BILL.BILL_DETAILS.PAYEE.IDENTIFIER", PAYEE_IDENTIFIER_IS_MANDATORY);
             }
         }
 
         if (StringUtils.isBlank(purchaseBill.getTenantId())) {
-            log.error("TenantId is mandatory");
-            errorMap.put("PURCHASE_BILL.TENANTID", "TenantId is mandatory");
+            log.error(TENANT_ID_IS_MANDATORY);
+            errorMap.put("PURCHASE_BILL.TENANTID", TENANT_ID_IS_MANDATORY);
         }
 
         if (!errorMap.isEmpty()) {
@@ -203,13 +209,13 @@ public class ExpenseCalculatorServiceValidator {
     private void updatedBillPayableLineItemFromDB(RequestInfo requestInfo, PurchaseBillRequest purchaseBillRequest) {
         // Get purchase bill from db and update payableLineItem into the request
         PurchaseBill billRequest = purchaseBillRequest.getBill();
-        List<Bill> bills=new ArrayList<>();
+        List<Bill> bills;
         List<String> billIds = new ArrayList<>(Arrays.asList(billRequest.getId()));
         bills = expenseCalculatorUtil.fetchBillsWithBillIds(requestInfo, billRequest.getTenantId(), billIds);
         if (bills != null && !bills.isEmpty()) {
             Bill billFromDB = bills.get((0));
             // Set payableLineItems ones
-            Map<String, BillDetail> billDetailMap = new HashMap<String, BillDetail>();
+            Map<String, BillDetail> billDetailMap = new HashMap<>();
             if (billFromDB != null && !billFromDB.getBillDetails().isEmpty() && !purchaseBillRequest.getBill().getBillDetails().isEmpty()) {
                 List<BillDetail> billDetailsFromDB = billFromDB.getBillDetails();
                 for (int idx = 0; idx < billDetailsFromDB.size(); idx++) {
@@ -249,13 +255,7 @@ public class ExpenseCalculatorServiceValidator {
         //Validate required parameters for calculator estimate
         validateRequiredParametersForCalculatorRequest(calculationRequest);
 
-        String businessServiceToValidate = null;
-        if(criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty())
-            businessServiceToValidate = configs.getWageBusinessService();
-        else
-            businessServiceToValidate = configs.getSupervisionBusinessService();
-
-        validateRequestAgainstMDMS(requestInfo,criteria.getTenantId(),businessServiceToValidate);
+        validateRequestAgainstMDMS(requestInfo,criteria.getTenantId());
     }
 
     private void validateMusterRollIdAgainstService(CalculationRequest calculationRequest, boolean onlyApproved) {
@@ -282,17 +282,6 @@ public class ExpenseCalculatorServiceValidator {
         log.info("Muster roll validated against muster roll service ["+musterRollId+"]");
     }
 
-//    private void validateMusterRollRequestAgainstMDMS(MusterRollRequest musterRollRequest) {
-//        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
-//        String tenantId = musterRoll.getTenantId();
-//        RequestInfo requestInfo = musterRollRequest.getRequestInfo();
-//        //Fetch MDMS data
-//        Object mdmsData = fetchMDMSDataForValidation(requestInfo,tenantId);
-//        // Validate tenantId against MDMS data
-//        validateTenantIdAgainstMDMS(mdmsData, tenantId);
-//
-//        log.info("MDMD validation done");
-//    }
 
     private void validateRequiredParametersForMusterRollRequest(MusterRollRequest musterRollRequest) {
          MusterRoll musterRoll = musterRollRequest.getMusterRoll();
@@ -304,8 +293,8 @@ public class ExpenseCalculatorServiceValidator {
          }
 
         if (StringUtils.isBlank(musterRoll.getTenantId())) {
-            log.error("TenantId is mandatory");
-            errorMap.put("MUSTERROLL.TENANTID", "TenantId is mandatory");
+            log.error(TENANT_ID_IS_MANDATORY);
+            errorMap.put("MUSTERROLL.TENANTID", TENANT_ID_IS_MANDATORY);
         }
 
         String musterRollId = musterRoll.getId();
@@ -349,8 +338,8 @@ public class ExpenseCalculatorServiceValidator {
         }
 
         if (StringUtils.isBlank(criteria.getTenantId())) {
-            log.error("TenantId is mandatory");
-            errorMap.put("CRITERIA.TENANTID", "TenantId is mandatory");
+            log.error(TENANT_ID_IS_MANDATORY);
+            errorMap.put("CRITERIA.TENANTID", TENANT_ID_IS_MANDATORY);
         }
 
         List<String> musterRollId = criteria.getMusterRollId();
@@ -370,41 +359,17 @@ public class ExpenseCalculatorServiceValidator {
         log.info("Required request parameter validation done for Calculator");
     }
 
-    private void validateRequestAgainstMDMS(RequestInfo requestInfo, String tenantId, String businessService) {
+    private void validateRequestAgainstMDMS(RequestInfo requestInfo, String tenantId) {
         //Fetch MDMS data
         Object mdmsData = fetchMDMSDataForValidation(requestInfo,tenantId);
         
         log.info("MDMS Data response:" + mdmsData.toString());        // Validate tenantId against MDMS data
         validateTenantIdAgainstMDMS(mdmsData, tenantId);
-        // Validate head code against MDMS data
-        //validateHeadCodeAgainstMDMS(mdmsData, businessService);
-        // Validate business service against MDMS data
-        //TODO: Commenting this out since this is problematic
-        //validateBusinessServiceAgainstMDMS(mdmsData, businessService);
     }
 
-    private void validateBusinessServiceAgainstMDMS(Object mdmsData, String businessService) {
-        List<Object> businessServiceRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION);
-        if (CollectionUtils.isEmpty(businessServiceRes) || !businessServiceRes.contains(businessService)){
-            log.error("The businessService: " + businessService + " is not present in MDMS");
-            throw new CustomException("INVALID_BUSINESS_SERVICE","Invalid businessService [" + businessService + "]");
-        }
-        log.info("BusinessService data validated against MDMS");
-
-    }
-
-//    private void validateHeadCodeAgainstMDMS(Object mdmsData, String businessService) {
-//        List<Object> businessServiceRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION);
-//        if (CollectionUtils.isEmpty(businessServiceRes) || !businessServiceRes.contains(businessService)){
-//            log.error("The businessService: " + businessService + " is not present in MDMS");
-//            throw new CustomException("INVALID_BUSINESS_SERVICE","Invalid businessService [" + businessService + "]");
-//        }
-//        log.info("BusinessService data validated against MDMS");
-//    }
 
     private Object fetchMDMSDataForValidation(RequestInfo requestInfo, String tenantId){
-        String rootTenantId = tenantId.split("\\.")[0];
-        return mdmsUtils.fetchMDMSForValidation(requestInfo, rootTenantId);
+        return mdmsUtils.fetchMDMSForValidation(requestInfo, tenantId);
 
     }
 
@@ -438,11 +403,10 @@ public class ExpenseCalculatorServiceValidator {
         CalculatorSearchCriteria searchCriteria=calculatorSearchRequest.getSearchCriteria();
 
         if(StringUtils.isBlank(tenantId)){
-            throw new CustomException("TENANT_ID","TenantId is mandatory");
+            throw new CustomException("TENANT_ID",TENANT_ID_IS_MANDATORY);
         }
 
-        if(StringUtils.isNotBlank(tenantId)){
-            if(!CollectionUtils.isEmpty(searchCriteria.getProjectNumbers())
+        if(StringUtils.isNotBlank(tenantId) && (!CollectionUtils.isEmpty(searchCriteria.getProjectNumbers())
                     || !CollectionUtils.isEmpty(searchCriteria.getOrgNumbers())
                     || !CollectionUtils.isEmpty(searchCriteria.getMusterRollNumbers())
                     || !CollectionUtils.isEmpty(searchCriteria.getContractNumbers())
@@ -450,10 +414,10 @@ public class ExpenseCalculatorServiceValidator {
                     || !CollectionUtils.isEmpty(searchCriteria.getBillReferenceIds())
                     || searchCriteria.getProjectName()!=null
                     || searchCriteria.getBoundary()!=null
-                    ){
+                    )){
                 isValidRequest=true;
 
-            }
+
         }
 
         if(!isValidRequest)

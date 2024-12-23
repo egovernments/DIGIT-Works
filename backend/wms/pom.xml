@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>org.egov</groupId>
 	<artifactId>works-management-service</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>Works Management Services</name>
 	<description>Works Management Services</description>
 

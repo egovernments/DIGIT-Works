@@ -1,11 +1,12 @@
 import React from "react";
 
-// import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 // import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 // import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
 import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
+import { initMeasurementComponents } from "@egovernments/digit-ui-module-measurement";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
@@ -24,7 +25,7 @@ const enabledModules = [
   // "Payment",
   // "PT",
   // "QuickPayLinks",
-  // "DSS",
+  "DSS",
   // "NDSS",
   // "MCollect",
   // "HRMS",
@@ -46,18 +47,20 @@ const enabledModules = [
   "Estimate",
   "Project",
   "Mukta",
+  "Measurement"
 ];
 
 const initDigitUI = () => {
   window.Digit.ComponentRegistryService.setupRegistry({});
 
-  // initDSSComponents();
+  initDSSComponents();
   // initEngagementComponents();
   // initWorksComponents();
   initHRMSComponents();
   initEstimateComponents();
   initAttendenceMgmtComponents();
   initContractsComponents();
+  initMeasurementComponents();
   initExpenditureComponents();
   initMastersComponents();
   initProjectComponents();

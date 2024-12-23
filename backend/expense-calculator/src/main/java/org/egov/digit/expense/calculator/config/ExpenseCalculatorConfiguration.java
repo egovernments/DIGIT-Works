@@ -46,6 +46,16 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.idgen.supervision.reference.number}")
 	private String idGenSupervisionBillFormat;
 
+	//Localization Config
+	@Value("${egov.localization.host}")
+	private String localizationServiceHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationServiceContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationServiceEndpoint;
+
 	// Workflow Config
 	@Value("${egov.workflow.host}")
 	private String wfHost;
@@ -66,12 +76,25 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndPoint;
 
+	@Value("${egov.mdms.v2.host}")
+	private String mdmsV2Host;
+
+	@Value("${egov.mdms.v2.search.endpoint}")
+	private String mdmsV2EndPoint;
+
 	// MusterRoll
 	@Value("${egov.musterroll.host}")
 	private String musterRollHost;
 
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
+
+	//Organisation Service
+	@Value("${egov.organisation.host}")
+	private String organisationServiceHost;
+
+	@Value("${egov.organisation.endpoint}")
+	private String organisationServiceEndpoint;
 
 	// Contract service
 	@Value("${egov.contract.service.host}")
@@ -136,6 +159,9 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${egov.works.expense.supervision.business.service}")
 	private String supervisionBusinessService;
+	
+	@Value("${works.wages.master.category}")
+	private String wagesMasterCategory;
 
 	@Value("${egov.works.expense.payer.type}")
 	private String payerType;

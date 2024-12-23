@@ -397,15 +397,15 @@ abstract class BillModelCopyWith<$R, $In extends BillModel,
       List<BillDetails>? billDetails,
       String? businessService,
       int? fromPeriod,
-      int? netPaidAmount,
-      int? netPayableAmount,
+      num? netPaidAmount,
+      num? netPayableAmount,
       Payer? payer,
       int? toPeriod,
       String? billNumber,
       String? wfStatus,
       BillAdditionalDetails? additionalDetails,
-      int? totalAmount,
-      int? totalPaidAmount});
+      num? totalAmount,
+      num? totalPaidAmount});
 }
 
 class _BillModelCopyWithImpl<$R, $Out extends BillModel>
@@ -1227,13 +1227,13 @@ abstract class BillLineItemsCopyWith<$R, $In extends BillLineItems,
       {String? id,
       ContractAuditDetails? auditDetails,
       String? tenantId,
-      int? amount,
+      num? amount,
       String? type,
       String? status,
       String? billDetailId,
       String? headCode,
       bool? isLineItemPayable,
-      int? paidAmount});
+      num? paidAmount});
 }
 
 class _BillLineItemsCopyWithImpl<$R, $Out extends BillLineItems>
@@ -1396,13 +1396,13 @@ abstract class PayableLineItemsCopyWith<$R, $In extends PayableLineItems,
       {String? id,
       ContractAuditDetails? auditDetails,
       String? tenantId,
-      int? amount,
+      num? amount,
       String? type,
       String? status,
       String? billDetailId,
       String? headCode,
       bool? isLineItemPayable,
-      int? paidAmount});
+      num? paidAmount});
 }
 
 class _PayableLineItemsCopyWithImpl<$R, $Out extends PayableLineItems>

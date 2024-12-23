@@ -9,6 +9,7 @@ import 'package:works_shg_app/utils/constants.dart';
 import '../Env/env_config.dart';
 import '../blocs/auth/auth.dart';
 import '../models/request_info/request_info_model.dart';
+import '../utils/global_variables.dart';
 
 class Client {
   Dio init() {
@@ -29,6 +30,8 @@ class ApiInterceptors extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    var ts = DateTime.now().millisecondsSinceEpoch;
+    var selectedLocale = await GlobalVariables.selectedLocale() ?? "en_IN";
     options.data = {
       ...options.data,
       "RequestInfo": {
@@ -39,7 +42,7 @@ class ApiInterceptors extends Interceptor {
           action: options.extra['action'] ?? "_search",
           did: options.extra['did'] ?? "1",
           key: options.extra['key'] ?? "",
-          msgId: options.extra['msgId'] ?? "20170310130900|en_IN",
+          msgId: selectedLocale != null ? "$ts|$selectedLocale" : "",
           authToken: options.extra['accessToken'],
         ).toJson(),
         "userInfo": options.extra['userInfo']
@@ -51,10 +54,10 @@ class ApiInterceptors extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     // ignore: no-empty-block
-    if (err.type == DioErrorType.response && err.response?.statusCode == 500) {
+    if (err.response?.statusCode == 500) {
       scaffoldMessengerKey.currentContext!
           .read<AuthBloc>()
-          .add(const AuthLogoutEvent());
+          .add(const AuthClearLoggedDetailsEvent());
     } else {
       handler.next(err);
     }

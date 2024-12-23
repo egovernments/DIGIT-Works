@@ -76,6 +76,18 @@
               ]
             },
             {
+              "head": "EXP_MB_DETAILES",
+              "subHead": "",
+              "body": [
+                  {
+                      "type": "component",
+                      "component": "MBDetailes",
+                      "withoutLabel": true,
+                      "key": "MBDetailes"
+                  }
+              ]
+            },
+            {
               "head": "EXP_INVOICE_DETAILS",
               "subHead": "",
               "body": [

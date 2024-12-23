@@ -1,0 +1,94 @@
+@startuml
+actor User as User order 0
+participant UI as UI order 1
+participant ContractSvc as Contracts order 3
+participant EstimateSvc as Estimates order 5
+participant IDGen order 7
+participant Workflow order 9
+participant Kafka order 11
+participant Persister order 13
+participant DB order 15
+title Create Revision Contract 
+== Create Revised Contract ==
+User -> UI: Update values in contract
+activate UI #DarkSalmon
+UI -> Contracts: Create revised contract
+activate Contracts #005500
+Contracts -> Estimates: Fetch estimate line items by ID
+activate Estimates 
+Estimates -> Contracts: Return latest version of estimate line items.
+deactivate Estimates
+Contracts -> Contracts: Validate quantities and handle additions or deletions in line items.
+
+Contracts -> IDGen: Generate ID for \n revised contract
+activate IDGen
+IDGen -> Contracts: Send ID
+deactivate IDGen
+
+Contracts -> Contracts: Add ID as supplementary number.\n Increment revision number.
+Contracts -> Workflow: Trigger revision workflow
+activate Workflow
+Workflow -> Contracts: Return WF status
+deactivate Workflow
+
+Contracts -> Contracts: Set revision contract status to INWORKFLOW
+Contracts -> Kafka: Push new revision to \n save-contract topic
+Contracts -> UI: Return revision contract ID
+deactivate Contracts
+deactivate UI
+Persister -> Kafka: Read save-contract topic
+activate Persister
+Persister -> DB: Save to the tables
+deactivate Persister
+
+== Revised Contract Approval ==
+User -> UI: JE approves revision
+activate UI #DarkSalmon
+UI -> Contracts: Call with workflow status APPROVE
+activate Contracts #005500
+Contracts -> Workflow: Update workflow
+Workflow -> Contracts: Return updated workflow state
+Contracts -> Kafka: Post to update-contract topic
+Contracts -> UI: Return contract payload
+deactivate UI
+deactivate Contracts
+Persister -> Kafka: Read update-contract topic
+activate Persister
+Persister -> DB: Save to the revision tables
+deactivate Persister
+
+== Revised Contract Accepted ==
+User -> UI: CBO accepts revised contract
+activate UI #DarkSalmon
+UI -> Contracts: Call with workflow status ACCEPT
+activate Contracts #005500
+Contracts -> Workflow: Update workflow
+activate Workflow
+Workflow -> Contracts: Return latest workflow state
+deactivate Workflow
+Contracts -> Contracts: Update status of older contract to INACTIVE. \n Update status of current version to ACTIVE.
+Contracts -> Kafka: Post to update-contract topic
+Contracts -> Kafka: Push to contract-changes topic\n for other services to consume
+Contracts -> UI: Return updated contract status
+deactivate Contracts
+deactivate UI
+Persister -> Kafka: Read update-contract topic
+Persister -> DB: Save data
+
+== Revised Contract Rejected ==
+User -> UI: CBO or JE rejects revised contract
+activate UI #DarkSalmon
+UI -> Contracts: Call with workflow status REJECT
+activate Contracts #005500
+Contracts -> Workflow: Update workflow
+activate Workflow
+Workflow -> Contracts: Return latest workflow state
+deactivate Workflow
+Contracts -> Contracts: Update status of current version to INACTIVE.
+Contracts -> Kafka: Post to update-contract topic
+Contracts -> UI: Return updated contract status
+deactivate Contracts
+deactivate UI
+Persister -> Kafka: Read update-contract topic
+Persister -> DB: Save data
+@enduml

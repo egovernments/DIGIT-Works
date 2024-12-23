@@ -15,11 +15,13 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 @Slf4j
 public class BillToMetaMapper {
 
-    @Autowired
-    private CommonUtil commonUtil;
+
+    private final ExpenseCalculatorConfiguration configs;
 
     @Autowired
-    private ExpenseCalculatorConfiguration configs;
+    public BillToMetaMapper(ExpenseCalculatorConfiguration configs) {
+        this.configs = configs;
+    }
 
     public BillMetaRecords map(List<Bill> bills, Map<String, String> metaInfo) {
         if(bills == null || bills.isEmpty()) return null;
@@ -95,11 +97,4 @@ public class BillToMetaMapper {
         return null;
     }
 
-    private String getValueFromAdditionalDetails(Bill bill, String key) {
-        Object additionalDetails = bill.getAdditionalDetails();
-        Optional<String> value = commonUtil.findValue(additionalDetails, key);
-        if(value.isPresent()) return value.get();
-
-        return null;
-    }
 }

@@ -10,10 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Overide the negotiated amounts from line items of the estimate
@@ -40,6 +38,10 @@ public class LineItems {
     @JsonProperty("estimateLineItemId")
     @Size(min = 1, max = 64)
     private String estimateLineItemId = null;
+
+    @JsonProperty("contractLineItemRef")
+    @Size(min = 1, max = 64)
+    private String contractLineItemRef = null;
 
     @JsonProperty("tenantId")
     @NotNull

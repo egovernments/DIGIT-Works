@@ -3,6 +3,7 @@ package org.egov.repository;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.repository.querybuilder.*;
 import org.egov.repository.rowmapper.*;
+import org.egov.service.EncryptionService;
 import org.egov.web.models.Document;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.web.models.*;
@@ -13,47 +14,56 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.egov.util.OrganisationConstant.ORGANISATION_ENCRYPT_KEY;
+
 @Repository
 @Slf4j
 public class OrganisationRepository {
 
-    @Autowired
-    private OrganisationFunctionQueryBuilder organisationFunctionQueryBuilder;
-    @Autowired
-    private OrganisationFunctionRowMapper organisationFunctionRowMapper;
-    @Autowired
-    private AddressQueryBuilder addressQueryBuilder;
-    @Autowired
-    private AddressRowMapper addressRowMapper;
-    @Autowired
-    private DocumentQueryBuilder documentQueryBuilder;
-    @Autowired
-    private DocumentRowMapper documentRowMapper;
-    @Autowired
-    private ContactDetailsQueryBuilder contactDetailsQueryBuilder;
-    @Autowired
-    private ContactDetailsRowMapper contactDetailsRowMapper;
-    @Autowired
-    private JurisdictionQueryBuilder jurisdictionQueryBuilder;
-    @Autowired
-    private JurisdictionRowMapper jurisdictionRowMapper;
-    @Autowired
-    private TaxIdentifierQueryBuilder taxIdentifierQueryBuilder;
-    @Autowired
-    private TaxIdentifierRowMapper taxIdentifierRowMapper;
-    @Autowired
-    private AddressOrgIdsRowMapper addressOrgIdsRowMapper;
-    @Autowired
-    private TaxIdentifierOrgIdsRowMapper taxIdentifierOrgIdsRowMapper;
+    private final OrganisationFunctionQueryBuilder organisationFunctionQueryBuilder;
+    private final OrganisationFunctionRowMapper organisationFunctionRowMapper;
+    private final AddressQueryBuilder addressQueryBuilder;
+    private final AddressRowMapper addressRowMapper;
+    private final DocumentQueryBuilder documentQueryBuilder;
+    private final DocumentRowMapper documentRowMapper;
+    private final ContactDetailsQueryBuilder contactDetailsQueryBuilder;
+    private final ContactDetailsRowMapper contactDetailsRowMapper;
+    private final JurisdictionQueryBuilder jurisdictionQueryBuilder;
+    private final JurisdictionRowMapper jurisdictionRowMapper;
+    private final TaxIdentifierQueryBuilder taxIdentifierQueryBuilder;
+    private final TaxIdentifierRowMapper taxIdentifierRowMapper;
+    private final AddressOrgIdsRowMapper addressOrgIdsRowMapper;
+    private final TaxIdentifierOrgIdsRowMapper taxIdentifierOrgIdsRowMapper;
+
+    private final ContactDetailsOrgIdsRowMapper contactDetailsOrgIdsRowMapper;
+
+    private final EncryptionService encryptionService;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private ContactDetailsOrgIdsRowMapper contactDetailsOrgIdsRowMapper;
-
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public OrganisationRepository(AddressQueryBuilder addressQueryBuilder, OrganisationFunctionQueryBuilder organisationFunctionQueryBuilder, OrganisationFunctionRowMapper organisationFunctionRowMapper, AddressOrgIdsRowMapper addressOrgIdsRowMapper, AddressRowMapper addressRowMapper, DocumentQueryBuilder documentQueryBuilder, DocumentRowMapper documentRowMapper, ContactDetailsQueryBuilder contactDetailsQueryBuilder, TaxIdentifierRowMapper taxIdentifierRowMapper, ContactDetailsRowMapper contactDetailsRowMapper, ContactDetailsOrgIdsRowMapper contactDetailsOrgIdsRowMapper, JdbcTemplate jdbcTemplate, JurisdictionQueryBuilder jurisdictionQueryBuilder, TaxIdentifierOrgIdsRowMapper taxIdentifierOrgIdsRowMapper, JurisdictionRowMapper jurisdictionRowMapper, TaxIdentifierQueryBuilder taxIdentifierQueryBuilder, EncryptionService encryptionService) {
+        this.addressQueryBuilder = addressQueryBuilder;
+        this.organisationFunctionQueryBuilder = organisationFunctionQueryBuilder;
+        this.organisationFunctionRowMapper = organisationFunctionRowMapper;
+        this.addressOrgIdsRowMapper = addressOrgIdsRowMapper;
+        this.addressRowMapper = addressRowMapper;
+        this.documentQueryBuilder = documentQueryBuilder;
+        this.documentRowMapper = documentRowMapper;
+        this.contactDetailsQueryBuilder = contactDetailsQueryBuilder;
+        this.taxIdentifierRowMapper = taxIdentifierRowMapper;
+        this.contactDetailsRowMapper = contactDetailsRowMapper;
+        this.contactDetailsOrgIdsRowMapper = contactDetailsOrgIdsRowMapper;
+        this.jdbcTemplate = jdbcTemplate;
+        this.jurisdictionQueryBuilder = jurisdictionQueryBuilder;
+        this.taxIdentifierOrgIdsRowMapper = taxIdentifierOrgIdsRowMapper;
+        this.jurisdictionRowMapper = jurisdictionRowMapper;
+        this.taxIdentifierQueryBuilder = taxIdentifierQueryBuilder;
+        this.encryptionService = encryptionService;
+    }
 
     public List<Organisation> getOrganisations(OrgSearchRequest orgSearchRequest) {
+        // Encrypt search criteria
+        encryptionService.encryptDetails(orgSearchRequest, ORGANISATION_ENCRYPT_KEY);
         //Fetch organisation ids based on identifierType and identifierValue search criteria
         Set<String> orgIdsFromIdentifierSearch = getOrgIdsForIdentifiersBasedOnSearchCriteria(orgSearchRequest);
         //Fetch organisation ids based on boundaryCode in  search criteria
@@ -82,7 +92,7 @@ public class OrganisationRepository {
         //Fetch addresses based on organisation Ids
         List<Address> addresses = getAddressBasedOnOrganisationIds(organisationIds);
 
-        //Fetch addresses based on organisation Ids
+        //Fetch contactDetails based on organisation Ids
         List<ContactDetails> contactDetails = getContactDetailsBasedOnOrganisationIds(organisationIds);
 
         Set<String> functionIds = organisations.stream()
@@ -100,7 +110,9 @@ public class OrganisationRepository {
 
         log.info("Fetched organisation details for search request");
         //Construct Organisation Objects with fetched organisations, addresses, contactDetails, jurisdictions, identifiers and documents using Organisation id
-        return buildOrganisationSearchResult(organisations, addresses, contactDetails, documents, jurisdictions, identifiers);
+        return encryptionService
+                .decrypt(buildOrganisationSearchResult(organisations, addresses, contactDetails, documents, jurisdictions, identifiers),
+                        ORGANISATION_ENCRYPT_KEY,orgSearchRequest);
     }
 
     private Set<String> getOrgIdsForContactNumberBasedOnSearchCriteria(OrgSearchRequest orgSearchRequest) {
@@ -163,11 +175,11 @@ public class OrganisationRepository {
         if (orgIdsFromIdentifierSearch.isEmpty() && isIdentifierSearchCriteriaPresent) {
             return;
         }
-        // If boundaryCode present in request, but the search result is empty, then return empty list
+        // If contactMobileNumber present in request, but the search result is empty, then return empty list
         if (orgIdsFromContactMobileNumberSearch.isEmpty() && isContactMobileNumberSearchCriteriaPresent) {
             return;
         }
-        // If contactMobileNumber present in request, but the search result is empty, then return empty list
+        // If boundaryCode present in request, but the search result is empty, then return empty list
         if (orgIdsFromBoundarySearch.isEmpty() && isBoundarySearchCriteriaPresent) {
             return;
         }
@@ -258,30 +270,32 @@ public class OrganisationRepository {
     private List<Organisation> buildOrganisationSearchResult(List<Organisation> organisations, List<Address> addresses, List<ContactDetails> contactDetails, List<Document> documents, List<Jurisdiction> jurisdictions, List<Identifier> identifiers) {
         for (Organisation organisation: organisations) {
             log.info("Constructing organisation object for organisation " + organisation.getId());
-            if (addresses != null && !addresses.isEmpty()) {
-                log.info("Adding Addresses to organisation " + organisation.getId());
-                addAddressToOrganisation(organisation, addresses);
-            }
-            if (documents != null && !documents.isEmpty()) {
-                log.info("Adding Documents to organisation " + organisation.getId());
-                addDocumentToOrganisation(organisation, documents);
-            }
-            if (contactDetails != null && !contactDetails.isEmpty()) {
-                log.info("Adding contactDetails to organisation " + organisation.getId());
-                addContactDetailsToOrganisation(organisation, contactDetails);
-            }
-            if (jurisdictions != null && !jurisdictions.isEmpty()) {
-                log.info("Adding jurisdictions to organisation " + organisation.getId());
-                addJurisdictionsToOrganisation(organisation, jurisdictions);
-            }
-            if (identifiers != null && !identifiers.isEmpty()) {
-                log.info("Adding identifiers to organisation " + organisation.getId());
-                addIdentifiersToOrganisation(organisation, identifiers);
-            }
-
+            constructOrganizationObject(organisation, addresses, contactDetails, documents, jurisdictions, identifiers);
             log.info("Constructed organisation object for organisation " + organisation.getId());
         }
         return organisations;
+    }
+    private void constructOrganizationObject(Organisation organisation, List<Address> addresses, List<ContactDetails> contactDetails, List<Document> documents, List<Jurisdiction> jurisdictions, List<Identifier> identifiers){
+        if (addresses != null && !addresses.isEmpty()) {
+            log.info("Adding Addresses to organisation " + organisation.getId());
+            addAddressToOrganisation(organisation, addresses);
+        }
+        if (documents != null && !documents.isEmpty()) {
+            log.info("Adding Documents to organisation " + organisation.getId());
+            addDocumentToOrganisation(organisation, documents);
+        }
+        if (contactDetails != null && !contactDetails.isEmpty()) {
+            log.info("Adding contactDetails to organisation " + organisation.getId());
+            addContactDetailsToOrganisation(organisation, contactDetails);
+        }
+        if (jurisdictions != null && !jurisdictions.isEmpty()) {
+            log.info("Adding jurisdictions to organisation " + organisation.getId());
+            addJurisdictionsToOrganisation(organisation, jurisdictions);
+        }
+        if (identifiers != null && !identifiers.isEmpty()) {
+            log.info("Adding identifiers to organisation " + organisation.getId());
+            addIdentifiersToOrganisation(organisation, identifiers);
+        }
     }
 
     private void addIdentifiersToOrganisation(Organisation organisation, List<Identifier> identifiers) {
@@ -320,10 +334,9 @@ public class OrganisationRepository {
         }
 
         for (Document document: documents) {
-            if (StringUtils.isNotBlank(document.getOrgId())) {
-                if (document.getOrgId().equals(organisation.getId()) && organisation.getDocuments().stream().noneMatch(d -> d.getId().equals(document.getId()))) {
+            if (StringUtils.isNotBlank(document.getOrgId()) && (document.getOrgId().equals(organisation.getId()) && organisation.getDocuments().stream().noneMatch(d -> d.getId().equals(document.getId())))) {
                     organisation.getDocuments().add(document);
-                }
+
             }
             if (organisation.getFunctions() != null && StringUtils.isNotBlank(document.getOrgFunctionId())) {
                 for (Function function: organisation.getFunctions()) {

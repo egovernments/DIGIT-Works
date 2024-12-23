@@ -27,3 +27,14 @@ class CBOMyWorksSearchCriteriaModel with _$CBOMyWorksSearchCriteriaModel {
   factory CBOMyWorksSearchCriteriaModel.fromJson(Map<String, dynamic> json) =>
       _$CBOMyWorksSearchCriteriaModelFromJson(json);
 }
+
+@freezed
+class CBOMyServiceRequestsConfig with _$CBOMyServiceRequestsConfig {
+  const factory CBOMyServiceRequestsConfig({
+    final String? editTimeExtReqCode,
+    final String? editActionCode,
+    final String? searchCriteria,
+  }) = _CBOMyServiceRequestsConfig;
+  factory CBOMyServiceRequestsConfig.fromJson(Map<String, dynamic> json) =>
+      _$CBOMyServiceRequestsConfigFromJson(json);
+}

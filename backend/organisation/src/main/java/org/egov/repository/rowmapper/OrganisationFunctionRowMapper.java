@@ -22,20 +22,24 @@ import java.util.*;
 @Repository
 public class OrganisationFunctionRowMapper implements ResultSetExtractor<List<Organisation>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public OrganisationFunctionRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Organisation> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
         Map<String, Organisation> organisationMap = new LinkedHashMap<>();
         while (resultSet.next()) {
-            String org_id = resultSet.getString("organisation_Id");
+            String orgId = resultSet.getString("organisation_Id");
 
-            if (!organisationMap.containsKey(org_id)) {
-                organisationMap.put(org_id, createOrganisationObj(resultSet));
+            if (!organisationMap.containsKey(orgId)) {
+                organisationMap.put(orgId, createOrganisationObj(resultSet));
             }
             else {
-                addFunctionToOrganisation(organisationMap.get(org_id), resultSet);
+                addFunctionToOrganisation(organisationMap.get(orgId), resultSet);
             }
         }
 
@@ -48,82 +52,78 @@ public class OrganisationFunctionRowMapper implements ResultSetExtractor<List<Or
         List<Function> functions = new ArrayList<>();
         functions.add(function);
 
-        String organisation_Id = rs.getString("organisation_Id");
-        String organisation_tenantId = rs.getString("organisation_tenantId");
-        String organisation_applicationNumber = rs.getString("organisation_applicationNumber");
-        String organisation_name = rs.getString("organisation_name");
-        String organisation_orgNumber = rs.getString("organisation_orgNumber");
-        String organisation_externalRefNumber = rs.getString("organisation_externalRefNumber");
-        BigDecimal organisation_dateOfIncorporation = rs.getBigDecimal("organisation_dateOfIncorporation");;
-        String organisation_applicationStatus = rs.getString("organisation_applicationStatus");
-        Boolean organisation_isActive = rs.getBoolean("organisation_isActive");
-        JsonNode organisation_additionalDetails = getAdditionalDetail("organisation_additionalDetails", rs);
-        String organisation_createdBy = rs.getString("organisation_createdBy");
-        String organisation_lastModifiedBy = rs.getString("organisation_lastModifiedBy");
-        Long organisation_createdTime = rs.getLong("organisation_createdTime");
-        Long organisation_lastModifiedTime = rs.getLong("organisation_lastModifiedTime");
+        String organisationId = rs.getString("organisation_Id");
+        String organisationTenantId = rs.getString("organisation_tenantId");
+        String organisationApplicationNumber = rs.getString("organisation_applicationNumber");
+        String organisationName = rs.getString("organisation_name");
+        String organisationOrgNumber = rs.getString("organisation_orgNumber");
+        String organisationExternalRefNumber = rs.getString("organisation_externalRefNumber");
+        BigDecimal organisationDateOfIncorporation = rs.getBigDecimal("organisation_dateOfIncorporation");
+        String organisationApplicationStatus = rs.getString("organisation_applicationStatus");
+        Boolean organisationIsActive = rs.getBoolean("organisation_isActive");
+        JsonNode organisationAdditionalDetails = getAdditionalDetail("organisation_additionalDetails", rs);
+        String organisationCreatedBy = rs.getString("organisation_createdBy");
+        String organisationLastModifiedBy = rs.getString("organisation_lastModifiedBy");
+        Long organisationCreatedTime = rs.getLong("organisation_createdTime");
+        Long organisationLastModifiedTime = rs.getLong("organisation_lastModifiedTime");
 
-        AuditDetails organisationAuditDetails = AuditDetails.builder().createdBy(organisation_createdBy).createdTime(organisation_createdTime)
-                .lastModifiedBy(organisation_lastModifiedBy).lastModifiedTime(organisation_lastModifiedTime)
+        AuditDetails organisationAuditDetails = AuditDetails.builder().createdBy(organisationCreatedBy).createdTime(organisationCreatedTime)
+                .lastModifiedBy(organisationLastModifiedBy).lastModifiedTime(organisationLastModifiedTime)
                 .build();
 
-        Organisation organisation = Organisation.builder()
-                .id(organisation_Id)
-                .tenantId(organisation_tenantId)
-                .applicationNumber(organisation_applicationNumber)
-                .name(organisation_name)
-                .orgNumber(organisation_orgNumber)
-                .externalRefNumber(organisation_externalRefNumber)
-                .dateOfIncorporation(organisation_dateOfIncorporation)
-                .applicationStatus(ApplicationStatus.fromValue(organisation_applicationStatus))
-                .isActive(organisation_isActive)
+        return Organisation.builder()
+                .id(organisationId)
+                .tenantId(organisationTenantId)
+                .applicationNumber(organisationApplicationNumber)
+                .name(organisationName)
+                .orgNumber(organisationOrgNumber)
+                .externalRefNumber(organisationExternalRefNumber)
+                .dateOfIncorporation(organisationDateOfIncorporation)
+                .applicationStatus(ApplicationStatus.fromValue(organisationApplicationStatus))
+                .isActive(organisationIsActive)
                 .functions(functions)
-                .additionalDetails(organisation_additionalDetails)
+                .additionalDetails(organisationAdditionalDetails)
                 .auditDetails(organisationAuditDetails)
                 .build();
-
-        return organisation;
     }
 
     private Function createFunctionObjFromResultSet(ResultSet rs) throws SQLException  {
-        String organisationFunction_Id = rs.getString("organisationFunction_Id");
-        String organisationFunction_OrgId = rs.getString("organisationFunction_OrgId");
-        String organisationFunction_applicationNumber = rs.getString("organisationFunction_applicationNumber");
-        String organisationFunction_type = rs.getString("organisationFunction_type");
-        String organisationFunction_category = rs.getString("organisationFunction_category");
-        String organisationFunction_class = rs.getString("organisationFunction_class");
-        BigDecimal organisationFunction_valid_from = rs.getBigDecimal("organisationFunction_valid_from");
-        BigDecimal organisationFunction_validTo = rs.getBigDecimal("organisationFunction_validTo");
-        String organisationFunction_applicationStatus = rs.getString("organisationFunction_applicationStatus");
-        String organisationFunction_wfStatus = rs.getString("organisationFunction_wfStatus");
-        Boolean organisationFunction_isActive = rs.getBoolean("organisationFunction_isActive");
-        JsonNode organisationFunction_additionalDetails = getAdditionalDetail("organisationFunction_additionalDetails", rs);
-        String organisationFunction_createdBy = rs.getString("organisationFunction_createdBy");
-        String organisationFunction_lastModifiedBy = rs.getString("organisationFunction_lastModifiedBy");
-        Long organisationFunction_createdTime = rs.getLong("organisationFunction_createdTime");
-        Long organisationFunction_lastModifiedTime = rs.getLong("organisationFunction_lastModifiedTime");
+        String organisationFunctionId = rs.getString("organisationFunction_Id");
+        String organisationFunctionOrgId = rs.getString("organisationFunction_OrgId");
+        String organisationFunctionApplicationNumber = rs.getString("organisationFunction_applicationNumber");
+        String organisationFunctionType = rs.getString("organisationFunction_type");
+        String organisationFunctionCategory = rs.getString("organisationFunction_category");
+        String organisationFunctionClass = rs.getString("organisationFunction_class");
+        BigDecimal organisationFunctionValidFrom = rs.getBigDecimal("organisationFunction_valid_from");
+        BigDecimal organisationFunctionValidTo = rs.getBigDecimal("organisationFunction_validTo");
+        String organisationFunctionApplicationStatus = rs.getString("organisationFunction_applicationStatus");
+        String organisationFunctionWfStatus = rs.getString("organisationFunction_wfStatus");
+        Boolean organisationFunctionIsActive = rs.getBoolean("organisationFunction_isActive");
+        JsonNode organisationFunctionAdditionalDetails = getAdditionalDetail("organisationFunction_additionalDetails", rs);
+        String organisationFunctionCreatedBy = rs.getString("organisationFunction_createdBy");
+        String organisationFunctionLastModifiedBy = rs.getString("organisationFunction_lastModifiedBy");
+        Long organisationFunctionCreatedTime = rs.getLong("organisationFunction_createdTime");
+        Long organisationFunctionLastModifiedTime = rs.getLong("organisationFunction_lastModifiedTime");
 
-        AuditDetails organisationFunctionAuditDetails = AuditDetails.builder().createdBy(organisationFunction_createdBy).createdTime(organisationFunction_createdTime)
-                .lastModifiedBy(organisationFunction_lastModifiedBy).lastModifiedTime(organisationFunction_lastModifiedTime)
+        AuditDetails organisationFunctionAuditDetails = AuditDetails.builder().createdBy(organisationFunctionCreatedBy).createdTime(organisationFunctionCreatedTime)
+                .lastModifiedBy(organisationFunctionLastModifiedBy).lastModifiedTime(organisationFunctionLastModifiedTime)
                 .build();
 
-        Function function = Function.builder()
-                .id(organisationFunction_Id)
-                .orgId(organisationFunction_OrgId)
-                .applicationNumber(organisationFunction_applicationNumber)
-                .type(organisationFunction_type)
-                .category(organisationFunction_category)
-                .propertyClass(organisationFunction_class)
-                .validFrom(organisationFunction_valid_from)
-                .validTo(organisationFunction_validTo)
-                .applicationStatus(ApplicationStatus.fromValue(organisationFunction_applicationStatus))
-                .wfStatus(organisationFunction_wfStatus)
-                .isActive(organisationFunction_isActive)
-                .additionalDetails(organisationFunction_additionalDetails)
+        return Function.builder()
+                .id(organisationFunctionId)
+                .orgId(organisationFunctionOrgId)
+                .applicationNumber(organisationFunctionApplicationNumber)
+                .type(organisationFunctionType)
+                .category(organisationFunctionCategory)
+                .propertyClass(organisationFunctionClass)
+                .validFrom(organisationFunctionValidFrom)
+                .validTo(organisationFunctionValidTo)
+                .applicationStatus(ApplicationStatus.fromValue(organisationFunctionApplicationStatus))
+                .wfStatus(organisationFunctionWfStatus)
+                .isActive(organisationFunctionIsActive)
+                .additionalDetails(organisationFunctionAdditionalDetails)
                 .auditDetails(organisationFunctionAuditDetails)
                 .build();
-
-        return function;
     }
 
     private void addFunctionToOrganisation(Organisation organisation, ResultSet resultSet) throws SQLException {

@@ -27,7 +27,6 @@ public class DocumentRepository {
     public List<Document> getDocuments(ContractCriteria contractCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getDocumentSearchQuery(contractCriteria, preparedStmtList);
-        List<Document> documents = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        return documents;
+        return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
     }
 }
