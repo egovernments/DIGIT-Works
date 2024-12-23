@@ -2,7 +2,6 @@ package org.egov.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.common.protocol.types.Field;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
@@ -172,11 +171,11 @@ public class RegisterQueryBuilder {
 
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);
-        return addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
+        return query.toString();
     }
 
-    private String addPaginationWrapper(String query,List<Object> preparedStmtList,
-                                        AttendanceRegisterSearchCriteria criteria){
+    public String addPaginationWrapper(String query, List<Object> preparedStmtList,
+                                       AttendanceRegisterSearchCriteria criteria){
         int limit = config.getAttendanceRegisterDefaultLimit();
         int offset = config.getAttendanceRegisterDefaultOffset();
 
