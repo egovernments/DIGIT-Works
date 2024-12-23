@@ -1,0 +1,7 @@
+# My Requests
+
+There are two types of requests raised by the CBOs. One is the request to close the project, second is to request to extend the completion period or time extension. Once these requests raised by CBOs are sent for approval, the same can be viewed and tracked from the **My Requests** option.
+
+| ![](https://lh4.googleusercontent.com/hSEI1TbdE58zLAEG-WDOZZJf9UeYD27oxYsgElUbhx0XZxoAjQD9oBawT1_arM01rM92RPZeVklp1E1r26MLszD9nBYKr-aQkemp5ffm0dna7wfrlFu82HNIqqIA2UCmiorZjWjGuF7KAyZBXQLaVg) | ![](https://lh5.googleusercontent.com/GrzvtCJaBeQsd1_2k2hVOHtbZEi0NdAmPwiVU92xqtKU7rd92a5NJBrojjKS7sadU6RTDZWgd6fRS5_Iisr6W4u3CLFKxjaiww2qouOT7-FHDF2jt_ohKJ54zWetxl215byiSWArfaV4ts5JlGATAg) |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <p>To view all raised requests - </p><p><mark style="color:red;"><strong>Step 1:</strong></mark> Click on the <strong>My Service Requests</strong> option.</p>                                | The list of service requests along with status and details will be available on screen.                                                                                                       |

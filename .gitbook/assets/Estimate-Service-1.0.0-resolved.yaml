@@ -1,0 +1,665 @@
+---
+openapi: 3.0.0
+info:
+  title: Estimate-Service
+  description: This service/registry will validate and store estimates.
+  version: 1.0.0
+paths:
+  /estimate/v1/_create:
+    post:
+      summary: Create an estimate
+      description: Submit Estimate with the estimate details to create an estimate in the system
+      requestBody:
+        description: Request object to create estimate in the system
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateRequest'
+        required: true
+      responses:
+        "202":
+          description: Successful created Estimate
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EstimateResponse'
+        "400":
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+  /estimate/v1/_update:
+    post:
+      summary: Update an estimate
+      description: Submit updated Estimate with the estimate details to update an existing estimate in the system
+      requestBody:
+        description: Request object to update estimate in the system
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateRequest'
+        required: true
+      responses:
+        "202":
+          description: Successful updated Estimate
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EstimateResponse'
+        "400":
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+  /estimate/v1/_search:
+    post:
+      summary: Fetch the Estimate(s) based on the search criteria used
+      description: |
+        Gets the list of estimates for a particular tenant based on search criteria.
+      parameters:
+      - name: tenantId
+        in: query
+        description: Unique id for a tenant.
+        required: true
+        schema:
+          type: string
+          format: varchar
+      - name: estiamteDetailNumber
+        in: query
+        description: formatted unique identifier of the estimateDetail
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: adminSanctionNumber
+        in: query
+        description: formmated unqiue identier of the sanction of Estimate Proposal
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: ids
+        in: query
+        description: Search by list of UUID
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            maxItems: 10
+            type: string
+      - name: estimateNumber
+        in: query
+        description: Search by Estiamte Number
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: estimateStatus
+        in: query
+        description: Search by status of the estimate
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: fromProposalDate
+        in: query
+        description: search by proposal date between the from date and todate
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+      - name: toProposalDate
+        in: query
+        description: search by proposal date between the from date and todate
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+      - name: estimateType
+        in: query
+        description: Search by EstimateType
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: department
+        in: query
+        description: Search by department
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: tyepOfWork
+        in: query
+        description: Search by type of work
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: sort the search results by fields
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - totalAmount
+          - typeOfWork
+          - department
+          - proposalDate
+          - estimateStatus
+          - createdTime
+      - name: sortOrder
+        in: query
+        description: sorting order of the search resulsts
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: limit
+        in: query
+        description: limit on the resulsts
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+      - name: offset
+        in: query
+        description: offset index of the overall search resulsts
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+      responses:
+        "202":
+          description: Successful response sorted by reverse chrnological order of creation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EstimateResponse'
+        "400":
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+components:
+  schemas:
+    Estimate:
+      required:
+      - beneficiaryType
+      - budgetHead
+      - department
+      - description
+      - entrustmentMode
+      - function
+      - fund
+      - natureOfWork
+      - requirementNumber
+      - status
+      - subject
+      - tenantId
+      - typeOfWork
+      - workCategory
+      - zone
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the estimate.
+          format: uuid
+          readOnly: true
+          example: 251c51eb-e970-4e01-a99a-70136c47a934
+        tenantId:
+          type: string
+          description: Unique identifier of the tenant that could be a department/ulb/state
+          example: pb.jalandhar OR dwss
+        estimateNumber:
+          type: string
+          description: The unique identifier of the estimate the custom formatting.
+          readOnly: true
+          example: EST/2022-23/010
+        adminSanctionNumber:
+          type: string
+          description: ' The unique identifier of the admin saction of the estimate with custom formatting'
+          readOnly: true
+          example: ASE/2022-23/110
+        proposalDate:
+          type: number
+          description: Date when the estimate is proposed. It will get filled by the service when the estimate is proposed(finalised).
+          readOnly: true
+          example: 1658222690000
+        status:
+          type: string
+          description: 'It stores the status of the estimate. '
+          enum:
+          - ACTIVE
+          - INACTIVE
+        estimateStatus:
+          type: string
+          description: Status of the estimate according to the workflow stage.
+          example: CREATED
+        subject:
+          maxLength: 140
+          pattern: ^[A-Za-z0-9\/ . _$@#]*$
+          type: string
+          description: User Input Field. Max Characters can be 140
+          example: Construct new schools
+        requirementNumber:
+          maxLength: 140
+          pattern: ^[A-Za-z0-9\/ . _$@#]*$
+          type: string
+          description: User Input Field. Max Characters can be 140. Usually the Offline File/letter Number related to the project
+          example: File-18430283
+        description:
+          maxLength: 240
+          pattern: ^[A-Za-z0-9\/ . _$@#]*$
+          type: string
+          description: User Input Field. Max Characters can be 240. The information from subject & description will be used to format the administrative sanction PDF.
+          example: Construct new schools
+        department:
+          type: string
+          description: Reference from MDMS
+        location:
+          type: string
+          description: Reference from MDMS. ULB/Ward/Zone/Locality
+        workCategory:
+          type: string
+          description: Reference from MDMS
+        beneficiaryType:
+          type: string
+          description: Reference from MDMS
+        natureOfWork:
+          type: string
+          description: Reference from MDMS
+        typeOfWork:
+          type: string
+          description: Reference from MDMS
+        subTypeOfWork:
+          type: string
+          description: Reference from MDMS
+        entrustmentMode:
+          type: string
+          description: Reference from MDMS
+        fund:
+          type: string
+          description: Reference from MDMS
+        function:
+          type: string
+          description: Reference from MDMS
+        budgetHead:
+          type: string
+          description: Reference from MDMS
+        scheme:
+          type: string
+          description: Reference from MDMS
+        subScheme:
+          type: string
+          description: Reference from MDMS
+        totalAmount:
+          type: number
+          description: sum of the amount of all the estimate details of this estimate
+          readOnly: true
+        estimateDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstimateDetail'
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the estimate. For attachments, fileStoreIds will also be stored here. '
+    EstimateDetail:
+      required:
+      - amount
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the estimateDetails.
+          format: uuid
+          readOnly: true
+          example: 251c51eb-e970-4e01-a99a-70136c47a934
+        estimateDetailNumber:
+          type: string
+          description: The unique identifier of the estimate detail the custom formatting.
+          readOnly: true
+          example: SUB-EST/2022-23/010
+        name:
+          maxLength: 140
+          type: string
+          description: name of the estiamte detail
+        amount:
+          type: number
+          description: Estimated amount for the current estimate detail
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the estimate. For attachments, fileStoreIds will also be stored here. '
+    EstimateRequest:
+      required:
+      - estimate
+      - requestInfo
+      - workflow
+      type: object
+      properties:
+        requestInfo:
+          $ref: '#/components/schemas/RequestHeader'
+        estimate:
+          $ref: '#/components/schemas/Estimate'
+        workflow:
+          $ref: '#/components/schemas/EstimateRequest_workflow'
+      description: Request for Estimate _create and _update api's
+    EstimateResponse:
+      required:
+      - ResponseInfo
+      - estimates
+      type: object
+      properties:
+        responseInfo:
+          $ref: '#/components/schemas/RequestHeader'
+        estimates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Estimate'
+      description: Response for the Estimate _create, _update and _search api's
+    save-estimate:
+      allOf:
+      - $ref: '#/components/schemas/EstimateRequest'
+      - description: All create events will be added to this topic. Persister and Indexer will read the events from it.
+    update-estimate:
+      allOf:
+      - $ref: '#/components/schemas/EstimateRequest'
+      - description: All create events will be added to this topic. Persister and Indexer will read the events from it.
+    ErrorRes:
+      required:
+      - ResponseHeader
+      type: object
+      properties:
+        ResponseHeader:
+          $ref: '#/components/schemas/ResponseHeader'
+        Errors:
+          minLength: 1
+          type: array
+          description: Error response array corresponding to Request Object array. In case of single object submission or _search related paths this may be an array of one error element
+          items:
+            $ref: '#/components/schemas/Error'
+      description: All APIs will return ErrorRes in case of failure which will carry ResponseHeader as metadata and Error object as actual representation of error. In case of bulk apis, some apis may chose to return the array of Error objects to indicate individual failure.
+    ResponseHeader:
+      required:
+      - msgId
+      - resMsgId
+      - status
+      type: object
+      properties:
+        ts:
+          type: integer
+          description: response time in epoch
+          format: int64
+        resMsgId:
+          maxLength: 256
+          type: string
+          description: unique response message id (UUID) - will usually be the correlation id from the server
+        msgId:
+          maxLength: 256
+          type: string
+          description: message id of the request
+        status:
+          type: string
+          description: status of request processing
+          enum:
+          - COMPLETED
+          - ACCEPTED
+          - FAILED
+        signature:
+          type: string
+          description: Hash describing the current ResponseHeader
+        error:
+          $ref: '#/components/schemas/Error'
+        information:
+          type: object
+          description: Additional information from API
+        debug:
+          type: object
+          description: Debug information when requested
+        additionalInfo:
+          type: object
+          description: Any additional information if required e.g. status url (to find out the current status of an asynchronous processing response), additional links to perform special functions like file uploads etc.
+      description: ResponseHeader should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseHeader should always correspond to the same values in respective request's RequestHeader.
+      readOnly: true
+    Error:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error Code will be module specific error label/code to identiffy the error. All modules should also publish the Error codes with their specific localized values in localization service to ensure clients can print locale specific error messages. Example for error code would be User.NotFound to indicate User Not Found by User/Authentication service. All services must declare their possible Error Codes with brief description in the error response section of their API path.
+        message:
+          type: string
+          description: English locale message of the error code. Clients should make a separate call to get the other locale description if configured with the service. Clients may choose to cache these locale specific messages to enhance performance with a reasonable TTL (May be defined by the localization service based on tenant + module combination).
+        description:
+          type: string
+          description: Optional long description of the error to help clients take remedial action. This will not be available as part of localization service.
+        params:
+          type: array
+          description: Some error messages may carry replaceable fields (say $1, $2) to provide more context to the message. E.g. Format related errors may want to indicate the actual field for which the format is invalid. Client's should use the values in the param array to replace those fields.
+          items:
+            type: string
+      description: Error object will be returned as a part of reponse body in conjunction with ResponseHeader as part of ErrorResponse whenever the request processing status in the ResponseHeader is FAILED. HTTP return in this scenario will usually be HTTP 400.
+    AuditDetails:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: username (preferred) or userid of the user that created the object
+        lastModifiedBy:
+          type: string
+          description: username (preferred) or userid of the user that last modified the object
+        createdTime:
+          type: integer
+          description: epoch of the time object is created
+          format: int64
+        lastModifiedTime:
+          type: integer
+          description: epoch of the time object is last modified
+          format: int64
+      description: Collection of audit related fields used by most models
+      readOnly: true
+    RequestHeader:
+      required:
+      - action
+      - apiId
+      - msgId
+      - ts
+      - ver
+      type: object
+      properties:
+        apiInfo:
+          $ref: '#/components/schemas/APIInfo'
+        deviceDetail:
+          $ref: '#/components/schemas/DeviceDetail'
+        ts:
+          type: integer
+          description: time in epoch
+          format: int64
+        action:
+          maxLength: 32
+          type: string
+          description: API action to be performed like _create, _update, _search (denoting POST, PUT, GET) or _oauth etc
+        key:
+          maxLength: 256
+          type: string
+          description: API key (API key provided to the caller in case of server to server communication)
+        msgId:
+          maxLength: 256
+          type: string
+          description: Unique request message id from the caller
+        requesterId:
+          maxLength: 256
+          type: string
+          description: UserId of the user calling
+        authToken:
+          type: string
+          description: //session/jwt/saml token/oauth token - the usual value that would go into HTTP bearer token
+        userInfo:
+          $ref: '#/components/schemas/UserInfo'
+        correlationId:
+          type: string
+          readOnly: true
+        signature:
+          type: string
+          description: Hash describing the current RequestHeader
+      description: RequestHeader should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestHeader as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseHeader in the response body to ensure correlation.
+    APIInfo:
+      type: object
+      properties:
+        id:
+          maxLength: 64
+          minLength: 2
+          type: string
+          description: The id of the API being called
+        version:
+          maxLength: 64
+          minLength: 2
+          type: string
+          description: The version of the API
+        path:
+          type: string
+          description: The URI of the API
+      description: Info of the API being called
+    DeviceDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the device which is trying to accessed
+        signature:
+          type: string
+          description: The electronic signature of the device
+      description: Contains information about the device used to access the api
+    UserInfo:
+      required:
+      - primaryrole
+      - tenantId
+      - userName
+      type: object
+      properties:
+        tenantId:
+          type: string
+          description: Unique Identifier of the tenant to which user primarily belongs
+        uuid:
+          type: string
+          description: System Generated User id of the authenticated user.
+        userName:
+          type: string
+          description: Unique user name of the authenticated user
+        password:
+          type: string
+          description: password of the user.
+        idToken:
+          type: string
+          description: This will be the OTP.
+        mobile:
+          type: string
+          description: mobile number of the autheticated user
+        email:
+          type: string
+          description: email address of the authenticated user
+        primaryrole:
+          type: array
+          description: List of all the roles for the primary tenant
+          items:
+            $ref: '#/components/schemas/Role'
+        additionalroles:
+          type: array
+          description: array of additional tenantids authorized for the authenticated user
+          items:
+            $ref: '#/components/schemas/TenantRole'
+      description: This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.
+      readOnly: true
+    Role:
+      required:
+      - code
+      - tenantId
+      type: object
+      properties:
+        name:
+          maxLength: 64
+          type: string
+          description: Unique name of the role
+        code:
+          maxLength: 64
+          type: string
+          description: Unique code of the role
+        tenantId:
+          maxLength: 64
+          type: string
+          description: The tenantId for which the role is available
+        description:
+          type: string
+          description: brief description of the role
+      description: |
+        minimal representation of the Roles in the system to be carried along in UserInfo with RequestHeader meta data. Actual authorization service to extend this to have more role related attributes
+    TenantRole:
+      required:
+      - roles
+      - tenantId
+      type: object
+      properties:
+        tenantId:
+          type: string
+          description: tenantid for the tenant
+        roles:
+          type: array
+          description: Roles assigned for a particular tenant - array of role codes/names
+          items:
+            $ref: '#/components/schemas/Role'
+      description: User role carries the tenant related role information for the user. A user can have multiple roles per tenant based on the need of the tenant. A user may also have multiple roles for multiple tenants.
+    EstimateRequest_workflow:
+      required:
+      - action
+      type: object
+      properties:
+        action:
+          type: string
+          description: Action of the workflow to be performned on the request
+        comment:
+          type: string
+          description: comment for the workflow action to be performed
+        assignees:
+          type: array
+          items:
+            type: string
+            description: ' uuid of the users in the system to assign workflow to the specific user intead of a all the users with the gien role.'
+  parameters:
+    tenantId:
+      name: tenantId
+      in: query
+      description: Unique id for a tenant.
+      required: true
+      schema:
+        type: string
+        format: varchar

@@ -1,0 +1,594 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: IFMS (JIT) Adapter API specification
+  description: Specifications defining the integration of MuktaSoft with the Odisha IFMS system via Just-in-time(JIT) APIs.
+paths:
+  /pi/v1/_create:
+    post:
+      description: This API creates a payment instruction (PI) and returns the response.
+      tags:
+        - Payment Instruction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PICreateRequest'
+      responses:
+        '202':
+          description: Accepted create PI request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PICreateResponse'
+        '400':
+          description: Invalid input or other errors
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /pi/v1/_search:
+    post:
+      tags:
+        - Payment Instruction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PISearchRequest'
+      responses:
+        '200':
+          description: Successful response sorted by reverse chronological order of creation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PISearchResponse'
+        '400':
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  
+  /funds/v1/_search:
+    post:
+      tags:
+        - Search funds summary
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PISearchRequest'
+      responses:
+        '200':
+          description: Returns Funds summary detils, sanctions details, allotments details
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FundsSearchResponse'
+        '400':
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
+  /_scheduler:
+    post:
+      tags:
+        - Cronjob Schedular
+      parameters:
+        - in: query
+          name: serviceId
+          type: string
+          required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchedularRequest'
+      responses:
+        '200':
+          description: Returns Funds summary detils, sanctions details, allotments details
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchedularResponse'
+        '400':
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                  
+components:
+  schemas:
+    Payment:
+      $ref: >-
+        https://raw.githubusercontent.com/egovernments/DIGIT-Specs/master/works/expense-contract.yml#/components/schemas/Payment
+    PaymentInst:
+      type: object
+      properties:
+        id: 
+          type: string
+          format: uuid
+          readOnly: true
+          minLength: 2
+          maxLength: 64
+        tenantId:
+          type: string
+          description: The tenant ID of the system
+          example: od.jatni, od.dhenkanal
+          minLength: 2
+          maxLength: 64
+        schemeCode:
+          type: string
+          description: Scheme code defined in MDMS.
+          minLength: 2
+          maxLength: 64
+        ssuCode:
+          type: string
+          description: Refers to the special spending unit generating this PI. Code defined in master data along with other SSU details
+          minLength: 2
+          maxLength: 64
+        piNumber:
+          type: string
+          description: Formatted payment instruction number. Format specified in MDMS. Includes tenant code to preserve global uniqueness.
+          minLength: 2
+          maxLength: 64
+        parentPiNumber:
+          type: string
+          description: Parent payment instruction number. Filled in case of revised payments.
+          minLength: 2
+          maxLength: 64
+        piDate:
+          type: number
+          description: The date in epoch time when the PI was posted
+        referenceId:
+          type: string
+          description: Mukta reference ID for this PI. Usually the payment number.
+          minLength: 2
+          maxLength: 64
+        hoaCode:
+          type: string
+          description: The HOA code under which this PI was posted. HOA details defined in MDMS.
+          minLength: 2
+          maxLength: 64
+        sanctionNumber:
+          type: string
+          description: The sanction or master allotment ID under which this PI was posted.
+          minLength: 2
+          maxLength: 64
+        piStatus:
+          type: string
+          description: Status of PI
+          enum:
+            - INITIATED
+            - INPROCESS
+            - REJECTED
+            - COMPLETED
+        numBeneficiaries:
+          type: number
+          description: Number of beneficiaries
+        grossAmount:
+          type: integer
+          description: Gross amount of the PI
+        netAmount:
+          type: integer
+          description: Net amount of the PI
+        beneficiaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Beneficiary'
+      required:
+        - all
+    Beneficiary:
+      type: object
+      properties:
+        id: 
+          type: string
+          format: uuid
+          description: Beneficiary ID
+          readOnly: true
+          minLength: 2
+          maxLength: 64
+        tenantId:
+          type: string
+          description: The tenant ID of the system
+          example: od.jatni, od.dhenkanal
+          minLength: 2
+          maxLength: 64
+        piId:
+          type: string
+          description: Refers to the Payment instruction.
+          minLength: 2
+          maxLength: 64  
+        beneficiaryId:
+          type: string
+          description: Refers to the Individual or Org ID in the payees.
+          minLength: 2
+          maxLength: 64
+        beneficiaryType:
+          type: string
+          description: Beneficiary type like ORG, IND, DEPT
+          minLength: 2
+          maxLength: 64
+        beneficiaryNumber:
+          type: string
+          description: Formated ID for beneficiary
+        bankAccountId:
+          type: string
+          description: The bank account ID linked to this beneficiary
+          minLength: 2
+          maxLength: 64
+        amount:
+          type: integer
+          description: Amount to be paid to beneficiary
+        voucherNumber:
+          type: string
+          description: Voucher Number recieved from JIT PD response
+          minLength: 2
+          maxLength: 64
+        voucherDate:
+          type: integer
+          description: Timestamp, when Payment is processed
+        challanNumber:
+          type: string
+          description: Challan Number recieved from JIT PD response
+          minLength: 2
+          maxLength: 64
+        challanDate:
+          type: string
+          description: Challan Date recieved from JIT PD response
+          minLength: 2
+          maxLength: 64
+        paymentStatus:
+          type: string
+          description: Beneficiary payment status
+          enum:
+            - Payment Pending
+            - Payment Initiated
+            - Payment In Process
+            - Payment Successful
+            - Payment Failed
+        benfLineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/BenfLineItem'
+            
+        additionalDetails:
+          type: object
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+      required:
+        - tenantId
+        - referenceId
+        - amount
+    
+    BenfLineItem:
+      type: object
+      properties:
+        id: 
+          type: string
+          format: uuid
+          description: Beneficiary Lineitem ID
+          readOnly: true
+          minLength: 2
+          maxLength: 64
+        beneficiaryId:
+          type: string
+          format: uuid
+          description: Reference beneficiary ID
+          readOnly: true
+          minLength: 2
+          maxLength: 64
+        lineItemId:
+          type: string
+          format: uuid
+          description: Bill Line Item ID
+          readOnly: true
+          minLength: 2
+          maxLength: 64
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+    
+    PICriteria:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          description: The tenant ID of the system
+          example: od.jatni, od.dhenkanal
+          minLength: 2
+          maxLength: 64
+        piNumber:
+          type: string
+          description: JIT bill number
+          minLength: 2
+          maxLength: 64
+        piNumbers:
+          type: array
+          items:
+            type: string
+            description: JIT bill number
+            minLength: 2
+            maxLength: 64
+        parentPiNumber:
+          type: string
+          description: JIT bill number of last JIT bill number
+          minLength: 2
+          maxLength: 64
+        muktaReferenceId:
+          type: string
+          description: MUKTA payment number
+          minLength: 2
+          maxLength: 64
+        piType:
+          type: string
+          description: Type of PI
+          enum:
+            - REVISED
+            - ORIGINAL
+          minLength: 2
+          maxLength: 64
+        piStatus:
+          type: string
+          description: Status of PI
+          enum:
+            - INITIATED
+            - FAILED
+            - PARTIAL
+            - APPROVED
+            - IN PROCESS
+            - COMPLETED
+            - SUCCESSFUL
+      required:
+        - tenantId
+    PISearchRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo
+        searchCriteria:
+          $ref: '#/components/schemas/PICriteria'
+    PISearchResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        paymentInstructions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentInst'
+    
+    PICreateRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo
+        referenceId:
+          type: string
+          description: The payment advice ID for which a PI is to be created
+        payment:
+          $ref: '#/components/schemas/Payment'
+        parentPI:
+          type: string
+          description: Parent PI number in case of revised PIs. All fields will be copied from parent PI
+        beneficiaries:
+          type: array
+          description: A list of beneficiaries for whom the revised PI needs to be posted. 
+          items:
+            $ref: '#/components/schemas/Beneficiary'
+      anyOf:
+        - required: [referenceId]
+        - required: [payment]
+        - required: [parentPI, beneficiaries]
+    PICreateResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        paymentInstruction:
+          $ref: '#/components/schemas/PaymentInst'
+    
+    FundsSearchRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo
+        searchCriteria:
+          $ref: '#/components/schemas/FundsCriteria'
+          
+    FundsSearchResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        paymentInstructions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Fund'
+    
+    FundsCriteria:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+            description: sanction ids
+        tenantId:
+          type: string
+          description: The tenant ID of the system
+          example: od.jatni, od.dhenkanal
+          minLength: 2
+          maxLength: 64
+        hoaCode:
+          type: string
+          description: Head of accounts code from MDMS
+          minLength: 2
+          maxLength: 128
+        ddoCode:
+          type: string
+          description: DDO Codes from MDMS
+          minLength: 2
+          maxLength: 64
+        masterAllotmentId:
+          type: string
+          description: Unique allotment ID from JIT
+          minLength: 1
+          maxLength: 64
+      required:
+        - tenantId
+    
+    Fund:
+      type: object
+      properties:
+        id: 
+          type: string
+          format: uuid
+          readOnly: true
+          minLength: 2
+          maxLength: 64
+        tenantId:
+          type: string
+          description: The tenant ID of the system
+          example: od.jatni, od.dhenkanal
+          minLength: 2
+          maxLength: 64
+        hoaCode:
+          type: string
+          description: The HOA code under which this PI was posted. HOA details defined in MDMS.
+          minLength: 2
+          maxLength: 64
+        ddoCode:
+          type: string
+          description: The HOA code under which this PI was posted. HOA details defined in MDMS.
+          minLength: 2
+          maxLength: 64
+        masterAllotmentId:
+          type: string
+          description: The HOA code under which this PI was posted. HOA details defined in MDMS.
+          minLength: 2
+          maxLength: 64
+        sanctionedAmount:
+          type: number
+          description: Refers to the special spending unit generating this PI. Code defined in master data along with other SSU details
+        financialYear:
+          type: string
+          description: The HOA code under which this PI was posted. HOA details defined in MDMS.
+          minLength: 2
+          maxLength: 64
+        availableAmount:
+          type: number
+          description: Refers to the special spending unit generating this PI. Code defined in master data along with other SSU details
+        fundsSummary:
+          type: object
+          $ref: '#/components/schemas/FundSymmary'
+        allotmentDetails:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Allotment'
+        additionalDetails:
+          type: object
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+    
+    Allotment:
+      type: object
+      properties:
+        id: 
+          type: string
+          format: uuid
+          readOnly: true
+          minLength: 2
+          maxLength: 64
+        tenantId:
+          type: string
+          description: The tenant ID of the system
+          example: od.jatni, od.dhenkanal
+          minLength: 2
+          maxLength: 64
+        sanctionId:
+          type: string
+          format: uuid
+          description: Parent uui id of Fund
+          minLength: 2
+          maxLength: 64
+        allotmentSerialNo:
+          type: string
+          description: Refers to the special spending unit generating this PI. Code defined in master data along with other SSU details
+          minLength: 2
+          maxLength: 64
+        decimalAllottedAmount:
+          type: string
+          description: Formatted payment instruction number. Format specified in MDMS. Includes tenant code to preserve global uniqueness.
+          minLength: 2
+          maxLength: 64
+        decimalSanctionBalance:
+          type: string
+          description: Parent payment instruction number. Filled in case of revised payments.
+          minLength: 2
+          maxLength: 64
+        allotmentDateTimeStamp:
+          type: number
+          description: The date in epoch time when the PI was posted
+        additionalDetails:
+          type: object
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+       
+    
+    FundSymmary:
+      type: object
+      properties:
+        id: 
+          type: string
+          format: uuid
+          readOnly: true
+          minLength: 2
+          maxLength: 64
+        tenantId:
+          type: string
+          description: The tenant ID of the system
+          example: od.jatni, od.dhenkanal
+          minLength: 2
+          maxLength: 64
+        sanctionId:
+          type: string
+          format: uuid
+          description: Parent uui id of Fund
+          minLength: 2
+          maxLength: 64
+        allottedAmount:
+          type: number
+          description: Total alloted amount for a sanciton, amount will increase when additional allotment recieved
+        availableAmount:
+          type: number
+          description: Available amount for a saction, it keep decreasing when PI created
+        additionalDetails:
+          type: object
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+
+    SchedularRequest:
+      type: object
+      properties:
+        requestInfo:
+            $ref: >-
+              https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo
+    
+    SchedularResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+    

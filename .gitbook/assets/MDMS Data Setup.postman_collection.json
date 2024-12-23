@@ -1,0 +1,689 @@
+{
+	"info": {
+		"_postman_id": "ea07e084-97b1-43d0-b9fc-b06a5a832508",
+		"name": "MDMS Data Setup",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21170203"
+	},
+	"item": [
+		{
+			"name": "Organisation",
+			"item": [
+				{
+					"name": "OrgFunctionClass",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"ff147ae5-6b0f-4b08-9627-a4549b39fb88\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": null,\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n        \"id\": \"ebb3de80-2d91-4596-8363-278b5cb479ef\",\n        \"tenantId\": \"pg\",\n        \"code\": \"common-masters.OrgFunctionClass\",\n        \"description\": \"common-masters.OrgFunctionClass\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"Generated schema for Root\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"code\",\n                \"description\",\n                \"active\",\n                \"effectiveFrom\"\n            ],\n            \"x-unique\": [\n                \"code\"\n            ],\n            \"properties\": {\n                \"code\": {\n                    \"type\": \"string\"\n                },\n                \"active\": {\n                    \"type\": \"boolean\"\n                },\n                \"description\": {\n                    \"type\": \"string\"\n                },\n                \"effectiveTo\": {\n                    \"type\": \"number\"\n                },\n                \"effectiveFrom\": {\n                    \"type\": \"number\"\n                }\n            },\n            \"x-ui-schema\": {\n                \"ui:order\": [\n                    \"code\",\n                    \"description\",\n                    \"active\",\n                    \"effectiveFrom\",\n                    \"effectiveTo\",\n                    \"*\"\n                ],\n                \"effectiveTo\": {\n                    \"format\": [\n                        \"preprocess\",\n                        \"postprocess\"\n                    ],\n                    \"ui:widget\": \"date\",\n                    \"formatType\": \"EPOC\"\n                },\n                \"effectiveFrom\": {\n                    \"format\": [\n                        \"preprocess\",\n                        \"postprocess\"\n                    ],\n                    \"ui:widget\": \"date\",\n                    \"formatType\": \"EPOC\"\n                }\n            },\n            \"x-ref-schema\": []\n        },\n        \"isActive\": true,\n        \"auditDetails\": {\n            \"createdBy\": null,\n            \"lastModifiedBy\": null,\n            \"createdTime\": 1725360004423,\n            \"lastModifiedTime\": 1725360004423\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OrgType",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"ff147ae5-6b0f-4b08-9627-a4549b39fb88\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": null,\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\":  {\n           \"id\": \"d7962f0b-8b28-494b-8692-157552c787ea\",\n           \"tenantId\": \"pg\",\n           \"code\": \"common-masters.OrgType\",\n           \"description\": \"common-masters.OrgType\",\n           \"definition\": {\n               \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n               \"title\": \"Generated schema for Root\",\n               \"type\": \"object\",\n               \"x-unique\": [\n                   \"code\"\n               ],\n               \"properties\": {\n                   \"code\": {\n                       \"type\": \"string\"\n                   },\n                   \"description\": {\n                       \"type\": \"string\"\n                   },\n                   \"parent\": {\n                       \"type\": \"string\"\n                   },\n                   \"active\": {\n                       \"type\": \"boolean\"\n                   },\n                   \"effectiveFrom\": {\n                       \"type\": \"number\"\n                   },\n                   \"effectiveTo\": {\n                       \"type\": \"number\"\n                   }\n               },\n               \"required\": [\n                   \"code\",\n                   \"description\",\n                   \"parent\",\n                   \"active\",\n                   \"effectiveFrom\"\n               ],\n               \"x-ref-schema\": [],\n               \"x-ui-schema\": {\n                   \"effectiveFrom\": {\n                       \"format\": [\n                           \"preprocess\",\n                           \"postprocess\"\n                       ],\n                       \"ui:widget\": \"date\",\n                       \"formatType\": \"EPOC\"\n                   },\n                   \"effectiveTo\": {\n                       \"format\": [\n                           \"preprocess\",\n                           \"postprocess\"\n                       ],\n                       \"ui:widget\": \"date\",\n                       \"formatType\": \"EPOC\"\n                   },\n                   \"ui:order\": [\n                       \"code\",\n                       \"description\",\n                       \"parent\",\n                       \"active\",\n                       \"effectiveFrom\",\n                       \"effectiveTo\",\n                       \"*\"\n                   ]\n               }\n           },\n           \"isActive\": true,\n           \"auditDetails\": {\n               \"createdBy\": null,\n               \"lastModifiedBy\": null,\n               \"createdTime\": 1723625750979,\n               \"lastModifiedTime\": 1723625750979\n           }\n       }\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OrgFunctionCategory",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"ff147ae5-6b0f-4b08-9627-a4549b39fb88\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": null,\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\":  {\n           \"id\": \"526fc699-b453-49ba-9b88-a23d54389678\",\n           \"tenantId\": \"pg\",\n           \"code\": \"common-masters.OrgFunctionCategory\",\n           \"description\": \"common-masters.OrgFunctionCategory\",\n           \"definition\": {\n               \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n               \"title\": \"Generated schema for Root\",\n               \"type\": \"object\",\n               \"x-unique\": [\n                   \"code\"\n               ],\n               \"properties\": {\n                   \"code\": {\n                       \"type\": \"string\"\n                   },\n                   \"description\": {\n                       \"type\": \"string\"\n                   },\n                   \"active\": {\n                       \"type\": \"boolean\"\n                   },\n                   \"effectiveFrom\": {\n                       \"type\": \"number\"\n                   },\n                   \"effectiveTo\": {\n                       \"type\": \"number\"\n                   }\n               },\n               \"required\": [\n                   \"code\",\n                   \"description\",\n                   \"active\",\n                   \"effectiveFrom\"\n               ],\n               \"x-ref-schema\": [],\n               \"x-ui-schema\": {\n                   \"effectiveFrom\": {\n                       \"format\": [\n                           \"preprocess\",\n                           \"postprocess\"\n                       ],\n                       \"ui:widget\": \"date\",\n                       \"formatType\": \"EPOC\"\n                   },\n                   \"effectiveTo\": {\n                       \"format\": [\n                           \"preprocess\",\n                           \"postprocess\"\n                       ],\n                       \"ui:widget\": \"date\",\n                       \"formatType\": \"EPOC\"\n                   },\n                   \"ui:order\": [\n                       \"code\",\n                       \"description\",\n                       \"active\",\n                       \"effectiveFrom\",\n                       \"effectiveTo\",\n                       \"*\"\n                   ]\n               }\n           },\n           \"isActive\": true,\n           \"auditDetails\": {\n               \"createdBy\": null,\n               \"lastModifiedBy\": null,\n               \"createdTime\": 1723626318736,\n               \"lastModifiedTime\": 1723626318736\n           }\n       }\n\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OrgTaxIdentifier",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"ff147ae5-6b0f-4b08-9627-a4549b39fb88\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": null,\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\":  {\n       \"tenantId\": \"pg\",\n       \"code\": \"common-masters.OrgTaxIdentifier\",\n       \"description\": \"common-masters.OrgTaxIdentifier\",\n       \"definition\": {\n           \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n           \"title\": \"Generated schema for Root\",\n           \"type\": \"object\",\n           \"x-unique\": [\n               \"code\"\n           ],\n           \"properties\": {\n               \"code\": {\n                   \"type\": \"string\"\n               },\n               \"description\": {\n                   \"type\": \"string\"\n               },\n               \"active\": {\n                   \"type\": \"boolean\"\n               },\n               \"effectiveFrom\": {\n                   \"type\": \"number\"\n               },\n               \"effectiveTo\": {\n                   \"type\": \"number\"\n               }\n           },\n           \"required\": [\n               \"code\",\n               \"description\",\n               \"active\",\n               \"effectiveFrom\"\n           ],\n           \"x-ref-schema\": [],\n           \"x-ui-schema\": {\n               \"effectiveFrom\": {\n                   \"format\": [\n                       \"preprocess\",\n                       \"postprocess\"\n                   ],\n                   \"ui:widget\": \"date\",\n                   \"formatType\": \"EPOC\"\n               },\n               \"effectiveTo\": {\n                   \"format\": [\n                       \"preprocess\",\n                       \"postprocess\"\n                   ],\n                   \"ui:widget\": \"date\",\n                   \"formatType\": \"EPOC\"\n               },\n               \"ui:order\": [\n                   \"code\",\n                   \"description\",\n                   \"active\",\n                   \"effectiveFrom\",\n                   \"effectiveTo\",\n                   \"*\"\n               ]\n           }\n       }\n   }\n\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WMS",
+			"item": [
+				{
+					"name": "SearchQueryConfiguration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"ff147ae5-6b0f-4b08-9627-a4549b39fb88\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": null,\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n       \"id\": \"054ab6ab-ad69-4c95-9b9f-a5455e77c08c\",\n       \"tenantId\": \"pg\",\n       \"code\": \"SEARCH.SearchQueryConfiguration\",\n       \"description\": \"SEARCH.SearchQueryConfiguration\",\n       \"definition\": {\n           \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n           \"title\": \"SEARCH.SearchQueryConfiguration\",\n           \"type\": \"object\",\n           \"properties\": {\n               \"module\": {\n                   \"type\": \"string\"\n               },\n               \"index\": {\n                   \"type\": \"string\"\n               },\n               \"allowedSearchCriteria\": {\n                   \"type\": \"array\",\n                   \"items\": {\n                       \"type\": \"object\",\n                       \"properties\": {\n                           \"name\": {\n                               \"type\": \"string\"\n                           },\n                           \"path\": {\n                               \"type\": \"string\"\n                           },\n                           \"isMandatory\": {\n                               \"type\": \"boolean\"\n                           },\n                           \"operator\": {\n                               \"type\": \"string\"\n                           }\n                       },\n                       \"required\": [\n                           \"name\",\n                           \"path\",\n                           \"isMandatory\" \n                       ]\n                   }\n               },\n               \"sortBy\": {\n                   \"type\": \"object\",\n                   \"properties\": {\n                       \"path\": {\n                           \"type\": \"string\"\n                       },\n                       \"defaultOrder\": {\n                           \"type\": \"string\"\n                       }\n                   },\n                   \"required\": [\n                       \"path\",\n                       \"defaultOrder\"\n                   ]\n               },\n               \"sourceFilterPathList\": {\n                   \"type\": \"array\",\n                   \"items\": {\n                       \"type\": \"string\"\n                   }\n               }\n           },\n           \"required\": [\n               \"module\",\n               \"index\",\n               \"allowedSearchCriteria\",\n               \"sortBy\",\n               \"sourceFilterPathList\"\n           ],\n           \"x-unique\": [\n               \"module\",\n               \"index\"\n           ],\n           \"x-ui-schema\": {\n               \"ui:order\": [\n                   \"module\",\n                   \"index\",\n                   \"allowedSearchCriteria\",\n                   \"sortBy\",\n                   \"sourceFilterPathList\"\n               ]\n           }\n       },\n       \"isActive\": true,\n       \"auditDetails\": {\n           \"createdBy\": null,\n           \"lastModifiedBy\": null,\n           \"createdTime\": 1724739600695,\n           \"lastModifiedTime\": 1724739600695\n       }\n   }\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Estimate",
+			"item": [
+				{
+					"name": "Department",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n            \"id\": \"137a909b-fa31-42f7-91c5-06cbc31c4e28\",\n            \"tenantId\": \"pg\",\n            \"code\": \"common-masters.Department\",\n            \"description\": \"common-masters.Department\",\n            \"definition\": {\n                \"type\": \"object\",\n                \"title\": \"common-masters.Department\",\n                \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n                \"required\": [\n                    \"code\",\n                    \"id\",\n                    \"name\"\n                ],\n                \"x-unique\": [\n                    \"code\",\n                    \"id\"\n                ],\n                \"properties\": {\n                    \"id\": {\n                        \"type\": \"integer\"\n                    },\n                    \"code\": {\n                        \"type\": \"string\",\n                        \"pattern\": \"^[A-Za-z]+$\"\n                    },\n                    \"name\": {\n                        \"type\": \"string\",\n                        \"minLength\": 3\n                    },\n                    \"active\": {\n                        \"type\": \"boolean\"\n                    }\n                },\n                \"x-ref-schema\": []\n            },\n            \"isActive\": true,\n            \"auditDetails\": {\n                \"createdBy\": null,\n                \"lastModifiedBy\": null,\n                \"createdTime\": 1692771721706,\n                \"lastModifiedTime\": 1692771721706\n            }\n        }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n           \"id\": \"cd4570e5-80cd-449b-98a9-683a91e25274\",\n           \"tenantId\": \"pg\",\n           \"code\": \"works.Category\",\n           \"description\": \"works.Category\",\n           \"definition\": {\n               \"type\": \"object\",\n               \"title\": \"works.Category\",\n               \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n               \"required\": [\n                   \"id\",\n                   \"name\",\n                   \"code\",\n                   \"active\"\n               ],\n               \"x-unique\": [\n                   \"id\",\n                   \"code\"\n               ],\n               \"properties\": {\n                   \"id\": {\n                       \"type\": \"integer\"\n                   },\n                   \"code\": {\n                       \"type\": \"string\"\n                   },\n                   \"name\": {\n                       \"type\": \"string\"\n                   },\n                   \"active\": {\n                       \"type\": \"boolean\"\n                   }\n               },\n               \"x-ui-schema\": {\n                   \"ui:order\": [\n                       \"id\",\n                       \"code\",\n                       \"name\",\n                       \"active\",\n                       \"*\"\n                   ]\n               }\n           },\n           \"isActive\": true,\n           \"auditDetails\": {\n               \"createdBy\": null,\n               \"lastModifiedBy\": null,\n               \"createdTime\": 1715859887021,\n               \"lastModifiedTime\": 1715859887021\n           }\n       }\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "MusterRoll",
+			"item": [
+				{
+					"name": "MusterRoll",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n           \"id\": \"16d290ca-d4c9-4db8-aa77-25d14f4b0086\",\n           \"tenantId\": \"pg\",\n           \"code\": \"common-masters.MusterRoll\",\n           \"description\": \"common-masters.MusterRoll\",\n           \"definition\": {\n               \"type\": \"object\",\n               \"title\": \"common-masters.MusterRoll\",\n               \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n               \"required\": [\n                   \"code\",\n                   \"value\"\n               ],\n               \"x-unique\": [\n                   \"code\"\n               ],\n               \"properties\": {\n                   \"code\": {\n                       \"type\": \"string\"\n                   },\n                   \"value\": {\n                       \"type\": \"string\"\n                   }\n               },\n               \"x-ui-schema\": {\n                   \"ui:order\": [\n                       \"code\",\n                       \"value\"\n                   ]\n               },\n               \"auditDetails\": {\n                   \"createdBy\": null,\n                   \"createdTime\": 1697098069220,\n                   \"lastModifiedBy\": null,\n                   \"lastModifiedTime\": 1697098069220\n               }\n           },\n           \"isActive\": true,\n           \"auditDetails\": {\n               \"createdBy\": null,\n               \"lastModifiedBy\": null,\n               \"createdTime\": 1725430693251,\n               \"lastModifiedTime\": 1725430693251\n           }\n       }\n\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contract",
+			"item": [
+				{
+					"name": "CboRoles",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n        \"id\": \"baece49c-a7fa-49e7-bddd-d19ba71b2b89\",\n        \"tenantId\": \"pg\",\n        \"code\": \"works.CBORoles\",\n        \"description\": \"works.CBORoles\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"works.CBORoles\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"code\"\n            ],\n            \"x-unique\": [\n                \"code\"\n            ],\n            \"properties\": {\n                \"code\": {\n                    \"type\": \"string\"\n                },\n                \"name\": {\n                    \"type\": \"string\"\n                },\n                \"disable\": {\n                    \"type\": \"boolean\"\n                },\n                \"amount\": {\n                    \"type\": \"number\"\n                },\n                \"description\": {\n                    \"type\": \"string\"\n                },\n                \"effectiveFrom\": {\n                    \"type\": \"integer\",\n                    \"format\": \"epoch\"\n                },\n                \"effectiveTo\": {\n                    \"anyOf\": [\n                        {\n                            \"type\": \"integer\",\n                            \"format\": \"epoch\"\n                        },\n                        {\n                            \"type\": \"string\",\n                            \"pattern\": \"^$\"\n                        }\n                    ]\n                },\n                \"active\": {\n                    \"type\": \"boolean\"\n                }\n            }\n        },\n        \"x-ui-schema\": {\n            \"effectiveTo\": {\n                \"format\": [\n                    \"preprocess\",\n                    \"postprocess\"\n                ],\n                \"ui:widget\": \"date\",\n                \"formatType\": \"EPOC\"\n            },\n            \"effectiveFrom\": {\n                \"format\": [\n                    \"preprocess\",\n                    \"postprocess\"\n                ],\n                \"ui:widget\": \"date\",\n                \"formatType\": \"EPOC\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8094/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8094",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OicRoles",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n        \"id\": \"baece49c-a7fa-49e7-bddd-d19ba71b2b89\",\n        \"tenantId\": \"pg\",\n        \"code\": \"works.OICRoles\",\n        \"description\": \"works.OICRoles\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"works.OICRoles\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"code\"\n            ],\n            \"x-unique\": [\n                \"code\"\n            ],\n            \"properties\": {\n                \"code\": {\n                    \"type\": \"string\"\n                },\n                \"name\": {\n                    \"type\": \"string\"\n                },\n                \"description\": {\n                    \"type\": \"string\"\n                },\n                \"active\": {\n                    \"type\": \"boolean\"\n                }\n            }\n        },\n        \"x-ui-schema\": {\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8094/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8094",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ContractType",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\":  {\n        \"id\": \"baece49c-a7fa-49e7-bddd-d19ba71b2b89\",\n        \"tenantId\": \"pg\",\n        \"code\": \"works.ContractType\",\n        \"description\": \"works.ContractType\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"works.ContractType\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"code\",\n                \"name\",\n                \"description\",\n                \"createRegister\",\n                \"active\"\n            ],\n            \"x-unique\": [\n                \"code\"\n            ],\n            \"properties\": {\n                \"code\": {\n                    \"type\": \"string\"\n                },\n                \"name\": {\n                    \"type\": \"string\"\n                },\n                \"description\": {\n                    \"type\": \"string\"\n                },\n                \"createRegister\": {\n                    \"type\": \"boolean\"\n                },\n                \"active\": {\n                    \"type\": \"boolean\"\n                }\n            }\n        },\n        \"x-ui-schema\": {}\n    }\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://unified-qa.digit.org/mdms-v2/schema/v1/_create",
+							"protocol": "https",
+							"host": [
+								"unified-qa",
+								"digit",
+								"org"
+							],
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Overheads",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n   \"SchemaDefinition\": {\n        \"id\": \"baece49c-a7fa-49e7-bddd-d19ba71b2b89\",\n        \"tenantId\": \"pg\",\n        \"code\": \"works.Overheads\",\n        \"description\": \"works.Overheads\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"works.Overheads\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"id\",\n                \"code\"\n            ],\n            \"x-unique\": [\n                \"id\",\n                \"code\"\n            ],\n            \"properties\": {\n                \"id\": {\n                    \"type\": \"string\"\n                },\n                \"code\": {\n                    \"type\": \"string\"\n                },\n                \"description\": {\n                    \"type\": \"string\"\n                },\n                \"active\": {\n                    \"type\": \"boolean\"\n                },\n                \"isAutoCalculated\": {\n                    \"type\": \"boolean\"\n                },\n                \"isWorkOrderValue\": {\n                    \"type\": \"boolean\"\n                },\n                \"type\": {\n                    \"type\": \"string\"\n                },\n                \"value\": {\n                    \"type\": \"string\"\n                },\n                \"effectiveFrom\": {\n                    \"type\": \"integer\"\n                },\n                \"effectiveTo\": {\n                    \"anyOf\": [\n                        {\n                            \"type\": \"integer\"\n                        },\n                        {\n                            \"type\": \"null\"\n                        }\n                    ]\n                }\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8094/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8094",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Expense-Calculator",
+			"item": [
+				{
+					"name": "ApplicableCharges",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n        \"id\": \"baece49c-a7fa-49e7-bddd-d19ba71b2b89\",\n        \"tenantId\": \"pg\",\n        \"code\": \"expense.ApplicableCharges\",\n        \"description\": \"expense.ApplicableCharges\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"expense.ApplicableCharges\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"id\",\n                \"code\"\n            ],\n            \"x-unique\": [\n                \"id\",\n                \"code\"\n            ],\n            \"properties\": {\n                    \"id\": {\n                        \"type\": \"string\"\n                    },\n                    \"code\": {\n                        \"type\": \"string\"\n                    },\n                    \"service\": {\n                        \"type\": \"string\"\n                    },\n                    \"description\": {\n                        \"type\": \"string\"\n                    },\n                    \"active\": {\n                        \"type\": \"boolean\"\n                    },\n                    \"calculationType\": {\n                        \"type\": \"string\"\n                    },\n                    \"value\": {\n                        \"oneOf\": [\n                            {\"type\": \"string\"},\n                            {\"type\": \"null\"}\n                        ]\n                    },\n                    \"effectiveFrom\": {\n                        \"type\": \"integer\"\n                    },\n                    \"effectiveTo\": {\n                        \"oneOf\": [\n                            {\"type\": \"integer\"},\n                            {\"type\": \"null\"}\n                        ]\n                    }\n            }\n        },\n        \"isActive\": true,\n        \"auditDetails\": {\n            \"createdBy\": null,\n            \"lastModifiedBy\": null,\n            \"createdTime\": 1697098069220,\n            \"lastModifiedTime\": 1697098069220\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8094/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8094",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BusinessService",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n        \"id\": \"baece49c-a7fa-49e7-bddd-d19ba71b2b89\",\n        \"tenantId\": \"pg\",\n        \"code\": \"expense.BusinessService\",\n        \"description\": \"expense.BusinessService\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"expense.BusinessService\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"businessService\",\n                \"code\"\n            ],\n            \"x-unique\": [\n                \"businessService\",\n                \"code\"\n            ],\n            \"properties\": {\n                    \"businessService\": {\n                        \"type\": \"string\"\n                    },\n                    \"code\": {\n                        \"type\": \"string\"\n                    }\n                }\n        },\n        \"isActive\": true,\n        \"auditDetails\": {\n            \"createdBy\": null,\n            \"lastModifiedBy\": null,\n            \"createdTime\": 1697098069220,\n            \"lastModifiedTime\": 1697098069220\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8094/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8094",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HeadCodes",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n        \"id\": \"baece49c-a7fa-49e7-bddd-d19ba71b2b89\",\n        \"tenantId\": \"pg\",\n        \"code\": \"expense.HeadCodes\",\n        \"description\": \"expense.HeadCodes\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"expense.HeadCodes\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"id\",\n                \"code\"\n            ],\n            \"x-unique\": [\n                \"id\",\n                \"code\"\n            ],\n            \"properties\": {\n                \"id\": {\n                    \"type\": \"string\"\n                },\n                \"code\": {\n                    \"type\": \"string\"\n                },\n                \"description\": {\n                    \"type\": \"string\"\n                },\n                \"service\": {\n                    \"type\": \"string\"\n                },\n                \"category\": {\n                    \"type\": \"string\"\n                },\n                \"active\": {\n                    \"type\": \"boolean\"\n                },\n                \"effectiveFrom\": {\n                    \"type\": \"integer\"\n                },\n                \"effectiveTo\": {\n                    \"oneOf\": [\n                        {\n                            \"type\": \"integer\"\n                        },\n                        {\n                            \"type\": \"null\"\n                        }\n                    ]\n                }\n            },\n            \"isActive\": true,\n            \"auditDetails\": {\n                \"createdBy\": null,\n                \"lastModifiedBy\": null,\n                \"createdTime\": 1697098069220,\n                \"lastModifiedTime\": 1697098069220\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8094/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8094",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LabourCharges",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n        \"id\": \"baece49c-a7fa-49e7-bddd-d19ba71b2b89\",\n        \"tenantId\": \"pg\",\n        \"code\": \"expense.LabourCharges\",\n        \"description\": \"expense.LabourCharges\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"expense.LabourCharges\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"id\",\n                \"code\"\n            ],\n            \"x-unique\": [\n                \"code\"\n            ],\n            \"properties\":{\n                    \"id\": {\n                        \"oneOf\": [\n                            {\"type\": \"string\"},\n                            {\"type\": \"integer\"}\n                        ]\n                    },\n                    \"service\": {\n                        \"type\": \"string\"\n                    },\n                    \"code\": {\n                        \"type\": \"string\"\n                    },\n                    \"gender\": {\n                        \"type\": \"string\"\n                    },\n                    \"active\": {\n                        \"type\": \"boolean\"\n                    },\n                    \"amount\": {\n                        \"type\": \"number\"\n                    },\n                    \"unit\": {\n                        \"type\": \"string\"\n                    },\n                    \"effectiveFrom\": {\n                        \"type\": \"integer\"\n                    },\n                    \"effectiveTo\": {\n                        \"oneOf\": [\n                            {\"type\": \"integer\"},\n                            {\"type\": \"null\"}\n                        ]\n                    }\n                },\n            \"isActive\": true,\n            \"auditDetails\": {\n                \"createdBy\": null,\n                \"lastModifiedBy\": null,\n                \"createdTime\": 1697098069220,\n                \"lastModifiedTime\": 1697098069220\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8094/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8094",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PayerList",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"d350bcb5-30d8-4fa3-a6c6-718bd9223a06\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n        \"id\": \"baece49c-a7fa-49e7-bddd-d19ba71b2b89\",\n        \"tenantId\": \"pg\",\n        \"code\": \"expense.PayerList\",\n        \"description\": \"expense.PayerList\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"expense.PayerList\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"id\",\n                \"code\"\n            ],\n            \"x-unique\": [\n                \"id\",\n                \"code\"\n            ],\n            \"properties\":{\n                    \"id\": {\n                        \"type\": \"string\"\n                    },\n                    \"tenantId\": {\n                        \"type\": \"string\"\n                    },\n                    \"code\": {\n                        \"type\": \"string\"\n                    },\n                    \"type\": {\n                        \"type\": \"string\"\n                    },\n                    \"active\": {\n                        \"type\": \"boolean\"\n                    }\n                },\n            \"isActive\": true,\n            \"auditDetails\": {\n                \"createdBy\": null,\n                \"lastModifiedBy\": null,\n                \"createdTime\": 1697098069220,\n                \"lastModifiedTime\": 1697098069220\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8094/mdms-v2/schema/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8094",
+							"path": [
+								"mdms-v2",
+								"schema",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tenants",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": \"jagan\",\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null\n        }\n    },\n    \"SchemaDefinition\": {\n        \"id\": \"f17991fa-87a5-45f7-9b47-8e22d68501a3\",\n        \"tenantId\": \"pg\",\n        \"code\": \"tenant.tenants\",\n        \"description\": \"tenant.tenants\",\n        \"definition\": {\n            \"type\": \"object\",\n            \"title\": \"tenant.tenants\",\n            \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n            \"required\": [\n                \"code\",\n                \"name\",\n                \"description\",\n                \"type\",\n                \"city\",\n                \"contactNumber\"\n            ],\n            \"x-unique\": [\n                \"code\"\n            ],\n            \"properties\": {\n                \"city\": {\n                    \"type\": \"object\",\n                    \"required\": [\n                        \"name\",\n                        \"districtCode\",\n                        \"districtTenantCode\",\n                        \"ulbGrade\",\n                        \"longitude\",\n                        \"latitude\",\n                        \"code\",\n                        \"ddrName\"\n                    ],\n                    \"properties\": {\n                        \"code\": {\n                            \"type\": \"string\"\n                        },\n                        \"name\": {\n                            \"type\": \"string\"\n                        },\n                        \"captcha\": {\n                            \"type\": \"string\"\n                        },\n                        \"ddrName\": {\n                            \"type\": \"string\"\n                        },\n                        \"ulbType\": {\n                            \"enum\": [\n                                \"Municipal Council\",\n                                \"Municipal Corporation\",\n                                \"Others\"\n                            ],\n                            \"type\": \"string\"\n                        },\n                        \"latitude\": {\n                            \"type\": \"number\"\n                        },\n                        \"ulbGrade\": {\n                            \"enum\": [\n                                \"MC Class I\",\n                                \"MC Class II\",\n                                \"State\",\n                                \"Others\"\n                            ],\n                            \"type\": \"string\"\n                        },\n                        \"localName\": {\n                            \"type\": \"string\"\n                        },\n                        \"longitude\": {\n                            \"type\": \"number\"\n                        },\n                        \"regionName\": {\n                            \"type\": \"string\"\n                        },\n                        \"districtCode\": {\n                            \"type\": \"string\"\n                        },\n                        \"districtName\": {\n                            \"type\": \"string\"\n                        },\n                        \"shapeFileLocation\": {\n                            \"type\": \"string\"\n                        },\n                        \"districtTenantCode\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                },\n                \"code\": {\n                    \"type\": \"string\"\n                },\n                \"name\": {\n                    \"type\": \"string\"\n                },\n                \"type\": {\n                    \"type\": \"string\",\n                    \"default\": \"CITY\"\n                },\n                \"logoId\": {\n                    \"type\": \"string\"\n                },\n                \"address\": {\n                    \"type\": \"string\"\n                },\n                \"emailId\": {\n                    \"type\": \"string\"\n                },\n                \"imageId\": {\n                    \"type\": \"string\"\n                },\n                \"pincode\": {\n                    \"type\": \"array\",\n                    \"items\": {\n                        \"type\": \"number\"\n                    }\n                },\n                \"domainUrl\": {\n                    \"type\": \"string\"\n                },\n                \"pdfHeader\": {\n                    \"type\": \"string\"\n                },\n                \"twitterUrl\": {\n                    \"type\": \"string\"\n                },\n                \"description\": {\n                    \"type\": \"string\"\n                },\n                \"facebookUrl\": {\n                    \"type\": \"string\"\n                },\n                \"OfficeTimings\": {\n                    \"type\": \"object\",\n                    \"required\": [\n                        \"Mon - Fri\"\n                    ],\n                    \"properties\": {\n                        \"Mon - Fri\": {\n                            \"type\": \"string\",\n                            \"default\": \"9.00 AM - 6.00 PM\"\n                        }\n                    }\n                },\n                \"contactNumber\": {\n                    \"type\": \"string\"\n                },\n                \"pdfContactDetails\": {\n                    \"type\": \"string\"\n                }\n            },\n            \"x-ref-schema\": []\n        },\n        \"isActive\": true,\n        \"auditDetails\": {\n            \"createdBy\": null,\n            \"lastModifiedBy\": null,\n            \"createdTime\": 1697606783768,\n            \"lastModifiedTime\": 1697606783768\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/mdms-v2/schema/v1/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"mdms-v2",
+						"schema",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

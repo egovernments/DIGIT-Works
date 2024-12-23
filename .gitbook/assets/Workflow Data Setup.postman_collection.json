@@ -1,0 +1,262 @@
+{
+	"info": {
+		"_postman_id": "6efdeb2b-8071-4a08-85cd-8f0ff7de6bcd",
+		"name": "Workflow Data Setup",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21170203"
+	},
+	"item": [
+		{
+			"name": "Estimate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n      \"apiId\": \"estimate-service-mukta\",\n      \"action\": \"\",\n      \"did\": 1,\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"requesterId\": \"\",\n      \"ts\": 1513579888683,\n      \"ver\": \"1.0.0\",\n      \"authToken\": \"{{token}}\",\n      \"userInfo\": {\n          \"uuid\": \"{{userId}}\"\n      }\n  },\n    \"BusinessServices\": [\n    {\n      \"tenantId\": \"pg\",\n      \"businessService\": \"ESTIMATE\",\n      \"business\": \"estimate-service\",\n      \"businessServiceSla\": 432000000,\n      \"states\": [\n\t  {\n          \"sla\": null,\n          \"state\": null,\n          \"applicationStatus\": null,\n          \"docUploadRequired\": false,\n          \"isStartState\": true,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"SUBMIT\",\n              \"nextState\": \"PENDINGFORVERIFICATION\",\n              \"roles\": [\n                \"ESTIMATE_CREATOR\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 172800000,\n          \"state\": \"PENDINGFORVERIFICATION\",\n          \"applicationStatus\": \"INWORKFLOW\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"VERIFYANDFORWARD\",\n              \"nextState\": \"PENDINGFORTECHNICALSANCTION\",\n              \"roles\": [\n                \"ESTIMATE_VERIFIER\"\n              ]\n            },\n            {\n              \"action\": \"SENDBACK\",\n              \"nextState\": \"PENDINGFORCORRECTION\",\n              \"roles\": [\n                \"ESTIMATE_VERIFIER\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 86400000,\n          \"state\": \"PENDINGFORTECHNICALSANCTION\",\n          \"applicationStatus\": \"INWORKFLOW\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"TECHNICALSANCTION\",\n              \"nextState\": \"PENDINGFORAPPROVAL\",\n              \"roles\": [\n                \"TECHNICAL_SANCTIONER\"\n              ]\n            },\n            {\n              \"action\": \"SENDBACK\",\n              \"nextState\": \"PENDINGFORVERIFICATION\",\n              \"roles\": [\n                \"TECHNICAL_SANCTIONER\"\n              ]\n            },\n            {\n              \"action\": \"SENDBACKTOORIGINATOR\",\n              \"nextState\": \"PENDINGFORCORRECTION\",\n              \"roles\": [\n\t\t\t\t\"TECHNICAL_SANCTIONER\"\n              ]\n            },\n            {\n              \"action\": \"REJECT\",\n              \"nextState\": \"REJECTED\",\n              \"roles\": [\n\t\t\t\t\"TECHNICAL_SANCTIONER\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 86400000,\n          \"state\": \"PENDINGFORAPPROVAL\",\n          \"applicationStatus\": \"INWORKFLOW\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"SENDBACK\",\n              \"nextState\": \"PENDINGFORTECHNICALSANCTION\",\n              \"roles\": [\n                \"ESTIMATE_APPROVER\"\n              ]\n            },\n            {\n              \"action\": \"SENDBACKTOORIGINATOR\",\n              \"nextState\": \"PENDINGFORCORRECTION\",\n              \"roles\": [\n\t\t\t\t\"ESTIMATE_APPROVER\"\t\n              ]\n            },\n            {\n              \"action\": \"APPROVE\",\n              \"nextState\": \"APPROVED\",\n              \"roles\": [\n                \"ESTIMATE_APPROVER\"\n              ]\n            },\n            {\n              \"action\": \"REJECT\",\n              \"nextState\": \"REJECTED\",\n              \"roles\": [\n\t\t\t\t\"ESTIMATE_APPROVER\"\t\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 86400000,\n          \"state\": \"PENDINGFORCORRECTION\",\n          \"applicationStatus\": \"INWORKFLOW\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"RE-SUBMIT\",\n              \"nextState\": \"PENDINGFORVERIFICATION\",\n              \"roles\": [\n                \"ESTIMATE_CREATOR\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": null,\n          \"state\": \"APPROVED\",\n          \"applicationStatus\": \"ACTIVE\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true,\n          \"isStateUpdatable\": false,\n          \"actions\": null\n        },\n        {\n          \"sla\": null,\n          \"state\": \"REJECTED\",\n          \"applicationStatus\": \"INACTIVE\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true,\n          \"isStateUpdatable\": false,\n          \"actions\": null\n        }\n      ]\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/egov-workflow-v2/egov-wf/businessservice/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"egov-workflow-v2",
+						"egov-wf",
+						"businessservice",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contract",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"contract-service\",\n    \"action\": \"\",\n    \"did\": 1,\n    \"key\": \"\",\n    \"msgId\": \"20170310130900|en_IN\",\n    \"requesterId\": \"\",\n    \"ts\": 1513579888683,\n    \"ver\": \"1.0.0\",\n    \"authToken\": \"{{token}}\",\n    \"userInfo\": {\n      \"uuid\": \"{{userId}}\"\n    }\n  },\n   \"BusinessServices\": [\n       {\n         \"tenantId\": \"pg\",\n         \"businessService\": \"CONTRACT\",\n         \"business\": \"contract-service\",\n         \"businessServiceSla\": 604800000,\n         \"states\": [\n           {\n             \"sla\": null,\n             \"state\": null,\n             \"applicationStatus\": null,\n             \"docUploadRequired\": false,\n             \"isStartState\": true,\n             \"isTerminateState\": false,\n             \"isStateUpdatable\": true,\n             \"actions\": [\n               {\n                 \"action\": \"CREATE\",\n                 \"nextState\": \"PENDING_FOR_VERIFICATION\",\n                 \"roles\": [\n                   \"WORK_ORDER_CREATOR\"\n                 ]\n               }\n             ]\n           },\n           {\n             \"sla\": 172800000,\n             \"state\": \"PENDING_FOR_VERIFICATION\",\n             \"applicationStatus\": \"INWORKFLOW\",\n             \"docUploadRequired\": false,\n             \"isStartState\": false,\n             \"isTerminateState\": false,\n             \"isStateUpdatable\": true,\n             \"actions\": [\n               {\n                 \"action\": \"VERIFY_AND_FORWARD\",\n                 \"nextState\": \"PENDING_FOR_APPROVAL\",\n                 \"roles\": [\n                   \"WORK_ORDER_VERIFIER\"\n                 ]\n               },\n               {\n                 \"action\": \"SEND_BACK\",\n                 \"nextState\": \"PENDING_FOR_CORRECTION\",\n                 \"roles\": [\n                   \"WORK_ORDER_VERIFIER\"\n                 ]\n               }\n             ]\n           },\n           {\n             \"sla\": 86400000,\n             \"state\": \"PENDING_FOR_APPROVAL\",\n             \"applicationStatus\": \"INWORKFLOW\",\n             \"docUploadRequired\": false,\n             \"isStartState\": false,\n             \"isTerminateState\": false,\n             \"isStateUpdatable\": true,\n             \"actions\": [\n               {\n                 \"action\": \"APPROVE\",\n                 \"nextState\": \"PENDING_FOR_ACCEPTANCE\",\n                 \"roles\": [\n                   \"WORK_ORDER_APPROVER\"\n                 ]\n               },\n               {\n                 \"action\": \"SEND_BACK\",\n                 \"nextState\": \"PENDING_FOR_VERIFICATION\",\n                 \"roles\": [\n                   \"WORK_ORDER_APPROVER\"\n                 ]\n               },\n               {\n                 \"action\": \"REJECT\",\n                 \"nextState\": \"REJECTED\",\n                 \"roles\": [\n                   \"WORK_ORDER_APPROVER\"\n                 ]\n               },\n               {\n                 \"action\": \"SEND_BACK_TO_ORIGINATOR\",\n                 \"nextState\": \"PENDING_FOR_CORRECTION\",\n                 \"roles\": [\n                   \"WORK_ORDER_APPROVER\"\n                 ]\n               }\n             ]\n           },\n           {\n             \"sla\": 604800000,\n             \"state\": \"PENDING_FOR_ACCEPTANCE\",\n             \"applicationStatus\": \"INWORKFLOW\",\n             \"docUploadRequired\": false,\n             \"isStartState\": false,\n             \"isTerminateState\": false,\n             \"isStateUpdatable\": true,\n             \"actions\": [\n               {\n                 \"action\": \"ACCEPT\",\n                 \"nextState\": \"ACCEPTED\",\n                 \"roles\": [\n                   \"ORG_ADMIN\"\n                 ]\n               },\n               {\n                 \"action\": \"DECLINE\",\n                 \"nextState\": \"PENDING_FOR_CORRECTION\",\n                 \"roles\": [\n                   \"ORG_ADMIN\"\n                 ]\n               }\n             ]\n           },\n           {\n             \"sla\": 86400000,\n             \"state\": \"PENDING_FOR_CORRECTION\",\n             \"applicationStatus\": \"INWORKFLOW\",\n             \"docUploadRequired\": false,\n             \"isStartState\": true,\n             \"isTerminateState\": false,\n             \"isStateUpdatable\": true,\n             \"actions\": [\n               {\n                 \"action\": \"EDIT\",\n                 \"nextState\": \"PENDING_FOR_VERIFICATION\",\n                 \"roles\": [\n                   \"WORK_ORDER_CREATOR\"\n                 ]\n               },\n               {\n                 \"action\": \"REJECT\",\n                 \"nextState\": \"REJECTED\",\n                 \"roles\": [\n                   \"WORK_ORDER_CREATOR\"\n                 ]\n               }\n             ]\n           },\n           {\n             \"sla\": null,\n             \"state\": \"ACCEPTED\",\n             \"applicationStatus\": \"ACTIVE\",\n             \"docUploadRequired\": false,\n             \"isStartState\": false,\n             \"isTerminateState\": true,\n             \"isStateUpdatable\": false,\n             \"actions\": []\n           },\n           {\n             \"sla\": null,\n             \"state\": \"REJECTED\",\n             \"applicationStatus\": \"INACTIVE\",\n             \"docUploadRequired\": false,\n             \"isStartState\": false,\n             \"isTerminateState\": true,\n             \"isStateUpdatable\": false,\n             \"actions\": []\n           }\n         ]\n       }\n     ]\n   }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/egov-workflow-v2/egov-wf/businessservice/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"egov-workflow-v2",
+						"egov-wf",
+						"businessservice",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MeasurementBook",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"RequestInfo\": {\n       \"apiId\": \"Rainmaker\",\n       \"action\": \"\",\n       \"did\": 1,\n       \"key\": \"\",\n       \"msgId\": \"20170310130900|en_IN\",\n       \"requesterId\": \"\",\n       \"ts\": 1513579888683,\n       \"ver\": \".01\",\n       \"authToken\": \"{{token}}\",\n       \"userInfo\": {\n      \"uuid\": \"{{userId}}\"\n    }\n   },\n    \"BusinessServices\": [\n    {\n      \"tenantId\": \"pg\",\n      \"businessService\": \"MB\",\n      \"business\": \"measurement-book-service\",\n      \"businessServiceSla\": 432000000,\n      \"states\": [\n        {\n          \"sla\": null,\n          \"state\": null,\n          \"applicationStatus\": null,\n          \"docUploadRequired\": true,\n          \"isStartState\": true,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"SAVE_AS_DRAFT\",\n              \"nextState\": \"DRAFTED\",\n              \"roles\": [\n               \"MB_CREATOR\"\n              ]\n            },\n            {\n              \"action\": \"SUBMIT\",\n              \"nextState\": \"PENDING_FOR_VERIFICATION\",\n              \"roles\": [\n                \"MB_CREATOR\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": null,\n          \"state\": \"DRAFTED\",\n          \"applicationStatus\": \"DRAFTED\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"SUBMIT\",\n              \"nextState\": \"PENDING_FOR_VERIFICATION\",\n              \"roles\": [\n                \"MB_CREATOR\"\n              ]\n            },\n            {\n              \"action\": \"SAVE_AS_DRAFT\",\n              \"nextState\": \"DRAFTED\",\n              \"roles\": [\n               \"MB_CREATOR\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 172800000,\n          \"state\": \"PENDING_FOR_VERIFICATION\",\n          \"applicationStatus\": \"SUBMITTED\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"VERIFY_AND_FORWARD\",\n              \"nextState\": \"PENDING_FOR_APPROVAL\",\n              \"roles\": [\n               \"MB_VERIFIER\"\n              ]\n            },\n            {\n              \"action\": \"SENT_BACK\",\n              \"nextState\": \"PENDING_FOR_CORRECTION\",\n              \"roles\": [\n                \"MB_VERIFIER\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 86400000,\n          \"state\": \"PENDING_FOR_APPROVAL\",\n          \"applicationStatus\": \"VERIFIED\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"SENT_BACK\",\n              \"nextState\": \"PENDING_FOR_VERIFICATION\",\n              \"roles\": [\n                \"MB_APPROVER\"\n              ]\n            },\n            {\n              \"action\": \"APPROVE\",\n              \"nextState\": \"APPROVED\",\n              \"roles\": [\n                \"MB_APPROVER\"\n              ]\n            },\n            {\n              \"action\": \"REJECT\",\n              \"nextState\": \"REJECTED\",\n              \"roles\": [\n                \"MB_APPROVER\"\n              ]\n            },\n            {\n              \"action\": \"SEND_BACK_TO_ORIGINATOR\",\n              \"nextState\": \"PENDING_FOR_CORRECTION\",\n              \"roles\": [\n                \"MB_APPROVER\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 86400000,\n          \"state\": \"PENDING_FOR_CORRECTION\",\n          \"applicationStatus\": \"SENT_BACK\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"EDIT/RE-SUBMIT\",\n              \"nextState\": \"PENDING_FOR_VERIFICATION\",\n              \"roles\": [\n                \"MB_CREATOR\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": null,\n          \"state\": \"REJECTED\",\n          \"applicationStatus\": \"REJECTED\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true,\n          \"isStateUpdatable\": false,\n          \"actions\": null\n        },\n        {\n          \"sla\": null,\n          \"state\": \"APPROVED\",\n          \"applicationStatus\": \"APPROVED\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true,\n          \"isStateUpdatable\": false,\n          \"actions\": null\n        }\n\n      ]\n    }\n  ]\n   \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/egov-workflow-v2/egov-wf/businessservice/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"egov-workflow-v2",
+						"egov-wf",
+						"businessservice",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MusterRoll",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"muster-roll\",\n    \"action\": \"\",\n    \"did\": 1,\n    \"key\": \"\",\n    \"msgId\": \"20170310130900|en_IN\",\n    \"requesterId\": \"\",\n    \"ts\": 1513579888683,\n    \"ver\": \"1.0.0\",\n    \"authToken\": \"94ecb06f-8e5b-4798-af8f-56a987560209\"\n  },\n  \"BusinessServices\": [\n  {\n    \"tenantId\": \"pg\",\n    \"businessService\": \"MR\",\n    \"business\": \"muster-roll-service\",\n    \"businessServiceSla\": 432000000,\n    \"states\": [\n  {\n        \"sla\": null,\n        \"state\": null,\n        \"applicationStatus\": null,\n        \"docUploadRequired\": false,\n        \"isStartState\": true,\n        \"isTerminateState\": false,\n        \"isStateUpdatable\": true,\n        \"actions\": [\n          {\n            \"action\": \"SUBMIT\",\n            \"nextState\": \"PENDINGFORVERIFICATION\",\n            \"roles\": [\n              \"ORG_ADMIN\"\n            ]\n          }\n        ]\n      },\n      {\n        \"sla\": 172800000,\n        \"state\": \"PENDINGFORVERIFICATION\",\n        \"applicationStatus\": \"INWORKFLOW\",\n        \"docUploadRequired\": false,\n        \"isStartState\": false,\n        \"isTerminateState\": false,\n        \"isStateUpdatable\": true,\n        \"actions\": [\n          {\n            \"action\": \"VERIFYANDFORWARD\",\n            \"nextState\": \"PENDINGFORAPPROVAL\",\n            \"roles\": [\n              \"MUSTER_ROLL_VERIFIER\"\n            ]\n          },\n          {\n            \"action\": \"RE-SUBMIT\",\n            \"nextState\": \"PENDINGFORAPPROVAL\",\n            \"roles\": [\n              \"MUSTER_ROLL_VERIFIER\"\n            ]\n          },\n          {\n            \"action\": \"SENDBACKTOCBO\",\n            \"nextState\": \"PENDINGFORCORRECTION\",\n            \"roles\": [\n              \"MUSTER_ROLL_VERIFIER\"\n            ]\n          }\n        ]\n      },\n\n      {\n        \"sla\": 86400000,\n        \"state\": \"PENDINGFORAPPROVAL\",\n        \"applicationStatus\": \"INWORKFLOW\",\n        \"docUploadRequired\": false,\n        \"isStartState\": false,\n        \"isTerminateState\": false,\n        \"isStateUpdatable\": true,\n        \"actions\": [\n          {\n            \"action\": \"SENDBACK\",\n            \"nextState\": \"PENDINGFORVERIFICATION\",\n            \"roles\": [\n              \"MUSTER_ROLL_APPROVER\"\n            ]\n          },\n          {\n            \"action\": \"SENDBACKTOCBO\",\n            \"nextState\": \"PENDINGFORCORRECTION\",\n            \"roles\": [\n      \"MUSTER_ROLL_APPROVER\"\t\n            ]\n          },\n          {\n            \"action\": \"APPROVE\",\n            \"nextState\": \"APPROVED\",\n            \"roles\": [\n              \"MUSTER_ROLL_APPROVER\"\n            ]\n          }\n        ]\n      },\n      {\n        \"sla\": 86400000,\n        \"state\": \"PENDINGFORCORRECTION\",\n        \"applicationStatus\": \"INWORKFLOW\",\n        \"docUploadRequired\": false,\n        \"isStartState\": false,\n        \"isTerminateState\": false,\n        \"isStateUpdatable\": true,\n        \"actions\": [\n          {\n            \"action\": \"RE-SUBMIT\",\n            \"nextState\": \"PENDINGFORVERIFICATION\",\n            \"roles\": [\n              \"ORG_ADMIN\"\n            ]\n          }\n        ]\n      },\n      {\n        \"sla\": null,\n        \"state\": \"APPROVED\",\n        \"applicationStatus\": \"ACTIVE\",\n        \"docUploadRequired\": false,\n        \"isStartState\": false,\n        \"isTerminateState\": true,\n        \"isStateUpdatable\": false,\n        \"actions\": null\n      }\n    ]\n  }\n]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/egov-workflow-v2/egov-wf/businessservice/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"egov-workflow-v2",
+						"egov-wf",
+						"businessservice",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Expense-Wage",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n      \"apiId\": \"expense-service\",\n      \"action\": \"\",\n      \"did\": 1,\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"requesterId\": \"\",\n      \"ts\": 1513579888683,\n      \"ver\": \"1.0.0\",\n      \"authToken\": \"{{token}}\",\n      \"userInfo\": {\n          \"uuid\": \"{{userId}}\"\n      }\n  },\n\"BusinessServices\": [\n    {\n      \"tenantId\": \"pg\",\n      \"businessService\": \"EXPENSE.WAGES\",\n      \"business\": \"expense\",\n      \"businessServiceSla\": 604800000,\n      \"states\": [\n        {\n          \"sla\": null,\n          \"state\": null,\n          \"applicationStatus\": null,\n          \"docUploadRequired\": false,\n          \"isStartState\": true,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"SUBMIT\",\n              \"nextState\": \"APPROVED\",\n              \"roles\": [\n                \"MUSTER_ROLL_APPROVER\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 604800000,\n          \"state\": \"APPROVED\",\n          \"applicationStatus\": \"ACTIVE\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true,\n          \"isStateUpdatable\": false,\n          \"actions\": [\n          ]\n        }\n      ]\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/egov-workflow-v2/egov-wf/businessservice/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"egov-workflow-v2",
+						"egov-wf",
+						"businessservice",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Expense-Supervision",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n      \"apiId\": \"expense-service\",\n      \"action\": \"\",\n      \"did\": 1,\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"requesterId\": \"\",\n      \"ts\": 1513579888683,\n      \"ver\": \"1.0.0\",\n      \"authToken\": \"{{token}}\",\n      \"userInfo\": {\n          \"uuid\": \"{{userId}}\"\n      }\n  },\n\"BusinessServices\": [\n    {\n      \"tenantId\": \"pg\",\n      \"businessService\": \"EXPENSE.SUPERVISION\",\n      \"business\": \"expense\",\n      \"businessServiceSla\": 604800000,\n      \"states\": [\n        {\n          \"sla\": null,\n          \"state\": null,\n          \"applicationStatus\": null,\n          \"docUploadRequired\": false,\n          \"isStartState\": true,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"SUBMIT\",\n              \"nextState\": \"APPROVED\",\n              \"roles\": [\n                \"SYSTEM\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 604800000,\n          \"state\": \"APPROVED\",\n          \"applicationStatus\": \"ACTIVE\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true,\n          \"isStateUpdatable\": false,\n          \"actions\": [\n          ]\n        }\n      ]\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/egov-workflow-v2/egov-wf/businessservice/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"egov-workflow-v2",
+						"egov-wf",
+						"businessservice",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Expense-Purchase",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n      \"apiId\": \"expense-service\",\n      \"action\": \"\",\n      \"did\": 1,\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"requesterId\": \"\",\n      \"ts\": 1513579888683,\n      \"ver\": \"1.0.0\",\n      \"authToken\": \"{{token}}\",\n      \"userInfo\": {\n          \"uuid\": \"{{userId}}\"\n      }\n  },\n\"BusinessServices\": [\n  {\n    \"tenantId\": \"pg\",\n    \"businessService\": \"EXPENSE.PURCHASE\",\n    \"business\": \"expense\",\n    \"businessServiceSla\": 604800000,\n    \"states\": [\n      {\n        \"sla\": null,\n        \"state\": null,\n        \"applicationStatus\": null,\n        \"docUploadRequired\": false,\n        \"isStartState\": true,\n        \"isTerminateState\": false,\n        \"isStateUpdatable\": true,\n        \"actions\": [\n          {\n            \"action\": \"SUBMIT\",\n            \"nextState\": \"PENDING_FOR_VERIFICATION\",\n            \"roles\": [\n              \"BILL_CREATOR\"\n            ]\n          }\n        ]\n      },\n      {\n        \"sla\": 172800000,\n        \"state\": \"PENDING_FOR_VERIFICATION\",\n        \"applicationStatus\": \"INWORKFLOW\",\n        \"docUploadRequired\": false,\n        \"isStartState\": false,\n        \"isTerminateState\": false,\n        \"isStateUpdatable\": true,\n        \"actions\": [\n          {\n            \"action\": \"VERIFY_AND_FORWARD\",\n            \"nextState\": \"PENDING_FOR_APPROVAL\",\n            \"roles\": [\n              \"BILL_VERIFIER\"\n            ]\n          },\n          {\n            \"action\": \"RE-SUBMIT\",\n            \"nextState\": \"PENDING_FOR_APPROVAL\",\n            \"roles\": [\n              \"BILL_VERIFIER\"\n            ]\n          },\n          {\n            \"action\": \"SEND_BACK\",\n            \"nextState\": \"PENDING_FOR_CORRECTION\",\n            \"roles\": [\n              \"BILL_VERIFIER\"\n            ]\n          }\n        ]\n      },\n      {\n        \"sla\": 86400000,\n        \"state\": \"PENDING_FOR_APPROVAL\",\n        \"applicationStatus\": \"INWORKFLOW\",\n        \"docUploadRequired\": false,\n        \"isStartState\": false,\n        \"isTerminateState\": false,\n        \"isStateUpdatable\": true,\n        \"actions\": [\n          {\n            \"action\": \"APPROVE\",\n            \"nextState\": \"APPROVED\",\n            \"roles\": [\n              \"BILL_APPROVER\"\n            ]\n          },\n          {\n            \"action\": \"SEND_BACK\",\n            \"nextState\": \"PENDING_FOR_VERIFICATION\",\n            \"roles\": [\n              \"BILL_APPROVER\"\n            ]\n          },\n          {\n            \"action\": \"REJECT\",\n            \"nextState\": \"REJECTED\",\n            \"roles\": [\n              \"BILL_APPROVER\"\n            ]\n          },\n          {\n            \"action\": \"SEND_BACK_TO_ORIGINATOR\",\n            \"nextState\": \"PENDING_FOR_CORRECTION\",\n            \"roles\": [\n              \"BILL_APPROVER\"\n            ]\n          }\n        ]\n      },\n      {\n        \"sla\": 604800000,\n        \"state\": \"APPROVED\",\n        \"applicationStatus\": \"ACTIVE\",\n        \"docUploadRequired\": false,\n        \"isStartState\": false,\n        \"isTerminateState\": true,\n        \"isStateUpdatable\": false,\n        \"actions\": [\n        ]\n      },\n      {\n        \"sla\": 86400000,\n        \"state\": \"PENDING_FOR_CORRECTION\",\n        \"applicationStatus\": \"INWORKFLOW\",\n        \"docUploadRequired\": false,\n        \"isStartState\": true,\n        \"isTerminateState\": false,\n        \"isStateUpdatable\": true,\n        \"actions\": [\n          {\n            \"action\": \"RE-SUBMIT\",\n            \"nextState\": \"PENDING_FOR_VERIFICATION\",\n            \"roles\": [\n              \"BILL_CREATOR\"\n            ]\n          }\n        ]\n      },\n      {\n        \"sla\": null,\n        \"state\": \"REJECTED\",\n        \"applicationStatus\": \"INACTIVE\",\n        \"docUploadRequired\": false,\n        \"isStartState\": false,\n        \"isTerminateState\": true,\n        \"isStateUpdatable\": false,\n        \"actions\": [\n        ]\n      }\n    ]\n  }\n]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/egov-workflow-v2/egov-wf/businessservice/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"egov-workflow-v2",
+						"egov-wf",
+						"businessservice",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

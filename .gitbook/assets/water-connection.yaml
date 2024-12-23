@@ -1,0 +1,1449 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: eGov Water System.
+  description: | 
+   APIs for W&S module. This provide APIs for create new property, update existing property, search existing property.
+  contact: 
+    name: Egovernments Foundation
+    email: contact@egovernments.org
+  x-module: WC
+  x-common-path: 'https://raw.githubusercontent.com/egovernments/egov-services/PT_APPLY_PAY/docs/common/contracts/v1-1-1.yml'
+servers:
+  - url: /
+tags:
+  - name: water-controller
+    description: Water Controller
+paths:
+  
+  /wc/_create:
+    post:
+      tags:
+        - water-controller
+      summary: Apply for new Water connection.
+      operationId: createWaterConnectionUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WaterConnectionRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WaterConnectionResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /wc/_encryptOldData:
+    post:
+      tags:
+        - water-controller
+      summary: encryptOldData
+      operationId: encryptOldDataUsingPOST
+      parameters:
+        - name: accountId
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: applicationNumber
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: applicationStatus
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: applicationType
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: assignee
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: connectionNumber
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: doorNo
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int64
+        - name: ids
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: isCountCall
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isFilestoreIdRequire
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isInternalCall
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isPropertyDetailsRequired
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isSkipLevelSearch
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: locality
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: mobileNumber
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: offset
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: oldConnectionNumber
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: ownerIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            type: array
+            items:
+              type: string
+        - name: ownerName
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: propertyId
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: propertyIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: searchType
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: sortOrder
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+        - name: status
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: tenantIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: toDate
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int64
+        - name: userIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfoWrapper'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WaterConnectionResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /wc/_plainsearch:
+    post:
+      tags:
+        - water-controller
+      summary: plainSearch
+      operationId: plainSearchUsingPOST
+      parameters:
+        - name: accountId
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: applicationNumber
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: applicationStatus
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: applicationType
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: assignee
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: connectionNumber
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: doorNo
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int64
+        - name: ids
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: isCountCall
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isFilestoreIdRequire
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isInternalCall
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isPropertyDetailsRequired
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isSkipLevelSearch
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: locality
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: mobileNumber
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: offset
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: oldConnectionNumber
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: ownerIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            type: array
+            items:
+              type: string
+        - name: ownerName
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: propertyId
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: propertyIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: searchType
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: sortOrder
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+        - name: status
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: tenantIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: toDate
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int64
+        - name: userIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfoWrapper'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WaterConnectionResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /wc/_search:
+    post:
+      tags:
+        - water-controller
+      summary: Get the list of exsting Water connections.
+      operationId: searchUsingPOST
+      parameters:
+        - name: accountId
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: applicationNumber
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: applicationStatus
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: applicationType
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: assignee
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: connectionNumber
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: doorNo
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int64
+        - name: ids
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: isCountCall
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isFilestoreIdRequire
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isInternalCall
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isPropertyDetailsRequired
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: isSkipLevelSearch
+          in: query
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: locality
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: mobileNumber
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: offset
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: oldConnectionNumber
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: ownerIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            type: array
+            items:
+              type: string
+        - name: ownerName
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: propertyId
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: propertyIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: searchType
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: sortOrder
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+        - name: status
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: tenantIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+        - name: toDate
+          in: query
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int64
+        - name: userIds
+          in: query
+          required: false
+          style: pipeDelimited
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfoWrapper'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WaterConnectionResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /wc/_update:
+    post:
+      tags:
+        - water-controller
+      summary: Update existing Water connection details.
+      operationId: updateWaterConnectionUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WaterConnectionRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WaterConnectionResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  
+components:
+  schemas:
+    Action:
+      title: Action
+      type: object
+      properties:
+        action:
+          maxLength: 256
+          minLength: 0
+          type: string
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        currentState:
+          maxLength: 256
+          minLength: 0
+          type: string
+        nextState:
+          maxLength: 256
+          minLength: 0
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        tenantId:
+          maxLength: 256
+          minLength: 0
+          type: string
+        uuid:
+          maxLength: 256
+          minLength: 0
+          type: string
+      description: A Object holds the basic data for a Trade License
+    AuditDetails:
+      title: AuditDetails
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createdTime:
+          type: integer
+          format: int64
+        lastModifiedBy:
+          type: string
+        lastModifiedTime:
+          type: integer
+          format: int64
+    Document:
+      title: Document
+      required:
+        - documentType
+        - fileStoreId
+      type: object
+      properties:
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        documentType:
+          type: string
+        documentUid:
+          type: string
+        fileStoreId:
+          type: string
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - INWORKFLOW
+    OwnerInfo:
+      title: OwnerInfo
+      required:
+        - mobileNumber
+        - name
+        - ownerType
+      type: object
+      properties:
+        aadhaarNumber:
+          pattern: ^[0-9]{12}$
+          type: string
+        accountLocked:
+          type: boolean
+        active:
+          type: boolean
+        altContactNumber:
+          maxLength: 50
+          minLength: 0
+          type: string
+        bloodGroup:
+          maxLength: 32
+          minLength: 0
+          type: string
+        correspondenceAddress:
+          type: string
+        correspondenceCity:
+          maxLength: 300
+          minLength: 0
+          type: string
+        correspondencePinCode:
+          maxLength: 10
+          minLength: 0
+          type: string
+        createdBy:
+          maxLength: 64
+          minLength: 0
+          type: string
+        createdDate:
+          type: integer
+          format: int64
+        dob:
+          type: integer
+          format: int64
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        emailId:
+          maxLength: 128
+          minLength: 0
+          type: string
+        fatherOrHusbandName:
+          type: string
+        gender:
+          type: string
+        id:
+          type: integer
+          format: int64
+        identificationMark:
+          maxLength: 300
+          minLength: 0
+          type: string
+        institutionId:
+          type: string
+        isPrimaryOwner:
+          type: boolean
+        lastModifiedBy:
+          maxLength: 64
+          minLength: 0
+          type: string
+        lastModifiedDate:
+          type: integer
+          format: int64
+        locale:
+          maxLength: 16
+          minLength: 0
+          type: string
+        mobileNumber:
+          type: string
+        name:
+          maxLength: 100
+          minLength: 0
+          pattern: ^[a-zA-Z0-9 \-'`\.]*$
+          type: string
+        ownerInfoUuid:
+          type: string
+        ownerShipPercentage:
+          type: number
+          format: double
+        ownerType:
+          type: string
+        pan:
+          maxLength: 10
+          minLength: 0
+          type: string
+        password:
+          maxLength: 64
+          minLength: 0
+          type: string
+        permanentAddress:
+          maxLength: 300
+          minLength: 0
+          type: string
+        permanentCity:
+          maxLength: 300
+          minLength: 0
+          type: string
+        permanentPinCode:
+          maxLength: 10
+          minLength: 0
+          type: string
+        photo:
+          maxLength: 36
+          minLength: 0
+          type: string
+        pwdExpiryDate:
+          type: integer
+          format: int64
+        relationship:
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        salutation:
+          type: string
+        signature:
+          maxLength: 36
+          minLength: 0
+          type: string
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - INWORKFLOW
+        tenantId:
+          maxLength: 256
+          minLength: 0
+          type: string
+        type:
+          maxLength: 50
+          minLength: 0
+          type: string
+        userName:
+          maxLength: 64
+          minLength: 0
+          type: string
+        uuid:
+          maxLength: 64
+          minLength: 0
+          type: string
+    PlainAccessRequest:
+      title: PlainAccessRequest
+      type: object
+      properties:
+        plainRequestFields:
+          type: array
+          items:
+            type: string
+        recordId:
+          type: string
+    PlumberInfo:
+      title: PlumberInfo
+      type: object
+      properties:
+        additionalDetails:
+          type: object
+          description: Json object to capture any extra information which is not accommodated of model
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        correspondenceAddress:
+          maxLength: 1024
+          minLength: 0
+          type: string
+          description: The current address of the owner for correspondence.
+        fatherOrHusbandName:
+          maxLength: 256
+          minLength: 0
+          type: string
+          description: Father or Husband name of the user.
+        gender:
+          maxLength: 256
+          minLength: 0
+          type: string
+          description: Gender of the user.
+        id:
+          maxLength: 256
+          minLength: 0
+          type: string
+          description: The id of the user.
+        licenseNo:
+          maxLength: 256
+          minLength: 0
+          type: string
+          description: Plumber unique license number.
+        mobileNumber:
+          maxLength: 256
+          minLength: 0
+          type: string
+          description: MobileNumber of the user.
+        name:
+          maxLength: 256
+          minLength: 0
+          type: string
+          description: The name of the user.
+        relationship:
+          type: string
+          description: The relationship of gaurdian.
+    ProcessInstance:
+      title: ProcessInstance
+      required:
+        - action
+        - businessId
+        - businessService
+        - moduleName
+        - tenantId
+      type: object
+      properties:
+        action:
+          maxLength: 128
+          minLength: 0
+          type: string
+        assignes:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        businessId:
+          maxLength: 128
+          minLength: 0
+          type: string
+        businessService:
+          maxLength: 128
+          minLength: 0
+          type: string
+        comment:
+          type: string
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        id:
+          maxLength: 64
+          minLength: 0
+          type: string
+        moduleName:
+          maxLength: 64
+          minLength: 0
+          type: string
+        state:
+          $ref: '#/components/schemas/State'
+        tenantId:
+          maxLength: 128
+          minLength: 0
+          type: string
+      description: A Object holds the basic data for a Trade License
+    RequestInfo:
+      title: RequestInfo
+      type: object
+      properties:
+        action:
+          type: string
+        apiId:
+          type: string
+        authToken:
+          type: string
+        correlationId:
+          type: string
+        did:
+          type: string
+        key:
+          type: string
+        msgId:
+          type: string
+        plainAccessRequest:
+          $ref: '#/components/schemas/PlainAccessRequest'
+        ts:
+          type: integer
+          format: int64
+        userInfo:
+          $ref: '#/components/schemas/User'
+        ver:
+          type: string
+    RequestInfoWrapper:
+      title: RequestInfoWrapper
+      type: object
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+    ResponseInfo:
+      title: ResponseInfo
+      type: object
+      properties:
+        apiId:
+          type: string
+        msgId:
+          type: string
+        resMsgId:
+          type: string
+        status:
+          type: string
+        ts:
+          type: integer
+          format: int64
+        ver:
+          type: string
+    RoadCuttingInfo:
+      title: RoadCuttingInfo
+      type: object
+      properties:
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        id:
+          type: string
+        roadCuttingArea:
+          type: number
+          format: float
+        roadType:
+          type: string
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - INWORKFLOW
+    Role:
+      title: Role
+      type: object
+      properties:
+        code:
+          maxLength: 50
+          minLength: 0
+          type: string
+        id:
+          type: integer
+          format: int64
+        name:
+          maxLength: 128
+          minLength: 0
+          type: string
+        tenantId:
+          maxLength: 256
+          minLength: 0
+          type: string
+    State:
+      title: State
+      type: object
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+        applicationStatus:
+          maxLength: 256
+          minLength: 0
+          type: string
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        businessServiceId:
+          maxLength: 256
+          minLength: 0
+          type: string
+        docUploadRequired:
+          type: boolean
+        isStartState:
+          type: boolean
+        isStateUpdatable:
+          type: boolean
+        isTerminateState:
+          type: boolean
+        sla:
+          type: integer
+          format: int64
+        state:
+          maxLength: 256
+          minLength: 0
+          type: string
+        tenantId:
+          maxLength: 256
+          minLength: 0
+          type: string
+        uuid:
+          maxLength: 256
+          minLength: 0
+          type: string
+      description: A Object holds the basic data for a Trade License
+    User:
+      title: User
+      type: object
+      properties:
+        emailId:
+          maxLength: 300
+          minLength: 0
+          type: string
+        id:
+          type: integer
+          format: int64
+        mobileNumber:
+          maxLength: 150
+          minLength: 0
+          type: string
+        name:
+          maxLength: 250
+          minLength: 0
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        tenantId:
+          maxLength: 256
+          minLength: 0
+          type: string
+        type:
+          maxLength: 50
+          minLength: 0
+          type: string
+        userName:
+          maxLength: 180
+          minLength: 0
+          type: string
+        uuid:
+          maxLength: 36
+          minLength: 0
+          type: string
+    View:
+      title: View
+      type: object
+      properties:
+        contentType:
+          type: string
+    WaterConnection:
+      title: WaterConnection
+      required:
+        - connectionCategory
+        - connectionType
+      type: object
+      properties:
+        additionalDetails:
+          type: object
+          description: Json object to capture any extra information which is not accommodated of model
+        applicationNo:
+          maxLength: 64
+          minLength: 1
+          type: string
+          description: Formatted application number, which will be generated using ID-Gen at the time .
+          readOnly: true
+        applicationStatus:
+          type: string
+        applicationType:
+          type: string
+          readOnly: true
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        channel:
+          type: string
+          readOnly: true
+        connectionCategory:
+          maxLength: 32
+          minLength: 2
+          type: string
+          description: It is a master data, defined in MDMS
+        connectionExecutionDate:
+          type: integer
+          format: int64
+          readOnly: true
+        connectionHolders:
+          type: array
+          description: The connection holder info will enter by employee or citizen
+          items:
+            $ref: '#/components/schemas/OwnerInfo'
+        connectionNo:
+          maxLength: 64
+          minLength: 1
+          type: string
+          description: Formatted connection number, which will be generated using ID-Gen service after aproval of connection application in case of new application. If the source of data is "DATA_ENTRY" then application status will be considered as "APROVED" application.
+          readOnly: true
+        connectionType:
+          maxLength: 32
+          minLength: 2
+          type: string
+          description: It is a master data, defined in MDMS.
+        dateEffectiveFrom:
+          type: integer
+          format: int64
+          readOnly: true
+        disconnectionExecutionDate:
+          type: integer
+          format: int64
+        disconnectionReason:
+          type: string
+        documents:
+          type: array
+          description: The documents attached by owner for exemption.
+          items:
+            $ref: '#/components/schemas/Document'
+        id:
+          maxLength: 64
+          minLength: 1
+          type: string
+          description: Unique Identifier of the connection for internal reference.
+          readOnly: true
+        isDisconnectionTemporary:
+          type: boolean
+        meterId:
+          type: string
+        meterInstallationDate:
+          type: integer
+          format: int64
+        noOfTaps:
+          type: integer
+          format: int32
+        oldApplication:
+          type: boolean
+          description: ' '
+          example: false
+        oldConnectionNo:
+          maxLength: 64
+          minLength: 1
+          type: string
+          description: Mandatory if source is "DATA_ENTRY".
+          readOnly: true
+        pipeSize:
+          type: number
+          format: double
+        plumberInfo:
+          type: array
+          description: The documents attached by owner for exemption.
+          items:
+            $ref: '#/components/schemas/PlumberInfo'
+        processInstance:
+          $ref: '#/components/schemas/ProcessInstance'
+        propertyId:
+          type: string
+          description: UUID of the property.
+        proposedPipeSize:
+          type: number
+          format: double
+        proposedTaps:
+          type: integer
+          format: int32
+        roadCuttingArea:
+          type: number
+          description: Capture the road cutting area in sqft.
+          format: float
+        roadCuttingInfo:
+          type: array
+          description: The road cutting information given by owner
+          items:
+            $ref: '#/components/schemas/RoadCuttingInfo'
+        roadType:
+          maxLength: 32
+          minLength: 2
+          type: string
+          description: It is a master data, defined in MDMS. If road cutting is required to established the connection then we need to capture the details of road type.
+        status:
+          type: string
+          enum:
+            - Active
+            - Inactive
+        tenantId:
+          maxLength: 256
+          minLength: 2
+          type: string
+          description: Unique ULB identifier.
+        waterSource:
+          type: string
+      description: This is lightweight property object that can be used as reference by definitions needing property linking. Actual Property Object extends this to include more elaborate attributes of the property.
+    WaterConnectionRequest:
+      title: WaterConnectionRequest
+      type: object
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        WaterConnection:
+          $ref: '#/components/schemas/WaterConnection'
+        disconnectRequest:
+          type: boolean
+        isCreateCall:
+          type: boolean
+        isOldDataEncryptionRequest:
+          type: boolean
+      description: Contract class to receive request. Array of Property items  are used in case of create . Where as single Property item is used for update
+    WaterConnectionResponse:
+      title: WaterConnectionResponse
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        TotalCount:
+          type: integer
+          format: int32
+        WaterConnection:
+          type: array
+          items:
+            $ref: '#/components/schemas/WaterConnection'
+      description: Contains the ResponseHeader and the created/updated property

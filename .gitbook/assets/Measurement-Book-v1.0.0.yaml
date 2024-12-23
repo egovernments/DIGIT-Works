@@ -1,0 +1,296 @@
+openapi: 3.0.3
+info:
+  title: Measurement Book APIs
+  description: >
+    APIs to create, modify and search measurements for an entity identified through the referenceId. Measurements can aid in assessing progress with respect to the baseline or
+      reference values. What is to be measured and units of measurements to be defined in the service that uses the measurement service. Values captured in the measurement service are assumed to have the same units of measurement as the source service. Example: If the Works estimate service has defined a line item in cu.m, then a measurement of that line item is assumed to be in cu.m. 
+  version: 1.0.0
+  contact:
+    name: eGov Foundation
+    email: contact@egovernments.org
+  license:
+    name: MIT License
+    url: https://opensource.org/license/mit/
+externalDocs:
+  description: DIGIT Works Platform
+  url: https://works.digit.org
+tags:
+  - name: Measurement
+    description: APIs for creating and editing measurements
+  - name: Measurement Services
+    description: APIs for creating and editing measurements with Workflow enabled.
+paths:
+  /measurement/v1/_create:
+    post:
+      summary: /measurement/v1/_create
+      description: Create one or more measurement entries
+      tags:
+        - Measurement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementRequest'
+      responses:
+        '202':
+          description: Accepted create measurement request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MeasurementResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /measurement/v1/_update:
+    post:
+      summary: /measurement/v1/_update
+      description: Update one or more measurement entries
+      tags:
+        - Measurement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementRequest'
+      responses:
+        '200':
+          description: Accepted update measurement request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MeasurementResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /measurementservice/v1/_create:
+    post:
+      summary: /measurementservice/v1/_create
+      description: Creates a measurement entry along with workflow details.
+      tags:
+        - Measurement Services
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementServiceRequest'
+      responses:
+        '202':
+          description: Accepted create measurement book request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MeasurementServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /measurementservice/v1/_update:
+    post:
+      summary: /measurementservice/v1/_update
+      description: Update values in a measurement book
+      tags:
+        - Measurement Services
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementServiceRequest'
+      responses:
+        '200':
+          description: Accepted update measurement book request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MeasurementServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                
+components:
+  schemas:
+    Measurement:
+      type: object
+      description: This defines a measurement with or without detailed measures.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the detailed measurement entry
+          format: uuid
+          example: 251c51eb-e970-4e01-a99a-70136c47a934
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        measurementNumber:
+          type: string
+          description: Formatted number for this entry
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        physicalRefNumber:
+          type: string
+          description: Reference to a real world mBook or file or docket. Optional attribute.
+          minLength: 2
+          maxLength: 100
+        referenceId:
+          type: string
+          example: Contract number
+          description: The entity to which this measurement belongs or is related to
+          minLength: 2
+          maxLength: 64
+        entryDate:
+          type: number
+          description: Date (in epoch time) when measurement was taken if different from the system created time
+          format: timestamp
+        measures:
+          type: array
+          items:
+            $ref: '#/components/schemas/Measure'
+        isActive:
+          type: boolean
+          description: Flag used to soft delete entries
+          default: true
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+        additionalDetails:
+          type: object
+          description: >-
+            Any additional information that needs to be attached to the
+            estimate. For attachments, fileStoreIds will also be stored here.
+      required:
+        - referenceId
+        - entryDate
+     
+    Measure:
+      type: object
+      description: >-
+        Entity captures dimensions for a work item measurement
+      properties:
+        targetId:
+          type: string
+          description: The item which is being measured. 
+          example: contractlineitemid
+          minLength: 2
+          maxLength: 64
+        length:
+          type: number
+          description: Measured length if applicable 
+          example: 200
+          default: 1
+        breadth:
+          type: number
+          description: Measured breadth if applicable 
+          example: 200
+          default: 1
+        height:
+          type: number
+          description: Measured height if applicable
+          example: 200
+          default: 1
+        numItems:
+          type: number
+          description: Number of items with same dimensions
+          default: 1
+        currentValue:
+          type: number
+          description: Derived from LBHQ as L*B*H*Q or can be entered directly without LBHQ measurements. 
+        cumulativeValue:
+          type: number
+          description: Sum of all measurements so far for a given targetId
+        isActive:
+          type: boolean
+          description: Flag for soft deletion
+        comments:
+          type: string
+          description: Any observational comments made during measurement
+          minLength: 2
+          maxLength: 256
+        documents:
+          description: >-
+            Reference to documents related to the organisation that have been
+            attached via file upload
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+          minItems: 1
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+        additionalDetails:
+          type: object
+          description: >-
+            Any additional information that needs to be attached to the
+            estimate. For attachments, fileStoreIds will also be stored here.
+      required:
+        - targetId
+        - currentValue
+      
+    MeasurementService:
+      type: object
+      properties:
+        allOf:
+          $ref: '#/components/schemas/Measurement'
+        workflow:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
+  
+    MeasurementRequest:
+      type: object
+      description: Encapsulates a measurement entry request
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        measurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Measurement'
+          minItems: 1
+    MeasurementResponse:
+      type: object
+      description: Encapsulates a measurement response
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        measurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Measurement'
+    MeasurementServiceRequest:
+      type: object
+      description: Encapsulates a measurement book service request. Takes a singleton along with workflow.
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        measurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/MeasurementService'
+    
+    MeasurementServiceResponse:
+      type: object
+      description: Encapsulates a measurement service response. Returns an array of measurements with workflow.
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        measurements:
+          type: array
+          items:
+            $ref: '#/components/schemas/MeasurementService'

@@ -1,0 +1,291 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Contracts Service
+  description: ''
+
+paths: 
+  /contract/v1/_create:
+    post:
+      tags:
+      - Contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractRequest'
+      responses:
+        '202':
+          description: Accepted create contract request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
+  
+  /contract/v1/_update:
+    post:
+      tags:
+      - Contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractRequest'
+      responses:
+        '202':
+          description: Accepted create contract request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
+  
+  /contract/v1/_search:
+    post:
+      tags:
+      - Contract
+      description: |
+        Gets the list of contracts for a particular tenant based on search criteria.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfoWrapper'
+      parameters:
+        - $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/parameters/tenantId'
+        - name: ids
+          description: Search by list of UUID
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              maxItems: 10
+        - name: contractNumber
+          description: Custom-formatted unique identifier of the contract
+          in: query
+          schema:
+            type: string
+        - name: contractStatus
+          description: Workflow status of the contract
+          in: query
+          schema:
+            type: string
+        - name: subEstimateId
+          description: Id of the sub estimate against which the contract is linked.
+          in: query
+          schema:
+            type: string
+        - name: fileNumber
+          description: The number of the offline file. 
+          in: query
+          schema:
+            type: string
+        - name: executingAuthority
+          description: filter by executing authority
+          in: query
+          schema:
+            type: string
+        - name: contractType
+          description: Type of the contract. 
+          in: query
+          schema:
+            type: string
+        - name: fromAgreementDate
+          description: search by agreement date between the from date and to date
+          in: query
+          schema:
+            type: number
+        - name: toAgreementDate
+          description: search by agreement date between the from date and to date
+          in: query
+          schema:
+            type: number
+        - name: vendorId
+          description: Id of the vendor
+          in: query
+          schema:
+            type: string
+        - name: officerInCharge
+          description: Id of the officer-in-charge. 
+          in: query
+          schema:
+            type: string
+        - name: sortBy
+          in: query
+          description: sort the search results by fields
+          schema:
+            type: string
+            enum:
+              - amount
+              - agreementDate
+              - contractStatus
+              - createdTime
+        - name: sortOrder
+          in: query
+          description: sorting order of the search resulsts
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: limit
+          in: query
+          description: limit on the resulsts
+          schema:
+            type: number
+        - name: offset
+          in: query
+          description: offset index of the overall search resulsts
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Successful response sorted by reverse chrnological order of creation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
+
+components:
+  schemas:
+    Contract:
+      type: object
+      description: Contract
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the contract
+          readOnly: true
+        contractNumber:
+          type: string
+          description: Custom formatted unique identifier
+          readOnly: true
+        tenantId:
+          type: string
+          description: Tenant Identifier
+          example: pb.amritsar
+        contractStatus:
+          type: string
+          description: The status of the contract in the workflow. 
+        subEstimateId:
+          type: string
+          description: Reference to the sub-estimate against which the contract is being created. 
+        fileNumber:
+          type: string
+          description: Reference to the offline file
+          maxLength: 140
+        fileDate:
+          type: number
+          format: timestamp
+          description: Reference date of the offline file
+        executingAuthority:
+          type: string
+          description: The executing authority of the given contract. 
+          enum: 
+          - DEPARTMENT
+          - CONTRACTOR
+        contractType:
+          type: string
+          description: Type of the contract. This will decide the other attributes of the contract and how it will be processed down the line. 
+          enum: 
+          - WORK_ORDER
+          - PURCHASE_ORDER
+        amount:
+          type: number
+          description: The agreed upon amount of the contract. 
+        agreementDate:
+          type: number
+          format: timestamp
+          description: The date of the agreement. Default to today's date. Cannot be a future date. 
+        vendorId:
+          type: string
+          description: Reference Id of the contractor who is signing the contract. 
+        officerInCharge:
+          type: string
+          description: Identifier of the officer who will own the contract from the ULB's end. 
+        contractPeriod:
+          type: number
+          description: Number of days of the agreed upon time period. Applicable only for contracts of type WORK_ORDER. 
+        documentIds:
+          type: array
+          description: Any attachments of the contract. 
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/Document'
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: Any additional key-value pair to be stored with the contract. 
+      required:
+      - tenantId
+      - subEstimateId
+      - executingAuthority
+      - type
+      - amount
+      - vendorId
+      - officerInCharge
+      - contractPeriod
+    
+    ContractRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+        contract:
+          $ref: '#/components/schemas/Contract'
+        workflow:
+          type: object
+          properties:
+            action:
+              type: string
+              description: 'Action of the workflow to be performned on the request'
+            comment:
+              type: string
+              description: 'comment for the workflow action to be performed'
+            assignees:
+              type: array
+              items:
+                type: string
+                description: ' uuid of the users in the system to assign workflow to the specific user intead of a all the users with the gien role.'
+          required:
+          - action
+    
+    ContractResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contract'
+    
+    RequestInfoWrapper:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/eGovTrial/Contracts-Service/1.0.0
