@@ -104,5 +104,5 @@ Attendance service allows users to maintain attendance registers, enrol individu
 
 * [Functional specifications - Attendance](../../../../specifications/functional-specifications/attendance-management.md)
 * [Attendance module service configuration](../../../../setup/configure-works/service-configuration/attendance.md)
-* [Attendance UI configuration](broken-reference) - for MuktaSoft
+* [Attendance UI configuration](../../../../reference-implementations/muktasoft-v2.2/deployment/configuration/ui-configuration/modules/attendance-cbo-application.md) - for MuktaSoft
 * [Attendance employee user manual](../../../../reference-implementations/muktasoft-v2.2/implementation/training-resources/user-manual/mobile-application-user-manual/cbo-getting-started/track-attendance.md) - for MuktaSoft
