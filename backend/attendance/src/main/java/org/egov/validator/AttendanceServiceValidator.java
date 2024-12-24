@@ -5,10 +5,10 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.project.Project;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.IndividualServiceUtil;
-import org.egov.util.MDMSUtils;
+import org.egov.util.*;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
-import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
+import static org.egov.util.AttendanceServiceConstants.*;
 
 @Component
 @Slf4j
@@ -30,11 +29,16 @@ public class AttendanceServiceValidator {
     private final RegisterRepository registerRepository;
     private final IndividualServiceUtil individualServiceUtil;
 
+    private final BoundaryServiceUtil boundaryServiceUtil;
+    private final ProjectServiceUtil projectServiceUtil;
+
     @Autowired
-    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil) {
+    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil, ProjectServiceUtil projectServiceUtil) {
         this.mdmsUtils = mdmsUtils;
         this.registerRepository = registerRepository;
         this.individualServiceUtil = individualServiceUtil;
+        this.boundaryServiceUtil = boundaryServiceUtil;
+        this.projectServiceUtil = projectServiceUtil;
     }
 
     /* Validates create Attendance Register request body */
@@ -62,11 +66,16 @@ public class AttendanceServiceValidator {
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
 
+        //Verify boundary data for creating attendance register
+        boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
+
+
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
 
         //Verify that active attendance register is not already present for provided tenantId, referenceId and serviceCode
         validateAttendanceRegisterAgainstDB(attendanceRegisters);
+
         log.info("Attendance registers validated against DB");
     }
 
@@ -116,6 +125,15 @@ public class AttendanceServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
+
+        //Verify if Status is PENDINGFORAPPROVAL
+        validateStatus(attendanceRegisters, errorMap);
+
+        //Verify if Project Date ended
+        validateProjectEndDate(request, errorMap);
+
+        //Validate locality Code
+        boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -275,5 +293,38 @@ public class AttendanceServiceValidator {
             }
         }
 
+    }
+
+    private void validateStatus(List<AttendanceRegister> attendanceRegisters, Map<String, String> errorMap) {
+        attendanceRegisters.forEach(attendanceRegister -> {
+            if(attendanceRegister.getPaymentStatus()==PaymentStatus.APPROVED){
+                errorMap.put("STATUS_APPROVED", "Cannot update status already approved");
+            }
+        });
+    }
+
+    private void validateProjectEndDate(AttendanceRegisterRequest request, Map<String, String> errorMap) {
+        List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
+
+        attendanceRegisters.forEach(attendanceRegister -> {
+            String referenceId = attendanceRegister.getReferenceId();
+
+            if(referenceId!=null) {
+                Project projectsearch = Project.builder().id(referenceId).tenantId(attendanceRegister.getTenantId()).build();
+
+                List<Project> projects=projectServiceUtil.getProject(
+                  attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo()
+                );
+                if(projects.isEmpty())
+                    throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+referenceId);
+
+                Project project = projects.get(0);
+                Long time = System.currentTimeMillis();
+
+                if(project.getEndDate()<time){
+                    errorMap.put("PROJECT_ENDED_CANNOT_UPDATE", "Project ended cannot update the attendance register");
+                }
+            }
+        });
     }
 }

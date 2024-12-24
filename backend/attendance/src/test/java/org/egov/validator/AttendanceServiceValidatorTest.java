@@ -7,7 +7,9 @@ import org.egov.helper.AttendanceRegisterRequestBuilderTest;
 import org.egov.helper.AttendeeRequestBuilderTest;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.BoundaryServiceUtil;
 import org.egov.util.MDMSUtils;
+import org.egov.util.ProjectServiceUtil;
 import org.egov.web.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,6 +43,12 @@ public class AttendanceServiceValidatorTest {
 
     @Mock
     private RegisterRepository registerRepository;
+
+    @Mock
+    private BoundaryServiceUtil boundaryServiceUtil;
+
+    @Mock
+    private ProjectServiceUtil projectServiceUtil;
 
     @DisplayName("Method validateRequestInfo: With good request")
     @Test

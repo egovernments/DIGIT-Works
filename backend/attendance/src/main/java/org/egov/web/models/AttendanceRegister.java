@@ -62,6 +62,11 @@ public class AttendanceRegister {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
+    @JsonProperty("localityCode")
+    private String localityCode;
+
+    @JsonProperty("paymentStatus")
+    private PaymentStatus paymentStatus = PaymentStatus.PENDINGFORAPPROVAL;
 
     public AttendanceRegister addStaffItem(StaffPermission staffItem) {
         if (this.staff == null) {

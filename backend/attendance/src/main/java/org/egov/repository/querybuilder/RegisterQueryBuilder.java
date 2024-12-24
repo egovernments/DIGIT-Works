@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.web.models.PaymentStatus;
 import org.egov.web.models.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,9 @@ public class RegisterQueryBuilder {
             "reg.createdtime, " +
             "reg.lastmodifiedtime, " +
             "reg.referenceid, " +
-            "reg.servicecode " +
+            "reg.servicecode, " +
+            "reg.localitycode, " +
+            "reg.paymentstatus " +
             "FROM eg_wms_attendance_register reg ";
 
     private static final String JOIN_STAFF = " JOIN eg_wms_attendance_staff staff ";
@@ -151,13 +154,28 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(attendeeId);
         }
 
+        List<String> localityCodes = searchCriteria.getLocalityCode();
+        if(localityCodes!=null && !localityCodes.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.localitycode IN (").append(createQuery(localityCodes)).append(")");
+            preparedStmtList.addAll(localityCodes);
+        }
+
+        if (!ObjectUtils.isEmpty(searchCriteria.getPaymentStatus())) {
+            PaymentStatus paymentStatus = searchCriteria.getPaymentStatus();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.paymentstatus = ? ");
+            preparedStmtList.add(paymentStatus.toString());
+        }
+
+
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);
-        return addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
+        return query.toString();
     }
 
-    private String addPaginationWrapper(String query,List<Object> preparedStmtList,
-                                        AttendanceRegisterSearchCriteria criteria){
+    public String addPaginationWrapper(String query, List<Object> preparedStmtList,
+                                       AttendanceRegisterSearchCriteria criteria){
         int limit = config.getAttendanceRegisterDefaultLimit();
         int offset = config.getAttendanceRegisterDefaultOffset();
 
