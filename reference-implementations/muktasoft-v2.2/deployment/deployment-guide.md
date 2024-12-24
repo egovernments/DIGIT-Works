@@ -72,13 +72,11 @@ Upsert localisation [following this document](https://core.digit.org/guides/data
 MDMS configuration is listed for each service.
 
 * [Project](../../../platform/architecture/low-level-design/services/project.md)
-* [Estimates](broken-reference)
+* [Estimates](../../../platform/architecture/low-level-design/services/detailed-estimates.md)
 * [Contracts](../../../setup/configure-works/service-configuration/contract.md#mdms-configuration)
 * [Attendance](../../../setup/configure-works/service-configuration/attendance.md#configuration)
 * [Muster Roll](../../../setup/configure-works/service-configuration/muster-roll.md#configuration)
 * [Expense](../../../setup/configure-works/service-configuration/expense.md#configuration)
 * [Expense Calculator](muktasoft-services/expense-calculator.md)
 {% endhint %}
-
-###
 
