@@ -97,6 +97,6 @@ TBD
 
 * [Functional specifications - Estimates](../../../../specifications/functional-specifications/estimates.md)
 * [Estimates module service configuration](../../../../setup/configure-works/service-configuration/estimate.md)
-* [Estimates module UI configuration](broken-reference) - for MuktaSoft
+* [Estimates module UI configuration](../../../../reference-implementations/muktasoft-v2.2/deployment/configuration/ui-configuration/modules/estimate.md) - for MuktaSoft
 * [Estimates user stories](../../../../reference-implementations/muktasoft-v2.2/specifications/functional-requirements/user-stories/jit-fs-integration/) - for MuktaSoft
 * [Employee user manual on using the Estimates module ](../../../../reference-implementations/muktasoft-v2.2/implementation/training-resources/user-manual/web-application-user-manual/estimate.md)- for MuktaSoft
