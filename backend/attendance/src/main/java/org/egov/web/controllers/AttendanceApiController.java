@@ -9,10 +9,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.repository.RegisterRepository;
 import org.egov.service.AttendanceRegisterService;
 import org.egov.util.ResponseInfoFactory;
-import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.AttendanceRegisterRequest;
-import org.egov.web.models.AttendanceRegisterResponse;
-import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,15 +59,14 @@ public class AttendanceApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> searchAttendanceRegister(@Valid @ModelAttribute AttendanceRegisterSearchCriteria searchCriteria, @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-        List<AttendanceRegister> attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
-        Long[] counts = registerRepository.getRegisterCounts(searchCriteria);
+        RegisterResponse attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
         Map<String, Long> statusCount = new HashMap<>();
 
         // Initialize the map with default values
-        statusCount.put("APPROVED", counts[1]);
-        statusCount.put("APPROVAL_PENDING", counts[2]);
+        statusCount.put("APPROVED", attendanceRegisterList.getApprovedCount());
+        statusCount.put("APPROVAL_PENDING", attendanceRegisterList.getPendingCount());
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(attendanceRegisterList).totalCount(counts[0]).statusCount(statusCount).build();
+        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(attendanceRegisterList.getAttendanceRegisters()).totalCount(attendanceRegisterList.getTotalRows()).statusCount(statusCount).build();
         return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse, HttpStatus.OK);
     }
 
