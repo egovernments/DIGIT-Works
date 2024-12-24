@@ -66,6 +66,5 @@ Below are the sequence diagrams for the creation and consumption of revision con
 
 * [Functional specifications - Contracts](../../../../specifications/functional-specifications/contracts.md)
 * [Contracts module service configuration](../../../../setup/configure-works/service-configuration/contract.md)
-* [Contracts UI configuration - for MuktaSoft](broken-reference)
-* [Contracts employee user manual](broken-reference) - for MuktaSoft
+* [Contracts UI configuration - for MuktaSoft](../../../../reference-implementations/muktasoft-v2.2/deployment/sms-adapter-services/contact-notification-service.md)
 * [Contracts user stories](../../../../reference-implementations/muktasoft-v2.2/specifications/functional-requirements/user-stories/work-order/) - for MuktaSoft
