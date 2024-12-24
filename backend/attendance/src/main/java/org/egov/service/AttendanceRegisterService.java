@@ -28,6 +28,9 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.egov.util.AttendanceServiceConstants.STATUS_MAP;
+import static org.egov.util.AttendanceServiceConstants.TOTAL_COUNT;
+
 @Service
 @Slf4j
 public class AttendanceRegisterService {
@@ -89,7 +92,7 @@ public class AttendanceRegisterService {
      * @param searchCriteria
      * @return
      */
-    public RegisterResponse searchAttendanceRegister(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
+    public AttendanceRegisterResponse searchAttendanceRegister(RequestInfoWrapper requestInfoWrapper, AttendanceRegisterSearchCriteria searchCriteria) {
         //Validate the requested parameters
         attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria);
 
@@ -103,14 +106,14 @@ public class AttendanceRegisterService {
         Set<String> openSearchEnabledRoles  = getRegisterOpenSearchEnabledRoles();
 
         List<AttendanceRegister> resultAttendanceRegisters = new ArrayList<>();
-        Long[] count = new Long[]{0L, 0L, 0L};
+        Map<String, Long> counts = new HashMap<>();
 
         if(isUserEnabledForOpenSearch(userRoles,openSearchEnabledRoles)){
             /*
                User having the role to perform open search on attendance register.
             */
             log.info("Searching registers for Superuser or Engineer");
-            count = fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, resultAttendanceRegisters);
+            counts = fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, resultAttendanceRegisters);
         }else{
             /*
                Make sure response register list should contain only those register for which logged-in is associated.
@@ -119,15 +122,15 @@ public class AttendanceRegisterService {
 
             String individualId = individualServiceUtil.getIndividualDetailsFromUserId(userId,requestInfoWrapper.getRequestInfo(), searchCriteria.getTenantId()).get(0).getId();
             Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(individualId);
-            count = updateSearchCriteriaAndFetchAndFilterRegisters(requestInfoWrapper, registers, searchCriteria, resultAttendanceRegisters);
+            counts = updateSearchCriteriaAndFetchAndFilterRegisters(requestInfoWrapper, registers, searchCriteria, resultAttendanceRegisters);
         }
 
         // Create and populate the response object
-        RegisterResponse response = new RegisterResponse();
-        response.setAttendanceRegisters(resultAttendanceRegisters);
-        response.setTotalRows(count[0]);
-        response.setApprovedCount(count[1]);
-        response.setPendingCount(count[2]);
+        AttendanceRegisterResponse response = new AttendanceRegisterResponse();
+        response.setAttendanceRegister(resultAttendanceRegisters);
+        response.setTotalCount(counts.get(TOTAL_COUNT));
+        counts.remove(TOTAL_COUNT);
+        response.setStatusCount(counts);
 
         return response;
     }
@@ -164,11 +167,17 @@ public class AttendanceRegisterService {
      * @param searchCriteria
      * @param resultAttendanceRegisters
      */
-    public Long[] updateSearchCriteriaAndFetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,Set<String> registers, AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
+    public Map<String, Long> updateSearchCriteriaAndFetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,Set<String> registers, AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
+        Map<String, Long> counts = new HashMap<>();
+        counts.put(TOTAL_COUNT,0L);
+        for (Map.Entry<String, String> entry : STATUS_MAP.entrySet()) {
+            String alias = entry.getKey();
+            counts.put(alias,0L);
+        }
 
         if (registers == null || registers.isEmpty()) {
             log.info("Registers are empty or null");
-            return new Long[]{0L, 0L, 0L};
+            return counts;
         }
         if (searchCriteria.getIds() == null) {
             log.info("Register search criteria does not contain any register ids");
@@ -184,7 +193,7 @@ public class AttendanceRegisterService {
                 }
             }
         }
-        Long[] counts = fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, resultAttendanceRegisters);
+        counts = fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, resultAttendanceRegisters);
         return counts;
     }
 
@@ -195,7 +204,7 @@ public class AttendanceRegisterService {
      * @param searchCriteria
      * @param resultAttendanceRegisters
      */
-    private Long[] fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
+    private Map<String, Long> fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
         log.info("Fetching registers based on supplied search criteria");
 
         if(searchCriteria.isChildrenRequired()) {
@@ -209,7 +218,7 @@ public class AttendanceRegisterService {
         }
         // Fetch the all registers based on the supplied search criteria
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
-        Long[] counts = registerRepository.getRegisterCounts(searchCriteria);
+        Map<String, Long> counts = registerRepository.getRegisterCounts(searchCriteria);
 
         // Create a map with key as registerId and corresponding register list as value
         Map<String, List<AttendanceRegister>> registerIdVsAttendanceRegisters = attendanceRegisters.stream().collect(Collectors.groupingBy(AttendanceRegister::getId));
@@ -337,11 +346,11 @@ public class AttendanceRegisterService {
                 BigDecimal projectStartDate = BigDecimal.valueOf(project.getStartDate());
                 BigDecimal projectEndDate = BigDecimal.valueOf(project.getEndDate());
                 log.info("Fetching register from db for project : " + project.getId());
-                RegisterResponse response = searchAttendanceRegister(
+                AttendanceRegisterResponse response = searchAttendanceRegister(
                         requestInfoWrapper,
                         AttendanceRegisterSearchCriteria.builder().referenceId(project.getId()).tenantId(project.getTenantId()).build()
                 );
-                List<AttendanceRegister> registers = response.getAttendanceRegisters();
+                List<AttendanceRegister> registers = response.getAttendanceRegister();
                 if(CollectionUtils.isEmpty(registers)) return;
 
                 registers.forEach(attendanceRegister -> {
@@ -377,7 +386,7 @@ public class AttendanceRegisterService {
         // Calls search attendance register with created request. If some error in searching attendance register, throws error
         try {
 
-            attendanceRegisterList = searchAttendanceRegister(requestInfoWrapper, searchCriteria).getAttendanceRegisters();
+            attendanceRegisterList = searchAttendanceRegister(requestInfoWrapper, searchCriteria).getAttendanceRegister();
             log.info("Attendance register search successful");
         } catch (Exception e) {
             log.info("Error in searching attendance register", e);
