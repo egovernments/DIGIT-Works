@@ -130,6 +130,27 @@ public class MusterRollServiceConfiguration {
     @Value("${musterroll.update.recompute.attendance.enabled:true}")
     private boolean recomputeAttendanceEnabled;
 
+    @Value("${musterroll.individual.entry.roles.enabled:false}")
+    private boolean individualEntryRolesEnabled;
+
+    @Value("${musterroll.validate.start.date.monday.enabled:true}")
+    private boolean validateStartDateMondayEnabled;
+
+    @Value("${egov.user.host}")
+    private String userHost;
+
+    @Value("${egov.user.context.path}")
+    private String userContextPath;
+
+    @Value("${egov.user.create.path}")
+    private String userCreateEndpoint;
+
+    @Value("${egov.user.search.path}")
+    private String userSearchEndpoint;
+
+    @Value("${egov.user.update.path}")
+    private String userUpdateEndpoint;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));

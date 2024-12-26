@@ -9,6 +9,8 @@ import org.egov.common.contract.models.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.user.UserDetailResponse;
 import org.egov.common.models.individual.Identifier;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Skill;
@@ -29,6 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -42,14 +45,19 @@ public class MusterRollServiceUtil {
 
 	private final RestTemplate restTemplate;
 
+	private final UserUtil userUtil;
+
 	private final MusterRollServiceConfiguration config;
 	private static final String SKILL_CODE = "skillCode";
 
+	private static final String ROLES = "roles";
+
 	@Autowired
-	public MusterRollServiceUtil(ObjectMapper mapper, RestTemplate restTemplate, MusterRollServiceConfiguration config) {
+	public MusterRollServiceUtil(ObjectMapper mapper, RestTemplate restTemplate, UserUtil userUtil, MusterRollServiceConfiguration config) {
 		this.mapper = mapper;
 		this.restTemplate = restTemplate;
-		this.config = config;
+        this.userUtil = userUtil;
+        this.config = config;
 	}
 
 	/**
@@ -138,6 +146,17 @@ public class MusterRollServiceUtil {
 				additionalDetails.put("accountHolderName", accountHolderName);
 				additionalDetails.put("accountType", accountType);
 			}
+		}
+
+		if(config.isIndividualEntryRolesEnabled()) {
+			UserDetailResponse userDetailResponse = userUtil.searchUsersByIndividualIds(Collections.singletonList(individualEntry.getId()));
+			List<String> roles = userDetailResponse.getUser().stream().findFirst()
+					.orElseThrow(() -> new CustomException(
+							"MusterRollServiceUtil::populateAdditionalDetails::USER SEARCH ERROR",
+							"No user found for the individual id " + individualEntry.getId())
+					)
+					.getRoles().stream().map(Role::getCode).toList();
+			additionalDetails.put(ROLES, roles);
 		}
 
 		try {

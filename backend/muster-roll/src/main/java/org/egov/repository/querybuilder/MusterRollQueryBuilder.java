@@ -84,6 +84,10 @@ public class MusterRollQueryBuilder {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" muster.attendance_register_id=? ");
             preparedStmtList.add(searchCriteria.getRegisterId());
+        } else if (searchCriteria.getRegisterIds() != null && !searchCriteria.getRegisterIds().isEmpty()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" muster.attendance_register_id IN (").append(createQuery(searchCriteria.getRegisterIds())).append(")");
+            addToPreparedStatement(preparedStmtList, searchCriteria.getRegisterIds());
         } else if (registerIds != null && !registerIds.isEmpty()) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" muster.attendance_register_id IN (").append(createQuery(registerIds)).append(")");
