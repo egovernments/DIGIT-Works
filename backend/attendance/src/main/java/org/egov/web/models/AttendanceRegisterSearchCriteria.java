@@ -44,7 +44,7 @@ public class AttendanceRegisterSearchCriteria {
     private String staffId;
 
     @JsonProperty("referenceId")
-    private String referenceId;
+    private List<String> referenceId;
 
     @JsonProperty("serviceCode")
     private String serviceCode;

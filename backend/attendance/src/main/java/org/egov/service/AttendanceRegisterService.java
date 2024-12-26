@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.common.models.project.Address;
 import org.egov.common.models.project.Project;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.RegisterEnrichment;
@@ -17,6 +18,7 @@ import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.BoundaryServiceUtil;
 import org.egov.util.IndividualServiceUtil;
+import org.egov.util.ProjectServiceUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.web.models.*;
@@ -52,8 +54,10 @@ public class AttendanceRegisterService {
     private final IndividualServiceUtil individualServiceUtil;
     private final BoundaryServiceUtil boundaryServiceUtil;
 
+    private final ProjectServiceUtil projectServiceUtil;
+
     @Autowired
-    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil) {
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil, ProjectServiceUtil projectServiceUtil) {
         this.attendanceServiceValidator = attendanceServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.producer = producer;
@@ -65,6 +69,7 @@ public class AttendanceRegisterService {
         this.staffEnrichmentService = staffEnrichmentService;
         this.individualServiceUtil = individualServiceUtil;
         this.boundaryServiceUtil = boundaryServiceUtil;
+        this.projectServiceUtil = projectServiceUtil;
     }
 
     /**
@@ -198,7 +203,31 @@ public class AttendanceRegisterService {
     private Long[] fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
         log.info("Fetching registers based on supplied search criteria");
 
-        if(searchCriteria.isChildrenRequired()) {
+        if(searchCriteria.getReferenceId()!=null && !searchCriteria.getReferenceId().isEmpty()){
+            Project projectSearch = Project.builder()
+              .tenantId(searchCriteria.getTenantId())
+              .address(Address.builder().boundary(searchCriteria.getLocalityCode().get(0)).build())
+              .build();
+
+            List<Project> projects = projectServiceUtil.getProject(
+              searchCriteria.getTenantId(), projectSearch, requestInfoWrapper.getRequestInfo(), true
+            );
+
+            List<String> referenceId = new ArrayList<>();
+
+            projects.forEach(project -> {
+                referenceId.add(project.getId());
+
+                if(project.getDescendants()!=null && !project.getDescendants().isEmpty()) {
+                    project.getDescendants().forEach(child -> {
+                        referenceId.add(child.getId());
+                    });
+                }
+            });
+            searchCriteria.setReferenceId(referenceId);
+        }
+
+        if(searchCriteria.isChildrenRequired() && searchCriteria.getLocalityCode()!=null && !searchCriteria.getLocalityCode().isEmpty()) {
             List<String> localityCodes=boundaryServiceUtil.fetchChildren(
               requestInfoWrapper,
               searchCriteria.getLocalityCode(),
@@ -339,7 +368,7 @@ public class AttendanceRegisterService {
                 log.info("Fetching register from db for project : " + project.getId());
                 RegisterResponse response = searchAttendanceRegister(
                         requestInfoWrapper,
-                        AttendanceRegisterSearchCriteria.builder().referenceId(project.getId()).tenantId(project.getTenantId()).build()
+                        AttendanceRegisterSearchCriteria.builder().referenceId(Collections.singletonList(project.getId())).tenantId(project.getTenantId()).build()
                 );
                 List<AttendanceRegister> registers = response.getAttendanceRegisters();
                 if(CollectionUtils.isEmpty(registers)) return;
@@ -408,7 +437,7 @@ public class AttendanceRegisterService {
     public void updateEndDateForRevisedContract(RequestInfo requestInfo, String tenantId, String referenceId, BigDecimal endDate) {
         AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
                 .tenantId(tenantId)
-                .referenceId(referenceId)
+                .referenceId(Collections.singletonList(referenceId))
                 .limit(attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit())
                 .offset(attendanceServiceConfiguration.getAttendanceRegisterDefaultOffset()).build();
 
