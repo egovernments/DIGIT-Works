@@ -136,6 +136,9 @@ public class MusterRollServiceConfiguration {
     @Value("${musterroll.validate.start.date.monday.enabled:true}")
     private boolean validateStartDateMondayEnabled;
 
+    @Value("${musterroll.add.bank.account.details.enabled:true}")
+    private boolean addBankAccountDetails;
+
     @Value("${egov.user.host}")
     private String userHost;
 
