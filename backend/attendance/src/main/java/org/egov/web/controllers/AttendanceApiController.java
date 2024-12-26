@@ -59,14 +59,11 @@ public class AttendanceApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> searchAttendanceRegister(@Valid @ModelAttribute AttendanceRegisterSearchCriteria searchCriteria, @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-        RegisterResponse attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
+        AttendanceRegisterResponse attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
         Map<String, Long> statusCount = new HashMap<>();
 
-        // Initialize the map with default values
-        statusCount.put("APPROVED", attendanceRegisterList.getApprovedCount());
-        statusCount.put("APPROVAL_PENDING", attendanceRegisterList.getPendingCount());
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(attendanceRegisterList.getAttendanceRegisters()).totalCount(attendanceRegisterList.getTotalRows()).statusCount(statusCount).build();
+        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(attendanceRegisterList.getAttendanceRegister()).totalCount(attendanceRegisterList.getTotalCount()).statusCount(attendanceRegisterList.getStatusCount()).build();
         return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse, HttpStatus.OK);
     }
 
