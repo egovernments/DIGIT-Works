@@ -88,7 +88,7 @@ public class AttendanceServiceValidator {
              AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
                     .tenantId(tenantId)
                     .status(Status.ACTIVE)
-                    .referenceId(referenceId)
+                    .referenceId(Collections.singletonList(referenceId))
                     .serviceCode(serviceCode)
                     .build();
              List<AttendanceRegister> registers = registerRepository.getRegister(attendanceRegisterSearchCriteria);
@@ -313,7 +313,7 @@ public class AttendanceServiceValidator {
                 Project projectsearch = Project.builder().id(referenceId).tenantId(attendanceRegister.getTenantId()).build();
 
                 List<Project> projects=projectServiceUtil.getProject(
-                  attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo()
+                  attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo(), false
                 );
                 if(projects.isEmpty())
                     throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+referenceId);

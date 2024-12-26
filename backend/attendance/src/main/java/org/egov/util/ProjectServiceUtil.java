@@ -35,9 +35,9 @@ public class ProjectServiceUtil {
 	 * @param requestInfo
 	 * @return
 	 */
-	public List<Project> getProject(String tenantId, Project project, RequestInfo requestInfo){
+	public List<Project> getProject(String tenantId, Project project, RequestInfo requestInfo, boolean childProject){
 
-		StringBuilder url = getProjectURL(tenantId);
+		StringBuilder url = getProjectURL(tenantId, childProject);
 		ProjectRequest projectRequest = ProjectRequest.builder().projects(Collections.singletonList(project)).requestInfo(requestInfo).build();
 		ProjectResponse projectResponse = serviceRequestClient.fetchResult(url,projectRequest,ProjectResponse.class);
 
@@ -49,11 +49,17 @@ public class ProjectServiceUtil {
 	 * @param tenantId
 	 * @return URL
 	 */
-	public StringBuilder getProjectURL(String tenantId)
+	public StringBuilder getProjectURL(String tenantId, boolean childRequired)
 	{
 		StringBuilder builder = new StringBuilder(config.getProjectHost());
 		builder.append(config.getProjectSearchEndpoint()).append(LIMIT_OFFSET);
 		builder.append("&tenantId=").append(tenantId);
+
+		if(childRequired){
+			builder.append("&ancestorIds=").append(true);
+			builder.append("&includeDescendants=").append(true);
+		}
+
 		return builder;
 	}
 
