@@ -35,7 +35,7 @@ public class RegisterRepository {
 
     public List<AttendanceRegister> getRegister(AttendanceRegisterSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList);
+        String query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList, false);
         query = queryBuilder.addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
 
         log.info("Query of get register : " + query);
@@ -48,7 +48,7 @@ public class RegisterRepository {
 
     public Map<String, Long> getRegisterCounts(AttendanceRegisterSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList);
+        String query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList, true);
 
         log.info("Query of get register : " + query);
         log.info("preparedStmtList of get register : " + preparedStmtList.toString());
