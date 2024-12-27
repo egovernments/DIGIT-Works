@@ -212,30 +212,6 @@ public class AttendanceRegisterService {
     private Map<String, Long> fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
         log.info("Fetching registers based on supplied search criteria");
 
-        if(searchCriteria.getReferenceId()!=null && !searchCriteria.getReferenceId().isEmpty()){
-            Project projectSearch = Project.builder()
-              .tenantId(searchCriteria.getTenantId())
-              .address(Address.builder().boundary(searchCriteria.getLocalityCode().get(0)).build())
-              .build();
-
-            List<Project> projects = projectServiceUtil.getProject(
-              searchCriteria.getTenantId(), projectSearch, requestInfoWrapper.getRequestInfo(), true
-            );
-
-            List<String> referenceId = new ArrayList<>();
-
-            projects.forEach(project -> {
-                referenceId.add(project.getId());
-
-                if(project.getDescendants()!=null && !project.getDescendants().isEmpty()) {
-                    project.getDescendants().forEach(child -> {
-                        referenceId.add(child.getId());
-                    });
-                }
-            });
-            searchCriteria.setReferenceId(referenceId);
-        }
-
         if(searchCriteria.isChildrenRequired() && searchCriteria.getLocalityCode()!=null && !searchCriteria.getLocalityCode().isEmpty()) {
             List<String> localityCodes=boundaryServiceUtil.fetchChildren(
               requestInfoWrapper,
@@ -249,44 +225,46 @@ public class AttendanceRegisterService {
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
         Map<String, Long> counts = registerRepository.getRegisterCounts(searchCriteria);
 
-        // Create a map with key as registerId and corresponding register list as value
-        Map<String, List<AttendanceRegister>> registerIdVsAttendanceRegisters = attendanceRegisters.stream().collect(Collectors.groupingBy(AttendanceRegister::getId));
+        if(attendanceRegisters!=null && !attendanceRegisters.isEmpty()){
+            // Create a map with key as registerId and corresponding register list as value
+            Map<String, List<AttendanceRegister>> registerIdVsAttendanceRegisters = attendanceRegisters.stream().collect(Collectors.groupingBy(AttendanceRegister::getId));
 
-        List<String> registerIdsToSearch = new ArrayList<>();
-        registerIdsToSearch.addAll(registerIdVsAttendanceRegisters.keySet());
+            List<String> registerIdsToSearch = new ArrayList<>();
+            registerIdsToSearch.addAll(registerIdVsAttendanceRegisters.keySet());
 
-        // Fetch and filer staff members based on the supplied search criteria.
-        log.info("Fetch all staff members based on the supplied search criteria");
-        List<StaffPermission> staffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
-        // Create a map with key as registerId and corresponding staff list as value
-        Map<String, List<StaffPermission>> registerIdStaffMapping = staffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
+            // Fetch and filer staff members based on the supplied search criteria.
+            log.info("Fetch all staff members based on the supplied search criteria");
+            List<StaffPermission> staffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
+            // Create a map with key as registerId and corresponding staff list as value
+            Map<String, List<StaffPermission>> registerIdStaffMapping = staffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
 
-        // If staffId present in search criteria then update the registerIDToSearch list with new set of registerIds
-        if (searchCriteria.getStaffId() != null){
-            registerIdsToSearch.clear();
-            registerIdsToSearch.addAll(registerIdStaffMapping.keySet());
-        }
+            // If staffId present in search criteria then update the registerIDToSearch list with new set of registerIds
+            if (searchCriteria.getStaffId() != null){
+                registerIdsToSearch.clear();
+                registerIdsToSearch.addAll(registerIdStaffMapping.keySet());
+            }
 
-        // Fetch and filer attendees based on the supplied search criteria.
-        List<IndividualEntry> attendees = fetchAllAttendeesAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
-        // Create a map with key as registerId and corresponding attendee list as value
-        Map<String, List<IndividualEntry>> registerIdAttendeeMapping = attendees.stream().collect(Collectors.groupingBy(IndividualEntry::getRegisterId));
+            // Fetch and filer attendees based on the supplied search criteria.
+            List<IndividualEntry> attendees = fetchAllAttendeesAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
+            // Create a map with key as registerId and corresponding attendee list as value
+            Map<String, List<IndividualEntry>> registerIdAttendeeMapping = attendees.stream().collect(Collectors.groupingBy(IndividualEntry::getRegisterId));
 
-        // If AttendeeId present in search criteria then update the registerIDToSearch list with new set of registerIds
-        if(searchCriteria.getAttendeeId() != null){
-            List<String> registerIdsAssociatedToAttendees = new ArrayList<>();
-            registerIdsAssociatedToAttendees.addAll(registerIdAttendeeMapping.keySet());
-            registerIdsToSearch.clear();
-            registerIdsToSearch.addAll(registerIdsAssociatedToAttendees);
-        }
+            // If AttendeeId present in search criteria then update the registerIDToSearch list with new set of registerIds
+            if(searchCriteria.getAttendeeId() != null){
+                List<String> registerIdsAssociatedToAttendees = new ArrayList<>();
+                registerIdsAssociatedToAttendees.addAll(registerIdAttendeeMapping.keySet());
+                registerIdsToSearch.clear();
+                registerIdsToSearch.addAll(registerIdsAssociatedToAttendees);
+            }
 
-        // Populate final list of registers to be return
-        for(String registerId : registerIdsToSearch ){
-            List<AttendanceRegister> registers = registerIdVsAttendanceRegisters.get(registerId);
-            for(AttendanceRegister register : registers){
-                register.setStaff(registerIdStaffMapping.get(registerId));
-                register.setAttendees(registerIdAttendeeMapping.get(registerId));
-                resultAttendanceRegisters.add(register);
+            // Populate final list of registers to be return
+            for(String registerId : registerIdsToSearch ){
+                List<AttendanceRegister> registers = registerIdVsAttendanceRegisters.get(registerId);
+                for(AttendanceRegister register : registers){
+                    register.setStaff(registerIdStaffMapping.get(registerId));
+                    register.setAttendees(registerIdAttendeeMapping.get(registerId));
+                    resultAttendanceRegisters.add(register);
+                }
             }
         }
 
