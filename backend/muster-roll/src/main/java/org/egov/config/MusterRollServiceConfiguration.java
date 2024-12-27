@@ -80,6 +80,8 @@ public class MusterRollServiceConfiguration {
     private String attendanceLogEndpoint;
     @Value("${works.attendance.register.search.endpoint}")
     private String attendanceRegisterEndpoint;
+    @Value("${works.attendance.register.update.endpoint}")
+    private String attendanceRegisterUpdateEndpoint;
     @Value("${works.attendance.register.search.limit}")
     private String attendanceRegisterSearchLimit;
 
@@ -138,6 +140,9 @@ public class MusterRollServiceConfiguration {
 
     @Value("${musterroll.add.bank.account.details.enabled:true}")
     private boolean addBankAccountDetails;
+
+    @Value("${musterroll.update.attendance.register.payment.status.enabled:true}")
+    private boolean updateAttendanceRegisterPaymentStatusEnabled;
 
     @Value("${egov.user.host}")
     private String userHost;

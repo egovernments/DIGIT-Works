@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.egov.util.MusterRollServiceConstants.ACTION_APPROVE;
 import static org.egov.util.MusterRollServiceConstants.STATUS_APPROVED;
 
 @Service
@@ -211,6 +212,18 @@ public class MusterRollService {
             calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
         workflowService.updateWorkflowStatus(musterRollRequest);
+        if(config.isUpdateAttendanceRegisterPaymentStatusEnabled() && musterRollRequest.getWorkflow().getAction().equals(ACTION_APPROVE)) {
+            AttendanceRegisterResponse attendanceRegisterResponse = musterRollServiceUtil
+                    .fetchAttendanceRegister(musterRollRequest.getMusterRoll(), musterRollRequest.getRequestInfo());
+            List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
+            if(attendanceRegisters == null || attendanceRegisters.isEmpty()) {
+                log.error("No attendance registers found to update the status");
+                throw new CustomException("MusterRollService::updateMusterRoll::updateAttendanceRegister", "No attendance registers found to update the status");
+            }
+            AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
+            attendanceRegister.setPaymentStatus(STATUS_APPROVED);
+            musterRollServiceUtil.updateAttendanceRegister(attendanceRegister, musterRollRequest.getRequestInfo());
+        }
         musterRollProducer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
 
         try {

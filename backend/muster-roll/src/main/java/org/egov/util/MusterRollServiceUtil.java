@@ -16,6 +16,7 @@ import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Skill;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ServiceCallException;
 import org.egov.web.models.*;
 import org.egov.works.services.common.models.bankaccounts.BankAccount;
 import org.egov.works.services.common.models.bankaccounts.BankAccountDetails;
@@ -32,10 +33,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-import static org.egov.util.MusterRollServiceConstants.*;
 
 @Component
 @Slf4j
@@ -284,5 +286,31 @@ public class MusterRollServiceUtil {
 					"User is not enrolled in the attendance register and not authorized to fetch it");
 		}
 		return attendanceRegisterResponse;
+	}
+
+	public AttendanceRegisterResponse updateAttendanceRegister(AttendanceRegister attendanceRegister, RequestInfo requestInfo) {
+		log.info("updateAttendanceRegister::Update attendance register with tenantId::" + attendanceRegister.getTenantId()
+				+ " and register ID: " + attendanceRegister.getId());
+
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterUpdateEndpoint());
+
+		AttendanceRegisterResponse response = null;
+
+		AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequest.builder()
+				.attendanceRegister(Collections.singletonList(attendanceRegister))
+				.requestInfo(requestInfo)
+				.build();
+		try {
+			response = restTemplate.postForObject(uri.toString(), attendanceRegisterRequest, AttendanceRegisterResponse.class);
+		} catch (HttpClientErrorException e) {
+			throw new ServiceCallException(e.getResponseBodyAsString());
+		} catch (Exception e) {
+			Map<String, String> map = new HashMap<>();
+			map.put(e.getCause().getClass().getName(), e.getMessage());
+			throw new CustomException(map);
+		}
+
+		return response;
 	}
 }
