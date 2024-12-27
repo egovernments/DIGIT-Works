@@ -234,6 +234,8 @@ public class AttendanceRegisterService {
                 }
             });
             searchCriteria.setReferenceId(referenceId);
+
+            searchCriteria.setLocalityCode(null);
         }
 
         if(searchCriteria.isChildrenRequired() && searchCriteria.getLocalityCode()!=null && !searchCriteria.getLocalityCode().isEmpty()) {

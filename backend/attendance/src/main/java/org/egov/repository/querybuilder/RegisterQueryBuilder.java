@@ -58,7 +58,7 @@ public class RegisterQueryBuilder {
     }
 
 
-    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
+    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludePaymentStatus) {
 
         log.info("Search criteria of attendance search : " + searchCriteria.toString());
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
@@ -160,7 +160,7 @@ public class RegisterQueryBuilder {
             preparedStmtList.addAll(localityCodes);
         }
 
-        if (!ObjectUtils.isEmpty(searchCriteria.getPaymentStatus())) {
+        if (!ObjectUtils.isEmpty(searchCriteria.getPaymentStatus()) && !excludePaymentStatus) {
             PaymentStatus paymentStatus = searchCriteria.getPaymentStatus();
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.paymentstatus = ? ");
