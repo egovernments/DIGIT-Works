@@ -127,10 +127,10 @@ public class AttendanceServiceValidator {
         log.info("Request data validated with MDMS");
 
         //Verify if Status is PENDINGFORAPPROVAL
-        validateStatus(attendanceRegisters, errorMap);
+//        validateStatus(attendanceRegisters, errorMap);
 
         //Verify if Project Date ended
-        validateProjectEndDate(request, errorMap);
+//        validateProjectEndDate(request, errorMap);
 
         //Validate locality Code
         boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
@@ -295,36 +295,36 @@ public class AttendanceServiceValidator {
 
     }
 
-    private void validateStatus(List<AttendanceRegister> attendanceRegisters, Map<String, String> errorMap) {
-        attendanceRegisters.forEach(attendanceRegister -> {
-            if(attendanceRegister.getPaymentStatus()==PaymentStatus.APPROVED){
-                errorMap.put("STATUS_APPROVED", "Cannot update status already approved");
-            }
-        });
-    }
+//    private void validateStatus(List<AttendanceRegister> attendanceRegisters, Map<String, String> errorMap) {
+//        attendanceRegisters.forEach(attendanceRegister -> {
+//            if(attendanceRegister.getPaymentStatus()==PaymentStatus.APPROVED){
+//                errorMap.put("STATUS_APPROVED", "Cannot update status already approved");
+//            }
+//        });
+//    }
 
-    private void validateProjectEndDate(AttendanceRegisterRequest request, Map<String, String> errorMap) {
-        List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
-
-        attendanceRegisters.forEach(attendanceRegister -> {
-            String referenceId = attendanceRegister.getReferenceId();
-
-            if(referenceId!=null) {
-                Project projectsearch = Project.builder().id(referenceId).tenantId(attendanceRegister.getTenantId()).build();
-
-                List<Project> projects=projectServiceUtil.getProject(
-                  attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo(), false, null
-                );
-                if(projects.isEmpty())
-                    throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+referenceId);
-
-                Project project = projects.get(0);
-                Long time = System.currentTimeMillis();
-
-                if(project.getEndDate()<time){
-                    errorMap.put("PROJECT_ENDED_CANNOT_UPDATE", "Project ended cannot update the attendance register");
-                }
-            }
-        });
-    }
+//    private void validateProjectEndDate(AttendanceRegisterRequest request, Map<String, String> errorMap) {
+//        List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
+//
+//        attendanceRegisters.forEach(attendanceRegister -> {
+//            String referenceId = attendanceRegister.getReferenceId();
+//
+//            if(referenceId!=null) {
+//                Project projectsearch = Project.builder().id(referenceId).tenantId(attendanceRegister.getTenantId()).build();
+//
+//                List<Project> projects=projectServiceUtil.getProject(
+//                  attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo(), false, null
+//                );
+//                if(projects.isEmpty())
+//                    throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+referenceId);
+//
+//                Project project = projects.get(0);
+//                Long time = System.currentTimeMillis();
+//
+//                if(project.getEndDate()<time){
+//                    errorMap.put("PROJECT_ENDED_CANNOT_UPDATE", "Project ended cannot update the attendance register");
+//                }
+//            }
+//        });
+//    }
 }
