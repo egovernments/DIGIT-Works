@@ -107,6 +107,9 @@ public class MusterRollServiceConfiguration {
     @Value("${kafka.topics.notification.sms}")
     private String smsNotificationTopic;
 
+    @Value("${notification.sms.enabled:false}")
+    private boolean sendNotificationEnabled;
+
     //Expense Service
     @Value("${works.expense.calculator.host}")
     private String expenseCalculatorServiceHost;
