@@ -212,6 +212,30 @@ public class AttendanceRegisterService {
     private Map<String, Long> fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
         log.info("Fetching registers based on supplied search criteria");
 
+        if(searchCriteria.getReferenceId()!=null && !searchCriteria.getReferenceId().isEmpty()){
+            Project projectSearch = Project.builder()
+              .tenantId(searchCriteria.getTenantId())
+              .address(Address.builder().boundary(searchCriteria.getLocalityCode().get(0)).build())
+              .build();
+
+            List<Project> projects = projectServiceUtil.getProject(
+              searchCriteria.getTenantId(), projectSearch, requestInfoWrapper.getRequestInfo(), true, searchCriteria.getReferenceId().get(0)
+            );
+
+            List<String> referenceId = new ArrayList<>();
+
+            projects.forEach(project -> {
+                referenceId.add(project.getId());
+
+                if(project.getDescendants()!=null && !project.getDescendants().isEmpty()) {
+                    project.getDescendants().forEach(child -> {
+                        referenceId.add(child.getId());
+                    });
+                }
+            });
+            searchCriteria.setReferenceId(referenceId);
+        }
+
         if(searchCriteria.isChildrenRequired() && searchCriteria.getLocalityCode()!=null && !searchCriteria.getLocalityCode().isEmpty()) {
             List<String> localityCodes=boundaryServiceUtil.fetchChildren(
               requestInfoWrapper,

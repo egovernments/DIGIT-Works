@@ -313,7 +313,7 @@ public class AttendanceServiceValidator {
                 Project projectsearch = Project.builder().id(referenceId).tenantId(attendanceRegister.getTenantId()).build();
 
                 List<Project> projects=projectServiceUtil.getProject(
-                  attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo(), false
+                  attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo(), false, null
                 );
                 if(projects.isEmpty())
                     throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+referenceId);
