@@ -10,7 +10,7 @@ public class AttendanceServiceConstants {
     public static final String TWO_SESSIONS = "TWO_SESSIONS";
     public static final String TOTAL_COUNT = "totalCount";
     public static final Map<String, String> STATUS_MAP = Map.ofEntries(
-        Map.entry("approvedCount", "APPROVED"),
-        Map.entry("pendingCount", "PENDINGFORAPPROVAL")
+        Map.entry("APPROVED", "APPROVED"),
+        Map.entry("PENDINGFORAPPROVAL", "PENDINGFORAPPROVAL")
     );
 }
