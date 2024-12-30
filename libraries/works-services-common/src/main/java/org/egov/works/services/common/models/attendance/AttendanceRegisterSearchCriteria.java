@@ -45,6 +45,9 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("referenceId")
     private String referenceId;
 
+    @JsonProperty("referenceIds")
+    private String referenceIds;
+
     @JsonProperty("serviceCode")
     private String serviceCode;
 
@@ -59,6 +62,15 @@ public class AttendanceRegisterSearchCriteria {
 
     @JsonProperty("sortOrder")
     private SortOrder sortOrder;
+
+    @JsonProperty("localityCodes")
+    private List<String> localityCode;
+
+    @JsonProperty("isChildrenRequired")
+    private boolean isChildrenRequired;
+
+    @JsonProperty("wfStatus")
+    private WfStatus wfStatus;
 
     public enum SortOrder {
         ASC,

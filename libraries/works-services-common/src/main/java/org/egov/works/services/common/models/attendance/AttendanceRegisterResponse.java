@@ -7,7 +7,9 @@ import org.egov.common.contract.response.ResponseInfo;
 
 import jakarta.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Getter
@@ -22,6 +24,12 @@ public class AttendanceRegisterResponse {
     @JsonProperty("attendanceRegister")
     @Valid
     private List<AttendanceRegister> attendanceRegister = null;
+
+    @JsonProperty("totalCount")
+    private long totalCount = 0;
+
+    @JsonProperty("statusCount")
+    private Map<String, Long> statusCount = new HashMap<>();
 
 
     public AttendanceRegisterResponse addAttendanceRegisterItem(AttendanceRegister attendanceRegisterItem) {
