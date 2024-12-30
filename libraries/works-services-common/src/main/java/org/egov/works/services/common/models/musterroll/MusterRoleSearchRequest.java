@@ -5,15 +5,22 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.egov.common.contract.models.RequestInfoWrapper;
+import org.egov.common.contract.request.RequestInfo;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MusterRoleSearchRequest extends RequestInfoWrapper {
+@Builder
+public class MusterRoleSearchRequest {
+
+	@JsonProperty("RequestInfo")
+	@Valid
+    	private RequestInfo requestInfo = null;
+	
 	@JsonProperty("musterRoll")
 	@NotNull(message = "Muster Roll is mandatory")
 	@Valid
