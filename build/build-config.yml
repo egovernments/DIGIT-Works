@@ -95,8 +95,6 @@ config:
       - work-dir: "backend/expense-calculator"
         dockerfile: "build/maven-java17/Dockerfile"
         image-name: "expense-calculator"
-      - work-dir: "backend/expense-calculator/src/main/resources/db"
-        image-name: "expense-calculator-db"
 
   - name: "builds/health-campaign-services/health-services/health-expense-calculator"
     build:
