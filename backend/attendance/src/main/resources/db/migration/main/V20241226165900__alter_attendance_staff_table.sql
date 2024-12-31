@@ -1,0 +1,1 @@
+ALTER TABLE eg_wms_attendance_staff ADD COLUMN IF NOT EXISTS staffType character varying(64);

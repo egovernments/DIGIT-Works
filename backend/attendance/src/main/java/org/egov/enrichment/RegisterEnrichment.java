@@ -86,7 +86,7 @@ public class RegisterEnrichment {
                 .registerId(attendanceRegister.getId())
                 .userId(individualId)
                 .enrollmentDate(new BigDecimal(System.currentTimeMillis()))
-                .auditDetails(auditDetails)
+                .auditDetails(auditDetails).staffType(requestInfo.getUserInfo().getType() == null ? StaffType.EDITOR : StaffType.valueOf(requestInfo.getUserInfo().getType()))
                 .build();
         attendanceRegister.setStaff(Collections.singletonList(staffPermission));
         log.info("First staff for attendance register is added in attendance register");
