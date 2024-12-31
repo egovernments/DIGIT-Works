@@ -176,7 +176,7 @@ public class AttendanceRegisterService {
         Map<String, Long> counts = new HashMap<>();
         counts.put(TOTAL_COUNT,0L);
         for (Map.Entry<String, String> entry : STATUS_MAP.entrySet()) {
-            String alias = entry.getKey();
+            String alias = entry.getValue();
             counts.put(alias,0L);
         }
 

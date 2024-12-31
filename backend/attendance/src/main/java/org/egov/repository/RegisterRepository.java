@@ -5,6 +5,7 @@ import org.egov.repository.querybuilder.RegisterQueryBuilder;
 import org.egov.repository.rowmapper.RegisterRowMapper;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
+import org.egov.web.models.PaymentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -56,8 +57,8 @@ public class RegisterRepository {
 // Dynamically construct the SUM(CASE WHEN ...) parts
         StringBuilder statusCountsQuery = new StringBuilder();
         for (Map.Entry<String, String> entry : STATUS_MAP.entrySet()) {
-            String status = entry.getValue();
-            String alias = entry.getKey();
+            String status = entry.getKey();
+            String alias = entry.getValue();
             statusCountsQuery.append(", SUM(CASE WHEN reg.paymentstatus = '")
                     .append(status)
                     .append("' THEN 1 ELSE 0 END) AS ")
@@ -79,12 +80,21 @@ public class RegisterRepository {
 
             // Dynamically extract counts for each status
             for (Map.Entry<String, String> entry : STATUS_MAP.entrySet()) {
-                String alias = entry.getKey();
+                String alias = entry.getValue();
                 result.put(alias, resultSet.getLong(alias));
             }
 
             return result;
         }, preparedStmtList.toArray());
+
+        if(searchCriteria.getPaymentStatus() != null ) {
+            if(searchCriteria.getPaymentStatus().equals(PaymentStatus.APPROVED)) {
+                counts.put("totalCount", counts.get(STATUS_MAP.get(PaymentStatus.APPROVED.toString())));
+            }
+            else if(searchCriteria.getPaymentStatus().equals(PaymentStatus.PENDINGFORAPPROVAL)) {
+                counts.put("totalCount", counts.get(STATUS_MAP.get(PaymentStatus.PENDINGFORAPPROVAL.toString())));
+            }
+        }
 
         return counts;
     }
