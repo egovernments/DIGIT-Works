@@ -97,6 +97,14 @@ config:
         image-name: "expense-calculator"
       - work-dir: "backend/expense-calculator/src/main/resources/db"
         image-name: "expense-calculator-db"
+
+  - name: "builds/health-campaign-services/health-services/health-expense-calculator"
+    build:
+      - work-dir: "backend/expense-calculator"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "health-expense-calculator"
+      - work-dir: "backend/expense-calculator/src/main/resources/db"
+        image-name: "health-expense-calculator-db"
         
   - name: "builds/digit-works/backend/expense"
     build:
@@ -105,6 +113,14 @@ config:
         image-name: "expense"
       - work-dir: "backend/expense/src/main/resources/db"
         image-name: "expense-db"
+
+  - name: "builds/health-campaign-services/health-services/health-expense"
+    build:
+      - work-dir: "backend/expense"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "health-expense"
+      - work-dir: "backend/expense/src/main/resources/db"
+        image-name: "health-expense-db"
 
   - name: "builds/digit-works/backend/measurement-service"
     build:

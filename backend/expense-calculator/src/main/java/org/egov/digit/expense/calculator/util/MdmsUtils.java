@@ -218,7 +218,7 @@ public class MdmsUtils {
     }
 
     public Object getWorkerRateFromMDMSV2(RequestInfo requestInfo, String tenantId, String campaignId, String eventType) {
-        String filter = getWorkerFilter("test101", eventType);
+        String filter = getWorkerFilter(campaignId, eventType);
         MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, WORKER_RATES, tenantId, filter, HCM_CONSTANT);
         return serviceRequestRepository.fetchResult(getMDMSV2SearchUrl(), MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build());
     }

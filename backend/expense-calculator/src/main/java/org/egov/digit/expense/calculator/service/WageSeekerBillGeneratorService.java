@@ -93,6 +93,7 @@ public class WageSeekerBillGeneratorService {
 
 	public Bill createWageSeekerBillsHealth(RequestInfo requestInfo, List<MusterRoll> musterRolls, List<WorkerMdms> workerMdms) {
 		List<BillDetail> billDetails = new ArrayList<>();
+		BigDecimal totalBillAmount = BigDecimal.ZERO;
 		for (MusterRoll musterRoll : musterRolls) {
 
 			List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
@@ -112,20 +113,21 @@ public class WageSeekerBillGeneratorService {
 						.map(WorkerRate::getRateBreakup)
 						.orElseThrow(() -> new RuntimeException("Worker rate not found for the given role code"));
 				List<LineItem> payableLineItem = new ArrayList<>();
-				BigDecimal totalAmount = BigDecimal.ZERO;
+				BigDecimal totalBillDetailAmount = BigDecimal.ZERO;
 				for (Map.Entry<String, BigDecimal> entry : rateBreakup.entrySet()) {
 					BigDecimal amount = calculateAmount(individualEntry, entry.getValue());
-					totalAmount = totalAmount.add(amount);
+					totalBillDetailAmount = totalBillDetailAmount.add(amount);
 					LineItem lineItem = buildLineItem(musterRoll.getTenantId(), amount, entry.getKey(), LineItem.TypeEnum.PAYABLE);
 					payableLineItem.add(lineItem);
 				}
-				BillDetail billDetail = BillDetail.builder().payableLineItems(payableLineItem)
+				totalBillAmount = totalBillAmount.add(totalBillDetailAmount);
+				BillDetail billDetail = BillDetail.builder().payableLineItems(payableLineItem).totalAmount(totalBillDetailAmount)
 						.payee(Party.builder().identifier(individualEntry.getIndividualId()).build()).build();
 
 				billDetails.add(billDetail);
 			}
 		}
-		Bill bill = Bill.builder().billDetails(billDetails).build();
+		Bill bill = Bill.builder().totalAmount(totalBillAmount).billDetails(billDetails).build();
 		return bill;
 	}
 
