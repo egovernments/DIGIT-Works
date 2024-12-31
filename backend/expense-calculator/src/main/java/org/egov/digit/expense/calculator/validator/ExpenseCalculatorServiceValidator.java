@@ -3,13 +3,17 @@ package org.egov.digit.expense.calculator.validator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.project.Project;
+import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.util.CommonUtil;
 import org.egov.digit.expense.calculator.util.MdmsUtils;
+import org.egov.digit.expense.calculator.util.ProjectUtil;
 import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
 import org.egov.digit.expense.calculator.web.models.CalculationRequest;
 import org.egov.digit.expense.calculator.web.models.Criteria;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.services.common.models.attendance.AttendanceRegister;
 import org.egov.works.services.common.models.contract.Contract;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
 import org.egov.works.services.common.models.musterroll.MusterRollRequest;
@@ -27,6 +31,7 @@ public class ExpenseCalculatorServiceValidator {
     private final MdmsUtils mdmsUtils;
 
     private final CommonUtil commonUtil;
+    private final ProjectUtil projectUtil;
 
     private final ExpenseCalculatorUtil expenseCalculatorUtil;
     private static final String PURCHASEBILL_IS_MANDATORY ="PurchaseBill is mandatory";
@@ -36,9 +41,10 @@ public class ExpenseCalculatorServiceValidator {
     private static final String PAYEE_IDENTIFIER_IS_MANDATORY = "Payee identifier is mandatory";
     private static final String TENANT_ID_IS_MANDATORY = "TenantId is mandatory";
     @Autowired
-    public ExpenseCalculatorServiceValidator(MdmsUtils mdmsUtils, CommonUtil commonUtil, ExpenseCalculatorUtil expenseCalculatorUtil) {
+    public ExpenseCalculatorServiceValidator(MdmsUtils mdmsUtils, CommonUtil commonUtil, ProjectUtil projectUtil, ExpenseCalculatorUtil expenseCalculatorUtil) {
         this.mdmsUtils = mdmsUtils;
         this.commonUtil = commonUtil;
+        this.projectUtil = projectUtil;
         this.expenseCalculatorUtil = expenseCalculatorUtil;
     }
 
@@ -54,14 +60,30 @@ public class ExpenseCalculatorServiceValidator {
 
     }
 
-    public void validateCalculatorCalculateRequest(CalculationRequest calculationRequest){
-        validateCommonCalculatorRequest(calculationRequest);
+    public void validateCalculatorCalculateRequest(CalculationRequest calculationRequest, Project project){
+//        validateCommonCalculatorRequest(calculationRequest);
 
         //Validate muster roll Ids against muster roll service
         validateMusterRollIdAgainstService(calculationRequest,true);
 
         // Validate contractId if given against contract service
-        validateContractIdAgainstService(calculationRequest);
+//        validateContractIdAgainstService(calculationRequest);
+
+        // Validate if all muster roll are approved
+
+        // Validate if projectid is of district level
+        validateProject(project);
+
+    }
+
+    private void validateProject(Project project) {
+        if(!project.getAddress().getBoundaryType().equalsIgnoreCase("DISTRICT")) {
+            throw new CustomException("INVALID_PROJECT", "Project is not of district level");
+        }
+
+    }
+    public void validateAttendanceRegisterApproval(List<AttendanceRegister> attendanceRegisters) {
+
     }
 
     public void validateWageBillCreateForMusterRollRequest(MusterRollRequest musterRollRequest){
@@ -235,10 +257,10 @@ public class ExpenseCalculatorServiceValidator {
     private void validateContractIdAgainstService(CalculationRequest calculationRequest) {
         final Criteria criteria = calculationRequest.getCriteria();
         // Validate contractId if given against contract service
-        if(StringUtils.isNotBlank(criteria.getContractId())) {
-            List<Contract> contracts = expenseCalculatorUtil.fetchContract(calculationRequest.getRequestInfo(), criteria.getTenantId(), criteria.getContractId());
+        if(StringUtils.isNotBlank(criteria.getReferenceId())) {
+            List<Contract> contracts = expenseCalculatorUtil.fetchContract(calculationRequest.getRequestInfo(), criteria.getTenantId(), criteria.getReferenceId());
             if (CollectionUtils.isEmpty(contracts)) {
-                log.error("ExpenseCalculatorServiceValidator:No matched contract found for contractId - "+criteria.getContractId());
+                log.error("ExpenseCalculatorServiceValidator:No matched contract found for contractId - "+criteria.getReferenceId());
                 throw new CustomException("INVALID_CONTRACT_ID", "Contract not found");
             }
             log.info("ContractId validated against service");
@@ -341,7 +363,7 @@ public class ExpenseCalculatorServiceValidator {
         }
 
         List<String> musterRollId = criteria.getMusterRollId();
-        String contractId = criteria.getContractId();
+        String contractId = criteria.getReferenceId();
 
         if((musterRollId == null || musterRollId.isEmpty()) && (StringUtils.isBlank(contractId))) {
             log.error("MusterRollId or ContractId is mandatory");

@@ -217,19 +217,25 @@ public class MdmsUtils {
         return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
     }
 
+    public Object getWorkerRateFromMDMSV2(RequestInfo requestInfo, String tenantId, String campaignId, String eventType) {
+        String filter = getWorkerFilter("test101", eventType);
+        MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, WORKER_RATES, tenantId, filter, HCM_CONSTANT);
+        return serviceRequestRepository.fetchResult(getMDMSV2SearchUrl(), MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build());
+    }
+
     public Object getLabourSorFromMDMSV2(RequestInfo requestInfo, String tenantId, List<String> sorList, Boolean isRate) {
         String filter = getFilterFromSorList(sorList, isRate);
 
-        MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, isRate ? RATES_CONSTANT : SOR_CONSTANT, tenantId, filter);
+        MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, isRate ? RATES_CONSTANT : SOR_CONSTANT, tenantId, filter, WORKS_SOR_CONSTANT);
 
         return serviceRequestRepository.fetchResult(getMDMSV2SearchUrl(), MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build());
     }
 
 
-    private MdmsCriteria getMdmsCriteria (RequestInfo requestInfo, String masterName, String tenantId, String filter) {
+    private MdmsCriteria getMdmsCriteria (RequestInfo requestInfo, String masterName, String tenantId, String filter, String moduleName) {
         return MdmsCriteria.builder().tenantId(tenantId)
                 .moduleDetails(Collections.singletonList(ModuleDetail.builder()
-                        .moduleName(WORKS_SOR_CONSTANT)
+                        .moduleName(moduleName)
                         .masterDetails(Collections.singletonList(MasterDetail.builder()
                                 .name(masterName)
                                 .filter(filter)
@@ -237,6 +243,11 @@ public class MdmsUtils {
                         .build()))
                 .build();
 
+    }
+
+    String getWorkerFilter(String campaignId, String eventType) {
+        return new StringBuilder().append(FILTER_START).append(CAMPAIGN_ID_CONSTANT).append(campaignId)
+                .append(FILTER_AND_CONSTANT).append(EVENT_TYPE_CONSTANT).append(eventType).append(FILTER_END).toString();
     }
 
     String getFilterFromSorList(List<String> sorList, Boolean isRate) {

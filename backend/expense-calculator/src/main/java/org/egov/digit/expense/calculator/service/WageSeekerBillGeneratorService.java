@@ -1,5 +1,7 @@
 package org.egov.digit.expense.calculator.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
@@ -7,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.util.*;
 import org.egov.digit.expense.calculator.web.models.*;
@@ -24,6 +27,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
 
@@ -44,11 +48,12 @@ public class WageSeekerBillGeneratorService {
 	private final ExpenseCalculatorConfiguration configs;
 
 	private final IdgenUtil idgenUtil;
+	private final IndividualUtil individualUtil;
 	private static final String MUSTER_ROLL_REFERENCE_ID_MISSING = "MUSTER_ROLL_REFERENCE_ID_MISSING";
 	private static final String REFERENCE_ID_MISSING = "ReferenceId is missing for musterRollNumber [";
 
 	@Autowired
-	public WageSeekerBillGeneratorService(ObjectMapper mapper, ExpenseCalculatorUtil expenseCalculatorUtil, MdmsUtils mdmsUtils, CommonUtil commonUtil, ContractUtils contractUtils, ExpenseCalculatorConfiguration configs, IdgenUtil idgenUtil) {
+	public WageSeekerBillGeneratorService(ObjectMapper mapper, ExpenseCalculatorUtil expenseCalculatorUtil, MdmsUtils mdmsUtils, CommonUtil commonUtil, ContractUtils contractUtils, ExpenseCalculatorConfiguration configs, IdgenUtil idgenUtil, IndividualUtil individualUtil) {
 		this.mapper = mapper;
 		this.expenseCalculatorUtil = expenseCalculatorUtil;
 		this.mdmsUtils = mdmsUtils;
@@ -56,7 +61,8 @@ public class WageSeekerBillGeneratorService {
 		this.contractUtils = contractUtils;
 		this.configs = configs;
 		this.idgenUtil = idgenUtil;
-	}
+        this.individualUtil = individualUtil;
+    }
 
 	public Calculation calculateEstimates(RequestInfo requestInfo, String tenantId, List<MusterRoll> musterRolls,
 			List<SorDetail> sorDetails) {
@@ -84,6 +90,50 @@ public class WageSeekerBillGeneratorService {
 		}
 		return mdmsData;
 	}
+
+	public Bill createWageSeekerBillsHealth(RequestInfo requestInfo, List<MusterRoll> musterRolls, List<WorkerMdms> workerMdms) {
+		List<BillDetail> billDetails = new ArrayList<>();
+		for (MusterRoll musterRoll : musterRolls) {
+
+			List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
+			List<String> individualIds = individualEntries.stream().map(individualEntry -> individualEntry.getIndividualId()).collect(Collectors.toList());
+			List<Individual> individuals = individualUtil.fetchIndividualDetails(individualIds, requestInfo, musterRoll.getTenantId());
+			// Map of individual id and individual
+			Map<String, Individual> individualMap = individuals.stream().collect(Collectors.toMap(Individual::getId, individual -> individual));
+			for (IndividualEntry individualEntry : individualEntries) {
+				//TODO add validation
+				Individual individual = individualMap.get(individualEntry.getIndividualId());
+				String roleCode = individual.getSkills().get(0).getType();
+
+
+				Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getRolecode().equalsIgnoreCase(roleCode)).findAny();
+
+				Map<String, BigDecimal> rateBreakup = rate
+						.map(WorkerRate::getRateBreakup)
+						.orElseThrow(() -> new RuntimeException("Worker rate not found for the given role code"));
+				List<LineItem> payableLineItem = new ArrayList<>();
+				BigDecimal totalAmount = BigDecimal.ZERO;
+				for (Map.Entry<String, BigDecimal> entry : rateBreakup.entrySet()) {
+					BigDecimal amount = calculateAmount(individualEntry, entry.getValue());
+					totalAmount = totalAmount.add(amount);
+					LineItem lineItem = buildLineItem(musterRoll.getTenantId(), amount, entry.getKey(), LineItem.TypeEnum.PAYABLE);
+					payableLineItem.add(lineItem);
+				}
+				BillDetail billDetail = BillDetail.builder().payableLineItems(payableLineItem)
+						.payee(Party.builder().identifier(individualEntry.getIndividualId()).build()).build();
+
+				billDetails.add(billDetail);
+			}
+		}
+		Bill bill = Bill.builder().billDetails(billDetails).build();
+		return bill;
+	}
+
+	BigDecimal sumRateBreakup(Map<String, BigDecimal> rateBreakup) {
+		return rateBreakup.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+
 	
 	private List<Bill> createBillForMusterRolls(RequestInfo requestInfo, List<MusterRoll> musterRolls,
 			List<SorDetail> sorDetails, Map<String, String> metaInfo) {

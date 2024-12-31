@@ -40,6 +40,7 @@ public class BillUtils {
     }
 
     private BillResponse postBill(RequestInfo requestInfo, Bill bill, Workflow workflow, StringBuilder url) {
+        log.info(bill.toString());
         // Update workflow object because in expense service it's using core service workflow
         Workflow expenseWorkflow1 = Workflow.builder()
                 .action(workflow.getAction())

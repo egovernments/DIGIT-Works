@@ -90,6 +90,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
 
+	@Value("${egov.musterroll.search.v2.endpoint}")
+	private String musterRollEndV2Point;
+
 	//Organisation Service
 	@Value("${egov.organisation.host}")
 	private String organisationServiceHost;
@@ -206,4 +209,23 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${expense.billing.bill.index}")
 	private String billIndexTopic;
+
+	@Value("${is.health.integration.enabled}")
+	private boolean isHealthIntegrationEnabled;
+
+	//Individual
+	@Value("${egov.individual.host}")
+	private String individualHost;
+
+	@Value("${egov.individual.search.endpoint}")
+	private String individualSearchEndPoint;
+
+
+	//Attendance service
+	@Value("${works.attendance.log.host}")
+	private String attendanceLogHost;
+	@Value("${works.attendance.register.search.endpoint}")
+	private String attendanceRegisterEndpoint;
+	@Value("${works.attendance.register.search.limit}")
+	private String attendanceRegisterSearchLimit;
 }

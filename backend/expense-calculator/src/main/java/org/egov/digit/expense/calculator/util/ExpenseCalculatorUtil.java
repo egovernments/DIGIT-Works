@@ -2,29 +2,21 @@ package org.egov.digit.expense.calculator.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.*;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
-import org.egov.digit.expense.calculator.web.models.ApplicableCharge;
-import org.egov.digit.expense.calculator.web.models.Bill;
-import org.egov.digit.expense.calculator.web.models.BillCriteria;
-import org.egov.digit.expense.calculator.web.models.BillResponse;
-import org.egov.digit.expense.calculator.web.models.BillSearchRequest;
-import org.egov.digit.expense.calculator.web.models.HeadCode;
-import org.egov.digit.expense.calculator.web.models.LineItem;
-import org.egov.digit.expense.calculator.web.models.Order;
+import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.digit.expense.calculator.web.models.Pagination;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.contract.Contract;
 import org.egov.works.services.common.models.contract.ContractCriteria;
 import org.egov.works.services.common.models.contract.ContractResponse;
-import org.egov.works.services.common.models.musterroll.MusterRoll;
-import org.egov.works.services.common.models.musterroll.MusterRollResponse;
+import org.egov.works.services.common.models.musterroll.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -100,6 +92,19 @@ public class ExpenseCalculatorUtil {
         return response.getMusterRolls();
     }
 
+    public List<MusterRoll> fetchMusterRollByRegIds(RequestInfo requestInfo, String tenantId, List<String> registerIds) {
+        StringBuilder url = getMusterRollSearchV2URI();
+        MusterRollSearchCriteria musterRollSearchCriteria = MusterRollSearchCriteria.builder().tenantId(tenantId)
+                .limit(registerIds.size()).registerIds(registerIds).build();
+
+
+        MusterRoleSearchRequest request = MusterRoleSearchRequest.builder().requestInfo(requestInfo).musterRoll(musterRollSearchCriteria).build();
+        Object responseObj = restRepo.fetchResult(url, request);
+
+        MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
+        return response.getMusterRolls();
+    }
+
 
 
     private StringBuilder getApprovedMusterRollURI(String tenantId, List<String> musterRollId) {
@@ -125,20 +130,25 @@ public class ExpenseCalculatorUtil {
 
         return builder;
     }
+    private StringBuilder getMusterRollSearchV2URI() {
+        StringBuilder builder = new StringBuilder(configs.getMusterRollHost());
+        builder.append(configs.getMusterRollEndV2Point());
+        return builder;
+    }
 
-    private StringBuilder getMusterRollURI(String tenantId, String contractId) {
+    private StringBuilder getMusterRollURI(String tenantId, String projectId) {
         StringBuilder builder = new StringBuilder(configs.getMusterRollHost());
         builder.append(configs.getMusterRollEndPoint());
         builder.append(TENANT_ID_CLAUSE);
         builder.append(tenantId);
         builder.append("&referenceId=");
-        builder.append(contractId);
+        builder.append(projectId);
 
         return builder;
     }
 
-    public List<String> fetchMusterByContractId(RequestInfo requestInfo, String tenantId, String contractId) {
-        StringBuilder url = getMusterRollURI(tenantId, contractId);
+    public List<String> fetchMusterByProjectId(RequestInfo requestInfo, String tenantId, String projectId) {
+        StringBuilder url = getMusterRollURI(tenantId, projectId);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
         MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);

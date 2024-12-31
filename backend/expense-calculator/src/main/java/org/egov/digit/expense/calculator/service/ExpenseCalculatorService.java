@@ -21,6 +21,7 @@ import org.egov.digit.expense.calculator.util.*;
 import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValidator;
 import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.services.common.models.attendance.AttendanceRegister;
 import org.egov.works.services.common.models.contract.Contract;
 import org.egov.works.services.common.models.contract.ContractResponse;
 import org.egov.works.services.common.models.estimate.Estimate;
@@ -60,9 +61,11 @@ public class ExpenseCalculatorService {
     private final ObjectMapper objectMapper;
     private final ContractUtils contractUtils;
     private final EstimateServiceUtil estimateServiceUtil;
+    private final ProjectUtil projectUtil;
+    private final AttendanceUtil attendanceUtil;
 
     @Autowired
-    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil) {
+    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil) {
         this.expenseCalculatorProducer = expenseCalculatorProducer;
         this.expenseCalculatorServiceValidator = expenseCalculatorServiceValidator;
         this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
@@ -80,6 +83,8 @@ public class ExpenseCalculatorService {
         this.commonUtil = commonUtil;
         this.contractUtils = contractUtils;
         this.estimateServiceUtil = estimateServiceUtil;
+        this.projectUtil = projectUtil;
+        this.attendanceUtil = attendanceUtil;
     }
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
@@ -94,7 +99,7 @@ public class ExpenseCalculatorService {
             List<SorDetail> sorDetails = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
             return wageSeekerBillGeneratorService.calculateEstimates(requestInfo, criteria.getTenantId(), musterRolls, sorDetails);
         } else {
-            List<Bill> bills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId());
+            List<Bill> bills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getReferenceId());
             //TODO: Add check for empty bill list here and send back a response
             return supervisionBillGeneratorService.estimateBill(requestInfo, criteria, bills);
         }
@@ -185,14 +190,38 @@ public class ExpenseCalculatorService {
     }
 
     public List<Bill> createWageOrSupervisionBills(CalculationRequest calculationRequest){
-        expenseCalculatorServiceValidator.validateCalculatorCalculateRequest(calculationRequest);
+        // Fetch all muster rolls for that particular district and projectId with children
+
+        ProjectResponse projectResponse = projectUtil.getProjectDetails(calculationRequest.getRequestInfo(),
+                calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId());
+        //TODO validation for project
+        if (projectResponse.getProject().isEmpty()) {
+            log.error("Project not found");
+            throw new CustomException("PROJECT_NOT_FOUND", "Project not found");
+        }
+        String parentProjectId = null;
+        if (projectResponse.getProject().get(0).getProjectHierarchy().contains(".")) {
+            parentProjectId = projectResponse.getProject().get(0).getProjectHierarchy().split("\\.")[0];
+        } else {
+            parentProjectId = projectResponse.getProject().get(0).getProjectHierarchy();
+        }
+        String localityCode = projectResponse.getProject().get(0).getAddress().getBoundary();
+
+        // Fetch mdms data for campaign id and eventType
+
+        // Fetch all approved muster-rolls by register id
+
+        // Fetch all
+
+        expenseCalculatorServiceValidator.validateCalculatorCalculateRequest(calculationRequest, projectResponse.getProject().get(0));
+        //TODO send to kafka and return response
         RequestInfo requestInfo = calculationRequest.getRequestInfo();
         Criteria criteria = calculationRequest.getCriteria();
         List<Bill> bills = null;
         Map<String, String> metaInfo = new HashMap<>();
 
-        if(criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) {
-            bills = createWageBill(requestInfo, criteria, metaInfo);
+        if((criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) || config.isHealthIntegrationEnabled()) {
+            bills = createWageBill(requestInfo, criteria, metaInfo, parentProjectId, localityCode);
         } else {
             bills = createSupervisionBill(requestInfo, criteria, metaInfo);
         }
@@ -221,11 +250,22 @@ public class ExpenseCalculatorService {
         return submittedBills;
     }
 
-    private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo) {
-        log.info("Create wage bill for musterRollIds :"+criteria.getMusterRollId() );
+    private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo, String parentProjectId, String localityCode) {
+        log.info("Create wage bill for musterRollIds :"+criteria.getMusterRollId());
+
+            // fetch approved attendance registers
+            List<AttendanceRegister> attendanceRegisters = attendanceUtil.fetchAttendanceRegister(criteria.getReferenceId(), criteria.getTenantId(), requestInfo, localityCode);
+            // TODO validate attendance register approval
+            expenseCalculatorServiceValidator.validateAttendanceRegisterApproval(attendanceRegisters);
+
+            List<String> regIds = attendanceRegisters.stream().map(AttendanceRegister::getId).collect(Collectors.toList());
         // Fetch musterRolls for given muster roll IDs
-        List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo,criteria,true);
+        List<MusterRoll> musterRolls =  expenseCalculatorUtil.fetchMusterRollByRegIds(requestInfo,criteria.getTenantId(),regIds);
         // Fetch wage seeker skills from MDMS
+        if (config.isHealthIntegrationEnabled()) {
+            List<WorkerMdms> workerMdms = fetchMDMSDataForWorker(requestInfo, criteria.getTenantId(), parentProjectId);
+            return Collections.singletonList(wageSeekerBillGeneratorService.createWageSeekerBillsHealth(requestInfo,musterRolls,workerMdms));
+        }
 //        List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
         List<SorDetail> sorDetails = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
         // Contract project mapping
@@ -235,13 +275,13 @@ public class ExpenseCalculatorService {
     }
 
     private List<Bill> createSupervisionBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo) {
-        log.info("Create supervision bill for contractId :"+criteria.getContractId() );
-        List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId().trim());
+        log.info("Create supervision bill for contractId :"+criteria.getReferenceId() );
+        List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getReferenceId().trim());
         validateExpenseBills(expenseBills, criteria);
         Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
         validateCalculationDetails(calculation,criteria);
         //Construct meta object to persist in calculator db
-        Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, criteria.getTenantId(),criteria.getContractId()).get(0);
+        Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, criteria.getTenantId(),criteria.getReferenceId()).get(0);
         Map<String, String> contractProjectMapping = buildContractProjectMapping(contract);
         metaInfo.putAll(contractProjectMapping);
         return supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation);
@@ -252,7 +292,7 @@ public class ExpenseCalculatorService {
             log.info("SupervisionBillGeneratorService::calculateEstimate::Wage bill and purchase bill not created. "
                     + " So Supervision bill cannot be calculated.");
             throw new CustomException("NO_WAGE_PURCHASE_BILL",
-                    String.format("No wage or purchase bills are found for this contract %s and tenant %s. So Supervision bill cannot be calculated.", criteria.getContractId(), criteria.getTenantId()));
+                    String.format("No wage or purchase bills are found for this contract %s and tenant %s. So Supervision bill cannot be calculated.", criteria.getReferenceId(), criteria.getTenantId()));
         }
     }
 
@@ -267,7 +307,7 @@ public class ExpenseCalculatorService {
         if (!Boolean.TRUE.equals(hasCalcDetail)) {
             log.info("ExpenseCalculatorService::createWageOrSupervisionBills::Supervision bill will not created because there are no calculation details in estimate.");
             throw new CustomException("NO_CALCULATION_DETAIL",
-                    String.format("No calculation details found for bills of contract %s and tenant %s. So Supervision bill cannot be generated.", criteria.getContractId(), criteria.getTenantId()));
+                    String.format("No calculation details found for bills of contract %s and tenant %s. So Supervision bill cannot be generated.", criteria.getReferenceId(), criteria.getTenantId()));
         }
     }
 
@@ -330,6 +370,19 @@ public class ExpenseCalculatorService {
     private BillResponse postUpdateBill(RequestInfo requestInfo, Bill bill, Workflow workflow){
         log.info("Post bill for update");
         return billUtils.postUpdateBill(requestInfo, bill, workflow);
+    }
+
+    private List<WorkerMdms> fetchMDMSDataForWorker(RequestInfo requestInfo, String tenantId, String campaignId){
+        log.info("Fetch worker MDMS");
+        String eventType = "campaign";
+        Object mdmsData = mdmsUtils.getWorkerRateFromMDMSV2(requestInfo, tenantId, campaignId, eventType);
+        List<Object> workerListJson = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_HCM);
+        List<WorkerMdms> workerMdmsList = new ArrayList<>();
+        for(Object obj : workerListJson){
+            WorkerMdms workerMdms = mapper.convertValue(obj, WorkerMdms.class);
+            workerMdmsList.add(workerMdms);
+        }
+        return workerMdmsList;
     }
 
     private List<SorDetail> fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String tenantId, List<MusterRoll> musterRolls){

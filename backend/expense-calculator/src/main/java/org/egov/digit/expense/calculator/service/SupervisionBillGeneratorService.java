@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.idgen.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.IdGenRepository;
@@ -43,7 +44,6 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
-import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
@@ -98,7 +98,7 @@ public class SupervisionBillGeneratorService {
 			log.info("SupervisionBillGeneratorService::calculateEstimate::Wage bill and purchase bill not created. "
 					+ " So Supervision bill cannot be calculated.");
 			throw new CustomException("NO_WAGE_PURCHASE_BILL",
-					String.format("No wage or purchase bills are found for this contract %s and tenant %s. So Supervision bill cannot be calculated.", criteria.getContractId(), criteria.getTenantId()));
+					String.format("No wage or purchase bills are found for this contract %s and tenant %s. So Supervision bill cannot be calculated.", criteria.getReferenceId(), criteria.getTenantId()));
 		}
 		
 	
@@ -148,12 +148,12 @@ public class SupervisionBillGeneratorService {
 			if (wageAndPurchaseBills == null || CollectionUtils.isEmpty(wageAndPurchaseBills)) {
 				log.info("There are no wage and purchase bills for which supervision needs to be calculated.");
 				throw new CustomException("NO_WAGE_PURCHASE_BILL",
-					String.format("Supervision bills have been created for all existing wage and purchase bills for contract %s", criteria.getContractId()));
+					String.format("Supervision bills have been created for all existing wage and purchase bills for contract %s", criteria.getReferenceId()));
 
 			}
 
 		
-		log.info(String.format("There are %s bills for contract %s for which a supervision bill needs to be raised", wageAndPurchaseBills.size(), criteria.getContractId()));
+		log.info(String.format("There are %s bills for contract %s for which a supervision bill needs to be raised", wageAndPurchaseBills.size(), criteria.getReferenceId()));
 		for(String s: wageAndPurchaseBills) {
 			log.info("Bill number: " + s);
 		}
@@ -166,7 +166,7 @@ public class SupervisionBillGeneratorService {
 		}
 
 		// calculate supervision charge
-		return calculateSupervisionCharge(filteredBills, requestInfo, criteria.getTenantId(), criteria.getContractId());
+		return calculateSupervisionCharge(filteredBills, requestInfo, criteria.getTenantId(), criteria.getReferenceId());
 
 	}
 
@@ -228,10 +228,10 @@ public class SupervisionBillGeneratorService {
 			}
 
 			//Fetch Contract additional details and pass onto Bill for the indexer
-			Object additionalDetails = expenseCalculatorUtil.getContractAdditionalDetails(requestInfo, criteria.getTenantId(), criteria.getContractId());
+			Object additionalDetails = expenseCalculatorUtil.getContractAdditionalDetails(requestInfo, criteria.getTenantId(), criteria.getReferenceId());
 			// Build Bill
 			Bill bill = Bill.builder().tenantId(criteria.getTenantId()).billDate(Instant.now().toEpochMilli())
-					.referenceId(criteria.getContractId() + "_" + supervisionBillNumber)
+					.referenceId(criteria.getReferenceId() + "_" + supervisionBillNumber)
 					.businessService(config.getSupervisionBusinessService()).payer(payer).billDetails(billDetails)
 					.totalAmount(new BigDecimal(0))
 					.totalPaidAmount(new BigDecimal(0))
@@ -393,8 +393,7 @@ public class SupervisionBillGeneratorService {
 	 * @return List of ids generated using idGen service
 	 */
 	private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey, String idformat, int count) {
-		List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count)
-				.getIdResponses();
+		List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses();
 
 		if (CollectionUtils.isEmpty(idResponses))
 			throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
