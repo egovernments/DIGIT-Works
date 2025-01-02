@@ -108,6 +108,10 @@ public class ProjectUtil {
         //added the url param
         uriBuilder.append("?").append(TENANT_ID).append(EQUAL_TO).append(tenantId)
                 .append(AMPERSAND)
+                .append("isAncestorProjectId").append(EQUAL_TO).append("true")
+                .append(AMPERSAND)
+                .append("includeDescendants").append(EQUAL_TO).append("true")
+                .append(AMPERSAND)
                 .append(OFFSET).append(EQUAL_TO).append(DEFAULT_OFFSET)
                 .append(AMPERSAND)
                 .append(LIMIT).append(EQUAL_TO).append(DEFAULT_LIMIT);
