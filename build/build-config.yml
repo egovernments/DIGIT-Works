@@ -106,6 +106,14 @@ config:
       - work-dir: "backend/expense/src/main/resources/db"
         image-name: "expense-db"
 
+  - name: "builds/health-campaign-services/health-services/health-expense"
+    build:
+      - work-dir: "backend/expense"
+        dockerfile: "build/maven-java17/Dockerfile"
+        image-name: "health-expense"
+      - work-dir: "backend/expense/src/main/resources/db"
+        image-name: "health-expense-db"
+
   - name: "builds/digit-works/backend/measurement-service"
     build:
       - work-dir: "backend/measurement-service"
