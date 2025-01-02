@@ -20,7 +20,7 @@ const SearchWageSeeker = () => {
       configModuleName,
    [
     {
-      name: "SearchIndividualConfig",
+      name: "SearchWMSIndividualConfig",
     },
   ]);
 

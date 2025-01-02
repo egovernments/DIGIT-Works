@@ -13,12 +13,21 @@ import TotalEstAmount from "./pageComponents/TotalEstAmount";
 import LabourAnalysis from "./pageComponents/LabourAnalysis";
 import ViewTotalEstAmount from "./components/ViewTotalEstAmount";
 import ViewLabourAnalysis from "./components/ViewLabourAnalysis"
+import searchSor from "./pageComponents/searchSor";
+import EstimateDropdown from "./pageComponents/EstimateDropdown";
+import SearchBar from "./pageComponents/SearchBar";
+import OverheadDetailsTable from "./components/OverheadDetailsTable";
+import ViewAnalysisStatement from "./pageComponents/ViewAnalysisStatement";
+import UpdateDetailedEstimate from "./pages/employee/Estimates/CreateDetailedEstimate/UpdateDetailedEstimate";
+import CreateRevisionDetailedEstimate from "./pages/employee/Estimates/CreateDetailedEstimate/CreateRevisionDetailedEstimate";
+import UpdateRevisionDetailedEstimate from "./pages/employee/Estimates/CreateDetailedEstimate/UpdateRevisionDetailedEstimate";
+import EstimateMeasureTableWrapper from "./pageComponents/EstimateMeasureTableWrapper";
 
 const EstimateModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const moduleCode = ["Estimate","common-masters","workflow",tenantId];
+    const moduleCode = ["Estimate","common-masters","workflow","mdms",tenantId];
     const { isLoading, data: store } = Digit.Services.useStore({
         stateCode,
         moduleCode,
@@ -44,7 +53,17 @@ const componentsToRegister = {
     TotalEstAmount,
     LabourAnalysis,
     ViewTotalEstAmount,
-    ViewLabourAnalysis
+    ViewLabourAnalysis,
+    searchSor,
+    EstimateDropdown,
+    SearchBar,
+    OverheadDetailsTable,
+    ViewAnalysisStatement,
+    UpdateDetailedEstimate,
+    CreateRevisionDetailedEstimate,
+    UpdateRevisionDetailedEstimate,
+    EstimateMeasureTableWrapper
+
 };
 
 export const initEstimateComponents = () => {

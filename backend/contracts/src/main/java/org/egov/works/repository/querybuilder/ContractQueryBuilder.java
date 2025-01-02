@@ -3,7 +3,6 @@ package org.egov.works.repository.querybuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.web.models.Contract;
 import org.egov.works.web.models.ContractCriteria;
 import org.egov.works.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,10 @@ public class ContractQueryBuilder {
 
     private static final String CONTRACT_SELECT_QUERY = " SELECT contract.id AS id, " +
             "contract.contract_number AS contractNumber, " +
+            "contract.supplement_number AS supplementNumber, " +
+            "contract.version_number AS versionNumber, " +
+            "contract.old_uuid AS oldUuid, " +
+            "contract.business_service AS businessService, " +
             "contract.tenant_id AS tenantId, " +
             "contract.wf_status AS wfStatus, " +
             "contract.executing_authority AS executingAuthority, " +
@@ -72,6 +75,18 @@ public class ContractQueryBuilder {
             preparedStmtList.add(criteria.getContractNumber());
         }
 
+        if (StringUtils.isNotBlank(criteria.getSupplementNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.supplement_number=? ");
+            preparedStmtList.add(criteria.getSupplementNumber());
+        }
+
+        if (StringUtils.isNotBlank(criteria.getBusinessService())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.business_service=? ");
+            preparedStmtList.add(criteria.getBusinessService());
+        }
+
         if (StringUtils.isNotBlank(criteria.getStatus())) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" contract.status=? ");
@@ -123,14 +138,14 @@ public class ContractQueryBuilder {
             }
         }
 
-        addOrderByClause(query, criteria, preparedStmtList);
+        addOrderByClause(query, criteria);
 
         addLimitAndOffset(query, criteria, preparedStmtList);
 
         return query.toString();
     }
 
-    private void addOrderByClause(StringBuilder queryBuilder, ContractCriteria criteria, List<Object> preparedStmtList) {
+    private void addOrderByClause(StringBuilder queryBuilder, ContractCriteria criteria) {
 
         Pagination pagination = criteria.getPagination();
 

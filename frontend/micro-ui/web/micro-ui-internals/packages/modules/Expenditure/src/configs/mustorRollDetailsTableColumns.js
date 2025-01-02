@@ -56,7 +56,7 @@ export const mustorRollDetailsTableColumns = (t) => [
     Header: () => <p>{t("EXP_TOTAL_WAGE")}</p>,
     accessor: "amount",
     Cell: ({ value, column, row }) => {
-      return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+      return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
     }
   },
   {

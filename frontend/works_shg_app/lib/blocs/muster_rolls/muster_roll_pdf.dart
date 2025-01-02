@@ -24,6 +24,7 @@ class MusterRollPDFBloc extends Bloc<MusterRollPDFEvent, MusterRollPDFState> {
     MusterRollPDFEmitter emit,
   ) async {
     Client client = Client();
+    var selectedLocale = await GlobalVariables.selectedLocale();
     try {
       await CommonRepository(client.init()).downloadPDF(
         url: '${Urls.commonServices.pdfDownload}/musterRoll/muster-roll',
@@ -34,7 +35,8 @@ class MusterRollPDFBloc extends Bloc<MusterRollPDFEvent, MusterRollPDFState> {
         fileName: 'MusterRoll.pdf',
         options: Options(extra: {
           "userInfo": GlobalVariables.userRequestModel,
-          "accessToken": GlobalVariables.authToken
+          "accessToken": GlobalVariables.authToken,
+          "msgId": "20170310130900|$selectedLocale"
         }, headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
         }, responseType: ResponseType.bytes),

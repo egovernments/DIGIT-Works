@@ -2,7 +2,7 @@ package org.egov.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
-import org.egov.Main;
+import org.egov.EstimateServiceMain;
 import org.egov.TestConfiguration;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -35,11 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * API tests for EstimateApiController
  */
-@ContextConfiguration(classes = Main.class)
+@ContextConfiguration(classes = EstimateServiceMain.class)
 @WebMvcTest(EstimateApiController.class)
 @Import({TestConfiguration.class})
 @AutoConfigureMockMvc
-public class EstimateApiControllerTest {
+class EstimateApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,7 +54,7 @@ public class EstimateApiControllerTest {
     private EstimateRepository estimateRepository;
 
     @Test
-    public void estimateV1CreatePostSuccess() throws Exception {
+    void estimateV1CreatePostSuccess() throws Exception {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         ResponseInfo responseInfo = EstimateRequestBuilderTest.builder().getResponseInfo_Success();
         when(estimateService.createEstimate(any(EstimateRequest.class))).thenReturn(estimateRequest);
@@ -74,7 +74,7 @@ public class EstimateApiControllerTest {
     }
 
     @Test
-    public void estimateV1CreatePostFailure() throws Exception {
+    void estimateV1CreatePostFailure() throws Exception {
         EstimateRequest musterRollRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateExceptionForAmountDetail();
         ResponseInfo responseInfo = EstimateRequestBuilderTest.builder().getResponseInfo_Success();
         when(estimateService.createEstimate(any(EstimateRequest.class)))
@@ -95,7 +95,7 @@ public class EstimateApiControllerTest {
     }
 
     @Test
-    public void fetchtEstimateBasedSearchCriteriaUsedSuccess() throws Exception {
+    void fetchtEstimateBasedSearchCriteriaUsedSuccess() throws Exception {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
                 .requestInfo(EstimateRequestBuilderTest.builder().getRequestInfo())
                 .build();
@@ -108,14 +108,14 @@ public class EstimateApiControllerTest {
     }
 
     @Test
-    public void fetchtheEstimateSbasedonthesearchcriteriausedFailure() throws Exception {
+    void fetchtheEstimateSbasedonthesearchcriteriausedFailure() throws Exception {
         mockMvc.perform(post("/v1/_search").contentType(MediaType
                         .APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void updateaEstimateSuccess() throws Exception {
+    void updateaEstimateSuccess() throws Exception {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         estimateRequest.getEstimate().setId("96ba2d55-b7a4-41e2-8598-19a83d63c9a5");
         ResponseInfo responseInfo = EstimateRequestBuilderTest.builder().getResponseInfo_Success();
@@ -137,7 +137,7 @@ public class EstimateApiControllerTest {
     }
 
     @Test
-    public void updateanestimateFailure() throws Exception {
+    void updateanestimateFailure() throws Exception {
         mockMvc.perform(post("/v1/_update").contentType(MediaType
                         .APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());

@@ -24,7 +24,7 @@ const CreateProjectResponse = () => {
                 break;
             }
             case "create-estimate" : {
-                history.push(`/${window.contextPath}/employee/estimate/create-estimate?tenantId=${queryStrings?.tenantId}&projectNumber=${projectIDsList?.[0]}`);
+                history.push(`/${window.contextPath}/employee/estimate/create-detailed-estimate?tenantId=${queryStrings?.tenantId}&projectNumber=${projectIDsList?.[0]}`);
                 break;
             }
             case "home-screen" : {

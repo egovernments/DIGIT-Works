@@ -7,7 +7,6 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * This computed data will also be stored as part of the muster roll db.

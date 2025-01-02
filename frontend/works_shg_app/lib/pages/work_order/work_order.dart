@@ -11,6 +11,7 @@ import 'package:works_shg_app/widgets/loaders.dart' as shg_loader;
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/localization/localization.dart';
+import '../../blocs/time_extension_request/valid_time_extension.dart';
 import '../../blocs/work_orders/accept_work_order.dart';
 import '../../blocs/work_orders/decline_work_order.dart';
 import '../../blocs/work_orders/my_works_search_criteria.dart';
@@ -128,27 +129,30 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                               workOrderList = contracts!.contracts!
                                   .map((e) => {
                                         'cardDetails': {
-                                          i18.workOrder.workOrderNo: e
-                                                  .contractNumber ??
-                                              t.translate(i18.common.noValue),
+                                          i18.workOrder.workOrderNo:
+                                              e.contractNumber ??
+                                                  i18.common.noValue,
+                                          i18.attendanceMgmt.projectName: e
+                                                  .additionalDetails
+                                                  ?.projectName ??
+                                              i18.common.noValue,
                                           i18.attendanceMgmt.projectDesc: e
                                                   .additionalDetails
                                                   ?.projectDesc ??
-                                              t.translate(i18.common.noValue),
-                                          i18.workOrder.roleOfCBO: t.translate(
-                                              'COMMON_MASTERS_${e.executingAuthority ?? 'NA'}'),
+                                              i18.common.noValue,
+                                          i18.workOrder.roleOfCBO:
+                                              'COMMON_MASTERS_${e.executingAuthority ?? 'NA'}',
                                           i18.attendanceMgmt.engineerInCharge: e
                                                   .additionalDetails
                                                   ?.officerInChargeName
                                                   ?.name ??
                                               t.translate(i18.common.noValue),
-                                          i18.workOrder.contractIssueDate: e
-                                                      .issueDate !=
-                                                  null
-                                              ? DateFormats.timeStampToDate(
-                                                  e.issueDate,
-                                                  format: "dd/MM/yyyy")
-                                              : t.translate(i18.common.noValue),
+                                          i18.workOrder.contractIssueDate:
+                                              e.issueDate != null
+                                                  ? DateFormats.timeStampToDate(
+                                                      e.issueDate,
+                                                      format: "dd/MM/yyyy")
+                                                  : i18.common.noValue,
                                           i18.workOrder.dueDate: e.issueDate !=
                                                   null
                                               ? DateFormats.getFilteredDate(DateTime
@@ -160,8 +164,8 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                               : t.translate(i18.common.noValue),
                                           i18.workOrder.workOrderAmount:
                                               '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
-                                          i18.common.status: t.translate(
-                                              'WF_WORK_ORDER_STATE_${e.wfStatus.toString()}'),
+                                          i18.common.status:
+                                              'WF_WORK_ORDER_STATE_${e.wfStatus.toString()}',
                                           Constants.activeInboxStatus:
                                               e.wfStatus != acceptCode
                                                   ? 'false'
@@ -225,6 +229,8 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                                             {
                                                                           i18.workOrder.workOrderNo:
                                                                               e.contractNumber ?? t.translate(i18.common.noValue),
+                                                                          i18.attendanceMgmt.projectName:
+                                                                              e.additionalDetails?.projectName ?? t.translate(i18.common.noValue),
                                                                           i18.attendanceMgmt.projectDesc:
                                                                               e.additionalDetails?.projectDesc ?? t.translate(i18.common.noValue),
                                                                           i18.workOrder.roleOfCBO:
@@ -374,6 +380,28 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                   orElse: () => false);
                                             },
                                             child: Container(),
+                                          ),
+                                          BlocListener<
+                                              ValidTimeExtCreationsSearchBloc,
+                                              ValidTimeExtCreationsSearchState>(
+                                            listener:
+                                                (context, validContractState) {
+                                              validContractState.maybeWhen(
+                                                  orElse: () => false,
+                                                  loaded: (Contracts?
+                                                          contracts) =>
+                                                      context.router.push(
+                                                          CreateTimeExtensionRequestRoute(
+                                                        contractNumber: contracts
+                                                            ?.contractNumber,
+                                                      )),
+                                                  error: (String? error) =>
+                                                      Notifiers.getToastMessage(
+                                                          context,
+                                                          error ?? 'ERR!',
+                                                          'ERROR'));
+                                            },
+                                            child: const SizedBox.shrink(),
                                           ),
                                         ]));
                       })));

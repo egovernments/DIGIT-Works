@@ -14,6 +14,7 @@ import org.egov.digit.expense.web.models.PaymentBill;
 import org.egov.digit.expense.web.models.PaymentBillDetail;
 import org.egov.digit.expense.web.models.PaymentLineItem;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.ReferenceStatus;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 	
+	private final ObjectMapper mapper;
 	@Autowired
-	private ObjectMapper mapper;
+	public PaymentRowMapper(ObjectMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	@Override
 	public List<Payment> extractData(ResultSet rs) throws SQLException {
@@ -59,6 +63,7 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 				payment = Payment.builder()
 					.additionalDetails(getadditionalDetail(rs, "p_additionalDetails"))
 					.status(PaymentStatus.fromValue(rs.getString("p_status")))
+					.referenceStatus(ReferenceStatus.fromValue(rs.getString("p_referencestatus")))
 					.netPayableAmount(rs.getBigDecimal("netpayableamount"))
 					.netPaidAmount(rs.getBigDecimal("netpaidamount"))
 					.paymentNumber(rs.getString("paymentnumber"))

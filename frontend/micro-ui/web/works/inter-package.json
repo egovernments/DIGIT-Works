@@ -5,7 +5,7 @@
   "workspaces": [
     "packages/libraries",
     "packages/react-components",
-    "packages/modules/Project",
+    "packages/modules/Measurement",
     "packages/modules/Estimate"
     ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
@@ -36,12 +36,13 @@
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "buildD:works": "cd packages/modules/works && yarn build",
+    "build:measurement": "cd packages/modules/Measurement && yarn build",
     "buildD:attendencemgmt":"cd packages/modules/AttendenceMgmt && yarn build",
     "buildD:expenditure":"cd packages/modules/Expenditure && yarn build",
     "buildD:contracts":"cd packages/modules/Contracts && yarn build",
     "buildD:masters": "cd packages/modules/Masters && yarn build",
     "build:estimate": "cd packages/modules/Estimate && yarn build",
-    "build:project": "cd packages/modules/Project && yarn build",
+    "buildD:project": "cd packages/modules/Project && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh",
     "clean": "rm -rf node_modules"
   },

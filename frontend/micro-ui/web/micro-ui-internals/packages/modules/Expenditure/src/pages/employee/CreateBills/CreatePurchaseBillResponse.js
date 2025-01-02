@@ -15,7 +15,7 @@ const CreatePurchaseBillResponse = () => {
     const [sessionFormData, setSessionFormData, clearSessionFormData] = PurchaseBillSession;
     
     useEffect(() => {
-        if (!window.location.href.includes("create-purchase-bill") && Object.keys(sessionFormData) != 0) {
+        if (Object.keys(sessionFormData).length != 0) {
             clearSessionFormData();
         }
     });

@@ -28,8 +28,12 @@ import java.util.Map;
 @Repository
 public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public MusterRollRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<MusterRoll> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -89,7 +93,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
         Long createdtime = rs.getLong("indCreatedTime");
         Long lastmodifiedtime = rs.getLong("indModifiedTime");
 
-        if (StringUtils.isNotBlank(musterId) && musterId.equalsIgnoreCase(musterRoll.getId().toString())) {
+        if (StringUtils.isNotBlank(musterId) && musterId.equalsIgnoreCase(musterRoll.getId())) {
 
             JsonNode additionalDetails = getAdditionalDetail("indAddlDetails", rs);
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
@@ -128,7 +132,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
         Long createdtime = rs.getLong("attnCreatedTime");
         Long lastmodifiedtime = rs.getLong("attnModifiedTime");
 
-        if (StringUtils.isNotBlank(summaryId) && summaryId.equalsIgnoreCase(individualEntry.getId().toString())) {
+        if (StringUtils.isNotBlank(summaryId) && summaryId.equalsIgnoreCase(individualEntry.getId())) {
 
             JsonNode additionalDetails = getAdditionalDetail("attnAddlDetails", rs);
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)

@@ -1,0 +1,32 @@
+/* SearchBar.css */
+
+.search-bar-sor {
+    position: relative;
+    width: 300px;
+    /* Set your desired width */
+    margin: 20px;
+    margin-bottom: 0px;
+}
+
+ul.suggestions-sor {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    width: 205%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+ul.suggestions-sor li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+ul.suggestions-sor li:hover {
+    background-color: #f0f0f0;
+}

@@ -203,7 +203,8 @@ export const CreateWageSeekerConfig = {
                 defaultText: 'COMMON_SELECT_SKILL',
                 selectedText: "COMMON_SELECTED",
                 allowMultiSelect: true,
-                options: []
+                options: [],
+                isDropdownWithChip: true
               }
             }
           ]

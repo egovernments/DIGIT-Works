@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -22,6 +23,21 @@ public class EstimateSearchCriteria {
 
     @JsonProperty("estimateNumber")
     private String estimateNumber = null;
+
+    @JsonProperty("revisionNumber")
+    @Size(min = 2,max = 64)
+    private String revisionNumber = null;
+
+    @JsonProperty("businessService")
+    @Size(min = 2,max = 64)
+    private String businessService = null;
+
+    @JsonProperty("versionNumber")
+    private BigDecimal versionNumber = null;
+
+    @JsonProperty("oldUuid")
+    @Size(min = 2,max = 64)
+    private String oldUuid = null;
 
     @JsonProperty("projectId")
     private String projectId = null;
@@ -55,6 +71,9 @@ public class EstimateSearchCriteria {
 
     @JsonIgnore
     private Boolean isCountNeeded = false;
+
+    @JsonProperty("status")
+    private String status = null;
 
 
     public enum SortOrder {

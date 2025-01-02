@@ -69,15 +69,25 @@ class SHGFilePickerState extends State<SHGFilePicker> {
 
       if (paths != null) {
         var isNotValidSize = false;
+        var isNotValidFile = false;
 
         for (var path in paths) {
           if (!(await CommonMethods.isValidFileSize(path.size))) {
             isNotValidSize = true;
           }
+          if (!CommonMethods.validateImageFileExtension(path.extension ?? '',
+              widget.extensions ?? ['png', 'jpeg', 'jpg'])) {
+            isNotValidFile = true;
+          }
         }
 
         if (isNotValidSize) {
           Notifiers.getToastMessage(context, i18.common.fileSize, 'ERROR');
+          return;
+        }
+        if (isNotValidFile) {
+          Notifiers.getToastMessage(
+              context, i18.common.invalidImageFile, 'ERROR');
           return;
         }
         if (multiPick) {

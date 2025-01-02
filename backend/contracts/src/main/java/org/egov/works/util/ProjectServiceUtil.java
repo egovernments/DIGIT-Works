@@ -71,11 +71,13 @@ public class ProjectServiceUtil {
         Object projectRes = requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
 
         Map<String, String> projectDetails = new HashMap<>();
+        List<String> projectNumber = null;
         List<String> projectNames = null;
         List<String> boundaries = null;
         List<String> boundaryTypes=null;
 
         try {
+            projectNumber = JsonPath.read(projectRes, PROJECT_NUMBER_CODE);
             projectNames = JsonPath.read(projectRes, PROJECT_NAME_CODE);
             boundaries = JsonPath.read(projectRes,PROJECT_BOUNDARY_CODE);
             boundaryTypes = JsonPath.read(projectRes,PROJECT_BOUNDARY_TYPE_CODE);
@@ -87,6 +89,7 @@ public class ProjectServiceUtil {
         projectDetails.put("projectName", projectNames.get(0));
         projectDetails.put("boundary", boundaries.get(0));
         projectDetails.put("boundaryType", boundaryTypes.get(0));
+        projectDetails.put("projectNumber", projectNumber.get(0));
 
         return projectDetails;
     }

@@ -39,6 +39,9 @@ public class PaymentCriteria   {
 
   @JsonProperty("status")
   private String status;
+
+  @JsonProperty("referenceStatus")
+  private String referenceStatus;
   
   @JsonProperty("paymentNumbers")
   @Valid

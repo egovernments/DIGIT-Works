@@ -30,20 +30,21 @@ import static org.egov.util.MusterRollServiceConstants.ACTION_REJECT;
 @Slf4j
 public class EnrichmentService {
 
-    @Autowired
-    private MusterRollServiceUtil musterRollServiceUtil;
+    private final MusterRollServiceUtil musterRollServiceUtil;
+
+    private final MusterRollServiceConfiguration config;
+
+    private final IdGenRepository idGenRepository;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private MusterRollServiceConfiguration config;
-
-    @Autowired
-    private IdGenRepository idGenRepository;
-
-    @Autowired
-    private MusterRollRepository musterRollRepository;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public EnrichmentService(MusterRollServiceUtil musterRollServiceUtil, MusterRollServiceConfiguration config, IdGenRepository idGenRepository, ObjectMapper mapper) {
+        this.musterRollServiceUtil = musterRollServiceUtil;
+        this.config = config;
+        this.idGenRepository = idGenRepository;
+        this.mapper = mapper;
+    }
 
 
     /**
@@ -88,7 +89,7 @@ public class EnrichmentService {
         musterRoll.setAuditDetails(auditDetails);
 
         //musterRollNumber - Idgen
-        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
+        String rootTenantId = musterRoll.getTenantId();
         List<String> musterNumbers = getIdList(requestInfo, rootTenantId
                 , config.getIdgenMusterRollNumberName(), "", 1); //idformat will be fetched by idGen service
         if (musterNumbers != null && !musterNumbers.isEmpty()) {

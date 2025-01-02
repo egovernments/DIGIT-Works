@@ -364,6 +364,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
           initSortId="S N "
           data={tableRow}
           totalRecords={tableRow.length}
+          pageSizeLimit={tableRow.length}
           columns={tableColumns}
           isPaginationRequired={false}
           getCellProps={(cellInfo) => {
