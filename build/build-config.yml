@@ -42,7 +42,7 @@ config:
         image-name: "muster-roll"
       - work-dir: "backend/muster-roll/src/main/resources/db"
         image-name: "muster-roll-db"
-  - name: "builds/digit-works/backend/health-muster-roll"
+  - name: "builds/health-campaign-services/health-services/health-muster-roll"
     build:
       - work-dir: "backend/muster-roll"
         dockerfile: "build/maven/Dockerfile"
