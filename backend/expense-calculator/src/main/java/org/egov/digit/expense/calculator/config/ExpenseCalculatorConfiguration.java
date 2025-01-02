@@ -228,4 +228,42 @@ public class ExpenseCalculatorConfiguration {
 	private String attendanceRegisterEndpoint;
 	@Value("${works.attendance.register.search.limit}")
 	private String attendanceRegisterSearchLimit;
+
+	// File store service
+	@Value("${egov.filestore.host}")
+	private String fileStoreHost;
+
+	@Value("${egov.filestore.path}")
+	private String fileStoreEndpoint;
+
+	@Value("${state.level.tenant.id}")
+	private String stateLevelTenantId;
+
+	@Value("${egov.pdf.service.host}")
+	private String pdfServiceHost;
+
+	@Value("${egov.pdf.service.create.endpoint}")
+	private String pdfServiceCreateEndpoint;
+
+	@Value("${payment.pdf.key}")
+	private String paymentPdfKey;
+
+	@Value("${report.localization.module.name}")
+	private String reportLocalizationModuleName;
+
+	@Value("${report.localization.boundary.module.name}")
+	private String reportLocalizationBoundaryModuleName;
+
+	@Value("${report.localization.locale.code}")
+	private String reportLocalizationLocaleCode;
+
+	@Value("${report.header.title}")
+	private String reportHeaderTitle;
+
+	@Value("${report.date.time.format}")
+	private String reportDateTimeFormat;
+
+	@Value("${report.date.time.zone}")
+	private String reportDateTimeZone;
+
 }
