@@ -15,8 +15,8 @@ import java.util.Map;
 @Builder
 public class WorkerRate {
 
-    @JsonProperty("rolecode")
-    private String rolecode;
+    @JsonProperty("skillCode")
+    private String skillCode;
 
     @JsonProperty("rateBreakup")
     private Map<String, BigDecimal> rateBreakup;

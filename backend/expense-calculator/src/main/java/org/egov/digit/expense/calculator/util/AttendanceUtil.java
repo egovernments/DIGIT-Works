@@ -30,7 +30,8 @@ public class AttendanceUtil {
     }
 
 
-    public List<AttendanceRegister> fetchAttendanceRegister(String referenceId, String tenantId, RequestInfo requestInfo, String localityCode) {
+    public List<AttendanceRegister> fetchAttendanceRegister(String referenceId, String tenantId, RequestInfo requestInfo,
+                                                            String localityCode, boolean isChildrenRequired) {
         //TODO fix logs
         log.info("MusterRollValidator::Fetching attendance register with tenantId::" + tenantId
                 + " and register ID: " +referenceId);
@@ -41,6 +42,7 @@ public class AttendanceUtil {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
                 .queryParam("tenantId", tenantId).queryParam("referenceId", referenceId)
                 .queryParam("localityCode", localityCode)
+                .queryParam("isChildrenRequired", isChildrenRequired)
                 .queryParam("status", Status.ACTIVE);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 

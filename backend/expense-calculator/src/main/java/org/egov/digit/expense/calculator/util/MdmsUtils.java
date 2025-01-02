@@ -217,8 +217,8 @@ public class MdmsUtils {
         return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
     }
 
-    public Object getWorkerRateFromMDMSV2(RequestInfo requestInfo, String tenantId, String campaignId, String eventType) {
-        String filter = getWorkerFilter(campaignId, eventType);
+    public Object getWorkerRateFromMDMSV2(RequestInfo requestInfo, String tenantId, String campaignId) {
+        String filter = getWorkerFilter(campaignId);
         MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, WORKER_RATES, tenantId, filter, HCM_CONSTANT);
         return serviceRequestRepository.fetchResult(getMDMSV2SearchUrl(), MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build());
     }
@@ -245,9 +245,9 @@ public class MdmsUtils {
 
     }
 
-    String getWorkerFilter(String campaignId, String eventType) {
+    String getWorkerFilter(String campaignId) {
         return new StringBuilder().append(FILTER_START).append(CAMPAIGN_ID_CONSTANT).append(campaignId)
-                .append(FILTER_AND_CONSTANT).append(EVENT_TYPE_CONSTANT).append(eventType).append(FILTER_END).toString();
+                .append(FILTER_END).toString();
     }
 
     String getFilterFromSorList(List<String> sorList, Boolean isRate) {

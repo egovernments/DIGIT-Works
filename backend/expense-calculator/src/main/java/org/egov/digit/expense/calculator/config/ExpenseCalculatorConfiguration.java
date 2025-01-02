@@ -228,4 +228,10 @@ public class ExpenseCalculatorConfiguration {
 	private String attendanceRegisterEndpoint;
 	@Value("${works.attendance.register.search.limit}")
 	private String attendanceRegisterSearchLimit;
+
+	@Value("${egov.boundary.host}")
+	private String boundaryServiceHost;
+
+	@Value("${egov.boundary.search.url}")
+	private String boundarySearchUrl;
 }

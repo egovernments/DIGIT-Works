@@ -41,6 +41,11 @@ public class Bill {
 	@Size(min = 2, max = 64)
 	private String tenantId;
 
+	@JsonProperty("localityCode")
+	@NotNull
+	@Size(min = 2, max = 64)
+	private String localityCode;
+
 	@JsonProperty("billDate")
 	@Valid
 	private Long billDate;
