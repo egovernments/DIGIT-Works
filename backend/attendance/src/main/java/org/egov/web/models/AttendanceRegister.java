@@ -63,10 +63,10 @@ public class AttendanceRegister {
     private Object additionalDetails = null;
 
     @JsonProperty("localityCode")
-    private String localityCode;
+    private String localityCode = null;
 
-    @JsonProperty("paymentStatus")
-    private PaymentStatus paymentStatus = PaymentStatus.PENDINGFORAPPROVAL;
+    @JsonProperty("reviewStatus")
+    private String reviewStatus = null;
 
     public AttendanceRegister addStaffItem(StaffPermission staffItem) {
         if (this.staff == null) {

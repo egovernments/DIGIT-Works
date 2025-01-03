@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.PaymentStatus;
 import org.egov.web.models.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +52,7 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
             String referenceId = rs.getString("referenceid");
             String serviceCode = rs.getString("servicecode");
             String localityCode = rs.getString("localitycode");
-            String paymentStatus = rs.getString("paymentstatus");
+            String reviewstatus = rs.getString("reviewstatus");
 
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
@@ -74,7 +73,7 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
                     .endDate(endDate)
                     .auditDetails(auditDetails)
                     .localityCode(localityCode)
-                    .paymentStatus(PaymentStatus.fromValue(paymentStatus))
+                    .reviewStatus(reviewstatus)
                     .build();
 
             if (!attendanceRegisterMap.containsKey(id)) {

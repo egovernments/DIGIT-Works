@@ -44,10 +44,13 @@ public class AttendanceRegisterSearchCriteria {
     private String staffId;
 
     @JsonProperty("referenceId")
-    private List<String> referenceId;
+    private String referenceId;
 
     @JsonProperty("serviceCode")
     private String serviceCode;
+
+    @JsonProperty("referenceIds")
+    private List<String> referenceIds;
 
     @JsonProperty("limit")
     private Integer limit;
@@ -61,14 +64,11 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("sortOrder")
     private SortOrder sortOrder;
 
-    @JsonProperty("localityCodes")
-    private List<String> localityCode;
+    @JsonProperty("localityCode")
+    private String localityCode;
 
-    @JsonProperty("isChildrenRequired")
-    private boolean isChildrenRequired;
-
-    @JsonProperty("paymentStatus")
-    private PaymentStatus paymentStatus;
+    @JsonProperty("reviewStatus")
+    private String reviewStatus;
 
     public enum SortOrder {
         ASC,

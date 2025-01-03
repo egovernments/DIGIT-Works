@@ -6,7 +6,6 @@ import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.repository.RegisterRepository;
 import org.egov.service.AttendanceRegisterService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.*;
@@ -17,10 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 @Controller
@@ -36,16 +31,13 @@ public class AttendanceApiController {
     private final AttendanceRegisterService attendanceRegisterService;
     private final ResponseInfoFactory responseInfoFactory;
 
-    private final RegisterRepository registerRepository;
-
     @Autowired
-    public AttendanceApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoFactory responseInfoCreator, AttendanceRegisterService attendanceRegisterService, ResponseInfoFactory responseInfoFactory, org.egov.repository.RegisterRepository registerRepository) {
+    public AttendanceApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoFactory responseInfoCreator, AttendanceRegisterService attendanceRegisterService, ResponseInfoFactory responseInfoFactory) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.responseInfoCreator = responseInfoCreator;
         this.attendanceRegisterService = attendanceRegisterService;
         this.responseInfoFactory = responseInfoFactory;
-        this.registerRepository = registerRepository;
     }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
@@ -59,11 +51,9 @@ public class AttendanceApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> searchAttendanceRegister(@Valid @ModelAttribute AttendanceRegisterSearchCriteria searchCriteria, @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-        AttendanceRegisterResponse attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
-        Map<String, Long> statusCount = new HashMap<>();
-
+        AttendanceRegisterResponse attendanceRegisterResponse = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(attendanceRegisterList.getAttendanceRegister()).totalCount(attendanceRegisterList.getTotalCount()).statusCount(attendanceRegisterList.getStatusCount()).build();
+        attendanceRegisterResponse.setResponseInfo(responseInfo);
         return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse, HttpStatus.OK);
     }
 

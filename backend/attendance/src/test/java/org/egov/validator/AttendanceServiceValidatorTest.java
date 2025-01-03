@@ -2,6 +2,7 @@ package org.egov.validator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.helper.AttendanceLogRequestTestBuilder;
 import org.egov.helper.AttendanceRegisterRequestBuilderTest;
 import org.egov.helper.AttendeeRequestBuilderTest;
@@ -50,7 +51,11 @@ public class AttendanceServiceValidatorTest {
     @Mock
     private ProjectServiceUtil projectServiceUtil;
 
-    @DisplayName("Method validateRequestInfo: With good request")
+    @Mock
+    private AttendanceServiceConfiguration config;
+
+
+	@DisplayName("Method validateRequestInfo: With good request")
     @Test
     public void validateCreateAttendanceRegister_validateRequestInfo_1(){
         AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().addGoodRegister().build();

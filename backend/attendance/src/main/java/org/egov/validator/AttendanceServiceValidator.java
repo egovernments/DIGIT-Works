@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.project.Project;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.*;
@@ -32,13 +33,16 @@ public class AttendanceServiceValidator {
     private final BoundaryServiceUtil boundaryServiceUtil;
     private final ProjectServiceUtil projectServiceUtil;
 
+    private final AttendanceServiceConfiguration config;
+
     @Autowired
-    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil, ProjectServiceUtil projectServiceUtil) {
+    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil, ProjectServiceUtil projectServiceUtil, AttendanceServiceConfiguration config) {
         this.mdmsUtils = mdmsUtils;
         this.registerRepository = registerRepository;
         this.individualServiceUtil = individualServiceUtil;
         this.boundaryServiceUtil = boundaryServiceUtil;
         this.projectServiceUtil = projectServiceUtil;
+        this.config = config;
     }
 
     /* Validates create Attendance Register request body */
@@ -67,9 +71,9 @@ public class AttendanceServiceValidator {
         log.info("Request data validated with MDMS");
 
         //Verify boundary data for creating attendance register
-        boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
-
-
+        if(config.getAttendanceRegisterBoundarySearchEnabled()){
+            boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
+        }
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
 
@@ -88,7 +92,7 @@ public class AttendanceServiceValidator {
              AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
                     .tenantId(tenantId)
                     .status(Status.ACTIVE)
-                    .referenceId(Collections.singletonList(referenceId))
+                    .referenceId(referenceId)
                     .serviceCode(serviceCode)
                     .build();
              List<AttendanceRegister> registers = registerRepository.getRegister(attendanceRegisterSearchCriteria);
@@ -126,14 +130,10 @@ public class AttendanceServiceValidator {
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
 
-        //Verify if Status is PENDINGFORAPPROVAL
-//        validateStatus(attendanceRegisters, errorMap);
-
-        //Verify if Project Date ended
-//        validateProjectEndDate(request, errorMap);
-
         //Validate locality Code
-        boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
+        if(config.getAttendanceRegisterBoundarySearchEnabled()){
+            boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
+        }
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -165,6 +165,11 @@ public class AttendanceServiceValidator {
             } else if(registerFirstStaffInsertEnabled) {
                 log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+            }
+
+            if(config.getAttendanceRegisterReviewStatusEnabled() && registerFromDB.getReviewStatus().equalsIgnoreCase("APPROVED")){
+                log.error("Attendance Register having register Id " + registerFromRequest.getId() + " that you are trying to update has review status APPROVED");
+                throw new CustomException("ATTENDANCE_REGISTER_REVIEW_STATUS_APPROVED", "Attendance Register with register Id " + registerFromRequest.getId() + " that you are trying to update is already approved");
             }
         }
     }
@@ -295,36 +300,4 @@ public class AttendanceServiceValidator {
 
     }
 
-//    private void validateStatus(List<AttendanceRegister> attendanceRegisters, Map<String, String> errorMap) {
-//        attendanceRegisters.forEach(attendanceRegister -> {
-//            if(attendanceRegister.getPaymentStatus()==PaymentStatus.APPROVED){
-//                errorMap.put("STATUS_APPROVED", "Cannot update status already approved");
-//            }
-//        });
-//    }
-
-//    private void validateProjectEndDate(AttendanceRegisterRequest request, Map<String, String> errorMap) {
-//        List<AttendanceRegister> attendanceRegisters = request.getAttendanceRegister();
-//
-//        attendanceRegisters.forEach(attendanceRegister -> {
-//            String referenceId = attendanceRegister.getReferenceId();
-//
-//            if(referenceId!=null) {
-//                Project projectsearch = Project.builder().id(referenceId).tenantId(attendanceRegister.getTenantId()).build();
-//
-//                List<Project> projects=projectServiceUtil.getProject(
-//                  attendanceRegister.getTenantId(), projectsearch, request.getRequestInfo(), false, null
-//                );
-//                if(projects.isEmpty())
-//                    throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+referenceId);
-//
-//                Project project = projects.get(0);
-//                Long time = System.currentTimeMillis();
-//
-//                if(project.getEndDate()<time){
-//                    errorMap.put("PROJECT_ENDED_CANNOT_UPDATE", "Project ended cannot update the attendance register");
-//                }
-//            }
-//        });
-//    }
 }

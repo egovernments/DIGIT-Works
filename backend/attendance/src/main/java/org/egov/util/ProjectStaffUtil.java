@@ -84,7 +84,7 @@ public class ProjectStaffUtil {
 
         // Get the project details
         Project projectsearch = Project.builder().id(projectStaff.getProjectId()).tenantId(tenantId).build();
-        List<Project> projectList = projectServiceUtil.getProject(tenantId,projectsearch,requestInfo,false, null);
+        List<Project> projectList = projectServiceUtil.getProject(tenantId,projectsearch,requestInfo,false, false);
         if(projectList.isEmpty())
             throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+projectStaff.getProjectId());
 
@@ -193,7 +193,7 @@ public class ProjectStaffUtil {
         Individual reportingToIndividual = individualList.get(0);
 
         // Get the attendance registers for the project and staff
-        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().staffId(reportingToIndividual.getId()).referenceId(Collections.singletonList(projectStaff.getProjectId())).build();
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().staffId(reportingToIndividual.getId()).referenceId(projectStaff.getProjectId()).build();
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
 
         if (attendanceRegisters.isEmpty())
