@@ -87,8 +87,8 @@ public class RegisterEnrichment {
                 .registerId(attendanceRegister.getId())
                 .userId(individualId)
                 .enrollmentDate(new BigDecimal(System.currentTimeMillis()))
-                .auditDetails(auditDetails).staffType(StaffType.OWNER)
-                .additionalDetails(Map.of("staffUserName", individualList.get(0).getUserDetails().getUsername()))
+                .auditDetails(auditDetails).staffType(Collections.singletonList(StaffType.OWNER))
+                .additionalDetails(Map.of("staffName", individualList.get(0).getName().getGivenName()))
                 .build();
 
         attendanceRegister.setStaff(Collections.singletonList(staffPermission));

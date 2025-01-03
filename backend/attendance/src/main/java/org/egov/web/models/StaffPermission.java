@@ -6,6 +6,10 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 
 /**
  * StaffPermission
@@ -43,6 +47,6 @@ public class StaffPermission {
     private Object additionalDetails = null;
 
     @JsonProperty("staffType")
-    private StaffType staffType = StaffType.EDITOR;
+    private List<StaffType> staffType = Collections.singletonList(StaffType.OWNER);
 }
 
