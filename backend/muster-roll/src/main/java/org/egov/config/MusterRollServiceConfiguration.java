@@ -144,8 +144,8 @@ public class MusterRollServiceConfiguration {
     @Value("${musterroll.add.bank.account.details.enabled:true}")
     private boolean addBankAccountDetails;
 
-    @Value("${musterroll.update.attendance.register.payment.status.enabled:true}")
-    private boolean updateAttendanceRegisterPaymentStatusEnabled;
+    @Value("${musterroll.update.attendance.register.review.status.enabled:true}")
+    private boolean updateAttendanceRegisterReviewStatusEnabled;
 
     @Value("${egov.user.host}")
     private String userHost;

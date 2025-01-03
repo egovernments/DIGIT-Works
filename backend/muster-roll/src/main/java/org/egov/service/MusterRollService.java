@@ -212,7 +212,7 @@ public class MusterRollService {
             calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
         workflowService.updateWorkflowStatus(musterRollRequest);
-        if(config.isUpdateAttendanceRegisterPaymentStatusEnabled() && musterRollRequest.getWorkflow().getAction().equals(ACTION_APPROVE)) {
+        if(config.isUpdateAttendanceRegisterReviewStatusEnabled() && musterRollRequest.getWorkflow().getAction().equals(ACTION_APPROVE)) {
             AttendanceRegisterResponse attendanceRegisterResponse = musterRollServiceUtil
                     .fetchAttendanceRegister(musterRollRequest.getMusterRoll(), musterRollRequest.getRequestInfo());
             List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
@@ -221,7 +221,7 @@ public class MusterRollService {
                 throw new CustomException("MusterRollService::updateMusterRoll::updateAttendanceRegister", "No attendance registers found to update the status");
             }
             AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
-            attendanceRegister.setPaymentStatus(STATUS_APPROVED);
+            attendanceRegister.setReviewStatus(STATUS_APPROVED);
             musterRollServiceUtil.updateAttendanceRegister(attendanceRegister, musterRollRequest.getRequestInfo());
         }
         musterRollProducer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);

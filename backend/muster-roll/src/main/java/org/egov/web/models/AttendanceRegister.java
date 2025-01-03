@@ -62,8 +62,8 @@ public class AttendanceRegister {
     @JsonProperty("localityCode")
     private String localityCode;
 
-    @JsonProperty("paymentStatus")
-    private String paymentStatus;
+    @JsonProperty("reviewStatus")
+    private String reviewStatus;
 
 
     public AttendanceRegister addStaffItem(StaffPermission staffItem) {
