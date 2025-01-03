@@ -1,6 +1,15 @@
 package org.egov.digit.expense.calculator.constraints;
 
 public class BillReportConstraints {
+    public static final String REPORT_KEY = "reportDetails";
+    public static final String REPORT_STATUS_KEY = "status";
+    public static final String PDF_REPORT_ID_KEY = "pdfReportId";
+    public static final String EXCEL_REPORT_ID_KEY = "excelReportId";
+    public static final String ERROR_ERROR_MESSAGE_KEY = "errorMessage";
+    public static final String REPORT_STATUS_INITIATED = "INITIATED";
+    public static final String REPORT_STATUS_COMPLETED = "COMPLETED";
+    public static final String REPORT_STATUS_FAILED = "FAILED";
+
     public static final String FOOD_HEAD_CODE = "FOOD";
     public static final String TRANSPORT_HEAD_CODE = "TRAVEL";
     public static final String PER_DIEM_HEAD_CODE = "PER_DAY";

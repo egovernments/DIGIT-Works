@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -29,13 +29,13 @@ import static org.egov.digit.expense.calculator.constraints.BillReportConstraint
 
 @Slf4j
 @Service
-public class ExcelGenerate {
+public class BillExcelGenerate {
 
     private final LocalizationUtil localizationUtil;
     private final ExpenseCalculatorConfiguration config;
     private final FileStoreUtil fileStoreUtil;
     @Autowired
-    public ExcelGenerate(LocalizationUtil localizationUtil, ExpenseCalculatorConfiguration config, FileStoreUtil fileStoreUtil) {
+    public BillExcelGenerate(LocalizationUtil localizationUtil, ExpenseCalculatorConfiguration config, FileStoreUtil fileStoreUtil) {
         this.localizationUtil = localizationUtil;
         this.config = config;
         this.fileStoreUtil = fileStoreUtil;
@@ -46,7 +46,6 @@ public class ExcelGenerate {
 
         ByteArrayResource excelFile = generateExcelFromReportObject(reportBill, localizationMap.get(config.getReportLocalizationLocaleCode() + "|" + config.getStateLevelTenantId()));
         return fileStoreUtil.uploadFileAndGetFileStoreId(config.getStateLevelTenantId(), excelFile);
-//        return null;
     }
 
 
@@ -62,11 +61,14 @@ public class ExcelGenerate {
         Sheet sheet = workbook.createSheet(campaignName);
 
         // Create styles
+        XSSFCellStyle otherHeaderLabelStyle = createOtherHeaderStyle(workbook, true);
+        XSSFCellStyle otherHeaderValueStyle = createOtherHeaderStyle(workbook, false);
         XSSFCellStyle titleStyle = createTitleStyle(workbook);
         XSSFCellStyle boldStyle = createBoldStyle(workbook);
         XSSFCellStyle headerStyle = createHeaderStyle(workbook);
         XSSFCellStyle textStyle = createCellStyle(workbook, HorizontalAlignment.LEFT);
         XSSFCellStyle numberStyle = createCellStyle(workbook, HorizontalAlignment.RIGHT);
+        XSSFCellStyle slNoStyle = createSlNoCellStyle(workbook);
 
         int rowNum = 0;
 
@@ -81,18 +83,33 @@ public class ExcelGenerate {
         CellRangeAddress mergedRegion = new CellRangeAddress(1, 1, 0, 1); // Row 0, Columns 0 to 1
         sheet.addMergedRegion(mergedRegion);
         campaignRow1.createCell(0).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_CAMPAIGN_NAME_LABEL, BILL_EXCEL_CAMPAIGN_NAME_LABEL));
-        campaignRow1.getCell(0).setCellStyle(boldStyle);
+        campaignRow1.getCell(0).setCellStyle(otherHeaderLabelStyle);
         campaignRow1.createCell(2).setCellValue(campaignName);
+        campaignRow1.getCell(2).setCellStyle(otherHeaderValueStyle);
 
         campaignRow1.createCell(3).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_TOTAL_AMOUNT_TO_PROCESS_LABEL, BILL_EXCEL_TOTAL_AMOUNT_TO_PROCESS_LABEL));
-        campaignRow1.getCell(3).setCellStyle(boldStyle);
+        campaignRow1.getCell(3).setCellStyle(otherHeaderLabelStyle);
         campaignRow1.createCell(4).setCellValue(totalAmountToProcess.toPlainString());
-        campaignRow1.getCell(4).setCellStyle(textStyle);
+        campaignRow1.getCell(4).setCellStyle(otherHeaderValueStyle);
 
         Row campaignRow2 = sheet.createRow(rowNum++);
+        campaignRow2.createCell(0).setCellValue("");
+        campaignRow2.getCell(0).setCellStyle(otherHeaderValueStyle);
+        campaignRow2.createCell(1).setCellValue("");
+        campaignRow2.getCell(1).setCellStyle(otherHeaderValueStyle);
+        campaignRow2.createCell(2).setCellValue("");
+        campaignRow2.getCell(2).setCellStyle(otherHeaderValueStyle);
         campaignRow2.createCell(3).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_TOTAL_NUMBER_OF_WORKERS_LABEL, BILL_EXCEL_TOTAL_NUMBER_OF_WORKERS_LABEL));
-        campaignRow2.getCell(3).setCellStyle(boldStyle);
+        campaignRow2.getCell(3).setCellStyle(otherHeaderLabelStyle);
         campaignRow2.createCell(4).setCellValue(totalNumberOfWorkers);
+        campaignRow2.getCell(4).setCellStyle(otherHeaderValueStyle);
+        // fill empty cells
+        for (int i = 5; i < columns.length; i++) {
+            campaignRow1.createCell(i).setCellValue("");
+            campaignRow1.getCell(i).setCellStyle(headerStyle);
+            campaignRow2.createCell(i).setCellValue("");
+            campaignRow2.getCell(i).setCellStyle(headerStyle);
+        }
 
         // Write column headers
         Row billDetailsHeaderRow = sheet.createRow(rowNum++);
@@ -116,7 +133,12 @@ public class ExcelGenerate {
 
             for (int i = 0; i < data.length; i++) {
                 Cell cell = row.createCell(i);
-                setCellValueWithAlignment(cell, data[i], textStyle, numberStyle);
+                if (i == 0) {
+                    cell.setCellStyle(slNoStyle);
+                    cell.setCellValue(data[i].toString());
+                } else {
+                    setCellValueWithAlignment(cell, data[i], textStyle, numberStyle);
+                }
             }
         }
 
@@ -162,17 +184,20 @@ public class ExcelGenerate {
         for (int i = 0; i < columns.length; i++) {
             sheet.autoSizeColumn(i);
         }
-        sheet.protectSheet("password");
-        // Save the file to the specified path
-//        try (FileOutputStream outputStream = new FileOutputStream("Sample.xlsx")) {
-//            workbook.write(outputStream);
-//            workbook.close();
-//            log.info("Excel file saved successfully at: " + "Sample.xlsx");
-//        } catch (IOException e) {
-//            log.error("Exception while saving Excel file: " + e);
-//            throw new CustomException("EXCEL_SAVE_ERROR", "Exception while saving Excel file to local system");
-//        }
-//        return null;
+        sheet.protectSheet(campaignName);
+        /*
+        // This code is for local testing, it Saves the file to the specified path
+        try (FileOutputStream outputStream = new FileOutputStream("Sample.xlsx")) {
+            workbook.write(outputStream);
+            workbook.close();
+            log.info("Excel file saved successfully at: " + "Sample.xlsx");
+        } catch (IOException e) {
+            log.error("Exception while saving Excel file: " + e);
+            throw new CustomException("EXCEL_SAVE_ERROR", "Exception while saving Excel file to local system");
+        }
+        return null;
+
+         */
         // Write to ByteArrayResource
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             workbook.write(outputStream);
@@ -195,7 +220,7 @@ public class ExcelGenerate {
         XSSFCellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setBold(true);
-        font.setFontHeight(12);
+        font.setFontHeight(10);
         style.setFont(font);
         return style;
     }
@@ -204,16 +229,38 @@ public class ExcelGenerate {
         XSSFCellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setBold(true);
-        font.setFontHeight(12);
+        font.setFontHeight(10);
         style.setFont(font);
-//        style.setFillBackgroundColor(Short.parseShort("#FCE5CD"));
         style.setAlignment(HorizontalAlignment.CENTER);
+        XSSFColor customColor = new XSSFColor(new java.awt.Color(252, 229, 205), null);
+        style.setFillForegroundColor(customColor);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        return style;
+    }
+
+    private XSSFCellStyle createOtherHeaderStyle(XSSFWorkbook workbook, Boolean isValue) {
+        XSSFCellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
+        font.setBold(true);
+        font.setFontHeight(10);
+        if (isValue) {
+            style.setFont(font);
+        }
+        style.setAlignment(HorizontalAlignment.LEFT);
+        XSSFColor customColor = new XSSFColor(new java.awt.Color(236, 255, 220), null);
+        style.setFillForegroundColor(customColor);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         return style;
     }
 
     private XSSFCellStyle createHeaderStyle(XSSFWorkbook workbook) {
         XSSFCellStyle style = workbook.createCellStyle();
-        style.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+        XSSFColor customColor = new XSSFColor(new java.awt.Color(201, 218, 248), null);
+        style.setFillForegroundColor(customColor);
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setBorderBottom(BorderStyle.THIN);
         style.setBorderTop(BorderStyle.THIN);
@@ -223,8 +270,25 @@ public class ExcelGenerate {
         return style;
     }
 
+    private XSSFCellStyle createSlNoCellStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle style = workbook.createCellStyle();
+        XSSFColor customColor = new XSSFColor(new java.awt.Color(212, 212, 212), null);
+        style.setFillForegroundColor(customColor);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        XSSFFont font = workbook.createFont();
+        font.setFontHeight(8);
+        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        return style;
+    }
+
     private XSSFCellStyle createCellStyle(XSSFWorkbook workbook, HorizontalAlignment alignment) {
         XSSFCellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
+        font.setFontHeight(8);
         style.setAlignment(alignment);
         style.setBorderBottom(BorderStyle.THIN);
         style.setBorderTop(BorderStyle.THIN);
@@ -232,6 +296,7 @@ public class ExcelGenerate {
         style.setBorderRight(BorderStyle.THIN);
         return style;
     }
+
 
     private void setCellValueWithAlignment(Cell cell, Object value, XSSFCellStyle textStyle, XSSFCellStyle numberStyle) {
         if (value instanceof BigDecimal) {

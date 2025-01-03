@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.calculator.service.HealthBillReportGenerator;
-import org.egov.digit.expense.calculator.util.ExcelGenerate;
+import org.egov.digit.expense.calculator.util.BillExcelGenerate;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
 import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.digit.expense.calculator.web.models.report.BillReportRequest;
@@ -28,15 +28,15 @@ public class HealthReportApiController {
 	private final HttpServletRequest request;
 	private ResponseInfoFactory responseInfoFactory;
 	private HealthBillReportGenerator healthBillReportGenerator;
-	private ExcelGenerate excelGenerate;
+	private BillExcelGenerate billExcelGenerate;
 
 	@Autowired
-	public HealthReportApiController(ObjectMapper objectMapper, HttpServletRequest request, HealthBillReportGenerator healthBillReportGenerator, ResponseInfoFactory responseInfoFactory, ExcelGenerate excelGenerate) {
+	public HealthReportApiController(ObjectMapper objectMapper, HttpServletRequest request, HealthBillReportGenerator healthBillReportGenerator, ResponseInfoFactory responseInfoFactory, BillExcelGenerate billExcelGenerate) {
 		this.objectMapper = objectMapper;
 		this.request = request;
 		this.healthBillReportGenerator = healthBillReportGenerator;
 		this.responseInfoFactory = responseInfoFactory;
-		this.excelGenerate = excelGenerate;
+		this.billExcelGenerate = billExcelGenerate;
 	}
 
 
@@ -44,18 +44,13 @@ public class HealthReportApiController {
 	public ResponseEntity<BillReportRequest> generateReport(
 			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody BillRequest billRequest) {
 		BillReportRequest billReportRequest = healthBillReportGenerator.generateHealthBillReportRequest(billRequest);
-//		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(billRequest.getRequestInfo(), true);
-//		CalculationResponse calculationResponse = CalculationResponse.builder()
-//				.responseInfo(responseInfo)
-//				.calculation(new Calculation())
-//				.build();
 		return new ResponseEntity<BillReportRequest>(billReportRequest, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/excel", method = RequestMethod.POST)
 	public ResponseEntity<CalculationResponse> generateExcel(
 			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody BillReportRequest billReportRequest) {
-		excelGenerate.generateExcel(billReportRequest.getRequestInfo(), billReportRequest.getReportBill().get(0));
+		billExcelGenerate.generateExcel(billReportRequest.getRequestInfo(), billReportRequest.getReportBill().get(0));
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(billReportRequest.getRequestInfo(), true);
 		CalculationResponse calculationResponse = CalculationResponse.builder()
 				.responseInfo(responseInfo)

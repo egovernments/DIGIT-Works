@@ -266,4 +266,7 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${report.date.time.zone}")
 	private String reportDateTimeZone;
 
+	@Value("${report.error.queue.topic}")
+	private String reportErrorQueueTopic;
+
 }

@@ -1,8 +1,8 @@
 package org.egov.digit.expense.calculator.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.models.core.Boundary;
 import org.egov.common.models.individual.Address;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Skill;
@@ -35,35 +35,41 @@ public class HealthBillReportGenerator {
 
     private final IndividualUtil individualUtil;
     private final ExpenseCalculatorUtil expenseCalculatorUtil;
-    private final ExcelGenerate excelGenerate;
+    private final BillExcelGenerate billExcelGenerate;
     private final ExpenseCalculatorConfiguration config;
     private final ProjectUtil projectUtil;
     private final LocalizationUtil localizationUtil;
     private final PDFServiceUtil pdfServiceUtil;
+    private final BillUtils billUtils;
+
 
     @Autowired
-    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, ExcelGenerate excelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil) {
+    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils) {
         this.individualUtil = individualUtil;
         this.expenseCalculatorUtil = expenseCalculatorUtil;
-        this.excelGenerate = excelGenerate;
+        this.billExcelGenerate = billExcelGenerate;
         this.config = config;
         this.projectUtil = projectUtil;
         this.localizationUtil = localizationUtil;
         this.pdfServiceUtil = pdfServiceUtil;
+        this.billUtils = billUtils;
     }
 
     public BillReportRequest generateHealthBillReportRequest(BillRequest billRequest) {
         try {
+            updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null);
             List<ReportBillDetail> reportBillDetail = getReportBillDetail(billRequest.getRequestInfo(), billRequest.getBill());
             BillReportRequest billReportRequest = enrichReportRequest(billRequest, reportBillDetail); //enrichReportRequest
 
-            String excelFileStoreId = excelGenerate.generateExcel(billReportRequest.getRequestInfo(), billReportRequest.getReportBill().get(0));
+            String excelFileStoreId = billExcelGenerate.generateExcel(billReportRequest.getRequestInfo(), billReportRequest.getReportBill().get(0));
             String pdfFileStoreId = pdfServiceUtil.createPDF(billReportRequest, billRequest.getBill().getTenantId(), config.getPaymentPdfKey());
             log.info("PDF FileStoreId: " + pdfFileStoreId);
             log.info("Excel FileStoreId: " + excelFileStoreId);
+            updateReportStatus(billRequest, REPORT_STATUS_COMPLETED, excelFileStoreId, pdfFileStoreId, null);
             return billReportRequest;
         } catch (Exception e) {
             log.error("Error while generating report", e);
+            updateReportStatus(billRequest, REPORT_STATUS_FAILED, null, null, e.getMessage());
             return null;
         }
 
@@ -262,12 +268,38 @@ public class HealthBillReportGenerator {
         Map<String, Map<String, String>>  localizationMap = localizationUtil.getLocalisedMessages(
                 billRequest.getRequestInfo(), billRequest.getBill().getTenantId(),
                 config.getReportLocalizationLocaleCode(),
-                config.getReportLocalizationBoundaryModuleName());
+                config.getReportLocalizationBoundaryModuleName() + "," + config.getReportLocalizationModuleName());
         if (localizationMap != null && localizationMap.containsKey(config.getReportLocalizationLocaleCode() + "|" + billRequest.getBill().getTenantId())) {
             Map<String, String> localization = localizationMap.get(config.getReportLocalizationLocaleCode() + "|" + billRequest.getBill().getTenantId());
-            // TODO: Add localization to reportBill
+            if (localization == null) {
+                return;
+            }
+            for (ReportBillDetail reportBillDetail : reportBill.getReportBillDetails()) {
+                reportBillDetail.setLocality(localization.getOrDefault(reportBillDetail.getLocality(), reportBillDetail.getLocality()));
+                reportBillDetail.setRole(localization.getOrDefault(reportBillDetail.getRole(), reportBillDetail.getRole()));
+            }
         }
 
     }
 
+    private void updateReportStatus(BillRequest billRequest, String status, String excelReportId, String pdfReportId, String errorMessage) {
+        // Ensure additionalDetails is initialized
+        Object additionalDetails = billRequest.getBill().getAdditionalDetails();
+        if (additionalDetails == null) {
+            additionalDetails = new HashMap<String, Object>();
+        }
+        // Cast additionalDetails to Map
+        Map<String, Object> additionalDetailsMap = (Map<String, Object>) additionalDetails;
+        // Add reportDetails key with nested values
+        Map<String, Object> reportDetails = new HashMap<>();
+        reportDetails.put(REPORT_STATUS_KEY, status);
+        reportDetails.put(PDF_REPORT_ID_KEY, pdfReportId);
+        reportDetails.put(EXCEL_REPORT_ID_KEY, excelReportId);
+        reportDetails.put(ERROR_ERROR_MESSAGE_KEY, errorMessage);
+
+        // Add or overwrite reportDetails key
+        additionalDetailsMap.put(REPORT_KEY, reportDetails);
+        billRequest.getBill().setAdditionalDetails(additionalDetailsMap);
+        billUtils.postUpdateBill(billRequest.getRequestInfo(), billRequest.getBill(), null);
+    }
 }
