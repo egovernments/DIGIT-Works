@@ -42,6 +42,7 @@ public class NotificationService {
      */
     public void sendNotificationToCBO(MusterRollRequest musterRollRequest){
         String action = musterRollRequest.getWorkflow().getAction();
+        if(!config.isSendNotificationEnabled()) return;
         if(action.equalsIgnoreCase(WF_SEND_BACK_TO_CBO_CODE) || action.equalsIgnoreCase(WF_APPROVE_CODE)) {
                 Map<String, String> cboDetails = notificationUtil.getCBOContactPersonDetails(musterRollRequest);
                 String amount = notificationUtil.getExpenseAmount(musterRollRequest);

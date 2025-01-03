@@ -31,6 +31,9 @@ public class MusterRollSearchCriteria {
     @JsonProperty("registerId")
     private String registerId;
 
+    @JsonProperty("registerIds")
+    private List<String> registerIds;
+
     @JsonProperty("fromDate")
     private BigDecimal fromDate;
 

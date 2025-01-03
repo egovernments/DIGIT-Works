@@ -15,6 +15,7 @@ public class MusterRollServiceConstants {
     public static final String ENTRY_EVENT = "ENTRY";
     public static final String EXIT_EVENT = "EXIT";
     public static final String STATUS_APPROVED = "APPROVED";
+    public static final String ACTION_APPROVE = "APPROVE";
     public static final String TENANT_ID = "tenantId";
     public static final String CONTRACT_NUMBER = "contractNumber";
     public static final String REQUEST_INFO = "RequestInfo";

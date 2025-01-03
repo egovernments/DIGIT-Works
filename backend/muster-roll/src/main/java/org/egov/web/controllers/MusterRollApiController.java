@@ -10,6 +10,7 @@ import org.egov.util.ResponseInfoCreator;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.web.models.MusterRollSearchCriteria;
+import org.egov.web.models.MusterRollSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,8 +59,14 @@ public class MusterRollApiController {
     }
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
-    public ResponseEntity<MusterRollResponse> attendanceV1SearchPOST(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute MusterRollSearchCriteria searchCriteria) {
+    public ResponseEntity<MusterRollResponse> musterRollV1SearchPOST(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute MusterRollSearchCriteria searchCriteria) {
         MusterRollResponse musterRollResponse = musterRollService.searchMusterRolls(requestInfoWrapper, searchCriteria);
+        return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/v2/_search", method = RequestMethod.POST)
+    public ResponseEntity<MusterRollResponse> musterRollV2SearchPOST(@Valid @RequestBody MusterRollSearchRequest request) {
+        MusterRollResponse musterRollResponse = musterRollService.searchMusterRolls(request, request.getMusterRoll());
         return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
     }
 

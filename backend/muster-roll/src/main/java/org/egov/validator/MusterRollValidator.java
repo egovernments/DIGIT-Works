@@ -180,7 +180,7 @@ public class MusterRollValidator {
 
         //Check if the startDate is Monday - UI sends the epoch time in IST
         LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.of(serviceConfiguration.getTimeZone())).toLocalDate();
-        if (startDate.getDayOfWeek() != DayOfWeek.MONDAY) {
+        if (serviceConfiguration.isValidateStartDateMondayEnabled() && startDate.getDayOfWeek() != DayOfWeek.MONDAY) {
             throw new CustomException("START_DATE_MONDAY","StartDate should be Monday");
         }
         musterRoll.setStartDate(new BigDecimal(startDate.atStartOfDay(ZoneId.of(serviceConfiguration.getTimeZone())).toInstant().toEpochMilli()));

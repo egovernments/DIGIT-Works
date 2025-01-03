@@ -47,6 +47,7 @@ class MusterRollValidatorTest {
         lenient().when(mdmsUtils.mDMSCall(any(MusterRollRequest.class),
                 any(String.class))).thenReturn(mdmsResponse);
         lenient().when(serviceConfiguration.getTimeZone()).thenReturn("Asia/Kolkata");
+        lenient().when(serviceConfiguration.isValidateStartDateMondayEnabled()).thenReturn(true);
 
     }
 
