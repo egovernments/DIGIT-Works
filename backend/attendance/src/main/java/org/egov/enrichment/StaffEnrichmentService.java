@@ -4,12 +4,14 @@ import digit.models.coremodels.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.utils.MultiStateInstanceUtil;
+import org.egov.tracer.model.CustomException;
 import org.egov.util.AttendanceServiceUtil;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -44,7 +46,7 @@ public class StaffEnrichmentService {
             staffPermissionFromRequest.setId(UUID.randomUUID().toString());
             BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
             staffPermissionFromRequest.setEnrollmentDate(enrollmentDate);
-            staffPermissionFromRequest.setAdditionalDetails(Map.of("staffName", individualList.get(0).getName().getGivenName()));
+            staffPermissionFromRequest.setAdditionalDetails(Map.of("staffName", !individualList.isEmpty() ? individualList.get(0).getName().getGivenName() : "NA"));
         }
     }
 
