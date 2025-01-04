@@ -62,7 +62,7 @@ public class ExpenseCalculatorServiceValidator {
     }
 
     public void validateCalculatorCalculateRequest(CalculationRequest calculationRequest, Project project){
-//        validateCommonCalculatorRequest(calculationRequest);
+        validateCommonCalculatorRequest(calculationRequest);
 
         //Validate muster roll Ids against muster roll service
         validateMusterRollIdAgainstService(calculationRequest,true);
