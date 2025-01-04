@@ -1,5 +1,6 @@
 package org.egov.config;
 
+import java.util.Map;
 import java.util.TimeZone;
 import jakarta.annotation.PostConstruct;
 
@@ -143,6 +144,21 @@ public class AttendanceServiceConfiguration {
 
     @Value("${egov.boundary.search.url}")
     private String boundarySearchUrl;
+
+    @Value("${attendance.register.search.check.project.enabled:false}")
+    private Boolean attendanceRegisterProjectSearchEnabled;
+
+    @Value("${attendance.register.review.status.enabled:false}")
+    private Boolean attendanceRegisterReviewStatusEnabled;
+
+    @Value("${attendance.register.review.status.init.value}")
+    private String attendanceRegisterReviewStatusValue;
+
+    @Value("${attendance.register.boundary.search.enabled:false}")
+    private Boolean attendanceRegisterBoundarySearchEnabled;
+
+    @Value("#{${attendance.register.status.map}}")
+    private Map<String, String> attendanceRegisterStatusMap;
 }
 
 

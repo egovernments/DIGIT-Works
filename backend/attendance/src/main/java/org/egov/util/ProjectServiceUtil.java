@@ -35,9 +35,9 @@ public class ProjectServiceUtil {
 	 * @param requestInfo
 	 * @return
 	 */
-	public List<Project> getProject(String tenantId, Project project, RequestInfo requestInfo, boolean childProject, String referenceId){
+	public List<Project> getProject(String tenantId, Project project, RequestInfo requestInfo, boolean childProject, boolean isAncestorProjectId){
 
-		StringBuilder url = getProjectURL(tenantId, childProject, referenceId);
+		StringBuilder url = getProjectURL(tenantId, childProject, isAncestorProjectId);
 		ProjectRequest projectRequest = ProjectRequest.builder().projects(Collections.singletonList(project)).requestInfo(requestInfo).build();
 		ProjectResponse projectResponse = serviceRequestClient.fetchResult(url,projectRequest,ProjectResponse.class);
 
@@ -49,17 +49,13 @@ public class ProjectServiceUtil {
 	 * @param tenantId
 	 * @return URL
 	 */
-	public StringBuilder getProjectURL(String tenantId, boolean childRequired, String referenceId)
+	public StringBuilder getProjectURL(String tenantId, boolean childRequired, boolean isAncestorProjectId)
 	{
 		StringBuilder builder = new StringBuilder(config.getProjectHost());
 		builder.append(config.getProjectSearchEndpoint()).append(LIMIT_OFFSET);
 		builder.append("&tenantId=").append(tenantId);
-
-		if(childRequired){
-			builder.append("&ancestorIds=").append(referenceId);
-			builder.append("&includeDescendants=").append(true);
-		}
-
+		builder.append("&isAncestorProjectId=").append(isAncestorProjectId);
+		builder.append("&includeDescendants=").append(childRequired);
 		return builder;
 	}
 

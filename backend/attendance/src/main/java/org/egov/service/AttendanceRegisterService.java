@@ -30,7 +30,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.util.AttendanceServiceConstants.STATUS_MAP;
 import static org.egov.util.AttendanceServiceConstants.TOTAL_COUNT;
 
 @Service
@@ -110,15 +109,14 @@ public class AttendanceRegisterService {
         //Get the roles enabled for open serach
         Set<String> openSearchEnabledRoles  = getRegisterOpenSearchEnabledRoles();
 
-        List<AttendanceRegister> resultAttendanceRegisters = new ArrayList<>();
-        Map<String, Long> counts = new HashMap<>();
+        AttendanceRegisterResponse attendanceRegisterResponse = new AttendanceRegisterResponse();
 
         if(isUserEnabledForOpenSearch(userRoles,openSearchEnabledRoles)){
             /*
                User having the role to perform open search on attendance register.
             */
             log.info("Searching registers for Superuser or Engineer");
-            counts = fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, resultAttendanceRegisters);
+            fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, attendanceRegisterResponse);
         }else{
             /*
                Make sure response register list should contain only those register for which logged-in is associated.
@@ -127,17 +125,10 @@ public class AttendanceRegisterService {
 
             String individualId = individualServiceUtil.getIndividualDetailsFromUserId(userId,requestInfoWrapper.getRequestInfo(), searchCriteria.getTenantId()).get(0).getId();
             Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(individualId);
-            counts = updateSearchCriteriaAndFetchAndFilterRegisters(requestInfoWrapper, registers, searchCriteria, resultAttendanceRegisters);
+            updateSearchCriteriaAndFetchAndFilterRegisters(requestInfoWrapper, registers, searchCriteria, attendanceRegisterResponse);
         }
 
-        // Create and populate the response object
-        AttendanceRegisterResponse response = new AttendanceRegisterResponse();
-        response.setAttendanceRegister(resultAttendanceRegisters);
-        response.setTotalCount(counts.get(TOTAL_COUNT));
-        counts.remove(TOTAL_COUNT);
-        response.setStatusCount(counts);
-
-        return response;
+        return attendanceRegisterResponse;
     }
 
     private boolean isUserEnabledForOpenSearch(Set<String> userRoles, Set<String> openSearchEnabledRoles) {
@@ -170,20 +161,16 @@ public class AttendanceRegisterService {
      *
      * @param registers
      * @param searchCriteria
-     * @param resultAttendanceRegisters
+     * @param attendanceRegisterResponse
      */
-    public Map<String, Long> updateSearchCriteriaAndFetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,Set<String> registers, AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
+    public void updateSearchCriteriaAndFetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,Set<String> registers, AttendanceRegisterSearchCriteria searchCriteria, AttendanceRegisterResponse attendanceRegisterResponse) {
         Map<String, Long> counts = new HashMap<>();
         counts.put(TOTAL_COUNT,0L);
-        for (Map.Entry<String, String> entry : STATUS_MAP.entrySet()) {
-            String alias = entry.getValue();
+        for (Map.Entry<String, String> entry : attendanceServiceConfiguration.getAttendanceRegisterStatusMap().entrySet()) {
+            String alias = entry.getKey();
             counts.put(alias,0L);
         }
 
-        if (registers == null || registers.isEmpty()) {
-            log.info("Registers are empty or null");
-            return counts;
-        }
         if (searchCriteria.getIds() == null) {
             log.info("Register search criteria does not contain any register ids");
             List<String> registerIds = new ArrayList<>();
@@ -198,8 +185,7 @@ public class AttendanceRegisterService {
                 }
             }
         }
-        counts = fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, resultAttendanceRegisters);
-        return counts;
+        fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, attendanceRegisterResponse);
     }
 
     /**
@@ -207,50 +193,45 @@ public class AttendanceRegisterService {
      * but keep only those registers which contains attendees or staff given in search criteria
      *
      * @param searchCriteria
-     * @param resultAttendanceRegisters
+     * @param attendanceRegisterResponse
      */
-    private Map<String, Long> fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, List<AttendanceRegister> resultAttendanceRegisters) {
+    private void fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, AttendanceRegisterResponse attendanceRegisterResponse) {
         log.info("Fetching registers based on supplied search criteria");
 
-        if(searchCriteria.getReferenceId()!=null && !searchCriteria.getReferenceId().isEmpty()){
-            Project projectSearch = Project.builder()
-              .tenantId(searchCriteria.getTenantId())
-              .address(Address.builder().boundary(searchCriteria.getLocalityCode().get(0)).build())
-              .build();
+        if(attendanceServiceConfiguration.getAttendanceRegisterProjectSearchEnabled()){
+            if(searchCriteria.getReferenceId()!=null && !searchCriteria.getReferenceId().isEmpty()){
+                Project projectSearch = Project.builder()
+                  .tenantId(searchCriteria.getTenantId())
+                  .id(searchCriteria.getReferenceId())
+                  .address(Address.builder().boundary(searchCriteria.getLocalityCode()).build())
+                  .build();
 
-            List<Project> projects = projectServiceUtil.getProject(
-              searchCriteria.getTenantId(), projectSearch, requestInfoWrapper.getRequestInfo(), true, searchCriteria.getReferenceId().get(0)
-            );
+                List<Project> projects = projectServiceUtil.getProject(
+                  searchCriteria.getTenantId(), projectSearch, requestInfoWrapper.getRequestInfo(), true, true
+                );
 
-            List<String> referenceId = new ArrayList<>();
+                List<String> referenceId = new ArrayList<>();
 
-            projects.forEach(project -> {
-                referenceId.add(project.getId());
+                projects.forEach(project -> {
+                    referenceId.add(project.getId());
 
-                if(project.getDescendants()!=null && !project.getDescendants().isEmpty()) {
-                    project.getDescendants().forEach(child -> {
-                        referenceId.add(child.getId());
-                    });
-                }
-            });
-            searchCriteria.setReferenceId(referenceId);
-
-            searchCriteria.setLocalityCode(null);
+                    if(project.getDescendants()!=null && !project.getDescendants().isEmpty()) {
+                        project.getDescendants().forEach(child -> {
+                            referenceId.add(child.getId());
+                        });
+                    }
+                });
+                searchCriteria.setReferenceIds(referenceId);
+                searchCriteria.setReferenceId(null);
+                searchCriteria.setLocalityCode(null);
+            }
         }
 
-        if(searchCriteria.isChildrenRequired() && searchCriteria.getLocalityCode()!=null && !searchCriteria.getLocalityCode().isEmpty()) {
-            List<String> localityCodes=boundaryServiceUtil.fetchChildren(
-              requestInfoWrapper,
-              searchCriteria.getLocalityCode(),
-              searchCriteria.getTenantId()
-            );
-
-            searchCriteria.setLocalityCode(localityCodes);
-        }
         // Fetch the all registers based on the supplied search criteria
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
         Map<String, Long> counts = registerRepository.getRegisterCounts(searchCriteria);
 
+        List<AttendanceRegister> resultAttendanceRegisters = new ArrayList<>();
         if(attendanceRegisters!=null && !attendanceRegisters.isEmpty()){
             // Create a map with key as registerId and corresponding register list as value
             Map<String, List<AttendanceRegister>> registerIdVsAttendanceRegisters = attendanceRegisters.stream().collect(Collectors.groupingBy(AttendanceRegister::getId));
@@ -294,7 +275,10 @@ public class AttendanceRegisterService {
             }
         }
 
-        return counts;
+        attendanceRegisterResponse.setAttendanceRegister(resultAttendanceRegisters);
+        attendanceRegisterResponse.setTotalCount(counts.get(TOTAL_COUNT));
+        counts.remove(TOTAL_COUNT);
+        if(attendanceServiceConfiguration.getAttendanceRegisterReviewStatusEnabled()) attendanceRegisterResponse.setStatusCount(counts);
     }
 
     private List<IndividualEntry> fetchAllAttendeesAssociatedToRegisterIds(List<String> registerIdsToSearch, AttendanceRegisterSearchCriteria searchCriteria) {

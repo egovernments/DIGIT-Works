@@ -1,6 +1,7 @@
 package org.egov.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.querybuilder.RegisterQueryBuilder;
 import org.egov.repository.rowmapper.RegisterRowMapper;
 import org.egov.web.models.AttendanceRegister;
@@ -15,8 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.util.AttendanceServiceConstants.STATUS_MAP;
-
 @Repository
 @Slf4j
 public class RegisterRepository {
@@ -27,11 +26,14 @@ public class RegisterRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final AttendanceServiceConfiguration config;
+
     @Autowired
-    public RegisterRepository(RegisterRowMapper rowMapper, RegisterQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+    public RegisterRepository(RegisterRowMapper rowMapper, RegisterQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, AttendanceServiceConfiguration config) {
         this.rowMapper = rowMapper;
         this.queryBuilder = queryBuilder;
         this.jdbcTemplate = jdbcTemplate;
+        this.config = config;
     }
 
     public List<AttendanceRegister> getRegister(AttendanceRegisterSearchCriteria searchCriteria) {
@@ -54,18 +56,20 @@ public class RegisterRepository {
         log.info("Query of get register : " + query);
         log.info("preparedStmtList of get register : " + preparedStmtList.toString());
 
-// Dynamically construct the SUM(CASE WHEN ...) parts
+        // Dynamically construct the SUM(CASE WHEN ...) parts
         StringBuilder statusCountsQuery = new StringBuilder();
-        for (Map.Entry<String, String> entry : STATUS_MAP.entrySet()) {
-            String status = entry.getKey();
-            String alias = entry.getValue();
-            statusCountsQuery.append(", SUM(CASE WHEN reg.paymentstatus = '")
-                    .append(status)
-                    .append("' THEN 1 ELSE 0 END) AS ")
-                    .append(alias);
+        if(config.getAttendanceRegisterReviewStatusEnabled()){
+            for (Map.Entry<String, String> entry : config.getAttendanceRegisterStatusMap().entrySet()) {
+                String status = entry.getValue();
+                String alias = entry.getKey();
+                statusCountsQuery.append(", SUM(CASE WHEN reg.reviewstatus = '")
+                  .append(status)
+                  .append("' THEN 1 ELSE 0 END) AS ")
+                  .append(alias);
+            }
         }
 
-// Construct the full query
+        // Construct the full query
         String cteQuery = "WITH result_cte AS (" + query + "), " +
                 "totalCount_cte AS (SELECT COUNT(*) AS totalCount " +
                 statusCountsQuery +
@@ -73,28 +77,21 @@ public class RegisterRepository {
 
         log.info("Constructed Query: " + cteQuery);
 
-// Execute the query and extract results
+        // Execute the query and extract results
         Map<String, Long> counts = jdbcTemplate.queryForObject(cteQuery, (resultSet, rowNum) -> {
             Map<String, Long> result = new HashMap<>();
             result.put("totalCount", resultSet.getLong("totalCount"));
 
             // Dynamically extract counts for each status
-            for (Map.Entry<String, String> entry : STATUS_MAP.entrySet()) {
-                String alias = entry.getValue();
-                result.put(alias, resultSet.getLong(alias));
+            if(config.getAttendanceRegisterReviewStatusEnabled()){
+                for (Map.Entry<String, String> entry : config.getAttendanceRegisterStatusMap().entrySet()) {
+                    String alias = entry.getKey();
+                    result.put(alias, resultSet.getLong(alias));
+                }
             }
 
             return result;
         }, preparedStmtList.toArray());
-
-        if(searchCriteria.getPaymentStatus() != null ) {
-            if(searchCriteria.getPaymentStatus().equals(PaymentStatus.APPROVED)) {
-                counts.put("totalCount", counts.get(STATUS_MAP.get(PaymentStatus.APPROVED.toString())));
-            }
-            else if(searchCriteria.getPaymentStatus().equals(PaymentStatus.PENDINGFORAPPROVAL)) {
-                counts.put("totalCount", counts.get(STATUS_MAP.get(PaymentStatus.PENDINGFORAPPROVAL.toString())));
-            }
-        }
 
         return counts;
     }

@@ -18,10 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 @Controller
 @RequestMapping("/v1")
@@ -59,11 +55,9 @@ public class AttendanceApiController {
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<AttendanceRegisterResponse> searchAttendanceRegister(@Valid @ModelAttribute AttendanceRegisterSearchCriteria searchCriteria, @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-        AttendanceRegisterResponse attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
-        Map<String, Long> statusCount = new HashMap<>();
-
+        AttendanceRegisterResponse attendanceRegisterResponse = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, searchCriteria);
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        AttendanceRegisterResponse attendanceRegisterResponse = AttendanceRegisterResponse.builder().responseInfo(responseInfo).attendanceRegister(attendanceRegisterList.getAttendanceRegister()).totalCount(attendanceRegisterList.getTotalCount()).statusCount(attendanceRegisterList.getStatusCount()).build();
+        attendanceRegisterResponse.setResponseInfo(responseInfo);
         return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse, HttpStatus.OK);
     }
 

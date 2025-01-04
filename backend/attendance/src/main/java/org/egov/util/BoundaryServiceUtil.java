@@ -98,32 +98,4 @@ public class BoundaryServiceUtil {
 			});
 		}
 	}
-
-	public List<String> fetchChildren(
-		RequestInfoWrapper request,
-		List<String> localityCodes,
-		String tenantId
-	){
-		try{
-			BoundaryResponse boundarySearchResponse = serviceRequestClient.fetchResult(
-				new StringBuilder(attendanceServiceConfiguration.getBoundaryServiceHost()
-					+ attendanceServiceConfiguration.getBoundarySearchUrl()
-					+ "?limit=" + localityCodes.size()
-					+ "&offset=0&tenantId=" + tenantId
-					+ "&codes=" + String.join(",", localityCodes)
-					+ "&includeChildren=" + true),
-				request, // Replace with a generic RequestInfo if required
-				BoundaryResponse.class
-			);
-
-			// Return the list of child boundary codes
-			return boundarySearchResponse.getBoundary().stream()
-				.map(Boundary::getCode)
-				.toList();
-		} catch (Exception e) {
-			log.error("Exception while searching boundaries for parent boundary codes");
-			throw new CustomException("BOUNDARY_SERVICE_SEARCH_ERROR", "Error while fetching boundaries from Boundary Service: " + e.getMessage());
-		}
-	}
-
 }

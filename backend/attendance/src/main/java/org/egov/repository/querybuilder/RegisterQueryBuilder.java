@@ -38,6 +38,7 @@ public class RegisterQueryBuilder {
             "reg.servicecode, " +
             "reg.localitycode, " +
             "reg.paymentstatus " +
+            "reg.reviewstatus " +
             "FROM eg_wms_attendance_register reg ";
 
     private static final String JOIN_STAFF = " JOIN eg_wms_attendance_staff staff ";
@@ -99,6 +100,13 @@ public class RegisterQueryBuilder {
             preparedStmtList.addAll(referenceId);
         }
 
+        List<String> referenceIds = searchCriteria.getReferenceIds();
+        if (referenceIds != null && !referenceIds.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.referenceid IN (").append(createQuery(referenceIds)).append(")");
+            preparedStmtList.addAll(referenceIds);
+        }
+
         if (!ObjectUtils.isEmpty(searchCriteria.getServiceCode())) {
             String serviceCode = searchCriteria.getServiceCode();
             addClauseIfRequired(query, preparedStmtList);
@@ -153,18 +161,18 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(attendeeId);
         }
 
-        List<String> localityCodes = searchCriteria.getLocalityCode();
-        if(localityCodes!=null && !localityCodes.isEmpty()) {
+        if(!ObjectUtils.isEmpty(searchCriteria.getLocalityCode())) {
+            String localityCode = searchCriteria.getLocalityCode();
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" reg.localitycode IN (").append(createQuery(localityCodes)).append(")");
-            preparedStmtList.addAll(localityCodes);
+            query.append(" reg.localitycode = ? ");
+            preparedStmtList.add(localityCode);
         }
 
-        if (!ObjectUtils.isEmpty(searchCriteria.getPaymentStatus()) && !excludePaymentStatus) {
-            PaymentStatus paymentStatus = searchCriteria.getPaymentStatus();
+        if (!ObjectUtils.isEmpty(searchCriteria.getReviewStatus()) && !excludePaymentStatus) {
+            String reviewStatus = searchCriteria.getReviewStatus();
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" reg.paymentstatus = ? ");
-            preparedStmtList.add(paymentStatus.toString());
+            query.append(" reg.reviewstatus = ? ");
+            preparedStmtList.add(reviewStatus);
         }
 
 

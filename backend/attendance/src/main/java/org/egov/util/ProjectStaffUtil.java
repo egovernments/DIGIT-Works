@@ -84,7 +84,7 @@ public class ProjectStaffUtil {
 
         // Get the project details
         Project projectsearch = Project.builder().id(projectStaff.getProjectId()).tenantId(tenantId).build();
-        List<Project> projectList = projectServiceUtil.getProject(tenantId,projectsearch,requestInfo,false, null);
+        List<Project> projectList = projectServiceUtil.getProject(tenantId,projectsearch,requestInfo,false, false);
         if(projectList.isEmpty())
             throw new CustomException("INVALID_PROJECT_ID","No Project found for the given project ID - "+projectStaff.getProjectId());
 
