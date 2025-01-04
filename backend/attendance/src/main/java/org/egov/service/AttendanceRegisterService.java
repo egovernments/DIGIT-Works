@@ -365,7 +365,7 @@ public class AttendanceRegisterService {
                 log.info("Fetching register from db for project : " + project.getId());
                 AttendanceRegisterResponse response = searchAttendanceRegister(
                         requestInfoWrapper,
-                        AttendanceRegisterSearchCriteria.builder().referenceId(Collections.singletonList(project.getId())).tenantId(project.getTenantId()).build()
+                        AttendanceRegisterSearchCriteria.builder().referenceId(project.getId()).tenantId(project.getTenantId()).build()
                 );
                 List<AttendanceRegister> registers = response.getAttendanceRegister();
                 if(CollectionUtils.isEmpty(registers)) return;
@@ -434,7 +434,7 @@ public class AttendanceRegisterService {
     public void updateEndDateForRevisedContract(RequestInfo requestInfo, String tenantId, String referenceId, BigDecimal endDate) {
         AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
                 .tenantId(tenantId)
-                .referenceId(Collections.singletonList(referenceId))
+                .referenceId(referenceId)
                 .limit(attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit())
                 .offset(attendanceServiceConfiguration.getAttendanceRegisterDefaultOffset()).build();
 

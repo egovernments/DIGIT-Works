@@ -93,11 +93,11 @@ public class RegisterQueryBuilder {
             query.append(" reg.registernumber = ? ");
             preparedStmtList.add(registerNumber);
         }
-        List<String> referenceId = searchCriteria.getReferenceId();
+        String referenceId = searchCriteria.getReferenceId();
         if (referenceId!=null && !referenceId.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" reg.referenceid IN (").append(createQuery(referenceId)).append(")");
-            preparedStmtList.addAll(referenceId);
+            query.append(" reg.referenceid = ? ");
+            preparedStmtList.add(referenceId);
         }
 
         List<String> referenceIds = searchCriteria.getReferenceIds();

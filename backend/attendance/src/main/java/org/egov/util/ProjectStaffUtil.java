@@ -193,7 +193,7 @@ public class ProjectStaffUtil {
         Individual reportingToIndividual = individualList.get(0);
 
         // Get the attendance registers for the project and staff
-        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().staffId(reportingToIndividual.getId()).referenceId(Collections.singletonList(projectStaff.getProjectId())).build();
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().staffId(reportingToIndividual.getId()).referenceId(projectStaff.getProjectId()).build();
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
 
         if (attendanceRegisters.isEmpty())

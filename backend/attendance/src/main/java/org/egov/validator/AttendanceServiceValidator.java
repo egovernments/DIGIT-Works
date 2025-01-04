@@ -92,7 +92,7 @@ public class AttendanceServiceValidator {
              AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
                     .tenantId(tenantId)
                     .status(Status.ACTIVE)
-                    .referenceId(Collections.singletonList(referenceId))
+                    .referenceId(referenceId)
                     .serviceCode(serviceCode)
                     .build();
              List<AttendanceRegister> registers = registerRepository.getRegister(attendanceRegisterSearchCriteria);
