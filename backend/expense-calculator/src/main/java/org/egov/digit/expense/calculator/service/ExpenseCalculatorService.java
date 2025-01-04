@@ -242,11 +242,12 @@ public class ExpenseCalculatorService {
             {
                 log.info("Bill successfully posted to expense service. Reference ID " + bill.getReferenceId());
                 List<Bill> respBills = billResponse.getBills();
-                if(respBills != null && !respBills.isEmpty()) {
-                    log.info("Persisting meta for bill reference ID: " + bill.getReferenceId());
-                    persistMeta(respBills,metaInfo);
-                    submittedBills.addAll(respBills);
-                }
+                submittedBills.addAll(respBills);
+//                if(respBills != null && !respBills.isEmpty()) {
+//                    log.info("Persisting meta for bill reference ID: " + bill.getReferenceId());
+//                    persistMeta(respBills,metaInfo);
+//                    submittedBills.addAll(respBills);
+//                }
             }
             else {
                 log.info("Bill posting failed for bill " + bill.getBusinessService() + " reference ID " + bill.getReferenceId());
