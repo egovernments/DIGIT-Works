@@ -234,4 +234,7 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${egov.boundary.search.url}")
 	private String boundarySearchUrl;
+
+	@Value("${is.attendance.approval.required}")
+	private boolean isAttendanceApprovalRequired;
 }

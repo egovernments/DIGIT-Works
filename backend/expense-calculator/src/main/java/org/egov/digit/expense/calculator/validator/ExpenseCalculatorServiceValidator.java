@@ -72,16 +72,6 @@ public class ExpenseCalculatorServiceValidator {
 
         // Validate if all muster roll are approved
 
-        // Validate if projectid is of district level
-        validateProject(project);
-
-    }
-
-    private void validateProject(Project project) {
-        if(!project.getAddress().getBoundaryType().equalsIgnoreCase("DISTRICT")) {
-            throw new CustomException("INVALID_PROJECT", "Project is not of district level");
-        }
-
     }
     public void validateAttendanceRegisterApproval(List<AttendanceRegister> attendanceRegisters) {
 

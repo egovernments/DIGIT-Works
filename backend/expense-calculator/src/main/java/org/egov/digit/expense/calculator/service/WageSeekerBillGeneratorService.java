@@ -123,6 +123,7 @@ public class WageSeekerBillGeneratorService {
 				totalBillAmount = totalBillAmount.add(totalBillDetailAmount);
 				BillDetail billDetail = BillDetail.builder()
 						.payableLineItems(payableLineItem)
+						.lineItems(new ArrayList<>())
 						.totalAmount(totalBillDetailAmount)
 						.referenceId(musterRoll.getId())
 						.tenantId(musterRoll.getTenantId())

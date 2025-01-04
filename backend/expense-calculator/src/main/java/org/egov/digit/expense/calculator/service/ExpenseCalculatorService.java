@@ -263,8 +263,8 @@ public class ExpenseCalculatorService {
         List<AttendanceRegister> attendanceRegisters = attendanceUtil
                 .fetchAttendanceRegister(criteria.getReferenceId(), criteria.getTenantId(), requestInfo,
                         criteria.getLocalityCode(), isDistrictLevel);
-        // TODO validate attendance register approval
-//        expenseCalculatorServiceValidator.validateAttendanceRegisterApproval(attendanceRegisters);
+        if (config.isAttendanceApprovalRequired())
+            expenseCalculatorServiceValidator.validateAttendanceRegisterApproval(attendanceRegisters);
 
             List<String> regIds = attendanceRegisters.stream().map(AttendanceRegister::getId).collect(Collectors.toList());
         // Fetch musterRolls for given muster roll IDs
