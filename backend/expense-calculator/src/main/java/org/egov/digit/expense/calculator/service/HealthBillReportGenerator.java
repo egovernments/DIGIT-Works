@@ -1,6 +1,5 @@
 package org.egov.digit.expense.calculator.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Address;
@@ -9,10 +8,7 @@ import org.egov.common.models.individual.Skill;
 import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.util.*;
-import org.egov.digit.expense.calculator.web.models.Bill;
-import org.egov.digit.expense.calculator.web.models.BillDetail;
-import org.egov.digit.expense.calculator.web.models.BillRequest;
-import org.egov.digit.expense.calculator.web.models.LineItem;
+import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.digit.expense.calculator.web.models.report.BillReportRequest;
 import org.egov.digit.expense.calculator.web.models.report.ReportBill;
 import org.egov.digit.expense.calculator.web.models.report.ReportBillDetail;
@@ -27,7 +23,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static org.egov.digit.expense.calculator.constraints.BillReportConstraints.*;
+import static org.egov.digit.expense.calculator.util.BillReportConstraints.*;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.WF_SUBMIT_ACTION_CONSTANT;
 
 @Slf4j
 @Service
@@ -300,6 +297,9 @@ public class HealthBillReportGenerator {
         // Add or overwrite reportDetails key
         additionalDetailsMap.put(REPORT_KEY, reportDetails);
         billRequest.getBill().setAdditionalDetails(additionalDetailsMap);
-        billUtils.postUpdateBill(billRequest.getRequestInfo(), billRequest.getBill(), null);
+        Workflow workflow = Workflow.builder()
+                .action(WF_SUBMIT_ACTION_CONSTANT)
+                .build();
+        billUtils.postUpdateBill(billRequest.getRequestInfo(), billRequest.getBill(), workflow);
     }
 }

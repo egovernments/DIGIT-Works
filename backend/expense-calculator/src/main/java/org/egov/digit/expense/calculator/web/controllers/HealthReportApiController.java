@@ -39,14 +39,15 @@ public class HealthReportApiController {
 		this.billExcelGenerate = billExcelGenerate;
 	}
 
-
+	// This is used to test generate report TODO: Delete after testing
 	@RequestMapping(value = "/_generate", method = RequestMethod.POST)
 	public ResponseEntity<BillReportRequest> generateReport(
 			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody BillRequest billRequest) {
 		BillReportRequest billReportRequest = healthBillReportGenerator.generateHealthBillReportRequest(billRequest);
 		return new ResponseEntity<BillReportRequest>(billReportRequest, HttpStatus.OK);
 	}
-
+	/*
+	// Created for testing excel generate TODO: Delete after testing
 	@RequestMapping(value = "/excel", method = RequestMethod.POST)
 	public ResponseEntity<CalculationResponse> generateExcel(
 			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody BillReportRequest billReportRequest) {
@@ -58,6 +59,7 @@ public class HealthReportApiController {
 				.build();
 		return new ResponseEntity<CalculationResponse>(calculationResponse, HttpStatus.OK);
 	}
+	 */
 
 
 }

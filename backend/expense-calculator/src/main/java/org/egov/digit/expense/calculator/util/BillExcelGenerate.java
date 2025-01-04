@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
-import static org.egov.digit.expense.calculator.constraints.BillReportConstraints.*;
+import static org.egov.digit.expense.calculator.util.BillReportConstraints.*;
 
 @Slf4j
 @Service

@@ -1,4 +1,4 @@
-package org.egov.digit.expense.calculator.constraints;
+package org.egov.digit.expense.calculator.util;
 
 public class BillReportConstraints {
     public static final String REPORT_KEY = "reportDetails";
