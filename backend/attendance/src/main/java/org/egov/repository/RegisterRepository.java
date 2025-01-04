@@ -6,7 +6,6 @@ import org.egov.repository.querybuilder.RegisterQueryBuilder;
 import org.egov.repository.rowmapper.RegisterRowMapper;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
-import org.egov.web.models.PaymentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

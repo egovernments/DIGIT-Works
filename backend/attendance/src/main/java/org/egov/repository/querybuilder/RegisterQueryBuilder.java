@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
-import org.egov.web.models.PaymentStatus;
 import org.egov.web.models.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +36,6 @@ public class RegisterQueryBuilder {
             "reg.referenceid, " +
             "reg.servicecode, " +
             "reg.localitycode, " +
-            "reg.paymentstatus " +
             "reg.reviewstatus " +
             "FROM eg_wms_attendance_register reg ";
 
@@ -59,7 +57,7 @@ public class RegisterQueryBuilder {
     }
 
 
-    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludePaymentStatus) {
+    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludeReviewStatus) {
 
         log.info("Search criteria of attendance search : " + searchCriteria.toString());
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
@@ -168,7 +166,7 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(localityCode);
         }
 
-        if (!ObjectUtils.isEmpty(searchCriteria.getReviewStatus()) && !excludePaymentStatus) {
+        if (!ObjectUtils.isEmpty(searchCriteria.getReviewStatus()) && !excludeReviewStatus) {
             String reviewStatus = searchCriteria.getReviewStatus();
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.reviewstatus = ? ");

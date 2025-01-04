@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.PaymentStatus;
 import org.egov.web.models.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -54,12 +54,11 @@ public class AttendanceRegisterService {
 
     private final StaffEnrichmentService staffEnrichmentService;
     private final IndividualServiceUtil individualServiceUtil;
-    private final BoundaryServiceUtil boundaryServiceUtil;
 
     private final ProjectServiceUtil projectServiceUtil;
 
     @Autowired
-    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil, ProjectServiceUtil projectServiceUtil) {
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, ProjectServiceUtil projectServiceUtil) {
         this.attendanceServiceValidator = attendanceServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.producer = producer;
@@ -70,7 +69,6 @@ public class AttendanceRegisterService {
         this.attendeeRepository = attendeeRepository;
         this.staffEnrichmentService = staffEnrichmentService;
         this.individualServiceUtil = individualServiceUtil;
-        this.boundaryServiceUtil = boundaryServiceUtil;
         this.projectServiceUtil = projectServiceUtil;
     }
 

@@ -13,7 +13,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerNumber
       auditAttributeBasePath: $.attendanceRegister.*
       queryMaps:
-        - query: INSERT INTO eg_wms_attendance_register(id,tenantid,registernumber,name,startdate,enddate,status,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,referenceid,servicecode,localitycode,paymentstatus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO eg_wms_attendance_register(id,tenantid,registernumber,name,startdate,enddate,status,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,referenceid,servicecode,localitycode,reviewStatus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendanceRegister.*
           jsonMaps:
             - jsonPath: $.attendanceRegister.*.id
@@ -48,7 +48,7 @@ serviceMaps:
 
             - jsonPath: $.attendanceRegister.*.localityCode
 
-            - jsonPath: $.attendanceRegister.*.paymentStatus
+            - jsonPath: $.attendanceRegister.*.reivewStatus
 
         - query: INSERT INTO eg_wms_attendance_staff(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,stafftype) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendanceRegister.*.staff.*
@@ -318,7 +318,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerNumber
       auditAttributeBasePath:  $.attendanceRegister.*
       queryMaps:
-        - query: UPDATE eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, paymentstatus=? where id=?;
+        - query: UPDATE eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=? where id=?;
           basePath: $.attendanceRegister.*
           jsonMaps:
             - jsonPath: $.attendanceRegister.*.name
@@ -339,7 +339,7 @@ serviceMaps:
 
             - jsonPath: $.attendanceRegister.*.localityCode
 
-            - jsonPath: $.attendanceRegister.*.paymentStatus
+            - jsonPath: $.attendanceRegister.*.reviewStatus
 
             - jsonPath: $.attendanceRegister.*.id
 
