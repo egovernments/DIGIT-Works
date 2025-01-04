@@ -18,6 +18,7 @@ import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.digit.expense.web.validators.BillValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -151,9 +152,13 @@ public class BillService {
 
 		ResponseInfo responseInfo = responseInfoFactory.
 		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
-		
-		if (isWfEncrichRequired && bills != null && !bills.isEmpty())
+
+		if (!config.isHealthContextEnabled() && isWfEncrichRequired  && bills != null && !bills.isEmpty())
 			enrichWfstatusForBills(bills, billCriteria.getTenantId(), billSearchRequest.getRequestInfo());
+
+		if (config.isHealthContextEnabled() && !StringUtils.isEmpty(billCriteria.getLocalityCode())) {
+			bills.stream().forEach(bill -> bill.setLocalityCode(billCriteria.getLocalityCode()));
+		}
 
 		return BillResponse.builder()
 				.bills(bills)

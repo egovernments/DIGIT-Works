@@ -213,9 +213,14 @@ public class BillValidator {
 				&& CollectionUtils.isEmpty(billCriteria.getReferenceIds())
 				&& CollectionUtils.isEmpty(billCriteria.getIds())
 				&& CollectionUtils.isEmpty(billCriteria.getBillNumbers())
-				&& billCriteria.getIsPaymentStatusNull() == null )
+				&& billCriteria.getIsPaymentStatusNull() == null ) {
+			if (configs.isHealthContextEnabled())
+				throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
+						"One of ids OR referenceIds OR billNumbers should be provided for a bill search");
 			throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
 					"One of ids OR (referenceIds & businessService) OR (billNumbers & businessService) should be provided for a bill search");
+		}
+
 		boolean isRefIdOrBillNoProvided = (!CollectionUtils.isEmpty(billCriteria.getReferenceIds())
 				|| !CollectionUtils.isEmpty(billCriteria.getBillNumbers()));
 		boolean isBusinessServiceProvided = !StringUtils.isEmpty(billCriteria.getBusinessService());
