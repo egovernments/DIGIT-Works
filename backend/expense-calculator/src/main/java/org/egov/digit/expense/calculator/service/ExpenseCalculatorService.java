@@ -195,6 +195,7 @@ public class ExpenseCalculatorService {
 
     public List<Bill> createWageOrSupervisionBills(CalculationRequest calculationRequest){
         //TODO send to kafka and return response
+
         // Fetch all boundaries for that particular district and projectId with children
         List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(RequestInfoWrapper.builder()
                 .requestInfo(calculationRequest.getRequestInfo()).build(), calculationRequest.getCriteria().getLocalityCode(),
@@ -209,14 +210,12 @@ public class ExpenseCalculatorService {
         boolean isBoundaryDistrict = isBoundaryDistrictLevel(boundaries.get(0));
 
         ProjectResponse projectResponse = projectUtil.getProjectDetails(calculationRequest.getRequestInfo(),
-                calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId());
-        //TODO validation for project
+                calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId(),
+                calculationRequest.getCriteria().getLocalityCode());
         if (projectResponse.getProject().isEmpty()) {
             log.error("Project not found");
             throw new CustomException("PROJECT_NOT_FOUND", "Project not found");
         }
-
-        // Fetch mdms data for campaign id and eventType
 
         // Fetch all approved muster-rolls by register id
 
@@ -278,9 +277,10 @@ public class ExpenseCalculatorService {
             } else {
                 parentProjectId = project.getProjectHierarchy();
             }
+            // Fetching mdms data for campaign id
             List<WorkerMdms> workerMdms = fetchMDMSDataForWorker(requestInfo, criteria.getTenantId(), parentProjectId);
             Bill bill = wageSeekerBillGeneratorService.createWageSeekerBillsHealth(requestInfo,musterRolls,workerMdms);
-            enrichBill(bill, criteria, project, parentProjectId);
+            enrichBill(bill, criteria, project);
             return Collections.singletonList(bill);
         }
 //        List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
@@ -571,7 +571,7 @@ public class ExpenseCalculatorService {
         }
         Estimate estimate = estimates.get(0);
         String projectId = estimate.getProjectId();
-        ProjectResponse projectResponse = projectUtils.getProjectDetails(requestInfo, bill.getTenantId(), projectId);
+        ProjectResponse projectResponse = projectUtils.getProjectDetails(requestInfo, bill.getTenantId(), projectId, "Remove");
         if(projectResponse == null || projectResponse.getProject() == null) {
             log.error("No project found for project id " + projectId);
             return;
@@ -600,15 +600,15 @@ public class ExpenseCalculatorService {
         return boundary.getBoundary().get(0).getBoundaryType().equals("DISTRICT");
     }
 
-    private void enrichBill(Bill bill, Criteria criteria,  Project project, String parentId) {
+    private void enrichBill(Bill bill, Criteria criteria,  Project project) {
         bill.setFromPeriod(project.getStartDate());
         bill.setBillDate(System.currentTimeMillis());
         bill.setToPeriod(project.getEndDate());
         bill.setTenantId(criteria.getTenantId());
-        bill.setReferenceId(parentId);
+        bill.setReferenceId(project.getId());
         bill.setBusinessService("EXPENSE.WAGES");
         bill.setStatus("ACTIVE");
         bill.setLocalityCode(criteria.getLocalityCode());
-        bill.setPayer(Party.builder().identifier(parentId).tenantId(criteria.getTenantId()).type("ORG").build());
+        bill.setPayer(Party.builder().identifier(project.getId()).tenantId(criteria.getTenantId()).type("ORG").build());
     }
 }
