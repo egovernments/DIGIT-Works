@@ -81,7 +81,7 @@ public class EnrichmentUtil {
             billDetail.getPayee().setAuditDetails(audit);
             billDetail.getPayee().setStatus(Status.ACTIVE);
 
-            if (config.isHealthContextEnabled()) {
+            if (!config.isHealthContextEnabled()) {
                 String gender = genderUtil.getGenderDetails(billRequest.getRequestInfo(), billDetail.getPayee().getTenantId(), billDetail.getPayee().getIdentifier());
                 ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, Object> map = objectMapper.convertValue(billDetail.getPayee().getAdditionalDetails(), new TypeReference<Map<String, Object>>() {
