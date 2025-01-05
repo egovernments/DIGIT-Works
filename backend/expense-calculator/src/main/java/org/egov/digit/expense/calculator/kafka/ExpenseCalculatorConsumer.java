@@ -33,6 +33,8 @@ public class ExpenseCalculatorConsumer {
         this.healthBillReportGenerator = healthBillReportGenerator;
     }
 
+	// Commenting existing consumer
+	/*
 	@KafkaListener(topics = {"${expense.calculator.consume.topic}"})
 	public void listen(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("ExpenseCalculatorConsumer:listen");
@@ -49,8 +51,6 @@ public class ExpenseCalculatorConsumer {
 			producer.push(configs.getCalculatorErrorTopic(),error);
 		}
 	}
-	// Commenting existing consumer
-	/*
 	@KafkaListener(topics = {"${expense.billing.bill.create}", "${expense.billing.bill.update}"})
 	public void listenBill(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("ExpenseCalculatorConsumer:listenBill");
