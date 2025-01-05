@@ -237,4 +237,7 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${is.attendance.approval.required}")
 	private boolean isAttendanceApprovalRequired;
+
+	@Value("${register.batch.size}")
+	private Integer registerBatchSize;
 }

@@ -14,7 +14,6 @@ import org.egov.digit.expense.calculator.web.models.CalculationRequest;
 import org.egov.digit.expense.calculator.web.models.Criteria;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.attendance.AttendanceRegister;
-import org.egov.works.services.common.models.attendance.WfStatus;
 import org.egov.works.services.common.models.contract.Contract;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
 import org.egov.works.services.common.models.musterroll.MusterRollRequest;
@@ -75,11 +74,8 @@ public class ExpenseCalculatorServiceValidator {
     }
     public void validateAttendanceRegisterApproval(List<AttendanceRegister> attendanceRegisters) {
 
-        if(CollectionUtils.isEmpty(attendanceRegisters)) {
-            throw new CustomException("ATTENDANCE_REGISTERS_EMPTY", "AttendanceRegister is mandatory");
-        }
         attendanceRegisters.stream().forEach(attendanceRegister -> {
-            if(!WfStatus.APPROVED.equals(attendanceRegister.getWfStatus())) {
+            if(!"APPROVED".equalsIgnoreCase(attendanceRegister.getReviewStatus())) {
                 throw new CustomException("ATTENDANCE_REGISTERS_APPROVED", "Atleast one AttendanceRegister is not approved");
             }
         });
