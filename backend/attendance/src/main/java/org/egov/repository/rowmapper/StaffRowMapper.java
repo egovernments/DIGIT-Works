@@ -43,7 +43,7 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
             String lastmodifiedby = rs.getString("lastmodifiedby");
             Long createdtime = rs.getLong("createdtime");
             Long lastmodifiedtime = rs.getLong("lastmodifiedtime");
-            List<StaffType> staffType = getStaffType(rs);
+            StaffType staffType = StaffType.fromValue(rs.getString("stafftype"));
 
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
@@ -70,37 +70,6 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
         }
         return new ArrayList<>(attendanceStaffMap.values());
     }
-
-    public List<StaffType> getStaffType(ResultSet rs) {
-        JsonNode staffType = null;
-        ObjectMapper mapper = new ObjectMapper(); // You can reuse this ObjectMapper if it's already instantiated elsewhere in your code
-
-        try {
-            PGobject obj = (PGobject) rs.getObject("stafftype");
-            if (obj != null) {
-                staffType = mapper.readTree(obj.getValue());
-            }
-        } catch (IOException | SQLException e) {
-            throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object");
-        }
-
-        if (staffType != null && !staffType.isEmpty()) {
-            List<StaffType> staffTypesList = new ArrayList<>();
-            for (JsonNode node : staffType) {
-                // Convert each string in the array to the corresponding enum
-                try {
-                    staffTypesList.add(StaffType.valueOf(node.asText()));
-                } catch (IllegalArgumentException e) {
-                    // Handle invalid enum string (optional)
-                    throw new CustomException("INVALID_ENUM", "Invalid staff type value: " + node.asText());
-                }
-            }
-            return staffTypesList;
-        } else {
-            return null; // or return an empty list if you prefer
-        }
-    }
-
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
         JsonNode additionalDetails = null;

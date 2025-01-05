@@ -161,14 +161,29 @@ public class AttendanceServiceValidator {
                     log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                     throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 }
-                // Find the staff with the given userstaffId
-                StaffPermission staff = registerFromDB.getStaff().stream()
-                        .filter(st -> individualId.equals(st.getUserId()))
-                        .findFirst().orElse(null);
 
-                if(staff ==null || staff.getStaffType()==null || !staff.getStaffType().contains(StaffType.APPROVER)) {
-                    log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
-                    throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                if(config.getAttendanceRegisterReviewStatusEnabled() && registerFromRequest.getReviewStatus() != null && registerFromRequest.getReviewStatus().equalsIgnoreCase(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL)){
+                    // Find the staff with the given userstaffId
+                    StaffPermission staff = registerFromDB.getStaff().stream()
+                            .filter(st -> individualId.equals(st.getUserId()))
+                            .findFirst().orElse(null);
+
+                    if(staff == null || staff.getStaffType() == null || (!staff.getStaffType().equals(StaffType.APPROVER) && !staff.getStaffType().equals(StaffType.EDITOR))) {
+                        log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                        throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                    }
+                }
+
+                if(config.getAttendanceRegisterReviewStatusEnabled() && registerFromRequest.getReviewStatus() != null && registerFromRequest.getReviewStatus().equalsIgnoreCase(ATTENDANCE_REGISTER_APPROVED)){
+                    // Find the staff with the given userstaffId
+                    StaffPermission staff = registerFromDB.getStaff().stream()
+                            .filter(st -> individualId.equals(st.getUserId()))
+                            .findFirst().orElse(null);
+
+                    if(staff == null || staff.getStaffType() == null || !staff.getStaffType().equals(StaffType.APPROVER)) {
+                        log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                        throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                    }
                 }
             } else if(registerFirstStaffInsertEnabled) {
                 log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());

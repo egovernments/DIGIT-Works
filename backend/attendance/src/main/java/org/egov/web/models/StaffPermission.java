@@ -47,6 +47,6 @@ public class StaffPermission {
     private Object additionalDetails = null;
 
     @JsonProperty("staffType")
-    private List<StaffType> staffType = Collections.singletonList(StaffType.OWNER);
+    private StaffType staffType = StaffType.OWNER;
 }
 
