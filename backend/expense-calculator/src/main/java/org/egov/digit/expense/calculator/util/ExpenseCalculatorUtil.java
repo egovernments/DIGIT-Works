@@ -105,6 +105,19 @@ public class ExpenseCalculatorUtil {
         return response.getMusterRolls();
     }
 
+    public List<MusterRoll> fetchMusterRollByRegIdsV2(RequestInfo requestInfo, String tenantId, List<String> ids) {
+        StringBuilder url = getMusterRollSearchV2URI();
+        MusterRollSearchCriteria musterRollSearchCriteria = MusterRollSearchCriteria.builder().tenantId(tenantId)
+                .limit(ids.size()).ids(ids).build();
+
+
+        MusterRoleSearchRequest request = MusterRoleSearchRequest.builder().requestInfo(requestInfo).musterRoll(musterRollSearchCriteria).build();
+        Object responseObj = restRepo.fetchResult(url, request);
+
+        MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
+        return response.getMusterRolls();
+    }
+
 
 
     private StringBuilder getApprovedMusterRollURI(String tenantId, List<String> musterRollId) {
@@ -146,6 +159,7 @@ public class ExpenseCalculatorUtil {
 
         return builder;
     }
+
 
     public List<String> fetchMusterByProjectId(RequestInfo requestInfo, String tenantId, String projectId) {
         StringBuilder url = getMusterRollURI(tenantId, projectId);
