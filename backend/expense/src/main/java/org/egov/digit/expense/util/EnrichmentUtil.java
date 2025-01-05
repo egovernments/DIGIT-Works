@@ -200,7 +200,7 @@ public class EnrichmentUtil {
             if (projectResponse != null && projectResponse.getProject() != null && !projectResponse.getProject().isEmpty()) {
                 Project project = projectResponse.getProject().get(0);
                 if (project != null && project.getReferenceID() != null) {
-                    billSearchRequest.getBillCriteria().setReferenceIds(new HashSet<>(Collections.singleton(project.getReferenceID())));
+                    billSearchRequest.getBillCriteria().setReferenceIds(new HashSet<>(Collections.singleton(project.getId())));
                 }
             }
 
