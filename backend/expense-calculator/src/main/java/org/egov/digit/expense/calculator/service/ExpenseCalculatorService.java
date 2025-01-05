@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.project.Project;
 import org.egov.common.models.project.ProjectResponse;
@@ -63,9 +65,10 @@ public class ExpenseCalculatorService {
     private final EstimateServiceUtil estimateServiceUtil;
     private final ProjectUtil projectUtil;
     private final AttendanceUtil attendanceUtil;
+    private final BoundaryUtil boundaryUtil;
 
     @Autowired
-    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil) {
+    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil, BoundaryUtil boundaryUtil) {
         this.expenseCalculatorProducer = expenseCalculatorProducer;
         this.expenseCalculatorServiceValidator = expenseCalculatorServiceValidator;
         this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
@@ -85,6 +88,7 @@ public class ExpenseCalculatorService {
         this.estimateServiceUtil = estimateServiceUtil;
         this.projectUtil = projectUtil;
         this.attendanceUtil = attendanceUtil;
+        this.boundaryUtil = boundaryUtil;
     }
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
@@ -190,38 +194,39 @@ public class ExpenseCalculatorService {
     }
 
     public List<Bill> createWageOrSupervisionBills(CalculationRequest calculationRequest){
-        // Fetch all muster rolls for that particular district and projectId with children
+        //TODO send to kafka and return response
+
+        // Fetch all boundaries for that particular district and projectId with children
+        List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(RequestInfoWrapper.builder()
+                .requestInfo(calculationRequest.getRequestInfo()).build(), calculationRequest.getCriteria().getLocalityCode(),
+                calculationRequest.getCriteria().getTenantId(), false);
+
+        if (boundaries.isEmpty()) {
+            log.error("Boundary not found");
+            throw new CustomException("BOUNDARY_NOT_FOUND", "Boundary not found");
+        }
+
+        // Check if boundary is of district level
+        boolean isBoundaryDistrict = isBoundaryDistrictLevel(boundaries.get(0));
 
         ProjectResponse projectResponse = projectUtil.getProjectDetails(calculationRequest.getRequestInfo(),
-                calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId());
-        //TODO validation for project
+                calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId(),
+                calculationRequest.getCriteria().getLocalityCode());
         if (projectResponse.getProject().isEmpty()) {
             log.error("Project not found");
             throw new CustomException("PROJECT_NOT_FOUND", "Project not found");
         }
-        String parentProjectId = null;
-        if (projectResponse.getProject().get(0).getProjectHierarchy().contains(".")) {
-            parentProjectId = projectResponse.getProject().get(0).getProjectHierarchy().split("\\.")[0];
-        } else {
-            parentProjectId = projectResponse.getProject().get(0).getProjectHierarchy();
-        }
-        String localityCode = projectResponse.getProject().get(0).getAddress().getBoundary();
-
-        // Fetch mdms data for campaign id and eventType
 
         // Fetch all approved muster-rolls by register id
 
-        // Fetch all
-
         expenseCalculatorServiceValidator.validateCalculatorCalculateRequest(calculationRequest, projectResponse.getProject().get(0));
-        //TODO send to kafka and return response
         RequestInfo requestInfo = calculationRequest.getRequestInfo();
         Criteria criteria = calculationRequest.getCriteria();
         List<Bill> bills = null;
         Map<String, String> metaInfo = new HashMap<>();
 
         if((criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) || config.isHealthIntegrationEnabled()) {
-            bills = createWageBill(requestInfo, criteria, metaInfo, parentProjectId, localityCode);
+            bills = createWageBill(requestInfo, criteria, metaInfo, projectResponse.getProject().get(0), isBoundaryDistrict);
         } else {
             bills = createSupervisionBill(requestInfo, criteria, metaInfo);
         }
@@ -237,11 +242,12 @@ public class ExpenseCalculatorService {
             {
                 log.info("Bill successfully posted to expense service. Reference ID " + bill.getReferenceId());
                 List<Bill> respBills = billResponse.getBills();
-                if(respBills != null && !respBills.isEmpty()) {
-                    log.info("Persisting meta for bill reference ID: " + bill.getReferenceId());
-                    persistMeta(respBills,metaInfo);
-                    submittedBills.addAll(respBills);
-                }
+                submittedBills.addAll(respBills);
+//                if(respBills != null && !respBills.isEmpty()) {
+//                    log.info("Persisting meta for bill reference ID: " + bill.getReferenceId());
+//                    persistMeta(respBills,metaInfo);
+//                    submittedBills.addAll(respBills);
+//                }
             }
             else {
                 log.info("Bill posting failed for bill " + bill.getBusinessService() + " reference ID " + bill.getReferenceId());
@@ -250,12 +256,15 @@ public class ExpenseCalculatorService {
         return submittedBills;
     }
 
-    private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo, String parentProjectId, String localityCode) {
+    private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo,
+                                      Project project, boolean isDistrictLevel) {
         log.info("Create wage bill for musterRollIds :"+criteria.getMusterRollId());
 
             // fetch approved attendance registers
-            List<AttendanceRegister> attendanceRegisters = attendanceUtil.fetchAttendanceRegister(criteria.getReferenceId(), criteria.getTenantId(), requestInfo, localityCode);
-            // TODO validate attendance register approval
+        List<AttendanceRegister> attendanceRegisters = attendanceUtil
+                .fetchAttendanceRegister(criteria.getReferenceId(), criteria.getTenantId(), requestInfo,
+                        criteria.getLocalityCode(), isDistrictLevel);
+        if (config.isAttendanceApprovalRequired())
             expenseCalculatorServiceValidator.validateAttendanceRegisterApproval(attendanceRegisters);
 
             List<String> regIds = attendanceRegisters.stream().map(AttendanceRegister::getId).collect(Collectors.toList());
@@ -263,8 +272,17 @@ public class ExpenseCalculatorService {
         List<MusterRoll> musterRolls =  expenseCalculatorUtil.fetchMusterRollByRegIds(requestInfo,criteria.getTenantId(),regIds);
         // Fetch wage seeker skills from MDMS
         if (config.isHealthIntegrationEnabled()) {
+            String parentProjectId = null;
+            if (project.getProjectHierarchy().contains(".")) {
+                parentProjectId = project.getProjectHierarchy().split("\\.")[0];
+            } else {
+                parentProjectId = project.getProjectHierarchy();
+            }
+            // Fetching mdms data for campaign id
             List<WorkerMdms> workerMdms = fetchMDMSDataForWorker(requestInfo, criteria.getTenantId(), parentProjectId);
-            return Collections.singletonList(wageSeekerBillGeneratorService.createWageSeekerBillsHealth(requestInfo,musterRolls,workerMdms));
+            Bill bill = wageSeekerBillGeneratorService.createWageSeekerBillsHealth(requestInfo,musterRolls,workerMdms);
+            enrichBill(bill, criteria, project);
+            return Collections.singletonList(bill);
         }
 //        List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
         List<SorDetail> sorDetails = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
@@ -374,8 +392,7 @@ public class ExpenseCalculatorService {
 
     private List<WorkerMdms> fetchMDMSDataForWorker(RequestInfo requestInfo, String tenantId, String campaignId){
         log.info("Fetch worker MDMS");
-        String eventType = "campaign";
-        Object mdmsData = mdmsUtils.getWorkerRateFromMDMSV2(requestInfo, tenantId, campaignId, eventType);
+        Object mdmsData = mdmsUtils.getWorkerRateFromMDMSV2(requestInfo, tenantId, campaignId);
         List<Object> workerListJson = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_HCM);
         List<WorkerMdms> workerMdmsList = new ArrayList<>();
         for(Object obj : workerListJson){
@@ -555,7 +572,7 @@ public class ExpenseCalculatorService {
         }
         Estimate estimate = estimates.get(0);
         String projectId = estimate.getProjectId();
-        ProjectResponse projectResponse = projectUtils.getProjectDetails(requestInfo, bill.getTenantId(), projectId);
+        ProjectResponse projectResponse = projectUtils.getProjectDetails(requestInfo, bill.getTenantId(), projectId, "Remove");
         if(projectResponse == null || projectResponse.getProject() == null) {
             log.error("No project found for project id " + projectId);
             return;
@@ -578,5 +595,21 @@ public class ExpenseCalculatorService {
         additionalDetails.put("projectCreatedDate", project.getAuditDetails().getCreatedTime());
 
         bill.setAdditionalDetails(additionalDetails);
+    }
+
+    private boolean isBoundaryDistrictLevel(TenantBoundary boundary) {
+        return boundary.getBoundary().get(0).getBoundaryType().equals("DISTRICT");
+    }
+
+    private void enrichBill(Bill bill, Criteria criteria,  Project project) {
+        bill.setFromPeriod(project.getStartDate());
+        bill.setBillDate(System.currentTimeMillis());
+        bill.setToPeriod(project.getEndDate());
+        bill.setTenantId(criteria.getTenantId());
+        bill.setReferenceId(project.getId());
+        bill.setBusinessService("EXPENSE.WAGES");
+        bill.setStatus("ACTIVE");
+        bill.setLocalityCode(criteria.getLocalityCode());
+        bill.setPayer(Party.builder().identifier(project.getId()).tenantId(criteria.getTenantId()).type("ORG").build());
     }
 }

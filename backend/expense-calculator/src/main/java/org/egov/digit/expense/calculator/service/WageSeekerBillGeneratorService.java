@@ -1,7 +1,5 @@
 package org.egov.digit.expense.calculator.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.*;
@@ -99,6 +96,7 @@ public class WageSeekerBillGeneratorService {
 			List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
 			List<String> individualIds = individualEntries.stream().map(individualEntry -> individualEntry.getIndividualId()).collect(Collectors.toList());
 			List<Individual> individuals = individualUtil.fetchIndividualDetails(individualIds, requestInfo, musterRoll.getTenantId());
+			individuals.stream().forEach(individual -> {individual.getSkills().get(0).setType("PROXIMITY_SUPERVISOR");});
 			// Map of individual id and individual
 			Map<String, Individual> individualMap = individuals.stream().collect(Collectors.toMap(Individual::getId, individual -> individual));
 			for (IndividualEntry individualEntry : individualEntries) {
@@ -106,12 +104,14 @@ public class WageSeekerBillGeneratorService {
 				Individual individual = individualMap.get(individualEntry.getIndividualId());
 				String roleCode = individual.getSkills().get(0).getType();
 
-
-				Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getRolecode().equalsIgnoreCase(roleCode)).findAny();
+				if (workerMdms.isEmpty()) {
+					throw new CustomException("RATES_NOT_CONFIGURED_IN_MDMS", "rates are not configured in mdms");
+				}
+				Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getSkillCode().equalsIgnoreCase(roleCode)).findAny();
 
 				Map<String, BigDecimal> rateBreakup = rate
 						.map(WorkerRate::getRateBreakup)
-						.orElseThrow(() -> new RuntimeException("Worker rate not found for the given role code"));
+						.orElseThrow(() -> new CustomException("RATES_NOT_CONFIGURED_IN_MDMS","Worker rate not found for the given role code"));
 				List<LineItem> payableLineItem = new ArrayList<>();
 				BigDecimal totalBillDetailAmount = BigDecimal.ZERO;
 				for (Map.Entry<String, BigDecimal> entry : rateBreakup.entrySet()) {
@@ -121,14 +121,24 @@ public class WageSeekerBillGeneratorService {
 					payableLineItem.add(lineItem);
 				}
 				totalBillAmount = totalBillAmount.add(totalBillDetailAmount);
-				BillDetail billDetail = BillDetail.builder().payableLineItems(payableLineItem).totalAmount(totalBillDetailAmount)
-						.payee(Party.builder().identifier(individualEntry.getIndividualId()).build()).build();
+				BillDetail billDetail = BillDetail.builder()
+						.payableLineItems(payableLineItem)
+						.lineItems(new ArrayList<>())
+						.totalAmount(totalBillDetailAmount)
+						.referenceId(musterRoll.getId())
+						.tenantId(musterRoll.getTenantId())
+						.payee(Party.builder()
+								.tenantId(musterRoll.getTenantId())
+								.identifier(individualEntry.getIndividualId())
+								.type("IND")
+								.build())
+						.build();
 
 				billDetails.add(billDetail);
 			}
 		}
-		Bill bill = Bill.builder().totalAmount(totalBillAmount).billDetails(billDetails).build();
-		return bill;
+
+		return Bill.builder().totalAmount(totalBillAmount).billDetails(billDetails).build();
 	}
 
 	BigDecimal sumRateBreakup(Map<String, BigDecimal> rateBreakup) {

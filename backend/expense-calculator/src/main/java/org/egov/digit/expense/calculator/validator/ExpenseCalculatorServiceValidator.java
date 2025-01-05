@@ -14,6 +14,7 @@ import org.egov.digit.expense.calculator.web.models.CalculationRequest;
 import org.egov.digit.expense.calculator.web.models.Criteria;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.attendance.AttendanceRegister;
+import org.egov.works.services.common.models.attendance.WfStatus;
 import org.egov.works.services.common.models.contract.Contract;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
 import org.egov.works.services.common.models.musterroll.MusterRollRequest;
@@ -61,7 +62,7 @@ public class ExpenseCalculatorServiceValidator {
     }
 
     public void validateCalculatorCalculateRequest(CalculationRequest calculationRequest, Project project){
-//        validateCommonCalculatorRequest(calculationRequest);
+        validateCommonCalculatorRequest(calculationRequest);
 
         //Validate muster roll Ids against muster roll service
         validateMusterRollIdAgainstService(calculationRequest,true);
@@ -71,19 +72,17 @@ public class ExpenseCalculatorServiceValidator {
 
         // Validate if all muster roll are approved
 
-        // Validate if projectid is of district level
-        validateProject(project);
-
-    }
-
-    private void validateProject(Project project) {
-        if(!project.getAddress().getBoundaryType().equalsIgnoreCase("DISTRICT")) {
-            throw new CustomException("INVALID_PROJECT", "Project is not of district level");
-        }
-
     }
     public void validateAttendanceRegisterApproval(List<AttendanceRegister> attendanceRegisters) {
 
+        if(CollectionUtils.isEmpty(attendanceRegisters)) {
+            throw new CustomException("ATTENDANCE_REGISTERS_EMPTY", "AttendanceRegister is mandatory");
+        }
+        attendanceRegisters.stream().forEach(attendanceRegister -> {
+            if(!WfStatus.APPROVED.equals(attendanceRegister.getWfStatus())) {
+                throw new CustomException("ATTENDANCE_REGISTERS_APPROVED", "Atleast one AttendanceRegister is not approved");
+            }
+        });
     }
 
     public void validateWageBillCreateForMusterRollRequest(MusterRollRequest musterRollRequest){

@@ -269,4 +269,12 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${report.error.queue.topic}")
 	private String reportErrorQueueTopic;
 
+	@Value("${egov.boundary.host}")
+	private String boundaryServiceHost;
+
+	@Value("${egov.boundary.search.url}")
+	private String boundarySearchUrl;
+
+	@Value("${is.attendance.approval.required}")
+	private boolean isAttendanceApprovalRequired;
 }

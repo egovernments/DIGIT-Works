@@ -100,13 +100,19 @@ public class ProjectUtil {
                 .append(serviceConfiguration.getProjectSearchPath()));
     }
 
-    public ProjectResponse getProjectDetails(RequestInfo requestInfo, String tenantId, String projectId) {
+    public ProjectResponse getProjectDetails(RequestInfo requestInfo, String tenantId, String projectId, String localityCode) {
         log.info("ProjectUtil::getProjectDetails");
 
         StringBuilder uriBuilder = getProjectUrl();
 
         //added the url param
         uriBuilder.append("?").append(TENANT_ID).append(EQUAL_TO).append(tenantId)
+                .append(AMPERSAND)
+                .append("localityCode").append(EQUAL_TO).append(localityCode)
+                .append(AMPERSAND)
+                .append("isAncestorProjectId").append(EQUAL_TO).append("true")
+                .append(AMPERSAND)
+                .append("includeDescendants").append(EQUAL_TO).append("false")
                 .append(AMPERSAND)
                 .append(OFFSET).append(EQUAL_TO).append(DEFAULT_OFFSET)
                 .append(AMPERSAND)

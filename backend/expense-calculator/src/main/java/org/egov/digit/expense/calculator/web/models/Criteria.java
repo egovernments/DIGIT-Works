@@ -50,6 +50,9 @@ public class Criteria {
 
 	private String referenceId = null;
 
+	@JsonProperty("localityCode")
+	private String localityCode = null;
+
 	@JsonProperty("auditDetails")
 
 	@Valid
