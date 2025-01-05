@@ -250,7 +250,7 @@ public class HealthBillReportGenerator {
                 individualIdWorkDaysMap.put(individualId, individualEntry.getActualTotalAttendance());
             }
         }
-        individualMusterAttendanceMap.put(musterRoll.getMusterRollNumber(), individualIdWorkDaysMap);
+        individualMusterAttendanceMap.put(musterRoll.getId(), individualIdWorkDaysMap);
 
     }
 
