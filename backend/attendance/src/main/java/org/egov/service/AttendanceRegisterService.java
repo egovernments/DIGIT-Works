@@ -198,6 +198,10 @@ public class AttendanceRegisterService {
 
         if(attendanceServiceConfiguration.getAttendanceRegisterProjectSearchEnabled()){
             if(searchCriteria.getReferenceId()!=null && !searchCriteria.getReferenceId().isEmpty()){
+                if(searchCriteria.getLocalityCode()==null){
+                    throw new CustomException("ATTENDANCE_REGISTER_SEARCH_REFERENCE_ID_INVALID", "Attendance Register with only reference Id invalid, needs locality code too");
+                }
+
                 Project projectSearch = Project.builder()
                   .tenantId(searchCriteria.getTenantId())
                   .id(searchCriteria.getReferenceId())
@@ -223,6 +227,10 @@ public class AttendanceRegisterService {
                 searchCriteria.setReferenceId(null);
                 searchCriteria.setLocalityCode(null);
             }
+        }
+
+        if(searchCriteria.getLocalityCode()!=null) {
+            throw new CustomException("ATTENDANCE_REGISTER_LOCALITY_CODE_SEARCH_INVALID", "Attendance register search with only locality code is invalid");
         }
 
         // Fetch the all registers based on the supplied search criteria
