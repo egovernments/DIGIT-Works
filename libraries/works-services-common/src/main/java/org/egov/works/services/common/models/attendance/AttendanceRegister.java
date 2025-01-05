@@ -60,10 +60,10 @@ public class AttendanceRegister {
     private Object additionalDetails = null;
 
     @JsonProperty("localityCode")
-    private String localityCode;
+    private String localityCode = null;
 
-    @JsonProperty("wfStatus")
-    private WfStatus wfStatus = WfStatus.PENDINGFORAPPROVAL;
+    @JsonProperty("reviewStatus")
+    private String reviewStatus = null;
 
 
     public AttendanceRegister addStaffItem(StaffPermission staffItem) {
