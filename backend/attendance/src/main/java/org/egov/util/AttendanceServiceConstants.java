@@ -10,4 +10,5 @@ public class AttendanceServiceConstants {
     public static final String TWO_SESSIONS = "TWO_SESSIONS";
     public static final String TOTAL_COUNT = "totalCount";
     public static final String ATTENDANCE_REGISTER_APPROVED = "APPROVED";
+    public static final String ATTENDANCE_REGISTER_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
 }
