@@ -54,12 +54,11 @@ public class AttendanceRegisterService {
 
     private final StaffEnrichmentService staffEnrichmentService;
     private final IndividualServiceUtil individualServiceUtil;
-    private final BoundaryServiceUtil boundaryServiceUtil;
 
     private final ProjectServiceUtil projectServiceUtil;
 
     @Autowired
-    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil, ProjectServiceUtil projectServiceUtil) {
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, ProjectServiceUtil projectServiceUtil) {
         this.attendanceServiceValidator = attendanceServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.producer = producer;
@@ -70,7 +69,6 @@ public class AttendanceRegisterService {
         this.attendeeRepository = attendeeRepository;
         this.staffEnrichmentService = staffEnrichmentService;
         this.individualServiceUtil = individualServiceUtil;
-        this.boundaryServiceUtil = boundaryServiceUtil;
         this.projectServiceUtil = projectServiceUtil;
     }
 
@@ -171,9 +169,6 @@ public class AttendanceRegisterService {
             counts.put(alias,0L);
         }
 
-        if (registers == null || registers.isEmpty()) {
-            log.info("Registers are empty or null");
-        }
         if (searchCriteria.getIds() == null) {
             log.info("Register search criteria does not contain any register ids");
             List<String> registerIds = new ArrayList<>();
@@ -235,7 +230,6 @@ public class AttendanceRegisterService {
         Map<String, Long> counts = registerRepository.getRegisterCounts(searchCriteria);
 
         List<AttendanceRegister> resultAttendanceRegisters = new ArrayList<>();
-
         if(attendanceRegisters!=null && !attendanceRegisters.isEmpty()){
             // Create a map with key as registerId and corresponding register list as value
             Map<String, List<AttendanceRegister>> registerIdVsAttendanceRegisters = attendanceRegisters.stream().collect(Collectors.groupingBy(AttendanceRegister::getId));

@@ -22,7 +22,7 @@ public class StaffQueryBuilder {
             "stf.lastmodifiedby, " +
             "stf.createdtime, " +
             "stf.lastmodifiedtime, " +
-            "stf.tenantid " +
+            "stf.tenantid, " + "stf.stafftype " +
             "FROM eg_wms_attendance_staff stf ";
 
     public String getActiveAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {

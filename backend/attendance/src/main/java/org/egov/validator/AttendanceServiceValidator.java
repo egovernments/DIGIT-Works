@@ -134,7 +134,6 @@ public class AttendanceServiceValidator {
         if(config.getAttendanceRegisterBoundarySearchEnabled()){
             boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
         }
-
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
@@ -162,12 +161,21 @@ public class AttendanceServiceValidator {
                     log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                     throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 }
+                // Find the staff with the given userstaffId
+                StaffPermission staff = registerFromDB.getStaff().stream()
+                        .filter(st -> individualId.equals(st.getUserId()))
+                        .findFirst().orElse(null);
+
+                if(staff ==null || staff.getStaffType()==null || !staff.getStaffType().contains(StaffType.APPROVER)) {
+                    log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                    throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                }
             } else if(registerFirstStaffInsertEnabled) {
                 log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
             }
 
-            if(config.getAttendanceRegisterReviewStatusEnabled() && registerFromDB.getReviewStatus().equalsIgnoreCase("APPROVED")){
+            if(config.getAttendanceRegisterReviewStatusEnabled() && registerFromDB.getReviewStatus().equalsIgnoreCase(ATTENDANCE_REGISTER_APPROVED)){
                 log.error("Attendance Register having register Id " + registerFromRequest.getId() + " that you are trying to update has review status APPROVED");
                 throw new CustomException("ATTENDANCE_REGISTER_REVIEW_STATUS_APPROVED", "Attendance Register with register Id " + registerFromRequest.getId() + " that you are trying to update is already approved");
             }

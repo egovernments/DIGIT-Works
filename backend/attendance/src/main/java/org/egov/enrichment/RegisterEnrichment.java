@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -88,8 +89,10 @@ public class RegisterEnrichment {
                 .registerId(attendanceRegister.getId())
                 .userId(individualId)
                 .enrollmentDate(new BigDecimal(System.currentTimeMillis()))
-                .auditDetails(auditDetails)
+                .auditDetails(auditDetails).staffType(Collections.singletonList(StaffType.OWNER))
+                .additionalDetails(Map.of("staffName", individualList.get(0).getName().getGivenName()))
                 .build();
+
         attendanceRegister.setStaff(Collections.singletonList(staffPermission));
         log.info("First staff for attendance register is added in attendance register");
         log.info("The user " + requestInfo.getUserInfo().getUuid() + " is addedd as staff for the attendance register + " + staffPermission.getRegisterId());

@@ -57,7 +57,7 @@ public class RegisterQueryBuilder {
     }
 
 
-    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludePaymentStatus) {
+    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludeReviewStatus) {
 
         log.info("Search criteria of attendance search : " + searchCriteria.toString());
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
@@ -91,9 +91,8 @@ public class RegisterQueryBuilder {
             query.append(" reg.registernumber = ? ");
             preparedStmtList.add(registerNumber);
         }
-
-        if (!ObjectUtils.isEmpty(searchCriteria.getReferenceId())) {
-            String referenceId = searchCriteria.getReferenceId();
+        String referenceId = searchCriteria.getReferenceId();
+        if (referenceId!=null && !referenceId.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.referenceid = ? ");
             preparedStmtList.add(referenceId);
@@ -167,7 +166,7 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(localityCode);
         }
 
-        if (!ObjectUtils.isEmpty(searchCriteria.getReviewStatus()) && !excludePaymentStatus) {
+        if (!ObjectUtils.isEmpty(searchCriteria.getReviewStatus()) && !excludeReviewStatus) {
             String reviewStatus = searchCriteria.getReviewStatus();
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.reviewstatus = ? ");

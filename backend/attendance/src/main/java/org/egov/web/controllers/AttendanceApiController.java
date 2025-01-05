@@ -6,6 +6,7 @@ import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
 import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.repository.RegisterRepository;
 import org.egov.service.AttendanceRegisterService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.*;
@@ -31,13 +32,16 @@ public class AttendanceApiController {
     private final AttendanceRegisterService attendanceRegisterService;
     private final ResponseInfoFactory responseInfoFactory;
 
+    private final RegisterRepository registerRepository;
+
     @Autowired
-    public AttendanceApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoFactory responseInfoCreator, AttendanceRegisterService attendanceRegisterService, ResponseInfoFactory responseInfoFactory) {
+    public AttendanceApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoFactory responseInfoCreator, AttendanceRegisterService attendanceRegisterService, ResponseInfoFactory responseInfoFactory, org.egov.repository.RegisterRepository registerRepository) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.responseInfoCreator = responseInfoCreator;
         this.attendanceRegisterService = attendanceRegisterService;
         this.responseInfoFactory = responseInfoFactory;
+        this.registerRepository = registerRepository;
     }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)

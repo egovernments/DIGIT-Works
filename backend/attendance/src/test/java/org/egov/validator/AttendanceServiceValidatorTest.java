@@ -54,8 +54,7 @@ public class AttendanceServiceValidatorTest {
     @Mock
     private AttendanceServiceConfiguration config;
 
-
-	@DisplayName("Method validateRequestInfo: With good request")
+	  @DisplayName("Method validateRequestInfo: With good request")
     @Test
     public void validateCreateAttendanceRegister_validateRequestInfo_1(){
         AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().addGoodRegister().build();
