@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
+import org.egov.digit.expense.calculator.service.HealthBillReportGenerator;
 import org.egov.digit.expense.calculator.web.models.BillRequest;
 import org.egov.digit.expense.calculator.web.models.MusterRollConsumerError;
 import org.egov.works.services.common.models.musterroll.MusterRollRequest;
@@ -21,15 +22,19 @@ public class ExpenseCalculatorConsumer {
 	private final ExpenseCalculatorService expenseCalculatorService;
 	private final ObjectMapper objectMapper;
 	private final ExpenseCalculatorProducer producer;
+	private final HealthBillReportGenerator healthBillReportGenerator;
 
 	@Autowired
-	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, ExpenseCalculatorProducer producer) {
+	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, ExpenseCalculatorProducer producer, HealthBillReportGenerator healthBillReportGenerator) {
 		this.configs = configs;
 		this.expenseCalculatorService = expenseCalculatorService;
 		this.objectMapper = objectMapper;
 		this.producer = producer;
-	}
+        this.healthBillReportGenerator = healthBillReportGenerator;
+    }
 
+	// Commenting existing consumer
+	/*
 	@KafkaListener(topics = {"${expense.calculator.consume.topic}"})
 	public void listen(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("ExpenseCalculatorConsumer:listen");
@@ -46,7 +51,6 @@ public class ExpenseCalculatorConsumer {
 			producer.push(configs.getCalculatorErrorTopic(),error);
 		}
 	}
-
 	@KafkaListener(topics = {"${expense.billing.bill.create}", "${expense.billing.bill.update}"})
 	public void listenBill(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("ExpenseCalculatorConsumer:listenBill");
@@ -56,6 +60,19 @@ public class ExpenseCalculatorConsumer {
 			expenseCalculatorService.processBillForAdditionalDetailsEnrichment(request);
 		} catch (Exception exception) {
 			log.error("Error occurred while processing the consumed muster record from topic : " + topic, exception);
+		}
+	}
+	 */
+	@KafkaListener(topics = {"${expense.billing.bill.create}"})
+	public void listenBill(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+		log.info("ExpenseCalculatorConsumer:listenBill");
+		BillRequest request = null;
+		try {
+			request = objectMapper.readValue(consumerRecord, BillRequest.class);
+			healthBillReportGenerator.generateHealthBillReportRequest(request);
+		} catch (Exception exception) {
+			log.error("Error occurred while processing the report from topic : " + topic, exception);
+			producer.push(configs.getCalculatorErrorTopic(), exception.getMessage() + " : " + consumerRecord);
 		}
 	}
 }
