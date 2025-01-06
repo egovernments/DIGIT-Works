@@ -88,8 +88,9 @@ public class WageSeekerBillGeneratorService {
 		return mdmsData;
 	}
 
-	public Bill createWageSeekerBillsHealth(RequestInfo requestInfo, List<MusterRoll> musterRolls, List<WorkerMdms> workerMdms) {
-		List<BillDetail> billDetails = new ArrayList<>();
+	public void createWageSeekerBillsHealth(RequestInfo requestInfo, List<MusterRoll> musterRolls,
+											List<WorkerMdms> workerMdms, Bill bill) {
+
 		BigDecimal totalBillAmount = BigDecimal.ZERO;
 		for (MusterRoll musterRoll : musterRolls) {
 
@@ -101,17 +102,18 @@ public class WageSeekerBillGeneratorService {
 			Map<String, Individual> individualMap = individuals.stream().collect(Collectors.toMap(Individual::getId, individual -> individual));
 			for (IndividualEntry individualEntry : individualEntries) {
 				//TODO add validation
-				Individual individual = individualMap.get(individualEntry.getIndividualId());
-				String roleCode = individual.getSkills().get(0).getType();
-
-				if (workerMdms.isEmpty()) {
-					throw new CustomException("RATES_NOT_CONFIGURED_IN_MDMS", "rates are not configured in mdms");
+				if (!individualMap.containsKey(individualEntry.getIndividualId())) {
+					log.error("Individual not present in individual service :: " + individualEntry.getIndividualId());
+					continue;
 				}
-				Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getSkillCode().equalsIgnoreCase(roleCode)).findAny();
+				Individual individual = individualMap.get(individualEntry.getIndividualId());
+				String skillCode = individual.getSkills().get(0).getType();
+
+				Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getSkillCode().equalsIgnoreCase(skillCode)).findAny();
 
 				Map<String, BigDecimal> rateBreakup = rate
 						.map(WorkerRate::getRateBreakup)
-						.orElseThrow(() -> new CustomException("RATES_NOT_CONFIGURED_IN_MDMS","Worker rate not found for the given role code"));
+						.orElse(new HashMap<>());
 				List<LineItem> payableLineItem = new ArrayList<>();
 				BigDecimal totalBillDetailAmount = BigDecimal.ZERO;
 				for (Map.Entry<String, BigDecimal> entry : rateBreakup.entrySet()) {
@@ -134,11 +136,11 @@ public class WageSeekerBillGeneratorService {
 								.build())
 						.build();
 
-				billDetails.add(billDetail);
+				bill.addBillDetailsItem(billDetail);
 			}
 		}
 
-		return Bill.builder().totalAmount(totalBillAmount).billDetails(billDetails).build();
+		bill.setTotalAmount(bill.getTotalAmount().add(totalBillAmount));
 	}
 
 	BigDecimal sumRateBreakup(Map<String, BigDecimal> rateBreakup) {

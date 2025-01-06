@@ -31,10 +31,9 @@ public class AttendanceUtil {
 
 
     public List<AttendanceRegister> fetchAttendanceRegister(String referenceId, String tenantId, RequestInfo requestInfo,
-                                                            String localityCode, boolean isChildrenRequired) {
-        //TODO fix logs
-        log.info("MusterRollValidator::Fetching attendance register with tenantId::" + tenantId
-                + " and register ID: " +referenceId);
+                                                            String localityCode, boolean isChildrenRequired, Integer offset) {
+        log.info("Fetching attendance register with tenantId::" + tenantId
+                + " and offset::" + offset + " and batch size:: " +config.getRegisterBatchSize());
         String id = requestInfo.getUserInfo().getUuid();
 
         StringBuilder uri = new StringBuilder();
@@ -43,7 +42,9 @@ public class AttendanceUtil {
                 .queryParam("tenantId", tenantId).queryParam("referenceId", referenceId)
                 .queryParam("localityCode", localityCode)
                 .queryParam("isChildrenRequired", isChildrenRequired)
-                .queryParam("status", Status.ACTIVE);
+                .queryParam("status", Status.ACTIVE)
+                .queryParam("offset", offset)
+                .queryParam("limit", config.getRegisterBatchSize());
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
         AttendanceRegisterResponse attendanceRegisterResponse = null;
@@ -52,18 +53,17 @@ public class AttendanceUtil {
             attendanceRegisterResponse = restTemplate.postForObject(uriBuilder.toUriString(), requestInfoWrapper,
                     AttendanceRegisterResponse.class);
         } catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
-            log.error("MusterRollValidator::Error thrown from attendance register service::"
+            log.error("AttendanceUtil::Error thrown from attendance register service::"
                     + httpClientOrServerExc.getStatusCode());
             throw new CustomException("ATTENDANCE_REGISTER_SERVICE_EXCEPTION",
                     "Error thrown from attendance register service::" + httpClientOrServerExc.getStatusCode());
         }
 
-        if (attendanceRegisterResponse == null
-                || CollectionUtils.isEmpty(attendanceRegisterResponse.getAttendanceRegister())) {
-            log.error("MusterRollValidator::User with id::" + id + " is not enrolled in the attendance register::"
+        if (attendanceRegisterResponse == null || attendanceRegisterResponse.getAttendanceRegister() == null) {
+            log.error("Error fetching registers::"
                     + referenceId);
-            throw new CustomException("ACCESS_EXCEPTION",
-                    "User is not enrolled in the attendance register and not authorized to fetch it");
+            throw new CustomException("ERROR_FETCHING_ATTENDANCE_REGISTER",
+                    "Error fetching attendance registers");
         }
         return attendanceRegisterResponse.getAttendanceRegister();
     }
