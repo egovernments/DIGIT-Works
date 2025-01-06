@@ -56,6 +56,12 @@ public class BillCriteria {
 	@JsonProperty("localityCode")
 	private String localityCode;
 
+	@JsonProperty("fromDate")
+	private Long fromDate;
+
+	@JsonProperty("toDate")
+	private Long toDate;
+
 	public BillCriteria addIdsItem(String idsItem) {
 		if (this.ids == null) {
 			this.ids = new HashSet<>();

@@ -1,5 +1,6 @@
 package org.egov.digit.expense.repository.querybuilder;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.Pagination;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -68,8 +70,27 @@ public class BillQueryBuilder {
             Set<String> referenceIds = criteria.getReferenceIds();
             if (!CollectionUtils.isEmpty(referenceIds)) {
                 addClauseIfRequired(query, preparedStmtList);
-                query.append(" bill.referenceid IN (").append(createQuery(referenceIds)).append(")");
+                query.append(" bill.referenceid IN (").append(createQuery(referenceIds)).append(" )");
                 addToPreparedStatement(preparedStmtList, referenceIds);
+            }
+        }
+
+        if (criteria.getFromDate() != null) {
+            addClauseIfRequired(query, preparedStmtList);
+
+            //If user does not specify toDate, take today's date as toDate by default.
+            if (criteria.getToDate() == null) {
+                criteria.setToDate(Instant.now().toEpochMilli());
+            }
+
+            query.append(" bill.billdate BETWEEN ? AND ? ");
+            preparedStmtList.add(criteria.getFromDate());
+            preparedStmtList.add(criteria.getToDate());
+
+        } else {
+            //if only toDate is provided as parameter without fromDate parameter, throw an exception.
+            if (criteria.getToDate() != null) {
+                throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify toDate without a fromDate");
             }
         }
 
