@@ -95,7 +95,7 @@ public class BillValidator {
 
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
 		validateTenantId(billRequest,mdmsData);
-		validateMasterData(billRequest, errorMap, mdmsData, false);
+//		validateMasterData(billRequest, errorMap, mdmsData, false);
 
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
