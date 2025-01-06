@@ -195,17 +195,6 @@ public class EnrichmentUtil {
 
     public void enrichSearchBillRequest(BillSearchRequest billSearchRequest) {
 
-        if (config.isHealthContextEnabled() && !CollectionUtils.isEmpty(billSearchRequest.getBillCriteria().getReferenceIds())) {
-            ProjectResponse projectResponse = projectUtil.getProjectDetails(billSearchRequest);
-            if (projectResponse != null && projectResponse.getProject() != null && !projectResponse.getProject().isEmpty()) {
-                Project project = projectResponse.getProject().get(0);
-                if (project != null && project.getReferenceID() != null) {
-                    billSearchRequest.getBillCriteria().setReferenceIds(new HashSet<>(Collections.singleton(project.getId())));
-                }
-            }
-
-        }
-
         Pagination pagination = getPagination(billSearchRequest);
 
         if (pagination.getLimit() == null)

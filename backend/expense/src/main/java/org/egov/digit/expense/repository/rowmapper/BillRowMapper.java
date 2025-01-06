@@ -69,6 +69,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.status(Status.fromValue(rs.getString("b_status")))
 					.businessService(rs.getString("businessservice"))
 					.totalAmount(rs.getBigDecimal("b_totalamount"))
+					.localityCode(rs.getString("b_localitycode"))
 					.referenceId(rs.getString("b_referenceid"))
 					.billNumber(rs.getString("billnumber"))
 					.fromPeriod(rs.getLong("b_fromperiod"))

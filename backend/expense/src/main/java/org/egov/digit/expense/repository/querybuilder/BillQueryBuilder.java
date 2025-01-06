@@ -1,5 +1,6 @@
 package org.egov.digit.expense.repository.querybuilder;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -51,11 +52,31 @@ public class BillQueryBuilder {
             addToPreparedStatement(preparedStmtList, ids);
         }
 
-        Set<String> referenceIds = criteria.getReferenceIds();
-        if (!CollectionUtils.isEmpty(referenceIds)) {
+        if (configs.isHealthContextEnabled()) {
+            Set<String> referenceIds = criteria.getReferenceIds();
+            if (!CollectionUtils.isEmpty(referenceIds)) {
+                addClauseIfRequired(query, preparedStmtList);
+                List<String> likeClauses = new ArrayList<>();
+                for (String refId : referenceIds) {
+                    likeClauses.add(" bill.referenceid LIKE ?");
+                    preparedStmtList.add("%" + refId + "%");  // Adding % for partial match
+                }
+                // Wrap the entire condition in brackets
+                query.append(" (").append(String.join(" OR ", likeClauses)).append(") ");
+            }
+        } else {
+            Set<String> referenceIds = criteria.getReferenceIds();
+            if (!CollectionUtils.isEmpty(referenceIds)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" bill.referenceid IN (").append(createQuery(referenceIds)).append(")");
+                addToPreparedStatement(preparedStmtList, referenceIds);
+            }
+        }
+
+        if (StringUtils.isNotBlank(criteria.getLocalityCode())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.referenceid IN (").append(createQuery(referenceIds)).append(")");
-            addToPreparedStatement(preparedStmtList, referenceIds);
+            query.append(" bill.localitycode = ? ");
+            preparedStmtList.add(criteria.getLocalityCode());
         }
 
         if (StringUtils.isNotBlank(criteria.getTenantId())) {

@@ -203,7 +203,6 @@ public class BillValidator {
 						BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST + invalidPayableLineItemIds);
 		}
 
-
 	}
 
 	public void validateSearchRequest(BillSearchRequest billSearchRequest) {
@@ -222,9 +221,8 @@ public class BillValidator {
 		}
 
 		if (configs.isHealthContextEnabled()) {
-			if ( (!CollectionUtils.isEmpty(billCriteria.getReferenceIds()) && org.apache.commons.lang3.StringUtils.isBlank(billCriteria.getLocalityCode())) ||
-					(org.apache.commons.lang3.StringUtils.isNotBlank(billCriteria.getLocalityCode()) && CollectionUtils.isEmpty(billCriteria.getReferenceIds()))) {
-				throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR", "LocalityCode should be provided along with referenceIds for a bill search");
+			if (org.apache.commons.lang3.StringUtils.isNotBlank(billCriteria.getLocalityCode()) && CollectionUtils.isEmpty(billCriteria.getReferenceIds())) {
+				throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR", "referenceIds should be provided along with localityCode for a bill search");
 			}
 		} else {
 			boolean isRefIdOrBillNoProvided = (!CollectionUtils.isEmpty(billCriteria.getReferenceIds())

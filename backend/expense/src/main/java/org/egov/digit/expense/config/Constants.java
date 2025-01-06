@@ -117,7 +117,7 @@ public class Constants {
 	
 	public static final String BILL_QUERY = "SELECT "
 			
-			+ " bill.id as b_id, bill.tenantid as b_tenantid, billdate, duedate, bill.totalamount as b_totalamount, bill.totalpaidamount as b_totalpaidamount, "
+			+ " bill.id as b_id, bill.tenantid as b_tenantid, bill.localitycode as b_localitycode, billdate, duedate, bill.totalamount as b_totalamount, bill.totalpaidamount as b_totalpaidamount, "
 			+ " businessservice, bill.referenceid as b_referenceid, billnumber, bill.fromperiod as b_fromperiod, bill.toperiod as b_toperiod, bill.status as b_status, "
 			+ " bill.paymentstatus as b_paymentstatus, bill.createdby as b_createdby, bill.createdtime as b_createdtime, bill.lastmodifiedby as b_lastmodifiedby,"
 			+ " bill.lastmodifiedtime as b_lastmodifiedtime, bill.additionaldetails as b_additionaldetails,"
