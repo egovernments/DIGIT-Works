@@ -240,4 +240,7 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${register.batch.size}")
 	private Integer registerBatchSize;
+
+	@Value("${load.testing.size}")
+	private Integer loadTestingSize;
 }

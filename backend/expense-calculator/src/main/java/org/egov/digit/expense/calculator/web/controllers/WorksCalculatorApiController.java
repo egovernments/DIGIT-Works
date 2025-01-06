@@ -55,6 +55,18 @@ public class WorksCalculatorApiController {
 
 		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.OK);
 	}
+	@RequestMapping(value = "/v1/_calculatetest", method = RequestMethod.POST)
+	public ResponseEntity<BillResponse> worksCalculatorV1CalculateTest(
+			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest calculationRequest) {
+		List<Bill> bills = expenseCalculatorService.createWageOrSupervisionBillTest(calculationRequest);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
+		BillResponse billResponse = BillResponse.builder()
+				.responseInfo(responseInfo)
+				.bills(bills)
+				.build();
+
+		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.OK);
+	}
 
 	@RequestMapping(value = "/v1/_estimate", method = RequestMethod.POST)
 	public ResponseEntity<CalculationResponse> worksCalculatorV1EstimatePost(

@@ -187,6 +187,59 @@ public class ExpenseCalculatorService {
         // Create the bill
         return purchaseBillGeneratorService.updatePurchaseBill(requestInfo,providedPurchaseBill,headCodes,applicableCharges,metaInfo);
     }
+    public List<Bill> createWageOrSupervisionBillTest(CalculationRequest calculationRequest){
+        Bill bill = Bill.builder().build();
+        String projectId = UUID.randomUUID().toString();
+        for (int i = 0; i < config.getLoadTestingSize(); i++) {
+
+            LineItem payableLineItem = wageSeekerBillGeneratorService
+                    .buildLineItem("mz", BigDecimal.TEN, "FOOD", LineItem.TypeEnum.PAYABLE);
+            LineItem payableLineItem2 = wageSeekerBillGeneratorService
+                    .buildLineItem("mz", BigDecimal.TEN, "TRAVEL", LineItem.TypeEnum.PAYABLE);
+            LineItem payableLineItem3 = wageSeekerBillGeneratorService
+                    .buildLineItem("mz", BigDecimal.TEN, "PER_DAY", LineItem.TypeEnum.PAYABLE);
+            List<LineItem> lineItems = new ArrayList<>();
+            lineItems.add(payableLineItem);
+            lineItems.add(payableLineItem2);
+            lineItems.add(payableLineItem3);
+            BillDetail billDetail = BillDetail.builder()
+                    .payableLineItems(lineItems)
+                    .lineItems(new ArrayList<>())
+                    .totalAmount(BigDecimal.valueOf(10000))
+                    .referenceId(projectId)
+                    .tenantId("mz")
+                    .payee(Party.builder()
+                            .tenantId("mz")
+                            .identifier(UUID.randomUUID().toString())
+                            .type("IND")
+                            .build())
+                    .build();
+            bill.addBillDetailsItem(billDetail);
+        }
+        bill.setFromPeriod(1734373800000L);
+        bill.setBillDate(System.currentTimeMillis());
+        bill.setToPeriod(1736101799000L);
+        bill.setTenantId("mz");
+        bill.setReferenceId(projectId);
+        bill.setBusinessService("EXPENSE.WAGES");
+        bill.setStatus("ACTIVE");
+        bill.setLocalityCode("MICROPLAN_MO_13_05_TCHIEN_TEST");
+        bill.setPayer(Party.builder().identifier(UUID.randomUUID().toString()).tenantId("mz").type("ORG").build());
+        Set<String> distinctRegisters = bill.getBillDetails().stream().map(BillDetail::getReferenceId).collect(Collectors.toSet());
+        // If additional details object is null add number of distinct registers in new object, else take additional details object and add number of distinct registers
+        ObjectNode additionalDetails = mapper.createObjectNode();
+        if(bill.getAdditionalDetails() != null){
+            additionalDetails = objectMapper.convertValue(bill.getAdditionalDetails(), ObjectNode.class);
+        }
+        additionalDetails.put("noOfRegisters", distinctRegisters.size());
+        bill.setAdditionalDetails(additionalDetails);
+
+        Workflow workflow = Workflow.builder()
+                .action(WF_SUBMIT_ACTION_CONSTANT)
+                .build();
+        BillResponse billResponse = postCreateBill(calculationRequest.getRequestInfo(), bill,workflow);
+        return billResponse.getBills();
+    }
 
     public List<Bill> createWageOrSupervisionBills(CalculationRequest calculationRequest){
         //TODO send to kafka and return response
