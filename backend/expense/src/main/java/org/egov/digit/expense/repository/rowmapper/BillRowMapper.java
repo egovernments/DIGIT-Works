@@ -112,6 +112,8 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.toPeriod(rs.getLong("bd_toperiod"))
 					.billId(rs.getString("billid"))
 					.auditDetails(bDAuditDetails)
+					.payableLineItems(new ArrayList<>())
+					.lineItems(new ArrayList<>())
 					.id(detailId)
 					.payee(payee)
 					.build();
