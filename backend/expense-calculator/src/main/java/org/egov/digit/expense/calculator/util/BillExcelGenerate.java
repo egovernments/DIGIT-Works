@@ -182,7 +182,8 @@ public class BillExcelGenerate {
 
         // Adjust column widths
         for (int i = 0; i < columns.length; i++) {
-            sheet.autoSizeColumn(i);
+//            sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
         }
         sheet.protectSheet(campaignName);
         /*
