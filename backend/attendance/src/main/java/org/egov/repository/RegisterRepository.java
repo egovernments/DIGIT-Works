@@ -92,6 +92,14 @@ public class RegisterRepository {
             return result;
         }, preparedStmtList.toArray());
 
+        if(searchCriteria.getReviewStatus()!=null) {
+            config.getAttendanceRegisterStatusMap().forEach((key, value) ->{
+                if(searchCriteria.getReviewStatus().equals(value)) {
+                    counts.put("totalCount", counts.get(key));
+                }
+            });
+        }
+
         return counts;
     }
 }
