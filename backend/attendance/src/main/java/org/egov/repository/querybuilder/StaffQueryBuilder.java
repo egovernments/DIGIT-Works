@@ -60,7 +60,7 @@ public class StaffQueryBuilder {
         String staffType = criteria.getStaffType();
         if (staffType != null && !staffType.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" stf.stafftype IN (").append(createQuery(Collections.singletonList(staffType))).append(")");
+            query.append(" stf.stafftype = ? ");
             preparedStmtList.add(staffType);
         }
         return query.toString();
