@@ -91,7 +91,7 @@ public class BillValidator {
 			throw new CustomException("EG_EXPENSE_INVALID_BILL","The bill does not exists for the given combination of "
 					+ " id : " + bill.getId() + " and refernceId : " + bill.getTenantId());
 
-		validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap);
+//		validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap);
 
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
 		validateTenantId(billRequest,mdmsData);
