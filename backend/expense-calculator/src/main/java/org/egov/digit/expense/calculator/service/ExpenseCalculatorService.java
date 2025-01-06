@@ -601,7 +601,7 @@ public class ExpenseCalculatorService {
         bill.setBillDate(System.currentTimeMillis());
         bill.setToPeriod(project.getEndDate());
         bill.setTenantId(criteria.getTenantId());
-        bill.setReferenceId(project.getId());
+        bill.setReferenceId(project.getProjectHierarchy());
         bill.setBusinessService("EXPENSE.WAGES");
         bill.setStatus("ACTIVE");
         bill.setLocalityCode(criteria.getLocalityCode());
