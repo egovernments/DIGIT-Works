@@ -255,7 +255,7 @@ public class HealthBillReportGenerator {
     }
 
     private void enrichCampaignName(ReportBill reportBill, BillRequest billRequest) {
-        ProjectResponse projectResponse = projectUtil.getProjectDetails(billRequest.getRequestInfo(), billRequest.getBill().getTenantId(), billRequest.getBill().getReferenceId(), null);
+        ProjectResponse projectResponse = projectUtil.getProjectDetails(billRequest.getRequestInfo(), billRequest.getBill().getTenantId(), billRequest.getBill().getReferenceId(), billRequest.getBill().getLocalityCode());
         if (projectResponse != null && projectResponse.getProject() != null && projectResponse.getProject().size() > 0) {
             reportBill.setCampaignName(projectResponse.getProject().get(0).getName());
         }
