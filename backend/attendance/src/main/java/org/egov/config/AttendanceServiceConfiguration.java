@@ -104,6 +104,9 @@ public class AttendanceServiceConfiguration {
     @Value("${attendance.register.open.search.enabled.roles}")
     private String registerOpenSearchEnabledRoles;
 
+    @Value("${attendance.log.open.search.enabled:false}")
+    private boolean logOpenSearchEnabled;
+
     //Individual servcie
     @Value("${works.individual.host}")
     private String individualHost;

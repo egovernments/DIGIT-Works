@@ -16,6 +16,7 @@ import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.HRMSUtil;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.util.ProjectServiceUtil;
 import org.egov.util.ResponseInfoFactory;
@@ -57,7 +58,7 @@ public class AttendanceRegisterService {
     private final ProjectServiceUtil projectServiceUtil;
 
     @Autowired
-    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, ProjectServiceUtil projectServiceUtil) {
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, ProjectServiceUtil projectServiceUtil, HRMSUtil hrmsUtil) {
         this.attendanceServiceValidator = attendanceServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.producer = producer;
@@ -101,14 +102,14 @@ public class AttendanceRegisterService {
         registerEnrichment.enrichSearchRegisterRequest(requestInfoWrapper.getRequestInfo(),searchCriteria);
 
         //Get the logged-in user roles
-        Set<String> userRoles = getUserRoleCodes(requestInfoWrapper.getRequestInfo());
+        Set<String> userRoles = HRMSUtil.getUserRoleCodes(requestInfoWrapper.getRequestInfo());
 
         //Get the roles enabled for open serach
-        Set<String> openSearchEnabledRoles  = getRegisterOpenSearchEnabledRoles();
+        Set<String> openSearchEnabledRoles  = HRMSUtil.getRegisterOpenSearchEnabledRoles(attendanceServiceConfiguration.getRegisterOpenSearchEnabledRoles());
 
         AttendanceRegisterResponse attendanceRegisterResponse = new AttendanceRegisterResponse();
 
-        if(isUserEnabledForOpenSearch(userRoles,openSearchEnabledRoles)){
+        if(HRMSUtil.isUserEnabledForOpenSearch(userRoles,openSearchEnabledRoles)){
             /*
                User having the role to perform open search on attendance register.
             */
@@ -126,29 +127,6 @@ public class AttendanceRegisterService {
         }
 
         return attendanceRegisterResponse;
-    }
-
-    private boolean isUserEnabledForOpenSearch(Set<String> userRoles, Set<String> openSearchEnabledRoles) {
-        for(String userRole : userRoles){
-            if(openSearchEnabledRoles.contains(userRole)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Set<String> getRegisterOpenSearchEnabledRoles() {
-        Set<String> openSearchEnabledRoles = new HashSet<>();
-        String registerOpenSearchEnabledRoles = attendanceServiceConfiguration.getRegisterOpenSearchEnabledRoles();
-        if(!StringUtils.isBlank(registerOpenSearchEnabledRoles)){
-            String[] roles = registerOpenSearchEnabledRoles.split(",");
-            for(String role :roles){
-                if(!StringUtils.isBlank(role)){
-                    openSearchEnabledRoles.add(role);
-                }
-            }
-        }
-        return openSearchEnabledRoles;
     }
 
     /**
@@ -301,15 +279,6 @@ public class AttendanceRegisterService {
             staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIdsToSearch).build();
         }
         return staffRepository.getAllStaff(staffSearchCriteria);
-    }
-
-    /* Returns list of user roles */
-    private Set<String> getUserRoleCodes(RequestInfo requestInfo) {
-        Set<String> userRoles = new HashSet<>();
-        List<Role> roles = requestInfo.getUserInfo().getRoles();
-        if(roles == null)
-            return userRoles;
-        return roles.stream().map(e->e.getCode()).collect(Collectors.toSet());
     }
 
     /* Get all registers associated for the logged in staff  */
