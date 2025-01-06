@@ -119,39 +119,36 @@ public class EnrichmentService {
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         Workflow workflow = musterRollRequest.getWorkflow();
 
-        log.info("EnrichmentService::enrichMusterRollOnUpdate::Workflow action is "+workflow.getAction());
-
-
-            //update totalAttendance and skill details if modified
-            List<IndividualEntry> individualEntries = existingMusterRoll.getIndividualEntries();
-            List<IndividualEntry> modifiedIndividualEntries = musterRoll.getIndividualEntries();
-            if (!CollectionUtils.isEmpty(modifiedIndividualEntries)) {
-                for (IndividualEntry individualEntry : individualEntries) {
-                    for (IndividualEntry modifiedIndividualEntry : modifiedIndividualEntries)  {
-                        if (modifiedIndividualEntry.getId().equalsIgnoreCase(individualEntry.getId())) {
-                            //update the total attendance
-                            if (modifiedIndividualEntry.getModifiedTotalAttendance() != null) {
-                                individualEntry.setModifiedTotalAttendance(modifiedIndividualEntry.getModifiedTotalAttendance());
-                            }
-                            if (modifiedIndividualEntry.getAdditionalDetails() != null) {
-                                try {
-                                    JsonNode node = mapper.readTree(mapper.writeValueAsString(modifiedIndividualEntry.getAdditionalDetails()));
-                                    if (node.findValue("code") != null  && StringUtils.isNotBlank(node.findValue("code").textValue())) {
-                                        String skillCode = node.findValue("code").textValue();
-                                        //Update the skill value based on the code from request
-                                        musterRollServiceUtil.updateAdditionalDetails(mdmsData,individualEntry,skillCode);
-                                    }
-                                } catch (IOException e) {
-                                    log.info("EnrichmentService::enrichMusterRollOnUpdate::Failed to parse additionalDetail object from request"+e);
-                                    throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object from request on update");
-                                }
-
-                            }
-                            break;
+        //update totalAttendance and skill details if modified
+        List<IndividualEntry> individualEntries = existingMusterRoll.getIndividualEntries();
+        List<IndividualEntry> modifiedIndividualEntries = musterRoll.getIndividualEntries();
+        if (!CollectionUtils.isEmpty(modifiedIndividualEntries)) {
+            for (IndividualEntry individualEntry : individualEntries) {
+                for (IndividualEntry modifiedIndividualEntry : modifiedIndividualEntries)  {
+                    if (modifiedIndividualEntry.getId().equalsIgnoreCase(individualEntry.getId())) {
+                        //update the total attendance
+                        if (modifiedIndividualEntry.getModifiedTotalAttendance() != null) {
+                            individualEntry.setModifiedTotalAttendance(modifiedIndividualEntry.getModifiedTotalAttendance());
                         }
+                        if (modifiedIndividualEntry.getAdditionalDetails() != null) {
+                            try {
+                                JsonNode node = mapper.readTree(mapper.writeValueAsString(modifiedIndividualEntry.getAdditionalDetails()));
+                                if (node.findValue("code") != null  && StringUtils.isNotBlank(node.findValue("code").textValue())) {
+                                    String skillCode = node.findValue("code").textValue();
+                                    //Update the skill value based on the code from request
+                                    musterRollServiceUtil.updateAdditionalDetails(mdmsData,individualEntry,skillCode);
+                                }
+                            } catch (IOException e) {
+                                log.info("EnrichmentService::enrichMusterRollOnUpdate::Failed to parse additionalDetail object from request"+e);
+                                throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object from request on update");
+                            }
+
+                        }
+                        break;
                     }
                 }
             }
+        }
 
         musterRoll = existingMusterRoll;
         musterRollRequest.setMusterRoll(existingMusterRoll);
@@ -164,7 +161,8 @@ public class EnrichmentService {
         //populate auditDetails in IndividualEntry and AttendanceEntry
         populateAuditDetailsIndividualEntry(musterRoll);
 
-        if (workflow.getAction().equals(ACTION_REJECT)) {
+        if (config.isMusterRollWorkflowEnabled() && workflow.getAction().equals(ACTION_REJECT)) {
+            log.info("EnrichmentService::enrichMusterRollOnUpdate::Workflow action is "+ workflow.getAction());
             enrichUpdateMusterWorkFlowForActionReject(musterRollRequest);
         }
 
