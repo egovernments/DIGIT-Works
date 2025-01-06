@@ -410,7 +410,7 @@ public class WageSeekerBillGeneratorService {
 		return payables;
 	}
 
-	private LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay,String headCode, LineItem.TypeEnum lineItemType) {
+	public LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay,String headCode, LineItem.TypeEnum lineItemType) {
 		//Round off
 		BigDecimal roundOffAmount = actualAmountToPay.setScale(0, BigDecimal.ROUND_HALF_UP);
 		return LineItem.builder().amount(roundOffAmount).paidAmount(BigDecimal.ZERO)
