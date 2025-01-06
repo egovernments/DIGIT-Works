@@ -135,6 +135,12 @@ public class MusterRollServiceConfiguration {
     @Value("${musterroll.update.recompute.attendance.enabled:true}")
     private boolean recomputeAttendanceEnabled;
 
+    @Value("${musterroll.workflow.enabled:true}")
+    private boolean musterRollWorkflowEnabled;
+
+    @Value("${musterroll.noworkflow.create.status}")
+    private String musterRollNoWorkflowCreateStatus;
+
     @Value("${musterroll.individual.entry.roles.enabled:false}")
     private boolean individualEntryRolesEnabled;
 

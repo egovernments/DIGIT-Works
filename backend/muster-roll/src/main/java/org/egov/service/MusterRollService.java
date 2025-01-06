@@ -127,7 +127,11 @@ public class MusterRollService {
         checkMusterRollExists(musterRollRequest.getMusterRoll());
         enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
         calculationService.createAttendance(musterRollRequest,true);
-        workflowService.updateWorkflowStatus(musterRollRequest);
+        if(config.isMusterRollWorkflowEnabled()) {
+            workflowService.updateWorkflowStatus(musterRollRequest);
+        } else {
+            musterRollRequest.getMusterRoll().setMusterRollStatus(config.getMusterRollNoWorkflowCreateStatus());
+        }
 
         musterRollProducer.push(serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
@@ -211,8 +215,10 @@ public class MusterRollService {
             musterRollValidator.isValidUser(existingMusterRoll, requestInfo);
             calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
-        workflowService.updateWorkflowStatus(musterRollRequest);
-        if(config.isUpdateAttendanceRegisterReviewStatusEnabled() && musterRollRequest.getWorkflow().getAction().equals(ACTION_APPROVE)) {
+        if(config.isMusterRollWorkflowEnabled()) {
+            workflowService.updateWorkflowStatus(musterRollRequest);
+        }
+        if(config.isUpdateAttendanceRegisterReviewStatusEnabled() && STATUS_APPROVED.equalsIgnoreCase(musterRollRequest.getMusterRoll().getMusterRollStatus())) {
             AttendanceRegisterResponse attendanceRegisterResponse = musterRollServiceUtil
                     .fetchAttendanceRegister(musterRollRequest.getMusterRoll(), musterRollRequest.getRequestInfo());
             List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();

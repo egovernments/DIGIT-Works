@@ -92,7 +92,9 @@ public class MusterRollValidator {
 
         validateRequestInfo(requestInfo);
         validateCreateMusterRollRequest(musterRoll);
-        validateWorkFlow(workflow, errorMap);
+        if(serviceConfiguration.isMusterRollWorkflowEnabled()) {
+            validateWorkFlow(workflow, errorMap);
+        }
 
         //split the tenantId and validate tenantId
         String tenantId = musterRoll.getTenantId();
@@ -121,7 +123,9 @@ public class MusterRollValidator {
         Workflow workflow = musterRollRequest.getWorkflow();
 
         validateRequestInfo(requestInfo);
-        validateWorkFlow(workflow, errorMap);
+        if(serviceConfiguration.isMusterRollWorkflowEnabled()) {
+            validateWorkFlow(workflow, errorMap);
+        }
         validateUpdateMusterRollRequest(musterRoll);
 
         //split the tenantId and validate tenantId
