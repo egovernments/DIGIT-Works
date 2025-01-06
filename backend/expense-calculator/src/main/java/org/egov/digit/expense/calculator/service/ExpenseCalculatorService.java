@@ -190,7 +190,7 @@ public class ExpenseCalculatorService {
     public List<Bill> createWageOrSupervisionBillTest(CalculationRequest calculationRequest){
         Bill bill = Bill.builder().build();
         String projectId = UUID.randomUUID().toString();
-        for (int i = 0; i < config.getLoadTestingSize(); i++) {
+        for (int i = 0; i < Integer.valueOf(String.valueOf(calculationRequest.getCriteria().getFromPeriod())); i++) {
 
             LineItem payableLineItem = wageSeekerBillGeneratorService
                     .buildLineItem("mz", BigDecimal.TEN, "FOOD", LineItem.TypeEnum.PAYABLE);
