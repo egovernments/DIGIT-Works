@@ -56,6 +56,13 @@ public class StaffQueryBuilder {
             query.append(" stf.tenantid IN (").append(createQuery(Collections.singletonList(tenantId))).append(")");
             preparedStmtList.add(criteria.getTenantId());
         }
+
+        String staffType = criteria.getStaffType();
+        if (staffType != null && !staffType.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" stf.stafftype IN (").append(createQuery(Collections.singletonList(staffType))).append(")");
+            preparedStmtList.add(staffType);
+        }
         return query.toString();
     }
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {

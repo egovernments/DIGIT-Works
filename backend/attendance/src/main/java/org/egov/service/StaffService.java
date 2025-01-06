@@ -197,4 +197,21 @@ public class StaffService {
         return registerIdToFirstStaffMap;
     }
 
+    public Map<String, StaffPermission> fetchRegisterIdtoFirstOwnerStaffMap(String tenantId, List<String> registerIds) {
+        Map<String, StaffPermission> registerIdToFirstStaffMap = new HashMap<>(); //mapping of registerId to the first StaffPermission for each unique registerId
+
+        for ( String registerId  : registerIds) {
+            if (!registerIdToFirstStaffMap.containsKey(registerId)) {
+                StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().tenantId(tenantId).registerIds(Collections.singletonList(registerId)).staffType("OWNER").build();
+
+                List<StaffPermission> staffPermissionList = staffRepository.getFirstStaff(staffSearchCriteria);
+
+                if (!staffPermissionList.isEmpty()) {
+                    registerIdToFirstStaffMap.put(registerId, staffPermissionList.get(0));
+                }
+            }
+        }
+        return registerIdToFirstStaffMap;
+    }
+
 }
