@@ -9,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -181,10 +182,10 @@ public class BillExcelGenerate {
 
 
         // Adjust column widths
-        for (int i = 0; i < columns.length; i++) {
-//            sheet.autoSizeColumn(i);
-            sheet.setColumnWidth(i, 20 * 256);
+        for (int i = 0; i < BILL_EXCEL_COLUMN_WIDTH.length; i++) {
+            sheet.setColumnWidth(i, BILL_EXCEL_COLUMN_WIDTH[i]);
         }
+
         sheet.protectSheet(campaignName);
         /*
         // This code is for local testing, it Saves the file to the specified path
