@@ -407,8 +407,13 @@ public class AttendeeServiceValidator {
                 .collect(Collectors.toList());
 
         //creating a register Id to First Staff Map
-        Map<String, StaffPermission> registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstOwnerStaffMap(tenantId,registerIds);
-
+        Map<String, StaffPermission> registerIdToFirstStaffMap = Map.of();
+        if(config.isRegisterFirstOwnerStaffEnabled()) {
+            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstOwnerStaffMap(tenantId,registerIds);
+        }
+        else {
+            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId,registerIds);
+        }
 
         //Fetching all the attendees's uuids for hrms search
         List<String> userUuids = attendeeCreateRequest.getAttendees().stream()

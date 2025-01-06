@@ -113,6 +113,9 @@ public class AttendanceServiceConfiguration {
     @Value("${attendance.register.first.staff.insert.enabled:true}")
     private Boolean registerFirstStaffInsertEnabled;
 
+    @Value(("${attendance.register.first.owner.staff.enabled:false}"))
+    private boolean registerFirstOwnerStaffEnabled;
+
     //HRMS Service
     @Value("${egov.hrms.host}")
     private String hrmsHost;
