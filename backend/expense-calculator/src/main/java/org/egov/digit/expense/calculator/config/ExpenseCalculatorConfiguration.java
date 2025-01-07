@@ -268,6 +268,8 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${report.error.queue.topic}")
 	private String reportErrorQueueTopic;
+	@Value("${report.beneficiary.identifier.type}")
+	private String reportBeneficiaryIdentifierType;
 
 	@Value("${egov.boundary.host}")
 	private String boundaryServiceHost;

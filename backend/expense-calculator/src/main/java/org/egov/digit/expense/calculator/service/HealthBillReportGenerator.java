@@ -3,6 +3,7 @@ package org.egov.digit.expense.calculator.service;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Address;
+import org.egov.common.models.individual.Identifier;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Skill;
 import org.egov.common.models.project.ProjectResponse;
@@ -202,6 +203,14 @@ public class HealthBillReportGenerator {
                         // Found the first non-deleted address
                         reportBillDetail.setLocality(address.getLocality().getCode()); // Set locality code
                         break; // Exit the loop once the first non-deleted address is found
+                    }
+                }
+            }
+            if (individual.getIdentifiers() != null) {
+                for (Identifier identifier : individual.getIdentifiers()) {
+                    if (identifier != null && identifier.getIsDeleted() != null && !identifier.getIsDeleted() && identifier.getIdentifierType().equals(config.getReportBeneficiaryIdentifierType())) {
+                        reportBillDetail.setIdNumber(identifier.getIdentifierId());
+                        break;
                     }
                 }
             }
