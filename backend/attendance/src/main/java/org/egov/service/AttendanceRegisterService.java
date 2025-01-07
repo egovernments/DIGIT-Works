@@ -186,7 +186,7 @@ public class AttendanceRegisterService {
                   .build();
 
                 List<Project> projects = projectServiceUtil.getProject(
-                  searchCriteria.getTenantId(), projectSearch, requestInfoWrapper.getRequestInfo(), true, true
+                  searchCriteria.getTenantId(), projectSearch, requestInfoWrapper.getRequestInfo(), searchCriteria.isChildrenRequired(), true
                 );
 
                 List<String> referenceId = new ArrayList<>();
