@@ -314,7 +314,7 @@ public class ExpenseCalculatorService {
         String parentProjectId = project.getProjectHierarchy();
         if (project.getProjectHierarchy() == null) {
             parentProjectId = project.getId();
-        } else {
+        } else if (project.getProjectHierarchy().contains(".")) {
             parentProjectId = parentProjectId.split("\\.")[0];
         }
         // Fetching mdms data for campaign id
