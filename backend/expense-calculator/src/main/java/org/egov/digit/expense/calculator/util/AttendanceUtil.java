@@ -34,7 +34,6 @@ public class AttendanceUtil {
                                                             String localityCode, boolean isChildrenRequired, Integer offset) {
         log.info("Fetching attendance register with tenantId::" + tenantId
                 + " and offset::" + offset + " and batch size:: " +config.getRegisterBatchSize());
-        String id = requestInfo.getUserInfo().getUuid();
 
         StringBuilder uri = new StringBuilder();
         uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());

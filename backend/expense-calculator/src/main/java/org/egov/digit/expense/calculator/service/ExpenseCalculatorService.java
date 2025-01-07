@@ -312,7 +312,9 @@ public class ExpenseCalculatorService {
         log.info("Create wage bill for musterRollIds :"+criteria.getMusterRollId());
         Bill bill = Bill.builder().totalAmount(BigDecimal.ZERO).billDetails(new ArrayList<>()).build();
         String parentProjectId = project.getProjectHierarchy();
-        if (parentProjectId.contains(".")) {
+        if (project.getProjectHierarchy() == null) {
+            parentProjectId = project.getId();
+        } else {
             parentProjectId = parentProjectId.split("\\.")[0];
         }
         // Fetching mdms data for campaign id
