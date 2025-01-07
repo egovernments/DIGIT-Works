@@ -248,6 +248,10 @@ public class ExpenseCalculatorService {
                 calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId(),
                 calculationRequest.getCriteria().getLocalityCode());
 
+        if (projectResponse == null || projectResponse.getProject() == null) {
+            log.error("Project Response null");
+            throw new CustomException("PROJECT_RESPONSE_NULL", "Project response null");
+        }
         if (projectResponse.getProject().isEmpty()) {
             log.error("Project not found");
             throw new CustomException("PROJECT_NOT_FOUND", "Project not found");
