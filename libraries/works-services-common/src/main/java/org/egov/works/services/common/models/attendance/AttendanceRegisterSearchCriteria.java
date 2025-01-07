@@ -69,6 +69,9 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("reviewStatus")
     private String reviewStatus;
 
+    @JsonProperty("isChildrenRequired")
+    private boolean isChildrenRequired = false;
+
     public enum SortOrder {
         ASC,
         DESC
