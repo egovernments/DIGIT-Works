@@ -55,7 +55,7 @@ public class HealthBillReportGenerator {
 
     public BillReportRequest generateHealthBillReportRequest(BillRequest billRequest) {
         try {
-            updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null);
+//            updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null);
             List<ReportBillDetail> reportBillDetail = getReportBillDetail(billRequest.getRequestInfo(), billRequest.getBill());
             BillReportRequest billReportRequest = enrichReportRequest(billRequest, reportBillDetail); //enrichReportRequest
 
