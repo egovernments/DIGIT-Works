@@ -147,6 +147,15 @@ public class MusterRollServiceConfiguration {
     @Value("${musterroll.validate.start.date.monday.enabled:true}")
     private boolean validateStartDateMondayEnabled;
 
+    @Value("${musterroll.validate.attendance.register.enabled:false}")
+    private boolean validateAttendanceRegisterEnabled;
+
+    @Value("${musterroll.set.default.duration.enabled:false}")
+    private boolean musterRollSetDefaultDurationEnabled;
+
+    @Value("${musterroll.default.duration.days:6}")
+    private int musterRollDefaultDuration;
+
     @Value("${musterroll.add.bank.account.details.enabled:true}")
     private boolean addBankAccountDetails;
 
