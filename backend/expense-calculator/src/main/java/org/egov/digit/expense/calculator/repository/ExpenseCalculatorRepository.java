@@ -84,12 +84,25 @@ public class ExpenseCalculatorRepository {
 
     public List<BillStatus> getBillStatusByReferenceId(String referenceId) {
         String sql = "SELECT * FROM eg_expense_bill_gen_status " +
-                "WHERE referenceid = :referenceId";
+                " WHERE referenceid = :referenceId ";
 
         Map<String, Object> params = new HashMap<>();
         params.put("referenceId", referenceId);
 
-        return namedParameterJdbcTemplate.queryForList(sql, params, BillStatus.class);
+        List<Map<String, Object>> objectMap = namedParameterJdbcTemplate.queryForList(sql, params);
+
+        List<BillStatus> billStatusList = new ArrayList<>(); //BillStatus
+        for (Map<String, Object> row : objectMap) {
+            BillStatus billStatus = BillStatus.builder()
+                    .id((String) row.get("id"))
+                    .referenceId((String) row.get("referenceid"))
+                    .tenantId((String) row.get("tenantid"))
+                    .status((String) row.get("status")).build();
+
+            billStatusList.add(billStatus);
+        }
+
+        return billStatusList;
     }
 
 
