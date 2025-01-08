@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.models.project.Project;
 import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
@@ -61,9 +61,10 @@ public class ExpenseCalculatorService {
     private final ProjectUtil projectUtil;
     private final AttendanceUtil attendanceUtil;
     private final BoundaryUtil boundaryUtil;
+    private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil, BoundaryUtil boundaryUtil) {
+    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil, BoundaryUtil boundaryUtil, ResponseInfoFactory responseInfoFactory) {
         this.expenseCalculatorProducer = expenseCalculatorProducer;
         this.expenseCalculatorServiceValidator = expenseCalculatorServiceValidator;
         this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
@@ -84,6 +85,7 @@ public class ExpenseCalculatorService {
         this.projectUtil = projectUtil;
         this.attendanceUtil = attendanceUtil;
         this.boundaryUtil = boundaryUtil;
+        this.responseInfoFactory = responseInfoFactory;
     }
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
@@ -188,6 +190,8 @@ public class ExpenseCalculatorService {
         return purchaseBillGeneratorService.updatePurchaseBill(requestInfo,providedPurchaseBill,headCodes,applicableCharges,metaInfo);
     }
     public List<Bill> createWageOrSupervisionBillTest(CalculationRequest calculationRequest){
+        Long startTime = System.currentTimeMillis();
+        log.info("Start time :: " + startTime);
         Bill bill = Bill.builder().build();
         String projectId = UUID.randomUUID().toString();
         for (int i = 0; i < Integer.valueOf(String.valueOf(calculationRequest.getCriteria().getFromPeriod())); i++) {
@@ -238,11 +242,72 @@ public class ExpenseCalculatorService {
                 .action(WF_SUBMIT_ACTION_CONSTANT)
                 .build();
         BillResponse billResponse = postCreateBill(calculationRequest.getRequestInfo(), bill,workflow);
+
+        log.info("Time taken to create bill is " + (System.currentTimeMillis() - startTime)/1000 + " seconds");
         return billResponse.getBills();
     }
 
+    public BillResponse createWageBillHealth(CalculationRequest calculationRequest){
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
+        if (config.isBillGenerationAsyncEnabled()) {
+            ProjectResponse projectResponse = projectUtil.getProjectDetails(calculationRequest.getRequestInfo(),
+                    calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId(),
+                    calculationRequest.getCriteria().getLocalityCode());
+
+            if (projectResponse == null || projectResponse.getProject() == null) {
+                log.error("Project Response null");
+                throw new CustomException("PROJECT_RESPONSE_NULL", "Project response null");
+            }
+            if (projectResponse.getProject().isEmpty()) {
+                log.error("Project not found");
+                throw new CustomException("PROJECT_NOT_FOUND", "Project not found");
+            }
+
+            String referenceId = null;
+            if (projectResponse.getProject().get(0).getProjectHierarchy() == null) {
+                referenceId = projectResponse.getProject().get(0).getId();
+            } else {
+                referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
+            }
+
+
+            List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+
+            if (!billStatuses.isEmpty()) {
+                if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains("SUCCESSFUL")) {
+                    return BillResponse.builder().responseInfo(responseInfo).statusCode("SUCCESSFUL").build();
+                }
+            } else if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains("INITIATED")) {
+                BillResponse billResponse = billUtils.searchBills(calculationRequest, referenceId);
+                BillResponse billResponse1 = BillResponse.builder()
+                        .responseInfo(responseInfo)
+                        .bills(new ArrayList<>())
+                        .build();
+                if (billResponse.getBills().isEmpty()) {
+                    billResponse1.setStatusCode("INITIATED");
+                    return billResponse1;
+                } else {
+                    BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals("INITIATED")).get();
+                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), "SUCCESSFUL", null);
+                    billResponse1.setStatusCode("SUCCESSFUL");
+                    return billResponse1;
+                }
+            }
+
+            expenseCalculatorRepository.createBillStatus(UUID.randomUUID().toString(),
+                    calculationRequest.getCriteria().getTenantId(), referenceId,
+                    "INITIATED", null);
+
+            expenseCalculatorProducer.push(config.getBillGenerationAsyncTopic(), calculationRequest);
+            return BillResponse.builder().responseInfo(responseInfo).statusCode("INITIATED").build();
+        } else {
+            return BillResponse.builder().responseInfo(responseInfo)
+                    .bills(createWageOrSupervisionBills(calculationRequest)).statusCode("INITIATED").build();
+
+        }
+    }
+
     public List<Bill> createWageOrSupervisionBills(CalculationRequest calculationRequest){
-        //TODO send to kafka and return response
 
         ProjectResponse projectResponse = projectUtil.getProjectDetails(calculationRequest.getRequestInfo(),
                 calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId(),
@@ -257,54 +322,78 @@ public class ExpenseCalculatorService {
             throw new CustomException("PROJECT_NOT_FOUND", "Project not found");
         }
 
-        // Fetch all boundaries for that particular district and projectId with children
-        List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(RequestInfoWrapper.builder()
-                .requestInfo(calculationRequest.getRequestInfo()).build(), calculationRequest.getCriteria().getLocalityCode(),
-                calculationRequest.getCriteria().getTenantId(), false);
+        try {
+            // Fetch all boundaries for that particular district and projectId with children
+            List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(RequestInfoWrapper.builder()
+                            .requestInfo(calculationRequest.getRequestInfo()).build(), calculationRequest.getCriteria().getLocalityCode(),
+                    calculationRequest.getCriteria().getTenantId(), false);
 
-        if (boundaries.isEmpty()) {
-            log.error("Boundary not found");
-            throw new CustomException("BOUNDARY_NOT_FOUND", "Boundary not found");
-        }
+            if (boundaries.isEmpty()) {
+                log.error("Boundary not found");
+                throw new CustomException("BOUNDARY_NOT_FOUND", "Boundary not found");
+            }
 
-        // Check if boundary is of district level
-        boolean isBoundaryDistrict = isBoundaryDistrictLevel(boundaries.get(0));
+            // Check if boundary is of district level
+            boolean isBoundaryDistrict = isBoundaryDistrictLevel(boundaries.get(0));
 
-        expenseCalculatorServiceValidator.validateCalculatorCalculateRequest(calculationRequest, projectResponse.getProject().get(0));
-        RequestInfo requestInfo = calculationRequest.getRequestInfo();
-        Criteria criteria = calculationRequest.getCriteria();
-        List<Bill> bills = null;
-        Map<String, String> metaInfo = new HashMap<>();
+            expenseCalculatorServiceValidator.validateCalculatorCalculateRequest(calculationRequest, projectResponse.getProject().get(0));
+            RequestInfo requestInfo = calculationRequest.getRequestInfo();
+            Criteria criteria = calculationRequest.getCriteria();
+            List<Bill> bills = null;
+            Map<String, String> metaInfo = new HashMap<>();
 
-        if((criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) || config.isHealthIntegrationEnabled()) {
-            bills = createWageBill(requestInfo, criteria, metaInfo, projectResponse.getProject().get(0), isBoundaryDistrict);
-        } else {
-            bills = createSupervisionBill(requestInfo, criteria, metaInfo);
-        }
+            if ((criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) || config.isHealthIntegrationEnabled()) {
+                bills = createWageBill(requestInfo, criteria, metaInfo, projectResponse.getProject().get(0), isBoundaryDistrict);
+            } else {
+                bills = createSupervisionBill(requestInfo, criteria, metaInfo);
+            }
 
-        BillResponse billResponse = null;
-        List<Bill> submittedBills = new ArrayList<>();
-        Workflow workflow = Workflow.builder()
-                .action(WF_SUBMIT_ACTION_CONSTANT)
-                .build();
-        for(Bill bill : bills) {
-            billResponse = postCreateBill(requestInfo, bill,workflow);
-            if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
-            {
-                log.info("Bill successfully posted to expense service. Reference ID " + bill.getReferenceId());
-                List<Bill> respBills = billResponse.getBills();
-                submittedBills.addAll(respBills);
+            BillResponse billResponse = null;
+            List<Bill> submittedBills = new ArrayList<>();
+            Workflow workflow = Workflow.builder()
+                    .action(WF_SUBMIT_ACTION_CONSTANT)
+                    .build();
+            for (Bill bill : bills) {
+                billResponse = postCreateBill(requestInfo, bill, workflow);
+                if (SUCCESSFUL_CONSTANT.equalsIgnoreCase(billResponse.getResponseInfo().getStatus())) {
+                    log.info("Bill successfully posted to expense service. Reference ID " + bill.getReferenceId());
+                    List<Bill> respBills = billResponse.getBills();
+                    submittedBills.addAll(respBills);
 //                if(respBills != null && !respBills.isEmpty()) {
 //                    log.info("Persisting meta for bill reference ID: " + bill.getReferenceId());
 //                    persistMeta(respBills,metaInfo);
 //                    submittedBills.addAll(respBills);
 //                }
+                } else {
+                    log.info("Bill posting failed for bill " + bill.getBusinessService() + " reference ID " + bill.getReferenceId());
+                }
             }
-            else {
-                log.info("Bill posting failed for bill " + bill.getBusinessService() + " reference ID " + bill.getReferenceId());
+            return submittedBills;
+        } catch (CustomException customException) {
+            String referenceId = null;
+            if (projectResponse.getProject().get(0).getProjectHierarchy() == null) {
+                referenceId = projectResponse.getProject().get(0).getId();
+            } else {
+                referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
             }
+            List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            if (!billStatuses.isEmpty()) {
+                BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals("INITIATED")).get();
+                if (billStatus != null)
+                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), "FAILED", customException.getCode() + " " + customException.getMessage());
+            }
+
+        } catch (Exception e) {
+            String referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
+            List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            if (!billStatuses.isEmpty()) {
+                BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals("INITIATED")).get();
+                if (billStatus != null)
+                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), "FAILED",  e.getMessage());
+            }
+
         }
-        return submittedBills;
+        return new ArrayList<>();
     }
 
     private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo,

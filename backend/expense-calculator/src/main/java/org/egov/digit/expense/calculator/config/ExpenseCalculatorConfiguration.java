@@ -282,4 +282,11 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${register.batch.size}")
 	private Integer registerBatchSize;
+
+	@Value("${bill.generation.async.enabled}")
+	private boolean isBillGenerationAsyncEnabled;
+
+	@Value("${bill.generation.async.topic}")
+	private String billGenerationAsyncTopic;
+
 }

@@ -5,13 +5,16 @@ import org.egov.digit.expense.calculator.repository.rowmapper.BillRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorBillRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorMusterRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorProjectRowMapper;
+import org.egov.digit.expense.calculator.util.BillStatus;
 import org.egov.digit.expense.calculator.web.models.BillMapper;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,16 +32,66 @@ public class ExpenseCalculatorRepository {
     private final ExpenseCalculatorQueryBuilder queryBuilder;
 
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
-    public ExpenseCalculatorRepository(ExpenseCalculatorMusterRowMapper musterRowMapper, ExpenseCalculatorBillRowMapper billRowMapper, ExpenseCalculatorProjectRowMapper projectRowMapper, BillRowMapper billMapper, ExpenseCalculatorQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+    public ExpenseCalculatorRepository(ExpenseCalculatorMusterRowMapper musterRowMapper, ExpenseCalculatorBillRowMapper billRowMapper, ExpenseCalculatorProjectRowMapper projectRowMapper, BillRowMapper billMapper, ExpenseCalculatorQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.musterRowMapper = musterRowMapper;
         this.billRowMapper = billRowMapper;
         this.projectRowMapper = projectRowMapper;
         this.billMapper = billMapper;
         this.queryBuilder = queryBuilder;
         this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
+
+    public void createBillStatus(String id, String tenantId, String referenceId, String status, String error) {
+        String sql = "INSERT INTO eg_expense_bill_gen_status (id, tenantid, referenceid, status, error) " +
+                "VALUES (:id, :tenantId, :referenceId, :status, :error)";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        params.put("tenantId", tenantId);
+        params.put("referenceId", referenceId);
+        params.put("status", status);
+        params.put("error", error);
+
+        namedParameterJdbcTemplate.update(sql, params);
+    }
+
+    public void updateBillStatus(String id, String status, String error) {
+        String sql = "UPDATE eg_expense_bill_gen_status " +
+                "SET status = :status, error = :error " +
+                "WHERE id = :id";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        params.put("status", status);
+        params.put("error", error);
+
+        namedParameterJdbcTemplate.update(sql, params);
+    }
+
+
+    public List<String> searchBillStatusByReferenceId(String referenceId) {
+        String sql = "SELECT status FROM eg_expense_bill_gen_status WHERE referenceid = :referenceId LIMIT 1";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("referenceId", referenceId);
+
+        return namedParameterJdbcTemplate.queryForList(sql, params, String.class);
+    }
+
+    public List<BillStatus> getBillStatusByReferenceId(String referenceId) {
+        String sql = "SELECT * FROM eg_expense_bill_gen_status " +
+                "WHERE referenceid = :referenceId";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("referenceId", referenceId);
+
+        return namedParameterJdbcTemplate.queryForList(sql, params, BillStatus.class);
+    }
+
 
 
     /**
