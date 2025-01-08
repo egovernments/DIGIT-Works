@@ -226,11 +226,17 @@ public class AttendanceRegisterService {
             // Fetch and filer staff members based on the supplied search criteria.
             log.info("Fetch all staff members based on the supplied search criteria");
             List<StaffPermission> staffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
+
+            String staffId = searchCriteria.getStaffId();
+            searchCriteria.setStaffId(null);
+            List<StaffPermission> allStaffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
             // Create a map with key as registerId and corresponding staff list as value
             Map<String, List<StaffPermission>> registerIdStaffMapping = staffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
+            Map<String, List<StaffPermission>> registerIdAllStaffMapping = allStaffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
+            // String ownerName = ((ObjectNode) allStaffMembers.stream().filter(staff -> staff.getStaffType() == StaffType.OWNER).findFirst().get().getAdditionalDetails()).get("")
 
-            enrichOwnerNameOfAttendanceRegister(registerIdStaffMapping);
-
+            enrichOwnerNameOfAttendanceRegister(registerIdStaffMapping, registerIdAllStaffMapping);
+            searchCriteria.setStaffId(staffId);
             // If staffId present in search criteria then update the registerIDToSearch list with new set of registerIds
             if (searchCriteria.getStaffId() != null){
                 registerIdsToSearch.clear();
@@ -267,9 +273,9 @@ public class AttendanceRegisterService {
         if(attendanceServiceConfiguration.getAttendanceRegisterReviewStatusEnabled()) attendanceRegisterResponse.setStatusCount(counts);
     }
 
-    private void enrichOwnerNameOfAttendanceRegister(Map<String, List<StaffPermission>> registerIdStaffMapping) {
+    private void enrichOwnerNameOfAttendanceRegister(Map<String, List<StaffPermission>> registerIdStaffMapping, Map<String, List<StaffPermission>> registerIdAllStaffMapping) {
         String ownerName = null;
-        for (Map.Entry<String, List<StaffPermission>> entry : registerIdStaffMapping.entrySet()) {
+        for (Map.Entry<String, List<StaffPermission>> entry : registerIdAllStaffMapping.entrySet()) {
             String registerId = entry.getKey();
             List<StaffPermission> staffPermissions = entry.getValue();
 
@@ -291,6 +297,11 @@ public class AttendanceRegisterService {
                     }
                 }
             }
+        }
+
+        for (Map.Entry<String, List<StaffPermission>> entry : registerIdStaffMapping.entrySet()) {
+            String registerId = entry.getKey();
+            List<StaffPermission> staffPermissions = entry.getValue();
 
             for (StaffPermission staffPermission : staffPermissions) {
                 Object additionalDetails = staffPermission.getAdditionalDetails();
