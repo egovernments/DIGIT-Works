@@ -1,6 +1,7 @@
 package org.egov.service;
 
 import ch.qos.logback.core.BasicStatusManager;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -228,6 +229,8 @@ public class AttendanceRegisterService {
             // Create a map with key as registerId and corresponding staff list as value
             Map<String, List<StaffPermission>> registerIdStaffMapping = staffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
 
+            enrichOwnerNameOfAttendanceRegister(registerIdStaffMapping);
+
             // If staffId present in search criteria then update the registerIDToSearch list with new set of registerIds
             if (searchCriteria.getStaffId() != null){
                 registerIdsToSearch.clear();
@@ -262,6 +265,48 @@ public class AttendanceRegisterService {
         attendanceRegisterResponse.setTotalCount(counts.get(TOTAL_COUNT));
         counts.remove(TOTAL_COUNT);
         if(attendanceServiceConfiguration.getAttendanceRegisterReviewStatusEnabled()) attendanceRegisterResponse.setStatusCount(counts);
+    }
+
+    private void enrichOwnerNameOfAttendanceRegister(Map<String, List<StaffPermission>> registerIdStaffMapping) {
+        String ownerName = null;
+        for (Map.Entry<String, List<StaffPermission>> entry : registerIdStaffMapping.entrySet()) {
+            String registerId = entry.getKey();
+            List<StaffPermission> staffPermissions = entry.getValue();
+
+            // Iterate through each StaffPermission in the list
+            for (StaffPermission staffPermission : staffPermissions) {
+                // Check if the staffType is OWNER
+                if (staffPermission.getStaffType() == StaffType.OWNER) {
+                    Object additionalDetails = staffPermission.getAdditionalDetails();
+
+                    if (additionalDetails instanceof ObjectNode) {
+                        // Cast additionalDetails to ObjectNode
+                        ObjectNode detailsNode = (ObjectNode) additionalDetails;
+
+                        // Get the staffName field as a String
+                        if (detailsNode.has("staffName")) {
+                            ownerName = detailsNode.get("staffName").asText();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (StaffPermission staffPermission : staffPermissions) {
+                Object additionalDetails = staffPermission.getAdditionalDetails();
+
+                if (additionalDetails instanceof ObjectNode) {
+                    // Cast additionalDetails to ObjectNode
+                    ObjectNode detailsNode = (ObjectNode) additionalDetails;
+
+                    // Add or update the ownerName field
+                    detailsNode.put("ownerName", ownerName);
+
+                    // Set the updated ObjectNode back
+                    staffPermission.setAdditionalDetails(detailsNode);
+                }
+            }
+        }
     }
 
     private List<IndividualEntry> fetchAllAttendeesAssociatedToRegisterIds(List<String> registerIdsToSearch, AttendanceRegisterSearchCriteria searchCriteria) {
