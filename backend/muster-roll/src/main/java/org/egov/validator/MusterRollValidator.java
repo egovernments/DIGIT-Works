@@ -98,7 +98,7 @@ public class MusterRollValidator {
         validateRequestInfo(requestInfo);
         validateCreateMusterRollRequest(musterRoll);
         if(serviceConfiguration.isValidateAttendanceRegisterEnabled()) {
-            validateAndEnrichAttendance(musterRoll, requestInfo);
+            validateAndEnrichAttendance(musterRoll, requestInfo, true);
         }
         if(serviceConfiguration.isMusterRollWorkflowEnabled()) {
             validateWorkFlow(workflow, errorMap);
@@ -132,7 +132,7 @@ public class MusterRollValidator {
 
         validateRequestInfo(requestInfo);
         if(serviceConfiguration.isValidateAttendanceRegisterEnabled()) {
-            validateAndEnrichAttendance(musterRoll, requestInfo);
+            validateAndEnrichAttendance(musterRoll, requestInfo, false);
         }
         if(serviceConfiguration.isMusterRollWorkflowEnabled()) {
             validateWorkFlow(workflow, errorMap);
@@ -311,7 +311,7 @@ public class MusterRollValidator {
 
     }
 
-    public void validateAndEnrichAttendance(MusterRoll musterRoll, RequestInfo requestInfo) {
+    public void validateAndEnrichAttendance(MusterRoll musterRoll, RequestInfo requestInfo, boolean isCreate) {
         log.info("MusterRollValidator::validateAndEnrichAttendance");
         AttendanceRegisterResponse attendanceRegisterResponse = musterRollServiceUtil
                 .fetchAttendanceRegister(musterRoll, requestInfo);
@@ -327,7 +327,7 @@ public class MusterRollValidator {
         // Calculate inclusive difference in days
         long inclusiveDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
         log.info("Total number of days in attendance register: " + inclusiveDays);
-        if (musterRoll.getIndividualEntries().stream()
+        if (!isCreate && musterRoll.getIndividualEntries().stream()
                 .anyMatch(entry ->
                         ((entry.getModifiedTotalAttendance() != null
                                 && inclusiveDays < entry.getModifiedTotalAttendance().longValue()))
