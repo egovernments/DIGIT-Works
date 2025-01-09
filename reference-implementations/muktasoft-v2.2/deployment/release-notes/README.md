@@ -1,31 +1,30 @@
 ---
-description: MUKTASoft v2.1
+description: MUKTASoft v2.2
 ---
 
 # Release Notes
 
 ## Release Summary
 
-The MUKTASoft 2.1 release offers multiple new features and enhancements including rate analysis, estimate templates, Kibana dashboard and mobile application.&#x20;
+The MUKTASoft v2.2 release introduces a series of data privacy-related enhancements and changes to ensure compliance, security, and user trust in managing sensitive information.
 
 ## Release Highlights
 
-* Rate Analysis - determines the cost of a Schedule of Rates (SOR), a unit of work, and is published by the Public Works Department (PWD).
-* Estimate Template - a set of SORs required to prepare an estimate for a specific type of work, allowing for easy reuse when preparing estimates for similar projects.
-* Analysis Statements - break down the estimated costs of all Schedule of Rates (SORs) into labour, material, and machinery - for better planning, budgeting, and resource allocation.
-* Utilization Statements – break down work costs from the measurement book for all Schedule of Rates (SORs) into labour, materials, and machinery, to validate wages, supervision, and purchase payments.
-* Mobile Application (Measurement Book) - mobile version of the measurement book, designed to help users capture measurements directly from the site and submit them for verification and approval.
-* Kibana Dashboard - developed with additional KPIs to help stakeholders track and monitor the progress of the MUKTA scheme.
-* The MUKTA CBO App has been enhanced with an employee login facility and renamed as the MUKTASoft App.
-* All the skills (MDMS v1) have been migrated into the Schedule of Rates registry (MDMS v2) as labor SORs.&#x20;
+1. A privacy policy notice has been added to the login page, requiring user acceptance before proceeding.&#x20;
+2. Bank account details have been removed from the "View Bill Details" page.&#x20;
+3. Bank account details and Aadhaar numbers are no longer displayed on the "View Muster Roll Detail" page for both web and mobile applications.&#x20;
+4. Account numbers and IFSC codes are masked for users without the required access permissions.&#x20;
+5. In the "View and Edit Wage Seeker's Details" section, all personally identifiable information (PII) is masked for unauthorized users.&#x20;
+6. In the "View and Edit Organization's Details" section, all PII is masked for users without access rights.&#x20;
+7. PII has been removed or masked in the "View Engaged Wage Seeker Details" section.&#x20;
+8. Organization profile pages now have masked PII data.&#x20;
+9. On the "Track Attendance" page, PII has been removed or masked.&#x20;
+10. When searching for wage seekers to engage in projects, the guardian's name is now displayed alongside the wage seeker's name.&#x20;
+11. PII and sensitive information have been removed from the additional details in each service.
 
 ## New Features/Enhancements
 
-<table><thead><tr><th width="241">Feature</th><th>Description</th></tr></thead><tbody><tr><td><strong>Rate Analysis</strong></td><td>Handles rate analysis features</td></tr><tr><td>Create Rate Analysis</td><td>This feature allows users to create rate analyses for given work SORs</td></tr><tr><td>View Rate Analysis</td><td>Users can search for specific SORs and view the rate analysis associated with it</td></tr><tr><td>Edit Rate Analysis</td><td>Users can edit the rate analysis</td></tr><tr><td><strong>Revision of Rate</strong></td><td>Manage functions related to revision of rates</td></tr><tr><td>Revise rate for selected</td><td>Users can revise the rates for selected SORs</td></tr><tr><td>Revise rate for all</td><td>Users can revise the rate for all the SORs without selecting any specific SOR</td></tr><tr><td>Show Job</td><td>Users can view the Job scheduled for rate analysis</td></tr><tr><td><strong>Analysis Statements</strong></td><td>Allows users to manage analysis statements</td></tr><tr><td>View Analysis Statements</td><td>Users can view analysis statements from the estimate view details </td></tr><tr><td>Download Analysis Statements</td><td>It allows the user to download the analysis statements from estimate view details.</td></tr><tr><td>Download Analysis Statement (CBO)</td><td>It allows the CBO to download the analysis statements from work order view details.</td></tr><tr><td><strong>Utilization Statement</strong></td><td>It covers the functionality of utilization statements.</td></tr><tr><td>View Analysis Statements</td><td>It allows the user to view the utilization statements from estimate view details.</td></tr><tr><td>Download Analysis Statements</td><td>It allows the user to download the utilization statements from estimate view details.</td></tr><tr><td><strong>Employee Mobile Application</strong></td><td>It covers the functionality of employee mobile application specifically MB.</td></tr><tr><td>Employee Login</td><td>It allows the user to login into mobile application.</td></tr><tr><td>Work Orders</td><td>It allows the user to search a work order to create measurement book.</td></tr><tr><td>View Details</td><td>It allows the user to view the work order details.</td></tr><tr><td>Create Measurement Book</td><td>It allows the user to create a MB.</td></tr><tr><td>Measurement Books</td><td>It serves the user as MB inbox.</td></tr><tr><td>View Measurement Book</td><td>It allows the user to view MB details.</td></tr><tr><td>Save as Draft Measurement Book</td><td>It allows the user to save MB as draft.</td></tr><tr><td>Submit Measurement Book</td><td>It allows the user to submit MB for verification.</td></tr><tr><td>Verify Measurement Book</td><td>It allows the user to verify MB and send for approval.</td></tr><tr><td>Approve Measurement Book</td><td>It allows the user to approve MB.</td></tr><tr><td><strong>Estimate Template</strong></td><td>It covers the functionality of estimate template.</td></tr><tr><td>Create Template</td><td>It allows the user to create template.</td></tr><tr><td>Search Template</td><td>It allows the user to search template.</td></tr><tr><td>View Template</td><td>It allows the user to view template.</td></tr><tr><td>Modify Template</td><td>It allows the user to modify template.</td></tr><tr><td><strong>Estimate</strong></td><td></td></tr><tr><td>Search and Add Template</td><td>It allows the user to search a template by code or name and add to estimate.</td></tr></tbody></table>
-
-## Kibana Dashboard
-
-<table><thead><tr><th width="214">KPIs</th><th>Description</th></tr></thead><tbody><tr><td><strong>Overview</strong></td><td></td></tr><tr><td>Urban Local Bodies</td><td>Number of Urban Local Bodies (ULBs) on-boarded</td></tr><tr><td>CBOs Registered</td><td>Number of Community-Based Organizations (CBOs) on-boarded</td></tr><tr><td>CBOs Benefited</td><td>Number of Community-Based Organizations (CBOs) that have received at least one work order</td></tr><tr><td>Wage Seekers Registered</td><td>Number of wage seekers on-boarded</td></tr><tr><td>Wage Seekers Benefited</td><td>Number of wage seekers who have been paid at least once through MUKTASoft</td></tr><tr><td>Onboarded Projects</td><td>Number of projects on-boarded</td></tr><tr><td>Estimates Submitted</td><td>Number of estimates prepared and submitted for verification</td></tr><tr><td>Estimates Technically Sanctioned</td><td>Number of estimates technically sanctioned</td></tr><tr><td>Estimates Administratively Approved</td><td>Number of estimates that have received administrative approval</td></tr><tr><td>Work orders issued</td><td>Number of work orders approved and sent to CBOs for acceptance</td></tr><tr><td>Work orders accepted</td><td>Number of work orders approved and accepted by CBOs</td></tr><tr><td>Upcoming Projects</td><td>Number of projects for which work orders accepted by CBOs are pending execution</td></tr><tr><td>Ongoing Projects</td><td>Number of projects currently in execution with at least one muster roll submitted</td></tr><tr><td>Value of work orders issued</td><td>Total value of approved work orders sent to CBOs for acceptance</td></tr><tr><td>Fund Utilized</td><td>Total amount paid for wage, purchase, and supervision bills clearance</td></tr><tr><td>Wage Amount</td><td>Total amount paid for wages</td></tr><tr><td>Purchase Amount</td><td>Total amount paid for purchases</td></tr><tr><td>Supervision Charges</td><td>Total amount paid for supervision charges</td></tr><tr><td><strong>Performance</strong></td><td></td></tr><tr><td>Work orders conversion rate</td><td>Percentage of onboarded projects with approved work orders (Projects work order approved/ Onboarded Projects*100)</td></tr><tr><td>Project execution rate</td><td>Percentage of approved work order value paid to beneficiaries (Total amount paid/ Value of work orders approved * 100)</td></tr><tr><td>Payment success rate</td><td>Percentage of successful payments out of the total payments processed (Number of successful payments/Total number of payments*100)</td></tr><tr><td>Average muster roll approval time (in days)</td><td>Average time in days taken to approve a muster roll (Total time taken to approve the muster rolls/Total muster rolls approved)</td></tr><tr><td>Average payment disbursal time (in days)</td><td>Average time taken to disburse payments to beneficiaries from bill approval (Total time taken for all disbursal / Total number of disbursal)</td></tr><tr><td>Urban Local Body</td><td>Urban Local Body</td></tr><tr><td>Onboarded Projects</td><td>Number of projects onboarded</td></tr><tr><td>Work orders issued</td><td>Number of work orders approved and sent to CBOs for acceptance</td></tr><tr><td>Value of work orders issued</td><td>Total value of approved work orders sent to CBOs for acceptance</td></tr><tr><td>Total amount paid</td><td>Total amount paid for wage, purchase, and supervision bills clearance</td></tr><tr><td>Work orders conversion rate</td><td>Percentage of onboarded projects with approved work orders (Projects work order approved/Onboarded Projects*100)</td></tr><tr><td>Project execution rate</td><td>Percentage of the approved work order value paid to beneficiaries (Total amount paid/Value of approved work orders * 100)</td></tr><tr><td>Average muster roll approval time (in days)</td><td>The average time in days taken to approve a muster roll (Total time taken to approve muster rolls/Total number of muster rolls approved)</td></tr><tr><td>Average payment disbursal time (in days)</td><td>The average time taken to disburse payments to beneficiaries from the approval of bills (Total time taken for all disbursal/Total number of disbursal)</td></tr><tr><td>Payment success rate</td><td>The percentage of payments successful of the total payments processed (Number of successful payments/Total number of payments*100)</td></tr><tr><td><strong>Workflows</strong></td><td></td></tr><tr><td>Estimates</td><td>Workflow status wise break shown in pie chart</td></tr><tr><td>Work Orders</td><td>Workflow status wise break shown in pie chart</td></tr><tr><td>Measurement Books</td><td>Workflow status wise break shown in pie chart</td></tr><tr><td>Muster Rolls</td><td>Workflow status wise break shown in pie chart</td></tr><tr><td>Bills</td><td>Workflow status wise break shown in pie chart</td></tr><tr><td>Payments</td><td>Payment status wise break shown in pie chart</td></tr><tr><td><strong>Payments</strong></td><td></td></tr><tr><td>Fund Utilized</td><td>Total amount paid towards wages, purchases, and supervision bills clearance</td></tr><tr><td>Wage Amount</td><td>Total amount paid towards wages</td></tr><tr><td>Purchase Amount</td><td>Total amount paid towards purchases</td></tr><tr><td>Supervision Charges</td><td>Total amount paid towards supervision charges</td></tr><tr><td>Monthly head wise payments</td><td>Monthly breakdown of the total paid amount, categorized by bill types: wage, purchase, and supervision</td></tr><tr><td>Weekly head wise payments</td><td>Weekly breakdown of the total paid amount, categorized by bill types: wage, purchase, and supervision</td></tr><tr><td>Monthly payment success rate</td><td>Monthly percentage of payments processed successfully out of the total attempted payments</td></tr><tr><td>Weekly payment success rate</td><td>Weekly percentage of payments processed successfully out of the total attempted payments</td></tr><tr><td>Monthly payment instruction wise payments</td><td>Monthly breakdown of total successful payment amount categorised by payment instruction type, i.e., original and revised payment instructions</td></tr><tr><td>Weekly payment instruction wise payments</td><td>Weekly breakdown of total successful payment amount categorised by payment instruction type, i.e., original and revised payment instructions</td></tr><tr><td>Monthly gender wise payments</td><td>Monthly breakdown of total successful payment amount processed categorised by the gender of beneficiaries</td></tr><tr><td>Weekly gender wise payments</td><td>Weekly breakdown of total successful payment amount processed categorised by the gender of beneficiaries</td></tr><tr><td>Monthly wage seekers registered vs benefited</td><td>Monthly comparison between registered and benefited wage seekers</td></tr><tr><td>Weekly wage seekers registered vs benefited</td><td>Weekly comparison between registered and benefited wage seekers</td></tr><tr><td>Monthly failure reason wise failed payments</td><td>Monthly total failed payments categorised by reasons for failure</td></tr><tr><td>Weekly failure reason wise failed payments</td><td>Weekly total failed payments categorised by reasons for failure</td></tr></tbody></table>
+No new feature has been added.
 
 ## Bug Fixes
 
@@ -33,38 +32,9 @@ None
 
 ## Known Issues
 
-Below are the known issues including Bug-bashes, ULB feedback and ULB-reports.
-
-1. [Technical Debts](https://digit-discuss.atlassian.net/jira/software/c/projects/UCEM/issues/UCEM-5?jql=project%20%3D%20%22UCEM%22%20ORDER%20BY%20created%20DESC)
-2. [Functional Debts ](https://digit-discuss.atlassian.net/browse/UCEM-695)
+None
 
 ## Upcoming Release Features
 
-1. Data Security and Privacy (**New Feature**)
-2. Work review and Project Closure (**New Feature**)
-3. Bulk Purchase: Vendor Invoicing and Payments (Without a purchase order) (**New Feature**)
-4. JIT Integration: Fund Allocation and Utilization Register (**New Feature**)
-5. Allow addition of wage seekers after muster roll submission. (**Enhancements**)
-6. Implement wage seekers search Criteria in the CBO App. (**Enhancements**)
-7. Carry forward differential amounts of MB in muster roll. (**Enhancements**)
-8. Reflect revised estimate costs accurately in view work orders details. (**Enhancements**)
-9. Add CBO search option by various criteria during work order creation by PC MUKTA. (**Enhancements**)
-10. Dashboard: Remaining KPIs, incorporating drill-down and filerts. (**Enhancements**)
-11. Project types to be modified, moving from MDMS v1 to v2 (**Change Request**)
-
-## Related Docs & Links
-
-| Doc links                                                                                                         |
-| ----------------------------------------------------------------------------------------------------------------- |
-| [Product Requirements Document](../../specifications/functional-requirements/product-requirements-document-v2.1/) |
-| [Users Stories](../../specifications/functional-requirements/user-stories/)                                       |
-| [Test Case Document](test-cases.md)                                                                               |
-| [Master Data Template](../configuration/master-data-templates/)                                                   |
-| [Localisation Document](../configuration/localisation.md)                                                         |
-| [Data migration from Works 0.1](../../../../specifications/release-notes/data-migration.md)                       |
-| [IFMS Adapter](../muktasoft-services/ifms-adapter.md)                                                             |
-| [Contract Service](../../../../setup/configure-works/service-configuration/contract.md)                           |
-| [Mukta Dashboard](../configuration/ui-configuration/modules/mukta-dashboard.md)                                   |
-| [Organisation Service](../../../../specifications/functional-specifications/organisation.md)                      |
-| [Workorder UI](../configuration/ui-configuration/modules/workorder/#overview)                                     |
+None
 

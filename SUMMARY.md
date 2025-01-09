@@ -142,7 +142,6 @@
   * [Deployment](reference-implementations/muktasoft-v2.2/deployment/README.md)
     * [Release Notes](reference-implementations/muktasoft-v2.2/deployment/release-notes/README.md)
       * [Service Build Updates](reference-implementations/muktasoft-v2.2/deployment/release-notes/service-build-updates.md)
-      * [MDMS & Configuration Updates](reference-implementations/muktasoft-v2.2/deployment/release-notes/mdms-and-configuration-updates.md)
       * [Data Migration](reference-implementations/muktasoft-v2.2/deployment/release-notes/data-migration.md)
       * [Test Cases](reference-implementations/muktasoft-v2.2/deployment/release-notes/test-cases.md)
     * [Deployment Guide](reference-implementations/muktasoft-v2.2/deployment/deployment-guide.md)
