@@ -1,30 +1,10 @@
----
-description: >-
-  Mukta v2.1 Test Cases consisting of different UI screens & API's the following
-  are the test cases:
----
-
 # Test Cases
 
-**Mukta v2.1 UI & API Test Cases**
+## View Test Cases
 
-1. **UI Test Cases**
-   * Mobile Employee Login Page & Home Page
-   * Mobile Employee Work Order
-   * Mobile:Measurement Book
-   * Moving Skills dataset into SOR&#x20;
-   * search & add template to detailed estimate
-   * CBO-Download Analysis
-2. **UI & API Test Cases:**
-   * Estimate Generate, view and download analysis
-   * MB Generate, view and download analysis statements
-   * Add/Edit, View Rate Analysis
-   * Search SOR
-   * show rate revision jobs
-   * Shedular-Revision of SOR
+{% embed url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0yNC0lqdR-OjZkTjOI7r4OJH5xq52gP30-hjwruJwOGb1Rb0KZQS6LftJZq5ox_XbTjE-enoQYRXO/pubhtml" %}
 
-[Mukta v2.1 UI & API Test Cases](https://docs.google.com/spreadsheets/d/1DAkpdBlVUpSvETwhiy4vfXV82hl-_W2LARlLj6WRxc4/edit?gid=0#gid=0)
+## Download Test Cases
 
-{% embed url="https://docs.google.com/spreadsheets/d/1DAkpdBlVUpSvETwhiy4vfXV82hl-_W2LARlLj6WRxc4/edit?gid=0#gid=0" %}
-Mukta V2,1 Test Cases
-{% endembed %}
+{% file src="../../../../.gitbook/assets/MUKTASoft v2.2  UI Test Cases.xlsx" %}
+

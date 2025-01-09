@@ -144,7 +144,6 @@
       * [Service Build Updates](reference-implementations/muktasoft-v2.2/deployment/release-notes/service-build-updates.md)
       * [MDMS & Configuration Updates](reference-implementations/muktasoft-v2.2/deployment/release-notes/mdms-and-configuration-updates.md)
       * [Data Migration](reference-implementations/muktasoft-v2.2/deployment/release-notes/data-migration.md)
-      * [Gate 2 Release Checklist](reference-implementations/muktasoft-v2.2/deployment/release-notes/gate-2-release-checklist.md)
       * [Test Cases](reference-implementations/muktasoft-v2.2/deployment/release-notes/test-cases.md)
     * [Deployment Guide](reference-implementations/muktasoft-v2.2/deployment/deployment-guide.md)
     * [SMS Adapter Services](reference-implementations/muktasoft-v2.2/deployment/sms-adapter-services/README.md)
