@@ -274,21 +274,21 @@ public class ExpenseCalculatorService {
             List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
 
             if (!billStatuses.isEmpty()) {
-                if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains("SUCCESSFUL")) {
-                    return BillResponse.builder().responseInfo(responseInfo).statusCode("SUCCESSFUL").build();
-                } else if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains("INITIATED")) {
+                if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains(SUCCESSFUL_STATUS)) {
+                    return BillResponse.builder().responseInfo(responseInfo).statusCode(SUCCESSFUL_STATUS).build();
+                } else if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains(INITIATED_STATUS)) {
                     BillResponse billResponse = billUtils.searchBills(calculationRequest, referenceId);
                     BillResponse billResponse1 = BillResponse.builder()
                             .responseInfo(responseInfo)
                             .bills(new ArrayList<>())
                             .build();
                     if (billResponse == null || billResponse.getBills().isEmpty()) {
-                        billResponse1.setStatusCode("INITIATED");
+                        billResponse1.setStatusCode(INPROGRESS_STATUS);
                         return billResponse1;
                     } else {
-                        BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals("INITIATED")).get();
-                        expenseCalculatorRepository.updateBillStatus(billStatus.getId(), "SUCCESSFUL", null);
-                        billResponse1.setStatusCode("SUCCESSFUL");
+                        BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).get();
+                        expenseCalculatorRepository.updateBillStatus(billStatus.getId(), SUCCESSFUL_STATUS, null);
+                        billResponse1.setStatusCode(SUCCESSFUL_STATUS);
                         return billResponse1;
                         }
                 }
@@ -296,13 +296,13 @@ public class ExpenseCalculatorService {
 
             expenseCalculatorRepository.createBillStatus(UUID.randomUUID().toString(),
                     calculationRequest.getCriteria().getTenantId(), referenceId,
-                    "INITIATED", null);
+                    INITIATED_STATUS, null);
 
             expenseCalculatorProducer.push(config.getBillGenerationAsyncTopic(), calculationRequest);
-            return BillResponse.builder().responseInfo(responseInfo).statusCode("INITIATED").build();
+            return BillResponse.builder().responseInfo(responseInfo).statusCode(INITIATED_STATUS).build();
         } else {
             return BillResponse.builder().responseInfo(responseInfo)
-                    .bills(createWageOrSupervisionBills(calculationRequest)).statusCode("INITIATED").build();
+                    .bills(createWageOrSupervisionBills(calculationRequest)).statusCode(INITIATED_STATUS).build();
 
         }
     }
@@ -378,18 +378,18 @@ public class ExpenseCalculatorService {
             }
             List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
             if (!billStatuses.isEmpty()) {
-                BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals("INITIATED")).get();
+                BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).get();
                 if (billStatus != null)
-                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), "FAILED", customException.getCode() + " " + customException.getMessage());
+                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS, customException.getCode() + " " + customException.getMessage());
             }
 
         } catch (Exception e) {
             String referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
             List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
             if (!billStatuses.isEmpty()) {
-                BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals("INITIATED")).get();
+                BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).get();
                 if (billStatus != null)
-                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), "FAILED",  e.getMessage());
+                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS,  e.getMessage());
             }
 
         }

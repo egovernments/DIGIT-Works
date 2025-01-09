@@ -73,4 +73,8 @@ public class ExpenseCalculatorServiceConstants {
     public static final String JSON_PATH_FOR_SOR = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + SOR_CONSTANT;
     public static final String JSON_PATH_FOR_RATES = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + RATES_CONSTANT;
     public static final String JSON_PATH_FOR_HCM = MDMS_RESP_CONSTANT+HCM_CONSTANT + "." + WORKER_RATES;
+    public static final String SUCCESSFUL_STATUS = "SUCCESSFUL";
+    public static final String INITIATED_STATUS = "INITIATED";
+    public static final String INPROGRESS_STATUS = "INPROGRESS";
+    public static final String FAILED_STATUS = "FAILED";
 }
