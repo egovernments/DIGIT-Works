@@ -83,7 +83,7 @@ public class ExpenseCalculatorConsumer {
 				redisService.setCacheForBillReport(request.getBill().getId());
 				healthBillReportGenerator.generateHealthBillReportRequest(request);
 			}
-			else if (System.currentTimeMillis() - request.getBill().getAuditDetails().getCreatedTime() > 30 * 60 * 1000) {
+			else if (System.currentTimeMillis() - request.getBill().getAuditDetails().getCreatedTime() < 30 * 60 * 1000) {
 				// Consumer will retry till 30 minutes
 				Thread.sleep(10 * 1000);
 				producer.push(configs.getReportRetryQueueTopic(), request);
