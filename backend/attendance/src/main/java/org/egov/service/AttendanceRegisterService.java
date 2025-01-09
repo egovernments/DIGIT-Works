@@ -31,7 +31,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.util.AttendanceServiceConstants.TOTAL_COUNT;
+import static org.egov.util.AttendanceServiceConstants.*;
 
 @Service
 @Slf4j
@@ -274,7 +274,7 @@ public class AttendanceRegisterService {
     }
 
     private void enrichOwnerNameOfAttendanceRegister(Map<String, List<StaffPermission>> registerIdStaffMapping, Map<String, List<StaffPermission>> registerIdAllStaffMapping) {
-        String ownerName = null;
+        Map<String, String> registerIdToOwnerName = new HashMap<>();
         for (Map.Entry<String, List<StaffPermission>> entry : registerIdAllStaffMapping.entrySet()) {
             String registerId = entry.getKey();
             List<StaffPermission> staffPermissions = entry.getValue();
@@ -290,8 +290,8 @@ public class AttendanceRegisterService {
                         ObjectNode detailsNode = (ObjectNode) additionalDetails;
 
                         // Get the staffName field as a String
-                        if (detailsNode.has("staffName")) {
-                            ownerName = detailsNode.get("staffName").asText();
+                        if (detailsNode.has(STAFF_NAME)) {
+                            registerIdToOwnerName.put(registerId, detailsNode.get(STAFF_NAME).asText());
                             break;
                         }
                     }
@@ -311,7 +311,7 @@ public class AttendanceRegisterService {
                     ObjectNode detailsNode = (ObjectNode) additionalDetails;
 
                     // Add or update the ownerName field
-                    detailsNode.put("ownerName", ownerName);
+                    detailsNode.put(OWNER_NAME, registerIdToOwnerName.get(registerId));
 
                     // Set the updated ObjectNode back
                     staffPermission.setAdditionalDetails(detailsNode);
