@@ -1,6 +1,7 @@
 package org.egov.digit.expense.calculator.util;
 
 public class BillReportConstraints {
+    public static final String REPORT_BILL_GEN_REDIS_KEY = "BILL_REPORT_{billId}";
     public static final String REPORT_KEY = "reportDetails";
     public static final String REPORT_STATUS_KEY = "status";
     public static final String PDF_REPORT_ID_KEY = "pdfReportId";

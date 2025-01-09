@@ -53,9 +53,18 @@ public class HealthBillReportGenerator {
         this.billUtils = billUtils;
     }
 
+    public boolean billExists(BillRequest billRequest) {
+        List<Bill> bills = this.expenseCalculatorUtil.fetchBillsWithBillIds(billRequest.getRequestInfo(), billRequest.getBill().getTenantId(), Collections.singletonList(billRequest.getBill().getId()));
+        if (bills == null || bills.isEmpty()) {
+            log.error("No bill found for bill id " + billRequest.getBill().getId());
+            return false;
+        }
+        return true;
+    }
+
     public BillReportRequest generateHealthBillReportRequest(BillRequest billRequest) {
         try {
-//            updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null);
+            updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null);
             List<ReportBillDetail> reportBillDetail = getReportBillDetail(billRequest.getRequestInfo(), billRequest.getBill());
             BillReportRequest billReportRequest = enrichReportRequest(billRequest, reportBillDetail); //enrichReportRequest
 

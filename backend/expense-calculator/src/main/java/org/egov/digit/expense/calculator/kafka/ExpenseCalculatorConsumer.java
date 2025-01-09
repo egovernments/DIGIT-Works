@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.service.HealthBillReportGenerator;
+import org.egov.digit.expense.calculator.service.RedisService;
 import org.egov.digit.expense.calculator.web.models.Bill;
 import org.egov.digit.expense.calculator.web.models.BillRequest;
 import org.egov.digit.expense.calculator.web.models.CalculationRequest;
@@ -27,14 +28,16 @@ public class ExpenseCalculatorConsumer {
 	private final ObjectMapper objectMapper;
 	private final ExpenseCalculatorProducer producer;
 	private final HealthBillReportGenerator healthBillReportGenerator;
+	private final RedisService redisService;
 
 	@Autowired
-	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, ExpenseCalculatorProducer producer, HealthBillReportGenerator healthBillReportGenerator) {
+	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, ExpenseCalculatorProducer producer, HealthBillReportGenerator healthBillReportGenerator, RedisService redisService) {
 		this.configs = configs;
 		this.expenseCalculatorService = expenseCalculatorService;
 		this.objectMapper = objectMapper;
 		this.producer = producer;
         this.healthBillReportGenerator = healthBillReportGenerator;
+        this.redisService = redisService;
     }
 
 	// Commenting existing consumer
@@ -67,13 +70,26 @@ public class ExpenseCalculatorConsumer {
 		}
 	}
 	 */
-	@KafkaListener(topics = {"${expense.billing.bill.create}"})
-	public void listenBill(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+	@KafkaListener(topics = {"${expense.billing.bill.create}", "${report.retry.queue.topic}"})
+	public void listenBillForReport(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("ExpenseCalculatorConsumer:listenBill");
 		BillRequest request = null;
 		try {
 			request = objectMapper.readValue(consumerRecord, BillRequest.class);
-			healthBillReportGenerator.generateHealthBillReportRequest(request);
+			if (healthBillReportGenerator.billExists(request)) {
+				if (redisService.isBillIdPresentInCache(request.getBill().getId())) {
+					return;
+				}
+				redisService.setCacheForBillReport(request.getBill().getId());
+				healthBillReportGenerator.generateHealthBillReportRequest(request);
+			}
+			else if (System.currentTimeMillis() - request.getBill().getAuditDetails().getCreatedTime() > 30 * 60 * 1000) {
+				// Consumer will retry till 30 minutes
+				Thread.sleep(10 * 1000);
+				producer.push(configs.getReportRetryQueueTopic(), request);
+			} else {
+				throw new Exception("Bill does not exist");
+			}
 		} catch (Exception exception) {
 			log.error("Error occurred while processing the report from topic : " + topic, exception);
 			producer.push(configs.getCalculatorErrorTopic(), exception.getMessage() + " : " + consumerRecord);

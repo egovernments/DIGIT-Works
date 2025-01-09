@@ -137,6 +137,8 @@ public class ExpenseCalculatorConfiguration {
 	//kafka
 	@Value("${expense.calculator.error.topic}")
 	private String calculatorErrorTopic;
+	@Value("${report.retry.queue.topic}")
+	private String reportRetryQueueTopic;
 
 	@Value("${expense.calculator.create.bill.topic}")
 	private String calculatorCreateBillTopic;
