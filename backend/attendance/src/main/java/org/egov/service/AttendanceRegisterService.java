@@ -187,11 +187,11 @@ public class AttendanceRegisterService {
                   .build();
 
                 List<Project> projects = projectServiceUtil.getProject(
-                  searchCriteria.getTenantId(), projectSearch, requestInfoWrapper.getRequestInfo(), searchCriteria.isChildrenRequired(), true
+                  searchCriteria.getTenantId(), projectSearch, requestInfoWrapper.getRequestInfo(), searchCriteria.getIsChildrenRequired(), true
                 );
 
                 if(projects.isEmpty()){
-                    throw new CustomException("ATTENDANCE_REGISTER_PROJECT_NOT_FOUND", "Project associated with attendance register not found");
+                    throw new CustomException("ATTENDANCE_REGISTER_PROJECT_NOT_FOUND", "Project not found");
                 }
 
                 List<String> referenceId = new ArrayList<>();
