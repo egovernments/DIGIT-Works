@@ -6,6 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
@@ -97,29 +98,30 @@ public class WageSeekerBillGeneratorService {
 			List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
 			List<String> individualIds = individualEntries.stream().map(individualEntry -> individualEntry.getIndividualId()).collect(Collectors.toList());
 			List<Individual> individuals = individualUtil.fetchIndividualDetails(individualIds, requestInfo, musterRoll.getTenantId());
-			individuals.stream().forEach(individual -> {individual.getSkills().get(0).setType("PROXIMITY_SUPERVISOR");});
 			// Map of individual id and individual
 			Map<String, Individual> individualMap = individuals.stream().collect(Collectors.toMap(Individual::getId, individual -> individual));
 			for (IndividualEntry individualEntry : individualEntries) {
-				//TODO add validation
 				if (!individualMap.containsKey(individualEntry.getIndividualId())) {
 					log.error("Individual not present in individual service :: " + individualEntry.getIndividualId());
 					continue;
 				}
 				Individual individual = individualMap.get(individualEntry.getIndividualId());
-				String skillCode = individual.getSkills().get(0).getType();
-
-				Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getSkillCode().equalsIgnoreCase(skillCode)).findAny();
-
-				Map<String, BigDecimal> rateBreakup = rate
-						.map(WorkerRate::getRateBreakup)
-						.orElse(new HashMap<>());
+				Map<String, BigDecimal> rateBreakup = new HashMap<>();
+				if (individual.getSkills().isEmpty() || StringUtils.isBlank(individual.getSkills().get(0).getType())) {
+					log.error("Skill not present in individual service :: " + individualEntry.getIndividualId());
+				} else {
+					String skillCode = individual.getSkills().get(0).getType();
+					Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getSkillCode().equalsIgnoreCase(skillCode)).findAny();
+					rateBreakup = rate
+							.map(WorkerRate::getRateBreakup)
+							.orElse(new HashMap<>());
+				}
 				List<LineItem> payableLineItem = new ArrayList<>();
 				BigDecimal totalBillDetailAmount = BigDecimal.ZERO;
 				for (Map.Entry<String, BigDecimal> entry : rateBreakup.entrySet()) {
 					BigDecimal amount = calculateAmount(individualEntry, entry.getValue());
-					totalBillDetailAmount = totalBillDetailAmount.add(amount);
 					LineItem lineItem = buildLineItem(musterRoll.getTenantId(), amount, entry.getKey(), LineItem.TypeEnum.PAYABLE);
+					totalBillDetailAmount = totalBillDetailAmount.add(lineItem.getAmount());
 					payableLineItem.add(lineItem);
 				}
 				totalBillAmount = totalBillAmount.add(totalBillDetailAmount);
@@ -412,7 +414,7 @@ public class WageSeekerBillGeneratorService {
 
 	public LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay,String headCode, LineItem.TypeEnum lineItemType) {
 		//Round off
-		BigDecimal roundOffAmount = actualAmountToPay.setScale(0, BigDecimal.ROUND_HALF_UP);
+		BigDecimal roundOffAmount = actualAmountToPay.setScale(2, BigDecimal.ROUND_HALF_UP);
 		return LineItem.builder().amount(roundOffAmount).paidAmount(BigDecimal.ZERO)
 				.headCode(headCode).type(lineItemType).status("ACTIVE").tenantId(tenantId).build();
 	}
