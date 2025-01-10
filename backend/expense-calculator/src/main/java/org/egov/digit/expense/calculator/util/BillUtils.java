@@ -68,10 +68,10 @@ public class BillUtils {
                 .bill(bill)
                 .workflow(expenseWorkflow1)
                 .build();
-        log.info("Posting Bill to expense service:" + requestInfoWrapper.toString());
+        log.info("Posting Bill to expense service");
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
         if(responseObj!=null)
-        	log.info("Received Bill Response: " + responseObj.toString());
+        	log.info("Received Bill Response");
         return mapper.convertValue(responseObj, BillResponse.class);
     }
     

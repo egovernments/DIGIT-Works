@@ -308,7 +308,8 @@ public class ExpenseCalculatorService {
     }
 
     public List<Bill> createWageOrSupervisionBills(CalculationRequest calculationRequest){
-
+        Long startTime = System.currentTimeMillis();
+        log.info("Processing bill started at time :: " + startTime);
         ProjectResponse projectResponse = projectUtil.getProjectDetails(calculationRequest.getRequestInfo(),
                 calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId(),
                 calculationRequest.getCriteria().getLocalityCode());
@@ -368,6 +369,7 @@ public class ExpenseCalculatorService {
                     log.info("Bill posting failed for bill " + bill.getBusinessService() + " reference ID " + bill.getReferenceId());
                 }
             }
+            log.info("Processing bill completed; time taken :: " + (System.currentTimeMillis() - startTime)/1000 + " seconds");
             return submittedBills;
         } catch (CustomException customException) {
             String referenceId = null;
