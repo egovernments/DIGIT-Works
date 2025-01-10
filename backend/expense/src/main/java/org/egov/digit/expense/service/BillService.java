@@ -146,7 +146,7 @@ public class BillService {
 		enrichmentUtil.enrichSearchBillRequest(billSearchRequest);
 
 		log.info("Search repository using billCriteria");
-		List<Bill> bills = billRepository.search(billSearchRequest);
+		List<Bill> bills = billRepository.search(billSearchRequest, false);
 		Integer totalBills = billRepository.searchCount(billSearchRequest);
 		billSearchRequest.getPagination().setTotalCount(totalBills);
 

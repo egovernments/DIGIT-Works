@@ -372,7 +372,7 @@ public class BillValidator {
 				.billCriteria(billCriteria)
 				.build();
 
-		return billRepository.search(billSearchRequest);
+		return billRepository.search(billSearchRequest, true);
 	}
 
 	private void validateWorkflow(BillRequest billRequest, Map<String, String> errorMap) {

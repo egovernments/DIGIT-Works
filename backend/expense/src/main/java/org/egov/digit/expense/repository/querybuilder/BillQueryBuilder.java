@@ -29,7 +29,8 @@ public class BillQueryBuilder {
     }
 
 
-    public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList, boolean isCountRequired) {
+    public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList, boolean isCountRequired,
+                               boolean isValidationSearch) {
     	
         BillCriteria criteria=billSearchRequest.getBillCriteria();
         StringBuilder query = null;
@@ -54,7 +55,7 @@ public class BillQueryBuilder {
             addToPreparedStatement(preparedStmtList, ids);
         }
 
-        if (configs.isHealthContextEnabled()) {
+        if (configs.isHealthContextEnabled() && !isValidationSearch) {
             Set<String> referenceIds = criteria.getReferenceIds();
             if (!CollectionUtils.isEmpty(referenceIds)) {
                 addClauseIfRequired(query, preparedStmtList);
@@ -195,7 +196,7 @@ public class BillQueryBuilder {
     }
 
     public String getSearchCountQueryString(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
-        String query = getBillQuery(billSearchRequest, preparedStmtList,true);
+        String query = getBillQuery(billSearchRequest, preparedStmtList,true, false);
         if (query != null)
             return Constants.COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
         else
