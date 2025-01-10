@@ -256,7 +256,7 @@ public class HealthBillReportGenerator {
             reportBillDetail.setWageAmount(skillCodeRateMap.get(role).getRateBreakup().getOrDefault(PER_DIEM_HEAD_CODE, BigDecimal.ZERO));
         }
         reportBillDetail.setTotalWages(reportBillDetail.getWageAmount().add(reportBillDetail.getTransportAmount()).add(reportBillDetail.getFoodAmount()));
-        reportBillDetail.setTotalAmount(reportBillDetail.getTotalWages().multiply(totalNumberOfDays));
+        reportBillDetail.setTotalAmount(billDetail.getTotalAmount());
         return reportBillDetail;
     }
 
