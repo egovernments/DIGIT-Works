@@ -1,6 +1,7 @@
 package org.egov.digit.expense.calculator.util;
 
 public class BillReportConstraints {
+    public static final String REPORT_BILL_GEN_REDIS_KEY = "BILL_REPORT_{billId}";
     public static final String REPORT_KEY = "reportDetails";
     public static final String REPORT_STATUS_KEY = "status";
     public static final String PDF_REPORT_ID_KEY = "pdfReportId";
@@ -22,9 +23,9 @@ public class BillReportConstraints {
             "PDF_STATIC_LABEL_BILL_TABLE_TOTAL_WAGE", "PDF_STATIC_LABEL_BILL_TABLE_NUMBER_OF_DAYS", "PDF_STATIC_LABEL_BILL_TABLE_TOTAL_AMOUNT_TO_PAY"
     };
     public static int[] BILL_EXCEL_COLUMN_WIDTH = {
-            6 * 256, 20 * 256, 15 * 256, 15 * 256,
-            15 * 256, 15 * 256, 15 * 256, 15 * 256,
-            15 * 256, 20 * 256, 20 * 256, 20 * 256
+            6, 24, 24, 24,
+            30, 15, 10, 10,
+            12, 15, 15, 15
     };
 
     public static final String BILL_EXCEL_CAMPAIGN_NAME_LABEL = "PDF_STATIC_LABEL_BILL_CAMPAIGN_NAME";

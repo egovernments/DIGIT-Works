@@ -530,7 +530,7 @@ public class ExpenseCalculatorService {
         return billUtils.postUpdateBill(requestInfo, bill, workflow);
     }
 
-    private List<WorkerMdms> fetchMDMSDataForWorker(RequestInfo requestInfo, String tenantId, String campaignId){
+    public List<WorkerMdms> fetchMDMSDataForWorker(RequestInfo requestInfo, String tenantId, String campaignId){
         log.info("Fetch worker MDMS");
         Object mdmsData = mdmsUtils.getWorkerRateFromMDMSV2(requestInfo, tenantId, campaignId);
         List<Object> workerListJson = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_HCM);

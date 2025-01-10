@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -62,8 +63,9 @@ public class BillExcelGenerate {
         Sheet sheet = workbook.createSheet(campaignName);
 
         // Create styles
-        XSSFCellStyle otherHeaderLabelStyle = createOtherHeaderStyle(workbook, true);
-        XSSFCellStyle otherHeaderValueStyle = createOtherHeaderStyle(workbook, false);
+        XSSFCellStyle otherHeaderLabelStyle = createOtherHeaderStyle(workbook, false, false);
+        XSSFCellStyle otherHeaderTxtValueStyle = createOtherHeaderStyle(workbook, true, false);
+        XSSFCellStyle otherHeaderNumValueStyle = createOtherHeaderStyle(workbook, false, true);
         XSSFCellStyle titleStyle = createTitleStyle(workbook);
         XSSFCellStyle boldStyle = createBoldStyle(workbook);
         XSSFCellStyle headerStyle = createHeaderStyle(workbook);
@@ -86,24 +88,24 @@ public class BillExcelGenerate {
         campaignRow1.createCell(0).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_CAMPAIGN_NAME_LABEL, BILL_EXCEL_CAMPAIGN_NAME_LABEL));
         campaignRow1.getCell(0).setCellStyle(otherHeaderLabelStyle);
         campaignRow1.createCell(2).setCellValue(campaignName);
-        campaignRow1.getCell(2).setCellStyle(otherHeaderValueStyle);
+        campaignRow1.getCell(2).setCellStyle(otherHeaderTxtValueStyle);
 
         campaignRow1.createCell(3).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_TOTAL_AMOUNT_TO_PROCESS_LABEL, BILL_EXCEL_TOTAL_AMOUNT_TO_PROCESS_LABEL));
         campaignRow1.getCell(3).setCellStyle(otherHeaderLabelStyle);
-        campaignRow1.createCell(4).setCellValue(totalAmountToProcess.toPlainString());
-        campaignRow1.getCell(4).setCellStyle(otherHeaderValueStyle);
+        campaignRow1.createCell(4).setCellValue(totalAmountToProcess.setScale(2, RoundingMode.HALF_UP).toPlainString());
+        campaignRow1.getCell(4).setCellStyle(otherHeaderNumValueStyle);
 
         Row campaignRow2 = sheet.createRow(rowNum++);
         campaignRow2.createCell(0).setCellValue("");
-        campaignRow2.getCell(0).setCellStyle(otherHeaderValueStyle);
+        campaignRow2.getCell(0).setCellStyle(otherHeaderNumValueStyle);
         campaignRow2.createCell(1).setCellValue("");
-        campaignRow2.getCell(1).setCellStyle(otherHeaderValueStyle);
+        campaignRow2.getCell(1).setCellStyle(otherHeaderNumValueStyle);
         campaignRow2.createCell(2).setCellValue("");
-        campaignRow2.getCell(2).setCellStyle(otherHeaderValueStyle);
+        campaignRow2.getCell(2).setCellStyle(otherHeaderNumValueStyle);
         campaignRow2.createCell(3).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_TOTAL_NUMBER_OF_WORKERS_LABEL, BILL_EXCEL_TOTAL_NUMBER_OF_WORKERS_LABEL));
         campaignRow2.getCell(3).setCellStyle(otherHeaderLabelStyle);
         campaignRow2.createCell(4).setCellValue(totalNumberOfWorkers);
-        campaignRow2.getCell(4).setCellStyle(otherHeaderValueStyle);
+        campaignRow2.getCell(4).setCellStyle(otherHeaderNumValueStyle);
         // fill empty cells
         for (int i = 5; i < columns.length; i++) {
             campaignRow1.createCell(i).setCellValue("");
@@ -180,10 +182,12 @@ public class BillExcelGenerate {
         Cell auditCellCreatedByValue = billFooterAuditCreatedBy.createCell(2);
         setCellValueWithAlignment(auditCellCreatedByValue, reportBill.getCreatedBy(), textStyle, numberStyle);
 
+        // Freeze the first 4 rows
+        sheet.createFreezePane(0, 4);
 
         // Adjust column widths
         for (int i = 0; i < BILL_EXCEL_COLUMN_WIDTH.length; i++) {
-            sheet.setColumnWidth(i, BILL_EXCEL_COLUMN_WIDTH[i]);
+            sheet.setColumnWidth(i, BILL_EXCEL_COLUMN_WIDTH[i] * 256);
         }
 
         sheet.protectSheet(campaignName);
@@ -233,6 +237,7 @@ public class BillExcelGenerate {
         font.setBold(true);
         font.setFontHeight(10);
         style.setFont(font);
+        style.setWrapText(true);
         style.setAlignment(HorizontalAlignment.CENTER);
         XSSFColor customColor = new XSSFColor(new java.awt.Color(252, 229, 205), null);
         style.setFillForegroundColor(customColor);
@@ -244,15 +249,24 @@ public class BillExcelGenerate {
         return style;
     }
 
-    private XSSFCellStyle createOtherHeaderStyle(XSSFWorkbook workbook, Boolean isValue) {
+    private XSSFCellStyle createOtherHeaderStyle(XSSFWorkbook workbook, Boolean isTxtValue, Boolean isNumberValue) {
         XSSFCellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setBold(true);
         font.setFontHeight(10);
-        if (isValue) {
+        if (isNumberValue) {
+            style.setAlignment(HorizontalAlignment.RIGHT);
+        } else if (isTxtValue) {
+            style.setAlignment(HorizontalAlignment.LEFT);
+        }else {
             style.setFont(font);
+            style.setAlignment(HorizontalAlignment.LEFT);
         }
-        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setWrapText(true);
         XSSFColor customColor = new XSSFColor(new java.awt.Color(236, 255, 220), null);
         style.setFillForegroundColor(customColor);
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -268,6 +282,8 @@ public class BillExcelGenerate {
         style.setBorderTop(BorderStyle.THIN);
         style.setBorderLeft(BorderStyle.THIN);
         style.setBorderRight(BorderStyle.THIN);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setWrapText(true);
         style.setFont(createBoldStyle(workbook).getFont());
         return style;
     }
@@ -280,6 +296,7 @@ public class BillExcelGenerate {
         XSSFFont font = workbook.createFont();
         font.setFontHeight(8);
         style.setAlignment(HorizontalAlignment.LEFT);
+        style.setVerticalAlignment(VerticalAlignment.TOP);
         style.setBorderBottom(BorderStyle.THIN);
         style.setBorderTop(BorderStyle.THIN);
         style.setBorderLeft(BorderStyle.THIN);
@@ -291,7 +308,9 @@ public class BillExcelGenerate {
         XSSFCellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setFontHeight(8);
+        style.setWrapText(true);
         style.setAlignment(alignment);
+        style.setVerticalAlignment(VerticalAlignment.TOP);
         style.setBorderBottom(BorderStyle.THIN);
         style.setBorderTop(BorderStyle.THIN);
         style.setBorderLeft(BorderStyle.THIN);
@@ -302,7 +321,7 @@ public class BillExcelGenerate {
 
     private void setCellValueWithAlignment(Cell cell, Object value, XSSFCellStyle textStyle, XSSFCellStyle numberStyle) {
         if (value instanceof BigDecimal) {
-            cell.setCellValue(((BigDecimal) value).toPlainString());
+            cell.setCellValue(((BigDecimal) value).setScale(2, RoundingMode.HALF_UP).toPlainString());
             cell.setCellStyle(numberStyle);
         } else if (value instanceof Number) {
             cell.setCellValue(((Number) value).doubleValue());
