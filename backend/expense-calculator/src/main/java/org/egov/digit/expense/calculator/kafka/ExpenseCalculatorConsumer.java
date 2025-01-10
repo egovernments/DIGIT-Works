@@ -72,11 +72,12 @@ public class ExpenseCalculatorConsumer {
 	 */
 	@KafkaListener(topics = {"${expense.billing.bill.create}", "${report.retry.queue.topic}"})
 	public void listenBillForReport(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-		log.info("ExpenseCalculatorConsumer:listenBill");
+		log.info("ExpenseCalculatorConsumer:listenBillForReport");
 		BillRequest request = null;
 		try {
 			request = objectMapper.readValue(consumerRecord, BillRequest.class);
 			if (healthBillReportGenerator.billExists(request)) {
+				log.info("Bill exists for bill id " + request.getBill().getId());
 				if (redisService.isBillIdPresentInCache(request.getBill().getId())) {
 					return;
 				}
@@ -84,6 +85,7 @@ public class ExpenseCalculatorConsumer {
 				healthBillReportGenerator.generateHealthBillReportRequest(request);
 			}
 			else if (System.currentTimeMillis() - request.getBill().getAuditDetails().getCreatedTime() < 30 * 60 * 1000) {
+				log.info("Bill does not exist, retrying for 10 seconds");
 				// Consumer will retry till 30 minutes
 				Thread.sleep(10 * 1000);
 				producer.push(configs.getReportRetryQueueTopic(), request);

@@ -39,10 +39,11 @@ public class HealthBillReportGenerator {
     private final LocalizationUtil localizationUtil;
     private final PDFServiceUtil pdfServiceUtil;
     private final BillUtils billUtils;
+    private final ExpenseCalculatorService expenseCalculatorService;
 
 
     @Autowired
-    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils) {
+    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService) {
         this.individualUtil = individualUtil;
         this.expenseCalculatorUtil = expenseCalculatorUtil;
         this.billExcelGenerate = billExcelGenerate;
@@ -51,6 +52,7 @@ public class HealthBillReportGenerator {
         this.localizationUtil = localizationUtil;
         this.pdfServiceUtil = pdfServiceUtil;
         this.billUtils = billUtils;
+        this.expenseCalculatorService = expenseCalculatorService;
     }
 
     public boolean billExists(BillRequest billRequest) {
@@ -64,6 +66,7 @@ public class HealthBillReportGenerator {
 
     public BillReportRequest generateHealthBillReportRequest(BillRequest billRequest) {
         try {
+            log.info("Generating report for bill id: " + billRequest.getBill().getId());
             updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null);
             List<ReportBillDetail> reportBillDetail = getReportBillDetail(billRequest.getRequestInfo(), billRequest.getBill());
             BillReportRequest billReportRequest = enrichReportRequest(billRequest, reportBillDetail); //enrichReportRequest
@@ -126,11 +129,12 @@ public class HealthBillReportGenerator {
     private List<ReportBillDetail> getReportBillDetail(RequestInfo requestInfo, Bill bill) {
 
         List<BillDetail> billDetails = bill.getBillDetails();
+        Map<String, WorkerRate> skillCodeRateMap = getSkillCodeRateMap(requestInfo, bill);
         int pageSize = 10;
         List<ReportBillDetail> reportBillDetails = new ArrayList<>();
         for (int i = 0; i < billDetails.size(); i += pageSize) {
             List<BillDetail> batch = billDetails.subList(i, Math.min(i + pageSize, billDetails.size()));
-            List<ReportBillDetail> reportBillDetail = generateReport(requestInfo, batch);
+            List<ReportBillDetail> reportBillDetail = generateReport(requestInfo, batch, skillCodeRateMap);
             reportBillDetails.addAll(reportBillDetail);
         }
 
@@ -147,7 +151,22 @@ public class HealthBillReportGenerator {
         return sortedReportBillDetails;
     }
 
-    private List<ReportBillDetail> generateReport(RequestInfo requestInfo, List<BillDetail> billDetails) {
+    private Map<String, WorkerRate> getSkillCodeRateMap(RequestInfo requestInfo, Bill bill) {
+        WorkerMdms workerRateMdms = null;
+        Map<String, WorkerRate> skillCodeRateMap = new HashMap<>();
+        if (bill.getReferenceId() != null) {
+            String parentProjectId = bill.getReferenceId().split("\\.")[0];
+            workerRateMdms = expenseCalculatorService.fetchMDMSDataForWorker(requestInfo, bill.getTenantId(), parentProjectId).get(0);
+        }
+        if (workerRateMdms != null) {
+            for (WorkerRate workerRate : workerRateMdms.getRates()) {
+                skillCodeRateMap.put(workerRate.getSkillCode(), workerRate);
+            }
+        }
+        return skillCodeRateMap;
+    }
+
+    private List<ReportBillDetail> generateReport(RequestInfo requestInfo, List<BillDetail> billDetails, Map<String, WorkerRate> skillCodeRateMap) {
         List<String> individualIds = new ArrayList<>();
         List<String> musterRollIds = new ArrayList<>();
         List<ReportBillDetail> reportBillDetails = new ArrayList<>();
@@ -171,12 +190,12 @@ public class HealthBillReportGenerator {
         }
 
         for (BillDetail billDetail : billDetails) {
-            reportBillDetails.add(getReportBillDetail(billDetail, individualMap.get(billDetail.getPayee().getIdentifier()), individualMusterAttendanceMap));
+            reportBillDetails.add(getReportBillDetail(billDetail, individualMap.get(billDetail.getPayee().getIdentifier()), individualMusterAttendanceMap, skillCodeRateMap));
         }
         return reportBillDetails;
     }
 
-    private ReportBillDetail getReportBillDetail(BillDetail billDetail, Individual individual, Map<String, Map<String, BigDecimal>> individualMusterAttendanceMap) {
+    private ReportBillDetail getReportBillDetail(BillDetail billDetail, Individual individual, Map<String, Map<String, BigDecimal>> individualMusterAttendanceMap, Map<String, WorkerRate> skillCodeRateMap) {
         ReportBillDetail reportBillDetail = new ReportBillDetail().builder()
                 .slNo(0)
                 .individualName(null)
@@ -200,7 +219,7 @@ public class HealthBillReportGenerator {
                 for (Skill skill : individual.getSkills()) {
                     if (skill != null && skill.getIsDeleted() != null && !skill.getIsDeleted()) {
                         // Found the first non-deleted skill
-                        reportBillDetail.setRole(skill.getLevel()); // Set the role based on the skill level
+                        reportBillDetail.setRole(skill.getType()); // Set the role based on the skill level
                         break; // Exit the loop once the first non-deleted skill is found
                     }
                 }
@@ -229,20 +248,13 @@ public class HealthBillReportGenerator {
             totalNumberOfDays = individualMusterAttendanceMap.get(billDetail.getReferenceId()).get(individual.getId());
             reportBillDetail.setTotalNumberOfDays(individualMusterAttendanceMap.get(billDetail.getReferenceId()).get(individual.getId()).floatValue());
         }
-        for (LineItem lineItem : billDetail.getPayableLineItems()) {
-            switch (lineItem.getHeadCode()) {
-                case FOOD_HEAD_CODE:
-                    reportBillDetail.setFoodAmount(perDayAmount(lineItem.getAmount(), totalNumberOfDays));
-                    break;
-                case TRANSPORT_HEAD_CODE:
-                    reportBillDetail.setTransportAmount(perDayAmount(lineItem.getAmount(), totalNumberOfDays));
-                    break;
-                case PER_DIEM_HEAD_CODE:
-                    reportBillDetail.setWageAmount(perDayAmount(lineItem.getAmount(), totalNumberOfDays));
-                    break;
-            }
-        }
 
+        String role = reportBillDetail.getRole();
+        if (role != null && skillCodeRateMap.containsKey(role)) {
+            reportBillDetail.setFoodAmount(skillCodeRateMap.get(role).getRateBreakup().getOrDefault(FOOD_HEAD_CODE, BigDecimal.ZERO));
+            reportBillDetail.setTransportAmount(skillCodeRateMap.get(role).getRateBreakup().getOrDefault(TRANSPORT_HEAD_CODE, BigDecimal.ZERO));
+            reportBillDetail.setWageAmount(skillCodeRateMap.get(role).getRateBreakup().getOrDefault(PER_DIEM_HEAD_CODE, BigDecimal.ZERO));
+        }
         reportBillDetail.setTotalWages(reportBillDetail.getWageAmount().add(reportBillDetail.getTransportAmount()).add(reportBillDetail.getFoodAmount()));
         reportBillDetail.setTotalAmount(reportBillDetail.getTotalWages().multiply(totalNumberOfDays));
         return reportBillDetail;
@@ -289,6 +301,7 @@ public class HealthBillReportGenerator {
             if (localization == null) {
                 return;
             }
+            reportBill.setCampaignName(localization.getOrDefault(reportBill.getCampaignName(), reportBill.getCampaignName()));
             for (ReportBillDetail reportBillDetail : reportBill.getReportBillDetails()) {
                 reportBillDetail.setLocality(localization.getOrDefault(reportBillDetail.getLocality(), reportBillDetail.getLocality()));
                 reportBillDetail.setRole(localization.getOrDefault(reportBillDetail.getRole(), reportBillDetail.getRole()));

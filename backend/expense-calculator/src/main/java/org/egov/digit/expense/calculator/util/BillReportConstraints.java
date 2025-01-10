@@ -23,9 +23,9 @@ public class BillReportConstraints {
             "PDF_STATIC_LABEL_BILL_TABLE_TOTAL_WAGE", "PDF_STATIC_LABEL_BILL_TABLE_NUMBER_OF_DAYS", "PDF_STATIC_LABEL_BILL_TABLE_TOTAL_AMOUNT_TO_PAY"
     };
     public static int[] BILL_EXCEL_COLUMN_WIDTH = {
-            6 * 256, 20 * 256, 15 * 256, 15 * 256,
-            15 * 256, 15 * 256, 15 * 256, 15 * 256,
-            15 * 256, 20 * 256, 20 * 256, 20 * 256
+            6, 24, 24, 24,
+            30, 15, 10, 10,
+            12, 15, 15, 15
     };
 
     public static final String BILL_EXCEL_CAMPAIGN_NAME_LABEL = "PDF_STATIC_LABEL_BILL_CAMPAIGN_NAME";
