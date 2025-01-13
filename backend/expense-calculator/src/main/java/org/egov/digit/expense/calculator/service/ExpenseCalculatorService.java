@@ -419,10 +419,13 @@ public class ExpenseCalculatorService {
                             criteria.getLocalityCode(), isDistrictLevel, offset);
             if (attendanceRegisters.isEmpty())
                 break;
-            offset++;
-            if (Integer.parseInt(String.valueOf(criteria.getFromPeriod())) == (offset))
-                break;
-//                offset = offset + config.getRegisterBatchSize();
+            if (criteria.getFromPeriod() != null) {
+                offset++;
+                if (Integer.parseInt(String.valueOf(criteria.getFromPeriod())) == (offset))
+                    break;
+            } else {
+                offset = offset + config.getRegisterBatchSize();
+            }
             if (config.isAttendanceApprovalRequired())
                 expenseCalculatorServiceValidator.validateAttendanceRegisterApproval(attendanceRegisters);
 
