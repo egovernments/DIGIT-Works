@@ -70,13 +70,24 @@ public class ExpenseCalculatorConsumer {
 		}
 	}
 	 */
+
+	/**
+	 * Bill Report Consumer to generate the report after generating the bill
+	 * @param consumerRecord
+	 * @param topic
+	 */
 	@KafkaListener(topics = {"${expense.billing.bill.create}", "${report.retry.queue.topic}"})
 	public void listenBillForReport(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("ExpenseCalculatorConsumer:listenBillForReport");
 		BillRequest request = null;
 		try {
 			request = objectMapper.readValue(consumerRecord, BillRequest.class);
+			// Validate that bill exists in the system, because of async possible that it's not persisted while consuming the record.
 			if (healthBillReportGenerator.billExists(request)) {
+				/*
+				 * If the bill is already present in the cache, then don't generate the report again.
+				 * Because this is long-running KAFKA consumer, the same record can be consumed multiple times. This is to prevent duplicate reports from being generated.
+				 */
 				log.info("Bill exists for bill id " + request.getBill().getId());
 				if (redisService.isBillIdPresentInCache(request.getBill().getId())) {
 					return;
@@ -85,11 +96,13 @@ public class ExpenseCalculatorConsumer {
 				healthBillReportGenerator.generateHealthBillReportRequest(request);
 			}
 			else if (System.currentTimeMillis() - request.getBill().getAuditDetails().getCreatedTime() < 30 * 60 * 1000) {
+				// Consumer will retry till 30 minutes after the creation of the bill
+				// If bill does not exist, retry for 10 seconds
 				log.info("Bill does not exist, retrying for 10 seconds");
-				// Consumer will retry till 30 minutes
 				Thread.sleep(10 * 1000);
 				producer.push(configs.getReportRetryQueueTopic(), request);
 			} else {
+				// Post 30 minutes after the creation of the bill if it's still not exists then throw exception
 				throw new Exception("Bill does not exist");
 			}
 		} catch (Exception exception) {

@@ -32,6 +32,14 @@ public class PDFServiceUtil {
         this.mapper = mapper;
     }
 
+    /**
+     * Calls the pdf service to generate a pdf document.
+     *
+     * @param request    the request object containing the data to be printed
+     * @param tenantId   the tenant id
+     * @param pdfKey     the key to identify the pdf template
+     * @return the file store id of the generated pdf file
+     */
     public String createPDF(BillReportRequest request, String tenantId, String pdfKey) {
         Object result = null;
         StringBuilder uri = new StringBuilder();

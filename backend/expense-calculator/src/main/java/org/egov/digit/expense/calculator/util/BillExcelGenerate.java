@@ -42,6 +42,14 @@ public class BillExcelGenerate {
         this.config = config;
         this.fileStoreUtil = fileStoreUtil;
     }
+
+    /**
+     * Generates an excel file from the given report bill object.
+     *
+     * @param requestInfo the request info
+     * @param reportBill  the report bill object
+     * @return the file store id of the generated excel file
+     */
     public String generateExcel(RequestInfo requestInfo, ReportBill reportBill) {
 
         Map<String, Map<String, String>> localizationMap = localizationUtil.getLocalisedMessages(requestInfo, config.getStateLevelTenantId(), config.getReportLocalizationLocaleCode(), config.getReportLocalizationModuleName());
@@ -50,7 +58,12 @@ public class BillExcelGenerate {
         return fileStoreUtil.uploadFileAndGetFileStoreId(config.getStateLevelTenantId(), excelFile);
     }
 
-
+    /**
+     * Generate an excel file from the given report object
+     * @param reportBill the report object using which the excel is generated
+     * @param localizationMap the localization map which will replace header labels
+     * @return the excel file binary
+     */
     private ByteArrayResource generateExcelFromReportObject(ReportBill reportBill, Map<String, String> localizationMap) {
         byte[] excelBytes;
 
@@ -106,7 +119,8 @@ public class BillExcelGenerate {
         campaignRow2.getCell(3).setCellStyle(otherHeaderLabelStyle);
         campaignRow2.createCell(4).setCellValue(totalNumberOfWorkers);
         campaignRow2.getCell(4).setCellStyle(otherHeaderNumValueStyle);
-        // fill empty cells
+
+        // fill empty cells of header
         for (int i = 5; i < columns.length; i++) {
             campaignRow1.createCell(i).setCellValue("");
             campaignRow1.getCell(i).setCellStyle(headerStyle);
@@ -222,6 +236,12 @@ public class BillExcelGenerate {
         };
     }
 
+    /**
+     * Creates a cell style with bold font.
+     *
+     * @param workbook the workbook where the style will be applied
+     * @return the created XSSFCellStyle with bold font
+     */
     private XSSFCellStyle createBoldStyle(XSSFWorkbook workbook) {
         XSSFCellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
@@ -231,6 +251,12 @@ public class BillExcelGenerate {
         return style;
     }
 
+    /**
+     * Creates a cell style for the title with bold font and a light brown background.
+     *
+     * @param workbook the workbook where the style will be applied
+     * @return the created XSSFCellStyle with bold font and light brown background
+     */
     private XSSFCellStyle createTitleStyle(XSSFWorkbook workbook) {
         XSSFCellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
@@ -249,6 +275,13 @@ public class BillExcelGenerate {
         return style;
     }
 
+    /**
+     * Creates a cell style with bold font, for headers.
+     *
+     * @param workbook the workbook where the style will be applied
+     * @param isTxtValue true if the header value is a string, false if it is a number
+     * @return the created XSSFCellStyle with bold font
+     */
     private XSSFCellStyle createOtherHeaderStyle(XSSFWorkbook workbook, Boolean isTxtValue, Boolean isNumberValue) {
         XSSFCellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
@@ -258,7 +291,7 @@ public class BillExcelGenerate {
             style.setAlignment(HorizontalAlignment.RIGHT);
         } else if (isTxtValue) {
             style.setAlignment(HorizontalAlignment.LEFT);
-        }else {
+        } else {
             style.setFont(font);
             style.setAlignment(HorizontalAlignment.LEFT);
         }
@@ -273,21 +306,35 @@ public class BillExcelGenerate {
         return style;
     }
 
+    /**
+     * Creates a header cell style with a specific background color, borders, and center alignment.
+     *
+     * @param workbook the workbook where the style will be applied
+     * @return the created XSSFCellStyle for header cells
+     */
     private XSSFCellStyle createHeaderStyle(XSSFWorkbook workbook) {
         XSSFCellStyle style = workbook.createCellStyle();
-        XSSFColor customColor = new XSSFColor(new java.awt.Color(201, 218, 248), null);
+        XSSFColor customColor = new XSSFColor(new java.awt.Color(201, 218, 248), null); // Light blue background
         style.setFillForegroundColor(customColor);
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setWrapText(true);
-        style.setFont(createBoldStyle(workbook).getFont());
+        style.setBorderBottom(BorderStyle.THIN); // Thin bottom border
+        style.setBorderTop(BorderStyle.THIN);    // Thin top border
+        style.setBorderLeft(BorderStyle.THIN);   // Thin left border
+        style.setBorderRight(BorderStyle.THIN);  // Thin right border
+        style.setAlignment(HorizontalAlignment.CENTER); // Center text alignment
+        style.setWrapText(true); // Enable text wrapping
+        style.setFont(createBoldStyle(workbook).getFont()); // Use bold font style
         return style;
     }
 
+    /**
+     * Creates a cell style with a light gray background and thin borders.
+     * The alignment is set to left and the font is set to 8 points.
+     * This style is used for the sl no column in the excel report.
+     *
+     * @param workbook the workbook where the style will be applied
+     * @return the created XSSFCellStyle for the sl no column
+     */
     private XSSFCellStyle createSlNoCellStyle(XSSFWorkbook workbook) {
         XSSFCellStyle style = workbook.createCellStyle();
         XSSFColor customColor = new XSSFColor(new java.awt.Color(212, 212, 212), null);
@@ -304,6 +351,14 @@ public class BillExcelGenerate {
         return style;
     }
 
+    /**
+     * Creates a cell style with a specified horizontal alignment, font size 8 and wrapping enabled.
+     * The style also has thin borders on all sides and top alignment.
+     *
+     * @param workbook the workbook where the style will be applied
+     * @param alignment the desired horizontal alignment
+     * @return the created XSSFCellStyle
+     */
     private XSSFCellStyle createCellStyle(XSSFWorkbook workbook, HorizontalAlignment alignment) {
         XSSFCellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
@@ -319,11 +374,21 @@ public class BillExcelGenerate {
     }
 
 
+    /**
+     * Sets the value of a cell with appropriate alignment and style based on the type of value.
+     *
+     * @param cell the cell where the value will be set
+     * @param value the value to set in the cell
+     * @param textStyle the style to apply for text values
+     * @param numberStyle the style to apply for numeric values
+     */
     private void setCellValueWithAlignment(Cell cell, Object value, XSSFCellStyle textStyle, XSSFCellStyle numberStyle) {
         if (value instanceof BigDecimal) {
+            // Set cell value for BigDecimal with two decimal places
             cell.setCellValue(((BigDecimal) value).setScale(2, RoundingMode.HALF_UP).toPlainString());
             cell.setCellStyle(numberStyle);
         } else if (value instanceof Number) {
+            // Set cell value for other Number types
             cell.setCellValue(((Number) value).doubleValue());
             cell.setCellStyle(numberStyle);
         } else {
