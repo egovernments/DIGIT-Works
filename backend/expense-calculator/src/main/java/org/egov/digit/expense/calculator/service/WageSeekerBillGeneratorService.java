@@ -111,7 +111,8 @@ public class WageSeekerBillGeneratorService {
 					log.error("Skill not present in individual service :: " + individualEntry.getIndividualId());
 				} else {
 					String skillCode = individual.getSkills().get(0).getType();
-					Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getSkillCode().equalsIgnoreCase(skillCode)).findAny();
+					//fetch correct skillCode for given role
+					Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getSkillCode() != null && workerRate.getSkillCode().equalsIgnoreCase(skillCode)).findAny();
 					rateBreakup = rate
 							.map(WorkerRate::getRateBreakup)
 							.orElse(new HashMap<>());
@@ -119,11 +120,13 @@ public class WageSeekerBillGeneratorService {
 				List<LineItem> payableLineItem = new ArrayList<>();
 				BigDecimal totalBillDetailAmount = BigDecimal.ZERO;
 				for (Map.Entry<String, BigDecimal> entry : rateBreakup.entrySet()) {
+					//Create line item for each skill
 					BigDecimal amount = calculateAmount(individualEntry, entry.getValue());
 					LineItem lineItem = buildLineItem(musterRoll.getTenantId(), amount, entry.getKey(), LineItem.TypeEnum.PAYABLE);
 					totalBillDetailAmount = totalBillDetailAmount.add(lineItem.getAmount());
 					payableLineItem.add(lineItem);
 				}
+				//Create bill detail
 				totalBillAmount = totalBillAmount.add(totalBillDetailAmount);
 				BillDetail billDetail = BillDetail.builder()
 						.payableLineItems(payableLineItem)
