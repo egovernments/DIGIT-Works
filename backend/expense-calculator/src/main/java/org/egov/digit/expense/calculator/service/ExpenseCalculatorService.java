@@ -412,6 +412,7 @@ public class ExpenseCalculatorService {
         List<WorkerMdms> workerMdms = fetchMDMSDataForWorker(requestInfo, criteria.getTenantId(), parentProjectId);
         List<AttendanceRegister> attendanceRegisters = new ArrayList<>();
         Integer offset = 0;
+        Integer testingLoop = 0;
             // fetch approved attendance registers
         do {
             attendanceRegisters = attendanceUtil
@@ -420,8 +421,8 @@ public class ExpenseCalculatorService {
             if (attendanceRegisters.isEmpty())
                 break;
             if (criteria.getFromPeriod() != null) {
-                offset++;
-                if (Integer.parseInt(String.valueOf(criteria.getFromPeriod())) == (offset))
+                testingLoop++;
+                if (Integer.parseInt(String.valueOf(criteria.getFromPeriod())) == (testingLoop))
                     break;
             } else {
                 offset = offset + config.getRegisterBatchSize();
