@@ -140,13 +140,17 @@ public class AttendanceRegisterService {
      * @param attendanceRegisterResponse
      */
     public void updateSearchCriteriaAndFetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,Set<String> registers, AttendanceRegisterSearchCriteria searchCriteria, AttendanceRegisterResponse attendanceRegisterResponse) {
+        // Initialize a map to store counts for different attendance register statuses
         Map<String, Long> counts = new HashMap<>();
         counts.put(TOTAL_COUNT,0L);
+
+        // Populate the map with initial count values for each register status alias
         for (Map.Entry<String, String> entry : attendanceServiceConfiguration.getAttendanceRegisterStatusMap().entrySet()) {
             String alias = entry.getKey();
             counts.put(alias,0L);
         }
 
+        // Check if the search criteria contain register IDs
         if (searchCriteria.getIds() == null) {
             log.info("Register search criteria does not contain any register ids");
             List<String> registerIds = new ArrayList<>();
@@ -154,6 +158,8 @@ public class AttendanceRegisterService {
             searchCriteria.setIds(registerIds);
         } else {
             log.info("Register search criteria does contains register ids");
+
+            // Validate that the user is searching only for associated registers
             for (String id : searchCriteria.getIds()) {
                 if (!registers.contains(id)) {
                     log.error( "User can search only associated registers");
@@ -161,6 +167,8 @@ public class AttendanceRegisterService {
                 }
             }
         }
+
+        // Call the method to fetch and filter attendance registers based on the criteria
         fetchAndFilterRegisters(requestInfoWrapper, searchCriteria, attendanceRegisterResponse);
     }
 
@@ -213,9 +221,14 @@ public class AttendanceRegisterService {
 
         // Fetch the all registers based on the supplied search criteria
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
+
+        // Retrieve the count of attendance registers based on the search criteria
         Map<String, Long> counts = registerRepository.getRegisterCounts(searchCriteria);
 
+        // Initialize the final list that will hold the filtered attendance registers
         List<AttendanceRegister> resultAttendanceRegisters = new ArrayList<>();
+
+        // Check if any registers were retrieved
         if(attendanceRegisters!=null && !attendanceRegisters.isEmpty()){
             // Create a map with key as registerId and corresponding register list as value
             Map<String, List<AttendanceRegister>> registerIdVsAttendanceRegisters = attendanceRegisters.stream().collect(Collectors.groupingBy(AttendanceRegister::getId));
@@ -227,15 +240,23 @@ public class AttendanceRegisterService {
             log.info("Fetch all staff members based on the supplied search criteria");
             List<StaffPermission> staffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
 
+            // Store the original staffId from searchCriteria before modifying it
             String staffId = searchCriteria.getStaffId();
-            searchCriteria.setStaffId(null);
+            searchCriteria.setStaffId(null); // Temporarily remove staffId to fetch all related staff members
+
+            // Fetch all staff members for the registers, regardless of the specific staff ID
             List<StaffPermission> allStaffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
+
             // Create a map with key as registerId and corresponding staff list as value
             Map<String, List<StaffPermission>> registerIdStaffMapping = staffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
-            Map<String, List<StaffPermission>> registerIdAllStaffMapping = allStaffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
-            // String ownerName = ((ObjectNode) allStaffMembers.stream().filter(staff -> staff.getStaffType() == StaffType.OWNER).findFirst().get().getAdditionalDetails()).get("")
 
+            // Map all staff members (not just filtered ones) to their respective registers
+            Map<String, List<StaffPermission>> registerIdAllStaffMapping = allStaffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
+
+            // Enrich attendance registers with owner names based on staff mappings
             enrichOwnerNameOfAttendanceRegister(registerIdStaffMapping, registerIdAllStaffMapping);
+
+            // Restore the original staffId in the search criteria
             searchCriteria.setStaffId(staffId);
             // If staffId present in search criteria then update the registerIDToSearch list with new set of registerIds
             if (searchCriteria.getStaffId() != null){
@@ -268,16 +289,23 @@ public class AttendanceRegisterService {
         }
 
         attendanceRegisterResponse.setAttendanceRegister(resultAttendanceRegisters);
+
+        // Set the total count of registers in the response
         attendanceRegisterResponse.setTotalCount(counts.get(TOTAL_COUNT));
         counts.remove(TOTAL_COUNT);
+
+        // If register review status is enabled, add the status count to the response
         if(attendanceServiceConfiguration.getAttendanceRegisterReviewStatusEnabled()) attendanceRegisterResponse.setStatusCount(counts);
     }
 
     private void enrichOwnerNameOfAttendanceRegister(Map<String, List<StaffPermission>> registerIdStaffMapping, Map<String, List<StaffPermission>> registerIdAllStaffMapping) {
+        // Create a map to store the owner name for each register ID
         Map<String, String> registerIdToOwnerName = new HashMap<>();
+
+        // Iterate over each entry in the registerIdAllStaffMapping map
         for (Map.Entry<String, List<StaffPermission>> entry : registerIdAllStaffMapping.entrySet()) {
             String registerId = entry.getKey();
-            List<StaffPermission> staffPermissions = entry.getValue();
+            List<StaffPermission> staffPermissions = entry.getValue(); // Get the list of staff members for this register
 
             // Iterate through each StaffPermission in the list
             for (StaffPermission staffPermission : staffPermissions) {

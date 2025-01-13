@@ -68,7 +68,9 @@ public class RegisterRepository {
             }
         }
 
-        // Construct the full query
+        /* Construct the full SQL query using Common Table Expressions (CTE)
+        The first CTE (`result_cte`) contains the main search query
+        The second CTE (`totalCount_cte`) calculates the total count and counts per status */
         String cteQuery = "WITH result_cte AS (" + query + "), " +
                 "totalCount_cte AS (SELECT COUNT(*) AS totalCount " +
                 statusCountsQuery +
@@ -92,6 +94,7 @@ public class RegisterRepository {
             return result;
         }, preparedStmtList.toArray());
 
+        // If a specific reviewStatus is provided in the search criteria, update the totalCount
         if(searchCriteria.getReviewStatus()!=null) {
             config.getAttendanceRegisterStatusMap().forEach((key, value) ->{
                 if(searchCriteria.getReviewStatus().equals(value)) {
