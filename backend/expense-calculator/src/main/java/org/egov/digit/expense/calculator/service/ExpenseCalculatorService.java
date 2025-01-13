@@ -250,6 +250,7 @@ public class ExpenseCalculatorService {
     public BillResponse createWageBillHealth(CalculationRequest calculationRequest){
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
         if (config.isBillGenerationAsyncEnabled()) {
+            // Fetch Project Details
             ProjectResponse projectResponse = projectUtil.getProjectDetails(calculationRequest.getRequestInfo(),
                     calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId(),
                     calculationRequest.getCriteria().getLocalityCode());
@@ -270,11 +271,12 @@ public class ExpenseCalculatorService {
                 referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
             }
 
-
+            // Fetch Bill Status from DB
             List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
 
             if (!billStatuses.isEmpty()) {
                 if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains(SUCCESSFUL_STATUS)) {
+                    // If already successful return success response
                     return BillResponse.builder().responseInfo(responseInfo).statusCode(SUCCESSFUL_STATUS).build();
                 } else if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains(INITIATED_STATUS)) {
                     BillResponse billResponse = billUtils.searchBills(calculationRequest, referenceId);
@@ -283,9 +285,11 @@ public class ExpenseCalculatorService {
                             .bills(new ArrayList<>())
                             .build();
                     if (billResponse == null || billResponse.getBills().isEmpty()) {
+                        //If not found in expense db return inprogress status
                         billResponse1.setStatusCode(INPROGRESS_STATUS);
                         return billResponse1;
                     } else {
+                        //If found in expense db return success status
                         BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).get();
                         expenseCalculatorRepository.updateBillStatus(billStatus.getId(), SUCCESSFUL_STATUS, null);
                         billResponse1.setStatusCode(SUCCESSFUL_STATUS);
@@ -294,10 +298,12 @@ public class ExpenseCalculatorService {
                 }
             }
 
+            // Create entry for bill status
             expenseCalculatorRepository.createBillStatus(UUID.randomUUID().toString(),
                     calculationRequest.getCriteria().getTenantId(), referenceId,
                     INITIATED_STATUS, null);
 
+            // Push to async topic for bill generation
             expenseCalculatorProducer.push(config.getBillGenerationAsyncTopic(), calculationRequest);
             return BillResponse.builder().responseInfo(responseInfo).statusCode(INITIATED_STATUS).build();
         } else {
@@ -310,6 +316,7 @@ public class ExpenseCalculatorService {
     public List<Bill> createWageOrSupervisionBills(CalculationRequest calculationRequest){
         Long startTime = System.currentTimeMillis();
         log.info("Processing bill started at time :: " + startTime);
+        // Fetch Project Details based on referenceId and localityCode
         ProjectResponse projectResponse = projectUtil.getProjectDetails(calculationRequest.getRequestInfo(),
                 calculationRequest.getCriteria().getTenantId(), calculationRequest.getCriteria().getReferenceId(),
                 calculationRequest.getCriteria().getLocalityCode());
@@ -324,7 +331,7 @@ public class ExpenseCalculatorService {
         }
 
         try {
-            // Fetch all boundaries for that particular district and projectId with children
+            // Fetch all boundaries for that particular locality and projectId with children
             List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(RequestInfoWrapper.builder()
                             .requestInfo(calculationRequest.getRequestInfo()).build(), calculationRequest.getCriteria().getLocalityCode(),
                     calculationRequest.getCriteria().getTenantId(), false);
@@ -414,6 +421,7 @@ public class ExpenseCalculatorService {
         Integer offset = 0;
             // fetch approved attendance registers
         do {
+            // Fetch children attendance registers if district level else just fetch current level registers
             attendanceRegisters = attendanceUtil
                     .fetchAttendanceRegister(criteria.getReferenceId(), criteria.getTenantId(), requestInfo,
                             criteria.getLocalityCode(), isDistrictLevel, offset);
@@ -430,6 +438,7 @@ public class ExpenseCalculatorService {
             wageSeekerBillGeneratorService.createWageSeekerBillsHealth(requestInfo,musterRolls,workerMdms, bill);
         } while(attendanceRegisters.size() > 0);
 
+        //Enrich bill common fields
         enrichBill(bill, criteria, project);
         return Collections.singletonList(bill);
     }
