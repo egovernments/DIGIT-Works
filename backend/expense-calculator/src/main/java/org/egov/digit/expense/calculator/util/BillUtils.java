@@ -43,6 +43,7 @@ public class BillUtils {
         BillCriteria billCriteria = BillCriteria.builder()
                 .tenantId(calculationRequest.getCriteria().getTenantId())
                 .referenceIds(Stream.of(referenceId).collect(Collectors.toSet()))
+                .localityCode(calculationRequest.getCriteria().getLocalityCode())
                 .build();
 
         BillSearchRequest billSearchRequest = BillSearchRequest.builder()

@@ -286,7 +286,7 @@ public class ExpenseCalculatorService {
                         billResponse1.setStatusCode(INPROGRESS_STATUS);
                         return billResponse1;
                     } else {
-                        BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).get();
+                        BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().get();
                         expenseCalculatorRepository.updateBillStatus(billStatus.getId(), SUCCESSFUL_STATUS, null);
                         billResponse1.setStatusCode(SUCCESSFUL_STATUS);
                         return billResponse1;
@@ -380,7 +380,7 @@ public class ExpenseCalculatorService {
             }
             List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
             if (!billStatuses.isEmpty()) {
-                BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).get();
+                BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().get();
                 if (billStatus != null)
                     expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS, customException.getCode() + " " + customException.getMessage());
             }
@@ -389,7 +389,7 @@ public class ExpenseCalculatorService {
             String referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
             List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
             if (!billStatuses.isEmpty()) {
-                BillStatus billStatus = billStatuses.stream().findFirst().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).get();
+                BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().get();
                 if (billStatus != null)
                     expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS,  e.getMessage());
             }
