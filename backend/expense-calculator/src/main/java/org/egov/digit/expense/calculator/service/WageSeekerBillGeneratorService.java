@@ -92,7 +92,6 @@ public class WageSeekerBillGeneratorService {
 	public void createWageSeekerBillsHealth(RequestInfo requestInfo, List<MusterRoll> musterRolls,
 											List<WorkerMdms> workerMdms, Bill bill) {
 
-		BigDecimal totalBillAmount = BigDecimal.ZERO;
 		for (MusterRoll musterRoll : musterRolls) {
 
 			List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
@@ -127,7 +126,6 @@ public class WageSeekerBillGeneratorService {
 					payableLineItem.add(lineItem);
 				}
 				//Create bill detail
-				totalBillAmount = totalBillAmount.add(totalBillDetailAmount);
 				BillDetail billDetail = BillDetail.builder()
 						.payableLineItems(payableLineItem)
 						.lineItems(new ArrayList<>())
@@ -142,10 +140,10 @@ public class WageSeekerBillGeneratorService {
 						.build();
 
 				bill.addBillDetailsItem(billDetail);
+				bill.setTotalAmount(bill.getTotalAmount().add(billDetail.getTotalAmount()));
 			}
 		}
 
-		bill.setTotalAmount(bill.getTotalAmount().add(totalBillAmount));
 	}
 
 	BigDecimal sumRateBreakup(Map<String, BigDecimal> rateBreakup) {
