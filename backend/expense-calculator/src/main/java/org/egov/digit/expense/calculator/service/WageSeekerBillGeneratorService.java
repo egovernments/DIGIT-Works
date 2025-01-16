@@ -140,7 +140,6 @@ public class WageSeekerBillGeneratorService {
 						.build();
 
 				bill.addBillDetailsItem(billDetail);
-				bill.setTotalAmount(bill.getTotalAmount().add(billDetail.getTotalAmount()));
 			}
 		}
 

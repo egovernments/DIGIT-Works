@@ -408,7 +408,7 @@ public class ExpenseCalculatorService {
     private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo,
                                       Project project, boolean isDistrictLevel) {
         log.info("Create wage bill for musterRollIds :"+criteria.getMusterRollId());
-        Bill bill = Bill.builder().totalAmount(BigDecimal.ZERO).billDetails(new ArrayList<>()).build();
+        Bill bill = Bill.builder().billDetails(new ArrayList<>()).build();
         String parentProjectId = project.getProjectHierarchy();
         if (project.getProjectHierarchy() == null) {
             parentProjectId = project.getId();
@@ -756,6 +756,8 @@ public class ExpenseCalculatorService {
     }
 
     private void enrichBill(Bill bill, Criteria criteria,  Project project) {
+        BigDecimal amount = bill.getBillDetails().stream().map(BillDetail::getTotalAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        bill.setTotalAmount(amount);
         bill.setFromPeriod(project.getStartDate());
         bill.setBillDate(System.currentTimeMillis());
         bill.setToPeriod(project.getEndDate());
