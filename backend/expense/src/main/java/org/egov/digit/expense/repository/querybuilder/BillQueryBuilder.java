@@ -130,7 +130,7 @@ public class BillQueryBuilder {
 
         }
 		return isCountRequired? query.toString() : addPaginationWrapper(query, billSearchRequest.getPagination(),
-                preparedStmtList, isValidationSearch);
+                preparedStmtList);
     }
 
     private String addOrderByClause(Pagination pagination) {
@@ -159,17 +159,12 @@ public class BillQueryBuilder {
         return paginationWrapper;
     }
 
-    private String addPaginationWrapper(StringBuilder query,Pagination pagination,List<Object> preparedStmtList, boolean isValidation){
+    private String addPaginationWrapper(StringBuilder query,Pagination pagination,List<Object> preparedStmtList){
 
 		String paginatedQuery = addOrderByClause(pagination);
 
 		int limit = null != pagination.getLimit() ? pagination.getLimit() : configs.getDefaultLimit();
 		int offset = null != pagination.getOffSet() ? pagination.getOffSet() : configs.getDefaultOffset();
-
-        if(isValidation){
-            limit = configs.getValidationDefaultLimit();
-            offset = configs.getDefaultOffset();
-        }
 
         String finalQuery = paginatedQuery.replace("{}", query);
 

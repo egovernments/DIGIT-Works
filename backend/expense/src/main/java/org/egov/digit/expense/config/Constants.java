@@ -67,6 +67,7 @@ public class Constants {
 
 
 	private static final String INNER_JOIN = "INNER JOIN";
+	private static final String LEFT_JOIN = "LEFT JOIN";
 
 	public static final String PAYMENT_QUERY = "SELECT "
 			
@@ -141,13 +142,13 @@ public class Constants {
 			
 			+ "FROM eg_expense_bill bill "
 			
-			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYER ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
+			+ LEFT_JOIN + " EG_EXPENSE_PARTY PAYER ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_BILLDETAIL BD ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
+			+ LEFT_JOIN + " EG_EXPENSE_BILLDETAIL BD ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
+			+ LEFT_JOIN + " EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
+			+ LEFT_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
 
 	public static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
 

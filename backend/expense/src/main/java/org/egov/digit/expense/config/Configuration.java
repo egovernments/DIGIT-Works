@@ -183,7 +183,4 @@ public class Configuration {
 
 	@Value("${project.search.path}")
 	private String projectSearchPath;
-
-	@Value("${validation.default.limit}")
-	private Integer validationDefaultLimit;
 }
