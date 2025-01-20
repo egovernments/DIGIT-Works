@@ -32,16 +32,13 @@ public class AttendanceApiController {
     private final AttendanceRegisterService attendanceRegisterService;
     private final ResponseInfoFactory responseInfoFactory;
 
-    private final RegisterRepository registerRepository;
-
     @Autowired
-    public AttendanceApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoFactory responseInfoCreator, AttendanceRegisterService attendanceRegisterService, ResponseInfoFactory responseInfoFactory, org.egov.repository.RegisterRepository registerRepository) {
+    public AttendanceApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoFactory responseInfoCreator, AttendanceRegisterService attendanceRegisterService, ResponseInfoFactory responseInfoFactory) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.responseInfoCreator = responseInfoCreator;
         this.attendanceRegisterService = attendanceRegisterService;
         this.responseInfoFactory = responseInfoFactory;
-        this.registerRepository = registerRepository;
     }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)

@@ -7,6 +7,7 @@ import org.egov.common.models.project.Project;
 import org.egov.common.models.project.ProjectRequest;
 import org.egov.common.models.project.ProjectResponse;
 import org.egov.config.AttendanceServiceConfiguration;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,20 +34,28 @@ public class ProjectServiceUtil {
 	 * @param tenantId
 	 * @param project
 	 * @param requestInfo
-	 * @return
+	 * @param childProject
+	 * @param isAncestorProjectId
+	 * @return List
 	 */
 	public List<Project> getProject(String tenantId, Project project, RequestInfo requestInfo, Boolean childProject, boolean isAncestorProjectId){
 
 		StringBuilder url = getProjectURL(tenantId, childProject, isAncestorProjectId);
 		ProjectRequest projectRequest = ProjectRequest.builder().projects(Collections.singletonList(project)).requestInfo(requestInfo).build();
-		ProjectResponse projectResponse = serviceRequestClient.fetchResult(url,projectRequest,ProjectResponse.class);
 
-		return projectResponse.getProject();
-
+		try {
+			ProjectResponse projectResponse = serviceRequestClient.fetchResult(url,projectRequest,ProjectResponse.class);
+			return projectResponse != null ? projectResponse.getProject() : Collections.emptyList();
+		} catch (Exception e) {
+			log.error("Error while fetching project details: ", e);
+			throw new CustomException("FETCH_PROJECT_ERROR", "Error while fetching project details");
+		}
 	}
 	/**
 	 * Builds Project search URL
 	 * @param tenantId
+	 * @param childRequired
+	 * @param isAncestorProjectId
 	 * @return URL
 	 */
 	public StringBuilder getProjectURL(String tenantId, Boolean childRequired, boolean isAncestorProjectId)

@@ -40,8 +40,6 @@ public class AttendanceLogServiceValidator {
 
     private final IndividualServiceUtil individualServiceUtil;
 
-    private final AttendanceServiceConfiguration attendanceServiceConfiguration;
-
     @Autowired
     public AttendanceLogServiceValidator(StaffRepository attendanceStaffRepository, RegisterRepository attendanceRegisterRepository, AttendeeRepository attendanceAttendeeRepository, AttendanceLogRepository attendanceLogRepository, AttendanceServiceConfiguration config, IndividualServiceUtil individualServiceUtil, AttendanceServiceConfiguration attendanceServiceConfiguration) {
         this.attendanceStaffRepository = attendanceStaffRepository;
@@ -50,7 +48,6 @@ public class AttendanceLogServiceValidator {
         this.attendanceLogRepository = attendanceLogRepository;
         this.config = config;
         this.individualServiceUtil = individualServiceUtil;
-        this.attendanceServiceConfiguration = attendanceServiceConfiguration;
     }
 
     public void validateCreateAttendanceLogRequest(AttendanceLogRequest attendanceLogRequest) {
@@ -431,11 +428,14 @@ public class AttendanceLogServiceValidator {
 
     private void validateLoggedInUser(String userUUID, String registerId, Set<String> userRoles) {
         if(config.isLogOpenSearchEnabled()) {
+            log.debug("Open search is enabled, checking user roles");
             //Get the roles enabled for open serach
-            Set<String> openSearchEnabledRoles  = HRMSUtil.getRegisterOpenSearchEnabledRoles(attendanceServiceConfiguration.getRegisterOpenSearchEnabledRoles());
+            Set<String> openSearchEnabledRoles  = HRMSUtil.getRegisterOpenSearchEnabledRoles(config.getRegisterOpenSearchEnabledRoles());
             if(HRMSUtil.isUserEnabledForOpenSearch(userRoles,openSearchEnabledRoles)) {
+                log.info("User {} is enabled for open search with roles {}", userUUID, userRoles);
                 return;
             }
+            log.debug("User {} is not enabled for open search, falling back to staff validation", userUUID);
         }
         StaffSearchCriteria searchCriteria = StaffSearchCriteria
                 .builder()

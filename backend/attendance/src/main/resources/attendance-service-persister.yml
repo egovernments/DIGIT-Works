@@ -48,7 +48,7 @@ serviceMaps:
 
             - jsonPath: $.attendanceRegister.*.localityCode
 
-            - jsonPath: $.attendanceRegister.*.reivewStatus
+            - jsonPath: $.attendanceRegister.*.reviewStatus
 
         - query: INSERT INTO eg_wms_attendance_staff(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,stafftype) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendanceRegister.*.staff.*
@@ -131,7 +131,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerId
       auditAttributeBasePath: $.staff.*
       queryMaps:
-        - query: INSERT INTO eg_wms_attendance_staff(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO eg_wms_attendance_staff(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,stafftype) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.staff.*
           jsonMaps:
             - jsonPath: $.staff.*.id
@@ -168,7 +168,7 @@ serviceMaps:
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.registerId
-      auditAttributeBasePath:  $.attendance.*
+      auditAttributeBasePath: $.attendance.*
       queryMaps:
         - query: INSERT INTO eg_wms_attendance_log(id,clientreferenceid,tenantid,individual_id,register_id,status,time,event_type,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime, clientcreatedby, clientlastmodifiedby, clientcreatedtime, clientlastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendance.*
@@ -241,7 +241,7 @@ serviceMaps:
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.registerId
-      auditAttributeBasePath:  $.attendance.*
+      auditAttributeBasePath: $.attendance.*
       queryMaps:
         - query: UPDATE eg_wms_attendance_log set status = ?, time = ? ,event_type =? ,additionaldetails = ?  ,lastmodifiedby = ?  ,lastmodifiedtime = ?, clientlastmodifiedby = ?, clientlastmodifiedtime = ? where id = ? ;
           basePath: $.attendance.*
@@ -316,7 +316,7 @@ serviceMaps:
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.registerNumber
-      auditAttributeBasePath:  $.attendanceRegister.*
+      auditAttributeBasePath: $.attendanceRegister.*
       queryMaps:
         - query: UPDATE eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=? where id=?;
           basePath: $.attendanceRegister.*
@@ -352,7 +352,7 @@ serviceMaps:
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.registerId
-      auditAttributeBasePath:  $.attendees.*
+      auditAttributeBasePath: $.attendees.*
       queryMaps:
         - query: UPDATE eg_wms_attendance_attendee set individual_id=?, register_id=?, enrollment_date=?, deenrollment_date=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=? where id=?;
           basePath: $.attendees.*
@@ -384,7 +384,7 @@ serviceMaps:
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.registerId
-      auditAttributeBasePath:  $.staff.*
+      auditAttributeBasePath: $.staff.*
       queryMaps:
         - query: UPDATE eg_wms_attendance_staff set individual_id=?, register_id=?, enrollment_date=?, deenrollment_date=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=? where id=?;
           basePath: $.staff.*

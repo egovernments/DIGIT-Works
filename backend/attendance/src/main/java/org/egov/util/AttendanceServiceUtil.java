@@ -3,8 +3,6 @@ package org.egov.util;
 import digit.models.coremodels.AuditDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
-
 @Component
 public class AttendanceServiceUtil {
     public AuditDetails getAuditDetails(String by, AuditDetails auditDetails, Boolean isCreate) {
