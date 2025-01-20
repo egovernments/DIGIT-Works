@@ -28,7 +28,6 @@ import org.egov.digit.expense.web.models.enums.ReferenceStatus;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 
 import static org.egov.digit.expense.config.Constants.GENDER;
@@ -41,14 +40,12 @@ public class EnrichmentUtil {
     private final IdgenUtil idgenUtil;
 
     private final GenderUtil genderUtil;
-    private final ProjectUtil projectUtil;
 
     @Autowired
-    public EnrichmentUtil(Configuration config, IdgenUtil idgenUtil, GenderUtil genderUtil, ProjectUtil projectUtil) {
+    public EnrichmentUtil(Configuration config, IdgenUtil idgenUtil, GenderUtil genderUtil) {
         this.config = config;
         this.idgenUtil = idgenUtil;
         this.genderUtil = genderUtil;
-        this.projectUtil = projectUtil;
     }
 
     public void encrichBillForCreate(BillRequest billRequest) {

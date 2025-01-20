@@ -177,10 +177,4 @@ public class Configuration {
 
 	@Value("${is.health.context.enabled}")
 	private boolean isHealthContextEnabled;
-
-	@Value("${project.service.host}")
-	private String projectHost;
-
-	@Value("${project.search.path}")
-	private String projectSearchPath;
 }
