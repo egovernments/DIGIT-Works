@@ -43,7 +43,7 @@ public class Bill {
 
 	@JsonProperty("localityCode")
 	@NotNull
-	@Size(min = 2, max = 64)
+	@Size(min = 2, max = 256)
 	private String localityCode;
 
 	@JsonProperty("billDate")
@@ -70,7 +70,7 @@ public class Bill {
 	private String businessService;
 
 	@JsonProperty("referenceId")
-	@Size(min = 2, max = 128)
+	@Size(min = 2, max = 256)
 	private String referenceId;
 
 	@JsonProperty("fromPeriod")
