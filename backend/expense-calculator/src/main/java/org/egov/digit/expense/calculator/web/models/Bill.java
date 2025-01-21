@@ -8,11 +8,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import org.egov.common.contract.models.AuditDetails;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +41,11 @@ public class Bill {
 	@Size(min = 2, max = 64)
 	private String tenantId;
 
+	@JsonProperty("localityCode")
+	@NotNull
+	@Size(min = 2, max = 256)
+	private String localityCode;
+
 	@JsonProperty("billDate")
 	@Valid
 	private Long billDate;
@@ -65,7 +70,7 @@ public class Bill {
 	private String businessService;
 
 	@JsonProperty("referenceId")
-	@Size(min = 2, max = 128)
+	@Size(min = 2, max = 256)
 	private String referenceId;
 
 	@JsonProperty("fromPeriod")

@@ -5,12 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
-import org.egov.digit.expense.calculator.web.models.Bill;
-import org.egov.digit.expense.calculator.web.models.BillCalculatorRequestInfoWrapper;
-import org.egov.digit.expense.calculator.web.models.BillResponse;
-import org.egov.digit.expense.calculator.web.models.Workflow;
+import org.egov.digit.expense.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @Slf4j
@@ -39,6 +39,23 @@ public class BillUtils {
         return postBill(requestInfo,bill,workflow,url);
     }
 
+    public BillResponse searchBills(CalculationRequest calculationRequest, String referenceId) {
+        BillCriteria billCriteria = BillCriteria.builder()
+                .tenantId(calculationRequest.getCriteria().getTenantId())
+                .referenceIds(Stream.of(referenceId).collect(Collectors.toSet()))
+                .localityCode(calculationRequest.getCriteria().getLocalityCode())
+                .build();
+
+        BillSearchRequest billSearchRequest = BillSearchRequest.builder()
+                .requestInfo(calculationRequest.getRequestInfo())
+                .billCriteria(billCriteria)
+                .pagination(Pagination.builder().build())
+                .build();
+
+        Object responseObj = restRepo.fetchResult(getBillSearchURI(), billSearchRequest);
+        return mapper.convertValue(responseObj, BillResponse.class);
+    }
+
     private BillResponse postBill(RequestInfo requestInfo, Bill bill, Workflow workflow, StringBuilder url) {
         // Update workflow object because in expense service it's using core service workflow
         Workflow expenseWorkflow1 = Workflow.builder()
@@ -52,10 +69,10 @@ public class BillUtils {
                 .bill(bill)
                 .workflow(expenseWorkflow1)
                 .build();
-        log.info("Posting Bill to expense service:" + requestInfoWrapper.toString());
+        log.info("Posting Bill to expense service");
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
         if(responseObj!=null)
-        	log.info("Received Bill Response: " + responseObj.toString());
+        	log.info("Received Bill Response");
         return mapper.convertValue(responseObj, BillResponse.class);
     }
     
@@ -69,6 +86,12 @@ public class BillUtils {
     private StringBuilder getBillUpdateURI() {
         StringBuilder builder = new StringBuilder(configs.getBillHost());
         builder.append(configs.getBillUpdateEndPoint());
+        return builder;
+    }
+
+    private StringBuilder getBillSearchURI() {
+        StringBuilder builder = new StringBuilder(configs.getBillHost());
+        builder.append(configs.getExpenseBillSearchEndPoint());
         return builder;
     }
 }

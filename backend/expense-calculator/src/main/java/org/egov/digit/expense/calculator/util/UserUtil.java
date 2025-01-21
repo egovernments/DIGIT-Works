@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.egov.common.contract.user.UserDetailResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
@@ -15,10 +16,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import digit.models.coremodels.UserDetailResponse;
-import digit.models.coremodels.user.Role;
-import digit.models.coremodels.user.User;
-import digit.models.coremodels.user.enums.UserType;
 
 @Component
 public class UserUtil {
@@ -100,37 +97,6 @@ public class UserUtil {
 			throw new CustomException("INVALID_DATE_FORMAT", "Failed to parse date format in user");
 		}
 		return d.getTime();
-	}
-
-	/**
-	 * enriches the userInfo with statelevel tenantId and other fields The function
-	 * creates user with username as mobile number.
-	 * 
-	 * @param mobileNumber
-	 * @param tenantId
-	 * @param userInfo
-	 */
-	public void addUserDefaultFields(String mobileNumber, String tenantId, User userInfo, UserType userType) {
-		Role role = getCitizenRole(tenantId);
-		userInfo.setRoles(Collections.singleton(role));
-		userInfo.setType(userType);
-		userInfo.setUsername(mobileNumber);
-		userInfo.setTenantId(getStateLevelTenant(tenantId));
-		userInfo.setActive(true);
-	}
-
-	/**
-	 * Returns role object for citizen
-	 * 
-	 * @param tenantId
-	 * @return
-	 */
-	private Role getCitizenRole(String tenantId) {
-		Role role = Role.builder().build();
-		role.setCode("CITIZEN");
-		role.setName("Citizen");
-		role.setTenantId(getStateLevelTenant(tenantId));
-		return role;
 	}
 
 	public String getStateLevelTenant(String tenantId) {
