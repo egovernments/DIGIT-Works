@@ -223,8 +223,8 @@ public class MusterRollService {
                     .fetchAttendanceRegister(musterRollRequest.getMusterRoll(), musterRollRequest.getRequestInfo());
             List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
             if(attendanceRegisters == null || attendanceRegisters.isEmpty()) {
-                log.error("No attendance registers found to update the status");
-                throw new CustomException("MusterRollService::updateMusterRoll::updateAttendanceRegister", "No attendance registers found to update the status");
+                log.error("No attendance registers found to update the status for muster roll ID: {}", musterRollRequest.getMusterRoll().getId());
+                throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND", "No attendance registers found to update the status for the given muster roll");
             }
             AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
             attendanceRegister.setReviewStatus(STATUS_APPROVED);

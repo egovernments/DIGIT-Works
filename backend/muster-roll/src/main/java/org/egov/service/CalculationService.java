@@ -202,7 +202,7 @@ public class CalculationService {
             for (IndividualEntry entry : individualEntries) {
 
                 // Set individual details in additionalDetails
-                if (!CollectionUtils.isEmpty(individuals) /* && !CollectionUtils.isEmpty(bankAccounts) */) {
+                if (!CollectionUtils.isEmpty(individuals)) {
                     Individual individual = individuals.stream()
                             .filter(ind -> ind.getId().equalsIgnoreCase(entry.getIndividualId())).findFirst()
                             .orElse(null);
@@ -210,7 +210,7 @@ public class CalculationService {
                             .filter(account -> account.getReferenceId().equalsIgnoreCase(entry.getIndividualId()))
                             .findFirst().orElse(null);
 
-                    if (individual != null /* && bankAccount != null */) {
+                    if (individual != null) {
                         setAdditionalDetails(entry, individualEntriesFromRequest, mdmsV2Data, individual,
                                 bankAccount, isCreate);
                     } else {

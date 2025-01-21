@@ -337,7 +337,7 @@ public class MusterRollValidator {
             throw new CustomException("MusterRollValidator::validateAndEnrichAttendance::", "Attendance days can't be more than register days");
         }
         musterRoll.setStartDate(attendanceRegister.getStartDate());
-        musterRoll.setEndDate(attendanceRegister.getStartDate());
+        musterRoll.setEndDate(attendanceRegister.getEndDate());
     }
     
    

@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -123,28 +124,29 @@ public class EnrichmentService {
         List<IndividualEntry> individualEntries = existingMusterRoll.getIndividualEntries();
         List<IndividualEntry> modifiedIndividualEntries = musterRoll.getIndividualEntries();
         if (!CollectionUtils.isEmpty(modifiedIndividualEntries)) {
-            for (IndividualEntry individualEntry : individualEntries) {
-                for (IndividualEntry modifiedIndividualEntry : modifiedIndividualEntries)  {
-                    if (modifiedIndividualEntry.getId().equalsIgnoreCase(individualEntry.getId())) {
-                        //update the total attendance
-                        if (modifiedIndividualEntry.getModifiedTotalAttendance() != null) {
-                            individualEntry.setModifiedTotalAttendance(modifiedIndividualEntry.getModifiedTotalAttendance());
-                        }
-                        if (modifiedIndividualEntry.getAdditionalDetails() != null) {
-                            try {
-                                JsonNode node = mapper.readTree(mapper.writeValueAsString(modifiedIndividualEntry.getAdditionalDetails()));
-                                if (node.findValue("code") != null  && StringUtils.isNotBlank(node.findValue("code").textValue())) {
-                                    String skillCode = node.findValue("code").textValue();
-                                    //Update the skill value based on the code from request
-                                    musterRollServiceUtil.updateAdditionalDetails(mdmsData,individualEntry,skillCode);
-                                }
-                            } catch (IOException e) {
-                                log.info("EnrichmentService::enrichMusterRollOnUpdate::Failed to parse additionalDetail object from request"+e);
-                                throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object from request on update");
-                            }
+            Map<String, IndividualEntry> modifiedEntriesMap = modifiedIndividualEntries.stream()
+                    .filter(entry -> entry.getId() != null)
+                    .collect(Collectors.toMap(IndividualEntry::getId, entry -> entry));
 
+            for (IndividualEntry individualEntry : individualEntries) {
+                if (individualEntry.getId() != null && modifiedEntriesMap.containsKey(individualEntry.getId())) {
+                    IndividualEntry modifiedIndividualEntry = modifiedEntriesMap.get(individualEntry.getId());
+                    if (modifiedIndividualEntry.getModifiedTotalAttendance() != null) {
+                        individualEntry.setModifiedTotalAttendance(modifiedIndividualEntry.getModifiedTotalAttendance());
+                    }
+                    if (modifiedIndividualEntry.getAdditionalDetails() != null) {
+                        try {
+                            JsonNode node = mapper.readTree(mapper.writeValueAsString(modifiedIndividualEntry.getAdditionalDetails()));
+                            if (node.findValue("code") != null  && StringUtils.isNotBlank(node.findValue("code").textValue())) {
+                                String skillCode = node.findValue("code").textValue();
+                                //Update the skill value based on the code from request
+                                musterRollServiceUtil.updateAdditionalDetails(mdmsData,individualEntry,skillCode);
+                            }
+                        } catch (IOException e) {
+                            log.info("EnrichmentService::enrichMusterRollOnUpdate::Failed to parse additionalDetail object from request"+e);
+                            throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object from request on update");
                         }
-                        break;
+
                     }
                 }
             }

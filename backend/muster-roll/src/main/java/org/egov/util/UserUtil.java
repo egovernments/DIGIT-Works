@@ -60,7 +60,17 @@ public class UserUtil {
         }
     }
 
+    /**
+      * Searches for users by their individual IDs
+      *
+      * @param individualIds List of individual IDs to search for
+      * @return UserDetailResponse containing the matched users
+      * @throws CustomException if individualIds is null or empty
+     * */
     public UserDetailResponse searchUsersByIndividualIds(List<String> individualIds) {
+        if (individualIds == null || individualIds.isEmpty()) {
+            throw new CustomException("INVALID_INPUT", "Individual IDs list cannot be null or empty");
+        }
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
                 .append(config.getUserHost())

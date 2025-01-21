@@ -289,8 +289,8 @@ public class MusterRollServiceUtil {
 	}
 
 	public AttendanceRegisterResponse updateAttendanceRegister(AttendanceRegister attendanceRegister, RequestInfo requestInfo) {
-		log.info("updateAttendanceRegister::Update attendance register with tenantId::" + attendanceRegister.getTenantId()
-				+ " and register ID: " + attendanceRegister.getId());
+		log.info("updateAttendanceRegister::Update attendance register with tenantId: {} and register ID: {}",
+				attendanceRegister.getTenantId(), attendanceRegister.getId());
 
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterUpdateEndpoint());
@@ -303,11 +303,12 @@ public class MusterRollServiceUtil {
 				.build();
 		try {
 			response = restTemplate.postForObject(uri.toString(), attendanceRegisterRequest, AttendanceRegisterResponse.class);
-		} catch (HttpClientErrorException e) {
+		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			throw new ServiceCallException(e.getResponseBodyAsString());
 		} catch (Exception e) {
 			Map<String, String> map = new HashMap<>();
-			map.put(e.getCause().getClass().getName(), e.getMessage());
+			String causeName = (e.getCause() != null) ? e.getCause().getClass().getName() : e.getClass().getName();
+			map.put(causeName, e.getMessage());
 			throw new CustomException(map);
 		}
 
