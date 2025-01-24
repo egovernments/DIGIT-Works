@@ -80,6 +80,8 @@ public class MusterRollServiceConfiguration {
     private String attendanceLogEndpoint;
     @Value("${works.attendance.register.search.endpoint}")
     private String attendanceRegisterEndpoint;
+    @Value("${works.attendance.register.update.endpoint}")
+    private String attendanceRegisterUpdateEndpoint;
     @Value("${works.attendance.register.search.limit}")
     private String attendanceRegisterSearchLimit;
 
@@ -105,6 +107,9 @@ public class MusterRollServiceConfiguration {
     @Value("${kafka.topics.notification.sms}")
     private String smsNotificationTopic;
 
+    @Value("${notification.sms.enabled:false}")
+    private boolean sendNotificationEnabled;
+
     //Expense Service
     @Value("${works.expense.calculator.host}")
     private String expenseCalculatorServiceHost;
@@ -126,6 +131,51 @@ public class MusterRollServiceConfiguration {
     //contract service code
     @Value("${works.contract.service.code}")
     private String contractServiceCode;
+
+    @Value("${musterroll.update.recompute.attendance.enabled:true}")
+    private boolean recomputeAttendanceEnabled;
+
+    @Value("${musterroll.workflow.enabled:true}")
+    private boolean musterRollWorkflowEnabled;
+
+    @Value("${musterroll.noworkflow.create.status}")
+    private String musterRollNoWorkflowCreateStatus;
+
+    @Value("${musterroll.individual.entry.roles.enabled:false}")
+    private boolean individualEntryRolesEnabled;
+
+    @Value("${musterroll.validate.start.date.monday.enabled:true}")
+    private boolean validateStartDateMondayEnabled;
+
+    @Value("${musterroll.validate.attendance.register.enabled:false}")
+    private boolean validateAttendanceRegisterEnabled;
+
+    @Value("${musterroll.set.default.duration.enabled:false}")
+    private boolean musterRollSetDefaultDurationEnabled;
+
+    @Value("${musterroll.default.duration.days:6}")
+    private int musterRollDefaultDuration;
+
+    @Value("${musterroll.add.bank.account.details.enabled:true}")
+    private boolean addBankAccountDetails;
+
+    @Value("${musterroll.update.attendance.register.review.status.enabled:true}")
+    private boolean updateAttendanceRegisterReviewStatusEnabled;
+
+    @Value("${egov.user.host}")
+    private String userHost;
+
+    @Value("${egov.user.context.path}")
+    private String userContextPath;
+
+    @Value("${egov.user.create.path}")
+    private String userCreateEndpoint;
+
+    @Value("${egov.user.search.path}")
+    private String userSearchEndpoint;
+
+    @Value("${egov.user.update.path}")
+    private String userUpdateEndpoint;
 
     @PostConstruct
     public void initialize() {

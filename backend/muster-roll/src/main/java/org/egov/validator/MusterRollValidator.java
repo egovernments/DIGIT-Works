@@ -9,6 +9,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
+import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
 import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,8 @@ public class MusterRollValidator {
 
     private final MdmsUtil mdmsUtils;
 
+    private final MusterRollServiceUtil musterRollServiceUtil;
+
     private final RestTemplate restTemplate;
 
     private static final String TENANT_ID = "TENANT_ID";
@@ -47,9 +51,10 @@ public class MusterRollValidator {
     private static final String TENANT_ID_IS_MANADATORY = "TenantId is mandatory";
 
     @Autowired
-    public MusterRollValidator(MusterRollServiceConfiguration serviceConfiguration, MdmsUtil mdmsUtils, RestTemplate restTemplate) {
+    public MusterRollValidator(MusterRollServiceConfiguration serviceConfiguration, MdmsUtil mdmsUtils, MusterRollServiceUtil musterRollServiceUtil, RestTemplate restTemplate) {
         this.serviceConfiguration = serviceConfiguration;
         this.mdmsUtils = mdmsUtils;
+        this.musterRollServiceUtil = musterRollServiceUtil;
         this.restTemplate = restTemplate;
     }
 
@@ -92,7 +97,12 @@ public class MusterRollValidator {
 
         validateRequestInfo(requestInfo);
         validateCreateMusterRollRequest(musterRoll);
-        validateWorkFlow(workflow, errorMap);
+        if(serviceConfiguration.isValidateAttendanceRegisterEnabled()) {
+            validateAndEnrichAttendance(musterRoll, requestInfo, true);
+        }
+        if(serviceConfiguration.isMusterRollWorkflowEnabled()) {
+            validateWorkFlow(workflow, errorMap);
+        }
 
         //split the tenantId and validate tenantId
         String tenantId = musterRoll.getTenantId();
@@ -121,7 +131,12 @@ public class MusterRollValidator {
         Workflow workflow = musterRollRequest.getWorkflow();
 
         validateRequestInfo(requestInfo);
-        validateWorkFlow(workflow, errorMap);
+        if(serviceConfiguration.isValidateAttendanceRegisterEnabled()) {
+            validateAndEnrichAttendance(musterRoll, requestInfo, false);
+        }
+        if(serviceConfiguration.isMusterRollWorkflowEnabled()) {
+            validateWorkFlow(workflow, errorMap);
+        }
         validateUpdateMusterRollRequest(musterRoll);
 
         //split the tenantId and validate tenantId
@@ -180,7 +195,7 @@ public class MusterRollValidator {
 
         //Check if the startDate is Monday - UI sends the epoch time in IST
         LocalDate startDate = Instant.ofEpochMilli(musterRoll.getStartDate().longValue()).atZone(ZoneId.of(serviceConfiguration.getTimeZone())).toLocalDate();
-        if (startDate.getDayOfWeek() != DayOfWeek.MONDAY) {
+        if (serviceConfiguration.isValidateStartDateMondayEnabled() && startDate.getDayOfWeek() != DayOfWeek.MONDAY) {
             throw new CustomException("START_DATE_MONDAY","StartDate should be Monday");
         }
         musterRoll.setStartDate(new BigDecimal(startDate.atStartOfDay(ZoneId.of(serviceConfiguration.getTimeZone())).toInstant().toEpochMilli()));
@@ -190,10 +205,11 @@ public class MusterRollValidator {
         log.info("MusterRollValidator::validateCreateMusterRoll::endDate in epoch from request::"+musterRoll.getEndDate());
 
         //Override the endDate as SUNDAY
-        LocalDate endDate = startDate.plusDays(6);
-        log.info("MusterRollValidator::validateCreateMusterRoll:: calculated endDate::"+endDate);
-        musterRoll.setEndDate(new BigDecimal(endDate.atStartOfDay(ZoneId.of(serviceConfiguration.getTimeZone())).toInstant().toEpochMilli()));
-
+        if (serviceConfiguration.isMusterRollSetDefaultDurationEnabled()) {
+            LocalDate endDate = startDate.plusDays(serviceConfiguration.getMusterRollDefaultDuration());
+            log.info("MusterRollValidator::validateCreateMusterRoll:: calculated endDate::"+endDate);
+            musterRoll.setEndDate(new BigDecimal(endDate.atStartOfDay(ZoneId.of(serviceConfiguration.getTimeZone())).toInstant().toEpochMilli()));
+        }
     }
 
     private void validateUpdateMusterRollRequest(MusterRoll musterRoll) {
@@ -293,6 +309,35 @@ public class MusterRollValidator {
             throw new CustomException("INVALID_USER","User is not enrolled in the attendance register");
         }
 
+    }
+
+    public void validateAndEnrichAttendance(MusterRoll musterRoll, RequestInfo requestInfo, boolean isCreate) {
+        log.info("MusterRollValidator::validateAndEnrichAttendance");
+        AttendanceRegisterResponse attendanceRegisterResponse = musterRollServiceUtil
+                .fetchAttendanceRegister(musterRoll, requestInfo);
+        List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
+        if(attendanceRegisters == null || attendanceRegisters.isEmpty()) {
+            log.error("No attendance registers found for the muster roll");
+            throw new CustomException("MusterRollValidator::validateAndEnrichAttendance", "No attendance registers found for the muster roll");
+        }
+        AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
+        LocalDate startDate = Instant.ofEpochMilli(attendanceRegister.getStartDate().longValue()).atZone(ZoneId.of(serviceConfiguration.getTimeZone())).toLocalDate();
+        LocalDate endDate = Instant.ofEpochMilli(attendanceRegister.getEndDate().longValue()).atZone(ZoneId.of(serviceConfiguration.getTimeZone())).toLocalDate();
+
+        // Calculate inclusive difference in days
+        long inclusiveDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        log.info("Total number of days in attendance register: " + inclusiveDays);
+        if (!isCreate && musterRoll.getIndividualEntries().stream()
+                .anyMatch(entry ->
+                        ((entry.getModifiedTotalAttendance() != null
+                                && inclusiveDays < entry.getModifiedTotalAttendance().longValue()))
+                || (entry.getActualTotalAttendance() != null
+                && inclusiveDays < entry.getActualTotalAttendance().longValue())))
+        {
+            throw new CustomException("MusterRollValidator::validateAndEnrichAttendance::", "Attendance days can't be more than register days");
+        }
+        musterRoll.setStartDate(attendanceRegister.getStartDate());
+        musterRoll.setEndDate(attendanceRegister.getEndDate());
     }
     
    
