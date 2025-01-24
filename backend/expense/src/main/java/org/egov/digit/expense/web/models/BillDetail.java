@@ -81,12 +81,14 @@ public class BillDetail {
 
 	@JsonProperty("lineItems")
 	@Valid
-	private List<LineItem> lineItems;
+	@Builder.Default
+	private List<LineItem> lineItems = new ArrayList<>();
 	
 	@JsonProperty("payableLineItems")
 	@NotNull
 	@Valid
-	private List<LineItem> payableLineItems;
+	@Builder.Default
+	private List<LineItem> payableLineItems = new ArrayList<>();
 	
 	@JsonProperty("auditDetails")
 	@Valid

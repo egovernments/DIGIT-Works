@@ -1,0 +1,1 @@
+ALTER TABLE eg_expense_bill ADD COLUMN localitycode character varying(256);

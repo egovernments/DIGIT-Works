@@ -174,4 +174,7 @@ public class Configuration {
 
 	@Value("${works.individual.endpoint}")
 	private String individualServiceEndpoint;
+
+	@Value("${is.health.context.enabled}")
+	private boolean isHealthContextEnabled;
 }
