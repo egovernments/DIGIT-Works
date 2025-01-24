@@ -54,7 +54,9 @@ public class BillQueryBuilder {
             query.append(" bill.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
-
+        /* If search is coming from validation we are using equals query as bills can be generated for multiple levels
+         * and using like query will throw an error if bill is already generated for a boundary level below the current level
+         */
         if (configs.isHealthContextEnabled() && !isValidationSearch) {
             Set<String> referenceIds = criteria.getReferenceIds();
             if (!CollectionUtils.isEmpty(referenceIds)) {

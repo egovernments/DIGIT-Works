@@ -40,12 +40,14 @@ public class EnrichmentUtil {
     private final IdgenUtil idgenUtil;
 
     private final GenderUtil genderUtil;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public EnrichmentUtil(Configuration config, IdgenUtil idgenUtil, GenderUtil genderUtil) {
+    public EnrichmentUtil(Configuration config, IdgenUtil idgenUtil, GenderUtil genderUtil, ObjectMapper objectMapper) {
         this.config = config;
         this.idgenUtil = idgenUtil;
         this.genderUtil = genderUtil;
+        this.objectMapper = objectMapper;
     }
 
     public void encrichBillForCreate(BillRequest billRequest) {
@@ -80,14 +82,10 @@ public class EnrichmentUtil {
 
             if (!config.isHealthContextEnabled()) {
                 String gender = genderUtil.getGenderDetails(billRequest.getRequestInfo(), billDetail.getPayee().getTenantId(), billDetail.getPayee().getIdentifier());
-                ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, Object> map = objectMapper.convertValue(billDetail.getPayee().getAdditionalDetails(), new TypeReference<Map<String, Object>>() {
                 });
                 if (map == null) {
                     map = new HashMap<>();
-                }
-                if (!gender.isEmpty()) {
-                    map.put(GENDER, gender);
                 }
                 map.put(GENDER, gender);
                 billDetail.getPayee().setAdditionalDetails(objectMapper.convertValue(map, Object.class));
