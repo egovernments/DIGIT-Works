@@ -1,0 +1,469 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Mukta Billing Calculator
+  description: >-
+    Three types of bills are generated in Mukta - Wage, Purchase and
+    Supervision. This spec covers APIs to calculate amounts for all three types
+    of bills. The _estimate API will perform the same calculation as _calculate
+    but will only return temporary results. _calculate calculates, stores
+    mappings between the bill creating and bill entities,  persists the results
+    and creates a bill. 
+paths:
+  /works-calculator/v1/_estimate:
+    description: This API will estimate the bill and send back responses.
+    post:
+      tags:
+        - Bill Calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationRequest'
+      responses:
+        '202':
+          description: Accepted account registration request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CalculationResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /works-calculator/v1/_calculate:
+    description: This API will calculate
+    post:
+      tags:
+        - Bill Calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationRequest'
+      responses:
+        '202':
+          description: Accepted calculation request.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Works/expense-service-codegen/backend/expense/src/main/resources/expense-service-contract.yaml#/components/schemas/BillResponse
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  
+  /works-calculator/v1/_search:
+    description: This API will search the calculator database and return an array of bill numbers.
+    post:
+      tags:
+        - Bill Calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationSearchRequest'
+      responses:
+        '202':
+          description: Accepted calculation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CalculationSearchResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /works-calculator/purchase/v1/_createbill:
+    description: This API is a pass through for the creation of a purchase bill.
+    post:
+      tags:
+        - Purchase Bill
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseBillRequest'
+      responses:
+        '202':
+          description: Accepted calculation request.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Works/expense-service-codegen/backend/expense/src/main/resources/expense-service-contract.yaml#/components/schemas/BillResponse
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /works-calculator/purchase/v1/_updatebill:
+    description: This API is a pass through for the updation of a purchase bill.
+    post:
+      tags:
+        - Purchase Bill
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseBillRequest'
+      responses:
+        '202':
+          description: Accepted calculation request.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Works/expense-service-codegen/backend/expense/src/main/resources/expense-service-contract.yaml#/components/schemas/BillResponse
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+components:
+  schemas:
+    CalculationRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        criteria:
+          $ref: '#/components/schemas/Criteria'
+    CalculationResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        calculation:
+          $ref: '#/components/schemas/Calculation'
+    
+    CalculationSearchCriteria:
+      type: object
+      properties:
+        projectName:
+          type: string
+        contractNumber:
+          type: string
+        orgCode:
+          type: string
+        musterRollNumber:
+          type: string
+        billNumber:
+          type: string
+        billType:
+          type: string
+          enum:
+            - WORKS-WAGE
+            - WORKS-PURCHASE
+            - WORKS-SUPERVISION
+        billRefId:
+          type: string
+        boundaryCode:
+          type: string
+        boundaryType:
+          type: string
+    
+    CalculationSearchResult:
+      type: object
+      properties:
+        billNumber:
+          type: string
+        billId:
+          type: string
+
+    Criteria:
+      type: object
+      properties:
+        tenantId:
+          type: string
+        musterRollId:
+          type: array
+          description: Required for wage bill calculation
+          items:
+            type: string
+        fromPeriod:
+          description: Start date of calculation period
+          type: number
+          format: timestamp
+        toPeriod:
+          description: End date of calculation period
+          type: number
+          format: timestamp
+        contractId:
+          type: string
+          description: Required for supervision bill calculation.
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+      required:
+        - tenantId
+    Calculation:
+      type: object
+      properties:
+        tenantId:
+          type: string
+        estimates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalcEstimate'
+        totalAmount:
+          type: number
+          description: Total amount to be paid
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+      required:
+        - tenantId
+        - type
+        - amount
+    CalcEstimate:
+      description: A Object which holds the info about the expense details.
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the record
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        netPayableAmount:
+          description: Net payable amount of the bill
+          type: number
+        businessService:
+          description: >-
+            Capture the expense system unique identifier.(It's name spaced
+            master data defined in MDMS)
+          example: WORKS, SALARY etc
+          type: string
+          minLength: 2
+          maxLength: 64
+        referenceId:
+          description: Pass reference id to link the bill with business entity
+          type: string
+          minLength: 2
+          maxLength: 64
+        fromPeriod:
+          description: Start date of billing period
+          type: number
+          format: timestamp
+        toPeriod:
+          description: End date of demand period
+          type: number
+          format: timestamp
+        calcDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalcDetail'
+        additionalFields:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
+      required:
+        - tenantId
+        - businessService
+        - billDetails
+    Party:
+      description: Account details
+      type: object
+      properties:
+        type:
+          description: Party type
+          example: individual, department etc
+          type: string
+          minLength: 2
+          maxLength: 64
+        identifier:
+          description: Unique identifier of a the party individual/Org
+          type: string
+          minLength: 2
+          maxLength: 64
+      required:
+        - type
+        - identifier
+    CalcDetail:
+      description: >-
+        Bill details of the individual payees. billId will be empty in case of
+        estimate APIs. Will only be populated when bill is generated.
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the record
+          readOnly: true
+          type: string
+          format: uuid
+        billId:
+          description: Bill ID where applicable as in the calculate API
+          readOnly: true
+          type: string
+          minLength: 2
+          maxLength: 64
+        referenceId:
+          description: Pass reference to link payees to business entity
+          type: string
+          minLength: 2
+          maxLength: 64
+        fromPeriod:
+          description: Start date of bill period
+          type: number
+          format: timestamp
+        toPeriod:
+          description: End date of bill period
+          type: number
+          format: timestamp
+        payee:
+          $ref: '#/components/schemas/Party'
+        lineItems:
+          type: array
+          description: Bill line items
+          items:
+            $ref: '#/components/schemas/LineItems'
+        payableLineItem:
+          type: array
+          description: Bill line items
+          items:
+            $ref: '#/components/schemas/LineItems'
+      required:
+        - payableLineItem
+    LineItems:
+      description: Line items are the amount breakups for net amounts
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the account
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        headCode:
+          description: Head codes are define master data
+          example: BASICSALARY, HRA, INCOMETAX
+          type: string
+          minLength: 2
+          maxLength: 64
+        amount:
+          description: amount for head code
+          type: number
+        type:
+          description: Type of line item
+          type: string
+          enum:
+            - EXPENSE
+            - PAYABLE
+            - DEDUCTION
+        isActive:
+          type: boolean
+        additionalFields:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
+      required:
+        - tenantId
+        - headCode
+        - amount
+        - type
+    PurchaseBill:
+      description: A Object which holds the info about the expense details
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the record
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        invoiceDate:
+          description: Invoice date
+          type: number
+          format: timestamp
+        invoiceNumber:
+          description: Invoice number
+          type: number
+        billDetails:
+          type: array
+          items:
+            $ref: >-
+              https://raw.githubusercontent.com/egovernments/DIGIT-Works/develop/backend/expense/src/main/resources/expense-service-contract.yaml#/components/schemas/BillDetail
+        additionalFields:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
+        documents:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
+      required:
+        - tenantId
+        - businessService
+        - billDetails
+    PurchaseBillRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        bill:
+          $ref: '#/components/schemas/PurchaseBill'
+        workflow:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
+    CalculationSearchRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        searchCriteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalculationSearchCriteria'
+    
+    CalculationSearchResponse:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        searchCriteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalculationSearchResult'
+
