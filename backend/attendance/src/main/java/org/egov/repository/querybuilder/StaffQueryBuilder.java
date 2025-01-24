@@ -22,7 +22,7 @@ public class StaffQueryBuilder {
             "stf.lastmodifiedby, " +
             "stf.createdtime, " +
             "stf.lastmodifiedtime, " +
-            "stf.tenantid " +
+            "stf.tenantid, " + "stf.stafftype " +
             "FROM eg_wms_attendance_staff stf ";
 
     public String getActiveAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
@@ -55,6 +55,13 @@ public class StaffQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" stf.tenantid IN (").append(createQuery(Collections.singletonList(tenantId))).append(")");
             preparedStmtList.add(criteria.getTenantId());
+        }
+
+        String staffType = criteria.getStaffType();
+        if (staffType != null && !staffType.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" stf.stafftype = ? ");
+            preparedStmtList.add(staffType);
         }
         return query.toString();
     }

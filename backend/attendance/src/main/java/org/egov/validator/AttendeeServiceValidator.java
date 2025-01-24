@@ -407,8 +407,20 @@ public class AttendeeServiceValidator {
                 .collect(Collectors.toList());
 
         //creating a register Id to First Staff Map
-        Map<String, StaffPermission> registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId,registerIds);
+        Map<String, StaffPermission> registerIdToFirstStaffMap;
+        if(config.isRegisterFirstOwnerStaffEnabled()) {
+            log.info("Using first owner staff mapping strategy");
+            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstOwnerStaffMap(tenantId,registerIds);
+        }
+        else {
+            log.info("Using first staff mapping strategy");
+            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId,registerIds);
+        }
 
+        if(registerIdToFirstStaffMap.isEmpty()) {
+            log.error("No staff mapping found for registers: {}", registerIds);
+            throw new CustomException("STAFF_MAPPING_NOT_FOUND", "No staff mapping found for the registers");
+        }
 
         //Fetching all the attendees's uuids for hrms search
         List<String> userUuids = attendeeCreateRequest.getAttendees().stream()

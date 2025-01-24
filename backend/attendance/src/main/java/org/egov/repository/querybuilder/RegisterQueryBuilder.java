@@ -34,7 +34,9 @@ public class RegisterQueryBuilder {
             "reg.createdtime, " +
             "reg.lastmodifiedtime, " +
             "reg.referenceid, " +
-            "reg.servicecode " +
+            "reg.servicecode, " +
+            "reg.localitycode, " +
+            "reg.reviewstatus " +
             "FROM eg_wms_attendance_register reg ";
 
     private static final String JOIN_STAFF = " JOIN eg_wms_attendance_staff staff ";
@@ -55,7 +57,7 @@ public class RegisterQueryBuilder {
     }
 
 
-    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
+    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludeReviewStatus) {
 
         log.info("Search criteria of attendance search : " + searchCriteria.toString());
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
@@ -89,12 +91,18 @@ public class RegisterQueryBuilder {
             query.append(" reg.registernumber = ? ");
             preparedStmtList.add(registerNumber);
         }
-
-        if (!ObjectUtils.isEmpty(searchCriteria.getReferenceId())) {
-            String referenceId = searchCriteria.getReferenceId();
+        String referenceId = searchCriteria.getReferenceId();
+        if (referenceId!=null && !referenceId.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.referenceid = ? ");
             preparedStmtList.add(referenceId);
+        }
+
+        List<String> referenceIds = searchCriteria.getReferenceIds();
+        if (referenceIds != null && !referenceIds.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.referenceid IN (").append(createQuery(referenceIds)).append(")");
+            preparedStmtList.addAll(referenceIds);
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getServiceCode())) {
@@ -151,13 +159,28 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(attendeeId);
         }
 
+        if(!ObjectUtils.isEmpty(searchCriteria.getLocalityCode())) {
+            String localityCode = searchCriteria.getLocalityCode();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.localitycode = ? ");
+            preparedStmtList.add(localityCode);
+        }
+
+        if (!ObjectUtils.isEmpty(searchCriteria.getReviewStatus()) && !excludeReviewStatus) {
+            String reviewStatus = searchCriteria.getReviewStatus();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.reviewstatus = ? ");
+            preparedStmtList.add(reviewStatus);
+        }
+
+
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);
-        return addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
+        return query.toString();
     }
 
-    private String addPaginationWrapper(String query,List<Object> preparedStmtList,
-                                        AttendanceRegisterSearchCriteria criteria){
+    public String addPaginationWrapper(String query, List<Object> preparedStmtList,
+                                       AttendanceRegisterSearchCriteria criteria){
         int limit = config.getAttendanceRegisterDefaultLimit();
         int offset = config.getAttendanceRegisterDefaultOffset();
 

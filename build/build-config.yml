@@ -30,7 +30,7 @@ config:
   - name: "builds/health-campaign-services/health-services/health-attendance-works"
     build:
       - work-dir: "backend/attendance"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "health-attendance"
       - work-dir: "backend/attendance/src/main/resources/db"
         image-name: "health-attendance-db"

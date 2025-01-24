@@ -3,6 +3,7 @@ package org.egov.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.http.client.ServiceRequestClient;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
@@ -14,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class HRMSUtil {
@@ -76,4 +80,34 @@ public class HRMSUtil {
         return builder;
     }
 
+    public static boolean isUserEnabledForOpenSearch(Set<String> userRoles, Set<String> openSearchEnabledRoles) {
+        for(String userRole : userRoles){
+            if(openSearchEnabledRoles.contains(userRole)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Set<String> getRegisterOpenSearchEnabledRoles(String registerOpenSearchEnabledRoles) {
+        Set<String> openSearchEnabledRoles = new HashSet<>();
+        if(!StringUtils.isBlank(registerOpenSearchEnabledRoles)){
+            String[] roles = registerOpenSearchEnabledRoles.split(",");
+            for(String role :roles){
+                if(!StringUtils.isBlank(role)){
+                    openSearchEnabledRoles.add(role);
+                }
+            }
+        }
+        return openSearchEnabledRoles;
+    }
+
+    /* Returns list of user roles */
+    public static Set<String> getUserRoleCodes(RequestInfo requestInfo) {
+        Set<String> userRoles = new HashSet<>();
+        List<Role> roles = requestInfo.getUserInfo().getRoles();
+        if(roles == null)
+            return userRoles;
+        return roles.stream().map(e->e.getCode()).collect(Collectors.toSet());
+    }
 }
