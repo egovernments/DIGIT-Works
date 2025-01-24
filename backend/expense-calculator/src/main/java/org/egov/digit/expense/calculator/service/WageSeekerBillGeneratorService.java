@@ -6,7 +6,9 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.util.*;
 import org.egov.digit.expense.calculator.web.models.*;
@@ -20,10 +22,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
 
@@ -44,11 +46,12 @@ public class WageSeekerBillGeneratorService {
 	private final ExpenseCalculatorConfiguration configs;
 
 	private final IdgenUtil idgenUtil;
+	private final IndividualUtil individualUtil;
 	private static final String MUSTER_ROLL_REFERENCE_ID_MISSING = "MUSTER_ROLL_REFERENCE_ID_MISSING";
 	private static final String REFERENCE_ID_MISSING = "ReferenceId is missing for musterRollNumber [";
 
 	@Autowired
-	public WageSeekerBillGeneratorService(ObjectMapper mapper, ExpenseCalculatorUtil expenseCalculatorUtil, MdmsUtils mdmsUtils, CommonUtil commonUtil, ContractUtils contractUtils, ExpenseCalculatorConfiguration configs, IdgenUtil idgenUtil) {
+	public WageSeekerBillGeneratorService(ObjectMapper mapper, ExpenseCalculatorUtil expenseCalculatorUtil, MdmsUtils mdmsUtils, CommonUtil commonUtil, ContractUtils contractUtils, ExpenseCalculatorConfiguration configs, IdgenUtil idgenUtil, IndividualUtil individualUtil) {
 		this.mapper = mapper;
 		this.expenseCalculatorUtil = expenseCalculatorUtil;
 		this.mdmsUtils = mdmsUtils;
@@ -56,7 +59,8 @@ public class WageSeekerBillGeneratorService {
 		this.contractUtils = contractUtils;
 		this.configs = configs;
 		this.idgenUtil = idgenUtil;
-	}
+        this.individualUtil = individualUtil;
+    }
 
 	public Calculation calculateEstimates(RequestInfo requestInfo, String tenantId, List<MusterRoll> musterRolls,
 			List<SorDetail> sorDetails) {
@@ -84,6 +88,69 @@ public class WageSeekerBillGeneratorService {
 		}
 		return mdmsData;
 	}
+
+	public void createWageSeekerBillsHealth(RequestInfo requestInfo, List<MusterRoll> musterRolls,
+											List<WorkerMdms> workerMdms, Bill bill) {
+
+		for (MusterRoll musterRoll : musterRolls) {
+
+			List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
+			List<String> individualIds = individualEntries.stream().map(individualEntry -> individualEntry.getIndividualId()).collect(Collectors.toList());
+			List<Individual> individuals = individualUtil.fetchIndividualDetails(individualIds, requestInfo, musterRoll.getTenantId());
+			// Map of individual id and individual
+			Map<String, Individual> individualMap = individuals.stream().collect(Collectors.toMap(Individual::getId, individual -> individual));
+			for (IndividualEntry individualEntry : individualEntries) {
+				if (!individualMap.containsKey(individualEntry.getIndividualId())) {
+					log.error("Individual not present in individual service :: " + individualEntry.getIndividualId());
+					continue;
+				}
+				Individual individual = individualMap.get(individualEntry.getIndividualId());
+				Map<String, BigDecimal> rateBreakup = new HashMap<>();
+				if (individual.getSkills().isEmpty() || StringUtils.isBlank(individual.getSkills().get(0).getType())) {
+					log.error("Skill not present in individual service :: " + individualEntry.getIndividualId());
+				} else {
+					String skillCode = individual.getSkills().get(0).getType();
+					//fetch correct skillCode for given role
+					Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getSkillCode() != null && workerRate.getSkillCode().equalsIgnoreCase(skillCode)).findAny();
+					rateBreakup = rate
+							.map(WorkerRate::getRateBreakup)
+							.orElse(new HashMap<>());
+				}
+				List<LineItem> payableLineItem = new ArrayList<>();
+				BigDecimal totalBillDetailAmount = BigDecimal.ZERO;
+				for (Map.Entry<String, BigDecimal> entry : rateBreakup.entrySet()) {
+					//Create line item for each skill
+					BigDecimal amount = calculateAmount(individualEntry, entry.getValue());
+					LineItem lineItem = buildLineItem(musterRoll.getTenantId(), amount, entry.getKey(), LineItem.TypeEnum.PAYABLE);
+					totalBillDetailAmount = totalBillDetailAmount.add(lineItem.getAmount());
+					payableLineItem.add(lineItem);
+				}
+				//Create bill detail
+				BillDetail billDetail = BillDetail.builder()
+						.payableLineItems(payableLineItem)
+						.lineItems(new ArrayList<>())
+						.totalAmount(totalBillDetailAmount)
+						.referenceId(musterRoll.getId())
+						.tenantId(musterRoll.getTenantId())
+						.payee(Party.builder()
+								.tenantId(musterRoll.getTenantId())
+								.identifier(individualEntry.getIndividualId())
+								.type("IND")
+								.build())
+						.build();
+
+				bill.addBillDetailsItem(billDetail);
+				bill.setTotalAmount(bill.getTotalAmount().add(billDetail.getTotalAmount()));
+			}
+		}
+
+	}
+
+	BigDecimal sumRateBreakup(Map<String, BigDecimal> rateBreakup) {
+		return rateBreakup.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+
 	
 	private List<Bill> createBillForMusterRolls(RequestInfo requestInfo, List<MusterRoll> musterRolls,
 			List<SorDetail> sorDetails, Map<String, String> metaInfo) {
@@ -346,9 +413,9 @@ public class WageSeekerBillGeneratorService {
 		return payables;
 	}
 
-	private LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay,String headCode, LineItem.TypeEnum lineItemType) {
+	public LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay,String headCode, LineItem.TypeEnum lineItemType) {
 		//Round off
-		BigDecimal roundOffAmount = actualAmountToPay.setScale(0, BigDecimal.ROUND_HALF_UP);
+		BigDecimal roundOffAmount = actualAmountToPay.setScale(2, BigDecimal.ROUND_HALF_UP);
 		return LineItem.builder().amount(roundOffAmount).paidAmount(BigDecimal.ZERO)
 				.headCode(headCode).type(lineItemType).status("ACTIVE").tenantId(tenantId).build();
 	}

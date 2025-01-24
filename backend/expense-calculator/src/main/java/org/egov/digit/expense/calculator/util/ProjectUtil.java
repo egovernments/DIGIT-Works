@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.project.Address;
+import org.egov.common.models.project.Project;
+import org.egov.common.models.project.ProjectRequest;
 import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
@@ -100,7 +104,7 @@ public class ProjectUtil {
                 .append(serviceConfiguration.getProjectSearchPath()));
     }
 
-    public ProjectResponse getProjectDetails(RequestInfo requestInfo, String tenantId, String projectId) {
+    public ProjectResponse getProjectDetails(RequestInfo requestInfo, String tenantId, String projectId, String localityCode) {
         log.info("ProjectUtil::getProjectDetails");
 
         StringBuilder uriBuilder = getProjectUrl();
@@ -108,30 +112,29 @@ public class ProjectUtil {
         //added the url param
         uriBuilder.append("?").append(TENANT_ID).append(EQUAL_TO).append(tenantId)
                 .append(AMPERSAND)
+                .append("isAncestorProjectId").append(EQUAL_TO).append("true")
+                .append(AMPERSAND)
+                .append("includeDescendants").append(EQUAL_TO).append("false")
+                .append(AMPERSAND)
                 .append(OFFSET).append(EQUAL_TO).append(DEFAULT_OFFSET)
                 .append(AMPERSAND)
                 .append(LIMIT).append(EQUAL_TO).append(DEFAULT_LIMIT);
 
 
-        //created the project search request body
-        ObjectNode projectSearchReqNode = mapper.createObjectNode();
-        ArrayNode projectArrayNode = mapper.createArrayNode();
+        ProjectRequest projectRequest = ProjectRequest.builder()
+                .requestInfo(requestInfo)
+                .projects(Collections.singletonList(Project.builder().id(projectId)
+                        .tenantId(tenantId)
+                        .address(Address.builder().boundary(localityCode).build())
+                        .build()))
+                .build();
 
-        ObjectNode projectObjNode = mapper.createObjectNode();
-        projectObjNode.put(ID, projectId);
-        projectObjNode.put(TENANT_ID, tenantId);
-
-        projectArrayNode.add(projectObjNode);
-
-        projectSearchReqNode.putPOJO(REQUEST_INFO, requestInfo);
-        projectSearchReqNode.putPOJO(PROJECTS, projectArrayNode);
-
-        log.info("ProjectUtil::search project request -> {}",projectSearchReqNode);
+        log.info("ProjectUtil::search project request -> {}",projectRequest);
 
         ProjectResponse projectResponse = null;
 
         try {
-            Object responseObj = requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
+            Object responseObj = requestRepository.fetchResult(uriBuilder, projectRequest);
             projectResponse = mapper.convertValue(responseObj, ProjectResponse.class);
         } catch (Exception e) {
             log.error("Exception while fetching from searcher: ", e);

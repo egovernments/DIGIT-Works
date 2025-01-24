@@ -35,6 +35,9 @@ public class BillResponse {
 	@Valid
 	private Pagination pagination;
 
+	@JsonProperty("statusCode")
+	private String statusCode;
+
 	public BillResponse addBillItem(Bill billItem) {
 		if (this.bills == null) {
 			this.bills = new ArrayList<>();

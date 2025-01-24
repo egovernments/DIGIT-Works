@@ -90,6 +90,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
 
+	@Value("${egov.musterroll.search.v2.endpoint}")
+	private String musterRollEndV2Point;
+
 	//Organisation Service
 	@Value("${egov.organisation.host}")
 	private String organisationServiceHost;
@@ -134,6 +137,8 @@ public class ExpenseCalculatorConfiguration {
 	//kafka
 	@Value("${expense.calculator.error.topic}")
 	private String calculatorErrorTopic;
+	@Value("${report.retry.queue.topic}")
+	private String reportRetryQueueTopic;
 
 	@Value("${expense.calculator.create.bill.topic}")
 	private String calculatorCreateBillTopic;
@@ -206,4 +211,84 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${expense.billing.bill.index}")
 	private String billIndexTopic;
+
+	@Value("${is.health.integration.enabled}")
+	private boolean isHealthIntegrationEnabled;
+
+	//Individual
+	@Value("${egov.individual.host}")
+	private String individualHost;
+
+	@Value("${egov.individual.search.endpoint}")
+	private String individualSearchEndPoint;
+
+
+	//Attendance service
+	@Value("${works.attendance.log.host}")
+	private String attendanceLogHost;
+	@Value("${works.attendance.register.search.endpoint}")
+	private String attendanceRegisterEndpoint;
+	@Value("${works.attendance.register.search.limit}")
+	private String attendanceRegisterSearchLimit;
+
+	// File store service
+	@Value("${egov.filestore.host}")
+	private String fileStoreHost;
+
+	@Value("${egov.filestore.path}")
+	private String fileStoreEndpoint;
+
+	@Value("${state.level.tenant.id}")
+	private String stateLevelTenantId;
+
+	@Value("${egov.pdf.service.host}")
+	private String pdfServiceHost;
+
+	@Value("${egov.pdf.service.create.endpoint}")
+	private String pdfServiceCreateEndpoint;
+
+	@Value("${payment.pdf.key}")
+	private String paymentPdfKey;
+
+	@Value("${report.localization.module.name}")
+	private String reportLocalizationModuleName;
+
+	@Value("${report.localization.boundary.module.name}")
+	private String reportLocalizationBoundaryModuleName;
+
+	@Value("${report.localization.locale.code}")
+	private String reportLocalizationLocaleCode;
+
+	@Value("${report.header.title}")
+	private String reportHeaderTitle;
+
+	@Value("${report.date.time.format}")
+	private String reportDateTimeFormat;
+
+	@Value("${report.date.time.zone}")
+	private String reportDateTimeZone;
+
+	@Value("${report.error.queue.topic}")
+	private String reportErrorQueueTopic;
+	@Value("${report.beneficiary.identifier.type}")
+	private String reportBeneficiaryIdentifierType;
+
+	@Value("${egov.boundary.host}")
+	private String boundaryServiceHost;
+
+	@Value("${egov.boundary.search.url}")
+	private String boundarySearchUrl;
+
+	@Value("${is.attendance.approval.required}")
+	private boolean isAttendanceApprovalRequired;
+
+	@Value("${register.batch.size}")
+	private Integer registerBatchSize;
+
+	@Value("${bill.generation.async.enabled}")
+	private boolean isBillGenerationAsyncEnabled;
+
+	@Value("${bill.generation.async.topic}")
+	private String billGenerationAsyncTopic;
+
 }
