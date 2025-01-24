@@ -26,7 +26,7 @@ public enum StaffType {
     @JsonCreator
     public static StaffType fromValue(String text) {
         for (StaffType b : StaffType.values()) {
-            if (String.valueOf(b.value).equals(text)) {
+            if (String.valueOf(b.value).equalsIgnoreCase(text)) {
                 return b;
             }
         }
