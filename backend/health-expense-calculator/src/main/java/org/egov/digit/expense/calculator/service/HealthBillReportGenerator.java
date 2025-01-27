@@ -17,6 +17,7 @@ import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -146,16 +147,15 @@ public class HealthBillReportGenerator {
      * @return the message id with the localization code appended
      */
     private String getMsgIdWithLocalCode(String msgId) {
-        String updatedMsgId = null;
-        if (msgId.contains("|")) {
+        if (StringUtils.hasLength(msgId) && msgId.contains("|")) {
             // Split the string by the pipe symbol
             String[] parts = msgId.split("\\|", 2); // Limit to 2 parts
             // Replace the value after the pipe with the new value
-            updatedMsgId = parts[0] + "|" + config.getReportLocalizationLocaleCode();
-        } else {
-            updatedMsgId = msgId + "|" + config.getReportLocalizationLocaleCode();
+            if (parts.length > 1 &&  StringUtils.hasLength(parts[1])) {
+                return msgId;
+            }
         }
-        return updatedMsgId;
+        return msgId + "|" + config.getReportLocalizationLocaleCode();
     }
 
     /**
@@ -379,12 +379,13 @@ public class HealthBillReportGenerator {
      * @param billRequest the bill request containing the request info and bill
      */
     private void enrichLocalization(ReportBill reportBill, BillRequest billRequest) {
+        String localCode = localizationUtil.getLocalCode(billRequest.getRequestInfo());
         Map<String, Map<String, String>> localizationMap = localizationUtil.getLocalisedMessages(
                 billRequest.getRequestInfo(), billRequest.getBill().getTenantId(),
-                config.getReportLocalizationLocaleCode(),
+                localCode,
                 config.getReportLocalizationBoundaryModuleName() + "," + config.getReportLocalizationModuleName());
-        if (localizationMap != null && localizationMap.containsKey(config.getReportLocalizationLocaleCode() + "|" + billRequest.getBill().getTenantId())) {
-            Map<String, String> localization = localizationMap.get(config.getReportLocalizationLocaleCode() + "|" + billRequest.getBill().getTenantId());
+        if (localizationMap != null && localizationMap.containsKey(localCode + "|" + billRequest.getBill().getTenantId())) {
+            Map<String, String> localization = localizationMap.get(localCode + "|" + billRequest.getBill().getTenantId());
             if (localization == null) {
                 return;
             }
