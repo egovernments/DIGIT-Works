@@ -1,7 +1,7 @@
 
 All notable changes to this module will be documented in this file.
 
-## 1.0.4 - 2025-01-27
+## 1.1.0 - 2025-01-27
 
 ### Changes
 
