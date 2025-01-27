@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.works.services.common.models.expense.enums.PaymentStatus;
 import org.egov.works.services.common.models.expense.enums.Status;
 
