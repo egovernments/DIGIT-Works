@@ -1,6 +1,7 @@
 package org.egov.works.services.common.models.expense;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +32,11 @@ public class Bill {
 	@NotNull
 	@Size(min = 2, max = 64)
 	private String tenantId;
+
+
+	@JsonProperty("localityCode")
+	@Size(min = 2, max = 256)
+	private String localityCode;
 	
 	@JsonProperty("billDate")
 	@Valid
@@ -57,7 +63,7 @@ public class Bill {
 	private String businessService;
 
 	@JsonProperty("referenceId")
-	@Size(min = 2, max = 128)
+	@Size(min = 2, max = 256)
 	@NotNull
 	private String referenceId;
 
@@ -98,6 +104,10 @@ public class Bill {
 	@JsonProperty("wfStatus")
 	@Size(min = 2, max = 64)
 	private String wfStatus;
+
+	@JsonProperty("processInstance")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private ProcessInstance processInstance;
 	
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
 
