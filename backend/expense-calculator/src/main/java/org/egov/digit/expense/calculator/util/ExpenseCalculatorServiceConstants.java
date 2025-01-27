@@ -61,20 +61,10 @@ public class ExpenseCalculatorServiceConstants {
     public static final String FILTER_END = "')]";
     public static final String ID_SEARCH_CONSTANT = "@.id=='";
     public static final String ID_SEARCH_CONSTANT_RATE = "@.sorId=='";
-    public static final String CAMPAIGN_ID_CONSTANT = "@.campaignId=='";
-    public static final String EVENT_TYPE_CONSTANT = "@.eventType=='";
     public static final String FILTER_OR_CONSTANT = "'||";
-    public static final String FILTER_AND_CONSTANT = "'&&";
     public static final String WORKS_SOR_CONSTANT = "WORKS-SOR";
     public static final String SOR_CONSTANT = "SOR";
     public static final String RATES_CONSTANT = "Rates";
-    public static final String HCM_CONSTANT = "HCM";
-    public static final String WORKER_RATES = "WORKER_RATES";
     public static final String JSON_PATH_FOR_SOR = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + SOR_CONSTANT;
     public static final String JSON_PATH_FOR_RATES = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + RATES_CONSTANT;
-    public static final String JSON_PATH_FOR_HCM = MDMS_RESP_CONSTANT+HCM_CONSTANT + "." + WORKER_RATES;
-    public static final String SUCCESSFUL_STATUS = "SUCCESSFUL";
-    public static final String INITIATED_STATUS = "INITIATED";
-    public static final String INPROGRESS_STATUS = "INPROGRESS";
-    public static final String FAILED_STATUS = "FAILED";
 }

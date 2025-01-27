@@ -1,6 +1,7 @@
 package org.egov.digit.expense.calculator.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.Document;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

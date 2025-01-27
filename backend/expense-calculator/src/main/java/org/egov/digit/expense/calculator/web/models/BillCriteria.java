@@ -41,9 +41,6 @@ public class BillCriteria {
     @JsonProperty("referenceIds")
     private Set<String> referenceIds;
 
-    @JsonProperty("localityCode")
-    private String localityCode;
-
     @JsonProperty("status")
     private String status;
 

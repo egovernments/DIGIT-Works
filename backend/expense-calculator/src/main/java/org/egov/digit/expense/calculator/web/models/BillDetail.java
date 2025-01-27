@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.egov.common.contract.models.AuditDetails;
+import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,15 +62,11 @@ public class BillDetail {
 
 	@JsonProperty("referenceId")
 	@Size(min = 2, max = 64)
-	// Muster-roll id
 	private String referenceId;
 
 	@JsonProperty("paymentStatus")
 	@Size(min = 2, max = 64)
 	private String paymentStatus;
-
-	@JsonProperty("status")
-	private Status status;
 
 	@JsonProperty("fromPeriod")
 	@Valid
@@ -87,12 +83,12 @@ public class BillDetail {
 
 	@JsonProperty("lineItems")
 	@Valid
-	private List<LineItem> lineItems = new ArrayList<>();
+	private List<LineItem> lineItems;
 
 	@JsonProperty("payableLineItems")
 	@NotNull
 	@Valid
-	private List<LineItem> payableLineItems = new ArrayList<>();
+	private List<LineItem> payableLineItems;
 
 	@JsonProperty("auditDetails")
 	@Valid
