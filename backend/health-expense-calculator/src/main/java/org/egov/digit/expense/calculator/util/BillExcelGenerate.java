@@ -51,10 +51,11 @@ public class BillExcelGenerate {
      * @return the file store id of the generated excel file
      */
     public String generateExcel(RequestInfo requestInfo, ReportBill reportBill) {
+        // Get local code from request info
+        String localCode = localizationUtil.getLocalCode(requestInfo);
+        Map<String, Map<String, String>> localizationMap = localizationUtil.getLocalisedMessages(requestInfo, config.getStateLevelTenantId(), localCode, config.getReportLocalizationModuleName());
 
-        Map<String, Map<String, String>> localizationMap = localizationUtil.getLocalisedMessages(requestInfo, config.getStateLevelTenantId(), config.getReportLocalizationLocaleCode(), config.getReportLocalizationModuleName());
-
-        ByteArrayResource excelFile = generateExcelFromReportObject(reportBill, localizationMap.get(config.getReportLocalizationLocaleCode() + "|" + config.getStateLevelTenantId()));
+        ByteArrayResource excelFile = generateExcelFromReportObject(reportBill, localizationMap.get(localCode + "|" + config.getStateLevelTenantId()));
         return fileStoreUtil.uploadFileAndGetFileStoreId(config.getStateLevelTenantId(), excelFile);
     }
 
