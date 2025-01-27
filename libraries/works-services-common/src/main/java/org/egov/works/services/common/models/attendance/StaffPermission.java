@@ -37,6 +37,7 @@ public class StaffPermission {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
-
+    @JsonProperty("staffType")
+    private StaffType staffType = StaffType.OWNER;
 }
 
