@@ -107,10 +107,10 @@ config:
 
   - name: "builds/health-campaign-services/health-services/health-expense-calculator"
     build:
-      - work-dir: "backend/health-expense-calculator"
+      - work-dir: "backend/expense-calculator"
         dockerfile: "build/maven-java17/Dockerfile"
         image-name: "health-expense-calculator"
-      - work-dir: "backend/health-expense-calculator/src/main/resources/db"
+      - work-dir: "backend/expense-calculator/src/main/resources/db"
         image-name: "health-expense-calculator-db"
         
   - name: "builds/digit-works/backend/expense"
