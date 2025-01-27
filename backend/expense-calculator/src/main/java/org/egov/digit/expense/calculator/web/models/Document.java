@@ -2,7 +2,7 @@ package org.egov.digit.expense.calculator.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.egov.common.contract.models.AuditDetails;
+import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

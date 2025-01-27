@@ -1,8 +1,9 @@
 package org.egov.digit.expense.calculator.repository;
 
-import org.egov.common.contract.idgen.IdGenerationRequest;
-import org.egov.common.contract.idgen.IdGenerationResponse;
-import org.egov.common.contract.idgen.IdRequest;
+
+import digit.models.coremodels.IdGenerationRequest;
+import digit.models.coremodels.IdGenerationResponse;
+import digit.models.coremodels.IdRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.tracer.model.CustomException;

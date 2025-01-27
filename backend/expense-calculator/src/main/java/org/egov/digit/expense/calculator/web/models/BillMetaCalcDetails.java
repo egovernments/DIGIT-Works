@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.egov.common.contract.models.AuditDetails;
+import digit.models.coremodels.AuditDetails;
 
 import jakarta.validation.Valid;
 

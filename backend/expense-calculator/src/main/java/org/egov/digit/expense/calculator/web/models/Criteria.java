@@ -46,13 +46,9 @@ public class Criteria {
 	@Valid
 	private BigDecimal toPeriod = null;
 
-	@JsonProperty("referenceId")
-	@NotNull
-	private String referenceId = null;
+	@JsonProperty("contractId")
 
-	@JsonProperty("localityCode")
-	@NotNull
-	private String localityCode = null;
+	private String contractId = null;
 
 	@JsonProperty("auditDetails")
 

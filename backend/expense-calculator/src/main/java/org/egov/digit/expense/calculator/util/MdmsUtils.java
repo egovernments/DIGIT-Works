@@ -217,25 +217,19 @@ public class MdmsUtils {
         return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
     }
 
-    public Object getWorkerRateFromMDMSV2(RequestInfo requestInfo, String tenantId, String campaignId) {
-        String filter = getWorkerFilter(campaignId);
-        MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, WORKER_RATES, tenantId, filter, HCM_CONSTANT);
-        return serviceRequestRepository.fetchResult(getMDMSV2SearchUrl(), MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build());
-    }
-
     public Object getLabourSorFromMDMSV2(RequestInfo requestInfo, String tenantId, List<String> sorList, Boolean isRate) {
         String filter = getFilterFromSorList(sorList, isRate);
 
-        MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, isRate ? RATES_CONSTANT : SOR_CONSTANT, tenantId, filter, WORKS_SOR_CONSTANT);
+        MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, isRate ? RATES_CONSTANT : SOR_CONSTANT, tenantId, filter);
 
         return serviceRequestRepository.fetchResult(getMDMSV2SearchUrl(), MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build());
     }
 
 
-    private MdmsCriteria getMdmsCriteria (RequestInfo requestInfo, String masterName, String tenantId, String filter, String moduleName) {
+    private MdmsCriteria getMdmsCriteria (RequestInfo requestInfo, String masterName, String tenantId, String filter) {
         return MdmsCriteria.builder().tenantId(tenantId)
                 .moduleDetails(Collections.singletonList(ModuleDetail.builder()
-                        .moduleName(moduleName)
+                        .moduleName(WORKS_SOR_CONSTANT)
                         .masterDetails(Collections.singletonList(MasterDetail.builder()
                                 .name(masterName)
                                 .filter(filter)
@@ -243,11 +237,6 @@ public class MdmsUtils {
                         .build()))
                 .build();
 
-    }
-
-    String getWorkerFilter(String campaignId) {
-        return new StringBuilder().append(FILTER_START).append(CAMPAIGN_ID_CONSTANT).append(campaignId)
-                .append(FILTER_END).toString();
     }
 
     String getFilterFromSorList(List<String> sorList, Boolean isRate) {
