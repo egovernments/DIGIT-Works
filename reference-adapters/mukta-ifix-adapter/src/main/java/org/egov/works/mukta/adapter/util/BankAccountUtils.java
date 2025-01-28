@@ -6,16 +6,12 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.constants.Error;
-import org.egov.works.mukta.adapter.web.models.Pagination;
-import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
-import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccountResponse;
-import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccountSearchCriteria;
-import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccountSearchRequest;
+import org.egov.works.services.common.models.bankaccounts.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 
 @Component
@@ -48,9 +44,9 @@ public class BankAccountUtils {
         }
 
         Pagination pagination = Pagination.builder()
-                .limit(bankAccountSearchCriteria.getReferenceId().size())
-                .offSet(0)
-                .order(Pagination.OrderEnum.ASC)
+                .limit((double) bankAccountSearchCriteria.getReferenceId().size())
+                .offSet((double) 0)
+                .order(Order.ASC)
                 .build();
 
         BankAccountSearchRequest bankAccountSearchRequest = BankAccountSearchRequest.builder()

@@ -1,6 +1,5 @@
 package org.egov.works.measurement.service;
 
-import digit.models.coremodels.SMSRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.measurement.config.MBServiceConfiguration;
@@ -8,6 +7,7 @@ import org.egov.works.measurement.config.ServiceConstants;
 import org.egov.works.measurement.kafka.MBServiceProducer;
 import org.egov.works.measurement.util.NotificationUtil;
 import org.egov.works.measurement.web.models.MeasurementServiceRequest;
+import org.egov.works.services.common.models.estimate.SMSRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -20,12 +20,16 @@ import static org.egov.works.measurement.config.ServiceConstants.REJECT_LOCALISA
 @Slf4j
 public class NotificationService {
 
+    private final MBServiceProducer producer;
+    private final MBServiceConfiguration config;
+    private final NotificationUtil notificationUtil;
+
     @Autowired
-    private MBServiceProducer producer;
-    @Autowired
-    private MBServiceConfiguration config;
-    @Autowired
-    private NotificationUtil notificationUtil;
+    public NotificationService(MBServiceProducer producer, MBServiceConfiguration config, NotificationUtil notificationUtil) {
+        this.producer = producer;
+        this.config = config;
+        this.notificationUtil = notificationUtil;
+    }
 
     public void sendNotification(MeasurementServiceRequest request) {
         String localisationCode = null;

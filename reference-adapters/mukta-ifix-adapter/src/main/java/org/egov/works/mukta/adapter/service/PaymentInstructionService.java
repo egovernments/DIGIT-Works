@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
+import org.egov.common.models.project.Project;
+import org.egov.common.models.project.ProjectResponse;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
@@ -18,13 +20,17 @@ import org.egov.works.mukta.adapter.repository.DisbursementRepository;
 import org.egov.works.mukta.adapter.util.*;
 import org.egov.works.mukta.adapter.validators.DisbursementValidator;
 import org.egov.works.mukta.adapter.web.models.*;
-import org.egov.works.mukta.adapter.web.models.bankaccount.BankAccount;
-import org.egov.works.mukta.adapter.web.models.bill.*;
+import org.egov.works.mukta.adapter.web.models.PaymentRequest;
 import org.egov.works.mukta.adapter.web.models.enums.*;
-import org.egov.works.mukta.adapter.web.models.enums.Status;
 import org.egov.works.mukta.adapter.web.models.jit.Beneficiary;
 import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
-import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
+import org.egov.works.services.common.models.bankaccounts.BankAccount;
+import org.egov.works.services.common.models.contract.ContractResponse;
+import org.egov.works.services.common.models.estimate.Estimate;
+import org.egov.works.services.common.models.expense.*;
+import org.egov.works.services.common.models.expense.enums.PaymentStatus;
+import org.egov.works.services.common.models.expense.enums.Status;
+import org.egov.works.services.common.models.organization.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,9 +55,12 @@ public class PaymentInstructionService {
     private final DisbursementValidator disbursementValidator;
     private final PaymentService paymentService;
     private final RedisService redisService;
+    private final ProjectUtil projectUtil;
+    private final EstimateServiceUtil estimateServiceUtil;
+    private final ContractUtils contractUtils;
 
     @Autowired
-    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator, RedisService redisService) {
+    public PaymentInstructionService(BillUtils billUtils, PaymentInstructionEnrichment piEnrichment, BankAccountUtils bankAccountUtils, OrganisationUtils organisationUtils, IndividualUtils individualUtils, MdmsUtil mdmsUtil, DisbursementRepository disbursementRepository, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, ObjectMapper objectMapper, PaymentService paymentService, DisbursementValidator disbursementValidator, RedisService redisService, ProjectUtil projectUtil, EstimateServiceUtil estimateServiceUtil, ContractUtils contractUtils) {
         this.billUtils = billUtils;
         this.piEnrichment = piEnrichment;
         this.bankAccountUtils = bankAccountUtils;
@@ -66,6 +75,9 @@ public class PaymentInstructionService {
         this.paymentService = paymentService;
         this.disbursementValidator = disbursementValidator;
         this.redisService = redisService;
+        this.projectUtil = projectUtil;
+        this.estimateServiceUtil = estimateServiceUtil;
+        this.contractUtils = contractUtils;
     }
 
     public Disbursement processDisbursementCreate(PaymentRequest paymentRequest) {
@@ -295,7 +307,99 @@ public class PaymentInstructionService {
             }
             indexerRequest.put("RequestInfo", requestInfo);
             indexerRequest.put("paymentInstruction", piObjectNode);
-            muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(),indexerRequest);
+            muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiIndexInternalTopic(),indexerRequest);
+        }catch (Exception e){
+            log.error("Exception occurred in : PaymentInstructionService:updatePiForIndexer " + e);
+        }
+    }
+
+    public List<Payment> processCreatePayment(BillSearchRequest billSearchRequest) {
+        List<Bill> bills = billUtils.fetchBillsData(billSearchRequest);
+        List<Payment> totalPayments = new ArrayList<>();
+        if (bills == null || bills.isEmpty()) {
+            throw new CustomException(Error.BILLS_NOT_FOUND, Error.BILLS_NOT_FOUND_MESSAGE);
+        }
+        for(Bill bill: bills){
+            String wfStatus = bill.getWfStatus();
+            if (bill.getPaymentStatus() == null && wfStatus != null && wfStatus.equalsIgnoreCase(Constants.APPROVED_STATUS)) {
+                PaymentRequest paymentRequest = paymentService.getPaymentRequest(billSearchRequest.getRequestInfo(), bill);
+                log.info("Payment request: " + paymentRequest);
+                // Payment create call
+                List<Payment> payments = paymentService.createPayment(paymentRequest);
+                totalPayments.addAll(payments);
+                if (payments.isEmpty()) {
+                    log.error("Error creating Payment for bill number : " + bill.getBillNumber());
+                }
+            }else{
+                log.error("Bill is not in approved status or payment status is already present for bill number : " + bill.getBillNumber());
+                throw new CustomException("BILL_NOT_APPROVED", "Bill is not in approved status or payment status is already present for bill number : " + bill.getBillNumber());
+            }
+        }
+        return totalPayments;
+    }
+
+    public void enrichPiCustomIndex(RequestInfo  requestInfo,  PaymentInstruction pi) {
+        log.info("Process bill for additional details enrichment");
+        Map<String, Object> additionalDetails = (Map<String, Object>) pi.getAdditionalDetails();
+        String referenceId = ((Map<String, List<Object>>) pi.getAdditionalDetails()).get("referenceId").get(0).toString();
+        String workOrderNumber = referenceId.split("_")[0];
+        // fetch estimate from work order
+        ContractResponse contractResponse = contractUtils.fetchContract(requestInfo, pi.getTenantId(), workOrderNumber);
+        if(contractResponse == null || contractResponse.getContracts() == null || contractResponse.getContracts().isEmpty()) {
+            log.error("No contract found for work order number " + workOrderNumber);
+            return;
+        }
+        String estimateId = contractResponse.getContracts().get(0).getLineItems().get(0).getEstimateId();
+        String projectId = estimateServiceUtil.getProjectIdFromEstimate(pi.getTenantId(), estimateId, requestInfo);
+        if(projectId == null || projectId.isEmpty()) {
+            log.error("No estimate found for estimate id " + estimateId);
+            return;
+        }
+
+        ProjectResponse projectResponse = projectUtil.getProjectDetails(requestInfo, pi.getTenantId(), projectId);
+        if(projectResponse == null || projectResponse.getProject() == null) {
+            log.error("No project found for project id " + projectId);
+            return;
+        }
+        Project project = projectResponse.getProject().get(0);
+        enrichAdditionalDetails(pi, project);
+        pushPIToIndex(requestInfo, pi);
+    }
+
+    private void enrichAdditionalDetails(PaymentInstruction pi, Project project) {
+        ObjectNode additionalDetails = objectMapper.createObjectNode();
+        if(pi.getAdditionalDetails() != null){
+            additionalDetails = objectMapper.convertValue(pi.getAdditionalDetails(), ObjectNode.class);
+        }
+
+        additionalDetails.put("projectName", project.getName());
+        additionalDetails.put("projectId", project.getProjectNumber());
+        additionalDetails.put("ward", project.getAddress().getBoundary());
+//        additionalDetails.put("projectDescription", project.getDescription());
+//        additionalDetails.put("projectCreatedDate", project.getAuditDetails().getCreatedTime());
+
+        pi.setAdditionalDetails(additionalDetails);
+    }
+
+    public void pushPIToIndex(RequestInfo requestInfo, PaymentInstruction pi) {
+        log.info("Executing PIUtils:updatePiForIndexer");
+        try {
+            Map<String, Object> indexerRequest = new HashMap<>();
+            JsonNode node = objectMapper.valueToTree(pi);
+            ObjectNode piObjectNode = (ObjectNode) node;
+            if (pi.getParentPiNumber() == null || pi.getParentPiNumber().equals("")) {
+                piObjectNode.put("parentPiNumber", "");
+                piObjectNode.put("piType", "ORIGINAL");
+            }
+            else {
+                piObjectNode.put("piType", "REVISED");
+            }
+            if (pi.getPiErrorResp() == null) {
+                piObjectNode.put("piErrorResp", "");
+            }
+            indexerRequest.put("RequestInfo", requestInfo);
+            indexerRequest.put("paymentInstruction", piObjectNode);
+            muktaAdaptorProducer.push(muktaAdaptorConfig.getIfmsPiEnrichmentTopic(), indexerRequest);
         }catch (Exception e){
             log.error("Exception occurred in : PaymentInstructionService:updatePiForIndexer " + e);
         }

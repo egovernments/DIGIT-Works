@@ -2,10 +2,10 @@ package org.egov.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.IndividualSearch;
+import org.egov.common.models.individual.IndividualSearchRequest;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.web.models.IndividualSearch;
-import org.egov.web.models.IndividualSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -16,11 +16,15 @@ import java.util.List;
 @Slf4j
 public class IndividualUtil {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
+
+    private final ServiceRequestRepository requestRepository;
 
     @Autowired
-    private ServiceRequestRepository requestRepository;
+    public IndividualUtil(Configuration config, ServiceRequestRepository requestRepository) {
+        this.config = config;
+        this.requestRepository = requestRepository;
+    }
 
     /**
      * fetch the individual details from individual service

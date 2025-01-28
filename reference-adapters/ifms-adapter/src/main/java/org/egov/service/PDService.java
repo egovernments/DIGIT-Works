@@ -9,8 +9,6 @@ import org.egov.config.Constants;
 import org.egov.repository.PIRepository;
 import org.egov.utils.BillUtils;
 import org.egov.utils.PIUtils;
-import org.egov.web.models.bill.Payment;
-import org.egov.web.models.bill.PaymentRequest;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +65,7 @@ public class PDService {
             JITResponse jitResponse = null;
             log.info("Calling ifms service.");
             try {
-                jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
+                jitResponse = ifmsService.sendRequest(paymentInstruction.getTenantId(),  JITRequest.builder()
                         .serviceId(JITServiceId.PD).params(pdRequest).build());
             }catch (Exception e){
                 log.info("Exception occurred while fetching PD from ifms." + e);

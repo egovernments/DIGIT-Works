@@ -1,10 +1,11 @@
 package org.egov.works.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.*;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.workflow.*;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.ServiceRequestRepository;
@@ -26,14 +27,18 @@ import static org.egov.works.util.ContractServiceConstants.CONTRACT_REVISION_BUS
 @Slf4j
 public class WorkflowService {
 
-    @Autowired
-    private ContractServiceConfiguration serviceConfiguration;
+    private final ContractServiceConfiguration serviceConfiguration;
+
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public WorkflowService(ContractServiceConfiguration serviceConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     /* Call the workflow service with the given action and update the status
      * return the updated status of the application

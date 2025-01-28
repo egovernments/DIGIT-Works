@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.TimeZone;
 
@@ -21,6 +21,10 @@ public class EstimateServiceConfiguration {
 
     @Value("${app.timezone}")
     private String timeZone;
+
+    @Value("${is.caching.enabled}")
+    private Boolean isCachingEnabled;
+
     //Idgen Config
     @Value("${egov.idgen.host}")
     private String idGenHost;

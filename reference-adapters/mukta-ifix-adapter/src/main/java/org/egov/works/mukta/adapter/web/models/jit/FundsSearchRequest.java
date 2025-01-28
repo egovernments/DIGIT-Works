@@ -10,8 +10,8 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.mukta.adapter.web.models.Pagination;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "A Object which holds the info about the payment search request")
 @Validated

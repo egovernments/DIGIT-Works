@@ -33,7 +33,7 @@ public class MdmsUtil {
 
     public Map<String,Map<String,JSONArray>> fetchExchangeServers(RequestInfo requestInfo, String tenantId) {
         StringBuilder uri = new StringBuilder();
-        uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
+        uri.append(configs.getMdmsV2Host()).append(configs.getMdmsV2EndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, MDMS_EXCHANGE_MODULE_NAME, Arrays.asList(MDMS_EXCHANGE_SERVER_MASTER));
         Object response = new HashMap<>();
         MdmsResponse mdmsResponse = new MdmsResponse();
@@ -49,7 +49,7 @@ public class MdmsUtil {
     }
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId) {
         StringBuilder uri = new StringBuilder();
-        uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
+        uri.append(configs.getMdmsV2Host()).append(configs.getMdmsV2EndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId);
         Object response = new HashMap<>();
         MdmsResponse mdmsResponse = new MdmsResponse();

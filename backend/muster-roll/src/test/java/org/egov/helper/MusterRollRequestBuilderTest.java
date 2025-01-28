@@ -2,18 +2,25 @@ package org.egov.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.models.individual.Individual;
+import org.egov.common.models.individual.IndividualBulkResponse;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.bankaccounts.BankAccount;
+import org.egov.works.services.common.models.bankaccounts.BankAccountResponse;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 public class MusterRollRequestBuilderTest {
@@ -39,7 +46,7 @@ public class MusterRollRequestBuilderTest {
     }
 
     public MusterRollRequest withMusterForCreateException(){
-        MusterRoll musterRoll = MusterRoll.builder().tenantId("pb.amritsar").startDate(new BigDecimal("1669919400000")).endDate(new BigDecimal("1670697000000")).build();
+        MusterRoll musterRoll = MusterRoll.builder().tenantId("pb.amritsar").startDate(new BigDecimal("1669919400000")).endDate(new BigDecimal("1670697000000")).registerId(UUID.randomUUID().toString()).build();
         this.builder = MusterRollRequest.builder().musterRoll(musterRoll).requestInfo(getRequestInfo()).build();
         return this.builder;
     }
@@ -64,8 +71,8 @@ public class MusterRollRequestBuilderTest {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/MusterRollMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            Path path = Paths.get("src/test/resources/MusterRollMDMSData.json");
+            String exampleRequest = Files.readString(path, StandardCharsets.UTF_8);
             mdmsResponse = objectMapper.readValue(exampleRequest, Object.class);
         } catch (Exception exception) {
             log.error("CalculationServiceTest::getMdmsResponse::Exception while parsing mdms json");
@@ -79,8 +86,8 @@ public class MusterRollRequestBuilderTest {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/TenantMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            Path path = Paths.get("src/test/resources/TenantMDMSData.json");
+            String exampleRequest = Files.readString(path, StandardCharsets.UTF_8);
             mdmsResponse = objectMapper.readValue(exampleRequest, Object.class);
         } catch (Exception exception) {
             log.error("CalculationServiceTest::getMdmsResponse::Exception while parsing mdms json");

@@ -2,6 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
  * OrgSearchRequest
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-15T14:49:42.141+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-15T14:49:42.141+05:30")
 
 @Data
 @AllArgsConstructor
@@ -26,6 +27,7 @@ public class OrgSearchRequest {
     private RequestInfo requestInfo = null;
 
     @JsonProperty("SearchCriteria")
+    @Valid
     private OrgSearchCriteria searchCriteria = null;
 
     @JsonProperty("Pagination")

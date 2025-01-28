@@ -2,23 +2,23 @@ package org.egov.works.mukta.adapter.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.Constants;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.enrichment.PaymentInstructionEnrichment;
+import org.egov.works.mukta.adapter.repository.ServiceRequestRepository;
 import org.egov.works.mukta.adapter.service.DisbursementService;
 import org.egov.works.mukta.adapter.service.PaymentInstructionService;
 import org.egov.works.mukta.adapter.service.PaymentService;
 import org.egov.works.mukta.adapter.service.RedisService;
 import org.egov.works.mukta.adapter.util.ProgramServiceUtil;
 import org.egov.works.mukta.adapter.validators.DisbursementValidator;
-import org.egov.works.mukta.adapter.web.models.Disbursement;
-import org.egov.works.mukta.adapter.web.models.DisbursementRequest;
-import org.egov.works.mukta.adapter.web.models.ErrorRes;
-import org.egov.works.mukta.adapter.web.models.MsgHeader;
-import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
+import org.egov.works.mukta.adapter.web.models.*;
 import org.egov.works.mukta.adapter.web.models.enums.*;
 import org.egov.works.mukta.adapter.web.models.jit.PaymentInstruction;
+import org.egov.works.services.common.models.attendance.RequestInfoWrapper;
+import org.egov.works.services.common.models.estimate.EstimateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -26,6 +26,8 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -110,4 +112,19 @@ public class MuktaAdaptorConsumer {
             throw new CustomException("Error occurred while processing the consumed save estimate record from topic : " + topic, e.toString());
         }
     }
+
+    @KafkaListener(topics = {"${ifms.pi.index.internal.topic}"})
+    public void piListener(final String record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        try {
+            log.info("Payment instruction index data received on.");
+            Map<String, Object> indexerRequest = objectMapper.readValue(record, Map.class);
+            RequestInfo requestInfo = objectMapper.convertValue(indexerRequest.get("RequestInfo"), RequestInfo.class);
+            PaymentInstruction pi = objectMapper.convertValue(indexerRequest.get("paymentInstruction"), PaymentInstruction.class);
+            paymentInstructionService.enrichPiCustomIndex(requestInfo, pi);
+            log.info("Payment instruction index data received on. " + pi);
+        } catch (Exception e) {
+            log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
+        }
+    }
+
 }

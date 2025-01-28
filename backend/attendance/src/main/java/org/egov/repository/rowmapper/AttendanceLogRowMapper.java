@@ -26,9 +26,12 @@ import java.util.*;
 @Slf4j
 public class AttendanceLogRowMapper implements ResultSetExtractor<List<AttendanceLog>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    @Qualifier("objectMapper")
-    private ObjectMapper mapper;
+    public AttendanceLogRowMapper(@Qualifier("objectMapper") ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<AttendanceLog> extractData(ResultSet rs) throws SQLException, DataAccessException {

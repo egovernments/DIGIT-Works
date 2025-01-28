@@ -9,7 +9,6 @@ import org.egov.works.mukta.adapter.constants.Error;
 import org.egov.works.mukta.adapter.repository.DisbursementRepository;
 import org.egov.works.mukta.adapter.service.RedisService;
 import org.egov.works.mukta.adapter.web.models.*;
-import org.egov.works.mukta.adapter.web.models.bill.PaymentRequest;
 import org.egov.works.mukta.adapter.web.models.enums.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

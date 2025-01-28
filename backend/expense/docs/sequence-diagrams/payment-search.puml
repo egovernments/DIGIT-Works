@@ -1,0 +1,32 @@
+@startuml
+title: Expense Service - Payment Search Flow
+
+actor user as "User" order 0 #ddff41
+participant Expense as "Expense \nService" #4Ff2AF
+database DB as "PostgreSQL" #4Ff2AF
+
+user -> Expense: call /payment/v1/_search API
+activate user #Fafd30
+activate Expense #00ad00
+
+Expense -> Expense: Validate search request
+note right: Validate search parameters\n(payment ID, tenant, date range, etc.)
+
+alt if validation fails
+    Expense --> user: [400]: Invalid or missing search parameters
+end
+
+
+note over Expense: Prepare and construct query based on\nsearch criteria like payment IDs, tenant ID, status, etc.
+
+Expense -> DB: Query payments in DB with search criteria
+activate DB #008390
+DB --> Expense: Return matching payments with pagination
+deactivate DB
+
+Expense --> user: [200]: Return paginated payment list
+
+deactivate Expense
+deactivate user
+
+@enduml

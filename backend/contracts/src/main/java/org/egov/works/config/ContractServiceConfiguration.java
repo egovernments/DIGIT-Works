@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @Component
@@ -88,6 +88,13 @@ public class ContractServiceConfiguration {
 
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+
+    //MDMS V2
+    @Value("${egov.mdms.v2.host}")
+    private String mdmsV2Host;
+
+    @Value("${egov.mdms.v2.search.endpoint}")
+    private String mdmsV2EndPoint;
 
     //HRMS
     @Value("${egov.hrms.host}")
@@ -203,6 +210,9 @@ public class ContractServiceConfiguration {
 
     @Value("${contract.revision.measurement.validation}")
     private Boolean isMeasurementValidationRequired;
+
+    @Value("${is.caching.enabled}")
+    private Boolean isCachingEnabled;
 
     @PostConstruct
     public void initialize() {

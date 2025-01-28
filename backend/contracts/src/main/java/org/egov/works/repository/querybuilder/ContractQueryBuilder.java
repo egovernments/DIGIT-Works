@@ -1,5 +1,6 @@
 package org.egov.works.repository.querybuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
@@ -13,15 +14,17 @@ import java.time.Instant;
 import java.util.*;
 
 @Component
+@Slf4j
 public class ContractQueryBuilder {
 
-    private static final String CONTRACT_SELECT_QUERY = " SELECT contract.id AS id, " +
+    private static final  String CONTRACT_SELECT_QUERY = " SELECT " +
+            "contract.id AS contractId, " +
             "contract.contract_number AS contractNumber, " +
             "contract.supplement_number AS supplementNumber, " +
             "contract.version_number AS versionNumber, " +
             "contract.old_uuid AS oldUuid, " +
             "contract.business_service AS businessService, " +
-            "contract.tenant_id AS tenantId, " +
+            "contract.tenant_id AS contractTenantId, " +
             "contract.wf_status AS wfStatus, " +
             "contract.executing_authority AS executingAuthority, " +
             "contract.contract_type AS contractType, " +
@@ -32,12 +35,12 @@ public class ContractQueryBuilder {
             "contract.org_id AS orgId, " +
             "contract.start_date AS startDate, " +
             "contract.end_date AS endDate, " +
-            "contract.status AS status, " +
-            "contract.additional_details AS additionalDetails, " +
-            "contract.created_by AS createdBy, " +
-            "contract.last_modified_by AS lastModifiedBy, " +
-            "contract.created_time AS createdTime, " +
-            "contract.last_modified_time AS lastModifiedTime, " +
+            "contract.status AS contractStatus, " +
+            "contract.additional_details AS contractAdditionalDetails, " +
+            "contract.created_by AS contractCreatedBy, " +
+            "contract.last_modified_by AS contractLastModifiedBy, " +
+            "contract.created_time AS contractCreatedTime, " +
+            "contract.last_modified_time AS contractLastModifiedTime, " +
             "contract.issue_date AS issueDate, " +
             "contract.completion_period AS completionPeriod, " +
 
@@ -46,21 +49,77 @@ public class ContractQueryBuilder {
             "document.document_type AS docDocumentType, " +
             "document.document_uid AS docDocumentUid, " +
             "document.status AS docStatus, " +
-            "document.contract_id AS docContractIid, " +
+            "document.contract_id AS docContractId, " +
             "document.additional_details AS docAdditionalDetails, " +
             "document.created_by AS docCreatedBy, " +
             "document.last_modified_by AS docLastModifiedBy, " +
             "document.created_time AS docCreatedTime, " +
-            "document.last_modified_time AS docLastModifiedTime " +
+            "document.last_modified_time AS docLastModifiedTime, " +
+
+            "lineItems.id AS lineItemId, " +
+            "lineItems.estimate_id AS estimateId, " +
+            "lineItems.estimate_line_item_id AS estimateLineItemId, " +
+            "lineItems.contract_line_item_ref AS contractLineItemRef, " +
+            "lineItems.contract_id AS lineItemContractId, " +
+            "lineItems.tenant_id AS lineItemTenantId, " +
+            "lineItems.unit_rate AS unitRate, " +
+            "lineItems.no_of_unit AS noOfUnit, " +
+            "lineItems.status AS lineItemStatus, " +
+            "lineItems.additional_details AS lineItemAdditionalDetails, " +
+            "lineItems.created_by AS lineItemCreatedBy, " +
+            "lineItems.last_modified_by AS lineItemLastModifiedBy, " +
+            "lineItems.created_time AS lineItemCreatedTime, " +
+            "lineItems.last_modified_time AS lineItemLastModifiedTime, " +
+
+
+            "amountBreakups.id AS amtId, " +
+            "amountBreakups.estimate_amount_breakup_id AS amtEstimateAmountBreakupId, " +
+            "amountBreakups.line_item_id AS amtLineItemId, " +
+            "amountBreakups.amount AS amtAmount, " +
+            "amountBreakups.status AS amtStatus, " +
+            "amountBreakups.additional_details AS amtAdditionalDetails, " +
+            "amountBreakups.created_by AS amtCreatedBy, " +
+            "amountBreakups.last_modified_by AS amtLastModifiedBy, " +
+            "amountBreakups.created_time AS amtCreatedTime, " +
+            "amountBreakups.last_modified_time AS amtLastModifiedTime " +
+
             "FROM eg_wms_contract AS contract " +
+            "LEFT JOIN eg_wms_contract_documents AS document " +
+            "ON contract.id = document.contract_id " +
+            "LEFT JOIN eg_wms_contract_line_items AS lineItems " +
+            "ON contract.id = lineItems.contract_id " +
             "LEFT JOIN " +
-            "eg_wms_contract_documents as document " +
-            "ON (contract.id=document.contract_id) ";
+            "eg_wms_contract_amount_breakups as amountBreakups " +
+            "ON lineItems.id=amountBreakups.line_item_id ";
+
+    private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY ORDERBYCOLUMN [] , contractId) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
+
+    private static final String LEFT_JOIN = "LEFT JOIN ";
+
+    private static final String CONTRACT_COUNT_QUERY = "SELECT distinct(contract.id) " +
+            "FROM eg_wms_contract AS contract " +
+            LEFT_JOIN+
+            "eg_wms_contract_line_items AS lineItems " +
+            "ON (contract.id = lineItems.contract_id) ";
+
+    private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+
     @Autowired
     private ContractServiceConfiguration config;
 
-    public String getContractSearchQuery(ContractCriteria criteria, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(CONTRACT_SELECT_QUERY);
+    public String getContractSearchQuery(ContractCriteria criteria, List<Object> preparedStmtList, Boolean isCountNeeded) {
+        StringBuilder query = null;
+
+        if(Boolean.FALSE.equals(isCountNeeded)){
+            query = new StringBuilder(CONTRACT_SELECT_QUERY);
+        }else{
+            query = new StringBuilder(CONTRACT_COUNT_QUERY);
+        }
 
         List<String> ids = criteria.getIds();
         if (ids != null && !ids.isEmpty()) {
@@ -68,7 +127,6 @@ public class ContractQueryBuilder {
             query.append(" contract.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
-
         if (StringUtils.isNotBlank(criteria.getContractNumber())) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" contract.contract_number=? ");
@@ -107,6 +165,14 @@ public class ContractQueryBuilder {
             addToPreparedStatement(preparedStmtList, orgIds);
         }
 
+        List<String> estimateIds = criteria.getEstimateIds();
+        if (estimateIds != null && !estimateIds.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" lineItems.estimate_id IN (").append(createQuery(estimateIds)).append(")");
+            addToPreparedStatement(preparedStmtList, estimateIds);
+        }
+
+
         if (StringUtils.isNotBlank(criteria.getContractType()) && criteria.getContractType()!=null) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" contract.contract_type=? ");
@@ -138,13 +204,17 @@ public class ContractQueryBuilder {
             }
         }
 
-        addOrderByClause(query, criteria);
-
-        addLimitAndOffset(query, criteria, preparedStmtList);
-
-        return query.toString();
+        return Boolean.FALSE.equals(isCountNeeded)? addPaginationWrapper(query.toString(), preparedStmtList, criteria): query.toString();
     }
 
+    public String getSearchCountQueryString(ContractCriteria criteria, List<Object> preparedStmtList) {
+        log.info("EstimateQueryBuilder::getSearchCountQueryString");
+        String query = getContractSearchQuery(criteria, preparedStmtList,true);
+        if (query != null)
+            return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
+    }
     private void addOrderByClause(StringBuilder queryBuilder, ContractCriteria criteria) {
 
         Pagination pagination = criteria.getPagination();
@@ -166,9 +236,57 @@ public class ContractQueryBuilder {
             queryBuilder.append(pagination.getOrder().name());
         }
         else{
-            criteria.getPagination().setOrder(Pagination.OrderEnum.ASC);
-            queryBuilder.append(Pagination.OrderEnum.ASC);
+            criteria.getPagination().setOrder(Pagination.OrderEnum.DESC);
+            queryBuilder.append(Pagination.OrderEnum.DESC);
         }
+    }
+
+    private String addPaginationWrapper(String query, List<Object> preparedStmtList,
+                                       ContractCriteria criteria) {
+        log.info("ContractQueryBuilder::addPaginationWrapper");
+        int limit = config.getContractDefaultLimit();
+        int offset = config.getContractDefaultOffset();
+        String wrapperQuery = PAGINATION_WRAPPER;
+        Pagination pagination = criteria.getPagination();
+        Set<String> sortableColumns = new HashSet<>(Arrays.asList("id","contractNumber","totalContractedamount","securityDeposit"
+                ,"agreementDate","defectLiabilityPeriod","startDate","endDate","createdTime","lastModifiedTime"));
+
+        if (pagination.getSortBy() != null && !pagination.getSortBy().isEmpty() && sortableColumns.contains(pagination.getSortBy())) {
+            if (pagination.getSortBy().equals("id")) {
+                wrapperQuery = wrapperQuery.replace("ORDERBYCOLUMN", "contractId");
+
+            } else if (pagination.getSortBy().equals("createdTime")) {
+                wrapperQuery = wrapperQuery.replace("ORDERBYCOLUMN", "contractCreatedTime");
+            } else if (pagination.getSortBy().equals("lastModifiedTime")) {
+                wrapperQuery = wrapperQuery.replace("ORDERBYCOLUMN", "contractLastModifiedTime");
+            } else {
+                wrapperQuery = wrapperQuery.replace( "ORDERBYCOLUMN", pagination.getSortBy());
+            }
+        } else {
+            wrapperQuery = wrapperQuery.replace("ORDERBYCOLUMN", "startDate");
+        }
+
+
+        if (criteria.getPagination().getOrder() == Pagination.OrderEnum.ASC)
+            wrapperQuery = wrapperQuery.replace("[]", "ASC");
+        else
+            wrapperQuery = wrapperQuery.replace("[]", "DESC");
+
+        String finalQuery = wrapperQuery.replace("{}", query);
+
+        if (criteria.getPagination().getLimit() != null) {
+            if (pagination.getLimit() <= config.getContractMaxLimit())
+                limit = pagination.getLimit();
+            else
+                limit = config.getContractMaxLimit();
+        }
+
+        if (pagination.getOffSet() != null)
+            offset = pagination.getOffSet();
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit + offset);
+        return finalQuery;
     }
 
     private void addLimitAndOffset(StringBuilder queryBuilder, ContractCriteria criteria, List<Object> preparedStmtList) {

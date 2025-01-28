@@ -1,0 +1,30 @@
+@startuml
+title Organisation Create Data Validations
+actor user as "User" order 0 #ddff41
+participant Organisation  order 1 #4Ff2AF
+participant MDMS  order 2 #4Ff2AF
+participant Boundary  order 3 #4Ff2AF
+
+activate Organisation #00ad00
+== Validate Request with Master Data ==
+Organisation -> MDMS: Search master data \nrequired for validation
+activate MDMS #008390
+MDMS -> Organisation: Return Master details
+deactivate MDMS
+Organisation -> Organisation: Validate master details
+note over Organisation, Boundary: Validate these masters with MDMS Response \n1. Org Type \n2. Functional Category \n3. Functional Class \n4. Org Identifier Type \nIf any field is not valid then push error message in Error Map
+
+alt if : Error map is not empty
+    user <-- Organisation: Return 400 with invalid fields
+end
+
+== Validate Request with Boundary ==
+Organisation -> Boundary: Search boundary based on request
+activate Boundary #A08390
+Boundary --> Organisation: Return Boundary details
+deactivate Boundary
+alt if : Boundary details are not available
+    user <-- Organisation: Return 400: Boundary code is \n not available.
+end
+
+@enduml

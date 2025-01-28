@@ -15,8 +15,12 @@ import java.util.UUID;
 @Service
 public class StaffEnrichmentService {
 
+    private final AttendanceServiceUtil attendanceServiceUtil;
+
     @Autowired
-    private AttendanceServiceUtil attendanceServiceUtil;
+    public StaffEnrichmentService(AttendanceServiceUtil attendanceServiceUtil) {
+        this.attendanceServiceUtil = attendanceServiceUtil;
+    }
 
     public void enrichStaffPermissionOnCreate(StaffPermissionRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();

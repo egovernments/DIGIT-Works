@@ -2,11 +2,11 @@ package org.egov.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.works.services.common.models.common.Address;
 import org.egov.tracer.model.CustomException;
-import org.egov.web.models.Address;
 import org.egov.web.models.AmountDetail;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateDetail;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -95,9 +94,8 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
         return Address.builder()
                 .id(rs.getString("estAddId"))
                 .tenantId(tenantId).addressLine1(rs.getString("address_line_1"))
-                .addressLine2(rs.getString("address_line_2")).addressNumber(rs.getString("address_number"))
+                .addressLine2(rs.getString("address_line_2"))
                 .city(rs.getString("city")).pincode(rs.getString("pin_code"))
-                .detail(rs.getString("detail"))
                 .landmark(rs.getString("landmark")).latitude(rs.getDouble("latitude"))
                 .longitude(rs.getDouble("longitude"))
                 .build();

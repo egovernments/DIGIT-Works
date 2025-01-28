@@ -6,16 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.utils.BillUtils;
-import org.egov.web.models.Pagination;
 import org.egov.web.models.bill.*;
-import org.egov.web.models.enums.Status;
+import org.egov.web.models.bill.PaymentRequest;
+import org.egov.works.services.common.models.expense.*;
+import org.egov.works.services.common.models.expense.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 import static org.egov.config.Constants.APPROVED_STATUS;
@@ -86,7 +86,7 @@ public class PaymentService {
                 BillSearchRequest billSearchRequest = BillSearchRequest.builder()
                         .requestInfo(requestInfo)
                         .billCriteria(billCriteria)
-                        .pagination(Pagination.builder().limit(limit).offSet(offset).build())
+                        .pagination(Pagination.builder().offSet(offset).limit(limit).build())
                         .build();
                 log.info(billSearchRequest.toString());
                 currentBills = billUtils.fetchBillsData(billSearchRequest);
