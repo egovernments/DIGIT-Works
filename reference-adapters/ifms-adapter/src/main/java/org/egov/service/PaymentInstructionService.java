@@ -2,8 +2,8 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.config.Constants;
@@ -13,26 +13,29 @@ import org.egov.repository.PIRepository;
 import org.egov.repository.PIStatusLogsRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.*;
-import org.egov.web.models.*;
-import org.egov.web.models.bankaccount.BankAccount;
-import org.egov.web.models.bill.*;
+import org.egov.web.models.Disbursement;
+import org.egov.web.models.DisbursementRequest;
+import org.egov.web.models.MsgCallbackHeader;
+import org.egov.web.models.PaginationForDisburse;
+import org.egov.web.models.bill.PaymentRequest;
 import org.egov.web.models.disburse.DisburseSearch;
 import org.egov.web.models.disburse.DisburseSearchRequest;
 import org.egov.web.models.disburse.DisburseSearchResponse;
 import org.egov.web.models.enums.*;
-import org.egov.web.models.enums.Status;
 import org.egov.web.models.jit.*;
 import org.egov.web.models.jit.PISearchCriteria;
-import org.egov.web.models.organisation.Organisation;
+import org.egov.works.services.common.models.bankaccounts.BankAccount;
+import org.egov.works.services.common.models.expense.*;
+import org.egov.works.services.common.models.expense.enums.PaymentStatus;
+import org.egov.works.services.common.models.expense.enums.ReferenceStatus;
+import org.egov.works.services.common.models.expense.enums.Status;
+import org.egov.works.services.common.models.organization.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpServerErrorException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -156,7 +159,7 @@ public class PaymentInstructionService {
                 JITRequest jitPiRequest = piEnrichment.getJitPaymentInstructionRequestForIFMS(piRequest);
                 try {
                     log.info("Payment instruction data is populated, creating jit request based on PI.");
-                    JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
+                    JITResponse jitResponse = ifmsService.sendRequest(paymentRequest.getTenantId(), jitPiRequest);
                     log.info("Jit response for create PI : " + jitResponse);
                     if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                         paymentStatus = PaymentStatus.INITIATED;
@@ -274,7 +277,7 @@ public class PaymentInstructionService {
             // GET failure pi JIT request data from PI
             JITRequest jitPiRequest = piEnrichment.getCorRequest(paymentRequest, paymentInstruction, originalPi, lastRevisedPi);
             try {
-                JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
+                JITResponse jitResponse = ifmsService.sendRequest(paymentRequest.getTenantId(), jitPiRequest);
                 if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                     paymentStatus = PaymentStatus.INITIATED;
                     jitApiRespStatus = JitRespStatusForPI.STATUS_LOG_COR_SUCCESS;
@@ -647,6 +650,9 @@ public class PaymentInstructionService {
                 .build();
         DisburseSearchResponse disbursementResponse = programServiceUtil.searchDisbursements(disburseSearchRequest);
         List<Disbursement> disbursements = disbursementResponse.getDisbursements();
+        if(disbursements == null || disbursements.isEmpty()){
+            throw new CustomException("DISBURSEMENT_NOT_FOUND","Disbursement not found for PI");
+        }
         Disbursement disbursement = disbursements.get(0);
 //        if(isRevised){
 //            for(Disbursement disbursement1: disbursements){

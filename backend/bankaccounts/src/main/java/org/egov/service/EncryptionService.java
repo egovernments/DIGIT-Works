@@ -16,8 +16,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EncryptionService {
 
+    private final EncryptionDecryptionUtil encryptionDecryptionUtil;
+
     @Autowired
-    private EncryptionDecryptionUtil encryptionDecryptionUtil;
+    public EncryptionService(EncryptionDecryptionUtil encryptionDecryptionUtil) {
+        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
+    }
 
     public BankAccountRequest encrypt(BankAccountRequest request, String key) {
         log.info("EncryptionService::encrypt-request");

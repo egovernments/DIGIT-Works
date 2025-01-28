@@ -1,0 +1,67 @@
+@startuml
+skinparam sequence {
+    ArrowColor Black
+    ActorBorderColor Black
+    ParticipantBorderColor Black
+    LifeLineBorderColor Black
+    LifeLineBackgroundColor LightGray
+}
+autonumber
+actor Client as "User" order 0 #ddff41
+participant Estimate #4Ff2AF
+participant Project #4Ff2AF
+participant MDMS #4Ff2AF
+participant SOR #4Ff2AF
+participant Document #4Ff2AF
+participant IDGen #4Ff2AF
+participant Workflow #4Ff2AF
+participant Kafka #4Ff2AF
+participant Persister #4Ff2AF
+participant Indexer #4Ff2AF
+participant Database #4Ff2AF
+participant ES #4Ff2AF
+
+Client -> Estimate : Create Detailed Estimate
+activate Estimate
+Estimate -> Project : Is valid project ID?
+activate Project
+Project --> Estimate : Project details
+deactivate Project
+Estimate -> MDMS : Validate tenantId
+activate MDMS
+MDMS --> Estimate : Master data
+deactivate MDMS
+Estimate -> SOR : Validate SOR and rate details
+activate SOR
+SOR --> Estimate : SORs
+deactivate SOR
+Estimate -> Document : Validate documentIds against the document service
+activate Document
+Document --> Estimate : documentIds
+deactivate Document
+Estimate -> IDGen : Request custom estimate IDs
+activate IDGen
+IDGen -> Estimate : ID list
+deactivate IDGen
+Estimate -> Estimate : Enrich request with \naudit details
+Estimate -> Workflow : Trigger workflow for process instance
+activate Workflow
+Workflow -> Estimate : Process Instance
+deactivate Workflow
+Estimate -> Kafka : Push Estimate create payload
+Estimate --> Client : Estimate created
+deactivate Estimate
+
+Estimate -> Indexer : Enrich estimates with project details for Indexer
+activate Indexer
+Estimate -> Kafka : Push payload for indexer
+Kafka -> Persister : Consume Estimate payload
+activate Persister
+Persister -> Database : Persist data
+deactivate Persister
+Kafka -> Indexer : Consume estimate payload
+Indexer -> ES : Store estimate payload
+deactivate Indexer
+deactivate ES
+
+@enduml

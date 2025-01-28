@@ -10,21 +10,24 @@ import org.egov.kafka.OrganizationProducer;
 import org.egov.repository.OrganisationRepository;
 import org.egov.service.OrganisationEnrichmentService;
 import org.egov.service.OrganisationService;
-import org.egov.service.UserService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.OrgRequest;
 import org.egov.web.models.OrgResponse;
 import org.junit.Ignore;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -42,7 +45,7 @@ import org.junit.jupiter.api.Test;
 //import org.springframework.test.web.servlet.MockMvc;
 //import org.springframework.test.web.servlet.MvcResult;
 //
-//import javax.servlet.http.HttpServletRequest;
+//import jakarta.servlet.http.HttpServletRequest;
 //
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.mockito.ArgumentMatchers.eq;
@@ -51,13 +54,8 @@ import org.junit.jupiter.api.Test;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@RunWith(SpringRunner.class)
-//@WebMvcTest(OrganisationApiController.class)
-//@Import({TestConfiguration.class})
-//@Slf4j
-@ContextConfiguration(classes = OrganizationMain.class)
-@WebMvcTest(OrganisationApiController.class)
-@Import(TestConfiguration.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = OrganizationMain.class, properties = "spring.main.lazy-initialization=true")
 @AutoConfigureMockMvc
 class OrganisationApiControllerTest {
 
@@ -91,8 +89,6 @@ class OrganisationApiControllerTest {
     @MockBean
     private Configuration configuration;
 
-    @MockBean
-    private UserService userService;
 
     @Test
     @DisplayName("Organisation request should pass with API Operation CREATE")

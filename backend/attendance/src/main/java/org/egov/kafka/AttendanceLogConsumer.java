@@ -20,11 +20,15 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class AttendanceLogConsumer {
 
-    @Autowired
-    private AttendanceLogService attendanceLogService;
+    private final AttendanceLogService attendanceLogService;
+
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    public AttendanceLogConsumer(AttendanceLogService attendanceLogService, ObjectMapper objectMapper) {
+        this.attendanceLogService = attendanceLogService;
+        this.objectMapper = objectMapper;
+    }
 
     @KafkaListener(topics = "${attendance.log.kafka.consumer.bulk.create.topic}")
     public void bulkCreate(Map<String, Object> consumerRecord,

@@ -76,7 +76,7 @@ public class PAGService {
             log.info("Calling ifms service.");
             JITResponse jitResponse = null;
             try {
-                jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
+                jitResponse = ifmsService.sendRequest(paymentInstruction.getTenantId(), jitRequest);
             }catch (Exception e){
                 log.info("Exception occurred while fetching PAG from ifms." + e);
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PAG_ERROR;

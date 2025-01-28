@@ -1,17 +1,14 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.PIRepository;
 import org.egov.repository.SanctionDetailsRepository;
-import org.egov.utils.BillUtils;
 import org.egov.utils.HelperUtil;
 import org.egov.utils.PIUtils;
-import org.egov.web.models.bill.Payment;
-import org.egov.web.models.bill.PaymentRequest;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +67,7 @@ public class PISService {
             JITResponse pisResponse = null;
             log.info("Calling ifms service.");
             try {
-                pisResponse = ifmsService.sendRequestToIFMS(jitRequest);
+                pisResponse = ifmsService.sendRequest(paymentInstruction.getTenantId(), jitRequest);
             }catch (Exception e){
                 log.info("Exception occurred while fetching PIS from ifms." + e);
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PIS_ERROR;

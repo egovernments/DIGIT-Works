@@ -13,6 +13,7 @@ import org.egov.enrichment.StaffEnrichmentService;
 import org.egov.common.producer.Producer;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
+import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.util.ResponseInfoFactory;
@@ -29,35 +30,39 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class AttendanceRegisterService {
-    @Autowired
-    private AttendanceServiceValidator attendanceServiceValidator;
+    private final AttendanceServiceValidator attendanceServiceValidator;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    private final ResponseInfoFactory responseInfoFactory;
 
-    @Autowired
-    private Producer producer;
+    private final Producer producer;
 
-    @Autowired
-    private AttendanceServiceConfiguration attendanceServiceConfiguration;
+    private final AttendanceServiceConfiguration attendanceServiceConfiguration;
 
-    @Autowired
-    private RegisterEnrichment registerEnrichment;
+    private final RegisterEnrichment registerEnrichment;
 
 
-    @Autowired
-    private StaffService staffService;
+    private final StaffRepository staffRepository;
+
+    private final RegisterRepository registerRepository;
+
+    private final AttendeeRepository attendeeRepository;
+
+    private final StaffEnrichmentService staffEnrichmentService;
+    private final IndividualServiceUtil individualServiceUtil;
 
     @Autowired
-    private RegisterRepository registerRepository;
-
-    @Autowired
-    private AttendeeRepository attendeeRepository;
-
-    @Autowired
-    private StaffEnrichmentService staffEnrichmentService;
-    @Autowired
-    private IndividualServiceUtil individualServiceUtil;
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil) {
+        this.attendanceServiceValidator = attendanceServiceValidator;
+        this.responseInfoFactory = responseInfoFactory;
+        this.producer = producer;
+        this.attendanceServiceConfiguration = attendanceServiceConfiguration;
+        this.registerEnrichment = registerEnrichment;
+        this.staffRepository = staffRepository;
+        this.registerRepository = registerRepository;
+        this.attendeeRepository = attendeeRepository;
+        this.staffEnrichmentService = staffEnrichmentService;
+        this.individualServiceUtil = individualServiceUtil;
+    }
 
     /**
      * Create Attendance register
@@ -241,7 +246,7 @@ public class AttendanceRegisterService {
         } else {
             staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIdsToSearch).build();
         }
-        return staffService.getAllStaff(staffSearchCriteria);
+        return staffRepository.getAllStaff(staffSearchCriteria);
     }
 
     /* Returns list of user roles */
@@ -258,7 +263,7 @@ public class AttendanceRegisterService {
         List<String> individualIds = new ArrayList<>();
         individualIds.add(uuid);
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().individualIds(individualIds).build();
-        List<StaffPermission> staffMembers = staffService.getAllStaff(staffSearchCriteria);
+        List<StaffPermission> staffMembers = staffRepository.getAllStaff(staffSearchCriteria);
         return staffMembers.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
     }
 

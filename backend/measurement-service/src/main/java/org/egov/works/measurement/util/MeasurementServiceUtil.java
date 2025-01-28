@@ -17,16 +17,15 @@ import java.util.List;
 @Component
 public class MeasurementServiceUtil {
 
+    private final WorkflowService workflowService;
+    private final MeasurementEnrichment measurementEnrichment;
+
     @Autowired
-    private MeasurementRegistry measurementRegistry;
-    @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
-    private MBServiceConfiguration MBServiceConfiguration;
-    @Autowired
-    private WorkflowService workflowService;
-    @Autowired
-    private MeasurementEnrichment measurementEnrichment;
+    public MeasurementServiceUtil(WorkflowService workflowService, MeasurementEnrichment measurementEnrichment) {
+        this.workflowService = workflowService;
+        this.measurementEnrichment = measurementEnrichment;
+    }
+
     public List<Measurement> convertToMeasurementList(List<MeasurementService> measurementServices) {
         List<Measurement> measurements = new ArrayList<>();
 

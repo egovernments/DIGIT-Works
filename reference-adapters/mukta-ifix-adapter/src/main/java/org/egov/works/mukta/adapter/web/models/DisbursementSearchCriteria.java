@@ -23,6 +23,9 @@ public class DisbursementSearchCriteria {
     @JsonProperty("status")
     private String status;
 
+    @JsonProperty("tenantId")
+    private String tenantId;
+
     @JsonProperty("type")
     private String type;
 }

@@ -1,6 +1,5 @@
 package org.egov.digit.expense.service;
 
-import digit.models.coremodels.SMSRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
@@ -9,6 +8,7 @@ import org.egov.digit.expense.util.HRMSUtils;
 import org.egov.digit.expense.util.LocalizationUtil;
 import org.egov.digit.expense.util.NotificationUtil;
 import org.egov.digit.expense.web.models.BillRequest;
+import org.egov.digit.expense.web.models.SMSRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -6,16 +6,12 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.constants.Error;
-import org.egov.works.mukta.adapter.web.models.Pagination;
-import org.egov.works.mukta.adapter.web.models.organisation.OrgResponse;
-import org.egov.works.mukta.adapter.web.models.organisation.OrgSearchCriteria;
-import org.egov.works.mukta.adapter.web.models.organisation.OrgSearchRequest;
-import org.egov.works.mukta.adapter.web.models.organisation.Organisation;
+import org.egov.works.services.common.models.organization.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 
 @Component
@@ -48,9 +44,8 @@ public class OrganisationUtils {
         }
 
         Pagination pagination = Pagination.builder()
-                .limit(orgSearchCriteria.getId().size())
-                .offSet(0)
-                .order(Pagination.OrderEnum.ASC)
+                .limit((double) orgSearchCriteria.getId().size())
+                .offset((double) 0)
                 .build();
 
         OrgSearchRequest orgSearchRequest = OrgSearchRequest.builder()
@@ -66,10 +61,10 @@ public class OrganisationUtils {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getOrganisationHost()).append(config.getOrganisationSearchEndPoint());
         Object response = new HashMap<>();
-        OrgResponse orgResponse = new OrgResponse();
+        OrgServiceResponse orgResponse = new OrgServiceResponse();
         try {
             response = restTemplate.postForObject(uri.toString(), bankAccountRequest, Map.class);
-            orgResponse = mapper.convertValue(response, OrgResponse.class);
+            orgResponse = mapper.convertValue(response, OrgServiceResponse.class);
             log.info("Organisation details fetched.");
         } catch (Exception e) {
             log.error("Exception occurred while fetching organisation getOrganisationsById:getOrganisations: ", e);

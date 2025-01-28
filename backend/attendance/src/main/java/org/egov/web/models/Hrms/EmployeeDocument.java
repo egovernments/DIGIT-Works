@@ -42,7 +42,6 @@ package org.egov.web.models.Hrms;
 
 import digit.models.coremodels.AuditDetails;
 import lombok.*;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
@@ -55,21 +54,21 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 public class EmployeeDocument {
 
-	@SafeHtml
+	
 	private String id;
 
-	@SafeHtml
+	
 	private String documentName;
 
-	@SafeHtml
+	
 	private  String documentId;
 
 	private EmployeeDocumentReferenceType referenceType;
 
-	@SafeHtml
+	
 	private String referenceId;
 
-	@SafeHtml
+	
 	private String tenantId;
 
 	private AuditDetails auditDetails;

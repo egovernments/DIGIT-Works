@@ -17,6 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.egov.common.contract.models.Workflow;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.repository.BillRepository;
@@ -30,15 +31,13 @@ import org.egov.digit.expense.web.models.LineItem;
 import org.egov.digit.expense.web.models.Party;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jayway.jsonpath.JsonPath;
-
-import digit.models.coremodels.Workflow;
-import net.minidev.json.JSONArray;
 
 @Service
 public class BillValidator {

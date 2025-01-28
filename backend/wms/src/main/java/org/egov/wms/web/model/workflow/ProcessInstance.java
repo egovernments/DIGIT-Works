@@ -3,13 +3,13 @@ package org.egov.wms.web.model.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.User;
-import org.egov.wms.web.model.AuditDetails;
-import org.egov.wms.web.model.Document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

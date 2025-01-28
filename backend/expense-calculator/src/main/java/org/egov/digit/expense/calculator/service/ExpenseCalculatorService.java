@@ -9,20 +9,24 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.project.Project;
+import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
 import org.egov.digit.expense.calculator.mapper.BillToMetaMapper;
 import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
-import org.egov.digit.expense.calculator.util.BillUtils;
-import org.egov.digit.expense.calculator.util.CommonUtil;
-import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
-import org.egov.digit.expense.calculator.util.MdmsUtils;
-import org.egov.digit.expense.calculator.util.ProjectUtil;
+import org.egov.digit.expense.calculator.util.*;
 import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValidator;
 import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.services.common.models.contract.Contract;
+import org.egov.works.services.common.models.contract.ContractResponse;
+import org.egov.works.services.common.models.estimate.Estimate;
+import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
+import org.egov.works.services.common.models.musterroll.MusterRoll;
+import org.egov.works.services.common.models.musterroll.MusterRollRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -54,9 +58,11 @@ public class ExpenseCalculatorService {
     private final ExpenseCalculatorRepository expenseCalculatorRepository;
 
     private final ObjectMapper objectMapper;
+    private final ContractUtils contractUtils;
+    private final EstimateServiceUtil estimateServiceUtil;
 
     @Autowired
-    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil) {
+    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil) {
         this.expenseCalculatorProducer = expenseCalculatorProducer;
         this.expenseCalculatorServiceValidator = expenseCalculatorServiceValidator;
         this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
@@ -72,6 +78,8 @@ public class ExpenseCalculatorService {
         this.expenseCalculatorRepository = expenseCalculatorRepository;
         this.mapper = mapper;
         this.commonUtil = commonUtil;
+        this.contractUtils = contractUtils;
+        this.estimateServiceUtil = estimateServiceUtil;
     }
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
@@ -474,5 +482,48 @@ public class ExpenseCalculatorService {
                         })
                         .collect(Collectors.toList());
     }
-    
+
+    public void processBillForAdditionalDetailsEnrichment(BillRequest request) {
+        log.info("Process bill for additional details enrichment");
+        RequestInfo requestInfo = request.getRequestInfo();
+        Bill bill = request.getBill();
+        String referenceId = bill.getReferenceId();
+        String workOrderNumber = referenceId.split("_")[0];
+        ContractResponse contractResponse = contractUtils.fetchContract(requestInfo, bill.getTenantId(), workOrderNumber);
+        if(contractResponse == null || contractResponse.getContracts() == null || contractResponse.getContracts().isEmpty()) {
+            log.error("No contract found for work order number " + workOrderNumber);
+            return;
+        }
+        String estimateId = contractResponse.getContracts().get(0).getLineItems().get(0).getEstimateId();
+        List<Estimate> estimates = estimateServiceUtil.fetchEstimates(bill.getTenantId(), Collections.singleton(estimateId), requestInfo);
+        if(estimates == null || estimates.isEmpty()) {
+            log.error("No estimate found for estimate id " + estimateId);
+            return;
+        }
+        Estimate estimate = estimates.get(0);
+        String projectId = estimate.getProjectId();
+        ProjectResponse projectResponse = projectUtils.getProjectDetails(requestInfo, bill.getTenantId(), projectId);
+        if(projectResponse == null || projectResponse.getProject() == null) {
+            log.error("No project found for project id " + projectId);
+            return;
+        }
+        Project project = projectResponse.getProject().get(0);
+        enrichAdditionalDetails(bill, project);
+        expenseCalculatorProducer.push(config.getBillIndexTopic(), request);
+    }
+
+    private void enrichAdditionalDetails(Bill bill, Project project) {
+        ObjectNode additionalDetails = mapper.createObjectNode();
+        if(bill.getAdditionalDetails() != null){
+            additionalDetails = objectMapper.convertValue(bill.getAdditionalDetails(), ObjectNode.class);
+        }
+
+        additionalDetails.put("projectName", project.getName());
+        additionalDetails.put("projectNumber", project.getProjectNumber());
+        additionalDetails.put("ward", project.getAddress().getBoundary());
+        additionalDetails.put("projectDescription", project.getDescription());
+        additionalDetails.put("projectCreatedDate", project.getAuditDetails().getCreatedTime());
+
+        bill.setAdditionalDetails(additionalDetails);
+    }
 }
