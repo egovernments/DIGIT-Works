@@ -76,41 +76,6 @@ public class MdmsUtil {
                 .requestInfo(requestInfo).build();
     }
 
-    public Object mDMSV2CallMuster(MusterRollRequest request, String tenantId) {
-        RequestInfo requestInfo = request.getRequestInfo();
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestMusterV2(requestInfo, tenantId);
-        return serviceRequestRepository.fetchResult(getMdmsV2SearchUrl(), mdmsCriteriaReq);
-    }
-
-    public MdmsCriteriaReq getMDMSRequestMusterV2(RequestInfo requestInfo, String tenantId) {
-        ModuleDetail musterRollModuleDetail = getMusterRollModuleRequestDataV2();
-
-        List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.add(musterRollModuleDetail);
-
-        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
-                .build();
-        return MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
-                .requestInfo(requestInfo).build();
-    }
-
-    public Object mDMSV2CallMuster(MusterRollRequest request, String tenantId) {
-        RequestInfo requestInfo = request.getRequestInfo();
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestMusterV2(requestInfo, tenantId);
-        return serviceRequestRepository.fetchResult(getMdmsV2SearchUrl(), mdmsCriteriaReq);
-    }
-
-    public MdmsCriteriaReq getMDMSRequestMusterV2(RequestInfo requestInfo, String tenantId) {
-        ModuleDetail musterRollModuleDetail = getMusterRollModuleRequestDataV2();
-
-        List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.add(musterRollModuleDetail);
-
-        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
-                .build();
-        return MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
-                .requestInfo(requestInfo).build();
-    }
 
     /**
      * Returns mdms search criteria based on the tenantId
