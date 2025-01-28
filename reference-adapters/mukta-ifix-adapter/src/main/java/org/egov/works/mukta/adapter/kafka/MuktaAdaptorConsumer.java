@@ -43,7 +43,6 @@ public class MuktaAdaptorConsumer {
     private final PaymentInstructionEnrichment paymentInstructionEnrichment;
     private final RedisService redisService;
 
-
     @Autowired
     public MuktaAdaptorConsumer(ObjectMapper objectMapper, PaymentInstructionService paymentInstructionService, ProgramServiceUtil programServiceUtil, MuktaAdaptorProducer muktaAdaptorProducer, MuktaAdaptorConfig muktaAdaptorConfig, PaymentService paymentService, DisbursementValidator disbursementValidator, PaymentInstructionEnrichment paymentInstructionEnrichment, RedisService redisService) {
         this.objectMapper = objectMapper;

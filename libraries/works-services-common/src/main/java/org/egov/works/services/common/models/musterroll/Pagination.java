@@ -18,8 +18,8 @@ import jakarta.validation.constraints.DecimalMax;
 public class Pagination {
 
     @JsonProperty("limit")
-    @DecimalMax("100")
-    private Double limit = 10d;
+//    @DecimalMax("100")
+    private Double limit = null;
 
     @JsonProperty("offSet")
     private Double offSet = 0d;

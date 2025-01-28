@@ -100,6 +100,9 @@ public class MuktaAdaptorConfig {
     @Value("${mukta.ifix.adapter.error.queue.topic}")
     private String muktaIfixAdapterErrorQueueTopic;
 
+    @Value("${mukta.ifix.adapter.error.queue.topic}")
+    private String muktaIfixAdapterErrorQueueTopic;
+
     @Value("${egov.program.service.host}")
     private String programServiceHost;
     @Value("${program.service.disbursement.create.endpoint}")
