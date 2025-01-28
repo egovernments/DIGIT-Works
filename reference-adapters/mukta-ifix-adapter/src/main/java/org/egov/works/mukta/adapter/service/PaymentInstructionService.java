@@ -405,28 +405,4 @@ public class PaymentInstructionService {
         }
     }
 
-    public List<Payment> processCreatePayment(BillSearchRequest billSearchRequest) {
-        List<Bill> bills = billUtils.fetchBillsData(billSearchRequest);
-        List<Payment> totalPayments = new ArrayList<>();
-        if (bills == null || bills.isEmpty()) {
-            throw new CustomException(Error.BILLS_NOT_FOUND, Error.BILLS_NOT_FOUND_MESSAGE);
-        }
-        for(Bill bill: bills){
-            String wfStatus = bill.getWfStatus();
-            if (bill.getPaymentStatus() == null && wfStatus != null && wfStatus.equalsIgnoreCase(Constants.APPROVED_STATUS)) {
-                PaymentRequest paymentRequest = paymentService.getPaymentRequest(billSearchRequest.getRequestInfo(), bill);
-                log.info("Payment request: " + paymentRequest);
-                // Payment create call
-                List<Payment> payments = paymentService.createPayment(paymentRequest);
-                totalPayments.addAll(payments);
-                if (payments.isEmpty()) {
-                    log.error("Error creating Payment for bill number : " + bill.getBillNumber());
-                }
-            }else{
-                log.error("Bill is not in approved status or payment status is already present for bill number : " + bill.getBillNumber());
-                throw new CustomException("BILL_NOT_APPROVED", "Bill is not in approved status or payment status is already present for bill number : " + bill.getBillNumber());
-            }
-        }
-        return totalPayments;
-    }
 }
