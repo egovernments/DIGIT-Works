@@ -1,6 +1,0 @@
-org/egov/web/models/Status.class
-org/egov/web/models/enums/StatusCode.class
-org/egov/web/models/enums/MessageType.class
-org/egov/config/Constants.class
-org/egov/web/models/program/Program.class
-org/egov/web/models/ExchangeCode.class

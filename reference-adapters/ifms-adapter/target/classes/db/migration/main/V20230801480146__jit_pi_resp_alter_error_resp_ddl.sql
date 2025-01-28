@@ -1,1 +1,0 @@
-ALTER TABLE jit_payment_inst_details ALTER COLUMN piErrorResp TYPE TEXT;
