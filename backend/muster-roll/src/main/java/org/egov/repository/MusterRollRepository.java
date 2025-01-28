@@ -14,14 +14,18 @@ import java.util.List;
 @Repository
 public class MusterRollRepository {
 
-    @Autowired
-    private MusterRollRowMapper rowMapper;
+    private final MusterRollRowMapper rowMapper;
+
+    private final MusterRollQueryBuilder queryBuilder;
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private MusterRollQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public MusterRollRepository(MusterRollRowMapper rowMapper, MusterRollQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+        this.rowMapper = rowMapper;
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
 
     /**
@@ -31,8 +35,18 @@ public class MusterRollRepository {
      */
     public List<MusterRoll> getMusterRoll(MusterRollSearchCriteria searchCriteria,List<String> registerIds) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getMusterSearchQuery(searchCriteria, preparedStmtList, registerIds);
-        List<MusterRoll> musterRollList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        return musterRollList;
+        String query = queryBuilder.getMusterSearchQuery(searchCriteria, preparedStmtList, registerIds,false);
+        return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+    }
+
+    /**
+     * Fetch the record count from DB based on the search criteria
+     * @param searchCriteria
+     * @return
+     */
+    public Integer getMusterRollCount(MusterRollSearchCriteria searchCriteria,List<String> registerIds) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getSearchCountQueryString(searchCriteria, preparedStmtList, registerIds);
+        return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
     }
 }

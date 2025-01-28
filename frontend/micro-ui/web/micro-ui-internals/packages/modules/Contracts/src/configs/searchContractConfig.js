@@ -32,6 +32,7 @@ return  {
           "projectType": "",
           "projectName": "",
           "workOrderNumber": "",
+          "revisedWorkOrderNumber": "",
           "status":"",
           "createdFrom": "",
           "createdTo": ""
@@ -102,7 +103,7 @@ return  {
                 "name": "workOrderNumber",
                 "error": "CONTRACT_PATTERN_ERR_MSG",
                 "validation": {
-                    "pattern": "WO\/[0-9]+-[0-9]+\/[0-9]+",
+                    "pattern": "WO|RW\/[0-9]+-[0-9]+\/[0-9]+",
                     "minlength": 2
                 }
               }

@@ -1,0 +1,80 @@
+@startuml
+title: Expense Service - Payment Creation Flow with Enrichment
+
+actor user as "User" order 0 #ddff41
+participant Expense as "Expense \nService" #4Ff2AF
+participant IDGen as "ID Generator" #4Ff2AF
+queue KAFKA as "KAFKA" #4Ff2AF
+participant Persister as "Persister" #4Ff2AF
+database DB as "PostgreSQL" #4Ff2AF
+
+user -> Expense: call /payment/v1/_create API (with bill list)
+activate user #Fafd30
+activate Expense #00ad00
+
+Expense -> Expense: Validate payment request
+note right: Validate required fields, bill list, \namounts, duplicate payments etc.
+
+alt if validation fails
+    Expense --> user: [400]: Invalid or missing payment details
+end
+
+
+note over Expense: Extract and prepare to enrich request
+Expense -> IDGen: Request for Payment IDs
+activate IDGen #ffad12
+IDGen --> Expense: Return Payment IDs
+deactivate IDGen
+
+Expense -> Expense: Enrich payment request with\nUUIDs, audit details, and set\npayment status to INITIATED
+note right: Set default status to INITIATED and \nenrich audit details (createdBy, createdTime)
+
+
+
+
+Expense -> KAFKA: Push payment data to <b>expense-payment-create</b> topic
+group Update paid amounts and payment status
+    loop for each bill
+        Expense -> Expense: Update bill's paid amount and payment status
+        Expense -> KAFKA: Push bill data to <b>expense-bill-update</b> topic
+    end
+end
+Expense --> user: [202]: Payment created successfully
+deactivate Expense
+deactivate user
+
+group Save to DB: [async]
+    KAFKA -> Persister: Consume payment payload
+    Persister -> DB: Save payment records
+    KAFKA -> Persister: Consume bill payload
+    Persister -> DB: Update bill records
+end
+
+==Validations==
+Expense -> DB: Check if bills exist in DB
+activate Expense #F1aF0F
+activate DB #008390
+DB --> Expense: Return matching bills from DB
+deactivate DB
+
+alt if any bill not found
+    Expense --> user: [400]: One or more bills not found
+end
+
+' Create same for payment if payment already exists
+
+Expense -> DB: Get payment by bill ids
+activate DB #008390
+DB --> Expense: Return matching payments from DB
+deactivate DB
+alt if payment already exists
+    Expense --> user: [400]: Payment already exists
+end
+
+'Amount to be paid should be less than bill amount
+Expense -> Expense: Check if paid amount is less than bill amount
+note over Expense: This will be performed at bill, bill details & lineitems
+alt if paid amount exceeds bill amount
+    Expense --> user: [400]: Amount to be paid exceeds the bill amount
+end
+@enduml

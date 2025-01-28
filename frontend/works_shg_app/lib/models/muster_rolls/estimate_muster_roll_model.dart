@@ -35,7 +35,8 @@ class EstimateMusterRoll with _$EstimateMusterRoll {
         List<EstimateIndividualEntries>? individualEntries,
     @JsonKey(name: 'additionalDetails')
         MusterAdditionalDetails? musterAdditionalDetails,
-    @JsonKey(name: 'auditDetails') AuditDetails? musterAuditDetails,
+    @JsonKey(name: 'auditDetails')
+        AuditDetails? musterAuditDetails,
   }) = _EstimateMusterRoll;
 
   factory EstimateMusterRoll.fromJson(
@@ -69,6 +70,7 @@ class EstimateMusterIndividualAdditionalDetails
   const factory EstimateMusterIndividualAdditionalDetails({
     String? userName,
     String? fatherName,
+    String? gender,
     String? aadharNumber,
     String? bankDetails,
     String? userId,

@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 
 class CommonWidgets {
   static getItemWidget(BuildContext context,
-      {String title = '', String description = '', String subtitle = ''}) {
+      {String title = '',
+      String description = '',
+      String subtitle = '',
+      Color? descColor}) {
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
@@ -38,10 +41,11 @@ class CommonWidgets {
                 width: MediaQuery.of(context).size.width / 2,
                 child: Text(
                   description,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: descColor ??
+                          DigitTheme.instance.colorScheme.onBackground),
                   textAlign: TextAlign.left,
                 ))
           ],

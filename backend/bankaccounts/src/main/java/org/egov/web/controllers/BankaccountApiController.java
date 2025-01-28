@@ -10,6 +10,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.BankAccountService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.bankaccounts.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +19,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-03-14T17:30:53.139+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-03-14T17:30:53.139+05:30[Asia/Kolkata]")
 @Controller
 @RequestMapping("/bankaccount/v1")
 @Slf4j
@@ -33,16 +34,16 @@ public class BankaccountApiController {
 
     private final HttpServletRequest request;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    private final ResponseInfoFactory responseInfoFactory;
+
+    private final BankAccountService bankAccountService;
 
     @Autowired
-    private BankAccountService bankAccountService;
-
-    @Autowired
-    public BankaccountApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public BankaccountApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoFactory responseInfoFactory, BankAccountService bankAccountService) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.responseInfoFactory = responseInfoFactory;
+        this.bankAccountService = bankAccountService;
     }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)

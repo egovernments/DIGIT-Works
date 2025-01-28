@@ -1757,6 +1757,7 @@ AttendeesAdditionalDetails _$AttendeesAdditionalDetailsFromJson(
 /// @nodoc
 mixin _$AttendeesAdditionalDetails {
   String? get individualName => throw _privateConstructorUsedError;
+  String? get gender => throw _privateConstructorUsedError;
   String? get individualGaurdianName => throw _privateConstructorUsedError;
   String? get individualID => throw _privateConstructorUsedError;
   String? get identifierId => throw _privateConstructorUsedError;
@@ -1777,6 +1778,7 @@ abstract class $AttendeesAdditionalDetailsCopyWith<$Res> {
   @useResult
   $Res call(
       {String? individualName,
+      String? gender,
       String? individualGaurdianName,
       String? individualID,
       String? identifierId,
@@ -1798,6 +1800,7 @@ class _$AttendeesAdditionalDetailsCopyWithImpl<$Res,
   @override
   $Res call({
     Object? individualName = freezed,
+    Object? gender = freezed,
     Object? individualGaurdianName = freezed,
     Object? individualID = freezed,
     Object? identifierId = freezed,
@@ -1807,6 +1810,10 @@ class _$AttendeesAdditionalDetailsCopyWithImpl<$Res,
       individualName: freezed == individualName
           ? _value.individualName
           : individualName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gender: freezed == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
               as String?,
       individualGaurdianName: freezed == individualGaurdianName
           ? _value.individualGaurdianName
@@ -1839,6 +1846,7 @@ abstract class _$$_AttendeesAdditionalDetailsCopyWith<$Res>
   @useResult
   $Res call(
       {String? individualName,
+      String? gender,
       String? individualGaurdianName,
       String? individualID,
       String? identifierId,
@@ -1859,6 +1867,7 @@ class __$$_AttendeesAdditionalDetailsCopyWithImpl<$Res>
   @override
   $Res call({
     Object? individualName = freezed,
+    Object? gender = freezed,
     Object? individualGaurdianName = freezed,
     Object? individualID = freezed,
     Object? identifierId = freezed,
@@ -1868,6 +1877,10 @@ class __$$_AttendeesAdditionalDetailsCopyWithImpl<$Res>
       individualName: freezed == individualName
           ? _value.individualName
           : individualName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gender: freezed == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
               as String?,
       individualGaurdianName: freezed == individualGaurdianName
           ? _value.individualGaurdianName
@@ -1894,6 +1907,7 @@ class __$$_AttendeesAdditionalDetailsCopyWithImpl<$Res>
 class _$_AttendeesAdditionalDetails implements _AttendeesAdditionalDetails {
   const _$_AttendeesAdditionalDetails(
       {this.individualName,
+      this.gender,
       this.individualGaurdianName,
       this.individualID,
       this.identifierId,
@@ -1905,6 +1919,8 @@ class _$_AttendeesAdditionalDetails implements _AttendeesAdditionalDetails {
   @override
   final String? individualName;
   @override
+  final String? gender;
+  @override
   final String? individualGaurdianName;
   @override
   final String? individualID;
@@ -1915,7 +1931,7 @@ class _$_AttendeesAdditionalDetails implements _AttendeesAdditionalDetails {
 
   @override
   String toString() {
-    return 'AttendeesAdditionalDetails(individualName: $individualName, individualGaurdianName: $individualGaurdianName, individualID: $individualID, identifierId: $identifierId, bankNumber: $bankNumber)';
+    return 'AttendeesAdditionalDetails(individualName: $individualName, gender: $gender, individualGaurdianName: $individualGaurdianName, individualID: $individualID, identifierId: $identifierId, bankNumber: $bankNumber)';
   }
 
   @override
@@ -1925,6 +1941,7 @@ class _$_AttendeesAdditionalDetails implements _AttendeesAdditionalDetails {
             other is _$_AttendeesAdditionalDetails &&
             (identical(other.individualName, individualName) ||
                 other.individualName == individualName) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.individualGaurdianName, individualGaurdianName) ||
                 other.individualGaurdianName == individualGaurdianName) &&
             (identical(other.individualID, individualID) ||
@@ -1937,7 +1954,7 @@ class _$_AttendeesAdditionalDetails implements _AttendeesAdditionalDetails {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, individualName,
+  int get hashCode => Object.hash(runtimeType, individualName, gender,
       individualGaurdianName, individualID, identifierId, bankNumber);
 
   @JsonKey(ignore: true)
@@ -1959,6 +1976,7 @@ abstract class _AttendeesAdditionalDetails
     implements AttendeesAdditionalDetails {
   const factory _AttendeesAdditionalDetails(
       {final String? individualName,
+      final String? gender,
       final String? individualGaurdianName,
       final String? individualID,
       final String? identifierId,
@@ -1969,6 +1987,8 @@ abstract class _AttendeesAdditionalDetails
 
   @override
   String? get individualName;
+  @override
+  String? get gender;
   @override
   String? get individualGaurdianName;
   @override

@@ -2,18 +2,19 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.IdResponse;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.idgen.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.repository.IdGenRepository;
-import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.expense.Pagination;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -30,20 +31,21 @@ import static org.egov.util.MusterRollServiceConstants.ACTION_REJECT;
 @Slf4j
 public class EnrichmentService {
 
-    @Autowired
-    private MusterRollServiceUtil musterRollServiceUtil;
+    private final MusterRollServiceUtil musterRollServiceUtil;
+
+    private final MusterRollServiceConfiguration config;
+
+    private final IdGenRepository idGenRepository;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private MusterRollServiceConfiguration config;
-
-    @Autowired
-    private IdGenRepository idGenRepository;
-
-    @Autowired
-    private MusterRollRepository musterRollRepository;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public EnrichmentService(MusterRollServiceUtil musterRollServiceUtil, MusterRollServiceConfiguration config, IdGenRepository idGenRepository, ObjectMapper mapper) {
+        this.musterRollServiceUtil = musterRollServiceUtil;
+        this.config = config;
+        this.idGenRepository = idGenRepository;
+        this.mapper = mapper;
+    }
 
 
     /**
@@ -88,7 +90,7 @@ public class EnrichmentService {
         musterRoll.setAuditDetails(auditDetails);
 
         //musterRollNumber - Idgen
-        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
+        String rootTenantId = musterRoll.getTenantId();
         List<String> musterNumbers = getIdList(requestInfo, rootTenantId
                 , config.getIdgenMusterRollNumberName(), "", 1); //idformat will be fetched by idGen service
         if (musterNumbers != null && !musterNumbers.isEmpty()) {
@@ -180,7 +182,7 @@ public class EnrichmentService {
         if (auditDetails != null && StringUtils.isNotBlank(auditDetails.getCreatedBy())) {
             List<String> updatedAssignees = new ArrayList<>();
             updatedAssignees.add(auditDetails.getCreatedBy());
-            workflow.setAssignees(updatedAssignees);
+            workflow.setAssignes(updatedAssignees);
         }
     }
 
@@ -200,6 +202,11 @@ public class EnrichmentService {
         if (searchCriteria.getLimit() != null && searchCriteria.getLimit() > config.getMusterMaxLimit())
             searchCriteria.setLimit(config.getMusterMaxLimit());
 
+        if (searchCriteria.getSortBy() == null)
+            searchCriteria.setSortBy("createdTime");
+
+        if (searchCriteria.getOrder() == null)
+            searchCriteria.setOrder(Pagination.OrderEnum.DESC);
     }
 
     /**

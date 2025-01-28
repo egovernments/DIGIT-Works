@@ -1,0 +1,65 @@
+@startuml
+title Update Bank Account
+actor user as "User" order 0 #ddff41
+participant BANK_ACCOUNT as "Bank Account" order 1 #4Ff2AF
+participant INDIVIDUAL as "Individual" order 2 #4Ff2AF
+participant ORGANISATION as "Organisation" order 3 #4Ff2AF
+participant ENC_CLIENT as "Encryption Service" order 4 #4Ff2AF
+queue KAFKA as "KAFKA" order 5 #4Ff2AF
+participant PERSISTER as "Persister Service" order 6 #4Ff2AF
+participant AUDIT_LOG as "Audit Log" order 7 #4Ff2AF
+database DB as "PostgreSQL" order 8 #4Ff2AF
+
+user -> BANK_ACCOUNT: Call _update API
+activate user #Fafd30
+note top: Update Bank Account Details
+activate BANK_ACCOUNT #00ad00
+BANK_ACCOUNT -> BANK_ACCOUNT: Validate request
+note right: Vaidate required fields \nto update bank account
+alt if: Request is not valid
+    user <-[#ff0000]- BANK_ACCOUNT: [400]: Error response\n with invalid field values
+end
+group Validate IND/ORG is registered by service code:
+    alt if: Service Code is IND
+        BANK_ACCOUNT -> INDIVIDUAL: Call _search API
+        note right: Get Individual Details
+        activate INDIVIDUAL #008390
+        BANK_ACCOUNT <-- INDIVIDUAL: Individual Details
+        deactivate INDIVIDUAL
+    else if : Service Code is ORG
+        BANK_ACCOUNT -> ORGANISATION: Call _search API
+        note right: Get Organisation details
+        activate ORGANISATION #A08390
+        BANK_ACCOUNT <-- ORGANISATION: Organisation Details
+        deactivate ORGANISATION
+    end
+    alt if: Organisation or Individual details not found
+        user <-[#ff0000]- BANK_ACCOUNT: [400]: Error response\n with invalid reference error
+    end
+end
+
+
+BANK_ACCOUNT -> BANK_ACCOUNT: Enrich request
+note right: Enrich request with \nUUID, audit details
+
+BANK_ACCOUNT -> ENC_CLIENT: call _encrypt: send bank account details
+activate ENC_CLIENT #F1aF0F
+BANK_ACCOUNT <-- ENC_CLIENT: Return encrypted bank account details
+deactivate ENC_CLIENT
+BANK_ACCOUNT -> KAFKA: Send request to <b>update-bank-account</b> topic
+user <-[#00a00b]- BANK_ACCOUNT: Success response
+note right: Return enriched Bank Account Details
+deactivate BANK_ACCOUNT
+deactivate user
+
+KAFKA <- PERSISTER: Listen \n<b>update-bank-account</b> topic
+activate PERSISTER #aFa00b
+PERSISTER -> DB: Persist bank account details in tables\neg_bank_account\neg_bank_account_detail\neg_bank_accounts_doc\neg_bank_branch_identifier
+PERSISTER -> KAFKA: Push record to \n<b>process-audit-records</b> topic
+deactivate PERSISTER
+
+KAFKA <- AUDIT_LOG: Listen <b>process-audit-records</b> topic
+activate AUDIT_LOG #aFa00b
+AUDIT_LOG -> DB: Save data in <b>eg_audit_logs</b> table
+deactivate AUDIT_LOG
+@enduml

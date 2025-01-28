@@ -20,18 +20,21 @@ mixin _$AuthEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password) login,
     required TResult Function() logout,
+    required TResult Function() clearLoggedInDetails,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password)? login,
     TResult? Function()? logout,
+    TResult? Function()? clearLoggedInDetails,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password)? login,
     TResult Function()? logout,
+    TResult Function()? clearLoggedInDetails,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -39,18 +42,22 @@ mixin _$AuthEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
     required TResult Function(AuthLogoutEvent value) logout,
+    required TResult Function(AuthClearLoggedDetailsEvent value)
+        clearLoggedInDetails,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
     TResult? Function(AuthLogoutEvent value)? logout,
+    TResult? Function(AuthClearLoggedDetailsEvent value)? clearLoggedInDetails,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
     TResult Function(AuthLogoutEvent value)? logout,
+    TResult Function(AuthClearLoggedDetailsEvent value)? clearLoggedInDetails,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -157,6 +164,7 @@ class _$AuthLoginEvent with DiagnosticableTreeMixin implements AuthLoginEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password) login,
     required TResult Function() logout,
+    required TResult Function() clearLoggedInDetails,
   }) {
     return login(userId, password);
   }
@@ -166,6 +174,7 @@ class _$AuthLoginEvent with DiagnosticableTreeMixin implements AuthLoginEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password)? login,
     TResult? Function()? logout,
+    TResult? Function()? clearLoggedInDetails,
   }) {
     return login?.call(userId, password);
   }
@@ -175,6 +184,7 @@ class _$AuthLoginEvent with DiagnosticableTreeMixin implements AuthLoginEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password)? login,
     TResult Function()? logout,
+    TResult Function()? clearLoggedInDetails,
     required TResult orElse(),
   }) {
     if (login != null) {
@@ -188,6 +198,8 @@ class _$AuthLoginEvent with DiagnosticableTreeMixin implements AuthLoginEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
     required TResult Function(AuthLogoutEvent value) logout,
+    required TResult Function(AuthClearLoggedDetailsEvent value)
+        clearLoggedInDetails,
   }) {
     return login(this);
   }
@@ -197,6 +209,7 @@ class _$AuthLoginEvent with DiagnosticableTreeMixin implements AuthLoginEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
     TResult? Function(AuthLogoutEvent value)? logout,
+    TResult? Function(AuthClearLoggedDetailsEvent value)? clearLoggedInDetails,
   }) {
     return login?.call(this);
   }
@@ -206,6 +219,7 @@ class _$AuthLoginEvent with DiagnosticableTreeMixin implements AuthLoginEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
     TResult Function(AuthLogoutEvent value)? logout,
+    TResult Function(AuthClearLoggedDetailsEvent value)? clearLoggedInDetails,
     required TResult orElse(),
   }) {
     if (login != null) {
@@ -275,6 +289,7 @@ class _$AuthLogoutEvent
   TResult when<TResult extends Object?>({
     required TResult Function(String userId, String password) login,
     required TResult Function() logout,
+    required TResult Function() clearLoggedInDetails,
   }) {
     return logout();
   }
@@ -284,6 +299,7 @@ class _$AuthLogoutEvent
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userId, String password)? login,
     TResult? Function()? logout,
+    TResult? Function()? clearLoggedInDetails,
   }) {
     return logout?.call();
   }
@@ -293,6 +309,7 @@ class _$AuthLogoutEvent
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userId, String password)? login,
     TResult Function()? logout,
+    TResult Function()? clearLoggedInDetails,
     required TResult orElse(),
   }) {
     if (logout != null) {
@@ -306,6 +323,8 @@ class _$AuthLogoutEvent
   TResult map<TResult extends Object?>({
     required TResult Function(AuthLoginEvent value) login,
     required TResult Function(AuthLogoutEvent value) logout,
+    required TResult Function(AuthClearLoggedDetailsEvent value)
+        clearLoggedInDetails,
   }) {
     return logout(this);
   }
@@ -315,6 +334,7 @@ class _$AuthLogoutEvent
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AuthLoginEvent value)? login,
     TResult? Function(AuthLogoutEvent value)? logout,
+    TResult? Function(AuthClearLoggedDetailsEvent value)? clearLoggedInDetails,
   }) {
     return logout?.call(this);
   }
@@ -324,6 +344,7 @@ class _$AuthLogoutEvent
   TResult maybeMap<TResult extends Object?>({
     TResult Function(AuthLoginEvent value)? login,
     TResult Function(AuthLogoutEvent value)? logout,
+    TResult Function(AuthClearLoggedDetailsEvent value)? clearLoggedInDetails,
     required TResult orElse(),
   }) {
     if (logout != null) {
@@ -335,6 +356,127 @@ class _$AuthLogoutEvent
 
 abstract class AuthLogoutEvent implements AuthEvent {
   const factory AuthLogoutEvent() = _$AuthLogoutEvent;
+}
+
+/// @nodoc
+abstract class _$$AuthClearLoggedDetailsEventCopyWith<$Res> {
+  factory _$$AuthClearLoggedDetailsEventCopyWith(
+          _$AuthClearLoggedDetailsEvent value,
+          $Res Function(_$AuthClearLoggedDetailsEvent) then) =
+      __$$AuthClearLoggedDetailsEventCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$AuthClearLoggedDetailsEventCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$AuthClearLoggedDetailsEvent>
+    implements _$$AuthClearLoggedDetailsEventCopyWith<$Res> {
+  __$$AuthClearLoggedDetailsEventCopyWithImpl(
+      _$AuthClearLoggedDetailsEvent _value,
+      $Res Function(_$AuthClearLoggedDetailsEvent) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$AuthClearLoggedDetailsEvent
+    with DiagnosticableTreeMixin
+    implements AuthClearLoggedDetailsEvent {
+  const _$AuthClearLoggedDetailsEvent();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthEvent.clearLoggedInDetails()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty('type', 'AuthEvent.clearLoggedInDetails'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AuthClearLoggedDetailsEvent);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String userId, String password) login,
+    required TResult Function() logout,
+    required TResult Function() clearLoggedInDetails,
+  }) {
+    return clearLoggedInDetails();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String userId, String password)? login,
+    TResult? Function()? logout,
+    TResult? Function()? clearLoggedInDetails,
+  }) {
+    return clearLoggedInDetails?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String userId, String password)? login,
+    TResult Function()? logout,
+    TResult Function()? clearLoggedInDetails,
+    required TResult orElse(),
+  }) {
+    if (clearLoggedInDetails != null) {
+      return clearLoggedInDetails();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AuthLoginEvent value) login,
+    required TResult Function(AuthLogoutEvent value) logout,
+    required TResult Function(AuthClearLoggedDetailsEvent value)
+        clearLoggedInDetails,
+  }) {
+    return clearLoggedInDetails(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AuthLoginEvent value)? login,
+    TResult? Function(AuthLogoutEvent value)? logout,
+    TResult? Function(AuthClearLoggedDetailsEvent value)? clearLoggedInDetails,
+  }) {
+    return clearLoggedInDetails?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(AuthLoginEvent value)? login,
+    TResult Function(AuthLogoutEvent value)? logout,
+    TResult Function(AuthClearLoggedDetailsEvent value)? clearLoggedInDetails,
+    required TResult orElse(),
+  }) {
+    if (clearLoggedInDetails != null) {
+      return clearLoggedInDetails(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class AuthClearLoggedDetailsEvent implements AuthEvent {
+  const factory AuthClearLoggedDetailsEvent() = _$AuthClearLoggedDetailsEvent;
 }
 
 /// @nodoc

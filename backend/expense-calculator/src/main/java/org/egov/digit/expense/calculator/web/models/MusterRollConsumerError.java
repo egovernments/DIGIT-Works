@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.egov.works.services.common.models.musterroll.MusterRollRequest;
 
 @AllArgsConstructor
 @NoArgsConstructor

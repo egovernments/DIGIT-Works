@@ -9,7 +9,15 @@
             grid-template-columns: 20% 1fr;
             gap : 1rem;
             &.inbox {
-
+                .links{
+                    .inbox-links-icon{
+                        color:#f47738;
+                        fill:#f47738;
+                        path{
+                            fill:#f47738;
+                        }
+                    }
+                }
             }
             &.search {
                 display: flex;
@@ -81,7 +89,6 @@
                     &.search-results {
                     }
                     &.links {
-                       
                     }
                     &.filter {
                        

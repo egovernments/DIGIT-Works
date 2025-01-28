@@ -22,7 +22,7 @@
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 16px 24px;
+    padding: 15px 24px;
     background: white;
     box-shadow: rgba(0, 0, 0, 0.24) 0 1px 4px;
     z-index: 9999;
@@ -32,24 +32,26 @@
 
       &.city {
         margin-right: 8px;
-        height: 48px;
-        width: 48px;
+        height: 52px;
+        width: 52px;
       }
 
       &.state {
-        height: 20px;
-        max-height: 20px;
+        height: 35px;
+        max-height: 35px;
         width: auto;
       }
     }
 
     .ulb {
       font-weight: bold;
+      font-size: 22px;
+      line-height: 26px;
     }
 
     .right {
       float: right;
-      margin-top: 12px;
+      margin-top: 0px;
 
       .user-img-txt {
         background: theme(colors.primary.main);
@@ -537,3 +539,54 @@
   text-align: right;
 }
 
+.banner{
+  .bannerLogo{
+    width:140px;
+  }
+} 
+
+.dss-metric-horizontal{
+  width: 48%;
+  max-width: 48%;
+}
+
+.loginFormStyleEmployee {
+  .loginCardSubHeaderClassName {
+    text-align: center !important;
+  }
+  .loginCardClassName {
+    margin: auto !important; 
+    min-width: 408px !important;
+  }
+  .buttonClassName {
+    max-width: 100% !important;
+    width: 100% !important
+  }
+  .field .field-container .text-input input {
+    margin-bottom: 5px !important;
+  }
+  .bannerHeader {
+    margin-bottom: 0px !important;
+  }
+
+  .primary-label-btn {
+    margin: 20px auto 0 auto !important;
+  }
+  .submit-bar,
+  .submit-bar-disabled {
+    width: 100% !important;
+  }
+
+  .employee-select-wrap .options-card {
+    max-height: 150px !important;
+  }
+}
+
+.topbar .left .employee-select-wrap .options-card {
+  right: -3rem !important
+}
+
+.reponse-link {
+  display: inline-flex;
+  gap: 7px;
+}

@@ -25,11 +25,13 @@ import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 @Slf4j
 public class StaffServiceValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+    private final MDMSUtils mdmsUtils;
+
 
     @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
+    public StaffServiceValidator(MDMSUtils mdmsUtils) {
+        this.mdmsUtils = mdmsUtils;
+    }
 
 
     public void validateMDMSAndRequestInfoForStaff(StaffPermissionRequest request) {
@@ -38,10 +40,8 @@ public class StaffServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
 
         String tenantId = staffPermissionListFromRequest.get(0).getTenantId();
-        //split the tenantId
-        String rootTenantId = tenantId.split("\\.")[0];
 
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
 
         //validate request-info
         log.info("validate request info coming from api request");

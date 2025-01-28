@@ -1,10 +1,20 @@
 import React, { Fragment, useState, useEffect, useMemo } from "react";
-import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Loader, Dropdown } from "@egovernments/digit-ui-react-components";
+import {
+  AddIcon,
+  DeleteIcon,
+  RemoveIcon,
+  TextInput,
+  CardLabelError,
+  Loader,
+  Dropdown,
+  InputTextAmount,
+} from "@egovernments/digit-ui-react-components";
 import { Controller } from "react-hook-form";
 import _ from "lodash";
 
 const OverheadsTable = ({ control, watch, ...props }) => {
   const [totalAmount, setTotalAmount] = useState(0);
+
   const [sorTotal, setSorTotal] = useState(0);
   const formFieldName = "overheadDetails"; // this will be the key under which the data for this table will be present on onFormSubmit
 
@@ -26,18 +36,17 @@ const OverheadsTable = ({ control, watch, ...props }) => {
             return row
               ? {
                   key: index,
-                  isShow: row?.isActive ? row?.isActive : (row?.amount!=="0"),
+                  isShow: row?.isActive ? row?.isActive : row?.amount !== "0",
                 }
               : {
-                key: index + 1000,
-                isShow: false,
-              };
+                  key: index + 1000,
+                  isShow: false,
+                };
           })
           ?.filter((row) => row)
       : initialState
   );
 
-  
   const setTotal = (formData) => {
     const tableData = formData?.[formFieldName];
 
@@ -52,7 +61,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
       ?.reduce((acc, curr) => acc + parseFloat(curr?.amount || 0), 0);
 
     setTotalAmount((prevState) => {
-      return Math.round(result);
+      return (Math.round(result * 100) / 100).toFixed(2);
     });
   };
 
@@ -60,8 +69,17 @@ const OverheadsTable = ({ control, watch, ...props }) => {
     setTotal(formData);
   }, [formData, rows]);
 
+  //calculating total sor and non sor amount in order to calculate amount in overheads
+  function getSorNonSorTotalAmount() {
+    let totalSor = formData?.SORtable?.reduce((acc, row) => (row?.amount ? parseFloat(row?.amount)  + acc : acc), 0);
+    totalSor = totalSor ? totalSor : 0;
+    let totalNONSor = formData?.NONSORtable?.reduce((acc, row) => (row?.amount ? parseFloat(row?.amount)  + acc : acc), 0);
+    totalNONSor = totalNONSor ? totalNONSor : 0;
+    return totalSor + totalNONSor;
+  }
+
   useEffect(() => {
-    setSorTotal(formData?.nonSORTablev1?.reduce((acc, row) => (row?.estimatedAmount ? parseFloat(row?.estimatedAmount) + acc : acc), 0));
+    setSorTotal(getSorNonSorTotalAmount());
   }, [formData]);
 
   useEffect(() => {
@@ -123,22 +141,21 @@ const OverheadsTable = ({ control, watch, ...props }) => {
     return true;
   };
   const removeRow = (row) => {
-
-    const countRows = rows.reduce((acc,row)=> {
-      return row.isShow ? acc+1 : acc
-    },0)
-    if(countRows === 1) {
+    const countRows = rows.reduce((acc, row) => {
+      return row.isShow ? acc + 1 : acc;
+    }, 0);
+    if (countRows === 1) {
       //clear the 1st rows data
-      
-      formData?.[formFieldName]?.map((row,index) => {
-        if(row) {
-          setValue(`${formFieldName}.${index}.name`,'')
-          setValue(`${formFieldName}.${index}.percentage`,'')
-          setValue(`${formFieldName}.${index}.amount`,'')
+
+      formData?.[formFieldName]?.map((row, index) => {
+        if (row) {
+          setValue(`${formFieldName}.${index}.name`, "");
+          setValue(`${formFieldName}.${index}.percentage`, "");
+          setValue(`${formFieldName}.${index}.amount`, "0");
         }
-      })
-      
-      return 
+      });
+
+      return;
     }
     //make a new state here which doesn't have this key
     const updatedState = rows.map((e) => {
@@ -187,7 +204,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
       let filteredOptions = [];
       if (options?.mdmsConfig) {
         filteredOptions = data?.filter((row) => {
-          return !formData?.[formFieldName]?.filter(line=>line?.amount!=="0").some((formRow) => formRow?.name?.code === row?.code);
+          return !formData?.[formFieldName]?.filter((line) => line?.amount !== "0").some((formRow) => formRow?.name?.code === row?.code);
         });
       }
 
@@ -211,7 +228,6 @@ const OverheadsTable = ({ control, watch, ...props }) => {
   };
 
   const handleDropdownChange = (e, props, row, inputName) => {
-    
     // const sorTotal = formData?.nonSORTablev1?.reduce((acc, row) => row?.estimatedAmount ? parseFloat(row?.estimatedAmount) + acc:acc,0)
 
     //here there are multiple cases that we need to handle
@@ -252,64 +268,65 @@ const OverheadsTable = ({ control, watch, ...props }) => {
     let i = 0;
     return rows.map((row, index) => {
       if (row.isShow) i++;
-      return  row.isShow &&  (
-        <tr key={index} style={!row?.isShow ? {display:'none'}: {}}>
-          <td style={getStyles(1)}>{i}</td>
+      return (
+        row.isShow && (
+          <tr key={index} style={!row?.isShow ? { display: "none" } : {}}>
+            <td style={getStyles(1)}>{i}</td>
 
-          <td style={getStyles(2)}>
-            <div style={cellContainerStyle}>
-              <Controller
-                control={control}
-                name={`${formFieldName}.${row.key}.name`}
-                rules={{
-                  required: true,
-                  pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/,
-                }}
-                render={(props) =>
-                  getDropDownDataFromMDMS(t, row, "name", props, register, "name", {
-                    mdmsConfig: {
-                      masterName: "Overheads",
-                      moduleName: "works",
-                      localePrefix: "ES_COMMON_OVERHEADS",
-                    },
-                  })
-                }
-              />
-            </div>
-            <div style={errorContainerStyles}>
-              {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "pattern" && (
-                <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>
-              )}
-              {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "required" && (
-                <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
-              )}
-            </div>
-          </td>
+            <td style={getStyles(2)}>
+              <div style={cellContainerStyle}>
+                <Controller
+                  control={control}
+                  name={`${formFieldName}.${row.key}.name`}
+                  rules={{
+                    required: true,
+                    pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/,
+                  }}
+                  render={(props) =>
+                    getDropDownDataFromMDMS(t, row, "name", props, register, "name", {
+                      mdmsConfig: {
+                        masterName: "Overheads",
+                        moduleName: "works",
+                        localePrefix: "ES_COMMON_OVERHEADS",
+                      },
+                    })
+                  }
+                />
+              </div>
+              <div style={errorContainerStyles}>
+                {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "pattern" && (
+                  <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>
+                )}
+                {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "required" && (
+                  <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
+                )}
+              </div>
+            </td>
 
-          <td style={getStyles(3)}>
-            <div style={cellContainerStyle}>
-              <TextInput
-                style={{ marginBottom: "0px" }}
-                name={`${formFieldName}.${row.key}.percentage`}
-                inputRef={register({
-                  required: true,
-                  pattern: /^[a-zA-Z0-9_ .$%@#\/ ]*$/,
-                })}
-                // disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
-                disable={true}
-              />
-            </div>
-            <div style={errorContainerStyles}>
-              {/* {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "pattern" && (
+            <td style={getStyles(3)}>
+              <div style={cellContainerStyle}>
+                <TextInput
+                  style={{ marginBottom: "0px" }}
+                  name={`${formFieldName}.${row.key}.percentage`}
+                  inputRef={register({
+                    required: true,
+                    pattern: /^[a-zA-Z0-9_ .$%@#\/ ]*$/,
+                  })}
+                  // disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
+                  disable={true}
+                />
+              </div>
+              <div style={errorContainerStyles}>
+                {/* {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "pattern" && (
                       <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                   {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "required" && (
                       <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)} */}
-            </div>
-          </td>
+              </div>
+            </td>
 
-          <td style={getStyles(4)}>
-            <div style={cellContainerStyle}>
-              <TextInput
+            <td style={getStyles(4)}>
+              <div style={cellContainerStyle}>
+                {/* <TextInput
                 style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
                 name={`${formFieldName}.${row.key}.amount`}
                 inputRef={register({
@@ -318,37 +335,60 @@ const OverheadsTable = ({ control, watch, ...props }) => {
                   pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
                 })}
                 disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
-              />
-            </div>
-            <div style={errorContainerStyles}>
-              {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
-                <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>
-              )}
-              {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-                <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
-              )}
-            </div>
-          </td>
+              /> */}
+                <Controller
+                  defaultValue={formData?.[formFieldName]?.[row?.key]?.amount}
+                  render={({ onChange, ref, value }) => (
+                    <InputTextAmount
+                      value={formData?.[formFieldName]?.[row?.key]?.amount}
+                      style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
+                      type={"text"}
+                      name={`${formFieldName}.${row.key}.amount`}
+                      onChange={onChange}
+                      inputRef={ref}
+                      // errorStyle={errors?.[populators.name]}
+                      disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
+                      // customIcon={populators?.customIcon}
+                      // customClass={populators?.customClass}
+                    />
+                  )}
+                  name={`${formFieldName}.${row.key}.amount`}
+                  rules={{
+                    required: isInputDisabled(`${formFieldName}.${row.key}.name`) ? false : true,
+                    // pattern: /^\d*\.?\d*$/,
+                    // pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
+                  }}
+                  control={control}
+                />
+              </div>
+              <div style={errorContainerStyles}>
+                {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
+                  <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>
+                )}
+                {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
+                  <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
+                )}
+              </div>
+            </td>
 
-          <td style={getStyles(5)}>
-            <div style={cellContainerStyle}>
-              {(
-                <span onClick={() => removeRow(row)} className="icon-wrapper">
-                  <DeleteIcon fill={"#B1B4B6"} />
-                </span>
-              )}
-            </div>
-            <div style={errorContainerStyles}></div>
-          </td>
-        </tr>
-      
-    )
+            <td style={getStyles(5)}>
+              <div style={cellContainerStyle}>
+                {
+                  <span onClick={() => removeRow(row)} className="icon-wrapper">
+                    <DeleteIcon fill={"#FF9100"} />
+                  </span>
+                }
+              </div>
+              <div style={errorContainerStyles}></div>
+            </td>
+          </tr>
+        )
+      );
     });
-  }, [rows,sorTotal,formData])
-
+  }, [rows, sorTotal, formData]);
 
   return (
-    <table className="table reports-table sub-work-table" style={{ marginTop: "-2rem" }}>
+    <table className="table reports-table sub-work-table">
       <thead>
         <tr>{renderHeader()}</tr>
       </thead>
@@ -359,7 +399,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
             {t("RT_TOTAL")}
           </td>
           <td colSpan={1} style={{ textAlign: "right" }}>
-            {Digit.Utils.dss.formatterWithoutRound(Math.round(totalAmount), "number")}
+            {Digit.Utils.dss.formatterWithoutRound(totalAmount, "number")}
           </td>
           <td colSpan={1}></td>
         </tr>

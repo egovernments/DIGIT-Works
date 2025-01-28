@@ -33,9 +33,12 @@ class AttendanceRegister with _$AttendanceRegister {
     @JsonKey(name: 'additionalDetails')
         AttendanceRegisterAdditionalDetails?
             attendanceRegisterAdditionalDetails,
-    @JsonKey(name: 'staff') List<StaffEntries>? staffEntries,
-    @JsonKey(name: 'auditDetails') RegisterAuditDetails? registerAuditDetails,
-    @JsonKey(name: 'attendees') List<AttendeesEntries>? attendeesEntries,
+    @JsonKey(name: 'staff')
+        List<StaffEntries>? staffEntries,
+    @JsonKey(name: 'auditDetails')
+        RegisterAuditDetails? registerAuditDetails,
+    @JsonKey(name: 'attendees')
+        List<AttendeesEntries>? attendeesEntries,
   }) = _AttendanceRegister;
 
   factory AttendanceRegister.fromJson(
@@ -116,6 +119,7 @@ class AttendeesEntries with _$AttendeesEntries {
 class AttendeesAdditionalDetails with _$AttendeesAdditionalDetails {
   const factory AttendeesAdditionalDetails({
     String? individualName,
+    String? gender,
     String? individualGaurdianName,
     String? individualID,
     String? identifierId,

@@ -7,6 +7,10 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.ServiceRequestRepository;
+import org.egov.works.services.common.models.attendance.AttendanceRegister;
+import org.egov.works.services.common.models.attendance.AttendanceRegisterRequest;
+import org.egov.works.services.common.models.attendance.AttendanceRegisterResponse;
+import org.egov.works.services.common.models.attendance.Status;
 import org.egov.works.web.models.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +27,21 @@ import static org.egov.works.util.ContractServiceConstants.*;
 @Component
 @Slf4j
 public class AttendanceUtils {
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+    private final ServiceRequestRepository restRepo;
+
+    private final ContractServiceConfiguration configs;
+
+    private final CommonUtil commonUtil;
 
     @Autowired
-    private ServiceRequestRepository restRepo;
-
-    @Autowired
-    private ContractServiceConfiguration configs;
-
-    @Autowired
-    private CommonUtil commonUtil;
+    public AttendanceUtils(ObjectMapper mapper, ServiceRequestRepository restRepo, ContractServiceConfiguration configs, CommonUtil commonUtil) {
+        this.mapper = mapper;
+        this.restRepo = restRepo;
+        this.configs = configs;
+        this.commonUtil = commonUtil;
+    }
 
     public String createAttendanceRegister(ContractRequest contractRequest) {
         AttendanceRegisterRequest attendanceRegisterRequest = getRegisterRequest(contractRequest);

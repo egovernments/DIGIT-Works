@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @Component
@@ -26,6 +26,10 @@ public class MusterRollServiceConfiguration {
     private String mdmsHost;
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+    @Value("${egov.mdms.v2.host}")
+    private String mdmsV2Host;
+    @Value("${egov.mdms.v2.search.endpoint}")
+    private String mdmsV2EndPoint;
 
     //Idgen Config
     @Value("${egov.idgen.host}")
@@ -79,6 +83,33 @@ public class MusterRollServiceConfiguration {
     @Value("${works.attendance.register.search.limit}")
     private String attendanceRegisterSearchLimit;
 
+    //Contract Service
+    @Value("${works.contract.host}")
+    private String contractServiceHost;
+    @Value("${works.contract.endpoint}")
+    private String contractServiceEndpoint;
+
+    //Organisation Service
+    @Value("${works.organisation.host}")
+    private String organisationServiceHost;
+    @Value("${works.organisation.endpoint}")
+    private String organisationServiceEndpoint;
+
+    //Localization Service
+    @Value("${egov.localization.host}")
+    private String localizationServiceHost;
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationServiceEndpoint;
+
+    //Notification Topic
+    @Value("${kafka.topics.notification.sms}")
+    private String smsNotificationTopic;
+
+    //Expense Service
+    @Value("${works.expense.calculator.host}")
+    private String expenseCalculatorServiceHost;
+    @Value("${works.expense.calculator.endpoint}")
+    private String expenseCalculatorServiceEndpoint;
 
     //Individual service
     @Value("${works.individual.host}")

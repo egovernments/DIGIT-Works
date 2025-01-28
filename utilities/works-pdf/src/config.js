@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = process.env.EGOV_HOST;
+HOST = process.env.EGOV_HOST || "localhost";
 
 
 if (!HOST) {
@@ -32,18 +32,25 @@ module.exports = {
       process.env.WORK_ORDER_TEMPLATE || "work-order",
     work_order_template_hindi:
       process.env.WORK_ORDER_TEMPLATE_HINDI || "work-order-hindi",
+    work_order_template_odiya:
+      process.env.WORK_ORDER_TEMPLATE_ODIYA || "work-order-odiya",
+    deviationStatement_template: process.env.MEASUREMENT_TEMPLATE || "deviation-statement",
+    measurement_template: process.env.MEASUREMENT_TEMPLATE || "measurement-book",
+    detailedEstimate_template: process.env.DETAILED_ESTIMATE_TEMPLATE || "detailed-estimate",
+    rateAnalysisStatement_template: process.env.RATE_ANALYSIS_TEMPLATE || "analysis-statement",
+    rateAnalysisUtilization_template: process.env.RATE_ANALYSIS_TEMPLATE || "utilization-statement",
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
     host: HOST,
-    contextPath: process.env.CONTEXT_PATH || "/egov-pdf",
+    contextPath: process.env.CONTEXT_PATH || "/works-pdf",
   },
   host: {
     mdms: process.env.EGOV_MDMS_HOST || 'http://localhost:8083',
-    pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8082',
+    pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8081',
     user: process.env.EGOV_USER_HOST || HOST,
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
-    projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081/',
+    projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8082/',
     estimates: process.env.EGOV_ESTIMATE_HOST || 'http://localhost:8084/',
     musterRoll: process.env.EGOV_MUSTER_ROLL_HOST || 'http://localhost:8085',
     contract: process.env.EGOV_CONTRACT_HOST || 'http://localhost:8086',
@@ -53,6 +60,8 @@ module.exports = {
     bankaccount: process.env.BANKACCOUNT_SERVICE_HOST || 'http://localhost:8091',
     filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
     expense_calculator: process.env.EXPENSE_CALCULATOR_SERVICE_HOST || 'http://localhost:8093',
+    measurements: process.env.EGOV_MEASUREMENT_HOST || 'http://localhost:8099',
+    statements: process.env.RATE_ANALYSIS_STATEMENTS_HOST || 'https://unified-qa.digit.org'
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -70,7 +79,11 @@ module.exports = {
     bankaccount_search: "/bankaccount-service/bankaccount/v1/_search",
     expense_calculator_estimate: "/expense-calculator/v1/_estimate",
     expense_calculator_search: "/expense-calculator/v1/_search",
-    localization_search: "/localization/messages/v1/_search"
+    localization_search: "/localization/messages/v1/_search",
+    deviationStatement_search: "/estimate/v1/_search",
+    measurement_book_search: "/mukta-services/measurement/_search",
+    analysis_statement_search: "/statements/v1/analysis/_search",
+    analysis_utilization_search: "/statements/v1/utilization/_search"
   },
   constraints: {
     "beneficiaryIdByHeadCode": "Deduction_{tanentId}_{headcode}"

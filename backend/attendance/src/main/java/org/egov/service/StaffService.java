@@ -4,7 +4,7 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.StaffEnrichmentService;
-import org.egov.kafka.Producer;
+import org.egov.common.producer.Producer;
 import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
 import org.egov.util.ResponseInfoFactory;
@@ -17,39 +17,42 @@ import org.egov.web.models.StaffSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
 public class StaffService {
-    @Autowired
-    private StaffServiceValidator staffServiceValidator;
+    private final StaffServiceValidator staffServiceValidator;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    private final ResponseInfoFactory responseInfoFactory;
 
-    @Autowired
-    private StaffEnrichmentService staffEnrichmentService;
+    private final StaffEnrichmentService staffEnrichmentService;
 
-    @Autowired
-    private StaffRepository staffRepository;
+    private final StaffRepository staffRepository;
 
-    @Autowired
-    private RegisterRepository registerRepository;
+    private final RegisterRepository registerRepository;
 
 
-    @Autowired
-    private Producer producer;
+    private final Producer producer;
+
+    private final AttendanceServiceConfiguration serviceConfiguration;
+
+    private final AttendanceRegisterService attendanceRegisterService;
+
+    private final AttendanceServiceValidator attendanceServiceValidator;
 
     @Autowired
-    private AttendanceServiceConfiguration serviceConfiguration;
-
-    @Autowired
-    private AttendanceRegisterService attendanceRegisterService;
-
-    @Autowired
-    private AttendanceServiceValidator attendanceServiceValidator;
+    public StaffService(StaffServiceValidator staffServiceValidator, ResponseInfoFactory responseInfoFactory, StaffEnrichmentService staffEnrichmentService, StaffRepository staffRepository, RegisterRepository registerRepository, Producer producer, AttendanceServiceConfiguration serviceConfiguration, AttendanceRegisterService attendanceRegisterService, AttendanceServiceValidator attendanceServiceValidator) {
+        this.staffServiceValidator = staffServiceValidator;
+        this.responseInfoFactory = responseInfoFactory;
+        this.staffEnrichmentService = staffEnrichmentService;
+        this.staffRepository = staffRepository;
+        this.registerRepository = registerRepository;
+        this.producer = producer;
+        this.serviceConfiguration = serviceConfiguration;
+        this.attendanceRegisterService = attendanceRegisterService;
+        this.attendanceServiceValidator = attendanceServiceValidator;
+    }
 
 
     /**
@@ -58,7 +61,7 @@ public class StaffService {
      * @param staffPermissionRequest
      * @return
      */
-    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest) {
+    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest, Boolean cboMigrationReq) {
         //incoming createRequest validation
         log.info("Validating incoming staff request");
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
@@ -79,7 +82,10 @@ public class StaffService {
 
         //validator call by passing staff request and the data from db call
         log.info("staffServiceValidator called to validate Create StaffPermission request");
-        staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
+        // When changing the CBO skip this validation
+        if (!cboMigrationReq) {
+            staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
+        }
 
         //enrichment call by passing staff request and data from db call
         log.info("staffEnrichmentService called to enrich Create StaffPermission request");
@@ -133,7 +139,7 @@ public class StaffService {
 
         // db call to get staff data
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIds).tenantId(tenantId).build();
-        List<StaffPermission> staffPermissionListFromDB = getAllStaff(staffSearchCriteria);
+        List<StaffPermission> staffPermissionListFromDB = staffRepository.getAllStaff(staffSearchCriteria);
 
 
         //validator call by passing staff request and the data from db call
@@ -147,12 +153,6 @@ public class StaffService {
         producer.push(serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
         log.info("staff present in Delete StaffPermission request are deenrolled from the register");
         return staffPermissionRequest;
-    }
-
-    public List<StaffPermission> getAllStaff(StaffSearchCriteria staffSearchCriteria) {
-        List<StaffPermission> staffPermissionListFromDB = staffRepository.getAllStaff(staffSearchCriteria);
-        log.info("size of staffPermission list received from DB : " + staffPermissionListFromDB.size());
-        return staffPermissionListFromDB;
     }
 
     private List<String> extractRegisterIdsFromRequest(StaffPermissionRequest staffPermissionRequest) {
@@ -171,6 +171,30 @@ public class StaffService {
             staffIds.add(staffPermission.getUserId());
         }
         return staffIds;
+    }
+
+    /**
+     * Creates a map of attendance registerId and its first staff enrolled.
+     *
+     * @param tenantId
+     * @param registerIds
+     * @return
+     */
+    public Map<String, StaffPermission> fetchRegisterIdtoFirstStaffMap(String tenantId, List<String> registerIds) {
+        Map<String, StaffPermission> registerIdToFirstStaffMap = new HashMap<>(); //mapping of registerId to the first StaffPermission for each unique registerId
+
+        for ( String registerId  : registerIds) {
+            if (!registerIdToFirstStaffMap.containsKey(registerId)) {
+                StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().tenantId(tenantId).registerIds(Collections.singletonList(registerId)).build();
+
+                List<StaffPermission> staffPermissionList = staffRepository.getFirstStaff(staffSearchCriteria);
+
+                if (!staffPermissionList.isEmpty()) {
+                    registerIdToFirstStaffMap.put(registerId, staffPermissionList.get(0));
+                }
+            }
+        }
+        return registerIdToFirstStaffMap;
     }
 
 }

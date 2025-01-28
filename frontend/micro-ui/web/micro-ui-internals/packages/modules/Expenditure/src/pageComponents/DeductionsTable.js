@@ -168,7 +168,7 @@ const DeductionsTable = ({control,watch,...props}) => {
                     const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
                     return optionsData.filter((opt) => HeadCodes?.includes(opt?.code) && opt?.active && Digit?.Customizations?.["commonUiConfig"]?.getBusinessService(opt?.service) === businessService).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
                 },
-                enabled: options?.mdmsConfig && HeadCodes?.length>0 && !isHeadCodesLoading ? true : false,
+                enabled: options?.mdmsConfig ? true : false,
             }
         );
         
@@ -254,7 +254,7 @@ const DeductionsTable = ({control,watch,...props}) => {
                 control={control}
                 name={`${formFieldName}.${row.key}.name`}
                 rules={{
-                  required: true,
+                  required: false,
                   pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/,
                 }}
                 render={(props) =>
@@ -354,9 +354,10 @@ const DeductionsTable = ({control,watch,...props}) => {
       
     )
     });
-  }, [rows,totalAmount,formData])
+  }, [rows,totalAmount,formData,isHeadCodesLoading])
 
-    if(isHeadCodesLoading) return <Loader />
+    if(isHeadCodesLoading && !HeadCodes?.length>0) return <Loader />
+
     return (
         <table className='table reports-table sub-work-table' style={{ marginTop: "-2rem" }}>
             <thead>

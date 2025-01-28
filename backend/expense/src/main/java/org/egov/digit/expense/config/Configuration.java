@@ -103,6 +103,13 @@ public class Configuration {
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndPoint;
 
+	//MDMS V2
+	@Value("${egov.mdms.v2.host}")
+	private String mdmsV2Host;
+
+	@Value("${egov.mdms.v2.search.endpoint}")
+	private String mdmsV2EndPoint;
+
 	// HRMS
 	@Value("${egov.hrms.host}")
 	private String hrmsHost;
@@ -134,4 +141,37 @@ public class Configuration {
     @Value("${expense.payment.default.status}")
 	public String defaultPaymentStatus;
 
+	@Value("${expense.reference.default.status}")
+	public String defaultReferenceStatus;
+
+	//Organisation Service
+	@Value("${works.organisation.host}")
+	private String organisationServiceHost;
+
+	@Value("${works.organisation.endpoint}")
+	private String organisationServiceEndpoint;
+
+	//Localization Config
+	@Value("${egov.localization.host}")
+	private String localizationServiceHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationServiceContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationServiceEndpoint;
+
+	//Contract Service
+	@Value("${works.contract.host}")
+	private String contractServiceHost;
+
+	@Value("${works.contract.endpoint}")
+	private String contractServiceEndpoint;
+
+	//Individual Service
+	@Value("${works.individual.host}")
+	private String individualServiceHost;
+
+	@Value("${works.individual.endpoint}")
+	private String individualServiceEndpoint;
 }

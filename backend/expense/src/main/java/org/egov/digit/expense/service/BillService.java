@@ -1,57 +1,60 @@
 package org.egov.digit.expense.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import io.swagger.models.auth.In;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.contract.workflow.ProcessInstance;
+import org.egov.common.contract.workflow.ProcessInstanceResponse;
+import org.egov.common.contract.workflow.State;
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.kafka.Producer;
+import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
 import org.egov.digit.expense.util.WorkflowUtil;
-import org.egov.digit.expense.web.models.Bill;
-import org.egov.digit.expense.web.models.BillCriteria;
-import org.egov.digit.expense.web.models.BillRequest;
-import org.egov.digit.expense.web.models.BillResponse;
-import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.digit.expense.web.validators.BillValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import digit.models.coremodels.ProcessInstance;
-import digit.models.coremodels.ProcessInstanceResponse;
-import digit.models.coremodels.State;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class BillService {
 	
-	@Autowired
-	private Producer producer;
+	private final ExpenseProducer expenseProducer;
 	
-	@Autowired
-	private Configuration config;
+	private final Configuration config;
 	
-	@Autowired
-	private BillValidator validator;
+	private final BillValidator validator;
 	
-	@Autowired
-	private WorkflowUtil workflowUtil;
+	private final WorkflowUtil workflowUtil;
 	
-	@Autowired
-	private BillRepository billRepository;
+	private final BillRepository billRepository;
 	
-	@Autowired
-	private EnrichmentUtil enrichmentUtil;
+	private final EnrichmentUtil enrichmentUtil;
 	
+	private final ResponseInfoFactory responseInfoFactory;
+
+	private final NotificationService notificationService;
+
 	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
+	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService) {
+		this.expenseProducer = expenseProducer;
+		this.config = config;
+		this.validator = validator;
+		this.workflowUtil = workflowUtil;
+		this.billRepository = billRepository;
+		this.enrichmentUtil = enrichmentUtil;
+		this.responseInfoFactory = responseInfoFactory;
+		this.notificationService = notificationService;
+	}
 
 	/**
 	 * Validates the Bill Request and sends to repository for create
@@ -70,13 +73,19 @@ public class BillService {
 		
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
-			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
+			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+			try {
+				if (billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.SUPERVISION"))
+					notificationService.sendNotificationForSupervisionBill(billRequest);
+			}catch (Exception e){
+				log.error("Exception while sending notification: " + e);
+			}
 		} else {
 			bill.setStatus(Status.ACTIVE);
 		}
-		
-		producer.push(config.getBillCreateTopic(), billRequest);
+
+		expenseProducer.push(config.getBillCreateTopic(), billRequest);
 		
 		response = BillResponse.builder()
 				.bills(Arrays.asList(billRequest.getBill()))
@@ -101,11 +110,17 @@ public class BillService {
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
-			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
+			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 		}
+		try {
+			if (billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.PURCHASE"))
+				notificationService.sendNotificationForPurchaseBill(billRequest);
+		}catch (Exception e){
+			log.error("Exception while sending notification: " + e);
+		}
 		
-		producer.push(config.getBillUpdateTopic(), billRequest);
+		expenseProducer.push(config.getBillUpdateTopic(), billRequest);
 		response = BillResponse.builder()
 				.bills(Arrays.asList(billRequest.getBill()))
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo,true))
@@ -131,19 +146,20 @@ public class BillService {
 
 		log.info("Search repository using billCriteria");
 		List<Bill> bills = billRepository.search(billSearchRequest);
+		Integer totalBills = billRepository.searchCount(billSearchRequest);
+		billSearchRequest.getPagination().setTotalCount(totalBills);
 
 		ResponseInfo responseInfo = responseInfoFactory.
 		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
 		
-		if (isWfEncrichRequired)
+		if (isWfEncrichRequired && bills != null && !bills.isEmpty())
 			enrichWfstatusForBills(bills, billCriteria.getTenantId(), billSearchRequest.getRequestInfo());
-		
-		BillResponse response = BillResponse.builder()
+
+		return BillResponse.builder()
 				.bills(bills)
 				.pagination(billSearchRequest.getPagination())
 				.responseInfo(responseInfo)
 				.build();
-		return response;
 	}
 
 	private void enrichWfstatusForBills(List<Bill> bills, String tenantId, RequestInfo requestInfo) {

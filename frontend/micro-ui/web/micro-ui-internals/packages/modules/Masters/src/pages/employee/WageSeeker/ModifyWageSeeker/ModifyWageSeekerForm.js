@@ -1,8 +1,9 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { FormComposer } from '@egovernments/digit-ui-react-components';
+import { FormComposer,Toast } from '@egovernments/digit-ui-react-components';
 import { getWageSeekerUpdatePayload, getBankAccountUpdatePayload, getWageSeekerSkillDeletePayload } from '../../../../utils';
+import debounce from 'lodash/debounce';
 
 const navConfig =  [{
     name:"Wage_Seeker_Details",
@@ -12,6 +13,7 @@ const navConfig =  [{
 const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessionFormData, clearSessionFormData, isModify, wageSeekerDataFromAPI }) => {
     const { t } = useTranslation();
     const history = useHistory()
+    const [showToast,setShowToast] = useState(null)
     const individualId = wageSeekerDataFromAPI?.individual?.individualId
 
     const [financeDetailsUpdated, setFinanceDetailsUpdated] = useState(false)
@@ -102,7 +104,40 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     }),
     [skillData, wardsAndLocalities, filteredLocalities, ULBOptions]);
 
+    const closeToast = () => {
+      setTimeout(() => {
+        setShowToast(null);
+      }, 5000);
+    };
+
+    const validateSelectedSkills = (formData) => {
+      //write logic to validate skills selected
+      let validateCheckPass = true
+      const countSkillsInCategory = {}
+      formData.skillDetails_skill.map(skill => {
+        countSkillsInCategory[skill.code.split('.')[1]] = countSkillsInCategory[skill.code.split('.')[1]] ? countSkillsInCategory[skill.code.split('.')[1]] + 1 : 1
+      });
+
+      if(Object.keys(countSkillsInCategory)?.length <= 0)
+        validateCheckPass = false;
+    
+      Object.keys(countSkillsInCategory).forEach(key => {
+        if(countSkillsInCategory[key] > 1){
+            validateCheckPass = false 
+        }
+      })
+
+      if(!validateCheckPass){
+        setShowToast({ label: t("SKILLS_SELECTION_INVALID") });
+        closeToast();
+        return true
+      }else{
+        return false
+      }
+    };
+
     const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+        
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
@@ -126,6 +161,8 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 setIsBirthDateValid(!(ageInYear < 18));
             }
             if(formData.financeDetails_ifsc) {
+                //capitalize ifsc
+                setValue("financeDetails_ifsc",formData?.financeDetails_ifsc?.toUpperCase())
                 if(formData.financeDetails_ifsc?.length > 10) {
                     setTimeout(() => {
                         fetchIFSCDetails(formData.financeDetails_ifsc, 'financeDetails_branchName', setValue, setError, clearErrors);
@@ -151,7 +188,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
 
     const sendDataToResponsePage = (individualId, isSuccess, message, showId) => {
         history.push({
-            pathname: `/${window?.contextPath}/employee/masters/response`,
+            pathname: `/${window?.contextPath}/employee/masters/response-wage-seeker`,
             search: individualId ? `?tenantId=${tenantId}&individualId=${individualId}` : '',
             state : {
                 message,
@@ -241,7 +278,10 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         });
     }
 
-    const onSubmit = (data) => {
+    const OnModalSubmit = (data) => {
+        data = Digit.Utils.trimStringsInObject(data)
+        const validationError = validateSelectedSkills(data)
+        if(validationError) return
         const wageSeekerPayload = getWageSeekerUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify})
         if(isModify) {
             const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: wageSeekerDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: true});
@@ -249,14 +289,21 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         }else {
             handleResponseForCreate(wageSeekerPayload, data);
         }
-    }
+    };
+
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
+
+    const handleSubmit = (_data) => {
+        // Call the debounced version of onModalSubmit
+        debouncedOnModalSubmit(_data);
+      };
 
     return (
         <React.Fragment>
            <FormComposer
                 label={isModify ? "CORE_COMMON_SAVE" : "ACTION_TEST_MASTERS_CREATE_WAGESEEKER"}
                 config={config?.form}
-                onSubmit={onSubmit}
+                onSubmit={handleSubmit}
                 submitInForm={false}
                 fieldStyle={{ marginRight: 0 }}
                 inline={false}
@@ -275,6 +322,9 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 cardClassName = "mukta-header-card"
                 labelBold={true}
             />
+            {showToast && <Toast label={showToast?.label} error={true} isDleteBtn={true} onClose={()=>{
+                setShowToast(null)
+            }}></Toast>}
         </React.Fragment>
     )
 }

@@ -19,14 +19,18 @@ import java.util.UUID;
 @Service
 public class OrganisationEnrichmentService {
 
-    @Autowired
-    private OrganisationUtil organisationUtil;
+    private final OrganisationUtil organisationUtil;
+
+    private final IdgenUtil idgenUtil;
+
+    private final Configuration config;
 
     @Autowired
-    private IdgenUtil idgenUtil;
-
-    @Autowired
-    private Configuration config;
+    public OrganisationEnrichmentService(OrganisationUtil organisationUtil, IdgenUtil idgenUtil, Configuration config) {
+        this.organisationUtil = organisationUtil;
+        this.idgenUtil = idgenUtil;
+        this.config = config;
+    }
 
 
     /**
@@ -41,14 +45,14 @@ public class OrganisationEnrichmentService {
 
         //set the audit details
         organisationUtil.setAuditDetailsForOrganisation(requestInfo.getUserInfo().getUuid(), organisationList, Boolean.TRUE);
-        String rootTenantId = organisationList.get(0).getTenantId().split("\\.")[0];
+        String tenantId = organisationList.get(0).getTenantId();
 
         //idgen to get the list of organisation application Numbers
-        List<String> orgApplicationNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getOrgApplicationNumberName()
+        List<String> orgApplicationNumbers = idgenUtil.getIdList(requestInfo, tenantId, config.getOrgApplicationNumberName()
                 , config.getOrgApplicationNumberFormat(), organisationList.size());
 
         //idgen to get the list of org Numbers
-        List<String> orgNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getOrgNumberName()
+        List<String> orgNumbers = idgenUtil.getIdList(requestInfo, tenantId, config.getOrgNumberName()
                 , config.getOrgNumberFormat(), organisationList.size());
 
         //idgen to get the list of function application Numbers
@@ -59,7 +63,7 @@ public class OrganisationEnrichmentService {
             return 0;
         }).sum();
 
-        List<String> orgFunctionApplicationNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getFunctionApplicationNumberName()
+        List<String> orgFunctionApplicationNumbers = idgenUtil.getIdList(requestInfo, tenantId, config.getFunctionApplicationNumberName()
                 , config.getFunctionApplicationNumberFormat(), ((int) idgenFuncApplicationNumberCount));
 
         int orgAppNumIdFormatIndex = 0;
@@ -86,77 +90,104 @@ public class OrganisationEnrichmentService {
             List<Jurisdiction> jurisdictionList = organisation.getJurisdiction();
 
             //org address
-            if (!CollectionUtils.isEmpty(orgAddressList)) {
-                for (Address address : orgAddressList) {
-                    address.setId(UUID.randomUUID().toString());
-                    address.getGeoLocation().setId(UUID.randomUUID().toString());
-                }
-            }
+            enrichOrgAddress(orgAddressList);
 
             //contact detail
-            if (!CollectionUtils.isEmpty(contactDetailsList)) {
-                for (ContactDetails contactDetails : contactDetailsList) {
-                    contactDetails.setId(UUID.randomUUID().toString());
-                }
-            }
+            enrichContactDetails(contactDetailsList);
 
             //org document
-            if (!CollectionUtils.isEmpty(documentList)) {
-                for (Document document : documentList) {
-                    document.setId(UUID.randomUUID().toString());
-                    if (document.getIsActive() == null) {
-                        document.setIsActive(Boolean.TRUE);
-                    }
-                }
-            }
+            enrichOrgDocument(documentList);
 
             //org tax identifier
-            if (!CollectionUtils.isEmpty(identifierList)) {
-                for (Identifier identifier : identifierList) {
-                    identifier.setId(UUID.randomUUID().toString());
-                    if (identifier.getIsActive() == null) {
-                        identifier.setIsActive(Boolean.TRUE);
-                    }
-                }
-            }
+            enrichTaxIdentifier(identifierList);
 
             //set id, audit details, application number for function
-            if (!CollectionUtils.isEmpty(functionList)) {
-
-                organisationUtil.setAuditDetailsForFunction(requestInfo.getUserInfo().getUuid(), functionList, Boolean.TRUE);
-
-                for (Function function : functionList) {
-                    function.setId(UUID.randomUUID().toString());
-                    function.setApplicationNumber(orgFunctionApplicationNumbers.get(funcAppNumIdFormatIndex));
-                    if (function.getIsActive() == null) {
-                        function.setIsActive(Boolean.TRUE);
-                    }
-
-                    List<Document> documents = function.getDocuments();
-                    if (!CollectionUtils.isEmpty(documents)) {
-                        for (Document funcDocument : documents) {
-                            funcDocument.setId(UUID.randomUUID().toString());
-                            if (funcDocument.getIsActive() == null) {
-                                funcDocument.setIsActive(Boolean.TRUE);
-                            }
-                        }
-                    }
-                    funcAppNumIdFormatIndex++;
-
-                }
-            }
+            enrichFunction(requestInfo, functionList, orgFunctionApplicationNumbers, funcAppNumIdFormatIndex);
 
             //jurisdiction
-            if (!CollectionUtils.isEmpty(jurisdictionList)) {
-                for (Jurisdiction jurisdiction : jurisdictionList) {
-                    jurisdiction.setId(UUID.randomUUID().toString());
-                }
-            }
+            enrichJurisdiction(jurisdictionList);
 
             orgAppNumIdFormatIndex++;
         }
 
 
+    }
+
+    private void enrichJurisdiction(List<Jurisdiction> jurisdictionList) {
+        if (!CollectionUtils.isEmpty(jurisdictionList)) {
+            for (Jurisdiction jurisdiction : jurisdictionList) {
+                jurisdiction.setId(UUID.randomUUID().toString());
+            }
+        }
+    }
+
+    private void enrichFunction(RequestInfo requestInfo,List<Function> functionList, List<String> orgFunctionApplicationNumbers, int funcAppNumIdFormatIndex) {
+        if (!CollectionUtils.isEmpty(functionList)) {
+
+            organisationUtil.setAuditDetailsForFunction(requestInfo.getUserInfo().getUuid(), functionList, Boolean.TRUE);
+
+            for (Function function : functionList) {
+                function.setId(UUID.randomUUID().toString());
+                function.setApplicationNumber(orgFunctionApplicationNumbers.get(funcAppNumIdFormatIndex));
+                if (function.getIsActive() == null) {
+                    function.setIsActive(Boolean.TRUE);
+                }
+
+                List<Document> documents = function.getDocuments();
+                enrichDocuments(documents);
+                funcAppNumIdFormatIndex++;
+
+            }
+        }
+    }
+
+    private void enrichDocuments(List<Document> documents) {
+        if (!CollectionUtils.isEmpty(documents)) {
+            for (Document funcDocument : documents) {
+                funcDocument.setId(UUID.randomUUID().toString());
+                if (funcDocument.getIsActive() == null) {
+                    funcDocument.setIsActive(Boolean.TRUE);
+                }
+            }
+        }
+    }
+
+    private void enrichTaxIdentifier(List<Identifier> identifierList) {
+        if (!CollectionUtils.isEmpty(identifierList)) {
+            for (Identifier identifier : identifierList) {
+                identifier.setId(UUID.randomUUID().toString());
+                if (identifier.getIsActive() == null) {
+                    identifier.setIsActive(Boolean.TRUE);
+                }
+            }
+        }
+    }
+
+    private void enrichOrgDocument(List<Document> documentList) {
+        if (!CollectionUtils.isEmpty(documentList)) {
+            for (Document document : documentList) {
+                document.setId(UUID.randomUUID().toString());
+                if (document.getIsActive() == null) {
+                    document.setIsActive(Boolean.TRUE);
+                }
+            }
+        }
+    }
+
+    private void enrichOrgAddress(List<Address> orgAddressList){
+        if (!CollectionUtils.isEmpty(orgAddressList)) {
+            for (Address address : orgAddressList) {
+                address.setId(UUID.randomUUID().toString());
+                address.getGeoLocation().setId(UUID.randomUUID().toString());
+            }
+        }
+    }
+    private void enrichContactDetails(List<ContactDetails> contactDetailsList){
+        if (!CollectionUtils.isEmpty(contactDetailsList)) {
+            for (ContactDetails contactDetails : contactDetailsList) {
+                contactDetails.setId(UUID.randomUUID().toString());
+            }
+        }
     }
 
     /**
@@ -172,7 +203,7 @@ public class OrganisationEnrichmentService {
         //set the audit details for organisation
         organisationUtil.setAuditDetailsForOrganisation(requestInfo.getUserInfo().getUuid(), organisationList, Boolean.FALSE);
 
-        String rootTenantId = organisationList.get(0).getTenantId().split("\\.")[0];
+        String tenantId = organisationList.get(0).getTenantId();
 
         for (Organisation organisation : organisationList) {
             List<Function> functionList = organisation.getFunctions();
@@ -186,7 +217,7 @@ public class OrganisationEnrichmentService {
             upsertOrgDocument(documentList);
 
             //upsert function and its document
-            upsertFunction(requestInfo, rootTenantId, organisation, functionList);
+            upsertFunction(requestInfo, tenantId, organisation, functionList);
 
 
         }
@@ -253,7 +284,7 @@ public class OrganisationEnrichmentService {
 
             //get the application numbers for new function from Idgen service
             List<String> orgFunctionApplicationNumbers = new ArrayList<>();
-            if (createFunctionList.size() > 0) {
+            if (!createFunctionList.isEmpty()) {
                 orgFunctionApplicationNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getFunctionApplicationNumberName()
                         , config.getFunctionApplicationNumberFormat(), createFunctionList.size());
             }
@@ -271,22 +302,25 @@ public class OrganisationEnrichmentService {
             upsertFunctionList.addAll(updateFunctionList);
 
             //check any new function doc, if yes , set a new UUID
-            for (Function function : upsertFunctionList) {
-                List<Document> documents = function.getDocuments();
-                if (!CollectionUtils.isEmpty(documents)) {
-                    for (Document document : documents) {
-                        if (StringUtils.isBlank(document.getId())) {
-                            document.setId(UUID.randomUUID().toString());
-                            if (document.getIsActive() == null) {
-                                document.setIsActive(Boolean.TRUE);
-                            }
+            setUUID(upsertFunctionList);
+
+            organisation.setFunctions(upsertFunctionList);
+
+        }
+    }
+    private void setUUID(List<Function> upsertFunctionList){
+        for (Function function : upsertFunctionList) {
+            List<Document> documents = function.getDocuments();
+            if (!CollectionUtils.isEmpty(documents)) {
+                for (Document document : documents) {
+                    if (StringUtils.isBlank(document.getId())) {
+                        document.setId(UUID.randomUUID().toString());
+                        if (document.getIsActive() == null) {
+                            document.setIsActive(Boolean.TRUE);
                         }
                     }
                 }
             }
-
-            organisation.setFunctions(upsertFunctionList);
-
         }
     }
 }

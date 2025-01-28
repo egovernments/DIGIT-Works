@@ -12,6 +12,7 @@ const assetsProxy = createProxyMiddleware({
   changeOrigin: true,
   secure: false,
 });
+
 module.exports = function (app) {
   [
     "/access/v1/actions/mdms",
@@ -78,6 +79,7 @@ module.exports = function (app) {
     "/expensebilling",
     "/bankaccount-service",
     "/wms",
+    "/ifms",
     "/wms/estimate/_search",
     "/expense-calculator/v1/_estimate",
     "/expense/bill",
@@ -86,7 +88,10 @@ module.exports = function (app) {
     "/egov-pdf/bill/_search",
     "/expense-calculator/v1/_search",
     "/expense/payment/",
-    "/expense-calculator/"
+    "/expense-calculator/",
+    "/measurement-service/",
+    "/mukta-services/",
+    "/mdms-v2/"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

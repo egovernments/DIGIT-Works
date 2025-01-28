@@ -11,8 +11,13 @@ import MobileSearchComponent from "./MobileView/MobileSearchComponent";
 import MobileSearchResults from "./MobileView/MobileSearchResults";
 import MediaQuery from 'react-responsive';
 import _ from "lodash";
+import Header from "../atoms/Header";
+import { useTranslation } from "react-i18next";
 
 const InboxSearchComposer = ({configs}) => {
+    const {t} = useTranslation()
+    const presets = Digit.Hooks.useQueryParams();
+    if(Object.keys(presets).length > 0) configs = Digit.Utils.configUpdater(configs)
 
     const [enable, setEnable] = useState(false);
     const [state, dispatch] = useReducer(reducer, initialInboxState);
@@ -27,7 +32,8 @@ const InboxSearchComposer = ({configs}) => {
         {}
     );
     const [sessionFormData, setSessionFormData, clearSessionFormData] = mobileSearchSession;
-
+    const [activeLink,setActiveLink] = useState(configs?.sections?.search?.uiConfig?.configNavItems?.filter(row=>row.activeByDefault)?.[0])
+    
     //for mobile view
     useEffect(() => {
         if (type) setPopup(true);
@@ -61,7 +67,7 @@ const InboxSearchComposer = ({configs}) => {
         const searchFormParamCount = Object.keys(state.searchForm).reduce((count,key)=>state.searchForm[key]===""?count:count+1,0)
         const filterFormParamCount = Object.keys(state.filterForm).reduce((count, key) => state.filterForm[key] === "" ? count : count + 1, 0)
         
-        if (Object.keys(state.tableForm)?.length > 0 && (searchFormParamCount >= apiDetails?.minParametersForSearchForm || filterFormParamCount >= apiDetails?.minParametersForFilterForm)){
+        if (Object.keys(state.tableForm)?.length > 0 && (searchFormParamCount >= ( activeLink ?activeLink?.minParametersForSearchForm : apiDetails?.minParametersForSearchForm) || filterFormParamCount >= apiDetails?.minParametersForFilterForm)){
             setEnable(true)
         }
 
@@ -101,7 +107,7 @@ const InboxSearchComposer = ({configs}) => {
     
 
 
-    const updatedReqCriteria = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess(requestCriteria) : requestCriteria 
+    const updatedReqCriteria = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess(requestCriteria,configs?.sections?.search?.uiConfig?.defaultValues,activeLink?.name) : requestCriteria 
 
     
     const { isLoading, data, revalidate,isFetching } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
@@ -122,6 +128,7 @@ const InboxSearchComposer = ({configs}) => {
 
     return (
         <InboxContext.Provider value={{state,dispatch}} >
+            {/* <Header className="works-header-search">{t(configs?.label)}</Header> */}
             <div className="inbox-search-component-wrapper ">
             <div className={`sections-parent ${configs?.type}`}>
                 {
@@ -144,6 +151,8 @@ const InboxSearchComposer = ({configs}) => {
                                 screenType={configs.type}
                                 fullConfig={configs}
                                 data={data}
+                                activeLink={activeLink}
+                                setActiveLink={setActiveLink}
                                 />
                         </div>
 
@@ -158,6 +167,8 @@ const InboxSearchComposer = ({configs}) => {
                                 screenType={configs.type}
                                 fullConfig={configs}
                                 data={data}
+                                activeLink={activeLink}
+                                setActiveLink={setActiveLink}
                                 />
                         </div> 
                 }
@@ -215,7 +226,7 @@ const InboxSearchComposer = ({configs}) => {
                 }
                 {   
                     configs?.sections?.searchResult?.show &&
-                        <div className="" style={data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0 ? (!(isLoading || isFetching) ?{ overflowX: "scroll" }: {}) : {  }} >
+                        <div className="" style={data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0 ? (!(isLoading || isFetching) ?{ overflowX: "auto" }: {}) : {  }} >
                             <MediaQuery minWidth={426}>
                     {/* configs?.sections?.searchResult?.show &&  
                         <div style={data?.[configs?.sections?.searchResult?.uiConfig?.resultsJsonPath]?.length > 0 ? (!(isLoading || isFetching) ?{ overflowX: "scroll", borderRadius : "4px" }: {}) : {  }} > */}
@@ -225,7 +236,10 @@ const InboxSearchComposer = ({configs}) => {
                                 data={data} 
                                 isLoading={isLoading} 
                                 isFetching={isFetching} 
-                                fullConfig={configs}/>
+                                fullConfig={configs}
+                                type={configs?.type}
+                                activeLink={activeLink}
+                                />
                             </MediaQuery>
                             <MediaQuery maxWidth={426}>
                             <MobileSearchResults
