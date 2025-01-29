@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -70,6 +71,8 @@ public class RegisterEnrichment {
             log.info("Enriched register " + attendanceRegisters.get(i).getId() + " with Audit details");
             // User who creates the register, by default gets enrolled as the first staff for that register.
             if(config.getRegisterFirstStaffInsertEnabled()) enrichRegisterFirstStaff(attendanceRegisters.get(i), requestInfo, auditDetails);
+            //Set initial Review Status value for attendance Register
+            if(config.getAttendanceRegisterReviewStatusEnabled()) attendanceRegisters.get(i).setReviewStatus(config.getAttendanceRegisterReviewStatusValue());
         }
     }
 
@@ -86,8 +89,10 @@ public class RegisterEnrichment {
                 .registerId(attendanceRegister.getId())
                 .userId(individualId)
                 .enrollmentDate(new BigDecimal(System.currentTimeMillis()))
-                .auditDetails(auditDetails)
+                .auditDetails(auditDetails).staffType(StaffType.OWNER)
+                .additionalDetails(Map.of("staffName", individualList.get(0).getName().getGivenName()))
                 .build();
+
         attendanceRegister.setStaff(Collections.singletonList(staffPermission));
         log.info("First staff for attendance register is added in attendance register");
         log.info("The user " + requestInfo.getUserInfo().getUuid() + " is addedd as staff for the attendance register + " + staffPermission.getRegisterId());

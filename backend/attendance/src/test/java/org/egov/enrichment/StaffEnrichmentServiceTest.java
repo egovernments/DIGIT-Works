@@ -1,11 +1,13 @@
 package org.egov.enrichment;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.helper.AttendeeRequestBuilderTest;
 import org.egov.helper.StaffRequestBuilderTest;
 import org.egov.service.AttendanceRegisterService;
 import org.egov.util.AttendanceServiceUtil;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendeeCreateRequest;
 import org.egov.web.models.StaffPermissionRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +29,13 @@ public class StaffEnrichmentServiceTest {
 
     @InjectMocks
     private StaffEnrichmentService staffEnrichmentService;
+
+    @Mock
+    private MultiStateInstanceUtil multiStateInstanceUtil;
+
+    @Mock
+    private IndividualServiceUtil individualServiceUtil;
+
 
     @DisplayName("update enrollmentDate for staff")
     @Test

@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.egov.util.MusterRollServiceConstants.ACTION_APPROVE;
 import static org.egov.util.MusterRollServiceConstants.STATUS_APPROVED;
 
 @Service
@@ -126,7 +127,11 @@ public class MusterRollService {
         checkMusterRollExists(musterRollRequest.getMusterRoll());
         enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
         calculationService.createAttendance(musterRollRequest,true);
-        workflowService.updateWorkflowStatus(musterRollRequest);
+        if(config.isMusterRollWorkflowEnabled()) {
+            workflowService.updateWorkflowStatus(musterRollRequest);
+        } else {
+            musterRollRequest.getMusterRoll().setMusterRollStatus(config.getMusterRollNoWorkflowCreateStatus());
+        }
 
         musterRollProducer.push(serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
@@ -210,7 +215,21 @@ public class MusterRollService {
             musterRollValidator.isValidUser(existingMusterRoll, requestInfo);
             calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
-        workflowService.updateWorkflowStatus(musterRollRequest);
+        if(config.isMusterRollWorkflowEnabled()) {
+            workflowService.updateWorkflowStatus(musterRollRequest);
+        }
+        if(config.isUpdateAttendanceRegisterReviewStatusEnabled() && STATUS_APPROVED.equalsIgnoreCase(musterRollRequest.getMusterRoll().getMusterRollStatus())) {
+            AttendanceRegisterResponse attendanceRegisterResponse = musterRollServiceUtil
+                    .fetchAttendanceRegister(musterRollRequest.getMusterRoll(), musterRollRequest.getRequestInfo());
+            List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
+            if(attendanceRegisters == null || attendanceRegisters.isEmpty()) {
+                log.error("No attendance registers found to update the status for muster roll ID: {}", musterRollRequest.getMusterRoll().getId());
+                throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND", "No attendance registers found to update the status for the given muster roll");
+            }
+            AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
+            attendanceRegister.setReviewStatus(STATUS_APPROVED);
+            musterRollServiceUtil.updateAttendanceRegister(attendanceRegister, musterRollRequest.getRequestInfo());
+        }
         musterRollProducer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
 
         try {
@@ -270,7 +289,7 @@ public class MusterRollService {
      * @return
      */
     private boolean isComputeAttendance (MusterRoll musterRoll) {
-       if (musterRoll.getAdditionalDetails() != null) {
+       if (config.isRecomputeAttendanceEnabled() && musterRoll.getAdditionalDetails() != null) {
            try {
                JsonNode node = mapper.readTree(mapper.writeValueAsString(musterRoll.getAdditionalDetails()));
                if (node.findValue(COMPUTE_ATTENDENSE) != null && StringUtils.isNotBlank(node.findValue(COMPUTE_ATTENDENSE).textValue())) {

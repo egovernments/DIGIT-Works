@@ -49,4 +49,7 @@ public class MusterRollSearchCriteria {
     @JsonProperty("offset")
     private Integer offset;
 
+    @JsonProperty("registerIds")
+    private List<String> registerIds;
+
 }

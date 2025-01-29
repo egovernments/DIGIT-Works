@@ -9,11 +9,14 @@ import org.egov.common.contract.models.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.user.UserDetailResponse;
 import org.egov.common.models.individual.Identifier;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Skill;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ServiceCallException;
 import org.egov.web.models.*;
 import org.egov.works.services.common.models.bankaccounts.BankAccount;
 import org.egov.works.services.common.models.bankaccounts.BankAccountDetails;
@@ -29,10 +32,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-import static org.egov.util.MusterRollServiceConstants.*;
 
 @Component
 @Slf4j
@@ -42,14 +47,19 @@ public class MusterRollServiceUtil {
 
 	private final RestTemplate restTemplate;
 
+	private final UserUtil userUtil;
+
 	private final MusterRollServiceConfiguration config;
 	private static final String SKILL_CODE = "skillCode";
 
+	private static final String ROLES = "roles";
+
 	@Autowired
-	public MusterRollServiceUtil(ObjectMapper mapper, RestTemplate restTemplate, MusterRollServiceConfiguration config) {
+	public MusterRollServiceUtil(ObjectMapper mapper, RestTemplate restTemplate, UserUtil userUtil, MusterRollServiceConfiguration config) {
 		this.mapper = mapper;
 		this.restTemplate = restTemplate;
-		this.config = config;
+        this.userUtil = userUtil;
+        this.config = config;
 	}
 
 	/**
@@ -138,6 +148,17 @@ public class MusterRollServiceUtil {
 				additionalDetails.put("accountHolderName", accountHolderName);
 				additionalDetails.put("accountType", accountType);
 			}
+		}
+
+		if(config.isIndividualEntryRolesEnabled()) {
+			UserDetailResponse userDetailResponse = userUtil.searchUsersByIndividualIds(Collections.singletonList(individualEntry.getId()));
+			List<String> roles = userDetailResponse.getUser().stream().findFirst()
+					.orElseThrow(() -> new CustomException(
+							"MusterRollServiceUtil::populateAdditionalDetails::USER SEARCH ERROR",
+							"No user found for the individual id " + individualEntry.getId())
+					)
+					.getRoles().stream().map(Role::getCode).toList();
+			additionalDetails.put(ROLES, roles);
 		}
 
 		try {
@@ -265,5 +286,32 @@ public class MusterRollServiceUtil {
 					"User is not enrolled in the attendance register and not authorized to fetch it");
 		}
 		return attendanceRegisterResponse;
+	}
+
+	public AttendanceRegisterResponse updateAttendanceRegister(AttendanceRegister attendanceRegister, RequestInfo requestInfo) {
+		log.info("updateAttendanceRegister::Update attendance register with tenantId: {} and register ID: {}",
+				attendanceRegister.getTenantId(), attendanceRegister.getId());
+
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterUpdateEndpoint());
+
+		AttendanceRegisterResponse response = null;
+
+		AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequest.builder()
+				.attendanceRegister(Collections.singletonList(attendanceRegister))
+				.requestInfo(requestInfo)
+				.build();
+		try {
+			response = restTemplate.postForObject(uri.toString(), attendanceRegisterRequest, AttendanceRegisterResponse.class);
+		} catch (HttpClientErrorException | HttpServerErrorException e) {
+			throw new ServiceCallException(e.getResponseBodyAsString());
+		} catch (Exception e) {
+			Map<String, String> map = new HashMap<>();
+			String causeName = (e.getCause() != null) ? e.getCause().getClass().getName() : e.getClass().getName();
+			map.put(causeName, e.getMessage());
+			throw new CustomException(map);
+		}
+
+		return response;
 	}
 }
