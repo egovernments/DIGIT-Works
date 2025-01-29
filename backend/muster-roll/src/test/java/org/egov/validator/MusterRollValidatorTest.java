@@ -47,6 +47,7 @@ class MusterRollValidatorTest {
         lenient().when(mdmsUtils.mDMSCall(any(MusterRollRequest.class),
                 any(String.class))).thenReturn(mdmsResponse);
         lenient().when(serviceConfiguration.getTimeZone()).thenReturn("Asia/Kolkata");
+        lenient().when(serviceConfiguration.isValidateStartDateMondayEnabled()).thenReturn(true);
 
     }
 
@@ -131,6 +132,7 @@ class MusterRollValidatorTest {
     void shouldThrowException_IfWorkflowIsNull() {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateValidationSuccess();
         musterRollRequest.setWorkflow(null);
+        lenient().when(serviceConfiguration.isMusterRollWorkflowEnabled()).thenReturn(true);
         CustomException exception = assertThrows(CustomException.class, ()-> musterRollValidator.validateCreateMusterRoll(musterRollRequest));
         assertTrue(exception.getCode().contentEquals("WORK_FLOW"));
     }
@@ -140,6 +142,7 @@ class MusterRollValidatorTest {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateValidationSuccess();
         getMockAttendanceRegisterSuccess();
         musterRollRequest.getWorkflow().setAction("");
+        lenient().when(serviceConfiguration.isMusterRollWorkflowEnabled()).thenReturn(true);
         CustomException exception = assertThrows(CustomException.class, ()-> musterRollValidator.validateCreateMusterRoll(musterRollRequest));
         assertNotNull(exception.getErrors().get("WORK_FLOW.ACTION"));
     }

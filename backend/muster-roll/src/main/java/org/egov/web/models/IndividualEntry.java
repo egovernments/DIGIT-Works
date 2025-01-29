@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
 
+import jakarta.validation.constraints.Min;
+
 /**
  * IndividualEntry
  */
@@ -37,9 +39,11 @@ public class IndividualEntry {
     private String individualId = null;
 
     @JsonProperty("actualTotalAttendance")
+    @Min(0)
     private BigDecimal actualTotalAttendance = null;
 
     @JsonProperty("modifiedTotalAttendance")
+    @Min(0)
     private BigDecimal modifiedTotalAttendance = null;
 
     @JsonProperty("attendanceEntries")

@@ -114,7 +114,6 @@ public class CalculationService {
         //Add all absentee individualIds as well
         individualIds.addAll(absenteesList.stream().map(entry-> entry.getIndividualId()).collect(Collectors.toSet()));
         List<Individual> individuals = fetchIndividualDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
-        List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId());
 
         for (Map.Entry<String,List<LocalDateTime>> entry : individualExitAttendanceMap.entrySet()) {
             IndividualEntry individualEntry = new IndividualEntry();
@@ -197,17 +196,19 @@ public class CalculationService {
             individualEntries.add(individualEntry);
         }
 
-        // Loop through and set individual and bank account details
-		for (IndividualEntry entry : individualEntries) {
+        if(config.isAddBankAccountDetails()) {
+            List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId());
+            // Loop through and set individual and bank account details
+            for (IndividualEntry entry : individualEntries) {
 
-			// Set individual details in additionalDetails
-			if (!CollectionUtils.isEmpty(individuals) /* && !CollectionUtils.isEmpty(bankAccounts) */) {
-				Individual individual = individuals.stream()
-						.filter(ind -> ind.getId().equalsIgnoreCase(entry.getIndividualId())).findFirst()
-						.orElse(null);
-				BankAccount bankAccount = bankAccounts.stream()
-						.filter(account -> account.getReferenceId().equalsIgnoreCase(entry.getIndividualId()))
-						.findFirst().orElse(null);
+                // Set individual details in additionalDetails
+                if (!CollectionUtils.isEmpty(individuals)) {
+                    Individual individual = individuals.stream()
+                            .filter(ind -> ind.getId().equalsIgnoreCase(entry.getIndividualId())).findFirst()
+                            .orElse(null);
+                    BankAccount bankAccount = bankAccounts.stream()
+                            .filter(account -> account.getReferenceId().equalsIgnoreCase(entry.getIndividualId()))
+                            .findFirst().orElse(null);
 
 				if (individual != null /* && bankAccount != null */) {
 					setAdditionalDetails(entry, individualEntriesFromRequest, mdmsV2Data, individual,
@@ -218,8 +219,6 @@ public class CalculationService {
 									+ entry.getIndividualId());
 				}
 
-			}
-		}
        
         musterRoll.setIndividualEntries(individualEntries);
         log.debug("CalculationService::createAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());

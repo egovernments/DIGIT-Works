@@ -30,7 +30,7 @@ config:
   - name: "builds/health-campaign-services/health-services/health-attendance-works"
     build:
       - work-dir: "backend/attendance"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "health-attendance"
       - work-dir: "backend/attendance/src/main/resources/db"
         image-name: "health-attendance-db"
@@ -45,7 +45,7 @@ config:
   - name: "builds/health-campaign-services/health-services/health-muster-roll"
     build:
       - work-dir: "backend/muster-roll"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "health-muster-roll"
       - work-dir: "backend/muster-roll/src/main/resources/db"
         image-name: "health-muster-roll-db"
@@ -108,7 +108,7 @@ config:
   - name: "builds/health-campaign-services/health-services/health-expense-calculator"
     build:
       - work-dir: "backend/health-expense-calculator"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "health-expense-calculator"
       - work-dir: "backend/health-expense-calculator/src/main/resources/db"
         image-name: "health-expense-calculator-db"

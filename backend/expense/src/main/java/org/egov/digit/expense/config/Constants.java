@@ -67,6 +67,7 @@ public class Constants {
 
 
 	private static final String INNER_JOIN = "INNER JOIN";
+	private static final String LEFT_JOIN = "LEFT JOIN";
 
 	public static final String PAYMENT_QUERY = "SELECT "
 			
@@ -117,7 +118,7 @@ public class Constants {
 	
 	public static final String BILL_QUERY = "SELECT "
 			
-			+ " bill.id as b_id, bill.tenantid as b_tenantid, billdate, duedate, bill.totalamount as b_totalamount, bill.totalpaidamount as b_totalpaidamount, "
+			+ " bill.id as b_id, bill.tenantid as b_tenantid, bill.localitycode as b_localitycode, billdate, duedate, bill.totalamount as b_totalamount, bill.totalpaidamount as b_totalpaidamount, "
 			+ " businessservice, bill.referenceid as b_referenceid, billnumber, bill.fromperiod as b_fromperiod, bill.toperiod as b_toperiod, bill.status as b_status, "
 			+ " bill.paymentstatus as b_paymentstatus, bill.createdby as b_createdby, bill.createdtime as b_createdtime, bill.lastmodifiedby as b_lastmodifiedby,"
 			+ " bill.lastmodifiedtime as b_lastmodifiedtime, bill.additionaldetails as b_additionaldetails,"
@@ -141,13 +142,17 @@ public class Constants {
 			
 			+ "FROM eg_expense_bill bill "
 			
-			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYER ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
+			+ LEFT_JOIN + " EG_EXPENSE_PARTY PAYER ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_BILLDETAIL BD ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
+			+ LEFT_JOIN + " EG_EXPENSE_BILLDETAIL BD ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
+			+ LEFT_JOIN + " EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
 			
+<<<<<<< HEAD
 			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
+=======
+			+ LEFT_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
+>>>>>>> 504a89d592593471db1fd567ee4faf870546941e
 
 	public static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
 

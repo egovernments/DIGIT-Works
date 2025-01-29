@@ -99,8 +99,8 @@ public class IndividualServiceUtil {
 
     public List<Individual> getIndividualDetailsFromUserId(Long userId, RequestInfo requestInfo, String tenantId) {
         String uri = getSearchURLWithParams(multiStateInstanceUtil.getStateLevelTenant(tenantId)).toUriString();
-        List<Long> userIdList = userId != null ? Collections.singletonList(userId) : null;
-        IndividualSearch individualSearch = IndividualSearch.builder().userId(userIdList).build();
+        List<Long> userIds = Collections.singletonList(userId);
+        IndividualSearch individualSearch = IndividualSearch.builder().userId(userIds).build();
         IndividualSearchRequest individualSearchRequest = IndividualSearchRequest.builder()
                 .requestInfo(requestInfo).individual(individualSearch).build();
 

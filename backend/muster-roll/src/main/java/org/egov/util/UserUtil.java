@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.user.UserDetailResponse;
+import org.egov.common.contract.user.UserSearchRequest;
+import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -20,26 +21,20 @@ import java.util.List;
 @Component
 public class UserUtil {
 
+    private final ObjectMapper mapper;
 
-    private ObjectMapper mapper;
+    private final ServiceRequestRepository serviceRequestRepository;
 
-    private ServiceRequestRepository serviceRequestRepository;
+    private final MusterRollServiceConfiguration config;
 
-    @Value("${egov.user.create.path}")
-    private String userCreateEndpoint;
-
-    @Value("${egov.user.search.path}")
-    private String userSearchEndpoint;
-
-    @Value("${egov.user.update.path}")
-    private String userUpdateEndpoint;
     private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
     private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 
     @Autowired
-    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, MusterRollServiceConfiguration config) {
         this.mapper = mapper;
         this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
     }
 
     /**
@@ -52,9 +47,9 @@ public class UserUtil {
 
     public UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
         String dobFormat = null;
-        if (uri.toString().contains(userSearchEndpoint) || uri.toString().contains(userUpdateEndpoint))
+        if (uri.toString().contains(config.getUserSearchEndpoint()) || uri.toString().contains(config.getUserUpdateEndpoint()))
             dobFormat = "yyyy-MM-dd";
-        else if (uri.toString().contains(userCreateEndpoint))
+        else if (uri.toString().contains(config.getUserCreateEndpoint()))
             dobFormat = "dd/MM/yyyy";
         try {
             LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
@@ -63,6 +58,27 @@ public class UserUtil {
         } catch (IllegalArgumentException e) {
             throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
         }
+    }
+
+    /**
+      * Searches for users by their individual IDs
+      *
+      * @param individualIds List of individual IDs to search for
+      * @return UserDetailResponse containing the matched users
+      * @throws CustomException if individualIds is null or empty
+     * */
+    public UserDetailResponse searchUsersByIndividualIds(List<String> individualIds) {
+        if (individualIds == null || individualIds.isEmpty()) {
+            throw new CustomException("INVALID_INPUT", "Individual IDs list cannot be null or empty");
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder
+                .append(config.getUserHost())
+                .append(config.getUserContextPath())
+                .append(config.getUserSearchEndpoint());
+        UserSearchRequest userSearchRequest = new UserSearchRequest();
+        userSearchRequest.setUuid(individualIds);
+        return userCall(userSearchRequest, stringBuilder);
     }
 
 

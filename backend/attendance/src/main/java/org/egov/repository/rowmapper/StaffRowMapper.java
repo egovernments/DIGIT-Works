@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.StaffPermission;
+import org.egov.web.models.StaffType;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,6 +43,7 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
             String lastmodifiedby = rs.getString("lastmodifiedby");
             Long createdtime = rs.getLong("createdtime");
             Long lastmodifiedtime = rs.getLong("lastmodifiedtime");
+            StaffType staffType = StaffType.fromValue(rs.getString("stafftype"));
 
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
@@ -59,6 +61,7 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
                     .enrollmentDate(enrollmentDate)
                     .denrollmentDate(deenrollmentDate)
                     .auditDetails(auditDetails)
+                    .staffType(staffType)
                     .build();
 
             if (!attendanceStaffMap.containsKey(id)) {
@@ -67,7 +70,6 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
         }
         return new ArrayList<>(attendanceStaffMap.values());
     }
-
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
         JsonNode additionalDetails = null;
