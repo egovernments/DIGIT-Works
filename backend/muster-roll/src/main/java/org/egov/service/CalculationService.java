@@ -198,6 +198,10 @@ public class CalculationService {
 
         if(config.isAddBankAccountDetails()) {
             List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId());
+            if (bankAccounts == null) {
+                log.error("Bank account service returned null response for muster roll: {}", musterRoll.getId());
+                bankAccounts = new ArrayList<>();
+            }
             // Loop through and set individual and bank account details
             for (IndividualEntry entry : individualEntries) {
 
@@ -210,16 +214,19 @@ public class CalculationService {
                             .filter(account -> account.getReferenceId().equalsIgnoreCase(entry.getIndividualId()))
                             .findFirst().orElse(null);
 
-				if (individual != null /* && bankAccount != null */) {
-					setAdditionalDetails(entry, individualEntriesFromRequest, mdmsV2Data, individual,
-							bankAccount, isCreate);
-				} else {
-					log.info(
-							"CalculationService::createAttendance::No match found in individual and bank account service for the individual id from attendance log - "
-									+ entry.getIndividualId());
-				}
+                    if (individual != null) {
+                        setAdditionalDetails(entry, individualEntriesFromRequest, mdmsV2Data, individual,
+                                bankAccount, isCreate);
+                    } else {
+                        log.info(
+                                "CalculationService::createAttendance::No match found in individual and bank account service for the individual id from attendance log - "
+                                        + entry.getIndividualId());
+                    }
 
-       
+                }
+            }
+        }
+
         musterRoll.setIndividualEntries(individualEntries);
         log.debug("CalculationService::createAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
 
