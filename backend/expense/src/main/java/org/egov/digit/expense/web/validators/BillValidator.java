@@ -91,11 +91,14 @@ public class BillValidator {
 			throw new CustomException("EG_EXPENSE_INVALID_BILL","The bill does not exists for the given combination of "
 					+ " id : " + bill.getId() + " and refernceId : " + bill.getTenantId());
 
-		validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap);
+		if (!configs.isHealthContextEnabled())
+			validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap);
 
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
 		validateTenantId(billRequest,mdmsData);
-		validateMasterData(billRequest, errorMap, mdmsData, false);
+
+		if (!configs.isHealthContextEnabled())
+			validateMasterData(billRequest, errorMap, mdmsData, false);
 
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
@@ -203,7 +206,6 @@ public class BillValidator {
 						BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST + invalidPayableLineItemIds);
 		}
 
-
 	}
 
 	public void validateSearchRequest(BillSearchRequest billSearchRequest) {
@@ -213,17 +215,28 @@ public class BillValidator {
 				&& CollectionUtils.isEmpty(billCriteria.getReferenceIds())
 				&& CollectionUtils.isEmpty(billCriteria.getIds())
 				&& CollectionUtils.isEmpty(billCriteria.getBillNumbers())
-				&& billCriteria.getIsPaymentStatusNull() == null )
+				&& billCriteria.getIsPaymentStatusNull() == null ) {
+			if (configs.isHealthContextEnabled())
+				throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
+						"One of ids OR referenceIds OR billNumbers should be provided for a bill search");
 			throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
 					"One of ids OR (referenceIds & businessService) OR (billNumbers & businessService) should be provided for a bill search");
-		boolean isRefIdOrBillNoProvided = (!CollectionUtils.isEmpty(billCriteria.getReferenceIds())
-				|| !CollectionUtils.isEmpty(billCriteria.getBillNumbers()));
-		boolean isBusinessServiceProvided = !StringUtils.isEmpty(billCriteria.getBusinessService());
+		}
 
-		if ((isRefIdOrBillNoProvided && !isBusinessServiceProvided)
-				|| (isBusinessServiceProvided && !isRefIdOrBillNoProvided))
-			throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
-					"The values of referenceIds or billNumbers should be provided along with businessService for a bill search");
+		if (configs.isHealthContextEnabled()) {
+			if (org.apache.commons.lang3.StringUtils.isNotBlank(billCriteria.getLocalityCode()) && CollectionUtils.isEmpty(billCriteria.getReferenceIds())) {
+				throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR", "referenceIds should be provided along with localityCode for a bill search");
+			}
+		} else {
+			boolean isRefIdOrBillNoProvided = (!CollectionUtils.isEmpty(billCriteria.getReferenceIds())
+					|| !CollectionUtils.isEmpty(billCriteria.getBillNumbers()));
+			boolean isBusinessServiceProvided = !StringUtils.isEmpty(billCriteria.getBusinessService());
+
+			if ((isRefIdOrBillNoProvided && !isBusinessServiceProvided)
+					|| (isBusinessServiceProvided && !isRefIdOrBillNoProvided))
+				throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
+						"The values of referenceIds or billNumbers should be provided along with businessService for a bill search");
+		}
 	}
 
 	private void validateMasterData(BillRequest billRequest, Map<String, String> errorMap, Map<String, Map<String, JSONArray>> mdmsData, boolean isCreate) {
@@ -362,7 +375,7 @@ public class BillValidator {
 				.billCriteria(billCriteria)
 				.build();
 
-		return billRepository.search(billSearchRequest);
+		return billRepository.search(billSearchRequest, true);
 	}
 
 	private void validateWorkflow(BillRequest billRequest, Map<String, String> errorMap) {

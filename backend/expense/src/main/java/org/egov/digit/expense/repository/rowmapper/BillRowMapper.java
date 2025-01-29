@@ -69,6 +69,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.status(Status.fromValue(rs.getString("b_status")))
 					.businessService(rs.getString("businessservice"))
 					.totalAmount(rs.getBigDecimal("b_totalamount"))
+					.localityCode(rs.getString("b_localitycode"))
 					.referenceId(rs.getString("b_referenceid"))
 					.billNumber(rs.getString("billnumber"))
 					.fromPeriod(rs.getLong("b_fromperiod"))
@@ -112,6 +113,8 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.toPeriod(rs.getLong("bd_toperiod"))
 					.billId(rs.getString("billid"))
 					.auditDetails(bDAuditDetails)
+					.payableLineItems(new ArrayList<>())
+					.lineItems(new ArrayList<>())
 					.id(detailId)
 					.payee(payee)
 					.build();
@@ -125,35 +128,38 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 			/*
 			 * Line items details
 			 */
-			Boolean isLineItemPayable = rs.getBoolean("islineitemPayable"); 
 			String lineTiemBillDetailId = rs.getString("line_billdetailid");
-			
-			AuditDetails auditDetails =AuditDetails.builder()
-					.createdBy(rs.getString("line_createdby"))
-					.createdTime((Long) rs.getObject("line_createdtime"))
-					.lastModifiedBy(rs.getString("line_lastmodifiedby"))
-					.lastModifiedTime((Long) rs.getObject("line_lastmodifiedtime"))
-					.build();
+			if (lineTiemBillDetailId != null) {
+				Boolean isLineItemPayable = rs.getBoolean("islineitemPayable");
 
-			LineItem lineItem = LineItem.builder()
-					.auditDetails(auditDetails)
-					.id(rs.getString("line_id"))
-					.tenantId(rs.getString("line_tenantid"))
-					.status(Status.fromValue(rs.getString("line_status")))
-					.headCode(rs.getString("headcode"))
-					.amount(rs.getBigDecimal("amount"))
-					.paidAmount(rs.getBigDecimal("paidamount"))
-					.paymentStatus(PaymentStatus.fromValue(rs.getString("li_paymentstatus")))
-					.type(LineItemType.fromValue(rs.getString("line_type")))
-					.additionalDetails(getadditionalDetail(rs, "line_additionalDetails"))
-					.build();
-			
-			if(lineTiemBillDetailId.equals(detailId)) {
-				if(Boolean.TRUE.equals(isLineItemPayable))
-					billDetail.addPayableLineItems(lineItem);
-				else 
-					billDetail.addLineItems(lineItem);
+				AuditDetails auditDetails =AuditDetails.builder()
+						.createdBy(rs.getString("line_createdby"))
+						.createdTime((Long) rs.getObject("line_createdtime"))
+						.lastModifiedBy(rs.getString("line_lastmodifiedby"))
+						.lastModifiedTime((Long) rs.getObject("line_lastmodifiedtime"))
+						.build();
+
+				LineItem lineItem = LineItem.builder()
+						.auditDetails(auditDetails)
+						.id(rs.getString("line_id"))
+						.tenantId(rs.getString("line_tenantid"))
+						.status(Status.fromValue(rs.getString("line_status")))
+						.headCode(rs.getString("headcode"))
+						.amount(rs.getBigDecimal("amount"))
+						.paidAmount(rs.getBigDecimal("paidamount"))
+						.paymentStatus(PaymentStatus.fromValue(rs.getString("li_paymentstatus")))
+						.type(LineItemType.fromValue(rs.getString("line_type")))
+						.additionalDetails(getadditionalDetail(rs, "line_additionalDetails"))
+						.build();
+
+				if(lineTiemBillDetailId.equals(detailId)) {
+					if(Boolean.TRUE.equals(isLineItemPayable))
+						billDetail.addPayableLineItems(lineItem);
+					else
+						billDetail.addLineItems(lineItem);
+				}
 			}
+
 					
 		}
 		log.debug("converting map to list object ::: " + billMap.values());

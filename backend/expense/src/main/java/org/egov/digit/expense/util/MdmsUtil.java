@@ -10,6 +10,7 @@ import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.mdms.model.*;
 
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -48,6 +49,7 @@ public class MdmsUtil {
             mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
         }catch(Exception e) {
             log.error("Exception occurred while fetching category lists from mdms: ",e);
+			throw new CustomException("ERROR_FETCHING_MASTER_DATA", "Exception while fetching tenant.tenants, expense.HeadCodes, expense.BusinessServices from mdms: " + e.getMessage());
         }
 
 		Long createdTime = billRequest.getBill().getAuditDetails() != null ? billRequest.getBill().getAuditDetails().getCreatedTime() : Instant.now().toEpochMilli();

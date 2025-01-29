@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.models.project.Project;
+import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.web.models.Bill;
@@ -38,12 +40,14 @@ public class EnrichmentUtil {
     private final IdgenUtil idgenUtil;
 
     private final GenderUtil genderUtil;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public EnrichmentUtil(Configuration config, IdgenUtil idgenUtil, GenderUtil genderUtil) {
+    public EnrichmentUtil(Configuration config, IdgenUtil idgenUtil, GenderUtil genderUtil, ObjectMapper objectMapper) {
         this.config = config;
         this.idgenUtil = idgenUtil;
         this.genderUtil = genderUtil;
+        this.objectMapper = objectMapper;
     }
 
     public void encrichBillForCreate(BillRequest billRequest) {
@@ -76,17 +80,16 @@ public class EnrichmentUtil {
             billDetail.getPayee().setAuditDetails(audit);
             billDetail.getPayee().setStatus(Status.ACTIVE);
 
-            String gender = genderUtil.getGenderDetails(billRequest.getRequestInfo(),billDetail.getPayee().getTenantId(),billDetail.getPayee().getIdentifier());
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> map = objectMapper.convertValue(billDetail.getPayee().getAdditionalDetails(), new TypeReference<Map<String, Object>>() {});
-            if(map == null){
-                map = new HashMap<>();
+            if (!config.isHealthContextEnabled()) {
+                String gender = genderUtil.getGenderDetails(billRequest.getRequestInfo(), billDetail.getPayee().getTenantId(), billDetail.getPayee().getIdentifier());
+                Map<String, Object> map = objectMapper.convertValue(billDetail.getPayee().getAdditionalDetails(), new TypeReference<Map<String, Object>>() {
+                });
+                if (map == null) {
+                    map = new HashMap<>();
+                }
+                map.put(GENDER, gender);
+                billDetail.getPayee().setAdditionalDetails(objectMapper.convertValue(map, Object.class));
             }
-            if(!gender.isEmpty()){
-                map.put(GENDER,gender);
-            }
-            map.put(GENDER,gender);
-            billDetail.getPayee().setAdditionalDetails(objectMapper.convertValue(map,Object.class));
             for (LineItem lineItem : billDetail.getLineItems()) {
                 lineItem.setId(UUID.randomUUID().toString());
                 lineItem.setAuditDetails(audit);
