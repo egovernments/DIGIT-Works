@@ -210,16 +210,19 @@ public class CalculationService {
                             .filter(account -> account.getReferenceId().equalsIgnoreCase(entry.getIndividualId()))
                             .findFirst().orElse(null);
 
-				if (individual != null /* && bankAccount != null */) {
-					setAdditionalDetails(entry, individualEntriesFromRequest, mdmsV2Data, individual,
-							bankAccount, isCreate);
-				} else {
-					log.info(
-							"CalculationService::createAttendance::No match found in individual and bank account service for the individual id from attendance log - "
-									+ entry.getIndividualId());
-				}
+                    if (individual != null) {
+                        setAdditionalDetails(entry, individualEntriesFromRequest, mdmsV2Data, individual,
+                                bankAccount, isCreate);
+                    } else {
+                        log.info(
+                                "CalculationService::createAttendance::No match found in individual and bank account service for the individual id from attendance log - "
+                                        + entry.getIndividualId());
+                    }
 
-       
+                }
+            }
+        }
+
         musterRoll.setIndividualEntries(individualEntries);
         log.debug("CalculationService::createAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
 
