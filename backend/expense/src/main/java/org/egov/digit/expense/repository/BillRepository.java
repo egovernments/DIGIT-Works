@@ -30,11 +30,7 @@ public class BillRepository {
 	public List<Bill> search(BillSearchRequest billSearchRequest, boolean isValidationSearch){
 		
 		List<Object> preparedStatementValues = new ArrayList<>();
-<<<<<<< HEAD
-		String queryStr = queryBuilder.getBillQuery(billSearchRequest, preparedStatementValues, false);
-=======
 		String queryStr = queryBuilder.getBillQuery(billSearchRequest, preparedStatementValues, false, isValidationSearch);
->>>>>>> 504a89d592593471db1fd567ee4faf870546941e
         return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
 	}
 

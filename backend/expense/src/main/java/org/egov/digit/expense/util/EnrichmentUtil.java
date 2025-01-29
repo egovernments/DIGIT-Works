@@ -7,11 +7,8 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.AuditDetails;
-<<<<<<< HEAD
-=======
 import org.egov.common.models.project.Project;
 import org.egov.common.models.project.ProjectResponse;
->>>>>>> 504a89d592593471db1fd567ee4faf870546941e
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.web.models.Bill;

@@ -148,11 +148,7 @@ public class Constants {
 			
 			+ LEFT_JOIN + " EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
 			
-<<<<<<< HEAD
-			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
-=======
 			+ LEFT_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
->>>>>>> 504a89d592593471db1fd567ee4faf870546941e
 
 	public static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
 
