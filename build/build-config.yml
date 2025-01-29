@@ -124,7 +124,7 @@ config:
   - name: "builds/health-campaign-services/health-services/health-expense"
     build:
       - work-dir: "backend/expense"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "build/maven-java17/Dockerfile"
         image-name: "health-expense"
       - work-dir: "backend/expense/src/main/resources/db"
         image-name: "health-expense-db"
