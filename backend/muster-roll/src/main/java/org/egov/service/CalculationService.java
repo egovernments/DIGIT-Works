@@ -198,6 +198,10 @@ public class CalculationService {
 
         if(config.isAddBankAccountDetails()) {
             List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId());
+            if (bankAccounts == null) {
+                log.error("Bank account service returned null response for muster roll: {}", musterRoll.getId());
+                bankAccounts = new ArrayList<>();
+            }
             // Loop through and set individual and bank account details
             for (IndividualEntry entry : individualEntries) {
 
