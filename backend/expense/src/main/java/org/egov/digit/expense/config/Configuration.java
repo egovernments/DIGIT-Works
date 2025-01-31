@@ -177,4 +177,13 @@ public class Configuration {
 
 	@Value("${is.health.context.enabled}")
 	private boolean isHealthContextEnabled;
+
+	@Value("${bill.persistence.breakdown.enabled:true}")
+	private boolean isBillBreakdownEnabled;
+
+	@Value("${bill.persistence.breakdown.size:200}")
+	private Integer billBreakdownSize;
+
+	@Value("${expense.excel.pdf.generation.topic}")
+	private String expenseExcelPdfGenerateTopic;
 }

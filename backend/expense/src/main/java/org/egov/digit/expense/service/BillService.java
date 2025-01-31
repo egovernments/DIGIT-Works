@@ -20,9 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,9 +42,10 @@ public class BillService {
 	private final ResponseInfoFactory responseInfoFactory;
 
 	private final NotificationService notificationService;
+	private final Configuration configs;
 
 	@Autowired
-	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService) {
+	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService, Configuration configs) {
 		this.expenseProducer = expenseProducer;
 		this.config = config;
 		this.validator = validator;
@@ -55,7 +54,8 @@ public class BillService {
 		this.enrichmentUtil = enrichmentUtil;
 		this.responseInfoFactory = responseInfoFactory;
 		this.notificationService = notificationService;
-	}
+        this.configs = configs;
+    }
 
 	/**
 	 * Validates the Bill Request and sends to repository for create
@@ -85,8 +85,11 @@ public class BillService {
 		} else {
 			bill.setStatus(Status.ACTIVE);
 		}
-
-		expenseProducer.push(config.getBillCreateTopic(), billRequest);
+		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
+			produceBillsBatchWise(billRequest);
+		} else {
+			expenseProducer.push(config.getBillCreateTopic(), billRequest);
+		}
 		
 		response = BillResponse.builder()
 				.bills(Arrays.asList(billRequest.getBill()))
@@ -120,8 +123,18 @@ public class BillService {
 		}catch (Exception e){
 			log.error("Exception while sending notification: " + e);
 		}
-		
-		expenseProducer.push(config.getBillUpdateTopic(), billRequest);
+
+		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
+			List<BillDetail> allBillDetails = new ArrayList<>(bill.getBillDetails());
+			for (int i = 0; i < allBillDetails.size(); i += configs.getBillBreakdownSize()) {
+				List<BillDetail> currBatchBillDetails = allBillDetails.subList(i, Math.min(i + configs.getBillBreakdownSize(), allBillDetails.size()));
+				bill.setBillDetails(currBatchBillDetails);
+				expenseProducer.push(configs.getBillUpdateTopic(), billRequest);
+			}
+		} else {
+			expenseProducer.push(config.getBillUpdateTopic(), billRequest);
+		}
+
 		response = BillResponse.builder()
 				.bills(Arrays.asList(billRequest.getBill()))
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo,true))
@@ -177,6 +190,33 @@ public class BillService {
 				.toMap(ProcessInstance::getBusinessId, processInstance -> processInstance.getState().getState()));
 		for (Bill bill : bills) {
 			bill.setWfStatus(busnessIdToWfStatus.get(bill.getBillNumber()));
+		}
+	}
+	/**
+	 * Breakdown the billDetails into batches and push to kafka. This is needed
+	 * to avoid large payload in kafka.
+	 *
+	 * @param billRequest The bill request object
+	 */
+	private void produceBillsBatchWise(BillRequest billRequest) {
+		Bill bill = billRequest.getBill();
+		List<BillDetail> allBillDetails = new ArrayList<>(bill.getBillDetails());
+		// Breakdown the billDetails into batches and push to kafka
+		for (int i = 0; i < allBillDetails.size(); i += configs.getBillBreakdownSize()) {
+			// Breakdown bill details into batches and push to kafka topic
+			List<BillDetail> currBatchBillDetails = allBillDetails.subList(i, Math.min(i + configs.getBillBreakdownSize(), allBillDetails.size()));
+			bill.setBillDetails(currBatchBillDetails);
+			expenseProducer.push(configs.getBillCreateTopic(), billRequest);
+		}
+		log.info("All bill details pushed to kafka");
+		// Implementation specific to generate pdf
+		if (config.isHealthContextEnabled()) {
+			Map<String, Object> pdfGenerationObject = new HashMap<>();
+			pdfGenerationObject.put("id", bill.getId());
+			pdfGenerationObject.put("createdTime", System.currentTimeMillis());
+			pdfGenerationObject.put("numberOfBillDetails", bill.getBillDetails().size());
+			expenseProducer.push(configs.getExpenseExcelPdfGenerateTopic(), pdfGenerationObject);
+			log.info("Excel/PDF generation request pushed to kafka");
 		}
 	}
 }
