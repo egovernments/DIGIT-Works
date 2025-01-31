@@ -6,17 +6,19 @@ import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.service.HealthBillReportGenerator;
 import org.egov.digit.expense.calculator.service.RedisService;
+import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
 import org.egov.digit.expense.calculator.web.models.Bill;
 import org.egov.digit.expense.calculator.web.models.BillRequest;
 import org.egov.digit.expense.calculator.web.models.CalculationRequest;
-import org.egov.digit.expense.calculator.web.models.MusterRollConsumerError;
-import org.egov.works.services.common.models.musterroll.MusterRollRequest;
+import org.egov.digit.expense.calculator.web.models.ReportGenerationTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -29,15 +31,19 @@ public class ExpenseCalculatorConsumer {
 	private final ExpenseCalculatorProducer producer;
 	private final HealthBillReportGenerator healthBillReportGenerator;
 	private final RedisService redisService;
+	private final ExpenseCalculatorUtil expenseCalculatorUtil;
 
 	@Autowired
-	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, ExpenseCalculatorProducer producer, HealthBillReportGenerator healthBillReportGenerator, RedisService redisService) {
+	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService,
+									 ObjectMapper objectMapper, ExpenseCalculatorProducer producer, HealthBillReportGenerator healthBillReportGenerator,
+									 RedisService redisService, ExpenseCalculatorUtil expenseCalculatorUtil) {
 		this.configs = configs;
 		this.expenseCalculatorService = expenseCalculatorService;
 		this.objectMapper = objectMapper;
 		this.producer = producer;
         this.healthBillReportGenerator = healthBillReportGenerator;
         this.redisService = redisService;
+        this.expenseCalculatorUtil = expenseCalculatorUtil;
     }
 
 	// Commenting existing consumer
@@ -76,18 +82,21 @@ public class ExpenseCalculatorConsumer {
 	 * @param consumerRecord
 	 * @param topic
 	 */
-	@KafkaListener(topics = {"${expense.billing.bill.create}", "${report.retry.queue.topic}"})
+	@KafkaListener(topics = {"${report.generation.trigger.topic}", "${report.generation.retry.trigger.topic}"})
 	public void listenBillForReport(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("ExpenseCalculatorConsumer:listenBillForReport");
-		BillRequest request = null;
+
 		try {
-			request = objectMapper.readValue(consumerRecord, BillRequest.class);
+			ReportGenerationTrigger trigger = objectMapper.readValue(consumerRecord, ReportGenerationTrigger.class);
+			List<Bill> bills =	expenseCalculatorUtil.fetchBillsWithBillIds(trigger.getRequestInfo(), trigger.getTenantId(), Collections.singletonList(trigger.getBillId()));
+
 			// Validate that bill exists in the system, because of async possible that it's not persisted while consuming the record.
-			if (healthBillReportGenerator.billExists(request)) {
+			if (!CollectionUtils.isEmpty(bills) && bills.get(0).getBillDetails().size() == trigger.getNumberOfBillDetails()) {
 				/*
 				 * If the bill is already present in the cache, then don't generate the report again.
 				 * Because this is long-running KAFKA consumer, the same record can be consumed multiple times. This is to prevent duplicate reports from being generated.
 				 */
+				BillRequest request = BillRequest.builder().requestInfo(trigger.getRequestInfo()).bill(bills.get(0)).build();
 				log.info("Bill exists for bill id " + request.getBill().getId());
 				if (redisService.isBillIdPresentInCache(request.getBill().getId())) {
 					return;
@@ -95,12 +104,12 @@ public class ExpenseCalculatorConsumer {
 				redisService.setCacheForBillReport(request.getBill().getId());
 				healthBillReportGenerator.generateHealthBillReportRequest(request);
 			}
-			else if (System.currentTimeMillis() - request.getBill().getAuditDetails().getCreatedTime() < 30 * 60 * 1000) {
+			else if (System.currentTimeMillis() - trigger.getCreatedTime() < 30 * 60 * 1000) {
 				// Consumer will retry till 30 minutes after the creation of the bill
 				// If bill does not exist, retry for 10 seconds
 				log.info("Bill does not exist, retrying for 10 seconds");
 				Thread.sleep(10 * 1000);
-				producer.push(configs.getReportRetryQueueTopic(), request);
+				producer.push(configs.getReportGenerationRetryTriggerTopic(), trigger);
 			} else {
 				// Post 30 minutes after the creation of the bill if it's still not exists then throw exception
 				throw new Exception("Bill does not exist");
