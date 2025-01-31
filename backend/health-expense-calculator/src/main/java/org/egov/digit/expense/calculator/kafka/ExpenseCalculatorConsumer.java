@@ -82,38 +82,21 @@ public class ExpenseCalculatorConsumer {
 	 * @param consumerRecord
 	 * @param topic
 	 */
-	@KafkaListener(topics = {"${expense.billing.bill.create}", "${report.retry.queue.topic}", "${report.generation.trigger.topic}",
-			"${report.generation.retry.trigger.topic}"})
+	@KafkaListener(topics = {"${report.generation.trigger.topic}", "${report.generation.retry.trigger.topic}"})
 	public void listenBillForReport(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("ExpenseCalculatorConsumer:listenBillForReport");
-		BillRequest request = null;
+
 		try {
-			boolean isTriggerTopic = topic.equalsIgnoreCase(configs.getReportGenerationTriggerTopic()) || topic.equals(configs.getReportGenerationRetryTriggerTopic());
-			if (isTriggerTopic) {
-				ReportGenerationTrigger trigger = objectMapper.readValue(consumerRecord, ReportGenerationTrigger.class);
-				List<Bill> bills =	expenseCalculatorUtil.fetchBillsWithBillIds(trigger.getRequestInfo(), trigger.getTenantId(), Collections.singletonList(trigger.getBillId()));
-				if (!CollectionUtils.isEmpty(bills) && bills.get(0).getBillDetails().size() == trigger.getNumberOfBillDetails()) {
-					request = BillRequest.builder().requestInfo(trigger.getRequestInfo()).bill(bills.get(0)).build();
-				} else if (System.currentTimeMillis() - trigger.getCreatedTime() < 30 * 60 * 1000) {
-					// Consumer will retry every 10 seconds till 30 minutes after the creation of the bill
-					log.info("Bill does not exist, retrying for 10 seconds");
-					Thread.sleep(10 * 1000);
-					producer.push(configs.getReportGenerationRetryTriggerTopic(), trigger);
-					return;
-				} else {
-					// Post 30 minutes after the creation of the bill if it's still not exists then throw exception
-					throw new Exception("Bill does not exist");
-				}
-			} else {
-				request = objectMapper.readValue(consumerRecord, BillRequest.class);
-			}
+			ReportGenerationTrigger trigger = objectMapper.readValue(consumerRecord, ReportGenerationTrigger.class);
+			List<Bill> bills =	expenseCalculatorUtil.fetchBillsWithBillIds(trigger.getRequestInfo(), trigger.getTenantId(), Collections.singletonList(trigger.getBillId()));
 
 			// Validate that bill exists in the system, because of async possible that it's not persisted while consuming the record.
-			if (isTriggerTopic || healthBillReportGenerator.billExists(request)) {
+			if (!CollectionUtils.isEmpty(bills) && bills.get(0).getBillDetails().size() == trigger.getNumberOfBillDetails()) {
 				/*
 				 * If the bill is already present in the cache, then don't generate the report again.
 				 * Because this is long-running KAFKA consumer, the same record can be consumed multiple times. This is to prevent duplicate reports from being generated.
 				 */
+				BillRequest request = BillRequest.builder().requestInfo(trigger.getRequestInfo()).bill(bills.get(0)).build();
 				log.info("Bill exists for bill id " + request.getBill().getId());
 				if (redisService.isBillIdPresentInCache(request.getBill().getId())) {
 					return;
@@ -121,12 +104,12 @@ public class ExpenseCalculatorConsumer {
 				redisService.setCacheForBillReport(request.getBill().getId());
 				healthBillReportGenerator.generateHealthBillReportRequest(request);
 			}
-			else if (System.currentTimeMillis() - request.getBill().getAuditDetails().getCreatedTime() < 30 * 60 * 1000) {
+			else if (System.currentTimeMillis() - trigger.getCreatedTime() < 30 * 60 * 1000) {
 				// Consumer will retry till 30 minutes after the creation of the bill
 				// If bill does not exist, retry for 10 seconds
 				log.info("Bill does not exist, retrying for 10 seconds");
 				Thread.sleep(10 * 1000);
-				producer.push(configs.getReportRetryQueueTopic(), request);
+				producer.push(configs.getReportGenerationRetryTriggerTopic(), trigger);
 			} else {
 				// Post 30 minutes after the creation of the bill if it's still not exists then throw exception
 				throw new Exception("Bill does not exist");
