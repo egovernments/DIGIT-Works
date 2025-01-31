@@ -184,6 +184,4 @@ public class Configuration {
 	@Value("${bill.persistence.breakdown.size:200}")
 	private Integer billBreakdownSize;
 
-	@Value("${expense.excel.pdf.generation.topic}")
-	private String expenseExcelPdfGenerateTopic;
 }

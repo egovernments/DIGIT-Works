@@ -86,7 +86,7 @@ public class BillService {
 			bill.setStatus(Status.ACTIVE);
 		}
 		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
-			produceBillsBatchWise(billRequest);
+			produceBillsBatchWise(billRequest, config.getBillCreateTopic());
 		} else {
 			expenseProducer.push(config.getBillCreateTopic(), billRequest);
 		}
@@ -125,12 +125,7 @@ public class BillService {
 		}
 
 		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
-			List<BillDetail> allBillDetails = new ArrayList<>(bill.getBillDetails());
-			for (int i = 0; i < allBillDetails.size(); i += configs.getBillBreakdownSize()) {
-				List<BillDetail> currBatchBillDetails = allBillDetails.subList(i, Math.min(i + configs.getBillBreakdownSize(), allBillDetails.size()));
-				bill.setBillDetails(currBatchBillDetails);
-				expenseProducer.push(configs.getBillUpdateTopic(), billRequest);
-			}
+			produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
 		} else {
 			expenseProducer.push(config.getBillUpdateTopic(), billRequest);
 		}
@@ -198,7 +193,7 @@ public class BillService {
 	 *
 	 * @param billRequest The bill request object
 	 */
-	private void produceBillsBatchWise(BillRequest billRequest) {
+	private void produceBillsBatchWise(BillRequest billRequest, String topic) {
 		Bill bill = billRequest.getBill();
 		List<BillDetail> allBillDetails = new ArrayList<>(bill.getBillDetails());
 		// Breakdown the billDetails into batches and push to kafka
@@ -206,17 +201,8 @@ public class BillService {
 			// Breakdown bill details into batches and push to kafka topic
 			List<BillDetail> currBatchBillDetails = allBillDetails.subList(i, Math.min(i + configs.getBillBreakdownSize(), allBillDetails.size()));
 			bill.setBillDetails(currBatchBillDetails);
-			expenseProducer.push(configs.getBillCreateTopic(), billRequest);
+			expenseProducer.push(topic, billRequest);
 		}
 		log.info("All bill details pushed to kafka");
-		// Implementation specific to generate pdf
-		if (config.isHealthContextEnabled()) {
-			Map<String, Object> pdfGenerationObject = new HashMap<>();
-			pdfGenerationObject.put("id", bill.getId());
-			pdfGenerationObject.put("createdTime", System.currentTimeMillis());
-			pdfGenerationObject.put("numberOfBillDetails", bill.getBillDetails().size());
-			expenseProducer.push(configs.getExpenseExcelPdfGenerateTopic(), pdfGenerationObject);
-			log.info("Excel/PDF generation request pushed to kafka");
-		}
 	}
 }
