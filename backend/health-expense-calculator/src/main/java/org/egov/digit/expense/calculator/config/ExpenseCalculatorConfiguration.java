@@ -291,4 +291,10 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${bill.generation.async.topic}")
 	private String billGenerationAsyncTopic;
 
+	@Value("${report.generation.trigger.topic}")
+	private String reportGenerationTriggerTopic;
+
+	@Value("${report.generation.retry.trigger.topic}")
+	private String reportGenerationRetryTriggerTopic;
+
 }
