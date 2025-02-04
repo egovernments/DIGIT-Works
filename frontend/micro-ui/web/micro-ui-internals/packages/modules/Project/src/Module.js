@@ -13,6 +13,9 @@ import CreateProject from "./pages/employee/CreateProject/index";
 import ProjectDetails from "./pages/employee/ProjectDetails";
 import ProjectSearch from "./pages/employee/ProjectSearch";
 import ProjectSearchAndInbox from "./pages/employee/ProjectSearchAndInbox";
+import ProjectWMSSearch from "./pages/employee/ProjectWMSSearch";
+import SampleComp from "./SampleComp";
+
 
 export const ProjectModule = ({ stateCode, userType, tenants }) => {
   
@@ -47,7 +50,9 @@ const componentsToRegister = {
     CreateProjectForm,
     ViewSubProjectsDetails,
     CitizenInfoLabel,
-    SelectGeoLocation
+    SelectGeoLocation,
+    ProjectWMSSearch,
+    GenericViewTestComp:SampleComp
 };
 
 export const initProjectComponents = () => {

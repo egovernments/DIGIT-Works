@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendanceLogEnrichment;
-import org.egov.kafka.Producer;
+import org.egov.common.producer.Producer;
 import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.repository.AttendanceLogRepository;
 import org.egov.util.ResponseInfoFactory;
@@ -18,24 +18,28 @@ import java.util.List;
 @Service
 @Slf4j
 public class AttendanceLogService {
-    @Autowired
-    private AttendanceLogServiceValidator attendanceLogServiceValidator;
+    private final AttendanceLogServiceValidator attendanceLogServiceValidator;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    private final ResponseInfoFactory responseInfoFactory;
 
 
-    @Autowired
-    private AttendanceLogEnrichment attendanceLogEnricher;
+    private final AttendanceLogEnrichment attendanceLogEnricher;
+
+    private final Producer producer;
+
+    private final AttendanceServiceConfiguration config;
+
+    private final AttendanceLogRepository attendanceLogRepository;
 
     @Autowired
-    private Producer producer;
-
-    @Autowired
-    private AttendanceServiceConfiguration config;
-
-    @Autowired
-    private AttendanceLogRepository attendanceLogRepository;
+    public AttendanceLogService(AttendanceLogServiceValidator attendanceLogServiceValidator, ResponseInfoFactory responseInfoFactory, AttendanceLogEnrichment attendanceLogEnricher, Producer producer, AttendanceServiceConfiguration config, AttendanceLogRepository attendanceLogRepository) {
+        this.attendanceLogServiceValidator = attendanceLogServiceValidator;
+        this.responseInfoFactory = responseInfoFactory;
+        this.attendanceLogEnricher = attendanceLogEnricher;
+        this.producer = producer;
+        this.config = config;
+        this.attendanceLogRepository = attendanceLogRepository;
+    }
 
     /**
      * Create Attendance Log
@@ -98,5 +102,11 @@ public class AttendanceLogService {
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
         log.info("Attendance logs updated successfully for register ["+registerId+"]");
         return attendanceLogResponse;
+    }
+
+    public void putInCache(List<AttendanceLog> attendanceLogs) {
+        log.info("putting {} Attendance Logs in cache", attendanceLogs.size());
+        attendanceLogRepository.putInCache(attendanceLogs);
+        log.info("successfully put Attendance Logs in cache");
     }
 }

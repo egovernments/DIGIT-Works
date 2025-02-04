@@ -1,0 +1,1 @@
+ALTER TABLE eg_wms_attendance_register RENAME COLUMN paymentStatus TO reviewStatus;

@@ -2,9 +2,9 @@ package org.egov.works.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
@@ -23,17 +23,15 @@ import static org.egov.works.util.ContractServiceConstants.*;
 @Component
 @Slf4j
 public class HRMSUtils {
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
+
+    private final ContractServiceConfiguration config;
 
     @Autowired
-    private ContractServiceConfiguration config;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private RestTemplate restTemplate;
+    public HRMSUtils(ServiceRequestRepository serviceRequestRepository, ContractServiceConfiguration config) {
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+    }
 
     public List<String> getRoleCodesByEmployeeId(RequestInfo requestInfo, String tenantId, List<String> employeeIds) {
         StringBuilder url = getHRMSURI(tenantId, employeeIds);

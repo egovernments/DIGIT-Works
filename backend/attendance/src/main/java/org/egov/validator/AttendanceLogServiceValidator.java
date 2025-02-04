@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
+import org.egov.util.HRMSUtil;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendeeSearchCriteria;
 import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
@@ -16,6 +18,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
 import java.util.*;
@@ -25,20 +28,27 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AttendanceLogServiceValidator {
 
-    @Autowired
-    private StaffRepository attendanceStaffRepository;
+    private final StaffRepository attendanceStaffRepository;
+
+    private final RegisterRepository attendanceRegisterRepository;
+
+    private final AttendeeRepository attendanceAttendeeRepository;
+
+    private final AttendanceLogRepository attendanceLogRepository;
+
+    private final AttendanceServiceConfiguration config;
+
+    private final IndividualServiceUtil individualServiceUtil;
 
     @Autowired
-    private RegisterRepository attendanceRegisterRepository;
-
-    @Autowired
-    private AttendeeRepository attendanceAttendeeRepository;
-
-    @Autowired
-    private AttendanceLogRepository attendanceLogRepository;
-
-    @Autowired
-    private AttendanceServiceConfiguration config;
+    public AttendanceLogServiceValidator(StaffRepository attendanceStaffRepository, RegisterRepository attendanceRegisterRepository, AttendeeRepository attendanceAttendeeRepository, AttendanceLogRepository attendanceLogRepository, AttendanceServiceConfiguration config, IndividualServiceUtil individualServiceUtil, AttendanceServiceConfiguration attendanceServiceConfiguration) {
+        this.attendanceStaffRepository = attendanceStaffRepository;
+        this.attendanceRegisterRepository = attendanceRegisterRepository;
+        this.attendanceAttendeeRepository = attendanceAttendeeRepository;
+        this.attendanceLogRepository = attendanceLogRepository;
+        this.config = config;
+        this.individualServiceUtil = individualServiceUtil;
+    }
 
     public void validateCreateAttendanceLogRequest(AttendanceLogRequest attendanceLogRequest) {
         log.info("Validate attendance log create request");
@@ -348,7 +358,12 @@ public class AttendanceLogServiceValidator {
 
         String userUUID = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
-        validateLoggedInUser(userUUID, registerId);
+        String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceLogRequest.getRequestInfo().getUserInfo().getId(), attendanceLogRequest.getRequestInfo(), attendanceLogRequest.getAttendance().get(0).getTenantId()).get(0).getId();
+
+        //Get the logged-in user roles
+        Set<String> userRoles = HRMSUtil.getUserRoleCodes(attendanceLogRequest.getRequestInfo());
+
+        validateLoggedInUser(individualId, registerId,userRoles);
         log.info("User ["+userUUID+"] validation is done for register ["+registerId+"]");
     }
 
@@ -359,19 +374,24 @@ public class AttendanceLogServiceValidator {
         // Verify given parameters
         validateSearchAttendanceLogParameters(requestInfoWrapper, searchCriteria);
 
-        // Fetch register for given Id
-        List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(searchCriteria.getRegisterId());
+        if(!StringUtils.isBlank(searchCriteria.getRegisterId())) {
+            // Fetch register for given Id
+            List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(searchCriteria.getRegisterId());
 
-        if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
-            throw new CustomException("INVALID_REGISTERID", "Register Not found ");
+            if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
+                throw new CustomException("INVALID_REGISTERID", "Register Not found ");
+            }
+
+            // Verify TenantId association with register
+            validateTenantIdAssociationWithRegisterId(attendanceRegisters.get(0), searchCriteria.getTenantId());
+
+            // Verify the Logged-in user is associated to the given register.
+            String individualId = individualServiceUtil.getIndividualDetailsFromUserId(requestInfoWrapper.getRequestInfo().getUserInfo().getId(), requestInfoWrapper.getRequestInfo(), searchCriteria.getTenantId()).get(0).getId();
+
+            //Get the logged-in user roles
+            Set<String> userRoles = HRMSUtil.getUserRoleCodes(requestInfoWrapper.getRequestInfo());
+            validateLoggedInUser(individualId, searchCriteria.getRegisterId(),userRoles);
         }
-
-        // Verify TenantId association with register
-        validateTenantIdAssociationWithRegisterId(attendanceRegisters.get(0), searchCriteria.getTenantId());
-
-        // Verify the Logged-in user is associated to the given register.
-        validateLoggedInUser(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid(), searchCriteria.getRegisterId());
-
         log.info("Attendance log search request validated successfully");
     }
 
@@ -389,9 +409,9 @@ public class AttendanceLogServiceValidator {
             log.error("Attendance log search, Tenant is mandatory");
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
-        if (StringUtils.isBlank(searchCriteria.getRegisterId())) {
-            log.error("Attendance log search, RegisterId is mandatory");
-            throw new CustomException("REGISTER_ID", "RegisterId is mandatory");
+        if (StringUtils.isBlank(searchCriteria.getRegisterId()) && CollectionUtils.isEmpty(searchCriteria.getClientReferenceId())) {
+            log.error("Attendance log search, RegisterId or ClientReferenceId is mandatory");
+            throw new CustomException("REGISTER_ID_OR_CLIENT_REFERENCE_ID", "RegisterId or ClientReferenceId is mandatory");
         }
 
         // Throw exception if required parameters are missing
@@ -406,7 +426,17 @@ public class AttendanceLogServiceValidator {
 
 
 
-    private void validateLoggedInUser(String userUUID, String registerId) {
+    private void validateLoggedInUser(String userUUID, String registerId, Set<String> userRoles) {
+        if(config.isLogOpenSearchEnabled()) {
+            log.debug("Open search is enabled, checking user roles");
+            //Get the roles enabled for open serach
+            Set<String> openSearchEnabledRoles  = HRMSUtil.getRegisterOpenSearchEnabledRoles(config.getRegisterOpenSearchEnabledRoles());
+            if(HRMSUtil.isUserEnabledForOpenSearch(userRoles,openSearchEnabledRoles)) {
+                log.info("User {} is enabled for open search with roles {}", userUUID, userRoles);
+                return;
+            }
+            log.debug("User {} is not enabled for open search, falling back to staff validation", userUUID);
+        }
         StaffSearchCriteria searchCriteria = StaffSearchCriteria
                 .builder()
                 .individualIds(Collections.singletonList(userUUID))

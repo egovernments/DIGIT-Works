@@ -1,19 +1,17 @@
 package org.egov.service;
 
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.RequestInfoWrapper;
-import digit.models.coremodels.SMSRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
-import org.egov.kafka.Producer;
+import org.egov.kafka.OrganizationProducer;
+import org.egov.repository.OrganisationRepository;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.util.HRMSUtils;
 import org.egov.util.OrganisationConstant;
-import org.egov.web.models.OrgRequest;
-import org.egov.web.models.Organisation;
-import org.egov.web.models.UserDetailResponse;
+import org.egov.web.models.*;
+import org.egov.works.services.common.models.estimate.SMSRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -31,20 +29,26 @@ import static org.egov.util.OrganisationConstant.ORGANISATION_UPDATE_LOCALIZATIO
 @Slf4j
 public class NotificationService {
 
-    @Autowired
-    private Producer producer;
+    private final OrganizationProducer organizationProducer;
+
+    private final ServiceRequestRepository repository;
+
+    private final RestTemplate restTemplate;
+
+    private final Configuration config;
+
+    private final OrganisationRepository organisationRepository;
+    private static final String PERSON_NAMES = "personNames";
+    private static final String ORG_NAME = "orgName";
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private Configuration config;
-
-    @Autowired
-    private HRMSUtils hrmsUtils;
+    public NotificationService(OrganizationProducer organizationProducer, ServiceRequestRepository repository, RestTemplate restTemplate, Configuration config, OrganisationRepository organisationRepository) {
+        this.organizationProducer = organizationProducer;
+        this.repository = repository;
+        this.restTemplate = restTemplate;
+        this.config = config;
+        this.organisationRepository = organisationRepository;
+    }
 
     /**
      * Sends notification by putting the sms content onto the core-sms topic
@@ -77,31 +81,27 @@ public class NotificationService {
             log.info("get orgName, ID, contactPerson, mobileNumber, cbo-url");
             Map<String, List<String>> orgDetails = getDetailsForSMS(organisation);
 
-            for (int i = 0; i < orgDetails.get("personNames").size(); i++) {
+            for (int i = 0; i < orgDetails.get(PERSON_NAMES).size(); i++) {
 
                 Map<String, String> smsDetails = new HashMap<>();
 
-                smsDetails.put("orgName", orgDetails.get("orgNames").get(0));
-                smsDetails.put("personName", orgDetails.get("personNames").get(i));
+                smsDetails.put(ORG_NAME, orgDetails.get("orgNames").get(0));
+                smsDetails.put("personName", orgDetails.get(PERSON_NAMES).get(i));
                 smsDetails.put("mobileNumber", orgDetails.get("mobileNumbers").get(i));
-                smsDetails.put("CBOUrl", orgDetails.get("CBOUrl").get(0));
                 smsDetails.put("orgId", organisation.getOrgNumber());
 
 
-                log.info("build Message For create Action for " + smsDetails.get("orgName"));
+                log.info("build Message For create Action for " + smsDetails.get(ORG_NAME));
                 String customizedMessage = buildMessageForCreateAction(smsDetails, message);
                 SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
 
                 log.info("push message for create Action");
-                producer.push(config.getSmsNotifTopic(), smsRequest);
+                organizationProducer.push(config.getSmsNotifTopic(), smsRequest);
             }
         }
     }
 
     private void pushNotificationForUpdate(OrgRequest request) {
-        List<Organisation> organisations = request.getOrganisations();
-        String modifiedByUuid=request.getOrganisations().get(0).getAuditDetails().getLastModifiedBy();
-
         log.info("get message template for update action");
         String message = getMessage(request, false);
 
@@ -110,56 +110,41 @@ public class NotificationService {
             return;
         }
 
-            //get orgName, ID, contactPerson, mobileNumber, cbo-url
-            log.info("get orgName, ID, contactPerson, mobileNumber, cbo-url");
-            Map<String, String> smsDetails = getSMSDetailsForUpdate(request);
+        for(Organisation organisation : request.getOrganisations()){
+            OrgSearchRequest orgSearchRequest = OrgSearchRequest.builder().requestInfo(request.getRequestInfo())
+                    .searchCriteria(OrgSearchCriteria.builder().orgNumber(organisation.getOrgNumber()).build()).build();
+            ContactDetails oldContactDetails = organisationRepository.getOrganisations(orgSearchRequest).get(0).getContactDetails().get(0);
 
-            log.info("build Message For update Action for " + smsDetails.get("orgName"));
+
+            Map<String, String> smsDetails = new HashMap<>();
+            smsDetails.put("orgNumber", organisation.getOrgNumber());
+            smsDetails.put("oldMobileNumber",oldContactDetails.getContactMobileNumber());
+            smsDetails.put("newMobileNumber", organisation.getContactDetails().get(0).getContactMobileNumber());
+            smsDetails.put(ORG_NAME,organisation.getName());
+            log.info("build Message For update Action for " + smsDetails.get(ORG_NAME));
             String customizedMessage = buildMessageForUpdateAction(smsDetails, message);
-            SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
+            SMSRequest smsRequestForOldMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("oldMobileNumber")).message(customizedMessage).build();
 
             log.info("push message for update Action");
-            producer.push(config.getSmsNotifTopic(), smsRequest);
+            organizationProducer.push(config.getSmsNotifTopic(), smsRequestForOldMobileNumber);
+            if(!organisation.getContactDetails().get(0).getContactMobileNumber().equalsIgnoreCase(oldContactDetails.getContactMobileNumber())){
+                SMSRequest smsRequestForNewMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("newMobileNumber")).message(customizedMessage).build();
+                organizationProducer.push(config.getSmsNotifTopic(), smsRequestForNewMobileNumber);
+            }
+        }
     }
 
     private Map<String, List<String>> getDetailsForSMS(Organisation organisation) {
 
         String orgName = organisation.getName();
-        List<String> personNames = organisation.getContactDetails().stream().map(contactDetails -> contactDetails.getContactName()).collect(Collectors.toList());
-        List<String> mobileNumbers = organisation.getContactDetails().stream().map(contactDetails -> contactDetails.getContactMobileNumber()).collect(Collectors.toList());
-        String CBOUrl = getShortnerURL(config.getCboUrlHost() + config.getCboUrlEndpoint());
+        List<String> personNames = organisation.getContactDetails().stream().map(ContactDetails::getContactName).collect(Collectors.toList());
+        List<String> mobileNumbers = organisation.getContactDetails().stream().map(ContactDetails::getContactMobileNumber).collect(Collectors.toList());
 
         Map<String, List<String>> smsDetails = new HashMap<>();
 
         smsDetails.put("orgNames", Collections.singletonList(orgName));
-        smsDetails.put("personNames", personNames);
+        smsDetails.put(PERSON_NAMES, personNames);
         smsDetails.put("mobileNumbers", mobileNumbers);
-        smsDetails.put("CBOUrl", Collections.singletonList(CBOUrl));
-
-
-        return smsDetails;
-    }
-
-    private Map<String, String> getSMSDetailsForUpdate(OrgRequest request) {
-
-        RequestInfo requestInfo= request.getRequestInfo();
-        Organisation organisation=request.getOrganisations().get(0);
-        String uuid=organisation.getAuditDetails().getLastModifiedBy();
-        String orgName = organisation.getName();
-        String tenantId=organisation.getTenantId();
-        String CBOUrl = getShortnerURL(config.getCboUrlHost() + config.getCboUrlEndpoint());
-
-
-        //get name, mobileNumber from hrms
-        log.info("get name, mobileNumber from hrms");
-        Map<String , String> employeeDetails=hrmsUtils.getEmployeeDetailsByUuid(requestInfo,tenantId,uuid);
-
-        Map<String, String> smsDetails = new HashMap<>();
-
-        smsDetails.put("orgNames", orgName);
-        smsDetails.put("personName", employeeDetails.get("userName"));
-        smsDetails.put("mobileNumber", employeeDetails.get("mobileNumber"));
-        smsDetails.put("CBOUrl", CBOUrl);
 
 
         return smsDetails;
@@ -185,11 +170,14 @@ public class NotificationService {
      * @return
      */
     public String getMessage(OrgRequest request, String msgCode) {
-        String rootTenantId = request.getOrganisations().get(0).getTenantId().split("\\.")[0];
+        String tenantId = request.getOrganisations().get(0).getTenantId();
         RequestInfo requestInfo = request.getRequestInfo();
-        Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(requestInfo, rootTenantId,
-                OrganisationConstant.ORGANISATION_NOTIFICATION_ENG_LOCALE_CODE, OrganisationConstant.ORGANISATION_MODULE_CODE);
-        return localizedMessageMap.get(OrganisationConstant.ORGANISATION_NOTIFICATION_ENG_LOCALE_CODE + "|" + rootTenantId).get(msgCode);
+        String locale = "en_IN";
+        if(requestInfo.getMsgId().split("\\|").length > 1)
+            locale = requestInfo.getMsgId().split("\\|")[1];
+        Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(requestInfo, tenantId,
+                locale, OrganisationConstant.ORGANISATION_MODULE_CODE);
+        return localizedMessageMap.get(locale + "|" + tenantId).get(msgCode);
     }
 
     /**
@@ -201,15 +189,13 @@ public class NotificationService {
      */
     public String buildMessageForCreateAction(Map<String, String> userDetailsForSMS, String message) {
         message = message.replace("{individualName}", userDetailsForSMS.get("personName"))
-                .replace("{organisationName}", userDetailsForSMS.get("orgName"))
-                .replace("{ID}", userDetailsForSMS.get("orgId"))
-                .replace("{cbo_portal_url}", userDetailsForSMS.get("CBOUrl"));
+                .replace("{organisationName}", userDetailsForSMS.get(ORG_NAME))
+                .replace("{ID}", userDetailsForSMS.get("orgId"));
         return message;
     }
 
     public String buildMessageForUpdateAction(Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{contactpersonname}", userDetailsForSMS.get("personName"))
-                .replace("{cbo_portal_url}", userDetailsForSMS.get("CBOUrl"));
+        message = message.replace("{orgID}", userDetailsForSMS.get("orgNumber"));
         return message;
     }
 
@@ -264,7 +250,7 @@ public class NotificationService {
         String res = restTemplate.postForObject(builder.toString(), body, String.class);
 
         if(StringUtils.isEmpty(res)){
-            log.error("URL_SHORTENING_ERROR","Unable to shorten url: "+actualURL); ;
+            log.error("URL_SHORTENING_ERROR","Unable to shorten url: "+actualURL);
             return actualURL;
         }
         else return res;

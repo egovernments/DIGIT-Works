@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
@@ -9,12 +9,19 @@ import EstimateSearchPlain from "./EstimateSearchPlain";
 import EstimateInbox from "./EstimateInbox";
 import ViewEstimate from "./ViewEstimate";
 import EstimateResponse from "./Estimates/CreateEstimate/EstimateResponse";
+import CreateDetailedEstimate from "./Estimates/CreateDetailedEstimate/CreateEstimate";
+import UpdateDetailedEstimate from "./Estimates/CreateDetailedEstimate/UpdateDetailedEstimate";
+import CreateRevisionDetailedEstimate from "./Estimates/CreateDetailedEstimate/CreateRevisionDetailedEstimate";
+import UpdateRevisionDetailedEstimate from "./Estimates/CreateDetailedEstimate/UpdateRevisionDetailedEstimate";
+
+import ViewDetailedEstimate from "./ViewDetailedEstimate";
+
 const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
 
     const search = useLocation().search;
     const fromScreen = new URLSearchParams(search).get("from") || null;
-    
+
     const crumbs = [
         {
             path: `/${window?.contextPath}/employee`,
@@ -26,11 +33,35 @@ const EstimateBreadCrumbs = ({ location }) => {
             content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_BILLING_MGMT")}` : t("WORKS_BILLING_MGMT"),
             show: location.pathname.includes("/expenditure/billinbox") ? true : false,
             isBack: fromScreen && true,
-        }, 
+        },
         {
             path: `/${window.contextPath}/employee/estimate/create-estimate`,
             content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_ESTIMATE")}` : t("WORKS_CREATE_ESTIMATE"),
             show: location.pathname.includes("/estimate/create-estimate") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/estimate/create-detailed-estimate`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_DETAILED_ESTIMATE")}` : t("WORKS_CREATE_DETAILED_ESTIMATE"),
+            show: location.pathname.includes("/estimate/create-detailed-estimate") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/estimate/update-detailed-estimate`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_UPDATE_DETAILED_ESTIMATE")}` : t("WORKS_UPDATE_DETAILED_ESTIMATE"),
+            show: location.pathname.includes("/estimate/update-detailed-estimate") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/estimate/create-revision-detailed-estimate`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_REVISION_DETAILED_ESTIMATE")}` : t("WORKS_CREATE_REVISION_DETAILED_ESTIMATE"),
+            show: location.pathname.includes("/estimate/create-revision-detailed-estimate") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            path: `/${window.contextPath}/employee/estimate/update-revision-detailed-estimate`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_UPDATE_REVISION_DETAILED_ESTIMATE")}` : t("WORKS_UPDATE_REVISION_DETAILED_ESTIMATE"),
+            show: location.pathname.includes("/estimate/update-revision-detailed-estimate") ? true : false,
             isBack: fromScreen && true,
         },
         {
@@ -49,6 +80,12 @@ const EstimateBreadCrumbs = ({ location }) => {
             // path: `/${window.contextPath}/employee/estimate/inbox`,
             content: fromScreen ? `${t(fromScreen)} / ${t("ESTIMATE_VIEW_ESTIMATE")}` : t("ESTIMATE_VIEW_ESTIMATE"),
             show: location.pathname.includes("/estimate/estimate-details") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            // path: `/${window.contextPath}/employee/estimate/inbox`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("ESTIMATE_VIEW_ESTIMATE")}` : t("ESTIMATE_VIEW_ESTIMATE"),
+            show: location.pathname.includes("/estimate/view-estimate") ? true : false,
             isBack: fromScreen && true,
         },
         {
@@ -92,11 +129,11 @@ const App = ({ path }) => {
     }
 
     // remove session form data if user navigates away from the estimate create screen
-    useEffect(()=>{
+    useEffect(() => {
         if (!window.location.href.includes("create-estimate") && sessionFormData && Object.keys(sessionFormData) != 0) {
-        clearSessionFormData();
+            clearSessionFormData();
         }
-    },[location]);
+    }, [location]);
 
     return (
         <Switch>
@@ -105,13 +142,19 @@ const App = ({ path }) => {
                     <div style={getBreadCrumbStyles(window.location.href)}>
                         <EstimateBreadCrumbs location={location} />
                     </div>
-                    <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }}  />} />
+                    <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/create-detailed-estimate`} component={() => <CreateDetailedEstimate {...{ path }} />} />
                     <PrivateRoute path={`${path}/search-estimate`} component={() => <EstimateSearch {...{ path }} />} />
                     <PrivateRoute path={`${path}/search-estimate-plain`} component={() => <EstimateSearchPlain {...{ path }} />} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <EstimateInbox {...{ path }} />} />
-                    <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewDetailedEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/update-detailed-estimate`} component={() => <UpdateDetailedEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/create-revision-detailed-estimate`} component={() => <CreateRevisionDetailedEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/update-revision-detailed-estimate`} component={() => <UpdateRevisionDetailedEstimate {...{ path }} />} />
+
                     <PrivateRoute path={`${path}/response`} component={() => <EstimateResponse {...{ path }} />} />
-                    
+
                 </div>
             </React.Fragment>
         </Switch>

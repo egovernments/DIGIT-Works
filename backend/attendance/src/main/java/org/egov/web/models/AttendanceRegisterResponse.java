@@ -5,15 +5,16 @@ import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * AttendanceRegisterResponse
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T14:44:21.051+05:30")
 
 @Getter
 @Setter
@@ -27,6 +28,12 @@ public class AttendanceRegisterResponse {
     @JsonProperty("attendanceRegister")
     @Valid
     private List<AttendanceRegister> attendanceRegister = null;
+
+    @JsonProperty("totalCount")
+    private long totalCount = 0;
+
+    @JsonProperty("statusCount")
+    private Map<String, Long> statusCount = new HashMap<>();
 
 
     public AttendanceRegisterResponse addAttendanceRegisterItem(AttendanceRegister attendanceRegisterItem) {

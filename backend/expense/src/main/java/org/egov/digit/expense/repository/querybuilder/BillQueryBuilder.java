@@ -1,5 +1,7 @@
 package org.egov.digit.expense.repository.querybuilder;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +12,7 @@ import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.Pagination;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -17,29 +20,32 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class BillQueryBuilder {
 	
-	@Autowired
-	private Configuration configs;
-
-   
-    private static String WRAPPER_QUERY = "SELECT * FROM " +
-            "(SELECT *, DENSE_RANK() OVER (ORDER BY b_id, {sortBy} {orderBy}) offset_ FROM " +
-            "({})" +
-            " result) result_offset " +
-            "WHERE offset_ > ? AND offset_ <= ?";
+	private final Configuration configs;
 
 
-    public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
+    @Autowired
+    public BillQueryBuilder(Configuration configs) {
+        this.configs = configs;
+    }
+
+
+    public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList, boolean isCountRequired,
+                               boolean isValidationSearch) {
     	
         BillCriteria criteria=billSearchRequest.getBillCriteria();
-        StringBuilder query = new StringBuilder(Constants.BILL_QUERY);
+        StringBuilder query = null;
+
+        if(isCountRequired) {
+            query = new StringBuilder(Constants.BILL_COUNT_QUERY);
+        } else {
+            query = new StringBuilder(Constants.BILL_QUERY);
+        }
 
         Set<String> billNumbers = criteria.getBillNumbers();
         if(!CollectionUtils.isEmpty(billNumbers)) {
-            if (billNumbers != null && !billNumbers.isEmpty()) {
-                addClauseIfRequired(query, preparedStmtList);
-                query.append(" bill.billNumber IN (").append(createQuery(billNumbers)).append(")");
-                addToPreparedStatement(preparedStmtList, billNumbers);
-            }
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" bill.billNumber IN (").append(createQuery(billNumbers)).append(")");
+            addToPreparedStatement(preparedStmtList, billNumbers);
         }
 
         Set<String> ids = criteria.getIds();
@@ -48,12 +54,53 @@ public class BillQueryBuilder {
             query.append(" bill.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
+        /* If search is coming from validation we are using equals query as bills can be generated for multiple levels
+         * and using like query will throw an error if bill is already generated for a boundary level below the current level
+         */
+        if (configs.isHealthContextEnabled() && !isValidationSearch) {
+            Set<String> referenceIds = criteria.getReferenceIds();
+            if (!CollectionUtils.isEmpty(referenceIds)) {
+                addClauseIfRequired(query, preparedStmtList);
+                List<String> likeClauses = new ArrayList<>();
+                for (String refId : referenceIds) {
+                    likeClauses.add(" bill.referenceid LIKE ?");
+                    preparedStmtList.add("%" + refId + "%");  // Adding % for partial match
+                }
+                // Wrap the entire condition in brackets
+                query.append(" (").append(String.join(" OR ", likeClauses)).append(") ");
+            }
+        } else {
+            Set<String> referenceIds = criteria.getReferenceIds();
+            if (!CollectionUtils.isEmpty(referenceIds)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" bill.referenceid IN (").append(createQuery(referenceIds)).append(" )");
+                addToPreparedStatement(preparedStmtList, referenceIds);
+            }
+        }
 
-        Set<String> referenceIds = criteria.getReferenceIds();
-        if (!CollectionUtils.isEmpty(referenceIds)) {
+        if (criteria.getFromDate() != null) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.referenceid IN (").append(createQuery(referenceIds)).append(")");
-            addToPreparedStatement(preparedStmtList, referenceIds);
+
+            //If user does not specify toDate, take today's date as toDate by default.
+            if (criteria.getToDate() == null) {
+                criteria.setToDate(Instant.now().toEpochMilli());
+            }
+
+            query.append(" bill.billdate BETWEEN ? AND ? ");
+            preparedStmtList.add(criteria.getFromDate());
+            preparedStmtList.add(criteria.getToDate());
+
+        } else {
+            //if only toDate is provided as parameter without fromDate parameter, throw an exception.
+            if (criteria.getToDate() != null) {
+                throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify toDate without a fromDate");
+            }
+        }
+
+        if (StringUtils.isNotBlank(criteria.getLocalityCode())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" bill.localitycode = ? ");
+            preparedStmtList.add(criteria.getLocalityCode());
         }
 
         if (StringUtils.isNotBlank(criteria.getTenantId())) {
@@ -79,12 +126,22 @@ public class BillQueryBuilder {
             query.append(" bill.status != ? ");
             preparedStmtList.add(criteria.getStatusNot());
         }
-		return addPaginationWrapper(query, billSearchRequest.getPagination(), preparedStmtList);
+        if (criteria.getIsPaymentStatusNull() != null && criteria.getIsPaymentStatusNull().equals(true)) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" bill.paymentstatus IS NULL");
+
+        }
+		return isCountRequired? query.toString() : addPaginationWrapper(query, billSearchRequest.getPagination(),
+                preparedStmtList);
     }
 
     private String addOrderByClause(Pagination pagination) {
 
-    	String paginationWrapper = WRAPPER_QUERY;
+        String paginationWrapper = "SELECT * FROM " +
+                "(SELECT *, DENSE_RANK() OVER (ORDER BY b_id, {sortBy} {orderBy}) offset_ FROM " +
+                "({})" +
+                " result) result_offset " +
+                "WHERE offset_ > ? AND offset_ <= ?";
 
         if ( !StringUtils.isEmpty(pagination.getSortBy()) && Constants.SORTABLE_BILL_COLUMNS.contains(pagination.getSortBy())) {
             paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
@@ -139,5 +196,13 @@ public class BillQueryBuilder {
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
         preparedStmtList.addAll(ids);
+    }
+
+    public String getSearchCountQueryString(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
+        String query = getBillQuery(billSearchRequest, preparedStmtList,true, false);
+        if (query != null)
+            return Constants.COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
     }
 }

@@ -1,0 +1,12 @@
+{
+  "serviceId": "COR",
+  "errorMsg": null,
+  "data": [
+    {
+      "jitCorBillNo": "COR/MUKTA2399",
+      "jitCorBillDate": "2023-03-30 16:26:42",
+      "successCode": "0",
+      "sucessDescrp": "Jit Correction Bill is received successfully ,Forwarded to Treasury officer to generate Return adjust Bill "
+    }
+  ]
+}

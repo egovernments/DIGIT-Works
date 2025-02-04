@@ -1,20 +1,19 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
+import org.egov.common.contract.models.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * This computed data will also be stored as part of the muster roll db.
  */
 @ApiModel(description = "This computed data will also be stored as part of the muster roll db.")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
 
 @Getter
 @Setter

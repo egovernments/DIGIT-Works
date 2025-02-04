@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.TimeZone;
 
 @Component
@@ -20,6 +21,10 @@ public class EstimateServiceConfiguration {
 
     @Value("${app.timezone}")
     private String timeZone;
+
+    @Value("${is.caching.enabled}")
+    private Boolean isCachingEnabled;
+
     //Idgen Config
     @Value("${egov.idgen.host}")
     private String idGenHost;
@@ -30,6 +35,22 @@ public class EstimateServiceConfiguration {
     private String mdmsHost;
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+
+    //MDMS V2
+    @Value("${egov.mdms.host.v2}")
+    private String mdmsHostV2;
+    @Value("${egov.mdms.search.endpoint.v2}")
+    private String mdmsEndPointV2;
+
+    //Schema Code
+    @Value("${estimate.sorSearch.schemacode}")
+    private String sorSearchSchemaCode;
+
+    @Value("${estimate.rateSearch.schemacode}")
+    private  String rateSearchSchenaCode;
+
+    @Value("${estimate.sorSearch.moduleName}")
+    private String sorSearchModuleName;
     //Topic
     @Value("${estimate.kafka.create.topic}")
     private String saveEstimateTopic;
@@ -44,6 +65,10 @@ public class EstimateServiceConfiguration {
     private String idgenEstimateNumberName;
     @Value("${egov.idgen.estimate.number.format}")
     private String idgenEstimateNumberFormat;
+    @Value("${egov.idgen.revisionEstimate.number.name}")
+    private String idgenRevisionEstimateNumberName;
+    @Value("${egov.idgen.revisionEstimate.number.format}")
+    private String idgenRevisionEstimateNumberFormat;
 
     //search config
     @Value("${estimate.default.offset}")
@@ -91,6 +116,19 @@ public class EstimateServiceConfiguration {
     @Value("${egov.location.endpoint}")
     private String locationEndpoint;
 
+    // Contracts
+    @Value("${egov.contract.host}")
+    private String contractHost;
+
+    @Value("${egov.contract.search.endpoint}")
+    private String contractSearchEndpoint;
+
+    //Measurement Book
+    @Value("${egov.measurementService.host}")
+    private String measurementBookHost;
+    @Value("${egov.measurementService.search.endpoint}")
+    private String measurementBookSearchEndpoint;
+
     //Notification
     @Value("${notification.sms.enabled}")
     private Boolean isSMSEnabled;
@@ -111,6 +149,15 @@ public class EstimateServiceConfiguration {
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
+    // RevisionEstimate
+    @Value("${estimate.revisionEstimate.buisnessService}")
+    private String revisionEstimateBusinessService;
+
+    @Value("${estimate.revisionEstimate.measurementValidation}")
+    private  Boolean revisionEstimateMeasurementValidation;
+
+    @Value("${estimate.revisionEstimate.maxLimit}")
+    private BigDecimal revisionEstimateMaxLimit;
 
     @PostConstruct
     public void initialize() {

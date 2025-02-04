@@ -15,19 +15,22 @@ import java.util.List;
 @Repository
 @Slf4j
 public class AmountBreakupRepository {
-    @Autowired
-    private AmountBreakupRowMapper rowMapper;
+    private final AmountBreakupRowMapper rowMapper;
+
+    private final AmountBreakupQueryBuilder queryBuilder;
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private AmountBreakupQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public AmountBreakupRepository(AmountBreakupRowMapper rowMapper, AmountBreakupQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+        this.rowMapper = rowMapper;
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public List<AmountBreakup> getAmountBreakups(ContractCriteria contractCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getAmountBreakupSearchQuery(contractCriteria, preparedStmtList);
-        List<AmountBreakup> amountBreakups = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        return amountBreakups;
+        return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
     }
 }

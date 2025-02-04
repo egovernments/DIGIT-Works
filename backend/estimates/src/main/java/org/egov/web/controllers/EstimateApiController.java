@@ -2,8 +2,8 @@ package org.egov.web.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.EstimateService;
 import org.egov.util.ResponseInfoCreator;
@@ -14,28 +14,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-12-30T13:05:25.880+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-12-30T13:05:25.880+05:30")
 
 @Controller
 @RequestMapping("/v1")
 public class EstimateApiController {
 
-    @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
     private HttpServletRequest request;
 
-    @Autowired
     private ResponseInfoCreator responseInfoCreator;
 
-    @Autowired
     private EstimateService estimateService;
+
+    @Autowired
+    public EstimateApiController(ObjectMapper objectMapper, HttpServletRequest request, ResponseInfoCreator responseInfoCreator, EstimateService estimateService) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+        this.responseInfoCreator = responseInfoCreator;
+        this.estimateService = estimateService;
+    }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<EstimateResponse> createEstimate(@ApiParam(value = "Request object to create estimate in the system", required = true) @Valid @RequestBody EstimateRequest body, @ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType) {

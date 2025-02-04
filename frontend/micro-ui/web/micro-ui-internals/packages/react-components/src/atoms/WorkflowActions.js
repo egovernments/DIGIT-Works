@@ -10,7 +10,7 @@ import { useHistory } from "react-router-dom";
 const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback ,callback}) => {
   
   const history = useHistory()
-  const { estimateNumber } = Digit.Hooks.useQueryParams();
+  const { estimateNumber, mbNumber, workOrderNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber 
 
   const { mutate } = Digit.Hooks.works.useUpdateCustom(url)
@@ -87,6 +87,8 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
     const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")
     const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")
+    const bsRevisedWO = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("revisedWO");
+    const bsMeasurement = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("measurement");
     
     
     setDisplayMenu(false)
@@ -94,9 +96,9 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
 
     //here check if actin is edit then do a history.push acc to the businessServ and action
     //send appropriate states over
-    
+
     if(bsEstimate === businessService && action?.action === "RE-SUBMIT"){
-        history.push(`/${window?.contextPath}/employee/estimate/create-estimate?tenantId=${tenantId}&projectNumber=${editApplicationNumber}&estimateNumber=${applicationDetails?.estimateNumber}&isEdit=true`);
+       editCallback()
         return 
     }
 
@@ -111,6 +113,16 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
 
     if(bsPurchaseBill === businessService && action?.action==="RE-SUBMIT"){
       history.push(`/${window?.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&billNumber=${editApplicationNumber}`);
+      return 
+    }
+
+    if(bsMeasurement === businessService && action?.action?.includes("RE-SUBMIT")){
+      history.push(`/${window?.contextPath}/employee/measurement/update?tenantId=${tenantId}&workOrderNumber=${workOrderNumber}&mbNumber=${mbNumber}`);
+      return 
+    }
+
+    if(bsRevisedWO === businessService && action?.action === "EDIT"){
+      editCallback()
       return 
     }
     //here we can add cases of toast messages,edit application and more...
@@ -167,6 +179,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
               t={t}
               onSelect={onActionSelect}
               style={MenuStyle}
+              actionStyle={{height:"auto",width:"100%"}}
             />
           ) : null}
           <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />

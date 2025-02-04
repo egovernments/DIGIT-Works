@@ -62,7 +62,7 @@
 
   th,
   td {
-    text-align: right;
+    text-align: left;
     border-bottom: 1px solid #b1b4b6;
     padding: 15px 10px;
   }
@@ -419,4 +419,9 @@
       padding: 20px 18px;
     }
   }
+}
+
+.measure-table-header {
+  float: right;
+  margin-top: -2rem;
 }
