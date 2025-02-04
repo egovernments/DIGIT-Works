@@ -1,5 +1,6 @@
 package org.egov.digit.expense.calculator.web.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
 import org.egov.digit.expense.calculator.web.models.*;
+import org.egov.mdms.model.MdmsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -84,6 +86,12 @@ public class WorksCalculatorApiController {
 		BillMapperSearchResponse billResponse= BillMapperSearchResponse.builder().responseInfo(responseInfo).billMappers(bills)
 				.pagination(calculatorSearchRequest.getPagination()).build();
 		return new ResponseEntity<BillMapperSearchResponse>(billResponse, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/v1/_searchMdms", method = RequestMethod.GET)
+	public ResponseEntity<MdmsResponse> searchMdms() {
+		//TODO further enhance with mdms integeration
+		return new ResponseEntity<MdmsResponse>(MdmsResponse.builder().mdmsRes(new HashMap<>()).build(), HttpStatus.OK);
 	}
 
 }
