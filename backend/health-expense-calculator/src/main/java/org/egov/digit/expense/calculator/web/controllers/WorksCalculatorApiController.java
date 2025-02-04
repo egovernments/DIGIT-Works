@@ -88,7 +88,7 @@ public class WorksCalculatorApiController {
 		return new ResponseEntity<BillMapperSearchResponse>(billResponse, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/v1/_searchMdms", method = RequestMethod.GET)
+	@RequestMapping(value = "/v1/_searchMdms", method = RequestMethod.POST)
 	public ResponseEntity<MdmsResponse> searchMdms() {
 		//TODO further enhance with mdms integeration
 		return new ResponseEntity<MdmsResponse>(MdmsResponse.builder().mdmsRes(new HashMap<>()).build(), HttpStatus.OK);
