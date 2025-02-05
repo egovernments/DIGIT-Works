@@ -375,6 +375,14 @@ public class ExpenseCalculatorService {
                 } else {
                     log.info("Bill posting failed for bill " + bill.getBusinessService() + " reference ID " + bill.getReferenceId());
                 }
+                ReportGenerationTrigger reportGenerationTrigger = ReportGenerationTrigger.builder()
+                        .requestInfo(requestInfo)
+                        .billId(billResponse.getBills().get(0).getId())
+                        .tenantId(billResponse.getBills().get(0).getTenantId())
+                        .createdTime(System.currentTimeMillis())
+                        .numberOfBillDetails(billResponse.getBills().get(0).getBillDetails().size())
+                        .build();
+                expenseCalculatorProducer.push(config.getReportGenerationTriggerTopic(), reportGenerationTrigger);
             }
             log.info("Processing bill completed; time taken :: " + (System.currentTimeMillis() - startTime)/1000 + " seconds");
             return submittedBills;
