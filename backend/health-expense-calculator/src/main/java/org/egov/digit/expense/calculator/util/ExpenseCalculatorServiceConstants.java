@@ -77,4 +77,5 @@ public class ExpenseCalculatorServiceConstants {
     public static final String INITIATED_STATUS = "INITIATED";
     public static final String INPROGRESS_STATUS = "INPROGRESS";
     public static final String FAILED_STATUS = "FAILED";
+    public static final String DISTRICT_BOUNDARYTYPE = "District Sanitaire";
 }
