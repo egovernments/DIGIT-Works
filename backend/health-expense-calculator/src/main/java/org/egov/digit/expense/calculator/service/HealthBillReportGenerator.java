@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.BillReportConstraints.*;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.WF_SUBMIT_ACTION_CONSTANT;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
 
 @Slf4j
 @Service
@@ -121,7 +121,7 @@ public class HealthBillReportGenerator {
 
         ReportBill reportBill = ReportBill.builder()
                 .totalAmount(billRequest.getBill().getTotalAmount())
-                .reportTitle(config.getReportHeaderTitle())
+                .reportTitle(billRequest.getBill().getLocalityCode())
                 .createdBy(createdBy)
                 .createdTime(System.currentTimeMillis())
                 .campaignName(null)
@@ -390,6 +390,13 @@ public class HealthBillReportGenerator {
                 return;
             }
             reportBill.setCampaignName(localization.getOrDefault(reportBill.getCampaignName(), reportBill.getCampaignName()));
+            String campaignName = reportBill.getCampaignName();
+            String boundaryCode = reportBill.getReportTitle();
+            String localizedBoundary = localization.getOrDefault(boundaryCode, boundaryCode);
+            String startingConstant = localization.getOrDefault(REPORT_FIRST_CONSTANT,REPORT_FIRST_CONSTANT);
+            String middleConstant = localization.getOrDefault(REPORT_MIDDLE_CONSTANT, REPORT_MIDDLE_CONSTANT);
+            String newReportTitle = startingConstant + campaignName + middleConstant + localizedBoundary;
+            reportBill.setReportTitle(newReportTitle);
             for (ReportBillDetail reportBillDetail : reportBill.getReportBillDetails()) {
                 reportBillDetail.setLocality(localization.getOrDefault(reportBillDetail.getLocality(), reportBillDetail.getLocality()));
                 reportBillDetail.setRole(localization.getOrDefault(reportBillDetail.getRole(), reportBillDetail.getRole()));
