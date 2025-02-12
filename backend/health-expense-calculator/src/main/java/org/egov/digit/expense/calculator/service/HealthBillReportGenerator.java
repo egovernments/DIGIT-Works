@@ -311,14 +311,6 @@ public class HealthBillReportGenerator {
                     }
                 }
             }
-//            if (individual.getIdentifiers() != null) {
-//                for (Identifier identifier : individual.getIdentifiers()) {
-//                    if (identifier != null && identifier.getIsDeleted() != null && !identifier.getIsDeleted() && identifier.getIdentifierType().equals(config.getReportBeneficiaryIdentifierType())) {
-//                        reportBillDetail.setIdNumber(identifier.getIdentifierId());
-//                        break;
-//                    }
-//                }
-//            }
         }
         BigDecimal totalNumberOfDays = BigDecimal.ZERO;
         if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId()) && individualMusterAttendanceMap.get(billDetail.getReferenceId()).containsKey(individual.getId())) {
