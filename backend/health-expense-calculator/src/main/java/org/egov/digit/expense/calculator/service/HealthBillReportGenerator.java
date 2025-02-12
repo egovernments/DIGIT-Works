@@ -13,6 +13,8 @@ import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.digit.expense.calculator.web.models.report.BillReportRequest;
 import org.egov.digit.expense.calculator.web.models.report.ReportBill;
 import org.egov.digit.expense.calculator.web.models.report.ReportBillDetail;
+import org.egov.digit.expense.calculator.web.models.report.ReportGenerationRequest;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.BillReportConstraints.*;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.NO_OF_BILL_DETAILS;
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.WF_SUBMIT_ACTION_CONSTANT;
 
 @Slf4j
@@ -73,12 +76,49 @@ public class HealthBillReportGenerator {
         return true;
     }
 
+    public Bill generateReportApi(ReportGenerationRequest reportGenerationRequest) {
+        List<Bill> bills = expenseCalculatorUtil.fetchBillsWithBillIds(reportGenerationRequest.getRequestInfo(),
+                reportGenerationRequest.getTenantId(), Collections.singletonList(reportGenerationRequest.getBillId()));
+        // Throwing error if billId not present in expense DB
+        if (bills.isEmpty()) {
+            throw new CustomException("BILL_NOT_FOUND", "Bill not found in database. If it is generated successfully, " +
+                    "wait for bill to be persisted");
+        }
+        Bill bill = bills.get(0);
+        /* If additional details is null, we don't have data of number of bill details, but assuming the api will be hit
+        * periodically after bill generation, so allowing to create report.*/
+        if (bill.getAdditionalDetails() == null) {
+            log.warn("Total number of bill details not present in additional details. " +
+                    "Generating report for number of bill details currently present in db");
+        } else {
+            Map<String, Object> additionalDetailsMap = (Map<String, Object>) bill.getAdditionalDetails();
+            Object noOfBillDetailsObject = additionalDetailsMap.get(NO_OF_BILL_DETAILS);
+            /* If noOfBillDetailsObject is null, we don't have data of number of bill details, but assuming the api will be hit
+             * periodically after bill generation so, allowing to create report.*/
+            if (noOfBillDetailsObject == null) {
+                log.warn("Total number of bill details not present in additional details. " +
+                        "Generating report for number of bill details currently present in db");
+            } else if (Integer.parseInt((String)noOfBillDetailsObject) > bill.getBillDetails().size()) {
+                throw new CustomException("ALL_BILL_DETAILS_NOT_PERSISTED",
+                        Integer.parseInt((String)noOfBillDetailsObject) - bill.getBillDetails().size() +
+                                " billDetails are yet to be persisted. Please wait for sometime and try again");
+            }
+        }
+
+        BillRequest billRequest = BillRequest.builder()
+                .requestInfo(reportGenerationRequest.getRequestInfo())
+                .bill(bill)
+                .build();
+
+        return generateHealthBillReportRequest(billRequest);
+    }
+
     /**
      * Generates a report for the given bill
      * @param billRequest - contains the bill id and tenant id
      * @return a BillReportRequest object which contains the report data
      */
-    public BillReportRequest generateHealthBillReportRequest(BillRequest billRequest) {
+    public Bill generateHealthBillReportRequest(BillRequest billRequest) {
         try {
             log.info("Generating report for bill id: " + billRequest.getBill().getId());
             // Update the report status to initiated
@@ -96,7 +136,7 @@ public class HealthBillReportGenerator {
             log.info("Excel FileStoreId: " + excelFileStoreId);
             // Update the report status to completed
             updateReportStatus(billRequest, REPORT_STATUS_COMPLETED, excelFileStoreId, pdfFileStoreId, null);
-            return billReportRequest;
+            return billRequest.getBill();
         } catch (Exception e) {
             log.error("Error while generating report", e);
             updateReportStatus(billRequest, REPORT_STATUS_FAILED, null, null, e.getMessage());

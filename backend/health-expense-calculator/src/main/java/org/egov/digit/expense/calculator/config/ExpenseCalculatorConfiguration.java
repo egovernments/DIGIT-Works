@@ -297,4 +297,7 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${report.generation.retry.trigger.topic}")
 	private String reportGenerationRetryTriggerTopic;
 
+	@Value("${report.generation.auto.enabled}")
+	private boolean reportGenerationAuto;
+
 }

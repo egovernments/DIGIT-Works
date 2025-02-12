@@ -12,6 +12,7 @@ import org.egov.digit.expense.calculator.util.BillExcelGenerate;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
 import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.digit.expense.calculator.web.models.report.BillReportRequest;
+import org.egov.digit.expense.calculator.web.models.report.ReportGenerationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Collections;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-11T13:19:59.852+05:30[Asia/Kolkata]")
 @Controller
@@ -41,10 +44,14 @@ public class HealthReportApiController {
 
 	// This is used to test generate report TODO: Delete after testing
 	@RequestMapping(value = "/_generate", method = RequestMethod.POST)
-	public ResponseEntity<BillReportRequest> generateReport(
-			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody BillRequest billRequest) {
-		BillReportRequest billReportRequest = healthBillReportGenerator.generateHealthBillReportRequest(billRequest);
-		return new ResponseEntity<BillReportRequest>(billReportRequest, HttpStatus.OK);
+	public ResponseEntity<BillResponse> generateReport(
+			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody ReportGenerationRequest reportGenerationRequest) {
+		Bill bill = healthBillReportGenerator.generateReportApi(reportGenerationRequest);
+		BillResponse billResponse = BillResponse.builder()
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(reportGenerationRequest.getRequestInfo(), true))
+				.bills(Collections.singletonList(bill))
+				.build();
+		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.OK);
 	}
 	/*
 	// Created for testing excel generate TODO: Delete after testing

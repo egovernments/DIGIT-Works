@@ -77,4 +77,6 @@ public class ExpenseCalculatorServiceConstants {
     public static final String INITIATED_STATUS = "INITIATED";
     public static final String INPROGRESS_STATUS = "INPROGRESS";
     public static final String FAILED_STATUS = "FAILED";
+    public static final String NO_OF_REGISTERS = "noOfRegisters";
+    public static final String NO_OF_BILL_DETAILS = "noOfBillDetails";
 }
