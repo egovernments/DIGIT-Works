@@ -86,6 +86,9 @@ public class BillService {
 			bill.setStatus(Status.ACTIVE);
 		}
 		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
+			/* For bills with high number of bill details, break down of billDetails into batches is done.
+			 Every bill will have a batch of billDetails; it will not create a insert error because of
+			 ON CONFLICT DO NOTHING change in persister config */
 			produceBillsBatchWise(billRequest, config.getBillCreateTopic());
 		} else {
 			expenseProducer.push(config.getBillCreateTopic(), billRequest);
@@ -125,6 +128,8 @@ public class BillService {
 		}
 
 		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
+			/* For bills with high number of bill details, break down of billDetails into batches is done.
+			 Every bill will have a batch of billDetails */
 			produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
 		} else {
 			expenseProducer.push(config.getBillUpdateTopic(), billRequest);
