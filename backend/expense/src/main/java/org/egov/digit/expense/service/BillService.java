@@ -42,10 +42,9 @@ public class BillService {
 	private final ResponseInfoFactory responseInfoFactory;
 
 	private final NotificationService notificationService;
-	private final Configuration configs;
 
 	@Autowired
-	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService, Configuration configs) {
+	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService) {
 		this.expenseProducer = expenseProducer;
 		this.config = config;
 		this.validator = validator;
@@ -54,7 +53,6 @@ public class BillService {
 		this.enrichmentUtil = enrichmentUtil;
 		this.responseInfoFactory = responseInfoFactory;
 		this.notificationService = notificationService;
-        this.configs = configs;
     }
 
 	/**
@@ -87,8 +85,9 @@ public class BillService {
 		}
 		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
 			/* For bills with high number of bill details, break down of billDetails into batches is done.
-			 Every bill will have a batch of billDetails; it will not create a insert error because of
-			 ON CONFLICT DO NOTHING change in persister config */
+			* Every bill will have a batch of billDetails; it will not create a insert error because of
+			* ON CONFLICT DO NOTHING change in persister config */
+			// produce full bill to different topic if indexing is required
 			produceBillsBatchWise(billRequest, config.getBillCreateTopic());
 		} else {
 			expenseProducer.push(config.getBillCreateTopic(), billRequest);
@@ -202,12 +201,13 @@ public class BillService {
 		Bill bill = billRequest.getBill();
 		List<BillDetail> allBillDetails = new ArrayList<>(bill.getBillDetails());
 		// Breakdown the billDetails into batches and push to kafka
-		for (int i = 0; i < allBillDetails.size(); i += configs.getBillBreakdownSize()) {
+		for (int i = 0; i < allBillDetails.size(); i += config.getBillBreakdownSize()) {
 			// Breakdown bill details into batches and push to kafka topic
-			List<BillDetail> currBatchBillDetails = allBillDetails.subList(i, Math.min(i + configs.getBillBreakdownSize(), allBillDetails.size()));
+			List<BillDetail> currBatchBillDetails = allBillDetails.subList(i, Math.min(i + config.getBillBreakdownSize(), allBillDetails.size()));
 			bill.setBillDetails(currBatchBillDetails);
 			expenseProducer.push(topic, billRequest);
 		}
+		bill.setBillDetails(allBillDetails);
 		log.info("All bill details pushed to kafka");
 	}
 }
