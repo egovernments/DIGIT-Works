@@ -10,10 +10,6 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
-
-/**
- * BillCriteria
- */
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 @Data
@@ -23,11 +19,12 @@ import org.springframework.validation.annotation.Validated;
 public class ReportGenerationTrigger {
 
     @JsonProperty("RequestInfo")
+    @NotNull(message="RequestInfo must not be null")
     private RequestInfo requestInfo;
 
     @JsonProperty("tenantId")
     @NotNull
-    @Size(min = 2, max = 64)
+    @Size(min = 2, max = 64, message="Tenant ID must be between 2 and 64 characters")
     private String tenantId;
 
     @JsonProperty("billId")
