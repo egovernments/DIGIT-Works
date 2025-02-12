@@ -290,6 +290,7 @@ public class HealthBillReportGenerator {
         if (individual != null) {
             reportBillDetail.setIndividualName(individual.getName().getGivenName());
             reportBillDetail.setMobileNumber(individual.getMobileNumber());
+            reportBillDetail.setIdNumber(individual.getName().getFamilyName());
 
             if (individual.getSkills() != null) {
                 for (Skill skill : individual.getSkills()) {
@@ -310,14 +311,14 @@ public class HealthBillReportGenerator {
                     }
                 }
             }
-            if (individual.getIdentifiers() != null) {
-                for (Identifier identifier : individual.getIdentifiers()) {
-                    if (identifier != null && identifier.getIsDeleted() != null && !identifier.getIsDeleted() && identifier.getIdentifierType().equals(config.getReportBeneficiaryIdentifierType())) {
-                        reportBillDetail.setIdNumber(identifier.getIdentifierId());
-                        break;
-                    }
-                }
-            }
+//            if (individual.getIdentifiers() != null) {
+//                for (Identifier identifier : individual.getIdentifiers()) {
+//                    if (identifier != null && identifier.getIsDeleted() != null && !identifier.getIsDeleted() && identifier.getIdentifierType().equals(config.getReportBeneficiaryIdentifierType())) {
+//                        reportBillDetail.setIdNumber(identifier.getIdentifierId());
+//                        break;
+//                    }
+//                }
+//            }
         }
         BigDecimal totalNumberOfDays = BigDecimal.ZERO;
         if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId()) && individualMusterAttendanceMap.get(billDetail.getReferenceId()).containsKey(individual.getId())) {
