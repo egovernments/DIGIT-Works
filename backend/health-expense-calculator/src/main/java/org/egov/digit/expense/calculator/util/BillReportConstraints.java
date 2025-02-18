@@ -10,6 +10,7 @@ public class BillReportConstraints {
     public static final String REPORT_STATUS_INITIATED = "INITIATED";
     public static final String REPORT_STATUS_COMPLETED = "COMPLETED";
     public static final String REPORT_STATUS_FAILED = "FAILED";
+    public static final String EVENT_NAME = "eventName";
 
     public static final String FOOD_HEAD_CODE = "FOOD";
     public static final String TRANSPORT_HEAD_CODE = "TRAVEL";

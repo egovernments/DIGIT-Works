@@ -13,6 +13,7 @@ import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.digit.expense.calculator.web.models.report.BillReportRequest;
 import org.egov.digit.expense.calculator.web.models.report.ReportBill;
 import org.egov.digit.expense.calculator.web.models.report.ReportBillDetail;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,8 +82,26 @@ public class HealthBillReportGenerator {
     public BillReportRequest generateHealthBillReportRequest(BillRequest billRequest) {
         try {
             log.info("Generating report for bill id: " + billRequest.getBill().getId());
+            ProjectResponse projectResponse = projectUtil.getProjectDetails(billRequest.getRequestInfo(),
+                    billRequest.getRequestInfo().getUserInfo().getTenantId(), billRequest.getBill().getReferenceId(),
+                    billRequest.getBill().getLocalityCode());
+            if (projectResponse == null || projectResponse.getProject() == null) {
+                log.error("Project Response null");
+                throw new CustomException("PROJECT_RESPONSE_NULL", "Project response null");
+            }
+            if (projectResponse.getProject().isEmpty()) {
+                log.error("Project not found");
+                throw new CustomException("PROJECT_NOT_FOUND", "Project not found");
+            }
+
+            String eventName = null;
+            if (projectResponse.getProject().get(0).getName() == null) {
+                eventName = null;
+            } else {
+                eventName = projectResponse.getProject().get(0).getName();
+            }
             // Update the report status to initiated
-            updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null);
+            updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null, eventName);
             // Fetch the report bill details
             List<ReportBillDetail> reportBillDetail = getReportBillDetail(billRequest.getRequestInfo(), billRequest.getBill());
             // Enrich the report request
@@ -95,11 +114,11 @@ public class HealthBillReportGenerator {
             log.info("PDF FileStoreId: " + pdfFileStoreId);
             log.info("Excel FileStoreId: " + excelFileStoreId);
             // Update the report status to completed
-            updateReportStatus(billRequest, REPORT_STATUS_COMPLETED, excelFileStoreId, pdfFileStoreId, null);
+            updateReportStatus(billRequest, REPORT_STATUS_COMPLETED, excelFileStoreId, pdfFileStoreId, null, eventName);
             return billReportRequest;
         } catch (Exception e) {
             log.error("Error while generating report", e);
-            updateReportStatus(billRequest, REPORT_STATUS_FAILED, null, null, e.getMessage());
+            updateReportStatus(billRequest, REPORT_STATUS_FAILED, null, null, e.getMessage(),null);
             return null;
         }
 
@@ -406,7 +425,7 @@ public class HealthBillReportGenerator {
      * @param pdfReportId    the id of the pdf report
      * @param errorMessage   the error message if the report generation failed
      */
-    private void updateReportStatus(BillRequest billRequest, String status, String excelReportId, String pdfReportId, String errorMessage) {
+    private void updateReportStatus(BillRequest billRequest, String status, String excelReportId, String pdfReportId, String errorMessage, String eventName) {
         // Ensure additionalDetails is initialized
         Object additionalDetails = billRequest.getBill().getAdditionalDetails();
         if (additionalDetails == null) {
@@ -420,6 +439,7 @@ public class HealthBillReportGenerator {
         reportDetails.put(PDF_REPORT_ID_KEY, pdfReportId);
         reportDetails.put(EXCEL_REPORT_ID_KEY, excelReportId);
         reportDetails.put(ERROR_ERROR_MESSAGE_KEY, errorMessage);
+        reportDetails.put(EVENT_NAME,eventName);
 
         // Add or overwrite reportDetails key
         additionalDetailsMap.put(REPORT_KEY, reportDetails);
