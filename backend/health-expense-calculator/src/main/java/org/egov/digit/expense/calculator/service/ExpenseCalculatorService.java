@@ -391,6 +391,7 @@ public class ExpenseCalculatorService {
                 if (billStatus != null)
                     expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS, customException.getCode() + " " + customException.getMessage());
             }
+            throw customException;
 
         } catch (Exception e) {
             String referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
@@ -400,9 +401,8 @@ public class ExpenseCalculatorService {
                 if (billStatus != null)
                     expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS,  e.getMessage());
             }
-
+            throw new CustomException("EXCEPTION", e.getMessage());
         }
-        return new ArrayList<>();
     }
 
     private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo,
@@ -760,7 +760,7 @@ public class ExpenseCalculatorService {
         bill.setBillDate(System.currentTimeMillis());
         bill.setToPeriod(project.getEndDate());
         bill.setTenantId(criteria.getTenantId());
-        bill.setReferenceId(project.getProjectHierarchy());
+        bill.setReferenceId(project.getProjectHierarchy() == null ? project.getId() : project.getProjectHierarchy());
         bill.setBusinessService("EXPENSE.WAGES");
         bill.setStatus("ACTIVE");
         bill.setLocalityCode(criteria.getLocalityCode());
