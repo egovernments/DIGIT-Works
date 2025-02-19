@@ -140,7 +140,7 @@ public class HealthBillReportGenerator {
         } catch (Exception e) {
             log.error("Error while generating report", e);
             updateReportStatus(billRequest, REPORT_STATUS_FAILED, null, null, e.getMessage());
-            throw new CustomException("REPORT_GENERATION_FAILED", e.getMessage());
+            throw new CustomException("REPORT_GENERATION_FAILED", "Error occured while generating report :: " + e.getMessage());
         }
 
     }
