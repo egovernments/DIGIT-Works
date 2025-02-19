@@ -10,8 +10,12 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
+/**
+ * Model class for triggering report generation. Contains information required
+ * to generate reports including tenant and bill details.
+ */
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
