@@ -13,6 +13,7 @@ public class LineItemsQueryBuilder {
     private static final String LINE_ITEMS_SELECT_QUERY = " SELECT lineItems.id AS id, " +
             "lineItems.estimate_id AS estimateId, " +
             "lineItems.estimate_line_item_id AS estimateLineItemId, " +
+            "lineItems.contract_line_item_ref AS contractLineItemRef, " +
             "lineItems.contract_id AS contractId, " +
             "lineItems.tenant_id AS tenantId, " +
             "lineItems.unit_rate AS unitRate, " +

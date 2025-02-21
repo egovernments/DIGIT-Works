@@ -35,6 +35,7 @@ import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
 import useGenderMDMS from "./useGenderMDMS";
 import useCustomAPIHook from "./useCustomAPIHook";
+import useCustomAPIMutationHook from "./useCustomAPIMutationHook";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
@@ -158,6 +159,13 @@ import useViewPurchaseBillDetails from "./bills/useViewPurchaseBillDetails";
 import useCreatePurchaseBill from "./bills/useCreatePurchaseBill";
 import useUpdatePurchaseBill from "./bills/useUpdatePurchaseBill";
 import useSearchBill from "./bills/useSearchBill";
+
+import useViewPaymentInstruction from "./payments/useViewPaymentInstruction";
+import useViewPayment from "./payments/useViewPayment";
+import useUpdatePI from "./expenditure/useUpdatePI";
+import useMBDataForPB from "./expenditure/useMBDataForPB";
+
+import useViewMeasurement from "./measurement/useViewMeasurement";
 
 const works = {
   useViewEstimateDetails,
@@ -306,6 +314,17 @@ const bankAccount = {
   useCreateBankAccount
 }
 
+const paymentInstruction = {
+  useViewPaymentInstruction,
+  useUpdatePI,
+  useMBDataForPB,
+  useViewPayment
+}
+
+const measurement = {
+  useViewMeasurement
+}
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -353,6 +372,7 @@ const Hooks = {
   useRouteSubscription,
   useCustomMDMS,
   useCustomAPIHook,
+  useCustomAPIMutationHook,
   useGetHowItWorksJSON,
   useGetFAQsJSON,
   useGetDSSFAQsJSON,
@@ -370,7 +390,9 @@ const Hooks = {
   project,
   wageSeeker,
   organisation,
-  bankAccount
+  bankAccount,
+  paymentInstruction,
+  measurement
 };
 
 export default Hooks;

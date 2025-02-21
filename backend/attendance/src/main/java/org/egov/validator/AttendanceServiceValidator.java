@@ -5,9 +5,11 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.project.Project;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.MDMSUtils;
+import org.egov.util.*;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,18 +19,31 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
-import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
+import static org.egov.util.AttendanceServiceConstants.*;
 
 @Component
 @Slf4j
 public class AttendanceServiceValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+    private final MDMSUtils mdmsUtils;
+
+    private final RegisterRepository registerRepository;
+    private final IndividualServiceUtil individualServiceUtil;
+
+    private final BoundaryServiceUtil boundaryServiceUtil;
+    private final ProjectServiceUtil projectServiceUtil;
+
+    private final AttendanceServiceConfiguration config;
 
     @Autowired
-    private RegisterRepository registerRepository;
+    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil, BoundaryServiceUtil boundaryServiceUtil, ProjectServiceUtil projectServiceUtil, AttendanceServiceConfiguration config) {
+        this.mdmsUtils = mdmsUtils;
+        this.registerRepository = registerRepository;
+        this.individualServiceUtil = individualServiceUtil;
+        this.boundaryServiceUtil = boundaryServiceUtil;
+        this.projectServiceUtil = projectServiceUtil;
+        this.config = config;
+    }
 
     /* Validates create Attendance Register request body */
     public void validateCreateAttendanceRegister(AttendanceRegisterRequest request) {
@@ -49,18 +64,22 @@ public class AttendanceServiceValidator {
         log.info("Attendance registers referenceId and ServiceCode are validated");
 
         String tenantId = attendanceRegisters.get(0).getTenantId();
-        String rootTenantId = tenantId.split("\\.")[0];
 
         //Get MDMS data using create attendance register request and tenantId
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
 
+        //Verify boundary data for creating attendance register
+        if(config.getAttendanceRegisterBoundarySearchEnabled()){
+            boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
+        }
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
 
         //Verify that active attendance register is not already present for provided tenantId, referenceId and serviceCode
         validateAttendanceRegisterAgainstDB(attendanceRegisters);
+
         log.info("Attendance registers validated against DB");
     }
 
@@ -105,19 +124,22 @@ public class AttendanceServiceValidator {
         }
 
         String tenantId = attendanceRegisters.get(0).getTenantId();
-        String rootTenantId = tenantId.split("\\.")[0];
 
         //Get MDMS data using create attendance register request and tenantId
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
 
+        //Validate locality Code
+        if(config.getAttendanceRegisterBoundarySearchEnabled()){
+            boundaryServiceUtil.validateLocalityCode(request.getRequestInfo(), request.getAttendanceRegister(), AttendanceRegister::getTenantId, AttendanceRegister::getLocalityCode, errorMap);
+        }
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
 
     /* Validates attendance register data in update request against attendance register data fetched from database */
-    public void validateUpdateAgainstDB(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegistersFromDB) {
+    public void validateUpdateAgainstDB(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegistersFromDB, Boolean registerFirstStaffInsertEnabled) {
         if (CollectionUtils.isEmpty(attendanceRegistersFromDB)) {
             log.error("The record that you are trying to update does not exists in the system");
             throw new CustomException("INVALID_REGISTER_MODIFY", "The record that you are trying to update does not exists in the system");
@@ -134,13 +156,43 @@ public class AttendanceServiceValidator {
             // If the user who is trying to update the register is not associated with the register, throw error that the user does not have permission to modify the attendance register
             if (registerFromDB.getStaff() != null) {
                 Set<String> staffUserIdsFromDB = registerFromDB.getStaff().stream().map(StaffPermission:: getUserId).collect(Collectors.toSet());
-                if (!staffUserIdsFromDB.contains(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid())) {
+                String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceRegisterRequest.getRequestInfo().getUserInfo().getId(),attendanceRegisterRequest.getRequestInfo(), registerFromRequest.getTenantId()).get(0).getId();
+                if (!staffUserIdsFromDB.contains(individualId)) {
                     log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                     throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 }
-            } else {
+
+                if(config.getAttendanceRegisterReviewStatusEnabled() && registerFromRequest.getReviewStatus() != null && registerFromRequest.getReviewStatus().equalsIgnoreCase(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL)){
+                    // Find the staff with the given userstaffId
+                    StaffPermission staff = registerFromDB.getStaff().stream()
+                            .filter(st -> individualId.equals(st.getUserId()))
+                            .findFirst().orElse(null);
+
+                    if(staff == null || staff.getStaffType() == null || (!staff.getStaffType().equals(StaffType.APPROVER) && !staff.getStaffType().equals(StaffType.EDITOR))) {
+                        log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                        throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                    }
+                }
+
+                if(config.getAttendanceRegisterReviewStatusEnabled() && registerFromRequest.getReviewStatus() != null && registerFromRequest.getReviewStatus().equalsIgnoreCase(ATTENDANCE_REGISTER_APPROVED)){
+                    // Find the staff with the given userstaffId
+                    StaffPermission staff = registerFromDB.getStaff().stream()
+                            .filter(st -> individualId.equals(st.getUserId()))
+                            .findFirst().orElse(null);
+
+                    if(staff == null || staff.getStaffType() == null || !staff.getStaffType().equals(StaffType.APPROVER)) {
+                        log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                        throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+                    }
+                }
+            } else if(registerFirstStaffInsertEnabled) {
                 log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
+            }
+
+            if(config.getAttendanceRegisterReviewStatusEnabled() && registerFromDB.getReviewStatus().equalsIgnoreCase(ATTENDANCE_REGISTER_APPROVED)){
+                log.error("Attendance Register having register Id " + registerFromRequest.getId() + " that you are trying to update has review status APPROVED");
+                throw new CustomException("ATTENDANCE_REGISTER_REVIEW_STATUS_APPROVED", "Attendance Register with register Id " + registerFromRequest.getId() + " that you are trying to update is already approved");
             }
         }
     }
@@ -270,4 +322,5 @@ public class AttendanceServiceValidator {
         }
 
     }
+
 }

@@ -215,6 +215,235 @@ class _SingleIndividualModelCopyWithImpl<$R, $Out extends SingleIndividualModel>
       SingleIndividualModel(Individual: or(Individual, $value.Individual)));
 }
 
+class WMSIndividualListModelMapper extends MapperBase<WMSIndividualListModel> {
+  static MapperContainer container = MapperContainer(
+    mappers: {WMSIndividualListModelMapper()},
+  )..linkAll({SingleWMSIndividualModelMapper.container});
+
+  @override
+  WMSIndividualListModelMapperElement createElement(MapperContainer container) {
+    return WMSIndividualListModelMapperElement._(this, container);
+  }
+
+  @override
+  String get id => 'WMSIndividualListModel';
+
+  static final fromMap = container.fromMap<WMSIndividualListModel>;
+  static final fromJson = container.fromJson<WMSIndividualListModel>;
+}
+
+class WMSIndividualListModelMapperElement
+    extends MapperElementBase<WMSIndividualListModel> {
+  WMSIndividualListModelMapperElement._(super.mapper, super.container);
+
+  @override
+  Function get decoder => decode;
+  WMSIndividualListModel decode(dynamic v) =>
+      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
+  WMSIndividualListModel fromMap(Map<String, dynamic> map) =>
+      WMSIndividualListModel(items: container.$getOpt(map, 'items'));
+
+  @override
+  Function get encoder => encode;
+  dynamic encode(WMSIndividualListModel v) => toMap(v);
+  Map<String, dynamic> toMap(WMSIndividualListModel w) =>
+      {'items': container.$enc(w.items, 'items')};
+
+  @override
+  String stringify(WMSIndividualListModel self) =>
+      'WMSIndividualListModel(items: ${container.asString(self.items)})';
+  @override
+  int hash(WMSIndividualListModel self) => container.hash(self.items);
+  @override
+  bool equals(WMSIndividualListModel self, WMSIndividualListModel other) =>
+      container.isEqual(self.items, other.items);
+}
+
+mixin WMSIndividualListModelMappable {
+  String toJson() => WMSIndividualListModelMapper.container
+      .toJson(this as WMSIndividualListModel);
+  Map<String, dynamic> toMap() => WMSIndividualListModelMapper.container
+      .toMap(this as WMSIndividualListModel);
+  WMSIndividualListModelCopyWith<WMSIndividualListModel, WMSIndividualListModel,
+          WMSIndividualListModel>
+      get copyWith => _WMSIndividualListModelCopyWithImpl(
+          this as WMSIndividualListModel, $identity, $identity);
+  @override
+  String toString() => WMSIndividualListModelMapper.container.asString(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (runtimeType == other.runtimeType &&
+          WMSIndividualListModelMapper.container.isEqual(this, other));
+  @override
+  int get hashCode => WMSIndividualListModelMapper.container.hash(this);
+}
+
+extension WMSIndividualListModelValueCopy<$R,
+        $Out extends WMSIndividualListModel>
+    on ObjectCopyWith<$R, WMSIndividualListModel, $Out> {
+  WMSIndividualListModelCopyWith<$R, WMSIndividualListModel, $Out>
+      get asWMSIndividualListModel =>
+          base.as((v, t, t2) => _WMSIndividualListModelCopyWithImpl(v, t, t2));
+}
+
+typedef WMSIndividualListModelCopyWithBound = WMSIndividualListModel;
+
+abstract class WMSIndividualListModelCopyWith<$R,
+        $In extends WMSIndividualListModel, $Out extends WMSIndividualListModel>
+    implements ObjectCopyWith<$R, $In, $Out> {
+  WMSIndividualListModelCopyWith<$R2, $In, $Out2>
+      chain<$R2, $Out2 extends WMSIndividualListModel>(
+          Then<WMSIndividualListModel, $Out2> t, Then<$Out2, $R2> t2);
+  ListCopyWith<
+      $R,
+      SingleWMSIndividualModel,
+      SingleWMSIndividualModelCopyWith<$R, SingleWMSIndividualModel,
+          SingleWMSIndividualModel>>? get items;
+  $R call({List<SingleWMSIndividualModel>? items});
+}
+
+class _WMSIndividualListModelCopyWithImpl<$R,
+        $Out extends WMSIndividualListModel>
+    extends CopyWithBase<$R, WMSIndividualListModel, $Out>
+    implements
+        WMSIndividualListModelCopyWith<$R, WMSIndividualListModel, $Out> {
+  _WMSIndividualListModelCopyWithImpl(super.value, super.then, super.then2);
+  @override
+  WMSIndividualListModelCopyWith<$R2, WMSIndividualListModel, $Out2>
+      chain<$R2, $Out2 extends WMSIndividualListModel>(
+              Then<WMSIndividualListModel, $Out2> t, Then<$Out2, $R2> t2) =>
+          _WMSIndividualListModelCopyWithImpl($value, t, t2);
+
+  @override
+  ListCopyWith<
+      $R,
+      SingleWMSIndividualModel,
+      SingleWMSIndividualModelCopyWith<$R, SingleWMSIndividualModel,
+          SingleWMSIndividualModel>>? get items => $value.items != null
+      ? ListCopyWith(
+          $value.items!,
+          (v, t) =>
+              v.copyWith.chain<$R, SingleWMSIndividualModel>($identity, t),
+          (v) => call(items: v))
+      : null;
+  @override
+  $R call({Object? items = $none}) =>
+      $then(WMSIndividualListModel(items: or(items, $value.items)));
+}
+
+class SingleWMSIndividualModelMapper
+    extends MapperBase<SingleWMSIndividualModel> {
+  static MapperContainer container = MapperContainer(
+    mappers: {SingleWMSIndividualModelMapper()},
+  )..linkAll({IndividualModelMapper.container});
+
+  @override
+  SingleWMSIndividualModelMapperElement createElement(
+      MapperContainer container) {
+    return SingleWMSIndividualModelMapperElement._(this, container);
+  }
+
+  @override
+  String get id => 'SingleWMSIndividualModel';
+
+  static final fromMap = container.fromMap<SingleWMSIndividualModel>;
+  static final fromJson = container.fromJson<SingleWMSIndividualModel>;
+}
+
+class SingleWMSIndividualModelMapperElement
+    extends MapperElementBase<SingleWMSIndividualModel> {
+  SingleWMSIndividualModelMapperElement._(super.mapper, super.container);
+
+  @override
+  Function get decoder => decode;
+  SingleWMSIndividualModel decode(dynamic v) =>
+      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
+  SingleWMSIndividualModel fromMap(Map<String, dynamic> map) =>
+      SingleWMSIndividualModel(
+          businessObject: container.$getOpt(map, 'businessObject'));
+
+  @override
+  Function get encoder => encode;
+  dynamic encode(SingleWMSIndividualModel v) => toMap(v);
+  Map<String, dynamic> toMap(SingleWMSIndividualModel s) =>
+      {'businessObject': container.$enc(s.businessObject, 'businessObject')};
+
+  @override
+  String stringify(SingleWMSIndividualModel self) =>
+      'SingleWMSIndividualModel(businessObject: ${container.asString(self.businessObject)})';
+  @override
+  int hash(SingleWMSIndividualModel self) =>
+      container.hash(self.businessObject);
+  @override
+  bool equals(SingleWMSIndividualModel self, SingleWMSIndividualModel other) =>
+      container.isEqual(self.businessObject, other.businessObject);
+}
+
+mixin SingleWMSIndividualModelMappable {
+  String toJson() => SingleWMSIndividualModelMapper.container
+      .toJson(this as SingleWMSIndividualModel);
+  Map<String, dynamic> toMap() => SingleWMSIndividualModelMapper.container
+      .toMap(this as SingleWMSIndividualModel);
+  SingleWMSIndividualModelCopyWith<SingleWMSIndividualModel,
+          SingleWMSIndividualModel, SingleWMSIndividualModel>
+      get copyWith => _SingleWMSIndividualModelCopyWithImpl(
+          this as SingleWMSIndividualModel, $identity, $identity);
+  @override
+  String toString() => SingleWMSIndividualModelMapper.container.asString(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (runtimeType == other.runtimeType &&
+          SingleWMSIndividualModelMapper.container.isEqual(this, other));
+  @override
+  int get hashCode => SingleWMSIndividualModelMapper.container.hash(this);
+}
+
+extension SingleWMSIndividualModelValueCopy<$R,
+        $Out extends SingleWMSIndividualModel>
+    on ObjectCopyWith<$R, SingleWMSIndividualModel, $Out> {
+  SingleWMSIndividualModelCopyWith<$R, SingleWMSIndividualModel, $Out>
+      get asSingleWMSIndividualModel => base
+          .as((v, t, t2) => _SingleWMSIndividualModelCopyWithImpl(v, t, t2));
+}
+
+typedef SingleWMSIndividualModelCopyWithBound = SingleWMSIndividualModel;
+
+abstract class SingleWMSIndividualModelCopyWith<
+        $R,
+        $In extends SingleWMSIndividualModel,
+        $Out extends SingleWMSIndividualModel>
+    implements ObjectCopyWith<$R, $In, $Out> {
+  SingleWMSIndividualModelCopyWith<$R2, $In, $Out2>
+      chain<$R2, $Out2 extends SingleWMSIndividualModel>(
+          Then<SingleWMSIndividualModel, $Out2> t, Then<$Out2, $R2> t2);
+  IndividualModelCopyWith<$R, IndividualModel, IndividualModel>?
+      get businessObject;
+  $R call({IndividualModel? businessObject});
+}
+
+class _SingleWMSIndividualModelCopyWithImpl<$R,
+        $Out extends SingleWMSIndividualModel>
+    extends CopyWithBase<$R, SingleWMSIndividualModel, $Out>
+    implements
+        SingleWMSIndividualModelCopyWith<$R, SingleWMSIndividualModel, $Out> {
+  _SingleWMSIndividualModelCopyWithImpl(super.value, super.then, super.then2);
+  @override
+  SingleWMSIndividualModelCopyWith<$R2, SingleWMSIndividualModel, $Out2>
+      chain<$R2, $Out2 extends SingleWMSIndividualModel>(
+              Then<SingleWMSIndividualModel, $Out2> t, Then<$Out2, $R2> t2) =>
+          _SingleWMSIndividualModelCopyWithImpl($value, t, t2);
+
+  @override
+  IndividualModelCopyWith<$R, IndividualModel, IndividualModel>?
+      get businessObject => $value.businessObject?.copyWith
+          .chain($identity, (v) => call(businessObject: v));
+  @override
+  $R call({Object? businessObject = $none}) => $then(SingleWMSIndividualModel(
+      businessObject: or(businessObject, $value.businessObject)));
+}
+
 class IndividualModelMapper extends MapperBase<IndividualModel> {
   static MapperContainer container = MapperContainer(
     mappers: {IndividualModelMapper()},

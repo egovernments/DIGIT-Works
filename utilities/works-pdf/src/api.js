@@ -137,7 +137,7 @@ async function search_estimateDetails(tenantId, requestinfo, estimateNumber) {
   var params = {
     tenantId: tenantId,
     estimateNumber: estimateNumber,
-    limit: 1,
+    limit: 100,
     _offset: 0,
     get offset() {
       return this._offset;
@@ -190,17 +190,22 @@ async function search_mdms(request) {
   });
 }
 
-async function search_localization(request, params) {
+async function search_localization(request, lang, module, tenantId) {
   return await axios({
     method: "post",
     url: url.resolve(config.host.localization, config.paths.localization_search),
     data: request,
-    params: params
+    params: {
+      "locale": lang,
+      "module": module,
+      "tenantId": tenantId.split(".")[0]
+    }
   });
 }
 
 async function create_pdf(tenantId, key, data, requestinfo) {
   var oj = Object.assign(requestinfo, data);
+  console.log(Object.assign(requestinfo, data))
   return await axios({
     responseType: "stream",
     method: "post",
@@ -471,6 +476,72 @@ async function create_bulk_pdf_pt(kafkaData) {
 
 }
 
+async function search_measurementBookDetails(tenantId, requestinfo,contractNumber, measurementBookNumber) {
+
+  const searchEndpoint = config.paths.measurement_book_search;
+  const data = {
+    "contractNumber": contractNumber,
+    "measurementNumber": measurementBookNumber,
+    "tenantId": tenantId
+  }
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.measurements, searchEndpoint),
+    data: Object.assign(requestinfo, data)
+  });
+}
+
+async function search_rateAnalysisStatementDetails(tenantId, requestinfo, referenceId) {
+  const search_endpoint = config.paths.analysis_statement_search;
+  const url = new URL(search_endpoint, config.host.statements);
+  requestinfo = requestinfo.RequestInfo;
+  const data = {
+    RequestInfo: requestinfo,
+    searchCriteria: {
+      tenantId: tenantId,
+      referenceId: referenceId
+    }
+  };
+
+  return await axios.post(url.href, data);
+}
+async function search_rateAnalysisUtilizationDetails(tenantId, requestinfo, referenceId) {
+  const search_endpoint = config.paths.analysis_utilization_search;
+  const url = new URL(search_endpoint, config.host.statements);
+  requestinfo = requestinfo.RequestInfo;
+  const data = {
+    RequestInfo: requestinfo,
+    searchCriteria: {
+      tenantId: tenantId,
+      referenceId: referenceId
+    }
+  };
+
+  return await axios.post(url.href, data);
+}
+
+async function search_projectDetails_by_ID(tenantId, requestinfo, projectId) {
+  var params = {
+    tenantId: tenantId,
+    limit: 1,
+    offset: 0
+  };
+
+  var searchEndpoint = config.paths.projectDetails_search;
+  var data = {
+    "Projects": [{
+      "tenantId": tenantId,
+      "id": projectId
+    }]
+  }
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.projectDetails, searchEndpoint),
+    data: Object.assign(requestinfo, data),
+    params,
+  });
+}
+
 module.exports = {
   pool,
   create_pdf,
@@ -494,5 +565,9 @@ module.exports = {
   upload_file_using_filestore,
   create_eg_payments_excel,
   reset_eg_payments_excel,
-  exec_query_eg_payments_excel
+  exec_query_eg_payments_excel,
+  search_measurementBookDetails,
+  search_rateAnalysisStatementDetails,
+  search_projectDetails_by_ID,
+  search_rateAnalysisUtilizationDetails
 };

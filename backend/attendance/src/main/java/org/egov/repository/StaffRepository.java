@@ -15,14 +15,18 @@ import java.util.List;
 @Repository
 @Slf4j
 public class StaffRepository {
-    @Autowired
-    private StaffRowMapper rowMapper;
+    private final StaffRowMapper rowMapper;
+
+    private final StaffQueryBuilder queryBuilder;
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private StaffQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public StaffRepository(StaffRowMapper rowMapper, StaffQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+        this.rowMapper = rowMapper;
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public List<StaffPermission> getActiveStaff(StaffSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
@@ -34,6 +38,19 @@ public class StaffRepository {
     public List<StaffPermission> getAllStaff(StaffSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getAttendanceStaffSearchQuery(searchCriteria, preparedStmtList);
+        List<StaffPermission> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+        return attendanceStaffList;
+    }
+
+    /**
+     * Retrieves a list of staff permissions based on the provided search criteria.
+     *
+     * @param searchCriteria The criteria to use for searching staff permissions
+     * @return A list of staff permissions
+     */
+    public List<StaffPermission> getFirstStaff(StaffSearchCriteria searchCriteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.appendOrderLimit(queryBuilder.getAttendanceStaffSearchQuery(searchCriteria, preparedStmtList));
         List<StaffPermission> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return attendanceStaffList;
     }

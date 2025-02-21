@@ -362,3 +362,193 @@ abstract class _CBOMyWorksSearchCriteriaModel
   _$$_CBOMyWorksSearchCriteriaModelCopyWith<_$_CBOMyWorksSearchCriteriaModel>
       get copyWith => throw _privateConstructorUsedError;
 }
+
+CBOMyServiceRequestsConfig _$CBOMyServiceRequestsConfigFromJson(
+    Map<String, dynamic> json) {
+  return _CBOMyServiceRequestsConfig.fromJson(json);
+}
+
+/// @nodoc
+mixin _$CBOMyServiceRequestsConfig {
+  String? get editTimeExtReqCode => throw _privateConstructorUsedError;
+  String? get editActionCode => throw _privateConstructorUsedError;
+  String? get searchCriteria => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $CBOMyServiceRequestsConfigCopyWith<CBOMyServiceRequestsConfig>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CBOMyServiceRequestsConfigCopyWith<$Res> {
+  factory $CBOMyServiceRequestsConfigCopyWith(CBOMyServiceRequestsConfig value,
+          $Res Function(CBOMyServiceRequestsConfig) then) =
+      _$CBOMyServiceRequestsConfigCopyWithImpl<$Res,
+          CBOMyServiceRequestsConfig>;
+  @useResult
+  $Res call(
+      {String? editTimeExtReqCode,
+      String? editActionCode,
+      String? searchCriteria});
+}
+
+/// @nodoc
+class _$CBOMyServiceRequestsConfigCopyWithImpl<$Res,
+        $Val extends CBOMyServiceRequestsConfig>
+    implements $CBOMyServiceRequestsConfigCopyWith<$Res> {
+  _$CBOMyServiceRequestsConfigCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? editTimeExtReqCode = freezed,
+    Object? editActionCode = freezed,
+    Object? searchCriteria = freezed,
+  }) {
+    return _then(_value.copyWith(
+      editTimeExtReqCode: freezed == editTimeExtReqCode
+          ? _value.editTimeExtReqCode
+          : editTimeExtReqCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      editActionCode: freezed == editActionCode
+          ? _value.editActionCode
+          : editActionCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      searchCriteria: freezed == searchCriteria
+          ? _value.searchCriteria
+          : searchCriteria // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_CBOMyServiceRequestsConfigCopyWith<$Res>
+    implements $CBOMyServiceRequestsConfigCopyWith<$Res> {
+  factory _$$_CBOMyServiceRequestsConfigCopyWith(
+          _$_CBOMyServiceRequestsConfig value,
+          $Res Function(_$_CBOMyServiceRequestsConfig) then) =
+      __$$_CBOMyServiceRequestsConfigCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? editTimeExtReqCode,
+      String? editActionCode,
+      String? searchCriteria});
+}
+
+/// @nodoc
+class __$$_CBOMyServiceRequestsConfigCopyWithImpl<$Res>
+    extends _$CBOMyServiceRequestsConfigCopyWithImpl<$Res,
+        _$_CBOMyServiceRequestsConfig>
+    implements _$$_CBOMyServiceRequestsConfigCopyWith<$Res> {
+  __$$_CBOMyServiceRequestsConfigCopyWithImpl(
+      _$_CBOMyServiceRequestsConfig _value,
+      $Res Function(_$_CBOMyServiceRequestsConfig) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? editTimeExtReqCode = freezed,
+    Object? editActionCode = freezed,
+    Object? searchCriteria = freezed,
+  }) {
+    return _then(_$_CBOMyServiceRequestsConfig(
+      editTimeExtReqCode: freezed == editTimeExtReqCode
+          ? _value.editTimeExtReqCode
+          : editTimeExtReqCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      editActionCode: freezed == editActionCode
+          ? _value.editActionCode
+          : editActionCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      searchCriteria: freezed == searchCriteria
+          ? _value.searchCriteria
+          : searchCriteria // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_CBOMyServiceRequestsConfig implements _CBOMyServiceRequestsConfig {
+  const _$_CBOMyServiceRequestsConfig(
+      {this.editTimeExtReqCode, this.editActionCode, this.searchCriteria});
+
+  factory _$_CBOMyServiceRequestsConfig.fromJson(Map<String, dynamic> json) =>
+      _$$_CBOMyServiceRequestsConfigFromJson(json);
+
+  @override
+  final String? editTimeExtReqCode;
+  @override
+  final String? editActionCode;
+  @override
+  final String? searchCriteria;
+
+  @override
+  String toString() {
+    return 'CBOMyServiceRequestsConfig(editTimeExtReqCode: $editTimeExtReqCode, editActionCode: $editActionCode, searchCriteria: $searchCriteria)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_CBOMyServiceRequestsConfig &&
+            (identical(other.editTimeExtReqCode, editTimeExtReqCode) ||
+                other.editTimeExtReqCode == editTimeExtReqCode) &&
+            (identical(other.editActionCode, editActionCode) ||
+                other.editActionCode == editActionCode) &&
+            (identical(other.searchCriteria, searchCriteria) ||
+                other.searchCriteria == searchCriteria));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, editTimeExtReqCode, editActionCode, searchCriteria);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_CBOMyServiceRequestsConfigCopyWith<_$_CBOMyServiceRequestsConfig>
+      get copyWith => __$$_CBOMyServiceRequestsConfigCopyWithImpl<
+          _$_CBOMyServiceRequestsConfig>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_CBOMyServiceRequestsConfigToJson(
+      this,
+    );
+  }
+}
+
+abstract class _CBOMyServiceRequestsConfig
+    implements CBOMyServiceRequestsConfig {
+  const factory _CBOMyServiceRequestsConfig(
+      {final String? editTimeExtReqCode,
+      final String? editActionCode,
+      final String? searchCriteria}) = _$_CBOMyServiceRequestsConfig;
+
+  factory _CBOMyServiceRequestsConfig.fromJson(Map<String, dynamic> json) =
+      _$_CBOMyServiceRequestsConfig.fromJson;
+
+  @override
+  String? get editTimeExtReqCode;
+  @override
+  String? get editActionCode;
+  @override
+  String? get searchCriteria;
+  @override
+  @JsonKey(ignore: true)
+  _$$_CBOMyServiceRequestsConfigCopyWith<_$_CBOMyServiceRequestsConfig>
+      get copyWith => throw _privateConstructorUsedError;
+}

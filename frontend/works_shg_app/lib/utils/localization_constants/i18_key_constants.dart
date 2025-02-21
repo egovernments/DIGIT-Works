@@ -7,6 +7,7 @@ WorkOrder workOrder = const WorkOrder();
 WageSeeker wageSeeker = const WageSeeker();
 AttendanceMgmt attendanceMgmt = const AttendanceMgmt();
 MyBills myBills = const MyBills();
+MyServiceRequests myServiceRequests = const MyServiceRequests();
 
 class Login {
   const Login();
@@ -87,6 +88,7 @@ class Common {
   String get total => 'TOTAL';
   String get attachments => 'CS_COMMON_ATTACHMENTS';
   String get apply => 'ES_COMMON_APPLY';
+  String get noItems => 'ES_COMMON_NO_ITEMS';
   String get cancel => 'CS_ACTION_CANCEL';
   String get close => 'CS_ACTION_CLOSE';
   String get startDate => 'EVENTS_START_DATE_LABEL';
@@ -98,6 +100,7 @@ class Common {
   String get action => 'CS_COMMON_ACTION';
   String get next => 'CS_COMMON_NEXT';
   String get fileSize => 'FILE_SIZE';
+  String get invalidImageFile => 'CS_COMMON_INVALID_IMAGE_FILE';
   String get chooseFile => 'CHOOSE_FILE';
   String get noFileUploaded => 'NO_FILE_UPLOADED';
   String get camera => 'CAMERA';
@@ -114,6 +117,7 @@ class Common {
   String get branchName => 'COMMON_BRANCH_NAME';
   String get photoGraph => 'COMMON_PHOTOGRAPH';
   String get inProgress => 'IN_PROGRESS_LABEL';
+  String get wageSeekerID => 'MASTERS_WAGESEEKER_ID';
   String get completed => 'COMPLETED_LABEL';
   String get info => 'ES_COMMON_INFO';
   String get clickToAddPhoto => 'CLICK_TO_ADD_PHOTO';
@@ -142,6 +146,8 @@ class Common {
   String get validPhotoGraph => 'PHOTOGRAPH_VALID_SIZE';
   String get individualAlreadyAdded => 'IND_ALREADY_ADDED_TO_THE_TABLE';
   String get noValue => 'ES_COMMON_NA';
+  String get noOrgLinkedWithMob => 'ES_COMMON_NO_ORG_LINKED_WITH_MOBILE_NUMBER';
+  String get takeAction => 'ES_COMMON_TAKE_ACTION';
 }
 
 class Home {
@@ -183,6 +189,28 @@ class WorkOrder {
   String get relevantDocuments => 'WORK_RELEVANT_DOCUMENTS';
   String get workStartDate => 'WORKS_START_DATE';
   String get workEndDate => 'WORKS_END_DATE';
+  String get extensionReqInDays => 'WORKS_EXTENSION_REQ_IN_DAYS';
+  String get reasonForExtension => 'WORKS_REASON_FOR_EXTENSION';
+  String get extensionReqInDaysIsRequired => 'EXTENSION_DAYS_IS_REQUIRED';
+  String get reasonForExtensionIsRequired =>
+      'WORKS_REASON_FOR_EXTENSION_IS_REQUIRED';
+  String get extensionReqInDaysMinVal => 'WORKS_EXTENSION_DAYS_MIN_VALUE';
+  String get extensionReqInDaysMaxVal => 'WORKS_EXTENSION_DAYS_MAX_VALUE';
+  String get reasonForExtensionMinChar =>
+      'WORKS_REASON_FOR_EXTENSION_MIN_CHARS';
+  String get reasonForExtensionMaxChar =>
+      'WORKS_REASON_FOR_EXTENSION_MAX_CHARS';
+  String get timeExtensionRequestedSuccess =>
+      'WORKS_TIME_EXTENSION_REQ_SUCCESSFULLY';
+  String get requestID => 'WORKS_TIME_EXT_REQUEST_ID';
+  String get timeExtensionRequestedSuccessSubText =>
+      'WORKS_TIME_EXTENSION_REQ_SUCCESSFULLY_SUB_TEXT';
+  String get requestTimeExtension => 'ACTION_TEST_TIME_EXTENSION';
+  String get projectClosure => 'ACTION_TEST_PROJECT_CLOSURE';
+  String get errNoMusterRollExists => 'ERR_NO_MUSTER_EXISTS';
+  String get errTimeExtReqAlreadyRaised => 'ERR_TIME_EXT_REQ_ALREADY_RAISED';
+  String get closureRequests => 'WORKS_CLOSURE_REQUESTS';
+  String get timeExtRequests => 'WORKS_TIME_EXT_REQUESTS';
 }
 
 class MyBills {
@@ -210,6 +238,7 @@ class WageSeeker {
   String get minMobileCharacters => 'MIN_MOBILE_CHARCTERS_REQUIRED';
   String get minAadhaarCharacters => 'MIN_AADHAAR_CHARCTERS_REQUIRED';
   String get maxMobileCharacters => 'MAX_MOBILE_CHARCTERS_REQUIRED';
+  String get validMobileCharacters => 'MAX_VALID_MOBILE_CHARCTERS_REQUIRED';
   String get maxAadhaarCharacters => 'MAX_AADHAAR_CHARCTERS_REQUIRED';
   String get pinCodeRequired => 'PINCODE_IS_REQUIRED';
   String get localityRequired => 'LOCALITY_IS_REQUIRED';
@@ -297,4 +326,14 @@ class AttendanceMgmt {
   String get halfDay => 'ATM_HALF_DAY';
   String get absent => 'ATM_ABSENT';
   String get toMarkAttendance => 'ATM_INFO_TO_MARK_ATTENDANCE';
+}
+
+class MyServiceRequests {
+  const MyServiceRequests();
+
+  String get serviceRequestsLabel => 'WORKS_SERVICE_REQUESTS';
+  String get timeExtRequestId => 'WORKS_TIME_EXT_REQUEST_ID';
+  String get revisedEndDate => 'WORKS_REVISED_END_DATE';
+  String get editAction => 'WF_CONTRACT_ACTION_EDIT';
+  String get noServiceRequests => 'SR_NO_SERVICE_REQUEST_FOUND';
 }

@@ -62,5 +62,18 @@ public class WMSConstants {
     public static final String ORDER_KEY = "order";
 
     public static final String SORT_KEY = "sort";
+    public static final String SHOULD_QUERY = "[\n" +
+            "        { \"term\": { \"Data.paymentStatus.keyword\": \"FAILED\" } },\n" +
+            "        { \"term\": { \"Data.paymentStatus.keyword\": \"SUCCESSFUL\" } },\n" +
+            "        { \"term\": { \"Data.paymentStatus.keyword\": \"PARTIAL\" } },\n" +
+            "        {\n" +
+            "          \"bool\": {\n" +
+            "            \"must\": [\n" +
+            "              { \"term\": { \"Data.paymentStatus.keyword\": \"INITIATED\" } },\n" +
+            "              { \"range\": { \"Data.totalPaidAmount\": { \"gt\": 0 } } }\n" +
+            "            ]\n" +
+            "          }\n" +
+            "        }\n" +
+            "      ]";
 
 }

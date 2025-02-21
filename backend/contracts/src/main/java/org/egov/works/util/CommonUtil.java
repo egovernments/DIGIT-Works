@@ -19,8 +19,12 @@ import static org.egov.works.util.ContractServiceConstants.OFFICER_IN_CHARGE_ID_
 @Slf4j
 public class CommonUtil {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public CommonUtil(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     public List<Object> readJSONPathValue(Object jsonObj, String path){
         try {
@@ -37,7 +41,9 @@ public class CommonUtil {
             if (node.findValue(findValueOf) != null  && StringUtils.isNotBlank(node.findValue(findValueOf).textValue())) {
                 return Optional.of(node.findValue(findValueOf).textValue());
             }
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+            log.error(ignore.toString());
+        }
         return Optional.empty();
     }
 }

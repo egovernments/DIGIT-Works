@@ -2,31 +2,29 @@ package org.egov.web.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.MusterRollService;
 import org.egov.util.ResponseInfoCreator;
-import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.web.models.MusterRollSearchCriteria;
+import org.egov.web.models.MusterRollSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.Collections;
-import java.util.List;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
 
 @Controller
 @RequestMapping("/v1")
@@ -61,8 +59,14 @@ public class MusterRollApiController {
     }
 
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
-    public ResponseEntity<MusterRollResponse> attendanceV1SearchPOST(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute MusterRollSearchCriteria searchCriteria) {
+    public ResponseEntity<MusterRollResponse> musterRollV1SearchPOST(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute MusterRollSearchCriteria searchCriteria) {
         MusterRollResponse musterRollResponse = musterRollService.searchMusterRolls(requestInfoWrapper, searchCriteria);
+        return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/v2/_search", method = RequestMethod.POST)
+    public ResponseEntity<MusterRollResponse> musterRollV2SearchPOST(@Valid @RequestBody MusterRollSearchRequest request) {
+        MusterRollResponse musterRollResponse = musterRollService.searchMusterRolls(request, request.getMusterRoll());
         return new ResponseEntity<MusterRollResponse>(musterRollResponse, HttpStatus.OK);
     }
 

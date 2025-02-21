@@ -1,7 +1,7 @@
 package org.egov.helper;
 
-import org.egov.web.models.Document;
 
+import org.egov.web.models.Document;
 
 public class DocumentTestBuilder {
     private Document.DocumentBuilder builder;

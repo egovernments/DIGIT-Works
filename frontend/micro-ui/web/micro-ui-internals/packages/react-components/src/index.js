@@ -190,6 +190,7 @@ import {
   NoResultsFoundIcon,
   WorksMgmtIcon,
   BioMetricIcon,
+  MeasurementIcon,
   MuktaHomeIcon,
   HRIcon,
   ProjectIcon,
@@ -200,12 +201,14 @@ import {
   OrganisationIcon,
   HelperIcon,
   DashboardIcon,
-  ExpenditureIcon
+  ExpenditureIcon,
+  PaymentIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
 import { Phone } from "./atoms/svgindex";
 import TextArea from "./atoms/TextArea";
+import InputTextAmount from "./atoms/InputTextAmount";
 import TextInput from "./atoms/TextInput";
 import Toast from "./atoms/Toast";
 import TopBar from "./atoms/TopBar";
@@ -218,6 +221,8 @@ import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
 import { FormComposer } from "./hoc/FormComposer";
+import ViewComposer from "./hoc/ViewComposer";
+import { FormComposer as FormComposerV2 } from "./hoc/FormComposer";
 import RenderFormFields from "./molecules/RenderFormFields";
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
@@ -254,6 +259,7 @@ import ToggleSwitch from "./atoms/ToggleSwitch";
 import WeekPicker from "./atoms/WeekPicker";
 import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
 import HorizontalNav from "./atoms/HorizontalNav";
+import HorizontalNavV2 from "./atoms/HorizontalNavV2";
 import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
 import InboxSearchComposer from "./hoc/InboxSearchComposer";
@@ -267,6 +273,7 @@ import WorkflowActions from "./atoms/WorkflowActions";
 import Amount from "./atoms/Amount";
 import Paragraph from "./atoms/Paragraph";
 export {
+  InputTextAmount,
   Button,
   ViewImages,
   Phone,
@@ -359,6 +366,7 @@ export {
   ViewDetailsCard,
   CollapseAndExpandGroups,
   HorizontalNav,
+  HorizontalNavV2,
   NoResultsFound,
   Amount,
   // Icons
@@ -423,6 +431,7 @@ export {
   CustomDropdown,
   // hoc
   FormComposer,
+  FormComposerV2,
   RenderFormFields,
   WorkflowTimeline,
   WorkflowActions,
@@ -448,6 +457,7 @@ export {
   ResultsTable,
   InboxSearchLinks,
   UploadFileComposer,
+  ViewComposer,
   // Icons
   FilterIcon,
   FilterSvg,
@@ -530,6 +540,7 @@ export {
   NoResultsFoundIcon,
   WorksMgmtIcon,
   BioMetricIcon,
+  MeasurementIcon,
   MuktaHomeIcon,
   HRIcon,
   ProjectIcon,
@@ -540,5 +551,6 @@ export {
   OrganisationIcon,
   HelperIcon,
   DashboardIcon,
-  ExpenditureIcon
+  ExpenditureIcon,
+  PaymentIcon
 };

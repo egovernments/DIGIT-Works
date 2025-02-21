@@ -14,20 +14,29 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class BillRepository {
 	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
 	
-	@Autowired
-	private BillQueryBuilder queryBuilder;
+	private final BillQueryBuilder queryBuilder;
 	
-	@Autowired
-	private BillRowMapper searchBillRowMapper;
+	private final BillRowMapper searchBillRowMapper;
 
-	public List<Bill> search(BillSearchRequest billSearchRequest){
+	@Autowired
+	public BillRepository(JdbcTemplate jdbcTemplate, BillQueryBuilder queryBuilder, BillRowMapper searchBillRowMapper) {
+		this.jdbcTemplate = jdbcTemplate;
+		this.queryBuilder = queryBuilder;
+		this.searchBillRowMapper = searchBillRowMapper;
+	}
+
+	public List<Bill> search(BillSearchRequest billSearchRequest, boolean isValidationSearch){
 		
 		List<Object> preparedStatementValues = new ArrayList<>();
-		String queryStr = queryBuilder.getBillQuery(billSearchRequest, preparedStatementValues);
-		List<Bill> bills= jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
-		return bills;
+		String queryStr = queryBuilder.getBillQuery(billSearchRequest, preparedStatementValues, false, isValidationSearch);
+        return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
+	}
+
+	public Integer searchCount(BillSearchRequest billSearchRequest){
+		List<Object> preparedStatementValues = new ArrayList<>();
+		String queryStr = queryBuilder.getSearchCountQueryString(billSearchRequest, preparedStatementValues);
+		return jdbcTemplate.queryForObject(queryStr, preparedStatementValues.toArray(), Integer.class);
 	}
 }
