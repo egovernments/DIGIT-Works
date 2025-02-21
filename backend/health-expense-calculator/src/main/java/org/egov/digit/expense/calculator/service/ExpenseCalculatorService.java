@@ -375,6 +375,16 @@ public class ExpenseCalculatorService {
                 } else {
                     log.info("Bill posting failed for bill " + bill.getBusinessService() + " reference ID " + bill.getReferenceId());
                 }
+                if (config.isReportGenerationAuto()) {
+                    ReportGenerationTrigger reportGenerationTrigger = ReportGenerationTrigger.builder()
+                            .requestInfo(requestInfo)
+                            .billId(billResponse.getBills().get(0).getId())
+                            .tenantId(billResponse.getBills().get(0).getTenantId())
+                            .createdTime(System.currentTimeMillis())
+                            .numberOfBillDetails(billResponse.getBills().get(0).getBillDetails().size())
+                            .build();
+                    expenseCalculatorProducer.push(config.getReportGenerationTriggerTopic(), reportGenerationTrigger);
+                }
             }
             log.info("Processing bill completed; time taken :: " + (System.currentTimeMillis() - startTime)/1000 + " seconds");
             return submittedBills;
@@ -771,7 +781,8 @@ public class ExpenseCalculatorService {
         if(bill.getAdditionalDetails() != null){
             additionalDetails = objectMapper.convertValue(bill.getAdditionalDetails(), ObjectNode.class);
         }
-        additionalDetails.put("noOfRegisters", distinctRegisters.size());
+        additionalDetails.put(NO_OF_REGISTERS, distinctRegisters.size());
+        additionalDetails.put(NO_OF_BILL_DETAILS, bill.getBillDetails().size());
         bill.setAdditionalDetails(additionalDetails);
     }
 }
