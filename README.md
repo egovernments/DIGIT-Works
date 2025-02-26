@@ -1,25 +1,57 @@
 # DIGIT Works
 
-DIGIT is a set of Open APIs, services, and reference implementations, setup as a public good, to allow government entities, businesses, startups, and civil society to use a unique digital Infrastructure and build solutions for urban India at a large scale. It provides a set of open standards, specifications and documentation to create a level playing field and enable ecosystem players to innovate on the stack. As a public good, the platform is provided without profit or restriction to all members of society.
+The DIGIT Works platform is an open-source Digital Public Good used by agencies and institutions to track project scope and finances. The objective is to facilitate transparency and efficiency of agencies involved in the execution of public works or civil projects. 
 
-DIGIT focuses on inclusion and is designed on the principle of enhancing both platform openness and choice for citizens. The platform uses open APIs and standards, creating a powerful framework to drive convergence across the multiple systems currently in use, and to lower the barrier to entry for locally-developed solutions. Keeping in mind that most Indians use the internet through their phones, we follow and advocate a “mobile-first” approach, while supporting multi-channel access to accommodate diverse needs and preferences.
+_Examples:_
+_1. Construction of new metro rail (New Works)_
+_2. Repair of existing roads (O&M)_
 
-## Explore more from these Useful Links:
+The platform is open, configurable and reusable, making it flexible to customise per project requirements. The goal of this works platform is to allow a seamless exchange of works-related information (such as projects, vendors, assets, attendance, estimates, contracts, bills etc.) between -
+1. Works and finance systems to accelerate payments
+2. Different agencies for better project coordination 
+3. Share open data & registries to avoid duplication and misuse of resources
 
-* ### [Documentation](https://docs.digit.org)
+# Installation
+Refer to the [Installation Guide](https://core.digit.org/guides/installation-guide) to install the Works platform.
+Post-installation, refer to the [steps here](https://works.digit.org/platform/configuration) to configure the Works-specific services.
 
-* ### [Discuss with community](https://github.com/egovernments/DIGIT/discussions)
+# Developer Documentation
+Check out our [Platform Docs](https://works.digit.org/platform) for developer resources.
 
-* ### [Issue Reporting](https://github.com/egovernments/DIGIT/issues)
+# Resource Links
+1. [Source Code](https://github.com/egovernments/DIGIT-Works)
+2. [Technical Specifications](https://works.digit.org/platform/architecture/low-level-design) 
+3. [Functional Specifications](https://works.digit.org/platform/functional-specifications)
+4. [Release Notes](https://works.digit.org/platform/release-notes)
+5. [Documentation](https://works.digit.org)
+
+# Community
+We would love to see more people contributing to the DIGIT platform. Please start posting your queries or project interests on our [Discussion Board](https://github.com/egovernments/Digit-Core/discussions).
+
+# Licensing
+DIGIT Code is open source under the MIT License and [Contributor Licence Agreement](https://docs.google.com/forms/d/e/1FAIpQLScSQFSNNyJrYym663sGZHNtIfkMZIEc-H-VXGmkrl3H058OHg/viewform)
+
+## MIT License
+
+Copyright (c) 2021 eGovernments Foundation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 
-## Some of the DIGIT Platform/Features
-<img src="https://egov-images.s3.ap-south-1.amazonaws.com/DIGIT+-+Features.png" width="1000">
 
-## Tech Overview
-<img src="https://egov-images.s3.ap-south-1.amazonaws.com/DIGIT+-+TechStack.png" width="1000">
-
-
-### DIGIT Code is open sources under the MIT License and under [Contributor License Agreement](https://forms.gle/nnNZjB7P1YPuEHb69)
-
-### DIGIT is Developed and Maintained by eGovrnments Foundation (A non-profit and non-governmental organisation)
