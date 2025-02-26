@@ -1,0 +1,44 @@
+{
+  "Mdms": {
+    "id": "0684da67-992f-445f-8f84-78d549659c61",
+    "tenantId": "pg",
+    "schemaCode": "WORKS-SOR.Composition",
+    "uniqueIdentifier": "CMP_000001",
+    "data": {
+      "type": "SOR",
+      "sorId": "SOR_000002",
+      "active": true,
+      "sorType": "W",
+      "quantity": 100,
+      "compositionId": "CMP_000001",
+      "effectiveFrom": "1716462935",
+      "basicSorDetails": [
+        {
+          "sorId": "SOR_000366",
+          "quantity": 2,
+          "perUnitQty": 0.02
+        },
+        {
+          "sorId": "SOR_000362",
+          "quantity": 4,
+          "perUnitQty": 0.04
+        }
+      ],
+      "additionalCharges": [
+        {
+          "figure": 20,
+          "description": "abcd",
+          "applicableOn": "SOR_000362",
+          "calculationType": "fixed"
+        }
+      ]
+    },
+    "isActive": true,
+    "auditDetails": {
+      "createdBy": "d7867ef2-d046-4361-9a82-94c35c98416e",
+      "lastModifiedBy": "d7867ef2-d046-4361-9a82-94c35c98416e",
+      "createdTime": 1716876672287,
+      "lastModifiedTime": 1716876672287
+    }
+  }
+}
