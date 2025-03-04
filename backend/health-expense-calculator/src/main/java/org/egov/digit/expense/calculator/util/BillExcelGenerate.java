@@ -141,12 +141,23 @@ public class BillExcelGenerate {
         // Write data rows
         for (ReportBillDetail detail : reportBill.getReportBillDetails()) {
             Row row = sheet.createRow(rowNum++);
+            BigDecimal wageAmount = detail.getWageAmount();
+            BigDecimal foodAmount = detail.getFoodAmount();
+            BigDecimal transportAmount = detail.getTransportAmount();
+            BigDecimal totalDays = BigDecimal.valueOf(detail.getTotalNumberOfDays());
+
+            // Perform multiplication using .multiply() method
+            BigDecimal totalWageAmount = wageAmount.multiply(totalDays);
+            BigDecimal totalFoodAmount = foodAmount.multiply(totalDays);
+            BigDecimal totalTransportAmount = transportAmount.multiply(totalDays);
             Object[] data = {
                     detail.getSlNo(), detail.getIndividualName(), detail.getRole(), detail.getLocality(),
                     detail.getIdNumber(), detail.getMobileNumber(),
                     detail.getWageAmount(), detail.getFoodAmount(),
                     detail.getTransportAmount(), detail.getTotalWages(),
-                    detail.getTotalNumberOfDays(), detail.getTotalAmount()
+                    detail.getTotalNumberOfDays(),
+                    totalWageAmount, totalFoodAmount, totalTransportAmount,
+                    detail.getTotalAmount()
             };
 
             for (int i = 0; i < data.length; i++) {
