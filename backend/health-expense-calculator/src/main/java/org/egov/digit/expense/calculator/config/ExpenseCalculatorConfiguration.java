@@ -277,6 +277,12 @@ public class ExpenseCalculatorConfiguration {
 	private String boundaryServiceHost;
 
 	@Value("${egov.boundary.search.url}")
+	private String boundaryRelationshipSearchUrl;
+
+	@Value("${egov.boundary.hierarchy.name}")
+	private String boundaryHierarchyName;
+
+	@Value("${egov.boundary.search.url}")
 	private String boundarySearchUrl;
 
 	@Value("${is.attendance.approval.required}")
@@ -290,5 +296,14 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${bill.generation.async.topic}")
 	private String billGenerationAsyncTopic;
+
+	@Value("${egov.localization.module.name:rainmaker-boundary-admin}")
+	private String localizationModuleName;
+
+	@Value("${egov.localization.locale.code:fr_BI}")
+	private String localizationLocaleCode;
+
+	@Value("${egov.boundary.v2.auth.token}")
+	private String boundaryV2AuthToken;
 
 }
