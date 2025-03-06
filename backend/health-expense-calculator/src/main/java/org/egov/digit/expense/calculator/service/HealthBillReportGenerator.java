@@ -414,7 +414,19 @@ public class HealthBillReportGenerator {
             reportBill.setReportTitle(newReportTitle);
             for (ReportBillDetail reportBillDetail : reportBill.getReportBillDetails()) {
                 BoundaryHierarchyResult boundaryHierarchyResult = boundaryService.getBoundaryHierarchyWithLocalityCode(reportBillDetail.getLocality(),billRequest.getRequestInfo().getUserInfo().getTenantId());
-                reportBillDetail.setLocality(localization.getOrDefault(reportBillDetail.getLocality(), reportBillDetail.getLocality()));
+                Map<String, String> boundaryMap = boundaryHierarchyResult.getBoundaryHierarchy();
+                // Check if "COUNTRY" is the only entry
+                if (boundaryMap.size() == 1 && boundaryMap.containsKey("COUNTRY")) {
+                    reportBillDetail.setLocality(boundaryMap.get("COUNTRY")); // Set COUNTRY if it's the only value
+                } else {
+                    // Remove COUNTRY if other values are present
+                    String filteredLocality = boundaryMap.entrySet().stream()
+                            .filter(entry -> !"COUNTRY".equals(entry.getKey()))  // Exclude COUNTRY if others exist
+                            .map(Map.Entry::getValue)  // Get only values
+                            .collect(Collectors.joining(" / ")); // Join as "/" separated string
+
+                    reportBillDetail.setLocality(filteredLocality);
+                }
                 reportBillDetail.setRole(localization.getOrDefault(reportBillDetail.getRole(), reportBillDetail.getRole()));
             }
         }
