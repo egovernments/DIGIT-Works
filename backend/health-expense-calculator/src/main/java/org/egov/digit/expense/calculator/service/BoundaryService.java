@@ -10,6 +10,7 @@ import org.egov.digit.expense.calculator.util.ServiceRequestClient;
 import org.egov.digit.expense.calculator.web.models.boundary.BoundaryRelationshipRequest;
 import org.egov.digit.expense.calculator.web.models.boundary.BoundarySearchResponse;
 import org.egov.digit.expense.calculator.web.models.boundary.EnrichedBoundary;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.util.CollectionUtils;
@@ -33,7 +34,7 @@ public class BoundaryService {
     private final ExpenseCalculatorConfiguration config;
 
     private static List<EnrichedBoundary> cachedEnrichedBoundaries = null;
-
+    @Autowired
     public BoundaryService( ServiceRequestClient serviceRequestClient , ExpenseCalculatorConfiguration config) {
         this.serviceRequestClient = serviceRequestClient;
         this.config = config;
