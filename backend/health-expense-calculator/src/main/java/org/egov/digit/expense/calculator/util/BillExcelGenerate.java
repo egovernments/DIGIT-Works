@@ -173,8 +173,14 @@ public class BillExcelGenerate {
 
         // Write total row
         Row billFooterTotalRow = sheet.createRow(rowNum++);
-        Cell totalLabelcell = billFooterTotalRow.createCell(columns.length - 2);
+        Cell totalLabelcell = billFooterTotalRow.createCell(columns.length - 5);
         setCellValueWithAlignment(totalLabelcell, localizationMap.getOrDefault(BILL_EXCEL_FOOTER_TOTAL_AMOUNT_LABEL, BILL_EXCEL_FOOTER_TOTAL_AMOUNT_LABEL), textStyle, numberStyle);
+        Cell totalWageAmountCell = billFooterTotalRow.createCell(columns.length - 4);
+        setCellValueWithAlignment(totalWageAmountCell, reportBill.getTotalWageAmount(), textStyle, numberStyle);
+        Cell totalFoodAmountCell = billFooterTotalRow.createCell(columns.length - 3);
+        setCellValueWithAlignment(totalFoodAmountCell, reportBill.getTotalFoodAmount(), textStyle, numberStyle);
+        Cell totalTransportAmountCell = billFooterTotalRow.createCell(columns.length - 2);
+        setCellValueWithAlignment(totalTransportAmountCell, reportBill.getTotalTransportAmount(), textStyle, numberStyle);
         Cell totalAmountCell = billFooterTotalRow.createCell(columns.length - 1);
         setCellValueWithAlignment(totalAmountCell, reportBill.getTotalAmount(), textStyle, numberStyle);
 

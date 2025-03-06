@@ -35,6 +35,21 @@ public class ReportBill {
     @Default
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
+    @JsonProperty("totalWageAmount")
+    @Valid
+    @Default
+    private BigDecimal totalWageAmount = BigDecimal.ZERO;
+
+    @JsonProperty("totalFoodAmount")
+    @Valid
+    @Default
+    private BigDecimal totalFoodAmount = BigDecimal.ZERO;
+
+    @JsonProperty("totalTransportAmount")
+    @Valid
+    @Default
+    private BigDecimal totalTransportAmount = BigDecimal.ZERO;
+
     @JsonProperty("campaignName")
     private String campaignName;
 

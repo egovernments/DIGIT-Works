@@ -118,9 +118,25 @@ public class WageSeekerBillGeneratorService {
 				}
 				List<LineItem> payableLineItem = new ArrayList<>();
 				BigDecimal totalBillDetailAmount = BigDecimal.ZERO;
+				BigDecimal food = BigDecimal.ZERO;
+				BigDecimal transport = BigDecimal.ZERO;
+				BigDecimal wage = BigDecimal.ZERO;
 				for (Map.Entry<String, BigDecimal> entry : rateBreakup.entrySet()) {
 					//Create line item for each skill
 					BigDecimal amount = calculateAmount(individualEntry, entry.getValue());
+					switch (entry.getKey()) {
+						case "FOOD":
+							food = food.add(amount);
+							break;
+						case "TRAVEL":
+							transport = transport.add(amount);
+							break;
+						case "PER_DAY":
+							wage = wage.add(amount);
+							break;
+						default:
+							break;
+					}
 					LineItem lineItem = buildLineItem(musterRoll.getTenantId(), amount, entry.getKey(), LineItem.TypeEnum.PAYABLE);
 					totalBillDetailAmount = totalBillDetailAmount.add(lineItem.getAmount());
 					payableLineItem.add(lineItem);
@@ -140,6 +156,9 @@ public class WageSeekerBillGeneratorService {
 						.build();
 
 				bill.addBillDetailsItem(billDetail);
+				bill.setTotalFoodAmount(bill.getTotalFoodAmount().add(food));
+				bill.setTotalWageAmount(bill.getTotalWageAmount().add(wage));
+				bill.setTotalTransportAmount(bill.getTotalTransportAmount().add(transport));
 				bill.setTotalAmount(bill.getTotalAmount().add(billDetail.getTotalAmount()));
 			}
 		}

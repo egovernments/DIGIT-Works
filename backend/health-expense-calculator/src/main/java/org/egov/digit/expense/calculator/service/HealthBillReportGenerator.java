@@ -143,6 +143,9 @@ public class HealthBillReportGenerator {
 
         ReportBill reportBill = ReportBill.builder()
                 .totalAmount(billRequest.getBill().getTotalAmount())
+                .totalFoodAmount(billRequest.getBill().getTotalFoodAmount())
+                .totalTransportAmount(billRequest.getBill().getTotalTransportAmount())
+                .totalWageAmount(billRequest.getBill().getTotalWageAmount())
                 .reportTitle(billRequest.getBill().getLocalityCode())
                 .createdBy(createdBy)
                 .createdTime(System.currentTimeMillis())
