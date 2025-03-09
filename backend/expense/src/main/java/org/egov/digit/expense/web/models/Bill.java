@@ -60,6 +60,21 @@ public class Bill {
 	@Builder.Default
 	private BigDecimal totalAmount = BigDecimal.ZERO;
 
+	@JsonProperty("totalWageAmount")
+	@Valid
+	@Builder.Default
+	private BigDecimal totalWageAmount = BigDecimal.ZERO;
+
+	@JsonProperty("totalFoodAmount")
+	@Valid
+	@Builder.Default
+	private BigDecimal totalFoodAmount = BigDecimal.ZERO;
+
+	@JsonProperty("totalTransportAmount")
+	@Valid
+	@Builder.Default
+	private BigDecimal totalTransportAmount = BigDecimal.ZERO;
+
 	@JsonProperty("totalPaidAmount")
 	@Valid
 	@Builder.Default
