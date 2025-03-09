@@ -366,6 +366,9 @@ public class ExpenseCalculatorService {
                 if (SUCCESSFUL_CONSTANT.equalsIgnoreCase(billResponse.getResponseInfo().getStatus())) {
                     log.info("Bill successfully posted to expense service. Reference ID " + bill.getReferenceId());
                     List<Bill> respBills = billResponse.getBills();
+                    respBills.get(0).setTotalTransportAmount(bill.getTotalTransportAmount());
+                    respBills.get(0).setTotalFoodAmount(bill.getTotalFoodAmount());
+                    respBills.get(0).setTotalWageAmount(bill.getTotalWageAmount());
                     submittedBills.addAll(respBills);
 //                if(respBills != null && !respBills.isEmpty()) {
 //                    log.info("Persisting meta for bill reference ID: " + bill.getReferenceId());
