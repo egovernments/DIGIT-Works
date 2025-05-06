@@ -1,7 +1,10 @@
 package org.egov.repository.querybuilder;
 
+import org.egov.common.exception.InvalidTenantIdException;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendeeSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -9,8 +12,13 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
+import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
+
 @Component
 public class AttendeeQueryBuilder {
+
+    @Autowired
+    MultiStateInstanceUtil multiStateInstanceUtil;
 
     private static final String ATTENDANCE_ATTENDEE_SELECT_QUERY = " SELECT att.id, " +
             "att.individual_id, " +
@@ -23,11 +31,11 @@ public class AttendeeQueryBuilder {
             "att.createdtime, " +
             "att.lastmodifiedtime, " +
             "att.tenantid " +
-            "FROM eg_wms_attendance_attendee att ";
+            "FROM %s.eg_wms_attendance_attendee att ";
 
-    public String getAttendanceAttendeeSearchQuery(AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getAttendanceAttendeeSearchQuery(String tenantId, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
         StringBuilder query = new StringBuilder(ATTENDANCE_ATTENDEE_SELECT_QUERY);
-
+        query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING));
         List<String> ids=criteria.getIds();
         if (ids!=null && !ids.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
@@ -68,6 +76,7 @@ public class AttendeeQueryBuilder {
             }
         }
 
+        query = new StringBuilder(multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId));
         return query.toString();
     }
     private void addLimitAndOffset(StringBuilder query, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {

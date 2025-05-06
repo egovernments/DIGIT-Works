@@ -26,6 +26,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -233,7 +234,7 @@ public class AttendanceLogServiceValidatorTest {
                                         .build();
         List<IndividualEntry> individualEntries = new ArrayList<>();
         individualEntries.add(individual);
-        when(attendanceAttendeeRepository.getAttendees(any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
+        when(attendanceAttendeeRepository.getAttendees(anyString(), any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
         assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendees", attendanceLogRequest));
     }
 
@@ -251,7 +252,7 @@ public class AttendanceLogServiceValidatorTest {
                 .build();
         List<IndividualEntry> individualEntries = new ArrayList<>();
         individualEntries.add(individual);
-        when(attendanceAttendeeRepository.getAttendees(any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
+        when(attendanceAttendeeRepository.getAttendees(anyString(), any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
         assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendees", attendanceLogRequest));
     }
 
@@ -269,7 +270,7 @@ public class AttendanceLogServiceValidatorTest {
                 .build();
         List<IndividualEntry> individualEntries = new ArrayList<>();
         individualEntries.add(individual);
-        when(attendanceAttendeeRepository.getAttendees(any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
+        when(attendanceAttendeeRepository.getAttendees(anyString(), any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
         assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendees", attendanceLogRequest));
     }
 
@@ -287,7 +288,7 @@ public class AttendanceLogServiceValidatorTest {
                 .build();
         List<IndividualEntry> individualEntries = new ArrayList<>();
         individualEntries.add(individual);
-        when(attendanceAttendeeRepository.getAttendees(any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
+        when(attendanceAttendeeRepository.getAttendees(anyString(), any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
         CustomException exception = assertThrows(CustomException.class, ( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendees", attendanceLogRequest)));
         assertTrue(exception.getCode().equals("INELIGIBLE_ATTENDEES"));
     }
@@ -307,7 +308,7 @@ public class AttendanceLogServiceValidatorTest {
                 .build();
         List<IndividualEntry> individualEntries = new ArrayList<>();
         individualEntries.add(individual);
-        when(attendanceAttendeeRepository.getAttendees(any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
+        when(attendanceAttendeeRepository.getAttendees(anyString(), any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
         CustomException exception = assertThrows(CustomException.class, ( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendees", attendanceLogRequest)));
         assertTrue(exception.getCode().equals("INELIGIBLE_ATTENDEES"));
     }
