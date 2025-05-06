@@ -1,8 +1,12 @@
 package org.egov.repository.querybuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.exception.InvalidTenantIdException;
+import org.egov.common.utils.CommonUtils;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceLogSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -10,8 +14,13 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
+import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
+
 @Component
 public class AttendanceLogQueryBuilder {
+
+    @Autowired
+    MultiStateInstanceUtil multiStateInstanceUtil;
 
     private static final String ATTENDANCE_LOG_SELECT_QUERY = " SELECT log.id as logid, " +
             "log.individual_id as logIndividualId, " +
@@ -41,15 +50,15 @@ public class AttendanceLogQueryBuilder {
             "doc.lastmodifiedby as docLastModifiedBy, " +
             "doc.createdtime as docCreatedTime, " +
             "doc.lastmodifiedtime as docLastModifiedTime " +
-            "FROM eg_wms_attendance_log AS log " +
+            "FROM %s.eg_wms_attendance_log AS log " +
             "LEFT JOIN " +
-            "eg_wms_attendance_document AS doc " +
+            "%s.eg_wms_attendance_document AS doc " +
             "ON (log.id=doc.attendance_log_id) ";
 
 
-    public String getAttendanceLogSearchQuery(AttendanceLogSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getAttendanceLogSearchQuery( String tenantId, AttendanceLogSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
         StringBuilder query = new StringBuilder(ATTENDANCE_LOG_SELECT_QUERY);
-
+        query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING, SCHEMA_REPLACE_STRING));
         List<String> ids = criteria.getIds();
         if (ids != null && !ids.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
@@ -112,6 +121,7 @@ public class AttendanceLogQueryBuilder {
 
         addLimitAndOffset(query, criteria, preparedStmtList);
 
+        query  = new StringBuilder(multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId));
         return query.toString();
     }
 

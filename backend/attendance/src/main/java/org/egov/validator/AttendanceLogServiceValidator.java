@@ -3,6 +3,7 @@ package org.egov.validator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.utils.CommonUtils;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.util.HRMSUtil;
 import org.egov.util.IndividualServiceUtil;
@@ -267,7 +268,8 @@ public class AttendanceLogServiceValidator {
 
         // Fetch all attendees for given register_id.
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
-        List<IndividualEntry> fetchAttendanceAttendeeLst = fetchAllAttendeesEnrolledInARegister(registerId);
+        String tenantId = CommonUtils.getTenantId(attendanceLogRequest.getAttendance());
+        List<IndividualEntry> fetchAttendanceAttendeeLst = fetchAllAttendeesEnrolledInARegister(tenantId, registerId);
 
         log.info("All attendees are fetched successfully for register ["+registerId+"]");
 
@@ -331,13 +333,13 @@ public class AttendanceLogServiceValidator {
         }
     }
 
-    private List<IndividualEntry> fetchAllAttendeesEnrolledInARegister(String registerId) {
+    private List<IndividualEntry> fetchAllAttendeesEnrolledInARegister(String tenantId, String registerId) {
         AttendeeSearchCriteria searchCriteria = AttendeeSearchCriteria
                 .builder()
                 .registerIds(Collections.singletonList(registerId))
                 .build();
 
-        return attendanceAttendeeRepository.getAttendees(searchCriteria);
+        return attendanceAttendeeRepository.getAttendees(tenantId, searchCriteria);
     }
 
     private void validateLoggedInUser(AttendanceLogRequest attendanceLogRequest) {

@@ -1,15 +1,22 @@
 package org.egov.repository.querybuilder;
 
+import org.egov.common.exception.InvalidTenantIdException;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.web.models.StaffSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
+
 @Component
 public class StaffQueryBuilder {
+
+    @Autowired
+    MultiStateInstanceUtil multiStateInstanceUtil;
 
     private static final String ATTENDANCE_STAFF_SELECT_QUERY = " SELECT stf.id, " +
             "stf.individual_id, " +
@@ -23,19 +30,21 @@ public class StaffQueryBuilder {
             "stf.createdtime, " +
             "stf.lastmodifiedtime, " +
             "stf.tenantid, " + "stf.stafftype " +
-            "FROM eg_wms_attendance_staff stf ";
+            "FROM %s.eg_wms_attendance_staff stf ";
 
-    public String getActiveAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(getAttendanceStaffSearchQuery(criteria, preparedStmtList));
+    public String getActiveAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
+        String tenantId = criteria.getTenantId();
+        StringBuilder query = new StringBuilder( getAttendanceStaffSearchQuery(criteria, preparedStmtList));
         addClauseIfRequired(query, preparedStmtList);
         query.append(" stf.deenrollment_date is null ");
 
         return query.toString();
     }
 
-    public String getAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
         StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
-
+        String tenantId = criteria.getTenantId();
+        query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING));
         List<String> staffUserIds = criteria.getIndividualIds();
         if (staffUserIds != null && !staffUserIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
@@ -50,7 +59,6 @@ public class StaffQueryBuilder {
             preparedStmtList.addAll(criteria.getRegisterIds());
         }
 
-        String tenantId = criteria.getTenantId();
         if (tenantId != null && !tenantId.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" stf.tenantid IN (").append(createQuery(Collections.singletonList(tenantId))).append(")");
@@ -63,6 +71,7 @@ public class StaffQueryBuilder {
             query.append(" stf.stafftype = ? ");
             preparedStmtList.add(staffType);
         }
+        query = new StringBuilder(multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId));
         return query.toString();
     }
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {

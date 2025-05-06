@@ -2,6 +2,8 @@ package org.egov.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.exception.InvalidTenantIdException;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
@@ -15,9 +17,14 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
+import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
+
 @Component
 @Slf4j
 public class RegisterQueryBuilder {
+
+    @Autowired
+    MultiStateInstanceUtil multiStateInstanceUtil;
 
     private final AttendanceServiceConfiguration config;
 
@@ -37,12 +44,12 @@ public class RegisterQueryBuilder {
             "reg.servicecode, " +
             "reg.localitycode, " +
             "reg.reviewstatus " +
-            "FROM eg_wms_attendance_register reg ";
+            "FROM %s.eg_wms_attendance_register reg ";
 
-    private static final String JOIN_STAFF = " JOIN eg_wms_attendance_staff staff ";
+    private static final String JOIN_STAFF = " JOIN %s.eg_wms_attendance_staff staff ";
     private static final String JOIN_STAFF_CONDITION = " ON reg.id = staff.register_id ";
 
-    private static final String JOIN_ATTENDEE = " JOIN eg_wms_attendance_attendee attendee ";
+    private static final String JOIN_ATTENDEE = " JOIN %s.eg_wms_attendance_attendee attendee ";
     private static final String JOIN_ATTENDEE_CONDITION = " ON reg.id = attendee.register_id ";
 
     private final String paginationWrapper = "SELECT * FROM " +
@@ -57,19 +64,22 @@ public class RegisterQueryBuilder {
     }
 
 
-    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludeReviewStatus) {
+    public String getAttendanceRegisterSearchQuery( AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludeReviewStatus) throws InvalidTenantIdException {
 
+        String tenantId = searchCriteria.getTenantId();
         log.info("Search criteria of attendance search : " + searchCriteria.toString());
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
-
+        query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING));
         if(!ObjectUtils.isEmpty(searchCriteria.getStaffId())) {
             query.append(JOIN_STAFF);
             query.append(JOIN_STAFF_CONDITION);
+            query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING));
         }
 
         if(!ObjectUtils.isEmpty(searchCriteria.getAttendeeId())) {
             query.append(JOIN_ATTENDEE);
             query.append(JOIN_ATTENDEE_CONDITION);
+            query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING));
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getTenantId())) {
@@ -176,6 +186,7 @@ public class RegisterQueryBuilder {
 
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);
+        query = new StringBuilder(multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId));
         return query.toString();
     }
 
