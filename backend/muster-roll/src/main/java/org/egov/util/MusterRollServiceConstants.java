@@ -35,4 +35,5 @@ public class MusterRollServiceConstants {
     public static final String WF_APPROVE_CODE = "APPROVE";
     public static final String CBO_NOTIFICATION_FOR_CORRECTION_LOCALIZATION_CODE = "MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION";
     public static final String CBO_NOTIFICATION_OF_APPROVAL_LOCALIZATION_CODE = "MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL";
+    public static final String INVALID_TENANT_ID_ERR_CODE = "INVALID_TENANT_ID";
 }
