@@ -64,6 +64,7 @@ public class BillService {
 	public BillResponse create(BillRequest billRequest) {
 
 		Bill bill = billRequest.getBill();
+		String tenantId = bill.getTenantId();
 		RequestInfo requestInfo = billRequest.getRequestInfo();
 		BillResponse response = null;
 
@@ -90,7 +91,7 @@ public class BillService {
 			// produce full bill to different topic if indexing is required
 			produceBillsBatchWise(billRequest, config.getBillCreateTopic());
 		} else {
-			expenseProducer.push(config.getBillCreateTopic(), billRequest);
+			expenseProducer.push(tenantId, config.getBillCreateTopic(), billRequest);
 		}
 		
 		response = BillResponse.builder()
@@ -109,6 +110,7 @@ public class BillService {
 	public BillResponse update(BillRequest billRequest) {
 
 		Bill bill = billRequest.getBill();
+		String tenantId = bill.getTenantId();
 		RequestInfo requestInfo = billRequest.getRequestInfo();
 		BillResponse response = null;
 
@@ -131,7 +133,7 @@ public class BillService {
 			 Every bill will have a batch of billDetails */
 			produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
 		} else {
-			expenseProducer.push(config.getBillUpdateTopic(), billRequest);
+			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
 		}
 
 		response = BillResponse.builder()
@@ -199,13 +201,14 @@ public class BillService {
 	 */
 	private void produceBillsBatchWise(BillRequest billRequest, String topic) {
 		Bill bill = billRequest.getBill();
+		String tenantId = bill.getTenantId();
 		List<BillDetail> allBillDetails = new ArrayList<>(bill.getBillDetails());
 		// Breakdown the billDetails into batches and push to kafka
 		for (int i = 0; i < allBillDetails.size(); i += config.getBillBreakdownSize()) {
 			// Breakdown bill details into batches and push to kafka topic
 			List<BillDetail> currBatchBillDetails = allBillDetails.subList(i, Math.min(i + config.getBillBreakdownSize(), allBillDetails.size()));
 			bill.setBillDetails(currBatchBillDetails);
-			expenseProducer.push(topic, billRequest);
+			expenseProducer.push(tenantId, topic, billRequest);
 		}
 		bill.setBillDetails(allBillDetails);
 		log.info("All bill details pushed to kafka");
