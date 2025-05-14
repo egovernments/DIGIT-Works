@@ -30,7 +30,7 @@ public class ExpenseCalculatorConsumer {
 		this.producer = producer;
 	}
 
-	@KafkaListener(topics = {"${expense.calculator.consume.topic}"})
+	@KafkaListener(topicPattern = ".*${expense.calculator.consume.topic}")
 	public void listen(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("ExpenseCalculatorConsumer:listen");
 		MusterRollRequest request = null;
@@ -47,7 +47,7 @@ public class ExpenseCalculatorConsumer {
 		}
 	}
 
-	@KafkaListener(topics = {"${expense.billing.bill.create}", "${expense.billing.bill.update}"})
+	@KafkaListener(topicPattern = ".*(${expense.billing.bill.create}|${expense.billing.bill.update})")
 	public void listenBill(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("ExpenseCalculatorConsumer:listenBill");
 		BillRequest request = null;

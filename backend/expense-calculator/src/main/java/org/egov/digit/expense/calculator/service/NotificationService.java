@@ -45,6 +45,7 @@ public class NotificationService {
         if(action.equalsIgnoreCase("APPROVE") || action.equalsIgnoreCase("REJECT")) {
             String amount = String.valueOf(purchaseBillRequest.getBill().getTotalAmount());
             String billNumber = purchaseBillRequest.getBill().getBillNumber();
+            String tenantId = purchaseBillRequest.getBill().getTenantId();
             String message = null;
             String contactMobileNumber = null;
             if (action.equalsIgnoreCase("APPROVE")) {
@@ -63,7 +64,7 @@ public class NotificationService {
             }
             String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
-            producer.push(config.getSmsNotificationTopic(), smsRequest);
+            producer.push(tenantId, config.getSmsNotificationTopic(), smsRequest);
         }
     }
 
@@ -71,11 +72,12 @@ public class NotificationService {
         Map<String, String> cboDetails = notificationUtil.getCBOContactPersonDetails(requestInfo, criteria.getTenantId(), criteria.getContractId());
         String amount = String.valueOf(calculation.getTotalAmount());
         String billNumber = bills.get(0).getBillNumber();
+        String tenantId = bills.get(0).getTenantId();
         String message = getMessage(requestInfo, criteria.getTenantId(), "SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO");
         String contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
         String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
-        producer.push(config.getSmsNotificationTopic(), smsRequest);
+        producer.push(tenantId, config.getSmsNotificationTopic(), smsRequest);
     }
 
     public String getMessage(RequestInfo requestInfo, String tenantId, String msgCode){
