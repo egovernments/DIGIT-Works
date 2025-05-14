@@ -386,9 +386,11 @@ public class ExpenseCalculatorService {
     }
 
     private void persistMeta(List<Bill> bills,Map<String, String> metaInfo) {
-        BillMetaRecords billMetaRecords = billToMetaMapper.map(bills,metaInfo);
-        expenseCalculatorProducer.push(config.getCalculatorCreateBillTopic(),billMetaRecords);
-        log.info("Meta records pushed into topic ["+config.getCalculatorCreateBillTopic()+"]");
+        if (!CollectionUtils.isEmpty(bills)) {
+            String tenantId = bills.get(0).getTenantId();
+            BillMetaRecords billMetaRecords = billToMetaMapper.map(bills,metaInfo);
+            expenseCalculatorProducer.push(tenantId, config.getCalculatorCreateBillTopic(),billMetaRecords);
+        }
     }
 
     public List<BillMapper> search(CalculatorSearchRequest calculatorSearchRequest) {
@@ -509,7 +511,7 @@ public class ExpenseCalculatorService {
         }
         Project project = projectResponse.getProject().get(0);
         enrichAdditionalDetails(bill, project);
-        expenseCalculatorProducer.push(config.getBillIndexTopic(), request);
+        expenseCalculatorProducer.push(bill.getTenantId(), config.getBillIndexTopic(), request);
     }
 
     private void enrichAdditionalDetails(Bill bill, Project project) {

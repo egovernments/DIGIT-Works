@@ -67,4 +67,6 @@ public class ExpenseCalculatorServiceConstants {
     public static final String RATES_CONSTANT = "Rates";
     public static final String JSON_PATH_FOR_SOR = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + SOR_CONSTANT;
     public static final String JSON_PATH_FOR_RATES = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + RATES_CONSTANT;
+
+    public static final String INVALID_TENANT_ID_ERR_CODE = "INVALID_TENANT_ID";
 }

@@ -12,20 +12,22 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
+import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
+
 @Component
 public class ExpenseCalculatorQueryBuilder {
 
     private final ExpenseCalculatorConfiguration config;
 
 
-    private static final String FETCH_MUSTER_NUM_QUERY = "SELECT musterroll_number FROM eg_works_calculation ";
+    private static final String FETCH_MUSTER_NUM_QUERY = "SELECT musterroll_number FROM " + SCHEMA_REPLACE_STRING + ".eg_works_calculation ";
 
-    private static final String FETCH_BILL_ID_QUERY = "SELECT bill_id FROM eg_works_calculation ";
+    private static final String FETCH_BILL_ID_QUERY = "SELECT bill_id FROM " + SCHEMA_REPLACE_STRING + ".eg_works_calculation ";
 
-    private static final String FETCH_PROJECT_ID_QUERY = "SELECT distinct project_number FROM eg_works_calculation ";
+    private static final String FETCH_PROJECT_ID_QUERY = "SELECT distinct project_number FROM " + SCHEMA_REPLACE_STRING + ".eg_works_calculation ";
 
     private static final String FETCH_CALCULATE_BILL_IDS_QUERY = "SELECT bill_id,contract_number,musterroll_number," +
-            "project_number,org_id FROM eg_works_calculation ";
+            "project_number,org_id FROM " + SCHEMA_REPLACE_STRING + ".eg_works_calculation ";
 
     private String paginationWrapper = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY {sortBy} {orderBy} , bill_id) offset_ FROM " +
@@ -33,7 +35,7 @@ public class ExpenseCalculatorQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
-    private static final String BILL_COUNT_QUERY = "SELECT COUNT(*) FROM eg_works_calculation ";
+    private static final String BILL_COUNT_QUERY = "SELECT COUNT(*) FROM " + SCHEMA_REPLACE_STRING + ".eg_works_calculation ";
 
     private static final String TENANT_ID_CLAUSE = " tenant_id=? ";
 

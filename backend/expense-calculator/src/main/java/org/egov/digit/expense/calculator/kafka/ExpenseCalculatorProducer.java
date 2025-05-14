@@ -22,4 +22,9 @@ public class ExpenseCalculatorProducer {
 	public void push(String topic, Object value) {
 		kafkaTemplate.send(topic, value);
 	}
+
+	public void push(String tenantId, String topic, Object value) {
+		kafkaTemplate.send(topic, value);
+		log.info("Meta records pushed into topic ["+topic+"]");
+	}
 }
