@@ -93,7 +93,7 @@ public class StaffService {
 
         //push to producer
         log.info("staff objects pushed via producer");
-        producer.push(serviceConfiguration.getSaveStaffTopic(), staffPermissionRequest);
+        producer.push( tenantId, serviceConfiguration.getSaveStaffTopic(), staffPermissionRequest);
         log.info("staff present in Create StaffPermission request are enrolled to the register");
         return staffPermissionRequest;
     }
@@ -150,7 +150,7 @@ public class StaffService {
         staffEnrichmentService.enrichStaffPermissionOnDelete(staffPermissionRequest, staffPermissionListFromDB);
 
         log.info("staff objects pushed via producer");
-        producer.push(serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
+        producer.push(tenantId, serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
         log.info("staff present in Delete StaffPermission request are deenrolled from the register");
         return staffPermissionRequest;
     }
