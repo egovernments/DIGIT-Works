@@ -28,7 +28,7 @@ public class AttendanceRegisterConsumer {
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topicPattern = "${project.management.system.kafka.update.topics.pattern}")
+    @KafkaListener(topicPattern = ".*${project.management.system.kafka.update.topic}")
     public void projectUpdate(Map<String, Object> consumerRecord,
                            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
