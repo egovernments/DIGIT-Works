@@ -1,5 +1,6 @@
 package org.egov.repository.querybuilder;
 
+import lombok.RequiredArgsConstructor;
 import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.web.models.StaffSearchCriteria;
@@ -12,11 +13,11 @@ import java.util.List;
 
 import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
 
+@RequiredArgsConstructor
 @Component
 public class StaffQueryBuilder {
 
-    @Autowired
-    MultiStateInstanceUtil multiStateInstanceUtil;
+    private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     private static final String ATTENDANCE_STAFF_SELECT_QUERY = " SELECT stf.id, " +
             "stf.individual_id, " +

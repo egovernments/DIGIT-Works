@@ -1,5 +1,6 @@
 package org.egov.repository.querybuilder;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.exception.InvalidTenantIdException;
@@ -19,12 +20,12 @@ import java.util.List;
 
 import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class RegisterQueryBuilder {
 
-    @Autowired
-    MultiStateInstanceUtil multiStateInstanceUtil;
+    private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     private final AttendanceServiceConfiguration config;
 
@@ -57,11 +58,6 @@ public class RegisterQueryBuilder {
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
-
-    @Autowired
-    public RegisterQueryBuilder(AttendanceServiceConfiguration config) {
-        this.config = config;
-    }
 
 
     public String getAttendanceRegisterSearchQuery( AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludeReviewStatus) throws InvalidTenantIdException {

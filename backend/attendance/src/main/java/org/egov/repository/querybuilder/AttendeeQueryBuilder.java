@@ -1,5 +1,6 @@
 package org.egov.repository.querybuilder;
 
+import lombok.RequiredArgsConstructor;
 import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.tracer.model.CustomException;
@@ -14,11 +15,11 @@ import java.util.List;
 
 import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
 
+@RequiredArgsConstructor
 @Component
 public class AttendeeQueryBuilder {
 
-    @Autowired
-    MultiStateInstanceUtil multiStateInstanceUtil;
+    private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     private static final String ATTENDANCE_ATTENDEE_SELECT_QUERY = " SELECT att.id, " +
             "att.individual_id, " +

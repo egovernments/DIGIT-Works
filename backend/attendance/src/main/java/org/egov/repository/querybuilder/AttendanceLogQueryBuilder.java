@@ -1,5 +1,6 @@
 package org.egov.repository.querybuilder;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.common.utils.CommonUtils;
@@ -16,11 +17,11 @@ import java.util.List;
 
 import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
 
+@RequiredArgsConstructor
 @Component
 public class AttendanceLogQueryBuilder {
 
-    @Autowired
-    MultiStateInstanceUtil multiStateInstanceUtil;
+    private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     private static final String ATTENDANCE_LOG_SELECT_QUERY = " SELECT log.id as logid, " +
             "log.individual_id as logIndividualId, " +
