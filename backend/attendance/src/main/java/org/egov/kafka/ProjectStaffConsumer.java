@@ -49,8 +49,7 @@ public class ProjectStaffConsumer {
         this.individualServiceUtil = individualServiceUtil;
         this.config = config;
     }
-
-    @KafkaListener(topics = "${project.staff.attendance.topic}")
+    @KafkaListener(topicPattern = ".*${project.staff.attendance.topic}")
     public void bulkStaffCreate(Map<String, Object> consumerRecord,
                                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
