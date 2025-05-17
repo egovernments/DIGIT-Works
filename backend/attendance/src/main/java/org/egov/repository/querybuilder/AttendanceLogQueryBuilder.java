@@ -121,8 +121,8 @@ public class AttendanceLogQueryBuilder {
 
         addLimitAndOffset(query, criteria, preparedStmtList);
 
-        query  = new StringBuilder(multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId));
-        return query.toString();
+        return multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId);
+        
     }
 
     private void addOrderByClause(StringBuilder queryBuilder, AttendanceLogSearchCriteria criteria) {
