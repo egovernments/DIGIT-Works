@@ -107,7 +107,7 @@ public class AttendeeService {
     }
 
     public List<IndividualEntry> getAttendees(String tenantId, List<String> registerIds,List<String> attendeeIds){
-        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).individualIds(attendeeIds).build();
+        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).tenantId(tenantId).individualIds(attendeeIds).build();
         List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(tenantId, attendeeSearchCriteria);
         log.info("attendee List received From DB : " + attendeeListFromDB.size());
         return attendeeListFromDB;
