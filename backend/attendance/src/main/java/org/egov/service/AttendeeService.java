@@ -101,13 +101,16 @@ public class AttendeeService {
 
         //push to producer
         log.info("attendee objects pushed via producer");
+        // Push enriched create request to Kafka using tenant-specific topic
         producer.push(tenantId, attendanceServiceConfiguration.getSaveAttendeeTopic(), attendeeCreateRequest);
         log.info("attendees present in Create attendee request are enrolled to the registers");
         return attendeeCreateRequest;
     }
 
     public List<IndividualEntry> getAttendees(String tenantId, List<String> registerIds,List<String> attendeeIds){
+        // Build search criteria using tenantId for schema-aware attendee fetch
         AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).tenantId(tenantId).individualIds(attendeeIds).build();
+        // Use tenant-aware repository method to retrieve matching attendees
         List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(tenantId, attendeeSearchCriteria);
         log.info("attendee List received From DB : " + attendeeListFromDB.size());
         return attendeeListFromDB;
@@ -165,6 +168,7 @@ public class AttendeeService {
 
         //push to producer
         log.info("attendee objects updated via producer");
+        // Push delete (de-enroll) request to Kafka with schema-aware tenant scoping
         producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendeeTopic(), attendeeDeleteRequest);
         log.info("attendees present in delete attendee request are deenrolled from the registers");
         return attendeeDeleteRequest;

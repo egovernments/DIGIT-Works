@@ -33,10 +33,17 @@ public class StaffRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Retrieves a list of active staff permissions based on the provided search criteria.
+     *
+     * @param searchCriteria The criteria to use for searching staff permissions
+     * @return A list of active staff permissions
+     */
     public List<StaffPermission> getActiveStaff(StaffSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = searchCriteria.getTenantId();
         String query = null;
+        // Wrap query construction in try-catch to handle invalid tenant scenarios gracefully
         try {
             query = queryBuilder.getActiveAttendanceStaffSearchQuery( searchCriteria, preparedStmtList);
         } catch (InvalidTenantIdException e) {
@@ -46,10 +53,17 @@ public class StaffRepository {
         return attendanceStaffList;
     }
 
+    /**
+     * Retrieves a list of all staff permissions based on the provided search criteria.
+     *
+     * @param searchCriteria The criteria to use for searching staff permissions
+     * @return A list of all staff permissions
+     */
     public List<StaffPermission> getAllStaff(StaffSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = searchCriteria.getTenantId();
         String query = null;
+        // Wrap query construction in try-catch to handle invalid tenant scenarios gracefully
         try {
             query = queryBuilder.getAttendanceStaffSearchQuery( searchCriteria, preparedStmtList);
         } catch (InvalidTenantIdException e) {

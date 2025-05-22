@@ -40,9 +40,16 @@ public class RegisterRepository {
         this.config = config;
     }
 
+    /**
+     * This method fetches the list of attendance registers based on the search criteria provided.
+     *
+     * @param searchCriteria The criteria used to filter the attendance registers.
+     * @return List<AttendanceRegister> A list of AttendanceRegister objects representing the attendance registers.
+     */
     public List<AttendanceRegister> getRegister(AttendanceRegisterSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = null;
+        // Wrap query construction in try-catch to handle invalid tenant scenarios gracefully
         try {
             query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList, false);
         } catch (InvalidTenantIdException e) {
@@ -61,6 +68,7 @@ public class RegisterRepository {
     public Map<String, Long> getRegisterCounts(AttendanceRegisterSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = null;
+        // Wrap query construction in try-catch to handle invalid tenant scenarios gracefully
         try {
             query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList, true);
         } catch (InvalidTenantIdException e) {

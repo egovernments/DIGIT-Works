@@ -76,9 +76,8 @@ public class AttendeeQueryBuilder {
                 throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify getEnrollmentDate without a getEnrollmentDate");
             }
         }
-
-        query = new StringBuilder(multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId));
-        return query.toString();
+        // After building full query, replace schema placeholders with actual schema using MultiStateInstanceUtil
+        return multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId);
     }
     private void addLimitAndOffset(StringBuilder query, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         query.append(" OFFSET ? ");

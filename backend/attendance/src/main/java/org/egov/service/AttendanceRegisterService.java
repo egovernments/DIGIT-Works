@@ -81,10 +81,12 @@ public class AttendanceRegisterService {
      * @return
      */
     public AttendanceRegisterRequest createAttendanceRegister(AttendanceRegisterRequest request) {
+        // Extract tenantId from the attendance register object for tenant-specific Kafka publishing
         String tenantId = CommonUtils.getTenantId(request.getAttendanceRegister());
         attendanceServiceValidator.validateCreateAttendanceRegister(request);
         registerEnrichment.enrichRegisterOnCreate(request);
         log.info("Enriched Register with Register number, Ids, first staff and audit details");
+        // Push the enriched register create request to Kafka topic configured for the tenant
         producer.push(tenantId, attendanceServiceConfiguration.getSaveAttendanceRegisterTopic(), request);
         log.info("Pushed create attendance register request to kafka");
         return request;
@@ -357,6 +359,7 @@ public class AttendanceRegisterService {
         } else {
             attendeeSearchCriteria = AttendeeSearchCriteria.builder().tenantId(searchCriteria.getTenantId()).registerIds(registerIdsToSearch).build();
         }
+        // Updated attendeeRepository call to pass tenantId explicitly for schema-aware data fetch
         return attendeeRepository.getAttendees(searchCriteria.getTenantId(), attendeeSearchCriteria);
     }
 
@@ -384,6 +387,7 @@ public class AttendanceRegisterService {
     private Set<String> fetchRegistersAssociatedToLoggedInStaffUser(String uuid, String tenantId ) {
         List<String> individualIds = new ArrayList<>();
         individualIds.add(uuid);
+        // Construct staff search criteria with tenantId to fetch registers for the logged-in staff user
         StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder().individualIds(individualIds).tenantId(tenantId).build();
         List<StaffPermission> staffMembers = staffRepository.getAllStaff(staffSearchCriteria);
         return staffMembers.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
@@ -419,6 +423,7 @@ public class AttendanceRegisterService {
 
         registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, attendanceRegistersFromDB);
         log.info("Enriched with register Number, Ids and AuditDetails");
+        // Push the update request to Kafka using tenant-specific topic
         producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
         log.info("Pushed update attendance register request to kafka");
 
@@ -427,6 +432,7 @@ public class AttendanceRegisterService {
 
     public void updateAttendanceRegister(RequestInfoWrapper requestInfoWrapper, List<Project> projects) {
         if(!CollectionUtils.isEmpty(projects)) {
+            // Extract tenantId from project list for downstream processing and Kafka publishing
             String tenantId = CommonUtils.getTenantId(projects);
             List<AttendanceRegister> updatedRegisters = new ArrayList<>();
             projects.forEach(project -> {
@@ -456,6 +462,7 @@ public class AttendanceRegisterService {
                             .build();
                     registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, updatedRegisters);
                     log.info("Pushing update attendance register request to kafka");
+                    // Push the tenant-scoped update request to Kafka topic
                     producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
                     log.info("Pushed update attendance register request to kafka");
                 }
@@ -524,6 +531,7 @@ public class AttendanceRegisterService {
                         requestInfo(requestInfo).build();
 
                 registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, Collections.singletonList(attendanceRegister));
+                // Push register update for revised contract end date to tenant-specific Kafka topic
                 producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
             }
         }else {

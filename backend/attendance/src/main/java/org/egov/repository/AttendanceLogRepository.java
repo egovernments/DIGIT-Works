@@ -47,13 +47,19 @@ public class AttendanceLogRepository extends GenericRepository<AttendanceLog> {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-
+    /*
+     * This method fetches the list of attendance logs based on the search criteria provided.
+     *
+     * @param searchCriteria The criteria used to filter the attendance logs.
+     * @return List<AttendanceLog> A list of AttendanceLog objects representing the attendance logs.
+     */
     public List<AttendanceLog> getAttendanceLogs(AttendanceLogSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         if(!StringUtils.isBlank(searchCriteria.getRegisterId())) log.info("Fetching Attendance Log list. RegisterId ["+searchCriteria.getRegisterId()+"]");
         if(!CollectionUtils.isEmpty(searchCriteria.getClientReferenceId())) log.info("Fetching Attendance Log list. ClientReferenceIds "+searchCriteria.getClientReferenceId());
         String tenantId = searchCriteria.getTenantId();
         String query = null;
+        // Wrap query construction in try-catch to handle invalid tenant scenarios gracefully
         try {
             query = queryBuilder.getAttendanceLogSearchQuery(tenantId, searchCriteria, preparedStmtList);
         } catch (InvalidTenantIdException e) {
