@@ -34,7 +34,7 @@ public class PaymentRepository {
 		this.jdbcTemplate = jdbcTemplate;
 		this.queryBuilder = queryBuilder;
 		this.paymentBillRowMapper = paymentBillRowMapper;
-        this.multiStateInstanceUtil = multiStateInstanceUtil;
+		this.multiStateInstanceUtil = multiStateInstanceUtil;
     }
 
 	public List<Payment> search(@Valid PaymentSearchRequest paymentSearchRequest) {
@@ -42,6 +42,7 @@ public class PaymentRepository {
 		List<Object> preparedStatementValues = new ArrayList<>();
 		String queryStr = queryBuilder.getPaymentQuery(paymentSearchRequest, preparedStatementValues, false);
         try {
+			// Applies schema replacement to the query string based on tenant ID
             queryStr = multiStateInstanceUtil.replaceSchemaPlaceholder(queryStr, paymentSearchRequest.getPaymentCriteria().getTenantId());
         } catch (InvalidTenantIdException e) {
 			throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());
@@ -53,6 +54,7 @@ public class PaymentRepository {
 		List<Object> preparedStatementValues = new ArrayList<>();
 		String queryStr = queryBuilder.getSearchCountQueryString(paymentSearchRequest, preparedStatementValues);
 		try {
+			// Applies schema replacement to the query string based on tenant ID
 			queryStr = multiStateInstanceUtil.replaceSchemaPlaceholder(queryStr, paymentSearchRequest.getPaymentCriteria().getTenantId());
 		} catch (InvalidTenantIdException e) {
 			throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());

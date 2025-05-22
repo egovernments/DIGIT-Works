@@ -21,6 +21,13 @@ public class ExpenseProducer {
         this.multiStateInstanceUtil = multiStateInstanceUtil;
     }
 
+    /**
+     * Publishes a message to a Kafka topic based on the tenant-specific topic name.
+     *
+     * @param tenantId the unique identifier of the tenant for which the message is being published
+     * @param topic the base Kafka topic name to which the message needs to be pushed
+     * @param value the message payload to be sent to the Kafka topic
+     */
     public void push(String tenantId, String topic, Object value) {
         String updatedTopic = multiStateInstanceUtil.getStateSpecificTopicName(tenantId, topic);
         log.info("The Kafka topic for the tenantId : {} is : {}", tenantId, updatedTopic);

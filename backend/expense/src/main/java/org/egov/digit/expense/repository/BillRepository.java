@@ -40,6 +40,7 @@ public class BillRepository {
 		List<Object> preparedStatementValues = new ArrayList<>();
 		String queryStr = queryBuilder.getBillQuery(billSearchRequest, preparedStatementValues, false, isValidationSearch);
 		try {
+			// Applies schema replacement to the query string based on tenant ID
 			queryStr = multiStateInstanceUtil.replaceSchemaPlaceholder(queryStr, billSearchRequest.getBillCriteria().getTenantId());
 		} catch (InvalidTenantIdException e) {
 			throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());
@@ -51,6 +52,7 @@ public class BillRepository {
 		List<Object> preparedStatementValues = new ArrayList<>();
 		String queryStr = queryBuilder.getSearchCountQueryString(billSearchRequest, preparedStatementValues);
 		try {
+			// Applies schema replacement to the query string based on tenant ID
 			queryStr = multiStateInstanceUtil.replaceSchemaPlaceholder(queryStr, billSearchRequest.getBillCriteria().getTenantId());
 		} catch (InvalidTenantIdException e) {
 			throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());
