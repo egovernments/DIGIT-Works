@@ -45,6 +45,7 @@ public class MusterRollRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getMusterSearchQuery(searchCriteria, preparedStmtList, registerIds,false);
         try {
+            // Applies schema replacement to the query string based on tenant ID
             query = multiStateInstanceUtil.replaceSchemaPlaceholder(query, searchCriteria.getTenantId());
         } catch (InvalidTenantIdException e) {
             throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());
@@ -61,6 +62,7 @@ public class MusterRollRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getSearchCountQueryString(searchCriteria, preparedStmtList, registerIds);
         try {
+            // Applies schema replacement to the query string based on tenant ID
             query = multiStateInstanceUtil.replaceSchemaPlaceholder(query, searchCriteria.getTenantId());
         } catch (InvalidTenantIdException e) {
             throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());

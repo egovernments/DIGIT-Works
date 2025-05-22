@@ -21,6 +21,13 @@ public class MusterRollProducer {
         this.multiStateInstanceUtil = multiStateInstanceUtil;
     }
 
+    /**
+     * Publishes a message to a Kafka topic specific to a tenant.
+     *
+     * @param tenantId The tenant ID to identify the specific tenant.
+     * @param topic The base topic name for publishing the message.
+     * @param value The value or payload to be sent to the Kafka topic.
+     */
     public void push(String tenantId, String topic, Object value) {
         String updatedTopic = multiStateInstanceUtil.getStateSpecificTopicName(tenantId, topic);
         log.info("The Kafka topic for the tenantId : {} is : {}", tenantId, updatedTopic);
