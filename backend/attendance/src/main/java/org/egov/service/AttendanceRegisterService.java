@@ -353,9 +353,9 @@ public class AttendanceRegisterService {
     private List<IndividualEntry> fetchAllAttendeesAssociatedToRegisterIds(List<String> registerIdsToSearch, AttendanceRegisterSearchCriteria searchCriteria) {
         AttendeeSearchCriteria attendeeSearchCriteria = null;
         if(searchCriteria.getAttendeeId() != null){
-            attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIdsToSearch).individualIds(Collections.singletonList(searchCriteria.getAttendeeId())).build();
+            attendeeSearchCriteria = AttendeeSearchCriteria.builder().tenantId(searchCriteria.getTenantId()).registerIds(registerIdsToSearch).individualIds(Collections.singletonList(searchCriteria.getAttendeeId())).build();
         } else {
-            attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIdsToSearch).build();
+            attendeeSearchCriteria = AttendeeSearchCriteria.builder().tenantId(searchCriteria.getTenantId()).registerIds(registerIdsToSearch).build();
         }
         return attendeeRepository.getAttendees(searchCriteria.getTenantId(), attendeeSearchCriteria);
     }
@@ -391,7 +391,7 @@ public class AttendanceRegisterService {
 
     /* Get all registers associated for the logged in attendee  */
     private Set<String> fetchRegistersAssociatedToLoggedInAttendeeUser(String tenantId, String uuid) {
-        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().individualIds(Collections.singletonList(uuid)).build();
+        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().tenantId(tenantId).individualIds(Collections.singletonList(uuid)).build();
         List<IndividualEntry> attendees = attendeeRepository.getAttendees(tenantId, attendeeSearchCriteria);
         return attendees.stream().map(e -> e.getRegisterId()).collect(Collectors.toSet());
     }

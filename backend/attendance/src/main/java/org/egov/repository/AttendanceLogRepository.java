@@ -39,10 +39,11 @@ public class AttendanceLogRepository extends GenericRepository<AttendanceLog> {
             RedisTemplate<String, Object> redisTemplate,
             SelectQueryBuilder selectQueryBuilder,
             AttendanceLogRowMapper rowMapper,
-            JdbcTemplate jdbcTemplate) {
+            JdbcTemplate jdbcTemplate,
+            AttendanceLogQueryBuilder queryBuilder) {
         super(producer, namedParameterJdbcTemplate, redisTemplate, selectQueryBuilder, null, Optional.of("abc"));
         this.rowMapper = rowMapper;
-        this.queryBuilder = new AttendanceLogQueryBuilder();
+        this.queryBuilder = queryBuilder;
         this.jdbcTemplate = jdbcTemplate;
     }
 

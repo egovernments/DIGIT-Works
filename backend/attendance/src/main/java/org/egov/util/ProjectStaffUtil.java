@@ -194,7 +194,11 @@ public class ProjectStaffUtil {
         Individual reportingToIndividual = individualList.get(0);
 
         // Get the attendance registers for the project and staff
-        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().staffId(reportingToIndividual.getId()).referenceId(projectStaff.getProjectId()).build();
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .staffId(reportingToIndividual.getId())
+                .referenceId(projectStaff.getProjectId())
+                .tenantId(tenantId)
+                .build();
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
 
         if (attendanceRegisters.isEmpty())
@@ -240,7 +244,7 @@ public class ProjectStaffUtil {
      */
     public Map<String, String>  getregisterIdVsProjectIdMap(String tenantId, List<String> registerIds, RequestInfo requestInfo){
 
-        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().ids(registerIds).build();
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).ids(registerIds).build();
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
         Map<String, String> registerIdVsProjectId = attendanceRegisters.stream()
                 .collect(Collectors.toMap(AttendanceRegister::getId, AttendanceRegister::getReferenceId));

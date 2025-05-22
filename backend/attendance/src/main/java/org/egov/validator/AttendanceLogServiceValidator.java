@@ -140,7 +140,7 @@ public class AttendanceLogServiceValidator {
         String tenantId = attendanceLogRequest.getAttendance().get(0).getTenantId();
 
         // Fetch register for given registerId
-        List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(registerId);
+        List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(registerId, tenantId);
 
         // Check existence of register
         checkRegisterExistence(attendanceRegisters,registerId);
@@ -181,10 +181,11 @@ public class AttendanceLogServiceValidator {
         }
     }
 
-    private List<AttendanceRegister> fetchRegisterWithId(String registerId) {
+    private List<AttendanceRegister> fetchRegisterWithId(String registerId, String tenantId) {
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria
                 .builder()
                 .ids(Collections.singletonList(registerId))
+                .tenantId(tenantId)
                 .build();
         return attendanceRegisterRepository.getRegister(searchCriteria);
     }
@@ -227,9 +228,10 @@ public class AttendanceLogServiceValidator {
 
     private void validateAttendanceLogIds(AttendanceLogRequest attendanceLogRequest) {
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
+        String tenantId = attendanceLogRequest.getAttendance().get(0).getTenantId();
         List<AttendanceLog> attendance = attendanceLogRequest.getAttendance();
         List<String> providedAttendanceLogIds = attendance.stream().map(e -> String.valueOf(e.getId())).collect(Collectors.toList());
-        List<AttendanceLog> fetchedAttendanceLogList = fetchAttendanceLogsByIds(providedAttendanceLogIds);
+        List<AttendanceLog> fetchedAttendanceLogList = fetchAttendanceLogsByIds(tenantId, providedAttendanceLogIds);
         Set<String> fetchedAttendanceLogIds = fetchedAttendanceLogList.stream().map(e -> String.valueOf(e.getId())).collect(Collectors.toSet());
         for (String providedAttendanceLogId : providedAttendanceLogIds) {
             if (!fetchedAttendanceLogIds.contains(providedAttendanceLogId)) {
@@ -241,9 +243,9 @@ public class AttendanceLogServiceValidator {
         log.info("Attendance Log Ids are validated successfully for register ["+registerId+"]");
     }
 
-    private List<AttendanceLog> fetchAttendanceLogsByIds(List<String> ids) {
+    private List<AttendanceLog> fetchAttendanceLogsByIds(String tenantId, List<String> ids) {
         //AttendanceLogSearchCriteria searchCriteria = AttendanceLogSearchCriteria.builder().ids(ids).status(Status.ACTIVE).build();
-        AttendanceLogSearchCriteria searchCriteria = AttendanceLogSearchCriteria.builder().ids(ids).build();
+        AttendanceLogSearchCriteria searchCriteria = AttendanceLogSearchCriteria.builder().tenantId(tenantId).ids(ids).build();
         return attendanceLogRepository.getAttendanceLogs(searchCriteria);
     }
 
@@ -337,6 +339,7 @@ public class AttendanceLogServiceValidator {
         AttendeeSearchCriteria searchCriteria = AttendeeSearchCriteria
                 .builder()
                 .registerIds(Collections.singletonList(registerId))
+                .tenantId(tenantId)
                 .build();
 
         return attendanceAttendeeRepository.getAttendees(tenantId, searchCriteria);
@@ -359,13 +362,14 @@ public class AttendanceLogServiceValidator {
         }
 
         String userUUID = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
+        String tenantId = attendanceLogRequest.getRequestInfo().getUserInfo().getTenantId();
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
         String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceLogRequest.getRequestInfo().getUserInfo().getId(), attendanceLogRequest.getRequestInfo(), attendanceLogRequest.getAttendance().get(0).getTenantId()).get(0).getId();
 
         //Get the logged-in user roles
         Set<String> userRoles = HRMSUtil.getUserRoleCodes(attendanceLogRequest.getRequestInfo());
 
-        validateLoggedInUser(individualId, registerId,userRoles);
+        validateLoggedInUser(tenantId, individualId, registerId,userRoles);
         log.info("User ["+userUUID+"] validation is done for register ["+registerId+"]");
     }
 
@@ -378,7 +382,7 @@ public class AttendanceLogServiceValidator {
 
         if(!StringUtils.isBlank(searchCriteria.getRegisterId())) {
             // Fetch register for given Id
-            List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(searchCriteria.getRegisterId());
+            List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(searchCriteria.getRegisterId(), searchCriteria.getTenantId());
 
             if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
                 throw new CustomException("INVALID_REGISTERID", "Register Not found ");
@@ -392,7 +396,7 @@ public class AttendanceLogServiceValidator {
 
             //Get the logged-in user roles
             Set<String> userRoles = HRMSUtil.getUserRoleCodes(requestInfoWrapper.getRequestInfo());
-            validateLoggedInUser(individualId, searchCriteria.getRegisterId(),userRoles);
+            validateLoggedInUser(searchCriteria.getTenantId(), individualId, searchCriteria.getRegisterId(),userRoles);
         }
         log.info("Attendance log search request validated successfully");
     }
@@ -428,7 +432,7 @@ public class AttendanceLogServiceValidator {
 
 
 
-    private void validateLoggedInUser(String userUUID, String registerId, Set<String> userRoles) {
+    private void validateLoggedInUser(String tenantId, String userUUID, String registerId, Set<String> userRoles) {
         if(config.isLogOpenSearchEnabled()) {
             log.debug("Open search is enabled, checking user roles");
             //Get the roles enabled for open serach
@@ -443,6 +447,7 @@ public class AttendanceLogServiceValidator {
                 .builder()
                 .individualIds(Collections.singletonList(userUUID))
                 .registerIds(Collections.singletonList(registerId))
+                .tenantId(tenantId)
                 .build();
         List<StaffPermission> attendanceStaff = attendanceStaffRepository.getActiveStaff(searchCriteria);
         if (attendanceStaff == null || attendanceStaff.isEmpty()) {
