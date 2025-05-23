@@ -41,13 +41,12 @@ public class StaffRepository {
      */
     public List<StaffPermission> getActiveStaff(StaffSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String tenantId = searchCriteria.getTenantId();
         String query = null;
         // Wrap query construction in try-catch to handle invalid tenant scenarios gracefully
         try {
             query = queryBuilder.getActiveAttendanceStaffSearchQuery( searchCriteria, preparedStmtList);
         } catch (InvalidTenantIdException e) {
-            throw new CustomException(INVALID_TENANT_ID, INVALID_TENANT_ID_MSG);
+            throw new CustomException(INVALID_TENANT_ID, e.getMessage());
         }
         List<StaffPermission> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return attendanceStaffList;
@@ -67,7 +66,7 @@ public class StaffRepository {
         try {
             query = queryBuilder.getAttendanceStaffSearchQuery( searchCriteria, preparedStmtList);
         } catch (InvalidTenantIdException e) {
-            throw new CustomException(INVALID_TENANT_ID, INVALID_TENANT_ID_MSG);
+            throw new CustomException(INVALID_TENANT_ID, e.getMessage());
         }
         List<StaffPermission> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return attendanceStaffList;
@@ -86,7 +85,7 @@ public class StaffRepository {
         try {
             query = queryBuilder.appendOrderLimit(queryBuilder.getAttendanceStaffSearchQuery( searchCriteria, preparedStmtList));
         } catch (InvalidTenantIdException e) {
-            throw new CustomException(INVALID_TENANT_ID, INVALID_TENANT_ID_MSG);
+            throw new CustomException(INVALID_TENANT_ID, e.getMessage());
         }
         List<StaffPermission> attendanceStaffList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return attendanceStaffList;

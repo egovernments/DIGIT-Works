@@ -2,7 +2,6 @@ package org.egov.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.utils.CommonUtils;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendeeEnrichmentService;
 import org.egov.common.producer.Producer;

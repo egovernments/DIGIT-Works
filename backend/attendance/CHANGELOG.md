@@ -1,5 +1,20 @@
-
 All notable changes to this module will be documented in this file.
+
+## 1.2.0 - 2025-03-15
+
+### Changes
+
+- Introduced audit trail for attendance register modifications
+- Enhanced security with role-based access control for attendance features
+- Optimized database queries for faster attendance data retrieval
+- Added support for exporting attendance data in CSV format
+- Improved logging for debugging and monitoring
+
+### Configuration Enhancements
+
+- Added new configuration for audit trail retention period
+- Introduced toggle for enabling/disabling CSV export functionality
+- Enhanced role and permission configuration for attendance module
 
 ## 1.1.0 - 2025-01-27
 
