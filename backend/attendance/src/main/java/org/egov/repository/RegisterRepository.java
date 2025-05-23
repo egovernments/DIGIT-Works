@@ -1,9 +1,11 @@
 package org.egov.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.querybuilder.RegisterQueryBuilder;
 import org.egov.repository.rowmapper.RegisterRowMapper;
+import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.egov.Constants.INVALID_TENANT_ID;
+import static org.egov.Constants.INVALID_TENANT_ID_MSG;
 
 @Repository
 @Slf4j
@@ -35,9 +40,21 @@ public class RegisterRepository {
         this.config = config;
     }
 
+    /**
+     * This method fetches the list of attendance registers based on the search criteria provided.
+     *
+     * @param searchCriteria The criteria used to filter the attendance registers.
+     * @return List<AttendanceRegister> A list of AttendanceRegister objects representing the attendance registers.
+     */
     public List<AttendanceRegister> getRegister(AttendanceRegisterSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList, false);
+        String query = null;
+        // Wrap query construction in try-catch to handle invalid tenant scenarios gracefully
+        try {
+            query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList, false);
+        } catch (InvalidTenantIdException e) {
+            throw new CustomException(INVALID_TENANT_ID, e.getMessage());
+        }
         query = queryBuilder.addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
 
         log.info("Query of get register : " + query);
@@ -50,7 +67,13 @@ public class RegisterRepository {
 
     public Map<String, Long> getRegisterCounts(AttendanceRegisterSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList, true);
+        String query = null;
+        // Wrap query construction in try-catch to handle invalid tenant scenarios gracefully
+        try {
+            query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList, true);
+        } catch (InvalidTenantIdException e) {
+            throw new CustomException(INVALID_TENANT_ID, e.getMessage());
+        }
 
         log.info("Query of get register : " + query);
         log.info("preparedStmtList of get register : " + preparedStmtList.toString());

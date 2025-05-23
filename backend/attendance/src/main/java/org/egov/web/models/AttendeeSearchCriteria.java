@@ -16,6 +16,9 @@ public class AttendeeSearchCriteria {
     @JsonProperty("ids")
     private List<String> ids;
 
+    @JsonProperty("tenantId")
+    private String tenantId;
+
     @JsonProperty("individualIds")
     private List<String> individualIds;
 

@@ -60,7 +60,7 @@ public class AttendanceLogServiceTest {
 
         verify(attendanceLogEnricher, times(1)).enrichAttendanceLogCreateRequest(attendanceLogRequest);
 
-        verify(producer, times(1)).push(eq("save-attendance-log"), any(AttendanceLogRequest.class));
+        verify(producer, times(1)).push(anyString(), eq("save-attendance-log"), any(AttendanceLogRequest.class));
 
         assertNotNull(attendanceLogRequest.getAttendance());
     }
