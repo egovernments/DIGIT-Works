@@ -59,10 +59,11 @@ public class PaymentService {
     	
         log.info("PaymentService::create");
         Payment payment = paymentRequest.getPayment();
+        String tenantId = payment.getTenantId();
         validator.validateCreateRequest(paymentRequest);
         enrichmentUtil.encrichCreatePayment(paymentRequest);
 
-        expenseProducer.push(config.getPaymentCreateTopic(), paymentRequest);
+        expenseProducer.push(tenantId, config.getPaymentCreateTopic(), paymentRequest);
         backUpdateBillForPayment(paymentRequest);
 
         return PaymentResponse.builder()
@@ -76,13 +77,14 @@ public class PaymentService {
     	
         log.info("PaymentService::update");
         Payment payment = paymentRequest.getPayment();
+        String tenantId = payment.getTenantId();
         List<Payment> paymentsFromSearch = validator.validateUpdateRequest(paymentRequest);
         enrichmentUtil.encrichUpdatePayment(paymentRequest, paymentsFromSearch.get(0));
         paymentRequest.setPayment(paymentsFromSearch.get(0));
         backUpdateBillForPayment(paymentRequest);
 
         /* only status update should be allowed here */
-        expenseProducer.push(config.getPaymentUpdateTopic(), paymentRequest);
+        expenseProducer.push(tenantId, config.getPaymentUpdateTopic(), paymentRequest);
         return PaymentResponse.builder()
                 .payments(Arrays.asList(payment))
                 .responseInfo(
@@ -113,6 +115,7 @@ public class PaymentService {
         log.info("PaymentService::backUpdateBillForPayment");
         RequestInfo requestInfo = paymentRequest.getRequestInfo();
         Payment payment = paymentRequest.getPayment();
+        String tenantId = payment.getTenantId();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, true);
         
@@ -181,7 +184,7 @@ public class PaymentService {
                     .bill(bill)
                     .requestInfo(requestInfo)
                     .build();
-            expenseProducer.push(config.getBillUpdateTopic(), billRequest);
+            expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
         }
     }
 
