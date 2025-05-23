@@ -192,8 +192,8 @@ public class ProjectStaffUtil {
             throw new CustomException("INVALID_STAFF_ID", "No Individual found for the reportingTo Uuid - " + reportingToUuid);
 
         Individual reportingToIndividual = individualList.get(0);
-
-        // Get the attendance registers for the project and staff
+        // Build tenant-scoped search criteria using staff ID and project ID
+        // This ensures we fetch only those attendance registers that belong to the staff for the given project
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
                 .staffId(reportingToIndividual.getId())
                 .referenceId(projectStaff.getProjectId())
@@ -243,7 +243,7 @@ public class ProjectStaffUtil {
      * @return
      */
     public Map<String, String>  getregisterIdVsProjectIdMap(String tenantId, List<String> registerIds, RequestInfo requestInfo){
-
+        // Create tenant-aware search criteria to fetch registers by ID
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).ids(registerIds).build();
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
         Map<String, String> registerIdVsProjectId = attendanceRegisters.stream()

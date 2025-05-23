@@ -182,8 +182,7 @@ public class RegisterQueryBuilder {
 
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);
-        query = new StringBuilder(multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId));
-        return query.toString();
+        return  multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId);
     }
 
     public String addPaginationWrapper(String query, List<Object> preparedStmtList,

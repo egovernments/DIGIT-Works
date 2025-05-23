@@ -34,7 +34,6 @@ public class StaffQueryBuilder {
             "FROM %s.eg_wms_attendance_staff stf ";
 
     public String getActiveAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
-        String tenantId = criteria.getTenantId();
         StringBuilder query = new StringBuilder( getAttendanceStaffSearchQuery(criteria, preparedStmtList));
         addClauseIfRequired(query, preparedStmtList);
         query.append(" stf.deenrollment_date is null ");
@@ -72,8 +71,8 @@ public class StaffQueryBuilder {
             query.append(" stf.stafftype = ? ");
             preparedStmtList.add(staffType);
         }
-        query = new StringBuilder(multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId));
-        return query.toString();
+
+        return multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId);
     }
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
         if (preparedStmtList.isEmpty()) {

@@ -93,6 +93,7 @@ public class StaffService {
 
         //push to producer
         log.info("staff objects pushed via producer");
+        // Push the staff enrollment request to Kafka, scoped by tenant ID for multitenancy
         producer.push( tenantId, serviceConfiguration.getSaveStaffTopic(), staffPermissionRequest);
         log.info("staff present in Create StaffPermission request are enrolled to the register");
         return staffPermissionRequest;
@@ -150,6 +151,7 @@ public class StaffService {
         staffEnrichmentService.enrichStaffPermissionOnDelete(staffPermissionRequest, staffPermissionListFromDB);
 
         log.info("staff objects pushed via producer");
+        // Push the staff de-enrollment (delete) request to the Kafka topic for the tenant
         producer.push(tenantId, serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
         log.info("staff present in Delete StaffPermission request are deenrolled from the register");
         return staffPermissionRequest;

@@ -3,11 +3,9 @@ package org.egov.repository.querybuilder;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.exception.InvalidTenantIdException;
-import org.egov.common.utils.CommonUtils;
 import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceLogSearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -21,6 +19,7 @@ import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING
 @Component
 public class AttendanceLogQueryBuilder {
 
+    // Constructor-injected dependency for resolving tenant-specific schema names
     private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     private static final String ATTENDANCE_LOG_SELECT_QUERY = " SELECT log.id as logid, " +
@@ -57,8 +56,18 @@ public class AttendanceLogQueryBuilder {
             "ON (log.id=doc.attendance_log_id) ";
 
 
+    /*
+     * This method constructs a SQL query to fetch attendance logs based on the provided search criteria.
+     *
+     * @param tenantId The tenant ID for which the logs are being fetched.
+     * @param criteria The search criteria containing filters for the logs.
+     * @param preparedStmtList A list to hold the prepared statement parameters.
+     * @return A SQL query string with placeholders for parameters.
+     * @throws InvalidTenantIdException If the tenant ID is invalid.
+     */
     public String getAttendanceLogSearchQuery( String tenantId, AttendanceLogSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
         StringBuilder query = new StringBuilder(ATTENDANCE_LOG_SELECT_QUERY);
+        // Replace static schema tokens with runtime schema for the given tenant ID
         query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING, SCHEMA_REPLACE_STRING));
         List<String> ids = criteria.getIds();
         if (ids != null && !ids.isEmpty()) {
@@ -122,6 +131,7 @@ public class AttendanceLogQueryBuilder {
 
         addLimitAndOffset(query, criteria, preparedStmtList);
 
+        // After building full query, replace schema placeholders with actual schema using MultiStateInstanceUtil
         return multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId);
         
     }

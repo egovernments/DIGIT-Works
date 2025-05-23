@@ -182,6 +182,7 @@ public class AttendanceLogServiceValidator {
     }
 
     private List<AttendanceRegister> fetchRegisterWithId(String registerId, String tenantId) {
+        // Build search criteria with tenantId and registerId to fetch the correct register in multi-tenant context
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria
                 .builder()
                 .ids(Collections.singletonList(registerId))
@@ -227,6 +228,7 @@ public class AttendanceLogServiceValidator {
     }
 
     private void validateAttendanceLogIds(AttendanceLogRequest attendanceLogRequest) {
+        // Extract tenantId to build search criteria for fetching attendance logs scoped to the correct tenant
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
         String tenantId = attendanceLogRequest.getAttendance().get(0).getTenantId();
         List<AttendanceLog> attendance = attendanceLogRequest.getAttendance();
@@ -245,6 +247,7 @@ public class AttendanceLogServiceValidator {
 
     private List<AttendanceLog> fetchAttendanceLogsByIds(String tenantId, List<String> ids) {
         //AttendanceLogSearchCriteria searchCriteria = AttendanceLogSearchCriteria.builder().ids(ids).status(Status.ACTIVE).build();
+        // Build search criteria using tenantId and attendance log IDs to enable schema-aware log retrieval
         AttendanceLogSearchCriteria searchCriteria = AttendanceLogSearchCriteria.builder().tenantId(tenantId).ids(ids).build();
         return attendanceLogRepository.getAttendanceLogs(searchCriteria);
     }
@@ -270,6 +273,7 @@ public class AttendanceLogServiceValidator {
 
         // Fetch all attendees for given register_id.
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
+        // Use utility method to resolve tenantId for attendance enrichment and repository lookups
         String tenantId = CommonUtils.getTenantId(attendanceLogRequest.getAttendance());
         List<IndividualEntry> fetchAttendanceAttendeeLst = fetchAllAttendeesEnrolledInARegister(tenantId, registerId);
 
@@ -336,6 +340,7 @@ public class AttendanceLogServiceValidator {
     }
 
     private List<IndividualEntry> fetchAllAttendeesEnrolledInARegister(String tenantId, String registerId) {
+        // Construct attendee search criteria using tenantId to ensure multi-tenant correctness
         AttendeeSearchCriteria searchCriteria = AttendeeSearchCriteria
                 .builder()
                 .registerIds(Collections.singletonList(registerId))
@@ -362,6 +367,7 @@ public class AttendanceLogServiceValidator {
         }
 
         String userUUID = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
+        // Extract tenantId from request info to scope individual service call and validation
         String tenantId = attendanceLogRequest.getRequestInfo().getUserInfo().getTenantId();
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
         String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceLogRequest.getRequestInfo().getUserInfo().getId(), attendanceLogRequest.getRequestInfo(), attendanceLogRequest.getAttendance().get(0).getTenantId()).get(0).getId();
@@ -382,6 +388,7 @@ public class AttendanceLogServiceValidator {
 
         if(!StringUtils.isBlank(searchCriteria.getRegisterId())) {
             // Fetch register for given Id
+            // Fetch attendance register using tenant-aware search criteria
             List<AttendanceRegister> attendanceRegisters = fetchRegisterWithId(searchCriteria.getRegisterId(), searchCriteria.getTenantId());
 
             if (attendanceRegisters == null || attendanceRegisters.isEmpty()) {
@@ -396,6 +403,7 @@ public class AttendanceLogServiceValidator {
 
             //Get the logged-in user roles
             Set<String> userRoles = HRMSUtil.getUserRoleCodes(requestInfoWrapper.getRequestInfo());
+            // Validate logged-in user against the tenant-aware register
             validateLoggedInUser(searchCriteria.getTenantId(), individualId, searchCriteria.getRegisterId(),userRoles);
         }
         log.info("Attendance log search request validated successfully");
@@ -443,6 +451,7 @@ public class AttendanceLogServiceValidator {
             }
             log.debug("User {} is not enabled for open search, falling back to staff validation", userUUID);
         }
+        // Build staff search criteria with tenantId to validate user access within a specific schema
         StaffSearchCriteria searchCriteria = StaffSearchCriteria
                 .builder()
                 .individualIds(Collections.singletonList(userUUID))
