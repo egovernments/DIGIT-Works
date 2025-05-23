@@ -53,7 +53,7 @@ public class RegisterRepository {
         try {
             query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList, false);
         } catch (InvalidTenantIdException e) {
-            throw new CustomException(INVALID_TENANT_ID, INVALID_TENANT_ID_MSG);
+            throw new CustomException(INVALID_TENANT_ID, e.getMessage());
         }
         query = queryBuilder.addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
 
@@ -72,7 +72,7 @@ public class RegisterRepository {
         try {
             query = queryBuilder.getAttendanceRegisterSearchQuery(searchCriteria, preparedStmtList, true);
         } catch (InvalidTenantIdException e) {
-            throw new CustomException(INVALID_TENANT_ID, INVALID_TENANT_ID_MSG);
+            throw new CustomException(INVALID_TENANT_ID, e.getMessage());
         }
 
         log.info("Query of get register : " + query);

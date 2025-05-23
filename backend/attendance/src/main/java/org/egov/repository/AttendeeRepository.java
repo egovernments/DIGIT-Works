@@ -45,7 +45,7 @@ public class AttendeeRepository {
         try {
             query = queryBuilder.getAttendanceAttendeeSearchQuery(tenantId, searchCriteria, preparedStmtList);
         } catch (InvalidTenantIdException e) {
-            throw new CustomException(INVALID_TENANT_ID, INVALID_TENANT_ID_MSG);
+            throw new CustomException(INVALID_TENANT_ID, e.getMessage());
         }
         List<IndividualEntry> attendanceStaffList = jdbcTemplate.query(query, attendeeRowMapper, preparedStmtList.toArray());
         return attendanceStaffList;

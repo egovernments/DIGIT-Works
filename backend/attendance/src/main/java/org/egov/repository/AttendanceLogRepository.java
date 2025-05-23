@@ -63,7 +63,7 @@ public class AttendanceLogRepository extends GenericRepository<AttendanceLog> {
         try {
             query = queryBuilder.getAttendanceLogSearchQuery(tenantId, searchCriteria, preparedStmtList);
         } catch (InvalidTenantIdException e) {
-            throw new CustomException(INVALID_TENANT_ID, INVALID_TENANT_ID_MSG);
+            throw new CustomException(INVALID_TENANT_ID, e.getMessage());
         }
         log.info("Query build successfully");
         List<AttendanceLog> attendanceLogList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
