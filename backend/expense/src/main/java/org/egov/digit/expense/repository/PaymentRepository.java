@@ -41,7 +41,7 @@ public class PaymentRepository {
 
 		List<Object> preparedStatementValues = new ArrayList<>();
 		String queryStr = queryBuilder.getPaymentQuery(paymentSearchRequest, preparedStatementValues, false);
-        try {
+		try {
 			// Applies schema replacement to the query string based on tenant ID
             queryStr = multiStateInstanceUtil.replaceSchemaPlaceholder(queryStr, paymentSearchRequest.getPaymentCriteria().getTenantId());
         } catch (InvalidTenantIdException e) {
