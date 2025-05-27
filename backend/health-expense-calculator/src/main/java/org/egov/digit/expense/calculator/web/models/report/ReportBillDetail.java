@@ -57,4 +57,13 @@ public class ReportBillDetail {
 
     @Schema(description = "totalAmount")
     private BigDecimal totalAmount = BigDecimal.ZERO;
+
+    @Schema(description = "bankName")
+    private String bankName;
+
+    @Schema(description = "cbnCode")
+    private String cbnCode;
+
+    @Schema(description = "bankAccountNumber")
+    private String bankAccountNumber;
 }

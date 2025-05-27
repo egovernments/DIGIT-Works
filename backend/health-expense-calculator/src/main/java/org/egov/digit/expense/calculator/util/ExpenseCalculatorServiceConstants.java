@@ -82,4 +82,8 @@ public class ExpenseCalculatorServiceConstants {
     public static final String REPORT_MIDDLE_CONSTANT = "FOR_CONSTANT";
     public static final String LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
     public static final String LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+
+    public static final String HRMS_BANK_DETAILS_BANK_NAME = "bankName";
+    public static final String HRMS_BANK_DETAILS_CBN_CODE = "cbnCode";
+    public static final String HRMS_BANK_DETAILS_ACCOUNT_NUMBER = "accountNumber";
 }

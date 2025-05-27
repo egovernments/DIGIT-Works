@@ -2,8 +2,8 @@ package org.egov.digit.expense.calculator.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.core.Field;
 import org.egov.common.models.individual.Address;
-import org.egov.common.models.individual.Identifier;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Skill;
 import org.egov.common.models.project.ProjectResponse;
@@ -297,7 +297,7 @@ public class HealthBillReportGenerator {
      * @return a ReportBillDetail object
      */
     private ReportBillDetail getReportBillDetail(BillDetail billDetail, Individual individual, Map<String, Map<String, BigDecimal>> individualMusterAttendanceMap, Map<String, WorkerRate> skillCodeRateMap) {
-        ReportBillDetail reportBillDetail = new ReportBillDetail().builder()
+        ReportBillDetail reportBillDetail = ReportBillDetail.builder()
                 .slNo(0)
                 .individualName(null)
                 .mobileNumber(null)
@@ -310,6 +310,9 @@ public class HealthBillReportGenerator {
                 .wageAmount(BigDecimal.ZERO)
                 .totalWages(BigDecimal.ZERO)
                 .totalAmount(BigDecimal.ZERO)
+                .bankName(null)
+                .bankAccountNumber(null)
+                .cbnCode(null)
                 .build();
 
         if (individual != null) {
@@ -336,6 +339,7 @@ public class HealthBillReportGenerator {
                     }
                 }
             }
+            enrichBankDetails(reportBillDetail, individual);
         }
         BigDecimal totalNumberOfDays = BigDecimal.ZERO;
         if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId()) && individualMusterAttendanceMap.get(billDetail.getReferenceId()).containsKey(individual.getId())) {
@@ -467,5 +471,27 @@ public class HealthBillReportGenerator {
                 .action(WF_SUBMIT_ACTION_CONSTANT)
                 .build();
         billUtils.postUpdateBill(billRequest.getRequestInfo(), billRequest.getBill(), workflow);
+    }
+
+    private static void enrichBankDetails(ReportBillDetail reportBillDetail, Individual individual) {
+        String accountNumber = getBankDetailFieldbyKey(individual, HRMS_BANK_DETAILS_ACCOUNT_NUMBER);
+        String bankName = getBankDetailFieldbyKey(individual, HRMS_BANK_DETAILS_BANK_NAME);
+        String cbnCode = getBankDetailFieldbyKey(individual, HRMS_BANK_DETAILS_CBN_CODE);
+        if (accountNumber != null && bankName != null && cbnCode != null) {
+            reportBillDetail.setBankName(bankName);
+            reportBillDetail.setCbnCode(cbnCode);
+            reportBillDetail.setBankAccountNumber(accountNumber);
+        }
+    }
+
+    private static String getBankDetailFieldbyKey(Individual individual, String key) {
+        if (individual.getAdditionalFields() != null && individual.getAdditionalFields().getFields() != null) {
+            return individual.getAdditionalFields().getFields().stream()
+                    .filter(field -> field.getKey().equals(key))
+                    .findFirst()
+                    .map(Field::getValue)
+                    .orElse(null);
+        }
+        return null;
     }
 }

@@ -153,6 +153,7 @@ public class BillExcelGenerate {
             Object[] data = {
                     detail.getSlNo(), detail.getIndividualName(), detail.getRole(), detail.getLocality(),
                     detail.getIdNumber(), detail.getMobileNumber(),
+                    detail.getBankName(), detail.getCbnCode(), detail.getBankAccountNumber(),
                     detail.getWageAmount(), detail.getFoodAmount(),
                     detail.getTransportAmount(), detail.getTotalWages(),
                     detail.getTotalNumberOfDays(),
