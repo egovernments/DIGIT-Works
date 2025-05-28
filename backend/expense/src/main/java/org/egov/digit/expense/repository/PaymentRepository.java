@@ -35,7 +35,7 @@ public class PaymentRepository {
 		this.queryBuilder = queryBuilder;
 		this.paymentBillRowMapper = paymentBillRowMapper;
 		this.multiStateInstanceUtil = multiStateInstanceUtil;
-    }
+	}
 
 	public List<Payment> search(@Valid PaymentSearchRequest paymentSearchRequest) {
 
