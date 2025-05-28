@@ -54,7 +54,7 @@ public class ProjectStaffConsumer {
      * This Kafka listener subscribes to topics matching the pattern:
      * [optional tenant prefix] + "update-project-health"
      *
-     * The tenant prefix is configured in `pgr.kafka.tenant.id.pattern` as a regex,
+     * The tenant prefix is configured in `attendance.kafka.tenant.id.pattern` as a regex,
      * e.g., "^(kebbi-|kano-)", allowing the listener to consume from:
      * - update-project-health
      * - kebbi-update-project-health
@@ -64,7 +64,7 @@ public class ProjectStaffConsumer {
      * tenant-specific and global topics.
      */
 
-    @KafkaListener(topicPattern = "(${pgr.kafka.tenant.id.pattern}){0,1}${project.staff.attendance.topic}")
+    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${project.staff.attendance.topic}")
     public void bulkStaffCreate(Map<String, Object> consumerRecord,
                                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
