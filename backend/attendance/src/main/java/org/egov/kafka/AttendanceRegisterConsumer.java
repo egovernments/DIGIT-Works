@@ -28,7 +28,21 @@ public class AttendanceRegisterConsumer {
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topics = "${project.management.system.kafka.update.topic}")
+    /**
+     * This Kafka listener subscribes to topics matching the pattern:
+     * [optional tenant prefix] + "update-project-health"
+     *
+     * The tenant prefix is configured in `attendance.kafka.tenant.id.pattern` as a regex,
+     * e.g., "^(kebbi-|kano-)", allowing the listener to consume from:
+     * - update-project-health
+     * - kebbi-update-project-health
+     * - kano-update-project-health
+     *
+     * `{0,1}` makes the tenant prefix optional, so the listener supports both
+     * tenant-specific and global topics.
+     */
+
+    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${project.management.system.kafka.update.topic}")
     public void projectUpdate(Map<String, Object> consumerRecord,
                            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {

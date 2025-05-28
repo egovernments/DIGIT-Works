@@ -2,6 +2,7 @@ package org.egov.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.utils.CommonUtils;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendanceLogEnrichment;
 import org.egov.common.producer.Producer;
@@ -48,12 +49,15 @@ public class AttendanceLogService {
      * @return attendanceLogResponse
      */
     public AttendanceLogResponse createAttendanceLog(AttendanceLogRequest attendanceLogRequest) {
+
+        // Extract tenantId from the first attendance object to use for schema-aware operations
+        String tenantId = CommonUtils.getTenantId(attendanceLogRequest.getAttendance());
         //Validate the incoming request
         attendanceLogServiceValidator.validateCreateAttendanceLogRequest(attendanceLogRequest);
         //Enrich the incoming request
         attendanceLogEnricher.enrichAttendanceLogCreateRequest(attendanceLogRequest);
-        // Push the request object to the topic for persister to listen and persist
-        producer.push(config.getCreateAttendanceLogTopic(), attendanceLogRequest);
+        // Publish the create request to the configured Kafka topic, partitioned by tenantId
+        producer.push(tenantId, config.getCreateAttendanceLogTopic(), attendanceLogRequest);
         // Create the response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceLogRequest.getRequestInfo(), true);
         AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogRequest.getAttendance()).build();
@@ -90,12 +94,14 @@ public class AttendanceLogService {
      * @return AttendanceLogResponse
      */
     public AttendanceLogResponse updateAttendanceLog(AttendanceLogRequest attendanceLogRequest) {
+        // Extract tenantId from the attendance entity for use in schema resolution and event publishing
+        String tenantId = CommonUtils.getTenantId(attendanceLogRequest.getAttendance());
         //Validate the incoming request
         attendanceLogServiceValidator.validateUpdateAttendanceLogRequest(attendanceLogRequest);
         //Enrich the incoming request
         attendanceLogEnricher.enrichAttendanceLogUpdateRequest(attendanceLogRequest);
-        // Push the request object to the topic for persister to listen and persist
-        producer.push(config.getUpdateAttendanceLogTopic(), attendanceLogRequest);
+        // Publish the update request to the Kafka topic, using tenantId for schema and topic resolution
+        producer.push(tenantId, config.getUpdateAttendanceLogTopic(), attendanceLogRequest);
         // Create the response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceLogRequest.getRequestInfo(), true);
         AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogRequest.getAttendance()).build();
