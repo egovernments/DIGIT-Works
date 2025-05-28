@@ -3,13 +3,14 @@ All notable changes to this module will be documented in this file.
 ## 1.2.0 - 2025-03-15
 
 ### Changes
+
 - Added tenant-based schema resolution using MultiStateInstanceUtil and schema placeholders in queries.
 - Updated repository methods to require tenant ID and handle InvalidTenantIdException.
 - Enhanced validators for multi-tenant support.
-- Added tenantId varialble in the AttendeeSearchCriteria model.
+- Added tenantId variable in the AttendeeSearchCriteria model.
 - Modified migration scripts for central instance compatibility.
 - Refactored tests to align with multi-tenant support changes.
-- Updated the persister file to handle multiple schmeas.
+- Updated the persister file to handle multiple schemas.
 
 ## 1.1.0 - 2025-01-27
 
