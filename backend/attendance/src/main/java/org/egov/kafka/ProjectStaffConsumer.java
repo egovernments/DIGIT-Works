@@ -52,13 +52,13 @@ public class ProjectStaffConsumer {
 
     /**
      * This Kafka listener subscribes to topics matching the pattern:
-     * [optional tenant prefix] + "update-project-health"
+     * [optional tenant prefix] + "project-staff-attendance-health-topic"
      *
      * The tenant prefix is configured in `attendance.kafka.tenant.id.pattern` as a regex,
      * e.g., "^(kebbi-|kano-)", allowing the listener to consume from:
-     * - update-project-health
-     * - kebbi-update-project-health
-     * - kano-update-project-health
+     * - project-staff-attendance-health-topic
+     * - kebbi-project-staff-attendance-health-topic
+     * - kano-project-staff-attendance-health-topic
      *
      * `{0,1}` makes the tenant prefix optional, so the listener supports both
      * tenant-specific and global topics.
