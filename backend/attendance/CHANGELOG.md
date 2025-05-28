@@ -11,6 +11,7 @@ All notable changes to this module will be documented in this file.
 - Modified migration scripts for central instance compatibility.
 - Refactored tests to align with multi-tenant support changes.
 - Updated the persister file to handle multiple schemas.
+- Updated Kafka consumer topicPatterns injection for Central instance compatibility.
 
 ## 1.1.0 - 2025-01-27
 
