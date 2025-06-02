@@ -184,4 +184,31 @@ public class Configuration {
 	@Value("${bill.persistence.breakdown.size:200}")
 	private Integer billBreakdownSize;
 
+	@Value("${mtn.base.url}")
+	private String baseUrlMTN;
+
+	@Value("${mtn.token.endpoint}")
+	private String tokenEndpointMTN;
+
+	@Value("${mtn.subscription.key}")
+	private String subscriptionKeyMTN;
+
+	@Value("${mtn.basic.authorization}")
+	private String authorizationMTN;
+
+	@Value("${mtn.target.environment}")
+	private String targetEnvironmentMTN;
+
+	@Value("${mtn.account.active.endpoint}")
+	private String accountEndpointMTN;
+
+	@Value("${mtn.user.info.endpoint}")
+	private String basicUserInfoEndpointMTN;
+
+	@Value("${expense.billing.bill.verify}")
+	private String billVerificationTopic;
+
+	@Value("${expense.billing.bill.verify.status.update}")
+	private String billVerificationStatusUpdateTopic;
+
 }

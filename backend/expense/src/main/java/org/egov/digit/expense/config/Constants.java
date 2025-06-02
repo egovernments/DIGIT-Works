@@ -17,6 +17,10 @@ public class Constants {
 	public static final String INDIVIDUAL = "Individual";
 	public static final String ORG_NAME_PATH = "$.organisations.*.name";
 	public static final String INDIVIDUAL_GENDER_PATH = "$.Individual.*.gender";
+
+	public static final String INDIVIDUAL_NAME_PATH = "$.Individual.*.name.givenName";
+	public static final String INDIVIDUAL_PHONE_NUMBER_PATH = "$.Individual.*.mobileNumber";
+
 	public static final String CONTACT_NAME_PATH = "$.organisations.*.contactDetails.*.contactName";
 	public static final String CONTACT_MOBILE_NUMBER_PATH = "$.organisations.*.contactDetails.*.contactMobileNumber";
 	public static final String ORG_NAME = "orgName";
@@ -34,6 +38,14 @@ public class Constants {
 	public static final String PURCHASE_BILL_APPROVE_TO_VENDOR_LOCALIZATION_CODE = "PURCHASE_BILL_APPROVE_TO_VENDOR";
 	public static final String PURCHASE_BILL_REJECT_TO_CREATOR_LOCALIZATION_CODE = "PURCHASE_BILL_REJECT_TO_CREATOR";
 	public static final String SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO_LOCALIZATION_CODE = "SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO";
+
+	public static final String MTN_SUBSCRIPTION_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key";
+	public static final String MTN_AUTHORIZATION_HEADER_NAME = "Authorization";
+	public static final String MTN_TARGET_ENVIRONMENT_HEADER_NAME = "X-Target-Environment";
+	public static final String MTN_ACCESS_TOKEN_TYPE = "Bearer ";
+	public static final String MTN_USER_GIVEN_NAME_FIELD = "given_name";
+	public static final String MTN_USER_FAMILY_NAME_FIELD = "family_name";
+	public static final String BILL_VERIFICATION_TASK_SEARCH_QUERY= "select * from eg_expense_bill_verification_task where id={id}";
 
 	public static final String TENANT_MODULE_NAME = "tenant";
 
