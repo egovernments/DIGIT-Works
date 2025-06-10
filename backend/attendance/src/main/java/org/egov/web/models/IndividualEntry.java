@@ -43,6 +43,9 @@ public class IndividualEntry {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
+    // This field is used to group individuals into teams.
+    @JsonProperty("tag")
+    private String tag = null;
 
 }
 

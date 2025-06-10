@@ -33,4 +33,11 @@ public class AttendeeSearchCriteria {
 
     @JsonProperty("offset")
     private Integer offset;
+
+    @JsonProperty("tags")
+    private List<String> tags;
+
+    @JsonProperty("tenantId")
+    private String tenantId;
+
 }

@@ -351,9 +351,11 @@ public class AttendanceRegisterService {
     private List<IndividualEntry> fetchAllAttendeesAssociatedToRegisterIds(List<String> registerIdsToSearch, AttendanceRegisterSearchCriteria searchCriteria) {
         AttendeeSearchCriteria attendeeSearchCriteria = null;
         if(searchCriteria.getAttendeeId() != null){
-            attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIdsToSearch).individualIds(Collections.singletonList(searchCriteria.getAttendeeId())).build();
+            attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIdsToSearch).individualIds(Collections.singletonList(searchCriteria.getAttendeeId())).tags(searchCriteria.getTags() != null && !searchCriteria.getTags().isEmpty() ? searchCriteria.getTags() : null)
+                    .tenantId(searchCriteria.getTenantId()).build();
         } else {
-            attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIdsToSearch).build();
+            attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIdsToSearch).tags(searchCriteria.getTags() != null && !searchCriteria.getTags().isEmpty() ? searchCriteria.getTags() : null)
+                    .tenantId(searchCriteria.getTenantId()).build();
         }
         return attendeeRepository.getAttendees(attendeeSearchCriteria);
     }

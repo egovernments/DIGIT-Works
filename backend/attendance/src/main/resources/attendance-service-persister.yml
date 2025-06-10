@@ -91,7 +91,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerId
       auditAttributeBasePath: $.attendees.*
       queryMaps:
-        - query: INSERT INTO eg_wms_attendance_attendee(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO eg_wms_attendance_attendee(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime, tag) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendees.*
           jsonMaps:
 
@@ -118,6 +118,8 @@ serviceMaps:
             - jsonPath: $.attendees.*.auditDetails.createdTime
 
             - jsonPath: $.attendees.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.attendees.*.tag
 
     - version: 1.0
       name: staff registration
@@ -354,7 +356,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerId
       auditAttributeBasePath: $.attendees.*
       queryMaps:
-        - query: UPDATE eg_wms_attendance_attendee set individual_id=?, register_id=?, enrollment_date=?, deenrollment_date=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=? where id=?;
+        - query: UPDATE eg_wms_attendance_attendee set individual_id=?, register_id=?, enrollment_date=?, deenrollment_date=?, tag=? ,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=? where id=?;
           basePath: $.attendees.*
           jsonMaps:
             - jsonPath: $.attendees.*.individualId
@@ -374,6 +376,8 @@ serviceMaps:
             - jsonPath: $.attendees.*.auditDetails.lastModifiedTime
 
             - jsonPath: $.attendees.*.id
+
+            - jsonPatgh: $.attendees.*.tag
 
     - version: 1.0
       description: update staff

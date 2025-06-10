@@ -1,5 +1,6 @@
 package org.egov.repository.querybuilder;
 
+import io.micrometer.common.util.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendeeSearchCriteria;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,8 @@ public class AttendeeQueryBuilder {
             "att.lastmodifiedby, " +
             "att.createdtime, " +
             "att.lastmodifiedtime, " +
-            "att.tenantid " +
+            "att.tenantid, " +
+            "att.tag " +
             "FROM eg_wms_attendance_attendee att ";
 
     public String getAttendanceAttendeeSearchQuery(AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
@@ -40,6 +42,21 @@ public class AttendeeQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" att.individual_id IN (").append(createQuery(individualIds)).append(")");
             addToPreparedStatement(preparedStmtList, individualIds);
+        }
+
+        // Filter by tags if provided
+        List<String> tags = criteria.getTags();
+        if (tags != null && !tags.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" att.tag IN (").append(createQuery(tags)).append(")");
+            addToPreparedStatement(preparedStmtList, tags);
+        }
+
+        // Filter by tenantId (usually mandatory in multi-tenant systems)
+        if (StringUtils.isNotBlank(criteria.getTenantId())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" att.tenantid = ?");
+            preparedStmtList.add(criteria.getTenantId());
         }
 
         List<String> registerIds = criteria.getRegisterIds();
