@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @Component
@@ -26,6 +26,10 @@ public class MusterRollServiceConfiguration {
     private String mdmsHost;
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+    @Value("${egov.mdms.v2.host}")
+    private String mdmsV2Host;
+    @Value("${egov.mdms.v2.search.endpoint}")
+    private String mdmsV2EndPoint;
 
     //Idgen Config
     @Value("${egov.idgen.host}")
@@ -76,9 +80,41 @@ public class MusterRollServiceConfiguration {
     private String attendanceLogEndpoint;
     @Value("${works.attendance.register.search.endpoint}")
     private String attendanceRegisterEndpoint;
+    @Value("${works.attendance.register.update.endpoint}")
+    private String attendanceRegisterUpdateEndpoint;
     @Value("${works.attendance.register.search.limit}")
     private String attendanceRegisterSearchLimit;
 
+    //Contract Service
+    @Value("${works.contract.host}")
+    private String contractServiceHost;
+    @Value("${works.contract.endpoint}")
+    private String contractServiceEndpoint;
+
+    //Organisation Service
+    @Value("${works.organisation.host}")
+    private String organisationServiceHost;
+    @Value("${works.organisation.endpoint}")
+    private String organisationServiceEndpoint;
+
+    //Localization Service
+    @Value("${egov.localization.host}")
+    private String localizationServiceHost;
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationServiceEndpoint;
+
+    //Notification Topic
+    @Value("${kafka.topics.notification.sms}")
+    private String smsNotificationTopic;
+
+    @Value("${notification.sms.enabled:false}")
+    private boolean sendNotificationEnabled;
+
+    //Expense Service
+    @Value("${works.expense.calculator.host}")
+    private String expenseCalculatorServiceHost;
+    @Value("${works.expense.calculator.endpoint}")
+    private String expenseCalculatorServiceEndpoint;
 
     //Individual service
     @Value("${works.individual.host}")
@@ -95,6 +131,51 @@ public class MusterRollServiceConfiguration {
     //contract service code
     @Value("${works.contract.service.code}")
     private String contractServiceCode;
+
+    @Value("${musterroll.update.recompute.attendance.enabled:true}")
+    private boolean recomputeAttendanceEnabled;
+
+    @Value("${musterroll.workflow.enabled:true}")
+    private boolean musterRollWorkflowEnabled;
+
+    @Value("${musterroll.noworkflow.create.status}")
+    private String musterRollNoWorkflowCreateStatus;
+
+    @Value("${musterroll.individual.entry.roles.enabled:false}")
+    private boolean individualEntryRolesEnabled;
+
+    @Value("${musterroll.validate.start.date.monday.enabled:true}")
+    private boolean validateStartDateMondayEnabled;
+
+    @Value("${musterroll.validate.attendance.register.enabled:false}")
+    private boolean validateAttendanceRegisterEnabled;
+
+    @Value("${musterroll.set.default.duration.enabled:false}")
+    private boolean musterRollSetDefaultDurationEnabled;
+
+    @Value("${musterroll.default.duration.days:6}")
+    private int musterRollDefaultDuration;
+
+    @Value("${musterroll.add.bank.account.details.enabled:true}")
+    private boolean addBankAccountDetails;
+
+    @Value("${musterroll.update.attendance.register.review.status.enabled:true}")
+    private boolean updateAttendanceRegisterReviewStatusEnabled;
+
+    @Value("${egov.user.host}")
+    private String userHost;
+
+    @Value("${egov.user.context.path}")
+    private String userContextPath;
+
+    @Value("${egov.user.create.path}")
+    private String userCreateEndpoint;
+
+    @Value("${egov.user.search.path}")
+    private String userSearchEndpoint;
+
+    @Value("${egov.user.update.path}")
+    private String userUpdateEndpoint;
 
     @PostConstruct
     public void initialize() {

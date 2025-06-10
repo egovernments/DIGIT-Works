@@ -50,23 +50,19 @@ class WageSeekerCreateBloc
                   "city": event.locationDetails?.city,
                   "street": event.locationDetails?.streetName != null &&
                           event.locationDetails?.streetName != ""
-                      ? event.locationDetails?.streetName
+                      ? event.locationDetails?.streetName?.trim().toString()
                       : null,
                   "doorNo": event.locationDetails?.doorNo != null &&
                           event.locationDetails?.doorNo != ""
-                      ? event.locationDetails?.doorNo
+                      ? event.locationDetails?.doorNo?.trim().toString()
                       : null,
                   "type": "PERMANENT",
                   "locality": {"code": event.locationDetails?.locality},
                   "ward": {"code": event.locationDetails?.ward}
                 }
               ],
-              "fatherName": event.individualDetails?.relationship == 'FATHER'
-                  ? event.individualDetails?.fatherName?.trim()
-                  : null,
-              "husbandName": event.individualDetails?.relationship == 'HUSBAND'
-                  ? event.individualDetails?.fatherName?.trim()
-                  : null,
+              "fatherName": event.individualDetails?.fatherName?.trim(),
+              "husbandName": null,
               "relationship": event.individualDetails?.relationship,
               "identifiers": [
                 {

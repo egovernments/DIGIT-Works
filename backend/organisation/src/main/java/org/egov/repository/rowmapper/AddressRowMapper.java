@@ -22,18 +22,22 @@ import java.util.Map;
 @Repository
 public class AddressRowMapper implements ResultSetExtractor<List<Address>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public AddressRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Address> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
         Map<String, Address> addressMap = new LinkedHashMap<>();
 
         while (resultSet.next()) {
-            String address_id = resultSet.getString("address_id");
+            String addressId = resultSet.getString("address_id");
 
-            if (!addressMap.containsKey(address_id)) {
-                addressMap.put(address_id, createAddressObject(resultSet));
+            if (!addressMap.containsKey(addressId)) {
+                addressMap.put(addressId, createAddressObject(resultSet));
             }
         }
 
@@ -43,64 +47,60 @@ public class AddressRowMapper implements ResultSetExtractor<List<Address>> {
     private Address createAddressObject(ResultSet rs) throws SQLException, DataAccessException  {
         GeoLocation geoLocation = createGeoLocationObjFromResultSet(rs);
 
-        String address_id = rs.getString("address_id");
-        String address_tenantId = rs.getString("address_tenantId");
-        String address_orgId = rs.getString("address_orgId");
-        String address_doorNo = rs.getString("address_doorNo");
-        String address_plotNo = rs.getString("address_plotNo");
-        String address_landmark = rs.getString("address_landmark");
-        String address_city = rs.getString("address_city");
-        String address_pinCode = rs.getString("address_pinCode");
-        String address_district = rs.getString("address_district");
-        String address_region = rs.getString("address_region");
-        String address_state = rs.getString("address_state");
-        String address_country = rs.getString("address_country");
-        String address_boundaryCode = rs.getString("address_boundaryCode");
-        String address_boundaryType = rs.getString("address_boundaryType");
-        String address_buildingName = rs.getString("address_buildingName");
-        String address_street = rs.getString("address_street");
-        JsonNode address_additionalDetails = getAdditionalDetail("address_additionalDetails", rs);
+        String addressId = rs.getString("address_id");
+        String addressTenantId = rs.getString("address_tenantId");
+        String addressOrgId = rs.getString("address_orgId");
+        String addressDoorNo = rs.getString("address_doorNo");
+        String addressPlotNo = rs.getString("address_plotNo");
+        String addressLandmark = rs.getString("address_landmark");
+        String addressCity = rs.getString("address_city");
+        String addressPinCode = rs.getString("address_pinCode");
+        String addressDistrict = rs.getString("address_district");
+        String addressRegion = rs.getString("address_region");
+        String addressState = rs.getString("address_state");
+        String addressCountry = rs.getString("address_country");
+        String addressBoundaryCode = rs.getString("address_boundaryCode");
+        String addressBoundaryType = rs.getString("address_boundaryType");
+        String addressBuildingName = rs.getString("address_buildingName");
+        String addressStreet = rs.getString("address_street");
+        JsonNode addressAdditionalDetails = getAdditionalDetail("address_additionalDetails", rs);
 
-        Address address = Address.builder()
-                .id(address_id)
-                .tenantId(address_tenantId)
-                .orgId(address_orgId)
-                .doorNo(address_doorNo)
-                .plotNo(address_plotNo)
-                .landmark(address_landmark)
-                .city(address_city)
-                .pincode(address_pinCode)
-                .district(address_district)
-                .region(address_region)
-                .state(address_state)
-                .country(address_country)
-                .boundaryCode(address_boundaryCode)
-                .boundaryType(address_boundaryType)
-                .buildingName(address_buildingName)
-                .street(address_street)
-                .additionDetails(address_additionalDetails)
+        return Address.builder()
+                .id(addressId)
+                .tenantId(addressTenantId)
+                .orgId(addressOrgId)
+                .doorNo(addressDoorNo)
+                .plotNo(addressPlotNo)
+                .landmark(addressLandmark)
+                .city(addressCity)
+                .pincode(addressPinCode)
+                .district(addressDistrict)
+                .region(addressRegion)
+                .state(addressState)
+                .country(addressCountry)
+                .boundaryCode(addressBoundaryCode)
+                .boundaryType(addressBoundaryType)
+                .buildingName(addressBuildingName)
+                .street(addressStreet)
+                .additionDetails(addressAdditionalDetails)
                 .geoLocation(geoLocation)
                 .build();
-
-        return address;
     }
 
     private GeoLocation createGeoLocationObjFromResultSet(ResultSet rs)  throws SQLException, DataAccessException {
-        String addressGeoLocation_Id = rs.getString("addressGeoLocation_Id");
-        String addressGeoLocation_addressId = rs.getString("addressGeoLocation_addressId");
-        Double addressGeoLocation_latitude = rs.getDouble("addressGeoLocation_latitude");
-        Double addressGeoLocation_longitude = rs.getDouble("addressGeoLocation_longitude");
-        JsonNode addressGeoLocation_additionalDetails = getAdditionalDetail("addressGeoLocation_additionalDetails", rs);
+        String addressGeoLocationId = rs.getString("addressGeoLocation_Id");
+        String addressGeoLocationAddressId = rs.getString("addressGeoLocation_addressId");
+        Double addressGeoLocationLatitude = rs.getDouble("addressGeoLocation_latitude");
+        Double addressGeoLocationLongitude = rs.getDouble("addressGeoLocation_longitude");
+        JsonNode addressGeoLocationAdditionalDetails = getAdditionalDetail("addressGeoLocation_additionalDetails", rs);
 
-        GeoLocation geoLocation = GeoLocation.builder()
-                .id(addressGeoLocation_Id)
-                .addressId(addressGeoLocation_addressId)
-                .latitude(addressGeoLocation_latitude)
-                .longitude(addressGeoLocation_longitude)
-                .additionalDetails(addressGeoLocation_additionalDetails)
+        return GeoLocation.builder()
+                .id(addressGeoLocationId)
+                .addressId(addressGeoLocationAddressId)
+                .latitude(addressGeoLocationLatitude)
+                .longitude(addressGeoLocationLongitude)
+                .additionalDetails(addressGeoLocationAdditionalDetails)
                 .build();
-
-        return geoLocation;
     }
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {

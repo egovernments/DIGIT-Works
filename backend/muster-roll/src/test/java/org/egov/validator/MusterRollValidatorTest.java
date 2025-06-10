@@ -28,7 +28,7 @@ import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class MusterRollValidatorTest {
+class MusterRollValidatorTest {
 
     @InjectMocks
     private MusterRollValidator musterRollValidator;
@@ -36,10 +36,6 @@ public class MusterRollValidatorTest {
     private MusterRollServiceConfiguration serviceConfiguration;
     @Mock
     private MdmsUtil mdmsUtils;
-    @Mock
-    private MusterRollRepository musterRollRepository;
-    @Mock
-    private MusterRollServiceConfiguration config;
     @Mock
     private RestTemplate restTemplate;
 
@@ -51,6 +47,7 @@ public class MusterRollValidatorTest {
         lenient().when(mdmsUtils.mDMSCall(any(MusterRollRequest.class),
                 any(String.class))).thenReturn(mdmsResponse);
         lenient().when(serviceConfiguration.getTimeZone()).thenReturn("Asia/Kolkata");
+        lenient().when(serviceConfiguration.isValidateStartDateMondayEnabled()).thenReturn(true);
 
     }
 
@@ -135,6 +132,7 @@ public class MusterRollValidatorTest {
     void shouldThrowException_IfWorkflowIsNull() {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateValidationSuccess();
         musterRollRequest.setWorkflow(null);
+        lenient().when(serviceConfiguration.isMusterRollWorkflowEnabled()).thenReturn(true);
         CustomException exception = assertThrows(CustomException.class, ()-> musterRollValidator.validateCreateMusterRoll(musterRollRequest));
         assertTrue(exception.getCode().contentEquals("WORK_FLOW"));
     }
@@ -144,14 +142,15 @@ public class MusterRollValidatorTest {
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateValidationSuccess();
         getMockAttendanceRegisterSuccess();
         musterRollRequest.getWorkflow().setAction("");
+        lenient().when(serviceConfiguration.isMusterRollWorkflowEnabled()).thenReturn(true);
         CustomException exception = assertThrows(CustomException.class, ()-> musterRollValidator.validateCreateMusterRoll(musterRollRequest));
         assertNotNull(exception.getErrors().get("WORK_FLOW.ACTION"));
     }
 
     void getMockAttendanceRegisterSuccess() {
         //MOCK Attendance log search service response
-        lenient().when(config.getAttendanceLogHost()).thenReturn("http://localhost:8023");
-        lenient().when(config.getAttendanceRegisterEndpoint()).thenReturn("/attendance/v1/_search");
+        lenient().when(serviceConfiguration.getAttendanceLogHost()).thenReturn("http://localhost:8023");
+        lenient().when(serviceConfiguration.getAttendanceRegisterEndpoint()).thenReturn("/attendance/v1/_search");
         AttendanceRegisterResponse response = MusterRollRequestBuilderTest.getAttendanceRegisterResponse();
         lenient().when(restTemplate.postForObject(any(String.class),any(Object.class),any())).
                 thenReturn(response);

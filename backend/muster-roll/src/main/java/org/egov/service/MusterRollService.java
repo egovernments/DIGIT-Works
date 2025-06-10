@@ -2,7 +2,7 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +10,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.MusterRollServiceConfiguration;
-import org.egov.kafka.Producer;
+import org.egov.kafka.MusterRollProducer;
 import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
@@ -24,7 +24,7 @@ import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.web.models.MusterRollSearchCriteria;
-import org.egov.web.models.Status;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -39,51 +39,60 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.egov.util.MusterRollServiceConstants.ACTION_APPROVE;
 import static org.egov.util.MusterRollServiceConstants.STATUS_APPROVED;
 
 @Service
 @Slf4j
 public class MusterRollService {
 
-    @Autowired
-    private MusterRollValidator musterRollValidator;
+    private final MusterRollValidator musterRollValidator;
+
+    private final EnrichmentService enrichmentService;
+
+    private final CalculationService calculationService;
+
+    private final WorkflowService workflowService;
+
+    private final NotificationService notificationService;
+
+    private final MusterRollProducer musterRollProducer;
+
+    private final MusterRollServiceConfiguration serviceConfiguration;
+
+    private final MusterRollRepository musterRollRepository;
+
+    private final ObjectMapper mapper;
+
+    private final MdmsUtil mdmsUtils;
+
+    private final MusterRollServiceUtil musterRollServiceUtil;
+
+    private final MusterRollServiceConfiguration config;
+
+    private final RestTemplate restTemplate;
+
+    private final ResponseInfoCreator responseInfoCreator;
+
+    private static final String COMPUTE_ATTENDENSE = "computeAttendance";
 
     @Autowired
-    private EnrichmentService enrichmentService;
-
-    @Autowired
-    private CalculationService calculationService;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private MusterRollServiceConfiguration serviceConfiguration;
-
-    @Autowired
-    private MusterRollRepository musterRollRepository;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private MdmsUtil mdmsUtils;
-
-    @Autowired
-    private MusterRollServiceUtil musterRollServiceUtil;
-
-    @Autowired
-    private MusterRollServiceConfiguration config;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private ResponseInfoCreator responseInfoCreator;
-
+    public MusterRollService(CalculationService calculationService, MusterRollValidator musterRollValidator, EnrichmentService enrichmentService, WorkflowService workflowService, NotificationService notificationService, MusterRollProducer musterRollProducer, MusterRollServiceConfiguration serviceConfiguration, MusterRollRepository musterRollRepository, ObjectMapper mapper, RestTemplate restTemplate, MdmsUtil mdmsUtils, MusterRollServiceUtil musterRollServiceUtil, MusterRollServiceConfiguration config, ResponseInfoCreator responseInfoCreator) {
+        this.calculationService = calculationService;
+        this.musterRollValidator = musterRollValidator;
+        this.enrichmentService = enrichmentService;
+        this.workflowService = workflowService;
+        this.notificationService = notificationService;
+        this.musterRollProducer = musterRollProducer;
+        this.serviceConfiguration = serviceConfiguration;
+        this.musterRollRepository = musterRollRepository;
+        this.mapper = mapper;
+        this.restTemplate = restTemplate;
+        this.mdmsUtils = mdmsUtils;
+        this.musterRollServiceUtil = musterRollServiceUtil;
+        this.config = config;
+        this.responseInfoCreator = responseInfoCreator;
+    }
 
     /**
      * Calculates the per day attendance , attendance aggregate from startDate to endDate
@@ -118,9 +127,13 @@ public class MusterRollService {
         checkMusterRollExists(musterRollRequest.getMusterRoll());
         enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
         calculationService.createAttendance(musterRollRequest,true);
-        workflowService.updateWorkflowStatus(musterRollRequest);
+        if(config.isMusterRollWorkflowEnabled()) {
+            workflowService.updateWorkflowStatus(musterRollRequest);
+        } else {
+            musterRollRequest.getMusterRoll().setMusterRollStatus(config.getMusterRollNoWorkflowCreateStatus());
+        }
 
-        producer.push(serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
+        musterRollProducer.push(serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
         return musterRollRequest;
     }
 
@@ -153,7 +166,7 @@ public class MusterRollService {
         }
 
         List<MusterRoll> musterRollList = musterRollRepository.getMusterRoll(searchCriteria,registerIds);
-        int count = !CollectionUtils.isEmpty(musterRollList) ? musterRollList.size() : 0;
+        int count = musterRollRepository.getMusterRollCount(searchCriteria,registerIds);
         List<MusterRoll> filteredMusterRollList = musterRollList;
 
         //apply the limit and offset
@@ -163,10 +176,8 @@ public class MusterRollService {
 
         //populate response
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        MusterRollResponse musterRollResponse = MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(filteredMusterRollList)
+        return MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(filteredMusterRollList)
                 .count(count).build();
-
-        return musterRollResponse;
     }
 
     /**
@@ -187,8 +198,10 @@ public class MusterRollService {
         log.info("MusterRollService::updateMusterRoll::update request for musterRollNumber::"+existingMusterRoll.getMusterRollNumber());
 
         //fetch MDMS data for muster - skill level
-        String rootTenantId = existingMusterRoll.getTenantId().split("\\.")[0];
-        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
+        String tenantId = existingMusterRoll.getTenantId();
+        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, tenantId);
+        Object mdmsV2Data = mdmsUtils.mDMSV2CallMuster(musterRollRequest, tenantId);
+
 
         //fetch the update additionalDetails from the request and persist it for verification
         if (!isComputeAttendance) {
@@ -196,18 +209,38 @@ public class MusterRollService {
             existingMusterRoll.setAdditionalDetails(additionalDetails);
         }
 
-        enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll,mdmsData);
+        enrichmentService.enrichMusterRollOnUpdate(musterRollRequest,existingMusterRoll,mdmsV2Data);
         if (isComputeAttendance) {
             RequestInfo requestInfo = musterRollRequest.getRequestInfo();
             musterRollValidator.isValidUser(existingMusterRoll, requestInfo);
             calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
-        workflowService.updateWorkflowStatus(musterRollRequest);
-        producer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
+        if(config.isMusterRollWorkflowEnabled()) {
+            workflowService.updateWorkflowStatus(musterRollRequest);
+        }
+        if(config.isUpdateAttendanceRegisterReviewStatusEnabled() && STATUS_APPROVED.equalsIgnoreCase(musterRollRequest.getMusterRoll().getMusterRollStatus())) {
+            AttendanceRegisterResponse attendanceRegisterResponse = musterRollServiceUtil
+                    .fetchAttendanceRegister(musterRollRequest.getMusterRoll(), musterRollRequest.getRequestInfo());
+            List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
+            if(attendanceRegisters == null || attendanceRegisters.isEmpty()) {
+                log.error("No attendance registers found to update the status for muster roll ID: {}", musterRollRequest.getMusterRoll().getId());
+                throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND", "No attendance registers found to update the status for the given muster roll");
+            }
+            AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
+            attendanceRegister.setReviewStatus(STATUS_APPROVED);
+            musterRollServiceUtil.updateAttendanceRegister(attendanceRegister, musterRollRequest.getRequestInfo());
+        }
+        musterRollProducer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
+
+        try {
+            notificationService.sendNotificationToCBO(musterRollRequest);
+        }catch (Exception e){
+            log.error("Exception while sending notification: " + e);
+        }
 
         //If the musterroll is in 'APPROVED' status, push the musterRoll to calculate topic to be processed by expense-calculator service
         if (StringUtils.isNotBlank(musterRollRequest.getMusterRoll().getMusterRollStatus()) && STATUS_APPROVED.equalsIgnoreCase(musterRollRequest.getMusterRoll().getMusterRollStatus())) {
-            producer.push(serviceConfiguration.getCalculateMusterRollTopic(), musterRollRequest);
+            musterRollProducer.push(serviceConfiguration.getCalculateMusterRollTopic(), musterRollRequest);
         }
 
         return musterRollRequest;
@@ -223,7 +256,7 @@ public class MusterRollService {
                 .toDate(musterRoll.getEndDate()).build();
         List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria,null);
         if (!CollectionUtils.isEmpty(musterRolls)) {
-            StringBuffer exceptionMessage = new StringBuffer();
+            StringBuilder exceptionMessage = new StringBuilder();
             exceptionMessage.append("Muster roll already exists for the register - ");
             exceptionMessage.append(musterRoll.getRegisterId());
             exceptionMessage.append(" with startDate - ");
@@ -247,8 +280,7 @@ public class MusterRollService {
         if (CollectionUtils.isEmpty(musterRolls)) {
             throw new CustomException("NO_MATCH_FOUND","Invalid Muster roll id - "+musterRoll.getId());
         }
-        MusterRoll existingMusterRoll = musterRolls.get(0);
-        return existingMusterRoll;
+        return musterRolls.get(0);
     }
 
     /**
@@ -257,11 +289,11 @@ public class MusterRollService {
      * @return
      */
     private boolean isComputeAttendance (MusterRoll musterRoll) {
-       if (musterRoll.getAdditionalDetails() != null) {
+       if (config.isRecomputeAttendanceEnabled() && musterRoll.getAdditionalDetails() != null) {
            try {
                JsonNode node = mapper.readTree(mapper.writeValueAsString(musterRoll.getAdditionalDetails()));
-               if (node.findValue("computeAttendance") != null && StringUtils.isNotBlank(node.findValue("computeAttendance").textValue())) {
-                   String value = node.findValue("computeAttendance").textValue();
+               if (node.findValue(COMPUTE_ATTENDENSE) != null && StringUtils.isNotBlank(node.findValue(COMPUTE_ATTENDENSE).textValue())) {
+                   String value = node.findValue(COMPUTE_ATTENDENSE).textValue();
                    return BooleanUtils.toBoolean(value);
                }
            } catch (IOException e) {
@@ -304,11 +336,9 @@ public class MusterRollService {
         }
 
         List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
-        List<String> registerIds = attendanceRegisters.stream()
-                .map(register -> register.getId())
+        return attendanceRegisters.stream()
+                .map(AttendanceRegister::getId)
                 .collect(Collectors.toList());
-
-        return  registerIds;
     }
 
     /**
@@ -318,10 +348,9 @@ public class MusterRollService {
      * @return
      */
     private List<MusterRoll> applyLimitAndOffset(MusterRollSearchCriteria searchCriteria, List<MusterRoll> musterRollList) {
-        List<MusterRoll> musterRolls = musterRollList.stream()
+        return musterRollList.stream()
                         .skip(searchCriteria.getOffset())  // offset
                         .limit(searchCriteria.getLimit()) // limit
                         .collect(Collectors.toList());
-        return musterRolls;
     }
 }

@@ -2,27 +2,30 @@ package org.egov.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.models.individual.Individual;
+import org.egov.common.models.individual.IndividualBulkResponse;
 import org.egov.web.models.*;
+import org.egov.works.services.common.models.bankaccounts.BankAccount;
+import org.egov.works.services.common.models.bankaccounts.BankAccountResponse;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 public class MusterRollRequestBuilderTest {
 
     private MusterRollRequest builder;
-
-    private Object mdmsResponse;
-
-    private AttendanceLogResponse attendanceLogResponse;
 
     public static MusterRollRequestBuilderTest builder(){
         return new MusterRollRequestBuilderTest();
@@ -43,7 +46,7 @@ public class MusterRollRequestBuilderTest {
     }
 
     public MusterRollRequest withMusterForCreateException(){
-        MusterRoll musterRoll = MusterRoll.builder().tenantId("pb.amritsar").startDate(new BigDecimal("1669919400000")).endDate(new BigDecimal("1670697000000")).build();
+        MusterRoll musterRoll = MusterRoll.builder().tenantId("pb.amritsar").startDate(new BigDecimal("1669919400000")).endDate(new BigDecimal("1670697000000")).registerId(UUID.randomUUID().toString()).build();
         this.builder = MusterRollRequest.builder().musterRoll(musterRoll).requestInfo(getRequestInfo()).build();
         return this.builder;
     }
@@ -54,14 +57,12 @@ public class MusterRollRequestBuilderTest {
         roles.add(role);
         User userInfo = User.builder().id(172L).uuid("5ce80dd3-b1c0-42fd-b8f6-a2be456db31c").userName("8070102021").name("test3").mobileNumber("8070102021")
                 .emailId("xyz@egovernments.org").type("EMPLOYEE").roles(roles).build();
-        RequestInfo requestInfo = RequestInfo.builder().apiId("muster-service").msgId("search with from and to values").userInfo(userInfo).build();
-        return requestInfo;
+        return RequestInfo.builder().apiId("muster-service").msgId("search with from and to values").userInfo(userInfo).build();
     }
 
     public ResponseInfo getResponseInfo_Success() {
-        ResponseInfo responseInfo = ResponseInfo.builder().apiId("muster-roll-service").ver(null).ts(null).resMsgId(null).msgId("search with from and to values")
+        return ResponseInfo.builder().apiId("muster-roll-service").ver(null).ts(null).resMsgId(null).msgId("search with from and to values")
                 .status("successful").build();
-        return responseInfo;
     }
 
     public static Object getMdmsResponse() {
@@ -70,8 +71,8 @@ public class MusterRollRequestBuilderTest {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/MusterRollMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            Path path = Paths.get("src/test/resources/MusterRollMDMSData.json");
+            String exampleRequest = Files.readString(path, StandardCharsets.UTF_8);
             mdmsResponse = objectMapper.readValue(exampleRequest, Object.class);
         } catch (Exception exception) {
             log.error("CalculationServiceTest::getMdmsResponse::Exception while parsing mdms json");
@@ -85,8 +86,8 @@ public class MusterRollRequestBuilderTest {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/TenantMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            Path path = Paths.get("src/test/resources/TenantMDMSData.json");
+            String exampleRequest = Files.readString(path, StandardCharsets.UTF_8);
             mdmsResponse = objectMapper.readValue(exampleRequest, Object.class);
         } catch (Exception exception) {
             log.error("CalculationServiceTest::getMdmsResponse::Exception while parsing mdms json");
@@ -129,8 +130,7 @@ public class MusterRollRequestBuilderTest {
                 .build();
         logs.add(attendanceLog);
 
-        AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().attendance(logs).build();
-        return attendanceLogResponse;
+        return AttendanceLogResponse.builder().attendance(logs).build();
     }
 
     public static IndividualBulkResponse getIndividualResponse() {
@@ -139,8 +139,7 @@ public class MusterRollRequestBuilderTest {
                 .build();
         individuals.add(individual);
 
-        IndividualBulkResponse response = IndividualBulkResponse.builder().individual(individuals).build();
-        return response;
+        return IndividualBulkResponse.builder().individual(individuals).build();
     }
 
     public static BankAccountResponse getBankDetailsResponse() {
@@ -149,15 +148,13 @@ public class MusterRollRequestBuilderTest {
                 .build();
         accounts.add(bankAccount);
 
-        BankAccountResponse response = BankAccountResponse.builder().bankAccounts(accounts).build();
-        return response;
+        return BankAccountResponse.builder().bankAccounts(accounts).build();
     }
 
     public static AttendanceRegisterResponse getAttendanceRegisterResponse() {
         List<AttendanceRegister> attendanceRegisterList = new ArrayList<>();
         AttendanceRegister attendanceRegister = AttendanceRegister.builder().id("196dc78f-54eb-4462-a924-f9e753834228").build();
         attendanceRegisterList.add(attendanceRegister);
-        AttendanceRegisterResponse response = AttendanceRegisterResponse.builder().attendanceRegister(attendanceRegisterList).build();
-        return response;
+        return AttendanceRegisterResponse.builder().attendanceRegister(attendanceRegisterList).build();
     }
 }

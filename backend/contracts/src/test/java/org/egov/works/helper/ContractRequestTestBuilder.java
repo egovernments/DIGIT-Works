@@ -1,15 +1,15 @@
 package org.egov.works.helper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.egov.works.web.models.ContractRequest;
-import org.egov.works.web.models.LineItems;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ContractRequestTestBuilder {
@@ -24,18 +24,29 @@ public class ContractRequestTestBuilder {
     }
 
     public static Object getMdmsResponseForValidTenant() {
-
         Object mdmsResponse = null;
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/test/resources/TenantMDMSData.json");
-            String exampleRequest = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-            mdmsResponse = objectMapper.readValue(exampleRequest, Object.class);
+            // Load the JSON file from the resources folder
+            InputStream inputStream = ContractRequestTestBuilder.class.getResourceAsStream("/TenantMDMSData.json");
+            if (inputStream != null) {
+                // Read the content of the JSON file into a string
+                String exampleRequest = new BufferedReader(new InputStreamReader(inputStream))
+                        .lines()
+                        .collect(Collectors.joining("\n"));
+                // Parse the JSON string into an object (replace 'Object' with the appropriate type)
+                // For example, if 'mdmsResponse' should be a JSONObject, you can use a JSON parsing library like Gson or Jackson to parse the string.
+                // For simplicity, I'm assuming 'mdmsResponse' should be a String.
+                mdmsResponse = exampleRequest;
+            } else {
+                log.error("ContractRequestTestBuilder::getMdmsResponse::Could not load TenantMDMSData.json");
+            }
         } catch (Exception exception) {
-            log.error("ContractRequestTestBuilder::getMdmsResponse::Exception while parsing mdms json");
+            log.error("ContractRequestTestBuilder::getMdmsResponse::Exception while parsing mdms json", exception);
         }
+
         return mdmsResponse;
+
     }
 //    public static JsonNode getJsonResponse() throws JsonProcessingException {
 //        LineItems lineItems=LineItems.builder().additionalDetails(AdditionalFields.builder().("some-officerInChargeId").build()).build();

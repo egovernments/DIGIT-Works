@@ -80,8 +80,7 @@ class MusterRollEstimateBloc
       await Future.delayed(const Duration(seconds: 1));
       emit(MusterRollEstimateState.loaded(musterRollsModel));
     } on DioError catch (e) {
-
-      emit(const MusterRollEstimateState.loaded(EstimateMusterRollsModel()));
+      emit(MusterRollEstimateState.error(e.response?.data['Errors'][0]['code']));
     }
   }
 }
@@ -111,4 +110,5 @@ class MusterRollEstimateState with _$MusterRollEstimateState {
   const factory MusterRollEstimateState.loading() = _Loading;
   const factory MusterRollEstimateState.loaded(
       EstimateMusterRollsModel? musterRollsModel) = _Loaded;
+  const factory MusterRollEstimateState.error(String? error) = _Error;
 }

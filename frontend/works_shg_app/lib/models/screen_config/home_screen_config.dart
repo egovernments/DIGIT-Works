@@ -26,6 +26,8 @@ class CommonUIConfigModel with _$CommonUIConfigModel {
         List<CBOHomeScreenConfigModel>? cboHomeScreenConfig,
     @JsonKey(name: 'CBOMyWorks')
         List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria,
+    @JsonKey(name: 'CBOMyServiceRequests')
+        List<CBOMyServiceRequestsConfig>? cboMyServiceRequestsConfig,
   }) = _CommonUIConfigModel;
 
   factory CommonUIConfigModel.fromJson(

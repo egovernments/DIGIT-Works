@@ -14,6 +14,7 @@ export const Row = (props) => {
   let value = props.text;
   let valueStyle = props.textStyle || {};
   let labelStyle = props.labelStyle || {};
+  let amountStyle = props.amountStyle || {}
   if (Array.isArray(props.text)) {
     value = props.text.map((val, index) => {
       if (val?.className) {
@@ -58,7 +59,7 @@ export const Row = (props) => {
       <h2 style={labelStyle}>{props.label}{props?.isMandotary && '*'}</h2>
       <div className="value" style={valueStyle}>
         {
-          props?.isValueLink ? (<p className="status-value-link" onClick={props?.navigateLinkHandler}>{value}</p>) : <p>{value}</p> 
+          props?.isValueLink ? (<p className="status-value-link" onClick={props?.navigateLinkHandler}>{value}</p>) : <p style={amountStyle}>{value}</p> 
         }
         {props?.privacy && (
           <span style={{ display: "inline-flex", width: "fit-content", marginLeft: "10px" }}>

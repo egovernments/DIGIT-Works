@@ -7,6 +7,7 @@ class CircularButton extends StatelessWidget {
   final double index;
   final bool isNotGreyed;
   final void Function()? onTap;
+  final bool viewOnly;
   //set index -1 to not select the Circular button
   //set index 1 to select half of the Circular button
   //set index 2 to completely select the Circular button
@@ -19,14 +20,15 @@ class CircularButton extends StatelessWidget {
       required this.color,
       required this.index,
       required this.isNotGreyed,
-      this.onTap});
+      this.onTap,
+      this.viewOnly = false});
 
   @override
   Widget build(BuildContext context) {
     return Align(
         alignment: Alignment.centerLeft,
         child: GestureDetector(
-            onTap: onTap,
+            onTap: viewOnly ? null : onTap,
             child: Container(
                 height: 30,
                 width: 30,

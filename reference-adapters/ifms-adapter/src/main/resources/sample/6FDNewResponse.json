@@ -1,0 +1,76 @@
+{
+  "serviceId": "FD",
+  "errorMsg": null,
+  "data": [
+    {
+      "billNumber": "PI-1013/2023-24/000258",
+      "billDate": "2023-05-25",
+      "voucherNo": "22171",
+      "voucherDate": "2023-06-01",
+      "billRefNo": "202311171279",
+      "tokenNumber": "4",
+      "tokenDate": "2023-05-29",
+      "benfDtls": [
+        {
+          "benfAcctNo": "389201502452",
+          "benfBankIfscCode": "ICIC0003892",
+          "utrNo": "RBI505",
+          "utrDate": "2023-06-01",
+          "endToEndId": "EP112202320000003231520002",
+          "orgBillRefNumber": "202311171279",
+          "challanNumber": "86581",
+          "challanDate": "2023-06-03",
+          "failedReason": " Account does not exist",
+          "benfId": "BN-1013/000224"
+        },
+        {
+          "benfAcctNo": "389201502453",
+          "benfBankIfscCode": "ICIC0003892",
+          "utrNo": "RBI505",
+          "utrDate": "2023-06-01",
+          "endToEndId": "EP112202320000002231520002",
+          "orgBillRefNumber": "202311171279",
+          "challanNumber": "86582",
+          "challanDate": "2023-06-03",
+          "failedReason": " Account is Dormant",
+          "benfId": "BN-1013/000096"
+        }
+      ]
+    },
+    {
+      "billNumber": "MUKTA/2023-24/06/06/03",
+      "billDate": "2023-06-05",
+      "voucherNo": "22171",
+      "voucherDate": "2023-07-03",
+      "billRefNo": "202311225280",
+      "tokenNumber": "13",
+      "tokenDate": "2023-07-03",
+      "benfDtls": [
+        {
+          "benfAcctNo": "1234512345",
+          "benfBankIfscCode": "ICIC0000460",
+          "utrNo": "RBI517",
+          "utrDate": "2023-07-03",
+          "endToEndId": "EP112202320000002231850005",
+          "orgBillRefNumber": "202311225280",
+          "challanNumber": "86581",
+          "challanDate": "2023-07-03",
+          "failedReason": "Failed to Pay by RBI(Through e-Kuber) Late Ret",
+          "benfId": "1"
+        },
+        {
+          "benfAcctNo": "9900123451",
+          "benfBankIfscCode": "ICIC0000460",
+          "utrNo": "RBI517",
+          "utrDate": "2023-07-03",
+          "endToEndId": "EP112202320000001231850005",
+          "orgBillRefNumber": "202311225280",
+          "challanNumber": "86582",
+          "challanDate": "2023-07-03",
+          "failedReason": "Failed to Pay by RBI(Through e-Kuber) Late Ret",
+          "benfId": "2"
+        }
+      ]
+    }
+  ]
+}

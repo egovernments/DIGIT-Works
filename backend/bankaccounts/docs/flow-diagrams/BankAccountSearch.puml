@@ -1,0 +1,32 @@
+@startuml
+title Search Bank Account
+actor user as "User" order 0 #ddff41
+participant BANK_ACCOUNT as "Bank Account" order 1 #4Ff2A0
+participant ENC_CLIENT as "Encryption Service" order 2 #4Ff2A0
+database DB as "PostgreSQL" order 3 #4Ff2A0
+
+user -> BANK_ACCOUNT: Call _search API
+note left: Add search parameters
+activate user #Fafd30
+activate BANK_ACCOUNT #00ad00
+BANK_ACCOUNT -> BANK_ACCOUNT: Validate request
+note right: Validate search criteria \nto search bank accounts
+alt if: Request is not valid
+    user <-[#ff0000]- BANK_ACCOUNT: [400]: Error response\n with invalid field values
+end
+
+BANK_ACCOUNT -> BANK_ACCOUNT: Create SQL query \nbased on search criteria
+BANK_ACCOUNT -> DB: Execute SQL query
+BANK_ACCOUNT <-- DB: Return QUERY response
+BANK_ACCOUNT -> BANK_ACCOUNT: Process DB Response \nand construct Bank Account object
+
+BANK_ACCOUNT -> ENC_CLIENT: call _decrypt api\nsend bank account details
+activate ENC_CLIENT #F1aF0F
+BANK_ACCOUNT <-- ENC_CLIENT: Return respnse
+note right: It will return <b>decrypted/maked/encrypted</b> \nbank account details based on role user have \n& Security configuration
+deactivate ENC_CLIENT
+user <-[#green]- BANK_ACCOUNT: Bank account details
+deactivate BANK_ACCOUNT
+deactivate user
+
+@enduml

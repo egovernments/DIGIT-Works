@@ -8,6 +8,7 @@ import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -24,8 +25,12 @@ import java.util.Map;
 @Component
 public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegister>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public RegisterRowMapper(@Qualifier("objectMapper") ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<AttendanceRegister> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -46,6 +51,8 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
             Long lastmodifiedtime = rs.getLong("lastmodifiedtime");
             String referenceId = rs.getString("referenceid");
             String serviceCode = rs.getString("servicecode");
+            String localityCode = rs.getString("localitycode");
+            String reviewstatus = rs.getString("reviewstatus");
 
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
@@ -65,6 +72,8 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
                     .startDate(startDate)
                     .endDate(endDate)
                     .auditDetails(auditDetails)
+                    .localityCode(localityCode)
+                    .reviewStatus(reviewstatus)
                     .build();
 
             if (!attendanceRegisterMap.containsKey(id)) {

@@ -201,8 +201,8 @@ export const WorksService = {
       params: {},
     });
   },
-  searchBill: (details) => {
-    return Request({
+  searchBill: async(details) => {
+   const billObject=await  Request({
       url: Urls.bills.searchBill,
       useCache: false,
       data: details,
@@ -211,6 +211,10 @@ export const WorksService = {
       userService: false,
       params: {},
     });
+    if(billObject?.bills?.[0]?.billDetails?.[0]?.lineItems?.[0]){
+      billObject.bills[0].billDetails[0].lineItems=  [...billObject?.bills?.[0]?.billDetails?.[0]?.lineItems?.filter(item=>item.status=="ACTIVE")];
+    }
+    return billObject;
   },
   searchBillCalculator: (details) => {
     return Request({

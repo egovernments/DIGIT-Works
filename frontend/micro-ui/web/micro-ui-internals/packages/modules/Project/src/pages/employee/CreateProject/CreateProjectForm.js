@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import CreateProjectUtils from "../../../utils/createProjectUtils";
 import { useHistory } from "react-router-dom";
+import debounce from 'lodash/debounce';
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -209,9 +210,10 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
     const { mutate: UpdateProjectMutation } = Digit.Hooks.works.useUpdateProject();
 
-    const onSubmit = (data) => {
+    const OnModalSubmit = async (data) => {
+      const trimmedData = Digit.Utils.trimStringsInObject(data)
       //Transforming Payload to categories of Basic Details, Projects and Sub-Projects
-      const transformedPayload = CreateProjectUtils.payload.transform(data);
+      const transformedPayload = CreateProjectUtils.payload.transform(trimmedData);
 
       const modifyParams = {
         modify_projectID,
@@ -227,8 +229,9 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
       }else {
         handleResponseForUpdate(payload);
       }
-    }
+    };
 
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
     const handleResponseForCreate = async (payload) => {
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
@@ -343,6 +346,11 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
         }
     },[selectedProjectType]);
 
+    const handleSubmit = (_data) => {
+      // Call the debounced version of onModalSubmit
+      debouncedOnModalSubmit(_data);
+    };
+
 
     return (
         <React.Fragment>
@@ -357,7 +365,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
                     body: config?.body.filter((a) => !a.hideInEmployee),
                   };
                 })}
-                onSubmit={onSubmit}
+                onSubmit={handleSubmit}
                 submitInForm={false}
                 fieldStyle={{ marginRight: 0 }}
                 inline={false}

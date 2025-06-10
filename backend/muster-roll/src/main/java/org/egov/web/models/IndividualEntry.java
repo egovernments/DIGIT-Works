@@ -5,12 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import digit.models.coremodels.AuditDetails;
+import org.egov.common.contract.models.AuditDetails;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,11 +17,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
 
+import jakarta.validation.constraints.Min;
+
 /**
  * IndividualEntry
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
 
 @Getter
 @Setter
@@ -38,9 +39,11 @@ public class IndividualEntry {
     private String individualId = null;
 
     @JsonProperty("actualTotalAttendance")
+    @Min(0)
     private BigDecimal actualTotalAttendance = null;
 
     @JsonProperty("modifiedTotalAttendance")
+    @Min(0)
     private BigDecimal modifiedTotalAttendance = null;
 
     @JsonProperty("attendanceEntries")

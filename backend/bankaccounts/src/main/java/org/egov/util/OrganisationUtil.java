@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
-import org.egov.web.models.OrgSearchCriteria;
-import org.egov.web.models.OrgSearchRequest;
+import org.egov.works.services.common.models.organization.OrgSearchCriteria;
+import org.egov.works.services.common.models.organization.OrgSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -17,14 +17,18 @@ import java.util.List;
 @Slf4j
 public class OrganisationUtil {
 
-    @Autowired
-    private Configuration config;
+    private final Configuration config;
+
+    private final RestTemplate restTemplate;
+
+    private final ServiceRequestRepository requestRepository;
 
     @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private ServiceRequestRepository requestRepository;
+    public OrganisationUtil(Configuration config, RestTemplate restTemplate, ServiceRequestRepository requestRepository) {
+        this.config = config;
+        this.restTemplate = restTemplate;
+        this.requestRepository = requestRepository;
+    }
 
 
     /**

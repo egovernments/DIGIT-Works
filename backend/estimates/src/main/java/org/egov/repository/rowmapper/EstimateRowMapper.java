@@ -2,11 +2,11 @@ package org.egov.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.works.services.common.models.common.Address;
 import org.egov.tracer.model.CustomException;
-import org.egov.web.models.Address;
 import org.egov.web.models.AmountDetail;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateDetail;
@@ -26,8 +26,12 @@ import java.util.*;
 @Slf4j
 public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public EstimateRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Estimate> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -45,11 +49,14 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             String wfStatus = rs.getString("wf_status");
             String name = rs.getString("name");
             String description = rs.getString("description");
+            String revisionNumber = rs.getString("revision_number");
+            String businessService = rs.getString("business_service");
+            BigDecimal versionNumber = rs.getBigDecimal("version_number");
+            String oldUuid = rs.getString("old_uuid");
             String referenceNumber = rs.getString("reference_number");
             String executingDepartment = rs.getString("executing_department");
             String createdby = rs.getString("created_by");
             String lastmodifiedby = rs.getString("last_modified_by");
-            //BigDecimal totalAmount = rs.getBigDecimal("total_amount");
             Long createdtime = rs.getLong("created_time");
             Long lastmodifiedtime = rs.getLong("last_modified_time");
 
@@ -62,6 +69,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             Estimate estimate = Estimate.builder().estimateNumber(estimateNumber).id(id)
                     .wfStatus(wfStatus).status(Estimate.StatusEnum.fromValue(status)).projectId(projectId)
                     .additionalDetails(additionalDetails).tenantId(tenantId).name(name)
+                    .revisionNumber(revisionNumber).businessService(businessService).versionNumber(versionNumber).oldUuid(oldUuid)
                     .description(description).referenceNumber(referenceNumber).executingDepartment(executingDepartment)
                     .proposalDate(proposalDate).auditDetails(auditDetails).build();
 
@@ -72,7 +80,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             addEstimateDetails(rs, estimateDetailMap, estimateMap.get(id));
 
             if (!isAddressAdded) {
-                Address address = getEstimateAddress(id, tenantId, rs);
+                Address address = getEstimateAddress(tenantId, rs);
                 //one-to-one mapping
                 estimate.setAddress(address);
                 isAddressAdded = true;
@@ -81,19 +89,16 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
         return new ArrayList<>(estimateMap.values());
     }
 
-    private Address getEstimateAddress(String id, String tenantId, ResultSet rs) throws SQLException {
+    private Address getEstimateAddress(String tenantId, ResultSet rs) throws SQLException {
         log.debug("EstimateRowMapper::getEstimateAddress");
-        Address address = Address.builder()
+        return Address.builder()
                 .id(rs.getString("estAddId"))
                 .tenantId(tenantId).addressLine1(rs.getString("address_line_1"))
-                .addressLine2(rs.getString("address_line_2")).addressNumber(rs.getString("address_number"))
+                .addressLine2(rs.getString("address_line_2"))
                 .city(rs.getString("city")).pincode(rs.getString("pin_code"))
-                .detail(rs.getString("detail"))
                 .landmark(rs.getString("landmark")).latitude(rs.getDouble("latitude"))
                 .longitude(rs.getDouble("longitude"))
                 .build();
-
-        return address;
     }
 
     private void addEstimateDetails(ResultSet rs, Map<String, EstimateDetail> estimateDetailMap, Estimate estimate) throws SQLException {
@@ -101,6 +106,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
         String estDetailsId = rs.getString("estDetailId");
         EstimateDetail estimateDetail = EstimateDetail.builder()
                 .id(estDetailsId)
+                .previousLineItemId(rs.getString("estDetailOldUuid"))
                 .sorId(rs.getString("sor_id"))
                 .category(rs.getString("category"))
                 .name(rs.getString("estDetailName"))
@@ -109,6 +115,11 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                 .noOfunit(rs.getDouble("no_of_unit"))
                 //.totalAmount(rs.getDouble("total_amount"))
                 .uomValue(rs.getDouble("uom_value"))
+                .length(rs.getBigDecimal("length"))
+                .width(rs.getBigDecimal("width"))
+                .height(rs.getBigDecimal("height"))
+                .isDeduction(rs.getBoolean("is_deduction"))
+                .quantity(rs.getBigDecimal("quantity"))
                 .uom(rs.getString("uom"))
                 .isActive(rs.getBoolean("estDetailActive"))
                 .build();

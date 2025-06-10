@@ -11,7 +11,7 @@ const useContractSearch = ({ tenantId, filters, config = {} }) => {
     {
         ...config,
         select: (data) => {
-            return data?.contracts?.[0]
+            return filters?.estimateIds?.length > 0 ? data?.contracts : data?.contracts?.[0]
         }
 
     }

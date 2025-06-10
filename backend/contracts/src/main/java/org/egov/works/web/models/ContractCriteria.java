@@ -1,7 +1,6 @@
 package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,8 +9,8 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.List;
  */
 @ApiModel(description = "The object will contain all the search parameters for contract service.")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
 
 @Data
 @AllArgsConstructor
@@ -40,6 +39,12 @@ public class ContractCriteria {
 
     @JsonProperty("contractNumber")
     private String contractNumber = null;
+
+    @JsonProperty("supplementNumber")
+    private String supplementNumber = null;
+
+    @JsonProperty("businessService")
+    private String businessService = null;
 
     @JsonProperty("ids")
     private List<String> ids = null;
