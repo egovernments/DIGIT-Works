@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
+
 public class Constants {
 	public static final String REQUEST_INFO = "RequestInfo";
 	public static final String TENANT_ID = "tenantId";
@@ -95,21 +97,21 @@ public class Constants {
 			+ " li.lastmodifiedby as li_lastmodifiedby, li.lastmodifiedtime as li_lastmodifiedtime "
 
 			
-			+ " FROM eg_expense_payment payment "
+			+ " FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_payment payment "
 			
-			+ INNER_JOIN + " eg_expense_payment_bill paymentbill ON paymentbill.paymentid = payment.id"
+			+ INNER_JOIN + " " + SCHEMA_REPLACE_STRING + ".eg_expense_payment_bill paymentbill ON paymentbill.paymentid = payment.id"
 					+ " AND paymentbill.tenantid = payment.tenantid "
 			
-			+ INNER_JOIN + " eg_expense_payment_billdetail paymentbd ON paymentbd.paymentbillid = paymentbill.id"
+			+ INNER_JOIN + " " + SCHEMA_REPLACE_STRING + ".eg_expense_payment_billdetail paymentbd ON paymentbd.paymentbillid = paymentbill.id"
 					+ " AND paymentbd.tenantid = paymentbill.tenantid "
 			
-			+ INNER_JOIN + " eg_expense_payment_lineitem li ON li.paymentbilldetailid = paymentbd.id"
+			+ INNER_JOIN + " " + SCHEMA_REPLACE_STRING + ".eg_expense_payment_lineitem li ON li.paymentbilldetailid = paymentbd.id"
 					+ " AND li.tenantid=paymentbd.tenantid ";
 
 	public static final String PAYMENT_COUNT_QUERY = "SELECT distinct(payment.id) " +
-			"FROM eg_expense_payment payment "
+			"FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_payment payment "
 
-			+ INNER_JOIN + " eg_expense_payment_bill paymentbill ON paymentbill.paymentid = payment.id"
+			+ INNER_JOIN + " " + SCHEMA_REPLACE_STRING + ".eg_expense_payment_bill paymentbill ON paymentbill.paymentid = payment.id"
 					+ " AND paymentbill.tenantid = payment.tenantid ";
 			
 	
@@ -140,18 +142,20 @@ public class Constants {
 			+ " payer.createdby as payer_createdby, payer.createdtime as payer_createdtime, payer.lastmodifiedby as payer_lastmodifiedby, "
 			+ "payer.lastmodifiedtime as payer_lastmodifiedtime, payer.additionaldetails as payer_additionaldetails, payer.status as payer_status "
 			
-			+ "FROM eg_expense_bill bill "
+			+ "FROM "+ SCHEMA_REPLACE_STRING + ".eg_expense_bill bill "
 			
-			+ LEFT_JOIN + " EG_EXPENSE_PARTY PAYER ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
+			+ LEFT_JOIN + " " + SCHEMA_REPLACE_STRING + ".EG_EXPENSE_PARTY PAYER ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
 			
-			+ LEFT_JOIN + " EG_EXPENSE_BILLDETAIL BD ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
+			+ LEFT_JOIN + " " + SCHEMA_REPLACE_STRING + ".EG_EXPENSE_BILLDETAIL BD ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
 			
-			+ LEFT_JOIN + " EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
+			+ LEFT_JOIN + " " + SCHEMA_REPLACE_STRING + ".EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
 			
-			+ LEFT_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
+			+ LEFT_JOIN + " " + SCHEMA_REPLACE_STRING + ".EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
 
 	public static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
 
 	public static final String BILL_COUNT_QUERY = "SELECT distinct(bill.id) " +
-             "FROM eg_expense_bill bill ";
+             "FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_bill bill ";
+
+	public static final String INVALID_TENANT_ID_ERR_CODE = "INVALID_TENANT_ID";
 }
