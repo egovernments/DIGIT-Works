@@ -27,6 +27,7 @@ on:
           - "muster-roll"
           - "organisation"
           - "wms"
+          - "expenses-billing"
         default: "attendance"
 
 env:
