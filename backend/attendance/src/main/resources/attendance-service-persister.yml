@@ -367,6 +367,8 @@ serviceMaps:
 
             - jsonPath: $.attendees.*.denrollmentDate
 
+            - jsonPath: $.attendees.*.tag
+
             - jsonPath: $.attendees.*.additionalDetails
               type: JSON
               dbType: JSONB
@@ -376,8 +378,6 @@ serviceMaps:
             - jsonPath: $.attendees.*.auditDetails.lastModifiedTime
 
             - jsonPath: $.attendees.*.id
-
-            - jsonPatgh: $.attendees.*.tag
 
     - version: 1.0
       description: update staff
