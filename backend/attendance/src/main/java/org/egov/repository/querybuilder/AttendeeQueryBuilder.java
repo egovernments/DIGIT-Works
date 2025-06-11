@@ -30,6 +30,13 @@ public class AttendeeQueryBuilder {
     public String getAttendanceAttendeeSearchQuery(AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(ATTENDANCE_ATTENDEE_SELECT_QUERY);
 
+        // Filter by tenantId (usually mandatory in multi-tenant systems)
+        if (StringUtils.isNotBlank(criteria.getTenantId())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" att.tenantid = ?");
+            preparedStmtList.add(criteria.getTenantId());
+        }
+
         List<String> ids=criteria.getIds();
         if (ids!=null && !ids.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
@@ -50,13 +57,6 @@ public class AttendeeQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" att.tag IN (").append(createQuery(tags)).append(")");
             addToPreparedStatement(preparedStmtList, tags);
-        }
-
-        // Filter by tenantId (usually mandatory in multi-tenant systems)
-        if (StringUtils.isNotBlank(criteria.getTenantId())) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" att.tenantid = ?");
-            preparedStmtList.add(criteria.getTenantId());
         }
 
         List<String> registerIds = criteria.getRegisterIds();
