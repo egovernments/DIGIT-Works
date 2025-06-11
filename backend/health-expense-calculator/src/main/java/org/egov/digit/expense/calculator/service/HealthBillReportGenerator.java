@@ -84,10 +84,15 @@ public class HealthBillReportGenerator {
      */
     public BillReportRequest generateHealthBillReportRequest(BillRequest billRequest) {
         try {
-            log.info("Generating report for bill id: " + billRequest.getBill().getId());
-            ProjectResponse projectResponse = projectUtil.getProjectDetails(billRequest.getRequestInfo(),
-                    billRequest.getRequestInfo().getUserInfo().getTenantId(), billRequest.getBill().getReferenceId(),
-                    billRequest.getBill().getLocalityCode());
+            log.info("Generating report for bill id: {}", billRequest.getBill().getId());
+
+            ProjectResponse projectResponse = projectUtil.getProjectDetails(
+                    billRequest.getRequestInfo(),
+                    billRequest.getRequestInfo().getUserInfo().getTenantId(),
+                    getReferenceId(billRequest),
+                    billRequest.getBill().getLocalityCode()
+            );
+
             if (projectResponse == null || projectResponse.getProject() == null) {
                 log.error("Project Response null");
                 throw new CustomException("PROJECT_RESPONSE_NULL", "Project response null");
@@ -384,8 +389,13 @@ public class HealthBillReportGenerator {
      * @param billRequest BillRequest containing the request info and bill
      */
     private void enrichCampaignName(ReportBill reportBill, BillRequest billRequest) {
-        ProjectResponse projectResponse = projectUtil.getProjectDetails(billRequest.getRequestInfo(), billRequest.getBill().getTenantId(), billRequest.getBill().getReferenceId(), billRequest.getBill().getLocalityCode());
-        if (projectResponse != null && projectResponse.getProject() != null && projectResponse.getProject().size() > 0) {
+        ProjectResponse projectResponse = projectUtil.getProjectDetails(
+                billRequest.getRequestInfo(),
+                billRequest.getBill().getTenantId(),
+                getReferenceId(billRequest),
+                billRequest.getBill().getLocalityCode()
+        );
+        if (projectResponse != null && projectResponse.getProject() != null && !projectResponse.getProject().isEmpty()) {
             reportBill.setCampaignName(projectResponse.getProject().get(0).getName());
         }
     }
@@ -468,4 +478,15 @@ public class HealthBillReportGenerator {
                 .build();
         billUtils.postUpdateBill(billRequest.getRequestInfo(), billRequest.getBill(), workflow);
     }
+
+    // The reference id is concatenated as parent.child.child
+    private String getReferenceId(BillRequest billRequest) {
+        String referenceId = billRequest.getBill().getReferenceId();
+        if (referenceId == null || referenceId.isEmpty()) {
+            return null;
+        }
+        String[] referenceIds = referenceId.split("\\.");
+        return referenceIds[referenceIds.length - 1];
+    }
+
 }
