@@ -423,7 +423,7 @@ public class HealthBillReportGenerator {
             String localizedBoundary = localization.getOrDefault(boundaryCode, boundaryCode);
             String startingConstant = localization.getOrDefault(REPORT_FIRST_CONSTANT,REPORT_FIRST_CONSTANT);
             String middleConstant = localization.getOrDefault(REPORT_MIDDLE_CONSTANT, REPORT_MIDDLE_CONSTANT);
-            String newReportTitle = startingConstant + campaignName + middleConstant + localizedBoundary;
+            String newReportTitle = startingConstant + " " + campaignName + " " + middleConstant + " " + localizedBoundary;
             reportBill.setReportTitle(newReportTitle);
             for (ReportBillDetail reportBillDetail : reportBill.getReportBillDetails()) {
                 BoundaryHierarchyResult boundaryHierarchyResult = boundaryService.getBoundaryHierarchyWithLocalityCode(reportBillDetail.getLocality(),billRequest.getRequestInfo().getUserInfo().getTenantId());
@@ -434,7 +434,7 @@ public class HealthBillReportGenerator {
                 } else {
                     // Remove COUNTRY if other values are present
                     String filteredLocality = boundaryMap.entrySet().stream()
-                            .filter(entry -> !"COUNTRY".equals(entry.getKey()))  // Exclude COUNTRY if others exist
+                            .filter(entry -> !"COUNTRY".equalsIgnoreCase(entry.getKey()))  // Exclude COUNTRY if others exist
                             .map(Map.Entry::getValue)  // Get only values
                             .collect(Collectors.joining(" / ")); // Join as "/" separated string
 
@@ -444,7 +444,7 @@ public class HealthBillReportGenerator {
             }
         }
     }
-    
+
     /**
      * Updates the report status of the given bill request.
      *
