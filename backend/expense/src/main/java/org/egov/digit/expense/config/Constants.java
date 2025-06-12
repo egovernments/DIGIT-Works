@@ -42,10 +42,13 @@ public class Constants {
 	public static final String MTN_SUBSCRIPTION_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key";
 	public static final String MTN_AUTHORIZATION_HEADER_NAME = "Authorization";
 	public static final String MTN_TARGET_ENVIRONMENT_HEADER_NAME = "X-Target-Environment";
+	public static final String MTN_X_REFERENCE_HEADER_NAME = "X-Reference-Id";
 	public static final String MTN_ACCESS_TOKEN_TYPE = "Bearer ";
 	public static final String MTN_USER_GIVEN_NAME_FIELD = "given_name";
 	public static final String MTN_USER_FAMILY_NAME_FIELD = "family_name";
-	public static final String BILL_VERIFICATION_TASK_SEARCH_QUERY= "select * from eg_expense_bill_verification_task where id={id}";
+	public static final String TASK_SEARCH_QUERY = "select * from eg_expense_task where id='{id}'";
+	public static final String TASK_DETAILS_SEARCH_QUERY = "select * from eg_expense_task_details where task_id='{taskId}' and bill_id='{billId}' and bill_details_id='{billDetailsId}'";
+	public static final String TASK_DETAILS_BY_TASK_ID_SEARCH_QUERY = "select * from eg_expense_task_details where task_id='{taskId}'";
 
 	public static final String TENANT_MODULE_NAME = "tenant";
 

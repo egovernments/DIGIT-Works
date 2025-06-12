@@ -18,16 +18,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Bill verification task details of the individual payee
+ * Task details of the individual payee
  */
-@Schema(description = "Bill verification task details of the individual payees")
+@Schema(description = "Task details for a task and bill detail")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-05-20T17:49:59.877+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillVerificationTaskDetails {
+public class TaskDetails {
 	
 	@JsonProperty("id")
 	@Valid
@@ -41,6 +41,10 @@ public class BillVerificationTaskDetails {
 	@JsonProperty("billId")
 	@Valid
 	private String billId;
+
+	@JsonProperty("billDetailsId")
+	@Valid
+	private String billDetailsId;
 	
 	@JsonProperty("payeeId")
 	@NotNull
@@ -54,13 +58,13 @@ public class BillVerificationTaskDetails {
 	@Size(min = 2, max = 64)
 	private String referenceId;
 
-	@JsonProperty("status")
+	@JsonProperty("responseMessage")
 	private String responseMessage;
 	
 	@JsonProperty("status")
 	private Status status;
 
-	@JsonProperty("status")
+	@JsonProperty("reasonForFailure")
 	private String reasonForFailure;
 
 	@JsonProperty("auditDetails")

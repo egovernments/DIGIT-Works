@@ -205,10 +205,24 @@ public class Configuration {
 	@Value("${mtn.user.info.endpoint}")
 	private String basicUserInfoEndpointMTN;
 
-	@Value("${expense.billing.bill.verify}")
-	private String billVerificationTopic;
+	@Value("${expense.bill.task}")
+	private String billTaskTopic;
 
-	@Value("${expense.billing.bill.verify.status.update}")
-	private String billVerificationStatusUpdateTopic;
+	@Value("${expense.bill.task.details}")
+	private String billTaskDetailsTopic;
 
+	@Value("${expense.task.status.update}")
+	private String taskStatusUpdateTopic;
+
+	@Value("${expense.task.details.update}")
+	private String taskDetailsUpdateTopic;
+
+	@Value("${mtn.transfer.endpoint}")
+	private String transferEndpointMTN;
+
+	@Value("${mtn.transfer.status.endpoint}")
+	private String transferStatusEndpointMTN;
+
+	@Value("${mtn.payment.currency}")
+	private String paymentCurrency;
 }

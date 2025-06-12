@@ -6,11 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * BillRequest
+ * BillResponse
  */
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
@@ -18,16 +19,14 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillVerificationTaskRequest {
+public class StatusResponse {
 
-	@JsonProperty("RequestInfo")
+	@JsonProperty("ResponseInfo")
 	@Valid
-	private RequestInfo requestInfo;
+	private ResponseInfo responseInfo;
 
-	@JsonProperty("bill")
-	private Bill bill;
-
-	@JsonProperty("taskid")
-	private String taskId;
+	@JsonProperty("status")
+	@Valid
+	private Status status;
 
 }

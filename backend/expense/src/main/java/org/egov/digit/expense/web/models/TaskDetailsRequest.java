@@ -9,22 +9,26 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
-/**
- * BillRequest
- */
+
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillVerificationRequest {
+public class TaskDetailsRequest {
 
 	@JsonProperty("RequestInfo")
 	@Valid
 	private RequestInfo requestInfo;
 
-	@JsonProperty("bill")
-	private Bill bill;
+	@JsonProperty("taskId")
+	private String taskId;
+
+	@JsonProperty("billId")
+	private String billId;
+
+	@JsonProperty("billDetailsId")
+	private String billDetailsId;
 
 }

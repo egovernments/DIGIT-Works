@@ -97,7 +97,7 @@ public class IndividualUtil {
         try{
             individualDetails = fetchIndividualDetails(requestInfo, tenantId, identifier);
         }catch (Exception e){
-            log.info("The Exception occured in fetching gender of payee: ",e);
+            log.info("The Exception occured in fetching details of payee: ",e);
         }
         return individualDetails;
     }

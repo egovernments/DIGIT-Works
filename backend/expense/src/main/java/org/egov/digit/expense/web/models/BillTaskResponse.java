@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * BillResponse
  */
@@ -21,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillVerificationResponse {
+public class BillTaskResponse {
 
 	@JsonProperty("ResponseInfo")
 	@Valid
