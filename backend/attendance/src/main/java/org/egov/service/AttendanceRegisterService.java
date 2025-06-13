@@ -350,12 +350,55 @@ public class AttendanceRegisterService {
 
     private List<IndividualEntry> fetchAllAttendeesAssociatedToRegisterIds(List<String> registerIdsToSearch, AttendanceRegisterSearchCriteria searchCriteria) {
         AttendeeSearchCriteria attendeeSearchCriteria = null;
-        if(searchCriteria.getAttendeeId() != null){
-            attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIdsToSearch).individualIds(Collections.singletonList(searchCriteria.getAttendeeId())).tags(searchCriteria.getTags() != null && !searchCriteria.getTags().isEmpty() ? searchCriteria.getTags() : null)
-                    .tenantId(searchCriteria.getTenantId()).build();
+
+        String tenantId = searchCriteria.getTenantId();
+        String attendeeId = searchCriteria.getAttendeeId();
+        List<String> fallbackTags = searchCriteria.getTags();
+        boolean includeTagged = Boolean.TRUE.equals(searchCriteria.getIncludeTaggedAttendees());
+
+        List<String> resolvedTags = null;
+
+        // If includeTaggedAttendees is true and attendeeId is provided, try resolving tags
+        if (attendeeId != null && includeTagged) {
+            List<IndividualEntry> baseAttendee = attendeeRepository.getAttendees(
+                    AttendeeSearchCriteria.builder()
+                            .individualIds(Collections.singletonList(attendeeId))
+                            .registerIds(registerIdsToSearch)
+                            .tenantId(tenantId)
+                            .build()
+            );
+
+            resolvedTags = baseAttendee.stream()
+                    .map(IndividualEntry::getTag)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            if (resolvedTags.isEmpty()) {
+                log.warn("includeTaggedAttendees is true but no tags found for attendeeId {}", attendeeId);
+            }
+        }
+
+        // Build the final search criteria based on the available information
+        if (attendeeId != null && includeTagged && !resolvedTags.isEmpty()) {
+            attendeeSearchCriteria = AttendeeSearchCriteria.builder()
+                    .registerIds(registerIdsToSearch)
+                    .tags(resolvedTags)
+                    .tenantId(tenantId)
+                    .build();
+        } else if (attendeeId != null) {
+            attendeeSearchCriteria = AttendeeSearchCriteria.builder()
+                    .registerIds(registerIdsToSearch)
+                    .individualIds(Collections.singletonList(attendeeId))
+                    .tags((fallbackTags != null && !fallbackTags.isEmpty()) ? fallbackTags : null)
+                    .tenantId(tenantId)
+                    .build();
         } else {
-            attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIdsToSearch).tags(searchCriteria.getTags() != null && !searchCriteria.getTags().isEmpty() ? searchCriteria.getTags() : null)
-                    .tenantId(searchCriteria.getTenantId()).build();
+            attendeeSearchCriteria = AttendeeSearchCriteria.builder()
+                    .registerIds(registerIdsToSearch)
+                    .tags((fallbackTags != null && !fallbackTags.isEmpty()) ? fallbackTags : null)
+                    .tenantId(tenantId)
+                    .build();
         }
         return attendeeRepository.getAttendees(attendeeSearchCriteria);
     }

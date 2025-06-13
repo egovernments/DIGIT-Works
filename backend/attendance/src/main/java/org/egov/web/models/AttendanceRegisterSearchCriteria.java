@@ -76,6 +76,9 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("tags")
     private List<String> tags;
 
+    @JsonProperty("includeTaggedAttendees")
+    private Boolean includeTaggedAttendees;
+
     public enum SortOrder {
         ASC,
         DESC
