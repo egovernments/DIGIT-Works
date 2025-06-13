@@ -36,6 +36,7 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
             String registerId = rs.getString("register_id");
             String individuaId = rs.getString("individual_id");
             String tenantId= rs.getString("tenantid");
+            String tag = rs.getString("tag");
             BigDecimal enrollmentDate = rs.getBigDecimal("enrollment_date");
             BigDecimal deenrollmentDate = rs.getBigDecimal("deenrollment_date");
             String createdby = rs.getString("createdby");
@@ -59,6 +60,7 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
                     .enrollmentDate(enrollmentDate)
                     .denrollmentDate(deenrollmentDate)
                     .auditDetails(auditDetails)
+                    .tag(tag)
                     .build();
 
             if (!attendanceAttendeeMap.containsKey(id)) {
