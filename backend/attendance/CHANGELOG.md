@@ -1,6 +1,22 @@
 
 All notable changes to this module will be documented in this file.
 
+
+## 1.1.1 - 2025-06-13
+### Changes
+
+- Added new tag field in eg_wms_attendance_attendee table with supporting index 
+- Introduced support for attendee tagging and tag-based filtering
+- Enhanced attendee retrieval logic to support:
+    - Filtering attendees based on explicit tags
+    - Resolving and including attendees with matching tags when includeTaggedAttendees is true
+- Added new /_updateTag API to update attendee tags
+
+### Configuration Enhancements
+- Extended AttendanceRegisterSearchCriteria with:
+    - tags – list of tags to filter attendees
+    - includeTaggedAttendees – boolean to fetch all attendees with the same tags as a specified individual
+
 ## 1.1.0 - 2025-01-27
 
 ### Changes
