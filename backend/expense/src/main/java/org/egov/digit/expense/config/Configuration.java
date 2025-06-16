@@ -225,4 +225,8 @@ public class Configuration {
 
 	@Value("${mtn.payment.currency}")
 	private String paymentCurrency;
+
+	@Value("${bill.detail.business.service}")
+	private String billDetailBusinessService;
+
 }
