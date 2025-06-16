@@ -21,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -210,83 +213,6 @@ public class MTNService {
 	public StatusResponse getTaskStatus(StatusRequest statusRequest){
 		Task task = taskRepository.searchTask(statusRequest.getTaskId());
 
-
-		if(task.getType() == Task.Type.Transfer && task.getStatus() == Status.IN_PROGRESS){
-			Bill bill = statusRequest.getBill();
-			BillRequest billRequest = BillRequest.builder()
-					.requestInfo(statusRequest.getRequestInfo())
-					.bill(bill)
-					.build();
-			List<Bill> billsFromSearch = getBills(billRequest,false);
-			enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
-			Bill billFromSearch = billsFromSearch.get(0);
-			Map<String, BillDetail> billDetailsById = new HashMap<>();
-			List<BillDetail> billDetailsFromSearch = billFromSearch.getBillDetails();
-			billDetailsFromSearch
-					.forEach(billDetail -> {
-						billDetailsById.put(billDetail.getId(),billDetail);
-					});
-			List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId());
-			for (TaskDetails taskDetail: taskDetails){
-				if (taskDetail.getStatus() == Status.IN_PROGRESS) {
-					BillDetail billDetail = billDetailsById.get(taskDetail.getBillDetailsId());
-					Workflow workflow = Workflow.builder().build();
-					try {
-						PaymentTransferResponse paymentTransferResponse = mtnUtil.getTransferStatus(taskDetail.getId());
-						if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.SUCCESSFUL.toString())) {
-							workflow.setAction(Actions.MAKE_PAYMENT.toString());
-						} else if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.FAILED.toString())) {
-
-							taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
-							taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
-							workflow.setAction(Actions.FAIL_PAYMENT.toString());
-						} else {
-							log.info("unknown response status: {} for task id: {}, task detail id: {}", paymentTransferResponse.getStatus(), task.getId(), taskDetail.getId());
-							taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
-						}
-						taskDetail.setStatus(Status.DONE);
-					} catch(Exception e){
-						taskDetail.setReasonForFailure(e.getMessage());
-						taskDetail.setResponseMessage(e.getLocalizedMessage());
-						taskDetail.setStatus(Status.DONE);
-						workflow.setAction(Actions.FAIL_PAYMENT.toString());
-					}
-					expenseProducer.push(config.getTaskDetailsUpdateTopic(),taskDetail);
-					setBillDetailStatus(billDetail,workflow,statusRequest.getRequestInfo());
-				}
-
-			}
-			List<TaskDetails> taskDetailsInProgress = taskDetails
-					.stream()
-					.filter(taskDetail -> taskDetail.getStatus() == Status.IN_PROGRESS)
-					.collect(Collectors.toList());
-			if (taskDetailsInProgress.isEmpty()){
-				task.setStatus(Status.DONE);
-			}
-
-			List<BillDetail> billDetailsForFailedPayments = billFromSearch
-					.getBillDetails()
-					.stream()
-					.filter(billDetail -> billDetail.getStatus() == Status.PAYMENT_FAILED)
-					.collect(Collectors.toList());
-			Workflow workflow = Workflow.builder()
-					.build();
-			boolean isWorkflowChange =true;
-			if (billDetailsForFailedPayments.isEmpty()){
-				workflow.setAction(Actions.MAKE_FULL_PAYMENT.toString());
-				task.setStatus(Status.DONE);
-			} else if (billDetailsForFailedPayments.size() != billDetailsFromSearch.size()){
-
-				workflow.setAction(Actions.MAKE_PARTIAL_PAYMENT.toString());
-			} else {
-				log.info("No workflow state change for bill id : {}, task id: {}", bill.getId(),task.getId());
-				isWorkflowChange = false;
-			}
-			billRequest.setBill(billFromSearch);
-			billRequest.setWorkflow(workflow);
-			updateBill(billRequest,isWorkflowChange);
-			expenseProducer.push(config.getTaskStatusUpdateTopic(),task);
-		}
 		ResponseInfo responseInfo = responseInfoFactory.
 				createResponseInfoFromRequestInfo(statusRequest.getRequestInfo(),true);
 
@@ -341,6 +267,10 @@ public class MTNService {
 				expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
 			}
 		}
+		wait(5);
+
+		updatePaymentTaskStatus(taskRequest);
+
 	}
 
 	private PaymentTransferRequest createPaymentTransferRequest(BillDetail billDetail, String partyId){
@@ -430,5 +360,91 @@ public class MTNService {
 				.billDetail(billDetailFromSearch)
 				.build();
 
+	}
+
+	private void updatePaymentTaskStatus(TaskRequest taskRequest){
+		Task task = taskRequest.getTask();
+		Bill bill = taskRequest.getBill();
+		BillRequest billRequest = BillRequest.builder()
+				.requestInfo(taskRequest.getRequestInfo())
+				.bill(bill)
+				.build();
+		List<Bill> billsFromSearch = getBills(billRequest,false);
+		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
+		Bill billFromSearch = billsFromSearch.get(0);
+		Map<String, BillDetail> billDetailsById = new HashMap<>();
+		List<BillDetail> billDetailsFromSearch = billFromSearch.getBillDetails();
+		billDetailsFromSearch
+				.forEach(billDetail -> {
+					billDetailsById.put(billDetail.getId(),billDetail);
+				});
+		List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId());
+		for (TaskDetails taskDetail: taskDetails){
+			if (taskDetail.getStatus() == Status.IN_PROGRESS) {
+				BillDetail billDetail = billDetailsById.get(taskDetail.getBillDetailsId());
+				Workflow workflow = Workflow.builder().build();
+				try {
+					PaymentTransferResponse paymentTransferResponse = mtnUtil.getTransferStatus(taskDetail.getId());
+					if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.SUCCESSFUL.toString())) {
+						workflow.setAction(Actions.MAKE_PAYMENT.toString());
+					} else if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.FAILED.toString())) {
+
+						taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
+						taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
+						workflow.setAction(Actions.FAIL_PAYMENT.toString());
+					} else {
+						log.info("unknown response status: {} for task id: {}, task detail id: {}", paymentTransferResponse.getStatus(), task.getId(), taskDetail.getId());
+						taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
+					}
+					taskDetail.setStatus(Status.DONE);
+				} catch(Exception e){
+					taskDetail.setReasonForFailure(e.getMessage());
+					taskDetail.setResponseMessage(e.getLocalizedMessage());
+					taskDetail.setStatus(Status.DONE);
+					workflow.setAction(Actions.FAIL_PAYMENT.toString());
+				}
+				expenseProducer.push(config.getTaskDetailsUpdateTopic(),taskDetail);
+				setBillDetailStatus(billDetail,workflow,taskRequest.getRequestInfo());
+			}
+
+		}
+		List<TaskDetails> taskDetailsInProgress = taskDetails
+				.stream()
+				.filter(taskDetail -> taskDetail.getStatus() == Status.IN_PROGRESS)
+				.collect(Collectors.toList());
+		if (taskDetailsInProgress.isEmpty()){
+			task.setStatus(Status.DONE);
+		}
+
+		List<BillDetail> billDetailsForFailedPayments = billFromSearch
+				.getBillDetails()
+				.stream()
+				.filter(billDetail -> billDetail.getStatus() == Status.PAYMENT_FAILED)
+				.collect(Collectors.toList());
+		Workflow workflow = Workflow.builder()
+				.build();
+		boolean isWorkflowChange =true;
+		if (billDetailsForFailedPayments.isEmpty()){
+			workflow.setAction(Actions.MAKE_FULL_PAYMENT.toString());
+		} else if (billDetailsForFailedPayments.size() != billDetailsFromSearch.size()){
+			workflow.setAction(Actions.MAKE_PARTIAL_PAYMENT.toString());
+		} else {
+			log.info("No workflow state change for bill id : {}, task id: {}", bill.getId(),task.getId());
+			isWorkflowChange = false;
+		}
+		billRequest.setBill(billFromSearch);
+		billRequest.setWorkflow(workflow);
+		updateBill(billRequest,isWorkflowChange);
+		task.setStatus(Status.DONE);
+		expenseProducer.push(config.getTaskStatusUpdateTopic(),task);
+	}
+
+	public static void wait(int minutesToSleep)
+	{
+		try	{
+			TimeUnit.MINUTES.sleep(minutesToSleep);
+		} catch(InterruptedException e) {
+			log.info("thread interrupted {}",e);
+		}
 	}
 }
