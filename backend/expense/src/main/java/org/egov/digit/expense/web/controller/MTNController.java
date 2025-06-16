@@ -31,7 +31,7 @@ public class MTNController {
 	}
 
 	@PostMapping(value = "task/_status")
-	public ResponseEntity<StatusResponse> getBillVerificationTaskStatus(@Valid @RequestBody StatusRequest request) {
+	public ResponseEntity<StatusResponse> getTaskStatus(@Valid @RequestBody StatusRequest request) {
 
 		StatusResponse response = service.getTaskStatus(request);
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -44,9 +44,14 @@ public class MTNController {
 	}
 
 	@PostMapping(value = "payment/_transfer")
-	public ResponseEntity<BillTaskResponse> Create(@Valid @RequestBody BillTaskRequest request) {
+	public ResponseEntity<BillTaskResponse> transfer(@Valid @RequestBody BillTaskRequest request) {
 		BillTaskResponse response = service.transfer(request);
 		return new ResponseEntity<BillTaskResponse>(response, HttpStatus.ACCEPTED);
 	}
 
+	@PostMapping(value = "bill/details/status/_update")
+	public ResponseEntity<BillDetailResponse> updateBillDetailStatus(@Valid @RequestBody BillDetailRequest billDetailRequest){
+		BillDetailResponse response = service.updateBillDetailStatus(billDetailRequest);
+		return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
+	}
 }

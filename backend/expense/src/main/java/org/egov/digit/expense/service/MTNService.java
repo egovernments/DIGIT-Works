@@ -397,4 +397,38 @@ public class MTNService {
 		}
 	}
 
+	public BillDetailResponse updateBillDetailStatus(BillDetailRequest billDetailRequest){
+		BillDetail billDetailFromRequest = billDetailRequest.getBillDetail();
+		BillCriteria billCriteria = BillCriteria.builder()
+				.ids(Set.of(billDetailFromRequest.getBillId()))
+				.tenantId(billDetailFromRequest.getTenantId())
+				.build();
+		BillSearchRequest billSearchRequest = BillSearchRequest.builder()
+				.requestInfo(billDetailRequest.getRequestInfo())
+				.billCriteria(billCriteria)
+				.build();
+
+		List<Bill> billsFromSearch = billRepository.search(billSearchRequest, true);
+		Bill billFromSearch = billsFromSearch.get(0);
+		List<BillDetail> billDetailsFromSearch = billFromSearch.getBillDetails().stream().filter(billDetail -> billDetail.getId().equals(billDetailFromRequest.getId())).collect(Collectors.toList());
+		BillDetail billDetailFromSearch = billDetailsFromSearch.get(0);
+		billDetailRequest.setBillDetail(billDetailFromSearch);
+		State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
+		billDetailFromSearch.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+
+		BillRequest billRequest = BillRequest.builder()
+				.requestInfo(billDetailRequest.getRequestInfo())
+				.bill(billFromSearch)
+				.build();
+		updateBill(billRequest,false);
+
+		ResponseInfo responseInfo = responseInfoFactory.
+				createResponseInfoFromRequestInfo(billDetailRequest.getRequestInfo(),true);
+		return BillDetailResponse
+				.builder()
+				.responseInfo(responseInfo)
+				.billDetail(billDetailFromSearch)
+				.build();
+
+	}
 }
