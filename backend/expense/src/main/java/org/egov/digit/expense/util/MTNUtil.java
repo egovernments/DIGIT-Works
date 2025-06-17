@@ -214,11 +214,12 @@ public class MTNUtil {
             if (response.getStatusCode() == HttpStatus.ACCEPTED) {
                 log.info("Transfer initiated successfully. Reference ID: {}", referenceId);
             } else {
-                log.error("Transfer failed. Status: {}, Body: {}", response.getStatusCode(), response.getBody());
+                log.error("Transfer failed. Status: {}, response: {}", response.getStatusCode(), response);
                 throw new CustomException("MTN_TRANSFER_FAILED", "Unexpected response status: " + response.getStatusCode());
             }
         } catch (Exception e) {
             log.error("Exception while initiating transfer", e);
+            e.printStackTrace();
             throw new CustomException("MTN_TRANSFER_EXCEPTION", e.getMessage());
         }
     }
