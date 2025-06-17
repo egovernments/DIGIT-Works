@@ -16,7 +16,7 @@ All notable changes to this module will be documented in this file.
 
 - Extended AttendanceRegisterSearchCriteria with:
   - tags – list of tags to filter attendees
-  - includeTaggedAttendees – boolean to fetch all attendees with the same tags as a specified individual
+  - includeTaggedAttendees – boolean flag that, when true, also fetches every attendee sharing those tags
 
 ## 1.1.0 - 2025-01-27
 

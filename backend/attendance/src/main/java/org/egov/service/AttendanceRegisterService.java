@@ -401,7 +401,8 @@ public class AttendanceRegisterService {
                     .tenantId(tenantId)
                     .build();
         }
-        return attendeeRepository.getAttendees(attendeeSearchCriteria);
+        return Optional.ofNullable(attendeeRepository.getAttendees(attendeeSearchCriteria))
+                .orElse(Collections.emptyList());
     }
 
     /* Get all staff members associated for the register */
