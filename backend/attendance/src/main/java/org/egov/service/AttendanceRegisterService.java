@@ -360,13 +360,14 @@ public class AttendanceRegisterService {
 
         // If includeTaggedAttendees is true and attendeeId is provided, try resolving tags
         if (attendeeId != null && includeTagged) {
-            List<IndividualEntry> baseAttendee = attendeeRepository.getAttendees(
+            List<IndividualEntry> baseAttendee = Optional
+                    .ofNullable(attendeeRepository.getAttendees(
                     AttendeeSearchCriteria.builder()
                             .individualIds(Collections.singletonList(attendeeId))
                             .registerIds(registerIdsToSearch)
                             .tenantId(tenantId)
                             .build()
-            );
+            )).orElse(Collections.emptyList());
 
             resolvedTags = baseAttendee.stream()
                     .map(IndividualEntry::getTag)

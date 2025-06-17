@@ -1,6 +1,6 @@
 package org.egov.repository.querybuilder;
 
-import io.micrometer.common.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendeeSearchCriteria;
 import org.springframework.stereotype.Component;

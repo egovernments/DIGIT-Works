@@ -58,28 +58,27 @@ public class AttendeeServiceValidator {
     public void validateAttendeeUpdateTagRequestParameters(AttendeeUpdateTagRequest attendeeUpdateTagRequest) {
         List<IndividualEntry> attendeeList = attendeeUpdateTagRequest.getAttendees();
         Map<String, String> errorMap = new HashMap<>();
-        // Check if the attendee list is empty or null
+
         if (attendeeList == null || attendeeList.isEmpty()) {
-            log.error("ATTENDEE Object is empty in attendee request");
-            throw new CustomException("ATTENDEE", "ATTENDEE Object is empty in attendee request");
+            log.error(ERROR_MSG_EMPTY_ATTENDEE_LIST);
+            throw new CustomException(ERROR_KEY_ATTENDEE, ERROR_MSG_EMPTY_ATTENDEE_LIST);
         }
 
         String tenantId = attendeeList.get(0).getTenantId();
         for (IndividualEntry attendee : attendeeList) {
-            //validate Ids
             if (StringUtils.isBlank(attendee.getId())) {
-                log.error("id is empty in attendee request");
-                errorMap.put("ID", "Attendee uuid is mandatory");
+                log.error(ERROR_MSG_ID_MANDATORY);
+                errorMap.put(ERROR_KEY_ID, ERROR_MSG_ID_MANDATORY);
             }
-            // validate if tenantId exists
+
             if (StringUtils.isBlank(attendee.getTenantId())) {
-                log.error("tenant id is empty in attendee request");
-                errorMap.put("TENANT_ID", "Tenant id is mandatory");
+                log.error(ERROR_MSG_TENANT_ID_MANDATORY);
+                errorMap.put(ERROR_KEY_TENANT_ID, ERROR_MSG_TENANT_ID_MANDATORY);
             }
-            //validate tag value
+
             if (StringUtils.isBlank(attendee.getTag())) {
-                log.error("New tag value must be provided in attendee request");
-                errorMap.put("TAG", "New tag value must be provided");
+                log.error(ERROR_MSG_TAG_MANDATORY);
+                errorMap.put(ERROR_KEY_TAG, ERROR_MSG_TAG_MANDATORY);
             }
         }
 
@@ -88,9 +87,7 @@ public class AttendeeServiceValidator {
             throw new CustomException(errorMap);
         }
 
-        // validate tenantId with MDMS
         validateTenantIds(attendeeUpdateTagRequest, tenantId);
-        //validate tenantId with MDMS
         log.info("validating tenant id from MDMS and Request info");
         validateMDMSAndRequestInfoForUpdateTagAttendee(attendeeUpdateTagRequest);
     }
@@ -102,7 +99,7 @@ public class AttendeeServiceValidator {
      * @param dbRecords   The list of attendees fetched from the database.
      * @throws CustomException if any requested attendee is not found in the database records.
      */
-    public void validateAllAttendeesExist (List<IndividualEntry> attendees, List<IndividualEntry> dbRecords) {
+    public void validateAllAttendeesExist(List<IndividualEntry> attendees, List<IndividualEntry> dbRecords) {
         Set<String> requestedIds = attendees.stream()
                 .map(IndividualEntry::getId)
                 .collect(Collectors.toSet());
@@ -115,10 +112,12 @@ public class AttendeeServiceValidator {
         missingIds.removeAll(foundIds);
 
         if (!missingIds.isEmpty()) {
-            throw new CustomException("MISSING_ATTENDEES",
-                    "Attendees not found in database for IDs: " + String.join(", ", missingIds));
+            throw new CustomException(
+                    ERROR_KEY_MISSING_ATTENDEES,
+                    ERROR_MSG_ATTENDEES_NOT_FOUND + String.join(", ", missingIds));
         }
     }
+
 
     public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
@@ -198,14 +197,13 @@ public class AttendeeServiceValidator {
      */
     public void validateTenantIds(AttendeeUpdateTagRequest attendeeUpdateTagRequest, String tenantId) {
         List<IndividualEntry> attendeeList = attendeeUpdateTagRequest.getAttendees();
-        //validate if all attendee in the list have the same tenant id
+
         for (IndividualEntry attendee : attendeeList) {
             if (!attendee.getTenantId().equals(tenantId)) {
-                log.error("All attendees dont have the same tenant id in attendee request");
-                throw new CustomException("TENANT_ID", "All Attendees to be enrolled or de enrolled must have the same tenant id. Please raise new request for different tenant id");
+                log.error(ERROR_MSG_INCONSISTENT_TENANT_ID);
+                throw new CustomException(ERROR_KEY_TENANT_ID, ERROR_MSG_INCONSISTENT_TENANT_ID);
             }
         }
-
     }
 
 
