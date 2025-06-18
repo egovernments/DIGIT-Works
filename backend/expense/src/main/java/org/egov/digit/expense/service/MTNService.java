@@ -143,7 +143,7 @@ public class MTNService {
 			try {
 				String name = mtnUtil.getNameIfActive(individualDetails.getPhoneNumber());
 
-				if (name != individualDetails.getName()){
+				if (!name.equals(individualDetails.getName())){
 					workflow.setAction(Actions.REFUTE.toString());
 					taskDetails.setReasonForFailure("NAME_MISMATCH");
 					taskDetails.setResponseMessage("Please check the name");
@@ -157,6 +157,11 @@ public class MTNService {
 			taskDetails.setStatus(Status.DONE);
 			expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
 
+			ErrorDetails errorDetails = ErrorDetails.builder()
+					.reasonForFailure(taskDetails.getReasonForFailure())
+					.responseMessage(taskDetails.getResponseMessage())
+					.response(taskDetails.getAdditionalDetails()).build();
+			billDetail.setAdditionalDetails(errorDetails);
 			setBillDetailStatus(billDetail,workflow,taskRequest.getRequestInfo());
 		}
 		List<BillDetail> verifiedBillDetails = bill.getBillDetails()
