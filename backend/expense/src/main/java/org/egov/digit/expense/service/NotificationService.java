@@ -38,6 +38,7 @@ public class NotificationService {
     public void sendNotificationForPurchaseBill(BillRequest billRequest){
 
         String action = billRequest.getWorkflow().getAction();
+        String tenantId = billRequest.getBill().getTenantId();
         if(action.equalsIgnoreCase(APPROVE_CODE) || action.equalsIgnoreCase(REJECT_CODE)) {
             String amount = String.valueOf(billRequest.getBill().getTotalAmount());
             String billNumber = billRequest.getBill().getBillNumber();
@@ -60,11 +61,12 @@ public class NotificationService {
             }
             String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
-            expenseProducer.push(config.getSmsNotificationTopic(), smsRequest);
+            expenseProducer.push(tenantId, config.getSmsNotificationTopic(), smsRequest);
         }
     }
 
     public void sendNotificationForSupervisionBill(BillRequest billRequest){
+        String tenantId = billRequest.getBill().getTenantId();
         Map<String, String> cboDetails = notificationUtil.getCBOContactPersonDetails(billRequest);
         String amount = String.valueOf(billRequest.getBill().getTotalAmount());
         String billNumber = billRequest.getBill().getBillNumber();
@@ -72,7 +74,7 @@ public class NotificationService {
         String contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
         String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
-        expenseProducer.push(config.getSmsNotificationTopic(), smsRequest);
+        expenseProducer.push(tenantId, config.getSmsNotificationTopic(), smsRequest);
     }
 
     public String getMessage(RequestInfo requestInfo, String tenantId, String msgCode){
