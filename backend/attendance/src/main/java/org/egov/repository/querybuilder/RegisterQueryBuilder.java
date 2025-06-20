@@ -9,7 +9,6 @@ import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.Status;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -179,7 +178,7 @@ public class RegisterQueryBuilder {
 
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);
-        return  multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId);
+        return  multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
 
     public String addPaginationWrapper(String query, List<Object> preparedStmtList,

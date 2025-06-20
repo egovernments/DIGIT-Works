@@ -5,7 +5,6 @@ import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendeeSearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -76,7 +75,7 @@ public class AttendeeQueryBuilder {
             }
         }
         // After building full query, replace schema placeholders with actual schema using MultiStateInstanceUtil
-        return multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId);
+        return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
     private void addLimitAndOffset(StringBuilder query, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         query.append(" OFFSET ? ");

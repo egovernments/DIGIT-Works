@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.web.models.StaffSearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -71,7 +70,7 @@ public class StaffQueryBuilder {
             preparedStmtList.add(staffType);
         }
 
-        return multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId);
+        return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
         if (preparedStmtList.isEmpty()) {

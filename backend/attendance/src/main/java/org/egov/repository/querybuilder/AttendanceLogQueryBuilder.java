@@ -131,7 +131,7 @@ public class AttendanceLogQueryBuilder {
         addLimitAndOffset(query, criteria, preparedStmtList);
 
         // After building full query, replace schema placeholders with actual schema using MultiStateInstanceUtil
-        return multiStateInstanceUtil.replaceSchemaPlaceholder(String.valueOf(query), tenantId);
+        return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
         
     }
 
