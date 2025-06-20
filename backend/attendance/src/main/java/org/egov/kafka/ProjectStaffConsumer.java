@@ -68,6 +68,7 @@ public class ProjectStaffConsumer {
     public void bulkStaffCreate(Map<String, Object> consumerRecord,
                                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
+            log.info("Received Project Staff Bulk Create Message for topic {}", topic);
             // Convert the received Kafka message into a ProjectStaffBulkRequest object
             ProjectStaffBulkRequest request = objectMapper.convertValue(consumerRecord, ProjectStaffBulkRequest.class);
 
