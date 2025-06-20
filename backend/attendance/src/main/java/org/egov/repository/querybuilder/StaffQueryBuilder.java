@@ -42,9 +42,8 @@ public class StaffQueryBuilder {
     }
 
     public String getAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
-        StringBuilder query = new StringBuilder(ATTENDANCE_STAFF_SELECT_QUERY);
         String tenantId = criteria.getTenantId();
-        query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING));
+        StringBuilder query = new StringBuilder(String.format(ATTENDANCE_STAFF_SELECT_QUERY, SCHEMA_REPLACE_STRING));
         List<String> staffUserIds = criteria.getIndividualIds();
         if (staffUserIds != null && !staffUserIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);

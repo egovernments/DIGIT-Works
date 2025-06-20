@@ -64,18 +64,15 @@ public class RegisterQueryBuilder {
 
         String tenantId = searchCriteria.getTenantId();
         log.info("Search criteria of attendance search : " + searchCriteria.toString());
-        StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
-        query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING));
+        StringBuilder query = new StringBuilder(String.format(ATTENDANCE_REGISTER_SELECT_QUERY, SCHEMA_REPLACE_STRING));
         if(!ObjectUtils.isEmpty(searchCriteria.getStaffId())) {
-            query.append(JOIN_STAFF);
+            query.append(String.format(JOIN_STAFF, SCHEMA_REPLACE_STRING));
             query.append(JOIN_STAFF_CONDITION);
-            query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING));
         }
 
         if(!ObjectUtils.isEmpty(searchCriteria.getAttendeeId())) {
-            query.append(JOIN_ATTENDEE);
+            query.append(String.format(JOIN_ATTENDEE, SCHEMA_REPLACE_STRING));
             query.append(JOIN_ATTENDEE_CONDITION);
-            query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING));
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getTenantId())) {

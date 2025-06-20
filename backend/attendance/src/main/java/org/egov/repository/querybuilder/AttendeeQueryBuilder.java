@@ -35,8 +35,7 @@ public class AttendeeQueryBuilder {
             "FROM %s.eg_wms_attendance_attendee att ";
 
     public String getAttendanceAttendeeSearchQuery(String tenantId, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
-        StringBuilder query = new StringBuilder(ATTENDANCE_ATTENDEE_SELECT_QUERY);
-        query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING));
+        StringBuilder query = new StringBuilder(String.format(ATTENDANCE_ATTENDEE_SELECT_QUERY, SCHEMA_REPLACE_STRING));
         List<String> ids=criteria.getIds();
         if (ids!=null && !ids.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
@@ -73,7 +72,7 @@ public class AttendeeQueryBuilder {
         } else {
             //if only toDate is provided as parameter without fromDate parameter, throw an exception.
             if (criteria.getDenrollmentDate() != null) {
-                throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify getEnrollmentDate without a getEnrollmentDate");
+                throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify denrollmentDate without a enrollmentDate");
             }
         }
         // After building full query, replace schema placeholders with actual schema using MultiStateInstanceUtil

@@ -66,9 +66,8 @@ public class AttendanceLogQueryBuilder {
      * @throws InvalidTenantIdException If the tenant ID is invalid.
      */
     public String getAttendanceLogSearchQuery( String tenantId, AttendanceLogSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
-        StringBuilder query = new StringBuilder(ATTENDANCE_LOG_SELECT_QUERY);
         // Replace static schema tokens with runtime schema for the given tenant ID
-        query = new StringBuilder(String.format(String.valueOf(query), SCHEMA_REPLACE_STRING, SCHEMA_REPLACE_STRING));
+        StringBuilder query = new StringBuilder(String.format(ATTENDANCE_LOG_SELECT_QUERY, SCHEMA_REPLACE_STRING, SCHEMA_REPLACE_STRING));
         List<String> ids = criteria.getIds();
         if (ids != null && !ids.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
