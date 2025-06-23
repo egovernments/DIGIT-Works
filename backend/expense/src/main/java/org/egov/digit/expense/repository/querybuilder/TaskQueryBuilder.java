@@ -1,5 +1,6 @@
 package org.egov.digit.expense.repository.querybuilder;
 
+import org.egov.digit.expense.web.models.Task;
 import org.egov.digit.expense.web.models.TaskDetailsRequest;
 import org.springframework.stereotype.Component;
 
@@ -8,8 +9,13 @@ import static org.egov.digit.expense.config.Constants.*;
 @Component
 public class TaskQueryBuilder {
 
-    public String getTaskQuery(String taskId){
-        return TASK_SEARCH_QUERY.replace("{id}",taskId);
+    public String getTaskQuery(Task task){
+        if (null != task.getId()) {
+            return TASK_SEARCH_BY_ID_QUERY.replace("{id}", task.getId());
+        }
+        return TASK_SEARCH_QUERY
+            .replace("{billId}", task.getBillId())
+            .replace("{type}", task.getType().toString());
     }
 
     public String getTaskDetailsQuery(TaskDetailsRequest taskDetailsRequest){

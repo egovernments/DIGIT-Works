@@ -21,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,8 +66,18 @@ public class MTNService {
 		this.executorService=executorService;
 	}
 
-	private Task createTask(BillTaskRequest billTaskRequest, Task.Type type){
+	private Task fetchOrCreateTask(BillTaskRequest billTaskRequest, Task.Type type){
 		Bill bill = billTaskRequest.getBill();
+		Task task = Task
+				.builder()
+					.billId(bill.getId())
+					.type(type)
+					.status(Status.IN_PROGRESS)
+				.build();
+		Task taskDb = taskRepository.searchTask(task);
+		if (taskDb != null){
+			return taskDb;
+		}
 
 		BillRequest billRequest = BillRequest.builder()
 				.requestInfo(billTaskRequest.getRequestInfo())
@@ -79,12 +87,10 @@ public class MTNService {
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
 		Bill billFromSearch = billsFromSearch.get(0);
 
-		Task task =
-				Task.builder()
-						.id(UUID.randomUUID().toString())
-						.type(type)
-						.auditDetails(billTaskRequest.getBill().getAuditDetails())
-						.status(Status.IN_PROGRESS).build();
+		task.setId(UUID.randomUUID().toString());
+
+		task.setAuditDetails(billTaskRequest.getBill().getAuditDetails());
+
 
 		TaskRequest taskRequest =
 				TaskRequest.builder()
@@ -109,7 +115,7 @@ public class MTNService {
 
 	public BillTaskResponse verify(BillTaskRequest billTaskRequest){
 
-		Task task = createTask(billTaskRequest, Task.Type.Verify);
+		Task task = fetchOrCreateTask(billTaskRequest, Task.Type.Verify);
 
 		ResponseInfo responseInfo = responseInfoFactory.
 				createResponseInfoFromRequestInfo(billTaskRequest.getRequestInfo(),true);
@@ -127,68 +133,77 @@ public class MTNService {
 
 
 		for (BillDetail billDetail: bill.getBillDetails() ){
-			IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(),bill.getTenantId(),billDetail.getPayee().getIdentifier());
-			TaskDetails taskDetails = TaskDetails.builder()
-					.id(UUID.randomUUID().toString())
-					.taskId(task.getId())
-					.billId(bill.getId())
-					.billDetailsId(billDetail.getId())
-					.payeeId(billDetail.getPayee().getId())
-					.status(Status.IN_PROGRESS)
-					.tenantId(bill.getTenantId())
-					.auditDetails(bill.getAuditDetails())
-					.referenceId(individualDetails.getPhoneNumber())
-					.build();
-			Workflow workflow = Workflow.builder().build();
-			try {
-				String name = mtnUtil.getNameIfActive(individualDetails.getPhoneNumber());
+			if (billDetail.getStatus() == Status.PENDING_VERIFICATION ||
+					billDetail.getStatus() == Status.EDITED	) {
+				IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(), bill.getTenantId(), billDetail.getPayee().getIdentifier());
+				TaskDetails taskDetails = TaskDetails.builder()
+						.id(UUID.randomUUID().toString())
+						.taskId(task.getId())
+						.billId(bill.getId())
+						.billDetailsId(billDetail.getId())
+						.payeeId(billDetail.getPayee().getId())
+						.status(Status.IN_PROGRESS)
+						.tenantId(bill.getTenantId())
+						.auditDetails(bill.getAuditDetails())
+						.referenceId(individualDetails.getPhoneNumber())
+						.build();
+				boolean updateBillDetailWorkflow = true;
+				Workflow workflow = Workflow.builder().build();
+				try {
+					String name = mtnUtil.getNameIfActive(individualDetails.getPhoneNumber());
 
-				if (!name.equals(individualDetails.getName())){
-					workflow.setAction(Actions.REFUTE.toString());
-					taskDetails.setReasonForFailure("NAME_MISMATCH");
-					taskDetails.setResponseMessage("Please check the name");
-				} else{
-					workflow.setAction(Actions.VERIFY.toString());
+					if (!name.equals(individualDetails.getName())) {
+						workflow.setAction(Actions.REFUTE.toString());
+						taskDetails.setReasonForFailure("NAME_MISMATCH");
+						taskDetails.setResponseMessage("Please check the name");
+					} else {
+						workflow.setAction(Actions.VERIFY.toString());
+					}
+				} catch (CustomException e) {
+					taskDetails.setResponseMessage(e.getMessage());
+					taskDetails.setReasonForFailure(e.getCode());
 				}
-			} catch(CustomException e) {
-				taskDetails.setResponseMessage(e.getMessage());
-				taskDetails.setReasonForFailure(e.getCode());
+				taskDetails.setStatus(Status.DONE);
+				expenseProducer.push(config.getBillTaskDetailsTopic(), taskDetails);
+
+				ErrorDetails errorDetails = ErrorDetails.builder()
+						.reasonForFailure(taskDetails.getReasonForFailure())
+						.responseMessage(taskDetails.getResponseMessage())
+						.response(taskDetails.getAdditionalDetails()).build();
+				billDetail.setAdditionalDetails(errorDetails);
+				setBillDetailStatus(billDetail, workflow, taskRequest.getRequestInfo());
 			}
-			taskDetails.setStatus(Status.DONE);
-			expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
-
-			ErrorDetails errorDetails = ErrorDetails.builder()
-					.reasonForFailure(taskDetails.getReasonForFailure())
-					.responseMessage(taskDetails.getResponseMessage())
-					.response(taskDetails.getAdditionalDetails()).build();
-			billDetail.setAdditionalDetails(errorDetails);
-			setBillDetailStatus(billDetail,workflow,taskRequest.getRequestInfo());
 		}
-		List<BillDetail> verifiedBillDetails = bill.getBillDetails()
-				.stream()
-				.filter(billDetail -> billDetail.getStatus() == Status.VERIFIED)
-				.collect(Collectors.toList());
-		boolean isWorkflowChange = true;
-		Workflow workflow = Workflow.builder()
-				.build();
-		if (verifiedBillDetails.size() == bill.getBillDetails().size()) {
-			workflow.setAction(Actions.VERIFY.toString());
-		} else if (!verifiedBillDetails.isEmpty()){
-			workflow.setAction(Actions.PARTIALLY_VERIFY.toString());
-		} else {
-			log.info("No workflow state change for bill id : {}, task id: {}", bill.getId(),task.getId());
-			isWorkflowChange = false;
-		}
+		if (bill.getStatus() == Status.PENDING_VERIFICATION
+				|| bill.getStatus() == Status.PARTIALLY_VERIFIED
+				|| bill.getStatus() == Status.PARTIALLY_PAID
+		) {
+			List<BillDetail> verifiedBillDetails = bill.getBillDetails()
+					.stream()
+					.filter(billDetail -> billDetail.getStatus() == Status.VERIFIED
+													|| billDetail.getStatus() == Status.PAID)
+					.collect(Collectors.toList());
+			boolean isWorkflowChange = true;
+			Workflow workflow = Workflow.builder()
+					.build();
+			if (verifiedBillDetails.size() == bill.getBillDetails().size()) {
+				workflow.setAction(Actions.VERIFY.toString());
+			} else if (!verifiedBillDetails.isEmpty() && bill.getStatus() != Status.PARTIALLY_VERIFIED) {
+				workflow.setAction(Actions.PARTIALLY_VERIFY.toString());
+			} else {
+				log.info("No workflow state change for bill id : {}, task id: {}", bill.getId(), task.getId());
+				isWorkflowChange = false;
+			}
 
+			BillRequest billRequest = BillRequest.builder()
+					.bill(bill)
+					.requestInfo(taskRequest.getRequestInfo())
+					.workflow(workflow)
+					.build();
+
+			updateBill(billRequest, isWorkflowChange);
+		}
 		task.setStatus(Status.DONE);
-
-		BillRequest billRequest = BillRequest.builder()
-				.bill(bill)
-				.requestInfo(taskRequest.getRequestInfo())
-				.workflow(workflow)
-				.build();
-
-		updateBill(billRequest,isWorkflowChange);
 		expenseProducer.push(config.getTaskStatusUpdateTopic(),task);
 	}
 
@@ -219,7 +234,15 @@ public class MTNService {
 	}
 
 	public StatusResponse getTaskStatus(StatusRequest statusRequest){
-		Task task = taskRepository.searchTask(statusRequest.getTaskId());
+
+		Task taskFromRequest = statusRequest.getTask();
+		if (null == taskFromRequest.getId()
+				&& (null == taskFromRequest.getBillId()
+						|| null == taskFromRequest.getType())){
+			throw new CustomException("TASK_SEARCH_ERROR", "either task id or bill id with type is required for search");
+		}
+		Task taskFromSearch = taskRepository.searchTask(taskFromRequest);
+
 
 		ResponseInfo responseInfo = responseInfoFactory.
 				createResponseInfoFromRequestInfo(statusRequest.getRequestInfo(),true);
@@ -227,13 +250,13 @@ public class MTNService {
 		return StatusResponse
 				.builder()
 				.responseInfo(responseInfo)
-				.status(task.getStatus())
+				.task(taskFromSearch)
 				.build();
 
 	}
 
 	public BillTaskResponse transfer(@Valid BillTaskRequest billTaskRequest) {
-		Task task = createTask(billTaskRequest, Task.Type.Transfer);
+		Task task = fetchOrCreateTask(billTaskRequest, Task.Type.Transfer);
 
 		ResponseInfo responseInfo = responseInfoFactory.
 				createResponseInfoFromRequestInfo(billTaskRequest.getRequestInfo(),true);
@@ -382,51 +405,49 @@ public class MTNService {
 
 		List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId());
 		for (TaskDetails taskDetail: taskDetails){
-			if (taskDetail.getStatus() == Status.IN_PROGRESS) {
-				BillDetail billDetail = billDetailsById.get(taskDetail.getBillDetailsId());
+			BillDetail billDetail = billDetailsById.get(taskDetail.getBillDetailsId());
+			if (taskDetail.getStatus() == Status.IN_PROGRESS && billDetail.getStatus() == Status.VERIFIED) {
 				Workflow billDetailWorkflow = Workflow.builder().build();
 				try {
 					PaymentTransferResponse paymentTransferResponse = mtnUtil.getTransferStatus(taskDetail.getId());
 					if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.SUCCESSFUL.toString())) {
 						billDetailWorkflow.setAction(Actions.MAKE_PAYMENT.toString());
 					} else if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.FAILED.toString())) {
-						taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
-						taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
 						billDetailWorkflow.setAction(Actions.FAIL_PAYMENT.toString());
 					} else {
 						log.info("unknown response status: {} for task id: {}, task detail id: {}", paymentTransferResponse.getStatus(), task.getId(), taskDetail.getId());
-						taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
 					}
+					taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
+					taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
 					taskDetail.setStatus(Status.DONE);
-				} catch(Exception e){
+
+				} catch (Exception e) {
 					taskDetail.setReasonForFailure(e.getMessage());
 					taskDetail.setResponseMessage(e.getLocalizedMessage());
 					taskDetail.setStatus(Status.DONE);
 					billDetailWorkflow.setAction(Actions.FAIL_PAYMENT.toString());
 				}
-				expenseProducer.push(config.getTaskDetailsUpdateTopic(),taskDetail);
+				expenseProducer.push(config.getTaskDetailsUpdateTopic(), taskDetail);
 				ErrorDetails errorDetails = ErrorDetails.builder()
 						.reasonForFailure(taskDetail.getReasonForFailure())
 						.responseMessage(taskDetail.getResponseMessage())
 						.response(taskDetail.getAdditionalDetails()).build();
 				billDetail.setAdditionalDetails(errorDetails);
-				setBillDetailStatus(billDetail,billDetailWorkflow,taskRequest.getRequestInfo());
-
+				setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo());
 			}
-
 		}
 
-		List<BillDetail> billDetailsForFailedPayments = bill
+		List<BillDetail> paidBillDetails = bill
 				.getBillDetails()
 				.stream()
-				.filter(billDetail -> billDetail.getStatus() == Status.PAYMENT_FAILED)
+				.filter(billDetail -> billDetail.getStatus() == Status.PAID)
 				.collect(Collectors.toList());
 		Workflow workflow = Workflow.builder()
 				.build();
 		boolean isWorkflowChange =true;
-		if (billDetailsForFailedPayments.isEmpty()){
+		if (paidBillDetails.size() == bill.getBillDetails().size()){
 			workflow.setAction(Actions.MAKE_FULL_PAYMENT.toString());
-		} else if (billDetailsForFailedPayments.size() != bill.getBillDetails().size()){
+		} else if (!paidBillDetails.isEmpty() && bill.getStatus() != Status.PARTIALLY_PAID){
 			workflow.setAction(Actions.MAKE_PARTIAL_PAYMENT.toString());
 		} else {
 			log.info("No workflow state change for bill id : {}, task id: {}", bill.getId(),task.getId());

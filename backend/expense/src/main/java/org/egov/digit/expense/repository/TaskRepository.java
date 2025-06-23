@@ -32,9 +32,10 @@ public class TaskRepository {
         this.taskDetailsRowMapper = taskDetailsRowMapper;
     }
 
-    public Task searchTask(String taskId){
-        String query = taskQueryBuilder.getTaskQuery(taskId);
-        return jdbcTemplate.queryForObject(query, taskRowMapper);
+    public Task searchTask(Task task){
+        String query = taskQueryBuilder.getTaskQuery(task);
+        List<Task> tasks = jdbcTemplate.query(query, taskRowMapper);
+        return tasks.isEmpty() ? null : tasks.get(0);
     }
 
     public TaskDetails searchTaskDetails(TaskDetailsRequest taskDetailsRequest){

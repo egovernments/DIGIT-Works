@@ -24,10 +24,7 @@ public class StatusRequest {
 	@Valid
 	private RequestInfo requestInfo;
 
-	@JsonProperty("taskId")
-	@Valid
-	private String taskId;
+	@JsonProperty("task")
+	private Task task;
 
-	@JsonProperty("bill")
-	private Bill bill;
 }

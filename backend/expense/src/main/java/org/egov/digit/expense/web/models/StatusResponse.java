@@ -25,8 +25,8 @@ public class StatusResponse {
 	@Valid
 	private ResponseInfo responseInfo;
 
-	@JsonProperty("status")
+	@JsonProperty("task")
 	@Valid
-	private Status status;
+	private Task task;
 
 }
