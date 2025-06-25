@@ -50,10 +50,25 @@ public class ProjectStaffConsumer {
         this.config = config;
     }
 
-    @KafkaListener(topics = "${project.staff.attendance.topic}")
+    /**
+     * This Kafka listener subscribes to topics matching the pattern:
+     * [optional tenant prefix] + "project-staff-attendance-health-topic"
+     *
+     * The tenant prefix is configured in `attendance.kafka.tenant.id.pattern` as a regex,
+     * e.g., "^(kebbi-|kano-)", allowing the listener to consume from:
+     * - project-staff-attendance-health-topic
+     * - kebbi-project-staff-attendance-health-topic
+     * - kano-project-staff-attendance-health-topic
+     *
+     * `{0,1}` makes the tenant prefix optional, so the listener supports both
+     * tenant-specific and global topics.
+     */
+
+    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${project.staff.attendance.topic}")
     public void bulkStaffCreate(Map<String, Object> consumerRecord,
                                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
+            log.info("Received Project Staff Bulk Create Message for topic {}", topic);
             // Convert the received Kafka message into a ProjectStaffBulkRequest object
             ProjectStaffBulkRequest request = objectMapper.convertValue(consumerRecord, ProjectStaffBulkRequest.class);
 

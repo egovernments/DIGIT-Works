@@ -1,12 +1,14 @@
 package org.egov.repository.querybuilder;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.exception.InvalidTenantIdException;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.Status;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -15,9 +17,14 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
+import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
+
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class RegisterQueryBuilder {
+
+    private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     private final AttendanceServiceConfiguration config;
 
@@ -37,12 +44,12 @@ public class RegisterQueryBuilder {
             "reg.servicecode, " +
             "reg.localitycode, " +
             "reg.reviewstatus " +
-            "FROM eg_wms_attendance_register reg ";
+            "FROM %s.eg_wms_attendance_register reg ";
 
-    private static final String JOIN_STAFF = " JOIN eg_wms_attendance_staff staff ";
+    private static final String JOIN_STAFF = " JOIN %s.eg_wms_attendance_staff staff ";
     private static final String JOIN_STAFF_CONDITION = " ON reg.id = staff.register_id ";
 
-    private static final String JOIN_ATTENDEE = " JOIN eg_wms_attendance_attendee attendee ";
+    private static final String JOIN_ATTENDEE = " JOIN %s.eg_wms_attendance_attendee attendee ";
     private static final String JOIN_ATTENDEE_CONDITION = " ON reg.id = attendee.register_id ";
 
     private final String paginationWrapper = "SELECT * FROM " +
@@ -51,24 +58,19 @@ public class RegisterQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
-    @Autowired
-    public RegisterQueryBuilder(AttendanceServiceConfiguration config) {
-        this.config = config;
-    }
 
+    public String getAttendanceRegisterSearchQuery( AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludeReviewStatus) throws InvalidTenantIdException {
 
-    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludeReviewStatus) {
-
+        String tenantId = searchCriteria.getTenantId();
         log.info("Search criteria of attendance search : " + searchCriteria.toString());
-        StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
-
+        StringBuilder query = new StringBuilder(String.format(ATTENDANCE_REGISTER_SELECT_QUERY, SCHEMA_REPLACE_STRING));
         if(!ObjectUtils.isEmpty(searchCriteria.getStaffId())) {
-            query.append(JOIN_STAFF);
+            query.append(String.format(JOIN_STAFF, SCHEMA_REPLACE_STRING));
             query.append(JOIN_STAFF_CONDITION);
         }
 
         if(!ObjectUtils.isEmpty(searchCriteria.getAttendeeId())) {
-            query.append(JOIN_ATTENDEE);
+            query.append(String.format(JOIN_ATTENDEE, SCHEMA_REPLACE_STRING));
             query.append(JOIN_ATTENDEE_CONDITION);
         }
 
@@ -176,7 +178,7 @@ public class RegisterQueryBuilder {
 
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);
-        return query.toString();
+        return  multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
 
     public String addPaginationWrapper(String query, List<Object> preparedStmtList,

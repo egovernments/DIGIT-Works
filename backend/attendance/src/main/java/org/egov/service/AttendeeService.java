@@ -77,7 +77,7 @@ public class AttendeeService {
 
         //push to producer
         log.info("attendee objects pushed via producer");
-        producer.push(attendanceServiceConfiguration.getUpdateAttendeeTopic(), attendeeUpdateTagRequest);
+        producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendeeTopic(), attendeeUpdateTagRequest);
 
         log.info("attendees present in update attendee tag request are updated with new tags");
         return attendeeUpdateTagRequest;
@@ -88,7 +88,7 @@ public class AttendeeService {
                 .ids(ids)
                 .tenantId(tenantId)
                 .build();
-        return attendeeRepository.getAttendees(criteria);
+        return attendeeRepository.getAttendees(tenantId, criteria);
     }
 
 
@@ -121,7 +121,7 @@ public class AttendeeService {
         List<String> registerIds = extractRegisterIdsFromCreateRequest(attendeeCreateRequest);
 
         //db call to get the attendeeList data
-        List<IndividualEntry> attendeeListFromDB = getAttendees(registerIds,attendeeIds);
+        List<IndividualEntry> attendeeListFromDB = getAttendees(tenantId, registerIds,attendeeIds);
 
         //db call to get registers from db
         List<AttendanceRegister> attendanceRegisterListFromDB = getAttendanceRegisters(attendeeCreateRequest,registerIds,tenantId);
@@ -141,14 +141,17 @@ public class AttendeeService {
 
         //push to producer
         log.info("attendee objects pushed via producer");
-        producer.push(attendanceServiceConfiguration.getSaveAttendeeTopic(), attendeeCreateRequest);
+        // Push enriched create request to Kafka using tenant-specific topic
+        producer.push(tenantId, attendanceServiceConfiguration.getSaveAttendeeTopic(), attendeeCreateRequest);
         log.info("attendees present in Create attendee request are enrolled to the registers");
         return attendeeCreateRequest;
     }
 
-    public List<IndividualEntry> getAttendees(List<String> registerIds,List<String> attendeeIds){
-        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).individualIds(attendeeIds).build();
-        List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(attendeeSearchCriteria);
+    public List<IndividualEntry> getAttendees(String tenantId, List<String> registerIds,List<String> attendeeIds){
+        // Build search criteria using tenantId for schema-aware attendee fetch
+        AttendeeSearchCriteria attendeeSearchCriteria = AttendeeSearchCriteria.builder().registerIds(registerIds).tenantId(tenantId).individualIds(attendeeIds).build();
+        // Use tenant-aware repository method to retrieve matching attendees
+        List<IndividualEntry> attendeeListFromDB = attendeeRepository.getAttendees(tenantId, attendeeSearchCriteria);
         log.info("attendee List received From DB : " + attendeeListFromDB.size());
         return attendeeListFromDB;
     }
@@ -185,7 +188,7 @@ public class AttendeeService {
         List<String> registerIds = extractRegisterIdsFromDeleteRequest(attendeeDeleteRequest);
 
         //db call to get the attendeeList data
-        List<IndividualEntry> attendeeListFromDB = getAttendees(registerIds,attendeeIds);
+        List<IndividualEntry> attendeeListFromDB = getAttendees(tenantId, registerIds,attendeeIds);
 
         //db call to get registers from db
         List<AttendanceRegister> attendanceRegisterListFromDB = getAttendanceRegisters(attendeeDeleteRequest,registerIds,tenantId);
@@ -205,7 +208,8 @@ public class AttendeeService {
 
         //push to producer
         log.info("attendee objects updated via producer");
-        producer.push(attendanceServiceConfiguration.getUpdateAttendeeTopic(), attendeeDeleteRequest);
+        // Push delete (de-enroll) request to Kafka with schema-aware tenant scoping
+        producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendeeTopic(), attendeeDeleteRequest);
         log.info("attendees present in delete attendee request are deenrolled from the registers");
         return attendeeDeleteRequest;
     }

@@ -1,6 +1,9 @@
 package org.egov.repository.querybuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import lombok.RequiredArgsConstructor;
+import org.egov.common.exception.InvalidTenantIdException;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendeeSearchCriteria;
 import org.springframework.stereotype.Component;
@@ -10,8 +13,13 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
+import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
+
+@RequiredArgsConstructor
 @Component
 public class AttendeeQueryBuilder {
+
+    private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     private static final String ATTENDANCE_ATTENDEE_SELECT_QUERY = " SELECT att.id, " +
             "att.individual_id, " +
@@ -25,11 +33,12 @@ public class AttendeeQueryBuilder {
             "att.lastmodifiedtime, " +
             "att.tenantid, " +
             "att.tag " +
-            "FROM eg_wms_attendance_attendee att ";
+            "FROM %s.eg_wms_attendance_attendee att ";
 
-    public String getAttendanceAttendeeSearchQuery(AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(ATTENDANCE_ATTENDEE_SELECT_QUERY);
 
+    public String getAttendanceAttendeeSearchQuery(String tenantId, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
+        StringBuilder query = new StringBuilder(String.format(ATTENDANCE_ATTENDEE_SELECT_QUERY, SCHEMA_REPLACE_STRING));
+        
         // Filter by tenantId (usually mandatory in multi-tenant systems)
         if (StringUtils.isNotBlank(criteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
@@ -81,11 +90,11 @@ public class AttendeeQueryBuilder {
         } else {
             //if only toDate is provided as parameter without fromDate parameter, throw an exception.
             if (criteria.getDenrollmentDate() != null) {
-                throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify getEnrollmentDate without a getEnrollmentDate");
+                throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify denrollmentDate without a enrollmentDate");
             }
         }
-
-        return query.toString();
+        // After building full query, replace schema placeholders with actual schema using MultiStateInstanceUtil
+        return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
     private void addLimitAndOffset(StringBuilder query, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
         query.append(" OFFSET ? ");

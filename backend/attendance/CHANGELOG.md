@@ -1,7 +1,6 @@
-
 All notable changes to this module will be documented in this file.
 
-## 1.1.1 - 2025-06-13
+## 1.3.0 - 2025-06-13
 
 ### Changes
 
@@ -17,6 +16,12 @@ All notable changes to this module will be documented in this file.
 - Extended AttendanceRegisterSearchCriteria with:
   - tags – list of tags to filter attendees
   - includeTaggedAttendees – boolean flag that, when true, also fetches every attendee sharing those tags
+
+## 1.2.0 - 2025-03-15
+
+- Added tenant-based schema resolution using MultiStateInstanceUtil and schema placeholders in queries.
+- Updated repository methods to require tenant ID and handle InvalidTenantIdException.
+- Modified migration scripts for central instance compatibility.
 
 ## 1.1.0 - 2025-01-27
 
