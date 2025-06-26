@@ -19,6 +19,7 @@ import org.egov.digit.expense.web.validators.BillValidator;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -173,7 +174,7 @@ public class MTNService {
 				billDetail.setAdditionalDetails(errorDetails);
 				try {
 					setBillDetailStatus(billDetail, workflow, taskRequest.getRequestInfo());
-				} catch(Exception e){
+				} catch(HttpClientErrorException e){
 					log.error("Error in updating workflow state change for billDetail Id: {}, bill number : {}, from status: {} to action: {}"
 							, billDetail.getId(), bill.getBillNumber(), billDetail.getStatus(),workflow.getAction(),e);
 				}
@@ -348,7 +349,7 @@ public class MTNService {
 				State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 				bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 			}
-		} catch (Exception e){
+		} catch (HttpClientErrorException e){
 			log.error("Error in updating workflow state change for bill number : {} from status: {}", bill.getBillNumber(), bill.getStatus(),e);
 		}
 		expenseProducer.push(config.getBillUpdateTopic(), billRequest);
@@ -367,37 +368,68 @@ public class MTNService {
 		}
 	}
 
-	public BillDetailResponse updateBillDetailStatus(BillDetailRequest billDetailRequest){
-		BillDetail billDetailFromRequest = billDetailRequest.getBillDetail();
+	public BillDetailResponse updateBillDetailStatus(BillRequest billRequest){
+		Bill billFromRequest = billRequest.getBill();
 		BillCriteria billCriteria = BillCriteria.builder()
-				.ids(Set.of(billDetailFromRequest.getBillId()))
-				.tenantId(billDetailFromRequest.getTenantId())
+				.ids(Set.of(billFromRequest.getId()))
+				.tenantId(billFromRequest.getTenantId())
 				.build();
 		BillSearchRequest billSearchRequest = BillSearchRequest.builder()
-				.requestInfo(billDetailRequest.getRequestInfo())
+				.requestInfo(billRequest.getRequestInfo())
 				.billCriteria(billCriteria)
 				.build();
 
 		List<Bill> billsFromSearch = billRepository.search(billSearchRequest, true);
 		Bill billFromSearch = billsFromSearch.get(0);
-		List<BillDetail> billDetailsFromSearch = billFromSearch.getBillDetails().stream().filter(billDetail -> billDetail.getId().equals(billDetailFromRequest.getId())).collect(Collectors.toList());
-		BillDetail billDetailFromSearch = billDetailsFromSearch.get(0);
-		billDetailRequest.setBillDetail(billDetailFromSearch);
-		State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
-		billDetailFromSearch.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 
-		BillRequest billRequest = BillRequest.builder()
-				.requestInfo(billDetailRequest.getRequestInfo())
-				.bill(billFromSearch)
+		Map<String, BillDetail> billDetailsFromRequestById
+				= billFromRequest.getBillDetails().stream().collect(Collectors.toMap(BillDetail::getId,billDetail -> billDetail));
+
+		Map<String, BillDetail> billDetailsFromSearchById
+				= billFromSearch.getBillDetails().stream().collect(Collectors.toMap(BillDetail::getId,billDetail -> billDetail));
+
+		Map<String, BillDetail> billDetailsToBeUpdatedById = new HashMap<>();
+		for (String id: billDetailsFromRequestById.keySet()){
+			billDetailsToBeUpdatedById.put(id,billDetailsFromSearchById.get(id));
+		}
+
+		BillDetailRequest billDetailRequest
+				= BillDetailRequest
+					.builder()
+						.requestInfo(billRequest.getRequestInfo())
+						.businessService(config.getBillDetailBusinessService())
+						.workflow(billRequest.getWorkflow())
+					.build();
+
+		List<BillDetail> updatedBillDetails = new ArrayList<>();
+		billDetailsToBeUpdatedById
+				.values()
+					.forEach( billDetail -> {
+						try {
+							billDetailRequest.setBillDetail(billDetail);
+							State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
+							billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+							updatedBillDetails.add(billDetail);
+						} catch (HttpClientErrorException e){
+							log.error("error updating workflow status for bill number: {}, billdetail id: {}, status: {}, action: {}",
+									billFromSearch.getBillNumber(), billDetail.getId(),billDetail.getStatus(), billRequest.getWorkflow().getAction(),e);
+						}
+					}
+				);
+		BillRequest billUpdateRequest
+				= BillRequest
+				.builder()
+					.requestInfo(billDetailRequest.getRequestInfo())
+					.bill(billFromSearch)
 				.build();
-		updateBill(billRequest,false);
+		updateBill(billUpdateRequest,false);
 
 		ResponseInfo responseInfo = responseInfoFactory.
 				createResponseInfoFromRequestInfo(billDetailRequest.getRequestInfo(),true);
 		return BillDetailResponse
 				.builder()
 				.responseInfo(responseInfo)
-				.billDetail(billDetailFromSearch)
+				.billDetails(updatedBillDetails)
 				.build();
 
 	}
@@ -429,7 +461,9 @@ public class MTNService {
 					taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
 					taskDetail.setStatus(Status.DONE);
 
-				} catch (Exception e) {
+				} catch (CustomException e) {
+					log.error("error in fetching payment transfer status from mtn for bill number : {}, billDetail: {},task: {}, taskDetail: {}",
+							bill.getBillNumber(),billDetail.getId(),task.getId(),taskDetail.getId(),e);
 					taskDetail.setReasonForFailure(e.getMessage());
 					taskDetail.setResponseMessage(e.getLocalizedMessage());
 					taskDetail.setStatus(Status.DONE);
@@ -443,7 +477,7 @@ public class MTNService {
 				billDetail.setAdditionalDetails(errorDetails);
 				try {
 					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo());
-				} catch(Exception e){
+				} catch(HttpClientErrorException e){
 					log.error("Error in updating workflow state change for billDetail Id: {}, bill number : {}, from status: {} to action: {}"
 							, billDetail.getId(), bill.getBillNumber(), billDetail.getStatus(),billDetailWorkflow.getAction(),e);
 				}

@@ -50,8 +50,8 @@ public class MTNController {
 	}
 
 	@PostMapping(value = "bill/details/status/_update")
-	public ResponseEntity<BillDetailResponse> updateBillDetailStatus(@Valid @RequestBody BillDetailRequest billDetailRequest){
-		BillDetailResponse response = service.updateBillDetailStatus(billDetailRequest);
+	public ResponseEntity<BillDetailResponse> updateBillDetailStatus(@Valid @RequestBody BillRequest billRequest){
+		BillDetailResponse response = service.updateBillDetailStatus(billRequest);
 		return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
 	}
 }

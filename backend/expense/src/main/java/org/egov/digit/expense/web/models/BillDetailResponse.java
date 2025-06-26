@@ -11,6 +11,8 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 /**
  * BillDetailResponse
  */
@@ -26,8 +28,12 @@ public class BillDetailResponse {
 	@Valid
 	private ResponseInfo responseInfo;
 
-	@JsonProperty("billDetail")
+	@JsonProperty("billDetails")
 	@Valid
-	private BillDetail billDetail;
+	private List<BillDetail> billDetails;
+
+	@JsonProperty("pagination")
+	@Valid
+	private Pagination pagination;
 
 }
