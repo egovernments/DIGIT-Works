@@ -171,7 +171,12 @@ public class MTNService {
 						.responseMessage(taskDetails.getResponseMessage())
 						.response(taskDetails.getAdditionalDetails()).build();
 				billDetail.setAdditionalDetails(errorDetails);
-				setBillDetailStatus(billDetail, workflow, taskRequest.getRequestInfo());
+				try {
+					setBillDetailStatus(billDetail, workflow, taskRequest.getRequestInfo());
+				} catch(Exception e){
+					log.error("Error in updating workflow state change for billDetail Id: {}, bill number : {}, from status: {} to action: {}"
+							, billDetail.getId(), bill.getBillNumber(), billDetail.getStatus(),workflow.getAction(),e);
+				}
 			}
 		}
 		if (bill.getStatus() == Status.PENDING_VERIFICATION
@@ -191,7 +196,7 @@ public class MTNService {
 			} else if (!verifiedBillDetails.isEmpty() && bill.getStatus() != Status.PARTIALLY_VERIFIED) {
 				workflow.setAction(Actions.PARTIALLY_VERIFY.toString());
 			} else {
-				log.info("No workflow state change for bill id : {}, task id: {}", bill.getId(), task.getId());
+				log.info("No workflow state change for bill number : {}, task id: {}", bill.getBillNumber(), task.getId());
 				isWorkflowChange = false;
 			}
 
@@ -337,12 +342,15 @@ public class MTNService {
 
 	private void updateBill(BillRequest billRequest,boolean isWorkflowChange){
 		Bill bill = billRequest.getBill();
-		if (isWorkflowChange &&
-				validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
-			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
-			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+		try {
+			if (isWorkflowChange &&
+					validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
+				State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
+				bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+			}
+		} catch (Exception e){
+			log.error("Error in updating workflow state change for bill number : {} from status: {}", bill.getBillNumber(), bill.getStatus(),e);
 		}
-
 		expenseProducer.push(config.getBillUpdateTopic(), billRequest);
 	}
 
@@ -398,7 +406,7 @@ public class MTNService {
 
         Task task = taskRequest.getTask();
 		Bill bill = taskRequest.getBill();
-		log.info("updating payment status for task {}, bill {}",task.getId(), bill.getId());
+		log.info("updating payment status for task {}, bill number {}",task.getId(), bill.getBillNumber());
 
 		Map<String, BillDetail> billDetailsById = bill.getBillDetails().stream()
 				.collect(Collectors.toMap(BillDetail::getId,billDetail -> billDetail));
@@ -415,7 +423,7 @@ public class MTNService {
 					} else if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.FAILED.toString())) {
 						billDetailWorkflow.setAction(Actions.FAIL_PAYMENT.toString());
 					} else {
-						log.info("unknown response status: {} for task id: {}, task detail id: {}", paymentTransferResponse.getStatus(), task.getId(), taskDetail.getId());
+						log.info("unknown response status: {} for bill bumber : {}, task id: {}, task detail id: {}", paymentTransferResponse.getStatus(),bill.getBillNumber(), task.getId(), taskDetail.getId());
 					}
 					taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
 					taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
@@ -433,36 +441,42 @@ public class MTNService {
 						.responseMessage(taskDetail.getResponseMessage())
 						.response(taskDetail.getAdditionalDetails()).build();
 				billDetail.setAdditionalDetails(errorDetails);
-				setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo());
+				try {
+					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo());
+				} catch(Exception e){
+					log.error("Error in updating workflow state change for billDetail Id: {}, bill number : {}, from status: {} to action: {}"
+							, billDetail.getId(), bill.getBillNumber(), billDetail.getStatus(),billDetailWorkflow.getAction(),e);
+				}
 			}
 		}
-
-		List<BillDetail> paidBillDetails = bill
-				.getBillDetails()
-				.stream()
-				.filter(billDetail -> billDetail.getStatus() == Status.PAID)
-				.collect(Collectors.toList());
-		Workflow workflow = Workflow.builder()
-				.build();
-		boolean isWorkflowChange =true;
-		if (paidBillDetails.size() == bill.getBillDetails().size()){
-			workflow.setAction(Actions.MAKE_FULL_PAYMENT.toString());
-		} else if (!paidBillDetails.isEmpty() && bill.getStatus() != Status.PARTIALLY_PAID){
-			workflow.setAction(Actions.MAKE_PARTIAL_PAYMENT.toString());
-		} else {
-			log.info("No workflow state change for bill id : {}, task id: {}", bill.getId(),task.getId());
-			isWorkflowChange = false;
+		if (bill.getStatus() == Status.PARTIALLY_VERIFIED || bill.getStatus() == Status.FULLY_VERIFIED || bill.getStatus() == Status.PARTIALLY_PAID) {
+			List<BillDetail> paidBillDetails = bill
+					.getBillDetails()
+					.stream()
+					.filter(billDetail -> billDetail.getStatus() == Status.PAID)
+					.collect(Collectors.toList());
+			Workflow workflow = Workflow.builder()
+					.build();
+			boolean isWorkflowChange = true;
+			if (paidBillDetails.size() == bill.getBillDetails().size()) {
+				workflow.setAction(Actions.MAKE_FULL_PAYMENT.toString());
+			} else if (!paidBillDetails.isEmpty() && bill.getStatus() != Status.PARTIALLY_PAID) {
+				workflow.setAction(Actions.MAKE_PARTIAL_PAYMENT.toString());
+			} else {
+				log.info("No workflow state change for bill number : {}, task id: {}", bill.getBillNumber(), task.getId());
+				isWorkflowChange = false;
+			}
+			BillRequest billRequest = BillRequest
+					.builder()
+					.bill(bill)
+					.workflow(workflow)
+					.requestInfo(taskRequest.getRequestInfo())
+					.build();
+			updateBill(billRequest, isWorkflowChange);
 		}
-		BillRequest billRequest = BillRequest
-				.builder()
-				.bill(bill)
-				.workflow(workflow)
-				.requestInfo(taskRequest.getRequestInfo())
-				.build();
-		updateBill(billRequest,isWorkflowChange);
 		task.setStatus(Status.DONE);
 		expenseProducer.push(config.getTaskStatusUpdateTopic(),task);
-		log.info("finished updating payment status for task {}, bill {}",task.getId(), bill.getId());
+		log.info("finished updating payment status for task {}, bill number {}",task.getId(), bill.getBillNumber());
 	}
 
 }
