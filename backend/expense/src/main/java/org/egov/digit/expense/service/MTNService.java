@@ -306,7 +306,7 @@ public class MTNService {
 
 		executorService.scheduleTask( () -> {
 			updatePaymentTaskStatus(taskRequest);
-		},5,TimeUnit.MINUTES);
+		}, Integer.valueOf(config.getScheduledTaskDelay()),TimeUnit.SECONDS);
 
 
 	}

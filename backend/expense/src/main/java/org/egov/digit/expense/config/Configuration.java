@@ -229,4 +229,7 @@ public class Configuration {
 	@Value("${bill.detail.business.service}")
 	private String billDetailBusinessService;
 
+	@Value("${bill.scheduled.task.delay}")
+	private String scheduledTaskDelay;
+
 }
