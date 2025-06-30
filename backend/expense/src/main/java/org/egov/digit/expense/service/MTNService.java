@@ -68,10 +68,10 @@ public class MTNService {
 	}
 
 	private Task fetchOrCreateTask(BillTaskRequest billTaskRequest, Task.Type type){
-		Bill bill = billTaskRequest.getBill();
+		Bill billFromRequest = billTaskRequest.getBill();
 		Task task = Task
 				.builder()
-					.billId(bill.getId())
+					.billId(billFromRequest.getId())
 					.type(type)
 					.status(Status.IN_PROGRESS)
 				.build();
@@ -79,14 +79,6 @@ public class MTNService {
 		if (taskDb != null){
 			return taskDb;
 		}
-
-		BillRequest billRequest = BillRequest.builder()
-				.requestInfo(billTaskRequest.getRequestInfo())
-				.bill(bill)
-				.build();
-		List<Bill> billsFromSearch = getBills(billRequest,false);
-		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
-		Bill billFromSearch = billsFromSearch.get(0);
 
 		task.setId(UUID.randomUUID().toString());
 
@@ -96,13 +88,24 @@ public class MTNService {
 		TaskRequest taskRequest =
 				TaskRequest.builder()
 						.task(task)
-						.bill(billFromSearch)
+						.bill(billFromRequest)
 						.requestInfo(billTaskRequest.getRequestInfo())
 						.build();
 
 		expenseProducer.push(config.getBillTaskTopic(),taskRequest);
 
 		return task;
+	}
+
+	private Bill getBillfromSearch(Bill billFromRequest,RequestInfo requestInfo){
+		BillRequest billRequest =
+				BillRequest.builder()
+					.requestInfo(requestInfo)
+					.bill(billFromRequest)
+				.build();
+		List<Bill> billsFromSearch = getBills(billRequest,false);
+		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
+		return billsFromSearch.get(0);
 	}
 
 	public void executeTask(TaskRequest taskRequest){
@@ -129,23 +132,26 @@ public class MTNService {
 
 	public void verify(TaskRequest taskRequest){
 
-		Bill bill = taskRequest.getBill();
 		Task task = taskRequest.getTask();
+		Bill billFromRequest = taskRequest.getBill();
+		Bill billFromSearch = getBillfromSearch(billFromRequest,taskRequest.getRequestInfo());
+
+		Map<String, BillDetail> billDetailsToBeUpdatedById = getBillDetailsToBeUpdated(billFromRequest,billFromSearch);
 
 
-		for (BillDetail billDetail: bill.getBillDetails() ){
+		for (BillDetail billDetail: billDetailsToBeUpdatedById.values()){
 			if (billDetail.getStatus() == Status.PENDING_VERIFICATION ||
 					billDetail.getStatus() == Status.EDITED	) {
-				IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(), bill.getTenantId(), billDetail.getPayee().getIdentifier());
+				IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(), billFromSearch.getTenantId(), billDetail.getPayee().getIdentifier());
 				TaskDetails taskDetails = TaskDetails.builder()
 						.id(UUID.randomUUID().toString())
 						.taskId(task.getId())
-						.billId(bill.getId())
+						.billId(billFromSearch.getId())
 						.billDetailsId(billDetail.getId())
 						.payeeId(billDetail.getPayee().getId())
 						.status(Status.IN_PROGRESS)
-						.tenantId(bill.getTenantId())
-						.auditDetails(bill.getAuditDetails())
+						.tenantId(billFromSearch.getTenantId())
+						.auditDetails(billFromSearch.getAuditDetails())
 						.referenceId(individualDetails.getPhoneNumber())
 						.build();
 				boolean updateBillDetailWorkflow = true;
@@ -176,15 +182,15 @@ public class MTNService {
 					setBillDetailStatus(billDetail, workflow, taskRequest.getRequestInfo());
 				} catch(HttpClientErrorException e){
 					log.error("Error in updating workflow state change for billDetail Id: {}, bill number : {}, from status: {} to action: {}"
-							, billDetail.getId(), bill.getBillNumber(), billDetail.getStatus(),workflow.getAction(),e);
+							, billDetail.getId(), billFromSearch.getBillNumber(), billDetail.getStatus(),workflow.getAction(),e);
 				}
 			}
 		}
-		if (bill.getStatus() == Status.PENDING_VERIFICATION
-				|| bill.getStatus() == Status.PARTIALLY_VERIFIED
-				|| bill.getStatus() == Status.PARTIALLY_PAID
+		if (billFromSearch.getStatus() == Status.PENDING_VERIFICATION
+				|| billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED
+				|| billFromSearch.getStatus() == Status.PARTIALLY_PAID
 		) {
-			List<BillDetail> verifiedBillDetails = bill.getBillDetails()
+			List<BillDetail> verifiedBillDetails = billFromSearch.getBillDetails()
 					.stream()
 					.filter(billDetail -> billDetail.getStatus() == Status.VERIFIED
 													|| billDetail.getStatus() == Status.PAID)
@@ -192,17 +198,17 @@ public class MTNService {
 			boolean isWorkflowChange = true;
 			Workflow workflow = Workflow.builder()
 					.build();
-			if (verifiedBillDetails.size() == bill.getBillDetails().size()) {
+			if (verifiedBillDetails.size() == billFromSearch.getBillDetails().size()) {
 				workflow.setAction(Actions.VERIFY.toString());
-			} else if (!verifiedBillDetails.isEmpty() && bill.getStatus() != Status.PARTIALLY_VERIFIED) {
+			} else if (!verifiedBillDetails.isEmpty() && billFromSearch.getStatus() != Status.PARTIALLY_VERIFIED) {
 				workflow.setAction(Actions.PARTIALLY_VERIFY.toString());
 			} else {
-				log.info("No workflow state change for bill number : {}, task id: {}", bill.getBillNumber(), task.getId());
+				log.info("No workflow state change for bill number : {}, task id: {}", billFromSearch.getBillNumber(), task.getId());
 				isWorkflowChange = false;
 			}
 
 			BillRequest billRequest = BillRequest.builder()
-					.bill(bill)
+					.bill(billFromSearch)
 					.requestInfo(taskRequest.getRequestInfo())
 					.workflow(workflow)
 					.build();
@@ -275,22 +281,26 @@ public class MTNService {
 
 	public void transfer(TaskRequest taskRequest){
 
-		Bill bill = taskRequest.getBill();
 		Task task = taskRequest.getTask();
+		Bill billFromRequest = taskRequest.getBill();
+		Bill billFromSearch = getBillfromSearch(billFromRequest,taskRequest.getRequestInfo());
 
-		for (BillDetail billDetail: bill.getBillDetails() ){
+		Map<String, BillDetail> billDetailsToBeupdatedById = getBillDetailsToBeUpdated(billFromRequest,billFromSearch);
+
+
+		for (BillDetail billDetail: billDetailsToBeupdatedById.values() ){
 			if(billDetail.getStatus()==Status.VERIFIED) {
-				IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(),bill.getTenantId(),billDetail.getPayee().getIdentifier());
+				IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(),billFromSearch.getTenantId(),billDetail.getPayee().getIdentifier());
 				TaskDetails taskDetails = TaskDetails.builder()
 						.id(UUID.randomUUID().toString())
 						.taskId(task.getId())
 						.referenceId(individualDetails.getPhoneNumber())
-						.billId(bill.getId())
+						.billId(billFromSearch.getId())
 						.billDetailsId(billDetail.getId())
 						.payeeId(billDetail.getPayee().getId())
 						.status(Status.IN_PROGRESS)
-						.tenantId(bill.getTenantId())
-						.auditDetails(bill.getAuditDetails())
+						.tenantId(billFromSearch.getTenantId())
+						.auditDetails(billFromSearch.getAuditDetails())
 						.build();
 
 				PaymentTransferRequest paymentTransferRequest = createPaymentTransferRequest(billDetail, individualDetails.getPhoneNumber());
@@ -370,28 +380,8 @@ public class MTNService {
 
 	public BillDetailResponse updateBillDetailStatus(BillRequest billRequest){
 		Bill billFromRequest = billRequest.getBill();
-		BillCriteria billCriteria = BillCriteria.builder()
-				.ids(Set.of(billFromRequest.getId()))
-				.tenantId(billFromRequest.getTenantId())
-				.build();
-		BillSearchRequest billSearchRequest = BillSearchRequest.builder()
-				.requestInfo(billRequest.getRequestInfo())
-				.billCriteria(billCriteria)
-				.build();
 
-		List<Bill> billsFromSearch = billRepository.search(billSearchRequest, true);
-		Bill billFromSearch = billsFromSearch.get(0);
-
-		Map<String, BillDetail> billDetailsFromRequestById
-				= billFromRequest.getBillDetails().stream().collect(Collectors.toMap(BillDetail::getId,billDetail -> billDetail));
-
-		Map<String, BillDetail> billDetailsFromSearchById
-				= billFromSearch.getBillDetails().stream().collect(Collectors.toMap(BillDetail::getId,billDetail -> billDetail));
-
-		Map<String, BillDetail> billDetailsToBeUpdatedById = new HashMap<>();
-		for (String id: billDetailsFromRequestById.keySet()){
-			billDetailsToBeUpdatedById.put(id,billDetailsFromSearchById.get(id));
-		}
+		Bill billFromSearch = getBillfromSearch(billFromRequest,billRequest.getRequestInfo());
 
 		BillDetailRequest billDetailRequest
 				= BillDetailRequest
@@ -402,7 +392,7 @@ public class MTNService {
 					.build();
 
 		List<BillDetail> updatedBillDetails = new ArrayList<>();
-		billDetailsToBeUpdatedById
+		getBillDetailsToBeUpdated(billFromRequest,billFromSearch)
 				.values()
 					.forEach( billDetail -> {
 						try {
@@ -432,6 +422,20 @@ public class MTNService {
 				.billDetails(updatedBillDetails)
 				.build();
 
+	}
+
+	private Map<String, BillDetail> getBillDetailsToBeUpdated(Bill billFromRequest, Bill billFromSearch){
+		Map<String, BillDetail> billDetailsFromRequestById
+				= billFromRequest.getBillDetails().stream().collect(Collectors.toMap(BillDetail::getId,billDetail -> billDetail));
+
+		Map<String, BillDetail> billDetailsFromSearchById
+				= billFromSearch.getBillDetails().stream().collect(Collectors.toMap(BillDetail::getId,billDetail -> billDetail));
+
+		Map<String, BillDetail> billDetailsToBeUpdatedById = new HashMap<>();
+		for (String id: billDetailsFromRequestById.keySet()){
+			billDetailsToBeUpdatedById.put(id,billDetailsFromSearchById.get(id));
+		}
+		return billDetailsToBeUpdatedById;
 	}
 
 	public void updatePaymentTaskStatus(TaskRequest taskRequest){
