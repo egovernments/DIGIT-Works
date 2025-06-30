@@ -59,7 +59,7 @@ public class NotificationService {
             String customizedMessage = buildMessageReplaceVariables(message, musterRollRequest.getMusterRoll().getMusterRollNumber(), amount);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
 
-            musterRollProducer.push(config.getSmsNotificationTopic(), smsRequest);
+            musterRollProducer.push(musterRollRequest.getMusterRoll().getTenantId(), config.getSmsNotificationTopic(), smsRequest);
         }
     }
 
