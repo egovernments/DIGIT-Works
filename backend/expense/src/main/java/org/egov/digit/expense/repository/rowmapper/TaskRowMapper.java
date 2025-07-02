@@ -1,20 +1,32 @@
 package org.egov.digit.expense.repository.rowmapper;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.web.models.Task;
 import org.egov.digit.expense.web.models.enums.Status;
+import org.egov.tracer.model.CustomException;
+import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 public class TaskRowMapper implements RowMapper<Task> {
+
+    private final ObjectMapper mapper;
+
+    @Autowired
+    public TaskRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public Task mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -36,11 +48,7 @@ public class TaskRowMapper implements RowMapper<Task> {
         }
 
         if (columnExists(rs, "additional_details")) {
-            String additionalDetailsJson = rs.getString("additional_details");
-            if (additionalDetailsJson != null && !additionalDetailsJson.isEmpty()) {
-                 Object additionalDetails = new ObjectMapper().convertValue(additionalDetailsJson,Object.class);
-                 builder.additionalDetails(additionalDetails);
-            }
+            builder.additionalDetails(getadditionalDetail(rs,"additional_details"));
         }
 
         return builder.build();
@@ -53,5 +61,27 @@ public class TaskRowMapper implements RowMapper<Task> {
         } catch (SQLException e) {
             return false;
         }
+    }
+
+    private JsonNode getadditionalDetail(ResultSet rs, String key) throws SQLException {
+
+        JsonNode additionalDetails = null;
+
+        try {
+
+            PGobject obj = (PGobject) rs.getObject(key);
+            if (obj != null) {
+                additionalDetails = mapper.readTree(obj.getValue());
+            }
+
+        } catch (IOException e) {
+            throw new CustomException("PARSING ERROR", "The propertyAdditionalDetail json cannot be parsed");
+        }
+
+        if(additionalDetails != null && additionalDetails.isEmpty())
+            additionalDetails = null;
+
+        return additionalDetails;
+
     }
 }

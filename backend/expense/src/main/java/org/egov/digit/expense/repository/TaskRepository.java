@@ -7,7 +7,6 @@ import org.egov.digit.expense.web.models.Task;
 import org.egov.digit.expense.web.models.TaskDetails;
 import org.egov.digit.expense.web.models.TaskDetailsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -46,5 +45,10 @@ public class TaskRepository {
     public List<TaskDetails> searchTaskDetailsByTaskId(String taskId){
         String query = taskQueryBuilder.getTaskDetailsByTaskIdQuery(taskId);
         return jdbcTemplate.query(query, taskDetailsRowMapper);
+    }
+
+    public List<Task> getInProgressTasks(String seconds,String type){
+        String query = taskQueryBuilder.getTasksInProgressQuery(seconds, type);
+        return jdbcTemplate.query(query,taskRowMapper);
     }
 }

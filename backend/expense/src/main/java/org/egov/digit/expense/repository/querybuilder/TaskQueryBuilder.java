@@ -31,4 +31,8 @@ public class TaskQueryBuilder {
         return TASK_DETAILS_BY_TASK_ID_SEARCH_QUERY.replace("{taskId}",taskId);
     }
 
+    public String getTasksInProgressQuery(String seconds, String type){
+        return TASK_IN_PROGRESS_SEARCH_QUERY.replace("{seconds}",seconds)
+                .replace("{type}",type);
+    }
 }

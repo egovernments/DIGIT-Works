@@ -212,7 +212,7 @@ public class Configuration {
 	private String billTaskDetailsTopic;
 
 	@Value("${expense.task.status.update}")
-	private String taskStatusUpdateTopic;
+	private String taskUpdateTopic;
 
 	@Value("${expense.task.details.update}")
 	private String taskDetailsUpdateTopic;
@@ -231,5 +231,8 @@ public class Configuration {
 
 	@Value("${bill.scheduled.task.delay}")
 	private String scheduledTaskDelay;
+
+	@Value("${bill.scheduled.task.fixed.rate}")
+	private String scheduledTaskFixedRate;
 
 }
