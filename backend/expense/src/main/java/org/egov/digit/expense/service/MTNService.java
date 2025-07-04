@@ -203,7 +203,7 @@ public class MTNService {
 					.build();
 			if (verifiedBillDetails.size() == billFromSearch.getBillDetails().size() ) {
 				workflow.setAction(Actions.FULLY_VERIFY.toString());
-			} else if (!verifiedBillDetails.isEmpty() && billFromSearch.getStatus() != Status.PARTIALLY_VERIFIED) {
+			} else if (!verifiedBillDetails.isEmpty() && billFromSearch.getStatus() == Status.PENDING_VERIFICATION) {
 				workflow.setAction(Actions.PARTIALLY_VERIFY.toString());
 			} else {
 				log.info("No workflow state change for bill number : {}, task id: {}", billFromSearch.getBillNumber(), task.getId());
