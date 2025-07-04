@@ -201,8 +201,8 @@ public class MTNService {
 			boolean isWorkflowChange = true;
 			Workflow workflow = Workflow.builder()
 					.build();
-			if (verifiedBillDetails.size() == billFromSearch.getBillDetails().size()) {
-				workflow.setAction(Actions.VERIFY.toString());
+			if (verifiedBillDetails.size() == billFromSearch.getBillDetails().size() ) {
+				workflow.setAction(Actions.FULLY_VERIFY.toString());
 			} else if (!verifiedBillDetails.isEmpty() && billFromSearch.getStatus() != Status.PARTIALLY_VERIFIED) {
 				workflow.setAction(Actions.PARTIALLY_VERIFY.toString());
 			} else {
@@ -457,9 +457,9 @@ public class MTNService {
 				try {
 					PaymentTransferResponse paymentTransferResponse = mtnUtil.getTransferStatus(taskDetail.getId());
 					if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.SUCCESSFUL.toString())) {
-						billDetailWorkflow.setAction(Actions.MAKE_PAYMENT.toString());
+						billDetailWorkflow.setAction(Actions.PAY.toString());
 					} else if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.FAILED.toString())) {
-						billDetailWorkflow.setAction(Actions.FAIL_PAYMENT.toString());
+						billDetailWorkflow.setAction(Actions.DECLINE.toString());
 					} else {
 						log.info("unknown response status: {} for bill bumber : {}, task id: {}, task detail id: {}", paymentTransferResponse.getStatus(),billFromSearch.getBillNumber(), task.getId(), taskDetail.getId());
 					}
@@ -473,7 +473,7 @@ public class MTNService {
 					taskDetail.setReasonForFailure(e.getMessage());
 					taskDetail.setResponseMessage(e.getLocalizedMessage());
 					taskDetail.setStatus(Status.DONE);
-					billDetailWorkflow.setAction(Actions.FAIL_PAYMENT.toString());
+					billDetailWorkflow.setAction(Actions.DECLINE.toString());
 				}
 				expenseProducer.push(config.getTaskDetailsUpdateTopic(), taskDetail);
 				ErrorDetails errorDetails = ErrorDetails.builder()
@@ -490,18 +490,27 @@ public class MTNService {
 			}
 		}
 		if (billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED || billFromSearch.getStatus() == Status.FULLY_VERIFIED || billFromSearch.getStatus() == Status.PARTIALLY_PAID) {
-			List<BillDetail> paidBillDetails = billFromSearch
-					.getBillDetails()
-					.stream()
-					.filter(billDetail -> billDetail.getStatus() == Status.PAID)
-					.collect(Collectors.toList());
+
+			List<BillDetail> paidBillDetails = new ArrayList<>();
+			List<BillDetail> declinedBillDetails = new ArrayList<>();
+			billFromSearch
+				.getBillDetails().forEach(billDetail -> {
+					if (billDetail.getStatus() == Status.PAID) {
+						paidBillDetails.add(billDetail);
+					} else if (billDetail.getStatus() == Status.PAYMENT_FAILED) {
+						declinedBillDetails.add(billDetail);
+					}
+				});
+
 			Workflow workflow = Workflow.builder()
 					.build();
 			boolean isWorkflowChange = true;
 			if (paidBillDetails.size() == billFromSearch.getBillDetails().size()) {
-				workflow.setAction(Actions.MAKE_FULL_PAYMENT.toString());
+				workflow.setAction(Actions.FULLY_PAY.toString());
 			} else if (!paidBillDetails.isEmpty() && billFromSearch.getStatus() != Status.PARTIALLY_PAID) {
-				workflow.setAction(Actions.MAKE_PARTIAL_PAYMENT.toString());
+				workflow.setAction(Actions.PARTIALLY_PAY.toString());
+			} else if (declinedBillDetails.size() == billFromSearch.getBillDetails().size()){
+				workflow.setAction(Actions.DECLINE_PAYMENT.toString());
 			} else {
 				log.info("No workflow state change for bill number : {}, task id: {}", billFromSearch.getBillNumber(), task.getId());
 				isWorkflowChange = false;
