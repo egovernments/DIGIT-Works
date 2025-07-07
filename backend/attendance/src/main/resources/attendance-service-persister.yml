@@ -210,7 +210,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerId
       auditAttributeBasePath: $.attendees.*
       queryMaps:
-        - query: INSERT INTO mz.eg_wms_attendance_attendee(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO mz.eg_wms_attendance_attendee(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime, tag) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendees.*
           jsonMaps:
 
