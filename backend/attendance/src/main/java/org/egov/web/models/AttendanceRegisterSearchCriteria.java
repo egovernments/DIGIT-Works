@@ -73,6 +73,12 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("isChildrenRequired")
     private Boolean isChildrenRequired;
 
+    @JsonProperty("tags")
+    private List<String> tags;
+
+    @JsonProperty("includeTaggedAttendees")
+    private Boolean includeTaggedAttendees =  Boolean.FALSE;
+
     public enum SortOrder {
         ASC,
         DESC

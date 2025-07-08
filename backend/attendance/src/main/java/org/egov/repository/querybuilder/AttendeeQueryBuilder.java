@@ -1,5 +1,6 @@
 package org.egov.repository.querybuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.common.utils.MultiStateInstanceUtil;
@@ -30,11 +31,21 @@ public class AttendeeQueryBuilder {
             "att.lastmodifiedby, " +
             "att.createdtime, " +
             "att.lastmodifiedtime, " +
-            "att.tenantid " +
+            "att.tenantid, " +
+            "att.tag " +
             "FROM %s.eg_wms_attendance_attendee att ";
+
 
     public String getAttendanceAttendeeSearchQuery(String tenantId, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
         StringBuilder query = new StringBuilder(String.format(ATTENDANCE_ATTENDEE_SELECT_QUERY, SCHEMA_REPLACE_STRING));
+        
+        // Filter by tenantId (usually mandatory in multi-tenant systems)
+        if (StringUtils.isNotBlank(criteria.getTenantId())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" att.tenantid = ?");
+            preparedStmtList.add(criteria.getTenantId());
+        }
+
         List<String> ids=criteria.getIds();
         if (ids!=null && !ids.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
@@ -47,6 +58,14 @@ public class AttendeeQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" att.individual_id IN (").append(createQuery(individualIds)).append(")");
             addToPreparedStatement(preparedStmtList, individualIds);
+        }
+
+        // Filter by tags if provided
+        List<String> tags = criteria.getTags();
+        if (tags != null && !tags.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" att.tag IN (").append(createQuery(tags)).append(")");
+            addToPreparedStatement(preparedStmtList, tags);
         }
 
         List<String> registerIds = criteria.getRegisterIds();

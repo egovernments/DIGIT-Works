@@ -50,6 +50,75 @@ public class AttendeeServiceValidator {
         this.config = config;
     }
 
+    /**
+     * Validates the parameters of the AttendeeUpdateTagRequest object.
+     *
+     * @param attendeeUpdateTagRequest The request object containing the list of attendees to be updated.
+     */
+    public void validateAttendeeUpdateTagRequestParameters(AttendeeUpdateTagRequest attendeeUpdateTagRequest) {
+        List<IndividualEntry> attendeeList = attendeeUpdateTagRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
+
+        if (attendeeList == null || attendeeList.isEmpty()) {
+            log.error(ERROR_MSG_EMPTY_ATTENDEE_LIST);
+            throw new CustomException(ERROR_KEY_ATTENDEE, ERROR_MSG_EMPTY_ATTENDEE_LIST);
+        }
+
+        String tenantId = attendeeList.get(0).getTenantId();
+        for (IndividualEntry attendee : attendeeList) {
+            if (StringUtils.isBlank(attendee.getId())) {
+                log.error(ERROR_MSG_ID_MANDATORY);
+                errorMap.put(ERROR_KEY_ID, ERROR_MSG_ID_MANDATORY);
+            }
+
+            if (StringUtils.isBlank(attendee.getTenantId())) {
+                log.error(ERROR_MSG_TENANT_ID_MANDATORY);
+                errorMap.put(ERROR_KEY_TENANT_ID, ERROR_MSG_TENANT_ID_MANDATORY);
+            }
+
+            if (StringUtils.isBlank(attendee.getTag())) {
+                log.error(ERROR_MSG_TAG_MANDATORY);
+                errorMap.put(ERROR_KEY_TAG, ERROR_MSG_TAG_MANDATORY);
+            }
+        }
+
+        if (!errorMap.isEmpty()) {
+            log.error("Attendee request validation failed");
+            throw new CustomException(errorMap);
+        }
+
+        validateTenantIds(attendeeUpdateTagRequest, tenantId);
+        log.info("validating tenant id from MDMS and Request info");
+        validateMDMSAndRequestInfoForUpdateTagAttendee(attendeeUpdateTagRequest);
+    }
+
+    /**
+     * Validates that all requested attendees exist in the database records.
+     *
+     * @param attendees   The list of attendees requested for validation.
+     * @param dbRecords   The list of attendees fetched from the database.
+     * @throws CustomException if any requested attendee is not found in the database records.
+     */
+    public void validateAllAttendeesExist(List<IndividualEntry> attendees, List<IndividualEntry> dbRecords) {
+        Set<String> requestedIds = attendees.stream()
+                .map(IndividualEntry::getId)
+                .collect(Collectors.toSet());
+
+        Set<String> foundIds = dbRecords.stream()
+                .map(IndividualEntry::getId)
+                .collect(Collectors.toSet());
+
+        Set<String> missingIds = new HashSet<>(requestedIds);
+        missingIds.removeAll(foundIds);
+
+        if (!missingIds.isEmpty()) {
+            throw new CustomException(
+                    ERROR_KEY_MISSING_ATTENDEES,
+                    ERROR_MSG_ATTENDEES_NOT_FOUND + String.join(", ", missingIds));
+        }
+    }
+
+
     public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
         Map<String, String> errorMap = new HashMap<>();
@@ -119,6 +188,24 @@ public class AttendeeServiceValidator {
         }
 
     }
+
+    /**
+     * Validates the tenant IDs in the AttendeeUpdateTagRequest object.
+     *
+     * @param attendeeUpdateTagRequest The request object containing the list of attendees to be updated.
+     * @param tenantId                 The tenant ID to validate against.
+     */
+    public void validateTenantIds(AttendeeUpdateTagRequest attendeeUpdateTagRequest, String tenantId) {
+        List<IndividualEntry> attendeeList = attendeeUpdateTagRequest.getAttendees();
+
+        for (IndividualEntry attendee : attendeeList) {
+            if (!attendee.getTenantId().equals(tenantId)) {
+                log.error(ERROR_MSG_INCONSISTENT_TENANT_ID);
+                throw new CustomException(ERROR_KEY_TENANT_ID, ERROR_MSG_INCONSISTENT_TENANT_ID);
+            }
+        }
+    }
+
 
     public void validateDuplicateAttendeeObjects(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
@@ -270,6 +357,28 @@ public class AttendeeServiceValidator {
             throw new CustomException(errorMap);
     }
 
+
+    /**
+     * Validates the MDMS data and request info for updating attendee tags.
+     *
+     * @param attendeeUpdateTagRequest The request object containing the list of attendees to be updated.
+     */
+    public void validateMDMSAndRequestInfoForUpdateTagAttendee(AttendeeUpdateTagRequest attendeeUpdateTagRequest) {
+
+        RequestInfo requestInfo = attendeeUpdateTagRequest.getRequestInfo();
+        List<IndividualEntry> attendeeListFromRequest = attendeeUpdateTagRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
+        String tenantId = attendeeListFromRequest.get(0).getTenantId();
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
+        //check tenant Id
+        log.info("validate tenantId with MDMS");
+        validateMDMSData(tenantId, mdmsData, errorMap);
+        //validate request-info
+        log.info("validate request info coming from api request");
+        validateRequestInfo(requestInfo, errorMap);
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
 
     public void validateAttendeeOnCreate(AttendeeCreateRequest attendeeCreateRequest
             , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {

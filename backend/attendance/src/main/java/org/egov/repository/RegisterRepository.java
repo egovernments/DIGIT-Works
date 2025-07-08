@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.egov.Constants.INVALID_TENANT_ID;
-import static org.egov.Constants.INVALID_TENANT_ID_MSG;
 
 @Repository
 @Slf4j
