@@ -26,4 +26,7 @@ public class StaffSearchCriteria {
 
     @JsonProperty("offset")
     private Integer offset;
+
+    @JsonProperty("staffType")
+    private String staffType = null;
 }

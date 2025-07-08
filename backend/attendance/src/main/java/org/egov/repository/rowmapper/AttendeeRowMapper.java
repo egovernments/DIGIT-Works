@@ -7,6 +7,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.web.models.IndividualEntry;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -20,8 +21,12 @@ import java.util.*;
 @Component
 public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntry>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public AttendeeRowMapper(@Qualifier("objectMapper") ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<IndividualEntry> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -31,6 +36,7 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
             String registerId = rs.getString("register_id");
             String individuaId = rs.getString("individual_id");
             String tenantId= rs.getString("tenantid");
+            String tag = rs.getString("tag");
             BigDecimal enrollmentDate = rs.getBigDecimal("enrollment_date");
             BigDecimal deenrollmentDate = rs.getBigDecimal("deenrollment_date");
             String createdby = rs.getString("createdby");
@@ -54,6 +60,7 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
                     .enrollmentDate(enrollmentDate)
                     .denrollmentDate(deenrollmentDate)
                     .auditDetails(auditDetails)
+                    .tag(tag)
                     .build();
 
             if (!attendanceAttendeeMap.containsKey(id)) {

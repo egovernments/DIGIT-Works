@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class DateRangePicker extends StatelessWidget {
-  final format = DateFormat("dd/MM/yyyy");
+  final DateFormat? format;
   final String label;
   final String? applyLabel;
   final String? cancelLabel;
@@ -15,6 +15,8 @@ class DateRangePicker extends StatelessWidget {
   final void Function(DateRangePickerViewChangedArgs)? onViewChange;
   final void Function()? onSubmit;
   final void Function()? onCancel;
+  final DateTime? minDate;
+  final DateTime? maxDate;
 
   DateRangePicker(
       {Key? key,
@@ -27,7 +29,10 @@ class DateRangePicker extends StatelessWidget {
       this.onSubmit,
       this.applyLabel,
       this.cancelLabel,
-      this.onCancel})
+      this.onCancel,
+        this.minDate,
+      this.maxDate,
+      this.format,})
       : super(key: key);
 
   @override
@@ -44,6 +49,8 @@ class DateRangePicker extends StatelessWidget {
                     selectionMode: selectionMode,
                     selectionRadius: 30,
                     onViewChanged: onViewChange,
+                    minDate: minDate,
+                    maxDate: maxDate,
                     startRangeSelectionColor:
                         DigitTheme.instance.colorScheme.secondary,
                     endRangeSelectionColor:

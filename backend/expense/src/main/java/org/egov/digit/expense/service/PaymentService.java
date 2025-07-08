@@ -9,67 +9,61 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.kafka.Producer;
+import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.PaymentRepository;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
-import org.egov.digit.expense.web.models.Bill;
-import org.egov.digit.expense.web.models.BillDetail;
-import org.egov.digit.expense.web.models.BillRequest;
-import org.egov.digit.expense.web.models.BillSearchRequest;
-import org.egov.digit.expense.web.models.LineItem;
-import org.egov.digit.expense.web.models.Payment;
-import org.egov.digit.expense.web.models.PaymentBill;
-import org.egov.digit.expense.web.models.PaymentBillDetail;
-import org.egov.digit.expense.web.models.PaymentLineItem;
-import org.egov.digit.expense.web.models.PaymentRequest;
-import org.egov.digit.expense.web.models.PaymentResponse;
-import org.egov.digit.expense.web.models.PaymentSearchRequest;
+import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
 import org.egov.digit.expense.web.validators.PaymentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class PaymentService {
 
-    @Autowired
-    private PaymentValidator validator;
+    private final PaymentValidator validator;
+
+    private final ExpenseProducer expenseProducer;
+
+    private final Configuration config;
+
+    private final BillService billService;
+
+    private final EnrichmentUtil enrichmentUtil;
+
+    private final ResponseInfoFactory responseInfoFactory;
+
+    private final PaymentRepository paymentRepository;
 
     @Autowired
-    private Producer producer;
-
-    @Autowired
-    private Configuration config;
-
-    @Autowired
-    private BillService billService;
-
-    @Autowired
-    private EnrichmentUtil enrichmentUtil;
-
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
-
-    @Autowired
-    private PaymentRepository paymentRepository;
+    public PaymentService(PaymentValidator validator, ExpenseProducer expenseProducer, Configuration config, BillService billService, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, PaymentRepository paymentRepository) {
+        this.validator = validator;
+        this.expenseProducer = expenseProducer;
+        this.config = config;
+        this.billService = billService;
+        this.enrichmentUtil = enrichmentUtil;
+        this.responseInfoFactory = responseInfoFactory;
+        this.paymentRepository = paymentRepository;
+    }
 
     public PaymentResponse create(@Valid PaymentRequest paymentRequest) {
     	
         log.info("PaymentService::create");
         Payment payment = paymentRequest.getPayment();
+        String tenantId = payment.getTenantId();
         validator.validateCreateRequest(paymentRequest);
         enrichmentUtil.encrichCreatePayment(paymentRequest);
 
-        producer.push(config.getPaymentCreateTopic(), paymentRequest);
+        expenseProducer.push(tenantId, config.getPaymentCreateTopic(), paymentRequest);
         backUpdateBillForPayment(paymentRequest);
 
         return PaymentResponse.builder()
@@ -83,13 +77,14 @@ public class PaymentService {
     	
         log.info("PaymentService::update");
         Payment payment = paymentRequest.getPayment();
+        String tenantId = payment.getTenantId();
         List<Payment> paymentsFromSearch = validator.validateUpdateRequest(paymentRequest);
-        enrichmentUtil.encrichUpdatePayment(paymentRequest);
+        enrichmentUtil.encrichUpdatePayment(paymentRequest, paymentsFromSearch.get(0));
         paymentRequest.setPayment(paymentsFromSearch.get(0));
         backUpdateBillForPayment(paymentRequest);
 
         /* only status update should be allowed here */
-        producer.push(config.getPaymentUpdateTopic(), paymentRequest);
+        expenseProducer.push(tenantId, config.getPaymentUpdateTopic(), paymentRequest);
         return PaymentResponse.builder()
                 .payments(Arrays.asList(payment))
                 .responseInfo(
@@ -101,11 +96,15 @@ public class PaymentService {
     	
         log.info("PaymentService::search");
         List<Payment> payments = paymentRepository.search(paymentSearchRequest);
+        Integer count = paymentRepository.count(paymentSearchRequest);
+        Pagination pagination = paymentSearchRequest.getPagination();
+        pagination.setTotalCount(count);
         /*
          * TODO enrich bills if required, can be done from UI only when needed
          */
         return PaymentResponse.builder()
                 .payments(payments)
+                .pagination(pagination)
                 .responseInfo(
                         responseInfoFactory.createResponseInfoFromRequestInfo(paymentSearchRequest.getRequestInfo(), true))
                 .build();
@@ -116,10 +115,10 @@ public class PaymentService {
         log.info("PaymentService::backUpdateBillForPayment");
         RequestInfo requestInfo = paymentRequest.getRequestInfo();
         Payment payment = paymentRequest.getPayment();
+        String tenantId = payment.getTenantId();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, true);
         
-        Boolean isPaymentCancelled = payment.getStatus().equals(PaymentStatus.CANCELLED);
 
         Set<String> billIds = paymentRequest.getPayment().getBills()
                 .stream().map(PaymentBill::getBillId)
@@ -146,28 +145,34 @@ public class PaymentService {
 		for (PaymentBill paymentBill : payment.getBills()) {
 
 			Bill billFromSearch = billMap.get(paymentBill.getBillId());
-			billFromSearch.setTotalPaidAmount(
-					getResultantAmount(billFromSearch.getTotalPaidAmount(),paymentBill.getTotalPaidAmount(), isPaymentCancelled));
 			billFromSearch.setPaymentStatus(payment.getStatus());
 			billFromSearch.setAuditDetails(auditDetails);
-
-			for (PaymentBillDetail paymentBillDetail : paymentBill.getBillDetails()) {
+            // Define bill paid amount to ZERO, it will calculeted in bill details
+            BigDecimal billPaidAmount = BigDecimal.ZERO;
+            for (PaymentBillDetail paymentBillDetail : paymentBill.getBillDetails()) {
 
 				BillDetail billDetailFromSearch = billDetailMap.get(paymentBillDetail.getBillDetailId());
 				billDetailFromSearch.setPaymentStatus(paymentBillDetail.getStatus());
-				billDetailFromSearch.setTotalPaidAmount(
-						getResultantAmount(billDetailFromSearch.getTotalPaidAmount(), paymentBillDetail.getTotalPaidAmount(), isPaymentCancelled));
 				billDetailFromSearch.setAuditDetails(auditDetails);
-
-				for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
+                // Define bill details paid amount to ZERO, it will calculeted in lineitem
+                BigDecimal billDetailPaidAmount = BigDecimal.ZERO;
+                for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
 
 					LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getLineItemId());
 					lineItemFromSearch.setPaymentStatus(payableLineItem.getStatus());
-					lineItemFromSearch.setPaidAmount(
-							getResultantAmount(lineItemFromSearch.getPaidAmount(), payableLineItem.getPaidAmount(), isPaymentCancelled));
+                    /**
+                     * Set paid amount based on payment status, because don't have support of partial payment
+                     * todo: Remove this while implementing partial payment
+                     */
+                    lineItemFromSearch.setPaidAmount(getLineItemPaidAmountByStatus(lineItemFromSearch, payableLineItem.getStatus()));
+                    billDetailPaidAmount = billDetailPaidAmount.add(lineItemFromSearch.getPaidAmount());
 					lineItemFromSearch.setAuditDetails(auditDetails);
 				}
+                // Add lineitem paid amount to billdetails and
+                billDetailFromSearch.setTotalPaidAmount(billDetailPaidAmount);
+                billPaidAmount = billPaidAmount.add(billDetailPaidAmount);
 			}
+            billFromSearch.setTotalPaidAmount(billPaidAmount);
 		}
 		
         /*
@@ -179,18 +184,24 @@ public class PaymentService {
                     .bill(bill)
                     .requestInfo(requestInfo)
                     .build();
-            producer.push(config.getBillUpdateTopic(), billRequest);
+            expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
         }
     }
 
-	private BigDecimal getResultantAmount(BigDecimal billPaidAmount, BigDecimal paymentPaidAmount,
-			Boolean isPaymentCancelled) {
-		
-		if(isPaymentCancelled)
-			return billPaidAmount.subtract(paymentPaidAmount);
-		
-		return billPaidAmount.add(paymentPaidAmount);
-	}
+
+    /**
+     * For lineitem paid amount will be either ZERO or same as Payable amount
+     * @param lineItem
+     * @param paymentStatus
+     * @return
+     */
+    private BigDecimal getLineItemPaidAmountByStatus(LineItem lineItem, PaymentStatus paymentStatus) {
+        BigDecimal paidAmount = BigDecimal.ZERO;
+        if (lineItem != null && paymentStatus != null && (paymentStatus.equals(PaymentStatus.SUCCESSFUL)))
+                {paidAmount = lineItem.getAmount();
+        }
+        return paidAmount;
+    }
 
 
 }

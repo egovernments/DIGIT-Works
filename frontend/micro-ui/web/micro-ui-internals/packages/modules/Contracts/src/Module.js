@@ -6,14 +6,17 @@ import EmployeeApp from "./pages/employee";
 import SearchContractApplication from "./components/SearchContract";
 import ContractsCard from "./components/ContractsCard";
 import ContractDetails from "./components/ViewContract/ContractDetails";
+import CreateTimeExtension from "./components/TimeExtension/CreateTimeExtension";
 import TermsAndConditions from "./components/ViewContract/TermsAndConditions";
 import CreateWorkOrder from "./pages/employee/CreateWorkOrder";
 import WOTermsAndConditions from "./components/WOTermsAndConditions";
 import ViewEstimateDocs from "./components/ViewEstimateDocs";
 import CreateWOResponse from "./pages/employee/CreateWorkOrder/CreateWOResponse";
+import TimeExtensionResponse from "./components/TimeExtension/TimeExtensionResponse";
 
 
 const ContractsModule = ({ stateCode, userType, tenants }) => {
+    
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -37,11 +40,13 @@ const componentsToRegister = {
     SearchContractApplication,
     ContractCard:ContractsCard,
     ContractDetails,
+    CreateTimeExtension,
     TermsAndConditions,
     CreateWorkOrder,
     WOTermsAndConditions,
     ViewEstimateDocs,
-    CreateWOResponse
+    CreateWOResponse,
+    TimeExtensionResponse
 
 };
 

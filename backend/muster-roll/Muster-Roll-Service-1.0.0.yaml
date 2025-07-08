@@ -4,8 +4,14 @@ info:
   title: Muster Roll Service
   description: ''
 
+servers:
+  - url: /health-muster-roll
+    description: Base context path for the API
+  - url: http://localhost:8080/health-muster-roll
+    description: Base context path for the API
+
 paths:
-  /muster-roll/v1/_estimate:
+  /v1/_estimate:
     post:
       tags:
         - Muster Roll
@@ -22,7 +28,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/MusterRollResponse'
 
-  /muster-roll/v1/_create:
+  /v1/_create:
     post:
       tags:
         - Muster Roll
@@ -39,7 +45,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/MusterRollResponse'
 
-  /muster-roll/v1/_update:
+  /v1/_update:
     post:
       tags:
         - Muster Roll
@@ -56,7 +62,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/MusterRollResponse'
 
-  /muster-roll/v1/_search:
+  /v1/_search:
     post:
       tags:
         - Muster Roll
@@ -66,7 +72,7 @@ paths:
             schema:
               $ref: '#/components/schemas/RequestInfoWrapper'
       parameters:
-        - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/parameters/tenantId'
+        - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/parameters/tenantId'
         - name: ids
           description: Ids of the muster roll
           in: query
@@ -109,11 +115,35 @@ paths:
           in: query
           schema:
             type: string
+        - name: referenceIds
+          description: Ids of the entity to which register is associated. Example ContractId
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
         - name: serviceCode
           description: Service to which register is associated.
           in: query
           schema:
             type: string
+      responses:
+        '200':
+          description: 'Search results'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MusterRollResponse'
+
+  /v2/_search:
+    post:
+      tags:
+        - Muster Roll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MusterRollSearchRequest'
       responses:
         '200':
           description: 'Search results'
@@ -196,11 +226,12 @@ components:
           description: Reference of the attendee from the Individual Registry.
         actualTotalAttendance:
           type: number
+          minimum: 0
           readOnly: true
           description: It is the computed sum of attendance in the given time period of the muster roll. This will be stored in the muster roll service's db. It will be computed only when the muster is created. So the computation will happen with CREATE actions only.
         modifiedTotalAttendance:
           type: number
-          readOnly: true
+          minimum: 0
           description: It is the modified sum of attendance in the given time period of the muster roll. This will be stored in the muster roll service's db. It will be stored when the totalAttendance is edited. So the updation will happen with EDIT actions only.
         attendanceEntries:
           type: array
@@ -232,23 +263,11 @@ components:
           type: object
           description: This is an updatable field from the user's input.
 
-    AttendanceLog:
-      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceLog'
-
-    AttendanceLogResponse:
-      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceLogResponse'
-
-    AttendanceRegister:
-      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceRegister'
-
-    AttendanceRegisterResponse:
-      $ref: 'https://github.com/egovernments/DIGIT-Works/blob/develop/backend/attendance-service/Attendance-Service-1.0.0.yaml#/components/schemas/AttendanceRegisterResponse'
-
     MusterRollRequest:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         musterRoll:
           $ref: '#/components/schemas/MusterRoll'
         workflow:
@@ -272,7 +291,7 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         musterRolls:
           type: array
           items:
@@ -282,4 +301,91 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/RequestInfo'
+
+    MusterRollSearchCriteria:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          description: Ids of the muster roll
+        tenantId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Tenant ID (must be between 2 and 64 characters)
+        musterRollNumber:
+          type: string
+          description: (Custom-formatted) Muster roll number
+        registerId:
+          type: string
+          description: Register ID
+        registerIds:
+          type: array
+          items:
+            type: string
+          description: List of Register IDs
+        fromDate:
+          type: number
+          format: double
+          description: Start date (timestamp in milliseconds)
+        toDate:
+          type: number
+          format: double
+          description: End date (timestamp in milliseconds)
+        status:
+          $ref: '#/components/schemas/Status'
+        musterRollStatus:
+          type: string
+          description: Status of the muster roll (string representation)
+          example: APPROVAL_PENDING
+        referenceId:
+          type: string
+          description: Project ID where the register is created
+          default: null
+        serviceCode:
+          type: string
+          description: Service code
+          default: null
+        limit:
+          type: integer
+          description: Maximum number of results to return
+        offset:
+          type: integer
+          description: Offset for pagination
+        sortBy:
+          type: string
+          description: Field to sort by
+        order:
+          $ref: '#/components/schemas/PaginationOrderEnum'
+      required:
+        - tenantId
+
+    MusterRollSearchRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestInfoWrapper'
+        - type: object
+          properties:
+            musterRoll:
+              $ref: '#/components/schemas/MusterRollSearchCriteria'
+          required:
+            - musterRoll
+
+    Status:
+      type: string
+      enum:
+        - ACTIVE
+        - INWORKFLOW
+        - INACTIVE
+        - CANCELLED
+      description: state of the muster roll
+      example: ACTIVE
+
+    PaginationOrderEnum:
+      type: string
+      description: Order of sorting
+      enum:
+        - ASC
+        - DESC

@@ -17,15 +17,18 @@ import java.util.List;
 @Slf4j
 public class BankAccountRepository {
 
+    private final JdbcTemplate jdbcTemplate;
+
+    private final BankAccountQueryBuilder queryBuilder;
+
+    private final BankAccountRowMapper rowMapper;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private BankAccountQueryBuilder queryBuilder;
-
-    @Autowired
-    private BankAccountRowMapper rowMapper;
+    public BankAccountRepository(JdbcTemplate jdbcTemplate, BankAccountQueryBuilder queryBuilder, BankAccountRowMapper rowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.queryBuilder = queryBuilder;
+        this.rowMapper = rowMapper;
+    }
 
     /**
      * @param searchRequest

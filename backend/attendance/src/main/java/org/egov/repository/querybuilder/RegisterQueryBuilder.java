@@ -1,12 +1,14 @@
 package org.egov.repository.querybuilder;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.exception.InvalidTenantIdException;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
-import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.Status;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -15,11 +17,16 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
+import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
+
+@RequiredArgsConstructor
 @Component
+@Slf4j
 public class RegisterQueryBuilder {
 
-    @Autowired
-    private AttendanceServiceConfiguration config;
+    private final MultiStateInstanceUtil multiStateInstanceUtil;
+
+    private final AttendanceServiceConfiguration config;
 
     private static final String ATTENDANCE_REGISTER_SELECT_QUERY = " SELECT reg.id, " +
             "reg.tenantid, " +
@@ -34,9 +41,16 @@ public class RegisterQueryBuilder {
             "reg.createdtime, " +
             "reg.lastmodifiedtime, " +
             "reg.referenceid, " +
-            "reg.servicecode " +
-            "FROM eg_wms_attendance_register reg ";
+            "reg.servicecode, " +
+            "reg.localitycode, " +
+            "reg.reviewstatus " +
+            "FROM %s.eg_wms_attendance_register reg ";
 
+    private static final String JOIN_STAFF = " JOIN %s.eg_wms_attendance_staff staff ";
+    private static final String JOIN_STAFF_CONDITION = " ON reg.id = staff.register_id ";
+
+    private static final String JOIN_ATTENDEE = " JOIN %s.eg_wms_attendance_attendee attendee ";
+    private static final String JOIN_ATTENDEE_CONDITION = " ON reg.id = attendee.register_id ";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY lastmodifiedtime DESC , id) offset_ FROM " +
@@ -45,9 +59,20 @@ public class RegisterQueryBuilder {
             "WHERE offset_ > ? AND offset_ <= ?";
 
 
-    public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
+    public String getAttendanceRegisterSearchQuery( AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList, boolean excludeReviewStatus) throws InvalidTenantIdException {
 
-        StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
+        String tenantId = searchCriteria.getTenantId();
+        log.info("Search criteria of attendance search : " + searchCriteria.toString());
+        StringBuilder query = new StringBuilder(String.format(ATTENDANCE_REGISTER_SELECT_QUERY, SCHEMA_REPLACE_STRING));
+        if(!ObjectUtils.isEmpty(searchCriteria.getStaffId())) {
+            query.append(String.format(JOIN_STAFF, SCHEMA_REPLACE_STRING));
+            query.append(JOIN_STAFF_CONDITION);
+        }
+
+        if(!ObjectUtils.isEmpty(searchCriteria.getAttendeeId())) {
+            query.append(String.format(JOIN_ATTENDEE, SCHEMA_REPLACE_STRING));
+            query.append(JOIN_ATTENDEE_CONDITION);
+        }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
@@ -68,12 +93,18 @@ public class RegisterQueryBuilder {
             query.append(" reg.registernumber = ? ");
             preparedStmtList.add(registerNumber);
         }
-
-        if (!ObjectUtils.isEmpty(searchCriteria.getReferenceId())) {
-            String referenceId = searchCriteria.getReferenceId();
+        String referenceId = searchCriteria.getReferenceId();
+        if (referenceId!=null && !referenceId.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.referenceid = ? ");
             preparedStmtList.add(referenceId);
+        }
+
+        List<String> referenceIds = searchCriteria.getReferenceIds();
+        if (referenceIds != null && !referenceIds.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.referenceid IN (").append(createQuery(referenceIds)).append(")");
+            preparedStmtList.addAll(referenceIds);
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getServiceCode())) {
@@ -116,13 +147,42 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(status.toString());
         }
 
+        if(!ObjectUtils.isEmpty(searchCriteria.getStaffId())) {
+            String staffId = searchCriteria.getStaffId();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" staff.individual_id = ? ");
+            preparedStmtList.add(staffId);
+        }
+
+        if(!ObjectUtils.isEmpty(searchCriteria.getAttendeeId())) {
+            String attendeeId = searchCriteria.getAttendeeId();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" attendee.individual_id = ? ");
+            preparedStmtList.add(attendeeId);
+        }
+
+        if(!ObjectUtils.isEmpty(searchCriteria.getLocalityCode())) {
+            String localityCode = searchCriteria.getLocalityCode();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.localitycode = ? ");
+            preparedStmtList.add(localityCode);
+        }
+
+        if (!ObjectUtils.isEmpty(searchCriteria.getReviewStatus()) && !excludeReviewStatus) {
+            String reviewStatus = searchCriteria.getReviewStatus();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.reviewstatus = ? ");
+            preparedStmtList.add(reviewStatus);
+        }
+
+
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);
-        return addPaginationWrapper(query.toString(), preparedStmtList, searchCriteria);
+        return  multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
 
-    private String addPaginationWrapper(String query,List<Object> preparedStmtList,
-                                        AttendanceRegisterSearchCriteria criteria){
+    public String addPaginationWrapper(String query, List<Object> preparedStmtList,
+                                       AttendanceRegisterSearchCriteria criteria){
         int limit = config.getAttendanceRegisterDefaultLimit();
         int offset = config.getAttendanceRegisterDefaultOffset();
 

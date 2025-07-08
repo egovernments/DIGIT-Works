@@ -1,0 +1,33 @@
+@startuml
+title Organisation Search Sequence Diagram
+actor user as "User" order 0 #ddff41
+participant Organisation  order 1 #4Ff2AF
+participant Individual order 5 #4Ff2AF
+participant Encryption as "Encryption Service" order 6 #4Ff2AF
+database DB as "PostgreSQL" order 10 #4Ff2AF
+
+user -> Organisation: Call /organisation/v1/_search API
+activate user #Fafd30
+activate Organisation #00ad00
+
+Organisation -> Organisation: Validate Request
+note right: Validate Date filter search criteria
+alt if: Request is not valid
+    user <-[#ff0000]- Organisation: [400]: Error response\n with invalid field values
+end
+
+Organisation -> Organisation: Create SQL query \nbased on search criteria
+Organisation -> DB: Fetch data according to criteria
+DB -> Organisation: Fetched data
+
+Organisation -> Organisation: Process DB Response \nand construct Organisation object
+
+Organisation -> Encryption: call _decrypt api\nsend Organisation details
+activate Encryption #F1aF0F
+Organisation <-- Encryption: Return respnse
+deactivate Encryption
+note right: It will return <b>decrypted/maked/encrypted</b> \nOrganisation details based on role user have \n& Security configuration
+
+
+Organisation --> user: [200]: Organisation details
+@enduml

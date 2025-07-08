@@ -3,7 +3,7 @@ import { Switch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, AppContainer, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import WorkflowCompTest from "./WorkflowCompTest";
-
+import SampleComp from "./SampleComp";
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const search = useLocation().search;
@@ -27,7 +27,7 @@ const ProjectBreadCrumb = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
-      path: `/${window.contextPath}/employee/project/project-details`,
+      // path: `/${window.contextPath}/employee/project/project-details`,
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT_DETAILS")}` : t("WORKS_PROJECT_DETAILS"),
       show: location.pathname.includes("/project/project-details") ? true : false,
       isBack: fromScreen && true,
@@ -45,7 +45,7 @@ const ProjectBreadCrumb = ({ location }) => {
 const App = ({ path }) => {
   const CreateProjectComponent = Digit?.ComponentRegistryService?.getComponent("CreateProject");
   const ProjectDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ProjectDetails");
-  const ProjectSearchComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearch");
+  const ProjectSearchComponent = Digit?.ComponentRegistryService?.getComponent("ProjectWMSSearch");
   const ProjectSearchAndInboxComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearchAndInbox");
   const CreateProjectResponseComponent = Digit?.ComponentRegistryService?.getComponent("CreateProjectResponse");
   const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
@@ -81,6 +81,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/inbox`} component={() => <ProjectSearchAndInboxComponent parentRoute={path}/>} />
         <PrivateRoute path={`${path}/create-project-response`} component={() => <CreateProjectResponseComponent parentRoute={path}/>} />
         <PrivateRoute path={`${path}/workflow`} component={() => <WorkflowCompTest parentRoute={path} />} />
+        <PrivateRoute path={`${path}/sample`} component={() => <SampleComp parentRoute={path} />} />
       </AppContainer>
     </Switch>
   );

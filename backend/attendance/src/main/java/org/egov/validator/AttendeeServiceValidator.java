@@ -4,13 +4,19 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.project.ProjectStaff;
+import org.egov.common.models.project.ProjectStaffSearch;
+import org.egov.config.AttendanceServiceConfiguration;
+import org.egov.repository.RegisterRepository;
+import org.egov.service.StaffService;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.HRMSUtil;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.util.MDMSUtils;
-import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.AttendeeCreateRequest;
-import org.egov.web.models.AttendeeDeleteRequest;
-import org.egov.web.models.IndividualEntry;
+import org.egov.util.ProjectStaffUtil;
+import org.egov.web.models.*;
+import org.egov.web.models.Hrms.Assignment;
+import org.egov.web.models.Hrms.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -19,18 +25,99 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
-import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
+import static org.egov.util.AttendanceServiceConstants.*;
 
 @Component
 @Slf4j
 public class AttendeeServiceValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+    private final MDMSUtils mdmsUtils;
+
+    private final IndividualServiceUtil individualServiceUtil;
+
+    private final HRMSUtil hrmsUtil;
+    private final StaffService staffService;
+
+    private final AttendanceServiceConfiguration config;
+
 
     @Autowired
-    private IndividualServiceUtil individualServiceUtil;
+    public AttendeeServiceValidator(MDMSUtils mdmsUtils, IndividualServiceUtil individualServiceUtil, HRMSUtil hrmsUtil, StaffService staffService, AttendanceServiceConfiguration config) {
+        this.mdmsUtils = mdmsUtils;
+        this.individualServiceUtil = individualServiceUtil;
+        this.hrmsUtil = hrmsUtil;
+        this.staffService = staffService;
+        this.config = config;
+    }
+
+    /**
+     * Validates the parameters of the AttendeeUpdateTagRequest object.
+     *
+     * @param attendeeUpdateTagRequest The request object containing the list of attendees to be updated.
+     */
+    public void validateAttendeeUpdateTagRequestParameters(AttendeeUpdateTagRequest attendeeUpdateTagRequest) {
+        List<IndividualEntry> attendeeList = attendeeUpdateTagRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
+
+        if (attendeeList == null || attendeeList.isEmpty()) {
+            log.error(ERROR_MSG_EMPTY_ATTENDEE_LIST);
+            throw new CustomException(ERROR_KEY_ATTENDEE, ERROR_MSG_EMPTY_ATTENDEE_LIST);
+        }
+
+        String tenantId = attendeeList.get(0).getTenantId();
+        for (IndividualEntry attendee : attendeeList) {
+            if (StringUtils.isBlank(attendee.getId())) {
+                log.error(ERROR_MSG_ID_MANDATORY);
+                errorMap.put(ERROR_KEY_ID, ERROR_MSG_ID_MANDATORY);
+            }
+
+            if (StringUtils.isBlank(attendee.getTenantId())) {
+                log.error(ERROR_MSG_TENANT_ID_MANDATORY);
+                errorMap.put(ERROR_KEY_TENANT_ID, ERROR_MSG_TENANT_ID_MANDATORY);
+            }
+
+            if (StringUtils.isBlank(attendee.getTag())) {
+                log.error(ERROR_MSG_TAG_MANDATORY);
+                errorMap.put(ERROR_KEY_TAG, ERROR_MSG_TAG_MANDATORY);
+            }
+        }
+
+        if (!errorMap.isEmpty()) {
+            log.error("Attendee request validation failed");
+            throw new CustomException(errorMap);
+        }
+
+        validateTenantIds(attendeeUpdateTagRequest, tenantId);
+        log.info("validating tenant id from MDMS and Request info");
+        validateMDMSAndRequestInfoForUpdateTagAttendee(attendeeUpdateTagRequest);
+    }
+
+    /**
+     * Validates that all requested attendees exist in the database records.
+     *
+     * @param attendees   The list of attendees requested for validation.
+     * @param dbRecords   The list of attendees fetched from the database.
+     * @throws CustomException if any requested attendee is not found in the database records.
+     */
+    public void validateAllAttendeesExist(List<IndividualEntry> attendees, List<IndividualEntry> dbRecords) {
+        Set<String> requestedIds = attendees.stream()
+                .map(IndividualEntry::getId)
+                .collect(Collectors.toSet());
+
+        Set<String> foundIds = dbRecords.stream()
+                .map(IndividualEntry::getId)
+                .collect(Collectors.toSet());
+
+        Set<String> missingIds = new HashSet<>(requestedIds);
+        missingIds.removeAll(foundIds);
+
+        if (!missingIds.isEmpty()) {
+            throw new CustomException(
+                    ERROR_KEY_MISSING_ATTENDEES,
+                    ERROR_MSG_ATTENDEES_NOT_FOUND + String.join(", ", missingIds));
+        }
+    }
+
 
     public void validateAttendeeCreateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
@@ -101,6 +188,24 @@ public class AttendeeServiceValidator {
         }
 
     }
+
+    /**
+     * Validates the tenant IDs in the AttendeeUpdateTagRequest object.
+     *
+     * @param attendeeUpdateTagRequest The request object containing the list of attendees to be updated.
+     * @param tenantId                 The tenant ID to validate against.
+     */
+    public void validateTenantIds(AttendeeUpdateTagRequest attendeeUpdateTagRequest, String tenantId) {
+        List<IndividualEntry> attendeeList = attendeeUpdateTagRequest.getAttendees();
+
+        for (IndividualEntry attendee : attendeeList) {
+            if (!attendee.getTenantId().equals(tenantId)) {
+                log.error(ERROR_MSG_INCONSISTENT_TENANT_ID);
+                throw new CustomException(ERROR_KEY_TENANT_ID, ERROR_MSG_INCONSISTENT_TENANT_ID);
+            }
+        }
+    }
+
 
     public void validateDuplicateAttendeeObjects(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
@@ -213,10 +318,8 @@ public class AttendeeServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
 
         String tenantId = attendeeListFromRequest.get(0).getTenantId();
-        //split the tenantId
-        String rootTenantId = tenantId.split("\\.")[0];
 
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
 
         //check tenant Id
         log.info("validate tenantId with MDMS");
@@ -238,10 +341,8 @@ public class AttendeeServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
 
         String tenantId = attendeeListFromRequest.get(0).getTenantId();
-        //split the tenantId
-        String rootTenantId = tenantId.split("\\.")[0];
 
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
 
         //check tenant Id
         log.info("validate tenantId with MDMS");
@@ -256,6 +357,28 @@ public class AttendeeServiceValidator {
             throw new CustomException(errorMap);
     }
 
+
+    /**
+     * Validates the MDMS data and request info for updating attendee tags.
+     *
+     * @param attendeeUpdateTagRequest The request object containing the list of attendees to be updated.
+     */
+    public void validateMDMSAndRequestInfoForUpdateTagAttendee(AttendeeUpdateTagRequest attendeeUpdateTagRequest) {
+
+        RequestInfo requestInfo = attendeeUpdateTagRequest.getRequestInfo();
+        List<IndividualEntry> attendeeListFromRequest = attendeeUpdateTagRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
+        String tenantId = attendeeListFromRequest.get(0).getTenantId();
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
+        //check tenant Id
+        log.info("validate tenantId with MDMS");
+        validateMDMSData(tenantId, mdmsData, errorMap);
+        //validate request-info
+        log.info("validate request info coming from api request");
+        validateRequestInfo(requestInfo, errorMap);
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
 
     public void validateAttendeeOnCreate(AttendeeCreateRequest attendeeCreateRequest
             , List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
@@ -373,6 +496,85 @@ public class AttendeeServiceValidator {
 
         if (CollectionUtils.isEmpty(tenantRes))
             errorMap.put("INVALID_TENANT", "The tenant: " + tenantId + " is not present in MDMS");
+    }
+
+    /**
+     * Function that validates whether attendees are project staff and whether attendees have the correct reporting staff
+     *
+     * @param attendeeCreateRequest
+     * @return
+     */
+
+    public void validateAttendeeDetails(AttendeeCreateRequest attendeeCreateRequest) {
+        String tenantId = attendeeCreateRequest.getAttendees().get(0).getTenantId();
+        RequestInfo requestInfo = attendeeCreateRequest.getRequestInfo();
+        List<IndividualEntry> validIndividualEntries = new ArrayList<>();
+
+        //extracting all registerIDs coming in the request
+        List<String> registerIds = attendeeCreateRequest.getAttendees().stream()
+                .map(IndividualEntry::getRegisterId)
+                .collect(Collectors.toList());
+
+        //creating a register Id to First Staff Map
+        Map<String, StaffPermission> registerIdToFirstStaffMap;
+        if(config.isRegisterFirstOwnerStaffEnabled()) {
+            log.info("Using first owner staff mapping strategy");
+            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstOwnerStaffMap(tenantId,registerIds);
+        }
+        else {
+            log.info("Using first staff mapping strategy");
+            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId,registerIds);
+        }
+
+        if(registerIdToFirstStaffMap.isEmpty()) {
+            log.error("No staff mapping found for registers: {}", registerIds);
+            throw new CustomException("STAFF_MAPPING_NOT_FOUND", "No staff mapping found for the registers");
+        }
+
+        //Fetching all the attendees's uuids for hrms search
+        List<String> userUuids = attendeeCreateRequest.getAttendees().stream()
+                .map(IndividualEntry::getIndividualId)
+                .collect(Collectors.toList());
+
+        //getting the employee List from HRMS Search based on the attendee's uuids
+        List<Employee> employeeList = hrmsUtil.getEmployee(tenantId, userUuids, requestInfo);
+
+        Map<String, Employee> individualIdVsEmployeeMap = employeeList.stream()
+                .collect(Collectors.toMap(Employee::getUuid, emp -> emp));
+
+        //looping through attendees for validating their details
+        for (IndividualEntry entry : attendeeCreateRequest.getAttendees()) {
+            try {
+
+                if (!individualIdVsEmployeeMap.containsKey(entry.getIndividualId())) {
+                    throw new CustomException("HRMS_EMPLOYEE_NOT_FOUND", "Employee not present in HRMS for the individual ID - " + entry.getIndividualId());
+                }
+
+                //fetch reportingTo uuids from employees assignments
+                List<String> reportingToList = individualIdVsEmployeeMap.get(entry.getIndividualId()).getAssignments().stream()
+                        .map(Assignment::getReportingTo)
+                        .filter(reportingTo -> reportingTo != null && !reportingTo.isEmpty())
+                        .collect(Collectors.toList());
+
+                //fetch the first staff's User Id
+                String reportersUuid = registerIdToFirstStaffMap.get(entry.getRegisterId()).getUserId();
+
+                List<Employee> reportersEmployeeList = hrmsUtil.getEmployee(tenantId, Collections.singletonList(reportersUuid), requestInfo);
+                if(reportersEmployeeList.isEmpty())
+                    throw new CustomException("FAILED_TO_FETCH_REPORTERS_UUID", "Failed to fetch reporters hrms uuid for userserviceId - " + reportersUuid);
+
+                if (!reportingToList.contains(reportersEmployeeList.get(0).getUser().getUserServiceUuid())) {
+                    //throw validation error if attendee's reportingTo is not First Staff of the Register
+                    throw new CustomException("REPORTING_STAFF_INCORRECT_FOR_ATTENDEE", "Attendees reporting uuid does not match with for attendee uuid - " + entry.getIndividualId());
+                }
+                validIndividualEntries.add(entry);
+            }
+            catch (Exception e)
+            {
+                log.error(e.toString());
+            }
+        }
+        attendeeCreateRequest.setAttendees(validIndividualEntries);
     }
 }
 

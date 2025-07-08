@@ -1,0 +1,1 @@
+ALTER TABLE eg_org_contact_detail ADD COLUMN individual_id character varying(256);

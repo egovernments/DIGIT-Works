@@ -2,6 +2,7 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -12,7 +13,6 @@ import java.util.UUID;
  * IndividualEntry
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T14:44:21.051+05:30")
 
 @Getter
 @Setter
@@ -44,6 +44,10 @@ public class IndividualEntry {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
+    // This field is used to group individuals into teams.
+    @Size(max=64)
+    @JsonProperty("tag")
+    private String tag = null;
 
 }
 

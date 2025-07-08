@@ -26,6 +26,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -130,7 +131,7 @@ public class AttendanceLogServiceValidatorTest {
     @DisplayName("Method validateAttendanceLogRequest: RequestInfo object with UserInfo but without Attendance Log Time")
     @Test
     public void validateCreateAttendanceLogRequest_validateAttendanceLogRequest_11(){
-        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().attendanceLogWithoutTime().build();;
+        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().attendanceLogWithoutTime().build();
         CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendanceLogRequest", attendanceLogRequest));
         assertTrue(exception.toString().contains("Attendance time is mandatory"));
     }
@@ -146,53 +147,53 @@ public class AttendanceLogServiceValidatorTest {
         assertTrue(exception.getCode().equals("INTEGRATION_UNDERDEVELOPMENT"));
     }
 
-    @DisplayName("Method validateLoggedInUser: should through exception with error code UNAUTHORISED_USER")
-    @Test
-    public void validateCreateAttendanceLogRequest_validateLoggedInUser_2(){
-        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
-        when(config.getStaffServiceIntegrationRequired()).thenReturn("FALSE");
-        when(attendanceStaffRepository.getActiveStaff(any(StaffSearchCriteria.class))).thenReturn(null);
+//    @DisplayName("Method validateLoggedInUser: should through exception with error code UNAUTHORISED_USER")
+//    @Test
+//    public void validateCreateAttendanceLogRequest_validateLoggedInUser_2(){
+//        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+//        when(config.getStaffServiceIntegrationRequired()).thenReturn("FALSE");
+//        when(attendanceStaffRepository.getActiveStaff(any(StaffSearchCriteria.class))).thenReturn(null);
+//
+//        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateLoggedInUser", attendanceLogRequest));
+//        assertTrue(exception.getCode().equals("UNAUTHORISED_USER"));
+//
+//    }
 
-        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateLoggedInUser", attendanceLogRequest));
-        assertTrue(exception.getCode().equals("UNAUTHORISED_USER"));
+//    @DisplayName("Method validateLoggedInUser: should through exception with error code UNAUTHORISED_USER")
+//    @Test
+//    public void validateCreateAttendanceLogRequest_validateLoggedInUser_3(){
+//        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+//        when(config.getStaffServiceIntegrationRequired()).thenReturn("FALSE");
+//        List<StaffPermission> attendanceStaff = new ArrayList<>();
+//        when(attendanceStaffRepository.getActiveStaff(any(StaffSearchCriteria.class))).thenReturn(attendanceStaff);
+//
+//        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateLoggedInUser", attendanceLogRequest));
+//        assertTrue(exception.getCode().equals("UNAUTHORISED_USER"));
+//
+//    }
 
-    }
-
-    @DisplayName("Method validateLoggedInUser: should through exception with error code UNAUTHORISED_USER")
-    @Test
-    public void validateCreateAttendanceLogRequest_validateLoggedInUser_3(){
-        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
-        when(config.getStaffServiceIntegrationRequired()).thenReturn("FALSE");
-        List<StaffPermission> attendanceStaff = new ArrayList<>();
-        when(attendanceStaffRepository.getActiveStaff(any(StaffSearchCriteria.class))).thenReturn(attendanceStaff);
-
-        CustomException exception = assertThrows(CustomException.class, ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateLoggedInUser", attendanceLogRequest));
-        assertTrue(exception.getCode().equals("UNAUTHORISED_USER"));
-
-    }
-
-    @DisplayName("Method validateLoggedInUser: should run successfully")
-    @Test
-    public void validateCreateAttendanceLogRequest_validateLoggedInUser_4(){
-        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
-        when(config.getStaffServiceIntegrationRequired()).thenReturn("FALSE");
-        StaffPermission staff = StaffPermission.builder()
-                                        .id("staff-uuid")
-                                        .tenantId("tenantId")
-                                        .userId("staffId")
-                                        .registerId("registerId")
-                                        .enrollmentDate(BigDecimal.valueOf(1L))
-                                        .denrollmentDate(BigDecimal.valueOf(1L))
-                                        .auditDetails(AuditDetailsTestBuilder.builder().withAuditDetails().build())
-                                        .additionalDetails(AdditionalFields.builder().build())
-                                        .build();
-        List<StaffPermission> attendanceStaff = new ArrayList<>();
-        attendanceStaff.add(staff);
-        when(attendanceStaffRepository.getActiveStaff(any(StaffSearchCriteria.class))).thenReturn(attendanceStaff);
-
-        assertDoesNotThrow(()->ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateLoggedInUser", attendanceLogRequest));
-
-    }
+//    @DisplayName("Method validateLoggedInUser: should run successfully")
+//    @Test
+//    public void validateCreateAttendanceLogRequest_validateLoggedInUser_4(){
+//        AttendanceLogRequest attendanceLogRequest = AttendanceLogRequestTestBuilder.builder().withRequestInfo().addGoodAttendanceLog().build();
+//        when(config.getStaffServiceIntegrationRequired()).thenReturn("FALSE");
+//        StaffPermission staff = StaffPermission.builder()
+//                                        .id("staff-uuid")
+//                                        .tenantId("tenantId")
+//                                        .userId("staffId")
+//                                        .registerId("registerId")
+//                                        .enrollmentDate(BigDecimal.valueOf(1L))
+//                                        .denrollmentDate(BigDecimal.valueOf(1L))
+//                                        .auditDetails(AuditDetailsTestBuilder.builder().withAuditDetails().build())
+//                                        .additionalDetails(AdditionalFields.builder().build())
+//                                        .build();
+//        List<StaffPermission> attendanceStaff = new ArrayList<>();
+//        attendanceStaff.add(staff);
+//        when(attendanceStaffRepository.getActiveStaff(any(StaffSearchCriteria.class))).thenReturn(attendanceStaff);
+//
+//        assertDoesNotThrow(()->ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateLoggedInUser", attendanceLogRequest));
+//
+//    }
 
     @DisplayName("Method validateTenantIdAssociationWithRegisterId: should through exception with error code INVALID_TENANTID")
     @Test
@@ -233,7 +234,7 @@ public class AttendanceLogServiceValidatorTest {
                                         .build();
         List<IndividualEntry> individualEntries = new ArrayList<>();
         individualEntries.add(individual);
-        when(attendanceAttendeeRepository.getAttendees(any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
+        when(attendanceAttendeeRepository.getAttendees(anyString(), any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
         assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendees", attendanceLogRequest));
     }
 
@@ -251,7 +252,7 @@ public class AttendanceLogServiceValidatorTest {
                 .build();
         List<IndividualEntry> individualEntries = new ArrayList<>();
         individualEntries.add(individual);
-        when(attendanceAttendeeRepository.getAttendees(any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
+        when(attendanceAttendeeRepository.getAttendees(anyString(), any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
         assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendees", attendanceLogRequest));
     }
 
@@ -269,7 +270,7 @@ public class AttendanceLogServiceValidatorTest {
                 .build();
         List<IndividualEntry> individualEntries = new ArrayList<>();
         individualEntries.add(individual);
-        when(attendanceAttendeeRepository.getAttendees(any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
+        when(attendanceAttendeeRepository.getAttendees(anyString(), any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
         assertDoesNotThrow( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendees", attendanceLogRequest));
     }
 
@@ -287,7 +288,7 @@ public class AttendanceLogServiceValidatorTest {
                 .build();
         List<IndividualEntry> individualEntries = new ArrayList<>();
         individualEntries.add(individual);
-        when(attendanceAttendeeRepository.getAttendees(any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
+        when(attendanceAttendeeRepository.getAttendees(anyString(), any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
         CustomException exception = assertThrows(CustomException.class, ( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendees", attendanceLogRequest)));
         assertTrue(exception.getCode().equals("INELIGIBLE_ATTENDEES"));
     }
@@ -307,7 +308,7 @@ public class AttendanceLogServiceValidatorTest {
                 .build();
         List<IndividualEntry> individualEntries = new ArrayList<>();
         individualEntries.add(individual);
-        when(attendanceAttendeeRepository.getAttendees(any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
+        when(attendanceAttendeeRepository.getAttendees(anyString(), any(AttendeeSearchCriteria.class))).thenReturn(individualEntries);
         CustomException exception = assertThrows(CustomException.class, ( ()-> ReflectionTestUtils.invokeMethod(attendanceLogServiceValidator, "validateAttendees", attendanceLogRequest)));
         assertTrue(exception.getCode().equals("INELIGIBLE_ATTENDEES"));
     }

@@ -21,7 +21,7 @@ export const handleModifyWOFiles = (uploadedDocs, docConfigData) => {
     let currentDoc = uploadedDocs?.filter((doc)=>doc?.documentType === fileKeyMapping?.value)[0];
 
     if(currentDoc?.fileStore) {
-      if(fileKeyMapping?.value === "Others") {
+      if(fileKeyMapping?.value === "OTHERS") {
         documentObject["doc_others_name"] = currentDoc?.additionalDetails?.otherCategoryName;
       }
       documentObject[fileKeyMapping?.key] = [

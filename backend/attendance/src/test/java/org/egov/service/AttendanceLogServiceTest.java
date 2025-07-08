@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendanceLogEnrichment;
 import org.egov.helper.AttendanceLogRequestTestBuilder;
-import org.egov.kafka.Producer;
+import org.egov.common.producer.Producer;
 import org.egov.repository.AttendanceLogRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.ResponseInfoFactory;
@@ -60,7 +60,7 @@ public class AttendanceLogServiceTest {
 
         verify(attendanceLogEnricher, times(1)).enrichAttendanceLogCreateRequest(attendanceLogRequest);
 
-        verify(producer, times(1)).push(eq("save-attendance-log"), any(AttendanceLogRequest.class));
+        verify(producer, times(1)).push(anyString(), eq("save-attendance-log"), any(AttendanceLogRequest.class));
 
         assertNotNull(attendanceLogRequest.getAttendance());
     }

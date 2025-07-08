@@ -119,18 +119,28 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
                     spacing: 3.0,
                     runSpacing: 3.0,
                     children: widget.selectedOptions
-                        .map((option) => Chip(
-                              label: Text(AppLocalizations.of(context)
-                                  .translate('COMMON_MASTERS_SKILLS_$option')),
-                              padding: const EdgeInsets.all(2.0),
-                              deleteIcon: const Icon(Icons.cancel),
-                              onDeleted: () {
-                                setChip(() {
-                                  widget.selectedOptions.remove(option);
-                                });
-                                widget.onChange?.call(widget.selectedOptions);
-                              },
-                              deleteButtonTooltipMessage: '',
+                        .map((option) => Tooltip(
+                              message: AppLocalizations.of(context)
+                                  .translate('COMMON_MASTERS_SKILLS_$option'),
+                              preferBelow: false,
+                              child: Chip(
+                                backgroundColor: const DigitColors().quillGray,
+                                label: Text(
+                                  AppLocalizations.of(context).translate(
+                                      'COMMON_MASTERS_SKILLS_$option'),
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: true,
+                                ),
+                                padding: const EdgeInsets.all(2.0),
+                                deleteIcon: const Icon(Icons.cancel),
+                                onDeleted: () {
+                                  setChip(() {
+                                    widget.selectedOptions.remove(option);
+                                  });
+                                  widget.onChange?.call(widget.selectedOptions);
+                                },
+                                deleteButtonTooltipMessage: '',
+                              ),
                             ))
                         .toList()),
               );

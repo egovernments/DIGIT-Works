@@ -11,10 +11,12 @@ import { Loader } from '../atoms/Loader';
 import NoResultsFound from '../atoms/NoResultsFound';
 import { InfoIcon } from "../atoms/svgindex";
 
-const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate }) => {
+const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate,type,activeLink }) => {
+    
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
+    const [showResultsTable,setShowResultsTable] = useState(true)
     
     // let searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
     let searchResult = _.get(data,resultsKey,[])
@@ -41,6 +43,21 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
 
     const {state,dispatch} = useContext(InboxContext)
     
+    //here I am just checking state.searchForm has all empty keys or not(when clicked on clear search)
+    useEffect(() => {
+        if(apiDetails?.minParametersForSearchForm !== 0 && Object.keys(state.searchForm).length > 0 && !Object.keys(state.searchForm).some(key => state.searchForm[key]!=="") && type==="search" && activeLink?.minParametersForSearchForm !== 0){
+            setShowResultsTable(false)
+        }
+        // else{
+        //     setShowResultsTable(true)
+        // }
+        return ()=>{
+            setShowResultsTable(true)
+        }
+    }, [state])
+   
+    
+
     const tableColumns = useMemo(() => {
         //test if accessor can take jsonPath value only and then check sort and global search work properly
         return config?.columns?.map(column => {
@@ -148,6 +165,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     
     if (isLoading || isFetching ) return <Loader />
     if(!data) return <></>
+    if(!showResultsTable) return <></>
     if (searchResult?.length === 0) return <NoResultsFound/>
     return (
         <div style={{width : "100%"}}>
@@ -163,13 +181,13 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
             {searchResult?.length > 0 && <Table
                 className={config?.tableClassName ? config?.tableClassName: "table"}
                 t={t}
-                customTableWrapperClassName={"dss-table-wrapper"}
+                customTableWrapperClassName={"search-component-table"}
                 disableSort={config?.enableColumnSort ? false : true}
                 autoSort={config?.enableColumnSort ? true : false}
                 globalSearch={config?.enableGlobalSearch ? filterValue : undefined}
                 onSearch={config?.enableGlobalSearch ? searchQuery : undefined}
                 data={searchResult}
-                totalRecords={data?.count || data?.TotalCount || data?.totalCount}
+                totalRecords={data?.count || data?.TotalCount || data?.totalCount || searchResult?.length}
                 columns={tableColumns}
                 isPaginationRequired={true}
                 onPageSizeChange={onPageSizeChange}
@@ -185,7 +203,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                         style: {
                             padding: "20px 18px",
                             fontSize: "16px",
-                            whiteSpace: "break-spaces",
+                            whiteSpace: "normal",
                         },
                     };
                 }}

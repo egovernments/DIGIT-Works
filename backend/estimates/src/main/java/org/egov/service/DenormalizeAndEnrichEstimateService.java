@@ -3,14 +3,14 @@ package org.egov.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.ProcessInstanceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.workflow.ProcessInstanceResponse;
+import org.egov.common.models.project.Project;
 import org.egov.util.EstimateServiceConstant;
 import org.egov.util.ProjectUtil;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
-import org.egov.web.models.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +21,18 @@ import java.util.List;
 @Slf4j
 public class DenormalizeAndEnrichEstimateService {
 
-    @Autowired
-    private ProjectUtil projectUtil;
+    private final ProjectUtil projectUtil;
+
+    private final WorkflowService workflowService;
+
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    public DenormalizeAndEnrichEstimateService(ProjectUtil projectUtil, WorkflowService workflowService, ObjectMapper objectMapper) {
+        this.projectUtil = projectUtil;
+        this.workflowService = workflowService;
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * Denormalize the project details by calling to project service and enrich the same

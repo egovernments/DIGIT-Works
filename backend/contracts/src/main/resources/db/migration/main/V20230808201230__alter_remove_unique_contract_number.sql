@@ -1,0 +1,1 @@
+ALTER TABLE eg_wms_contract DROP CONSTRAINT uk_eg_wms_contract;

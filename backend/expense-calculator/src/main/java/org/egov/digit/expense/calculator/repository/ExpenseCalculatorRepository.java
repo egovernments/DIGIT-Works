@@ -6,7 +6,6 @@ import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorB
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorMusterRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorProjectRowMapper;
 import org.egov.digit.expense.calculator.web.models.BillMapper;
-import org.egov.digit.expense.calculator.web.models.CalculatorSearchCriteria;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,23 +18,27 @@ import java.util.Map;
 @Repository
 public class ExpenseCalculatorRepository {
 
-    @Autowired
-    private ExpenseCalculatorMusterRowMapper musterRowMapper;
+    private final ExpenseCalculatorMusterRowMapper musterRowMapper;
 
-    @Autowired
-    private ExpenseCalculatorBillRowMapper billRowMapper;
+    private final ExpenseCalculatorBillRowMapper billRowMapper;
     
-    @Autowired
-    private ExpenseCalculatorProjectRowMapper projectRowMapper;
+    private final ExpenseCalculatorProjectRowMapper projectRowMapper;
+
+    private final BillRowMapper billMapper;
+
+    private final ExpenseCalculatorQueryBuilder queryBuilder;
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private BillRowMapper billMapper;
-
-    @Autowired
-    private ExpenseCalculatorQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public ExpenseCalculatorRepository(ExpenseCalculatorMusterRowMapper musterRowMapper, ExpenseCalculatorBillRowMapper billRowMapper, ExpenseCalculatorProjectRowMapper projectRowMapper, BillRowMapper billMapper, ExpenseCalculatorQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+        this.musterRowMapper = musterRowMapper;
+        this.billRowMapper = billRowMapper;
+        this.projectRowMapper = projectRowMapper;
+        this.billMapper = billMapper;
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
 
     /**
@@ -46,8 +49,7 @@ public class ExpenseCalculatorRepository {
     public List<String> getMusterRoll(String contractId, String billType, String tenantId, List<String> billIds) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getMusterRollsOfContract(contractId, billType, tenantId, billIds, preparedStmtList);
-        List<String> musterrollIds = jdbcTemplate.query(query, musterRowMapper, preparedStmtList.toArray());
-        return musterrollIds;
+        return jdbcTemplate.query(query, musterRowMapper, preparedStmtList.toArray());
     }
     
     
@@ -60,22 +62,19 @@ public class ExpenseCalculatorRepository {
     public List<String> getBills(String contractId, String tenantId) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getBillsOfContract(contractId, tenantId, preparedStmtList);
-        List<String> billIds = jdbcTemplate.query(query, billRowMapper, preparedStmtList.toArray());
-        return billIds;
+        return jdbcTemplate.query(query, billRowMapper, preparedStmtList.toArray());
     }
     
     public List<String> getBillsByProjectNumber(String tenantId, List<String> projectNumbers) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getBillsByProjectNumbers(tenantId, projectNumbers, preparedStmtList);
-        List<String> result = jdbcTemplate.query(query, billRowMapper, preparedStmtList.toArray());
-        return result;
+        return jdbcTemplate.query(query, billRowMapper, preparedStmtList.toArray());
     }
     
     public List<String> getUniqueProjectNumbers(String tenantId) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getUniqueProjectNumbersByTenant(tenantId,preparedStmtList);
-        List<String> result = jdbcTemplate.query(query, projectRowMapper, preparedStmtList.toArray());
-        return result;
+        return jdbcTemplate.query(query, projectRowMapper, preparedStmtList.toArray());
     }
     
 
@@ -86,9 +85,8 @@ public class ExpenseCalculatorRepository {
     public Map<String,BillMapper> getBillMappers(CalculatorSearchRequest calculatorSearchRequest) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getBillIds(calculatorSearchRequest,preparedStmtList,false);
-        Map<String,BillMapper> billMappers = jdbcTemplate.query(query,billMapper,preparedStmtList.toArray());
 
-        return billMappers;
+        return jdbcTemplate.query(query,billMapper,preparedStmtList.toArray());
     }
 
     public Integer getBillCount(CalculatorSearchRequest calculatorSearchRequest) {
@@ -96,7 +94,6 @@ public class ExpenseCalculatorRepository {
         String query = queryBuilder.getSearchCountQueryString(calculatorSearchRequest, preparedStmtList,true);
         if (query == null)
             return 0;
-        Integer count = jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
-        return count;
+        return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
     }
 }

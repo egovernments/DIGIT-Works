@@ -11,6 +11,7 @@ class TableDataModel with _$TableDataModel {
     String? aadhaar,
     String? individualGaurdianName,
     String? mobileNumber,
+    String? individualCode,
     String? skill,
     String? uuid,
     String? individualId,

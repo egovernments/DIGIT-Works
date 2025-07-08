@@ -49,6 +49,9 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("serviceCode")
     private String serviceCode;
 
+    @JsonProperty("referenceIds")
+    private List<String> referenceIds;
+
     @JsonProperty("limit")
     private Integer limit;
 
@@ -60,6 +63,21 @@ public class AttendanceRegisterSearchCriteria {
 
     @JsonProperty("sortOrder")
     private SortOrder sortOrder;
+
+    @JsonProperty("localityCode")
+    private String localityCode;
+
+    @JsonProperty("reviewStatus")
+    private String reviewStatus;
+
+    @JsonProperty("isChildrenRequired")
+    private Boolean isChildrenRequired;
+
+    @JsonProperty("tags")
+    private List<String> tags;
+
+    @JsonProperty("includeTaggedAttendees")
+    private Boolean includeTaggedAttendees =  Boolean.FALSE;
 
     public enum SortOrder {
         ASC,
