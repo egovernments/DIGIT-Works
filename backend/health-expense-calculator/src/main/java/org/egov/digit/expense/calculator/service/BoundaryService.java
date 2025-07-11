@@ -173,7 +173,7 @@ public class BoundaryService {
     private Map<String, String> getBoundaryCodeToLocalizedNameMap(
             List<EnrichedBoundary> boundaries, RequestInfo requestInfo, String tenantId) {
 
-        Map<String, String> boundaryMap = new HashMap<>();
+        Map<String, String> boundaryMap = new LinkedHashMap<>();
 
         for (EnrichedBoundary boundary : boundaries) {
             String boundaryCode = boundary.getCode();
@@ -251,8 +251,8 @@ public class BoundaryService {
     }
 
     public BoundaryHierarchyResult applyTransformerElasticIndexLabels(BoundaryHierarchyResult boundaryResult, String tenantId) {
-        Map<String, String> localizedBoundaryHierarchy = new HashMap<>();
-        Map<String, String> nonLocalizedBoundaryHierarchyCode = new HashMap<>();
+        Map<String, String> localizedBoundaryHierarchy = new LinkedHashMap<>();
+        Map<String, String> nonLocalizedBoundaryHierarchyCode = new LinkedHashMap<>();
 
         boundaryResult.getBoundaryHierarchy().forEach((boundaryType, localizedName) -> {
             // Generate elastic index label
