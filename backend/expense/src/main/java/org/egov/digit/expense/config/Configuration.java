@@ -235,4 +235,11 @@ public class Configuration {
 	@Value("${bill.scheduled.task.fixed.rate}")
 	private String scheduledTaskFixedRate;
 
+	@Value("${expense.calculator.host}")
+	private String calculatorHost;
+
+	@Value("${expense.calculator.calculate.endpoint}")
+	private String calculatePath;
+
+
 }

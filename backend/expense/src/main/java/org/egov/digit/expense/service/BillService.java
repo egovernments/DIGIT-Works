@@ -10,6 +10,7 @@ import org.egov.common.contract.workflow.State;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.BillRepository;
+import org.egov.digit.expense.util.CalculatorUtil;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
 import org.egov.digit.expense.util.WorkflowUtil;
@@ -43,8 +44,10 @@ public class BillService {
 
 	private final NotificationService notificationService;
 
+	private final CalculatorUtil calculatorUtil;
+
 	@Autowired
-	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService) {
+	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService, CalculatorUtil calculatorUtil) {
 		this.expenseProducer = expenseProducer;
 		this.config = config;
 		this.validator = validator;
@@ -53,6 +56,7 @@ public class BillService {
 		this.enrichmentUtil = enrichmentUtil;
 		this.responseInfoFactory = responseInfoFactory;
 		this.notificationService = notificationService;
+		this.calculatorUtil = calculatorUtil;
     }
 
 	/**
@@ -209,5 +213,38 @@ public class BillService {
 		}
 		bill.setBillDetails(allBillDetails);
 		log.info("All bill details pushed to kafka");
+	}
+
+	public BillResponse searchCalculatedBills(BillSearchRequest billSearchRequest, boolean isWfEncrichRequired) {
+		BillResponse billResponse = search(billSearchRequest,isWfEncrichRequired);
+		List<Bill> billsFromSearch = billResponse.getBills();
+		if(billsFromSearch.isEmpty()){
+			return billResponse;
+		}
+		List<Bill> calculatedBills = billsFromSearch.stream().filter(bill -> isBillCalculationComplete(bill, billSearchRequest.getRequestInfo())).collect(Collectors.toList());
+		billResponse.setBills(calculatedBills);
+		return billResponse;
+	}
+	private Boolean isBillCalculationComplete(Bill bill, RequestInfo requestInfo){
+		Boolean isBillCalculationComplete = false;
+		BillCalculationCriteria criteria =
+				BillCalculationCriteria
+						.builder()
+						.tenantId(bill.getTenantId())
+						.localityCode(bill.getLocalityCode())
+						.referenceId(bill.getReferenceId())
+						.build();
+
+		BillCalculationRequest request =
+				BillCalculationRequest
+						.builder()
+						.requestInfo(requestInfo)
+						.criteria(criteria)
+						.build();
+		BillCalculationResponse response = calculatorUtil.getBills(request);
+		if (response.getStatusCode() == BillCalculationResponse.StatusCode.SUCCESSFUL){
+			isBillCalculationComplete = true;
+		}
+		return isBillCalculationComplete;
 	}
 }

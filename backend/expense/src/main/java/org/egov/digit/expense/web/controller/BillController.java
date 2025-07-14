@@ -43,4 +43,10 @@ public class BillController {
 		BillResponse response = service.update(billRequest);
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
+
+	@PostMapping(value = "search/_calculated")
+	public ResponseEntity<BillResponse> searchCalculatedBills(@Valid @RequestBody BillSearchRequest billSearchRequest) {
+		BillResponse billResponse = service.searchCalculatedBills(billSearchRequest, true);
+		return new ResponseEntity<>(billResponse, HttpStatus.ACCEPTED);
+	}
 }
