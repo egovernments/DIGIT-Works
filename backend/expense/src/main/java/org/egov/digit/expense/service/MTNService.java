@@ -380,10 +380,17 @@ public class MTNService {
 	}
 
 	public BillDetailResponse updateBillDetailStatus(BillRequest billRequest){
+
+
 		Bill billFromRequest = billRequest.getBill();
 
 		Bill billFromSearch = getBillfromSearch(billFromRequest,billRequest.getRequestInfo());
 
+		boolean isBillWorkflowChange = false;
+		if(billRequest.getWorkflow().getAction().equals(Actions.CREATE.toString())) {
+			billFromSearch.setBusinessService(config.getBillBusinessService());
+			isBillWorkflowChange = true;
+		}
 		BillDetailRequest billDetailRequest
 				= BillDetailRequest
 					.builder()
@@ -410,10 +417,14 @@ public class MTNService {
 		BillRequest billUpdateRequest
 				= BillRequest
 				.builder()
-					.requestInfo(billDetailRequest.getRequestInfo())
+					.requestInfo(billRequest.getRequestInfo())
 					.bill(billFromSearch)
 				.build();
-		updateBill(billUpdateRequest,false);
+
+		if (isBillWorkflowChange){
+			billUpdateRequest.setWorkflow(billRequest.getWorkflow());
+		}
+		updateBill(billUpdateRequest, isBillWorkflowChange);
 
 		ResponseInfo responseInfo = responseInfoFactory.
 				createResponseInfoFromRequestInfo(billDetailRequest.getRequestInfo(),true);
