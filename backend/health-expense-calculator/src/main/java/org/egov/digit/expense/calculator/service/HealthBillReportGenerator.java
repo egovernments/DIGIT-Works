@@ -427,18 +427,24 @@ public class HealthBillReportGenerator {
             reportBill.setReportTitle(newReportTitle);
             for (ReportBillDetail reportBillDetail : reportBill.getReportBillDetails()) {
                 BoundaryHierarchyResult boundaryHierarchyResult = boundaryService.getBoundaryHierarchyWithLocalityCode(reportBillDetail.getLocality(),billRequest.getRequestInfo().getUserInfo().getTenantId());
-                Map<String, String> boundaryMap = boundaryHierarchyResult.getBoundaryHierarchy();
-                // Check if "COUNTRY" is the only entry
-                if (boundaryMap.size() == 1 && boundaryMap.containsKey("COUNTRY")) {
-                    reportBillDetail.setLocality(boundaryMap.get("COUNTRY")); // Set COUNTRY if it's the only value
-                } else {
-                    // Remove COUNTRY if other values are present
-                    String filteredLocality = boundaryMap.entrySet().stream()
-                            .filter(entry -> !"COUNTRY".equalsIgnoreCase(entry.getKey()))  // Exclude COUNTRY if others exist
-                            .map(Map.Entry::getValue)  // Get only values
-                            .collect(Collectors.joining(" / ")); // Join as "/" separated string
+                if(boundaryHierarchyResult != null) {
+                    Map<String, String> boundaryMap = boundaryHierarchyResult.getBoundaryHierarchy();
+                    // Check if "COUNTRY" is the only entry
+                    if (boundaryMap.size() == 1 && boundaryMap.containsKey("COUNTRY")) {
+                        reportBillDetail.setLocality(boundaryMap.get("COUNTRY")); // Set COUNTRY if it's the only value
+                    } else {
+                        // Remove COUNTRY if other values are present
+                        String filteredLocality = boundaryMap.entrySet().stream()
+                                .filter(entry -> !"COUNTRY".equalsIgnoreCase(entry.getKey()))  // Exclude COUNTRY if others exist
+                                .map(Map.Entry::getValue)  // Get only values
+                                .collect(Collectors.joining(" / ")); // Join as "/" separated string
 
-                    reportBillDetail.setLocality(filteredLocality);
+                        reportBillDetail.setLocality(filteredLocality);
+                    }
+                }
+                else{
+                    log.warn("No boundary hierarchy found for locality code {} setting NA as fallback", reportBillDetail.getLocality());
+                    reportBillDetail.setLocality("NA");
                 }
                 reportBillDetail.setRole(localization.getOrDefault(reportBillDetail.getRole(), reportBillDetail.getRole()));
             }
