@@ -221,18 +221,33 @@ public class BillService {
 		if(billsFromSearch.isEmpty()){
 			return billResponse;
 		}
-		List<Bill> calculatedBills = billsFromSearch.stream().filter(bill -> isBillCalculationComplete(bill, billSearchRequest.getRequestInfo())).collect(Collectors.toList());
+		List<Bill> calculatedBills = new ArrayList<>();
+		billsFromSearch.stream().forEach(bill -> {
+			boolean isBillBusinessServiceUpdated = bill.getBusinessService().equals(config.getBillBusinessService());
+
+			if(isBillBusinessServiceUpdated){
+				calculatedBills.add(bill);
+			} else {
+				boolean isBillCalculationComplete = isBillCalculationComplete(bill, billSearchRequest.getRequestInfo());
+				if (isBillCalculationComplete){
+					calculatedBills.add(bill);
+				}
+			}
+		});
+
 		billResponse.setBills(calculatedBills);
 		return billResponse;
 	}
 	private Boolean isBillCalculationComplete(Bill bill, RequestInfo requestInfo){
 		Boolean isBillCalculationComplete = false;
+		String[] referenceIds = bill.getReferenceId().split("\\.\\.");
+		String projectReferenceId = referenceIds[referenceIds.length - 1];
 		BillCalculationCriteria criteria =
 				BillCalculationCriteria
 						.builder()
 						.tenantId(bill.getTenantId())
 						.localityCode(bill.getLocalityCode())
-						.referenceId(bill.getReferenceId())
+						.referenceId(projectReferenceId)
 						.build();
 
 		BillCalculationRequest request =
