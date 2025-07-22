@@ -240,7 +240,7 @@ public class BillService {
 	}
 	private Boolean isBillCalculationComplete(Bill bill, RequestInfo requestInfo){
 		Boolean isBillCalculationComplete = false;
-		String[] referenceIds = bill.getReferenceId().split("\\.\\.");
+		String[] referenceIds = bill.getReferenceId().split("\\.");
 		String projectReferenceId = referenceIds[referenceIds.length - 1];
 		BillCalculationCriteria criteria =
 				BillCalculationCriteria
