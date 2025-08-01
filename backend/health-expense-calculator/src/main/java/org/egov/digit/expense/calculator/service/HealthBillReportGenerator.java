@@ -123,6 +123,9 @@ public class HealthBillReportGenerator {
             log.info("Excel FileStoreId: " + excelFileStoreId);
             // Update the report status to completed
             updateReportStatus(billRequest, REPORT_STATUS_COMPLETED, excelFileStoreId, pdfFileStoreId, null, eventName);
+
+            updateBillBusinessService(billRequest);
+
             return billReportRequest;
         } catch (Exception e) {
             log.error("Error while generating report", e);
@@ -130,6 +133,17 @@ public class HealthBillReportGenerator {
             return null;
         }
 
+    }
+
+    private void updateBillBusinessService( BillRequest billRequest){
+        Bill bill = billRequest.getBill();
+        if(!bill.getBusinessService().equalsIgnoreCase(PAYMENTS_BILL_BUSINESS_SERVICE)) {
+            Workflow expenseWorkflow1 = Workflow.builder()
+                    .action(WF_CREATE_ACTION_CONSTANT)
+                    .build();
+            log.info("updating business service for bill");
+            billUtils.postUpdateBillDetailStatus(billRequest.getRequestInfo(), bill, expenseWorkflow1);
+        }
     }
 
     /**
@@ -160,7 +174,7 @@ public class HealthBillReportGenerator {
                 .build();
 
         enrichCampaignName(reportBill, billRequest);
-        enrichLocalization(reportBill, billRequest);
+//        enrichLocalization(reportBill, billRequest);
         billRequest.getRequestInfo().setMsgId(getMsgIdWithLocalCode(billRequest.getRequestInfo().getMsgId()));
 
         return BillReportRequest.builder()

@@ -96,17 +96,6 @@ public class ExpenseCalculatorConsumer {
 				}
 				redisService.setCacheForBillReport(request.getBill().getId());
 				healthBillReportGenerator.generateHealthBillReportRequest(request);
-
-				if (healthBillReportGenerator.billExists(request)) {
-					Bill bill = request.getBill();
-					if(!bill.getBusinessService().equalsIgnoreCase(PAYMENTS_BILL_BUSINESS_SERVICE)) {
-						Workflow expenseWorkflow1 = Workflow.builder()
-								.action(WF_CREATE_ACTION_CONSTANT)
-								.build();
-						log.info("updating business service for bill");
-						billUtils.postUpdateBillDetailStatus(request.getRequestInfo(), bill, expenseWorkflow1);
-					}
-				}
 			}
 			else if (System.currentTimeMillis() - request.getBill().getAuditDetails().getCreatedTime() < 30 * 60 * 1000) {
 				// Consumer will retry till 30 minutes after the creation of the bill
