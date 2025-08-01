@@ -6,10 +6,8 @@ import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.service.HealthBillReportGenerator;
 import org.egov.digit.expense.calculator.service.RedisService;
-import org.egov.digit.expense.calculator.web.models.Bill;
-import org.egov.digit.expense.calculator.web.models.BillRequest;
-import org.egov.digit.expense.calculator.web.models.CalculationRequest;
-import org.egov.digit.expense.calculator.web.models.MusterRollConsumerError;
+import org.egov.digit.expense.calculator.util.BillUtils;
+import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.works.services.common.models.musterroll.MusterRollRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,6 +16,8 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
 
 @Component
 @Slf4j
@@ -29,15 +29,17 @@ public class ExpenseCalculatorConsumer {
 	private final ExpenseCalculatorProducer producer;
 	private final HealthBillReportGenerator healthBillReportGenerator;
 	private final RedisService redisService;
+	private final BillUtils billUtils;
 
 	@Autowired
-	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, ExpenseCalculatorProducer producer, HealthBillReportGenerator healthBillReportGenerator, RedisService redisService) {
+	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, ExpenseCalculatorProducer producer, HealthBillReportGenerator healthBillReportGenerator, RedisService redisService, BillUtils billUtils) {
 		this.configs = configs;
 		this.expenseCalculatorService = expenseCalculatorService;
 		this.objectMapper = objectMapper;
 		this.producer = producer;
         this.healthBillReportGenerator = healthBillReportGenerator;
         this.redisService = redisService;
+        this.billUtils = billUtils;
     }
 
 	// Commenting existing consumer
@@ -94,6 +96,17 @@ public class ExpenseCalculatorConsumer {
 				}
 				redisService.setCacheForBillReport(request.getBill().getId());
 				healthBillReportGenerator.generateHealthBillReportRequest(request);
+
+				if (healthBillReportGenerator.billExists(request)) {
+					Bill bill = request.getBill();
+					if(!bill.getBusinessService().equalsIgnoreCase(PAYMENTS_BILL_BUSINESS_SERVICE)) {
+						Workflow expenseWorkflow1 = Workflow.builder()
+								.action(WF_CREATE_ACTION_CONSTANT)
+								.build();
+						log.info("updating business service for bill");
+						billUtils.postUpdateBillDetailStatus(request.getRequestInfo(), bill, expenseWorkflow1);
+					}
+				}
 			}
 			else if (System.currentTimeMillis() - request.getBill().getAuditDetails().getCreatedTime() < 30 * 60 * 1000) {
 				// Consumer will retry till 30 minutes after the creation of the bill

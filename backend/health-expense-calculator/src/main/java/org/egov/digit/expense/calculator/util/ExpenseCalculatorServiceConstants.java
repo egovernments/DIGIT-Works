@@ -82,4 +82,6 @@ public class ExpenseCalculatorServiceConstants {
     public static final String REPORT_MIDDLE_CONSTANT = "FOR_CONSTANT";
     public static final String LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
     public static final String LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+    public static final String WF_CREATE_ACTION_CONSTANT = "CREATE";
+    public static final String PAYMENTS_BILL_BUSINESS_SERVICE = "PAYMENTS.BILL";
 }
