@@ -389,6 +389,7 @@ public class MTNService {
 		boolean isBillWorkflowChange = false;
 		if(billRequest.getWorkflow().getAction().equals(Actions.CREATE.toString())) {
 			billFromSearch.setBusinessService(config.getBillBusinessService());
+			billFromSearch.setAdditionalDetails(billFromRequest.getAdditionalDetails());
 			isBillWorkflowChange = true;
 		}
 		BillDetailRequest billDetailRequest
