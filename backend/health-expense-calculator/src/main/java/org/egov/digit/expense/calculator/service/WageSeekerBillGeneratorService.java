@@ -1,6 +1,7 @@
 package org.egov.digit.expense.calculator.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
@@ -154,6 +155,14 @@ public class WageSeekerBillGeneratorService {
 								.type("IND")
 								.build())
 						.build();
+
+				ObjectNode additionalDetails = mapper.createObjectNode();
+				if (individualEntry.getModifiedTotalAttendance() != null) {
+					additionalDetails.put("noOfDaysWorked", individualEntry.getModifiedTotalAttendance());
+				} else {
+					additionalDetails.put("noOfDaysWorked", individualEntry.getActualTotalAttendance());
+				}
+				billDetail.setAdditionalDetails(additionalDetails);
 
 				bill.addBillDetailsItem(billDetail);
 				bill.setTotalFoodAmount(bill.getTotalFoodAmount().add(food));
