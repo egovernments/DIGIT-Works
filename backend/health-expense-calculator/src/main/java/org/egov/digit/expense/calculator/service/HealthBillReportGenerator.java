@@ -123,8 +123,11 @@ public class HealthBillReportGenerator {
             log.info("Excel FileStoreId: " + excelFileStoreId);
             // Update the report status to completed
             updateReportStatus(billRequest, REPORT_STATUS_COMPLETED, excelFileStoreId, pdfFileStoreId, null, eventName);
-
-            updateBillBusinessService(billRequest);
+            Map<String, Object> additionalDetails = (Map<String, Object>) billRequest.getBill().getAdditionalDetails();
+            Map<String, Object> reportDetails = (Map<String, Object>) additionalDetails.get("reportDetails");
+            if (reportDetails.get("status") == REPORT_STATUS_COMPLETED) {
+                updateBillBusinessService(billRequest);
+            }
 
             return billReportRequest;
         } catch (Exception e) {
