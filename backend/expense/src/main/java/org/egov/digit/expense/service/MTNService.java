@@ -1,5 +1,6 @@
 package org.egov.digit.expense.service;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
@@ -180,7 +181,9 @@ public class MTNService {
 						.reasonForFailure(taskDetails.getReasonForFailure())
 						.responseMessage(taskDetails.getResponseMessage())
 						.response(taskDetails.getAdditionalDetails()).build();
-				billDetail.setAdditionalDetails(errorDetails);
+				Map<String, Object> additionalDetails = (Map<String, Object>) billDetail.getAdditionalDetails();
+				additionalDetails.put("errorDetails", errorDetails);
+				billDetail.setAdditionalDetails(additionalDetails);
 				try {
 					setBillDetailStatus(billDetail, workflow, taskRequest.getRequestInfo());
 				} catch(HttpClientErrorException e){
@@ -492,7 +495,9 @@ public class MTNService {
 						.reasonForFailure(taskDetail.getReasonForFailure())
 						.responseMessage(taskDetail.getResponseMessage())
 						.response(taskDetail.getAdditionalDetails()).build();
-				billDetail.setAdditionalDetails(errorDetails);
+				Map<String, Object> additionalDetails = (Map<String, Object>) billDetail.getAdditionalDetails();
+				additionalDetails.put("errorDetails", errorDetails);
+				billDetail.setAdditionalDetails(additionalDetails);
 				try {
 					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo());
 				} catch(HttpClientErrorException e){
