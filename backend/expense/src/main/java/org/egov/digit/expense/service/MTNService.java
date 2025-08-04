@@ -1,5 +1,7 @@
 package org.egov.digit.expense.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -177,11 +179,23 @@ public class MTNService {
 				taskDetails.setStatus(Status.DONE);
 				expenseProducer.push(config.getBillTaskDetailsTopic(), taskDetails);
 
+				Object additionalDetailsObj = billDetail.getAdditionalDetails();
+				Map<String, Object> additionalDetails;
+
+				try {
+					additionalDetails = new ObjectMapper().convertValue(
+							additionalDetailsObj,
+							new TypeReference<>() {
+							}
+					);
+				} catch (IllegalArgumentException e) {
+					additionalDetails = new HashMap<>();
+				}
+
 				ErrorDetails errorDetails = ErrorDetails.builder()
 						.reasonForFailure(taskDetails.getReasonForFailure())
 						.responseMessage(taskDetails.getResponseMessage())
 						.response(taskDetails.getAdditionalDetails()).build();
-				Map<String, Object> additionalDetails = (Map<String, Object>) billDetail.getAdditionalDetails();
 				additionalDetails.put("errorDetails", errorDetails);
 				billDetail.setAdditionalDetails(additionalDetails);
 				try {
@@ -491,11 +505,24 @@ public class MTNService {
 					billDetailWorkflow.setAction(Actions.DECLINE.toString());
 				}
 				expenseProducer.push(config.getTaskDetailsUpdateTopic(), taskDetail);
+
+				Object additionalDetailsObj = billDetail.getAdditionalDetails();
+				Map<String, Object> additionalDetails;
+
+				try {
+					additionalDetails = new ObjectMapper().convertValue(
+							additionalDetailsObj,
+                            new TypeReference<>() {
+                            }
+					);
+				} catch (IllegalArgumentException e) {
+					additionalDetails = new HashMap<>();
+				}
+
 				ErrorDetails errorDetails = ErrorDetails.builder()
 						.reasonForFailure(taskDetail.getReasonForFailure())
 						.responseMessage(taskDetail.getResponseMessage())
 						.response(taskDetail.getAdditionalDetails()).build();
-				Map<String, Object> additionalDetails = (Map<String, Object>) billDetail.getAdditionalDetails();
 				additionalDetails.put("errorDetails", errorDetails);
 				billDetail.setAdditionalDetails(additionalDetails);
 				try {
