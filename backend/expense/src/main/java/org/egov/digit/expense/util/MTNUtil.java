@@ -11,6 +11,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -63,7 +64,9 @@ public class MTNUtil {
                 throw new CustomException("TOKEN_FETCH_FAILED",
                         "Failed to fetch token. Status: " + response.getStatusCode());
             }
-
+        } catch (HttpClientErrorException e) {
+            log.error("Error from MTN service", e);
+            throw new CustomException("MTN_SERVICE_EXCEPTION", e.getMessage());
         } catch (Exception e) {
             log.error("Exception while fetching access token", e);
             throw new CustomException("TOKEN_FETCH_EXCEPTION", e.getMessage());
@@ -98,7 +101,9 @@ public class MTNUtil {
                 throw new CustomException("MTN_ACCOUNT_STATUS_ERROR",
                         "Unexpected response status: " + response.getStatusCode());
             }
-
+        } catch (HttpClientErrorException e) {
+            log.error("Error from MTN service {}", msisdn, e);
+            throw new CustomException("MTN_SERVICE_EXCEPTION", e.getMessage());
         } catch (Exception e) {
             log.error("Error checking MTN account status for MSISDN {}", msisdn, e);
             throw new CustomException("MTN_ACCOUNT_STATUS_EXCEPTION", e.getMessage());
@@ -133,6 +138,9 @@ public class MTNUtil {
                         "Unexpected response status: " + response.getStatusCode());
             }
 
+        } catch (HttpClientErrorException e) {
+            log.error("Error from MTN service {}", msisdn, e);
+            throw new CustomException("MTN_SERVICE_EXCEPTION", e.getMessage());
         } catch (Exception e) {
             log.error("Error fetching basic user info for MSISDN {}", msisdn, e);
             throw new CustomException("MTN_BASIC_USERINFO_EXCEPTION", e.getMessage());
@@ -145,7 +153,7 @@ public class MTNUtil {
             accessToken = getAccessToken();
         } catch (CustomException e) {
             log.error("Failed to retrieve access token", e);
-            throw new CustomException("MTN_TOKEN_FAILURE", "Could not retrieve MTN access token: " + e.getMessage());
+            throw new CustomException(e.getCode(), e.getMessage());
         }
 
         boolean isActive;
@@ -153,7 +161,7 @@ public class MTNUtil {
             isActive = isAccountHolderActive(msisdn, accessToken);
         } catch (CustomException e) {
             log.error("Failed to verify account status for MSISDN {}", msisdn, e);
-            throw new CustomException("MTN_ACCOUNT_VALIDATION_FAILED", "Account validation failed for MSISDN: " + msisdn);
+            throw new CustomException(e.getCode(), e.getMessage());
         }
 
         if (!isActive) {
@@ -217,6 +225,10 @@ public class MTNUtil {
                 log.error("Transfer failed. Status: {}, response: {}", response.getStatusCode(), response);
                 throw new CustomException("MTN_TRANSFER_FAILED", "Unexpected response status: " + response.getStatusCode());
             }
+        }catch (HttpClientErrorException e) {
+            log.error("Exception while initiating transfer", e);
+            e.printStackTrace();
+            throw new CustomException("MTN_SERVICE_EXCEPTION", e.getMessage());
         } catch (Exception e) {
             log.error("Exception while initiating transfer", e);
             e.printStackTrace();
@@ -226,12 +238,31 @@ public class MTNUtil {
 
     public void transferIfAccountIsActive(PaymentTransferRequest paymentTransferRequest,String referenceId) {
 
-        String accessToken = getAccessToken();
-
-        if (!isAccountHolderActive(paymentTransferRequest.getPayee().getPartyId(), accessToken)) {
-            log.warn("Transfer aborted: MTN account {} is not active", paymentTransferRequest.getPayee().getPartyId());
-            throw new CustomException("MTN_ACCOUNT_INACTIVE", "The recipient account is not active for transfers");
+        String accessToken;
+        try {
+            accessToken = getAccessToken();
+        } catch (CustomException e) {
+            log.error("Failed to retrieve access token", e);
+            throw new CustomException(e.getCode(), e.getMessage());
         }
+
+        boolean isActive;
+        try {
+            isActive = isAccountHolderActive(paymentTransferRequest.getPayee().getPartyId(), accessToken);
+        } catch (CustomException e) {
+            log.error("Failed to verify account status for MSISDN {}", paymentTransferRequest.getPayee().getPartyId(), e);
+            throw new CustomException(e.getCode(), e.getMessage());
+        }
+
+        if (!isActive) {
+            log.warn("Inactive MTN account for MSISDN: {}", paymentTransferRequest.getPayee().getPartyId());
+            throw new CustomException("MTN_ACCOUNT_INACTIVE", "The recipient account is not active for transfers " + paymentTransferRequest.getPayee().getPartyId());
+        }
+
+//        if (!isAccountHolderActive(paymentTransferRequest.getPayee().getPartyId(), accessToken)) {
+//            log.warn("Transfer aborted: MTN account {} is not active", paymentTransferRequest.getPayee().getPartyId());
+//            throw new CustomException("MTN_ACCOUNT_INACTIVE", "The recipient account is not active for transfers");
+//        }
 
         try {
             initiateTransfer(
@@ -276,6 +307,9 @@ public class MTNUtil {
                         "Unexpected response status while fetching transfer status: " + response.getStatusCode());
             }
 
+        } catch (HttpClientErrorException e) {
+            log.error("Error from MTN service", e);
+            throw new CustomException("MTN_SERVICE_EXCEPTION", e.getMessage());
         } catch (Exception e) {
             log.error("Error while retrieving transfer status for referenceId {}", referenceId, e);
             throw new CustomException("MTN_TRANSFER_STATUS_EXCEPTION", e.getMessage());
