@@ -173,9 +173,21 @@ public class MTNService {
 						workflow.setAction(Actions.VERIFY.toString());
 					}
 				} catch (CustomException e) {
+//					if(Objects.equals(e.getCode(), "MTN_ACCOUNT_INACTIVE")){
+//						workflow.setAction(Actions.REFUTE.toString());
+//					}
 					taskDetails.setResponseMessage(e.getMessage());
 					taskDetails.setReasonForFailure(e.getCode());
 				}
+//				catch(HttpClientErrorException e){
+//					//todo
+//					if(Objects.equals(e.getStatusCode().toString(), "MTN_SERVICE_EXCEPTION")){
+//						updateBillDetailWorkflow = false;
+//						taskDetails.setResponseMessage(e.getMessage());
+//						taskDetails.setReasonForFailure(e.getStatusCode().toString());
+//					}
+//
+//				}
 				taskDetails.setStatus(Status.DONE);
 				expenseProducer.push(config.getBillTaskDetailsTopic(), taskDetails);
 
@@ -209,6 +221,7 @@ public class MTNService {
 		if (billFromSearch.getStatus() == Status.PENDING_VERIFICATION
 				|| billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED
 				|| billFromSearch.getStatus() == Status.PARTIALLY_PAID
+				|| billFromSearch.getStatus() == Status.PAYMENT_FAILED
 		) {
 			List<BillDetail> verifiedBillDetails = billFromSearch.getBillDetails()
 					.stream()
@@ -391,8 +404,13 @@ public class MTNService {
 					.workflow(workflow)
 					.requestInfo(requestInfo)
 					.build();
-			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
-			billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+//			try {
+				State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
+				billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+//			} catch (HttpClientErrorException e) {
+//				log.error("Error in updating workflow state change for billDetail Id: {}, from status: {} to action: {}"
+//						, billDetail.getId(), billDetail.getStatus(),workflow.getAction(),e);
+//			}
 		}
 	}
 
@@ -480,6 +498,7 @@ public class MTNService {
 
 		List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId());
 		for (TaskDetails taskDetail: taskDetails){
+//			boolean isUpdateWorkflow = true;
 			BillDetail billDetail = billDetailsById.get(taskDetail.getBillDetailsId());
 			if (taskDetail.getStatus() == Status.IN_PROGRESS && billDetail.getStatus() == Status.VERIFIED) {
 				Workflow billDetailWorkflow = Workflow.builder().build();
