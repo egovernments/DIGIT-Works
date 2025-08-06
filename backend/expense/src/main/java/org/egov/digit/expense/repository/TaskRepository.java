@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -32,23 +33,27 @@ public class TaskRepository {
     }
 
     public Task searchTask(Task task){
-        String query = taskQueryBuilder.getTaskQuery(task);
-        List<Task> tasks = jdbcTemplate.query(query, taskRowMapper);
+        List<Object> preparedStatementValues = new ArrayList<>();
+        String query = taskQueryBuilder.getTaskQuery(task,preparedStatementValues);
+        List<Task> tasks = jdbcTemplate.query(query, preparedStatementValues.toArray(), taskRowMapper);
         return tasks.isEmpty() ? null : tasks.get(0);
     }
 
     public TaskDetails searchTaskDetails(TaskDetailsRequest taskDetailsRequest){
-        String query = taskQueryBuilder.getTaskDetailsQuery(taskDetailsRequest);
-        return jdbcTemplate.queryForObject(query, taskDetailsRowMapper);
+        List<Object> preparedStatementValues = new ArrayList<>();
+        String query = taskQueryBuilder.getTaskDetailsQuery(taskDetailsRequest, preparedStatementValues);
+        return jdbcTemplate.queryForObject(query, preparedStatementValues.toArray(), taskDetailsRowMapper);
     }
 
     public List<TaskDetails> searchTaskDetailsByTaskId(String taskId){
-        String query = taskQueryBuilder.getTaskDetailsByTaskIdQuery(taskId);
-        return jdbcTemplate.query(query, taskDetailsRowMapper);
+        List<Object> preparedStatementValues = new ArrayList<>();
+        String query = taskQueryBuilder.getTaskDetailsByTaskIdQuery(taskId, preparedStatementValues);
+        return jdbcTemplate.query(query, preparedStatementValues.toArray(), taskDetailsRowMapper);
     }
 
     public List<Task> getInProgressTasks(String seconds,String type){
-        String query = taskQueryBuilder.getTasksInProgressQuery(seconds, type);
-        return jdbcTemplate.query(query,taskRowMapper);
+        List<Object> preparedStatementValues = new ArrayList<>();
+        String query = taskQueryBuilder.getTasksInProgressQuery(seconds, type, preparedStatementValues);
+        return jdbcTemplate.query(query, preparedStatementValues.toArray(), taskRowMapper);
     }
 }
