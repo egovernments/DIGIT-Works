@@ -226,16 +226,19 @@ public class Configuration {
 	@Value("${mtn.payment.currency}")
 	private String paymentCurrency;
 
+	@Value("${mtn.payment.partyIdType}")
+	private String partyIdType;
+
 	@Value("${bill.business.service}")
 	private String billBusinessService;
 
 	@Value("${bill.detail.business.service}")
 	private String billDetailBusinessService;
 
-	@Value("${bill.scheduled.task.delay}")
+	@Value("${bill.scheduled.task.delay.sec}")
 	private String scheduledTaskDelay;
 
-	@Value("${bill.scheduled.task.fixed.rate}")
+	@Value("${bill.scheduled.task.fixed.rate.millisec}")
 	private String scheduledTaskFixedRate;
 
 	@Value("${expense.calculator.host}")

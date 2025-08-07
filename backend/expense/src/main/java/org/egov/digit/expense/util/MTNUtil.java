@@ -259,11 +259,6 @@ public class MTNUtil {
             throw new CustomException("MTN_ACCOUNT_INACTIVE", "The recipient account is not active for transfers " + paymentTransferRequest.getPayee().getPartyId());
         }
 
-//        if (!isAccountHolderActive(paymentTransferRequest.getPayee().getPartyId(), accessToken)) {
-//            log.warn("Transfer aborted: MTN account {} is not active", paymentTransferRequest.getPayee().getPartyId());
-//            throw new CustomException("MTN_ACCOUNT_INACTIVE", "The recipient account is not active for transfers");
-//        }
-
         try {
             initiateTransfer(
                     paymentTransferRequest,

@@ -2,7 +2,6 @@ package org.egov.digit.expense.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
@@ -241,7 +240,7 @@ public class MTNService {
 					.workflow(workflow)
 					.build();
 
-			updateBill(billRequest, isWorkflowChange);
+			updateBillWfStatus(billRequest, isWorkflowChange);
 		}
 		task.setStatus(Status.DONE);
 		expenseProducer.push(config.getTaskUpdateTopic(),task);
@@ -354,7 +353,7 @@ public class MTNService {
 				.externalId(billDetail.getId())
 				.payee(PaymentTransferRequest.Payee.builder()
 						.partyId(partyId)
-						.partyIdType("MSISDN")//TODO get from config
+						.partyIdType(config.getPartyIdType())
 						.build())
 				.build();
 
@@ -377,7 +376,7 @@ public class MTNService {
 				.build();
 	}
 
-	private void updateBill(BillRequest billRequest,boolean isWorkflowChange){
+	private void updateBillWfStatus(BillRequest billRequest,boolean isWorkflowChange){
 		Bill bill = billRequest.getBill();
 		try {
 			if (isWorkflowChange &&
@@ -455,7 +454,7 @@ public class MTNService {
 		if (isBillWorkflowChange){
 			billUpdateRequest.setWorkflow(billRequest.getWorkflow());
 		}
-		updateBill(billUpdateRequest, isBillWorkflowChange);
+		updateBillWfStatus(billUpdateRequest, isBillWorkflowChange);
 
 		ResponseInfo responseInfo = responseInfoFactory.
 				createResponseInfoFromRequestInfo(billDetailRequest.getRequestInfo(),true);
@@ -579,7 +578,7 @@ public class MTNService {
 					.workflow(workflow)
 					.requestInfo(taskRequest.getRequestInfo())
 					.build();
-			updateBill(billRequest, isWorkflowChange);
+			updateBillWfStatus(billRequest, isWorkflowChange);
 		}
 
 		log.info("finished updating payment status for task {}, bill number {}",task.getId(), billFromSearch.getBillNumber());
