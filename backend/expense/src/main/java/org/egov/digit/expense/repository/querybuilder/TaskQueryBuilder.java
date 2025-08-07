@@ -18,17 +18,17 @@ public class TaskQueryBuilder {
     }
 
 
-    public String getTaskQuery(Task task){
-        if (null != task.getId()) {
-            return TASK_SEARCH_BY_ID_QUERY.replace("{id}", task.getId());
-        }
-        return TASK_SEARCH_QUERY
-            .replace("{billId}", task.getBillId())
-            .replace("{type}", task.getType().toString());
-    }
+//    public String getTaskQuery(Task task){
+//        if (null != task.getId()) {
+//            return TASK_SEARCH_BY_ID_QUERY.replace("{id}", task.getId());
+//        }
+//        return TASK_SEARCH_QUERY
+//            .replace("{billId}", task.getBillId())
+//            .replace("{type}", task.getType().toString());
+//    }
 
     public String getTaskQuery(Task task, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder("SELECT * FROM eg_expense_task");
+        StringBuilder query = new StringBuilder(TASK_SEARCH_QUERY);
 
         if (task.getId() != null) {
             query.append(" WHERE id = ?");
@@ -38,24 +38,24 @@ public class TaskQueryBuilder {
             preparedStmtList.add(task.getBillId());
             preparedStmtList.add(task.getType().toString());
 
-            query.append(" ORDER BY last_modified_time DESC LIMIT 1");
+            query.append(TASK_ORDER_BY_QUERY);
         }
 
         return query.toString();
     }
 
-    public String getTaskDetailsQuery(TaskDetailsRequest taskDetailsRequest){
-        String query = TASK_DETAILS_SEARCH_QUERY.replace("{taskId}",taskDetailsRequest.getTaskId());
-
-        query = query.replace("{billId}", taskDetailsRequest.getBillId());
-
-        query = query.replace("{billDetailsId}",taskDetailsRequest.getBillDetailsId());
-
-        return query;
-    }
+//    public String getTaskDetailsQuery(TaskDetailsRequest taskDetailsRequest){
+//        String query = TASK_DETAILS_SEARCH_QUERY.replace("{taskId}",taskDetailsRequest.getTaskId());
+//
+//        query = query.replace("{billId}", taskDetailsRequest.getBillId());
+//
+//        query = query.replace("{billDetailsId}",taskDetailsRequest.getBillDetailsId());
+//
+//        return query;
+//    }
 
     public String getTaskDetailsQuery(TaskDetailsRequest taskDetailsRequest, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder("SELECT * FROM eg_expense_task_details");
+        StringBuilder query = new StringBuilder(TASK_DETAILS_SEARCH_QUERY);
 
         if (taskDetailsRequest.getTaskId() != null) {
             builderUtils.addClauseIfRequired(preparedStmtList, query);
@@ -77,30 +77,24 @@ public class TaskQueryBuilder {
 
         return query.toString();
     }
-    public String getTaskDetailsByTaskIdQuery(String taskId){
-        return TASK_DETAILS_BY_TASK_ID_SEARCH_QUERY.replace("{taskId}",taskId);
-    }
+//    public String getTaskDetailsByTaskIdQuery(String taskId){
+//        return TASK_DETAILS_BY_TASK_ID_SEARCH_QUERY.replace("{taskId}",taskId);
+//    }
 
     public String getTaskDetailsByTaskIdQuery(String taskId, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder("SELECT * FROM eg_expense_task_details WHERE task_id = ?");
+        StringBuilder query = new StringBuilder(TASK_DETAILS_BY_TASK_ID_SEARCH_QUERY);
         preparedStmtList.add(taskId);
         return query.toString();
     }
 
 
-    public String getTasksInProgressQuery(String seconds, String type){
-        return TASK_IN_PROGRESS_SEARCH_QUERY.replace("{seconds}",seconds)
-                .replace("{type}",type);
-    }
+//    public String getTasksInProgressQuery(String seconds, String type){
+//        return TASK_IN_PROGRESS_SEARCH_QUERY.replace("{seconds}",seconds)
+//                .replace("{type}",type);
+//    }
     public String getTasksInProgressQuery(String seconds, String type, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(
-                "SELECT * FROM eg_expense_task " +
-                        "WHERE status = 'IN_PROGRESS' " +
-                        "AND last_modified_time < extract(epoch FROM now()) * 1000 - ? " +
-                        "AND type = ?"
-        );
+        StringBuilder query = new StringBuilder(TASK_IN_PROGRESS_SEARCH_QUERY);
 
-        // Convert seconds to milliseconds in Java
         long millis = Long.parseLong(seconds) * 1000;
         preparedStmtList.add(millis);
         preparedStmtList.add(type);
