@@ -46,18 +46,13 @@ public class Constants {
 	public static final String MTN_ACCESS_TOKEN_TYPE = "Bearer ";
 	public static final String MTN_USER_GIVEN_NAME_FIELD = "given_name";
 	public static final String MTN_USER_FAMILY_NAME_FIELD = "family_name";
-//	public static final String TASK_SEARCH_BY_ID_QUERY = "select * from eg_expense_task where id='{id}'";
 	public static final String TASK_SEARCH_QUERY = "SELECT * FROM eg_expense_task";
 	public static final String TASK_ORDER_BY_QUERY = " ORDER BY last_modified_time DESC LIMIT 1";
-//	public static final String TASK_SEARCH_QUERY = "select * from eg_expense_task where bill_id='{billId}' and type='{type}' and status = 'IN_PROGRESS' order by last_modified_time desc limit 1";
-//	public static final String TASK_IN_PROGRESS_SEARCH_QUERY = "select * FROM eg_expense_task where status = 'IN_PROGRESS' AND last_modified_time < extract(epoch FROM now()) * 1000 - ('{seconds}' * 1000) and type='{type}'";
 	public static final String TASK_IN_PROGRESS_SEARCH_QUERY = "SELECT * FROM eg_expense_task " +
 		"WHERE status = 'IN_PROGRESS' " +
 		"AND last_modified_time < extract(epoch FROM now()) * 1000 - ? " +
 		"AND type = ?";
-//	public static final String TASK_DETAILS_SEARCH_QUERY = "select * from eg_expense_task_details where task_id='{taskId}' and bill_id='{billId}' and bill_details_id='{billDetailsId}'";
 	public static final String TASK_DETAILS_SEARCH_QUERY = "SELECT * FROM eg_expense_task_details";
-//	public static final String TASK_DETAILS_BY_TASK_ID_SEARCH_QUERY = "select * from eg_expense_task_details where task_id='{taskId}'";
 	public static final String TASK_DETAILS_BY_TASK_ID_SEARCH_QUERY = "SELECT * FROM eg_expense_task_details WHERE task_id = ?";
 
 	public static final String TENANT_MODULE_NAME = "tenant";
