@@ -40,7 +40,7 @@ public class SchedulerService {
         this.mapper = mapper;
     }
 
-    @Scheduled(fixedRateString = "${bill.scheduled.task.fixed.rate}") // every 5 minutes
+    @Scheduled(fixedRateString = "${bill.scheduled.task.fixed.rate.millisec}") // every 5 minutes
     public void UpdateInProgressPaymentStatus() {
         List<Task> inProgressPaymentTasks = taskRepository.getInProgressTasks(config.getScheduledTaskDelay().toString(),Task.Type.Transfer.toString());
 
