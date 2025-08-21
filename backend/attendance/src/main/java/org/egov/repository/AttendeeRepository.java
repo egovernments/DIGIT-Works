@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.egov.Constants.INVALID_TENANT_ID;
-import static org.egov.Constants.INVALID_TENANT_ID_MSG;
 
 @Repository
 public class AttendeeRepository {

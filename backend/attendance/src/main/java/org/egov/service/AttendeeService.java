@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -48,6 +49,46 @@ public class AttendeeService {
         this.attendeeEnrichmentService = attendeeEnrichmentService;
         this.attendanceServiceConfiguration = attendanceServiceConfiguration;
         this.producer = producer;
+    }
+
+    /* * Update Attendee Tag
+     *
+     * @param request
+     * @return
+     */
+    public AttendeeUpdateTagRequest updateAttendeeTag(AttendeeUpdateTagRequest attendeeUpdateTagRequest) {
+
+        List<IndividualEntry> attendees = attendeeUpdateTagRequest.getAttendees();
+        // Incoming request validation
+        log.info("validating update attendee tag request parameters");
+        attendeeServiceValidator.validateAttendeeUpdateTagRequestParameters(attendeeUpdateTagRequest);
+
+
+        String tenantId = attendees.get(0).getTenantId();
+        // Fetch current attendee records from DB
+        List<String> ids = attendees.stream().map(IndividualEntry::getId).collect(Collectors.toList());
+        List<IndividualEntry> attendeeListFromDB = getAttendeesByIds(ids, tenantId);
+
+        // Validate that all requested attendees exist in the DB
+        attendeeServiceValidator.validateAllAttendeesExist(attendees, attendeeListFromDB);
+
+       //enrichment call by passing attendee request and data from db call
+        attendeeEnrichmentService.enrichAttendeesForTagUpdate(attendeeUpdateTagRequest, attendeeListFromDB);
+
+        //push to producer
+        log.info("attendee objects pushed via producer");
+        producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendeeTopic(), attendeeUpdateTagRequest);
+
+        log.info("attendees present in update attendee tag request are updated with new tags");
+        return attendeeUpdateTagRequest;
+    }
+
+    private  List<IndividualEntry> getAttendeesByIds(List<String> ids, String tenantId) {
+        AttendeeSearchCriteria criteria = AttendeeSearchCriteria.builder()
+                .ids(ids)
+                .tenantId(tenantId)
+                .build();
+        return attendeeRepository.getAttendees(tenantId, criteria);
     }
 
 
