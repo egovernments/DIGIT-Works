@@ -15,7 +15,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.egov.digit.expense.config.Constants.*;
 
@@ -36,7 +38,37 @@ public class MTNUtil {
         this.config = config;
     }
 
+    private final AtomicInteger tokenCalls = new AtomicInteger(0);
+    private final AtomicInteger accountStatusCalls = new AtomicInteger(0);
+    private final AtomicInteger basicUserInfoCalls = new AtomicInteger(0);
+    private final AtomicInteger transferCalls = new AtomicInteger(0);
+    private final AtomicInteger transferStatusCalls = new AtomicInteger(0);
+
+    private final ThreadLocal<Map<String, Integer>> perUserCounters =
+            ThreadLocal.withInitial(HashMap::new);
+
+    private void incrementCounter(AtomicInteger counter, String name) { //TODO: remove
+        counter.incrementAndGet();
+        perUserCounters.get().merge(name, 1, Integer::sum);
+    }
+
+    private void resetPerUserCounters() { //TODO: remove
+        perUserCounters.set(new HashMap<>());
+    }
+
+    private void logPerUserSummary(String msisdn) { //TODO: remove
+        Map<String, Integer> counts = perUserCounters.get();
+        log.info("MTN API usage for user {} -> {}", msisdn, counts);
+    }
+
+    private void logBatchSummary() { //TODO: remove
+        log.info("MTN API usage summary (batch) -> Tokens={}, AccountStatus={}, UserInfo={}, Transfers={}, TransferStatus={}",
+                tokenCalls.get(), accountStatusCalls.get(),
+                basicUserInfoCalls.get(), transferCalls.get(), transferStatusCalls.get());
+    }
+
     private String getAccessToken() {
+        incrementCounter(tokenCalls, "getAccessTokenApi");
         String url = UriComponentsBuilder
                 .fromHttpUrl(config.getBaseUrlMTN()+config.getTokenEndpointMTN())
                 .toUriString();
@@ -73,7 +105,22 @@ public class MTNUtil {
         }
     }
 
+    //TODO: CACHING Token
+//    private static String cachedToken;
+//    private static long tokenExpiryTime = 0;
+//
+//    private synchronized String getAccessToken() {
+//        long now = System.currentTimeMillis();
+//        if (cachedToken != null && now < tokenExpiryTime) {
+//            return cachedToken;
+//        }
+//        cachedToken = getAccessTokenApi();
+//        tokenExpiryTime = now + 3600_000; // 1 hour
+//        return cachedToken;
+//    }
+
     private boolean isAccountHolderActive(String msisdn, String accessToken) {
+        incrementCounter(accountStatusCalls, "isAccountHolderActive");//Todo: remove
 
         String url = UriComponentsBuilder
                 .fromHttpUrl(config.getBaseUrlMTN() + config.getAccountEndpointMTN().replace("{id}",msisdn))
@@ -111,6 +158,8 @@ public class MTNUtil {
     }
 
     private ObjectNode getBasicUserInfo(String msisdn, String accessToken) {
+        incrementCounter(basicUserInfoCalls, "getBasicUserInfo");//Todo: remove
+
         String url = UriComponentsBuilder
                 .fromHttpUrl(config.getBaseUrlMTN() + config.getBasicUserInfoEndpointMTN().replace("{id}", msisdn))
                 .toUriString();
@@ -176,20 +225,25 @@ public class MTNUtil {
                 if (userInfo.hasNonNull(MTN_USER_FAMILY_NAME_FIELD)) {
                     name = name + " " + userInfo.get(MTN_USER_FAMILY_NAME_FIELD).asText();
                 }
+                logPerUserSummary(msisdn);
                 return name;
             } else {
                 log.error("Missing 'given_name' in user info response for MSISDN: {}", msisdn);
+                logPerUserSummary(msisdn);//Todo: remove
                 throw new CustomException("MTN_USERINFO_MISSING_NAME", "Given name is missing in user info for MSISDN: " + msisdn);
             }
         } catch (CustomException e) {
+            logPerUserSummary(msisdn);//Todo: remove
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error fetching basic user info for MSISDN {}", msisdn, e);
+            logPerUserSummary(msisdn);//Todo: remove
             throw new CustomException("MTN_USERINFO_FETCH_FAILED", "Could not retrieve user info: " + e.getMessage());
         }
     }
 
     private void initiateTransfer(PaymentTransferRequest paymentTransferRequest, String referenceId, String accessToken) {
+        incrementCounter(transferCalls, "initiateTransfer"); //Todo: remove
 
         String url = UriComponentsBuilder
                 .fromHttpUrl(config.getBaseUrlMTN() + config.getTransferEndpointMTN())
@@ -237,7 +291,7 @@ public class MTNUtil {
     }
 
     public void transferIfAccountIsActive(PaymentTransferRequest paymentTransferRequest,String referenceId) {
-
+        resetPerUserCounters();//Todo: remove
         String accessToken;
         try {
             accessToken = getAccessToken();
@@ -269,9 +323,11 @@ public class MTNUtil {
             log.error("MTN transfer failed for MSISDN {} with reference {}", paymentTransferRequest.getPayee().getPartyId(), referenceId, e);
             throw e;
         }
+        logPerUserSummary(paymentTransferRequest.getPayee().getPartyId());//TODO: remove
     }
 
     public PaymentTransferResponse getTransferStatus(String referenceId) {
+        incrementCounter(transferStatusCalls, "getTransferStatus");//Todo: remove
 
         String accessToken = getAccessToken();
         String url = UriComponentsBuilder
@@ -309,6 +365,10 @@ public class MTNUtil {
             log.error("Error while retrieving transfer status for referenceId {}", referenceId, e);
             throw new CustomException("MTN_TRANSFER_STATUS_EXCEPTION", e.getMessage());
         }
+    }
+
+    public void logFinalBatchSummary() { //TODO: remove
+        logBatchSummary();
     }
 
 }

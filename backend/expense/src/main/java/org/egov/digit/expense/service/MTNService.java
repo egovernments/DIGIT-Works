@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -211,6 +212,7 @@ public class MTNService {
 				}
 			}
 		}
+		mtnUtil.logFinalBatchSummary();//TODO: remove
 		if (billFromSearch.getStatus() == Status.PENDING_VERIFICATION
 				|| billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED
 				|| billFromSearch.getStatus() == Status.PARTIALLY_PAID
@@ -329,6 +331,16 @@ public class MTNService {
 						.tenantId(billFromSearch.getTenantId())
 						.auditDetails(billFromSearch.getAuditDetails())
 						.build();
+					//TODO: ZERO Amt check
+
+//				if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
+//					taskDetails.setResponseMessage("TOTAL_AMOUNT_ZERO_EXCEPTION");
+//					taskDetails.setReasonForFailure("Payment couldn't be processed as total amount is 0.");
+//					taskDetails.setStatus(Status.DONE);
+//					Workflow billDetailWorkflow = Workflow.builder().action(Actions.DECLINE.toString()).build();
+//					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), true);
+//					log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
+//				}
 
 				PaymentTransferRequest paymentTransferRequest = createPaymentTransferRequest(billDetail, individualDetails.getPhoneNumber());
 				try {
@@ -340,6 +352,7 @@ public class MTNService {
 				expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
 			}
 		}
+		mtnUtil.logFinalBatchSummary(); //TODO: remove
 		task.setAdditionalDetails(taskRequest.getRequestInfo());
 		AuditDetails auditDetails = task.getAuditDetails();
 		auditDetails.setLastModifiedTime(System.currentTimeMillis());
@@ -514,6 +527,7 @@ public class MTNService {
 							billFromSearch.getBillNumber(),billDetail.getId(),task.getId(),taskDetail.getId(),e);
 					taskDetail.setReasonForFailure(e.getMessage());
 					taskDetail.setResponseMessage(e.getLocalizedMessage());
+					//TODO keep in progress - remove
 					taskDetail.setStatus(Status.DONE);
 					billDetailWorkflow.setAction(Actions.DECLINE.toString());
 				}
@@ -546,6 +560,7 @@ public class MTNService {
 				}
 			}
 		}
+		mtnUtil.logFinalBatchSummary();//TODO: remove
 		if (billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED || billFromSearch.getStatus() == Status.FULLY_VERIFIED || billFromSearch.getStatus() == Status.PARTIALLY_PAID) {
 
 			List<BillDetail> paidBillDetails = new ArrayList<>();
