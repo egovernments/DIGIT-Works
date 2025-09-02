@@ -365,7 +365,7 @@ public class MTNService {
 				.currency(config.getPaymentCurrency())
 				.externalId(billDetail.getId())
 				.payee(PaymentTransferRequest.Payee.builder()
-						.partyId(partyId)
+						.partyId(config.getPhoneCodePrefix()+partyId)
 						.partyIdType(config.getPartyIdType())
 						.build())
 				.build();

@@ -67,7 +67,7 @@ public class MTNUtil {
                 basicUserInfoCalls.get(), transferCalls.get(), transferStatusCalls.get());
     }
 
-    private String getAccessToken() {
+    private String getAccessTokenApi() {
         incrementCounter(tokenCalls, "getAccessTokenApi");
         String url = UriComponentsBuilder
                 .fromHttpUrl(config.getBaseUrlMTN()+config.getTokenEndpointMTN())
@@ -106,18 +106,18 @@ public class MTNUtil {
     }
 
     //TODO: CACHING Token
-//    private static String cachedToken;
-//    private static long tokenExpiryTime = 0;
-//
-//    private synchronized String getAccessToken() {
-//        long now = System.currentTimeMillis();
-//        if (cachedToken != null && now < tokenExpiryTime) {
-//            return cachedToken;
-//        }
-//        cachedToken = getAccessTokenApi();
-//        tokenExpiryTime = now + 3600_000; // 1 hour
-//        return cachedToken;
-//    }
+    private static String cachedToken;
+    private static long tokenExpiryTime = 0;
+
+    private synchronized String getAccessToken() {
+        long now = System.currentTimeMillis();
+        if (cachedToken != null && now < tokenExpiryTime) {
+            return cachedToken;
+        }
+        cachedToken = getAccessTokenApi();
+        tokenExpiryTime = now + Long.parseLong(config.getTokenExpiryInterval()); // keeping it 55mins instead of 1 hr
+        return cachedToken;
+    }
 
     private boolean isAccountHolderActive(String msisdn, String accessToken) {
         incrementCounter(accountStatusCalls, "isAccountHolderActive");//Todo: remove
@@ -161,7 +161,7 @@ public class MTNUtil {
         incrementCounter(basicUserInfoCalls, "getBasicUserInfo");//Todo: remove
 
         String url = UriComponentsBuilder
-                .fromHttpUrl(config.getBaseUrlMTN() + config.getBasicUserInfoEndpointMTN().replace("{id}", msisdn))
+                .fromHttpUrl(config.getBaseUrlMTN() + config.getBasicUserInfoEndpointMTN().replace("{id}", config.getPhoneCodePrefix()+msisdn))
                 .toUriString();
 
         HttpHeaders headers = new HttpHeaders();
@@ -207,7 +207,7 @@ public class MTNUtil {
 
         boolean isActive;
         try {
-            isActive = isAccountHolderActive(msisdn, accessToken);
+            isActive = isAccountHolderActive(config.getPhoneCodePrefix()+msisdn, accessToken);
         } catch (CustomException e) {
             log.error("Failed to verify account status for MSISDN {}", msisdn, e);
             throw new CustomException(e.getCode(), e.getMessage());

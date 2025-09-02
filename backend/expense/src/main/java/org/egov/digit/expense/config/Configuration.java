@@ -229,6 +229,12 @@ public class Configuration {
 	@Value("${mtn.payment.partyIdType}")
 	private String partyIdType;
 
+	@Value("${mtn.payment.token.expiry.interval.millisec}")
+	private String tokenExpiryInterval;
+
+	@Value("${mtn.payment.phone.code.prefix}")
+	private String phoneCodePrefix;
+
 	@Value("${bill.business.service}")
 	private String billBusinessService;
 
