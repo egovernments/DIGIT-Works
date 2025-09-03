@@ -416,6 +416,7 @@ public class MTNService {
 			try {
 				State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
 				billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+				log.info("billdetailstatus {}",Status.fromValue(wfState.getApplicationStatus())); //TODO REMOVE
 			} catch (HttpClientErrorException e) {
 				log.error("Error in updating workflow state change for billDetail Id: {}, from status: {} to action: {}"
 						, billDetail.getId(), billDetail.getStatus(),workflow.getAction(),e);
