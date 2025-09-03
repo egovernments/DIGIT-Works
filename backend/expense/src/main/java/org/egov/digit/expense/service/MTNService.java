@@ -333,14 +333,14 @@ public class MTNService {
 						.build();
 					//TODO: ZERO Amt check
 
-//				if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
-//					taskDetails.setResponseMessage("TOTAL_AMOUNT_ZERO_EXCEPTION");
-//					taskDetails.setReasonForFailure("Payment couldn't be processed as total amount is 0.");
-//					taskDetails.setStatus(Status.DONE);
-//					Workflow billDetailWorkflow = Workflow.builder().action(Actions.DECLINE.toString()).build();
-//					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), true);
-//					log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
-//				}
+				if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
+					taskDetails.setResponseMessage("Payment couldn't be processed as total amount is 0.");
+					taskDetails.setReasonForFailure("TOTAL_AMOUNT_ZERO_EXCEPTION");
+					taskDetails.setStatus(Status.DONE);
+					Workflow billDetailWorkflow = Workflow.builder().action(Actions.DECLINE.toString()).build();
+					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), true);
+					log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
+				}
 
 				PaymentTransferRequest paymentTransferRequest = createPaymentTransferRequest(billDetail, individualDetails.getPhoneNumber());
 				try {
@@ -361,7 +361,7 @@ public class MTNService {
 
 	private PaymentTransferRequest createPaymentTransferRequest(BillDetail billDetail, String partyId){
 		return PaymentTransferRequest.builder()
-				.amount(String.valueOf(billDetail.getTotalAmount()))
+				.amount(String.valueOf(billDetail.getTotalAmount().longValue()))
 				.currency(config.getPaymentCurrency())
 				.externalId(billDetail.getId())
 				.payee(PaymentTransferRequest.Payee.builder()
