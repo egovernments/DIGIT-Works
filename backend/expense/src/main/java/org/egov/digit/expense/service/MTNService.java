@@ -331,12 +331,13 @@ public class MTNService {
 						.tenantId(billFromSearch.getTenantId())
 						.auditDetails(billFromSearch.getAuditDetails())
 						.build();
-					//TODO: ZERO Amt check
 
+					//TODO: ZERO Amt check
 				if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
 					taskDetails.setResponseMessage("Payment couldn't be processed as total amount is 0.");
 					taskDetails.setReasonForFailure("TOTAL_AMOUNT_ZERO_EXCEPTION");
 					taskDetails.setStatus(Status.DONE);
+					expenseProducer.push(config.getTaskDetailsUpdateTopic(), taskDetails);
 					Workflow billDetailWorkflow = Workflow.builder().action(Actions.DECLINE.toString()).build();
 					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), true);
 					log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
