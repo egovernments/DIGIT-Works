@@ -337,6 +337,7 @@ public class MTNService {
 					taskDetails.setResponseMessage("Payment couldn't be processed as total amount is 0.");
 					taskDetails.setReasonForFailure("TOTAL_AMOUNT_ZERO_EXCEPTION");
 					taskDetails.setStatus(Status.DONE);
+					expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
 					Workflow billDetailWorkflow = Workflow.builder().action(Actions.DECLINE.toString()).build();
 					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), true);
 					log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
@@ -349,8 +350,8 @@ public class MTNService {
 						taskDetails.setResponseMessage(e.getMessage());
 						taskDetails.setReasonForFailure(e.getCode());
 					}
+					expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
 				}
-				expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
 			}
 		}
 		mtnUtil.logFinalBatchSummary(); //TODO: remove
