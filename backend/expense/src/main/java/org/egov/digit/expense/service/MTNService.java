@@ -336,11 +336,11 @@ public class MTNService {
 				if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
 					taskDetails.setResponseMessage("Payment couldn't be processed as total amount is 0.");
 					taskDetails.setReasonForFailure("TOTAL_AMOUNT_ZERO_EXCEPTION");
-					taskDetails.setStatus(Status.DONE);
-					expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
-					Workflow billDetailWorkflow = Workflow.builder().action(Actions.DECLINE.toString()).build();
-					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), true);
-					log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
+//					taskDetails.setStatus(Status.DONE);
+//					expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
+//					Workflow billDetailWorkflow = Workflow.builder().action(Actions.DECLINE.toString()).build();
+//					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), true);
+//					log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
 				}
 				else {
 					PaymentTransferRequest paymentTransferRequest = createPaymentTransferRequest(billDetail, individualDetails.getPhoneNumber());
@@ -513,18 +513,23 @@ public class MTNService {
 			if (taskDetail.getStatus() == Status.IN_PROGRESS && billDetail.getStatus() == Status.VERIFIED) {
 				Workflow billDetailWorkflow = Workflow.builder().build();
 				try {
-					PaymentTransferResponse paymentTransferResponse = mtnUtil.getTransferStatus(taskDetail.getId());
-					if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.SUCCESSFUL.toString())) {
-						billDetailWorkflow.setAction(Actions.PAY.toString());
-					} else if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.FAILED.toString())) {
+					if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
 						billDetailWorkflow.setAction(Actions.DECLINE.toString());
-					} else {
-						log.info("unknown response status: {} for bill bumber : {}, task id: {}, task detail id: {}", paymentTransferResponse.getStatus(),billFromSearch.getBillNumber(), task.getId(), taskDetail.getId());
+						log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
 					}
-					taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
-					taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
-					taskDetail.setStatus(Status.DONE);
-
+					else {
+						PaymentTransferResponse paymentTransferResponse = mtnUtil.getTransferStatus(taskDetail.getId());
+						if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.SUCCESSFUL.toString())) {
+							billDetailWorkflow.setAction(Actions.PAY.toString());
+						} else if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.FAILED.toString())) {
+							billDetailWorkflow.setAction(Actions.DECLINE.toString());
+						} else {
+							log.info("unknown response status: {} for bill bumber : {}, task id: {}, task detail id: {}", paymentTransferResponse.getStatus(), billFromSearch.getBillNumber(), task.getId(), taskDetail.getId());
+						}
+						taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
+						taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
+						taskDetail.setStatus(Status.DONE);
+					}
 				} catch (CustomException e) {
 					log.error("error in fetching payment transfer status from mtn for bill number : {}, billDetail: {},task: {}, taskDetail: {}",
 							billFromSearch.getBillNumber(),billDetail.getId(),task.getId(),taskDetail.getId(),e);
@@ -570,6 +575,7 @@ public class MTNService {
 			List<BillDetail> declinedBillDetails = new ArrayList<>();
 			billFromSearch
 				.getBillDetails().forEach(billDetail -> {
+					log.info("bill det status 123 {}, id {}",billDetail.getStatus(), billDetail.getId());
 					if (billDetail.getStatus() == Status.PAID) {
 						paidBillDetails.add(billDetail);
 					} else if (billDetail.getStatus() == Status.PAYMENT_FAILED) {
