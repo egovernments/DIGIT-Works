@@ -336,11 +336,11 @@ public class MTNService {
 				if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
 					taskDetails.setResponseMessage("Payment couldn't be processed as total amount is 0.");
 					taskDetails.setReasonForFailure("TOTAL_AMOUNT_ZERO_EXCEPTION");
+					expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
 //					taskDetails.setStatus(Status.DONE);
-//					expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
 //					Workflow billDetailWorkflow = Workflow.builder().action(Actions.DECLINE.toString()).build();
 //					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), true);
-//					log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
+					log.info("12232343Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
 				}
 				else {
 					PaymentTransferRequest paymentTransferRequest = createPaymentTransferRequest(billDetail, individualDetails.getPhoneNumber());
@@ -515,6 +515,7 @@ public class MTNService {
 				try {
 					if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
 						billDetailWorkflow.setAction(Actions.DECLINE.toString());
+						taskDetail.setStatus(Status.DONE);
 						log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
 					}
 					else {
