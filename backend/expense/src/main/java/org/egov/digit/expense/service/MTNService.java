@@ -531,6 +531,8 @@ public class MTNService {
 						taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
 						taskDetail.setStatus(Status.DONE);
 					}
+					if(billDetail.getStatus() == Status.PAYMENT_FAILED && Objects.equals(billDetailWorkflow.getAction(), Actions.DECLINE.toString()))
+						isUpdateWorkflow = false;
 				} catch (CustomException e) {
 					log.error("error in fetching payment transfer status from mtn for bill number : {}, billDetail: {},task: {}, taskDetail: {}",
 							billFromSearch.getBillNumber(),billDetail.getId(),task.getId(),taskDetail.getId(),e);
