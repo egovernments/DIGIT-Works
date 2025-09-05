@@ -318,7 +318,7 @@ public class MTNService {
 
 
 		for (BillDetail billDetail: billDetailsToBeupdatedById.values() ){
-			if(billDetail.getStatus()==Status.VERIFIED) {
+			if(billDetail.getStatus()==Status.VERIFIED || billDetail.getStatus()==Status.PAYMENT_FAILED) {
 				IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(),billFromSearch.getTenantId(),billDetail.getPayee().getIdentifier());
 				TaskDetails taskDetails = TaskDetails.builder()
 						.id(UUID.randomUUID().toString())
@@ -510,7 +510,7 @@ public class MTNService {
 		for (TaskDetails taskDetail: taskDetails){
 			boolean isUpdateWorkflow = true;
 			BillDetail billDetail = billDetailsById.get(taskDetail.getBillDetailsId());
-			if (taskDetail.getStatus() == Status.IN_PROGRESS && billDetail.getStatus() == Status.VERIFIED) {
+			if (taskDetail.getStatus() == Status.IN_PROGRESS && (billDetail.getStatus() == Status.VERIFIED || billDetail.getStatus() == Status.PAYMENT_FAILED)) {
 				Workflow billDetailWorkflow = Workflow.builder().build();
 				try {
 					if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
@@ -536,6 +536,7 @@ public class MTNService {
 							billFromSearch.getBillNumber(),billDetail.getId(),task.getId(),taskDetail.getId(),e);
 					taskDetail.setReasonForFailure(e.getMessage());
 					taskDetail.setResponseMessage(e.getLocalizedMessage());
+//					isUpdateWorkflow = false; //TODO : ADD
 					//TODO keep in progress - remove
 					taskDetail.setStatus(Status.DONE);
 					billDetailWorkflow.setAction(Actions.DECLINE.toString());

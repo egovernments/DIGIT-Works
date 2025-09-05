@@ -63,7 +63,7 @@ public class SchedulerService {
             } finally {
                 AuditDetails auditDetails = task.getAuditDetails();
                 auditDetails.setLastModifiedTime(System.currentTimeMillis());
-                task.setStatus(Status.DONE);
+                task.setStatus(Status.DONE); // TODO : REMOVE FROM HERE AND MOVE TO SERVICE LOGIC
                 expenseProducer.push(config.getTaskUpdateTopic(),task);
             }
         }
