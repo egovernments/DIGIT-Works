@@ -363,7 +363,8 @@ public class MTNService {
 
 	private PaymentTransferRequest createPaymentTransferRequest(BillDetail billDetail, String partyId){
 		return PaymentTransferRequest.builder()
-				.amount(String.valueOf(billDetail.getTotalAmount().longValue()))
+//				.amount(String.valueOf(billDetail.getTotalAmount().longValue()))
+				.amount("886530005") //todo revert
 				.currency(config.getPaymentCurrency())
 				.externalId(billDetail.getId())
 				.payee(PaymentTransferRequest.Payee.builder()
@@ -525,7 +526,7 @@ public class MTNService {
 						} else if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.FAILED.toString())) {
 							billDetailWorkflow.setAction(Actions.DECLINE.toString());
 						} else {
-							log.info("unknown response status: {} for bill bumber : {}, task id: {}, task detail id: {}", paymentTransferResponse.getStatus(), billFromSearch.getBillNumber(), task.getId(), taskDetail.getId());
+							log.info("unknown response status: {} for bill number : {}, task id: {}, task detail id: {}", paymentTransferResponse.getStatus(), billFromSearch.getBillNumber(), task.getId(), taskDetail.getId());
 						}
 						taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
 						taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
@@ -536,12 +537,12 @@ public class MTNService {
 				} catch (CustomException e) {
 					log.error("error in fetching payment transfer status from mtn for bill number : {}, billDetail: {},task: {}, taskDetail: {}",
 							billFromSearch.getBillNumber(),billDetail.getId(),task.getId(),taskDetail.getId(),e);
-					taskDetail.setReasonForFailure(e.getMessage());
-					taskDetail.setResponseMessage(e.getLocalizedMessage());
-//					isUpdateWorkflow = false; //TODO : ADD
+					taskDetail.setReasonForFailure(e.getCode());
+					taskDetail.setResponseMessage(e.getMessage());
+					isUpdateWorkflow = false; //TODO : ADD
 					//TODO keep in progress - remove
-					taskDetail.setStatus(Status.DONE);
-					billDetailWorkflow.setAction(Actions.DECLINE.toString());
+//					taskDetail.setStatus(Status.DONE);
+//					billDetailWorkflow.setAction(Actions.DECLINE.toString());
 				}
 				expenseProducer.push(config.getTaskDetailsUpdateTopic(), taskDetail);
 

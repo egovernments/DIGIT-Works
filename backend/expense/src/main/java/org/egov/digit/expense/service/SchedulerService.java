@@ -9,6 +9,7 @@ import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.Task;
+import org.egov.digit.expense.web.models.TaskDetails;
 import org.egov.digit.expense.web.models.TaskRequest;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,13 @@ public class SchedulerService {
                             .bill(Bill.builder().id(task.getBillId()).tenantId(requestInfo.getUserInfo().getTenantId()).build())
                         .build();
                 mtnService.updatePaymentTaskStatus(taskRequest);
+                List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId());
+                boolean anyInProgress = taskDetails.stream()
+                        .anyMatch(td -> td.getStatus() == Status.IN_PROGRESS);
+
+                if (!anyInProgress) {
+                    task.setStatus(Status.DONE);
+                }
 
             } catch (Exception e) {
                 log.error("Error in Updating payment status for task {}", task.getId(),e);
@@ -63,7 +71,6 @@ public class SchedulerService {
             } finally {
                 AuditDetails auditDetails = task.getAuditDetails();
                 auditDetails.setLastModifiedTime(System.currentTimeMillis());
-                task.setStatus(Status.DONE); // TODO : REMOVE FROM HERE AND MOVE TO SERVICE LOGIC
                 expenseProducer.push(config.getTaskUpdateTopic(),task);
             }
         }
