@@ -173,11 +173,11 @@ public class MTNService {
 						workflow.setAction(Actions.VERIFY.toString());
 					}
 				} catch (CustomException e) {
-					if(Objects.equals(e.getCode(), "MTN_ACCOUNT_INACTIVE")){
-						workflow.setAction(Actions.REFUTE.toString());
-					}
-					else if(Objects.equals(e.getCode(), "MTN_SERVICE_EXCEPTION")){
+					if(Objects.equals(e.getCode(), "MTN_SERVICE_EXCEPTION")){
 						updateBillDetailWorkflow = false;
+					}
+					else{
+						workflow.setAction(Actions.REFUTE.toString());
 					}
 					taskDetails.setResponseMessage(e.getMessage());
 					taskDetails.setReasonForFailure(e.getCode());
@@ -212,7 +212,6 @@ public class MTNService {
 				}
 			}
 		}
-		mtnUtil.logFinalBatchSummary();//TODO: remove
 		if (billFromSearch.getStatus() == Status.PENDING_VERIFICATION
 				|| billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED
 				|| billFromSearch.getStatus() == Status.PARTIALLY_PAID
@@ -332,15 +331,12 @@ public class MTNService {
 						.auditDetails(billFromSearch.getAuditDetails())
 						.build();
 
-					//TODO: ZERO Amt check
+					//ZERO Amt check
 				if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
 					taskDetails.setResponseMessage("Payment couldn't be processed as total amount is 0.");
 					taskDetails.setReasonForFailure("TOTAL_AMOUNT_ZERO_EXCEPTION");
 					expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
-//					taskDetails.setStatus(Status.DONE);
-//					Workflow billDetailWorkflow = Workflow.builder().action(Actions.DECLINE.toString()).build();
-//					setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), true);
-					log.info("12232343Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
+					log.info("payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
 				}
 				else {
 					PaymentTransferRequest paymentTransferRequest = createPaymentTransferRequest(billDetail, individualDetails.getPhoneNumber());
@@ -354,7 +350,6 @@ public class MTNService {
 				}
 			}
 		}
-		mtnUtil.logFinalBatchSummary(); //TODO: remove
 		task.setAdditionalDetails(taskRequest.getRequestInfo());
 		AuditDetails auditDetails = task.getAuditDetails();
 		auditDetails.setLastModifiedTime(System.currentTimeMillis());
@@ -363,8 +358,7 @@ public class MTNService {
 
 	private PaymentTransferRequest createPaymentTransferRequest(BillDetail billDetail, String partyId){
 		return PaymentTransferRequest.builder()
-//				.amount(String.valueOf(billDetail.getTotalAmount().longValue()))
-				.amount("886530005") //todo revert
+				.amount(String.valueOf(billDetail.getTotalAmount().longValue()))
 				.currency(config.getPaymentCurrency())
 				.externalId(billDetail.getId())
 				.payee(PaymentTransferRequest.Payee.builder()
@@ -417,7 +411,6 @@ public class MTNService {
 			try {
 				State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
 				billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-				log.info("billdetailstatus {}",Status.fromValue(wfState.getApplicationStatus())); //TODO REMOVE
 			} catch (HttpClientErrorException e) {
 				log.error("Error in updating workflow state change for billDetail Id: {}, from status: {} to action: {}"
 						, billDetail.getId(), billDetail.getStatus(),workflow.getAction(),e);
@@ -539,10 +532,7 @@ public class MTNService {
 							billFromSearch.getBillNumber(),billDetail.getId(),task.getId(),taskDetail.getId(),e);
 					taskDetail.setReasonForFailure(e.getCode());
 					taskDetail.setResponseMessage(e.getMessage());
-					isUpdateWorkflow = false; //TODO : ADD
-					//TODO keep in progress - remove
-//					taskDetail.setStatus(Status.DONE);
-//					billDetailWorkflow.setAction(Actions.DECLINE.toString());
+					isUpdateWorkflow = false;
 				}
 				expenseProducer.push(config.getTaskDetailsUpdateTopic(), taskDetail);
 
@@ -573,14 +563,12 @@ public class MTNService {
 				}
 			}
 		}
-		mtnUtil.logFinalBatchSummary();//TODO: remove
 		if (billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED || billFromSearch.getStatus() == Status.FULLY_VERIFIED || billFromSearch.getStatus() == Status.PARTIALLY_PAID) {
 
 			List<BillDetail> paidBillDetails = new ArrayList<>();
 			List<BillDetail> declinedBillDetails = new ArrayList<>();
 			billFromSearch
 				.getBillDetails().forEach(billDetail -> {
-					log.info("bill det status 123 {}, id {}",billDetail.getStatus(), billDetail.getId());
 					if (billDetail.getStatus() == Status.PAID) {
 						paidBillDetails.add(billDetail);
 					} else if (billDetail.getStatus() == Status.PAYMENT_FAILED) {
@@ -598,7 +586,7 @@ public class MTNService {
 			} else if (declinedBillDetails.size() == billFromSearch.getBillDetails().size()){
 				workflow.setAction(Actions.DECLINE_PAYMENT.toString());
 			} else {
-				log.info("No workflow state change for bill number : {}, task id: {}", billFromSearch.getBillNumber(), task.getId());
+				log.info("no workflow state change for bill number : {}, task id: {}", billFromSearch.getBillNumber(), task.getId());
 				isWorkflowChange = false;
 			}
 			BillRequest billRequest = BillRequest
