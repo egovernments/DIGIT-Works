@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>6.5.4</version>
+			<version>8.18.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov.works</groupId>
