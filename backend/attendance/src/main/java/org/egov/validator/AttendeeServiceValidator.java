@@ -565,13 +565,20 @@ public class AttendeeServiceValidator {
 
                 if (!reportingToList.contains(reportersEmployeeList.get(0).getUser().getUserServiceUuid())) {
                     //throw validation error if attendee's reportingTo is not First Staff of the Register
-                    throw new CustomException("REPORTING_STAFF_INCORRECT_FOR_ATTENDEE", "Attendees reporting uuid does not match with for attendee uuid - " + entry.getIndividualId());
+                    throw new CustomException("REPORTING_STAFF_INCORRECT_FOR_ATTENDEE", "Attendees reporting uuid does not match with the register owner uuid");
                 }
                 validIndividualEntries.add(entry);
             }
-            catch (Exception e)
-            {
-                log.error(e.toString());
+            catch (CustomException e) {
+                // Re-throw CustomException as-is to preserve the original error code and message
+                log.error("Validation failed for attendee {}: {} - {}", entry.getIndividualId(), e.getCode(), e.getMessage());
+                throw e;
+            }
+            catch (Exception e) {
+                // Wrap unexpected exceptions
+                log.error("Unexpected error while validating attendee {}: {}", entry.getIndividualId(), e.toString(), e);
+                throw new CustomException("ATTENDEE_VALIDATION_FAILED",
+                        "Failed to validate attendee with individual ID - " + entry.getIndividualId() + ": " + e.getMessage());
             }
         }
         attendeeCreateRequest.setAttendees(validIndividualEntries);
