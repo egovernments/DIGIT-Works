@@ -422,6 +422,9 @@ public class AttendeeServiceValidator {
                     if (attendeeFromDB.getDenrollmentDate() == null) { // already enrolled to the register
                         throw new CustomException("INDIVIDUAL_ID", "Attendee " + attendeeFromRequest.getIndividualId() + " is already enrolled in the register " + attendeeFromRequest.getRegisterId());
 
+                    }  else {
+                         // Prevent re-enrollment of previously de-enrolled attendees
+                         throw new CustomException("INDIVIDUAL_ID", "Attendee " + attendeeFromRequest.getIndividualId() + " was previously enrolled and de-enrolled from register " + attendeeFromRequest.getRegisterId() + ". Re-enrollment is not allowed.");
                     }
                 }
             }
