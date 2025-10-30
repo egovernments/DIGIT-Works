@@ -385,6 +385,31 @@ public class AttendeeServiceValidator {
 
         List<IndividualEntry> attendeeListFromRequest = attendeeCreateRequest.getAttendees();
 
+        // Fetch individual details to get names
+        List<String> individualIds = attendeeListFromRequest.stream()
+                .map(IndividualEntry::getIndividualId)
+                .collect(Collectors.toList());
+        Map<String, String> individualIdToNameMap = new HashMap<>();
+        try {
+            individualServiceUtil.getIndividualDetails(individualIds, attendeeCreateRequest.getRequestInfo(),
+                    attendeeListFromRequest.get(0).getTenantId())
+                    .forEach(individual -> {
+                        String name = individual.getName() != null && individual.getName().getGivenName() != null
+                                ? individual.getName().getGivenName()
+                                : individual.getId();
+                        individualIdToNameMap.put(individual.getId(), name);
+                    });
+        } catch (Exception e) {
+            log.warn("Failed to fetch individual names, will use IDs in error messages: {}", e.getMessage());
+        }
+
+        // Create register ID to name map
+        Map<String, String> registerIdToNameMap = attendanceRegisterListFromDB.stream()
+                .collect(Collectors.toMap(
+                        AttendanceRegister::getId,
+                        register -> register.getName() != null ? register.getName() : register.getId()
+                ));
+
 
         // attendee cannot be added to register if register's end date has passed
         log.info("verifying that attendee cannot be added to register if register's end date has passed");
@@ -392,7 +417,8 @@ public class AttendeeServiceValidator {
         for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
             int dateComparisonResult = attendanceRegister.getEndDate().compareTo(currentDate);
             if (dateComparisonResult < 0) {
-                throw new CustomException("END_DATE", "Attendee cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
+                String registerName = registerIdToNameMap.getOrDefault(attendanceRegister.getId(), attendanceRegister.getId());
+                throw new CustomException("END_DATE", "Attendee cannot be enrolled as END_DATE of register '" + registerName + "' has already passed.");
             }
         }
 
@@ -405,8 +431,10 @@ public class AttendeeServiceValidator {
                         int startDateCompare = attendeeFromRequest.getEnrollmentDate().compareTo(attendanceRegister.getStartDate());
                         int endDateCompare = attendanceRegister.getEndDate().compareTo(attendeeFromRequest.getEnrollmentDate());
                         if (startDateCompare < 0 || endDateCompare < 0) {
+                            String individualName = individualIdToNameMap.getOrDefault(attendeeFromRequest.getIndividualId(), attendeeFromRequest.getIndividualId());
+                            String registerName = registerIdToNameMap.getOrDefault(attendeeFromRequest.getRegisterId(), attendeeFromRequest.getRegisterId());
                             throw new CustomException("ENROLLMENT_DATE"
-                                    , "Enrollment date for attendee : " + attendeeFromRequest.getIndividualId() + " must be within start and end date of the register");
+                                    , "Enrollment date for attendee '" + individualName + "' must be within start and end date of the register '" + registerName + "'");
                         }
                     }
                 }
@@ -419,11 +447,15 @@ public class AttendeeServiceValidator {
             for (IndividualEntry attendeeFromDB : attendeeListFromDB) {
                 if (attendeeFromRequest.getRegisterId().equals(attendeeFromDB.getRegisterId())
                         && attendeeFromRequest.getIndividualId().equals(attendeeFromDB.getIndividualId())) {//attendee present in db
+                    String individualName = individualIdToNameMap.getOrDefault(attendeeFromRequest.getIndividualId(), attendeeFromRequest.getIndividualId());
+                    String registerName = registerIdToNameMap.getOrDefault(attendeeFromRequest.getRegisterId(), attendeeFromRequest.getRegisterId());
+
                     if (attendeeFromDB.getDenrollmentDate() == null) { // already enrolled to the register
-                        throw new CustomException("INDIVIDUAL_ID", "Attendee " + attendeeFromRequest.getIndividualId() + " is already enrolled in the register " + attendeeFromRequest.getRegisterId());
-                    } else {
-                        // Prevent re-enrollment of previously de-enrolled attendees
-                        throw new CustomException("INDIVIDUAL_ID", "Attendee " + attendeeFromRequest.getIndividualId() + " was previously enrolled and de-enrolled from register " + attendeeFromRequest.getRegisterId() + ". Re-enrollment is not allowed.");
+                        throw new CustomException("INDIVIDUAL_ID", "Attendee '" + individualName + "' is already enrolled in the register '" + registerName + "'");
+
+                    }  else {
+                         // Prevent re-enrollment of previously de-enrolled attendees
+                         throw new CustomException("INDIVIDUAL_ID", "Attendee '" + individualName + "' was previously enrolled and de-enrolled from register '" + registerName + "'. Re-enrollment is not allowed.");
                     }
                 }
             }
