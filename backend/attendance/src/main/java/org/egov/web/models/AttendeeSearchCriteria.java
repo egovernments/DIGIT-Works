@@ -1,6 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,9 +16,6 @@ public class AttendeeSearchCriteria {
 
     @JsonProperty("ids")
     private List<String> ids;
-
-    @JsonProperty("tenantId")
-    private String tenantId;
 
     @JsonProperty("individualIds")
     private List<String> individualIds;
@@ -36,4 +34,12 @@ public class AttendeeSearchCriteria {
 
     @JsonProperty("offset")
     private Integer offset;
+
+    @JsonProperty("tags")
+    private List<String> tags;
+
+    @NotNull
+    @JsonProperty("tenantId")
+    private String tenantId;
+
 }

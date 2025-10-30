@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.kafka.MusterRollProducer;
 import org.egov.repository.MusterRollRepository;

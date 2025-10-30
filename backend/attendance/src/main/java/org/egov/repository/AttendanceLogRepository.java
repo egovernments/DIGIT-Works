@@ -23,7 +23,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import static org.egov.Constants.INVALID_TENANT_ID;
-import static org.egov.Constants.INVALID_TENANT_ID_MSG;
 
 @Repository
 @Slf4j
