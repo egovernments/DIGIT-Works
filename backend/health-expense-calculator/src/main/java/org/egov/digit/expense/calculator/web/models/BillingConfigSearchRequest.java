@@ -26,7 +26,7 @@ import java.util.List;
 @Builder
 public class BillingConfigSearchRequest {
 
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
     @NotNull
     @Valid
     @Schema(description = "Request metadata", required = true)

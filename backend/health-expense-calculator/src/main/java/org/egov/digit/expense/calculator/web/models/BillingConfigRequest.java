@@ -24,7 +24,7 @@ import org.egov.common.contract.request.RequestInfo;
 @Builder
 public class BillingConfigRequest {
 
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
     @NotNull
     @Valid
     @Schema(description = "Request metadata", required = true)
