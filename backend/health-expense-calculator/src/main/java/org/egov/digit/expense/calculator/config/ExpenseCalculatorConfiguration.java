@@ -250,6 +250,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${payment.pdf.key}")
 	private String paymentPdfKey;
 
+	@Value("${district.boundary.type}")
+	private String districtBoundaryType;
+
 	@Value("${report.localization.module.name}")
 	private String reportLocalizationModuleName;
 

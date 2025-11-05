@@ -755,7 +755,7 @@ public class ExpenseCalculatorService {
     }
 
     private boolean isBoundaryDistrictLevel(TenantBoundary boundary) {
-        return boundary.getBoundary().get(0).getBoundaryType().equals(DISTRICT_BOUNDARYTYPE);
+        return boundary.getBoundary().get(0).getBoundaryType().equals(config.getDistrictBoundaryType());
     }
 
     private void enrichBill(Bill bill, Criteria criteria,  Project project) {
