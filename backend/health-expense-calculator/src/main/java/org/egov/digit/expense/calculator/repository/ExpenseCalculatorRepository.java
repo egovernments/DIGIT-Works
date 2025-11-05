@@ -162,4 +162,100 @@ public class ExpenseCalculatorRepository {
             return 0;
         return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
     }
+
+    // ==================== V2 Methods for Intermediate Billing ====================
+
+    /**
+     * Get bill status by period ID
+     * Used for duplicate bill prevention in V2 intermediate billing
+     *
+     * @param periodId Billing period ID
+     * @return List of bill statuses for the period
+     */
+    public List<BillStatus> getBillStatusByPeriodId(String periodId) {
+        String sql = "SELECT * FROM eg_expense_bill_gen_status WHERE period_id = :periodId";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("periodId", periodId);
+
+        List<Map<String, Object>> objectMap = namedParameterJdbcTemplate.queryForList(sql, params);
+
+        List<BillStatus> billStatusList = new ArrayList<>();
+        for (Map<String, Object> row : objectMap) {
+            BillStatus billStatus = BillStatus.builder()
+                    .id((String) row.get("id"))
+                    .referenceId((String) row.get("referenceid"))
+                    .tenantId((String) row.get("tenantid"))
+                    .status((String) row.get("status"))
+                    .error((String) row.get("error"))
+                    .build();
+
+            billStatusList.add(billStatus);
+        }
+
+        return billStatusList;
+    }
+
+    /**
+     * Create bill status with V2 fields
+     * Includes period information and processing time tracking
+     *
+     * @param id Bill status ID
+     * @param tenantId Tenant ID
+     * @param referenceId Reference ID (project ID)
+     * @param billingType REGULAR, INTERMEDIATE, or FINAL_AGGREGATE
+     * @param periodId Billing period ID
+     * @param periodNumber Period number (1, 2, 3, etc.)
+     * @param status Status (INITIATED, SUCCESSFUL, FAILED)
+     * @param error Error message (if any)
+     * @param processingStartTime Processing start timestamp
+     * @param registerCount Number of registers in this period
+     */
+    public void createBillStatusV2(String id, String tenantId, String referenceId,
+                                   String billingType, String periodId, Integer periodNumber,
+                                   String status, String error, Long processingStartTime,
+                                   Integer registerCount) {
+        String sql = "INSERT INTO eg_expense_bill_gen_status " +
+                "(id, tenantid, referenceid, billing_type, period_id, period_number, " +
+                "status, error, processing_start_time, register_count) " +
+                "VALUES (:id, :tenantId, :referenceId, :billingType, :periodId, :periodNumber, " +
+                ":status, :error, :processingStartTime, :registerCount)";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        params.put("tenantId", tenantId);
+        params.put("referenceId", referenceId);
+        params.put("billingType", billingType);
+        params.put("periodId", periodId);
+        params.put("periodNumber", periodNumber);
+        params.put("status", status);
+        params.put("error", error);
+        params.put("processingStartTime", processingStartTime);
+        params.put("registerCount", registerCount);
+
+        namedParameterJdbcTemplate.update(sql, params);
+    }
+
+    /**
+     * Update bill status with V2 fields
+     * Updates status, error message, and processing end time
+     *
+     * @param id Bill status ID
+     * @param status Updated status
+     * @param error Error message (if any)
+     * @param processingEndTime Processing end timestamp
+     */
+    public void updateBillStatusV2(String id, String status, String error, Long processingEndTime) {
+        String sql = "UPDATE eg_expense_bill_gen_status " +
+                "SET status = :status, error = :error, processing_end_time = :processingEndTime " +
+                "WHERE id = :id";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        params.put("status", status);
+        params.put("error", error);
+        params.put("processingEndTime", processingEndTime);
+
+        namedParameterJdbcTemplate.update(sql, params);
+    }
 }

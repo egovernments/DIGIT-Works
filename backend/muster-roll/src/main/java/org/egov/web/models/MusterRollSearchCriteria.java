@@ -52,6 +52,10 @@ public class MusterRollSearchCriteria {
     @JsonProperty("serviceCode")
     private String serviceCode = null;
 
+    @JsonProperty("billingPeriodId")
+    @Size(max = 64)
+    private String billingPeriodId;
+
     @JsonProperty("limit")
     private Integer limit;
 

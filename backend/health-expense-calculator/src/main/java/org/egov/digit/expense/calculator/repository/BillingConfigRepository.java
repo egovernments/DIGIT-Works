@@ -65,17 +65,17 @@ public class BillingConfigRepository {
         log.info("Saving billing configuration: {}", config.getId());
 
         String sql = "INSERT INTO eg_expense_billing_config " +
-            "(id, tenant_id, project_id, billing_frequency, custom_frequency_days, " +
+            "(id, tenant_id, campaign_number, billing_frequency, custom_frequency_days, " +
             "project_start_date, project_end_date, status, created_by, created_time, " +
             "last_modified_by, last_modified_time, additional_details) " +
-            "VALUES (:id, :tenantId, :projectId, :billingFrequency, :customFrequencyDays, " +
+            "VALUES (:id, :tenantId, :campaignNumber, :billingFrequency, :customFrequencyDays, " +
             ":projectStartDate, :projectEndDate, :status, :createdBy, :createdTime, " +
             ":lastModifiedBy, :lastModifiedTime, :additionalDetails::jsonb)";
 
         Map<String, Object> params = new HashMap<>();
         params.put("id", config.getId());
         params.put("tenantId", config.getTenantId());
-        params.put("projectId", config.getProjectId());
+        params.put("campaignNumber", config.getCampaignNumber());
         params.put("billingFrequency", config.getBillingFrequency() != null ?
             config.getBillingFrequency().getValue() : null);
         params.put("customFrequencyDays", config.getCustomFrequencyDays());
@@ -107,12 +107,12 @@ public class BillingConfigRepository {
         log.info("Saving {} billing periods", periods.size());
 
         String sql = "INSERT INTO eg_wms_billing_period " +
-            "(id, tenant_id, project_id, billing_config_id, period_number, " +
+            "(id, tenant_id, campaign_number, billing_config_id, period_number, " +
             "period_start_date, period_end_date, billing_frequency, period_type, " +
             "status, bill_id, total_amount, beneficiary_count, register_count, " +
             "muster_roll_count, created_by, created_time, last_modified_by, " +
             "last_modified_time, additional_details) " +
-            "VALUES (:id, :tenantId, :projectId, :billingConfigId, :periodNumber, " +
+            "VALUES (:id, :tenantId, :campaignNumber, :billingConfigId, :periodNumber, " +
             ":periodStartDate, :periodEndDate, :billingFrequency, :periodType, " +
             ":status, :billId, :totalAmount, :beneficiaryCount, :registerCount, " +
             ":musterRollCount, :createdBy, :createdTime, :lastModifiedBy, " +
@@ -123,7 +123,7 @@ public class BillingConfigRepository {
             Map<String, Object> params = new HashMap<>();
             params.put("id", period.getId());
             params.put("tenantId", period.getTenantId());
-            params.put("projectId", period.getProjectId());
+            params.put("campaignNumber", period.getCampaignNumber());
             params.put("billingConfigId", period.getBillingConfigId());
             params.put("periodNumber", period.getPeriodNumber());
             params.put("periodStartDate", period.getPeriodStartDate());
@@ -175,17 +175,17 @@ public class BillingConfigRepository {
     }
 
     /**
-     * Finds billing configuration by project ID.
+     * Finds billing configuration by campaign number.
      *
-     * @param projectId Project identifier
+     * @param campaignNumber Campaign identifier
      * @param tenantId Tenant identifier
      * @return Billing configuration or null if not found
      */
-    public BillingConfig findByProjectId(String projectId, String tenantId) {
-        log.info("Finding billing configuration for project: {} in tenant: {}", projectId, tenantId);
+    public BillingConfig findByCampaignNumber(String campaignNumber, String tenantId) {
+        log.info("Finding billing configuration for campaign: {} in tenant: {}", campaignNumber, tenantId);
 
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.buildFindByProjectIdQuery(projectId, tenantId, preparedStmtList);
+        String query = queryBuilder.buildFindByCampaignNumberQuery(campaignNumber, tenantId, preparedStmtList);
 
         log.debug("Executing query: {} with params: {}", query, preparedStmtList);
 
@@ -200,22 +200,22 @@ public class BillingConfigRepository {
             return configs.get(0);
         }
 
-        log.info("No billing configuration found for project: {}", projectId);
+        log.info("No billing configuration found for campaign: {}", campaignNumber);
         return null;
     }
 
     /**
-     * Finds billing periods by project ID.
+     * Finds billing periods by campaign number.
      *
-     * @param projectId Project identifier
+     * @param campaignNumber Campaign identifier
      * @param tenantId Tenant identifier
      * @return List of billing periods ordered by period number
      */
-    public List<BillingPeriod> findPeriodsByProjectId(String projectId, String tenantId) {
-        log.info("Finding billing periods for project: {} in tenant: {}", projectId, tenantId);
+    public List<BillingPeriod> findPeriodsByCampaignNumber(String campaignNumber, String tenantId) {
+        log.info("Finding billing periods for campaign: {} in tenant: {}", campaignNumber, tenantId);
 
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.buildBillingPeriodSearchQuery(projectId, tenantId, preparedStmtList);
+        String query = queryBuilder.buildBillingPeriodSearchQuery(campaignNumber, tenantId, preparedStmtList);
 
         log.debug("Executing query: {} with params: {}", query, preparedStmtList);
 

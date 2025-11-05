@@ -20,14 +20,14 @@ import java.util.List;
 public class BillingConfigQueryBuilder {
 
     private static final String BILLING_CONFIG_BASE_QUERY =
-        "SELECT bc.id, bc.tenant_id, bc.project_id, bc.billing_frequency, " +
+        "SELECT bc.id, bc.tenant_id, bc.campaign_number, bc.billing_frequency, " +
         "bc.custom_frequency_days, bc.project_start_date, bc.project_end_date, " +
         "bc.status, bc.created_by, bc.created_time, bc.last_modified_by, " +
         "bc.last_modified_time, bc.additional_details " +
         "FROM eg_expense_billing_config bc ";
 
     private static final String BILLING_PERIOD_BASE_QUERY =
-        "SELECT bp.id, bp.tenant_id, bp.project_id, bp.billing_config_id, " +
+        "SELECT bp.id, bp.tenant_id, bp.campaign_number, bp.billing_config_id, " +
         "bp.period_number, bp.period_start_date, bp.period_end_date, " +
         "bp.billing_frequency, bp.period_type, bp.status, bp.bill_id, " +
         "bp.total_amount, bp.beneficiary_count, bp.register_count, " +
@@ -59,20 +59,20 @@ public class BillingConfigQueryBuilder {
             addToPreparedStatement(preparedStmtList, criteria.getIds());
         }
 
-        // Filter by project ID
-        if (StringUtils.isNotBlank(criteria.getProjectId())) {
+        // Filter by campaign number
+        if (StringUtils.isNotBlank(criteria.getCampaignNumber())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" bc.project_id = ? ");
-            preparedStmtList.add(criteria.getProjectId());
+            queryBuilder.append(" bc.campaign_number = ? ");
+            preparedStmtList.add(criteria.getCampaignNumber());
         }
 
-        // Filter by project IDs
-        if (criteria.getProjectIds() != null && !criteria.getProjectIds().isEmpty()) {
+        // Filter by campaign numbers
+        if (criteria.getCampaignNumbers() != null && !criteria.getCampaignNumbers().isEmpty()) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" bc.project_id IN (")
-                       .append(createQuery(criteria.getProjectIds()))
+            queryBuilder.append(" bc.campaign_number IN (")
+                       .append(createQuery(criteria.getCampaignNumbers()))
                        .append(") ");
-            addToPreparedStatement(preparedStmtList, criteria.getProjectIds());
+            addToPreparedStatement(preparedStmtList, criteria.getCampaignNumbers());
         }
 
         // Filter by billing frequency
@@ -112,20 +112,20 @@ public class BillingConfigQueryBuilder {
     /**
      * Builds query for searching billing periods.
      *
-     * @param projectId Project identifier
+     * @param campaignNumber Campaign identifier
      * @param tenantId Tenant identifier
      * @param preparedStmtList List to store prepared statement parameters
      * @return SQL query string
      */
-    public String buildBillingPeriodSearchQuery(String projectId, String tenantId,
+    public String buildBillingPeriodSearchQuery(String campaignNumber, String tenantId,
                                                List<Object> preparedStmtList) {
         StringBuilder queryBuilder = new StringBuilder(BILLING_PERIOD_BASE_QUERY);
 
         queryBuilder.append(" WHERE bp.tenant_id = ? ");
         preparedStmtList.add(tenantId);
 
-        queryBuilder.append(" AND bp.project_id = ? ");
-        preparedStmtList.add(projectId);
+        queryBuilder.append(" AND bp.campaign_number = ? ");
+        preparedStmtList.add(campaignNumber);
 
         // Order by period number
         queryBuilder.append(" ORDER BY bp.period_number ASC ");
@@ -156,26 +156,26 @@ public class BillingConfigQueryBuilder {
     }
 
     /**
-     * Builds query to find billing config by project ID.
+     * Builds query to find billing config by campaign number.
      *
-     * @param projectId Project identifier
+     * @param campaignNumber Campaign identifier
      * @param tenantId Tenant identifier
      * @param preparedStmtList List to store prepared statement parameters
      * @return SQL query string
      */
-    public String buildFindByProjectIdQuery(String projectId, String tenantId,
+    public String buildFindByCampaignNumberQuery(String campaignNumber, String tenantId,
                                            List<Object> preparedStmtList) {
         StringBuilder queryBuilder = new StringBuilder(BILLING_CONFIG_BASE_QUERY);
 
         queryBuilder.append(" WHERE bc.tenant_id = ? ");
         preparedStmtList.add(tenantId);
 
-        queryBuilder.append(" AND bc.project_id = ? ");
-        preparedStmtList.add(projectId);
+        queryBuilder.append(" AND bc.campaign_number = ? ");
+        preparedStmtList.add(campaignNumber);
 
         queryBuilder.append(" LIMIT 1 ");
 
-        log.debug("Find by project ID query: {}", queryBuilder);
+        log.debug("Find by campaign number query: {}", queryBuilder);
         return queryBuilder.toString();
     }
 

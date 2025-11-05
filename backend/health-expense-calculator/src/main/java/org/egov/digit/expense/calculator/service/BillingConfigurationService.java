@@ -20,14 +20,16 @@ import java.util.UUID;
 /**
  * BillingConfigurationService
  *
- * Main service for managing billing configuration lifecycle.
+ * Main service for managing campaign-level billing configuration lifecycle.
  * Handles create, search, and update operations with proper validation.
  *
  * Key responsibilities:
- * - Create billing configuration with period generation
+ * - Create billing configuration with period generation for campaigns
  * - Search billing configurations with flexible criteria
- * - Update billing configuration status
- * - Retrieve billing periods for a project
+ * - Update billing configuration (status, frequency, dates)
+ * - Recalculate periods when configuration changes
+ * - Retrieve billing periods for a campaign
+ * - Prevent critical updates after campaign start date
  *
  * @author DIGIT-Works
  */
@@ -52,9 +54,9 @@ public class BillingConfigurationService {
     }
 
     /**
-     * Creates billing configuration for a project.
+     * Creates billing configuration for a campaign.
      *
-     * This enables intermediate billing for the project by:
+     * This enables intermediate billing for the campaign by:
      * 1. Validating the configuration
      * 2. Checking for duplicates
      * 3. Enriching with audit details
@@ -70,8 +72,8 @@ public class BillingConfigurationService {
     public BillingConfigResponse createBillingConfig(BillingConfigRequest request) {
         BillingConfig config = request.getBillingConfig();
 
-        log.info("Creating billing configuration for project: {} with frequency: {}",
-            config.getProjectId(), config.getBillingFrequency());
+        log.info("Creating billing configuration for campaign: {} with frequency: {}",
+            config.getCampaignNumber(), config.getBillingFrequency());
 
         // Step 1: Validate configuration
         validator.validateCreateRequest(request);
@@ -121,8 +123,8 @@ public class BillingConfigurationService {
             .build()
             .withTotalPeriods();
 
-        log.info("Billing configuration created successfully for project: {} with {} periods",
-            config.getProjectId(), periods.size());
+        log.info("Billing configuration created successfully for campaign: {} with {} periods",
+            config.getCampaignNumber(), periods.size());
 
         return response;
     }
@@ -189,47 +191,60 @@ public class BillingConfigurationService {
     }
 
     /**
-     * Gets billing configuration for a specific project.
+     * Gets billing configuration for a specific campaign.
      *
-     * Returns null if project doesn't have billing configuration (V1 mode).
+     * Returns null if campaign doesn't have billing configuration (V1 mode).
      *
-     * @param projectId Project identifier
+     * @param campaignNumber Campaign identifier
      * @param tenantId Tenant identifier
      * @return Billing configuration or null if not found
      */
-    public BillingConfig getBillingConfig(String projectId, String tenantId) {
-        log.info("Getting billing configuration for project: {} in tenant: {}", projectId, tenantId);
+    public BillingConfig getBillingConfig(String campaignNumber, String tenantId) {
+        log.info("Getting billing configuration for campaign: {} in tenant: {}", campaignNumber, tenantId);
 
-        BillingConfig config = repository.findByProjectId(projectId, tenantId);
+        BillingConfig config = repository.findByCampaignNumber(campaignNumber, tenantId);
 
         if (config != null) {
             log.info("Found billing configuration: {} with frequency: {}",
                 config.getId(), config.getBillingFrequency());
         } else {
-            log.info("No billing configuration found for project: {} (V1 mode)", projectId);
+            log.info("No billing configuration found for campaign: {} (V1 mode)", campaignNumber);
         }
 
         return config;
     }
 
     /**
-     * Gets billing periods for a specific project.
+     * Gets billing configuration by campaign number.
+     *
+     * Alias method for getBillingConfig for better clarity.
+     *
+     * @param campaignNumber Campaign identifier
+     * @param tenantId Tenant identifier
+     * @return Billing configuration or null if not found
+     */
+    public BillingConfig getBillingConfigByCampaignNumber(String campaignNumber, String tenantId) {
+        return getBillingConfig(campaignNumber, tenantId);
+    }
+
+    /**
+     * Gets billing periods for a specific campaign.
      *
      * Returns periods ordered by period number.
      *
-     * @param projectId Project identifier
+     * @param campaignNumber Campaign identifier
      * @param tenantId Tenant identifier
      * @return List of billing periods or empty list if not found
      */
-    public List<BillingPeriod> getBillingPeriods(String projectId, String tenantId) {
-        log.info("Getting billing periods for project: {} in tenant: {}", projectId, tenantId);
+    public List<BillingPeriod> getBillingPeriods(String campaignNumber, String tenantId) {
+        log.info("Getting billing periods for campaign: {} in tenant: {}", campaignNumber, tenantId);
 
-        List<BillingPeriod> periods = repository.findPeriodsByProjectId(projectId, tenantId);
+        List<BillingPeriod> periods = repository.findPeriodsByCampaignNumber(campaignNumber, tenantId);
 
         if (periods != null && !periods.isEmpty()) {
-            log.info("Found {} billing periods for project: {}", periods.size(), projectId);
+            log.info("Found {} billing periods for campaign: {}", periods.size(), campaignNumber);
         } else {
-            log.info("No billing periods found for project: {}", projectId);
+            log.info("No billing periods found for campaign: {}", campaignNumber);
             periods = new ArrayList<>();
         }
 
@@ -237,20 +252,33 @@ public class BillingConfigurationService {
     }
 
     /**
+     * Gets billing periods by campaign number.
+     *
+     * Alias method for getBillingPeriods for better clarity.
+     *
+     * @param campaignNumber Campaign identifier
+     * @param tenantId Tenant identifier
+     * @return List of billing periods or empty list if not found
+     */
+    public List<BillingPeriod> getBillingPeriodsByCampaignNumber(String campaignNumber, String tenantId) {
+        return getBillingPeriods(campaignNumber, tenantId);
+    }
+
+    /**
      * Gets a specific billing period by period number.
      *
-     * @param projectId Project identifier
+     * @param campaignNumber Campaign identifier
      * @param tenantId Tenant identifier
      * @param periodNumber Period number
      * @return Billing period or null if not found
      */
-    public BillingPeriod getBillingPeriod(String projectId, String tenantId, Integer periodNumber) {
-        log.info("Getting billing period {} for project: {}", periodNumber, projectId);
+    public BillingPeriod getBillingPeriod(String campaignNumber, String tenantId, Integer periodNumber) {
+        log.info("Getting billing period {} for campaign: {}", periodNumber, campaignNumber);
 
-        List<BillingPeriod> periods = repository.findPeriodsByProjectId(projectId, tenantId);
+        List<BillingPeriod> periods = repository.findPeriodsByCampaignNumber(campaignNumber, tenantId);
 
         if (periods == null || periods.isEmpty()) {
-            log.warn("No billing periods found for project: {}", projectId);
+            log.warn("No billing periods found for campaign: {}", campaignNumber);
             return null;
         }
 
@@ -261,18 +289,21 @@ public class BillingConfigurationService {
             }
         }
 
-        log.warn("Billing period {} not found for project: {}", periodNumber, projectId);
+        log.warn("Billing period {} not found for campaign: {}", periodNumber, campaignNumber);
         return null;
     }
 
     /**
      * Updates billing configuration status and metadata.
      *
-     * Only status and additional details can be updated.
-     * Other fields are immutable after creation.
+     * Supports updating:
+     * - Status and additional details (always allowed)
+     * - Billing frequency and dates (only before campaign start)
+     *
+     * If frequency or dates are updated, periods are recalculated automatically.
      *
      * @param request Update request
-     * @return Updated configuration
+     * @return Updated configuration with new periods if recalculated
      * @throws CustomException if validation fails or configuration not found
      */
     @Transactional
@@ -283,6 +314,41 @@ public class BillingConfigurationService {
 
         // Validate update request
         validator.validateUpdateRequest(request);
+
+        // Fetch existing configuration
+        BillingConfig existingConfig = repository.findByCampaignNumber(config.getCampaignNumber(), config.getTenantId());
+
+        if (existingConfig == null) {
+            throw new CustomException("CONFIG_NOT_FOUND",
+                "Billing configuration not found for campaign: " + config.getCampaignNumber());
+        }
+
+        // Check if campaign has already started - prevent critical updates after start
+        long currentTime = System.currentTimeMillis();
+        boolean campaignStarted = currentTime >= existingConfig.getProjectStartDate();
+
+        // Check if frequency or dates are being updated
+        boolean frequencyChanged = config.getBillingFrequency() != null &&
+            !config.getBillingFrequency().equals(existingConfig.getBillingFrequency());
+        boolean customFrequencyChanged = config.getCustomFrequencyDays() != null &&
+            !config.getCustomFrequencyDays().equals(existingConfig.getCustomFrequencyDays());
+        boolean startDateChanged = config.getProjectStartDate() != null &&
+            !config.getProjectStartDate().equals(existingConfig.getProjectStartDate());
+        boolean endDateChanged = config.getProjectEndDate() != null &&
+            !config.getProjectEndDate().equals(existingConfig.getProjectEndDate());
+
+        boolean configStructureChanged = frequencyChanged || customFrequencyChanged ||
+            startDateChanged || endDateChanged;
+
+        // Validate: Cannot update config structure after campaign start
+        if (campaignStarted && configStructureChanged) {
+            log.error("Cannot update billing configuration structure after campaign start date. Campaign: {}",
+                config.getCampaignNumber());
+            throw new CustomException("CONFIG_UPDATE_NOT_ALLOWED",
+                "Cannot update billing frequency or dates after campaign has started. " +
+                "Campaign start date: " + existingConfig.getProjectStartDate() +
+                ", Current time: " + currentTime);
+        }
 
         // Enrich with update audit details
         enrichForUpdate(config, request.getRequestInfo());
@@ -297,15 +363,22 @@ public class BillingConfigurationService {
         }
 
         // Fetch updated configuration
-        BillingConfig updated = repository.findByProjectId(config.getProjectId(), config.getTenantId());
+        BillingConfig updated = repository.findByCampaignNumber(config.getCampaignNumber(), config.getTenantId());
 
         if (updated == null) {
             throw new CustomException("CONFIG_NOT_FOUND",
                 "Billing configuration not found after update: " + config.getId());
         }
 
-        // Fetch periods
-        List<BillingPeriod> periods = repository.findPeriodsByConfigId(updated.getId());
+        // If config structure changed, recalculate periods
+        List<BillingPeriod> periods;
+        if (configStructureChanged) {
+            log.info("Configuration structure changed - recalculating billing periods");
+            periods = recalculatePeriods(existingConfig, updated, request.getRequestInfo());
+        } else {
+            // Just fetch existing periods
+            periods = repository.findPeriodsByConfigId(updated.getId());
+        }
 
         // Build response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(
@@ -344,26 +417,101 @@ public class BillingConfigurationService {
     }
 
     /**
-     * Checks if a project has billing configuration enabled.
+     * Recalculates billing periods when configuration is updated.
      *
-     * @param projectId Project identifier
-     * @param tenantId Tenant identifier
-     * @return true if project has active billing configuration
+     * This method:
+     * 1. Deprecates old periods (marks as DEPRECATED)
+     * 2. Generates new periods based on updated configuration
+     * 3. Saves new periods to database
+     *
+     * Note: Old periods are not deleted, just marked as deprecated for audit trail.
+     *
+     * @param oldConfig Previous billing configuration
+     * @param newConfig Updated billing configuration
+     * @param requestInfo Request info for audit details
+     * @return List of newly generated billing periods
+     * @throws CustomException if period recalculation fails
      */
-    public boolean hasActiveBillingConfig(String projectId, String tenantId) {
-        BillingConfig config = getBillingConfig(projectId, tenantId);
+    @Transactional
+    public List<BillingPeriod> recalculatePeriods(BillingConfig oldConfig,
+                                                  BillingConfig newConfig,
+                                                  RequestInfo requestInfo) {
+        log.info("Recalculating billing periods for config: {} (campaign: {})",
+            newConfig.getId(), newConfig.getCampaignNumber());
+
+        // Step 1: Deprecate old periods
+        List<BillingPeriod> oldPeriods = repository.findPeriodsByConfigId(oldConfig.getId());
+
+        if (oldPeriods != null && !oldPeriods.isEmpty()) {
+            log.info("Deprecating {} old billing periods", oldPeriods.size());
+
+            for (BillingPeriod oldPeriod : oldPeriods) {
+                oldPeriod.setStatus("DEPRECATED");
+                oldPeriod.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                oldPeriod.setLastModifiedTime(System.currentTimeMillis());
+
+                try {
+                    repository.updatePeriod(oldPeriod);
+                } catch (Exception e) {
+                    log.error("Error deprecating period: {}", oldPeriod.getId(), e);
+                    throw new CustomException("PERIOD_UPDATE_ERROR",
+                        "Error deprecating old period: " + e.getMessage());
+                }
+            }
+
+            log.info("Successfully deprecated {} old periods", oldPeriods.size());
+        } else {
+            log.info("No old periods to deprecate");
+        }
+
+        // Step 2: Generate new periods
+        List<BillingPeriod> newPeriods;
+        try {
+            newPeriods = periodGenerationService.generatePeriods(newConfig);
+            log.info("Generated {} new billing periods", newPeriods.size());
+        } catch (Exception e) {
+            log.error("Error generating new billing periods", e);
+            throw new CustomException("PERIOD_GENERATION_ERROR",
+                "Error generating new billing periods: " + e.getMessage());
+        }
+
+        // Step 3: Save new periods
+        try {
+            repository.savePeriods(newPeriods);
+            log.info("Successfully saved {} new billing periods", newPeriods.size());
+        } catch (Exception e) {
+            log.error("Error saving new billing periods", e);
+            throw new CustomException("DB_ERROR",
+                "Error saving new billing periods: " + e.getMessage());
+        }
+
+        log.info("Period recalculation completed. Old periods: {}, New periods: {}",
+            oldPeriods != null ? oldPeriods.size() : 0, newPeriods.size());
+
+        return newPeriods;
+    }
+
+    /**
+     * Checks if a campaign has billing configuration enabled.
+     *
+     * @param campaignNumber Campaign identifier
+     * @param tenantId Tenant identifier
+     * @return true if campaign has active billing configuration
+     */
+    public boolean hasActiveBillingConfig(String campaignNumber, String tenantId) {
+        BillingConfig config = getBillingConfig(campaignNumber, tenantId);
         return config != null && config.isActive();
     }
 
     /**
-     * Gets billing frequency for a project.
+     * Gets billing frequency for a campaign.
      *
-     * @param projectId Project identifier
+     * @param campaignNumber Campaign identifier
      * @param tenantId Tenant identifier
      * @return Billing frequency or null if no config exists
      */
-    public BillingFrequency getBillingFrequency(String projectId, String tenantId) {
-        BillingConfig config = getBillingConfig(projectId, tenantId);
+    public BillingFrequency getBillingFrequency(String campaignNumber, String tenantId) {
+        BillingConfig config = getBillingConfig(campaignNumber, tenantId);
         return config != null ? config.getBillingFrequency() : null;
     }
 

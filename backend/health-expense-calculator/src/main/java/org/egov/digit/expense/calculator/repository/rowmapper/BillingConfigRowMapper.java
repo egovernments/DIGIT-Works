@@ -59,7 +59,7 @@ public class BillingConfigRowMapper implements ResultSetExtractor<List<BillingCo
                 billingConfig = BillingConfig.builder()
                     .id(id)
                     .tenantId(rs.getString("tenant_id"))
-                    .projectId(rs.getString("project_id"))
+                    .campaignNumber(rs.getString("campaign_number"))
                     .billingFrequency(frequency)
                     .customFrequencyDays(getInteger(rs, "custom_frequency_days"))
                     .projectStartDate(rs.getLong("project_start_date"))

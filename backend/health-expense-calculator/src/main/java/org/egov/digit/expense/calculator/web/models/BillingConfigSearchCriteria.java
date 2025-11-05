@@ -36,14 +36,14 @@ public class BillingConfigSearchCriteria {
     @Schema(description = "List of billing configuration IDs", example = "[\"bc-123\", \"bc-456\"]")
     private List<String> ids;
 
-    @JsonProperty("projectId")
+    @JsonProperty("campaignNumber")
     @Size(min = 2, max = 256)
-    @Schema(description = "Project identifier", example = "PJ-2025-01-001")
-    private String projectId;
+    @Schema(description = "Campaign number/ID to filter billing configurations", example = "CMP-2025-10-14-007097")
+    private String campaignNumber;
 
-    @JsonProperty("projectIds")
-    @Schema(description = "List of project identifiers", example = "[\"PJ-001\", \"PJ-002\"]")
-    private List<String> projectIds;
+    @JsonProperty("campaignNumbers")
+    @Schema(description = "List of campaign numbers to filter", example = "[\"CMP-001\", \"CMP-002\"]")
+    private List<String> campaignNumbers;
 
     @JsonProperty("billingFrequency")
     @Schema(description = "Filter by billing frequency",

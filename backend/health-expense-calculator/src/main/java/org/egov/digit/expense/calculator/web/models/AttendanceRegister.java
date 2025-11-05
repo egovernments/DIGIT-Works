@@ -1,4 +1,5 @@
-package org.egov.web.models;
+package org.egov.digit.expense.calculator.web.models;
+
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.egov.common.contract.models.AuditDetails;
@@ -36,6 +37,12 @@ public class AttendanceRegister {
     @JsonProperty("name")
     private String name = null;
 
+    @JsonProperty("referenceId")
+    private String referenceId;
+
+    @JsonProperty("serviceCode")
+    private String serviceCode;
+
     @JsonProperty("startDate")
     private BigDecimal startDate = null;
 
@@ -64,12 +71,6 @@ public class AttendanceRegister {
 
     @JsonProperty("reviewStatus")
     private String reviewStatus;
-
-    @JsonProperty("referenceId")
-    private String referenceId;
-
-    @JsonProperty("serviceCode")
-    private String serviceCode;
 
 
     public AttendanceRegister addStaffItem(StaffPermission staffItem) {

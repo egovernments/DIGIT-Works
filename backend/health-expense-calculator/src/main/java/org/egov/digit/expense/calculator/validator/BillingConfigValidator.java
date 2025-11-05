@@ -196,7 +196,7 @@ public class BillingConfigValidator {
             errorMap.put("TENANT_ID_REQUIRED", "Tenant ID is mandatory");
         }
 
-        if (StringUtils.isBlank(config.getProjectId())) {
+        if (StringUtils.isBlank(config.getCampaignNumber())) {
             errorMap.put("PROJECT_ID_REQUIRED", "Project ID is mandatory");
         }
 
@@ -400,17 +400,17 @@ public class BillingConfigValidator {
      * @throws CustomException if duplicate exists
      */
     private void validateDuplicateConfiguration(BillingConfig config) {
-        log.info("Checking for duplicate billing configuration for project: {}", config.getProjectId());
+        log.info("Checking for duplicate billing configuration for project: {}", config.getCampaignNumber());
 
-        BillingConfig existing = repository.findByProjectId(
-            config.getProjectId(),
+        BillingConfig existing = repository.findByCampaignNumber(
+            config.getCampaignNumber(),
             config.getTenantId()
         );
 
         if (existing != null) {
-            log.error("Duplicate billing configuration found for project: {}", config.getProjectId());
+            log.error("Duplicate billing configuration found for project: {}", config.getCampaignNumber());
             throw new CustomException("BILLING_CONFIG_ALREADY_EXISTS",
-                "Billing configuration already exists for project: " + config.getProjectId() +
+                "Billing configuration already exists for project: " + config.getCampaignNumber() +
                 ". Only one billing configuration is allowed per project. " +
                 "Existing configuration ID: " + existing.getId());
         }
@@ -465,7 +465,7 @@ public class BillingConfigValidator {
         }
 
         // Verify configuration exists
-        BillingConfig existing = repository.findByProjectId(config.getProjectId(), config.getTenantId());
+        BillingConfig existing = repository.findByCampaignNumber(config.getCampaignNumber(), config.getTenantId());
         if (existing == null) {
             throw new CustomException("BILLING_CONFIG_NOT_FOUND",
                 "Billing configuration not found for update: " + config.getId());

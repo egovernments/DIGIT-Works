@@ -63,8 +63,13 @@ public class ExpenseCalculatorService {
     private final BoundaryUtil boundaryUtil;
     private final ResponseInfoFactory responseInfoFactory;
 
+    // V2 Intermediate Billing Services
+    private final IntermediateBillingService intermediateBillingService;
+    private final BillingConfigurationService billingConfigurationService;
+    private final BillingVersionHelper billingVersionHelper;
+
     @Autowired
-    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil, BoundaryUtil boundaryUtil, ResponseInfoFactory responseInfoFactory) {
+    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil, BoundaryUtil boundaryUtil, ResponseInfoFactory responseInfoFactory, IntermediateBillingService intermediateBillingService, BillingConfigurationService billingConfigurationService, BillingVersionHelper billingVersionHelper) {
         this.expenseCalculatorProducer = expenseCalculatorProducer;
         this.expenseCalculatorServiceValidator = expenseCalculatorServiceValidator;
         this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
@@ -86,6 +91,9 @@ public class ExpenseCalculatorService {
         this.attendanceUtil = attendanceUtil;
         this.boundaryUtil = boundaryUtil;
         this.responseInfoFactory = responseInfoFactory;
+        this.intermediateBillingService = intermediateBillingService;
+        this.billingConfigurationService = billingConfigurationService;
+        this.billingVersionHelper = billingVersionHelper;
     }
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
@@ -417,7 +425,88 @@ public class ExpenseCalculatorService {
 
     private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo,
                                       Project project, boolean isDistrictLevel) {
-        log.info("Create wage bill for musterRollIds :"+criteria.getMusterRollId());
+        log.info("ExpenseCalculatorService::createWageBill - Starting bill generation for project: {}", project.getId());
+
+        // NEW V2: Extract campaign number from project.referenceID and check for billing configuration
+        String campaignNumber = extractCampaignNumberFromProject(project);
+        BillingConfig billingConfig = null;
+
+        if (campaignNumber != null) {
+            try {
+                billingConfig = billingConfigurationService.getBillingConfigByCampaignNumber(campaignNumber, criteria.getTenantId());
+                log.info("ExpenseCalculatorService::createWageBill - Found billing config for campaign: {}", campaignNumber);
+            } catch (Exception e) {
+                log.warn("ExpenseCalculatorService::createWageBill - Error fetching billing config for campaign {}: {}. " +
+                        "Falling back to V1 mode.", campaignNumber, e.getMessage());
+            }
+        } else {
+            log.info("ExpenseCalculatorService::createWageBill - No campaign number found in project. Using V1 mode.");
+        }
+
+        // Detect billing mode and log
+        billingVersionHelper.logBillingMode(campaignNumber != null ? campaignNumber : project.getId(), billingConfig, "createWageBill");
+
+        if (billingVersionHelper.isV2Mode(billingConfig)) {
+            // V2 Mode: Process intermediate billing with periods
+            log.info("ExpenseCalculatorService::createWageBill - V2 Mode: Billing configuration found for campaign {}", campaignNumber);
+            return intermediateBillingService.processIntermediateBilling(
+                    requestInfo, criteria, project, isDistrictLevel, billingConfig
+            );
+        } else {
+            // V1 Mode: Regular billing (existing logic - NO CHANGES)
+            log.info("ExpenseCalculatorService::createWageBill - V1 Mode: No active billing configuration, using regular billing");
+            return processRegularBillingV1(requestInfo, criteria, project, isDistrictLevel);
+        }
+    }
+
+    /**
+     * Extract campaign number from project's referenceID field.
+     *
+     * The project.referenceID contains the campaign number (e.g., "CMP-2025-10-14-007097").
+     * This campaign number is used to fetch billing configuration at campaign level.
+     *
+     * @param project Project object
+     * @return Campaign number from referenceID, or null if not found
+     */
+    private String extractCampaignNumberFromProject(Project project) {
+        if (project == null) {
+            return null;
+        }
+
+        // Campaign number is stored in project.referenceID field
+        String referenceId = project.getReferenceID();
+
+        if (referenceId != null && !referenceId.trim().isEmpty()) {
+            log.debug("ExpenseCalculatorService::extractCampaignNumberFromProject - Extracted campaign number: {} from project: {}",
+                    referenceId, project.getId());
+            return referenceId.trim();
+        }
+
+        log.debug("ExpenseCalculatorService::extractCampaignNumberFromProject - No campaign number found for project: {}",
+                project.getId());
+        return null;
+    }
+
+    /**
+     * V1 Legacy Billing Flow - PRESERVED UNCHANGED
+     *
+     * This method contains the original V1 bill generation logic.
+     * It processes bills for the entire project duration in a single bill.
+     *
+     * Used when:
+     * - No billing configuration exists for the project
+     * - Billing configuration exists but is not ACTIVE
+     *
+     * @param requestInfo Request info
+     * @param criteria Billing criteria
+     * @param project Project details
+     * @param isDistrictLevel Whether project is district level
+     * @return Single bill for entire project duration
+     */
+    private List<Bill> processRegularBillingV1(RequestInfo requestInfo, Criteria criteria,
+                                                Project project, boolean isDistrictLevel) {
+        log.info("ExpenseCalculatorService::processRegularBillingV1 - Create wage bill for musterRollIds: {}", criteria.getMusterRollId());
+
         Bill bill = Bill.builder().totalAmount(BigDecimal.ZERO).billDetails(new ArrayList<>()).build();
         String parentProjectId = project.getProjectHierarchy();
         if (project.getProjectHierarchy() == null) {

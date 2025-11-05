@@ -57,8 +57,8 @@ public class PeriodGenerationService {
      * @throws CustomException if period generation fails
      */
     public List<BillingPeriod> generatePeriods(BillingConfig config) {
-        log.info("Generating billing periods for project: {} with frequency: {}",
-            config.getProjectId(), config.getBillingFrequency());
+        log.info("Generating billing periods for campaign: {} with frequency: {}",
+            config.getCampaignNumber(), config.getBillingFrequency());
 
         validateConfig(config);
 
@@ -91,7 +91,7 @@ public class PeriodGenerationService {
                     "Unsupported billing frequency: " + frequency);
         }
 
-        log.info("Generated {} billing periods for project: {}", periods.size(), config.getProjectId());
+        log.info("Generated {} billing periods for campaign: {}", periods.size(), config.getCampaignNumber());
         logPeriodsSummary(periods);
 
         return periods;
@@ -153,20 +153,20 @@ public class PeriodGenerationService {
     /**
      * Generates single period for end of campaign billing.
      *
-     * Creates one period spanning the entire project duration.
+     * Creates one period spanning the entire campaign duration.
      *
      * @param config Billing configuration
      * @return List containing single period
      */
     private List<BillingPeriod> generateEndOfCampaignPeriod(BillingConfig config) {
-        log.info("Generating end of campaign period (single period for entire project)");
+        log.info("Generating end of campaign period (single period for entire campaign)");
 
         List<BillingPeriod> periods = new ArrayList<>();
 
         BillingPeriod period = BillingPeriod.builder()
             .id(UUID.randomUUID().toString())
             .tenantId(config.getTenantId())
-            .projectId(config.getProjectId())
+            .campaignNumber(config.getCampaignNumber())
             .billingConfigId(config.getId())
             .periodNumber(1)
             .periodStartDate(config.getProjectStartDate())
@@ -287,7 +287,7 @@ public class PeriodGenerationService {
         return BillingPeriod.builder()
             .id(UUID.randomUUID().toString())
             .tenantId(config.getTenantId())
-            .projectId(config.getProjectId())
+            .campaignNumber(config.getCampaignNumber())
             .billingConfigId(config.getId())
             .periodNumber(periodNumber)
             .periodStartDate(startDate)

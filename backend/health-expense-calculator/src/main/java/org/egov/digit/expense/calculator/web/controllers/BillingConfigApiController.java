@@ -92,7 +92,7 @@ public class BillingConfigApiController {
             @Valid @RequestBody BillingConfigRequest billingConfigRequest) {
 
         log.info("Received create billing configuration request for project: {}",
-            billingConfigRequest.getBillingConfig().getProjectId());
+            billingConfigRequest.getBillingConfig().getCampaignNumber());
 
         BillingConfigResponse response = billingConfigurationService.createBillingConfig(billingConfigRequest);
 
