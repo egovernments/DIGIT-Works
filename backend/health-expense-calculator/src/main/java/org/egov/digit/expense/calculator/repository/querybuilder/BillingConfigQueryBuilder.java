@@ -20,14 +20,14 @@ import java.util.List;
 public class BillingConfigQueryBuilder {
 
     private static final String BILLING_CONFIG_BASE_QUERY =
-        "SELECT bc.id, bc.tenant_id, bc.campaign_number, bc.billing_frequency, " +
+        "SELECT bc.id, bc.tenant_id, bc.project_id, bc.campaign_number, bc.billing_frequency, " +
         "bc.custom_frequency_days, bc.project_start_date, bc.project_end_date, " +
         "bc.status, bc.created_by, bc.created_time, bc.last_modified_by, " +
         "bc.last_modified_time, bc.additional_details " +
         "FROM eg_expense_billing_config bc ";
 
     private static final String BILLING_PERIOD_BASE_QUERY =
-        "SELECT bp.id, bp.tenant_id, bp.campaign_number, bp.billing_config_id, " +
+        "SELECT bp.id, bp.tenant_id, bp.project_id, bp.campaign_number, bp.billing_config_id, " +
         "bp.period_number, bp.period_start_date, bp.period_end_date, " +
         "bp.billing_frequency, bp.period_type, bp.status, bp.bill_id, " +
         "bp.total_amount, bp.beneficiary_count, bp.register_count, " +
@@ -57,6 +57,22 @@ public class BillingConfigQueryBuilder {
                        .append(createQuery(criteria.getIds()))
                        .append(") ");
             addToPreparedStatement(preparedStmtList, criteria.getIds());
+        }
+
+        // Filter by project ID
+        if (StringUtils.isNotBlank(criteria.getProjectId())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bc.project_id = ? ");
+            preparedStmtList.add(criteria.getProjectId());
+        }
+
+        // Filter by project IDs
+        if (criteria.getProjectIds() != null && !criteria.getProjectIds().isEmpty()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bc.project_id IN (")
+                       .append(createQuery(criteria.getProjectIds()))
+                       .append(") ");
+            addToPreparedStatement(preparedStmtList, criteria.getProjectIds());
         }
 
         // Filter by campaign number
@@ -152,6 +168,30 @@ public class BillingConfigQueryBuilder {
         queryBuilder.append(" ORDER BY bp.period_number ASC ");
 
         log.debug("Billing period by config ID query: {}", queryBuilder);
+        return queryBuilder.toString();
+    }
+
+    /**
+     * Builds query to find billing config by project ID.
+     *
+     * @param projectId Project identifier
+     * @param tenantId Tenant identifier
+     * @param preparedStmtList List to store prepared statement parameters
+     * @return SQL query string
+     */
+    public String buildFindByProjectIdQuery(String projectId, String tenantId,
+                                           List<Object> preparedStmtList) {
+        StringBuilder queryBuilder = new StringBuilder(BILLING_CONFIG_BASE_QUERY);
+
+        queryBuilder.append(" WHERE bc.tenant_id = ? ");
+        preparedStmtList.add(tenantId);
+
+        queryBuilder.append(" AND bc.project_id = ? ");
+        preparedStmtList.add(projectId);
+
+        queryBuilder.append(" LIMIT 1 ");
+
+        log.debug("Find by project ID query: {}", queryBuilder);
         return queryBuilder.toString();
     }
 

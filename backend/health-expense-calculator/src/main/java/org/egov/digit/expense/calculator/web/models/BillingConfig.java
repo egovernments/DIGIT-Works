@@ -38,6 +38,13 @@ public class BillingConfig {
     @Schema(description = "Tenant identifier", example = "mz.meghalaya", required = true)
     private String tenantId;
 
+    @JsonProperty("projectId")
+    @NotNull
+    @Size(min = 2, max = 256)
+    @Schema(description = "Project identifier for which billing configuration is created",
+            example = "PROJECT-2025-001", required = true)
+    private String projectId;
+
     @JsonProperty("campaignNumber")
     @NotNull
     @Size(min = 2, max = 256)

@@ -40,6 +40,12 @@ public class BillingPeriod {
     @Schema(description = "Tenant identifier", example = "mz.meghalaya", required = true)
     private String tenantId;
 
+    @JsonProperty("projectId")
+    @NotNull
+    @Size(min = 2, max = 256)
+    @Schema(description = "Project identifier - inherited from billing configuration", example = "PROJECT-2025-001", required = true)
+    private String projectId;
+
     @JsonProperty("campaignNumber")
     @NotNull
     @Size(min = 2, max = 256)

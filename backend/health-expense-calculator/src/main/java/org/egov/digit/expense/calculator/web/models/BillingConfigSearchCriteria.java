@@ -36,6 +36,15 @@ public class BillingConfigSearchCriteria {
     @Schema(description = "List of billing configuration IDs", example = "[\"bc-123\", \"bc-456\"]")
     private List<String> ids;
 
+    @JsonProperty("projectId")
+    @Size(min = 2, max = 256)
+    @Schema(description = "Project identifier to filter billing configurations", example = "PROJECT-2025-001")
+    private String projectId;
+
+    @JsonProperty("projectIds")
+    @Schema(description = "List of project identifiers to filter", example = "[\"PROJECT-001\", \"PROJECT-002\"]")
+    private List<String> projectIds;
+
     @JsonProperty("campaignNumber")
     @Size(min = 2, max = 256)
     @Schema(description = "Campaign number/ID to filter billing configurations", example = "CMP-2025-10-14-007097")

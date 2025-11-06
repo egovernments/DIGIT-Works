@@ -60,6 +60,7 @@ public class BillingPeriodRowMapper implements ResultSetExtractor<List<BillingPe
                 billingPeriod = BillingPeriod.builder()
                     .id(id)
                     .tenantId(rs.getString("tenant_id"))
+                    .projectId(rs.getString("project_id"))
                     .campaignNumber(rs.getString("campaign_number"))
                     .billingConfigId(rs.getString("billing_config_id"))
                     .periodNumber(rs.getInt("period_number"))
