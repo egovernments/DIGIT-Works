@@ -32,7 +32,7 @@ public class BillingConfigQueryBuilder {
         "bp.billing_frequency, bp.period_type, bp.status, bp.bill_id, " +
         "bp.total_amount, bp.beneficiary_count, bp.register_count, " +
         "bp.muster_roll_count, bp.created_by, bp.created_time, " +
-        "bp.last_modified_by, bp.last_modified_time, bp.additional_details " +
+        "bp.last_modified_by, bp.last_modified_time, bp.is_deprecated, bp.additional_details " +
         "FROM eg_wms_billing_period bp ";
 
     /**

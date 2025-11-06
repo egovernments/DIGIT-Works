@@ -112,12 +112,12 @@ public class BillingConfigRepository {
             "period_start_date, period_end_date, billing_frequency, period_type, " +
             "status, bill_id, total_amount, beneficiary_count, register_count, " +
             "muster_roll_count, created_by, created_time, last_modified_by, " +
-            "last_modified_time, additional_details) " +
+            "last_modified_time, is_deprecated, additional_details) " +
             "VALUES (:id, :tenantId, :projectId, :campaignNumber, :billingConfigId, :periodNumber, " +
             ":periodStartDate, :periodEndDate, :billingFrequency, :periodType, " +
             ":status, :billId, :totalAmount, :beneficiaryCount, :registerCount, " +
             ":musterRollCount, :createdBy, :createdTime, :lastModifiedBy, " +
-            ":lastModifiedTime, :additionalDetails::jsonb)";
+            ":lastModifiedTime, :isDeprecated, :additionalDetails::jsonb)";
 
         List<Map<String, Object>> batchParams = new ArrayList<>();
         for (BillingPeriod period : periods) {
@@ -143,6 +143,7 @@ public class BillingConfigRepository {
             params.put("createdTime", period.getCreatedTime());
             params.put("lastModifiedBy", period.getLastModifiedBy());
             params.put("lastModifiedTime", period.getLastModifiedTime());
+            params.put("isDeprecated", period.getIsDeprecated() != null ? period.getIsDeprecated() : false);
             params.put("additionalDetails", convertAdditionalDetailsToJson(period.getAdditionalDetails()));
 
             batchParams.add(params);
@@ -295,6 +296,10 @@ public class BillingConfigRepository {
         log.info("Updating billing configuration: {}", config.getId());
 
         String sql = "UPDATE eg_expense_billing_config SET " +
+            "billing_frequency = :billingFrequency, " +
+            "custom_frequency_days = :customFrequencyDays, " +
+            "project_start_date = :projectStartDate, " +
+            "project_end_date = :projectEndDate, " +
             "status = :status, " +
             "last_modified_by = :lastModifiedBy, " +
             "last_modified_time = :lastModifiedTime, " +
@@ -304,6 +309,11 @@ public class BillingConfigRepository {
         Map<String, Object> params = new HashMap<>();
         params.put("id", config.getId());
         params.put("tenantId", config.getTenantId());
+        params.put("billingFrequency", config.getBillingFrequency() != null ?
+            config.getBillingFrequency().getValue() : null);
+        params.put("customFrequencyDays", config.getCustomFrequencyDays());
+        params.put("projectStartDate", config.getProjectStartDate());
+        params.put("projectEndDate", config.getProjectEndDate());
         params.put("status", config.getStatus());
         params.put("lastModifiedBy", config.getLastModifiedBy());
         params.put("lastModifiedTime", config.getLastModifiedTime());
@@ -316,6 +326,32 @@ public class BillingConfigRepository {
         } else {
             log.info("Billing configuration updated successfully: {}", config.getId());
         }
+    }
+
+    /**
+     * Deprecates all periods for a billing configuration.
+     *
+     * @param billingConfigId Billing configuration ID
+     * @param modifiedBy User who is deprecating
+     * @param modifiedTime Timestamp of deprecation
+     */
+    @Transactional
+    public void deprecatePeriodsByConfigId(String billingConfigId, String modifiedBy, Long modifiedTime) {
+        log.info("Deprecating all periods for config: {}", billingConfigId);
+
+        String sql = "UPDATE eg_wms_billing_period SET " +
+            "is_deprecated = true, " +
+            "last_modified_by = :lastModifiedBy, " +
+            "last_modified_time = :lastModifiedTime " +
+            "WHERE billing_config_id = :billingConfigId AND is_deprecated = false";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("billingConfigId", billingConfigId);
+        params.put("lastModifiedBy", modifiedBy);
+        params.put("lastModifiedTime", modifiedTime);
+
+        int rowsUpdated = namedParameterJdbcTemplate.update(sql, params);
+        log.info("Deprecated {} billing periods for config: {}", rowsUpdated, billingConfigId);
     }
 
     /**

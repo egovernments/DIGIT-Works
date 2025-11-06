@@ -177,6 +177,7 @@ public class PeriodGenerationService {
             .status("PENDING")
             .registerCount(0)
             .musterRollCount(0)
+            .isDeprecated(false)
             .createdBy(config.getCreatedBy())
             .createdTime(System.currentTimeMillis())
             .build();
@@ -299,6 +300,7 @@ public class PeriodGenerationService {
             .status("PENDING")
             .registerCount(0)
             .musterRollCount(0)
+            .isDeprecated(false)
             .createdBy(config.getCreatedBy())
             .createdTime(System.currentTimeMillis())
             .build();

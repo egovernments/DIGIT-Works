@@ -134,6 +134,10 @@ public class BillingPeriod {
     @Schema(description = "Last modification timestamp in epoch milliseconds", example = "1704153600000")
     private Long lastModifiedTime;
 
+    @JsonProperty("isDeprecated")
+    @Schema(description = "Flag indicating if this period is deprecated due to billing config update", example = "false", defaultValue = "false")
+    private Boolean isDeprecated;
+
     @JsonProperty("additionalDetails")
     @Schema(description = "Additional details as JSON object")
     private Object additionalDetails;

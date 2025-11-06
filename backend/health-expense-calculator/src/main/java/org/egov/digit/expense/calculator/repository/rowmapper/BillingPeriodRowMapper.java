@@ -78,6 +78,7 @@ public class BillingPeriodRowMapper implements ResultSetExtractor<List<BillingPe
                     .createdTime(rs.getLong("created_time"))
                     .lastModifiedBy(rs.getString("last_modified_by"))
                     .lastModifiedTime(getLong(rs, "last_modified_time"))
+                    .isDeprecated(rs.getBoolean("is_deprecated"))
                     .additionalDetails(getAdditionalDetails(rs, "additional_details"))
                     .build();
 
