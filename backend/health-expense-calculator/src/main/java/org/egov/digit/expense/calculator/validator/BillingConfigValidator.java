@@ -269,10 +269,10 @@ public class BillingConfigValidator {
                 "Project duration must be at least 1 day");
         }
 
-        if (duration > MAX_PROJECT_DURATION_MS) {
-            errorMap.put("PROJECT_DURATION_TOO_LONG",
-                "Project duration cannot exceed 1 year (365 days)");
-        }
+//        if (duration > MAX_PROJECT_DURATION_MS) {
+//            errorMap.put("PROJECT_DURATION_TOO_LONG",
+//                "Project duration cannot exceed 1 year (365 days)");
+//        }
     }
 
     /**
