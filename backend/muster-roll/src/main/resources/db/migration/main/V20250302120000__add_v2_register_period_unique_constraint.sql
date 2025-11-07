@@ -10,7 +10,7 @@
 -- This ensures: One register → One muster roll per billing period
 -- V1 musters (billing_period_id IS NULL) are not affected by this constraint
 CREATE UNIQUE INDEX IF NOT EXISTS uk_muster_register_period
-ON eg_wms_muster_roll (attendanceregisterid, billing_period_id, tenantid)
+ON eg_wms_muster_roll (attendance_register_id, billing_period_id, tenant_id)
 WHERE billing_period_id IS NOT NULL;
 
 -- Add comment for documentation
@@ -19,7 +19,7 @@ COMMENT ON INDEX uk_muster_register_period IS
 
 -- Add index for efficient period-based queries
 CREATE INDEX IF NOT EXISTS idx_muster_roll_period_status
-ON eg_wms_muster_roll (billing_period_id, musterrollstatus, tenantid)
+ON eg_wms_muster_roll (billing_period_id, musterroll_status, tenant_id)
 WHERE billing_period_id IS NOT NULL;
 
 COMMENT ON INDEX idx_muster_roll_period_status IS
