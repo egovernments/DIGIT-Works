@@ -294,6 +294,53 @@ public class BillingConfigurationService {
     }
 
     /**
+     * Searches for billing periods based on flexible criteria.
+     *
+     * This method provides comprehensive period search capabilities supporting:
+     * - Filter by IDs, billing config, campaign, project
+     * - Filter by status, period numbers
+     * - Filter by date range
+     * - Filter by bill existence
+     * - Pagination support
+     *
+     * @param request Billing period search request
+     * @return Search response with matching periods
+     */
+    public BillingPeriodSearchResponse searchBillingPeriods(BillingPeriodSearchRequest request) {
+        BillingPeriodSearchCriteria criteria = request.getSearchCriteria();
+
+        log.info("Searching billing periods with criteria - tenant: {}, campaign: {}, status: {}",
+            criteria.getTenantId(),
+            criteria.getCampaignNumber(),
+            criteria.getStatus());
+
+        // Search periods with criteria
+        List<BillingPeriod> periods = repository.searchPeriods(criteria);
+
+        // Count total periods (without pagination)
+        int totalCount = repository.countPeriods(criteria);
+
+        // Create response
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(
+            request.getRequestInfo(), true);
+
+        String message = String.format("Found %d billing periods (total: %d matching criteria)",
+            periods.size(), totalCount);
+
+        BillingPeriodSearchResponse response = BillingPeriodSearchResponse.builder()
+            .responseInfo(responseInfo)
+            .billingPeriods(periods)
+            .totalCount(totalCount)
+            .message(message)
+            .build();
+
+        log.info("Billing period search completed - returned: {}, total: {}",
+            periods.size(), totalCount);
+
+        return response;
+    }
+
+    /**
      * Updates billing configuration status and metadata.
      *
      * Supports updating:

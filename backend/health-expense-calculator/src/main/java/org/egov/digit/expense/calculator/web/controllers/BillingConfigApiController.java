@@ -14,6 +14,8 @@ import org.egov.digit.expense.calculator.service.BillingConfigurationService;
 import org.egov.digit.expense.calculator.web.models.BillingConfigRequest;
 import org.egov.digit.expense.calculator.web.models.BillingConfigResponse;
 import org.egov.digit.expense.calculator.web.models.BillingConfigSearchRequest;
+import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchRequest;
+import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -208,6 +210,62 @@ public class BillingConfigApiController {
 
         log.info("Successfully updated billing configuration: {}",
             response.getBillingConfig().getId());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Searches for billing periods based on flexible criteria.
+     *
+     * Supports comprehensive filtering by:
+     * - IDs, billing config, campaign, project
+     * - Status, period numbers
+     * - Date range, bill existence
+     * - Pagination
+     *
+     * @param searchRequest Search request with criteria
+     * @return Matching billing periods with total count
+     */
+    @Operation(
+        summary = "Search billing periods",
+        description = "Searches for billing periods with flexible criteria. " +
+                     "Supports filtering by campaign, project, status, period numbers, and more. " +
+                     "Returns periods with pagination and total count.",
+        tags = {"Billing Configuration"}
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Search completed successfully",
+            content = @Content(schema = @Schema(implementation = BillingPeriodSearchResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid search criteria"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
+    @RequestMapping(value = "/billing-config/v1/periods/_search", method = RequestMethod.POST)
+    public ResponseEntity<BillingPeriodSearchResponse> searchBillingPeriods(
+            @Parameter(
+                in = ParameterIn.DEFAULT,
+                description = "Search criteria for billing periods",
+                required = true,
+                schema = @Schema(implementation = BillingPeriodSearchRequest.class)
+            )
+            @Valid @RequestBody BillingPeriodSearchRequest searchRequest) {
+
+        log.info("Received search billing periods request with criteria: {}",
+            searchRequest.getSearchCriteria());
+
+        BillingPeriodSearchResponse response = billingConfigurationService.searchBillingPeriods(searchRequest);
+
+        log.info("Search completed - Found {} periods (total: {})",
+            response.getReturnedCount(),
+            response.getTotalCount());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

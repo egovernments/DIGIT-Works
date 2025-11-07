@@ -287,6 +287,73 @@ public class BillingConfigRepository {
     }
 
     /**
+     * Searches for billing periods based on flexible criteria.
+     * Supports filtering by IDs, config, campaign, project, status, period numbers, etc.
+     *
+     * @param criteria Search criteria
+     * @return List of matching billing periods ordered by period number
+     */
+    public List<BillingPeriod> searchPeriods(org.egov.digit.expense.calculator.web.models.BillingPeriodSearchCriteria criteria) {
+        log.info("Searching billing periods with criteria: {}", criteria);
+
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.buildBillingPeriodSearchQuery(criteria, preparedStmtList);
+
+        log.debug("Executing query: {} with params: {}", query, preparedStmtList);
+
+        List<BillingPeriod> periods = jdbcTemplate.query(
+            query,
+            billingPeriodRowMapper,
+            preparedStmtList.toArray()
+        );
+
+        log.info("Found {} billing periods", periods != null ? periods.size() : 0);
+        return periods != null ? periods : new ArrayList<>();
+    }
+
+    /**
+     * Counts total billing periods matching the search criteria (without pagination).
+     *
+     * @param criteria Search criteria
+     * @return Total count of matching periods
+     */
+    public int countPeriods(org.egov.digit.expense.calculator.web.models.BillingPeriodSearchCriteria criteria) {
+        log.info("Counting billing periods with criteria: {}", criteria);
+
+        StringBuilder countQuery = new StringBuilder(
+            "SELECT COUNT(*) FROM eg_wms_billing_period bp WHERE bp.tenant_id = ?");
+
+        List<Object> preparedStmtList = new ArrayList<>();
+        preparedStmtList.add(criteria.getTenantId());
+
+        // Add same filters as search query (without pagination)
+        if (criteria.getIds() != null && !criteria.getIds().isEmpty()) {
+            countQuery.append(" AND bp.id IN (");
+            for (int i = 0; i < criteria.getIds().size(); i++) {
+                countQuery.append("?");
+                if (i != criteria.getIds().size() - 1) countQuery.append(", ");
+                preparedStmtList.add(criteria.getIds().get(i));
+            }
+            countQuery.append(")");
+        }
+
+        if (criteria.getCampaignNumber() != null) {
+            countQuery.append(" AND bp.campaign_number = ?");
+            preparedStmtList.add(criteria.getCampaignNumber());
+        }
+
+        if (criteria.getStatus() != null) {
+            countQuery.append(" AND bp.status = ?");
+            preparedStmtList.add(criteria.getStatus());
+        }
+
+        Integer count = jdbcTemplate.queryForObject(countQuery.toString(), Integer.class, preparedStmtList.toArray());
+
+        log.info("Total count of billing periods: {}", count);
+        return count != null ? count : 0;
+    }
+
+    /**
      * Updates billing configuration in database.
      *
      * @param config Billing configuration to update

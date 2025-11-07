@@ -327,20 +327,27 @@ public class MusterRollServiceUtil {
 	public BillingPeriod fetchBillingPeriod(String billingPeriodId, String tenantId, RequestInfo requestInfo) {
 		log.info("fetchBillingPeriod::Fetching billing period with ID: {} for tenant: {}", billingPeriodId, tenantId);
 
+		// Build endpoint URL (without query parameters - using POST body instead)
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getExpenseCalculatorServiceHost())
-			.append(config.getBillingPeriodSearchEndpoint())
-			.append("?tenantId=").append(tenantId)
-			.append("&ids=").append(billingPeriodId);
+			.append(config.getBillingPeriodSearchEndpoint());
+
+		// Build search request with criteria
+		BillingPeriodSearchCriteria criteria = BillingPeriodSearchCriteria.builder()
+			.tenantId(tenantId)
+			.ids(java.util.Collections.singletonList(billingPeriodId))
+			.build();
+
+		BillingPeriodSearchRequest searchRequest = BillingPeriodSearchRequest.builder()
+			.requestInfo(requestInfo)
+			.searchCriteria(criteria)
+			.build();
 
 		BillingPeriodResponse response = null;
 
 		try {
-			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
-				.requestInfo(requestInfo)
-				.build();
-
-			response = restTemplate.postForObject(uri.toString(), requestInfoWrapper, BillingPeriodResponse.class);
+			log.debug("fetchBillingPeriod::Calling endpoint: {} with criteria: {}", uri, criteria);
+			response = restTemplate.postForObject(uri.toString(), searchRequest, BillingPeriodResponse.class);
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			log.error("fetchBillingPeriod::Error fetching billing period: {}", e.getResponseBodyAsString());
 			throw new ServiceCallException(e.getResponseBodyAsString());
@@ -357,6 +364,7 @@ public class MusterRollServiceUtil {
 				"Billing period not found with ID: " + billingPeriodId);
 		}
 
+		log.info("fetchBillingPeriod::Successfully fetched billing period: {}", response.getBillingPeriods().get(0).getId());
 		return response.getBillingPeriods().get(0);
 	}
 

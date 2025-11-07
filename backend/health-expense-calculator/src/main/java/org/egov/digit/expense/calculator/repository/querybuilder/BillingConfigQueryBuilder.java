@@ -172,6 +172,161 @@ public class BillingConfigQueryBuilder {
     }
 
     /**
+     * Builds comprehensive query for searching billing periods with flexible criteria.
+     *
+     * @param criteria Billing period search criteria
+     * @param preparedStmtList List to store prepared statement parameters
+     * @return SQL query string
+     */
+    public String buildBillingPeriodSearchQuery(org.egov.digit.expense.calculator.web.models.BillingPeriodSearchCriteria criteria,
+                                               List<Object> preparedStmtList) {
+        StringBuilder queryBuilder = new StringBuilder(BILLING_PERIOD_BASE_QUERY);
+
+        // Tenant ID is mandatory
+        queryBuilder.append(" WHERE bp.tenant_id = ? ");
+        preparedStmtList.add(criteria.getTenantId());
+
+        // Filter by IDs
+        if (criteria.getIds() != null && !criteria.getIds().isEmpty()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.id IN (")
+                       .append(createQuery(criteria.getIds()))
+                       .append(") ");
+            addToPreparedStatement(preparedStmtList, criteria.getIds());
+        }
+
+        // Filter by billing config ID
+        if (StringUtils.isNotBlank(criteria.getBillingConfigId())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.billing_config_id = ? ");
+            preparedStmtList.add(criteria.getBillingConfigId());
+        }
+
+        // Filter by billing config IDs
+        if (criteria.getBillingConfigIds() != null && !criteria.getBillingConfigIds().isEmpty()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.billing_config_id IN (")
+                       .append(createQuery(criteria.getBillingConfigIds()))
+                       .append(") ");
+            addToPreparedStatement(preparedStmtList, criteria.getBillingConfigIds());
+        }
+
+        // Filter by project ID
+        if (StringUtils.isNotBlank(criteria.getProjectId())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.project_id = ? ");
+            preparedStmtList.add(criteria.getProjectId());
+        }
+
+        // Filter by project IDs
+        if (criteria.getProjectIds() != null && !criteria.getProjectIds().isEmpty()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.project_id IN (")
+                       .append(createQuery(criteria.getProjectIds()))
+                       .append(") ");
+            addToPreparedStatement(preparedStmtList, criteria.getProjectIds());
+        }
+
+        // Filter by campaign number
+        if (StringUtils.isNotBlank(criteria.getCampaignNumber())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.campaign_number = ? ");
+            preparedStmtList.add(criteria.getCampaignNumber());
+        }
+
+        // Filter by campaign numbers
+        if (criteria.getCampaignNumbers() != null && !criteria.getCampaignNumbers().isEmpty()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.campaign_number IN (")
+                       .append(createQuery(criteria.getCampaignNumbers()))
+                       .append(") ");
+            addToPreparedStatement(preparedStmtList, criteria.getCampaignNumbers());
+        }
+
+        // Filter by period number
+        if (criteria.getPeriodNumber() != null) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.period_number = ? ");
+            preparedStmtList.add(criteria.getPeriodNumber());
+        }
+
+        // Filter by period numbers
+        if (criteria.getPeriodNumbers() != null && !criteria.getPeriodNumbers().isEmpty()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.period_number IN (");
+            for (int i = 0; i < criteria.getPeriodNumbers().size(); i++) {
+                queryBuilder.append("?");
+                if (i != criteria.getPeriodNumbers().size() - 1) {
+                    queryBuilder.append(", ");
+                }
+                preparedStmtList.add(criteria.getPeriodNumbers().get(i));
+            }
+            queryBuilder.append(") ");
+        }
+
+        // Filter by status
+        if (StringUtils.isNotBlank(criteria.getStatus())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.status = ? ");
+            preparedStmtList.add(criteria.getStatus());
+        }
+
+        // Filter by statuses
+        if (criteria.getStatuses() != null && !criteria.getStatuses().isEmpty()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.status IN (")
+                       .append(createQuery(criteria.getStatuses()))
+                       .append(") ");
+            addToPreparedStatement(preparedStmtList, criteria.getStatuses());
+        }
+
+        // Filter by billing frequency
+        if (criteria.getBillingFrequency() != null) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.billing_frequency = ? ");
+            preparedStmtList.add(criteria.getBillingFrequency().getValue());
+        }
+
+        // Filter by date range
+        if (criteria.getFromDate() != null) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.period_start_date >= ? ");
+            preparedStmtList.add(criteria.getFromDate());
+        }
+
+        if (criteria.getToDate() != null) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.period_end_date <= ? ");
+            preparedStmtList.add(criteria.getToDate());
+        }
+
+        // Filter by bill existence
+        if (criteria.hasFilterByBill()) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            if (criteria.getHasBill()) {
+                queryBuilder.append(" bp.bill_id IS NOT NULL ");
+            } else {
+                queryBuilder.append(" bp.bill_id IS NULL ");
+            }
+        }
+
+        // Order by period number
+        queryBuilder.append(" ORDER BY bp.period_number ASC ");
+
+        // Add pagination
+        Integer limit = criteria.getLimitOrDefault();
+        queryBuilder.append(" LIMIT ? ");
+        preparedStmtList.add(limit);
+
+        Integer offset = criteria.getOffsetOrDefault();
+        queryBuilder.append(" OFFSET ? ");
+        preparedStmtList.add(offset);
+
+        log.debug("Billing period search query: {}", queryBuilder);
+        return queryBuilder.toString();
+    }
+
+    /**
      * Builds query to find billing config by project ID.
      *
      * @param projectId Project identifier
