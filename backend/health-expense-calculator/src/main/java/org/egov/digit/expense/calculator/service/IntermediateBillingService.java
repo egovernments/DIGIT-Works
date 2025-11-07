@@ -32,12 +32,18 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
  * Handles HCM Payments V2 intermediate billing logic.
  * This service processes bills on a per-period basis for projects with billing configurations.
  *
+ * V2 Workflow:
+ * - Muster rolls are ALREADY CREATED by proximity supervisors before billing
+ * - This service SEARCHES for existing approved muster rolls (does NOT create them)
+ * - Bills can only be generated when ALL muster rolls for a period are APPROVED
+ *
  * Key Responsibilities:
- * - Iterate through billing periods
+ * - Validate sequential billing (Period N requires Period N-1 billed first)
  * - Fetch registers overlapping with each period
- * - Generate/fetch period-specific muster rolls
+ * - SEARCH for existing period-specific muster rolls
+ * - Validate ALL muster rolls are APPROVED
  * - Generate bills per period
- * - Update period status after billing
+ * - Track bill status at project+period level
  * - Prevent duplicate bill generation
  *
  * Backward Compatible: Projects without billing config use V1 flow (ExpenseCalculatorService)
@@ -92,20 +98,27 @@ public class IntermediateBillingService {
     /**
      * Process intermediate billing for V2 projects
      *
+     * V2 Workflow:
+     * - Proximity supervisors create and approve muster rolls BEFORE billing
+     * - District supervisor selects project + locality + period in UI
+     * - System searches for existing APPROVED muster rolls
+     * - Bill is generated only if ALL muster rolls are approved
+     *
      * Steps:
-     * 1. Get all billing periods for project
-     * 2. For each period:
-     *    a. Check if bill already generated (duplicate prevention)
-     *    b. Fetch registers overlapping with period dates
-     *    c. Validate register approval
-     *    d. Generate/fetch period-specific muster rolls
-     *    e. Generate bill for period
-     *    f. Submit bill to expense service
-     *    g. Update period status
+     * 1. Validate request and extract campaign/project details
+     * 2. For selected period (UI-driven) or all periods (batch mode):
+     *    a. Validate sequential billing (Period N requires Period N-1 billed)
+     *    b. Check if bill already generated for project+period (duplicate prevention)
+     *    c. Fetch registers overlapping with period dates
+     *    d. SEARCH for existing muster rolls (DO NOT CREATE)
+     *    e. Validate ALL muster rolls for period are APPROVED
+     *    f. Generate bill for period
+     *    g. Submit bill to expense service
+     *    h. Track bill status in bill_gen_status table
      * 3. Return list of generated bills
      *
      * @param requestInfo Request info with user details
-     * @param criteria Billing criteria
+     * @param criteria Billing criteria (includes billingPeriodId for UI-driven mode)
      * @param project Project details
      * @param isDistrictLevel Whether project is district level
      * @param billingConfig Billing configuration
@@ -269,40 +282,39 @@ public class IntermediateBillingService {
 
         log.info("Found {} registers for period {}", periodRegisters.size(), period.getPeriodNumber());
 
-        // Step 3: Validate ALL registers are approved (V1 validation preserved)
-        if (config.isAttendanceApprovalRequired()) {
-            expenseCalculatorServiceValidator.validateAttendanceRegisterApproval(periodRegisters);
-        }
-
-        // Step 4: Get register IDs
+        // Step 3: Get register IDs
         List<String> registerIds = periodRegisters.stream()
                 .map(AttendanceRegister::getId)
                 .collect(Collectors.toList());
 
-        // Step 4.1: Validate register IDs
+        // Step 3.1: Validate register IDs
         intermediateBillingValidator.validateRegisterIds(registerIds, period);
 
-        // Step 5: Generate/fetch period-specific muster rolls via remote service call
-        List<MusterRoll> musterRolls = callPeriodAwareMusterRollService(
+        // Step 4: SEARCH for existing period-specific muster rolls (DO NOT CREATE)
+        // In V2, muster rolls are created by proximity supervisors BEFORE billing
+        List<MusterRoll> musterRolls = searchExistingMusterRollsForPeriod(
                 requestInfo,
                 criteria.getTenantId(),
                 registerIds,
-                period,
-                campaignNumber
+                period
         );
 
         if (CollectionUtils.isEmpty(musterRolls)) {
-            log.warn("No muster rolls generated for period {}, skipping", period.getPeriodNumber());
-            return null;
+            log.warn("No muster rolls found for period {}. Proximity supervisors must create muster rolls before billing.",
+                    period.getPeriodNumber());
+            throw new CustomException("NO_MUSTER_ROLLS_FOR_PERIOD",
+                    "No muster rolls found for period " + period.getPeriodNumber() + ". " +
+                    "Muster rolls must be created by proximity supervisors before bill generation.");
         }
 
-        log.info("Processing {} muster rolls for period {}", musterRolls.size(), period.getPeriodNumber());
+        log.info("Found {} existing muster rolls for period {}", musterRolls.size(), period.getPeriodNumber());
 
-        // Step 5.1: Validate muster rolls before bill generation
-        intermediateBillingValidator.validateMusterRollsForBilling(musterRolls, period);
-
-        // Step 5.2: V2 Critical Validation - Ensure ALL overlapping registers have APPROVED musters
+        // Step 5: V2 CRITICAL VALIDATION - Ensure ALL muster rolls for this period are APPROVED
+        // This replaces V1's register approval check
         intermediateBillingValidator.validateAllRegisterMustersApproved(periodRegisters, musterRolls, period);
+
+        // Step 5.1: Additional validation for muster rolls before bill generation
+        intermediateBillingValidator.validateMusterRollsForBilling(musterRolls, period);
 
         // Step 6: Fetch billing config for enrichment
         BillingConfig billingConfig = billingConfigurationService.getBillingConfigByCampaignNumber(
@@ -470,44 +482,39 @@ public class IntermediateBillingService {
     }
 
     /**
-     * Call PeriodAwareMusterRollService in muster-roll service
-     * This is a remote service call to generate period-specific muster rolls
+     * Search for existing muster rolls for a billing period
+     * V2 Workflow: Muster rolls are ALREADY CREATED by proximity supervisors
+     * This method only SEARCHES for existing muster rolls, does NOT create new ones
      *
      * @param requestInfo Request info
      * @param tenantId Tenant ID
-     * @param registerIds List of register IDs
+     * @param registerIds List of register IDs to search for
      * @param period Billing period
-     * @return List of muster rolls for the period
+     * @return List of existing muster rolls for the period
      */
-    private List<MusterRoll> callPeriodAwareMusterRollService(RequestInfo requestInfo,
-                                                              String tenantId,
-                                                              List<String> registerIds,
-                                                              BillingPeriod period,
-                                                              String campaignNumber) {
-        log.info("Calling PeriodAwareMusterRollService for {} registers in period {}",
+    private List<MusterRoll> searchExistingMusterRollsForPeriod(RequestInfo requestInfo,
+                                                                String tenantId,
+                                                                List<String> registerIds,
+                                                                BillingPeriod period) {
+        log.info("Searching for existing muster rolls for {} registers in period {}",
                 registerIds.size(), period.getPeriodNumber());
 
-        // Build request for muster-roll service
-        String uri = config.getMusterRollHost() + config.getMusterRollEndPoint() + "/_periodicCreate";
+        // Build search request for muster-roll V2 search API
+        String uri = config.getMusterRollHost() + config.getMusterRollEndV2Point();
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("RequestInfo", requestInfo);
-        requestBody.put("tenantId", tenantId);
-        requestBody.put("registerIds", registerIds);
-        requestBody.put("campaignNumber", campaignNumber);
 
-        // Map BillingPeriod to simpler DTO for service call
-        Map<String, Object> periodDetails = new HashMap<>();
-        periodDetails.put("id", period.getId());
-        periodDetails.put("periodNumber", period.getPeriodNumber());
-        periodDetails.put("periodStartDate", period.getPeriodStartDate());
-        periodDetails.put("periodEndDate", period.getPeriodEndDate());
-        periodDetails.put("campaignNumber", campaignNumber);
+        // Build search criteria
+        Map<String, Object> searchCriteria = new HashMap<>();
+        searchCriteria.put("tenantId", tenantId);
+        searchCriteria.put("registerIds", registerIds);
+        searchCriteria.put("billingPeriodId", period.getId());
 
-        requestBody.put("billingPeriod", periodDetails);
+        requestBody.put("musterRollCriteria", searchCriteria);
 
         try {
-            // Call muster-roll service
+            // Call muster-roll V2 search service
             Map<String, Object> response = restTemplate.postForObject(
                     uri,
                     requestBody,
@@ -515,26 +522,30 @@ public class IntermediateBillingService {
             );
 
             if (response == null || !response.containsKey("musterRolls")) {
-                throw new CustomException("MUSTER_ROLL_GENERATION_FAILED",
-                        "Failed to generate muster rolls for period " + period.getPeriodNumber() +
-                                ": Empty response from muster-roll service");
+                log.warn("No muster rolls found in response for period {}", period.getPeriodNumber());
+                return new ArrayList<>();
             }
 
             // Convert response to MusterRoll list
             List<Map<String, Object>> musterRollMaps = (List<Map<String, Object>>) response.get("musterRolls");
+
+            if (musterRollMaps == null || musterRollMaps.isEmpty()) {
+                log.warn("Empty muster roll list for period {}", period.getPeriodNumber());
+                return new ArrayList<>();
+            }
+
             List<MusterRoll> musterRolls = musterRollMaps.stream()
                     .map(map -> mapper.convertValue(map, MusterRoll.class))
                     .collect(Collectors.toList());
 
-            log.info("Successfully retrieved {} muster rolls from PeriodAwareMusterRollService",
-                    musterRolls.size());
+            log.info("Found {} existing muster rolls for period {}", musterRolls.size(), period.getPeriodNumber());
 
             return musterRolls;
 
         } catch (Exception e) {
-            log.error("Error calling PeriodAwareMusterRollService: {}", e.getMessage(), e);
-            throw new CustomException("MUSTER_ROLL_SERVICE_ERROR",
-                    "Failed to call muster-roll service: " + e.getMessage());
+            log.error("Error searching for muster rolls: {}", e.getMessage(), e);
+            throw new CustomException("MUSTER_ROLL_SEARCH_ERROR",
+                    "Failed to search for muster rolls: " + e.getMessage());
         }
     }
 

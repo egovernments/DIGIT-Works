@@ -258,6 +258,11 @@ public class IntermediateBillingValidator {
      * V1: Checks register.reviewStatus = "APPROVED"
      * V2: Checks each register has an approved muster roll for this specific period
      *
+     * CRITICAL V2 VALIDATION:
+     * - For N registers in a period, there MUST be exactly N muster rolls
+     * - ALL N muster rolls MUST be in APPROVED status
+     * - Example: If 48 registers exist but only 47 muster rolls found → FAIL
+     *
      * @param periodRegisters List of registers overlapping with the period
      * @param musterRolls List of muster rolls for the period
      * @param period Billing period
@@ -272,12 +277,37 @@ public class IntermediateBillingValidator {
             return;
         }
 
-        if (CollectionUtils.isEmpty(musterRolls)) {
+        int registerCount = periodRegisters.size();
+        int musterRollCount = musterRolls != null ? musterRolls.size() : 0;
+
+        log.info("validateAllRegisterMustersApproved::Period {} - Registers: {}, Muster Rolls: {}",
+                period.getPeriodNumber(), registerCount, musterRollCount);
+
+        // CRITICAL: Count mismatch validation
+        // Every register MUST have exactly one muster roll
+        if (musterRollCount == 0) {
             errorMap.put("NO_MUSTER_ROLLS_FOR_REGISTERS",
-                    String.format("Period %d has %d overlapping registers but no muster rolls. " +
-                            "All registers must have approved muster rolls for the period.",
-                            period.getPeriodNumber(), periodRegisters.size()));
+                    String.format("Period %d has %d register(s) but NO muster rolls. " +
+                            "All registers must have approved muster rolls before billing.",
+                            period.getPeriodNumber(), registerCount));
             throw new CustomException(errorMap);
+        }
+
+        if (musterRollCount < registerCount) {
+            errorMap.put("MUSTER_ROLL_COUNT_MISMATCH",
+                    String.format("Period %d: Register-to-Muster count mismatch! " +
+                            "Found %d register(s) but only %d muster roll(s). " +
+                            "Each register MUST have exactly 1 muster roll. " +
+                            "Missing: %d muster roll(s). " +
+                            "Proximity supervisors must create muster rolls for ALL registers before billing.",
+                            period.getPeriodNumber(), registerCount, musterRollCount, (registerCount - musterRollCount)));
+            throw new CustomException(errorMap);
+        }
+
+        if (musterRollCount > registerCount) {
+            log.warn("Period {}: Found MORE muster rolls ({}) than registers ({}). " +
+                    "This might indicate duplicate muster rolls or incorrect period filtering.",
+                    period.getPeriodNumber(), musterRollCount, registerCount);
         }
 
         // Create a map of registerId → musterRoll for quick lookup
@@ -310,27 +340,37 @@ public class IntermediateBillingValidator {
             }
         }
 
-        // Build error messages
+        // Build detailed error messages
         if (!registersWithoutMuster.isEmpty()) {
+            String sampleRegisters = registersWithoutMuster.size() <= 5 ?
+                    String.join(", ", registersWithoutMuster) :
+                    String.join(", ", registersWithoutMuster.subList(0, 5)) + "... and " + (registersWithoutMuster.size() - 5) + " more";
+
             errorMap.put("REGISTERS_WITHOUT_MUSTER",
-                    String.format("Period %d: %d register(s) do not have muster rolls: %s. " +
-                            "All registers must have muster rolls before billing.",
+                    String.format("Period %d: CRITICAL VALIDATION FAILURE - %d out of %d register(s) do NOT have muster rolls! " +
+                            "Register IDs missing muster rolls: [%s]. " +
+                            "Each register MUST have exactly 1 muster roll. " +
+                            "Proximity supervisors must create muster rolls for these registers before billing can proceed.",
                             period.getPeriodNumber(),
                             registersWithoutMuster.size(),
-                            registersWithoutMuster.size() <= 5 ?
-                                    String.join(", ", registersWithoutMuster) :
-                                    registersWithoutMuster.subList(0, 5) + "... and " + (registersWithoutMuster.size() - 5) + " more"));
+                            registerCount,
+                            sampleRegisters));
         }
 
         if (!registersWithUnapprovedMuster.isEmpty()) {
+            String sampleMusters = registersWithUnapprovedMuster.size() <= 5 ?
+                    String.join(", ", registersWithUnapprovedMuster) :
+                    String.join(", ", registersWithUnapprovedMuster.subList(0, 5)) + "... and " + (registersWithUnapprovedMuster.size() - 5) + " more";
+
             errorMap.put("REGISTERS_WITH_UNAPPROVED_MUSTER",
-                    String.format("Period %d: %d register(s) have unapproved muster rolls: %s. " +
-                            "All muster rolls must be approved before billing.",
+                    String.format("Period %d: CRITICAL VALIDATION FAILURE - %d out of %d register(s) have UNAPPROVED muster rolls! " +
+                            "Register IDs with unapproved musters: [%s]. " +
+                            "ALL muster rolls must be in APPROVED status before billing. " +
+                            "Proximity supervisors must approve these muster rolls first.",
                             period.getPeriodNumber(),
                             registersWithUnapprovedMuster.size(),
-                            registersWithUnapprovedMuster.size() <= 5 ?
-                                    String.join(", ", registersWithUnapprovedMuster) :
-                                    registersWithUnapprovedMuster.subList(0, 5) + "... and " + (registersWithUnapprovedMuster.size() - 5) + " more"));
+                            registerCount,
+                            sampleMusters));
         }
 
         if (!errorMap.isEmpty()) {
@@ -338,8 +378,9 @@ public class IntermediateBillingValidator {
             throw new CustomException(errorMap);
         }
 
-        log.info("validateAllRegisterMustersApproved::Period {} - All {} registers have approved muster rolls",
-                period.getPeriodNumber(), periodRegisters.size());
+        log.info("validateAllRegisterMustersApproved::Period {} - ✓ VALIDATION PASSED - " +
+                "All {} register(s) have exactly {} approved muster roll(s). Ready for billing.",
+                period.getPeriodNumber(), registerCount, musterRollCount);
     }
 
     /**
