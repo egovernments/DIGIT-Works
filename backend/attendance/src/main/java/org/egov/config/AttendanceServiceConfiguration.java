@@ -165,6 +165,19 @@ public class AttendanceServiceConfiguration {
 
     @Value("#{${attendance.register.status.map}}")
     private Map<String, String> attendanceRegisterStatusMap;
+
+    // V2 Intermediate Billing - Service Integration Config
+    @Value("${egov.expense.calculator.host}")
+    private String expenseCalculatorHost;
+
+    @Value("${egov.expense.calculator.billing.period.search.endpoint}")
+    private String billingPeriodSearchEndpoint;
+
+    @Value("${egov.muster.roll.host}")
+    private String musterRollHost;
+
+    @Value("${egov.muster.roll.search.endpoint}")
+    private String musterRollV2SearchEndpoint;
 }
 
 

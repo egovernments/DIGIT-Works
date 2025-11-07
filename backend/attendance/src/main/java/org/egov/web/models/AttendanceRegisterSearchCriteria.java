@@ -79,6 +79,15 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("includeTaggedAttendees")
     private Boolean includeTaggedAttendees =  Boolean.FALSE;
 
+    /**
+     * V2 Intermediate Billing - Billing Period Filter
+     * When provided, the search will:
+     * 1. Filter registers that overlap with the billing period dates
+     * 2. Enrich each register with registerPeriodStatus (muster roll status for that period)
+     */
+    @JsonProperty("billingPeriodId")
+    private String billingPeriodId;
+
     public enum SortOrder {
         ASC,
         DESC

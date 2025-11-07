@@ -68,6 +68,24 @@ public class AttendanceRegister {
     @JsonProperty("reviewStatus")
     private String reviewStatus = null;
 
+    /**
+     * V2 Intermediate Billing - Register Period Status
+     *
+     * Indicates the muster roll status for this register within a specific billing period.
+     * Only populated when billingPeriodId is provided in search criteria.
+     *
+     * Possible values:
+     * - "NOT_CREATED": No muster roll exists for this register+period combination
+     * - "PENDING": Muster roll created but awaiting approval
+     * - "APPROVED": Muster roll approved, ready for billing
+     * - "REJECTED": Muster roll rejected
+     * - "SENT_BACK": Muster roll sent back for corrections
+     *
+     * This field helps UI determine which registers are ready for bill generation.
+     */
+    @JsonProperty("registerPeriodStatus")
+    private String registerPeriodStatus = null;
+
     public AttendanceRegister addStaffItem(StaffPermission staffItem) {
         if (this.staff == null) {
             this.staff = new ArrayList<>();

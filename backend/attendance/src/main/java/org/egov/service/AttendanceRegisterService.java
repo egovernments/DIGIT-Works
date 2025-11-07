@@ -59,8 +59,11 @@ public class AttendanceRegisterService {
 
     private final ProjectServiceUtil projectServiceUtil;
 
+    // V2 Intermediate Billing - Period-based enrichment
+    private final RegisterPeriodEnrichmentService registerPeriodEnrichmentService;
+
     @Autowired
-    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, ProjectServiceUtil projectServiceUtil) {
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, ProjectServiceUtil projectServiceUtil, RegisterPeriodEnrichmentService registerPeriodEnrichmentService) {
         this.attendanceServiceValidator = attendanceServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.producer = producer;
@@ -72,6 +75,7 @@ public class AttendanceRegisterService {
         this.staffEnrichmentService = staffEnrichmentService;
         this.individualServiceUtil = individualServiceUtil;
         this.projectServiceUtil = projectServiceUtil;
+        this.registerPeriodEnrichmentService = registerPeriodEnrichmentService;
     }
 
     /**
@@ -290,6 +294,25 @@ public class AttendanceRegisterService {
                     resultAttendanceRegisters.add(register);
                 }
             }
+        }
+
+        // V2 Intermediate Billing - Period-based filtering and enrichment
+        // Only apply when billingPeriodId is provided in search criteria
+        if (searchCriteria.getBillingPeriodId() != null &&
+            !searchCriteria.getBillingPeriodId().isEmpty()) {
+
+            log.info("V2 Request detected - applying period-based filtering and enrichment for period {}",
+                    searchCriteria.getBillingPeriodId());
+
+            // Filter registers by period dates and enrich with muster roll status
+            resultAttendanceRegisters = registerPeriodEnrichmentService.filterAndEnrichRegistersForPeriod(
+                    resultAttendanceRegisters,
+                    searchCriteria.getBillingPeriodId(),
+                    requestInfoWrapper.getRequestInfo(),
+                    searchCriteria.getTenantId()
+            );
+
+            log.info("After V2 period filtering: {} registers remain", resultAttendanceRegisters.size());
         }
 
         attendanceRegisterResponse.setAttendanceRegister(resultAttendanceRegisters);
