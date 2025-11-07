@@ -54,6 +54,9 @@ public class Criteria {
 	@NotNull
 	private String localityCode = null;
 
+	@JsonProperty("billingPeriodId")
+	private String billingPeriodId = null;
+
 	@JsonProperty("auditDetails")
 
 	@Valid

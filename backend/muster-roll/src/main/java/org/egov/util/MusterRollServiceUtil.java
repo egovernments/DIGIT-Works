@@ -413,4 +413,195 @@ public class MusterRollServiceUtil {
 
 		return attendanceRegisterResponse;
 	}
+
+	/**
+	 * Fetches billing configuration for a campaign from expense-calculator service.
+	 * Used for V2 period-aware validation.
+	 *
+	 * @param campaignNumber Campaign number
+	 * @param tenantId Tenant ID
+	 * @param requestInfo Request info
+	 * @return BillingConfig details or null if not found
+	 */
+	public BillingConfig fetchBillingConfig(String campaignNumber, String tenantId, RequestInfo requestInfo) {
+		log.info("fetchBillingConfig::Fetching billing config for campaign: {} in tenant: {}", campaignNumber, tenantId);
+
+		// Build endpoint URL
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getExpenseCalculatorServiceHost())
+			.append(config.getBillingConfigSearchEndpoint());
+
+		// Build search request
+		BillingConfigSearchCriteria criteria = BillingConfigSearchCriteria.builder()
+			.tenantId(tenantId)
+			.campaignNumber(campaignNumber)
+			.status("ACTIVE")
+			.build();
+
+		BillingConfigSearchRequest searchRequest = BillingConfigSearchRequest.builder()
+			.requestInfo(requestInfo)
+			.searchCriteria(criteria)
+			.build();
+
+		BillingConfigResponse response = null;
+
+		try {
+			log.debug("fetchBillingConfig::Calling endpoint: {} with criteria: {}", uri, criteria);
+			response = restTemplate.postForObject(uri.toString(), searchRequest, BillingConfigResponse.class);
+		} catch (HttpClientErrorException | HttpServerErrorException e) {
+			log.warn("fetchBillingConfig::Error fetching billing config (might not exist - V1 mode): {}",
+				e.getResponseBodyAsString());
+			return null; // Return null if not found - indicates V1 mode
+		} catch (Exception e) {
+			log.warn("fetchBillingConfig::Error fetching billing config: {}", e.getMessage());
+			return null; // Return null on error - fallback to V1 mode
+		}
+
+		if (response == null || response.getBillingConfig() == null) {
+			log.info("fetchBillingConfig::No billing config found for campaign: {} (V1 mode)", campaignNumber);
+			return null;
+		}
+
+		log.info("fetchBillingConfig::Successfully fetched billing config: {} for campaign: {}",
+			response.getBillingConfig().getId(), campaignNumber);
+		return response.getBillingConfig();
+	}
+
+	/**
+	 * Checks if a campaign has active billing configuration.
+	 * Used to determine if V2 intermediate billing is enabled.
+	 *
+	 * @param campaignNumber Campaign number
+	 * @param tenantId Tenant ID
+	 * @param requestInfo Request info
+	 * @return true if billing config exists and is active, false otherwise
+	 */
+	public boolean checkIfCampaignHasBillingConfig(String campaignNumber, String tenantId, RequestInfo requestInfo) {
+		if (campaignNumber == null || campaignNumber.isEmpty()) {
+			return false;
+		}
+
+		BillingConfig config = fetchBillingConfig(campaignNumber, tenantId, requestInfo);
+		return config != null && "ACTIVE".equalsIgnoreCase(config.getStatus());
+	}
+
+	/**
+	 * Finds the billing period that contains the given date range.
+	 * Used for V2 to auto-detect which period the dates fall into.
+	 *
+	 * @param campaignNumber Campaign number
+	 * @param tenantId Tenant ID
+	 * @param startDate Start date in epoch milliseconds
+	 * @param endDate End date in epoch milliseconds
+	 * @param requestInfo Request info
+	 * @return BillingPeriod that contains the dates, or null if not found
+	 */
+	public BillingPeriod findBillingPeriodForDates(String campaignNumber, String tenantId,
+	                                               Long startDate, Long endDate, RequestInfo requestInfo) {
+		log.info("findBillingPeriodForDates::Finding period for campaign: {}, dates: {} to {}",
+			campaignNumber, startDate, endDate);
+
+		// Build endpoint URL
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getExpenseCalculatorServiceHost())
+			.append(config.getBillingPeriodSearchEndpoint());
+
+		// Build search request
+		BillingPeriodSearchCriteria criteria = BillingPeriodSearchCriteria.builder()
+			.tenantId(tenantId)
+			.campaignNumber(campaignNumber)
+			.build();
+
+		BillingPeriodSearchRequest searchRequest = BillingPeriodSearchRequest.builder()
+			.requestInfo(requestInfo)
+			.searchCriteria(criteria)
+			.build();
+
+		BillingPeriodResponse response = null;
+
+		try {
+			response = restTemplate.postForObject(uri.toString(), searchRequest, BillingPeriodResponse.class);
+		} catch (Exception e) {
+			log.error("findBillingPeriodForDates::Error fetching billing periods: {}", e.getMessage());
+			return null;
+		}
+
+		if (response == null || CollectionUtils.isEmpty(response.getBillingPeriods())) {
+			log.warn("findBillingPeriodForDates::No billing periods found for campaign: {}", campaignNumber);
+			return null;
+		}
+
+		// Find period that contains the given dates
+		for (BillingPeriod period : response.getBillingPeriods()) {
+			Long periodStart = period.getPeriodStartDate();
+			Long periodEnd = period.getPeriodEndDate();
+
+			// Check if the provided dates fall completely within this period
+			if (startDate >= periodStart && endDate <= periodEnd) {
+				log.info("findBillingPeriodForDates::Found matching period: {} (period number: {})",
+					period.getId(), period.getPeriodNumber());
+				return period;
+			}
+		}
+
+		log.warn("findBillingPeriodForDates::No period found that contains dates {} to {} for campaign: {}",
+			startDate, endDate, campaignNumber);
+		return null;
+	}
+
+	/**
+	 * Validates that the given dates fall within the billing period boundaries.
+	 * Throws exception if dates are outside the period.
+	 *
+	 * @param startDate Start date to validate
+	 * @param endDate End date to validate
+	 * @param period Billing period to validate against
+	 * @throws CustomException if dates are outside period boundaries
+	 */
+	public void validateDatesAgainstPeriod(Long startDate, Long endDate, BillingPeriod period) {
+		if (period == null) {
+			throw new CustomException("BILLING_PERIOD_NULL", "Billing period cannot be null for validation");
+		}
+
+		Long periodStart = period.getPeriodStartDate();
+		Long periodEnd = period.getPeriodEndDate();
+
+		if (startDate < periodStart || endDate > periodEnd) {
+			String message = String.format(
+				"Dates (%d to %d) fall outside billing period boundaries (%d to %d). " +
+				"Period number: %d, Campaign: %s",
+				startDate, endDate, periodStart, periodEnd,
+				period.getPeriodNumber(), period.getCampaignNumber()
+			);
+			log.error("validateDatesAgainstPeriod::{}", message);
+			throw new CustomException("DATES_OUTSIDE_PERIOD", message);
+		}
+
+		log.info("validateDatesAgainstPeriod::Dates validated successfully against period: {}", period.getId());
+	}
+
+	/**
+	 * Extracts campaign number from attendance register.
+	 * Fetches the register and returns the campaign number.
+	 *
+	 * @param registerId Register ID
+	 * @param tenantId Tenant ID
+	 * @param requestInfo Request info
+	 * @return Campaign number from register, or null if not found
+	 */
+	public String getCampaignNumberFromRegister(String registerId, String tenantId, RequestInfo requestInfo) {
+		try {
+			AttendanceRegisterResponse response = fetchAttendanceRegister(requestInfo, tenantId, registerId);
+			if (response != null && !CollectionUtils.isEmpty(response.getAttendanceRegister())) {
+				AttendanceRegister register = response.getAttendanceRegister().get(0);
+				String referenceId = register.getReferenceId(); // This is the campaign number
+				log.info("getCampaignNumberFromRegister::Extracted campaign number: {} from register: {}",
+					referenceId, registerId);
+				return referenceId;
+			}
+		} catch (Exception e) {
+			log.error("getCampaignNumberFromRegister::Error fetching register: {}", e.getMessage());
+		}
+		return null;
+	}
 }

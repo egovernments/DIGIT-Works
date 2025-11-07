@@ -26,6 +26,12 @@ public class BillingPeriod {
     @JsonProperty("billingConfigId")
     private String billingConfigId;
 
+    @JsonProperty("campaignNumber")
+    private String campaignNumber;
+
+    @JsonProperty("projectId")
+    private String projectId;
+
     @JsonProperty("periodNumber")
     private Integer periodNumber;
 
@@ -35,6 +41,12 @@ public class BillingPeriod {
     @JsonProperty("periodEndDate")
     private Long periodEndDate;
 
+    @JsonProperty("billingFrequency")
+    private String billingFrequency;
+
     @JsonProperty("status")
     private String status;
+
+    @JsonProperty("billId")
+    private String billId;
 }

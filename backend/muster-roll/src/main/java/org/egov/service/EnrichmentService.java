@@ -70,6 +70,9 @@ public class EnrichmentService {
         //contract service code
         musterRoll.setServiceCode(config.getContractServiceCode());
 
+        // V2: Enrich with billing period context if present
+        enrichWithBillingPeriodContext(musterRoll, requestInfo);
+
     }
 
     /**
@@ -106,6 +109,9 @@ public class EnrichmentService {
 
         //contract service code
         musterRoll.setServiceCode(config.getContractServiceCode());
+
+        // V2: Enrich with billing period context if present
+        enrichWithBillingPeriodContext(musterRoll, requestInfo);
 
     }
 
@@ -257,5 +263,76 @@ public class EnrichmentService {
 
         return idResponses.stream()
                 .map(IdResponse::getId).collect(Collectors.toList());
+    }
+
+    /**
+     * Enrich muster roll with billing period context for V2 mode
+     * Adds period information to additionalDetails for UI consumption
+     *
+     * @param musterRoll The muster roll to enrich
+     * @param requestInfo Request info for API calls
+     */
+    private void enrichWithBillingPeriodContext(MusterRoll musterRoll, RequestInfo requestInfo) {
+        try {
+            // Only enrich if billing period ID is present (V2 mode)
+            if (musterRoll.getBillingPeriodId() == null || musterRoll.getBillingPeriodId().isEmpty()) {
+                log.debug("No billing period ID present, skipping V2 enrichment");
+                return;
+            }
+
+            // Fetch billing period details
+            BillingPeriod billingPeriod = musterRollServiceUtil.fetchBillingPeriod(
+                musterRoll.getBillingPeriodId(),
+                musterRoll.getTenantId(),
+                requestInfo
+            );
+
+            if (billingPeriod == null) {
+                log.warn("Billing period not found for ID: {}", musterRoll.getBillingPeriodId());
+                return;
+            }
+
+            // Prepare period context for additionalDetails
+            Map<String, Object> periodContext = new java.util.HashMap<>();
+            periodContext.put("isV2Mode", true);
+            periodContext.put("billingPeriodId", billingPeriod.getId());
+            periodContext.put("periodNumber", billingPeriod.getPeriodNumber());
+            periodContext.put("periodStartDate", billingPeriod.getPeriodStartDate());
+            periodContext.put("periodEndDate", billingPeriod.getPeriodEndDate());
+            periodContext.put("billingFrequency", billingPeriod.getBillingFrequency());
+
+            if (billingPeriod.getCampaignNumber() != null) {
+                periodContext.put("campaignNumber", billingPeriod.getCampaignNumber());
+            }
+
+            if (billingPeriod.getStatus() != null) {
+                periodContext.put("periodStatus", billingPeriod.getStatus());
+            }
+
+            // Merge with existing additionalDetails or create new
+            Object existingDetails = musterRoll.getAdditionalDetails();
+            Map<String, Object> additionalDetails;
+
+            if (existingDetails != null) {
+                // Convert existing details to map
+                additionalDetails = mapper.convertValue(existingDetails, Map.class);
+            } else {
+                additionalDetails = new java.util.HashMap<>();
+            }
+
+            // Add period context under "billingPeriod" key
+            additionalDetails.put("billingPeriod", periodContext);
+
+            // Set back to muster roll
+            musterRoll.setAdditionalDetails(additionalDetails);
+
+            log.info("Enriched muster roll with billing period context - Period: {}, Frequency: {}",
+                billingPeriod.getPeriodNumber(), billingPeriod.getBillingFrequency());
+
+        } catch (Exception e) {
+            // Graceful degradation - don't fail the request if enrichment fails
+            log.error("Failed to enrich with billing period context: {}", e.getMessage(), e);
+            log.warn("Continuing without period context enrichment");
+        }
     }
 }

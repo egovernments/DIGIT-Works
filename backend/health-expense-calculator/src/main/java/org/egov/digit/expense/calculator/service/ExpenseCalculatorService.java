@@ -104,13 +104,185 @@ public class ExpenseCalculatorService {
         if (criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) {
             // Fetch all the approved muster rolls for provided muster Ids
             List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo, criteria, false);
+
+            // V2: Validate and enrich with period context
+            validateAndEnrichEstimateWithPeriodContext(musterRolls, criteria);
+
             // Fetch wage seeker skills from MDMS
             List<SorDetail> sorDetails = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
-            return wageSeekerBillGeneratorService.calculateEstimates(requestInfo, criteria.getTenantId(), musterRolls, sorDetails);
+
+            // Calculate estimates
+            Calculation calculation = wageSeekerBillGeneratorService.calculateEstimates(
+                requestInfo, criteria.getTenantId(), musterRolls, sorDetails
+            );
+
+            // V2: Enrich response with period metadata
+            enrichCalculationWithPeriodMetadata(calculation, musterRolls);
+
+            return calculation;
         } else {
             List<Bill> bills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getReferenceId());
             //TODO: Add check for empty bill list here and send back a response
             return supervisionBillGeneratorService.estimateBill(requestInfo, criteria, bills);
+        }
+    }
+
+    /**
+     * Validate and enrich estimate request with V2 period context
+     * Ensures all muster rolls belong to the same billing period
+     *
+     * @param musterRolls List of muster rolls
+     * @param criteria Request criteria
+     */
+    private void validateAndEnrichEstimateWithPeriodContext(List<MusterRoll> musterRolls, Criteria criteria) {
+        if (musterRolls == null || musterRolls.isEmpty()) {
+            return;
+        }
+
+        // Check if any muster roll has billingPeriodId (V2 indicator)
+        String firstPeriodId = null;
+        boolean isV2 = false;
+
+        for (MusterRoll musterRoll : musterRolls) {
+            String periodId = extractBillingPeriodId(musterRoll);
+            if (periodId != null && !periodId.isEmpty()) {
+                isV2 = true;
+                if (firstPeriodId == null) {
+                    firstPeriodId = periodId;
+                }
+                break;
+            }
+        }
+
+        if (!isV2) {
+            log.info("V1 mode detected - muster rolls without billingPeriodId");
+            return; // V1 mode - no validation needed
+        }
+
+        log.info("V2 mode detected - validating period consistency for estimate");
+
+        // V2 validation: All muster rolls must belong to the same period
+        for (MusterRoll musterRoll : musterRolls) {
+            String periodId = extractBillingPeriodId(musterRoll);
+
+            if (periodId == null || periodId.isEmpty()) {
+                throw new CustomException("MIXED_V1_V2_MUSTERS",
+                    String.format("Cannot estimate with mixed V1/V2 muster rolls. " +
+                        "Muster roll %s does not have billingPeriodId while others do. " +
+                        "All muster rolls must belong to the same billing period.",
+                        musterRoll.getId()));
+            }
+
+            if (!periodId.equals(firstPeriodId)) {
+                throw new CustomException("MULTIPLE_PERIODS_IN_ESTIMATE",
+                    String.format("Cannot estimate across multiple billing periods. " +
+                        "Muster roll %s belongs to period %s but previous musters belong to period %s. " +
+                        "All muster rolls must belong to the same billing period.",
+                        musterRoll.getId(), periodId, firstPeriodId));
+            }
+        }
+
+        log.info("V2 validation passed - all {} muster rolls belong to period {}",
+            musterRolls.size(), firstPeriodId);
+    }
+
+    /**
+     * Extract billingPeriodId from MusterRoll
+     * Checks additionalDetails for the billingPeriodId
+     *
+     * @param musterRoll Muster roll object
+     * @return billingPeriodId if found, null otherwise
+     */
+    private String extractBillingPeriodId(MusterRoll musterRoll) {
+        try {
+            if (musterRoll.getAdditionalDetails() == null) {
+                return null;
+            }
+
+            Map<String, Object> additionalDetails = mapper.convertValue(
+                musterRoll.getAdditionalDetails(), Map.class
+            );
+
+            // Check for billingPeriodId in additionalDetails
+            if (additionalDetails.containsKey("billingPeriodId")) {
+                Object periodId = additionalDetails.get("billingPeriodId");
+                return periodId != null ? periodId.toString() : null;
+            }
+
+            // Check for nested billingPeriod object
+            if (additionalDetails.containsKey("billingPeriod")) {
+                Object billingPeriod = additionalDetails.get("billingPeriod");
+                if (billingPeriod instanceof Map) {
+                    Map<String, Object> periodMap = (Map<String, Object>) billingPeriod;
+                    if (periodMap.containsKey("billingPeriodId")) {
+                        Object periodId = periodMap.get("billingPeriodId");
+                        return periodId != null ? periodId.toString() : null;
+                    }
+                }
+            }
+
+            return null;
+        } catch (Exception e) {
+            log.warn("Failed to extract billingPeriodId from muster roll {}: {}",
+                musterRoll.getId(), e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Enrich calculation response with V2 period metadata
+     * Adds period information to additionalDetails for UI consumption
+     *
+     * @param calculation Calculation response
+     * @param musterRolls Muster rolls used in calculation
+     */
+    private void enrichCalculationWithPeriodMetadata(Calculation calculation, List<MusterRoll> musterRolls) {
+        if (musterRolls == null || musterRolls.isEmpty()) {
+            return;
+        }
+
+        // Check if V2 mode (has billingPeriodId)
+        MusterRoll firstMuster = musterRolls.get(0);
+        String periodId = extractBillingPeriodId(firstMuster);
+
+        if (periodId == null || periodId.isEmpty()) {
+            return; // V1 mode - no enrichment needed
+        }
+
+        try {
+            // Extract period information from first muster roll
+            Map<String, Object> periodMetadata = new java.util.HashMap<>();
+            periodMetadata.put("isV2Mode", true);
+            periodMetadata.put("billingPeriodId", periodId);
+            periodMetadata.put("musterRollCount", musterRolls.size());
+
+            // Add period dates if available from muster roll
+            if (firstMuster.getStartDate() != null) {
+                periodMetadata.put("periodStartDate", firstMuster.getStartDate().longValue());
+            }
+            if (firstMuster.getEndDate() != null) {
+                periodMetadata.put("periodEndDate", firstMuster.getEndDate().longValue());
+            }
+
+            // Merge with existing additionalDetails or create new
+            Object existingDetails = calculation.getAdditionalDetails();
+            Map<String, Object> additionalDetails;
+
+            if (existingDetails != null) {
+                additionalDetails = mapper.convertValue(existingDetails, Map.class);
+            } else {
+                additionalDetails = new java.util.HashMap<>();
+            }
+
+            additionalDetails.put("billingPeriod", periodMetadata);
+            calculation.setAdditionalDetails(additionalDetails);
+
+            log.info("Enriched estimate calculation with V2 period metadata - period: {}", periodId);
+
+        } catch (Exception e) {
+            // Graceful degradation - don't fail the estimate if enrichment fails
+            log.error("Failed to enrich calculation with period metadata: {}", e.getMessage(), e);
+            log.warn("Continuing without period metadata enrichment");
         }
     }
 

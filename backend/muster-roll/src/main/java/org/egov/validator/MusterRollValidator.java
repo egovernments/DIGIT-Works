@@ -72,6 +72,9 @@ public class MusterRollValidator {
         validateRequestInfo(requestInfo);
         validateEstimateMusterRollRequest(musterRoll);
 
+        // V2 Enhancement: Check for billing period and validate dates
+        validateAndEnrichWithBillingPeriod(musterRoll, requestInfo, errorMap, false);
+
         //split the tenantId and validate tenantId
         String tenantId = musterRoll.getTenantId();
         Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, tenantId);
@@ -97,6 +100,10 @@ public class MusterRollValidator {
 
         validateRequestInfo(requestInfo);
         validateCreateMusterRollRequest(musterRoll);
+
+        // V2 Enhancement: Check for billing period and validate dates
+        validateAndEnrichWithBillingPeriod(musterRoll, requestInfo, errorMap, true);
+
         if(serviceConfiguration.isValidateAttendanceRegisterEnabled()) {
             validateAndEnrichAttendance(musterRoll, requestInfo, true);
         }
@@ -399,6 +406,127 @@ public class MusterRollValidator {
         musterRoll.setStartDate(attendanceRegister.getStartDate());
         musterRoll.setEndDate(attendanceRegister.getEndDate());
     }
-    
-   
+
+    /**
+     * V2 Enhancement: Validates and enriches muster roll with billing period information.
+     * Implements backward-compatible V1/V2 mode detection:
+     *
+     * - If billingPeriodId provided: Fetch period and override dates (V2 mode)
+     * - If billing config exists for campaign: Auto-detect period from dates (V2 mode)
+     * - If no billing config exists: Skip validation (V1 mode - backward compatible)
+     *
+     * @param musterRoll Muster roll to validate and enrich
+     * @param requestInfo Request info
+     * @param errorMap Error map to accumulate validation errors
+     * @param isCreate True if called from create flow, false if from estimate
+     */
+    private void validateAndEnrichWithBillingPeriod(MusterRoll musterRoll, RequestInfo requestInfo,
+                                                    Map<String, String> errorMap, boolean isCreate) {
+        log.info("validateAndEnrichWithBillingPeriod::Checking for V2 billing period (isCreate: {})", isCreate);
+
+        String tenantId = musterRoll.getTenantId();
+        String registerId = musterRoll.getRegisterId();
+        String billingPeriodId = musterRoll.getBillingPeriodId();
+
+        try {
+            // Step 1: Get campaign number from register
+            String campaignNumber = musterRollServiceUtil.getCampaignNumberFromRegister(registerId, tenantId, requestInfo);
+            if (campaignNumber == null || campaignNumber.isEmpty()) {
+                log.info("validateAndEnrichWithBillingPeriod::No campaign number found - V1 mode (backward compatible)");
+                return; // V1 mode - no validation needed
+            }
+
+            log.info("validateAndEnrichWithBillingPeriod::Campaign number: {}", campaignNumber);
+
+            // Step 2: Check if campaign has billing configuration
+            boolean hasBillingConfig = musterRollServiceUtil.checkIfCampaignHasBillingConfig(
+                campaignNumber, tenantId, requestInfo);
+
+            if (!hasBillingConfig) {
+                log.info("validateAndEnrichWithBillingPeriod::No billing config for campaign {} - V1 mode (backward compatible)",
+                    campaignNumber);
+                return; // V1 mode - no validation needed
+            }
+
+            log.info("validateAndEnrichWithBillingPeriod::Campaign {} has billing config - V2 mode enabled", campaignNumber);
+
+            BillingPeriod billingPeriod = null;
+
+            // Step 3: Fetch billing period
+            if (billingPeriodId != null && !billingPeriodId.isEmpty()) {
+                // Case 1: billingPeriodId provided explicitly (UI selected period)
+                log.info("validateAndEnrichWithBillingPeriod::Fetching period by ID: {}", billingPeriodId);
+                billingPeriod = musterRollServiceUtil.fetchBillingPeriod(billingPeriodId, tenantId, requestInfo);
+
+                if (billingPeriod == null) {
+                    errorMap.put("BILLING_PERIOD_NOT_FOUND",
+                        "Billing period not found with ID: " + billingPeriodId);
+                    return;
+                }
+
+                // Override dates with period dates (Period takes precedence)
+                log.info("validateAndEnrichWithBillingPeriod::Overriding dates with period dates: {} to {}",
+                    billingPeriod.getPeriodStartDate(), billingPeriod.getPeriodEndDate());
+                musterRoll.setStartDate(new java.math.BigDecimal(billingPeriod.getPeriodStartDate()));
+                musterRoll.setEndDate(new java.math.BigDecimal(billingPeriod.getPeriodEndDate()));
+
+            } else {
+                // Case 2: No billingPeriodId - auto-detect from dates
+                log.info("validateAndEnrichWithBillingPeriod::No billingPeriodId provided - auto-detecting from dates");
+
+                Long startDate = musterRoll.getStartDate() != null ? musterRoll.getStartDate().longValue() : null;
+                Long endDate = musterRoll.getEndDate() != null ? musterRoll.getEndDate().longValue() : null;
+
+                if (startDate == null || endDate == null) {
+                    errorMap.put("DATES_REQUIRED",
+                        "Start and end dates are required when billingPeriodId is not provided for campaign with V2 billing");
+                    return;
+                }
+
+                // Find which period these dates fall into
+                billingPeriod = musterRollServiceUtil.findBillingPeriodForDates(
+                    campaignNumber, tenantId, startDate, endDate, requestInfo);
+
+                if (billingPeriod == null) {
+                    String message = String.format(
+                        "No billing period found for dates %d to %d in campaign %s. " +
+                        "Dates must fall within a billing period for V2 intermediate billing.",
+                        startDate, endDate, campaignNumber
+                    );
+                    log.error("validateAndEnrichWithBillingPeriod::{}", message);
+                    errorMap.put("DATES_OUTSIDE_ALL_PERIODS", message);
+                    return;
+                }
+
+                log.info("validateAndEnrichWithBillingPeriod::Auto-detected period: {} (period number: {})",
+                    billingPeriod.getId(), billingPeriod.getPeriodNumber());
+
+                // Enrich with detected period ID
+                musterRoll.setBillingPeriodId(billingPeriod.getId());
+            }
+
+            // Step 4: Additional validation for create flow
+            if (isCreate && billingPeriod != null) {
+                // Check if period is already billed
+                if ("BILLED".equalsIgnoreCase(billingPeriod.getStatus())) {
+                    log.warn("validateAndEnrichWithBillingPeriod::Period {} is already billed (Bill ID: {})",
+                        billingPeriod.getId(), billingPeriod.getBillId());
+                    // Note: This is a warning, not blocking - muster roll can be created but won't be billed again
+                }
+            }
+
+            log.info("validateAndEnrichWithBillingPeriod::V2 validation successful - Period: {}, Campaign: {}",
+                billingPeriod.getId(), campaignNumber);
+
+        } catch (CustomException e) {
+            // Re-throw custom exceptions (these are validation errors)
+            throw e;
+        } catch (Exception e) {
+            // Log and continue for unexpected errors - fallback to V1 mode for resilience
+            log.error("validateAndEnrichWithBillingPeriod::Unexpected error during V2 validation - falling back to V1 mode: {}",
+                e.getMessage(), e);
+            // Don't fail the request - V1 mode will continue
+        }
+    }
+
 }

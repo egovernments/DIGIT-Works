@@ -122,12 +122,58 @@ public class IntermediateBillingService {
         // Step 0: Validate all inputs
         intermediateBillingValidator.validateIntermediateBillingRequest(requestInfo, criteria, project, billingConfig);
 
+        // Extract project ID for status tracking
+        String projectId = project.getProjectHierarchy() != null ?
+                project.getProjectHierarchy() : project.getId();
+
         List<Bill> generatedBills = new ArrayList<>();
 
         // Step 1: Extract campaign number from project reference ID
         String campaignNumber = extractCampaignNumber(project);
 
-        // Get all billing periods for this campaign
+        // Step 2: Check if specific period requested (UI-driven mode)
+        if (criteria.getBillingPeriodId() != null && !criteria.getBillingPeriodId().isEmpty()) {
+            log.info("UI-driven mode: Processing specific period {} for project {}",
+                    criteria.getBillingPeriodId(), projectId);
+
+            // Fetch the specific period
+            BillingPeriod selectedPeriod = billingConfigurationService.getBillingPeriodById(
+                    criteria.getBillingPeriodId(),
+                    criteria.getTenantId()
+            );
+
+            if (selectedPeriod == null) {
+                throw new CustomException("PERIOD_NOT_FOUND",
+                        "Billing period not found: " + criteria.getBillingPeriodId());
+            }
+
+            // Process only the selected period
+            Bill bill = processSinglePeriod(requestInfo, criteria, selectedPeriod, project,
+                    isDistrictLevel, projectId, campaignNumber);
+
+            if (bill != null) {
+                generatedBills.add(bill);
+            }
+
+            return generatedBills;
+        }
+
+        // Step 3: Check if batch processing is enabled
+        if (!config.isBillingV2BatchProcessingEnabled()) {
+            String errorMsg = "Batch processing is disabled for V2 intermediate billing. " +
+                    "Please provide 'billingPeriodId' in the request to bill a specific period. " +
+                    "Batch processing requires manual approval of all muster rolls and is disabled " +
+                    "to prevent automatic billing of unapproved periods. " +
+                    "To enable batch processing, set 'billing.v2.batch.processing.enabled=true' " +
+                    "in application.properties (not recommended for production).";
+            log.error(errorMsg);
+            throw new CustomException("BATCH_PROCESSING_DISABLED", errorMsg);
+        }
+
+        log.warn("Batch processing mode enabled - Processing all unbilled periods for project {}. " +
+                "This should only be used in controlled environments with pre-approved data.", projectId);
+
+        // Step 4: Batch mode - Get all billing periods for this campaign
         List<BillingPeriod> periods = billingConfigurationService.getBillingPeriods(
                 campaignNumber,
                 criteria.getTenantId()
@@ -136,9 +182,9 @@ public class IntermediateBillingService {
         // Validate billing periods
         intermediateBillingValidator.validateBillingPeriods(periods, campaignNumber);
 
-        log.info("Found {} billing periods for campaign {}", periods.size(), campaignNumber);
+        log.info("Batch mode: Found {} billing periods for campaign {}", periods.size(), campaignNumber);
 
-        // Step 2: Process each billing period
+        // Step 4: Process each unbilled period
         for (BillingPeriod period : periods) {
             log.info("Processing billing period {}: {} to {}",
                     period.getPeriodNumber(),
@@ -147,94 +193,31 @@ public class IntermediateBillingService {
             );
 
             try {
-                // Step 2a.1: Validate period before processing
-                intermediateBillingValidator.validatePeriodForProcessing(period);
-
-                // Step 2a.2: Validate sequential billing (previous period must be billed)
-                intermediateBillingValidator.validateSequentialBilling(periods, period);
-
-                // Step 2a.3: Check if bill already generated for this period (duplicate prevention)
-                if (isBillGeneratedForPeriod(period)) {
-                    log.info("Bill already generated for period {} (status: {}), skipping",
-                            period.getPeriodNumber(), period.getStatus());
+                // Step 4a: Check if bill already generated for this project+period (duplicate prevention)
+                if (isBillGeneratedForProjectPeriod(projectId, period)) {
+                    log.info("Bill already generated for project {} period {}, skipping",
+                            projectId, period.getPeriodNumber());
                     continue;
                 }
 
-                // Step 2b: Fetch registers overlapping with period dates
-                List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
-                        requestInfo, criteria, isDistrictLevel, period
-                );
+                // Step 4b: Process this period
+                Bill bill = processSinglePeriod(requestInfo, criteria, period, project,
+                        isDistrictLevel, projectId, campaignNumber);
 
-                if (periodRegisters.isEmpty()) {
-                    log.info("No registers found for period {}, skipping", period.getPeriodNumber());
-                    continue;
-                }
-
-                log.info("Found {} registers for period {}", periodRegisters.size(), period.getPeriodNumber());
-
-                // Step 2c: Validate ALL registers are approved (V1 validation preserved)
-                if (config.isAttendanceApprovalRequired()) {
-                    expenseCalculatorServiceValidator.validateAttendanceRegisterApproval(periodRegisters);
-                }
-
-                // Step 2d: Get register IDs
-                List<String> registerIds = periodRegisters.stream()
-                        .map(AttendanceRegister::getId)
-                        .collect(Collectors.toList());
-
-                // Step 2d.1: Validate register IDs
-                intermediateBillingValidator.validateRegisterIds(registerIds, period);
-
-                // Step 2e: Generate/fetch period-specific muster rolls via remote service call
-                List<MusterRoll> musterRolls = callPeriodAwareMusterRollService(
-                        requestInfo,
-                        criteria.getTenantId(),
-                        registerIds,
-                        period,
-                        campaignNumber
-                );
-
-                if (CollectionUtils.isEmpty(musterRolls)) {
-                    log.warn("No muster rolls generated for period {}, skipping", period.getPeriodNumber());
-                    continue;
-                }
-
-                log.info("Processing {} muster rolls for period {}", musterRolls.size(), period.getPeriodNumber());
-
-                // Step 2e.1: Validate muster rolls before bill generation
-                intermediateBillingValidator.validateMusterRollsForBilling(musterRolls, period);
-
-                // Step 2e.2: V2 Critical Validation - Ensure ALL overlapping registers have APPROVED musters
-                intermediateBillingValidator.validateAllRegisterMustersApproved(periodRegisters, musterRolls, period);
-
-                // Step 2f: Generate bill for this period
-                Bill periodBill = generatePeriodBill(
-                        requestInfo, criteria, period, musterRolls, project, periodRegisters.size(), billingConfig
-                );
-
-                // Step 2f.1: Validate bill before submission
-                intermediateBillingValidator.validateBillBeforeSubmission(periodBill, period);
-
-                // Step 2g: Submit bill to expense service
-                Bill submittedBill = submitPeriodBill(requestInfo, periodBill, period, project, periodRegisters.size());
-
-                if (submittedBill != null) {
-                    generatedBills.add(submittedBill);
-
-                    // Update period status to BILLED
-                    updatePeriodStatusAfterBilling(period, submittedBill, periodRegisters.size(), musterRolls.size());
+                if (bill != null) {
+                    generatedBills.add(bill);
                 }
 
             } catch (CustomException e) {
                 log.error("IntermediateBillingService::processIntermediateBilling - Error processing period {}: {}",
                         period.getPeriodNumber(), e.getMessage(), e);
                 // Record failure but continue with other periods
-                recordPeriodBillingFailure(period, project, e);
+                recordPeriodBillingFailure(period, projectId, e);
             } catch (Exception e) {
                 log.error("IntermediateBillingService::processIntermediateBilling - Unexpected error processing period {}: {}",
                         period.getPeriodNumber(), e.getMessage(), e);
                 // Record failure but continue with other periods
-                recordPeriodBillingFailure(period, project,
+                recordPeriodBillingFailure(period, projectId,
                         new CustomException("BILL_GENERATION_ERROR", e.getMessage()));
             }
         }
@@ -250,30 +233,165 @@ public class IntermediateBillingService {
     }
 
     /**
-     * Check if bill already generated for a specific period
-     * Used for duplicate prevention
+     * Process a single billing period for a project
+     * Extracted common logic for both UI-driven and batch modes
      *
-     * @param period Billing period
-     * @return true if bill already generated, false otherwise
+     * @param requestInfo Request info
+     * @param criteria Billing criteria
+     * @param period Billing period to process
+     * @param project Project details
+     * @param isDistrictLevel Whether project is district level
+     * @param projectId Project reference ID
+     * @param campaignNumber Campaign number
+     * @return Generated bill, or null if skipped
      */
-    private boolean isBillGeneratedForPeriod(BillingPeriod period) {
-        // Check period status
-        if ("BILLED".equalsIgnoreCase(period.getStatus())) {
-            log.info("Period {} already marked as BILLED", period.getPeriodNumber());
-            return true;
+    private Bill processSinglePeriod(RequestInfo requestInfo, Criteria criteria,
+                                    BillingPeriod period, Project project,
+                                    boolean isDistrictLevel, String projectId,
+                                    String campaignNumber) {
+        log.info("Processing period {} for project {}", period.getPeriodNumber(), projectId);
+
+        // Step 1: Validate period before processing
+        intermediateBillingValidator.validatePeriodForProcessing(period);
+
+        // Step 1.1: Validate sequential billing (previous periods must be billed first)
+        validateSequentialBillingForProject(projectId, period, criteria.getTenantId());
+
+        // Step 2: Fetch registers overlapping with period dates
+        List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
+                requestInfo, criteria, isDistrictLevel, period
+        );
+
+        if (periodRegisters.isEmpty()) {
+            log.info("No registers found for period {}, skipping", period.getPeriodNumber());
+            return null;
         }
 
-        // Query bill status table for this period
-        List<BillStatus> statuses = expenseCalculatorRepository.getBillStatusByPeriodId(period.getId());
+        log.info("Found {} registers for period {}", periodRegisters.size(), period.getPeriodNumber());
 
-        boolean billExists = statuses.stream()
-                .anyMatch(status -> SUCCESSFUL_STATUS.equals(status.getStatus()));
+        // Step 3: Validate ALL registers are approved (V1 validation preserved)
+        if (config.isAttendanceApprovalRequired()) {
+            expenseCalculatorServiceValidator.validateAttendanceRegisterApproval(periodRegisters);
+        }
+
+        // Step 4: Get register IDs
+        List<String> registerIds = periodRegisters.stream()
+                .map(AttendanceRegister::getId)
+                .collect(Collectors.toList());
+
+        // Step 4.1: Validate register IDs
+        intermediateBillingValidator.validateRegisterIds(registerIds, period);
+
+        // Step 5: Generate/fetch period-specific muster rolls via remote service call
+        List<MusterRoll> musterRolls = callPeriodAwareMusterRollService(
+                requestInfo,
+                criteria.getTenantId(),
+                registerIds,
+                period,
+                campaignNumber
+        );
+
+        if (CollectionUtils.isEmpty(musterRolls)) {
+            log.warn("No muster rolls generated for period {}, skipping", period.getPeriodNumber());
+            return null;
+        }
+
+        log.info("Processing {} muster rolls for period {}", musterRolls.size(), period.getPeriodNumber());
+
+        // Step 5.1: Validate muster rolls before bill generation
+        intermediateBillingValidator.validateMusterRollsForBilling(musterRolls, period);
+
+        // Step 5.2: V2 Critical Validation - Ensure ALL overlapping registers have APPROVED musters
+        intermediateBillingValidator.validateAllRegisterMustersApproved(periodRegisters, musterRolls, period);
+
+        // Step 6: Fetch billing config for enrichment
+        BillingConfig billingConfig = billingConfigurationService.getBillingConfigByCampaignNumber(
+                campaignNumber, criteria.getTenantId()
+        );
+
+        // Step 7: Generate bill for this period
+        Bill periodBill = generatePeriodBill(
+                requestInfo, criteria, period, musterRolls, project, periodRegisters.size(), billingConfig
+        );
+
+        // Step 7.1: Validate bill before submission
+        intermediateBillingValidator.validateBillBeforeSubmission(periodBill, period);
+
+        // Step 8: Submit bill to expense service
+        Bill submittedBill = submitPeriodBill(requestInfo, periodBill, period, projectId,
+                periodRegisters.size(), musterRolls.size());
+
+        return submittedBill;
+    }
+
+    /**
+     * Check if bill already generated for a specific project+period combination
+     * Used for duplicate prevention in V2
+     *
+     * @param projectId Project reference ID
+     * @param period Billing period
+     * @return true if bill already generated for this project+period, false otherwise
+     */
+    private boolean isBillGeneratedForProjectPeriod(String projectId, BillingPeriod period) {
+        // Query bill_gen_status table for this project+period combination
+        boolean billExists = expenseCalculatorRepository.isBillGeneratedForProjectPeriod(
+            projectId,
+            period.getId()
+        );
 
         if (billExists) {
-            log.info("Bill status found for period {} with SUCCESSFUL status", period.getPeriodNumber());
+            log.info("Bill already generated for project {} period {}", projectId, period.getPeriodNumber());
         }
 
         return billExists;
+    }
+
+    /**
+     * Validate sequential billing for a project
+     * Ensures periods are billed in order - Period N cannot be billed unless all periods 1 to N-1 are billed
+     *
+     * @param projectId Project reference ID
+     * @param period Period to be billed
+     * @param tenantId Tenant ID
+     * @throws CustomException if sequential validation fails
+     */
+    private void validateSequentialBillingForProject(String projectId, BillingPeriod period, String tenantId) {
+        Integer currentPeriodNumber = period.getPeriodNumber();
+
+        // Period 1 can always be billed (no previous periods)
+        if (currentPeriodNumber == null || currentPeriodNumber <= 1) {
+            log.info("Period {} is first period, no sequential validation needed", currentPeriodNumber);
+            return;
+        }
+
+        log.info("Validating sequential billing for project {} period {}", projectId, currentPeriodNumber);
+
+        // Get all billed period numbers for this project
+        List<Integer> billedPeriods = expenseCalculatorRepository.getBilledPeriodNumbersForProject(
+            projectId,
+            tenantId
+        );
+
+        log.info("Project {} has {} billed periods: {}", projectId, billedPeriods.size(), billedPeriods);
+
+        // Check if all previous periods (1 to N-1) are billed
+        for (int i = 1; i < currentPeriodNumber; i++) {
+            if (!billedPeriods.contains(i)) {
+                String errorMsg = String.format(
+                    "Cannot bill period %d for project %s. Period %d must be billed first. " +
+                    "Periods must be billed sequentially. Currently billed periods: %s",
+                    currentPeriodNumber,
+                    projectId,
+                    i,
+                    billedPeriods.isEmpty() ? "None" : billedPeriods.toString()
+                );
+                log.error(errorMsg);
+                throw new CustomException("SEQUENTIAL_BILLING_VIOLATION", errorMsg);
+            }
+        }
+
+        log.info("Sequential billing validation passed for project {} period {}",
+            projectId, currentPeriodNumber);
     }
 
     /**
@@ -490,28 +608,26 @@ public class IntermediateBillingService {
 
     /**
      * Submit bill to expense service and track status
+     * CORRECTED: Uses project-specific status tracking in bill_gen_status table
      *
      * @param requestInfo Request info
      * @param bill Bill to submit
      * @param period Billing period
-     * @param project Project details
+     * @param projectId Project reference ID
      * @param registerCount Number of registers
+     * @param musterRollCount Number of muster rolls
      * @return Submitted bill from expense service
      */
     private Bill submitPeriodBill(RequestInfo requestInfo, Bill bill, BillingPeriod period,
-                                  Project project, int registerCount) {
-        log.info("Submitting bill for period {}", period.getPeriodNumber());
-
-        // Get project reference ID
-        String referenceId = project.getProjectHierarchy() != null ?
-                project.getProjectHierarchy() : project.getId();
+                                  String projectId, int registerCount, int musterRollCount) {
+        log.info("Submitting bill for project {} period {}", projectId, period.getPeriodNumber());
 
         // Create bill status entry BEFORE submission
         String billStatusId = UUID.randomUUID().toString();
         expenseCalculatorRepository.createBillStatusV2(
                 billStatusId,
                 bill.getTenantId(),
-                referenceId,
+                projectId,                   // Project-specific tracking
                 "INTERMEDIATE",              // billing_type
                 period.getId(),              // period_id
                 period.getPeriodNumber(),    // period_number
@@ -536,21 +652,25 @@ public class IntermediateBillingService {
                 if (!CollectionUtils.isEmpty(response.getBills())) {
                     Bill submittedBill = response.getBills().get(0);
 
-                    // Update status to SUCCESSFUL
-                    expenseCalculatorRepository.updateBillStatusV2(
+                    // Update status to SUCCESSFUL with bill details
+                    expenseCalculatorRepository.updateBillStatusWithDetails(
                             billStatusId,
                             SUCCESSFUL_STATUS,
                             null,
-                            System.currentTimeMillis()  // processing_end_time
+                            System.currentTimeMillis(),  // processing_end_time
+                            submittedBill.getId(),       // billId
+                            submittedBill.getBillNumber() != null ? submittedBill.getBillNumber() : "N/A",
+                            submittedBill.getTotalAmount() != null ? submittedBill.getTotalAmount().toString() : "0",
+                            musterRollCount
                     );
 
-                    log.info("Successfully submitted bill for period {} with ID: {}",
-                            period.getPeriodNumber(), submittedBill.getId());
+                    log.info("Successfully submitted bill for project {} period {} with ID: {}",
+                            projectId, period.getPeriodNumber(), submittedBill.getId());
 
                     return submittedBill;
                 } else {
-                    log.error("Bill submission returned empty bills list for period {}",
-                            period.getPeriodNumber());
+                    log.error("Bill submission returned empty bills list for project {} period {}",
+                            projectId, period.getPeriodNumber());
                     expenseCalculatorRepository.updateBillStatusV2(
                             billStatusId,
                             FAILED_STATUS,
@@ -560,7 +680,8 @@ public class IntermediateBillingService {
                     return null;
                 }
             } else {
-                String errorMsg = "Bill submission failed for period " + period.getPeriodNumber();
+                String errorMsg = "Bill submission failed for project " + projectId +
+                        " period " + period.getPeriodNumber();
                 log.error(errorMsg);
                 expenseCalculatorRepository.updateBillStatusV2(
                         billStatusId,
@@ -571,8 +692,8 @@ public class IntermediateBillingService {
                 return null;
             }
         } catch (Exception e) {
-            log.error("Exception during bill submission for period {}: {}",
-                    period.getPeriodNumber(), e.getMessage(), e);
+            log.error("Exception during bill submission for project {} period {}: {}",
+                    projectId, period.getPeriodNumber(), e.getMessage(), e);
             expenseCalculatorRepository.updateBillStatusV2(
                     billStatusId,
                     FAILED_STATUS,
@@ -584,44 +705,19 @@ public class IntermediateBillingService {
     }
 
     /**
-     * Update billing period status after successful billing
+     * Record period billing failure for specific project
+     * CORRECTED: Uses project-specific tracking, not config table updates
      *
      * @param period Billing period
-     * @param bill Submitted bill
-     * @param registerCount Number of registers
-     * @param musterRollCount Number of muster rolls
-     */
-    private void updatePeriodStatusAfterBilling(BillingPeriod period, Bill bill,
-                                                int registerCount, int musterRollCount) {
-        log.info("Updating period {} status to BILLED", period.getPeriodNumber());
-
-        period.setStatus("BILLED");
-        period.setBillId(bill.getId());
-        period.setTotalAmount(bill.getTotalAmount());
-        period.setRegisterCount(registerCount);
-        period.setMusterRollCount(musterRollCount);
-
-        billingConfigurationService.updateBillingPeriod(period);
-
-        log.info("Successfully updated period {} status", period.getPeriodNumber());
-    }
-
-    /**
-     * Record period billing failure
-     *
-     * @param period Billing period
-     * @param project Project details
+     * @param projectId Project reference ID
      * @param exception Exception that occurred
      */
-    private void recordPeriodBillingFailure(BillingPeriod period, Project project, CustomException exception) {
-        String referenceId = project.getProjectHierarchy() != null ?
-                project.getProjectHierarchy() : project.getId();
-
+    private void recordPeriodBillingFailure(BillingPeriod period, String projectId, CustomException exception) {
         String billStatusId = UUID.randomUUID().toString();
         expenseCalculatorRepository.createBillStatusV2(
                 billStatusId,
-                project.getTenantId(),
-                referenceId,
+                period.getTenantId(),
+                projectId,                      // Project-specific tracking
                 "INTERMEDIATE",
                 period.getId(),
                 period.getPeriodNumber(),
@@ -631,7 +727,7 @@ public class IntermediateBillingService {
                 0
         );
 
-        log.info("Recorded failure for period {}", period.getPeriodNumber());
+        log.info("Recorded failure for project {} period {}", projectId, period.getPeriodNumber());
     }
 
     /**

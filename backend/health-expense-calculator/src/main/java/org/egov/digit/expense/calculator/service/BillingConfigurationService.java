@@ -294,6 +294,33 @@ public class BillingConfigurationService {
     }
 
     /**
+     * Get billing period by ID
+     * Used for UI-driven period selection in V2 billing
+     *
+     * @param periodId Billing period ID
+     * @param tenantId Tenant ID
+     * @return BillingPeriod if found, null otherwise
+     */
+    public BillingPeriod getBillingPeriodById(String periodId, String tenantId) {
+        log.info("Getting billing period by ID: {}", periodId);
+
+        BillingPeriodSearchCriteria criteria = BillingPeriodSearchCriteria.builder()
+                .tenantId(tenantId)
+                .ids(java.util.Collections.singletonList(periodId))
+                .build();
+
+        List<BillingPeriod> periods = repository.searchPeriods(criteria);
+
+        if (periods == null || periods.isEmpty()) {
+            log.warn("Billing period not found for ID: {}", periodId);
+            return null;
+        }
+
+        log.info("Found billing period: {} (period number: {})", periodId, periods.get(0).getPeriodNumber());
+        return periods.get(0);
+    }
+
+    /**
      * Searches for billing periods based on flexible criteria.
      *
      * This method provides comprehensive period search capabilities supporting:
