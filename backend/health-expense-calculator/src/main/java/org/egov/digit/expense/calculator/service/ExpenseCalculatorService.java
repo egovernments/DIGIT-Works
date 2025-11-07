@@ -451,12 +451,32 @@ public class ExpenseCalculatorService {
                 referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
             }
 
-            // Fetch Bill Status from DB
-            List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            // V2: Check if billingPeriodId is present (multi-period billing)
+            String billingPeriodId = calculationRequest.getCriteria().getBillingPeriodId();
+            boolean isV2Request = billingPeriodId != null && !billingPeriodId.isEmpty();
+
+            // Fetch Bill Status from DB (V2: use project+period, V1: use project only)
+            List<BillStatus> billStatuses;
+            if (isV2Request) {
+                // V2: Check status for specific project+period combination
+                log.info("V2 Request detected - checking bill status for project {} and period {}",
+                    referenceId, billingPeriodId);
+                BillStatus periodBillStatus = expenseCalculatorRepository.getBillStatusByProjectAndPeriod(
+                    referenceId, billingPeriodId);
+                billStatuses = periodBillStatus != null ? Arrays.asList(periodBillStatus) : new ArrayList<>();
+            } else {
+                // V1: Check status for project only (backward compatibility)
+                log.info("V1 Request detected - checking bill status for project {}", referenceId);
+                billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            }
 
             if (!billStatuses.isEmpty()) {
                 if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains(SUCCESSFUL_STATUS)) {
                     // If already successful return success response
+                    log.info("{} - Bill already generated successfully for project {} {}",
+                        isV2Request ? "V2" : "V1",
+                        referenceId,
+                        isV2Request ? "and period " + billingPeriodId : "");
                     return BillResponse.builder().responseInfo(responseInfo).statusCode(SUCCESSFUL_STATUS).build();
                 } else if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains(INITIATED_STATUS)) {
                     BillResponse billResponse = billUtils.searchBills(calculationRequest, referenceId);
@@ -471,17 +491,44 @@ public class ExpenseCalculatorService {
                     } else {
                         //If found in expense db return success status
                         BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().get();
-                        expenseCalculatorRepository.updateBillStatus(billStatus.getId(), SUCCESSFUL_STATUS, null);
+                        if (isV2Request) {
+                            // V2: Update with period tracking
+                            expenseCalculatorRepository.updateBillStatusV2(billStatus.getId(), SUCCESSFUL_STATUS,
+                                null, System.currentTimeMillis());
+                        } else {
+                            // V1: Update without period tracking
+                            expenseCalculatorRepository.updateBillStatus(billStatus.getId(), SUCCESSFUL_STATUS, null);
+                        }
                         billResponse1.setStatusCode(SUCCESSFUL_STATUS);
                         return billResponse1;
                         }
                 }
             }
 
-            // Create entry for bill status
-            expenseCalculatorRepository.createBillStatus(UUID.randomUUID().toString(),
-                    calculationRequest.getCriteria().getTenantId(), referenceId,
-                    INITIATED_STATUS, null);
+            // Create entry for bill status (V2: with period, V1: without period)
+            if (isV2Request) {
+                // V2: Create status with period tracking
+                log.info("V2 - Creating bill status for project {} and period {}", referenceId, billingPeriodId);
+                // Note: periodNumber not available here, will be set during bill generation
+                expenseCalculatorRepository.createBillStatusV2(
+                    UUID.randomUUID().toString(),
+                    calculationRequest.getCriteria().getTenantId(),
+                    referenceId,
+                    "INTERMEDIATE",  // billing_type for V2
+                    billingPeriodId,
+                    null,  // periodNumber will be enriched during bill generation
+                    INITIATED_STATUS,
+                    null,
+                    System.currentTimeMillis(),
+                    0  // registerCount will be enriched during bill generation
+                );
+            } else {
+                // V1: Create status without period tracking (backward compatibility)
+                log.info("V1 - Creating bill status for project {}", referenceId);
+                expenseCalculatorRepository.createBillStatus(UUID.randomUUID().toString(),
+                        calculationRequest.getCriteria().getTenantId(), referenceId,
+                        INITIATED_STATUS, null);
+            }
 
             // Push to async topic for bill generation
             expenseCalculatorProducer.push(config.getBillGenerationAsyncTopic(), calculationRequest);
@@ -575,21 +622,70 @@ public class ExpenseCalculatorService {
             } else {
                 referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
             }
-            List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+
+            // V2: Check if billingPeriodId is present
+            String billingPeriodId = calculationRequest.getCriteria().getBillingPeriodId();
+            boolean isV2Request = billingPeriodId != null && !billingPeriodId.isEmpty();
+
+            // Fetch and update bill status (V2: project+period, V1: project only)
+            List<BillStatus> billStatuses;
+            if (isV2Request) {
+                // V2: Get status for specific project+period
+                BillStatus periodBillStatus = expenseCalculatorRepository.getBillStatusByProjectAndPeriod(
+                    referenceId, billingPeriodId);
+                billStatuses = periodBillStatus != null ? Arrays.asList(periodBillStatus) : new ArrayList<>();
+            } else {
+                // V1: Get status for project only
+                billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            }
+
             if (!billStatuses.isEmpty()) {
-                BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().get();
-                if (billStatus != null)
-                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS, customException.getCode() + " " + customException.getMessage());
+                BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().orElse(null);
+                if (billStatus != null) {
+                    String errorMsg = customException.getCode() + " " + customException.getMessage();
+                    if (isV2Request) {
+                        // V2: Update with period tracking
+                        expenseCalculatorRepository.updateBillStatusV2(billStatus.getId(), FAILED_STATUS,
+                            errorMsg, System.currentTimeMillis());
+                    } else {
+                        // V1: Update without period tracking
+                        expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS, errorMsg);
+                    }
+                }
             }
             throw customException;
 
         } catch (Exception e) {
             String referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
-            List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+
+            // V2: Check if billingPeriodId is present
+            String billingPeriodId = calculationRequest.getCriteria().getBillingPeriodId();
+            boolean isV2Request = billingPeriodId != null && !billingPeriodId.isEmpty();
+
+            // Fetch and update bill status (V2: project+period, V1: project only)
+            List<BillStatus> billStatuses;
+            if (isV2Request) {
+                // V2: Get status for specific project+period
+                BillStatus periodBillStatus = expenseCalculatorRepository.getBillStatusByProjectAndPeriod(
+                    referenceId, billingPeriodId);
+                billStatuses = periodBillStatus != null ? Arrays.asList(periodBillStatus) : new ArrayList<>();
+            } else {
+                // V1: Get status for project only
+                billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            }
+
             if (!billStatuses.isEmpty()) {
-                BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().get();
-                if (billStatus != null)
-                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS,  e.getMessage());
+                BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().orElse(null);
+                if (billStatus != null) {
+                    if (isV2Request) {
+                        // V2: Update with period tracking
+                        expenseCalculatorRepository.updateBillStatusV2(billStatus.getId(), FAILED_STATUS,
+                            e.getMessage(), System.currentTimeMillis());
+                    } else {
+                        // V1: Update without period tracking
+                        expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS, e.getMessage());
+                    }
+                }
             }
             throw new CustomException("EXCEPTION", e.getMessage());
         }
