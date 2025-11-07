@@ -38,7 +38,7 @@ public class RegisterPeriodEnrichmentService {
 
     @Autowired
     public RegisterPeriodEnrichmentService(RestTemplate restTemplate,
-                                          ObjectMapper mapper,
+                                          @org.springframework.beans.factory.annotation.Qualifier("objectMapper") ObjectMapper mapper,
                                           AttendanceServiceConfiguration config) {
         this.restTemplate = restTemplate;
         this.mapper = mapper;
