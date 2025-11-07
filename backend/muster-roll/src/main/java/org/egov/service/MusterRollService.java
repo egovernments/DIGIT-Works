@@ -20,11 +20,13 @@ import org.egov.validator.MusterRollValidator;
 
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterResponse;
+import org.egov.web.models.BillingPeriod;
 import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.web.models.MusterRollSearchCriteria;
 import org.egov.works.services.common.models.musterroll.Status;
+import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -123,18 +125,114 @@ public class MusterRollService {
     public MusterRollRequest createMusterRoll(MusterRollRequest musterRollRequest) {
         log.info("MusterRollService::createMusterRoll");
 
+        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
+
+        // V2 Flow: If billingPeriodId is present, apply period-aware date intersection logic
+        if (StringUtils.isNotBlank(musterRoll.getBillingPeriodId())) {
+            log.info("MusterRollService::createMusterRoll - V2 flow detected (billingPeriodId: {})",
+                musterRoll.getBillingPeriodId());
+            applyPeriodAwareDates(musterRollRequest);
+        } else {
+            log.info("MusterRollService::createMusterRoll - V1 flow detected (no billingPeriodId)");
+        }
+
+        // Common validation and enrichment (works for both v1 and v2)
         musterRollValidator.validateCreateMusterRoll(musterRollRequest);
-        checkMusterRollExists(musterRollRequest.getMusterRoll());
+        checkMusterRollExists(musterRoll);
         enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
         calculationService.createAttendance(musterRollRequest,true);
+
+        // Workflow processing (same for v1 and v2)
         if(config.isMusterRollWorkflowEnabled()) {
             workflowService.updateWorkflowStatus(musterRollRequest);
         } else {
-            musterRollRequest.getMusterRoll().setMusterRollStatus(config.getMusterRollNoWorkflowCreateStatus());
+            musterRoll.setMusterRollStatus(config.getMusterRollNoWorkflowCreateStatus());
         }
 
-        musterRollProducer.push(musterRollRequest.getMusterRoll().getTenantId(), serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
+        // Save muster roll
+        musterRollProducer.push(musterRoll.getTenantId(), serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
+
+        log.info("MusterRollService::createMusterRoll - Created muster roll {} with status {}",
+            musterRoll.getId(), musterRoll.getMusterRollStatus());
+
         return musterRollRequest;
+    }
+
+    /**
+     * Applies period-aware date intersection logic for V2 flow.
+     * Calculates intersection between register dates and billing period dates.
+     * Updates muster roll startDate and endDate to the intersection.
+     *
+     * @param musterRollRequest Muster roll request with billingPeriodId
+     */
+    private void applyPeriodAwareDates(MusterRollRequest musterRollRequest) {
+        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
+        String billingPeriodId = musterRoll.getBillingPeriodId();
+        String tenantId = musterRoll.getTenantId();
+        String registerId = musterRoll.getRegisterId();
+
+        log.info("MusterRollService::applyPeriodAwareDates - Calculating date intersection for register {} and period {}",
+            registerId, billingPeriodId);
+
+        try {
+            // Fetch billing period details
+            BillingPeriod period = musterRollServiceUtil.fetchBillingPeriod(
+                billingPeriodId,
+                tenantId,
+                musterRollRequest.getRequestInfo()
+            );
+
+            // Fetch attendance register to get its dates
+            AttendanceRegisterResponse registerResponse = musterRollServiceUtil.fetchAttendanceRegister(
+                musterRollRequest.getRequestInfo(),
+                tenantId,
+                registerId
+            );
+
+            if (registerResponse == null || CollectionUtils.isEmpty(registerResponse.getAttendanceRegister())) {
+                throw new CustomException("REGISTER_NOT_FOUND",
+                    "Attendance register not found for ID: " + registerId);
+            }
+
+            AttendanceRegister register = registerResponse.getAttendanceRegister().get(0);
+
+            // Calculate intersection between register dates and period dates
+            long registerStart = register.getStartDate().longValue();
+            long registerEnd = register.getEndDate().longValue();
+            long periodStart = period.getPeriodStartDate();
+            long periodEnd = period.getPeriodEndDate();
+
+            long intersectionStart = Math.max(registerStart, periodStart);
+            long intersectionEnd = Math.min(registerEnd, periodEnd);
+
+            // Validate intersection exists
+            if (intersectionStart > intersectionEnd) {
+                throw new CustomException("NO_DATE_INTERSECTION",
+                    String.format("Register dates (%s to %s) do not overlap with period dates (%s to %s)",
+                        formatDate(registerStart), formatDate(registerEnd),
+                        formatDate(periodStart), formatDate(periodEnd)));
+            }
+
+            // Update muster roll with intersection dates
+            musterRoll.setStartDate(BigDecimal.valueOf(intersectionStart));
+            musterRoll.setEndDate(BigDecimal.valueOf(intersectionEnd));
+
+            log.info("MusterRollService::applyPeriodAwareDates - Applied intersection dates: {} to {} ({} days)",
+                formatDate(intersectionStart), formatDate(intersectionEnd),
+                ((intersectionEnd - intersectionStart) / (24 * 60 * 60 * 1000)) + 1);
+
+        } catch (Exception e) {
+            log.error("MusterRollService::applyPeriodAwareDates - Error calculating period dates", e);
+            throw new CustomException("PERIOD_DATE_CALCULATION_ERROR",
+                "Failed to calculate period-aware dates: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Format timestamp to readable date string.
+     */
+    private String formatDate(long timestamp) {
+        return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date(timestamp));
     }
 
     /**
@@ -218,17 +316,38 @@ public class MusterRollService {
         if(config.isMusterRollWorkflowEnabled()) {
             workflowService.updateWorkflowStatus(musterRollRequest);
         }
-        if(config.isUpdateAttendanceRegisterReviewStatusEnabled() && STATUS_APPROVED.equalsIgnoreCase(musterRollRequest.getMusterRoll().getMusterRollStatus())) {
-            AttendanceRegisterResponse attendanceRegisterResponse = musterRollServiceUtil
-                    .fetchAttendanceRegister(musterRollRequest.getMusterRoll(), musterRollRequest.getRequestInfo());
-            List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
-            if(attendanceRegisters == null || attendanceRegisters.isEmpty()) {
-                log.error("No attendance registers found to update the status for muster roll ID: {}", musterRollRequest.getMusterRoll().getId());
-                throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND", "No attendance registers found to update the status for the given muster roll");
+        // Update attendance register status on muster approval
+        // V1 Flow: Update register.reviewStatus = "APPROVED" (1:1 mapping)
+        // V2 Flow: Skip register update (1:many mapping - register spans multiple periods)
+        if(config.isUpdateAttendanceRegisterReviewStatusEnabled()
+            && STATUS_APPROVED.equalsIgnoreCase(musterRollRequest.getMusterRoll().getMusterRollStatus())) {
+
+            MusterRoll musterRoll = musterRollRequest.getMusterRoll();
+
+            // V1 Flow ONLY: Update register when billingPeriodId is NULL
+            if (StringUtils.isBlank(musterRoll.getBillingPeriodId())) {
+                log.info("updateMusterRoll::V1 flow - updating register status to APPROVED for register: {}",
+                    musterRoll.getRegisterId());
+
+                AttendanceRegisterResponse attendanceRegisterResponse = musterRollServiceUtil
+                        .fetchAttendanceRegister(musterRoll, musterRollRequest.getRequestInfo());
+                List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
+
+                if(attendanceRegisters == null || attendanceRegisters.isEmpty()) {
+                    log.error("No attendance registers found to update the status for muster roll ID: {}", musterRoll.getId());
+                    throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND",
+                        "No attendance registers found to update the status for the given muster roll");
+                }
+
+                AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
+                attendanceRegister.setReviewStatus(STATUS_APPROVED);
+                musterRollServiceUtil.updateAttendanceRegister(attendanceRegister, musterRollRequest.getRequestInfo());
+            } else {
+                // V2 Flow: Don't update register status (register spans multiple periods)
+                log.info("updateMusterRoll::V2 flow - skipping register status update. " +
+                    "Muster approved for period: {} register: {}",
+                    musterRoll.getBillingPeriodId(), musterRoll.getRegisterId());
             }
-            AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
-            attendanceRegister.setReviewStatus(STATUS_APPROVED);
-            musterRollServiceUtil.updateAttendanceRegister(attendanceRegister, musterRollRequest.getRequestInfo());
         }
         musterRollProducer.push(tenantId, serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
 
@@ -247,23 +366,53 @@ public class MusterRollService {
     }
 
     /**
-     * Check if the muster roll already exists for the same registerId, startDate and endDate to avoid duplicate muster creation
-     * @param musterRoll
+     * Check if the muster roll already exists to avoid duplicate muster creation.
+     *
+     * V1 (billingPeriodId is NULL): Checks registerId + startDate + endDate
+     * V2 (billingPeriodId is present): Checks registerId + billingPeriodId
+     *
+     * @param musterRoll Muster roll to check
      */
     private void checkMusterRollExists(MusterRoll musterRoll) {
-        MusterRollSearchCriteria searchCriteria = MusterRollSearchCriteria.builder().tenantId(musterRoll.getTenantId())
-                .registerId(musterRoll.getRegisterId()).fromDate(musterRoll.getStartDate())
-                .toDate(musterRoll.getEndDate()).build();
-        List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria,null);
+        MusterRollSearchCriteria.MusterRollSearchCriteriaBuilder criteriaBuilder =
+            MusterRollSearchCriteria.builder()
+                .tenantId(musterRoll.getTenantId())
+                .registerId(musterRoll.getRegisterId());
+
+        // V2 Flow: Check for duplicate using registerId + billingPeriodId
+        if (StringUtils.isNotBlank(musterRoll.getBillingPeriodId())) {
+            log.info("checkMusterRollExists::V2 flow - checking register {} in period {}",
+                musterRoll.getRegisterId(), musterRoll.getBillingPeriodId());
+            criteriaBuilder.billingPeriodId(musterRoll.getBillingPeriodId());
+        } else {
+            // V1 Flow: Check for duplicate using registerId + startDate + endDate
+            log.info("checkMusterRollExists::V1 flow - checking register {} from {} to {}",
+                musterRoll.getRegisterId(), musterRoll.getStartDate(), musterRoll.getEndDate());
+            criteriaBuilder.fromDate(musterRoll.getStartDate())
+                          .toDate(musterRoll.getEndDate());
+        }
+
+        MusterRollSearchCriteria searchCriteria = criteriaBuilder.build();
+        List<MusterRoll> musterRolls = musterRollRepository.getMusterRoll(searchCriteria, null);
+
         if (!CollectionUtils.isEmpty(musterRolls)) {
             StringBuilder exceptionMessage = new StringBuilder();
-            exceptionMessage.append("Muster roll already exists for the register - ");
-            exceptionMessage.append(musterRoll.getRegisterId());
-            exceptionMessage.append(" with startDate - ");
-            exceptionMessage.append(musterRoll.getStartDate());
-            exceptionMessage.append(" and endDate - ");
-            exceptionMessage.append(musterRoll.getEndDate());
-            throw new CustomException("DUPLICATE_MUSTER_ROLL",exceptionMessage.toString());
+            exceptionMessage.append("Muster roll already exists for register: ")
+                          .append(musterRoll.getRegisterId());
+
+            if (StringUtils.isNotBlank(musterRoll.getBillingPeriodId())) {
+                // V2 error message
+                exceptionMessage.append(" in billing period: ")
+                              .append(musterRoll.getBillingPeriodId());
+            } else {
+                // V1 error message
+                exceptionMessage.append(" with startDate: ")
+                              .append(musterRoll.getStartDate())
+                              .append(" and endDate: ")
+                              .append(musterRoll.getEndDate());
+            }
+
+            throw new CustomException("DUPLICATE_MUSTER_ROLL", exceptionMessage.toString());
         }
     }
 

@@ -314,4 +314,95 @@ public class MusterRollServiceUtil {
 
 		return response;
 	}
+
+	/**
+	 * Fetches billing period details from expense-calculator service.
+	 * Used for V2 period-aware muster roll creation.
+	 *
+	 * @param billingPeriodId Billing period ID
+	 * @param tenantId Tenant ID
+	 * @param requestInfo Request info
+	 * @return BillingPeriod details
+	 */
+	public BillingPeriod fetchBillingPeriod(String billingPeriodId, String tenantId, RequestInfo requestInfo) {
+		log.info("fetchBillingPeriod::Fetching billing period with ID: {} for tenant: {}", billingPeriodId, tenantId);
+
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getExpenseCalculatorServiceHost())
+			.append(config.getBillingPeriodSearchEndpoint())
+			.append("?tenantId=").append(tenantId)
+			.append("&ids=").append(billingPeriodId);
+
+		BillingPeriodResponse response = null;
+
+		try {
+			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+				.requestInfo(requestInfo)
+				.build();
+
+			response = restTemplate.postForObject(uri.toString(), requestInfoWrapper, BillingPeriodResponse.class);
+		} catch (HttpClientErrorException | HttpServerErrorException e) {
+			log.error("fetchBillingPeriod::Error fetching billing period: {}", e.getResponseBodyAsString());
+			throw new ServiceCallException(e.getResponseBodyAsString());
+		} catch (Exception e) {
+			log.error("fetchBillingPeriod::Error fetching billing period", e);
+			Map<String, String> map = new HashMap<>();
+			String causeName = (e.getCause() != null) ? e.getCause().getClass().getName() : e.getClass().getName();
+			map.put(causeName, e.getMessage());
+			throw new CustomException(map);
+		}
+
+		if (response == null || CollectionUtils.isEmpty(response.getBillingPeriods())) {
+			throw new CustomException("BILLING_PERIOD_NOT_FOUND",
+				"Billing period not found with ID: " + billingPeriodId);
+		}
+
+		return response.getBillingPeriods().get(0);
+	}
+
+	/**
+	 * Fetches attendance register by ID.
+	 * Wrapper method for consistent naming with billing period fetch.
+	 *
+	 * @param requestInfo Request info
+	 * @param tenantId Tenant ID
+	 * @param registerId Register ID
+	 * @return AttendanceRegisterResponse
+	 */
+	public AttendanceRegisterResponse fetchAttendanceRegister(RequestInfo requestInfo, String tenantId, String registerId) {
+		log.info("fetchAttendanceRegister::Fetching attendance register with tenantId: {} and register ID: {}",
+			tenantId, registerId);
+
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
+		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
+			.queryParam("tenantId", tenantId)
+			.queryParam("ids", registerId)
+			.queryParam("status", Status.ACTIVE);
+
+		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+			.requestInfo(requestInfo)
+			.build();
+
+		AttendanceRegisterResponse attendanceRegisterResponse = null;
+
+		try {
+			attendanceRegisterResponse = restTemplate.postForObject(uriBuilder.toUriString(),
+				requestInfoWrapper, AttendanceRegisterResponse.class);
+		} catch (HttpClientErrorException | HttpServerErrorException e) {
+			log.error("fetchAttendanceRegister::Error thrown from attendance register service: {}",
+				e.getStatusCode());
+			throw new CustomException("ATTENDANCE_REGISTER_SERVICE_EXCEPTION",
+				"Error thrown from attendance register service: " + e.getStatusCode());
+		}
+
+		if (attendanceRegisterResponse == null
+			|| CollectionUtils.isEmpty(attendanceRegisterResponse.getAttendanceRegister())) {
+			log.error("fetchAttendanceRegister::Attendance register not found: {}", registerId);
+			throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND",
+				"Attendance register not found with ID: " + registerId);
+		}
+
+		return attendanceRegisterResponse;
+	}
 }

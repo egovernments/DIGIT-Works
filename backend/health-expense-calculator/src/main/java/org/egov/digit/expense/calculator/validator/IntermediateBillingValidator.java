@@ -11,6 +11,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,6 +199,147 @@ public class IntermediateBillingValidator {
             log.error("IntermediateBillingValidator::validatePeriodForProcessing - Validation failed: {}", errorMap);
             throw new CustomException(errorMap);
         }
+    }
+
+    /**
+     * Validate sequential billing: Previous period must be billed before current period
+     * This ensures bills are generated in order (period 1 → period 2 → period 3)
+     *
+     * @param allPeriods All billing periods (sorted by period number)
+     * @param currentPeriod Current period being processed
+     */
+    public void validateSequentialBilling(List<BillingPeriod> allPeriods, BillingPeriod currentPeriod) {
+        Map<String, String> errorMap = new HashMap<>();
+
+        if (currentPeriod == null) {
+            errorMap.put("CURRENT_PERIOD_NULL", "Current period is required for sequential validation");
+            throw new CustomException(errorMap);
+        }
+
+        // Period 1 can always be processed
+        if (currentPeriod.getPeriodNumber() == 1) {
+            log.info("validateSequentialBilling::Period 1 - no previous period to check");
+            return;
+        }
+
+        // Find previous period (periodNumber - 1)
+        int previousPeriodNumber = currentPeriod.getPeriodNumber() - 1;
+        BillingPeriod previousPeriod = allPeriods.stream()
+                .filter(p -> p.getPeriodNumber() != null && p.getPeriodNumber() == previousPeriodNumber)
+                .findFirst()
+                .orElse(null);
+
+        if (previousPeriod == null) {
+            errorMap.put("PREVIOUS_PERIOD_NOT_FOUND",
+                    "Cannot process period " + currentPeriod.getPeriodNumber() +
+                            ": Previous period " + previousPeriodNumber + " not found");
+            throw new CustomException(errorMap);
+        }
+
+        // Check if previous period is BILLED
+        if (!"BILLED".equalsIgnoreCase(previousPeriod.getStatus())) {
+            errorMap.put("PREVIOUS_PERIOD_NOT_BILLED",
+                    String.format("Cannot process period %d: Previous period %d is not billed yet (status: %s). " +
+                            "Bills must be generated sequentially.",
+                            currentPeriod.getPeriodNumber(),
+                            previousPeriod.getPeriodNumber(),
+                            previousPeriod.getStatus()));
+            throw new CustomException(errorMap);
+        }
+
+        log.info("validateSequentialBilling::Period {} validated - previous period {} is BILLED",
+                currentPeriod.getPeriodNumber(), previousPeriod.getPeriodNumber());
+    }
+
+    /**
+     * Validate that ALL overlapping registers have APPROVED muster rolls for the period
+     * This is the V2 equivalent of V1's register approval validation
+     *
+     * V1: Checks register.reviewStatus = "APPROVED"
+     * V2: Checks each register has an approved muster roll for this specific period
+     *
+     * @param periodRegisters List of registers overlapping with the period
+     * @param musterRolls List of muster rolls for the period
+     * @param period Billing period
+     */
+    public void validateAllRegisterMustersApproved(List<org.egov.works.services.common.models.attendance.AttendanceRegister> periodRegisters,
+                                                   List<org.egov.works.services.common.models.musterroll.MusterRoll> musterRolls,
+                                                   BillingPeriod period) {
+        Map<String, String> errorMap = new HashMap<>();
+
+        if (CollectionUtils.isEmpty(periodRegisters)) {
+            log.info("validateAllRegisterMustersApproved::No registers to validate for period {}", period.getPeriodNumber());
+            return;
+        }
+
+        if (CollectionUtils.isEmpty(musterRolls)) {
+            errorMap.put("NO_MUSTER_ROLLS_FOR_REGISTERS",
+                    String.format("Period %d has %d overlapping registers but no muster rolls. " +
+                            "All registers must have approved muster rolls for the period.",
+                            period.getPeriodNumber(), periodRegisters.size()));
+            throw new CustomException(errorMap);
+        }
+
+        // Create a map of registerId → musterRoll for quick lookup
+        Map<String, org.egov.works.services.common.models.musterroll.MusterRoll> registerToMusterMap = new HashMap<>();
+        for (org.egov.works.services.common.models.musterroll.MusterRoll musterRoll : musterRolls) {
+            if (musterRoll != null && StringUtils.isNotBlank(musterRoll.getRegisterId())) {
+                registerToMusterMap.put(musterRoll.getRegisterId(), musterRoll);
+            }
+        }
+
+        // Check each register has an approved muster roll
+        List<String> registersWithoutMuster = new ArrayList<>();
+        List<String> registersWithUnapprovedMuster = new ArrayList<>();
+
+        for (org.egov.works.services.common.models.attendance.AttendanceRegister register : periodRegisters) {
+            String registerId = register.getId();
+
+            // Check if muster roll exists for this register
+            if (!registerToMusterMap.containsKey(registerId)) {
+                registersWithoutMuster.add(registerId);
+                continue;
+            }
+
+            // Check if muster roll is approved
+            org.egov.works.services.common.models.musterroll.MusterRoll musterRoll = registerToMusterMap.get(registerId);
+            String musterStatus = musterRoll.getMusterRollStatus();
+
+            if (!"APPROVED".equalsIgnoreCase(musterStatus)) {
+                registersWithUnapprovedMuster.add(String.format("%s (status: %s)", registerId, musterStatus));
+            }
+        }
+
+        // Build error messages
+        if (!registersWithoutMuster.isEmpty()) {
+            errorMap.put("REGISTERS_WITHOUT_MUSTER",
+                    String.format("Period %d: %d register(s) do not have muster rolls: %s. " +
+                            "All registers must have muster rolls before billing.",
+                            period.getPeriodNumber(),
+                            registersWithoutMuster.size(),
+                            registersWithoutMuster.size() <= 5 ?
+                                    String.join(", ", registersWithoutMuster) :
+                                    registersWithoutMuster.subList(0, 5) + "... and " + (registersWithoutMuster.size() - 5) + " more"));
+        }
+
+        if (!registersWithUnapprovedMuster.isEmpty()) {
+            errorMap.put("REGISTERS_WITH_UNAPPROVED_MUSTER",
+                    String.format("Period %d: %d register(s) have unapproved muster rolls: %s. " +
+                            "All muster rolls must be approved before billing.",
+                            period.getPeriodNumber(),
+                            registersWithUnapprovedMuster.size(),
+                            registersWithUnapprovedMuster.size() <= 5 ?
+                                    String.join(", ", registersWithUnapprovedMuster) :
+                                    registersWithUnapprovedMuster.subList(0, 5) + "... and " + (registersWithUnapprovedMuster.size() - 5) + " more"));
+        }
+
+        if (!errorMap.isEmpty()) {
+            log.error("validateAllRegisterMustersApproved::Period {} validation failed: {}", period.getPeriodNumber(), errorMap);
+            throw new CustomException(errorMap);
+        }
+
+        log.info("validateAllRegisterMustersApproved::Period {} - All {} registers have approved muster rolls",
+                period.getPeriodNumber(), periodRegisters.size());
     }
 
     /**

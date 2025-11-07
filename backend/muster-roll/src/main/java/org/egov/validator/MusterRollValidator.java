@@ -131,6 +131,10 @@ public class MusterRollValidator {
         Workflow workflow = musterRollRequest.getWorkflow();
 
         validateRequestInfo(requestInfo);
+
+        // V2: Validate period is not frozen (check if period is already billed)
+        validatePeriodNotFrozen(musterRoll, requestInfo, errorMap);
+
         if(serviceConfiguration.isValidateAttendanceRegisterEnabled()) {
             validateAndEnrichAttendance(musterRoll, requestInfo, false);
         }
@@ -148,6 +152,62 @@ public class MusterRollValidator {
             throw new CustomException(errorMap);
         }
 
+    }
+
+    /**
+     * V2: Validate that period is not frozen (not already billed)
+     * This prevents muster roll edits after a period has been billed
+     *
+     * V1 Flow (billingPeriodId is NULL): Skip this validation
+     * V2 Flow (billingPeriodId is present): Check period status is not "BILLED"
+     *
+     * @param musterRoll Muster roll to validate
+     * @param requestInfo Request info
+     * @param errorMap Error map to accumulate errors
+     */
+    private void validatePeriodNotFrozen(MusterRoll musterRoll, RequestInfo requestInfo, Map<String, String> errorMap) {
+        // V1 Flow: Skip validation (no period association)
+        if (StringUtils.isBlank(musterRoll.getBillingPeriodId())) {
+            log.debug("validatePeriodNotFrozen::V1 flow - skipping period freeze check");
+            return;
+        }
+
+        // V2 Flow: Check period status
+        log.info("validatePeriodNotFrozen::V2 flow - checking period freeze status for period: {}",
+                musterRoll.getBillingPeriodId());
+
+        try {
+            // Fetch billing period from expense-calculator service
+            BillingPeriod period = musterRollServiceUtil.fetchBillingPeriod(
+                    musterRoll.getBillingPeriodId(),
+                    musterRoll.getTenantId(),
+                    requestInfo
+            );
+
+            if (period == null) {
+                errorMap.put("BILLING_PERIOD_NOT_FOUND",
+                        "Billing period not found with ID: " + musterRoll.getBillingPeriodId());
+                return;
+            }
+
+            // Check if period is BILLED (frozen)
+            if ("BILLED".equalsIgnoreCase(period.getStatus())) {
+                errorMap.put("PERIOD_FROZEN",
+                        String.format("Cannot edit muster roll: Billing period %d is already BILLED (frozen). " +
+                                "Muster rolls cannot be modified after bill generation.",
+                                period.getPeriodNumber()));
+                log.error("validatePeriodNotFrozen::Period {} is BILLED - cannot edit muster roll {}",
+                        period.getPeriodNumber(), musterRoll.getId());
+            } else {
+                log.info("validatePeriodNotFrozen::Period {} status is {} - edit allowed",
+                        period.getPeriodNumber(), period.getStatus());
+            }
+        } catch (Exception e) {
+            log.error("validatePeriodNotFrozen::Error fetching billing period {}: {}",
+                    musterRoll.getBillingPeriodId(), e.getMessage(), e);
+            errorMap.put("BILLING_PERIOD_FETCH_ERROR",
+                    "Error fetching billing period: " + e.getMessage());
+        }
     }
 
     /**

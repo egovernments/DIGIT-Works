@@ -168,6 +168,9 @@ public class MusterRollServiceConfiguration {
     @Value("${egov.user.context.path}")
     private String userContextPath;
 
+    @Value("${works.expense.calculator.billing.period.search.endpoint}")
+    private String billingPeriodSearchEndpoint;
+
     @Value("${egov.user.create.path}")
     private String userCreateEndpoint;
 

@@ -150,7 +150,10 @@ public class IntermediateBillingService {
                 // Step 2a.1: Validate period before processing
                 intermediateBillingValidator.validatePeriodForProcessing(period);
 
-                // Step 2a.2: Check if bill already generated for this period (duplicate prevention)
+                // Step 2a.2: Validate sequential billing (previous period must be billed)
+                intermediateBillingValidator.validateSequentialBilling(periods, period);
+
+                // Step 2a.3: Check if bill already generated for this period (duplicate prevention)
                 if (isBillGeneratedForPeriod(period)) {
                     log.info("Bill already generated for period {} (status: {}), skipping",
                             period.getPeriodNumber(), period.getStatus());
@@ -200,6 +203,9 @@ public class IntermediateBillingService {
 
                 // Step 2e.1: Validate muster rolls before bill generation
                 intermediateBillingValidator.validateMusterRollsForBilling(musterRolls, period);
+
+                // Step 2e.2: V2 Critical Validation - Ensure ALL overlapping registers have APPROVED musters
+                intermediateBillingValidator.validateAllRegisterMustersApproved(periodRegisters, musterRolls, period);
 
                 // Step 2f: Generate bill for this period
                 Bill periodBill = generatePeriodBill(
