@@ -80,6 +80,21 @@ public class RegisterPeriodEnrichmentService {
         Long periodStartDate = getLongValue(billingPeriod.get("periodStartDate"));
         Long periodEndDate = getLongValue(billingPeriod.get("periodEndDate"));
 
+        // Additional validation after conversion
+        if (periodStartDate == null || periodEndDate == null) {
+            log.error("Failed to parse billing period dates - startDate: {}, endDate: {}",
+                    periodStartDate, periodEndDate);
+            throw new CustomException("INVALID_PERIOD_DATES",
+                    "Unable to parse billing period dates for period " + billingPeriodId);
+        }
+
+        if (periodEndDate < periodStartDate) {
+            log.error("Invalid billing period {} - end date {} is before start date {}",
+                    billingPeriodId, periodEndDate, periodStartDate);
+            throw new CustomException("INVALID_PERIOD_RANGE",
+                    "Billing period end date cannot be before start date");
+        }
+
         log.info("Billing period {} dates: {} to {}", billingPeriodId, periodStartDate, periodEndDate);
 
         // Step 2: Filter registers that overlap with period dates
@@ -121,30 +136,61 @@ public class RegisterPeriodEnrichmentService {
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("RequestInfo", requestInfo);
 
+            // Build search criteria using correct field name as per BillingPeriodSearchRequest
             Map<String, Object> searchCriteria = new HashMap<>();
             searchCriteria.put("tenantId", tenantId);
             searchCriteria.put("ids", Collections.singletonList(billingPeriodId));
 
-            requestBody.put("billingPeriodSearchCriteria", searchCriteria);
+            requestBody.put("searchCriteria", searchCriteria);
 
-            log.info("Fetching billing period {} from expense-calculator", billingPeriodId);
+            log.info("Fetching billing period {} from expense-calculator using endpoint: {}",
+                    billingPeriodId, uri);
 
             Map<String, Object> response = restTemplate.postForObject(uri, requestBody, Map.class);
 
-            if (response != null && response.containsKey("billingPeriods")) {
-                List<Map<String, Object>> periods = (List<Map<String, Object>>) response.get("billingPeriods");
-                if (!periods.isEmpty()) {
-                    return periods.get(0);
-                }
+            // Validate response structure
+            if (response == null) {
+                log.warn("Null response received from billing period search API for period {}",
+                        billingPeriodId);
+                return null;
             }
 
-            log.warn("Billing period {} not found in response", billingPeriodId);
-            return null;
+            if (!response.containsKey("billingPeriods")) {
+                log.warn("Response does not contain 'billingPeriods' key for period {}",
+                        billingPeriodId);
+                return null;
+            }
 
+            List<Map<String, Object>> periods = (List<Map<String, Object>>) response.get("billingPeriods");
+
+            if (CollectionUtils.isEmpty(periods)) {
+                log.warn("Billing period {} not found in response - empty periods list",
+                        billingPeriodId);
+                return null;
+            }
+
+            Map<String, Object> period = periods.get(0);
+
+            // Validate critical fields exist
+            if (period.get("periodStartDate") == null || period.get("periodEndDate") == null) {
+                log.error("Billing period {} is missing required date fields - startDate: {}, endDate: {}",
+                        billingPeriodId, period.get("periodStartDate"), period.get("periodEndDate"));
+                throw new CustomException("INVALID_BILLING_PERIOD",
+                        "Billing period " + billingPeriodId + " is missing required date fields");
+            }
+
+            log.info("Successfully fetched billing period {} with dates: {} to {}",
+                    billingPeriodId, period.get("periodStartDate"), period.get("periodEndDate"));
+
+            return period;
+
+        } catch (CustomException e) {
+            // Re-throw custom exceptions
+            throw e;
         } catch (Exception e) {
             log.error("Error fetching billing period {}: {}", billingPeriodId, e.getMessage(), e);
             throw new CustomException("BILLING_PERIOD_FETCH_ERROR",
-                    "Failed to fetch billing period: " + e.getMessage());
+                    "Failed to fetch billing period " + billingPeriodId + ": " + e.getMessage());
         }
     }
 
@@ -154,6 +200,11 @@ public class RegisterPeriodEnrichmentService {
      * A register overlaps if:
      * - register.startDate <= period.endDate AND
      * - register.endDate >= period.startDate
+     *
+     * Edge cases handled:
+     * - Null register dates: excluded from results with warning
+     * - Invalid register ID: excluded with warning
+     * - Register end before start: excluded with warning
      *
      * @param registers List of registers
      * @param periodStartDate Period start date (epoch millis)
@@ -165,34 +216,69 @@ public class RegisterPeriodEnrichmentService {
             Long periodStartDate,
             Long periodEndDate) {
 
+        if (CollectionUtils.isEmpty(registers)) {
+            log.info("No registers to filter");
+            return new ArrayList<>();
+        }
+
         return registers.stream()
                 .filter(register -> {
-                    if (register.getStartDate() == null || register.getEndDate() == null) {
-                        log.warn("Register {} has null dates, excluding from period filter",
-                                register.getId());
+                    // Validate register ID
+                    if (StringUtils.isBlank(register.getId())) {
+                        log.warn("Found register with null or empty ID, excluding from period filter");
                         return false;
                     }
 
-                    // Convert BigDecimal to long for comparison
-                    long registerStart = register.getStartDate().longValue();
-                    long registerEnd = register.getEndDate().longValue();
-
-                    // Check overlap: register.start <= period.end && register.end >= period.start
-                    boolean overlaps = registerStart <= periodEndDate && registerEnd >= periodStartDate;
-
-                    if (!overlaps) {
-                        log.debug("Register {} ({} to {}) does not overlap with period ({} to {})",
-                                register.getId(), registerStart, registerEnd,
-                                periodStartDate, periodEndDate);
+                    // Validate register dates exist
+                    if (register.getStartDate() == null || register.getEndDate() == null) {
+                        log.warn("Register {} has null dates (start: {}, end: {}), excluding from period filter",
+                                register.getId(), register.getStartDate(), register.getEndDate());
+                        return false;
                     }
 
-                    return overlaps;
+                    try {
+                        // Convert BigDecimal to long for comparison
+                        long registerStart = register.getStartDate().longValue();
+                        long registerEnd = register.getEndDate().longValue();
+
+                        // Validate register date range
+                        if (registerEnd < registerStart) {
+                            log.warn("Register {} has invalid date range - end {} is before start {}, excluding",
+                                    register.getId(), registerEnd, registerStart);
+                            return false;
+                        }
+
+                        // Check overlap: register.start <= period.end && register.end >= period.start
+                        boolean overlaps = registerStart <= periodEndDate && registerEnd >= periodStartDate;
+
+                        if (!overlaps) {
+                            log.debug("Register {} ({} to {}) does not overlap with period ({} to {})",
+                                    register.getId(), registerStart, registerEnd,
+                                    periodStartDate, periodEndDate);
+                        } else {
+                            log.debug("Register {} ({} to {}) overlaps with period ({} to {})",
+                                    register.getId(), registerStart, registerEnd,
+                                    periodStartDate, periodEndDate);
+                        }
+
+                        return overlaps;
+
+                    } catch (Exception e) {
+                        log.error("Error processing register {} dates: {}", register.getId(), e.getMessage());
+                        return false;
+                    }
                 })
                 .collect(Collectors.toList());
     }
 
     /**
      * Enrich registers with muster roll status by calling muster-roll V2 search API
+     *
+     * Edge cases handled:
+     * - Empty register list: logs and returns
+     * - Registers with null IDs: excluded from muster roll search
+     * - Muster roll API failure: all registers get NOT_CREATED status
+     * - Missing muster roll status field: treated as NOT_CREATED
      *
      * @param registers List of registers to enrich
      * @param billingPeriodId Billing period ID
@@ -205,10 +291,24 @@ public class RegisterPeriodEnrichmentService {
             RequestInfo requestInfo,
             String tenantId) {
 
-        // Extract all register IDs
+        if (CollectionUtils.isEmpty(registers)) {
+            log.info("No registers to enrich with muster roll status");
+            return;
+        }
+
+        // Extract all valid register IDs
         List<String> registerIds = registers.stream()
                 .map(AttendanceRegister::getId)
+                .filter(StringUtils::isNotBlank)
+                .distinct()
                 .collect(Collectors.toList());
+
+        if (registerIds.isEmpty()) {
+            log.warn("No valid register IDs found to fetch muster roll status");
+            // Set all registers to NOT_CREATED
+            registers.forEach(r -> r.setRegisterPeriodStatus("NOT_CREATED"));
+            return;
+        }
 
         log.info("Fetching muster roll status for {} registers in period {}",
                 registerIds.size(), billingPeriodId);
@@ -220,12 +320,23 @@ public class RegisterPeriodEnrichmentService {
         // Build map: registerId -> muster roll status
         Map<String, String> registerToStatusMap = new HashMap<>();
 
-        for (Map<String, Object> musterRoll : musterRolls) {
-            String registerId = (String) musterRoll.get("registerId");
-            String status = (String) musterRoll.get("musterRollStatus");
+        if (!CollectionUtils.isEmpty(musterRolls)) {
+            for (Map<String, Object> musterRoll : musterRolls) {
+                if (musterRoll == null) {
+                    log.warn("Encountered null muster roll entry in response");
+                    continue;
+                }
 
-            if (StringUtils.isNotBlank(registerId) && StringUtils.isNotBlank(status)) {
-                registerToStatusMap.put(registerId, status);
+                String registerId = (String) musterRoll.get("registerId");
+                String status = (String) musterRoll.get("musterRollStatus");
+
+                if (StringUtils.isNotBlank(registerId) && StringUtils.isNotBlank(status)) {
+                    registerToStatusMap.put(registerId, status);
+                    log.debug("Mapped register {} to muster roll status: {}", registerId, status);
+                } else {
+                    log.warn("Muster roll entry missing registerId or status - registerId: {}, status: {}",
+                            registerId, status);
+                }
             }
         }
 
@@ -234,6 +345,12 @@ public class RegisterPeriodEnrichmentService {
 
         // Enrich each register
         for (AttendanceRegister register : registers) {
+            if (StringUtils.isBlank(register.getId())) {
+                log.warn("Register has null/empty ID, setting status to NOT_CREATED");
+                register.setRegisterPeriodStatus("NOT_CREATED");
+                continue;
+            }
+
             String musterStatus = registerToStatusMap.get(register.getId());
 
             if (musterStatus != null) {
@@ -251,17 +368,39 @@ public class RegisterPeriodEnrichmentService {
     /**
      * Search muster rolls for specific registers and period
      *
+     * Edge cases handled:
+     * - Empty register IDs list: returns empty list
+     * - Null/blank parameters: validates and returns empty
+     * - API call failure: logs error and returns empty (graceful degradation)
+     * - Malformed response: logs warning and returns empty
+     *
      * @param registerIds List of register IDs
      * @param billingPeriodId Billing period ID
      * @param requestInfo Request info
      * @param tenantId Tenant ID
-     * @return List of muster rolls
+     * @return List of muster rolls (empty list if error occurs)
      */
     private List<Map<String, Object>> searchMusterRollsForPeriod(
             List<String> registerIds,
             String billingPeriodId,
             RequestInfo requestInfo,
             String tenantId) {
+
+        // Validate input parameters
+        if (CollectionUtils.isEmpty(registerIds)) {
+            log.warn("Empty register IDs list provided for muster roll search");
+            return new ArrayList<>();
+        }
+
+        if (StringUtils.isBlank(billingPeriodId)) {
+            log.warn("Blank billing period ID provided for muster roll search");
+            return new ArrayList<>();
+        }
+
+        if (StringUtils.isBlank(tenantId)) {
+            log.warn("Blank tenant ID provided for muster roll search");
+            return new ArrayList<>();
+        }
 
         try {
             // Build URL to muster-roll V2 search API
@@ -277,25 +416,41 @@ public class RegisterPeriodEnrichmentService {
 
             requestBody.put("musterRollCriteria", searchCriteria);
 
-            log.info("Calling muster-roll V2 search for {} registers in period {}",
-                    registerIds.size(), billingPeriodId);
+            log.info("Calling muster-roll V2 search API: {} for {} registers in period {}",
+                    uri, registerIds.size(), billingPeriodId);
 
             Map<String, Object> response = restTemplate.postForObject(uri, requestBody, Map.class);
 
-            if (response != null && response.containsKey("musterRolls")) {
-                List<Map<String, Object>> musterRolls = (List<Map<String, Object>>) response.get("musterRolls");
-                log.info("Muster roll search returned {} muster rolls", musterRolls.size());
-                return musterRolls;
+            // Validate response
+            if (response == null) {
+                log.warn("Null response received from muster roll search API");
+                return new ArrayList<>();
             }
 
-            log.warn("Muster roll search returned empty response");
-            return new ArrayList<>();
+            if (!response.containsKey("musterRolls")) {
+                log.warn("Response does not contain 'musterRolls' key");
+                return new ArrayList<>();
+            }
+
+            Object musterRollsObj = response.get("musterRolls");
+            if (!(musterRollsObj instanceof List)) {
+                log.error("'musterRolls' field in response is not a List, type: {}",
+                        musterRollsObj != null ? musterRollsObj.getClass().getName() : "null");
+                return new ArrayList<>();
+            }
+
+            List<Map<String, Object>> musterRolls = (List<Map<String, Object>>) musterRollsObj;
+            log.info("Muster roll search returned {} muster rolls for {} registers",
+                    musterRolls.size(), registerIds.size());
+
+            return musterRolls != null ? musterRolls : new ArrayList<>();
 
         } catch (Exception e) {
-            log.error("Error searching muster rolls: {}", e.getMessage(), e);
+            log.error("Error searching muster rolls for period {}: {}", billingPeriodId, e.getMessage(), e);
             // Don't fail the entire search if muster roll fetch fails
             // Just log the error and return empty list (all registers will get NOT_CREATED status)
-            log.warn("Proceeding with register search despite muster roll fetch error");
+            log.warn("Proceeding with register search despite muster roll fetch error - " +
+                    "all registers will be marked as NOT_CREATED");
             return new ArrayList<>();
         }
     }

@@ -18,7 +18,7 @@ public class MusterRollQueryBuilder {
     private final MusterRollServiceUtil musterRollServiceUtil;
 
 
-    private static final String FETCH_MUSTER_ROLL_QUERY = "SELECT muster.id,muster.tenant_id,muster.musterroll_number,muster.attendance_register_id,muster.status,muster.musterroll_status,muster.start_date,muster.end_date,muster.createdby,muster.lastmodifiedby,muster.createdtime,muster.lastmodifiedtime,muster.additionaldetails,muster.reference_id,muster.service_code,"+
+    private static final String FETCH_MUSTER_ROLL_QUERY = "SELECT muster.id,muster.tenant_id,muster.musterroll_number,muster.attendance_register_id,muster.status,muster.musterroll_status,muster.start_date,muster.end_date,muster.billing_period_id,muster.createdby,muster.lastmodifiedby,muster.createdtime,muster.lastmodifiedtime,muster.additionaldetails,muster.reference_id,muster.service_code,"+
             "ind.id AS summaryId,ind.muster_roll_id AS indMusterId,ind.individual_id AS IndividualId,ind.actual_total_attendance AS actualTotalAttendance,ind.additionaldetails AS indAddlDetails,ind.createdby AS indCreatedBy,ind.lastmodifiedby AS indModifiedBy,ind.createdtime AS indCreatedTime,ind.lastmodifiedtime AS indModifiedTime,ind.modified_total_attendance AS modifiedTotalAttendance,"+
             "attn.id AS attendanceId,attn.attendance_summary_id AS attnSummaryId,attn.date_of_attendance AS AttnDate,attn.attendance_value AS attendance,attn.additionaldetails AS attnAddlDetails,attn.createdby AS attnCreatedBy,attn.lastmodifiedby AS attnModifiedBy,attn.createdtime AS attnCreatedTime,attn.lastmodifiedtime AS attnModifiedTime "+
             "FROM " + SCHEMA_REPLACE_STRING + ".eg_wms_muster_roll AS muster " +
@@ -131,6 +131,14 @@ public class MusterRollQueryBuilder {
             queryBuilder.append(" muster.musterroll_status=? ");
             preparedStmtList.add(searchCriteria.getMusterRollStatus());
         }
+
+        // V2 Intermediate Billing: Filter by billing period ID
+        if (StringUtils.isNotBlank(searchCriteria.getBillingPeriodId())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" muster.billing_period_id=? ");
+            preparedStmtList.add(searchCriteria.getBillingPeriodId());
+        }
+
         return queryBuilder;
     }
 

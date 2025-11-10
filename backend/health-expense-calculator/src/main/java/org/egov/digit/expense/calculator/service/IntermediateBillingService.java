@@ -496,25 +496,28 @@ public class IntermediateBillingService {
                                                                 String tenantId,
                                                                 List<String> registerIds,
                                                                 BillingPeriod period) {
-        log.info("Searching for existing muster rolls for {} registers in period {}",
+        log.info("Searching for existing muster rolls for {} registers in period {} using V1 API with billingPeriodId filter",
                 registerIds.size(), period.getPeriodNumber());
 
-        // Build search request for muster-roll V2 search API
-        String uri = config.getMusterRollHost() + config.getMusterRollEndV2Point();
+        // Build search request for muster-roll V1 search API
+        // V1 /_search endpoint now supports billingPeriodId in query params (MusterRollSearchCriteria)
+        StringBuilder uriBuilder = new StringBuilder(config.getMusterRollHost() + config.getMusterRollEndPoint());
+        uriBuilder.append("?tenantId=").append(tenantId);
+        uriBuilder.append("&billingPeriodId=").append(period.getId());
+
+        // Add registerIds as multiple query params
+        for (String registerId : registerIds) {
+            uriBuilder.append("&registerIds=").append(registerId);
+        }
+
+        String uri = uriBuilder.toString();
+        log.debug("Muster roll search URI: {}", uri);
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("RequestInfo", requestInfo);
 
-        // Build search criteria
-        Map<String, Object> searchCriteria = new HashMap<>();
-        searchCriteria.put("tenantId", tenantId);
-        searchCriteria.put("registerIds", registerIds);
-        searchCriteria.put("billingPeriodId", period.getId());
-
-        requestBody.put("musterRollCriteria", searchCriteria);
-
         try {
-            // Call muster-roll V2 search service
+            // Call muster-roll V1 search service with query params
             Map<String, Object> response = restTemplate.postForObject(
                     uri,
                     requestBody,
@@ -522,7 +525,8 @@ public class IntermediateBillingService {
             );
 
             if (response == null || !response.containsKey("musterRolls")) {
-                log.warn("No muster rolls found in response for period {}", period.getPeriodNumber());
+                log.info("No muster rolls found for period {} - this is normal for first-time billing",
+                        period.getPeriodNumber());
                 return new ArrayList<>();
             }
 
@@ -530,7 +534,8 @@ public class IntermediateBillingService {
             List<Map<String, Object>> musterRollMaps = (List<Map<String, Object>>) response.get("musterRolls");
 
             if (musterRollMaps == null || musterRollMaps.isEmpty()) {
-                log.warn("Empty muster roll list for period {}", period.getPeriodNumber());
+                log.info("Empty muster roll list for period {} - will create new muster rolls",
+                        period.getPeriodNumber());
                 return new ArrayList<>();
             }
 
@@ -538,12 +543,13 @@ public class IntermediateBillingService {
                     .map(map -> mapper.convertValue(map, MusterRoll.class))
                     .collect(Collectors.toList());
 
-            log.info("Found {} existing muster rolls for period {}", musterRolls.size(), period.getPeriodNumber());
+            log.info("Found {} existing muster rolls for period {} (server-side filtered by billingPeriodId)",
+                    musterRolls.size(), period.getPeriodNumber());
 
             return musterRolls;
 
         } catch (Exception e) {
-            log.error("Error searching for muster rolls: {}", e.getMessage(), e);
+            log.error("Error searching for muster rolls using V1 API: {}", e.getMessage(), e);
             throw new CustomException("MUSTER_ROLL_SEARCH_ERROR",
                     "Failed to search for muster rolls: " + e.getMessage());
         }
