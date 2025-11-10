@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.project.Project;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
+import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
 import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
 import org.egov.digit.expense.calculator.util.*;
 import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValidator;
@@ -65,6 +66,7 @@ public class IntermediateBillingService {
     private final ProjectUtil projectUtil;
     private final IntermediateBillingValidator intermediateBillingValidator;
     private final CommonUtil commonUtil;
+    private final ExpenseCalculatorProducer expenseCalculatorProducer;
 
     @Autowired
     public IntermediateBillingService(BillingConfigurationService billingConfigurationService,
@@ -79,7 +81,8 @@ public class IntermediateBillingService {
                                       MdmsUtils mdmsUtils,
                                       ProjectUtil projectUtil,
                                       IntermediateBillingValidator intermediateBillingValidator,
-                                      CommonUtil commonUtil) {
+                                      CommonUtil commonUtil,
+                                      ExpenseCalculatorProducer expenseCalculatorProducer) {
         this.billingConfigurationService = billingConfigurationService;
         this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
         this.expenseCalculatorRepository = expenseCalculatorRepository;
@@ -93,6 +96,7 @@ public class IntermediateBillingService {
         this.projectUtil = projectUtil;
         this.intermediateBillingValidator = intermediateBillingValidator;
         this.commonUtil = commonUtil;
+        this.expenseCalculatorProducer = expenseCalculatorProducer;
     }
 
     /**
@@ -600,6 +604,7 @@ public class IntermediateBillingService {
         Map<String, Object> additionalDetails = bill.getAdditionalDetails() != null ?
                 (Map<String, Object>) bill.getAdditionalDetails() : new HashMap<>();
 
+        // V2 Metadata
         additionalDetails.put("billingType", "INTERMEDIATE");
         additionalDetails.put("billingPeriodId", period.getId());
         additionalDetails.put("periodNumber", period.getPeriodNumber());
@@ -608,8 +613,12 @@ public class IntermediateBillingService {
         additionalDetails.put("billingFrequency", billingConfig.getBillingFrequency() != null ?
                 billingConfig.getBillingFrequency().toString() : "UNKNOWN");
         additionalDetails.put("v2Enhanced", true);
-        additionalDetails.put("noOfRegisters", registerCount);
-        // Campaign number can be extracted from project if needed
+
+        // Bill counts (required for report generation)
+        additionalDetails.put(NO_OF_REGISTERS, registerCount);
+        additionalDetails.put(NO_OF_BILL_DETAILS, bill.getBillDetails().size());
+
+        // Campaign number (for MDMS lookup)
         String campaignNumber = extractCampaignNumber(project);
         if (campaignNumber != null) {
             additionalDetails.put("campaignNumber", campaignNumber);
@@ -683,6 +692,21 @@ public class IntermediateBillingService {
 
                     log.info("Successfully submitted bill for project {} period {} with ID: {}",
                             projectId, period.getPeriodNumber(), submittedBill.getId());
+
+                    // V2: Trigger report generation (same as V1 flow)
+                    if (config.isReportGenerationAuto()) {
+                        log.info("Triggering report generation for V2 bill: {} period: {}",
+                                submittedBill.getId(), period.getPeriodNumber());
+                        ReportGenerationTrigger reportGenerationTrigger = ReportGenerationTrigger.builder()
+                                .requestInfo(requestInfo)
+                                .billId(submittedBill.getId())
+                                .tenantId(submittedBill.getTenantId())
+                                .createdTime(System.currentTimeMillis())
+                                .numberOfBillDetails(submittedBill.getBillDetails().size())
+                                .build();
+                        expenseCalculatorProducer.push(config.getReportGenerationTriggerTopic(), reportGenerationTrigger);
+                        log.info("Report generation trigger pushed for V2 bill: {}", submittedBill.getId());
+                    }
 
                     return submittedBill;
                 } else {

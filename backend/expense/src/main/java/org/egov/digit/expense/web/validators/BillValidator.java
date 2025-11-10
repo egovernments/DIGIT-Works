@@ -12,11 +12,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.egov.common.contract.models.Workflow;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
@@ -63,9 +66,22 @@ public class BillValidator {
 		Bill bill = billRequest.getBill();
 
 		List<Bill> billsFromSearch = getBillsForValidation(billRequest, true);
-		if(!CollectionUtils.isEmpty(billsFromSearch))
-			throw new CustomException("EG_EXPENSE_DUPLICATE_BILL","Active bill exists for the given combination of "
-					+ " businessService : " + bill.getBusinessService() + " and refernceId : " + bill.getReferenceId());
+		if(!CollectionUtils.isEmpty(billsFromSearch)) {
+			// V2 Periodic Billing: Allow multiple bills per register (one per billing period)
+			// Both flags must be enabled: either health context OR v2 periodic billing + bill must be marked as V2
+			boolean allowMultipleBillsForReference = (configs.isHealthContextEnabled() || configs.isV2PeriodicBillingEnabled()) && isV2Bill(bill);
+			List<Bill> conflictingBills = billsFromSearch;
+
+			if (allowMultipleBillsForReference) {
+				conflictingBills = billsFromSearch.stream()
+						.filter(existingBill -> hasV2Conflict(existingBill, bill))
+						.collect(Collectors.toList());
+			}
+
+			if(!CollectionUtils.isEmpty(conflictingBills)) {
+				throw new CustomException("EG_EXPENSE_DUPLICATE_BILL", buildDuplicateBillErrorMessage(bill));
+			}
+		}
 
 		validateWorkflow(billRequest, errorMap);
 
@@ -406,4 +422,106 @@ public class BillValidator {
 		return mdmsData;
 	}
 
+	private boolean isV2Bill(Bill bill) {
+		if (getBooleanAdditionalDetail(bill, "v2Enhanced").orElse(Boolean.FALSE)) {
+			return true;
+		}
+
+		if (getStringAdditionalDetail(bill, "billingType")
+				.map(value -> "INTERMEDIATE".equalsIgnoreCase(value))
+				.orElse(false)) {
+			return true;
+		}
+
+		return getBillingPeriodId(bill).isPresent();
+	}
+
+	private boolean hasV2Conflict(Bill existingBill, Bill newBill) {
+
+		Optional<String> newBillingPeriod = getBillingPeriodId(newBill);
+		Optional<String> existingBillingPeriod = getBillingPeriodId(existingBill);
+
+		if (newBillingPeriod.isPresent() && existingBillingPeriod.isPresent()) {
+			return Objects.equals(existingBillingPeriod.get(), newBillingPeriod.get());
+		}
+
+		if (!isV2Bill(existingBill)) {
+			return false;
+		}
+
+		Long existingFrom = existingBill.getFromPeriod();
+		Long existingTo = existingBill.getToPeriod();
+		Long newFrom = newBill.getFromPeriod();
+		Long newTo = newBill.getToPeriod();
+
+		if (existingFrom == null || existingTo == null || newFrom == null || newTo == null) {
+			return false;
+		}
+
+		return periodsOverlap(existingFrom, existingTo, newFrom, newTo);
+	}
+
+	private Optional<String> getBillingPeriodId(Bill bill) {
+		return getStringAdditionalDetail(bill, "billingPeriodId")
+				.filter(StringUtils::hasText);
+	}
+
+	private Optional<String> getStringAdditionalDetail(Bill bill, String key) {
+		if (bill.getAdditionalDetails() instanceof Map) {
+			Object value = ((Map<?, ?>) bill.getAdditionalDetails()).get(key);
+			return value == null ? Optional.empty() : Optional.of(String.valueOf(value));
+		} else if (bill.getAdditionalDetails() instanceof JsonNode) {
+			JsonNode jsonNode = (JsonNode) bill.getAdditionalDetails();
+			JsonNode valueNode = jsonNode.get(key);
+			if (valueNode == null || valueNode.isNull()) {
+				return Optional.empty();
+			}
+			return Optional.of(valueNode.asText());
+		}
+		return Optional.empty();
+	}
+
+	private Optional<Boolean> getBooleanAdditionalDetail(Bill bill, String key) {
+		if (bill.getAdditionalDetails() instanceof Map) {
+			Object value = ((Map<?, ?>) bill.getAdditionalDetails()).get(key);
+			if (value == null) {
+				return Optional.empty();
+			}
+
+			if (value instanceof Boolean) {
+				return Optional.of((Boolean) value);
+			}
+			return Optional.of(Boolean.parseBoolean(String.valueOf(value)));
+		} else if (bill.getAdditionalDetails() instanceof JsonNode) {
+			JsonNode jsonNode = (JsonNode) bill.getAdditionalDetails();
+			JsonNode valueNode = jsonNode.get(key);
+			if (valueNode == null || valueNode.isNull()) {
+				return Optional.empty();
+			}
+			return Optional.of(valueNode.asBoolean());
+		}
+		return Optional.empty();
+	}
+
+	private boolean periodsOverlap(Long existingFrom, Long existingTo, Long newFrom, Long newTo) {
+		return !(existingTo < newFrom || existingFrom > newTo);
+	}
+
+	private String buildDuplicateBillErrorMessage(Bill bill) {
+		// V2 Periodic Billing: Check if either health context or v2 periodic billing is enabled
+		if ((configs.isHealthContextEnabled() || configs.isV2PeriodicBillingEnabled()) && isV2Bill(bill)) {
+			String periodIdentifier = getBillingPeriodId(bill)
+					.orElse(bill.getFromPeriod() + "_" + bill.getToPeriod());
+			return "Active bill exists for the given combination of businessService : "
+					+ bill.getBusinessService()
+					+ " , refernceId : " + bill.getReferenceId()
+					+ " and billingPeriod : " + periodIdentifier
+					+ ". V2 Periodic Billing is enabled - only one bill is allowed per register per billing period.";
+		}
+
+		return "Active bill exists for the given combination of "
+				+ " businessService : " + bill.getBusinessService()
+				+ " and refernceId : " + bill.getReferenceId()
+				+ ". Only one bill is allowed per register (V1 mode).";
+	}
 }

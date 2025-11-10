@@ -1,5 +1,6 @@
 package org.egov.digit.expense.calculator.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Address;
@@ -44,10 +45,11 @@ public class HealthBillReportGenerator {
     private final PDFServiceUtil pdfServiceUtil;
     private final BillUtils billUtils;
     private final ExpenseCalculatorService expenseCalculatorService;
+    private final ObjectMapper objectMapper;
 
 
     @Autowired
-    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService) {
+    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper) {
         this.individualUtil = individualUtil;
         this.expenseCalculatorUtil = expenseCalculatorUtil;
         this.billExcelGenerate = billExcelGenerate;
@@ -57,6 +59,7 @@ public class HealthBillReportGenerator {
         this.pdfServiceUtil = pdfServiceUtil;
         this.billUtils = billUtils;
         this.expenseCalculatorService = expenseCalculatorService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -439,6 +442,8 @@ public class HealthBillReportGenerator {
     
     /**
      * Updates the report status of the given bill request.
+     * IMPORTANT: This method preserves existing V2 metadata (billingPeriodId, periodNumber, etc.)
+     * while adding/updating reportDetails.
      *
      * @param billRequest    the bill request containing the bill to be updated
      * @param status         the status of the report
@@ -447,26 +452,56 @@ public class HealthBillReportGenerator {
      * @param errorMessage   the error message if the report generation failed
      */
     private void updateReportStatus(BillRequest billRequest, String status, String excelReportId, String pdfReportId, String errorMessage) {
-        // Ensure additionalDetails is initialized
-        Object additionalDetails = billRequest.getBill().getAdditionalDetails();
-        if (additionalDetails == null) {
-            additionalDetails = new HashMap<String, Object>();
+        Bill bill = billRequest.getBill();
+
+        // Safely convert additionalDetails to Map (handles both Map and JsonNode types)
+        Map<String, Object> additionalDetailsMap;
+        try {
+            if (bill.getAdditionalDetails() == null) {
+                additionalDetailsMap = new HashMap<>();
+                log.info("Bill {} has null additionalDetails, creating new map", bill.getId());
+            } else {
+                // Use ObjectMapper to safely convert (handles Map, LinkedHashMap, JsonNode, etc.)
+                additionalDetailsMap = objectMapper.convertValue(
+                    bill.getAdditionalDetails(),
+                    objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class)
+                );
+
+                // Log V2 metadata if present (for debugging)
+                if (additionalDetailsMap.containsKey("billingPeriodId")) {
+                    log.info("Bill {} is V2 bill with billingPeriodId: {}, periodNumber: {}, preserving V2 metadata",
+                        bill.getId(),
+                        additionalDetailsMap.get("billingPeriodId"),
+                        additionalDetailsMap.get("periodNumber"));
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error converting additionalDetails for bill {}, creating new map. Error: {}",
+                bill.getId(), e.getMessage());
+            additionalDetailsMap = new HashMap<>();
         }
-        // Cast additionalDetails to Map
-        Map<String, Object> additionalDetailsMap = (Map<String, Object>) additionalDetails;
-        // Add reportDetails key with nested values
+
+        // Create reportDetails object
         Map<String, Object> reportDetails = new HashMap<>();
         reportDetails.put(REPORT_STATUS_KEY, status);
         reportDetails.put(PDF_REPORT_ID_KEY, pdfReportId);
         reportDetails.put(EXCEL_REPORT_ID_KEY, excelReportId);
         reportDetails.put(ERROR_ERROR_MESSAGE_KEY, errorMessage);
 
-        // Add or overwrite reportDetails key
+        // Add or update reportDetails while preserving all other keys (V2 metadata, etc.)
         additionalDetailsMap.put(REPORT_KEY, reportDetails);
-        billRequest.getBill().setAdditionalDetails(additionalDetailsMap);
+
+        // Log final state for verification
+        log.info("Updating bill {} with report status: {}. Final additionalDetails keys: {}",
+            bill.getId(), status, additionalDetailsMap.keySet());
+
+        bill.setAdditionalDetails(additionalDetailsMap);
+
         Workflow workflow = Workflow.builder()
                 .action(WF_SUBMIT_ACTION_CONSTANT)
                 .build();
-        billUtils.postUpdateBill(billRequest.getRequestInfo(), billRequest.getBill(), workflow);
+        billUtils.postUpdateBill(billRequest.getRequestInfo(), bill, workflow);
+
+        log.info("Successfully updated bill {} with report details", bill.getId());
     }
 }
