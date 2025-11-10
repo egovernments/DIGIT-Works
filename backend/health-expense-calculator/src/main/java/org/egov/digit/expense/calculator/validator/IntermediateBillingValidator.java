@@ -496,11 +496,11 @@ public class IntermediateBillingValidator {
             errorMap.put("BILL_NO_DETAILS",
                     "Bill has no bill details for period " + period.getPeriodNumber() + ". Cannot submit empty bill.");
         }
-        if (bill.getTotalAmount() == null || bill.getTotalAmount().doubleValue() <= 0) {
-            errorMap.put("BILL_AMOUNT_INVALID",
-                    "Bill total amount must be positive for period " + period.getPeriodNumber() +
-                            ". Current amount: " + bill.getTotalAmount());
-        }
+//        if (bill.getTotalAmount() == null || bill.getTotalAmount().doubleValue() <= 0) {
+//            errorMap.put("BILL_AMOUNT_INVALID",
+//                    "Bill total amount must be positive for period " + period.getPeriodNumber() +
+//                            ". Current amount: " + bill.getTotalAmount());
+//        }
         if (bill.getFromPeriod() == null || bill.getToPeriod() == null) {
             errorMap.put("BILL_PERIOD_DATES_NULL", "Bill period dates are required");
         } else if (bill.getFromPeriod() > bill.getToPeriod()) {
