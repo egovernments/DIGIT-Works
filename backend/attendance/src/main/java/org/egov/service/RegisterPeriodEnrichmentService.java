@@ -13,6 +13,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -366,7 +368,12 @@ public class RegisterPeriodEnrichmentService {
     }
 
     /**
-     * Search muster rolls for specific registers and period
+     * Search muster rolls for specific registers and period using V1 API
+     *
+     * V1 API Structure:
+     * - Endpoint: POST /v1/_search
+     * - Request Body: RequestInfoWrapper (only RequestInfo)
+     * - Search Criteria: Query parameters (tenantId, registerIds, billingPeriodId)
      *
      * Edge cases handled:
      * - Empty register IDs list: returns empty list
@@ -403,20 +410,26 @@ public class RegisterPeriodEnrichmentService {
         }
 
         try {
-            // Build URL to muster-roll V2 search API
-            String uri = config.getMusterRollHost() + config.getMusterRollV2SearchEndpoint();
+            // Build URL to muster-roll V1 search API with query parameters
+            // V1 API uses @RequestBody for RequestInfo and @ModelAttribute for search criteria (query params)
+            StringBuilder uriBuilder = new StringBuilder();
+            uriBuilder.append(config.getMusterRollHost())
+                      .append(config.getMusterRollV2SearchEndpoint())
+                      .append("?tenantId=").append(URLEncoder.encode(tenantId, StandardCharsets.UTF_8))
+                      .append("&billingPeriodId=").append(URLEncoder.encode(billingPeriodId, StandardCharsets.UTF_8));
 
+            // Add multiple registerIds as separate query parameters
+            for (String registerId : registerIds) {
+                uriBuilder.append("&registerIds=").append(URLEncoder.encode(registerId, StandardCharsets.UTF_8));
+            }
+
+            String uri = uriBuilder.toString();
+
+            // V1 API expects only RequestInfo in the request body (wrapped in RequestInfoWrapper)
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("RequestInfo", requestInfo);
 
-            Map<String, Object> searchCriteria = new HashMap<>();
-            searchCriteria.put("tenantId", tenantId);
-            searchCriteria.put("registerIds", registerIds);
-            searchCriteria.put("billingPeriodId", billingPeriodId);
-
-            requestBody.put("musterRollCriteria", searchCriteria);
-
-            log.info("Calling muster-roll V2 search API: {} for {} registers in period {}",
+            log.info("Calling muster-roll V1 search API: {} for {} registers in period {}",
                     uri, registerIds.size(), billingPeriodId);
 
             Map<String, Object> response = restTemplate.postForObject(uri, requestBody, Map.class);
