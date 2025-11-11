@@ -574,6 +574,30 @@ public class ExpenseCalculatorService {
                 bills = createSupervisionBill(requestInfo, criteria, metaInfo);
             }
 
+            // V2: Check if these are V2 bills (already submitted by IntermediateBillingService)
+            boolean areV2Bills = false;
+            if (!bills.isEmpty() && bills.get(0).getAdditionalDetails() != null) {
+                try {
+                    Map<String, Object> additionalDetails = objectMapper.convertValue(
+                        bills.get(0).getAdditionalDetails(),
+                        objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class)
+                    );
+                    areV2Bills = additionalDetails.containsKey("billingPeriodId");
+                } catch (Exception e) {
+                    log.warn("Could not parse additionalDetails, treating as V1 bill");
+                }
+            }
+
+            if (areV2Bills) {
+                // V2 bills are already submitted by IntermediateBillingService
+                // Report generation trigger also already pushed by IntermediateBillingService
+                log.info("V2 bills detected - already submitted by IntermediateBillingService. Skipping duplicate submission.");
+                log.info("Processing bill completed; time taken :: " + (System.currentTimeMillis() - startTime)/1000 + " seconds");
+                return bills;  // Return the bills as-is (already submitted)
+            }
+
+            // V1 flow: Bills need to be submitted to expense service
+            log.info("V1 bills detected - submitting to expense service");
             BillResponse billResponse = null;
             List<Bill> submittedBills = new ArrayList<>();
             Workflow workflow = Workflow.builder()

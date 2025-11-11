@@ -505,7 +505,7 @@ public class IntermediateBillingService {
 
         // Build search request for muster-roll V1 search API
         // V1 /_search endpoint now supports billingPeriodId in query params (MusterRollSearchCriteria)
-        StringBuilder uriBuilder = new StringBuilder(config.getMusterRollHost() + config.getMusterRollEndV2Point());
+        StringBuilder uriBuilder = new StringBuilder(config.getMusterRollHost() + config.getMusterRollEndV1Point());
         uriBuilder.append("?tenantId=").append(tenantId);
         uriBuilder.append("&billingPeriodId=").append(period.getId());
 

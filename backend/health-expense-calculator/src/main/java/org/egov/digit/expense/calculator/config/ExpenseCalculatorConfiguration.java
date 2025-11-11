@@ -90,6 +90,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
 
+    @Value("${egov.musterroll.search.v1.endpoint}")
+    private String musterRollEndV1Point;
+
 	@Value("${egov.musterroll.search.v2.endpoint}")
 	private String musterRollEndV2Point;
 

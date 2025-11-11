@@ -138,8 +138,15 @@ public class ExpenseCalculatorConsumer {
 				 * If the bill is already present in the cache, then don't generate the report again.
 				 * Because this is long-running KAFKA consumer, the same record can be consumed multiple times. This is to prevent duplicate reports from being generated.
 				 */
+
+				// Ensure bill has tenantId set (in case it's missing from expense service response)
+				if (bill.getTenantId() == null || bill.getTenantId().isEmpty()) {
+					log.warn("Bill {} has null/empty tenantId, setting from trigger: {}", bill.getId(), trigger.getTenantId());
+					bill.setTenantId(trigger.getTenantId());
+				}
+
 				BillRequest request = BillRequest.builder().requestInfo(trigger.getRequestInfo()).bill(bill).build();
-				log.info("Bill exists and validated for bill id: {} (V2: {})", bill.getId(), isV2Bill);
+				log.info("Bill exists and validated for bill id: {} (V2: {}), tenantId: {}", bill.getId(), isV2Bill, bill.getTenantId());
 
 				if (redisService.isBillIdPresentInCache(bill.getId())) {
 					log.info("Bill {} already in cache, skipping report generation to prevent duplicate", bill.getId());
