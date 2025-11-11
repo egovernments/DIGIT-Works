@@ -92,14 +92,22 @@ public class ExpenseCalculatorConsumer {
 
 		try {
 			ReportGenerationTrigger trigger = objectMapper.readValue(consumerRecord, ReportGenerationTrigger.class);
-			log.info("Processing report trigger for billId: {}, tenantId: {}, numberOfBillDetails: {}",
-				trigger.getBillId(), trigger.getTenantId(), trigger.getNumberOfBillDetails());
+			long triggerAge = System.currentTimeMillis() - trigger.getCreatedTime();
+			log.info("Processing report trigger for billId: {}, tenantId: {}, numberOfBillDetails: {}, triggerCreatedTime: {}, triggerAge: {} seconds",
+				trigger.getBillId(), trigger.getTenantId(), trigger.getNumberOfBillDetails(),
+				trigger.getCreatedTime(), triggerAge / 1000);
 
+			log.info("Searching for bill with ID: {} in expense service", trigger.getBillId());
 			List<Bill> bills =	expenseCalculatorUtil.fetchBillsWithBillIds(trigger.getRequestInfo(), trigger.getTenantId(), Collections.singletonList(trigger.getBillId()));
+			log.info("Search completed for bill ID: {}. Found {} bills", trigger.getBillId(), bills != null ? bills.size() : 0);
 
 			// Validate that bill exists in the system, because of async possible that it's not persisted while consuming the record.
 			if (!CollectionUtils.isEmpty(bills) && bills.get(0).getBillDetails().size() == trigger.getNumberOfBillDetails()) {
 				Bill bill = bills.get(0);
+
+				log.info("Bill found with matching details count. BillId: {}, billNumber: {}, actualBillDetails: {}, expectedBillDetails: {}",
+						bill.getId(), bill.getBillNumber(),
+						bill.getBillDetails().size(), trigger.getNumberOfBillDetails());
 
 				// Check if this is a V2 bill by looking at additionalDetails
 				boolean isV2Bill = false;
@@ -131,7 +139,7 @@ public class ExpenseCalculatorConsumer {
 				 * Because this is long-running KAFKA consumer, the same record can be consumed multiple times. This is to prevent duplicate reports from being generated.
 				 */
 				BillRequest request = BillRequest.builder().requestInfo(trigger.getRequestInfo()).bill(bill).build();
-				log.info("Bill exists for bill id: {} (V2: {})", bill.getId(), isV2Bill);
+				log.info("Bill exists and validated for bill id: {} (V2: {})", bill.getId(), isV2Bill);
 
 				if (redisService.isBillIdPresentInCache(bill.getId())) {
 					log.info("Bill {} already in cache, skipping report generation to prevent duplicate", bill.getId());

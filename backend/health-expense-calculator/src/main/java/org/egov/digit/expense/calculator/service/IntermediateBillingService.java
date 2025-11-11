@@ -646,10 +646,15 @@ public class IntermediateBillingService {
      */
     private Bill submitPeriodBill(RequestInfo requestInfo, Bill bill, BillingPeriod period,
                                   String projectId, int registerCount, int musterRollCount) {
-        log.info("Submitting bill for project {} period {}", projectId, period.getPeriodNumber());
+        log.info("Submitting bill for project {} period {} (bill has {} details)",
+                projectId, period.getPeriodNumber(),
+                bill.getBillDetails() != null ? bill.getBillDetails().size() : 0);
 
         // Create bill status entry BEFORE submission
         String billStatusId = UUID.randomUUID().toString();
+        log.info("Creating bill status entry with ID: {} for project {} period {}",
+                billStatusId, projectId, period.getPeriodNumber());
+
         expenseCalculatorRepository.createBillStatusV2(
                 billStatusId,
                 bill.getTenantId(),
@@ -669,7 +674,9 @@ public class IntermediateBillingService {
                 .build();
 
         try {
+            log.info("Calling expense service to create bill for project {} period {}", projectId, period.getPeriodNumber());
             BillResponse response = billUtils.postCreateBill(requestInfo, bill, workflow);
+            log.info("Received response from expense service for project {} period {}", projectId, period.getPeriodNumber());
 
             // Check if submission successful
             if (response != null && SUCCESSFUL_CONSTANT.equalsIgnoreCase(
@@ -677,6 +684,12 @@ public class IntermediateBillingService {
 
                 if (!CollectionUtils.isEmpty(response.getBills())) {
                     Bill submittedBill = response.getBills().get(0);
+
+                    log.info("Bill successfully created in expense service with ID: {}, billNumber: {}, totalAmount: {}, billDetails: {}",
+                            submittedBill.getId(),
+                            submittedBill.getBillNumber(),
+                            submittedBill.getTotalAmount(),
+                            submittedBill.getBillDetails() != null ? submittedBill.getBillDetails().size() : 0);
 
                     // Update status to SUCCESSFUL with bill details
                     expenseCalculatorRepository.updateBillStatusWithDetails(
@@ -690,13 +703,17 @@ public class IntermediateBillingService {
                             musterRollCount
                     );
 
-                    log.info("Successfully submitted bill for project {} period {} with ID: {}",
-                            projectId, period.getPeriodNumber(), submittedBill.getId());
+                    log.info("Successfully submitted bill for project {} period {} with ID: {} and updated status entry {}",
+                            projectId, period.getPeriodNumber(), submittedBill.getId(), billStatusId);
 
                     // V2: Trigger report generation (same as V1 flow)
                     if (config.isReportGenerationAuto()) {
-                        log.info("Triggering report generation for V2 bill: {} period: {}",
-                                submittedBill.getId(), period.getPeriodNumber());
+                        log.info("Triggering report generation for V2 bill: {} (billNumber: {}) period: {} with {} billDetails",
+                                submittedBill.getId(),
+                                submittedBill.getBillNumber(),
+                                period.getPeriodNumber(),
+                                submittedBill.getBillDetails().size());
+
                         ReportGenerationTrigger reportGenerationTrigger = ReportGenerationTrigger.builder()
                                 .requestInfo(requestInfo)
                                 .billId(submittedBill.getId())
@@ -704,8 +721,10 @@ public class IntermediateBillingService {
                                 .createdTime(System.currentTimeMillis())
                                 .numberOfBillDetails(submittedBill.getBillDetails().size())
                                 .build();
+
                         expenseCalculatorProducer.push(config.getReportGenerationTriggerTopic(), reportGenerationTrigger);
-                        log.info("Report generation trigger pushed for V2 bill: {}", submittedBill.getId());
+                        log.info("Report generation trigger successfully pushed to Kafka for V2 bill: {} with {} expected billDetails",
+                                submittedBill.getId(), submittedBill.getBillDetails().size());
                     }
 
                     return submittedBill;

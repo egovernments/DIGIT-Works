@@ -505,29 +505,20 @@ public class ExpenseCalculatorService {
                 }
             }
 
-            // Create entry for bill status (V2: with period, V1: without period)
-            if (isV2Request) {
-                // V2: Create status with period tracking
-                log.info("V2 - Creating bill status for project {} and period {}", referenceId, billingPeriodId);
-                // Note: periodNumber not available here, will be set during bill generation
-                expenseCalculatorRepository.createBillStatusV2(
-                    UUID.randomUUID().toString(),
-                    calculationRequest.getCriteria().getTenantId(),
-                    referenceId,
-                    "INTERMEDIATE",  // billing_type for V2
-                    billingPeriodId,
-                    null,  // periodNumber will be enriched during bill generation
-                    INITIATED_STATUS,
-                    null,
-                    System.currentTimeMillis(),
-                    0  // registerCount will be enriched during bill generation
-                );
-            } else {
+            // Create entry for bill status
+            // V2: IntermediateBillingService will create detailed status entry during processing
+            // V1: Create status here for backward compatibility
+            if (!isV2Request) {
                 // V1: Create status without period tracking (backward compatibility)
                 log.info("V1 - Creating bill status for project {}", referenceId);
                 expenseCalculatorRepository.createBillStatus(UUID.randomUUID().toString(),
                         calculationRequest.getCriteria().getTenantId(), referenceId,
                         INITIATED_STATUS, null);
+            } else {
+                // V2: Skip status creation here - IntermediateBillingService creates detailed status
+                log.info("V2 - Skipping API-level status creation for project {} and period {}. " +
+                        "IntermediateBillingService will create detailed status entry during processing.",
+                        referenceId, billingPeriodId);
             }
 
             // Push to async topic for bill generation

@@ -225,7 +225,7 @@ public class HealthBillReportGenerator {
             // Get the current batch
             List<BillDetail> batch = billDetails.subList(i, Math.min(i + pageSize, billDetails.size()));
             // Generate the report bill details for the current batch
-            List<ReportBillDetail> reportBillDetail = generateReport(requestInfo, batch, skillCodeRateMap);
+            List<ReportBillDetail> reportBillDetail = generateReport(requestInfo, batch, skillCodeRateMap, bill.getTenantId());
             // Add the report bill details to the result list
             reportBillDetails.addAll(reportBillDetail);
         }
@@ -275,9 +275,10 @@ public class HealthBillReportGenerator {
      * @param requestInfo            the request info
      * @param billDetails            the list of bill details
      * @param skillCodeRateMap       the map of skill code to the corresponding worker rate
+     * @param tenantId               the tenant id
      * @return a list of report bill details
      */
-    private List<ReportBillDetail> generateReport(RequestInfo requestInfo, List<BillDetail> billDetails, Map<String, WorkerRate> skillCodeRateMap) {
+    private List<ReportBillDetail> generateReport(RequestInfo requestInfo, List<BillDetail> billDetails, Map<String, WorkerRate> skillCodeRateMap, String tenantId) {
         List<String> individualIds = new ArrayList<>();
         List<String> musterRollIds = new ArrayList<>();
         List<ReportBillDetail> reportBillDetails = new ArrayList<>();
@@ -285,7 +286,7 @@ public class HealthBillReportGenerator {
             individualIds.add(billDetail.getPayee().getIdentifier());
             musterRollIds.add(billDetail.getReferenceId());
         }
-        List<Individual> individuals = individualUtil.fetchIndividualDetails(individualIds, requestInfo, billDetails.get(0).getTenantId());
+        List<Individual> individuals = individualUtil.fetchIndividualDetails(individualIds, requestInfo, tenantId);
         Map<String, Map<String, BigDecimal>> individualMusterAttendanceMap = new HashMap<>();
 
         Map<String, Individual> individualMap = new HashMap<>();
@@ -293,7 +294,7 @@ public class HealthBillReportGenerator {
             individualMap.put(individual.getId(), individual);
         }
 
-        List<MusterRoll> musterRolls = expenseCalculatorUtil.fetchMusterRollByRegIdsV2(requestInfo, billDetails.get(0).getTenantId(), musterRollIds);
+        List<MusterRoll> musterRolls = expenseCalculatorUtil.fetchMusterRollByRegIdsV2(requestInfo, tenantId, musterRollIds);
         if (musterRolls != null && !musterRolls.isEmpty()) {
             for (MusterRoll musterRoll : musterRolls) {
                 createMusterRollIndividualWorksMap(musterRoll, individualMusterAttendanceMap);
