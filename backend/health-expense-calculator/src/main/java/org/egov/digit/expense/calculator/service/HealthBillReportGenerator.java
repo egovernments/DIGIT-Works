@@ -131,6 +131,18 @@ public class HealthBillReportGenerator {
             // Enrich the report request
             BillReportRequest billReportRequest = enrichReportRequest(billRequest, reportBillDetail); //enrichReportRequest
 
+            // Validate the report request before sending to PDF service
+            log.info("Validating BillReportRequest before PDF generation:");
+            log.info("  - ReportBill count: {}", billReportRequest.getReportBill().size());
+            if (!billReportRequest.getReportBill().isEmpty()) {
+                ReportBill reportBill = billReportRequest.getReportBill().get(0);
+                log.info("  - Campaign Name: {}", reportBill.getCampaignName());
+                log.info("  - Report Title: {}", reportBill.getReportTitle());
+                log.info("  - Total Amount: {}", reportBill.getTotalAmount());
+                log.info("  - Number of Individuals: {}", reportBill.getNumberOfIndividuals());
+                log.info("  - Bill Details count: {}", reportBill.getReportBillDetails() != null ? reportBill.getReportBillDetails().size() : 0);
+            }
+
             // Generate the excel file
             String excelFileStoreId = billExcelGenerate.generateExcel(billReportRequest.getRequestInfo(), billReportRequest.getReportBill().get(0));
             // Generate the pdf file

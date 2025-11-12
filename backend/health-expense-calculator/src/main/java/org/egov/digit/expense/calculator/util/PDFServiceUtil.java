@@ -49,6 +49,10 @@ public class PDFServiceUtil {
                 .append("?tenantId=" + tenantId)
                 .append("&key=" + pdfKey);
         try {
+            // Log the request being sent to PDF service
+            log.info("PDF Service URL: {}", uri.toString());
+            log.info("PDF Service Request: {}", mapper.writeValueAsString(request));
+
             result = restRepo.fetchResult(uri, request);
             filestoreids = JsonPath.read(result, PDF_RESPONSE_FILESTORE_ID_JSONPATH);
         } catch (Exception e) {
