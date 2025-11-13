@@ -190,10 +190,10 @@ public class IntermediateBillingValidator {
 
         // Additional runtime validations
         long currentTime = System.currentTimeMillis();
-        if (period.getPeriodStartDate() > currentTime) {
-            errorMap.put("PERIOD_NOT_STARTED",
-                    "Period " + period.getPeriodNumber() + " has not started yet. Start date: " + period.getPeriodStartDate());
-        }
+//        if (period.getPeriodStartDate() > currentTime) {
+//            errorMap.put("PERIOD_NOT_STARTED",
+//                    "Period " + period.getPeriodNumber() + " has not started yet. Start date: " + period.getPeriodStartDate());
+//        }
 
         if (!errorMap.isEmpty()) {
             log.error("IntermediateBillingValidator::validatePeriodForProcessing - Validation failed: {}", errorMap);
