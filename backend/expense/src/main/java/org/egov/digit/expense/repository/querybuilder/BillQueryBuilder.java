@@ -131,6 +131,35 @@ public class BillQueryBuilder {
             query.append(" bill.paymentstatus IS NULL");
 
         }
+
+        // V2 Payments - Period-based billing search queries
+
+        if (!CollectionUtils.isEmpty(criteria.getBillingPeriodIds())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" bill.additionaldetails->>'billingPeriodId' = ANY(ARRAY[")
+                 .append(createQuery(criteria.getBillingPeriodIds()))
+                 .append("])");
+            addToPreparedStatement(preparedStmtList, criteria.getBillingPeriodIds());
+        }
+
+        if (criteria.getIsAggregate() != null) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" bill.additionaldetails->>'isAggregate' = ? ");
+            preparedStmtList.add(criteria.getIsAggregate().toString());
+        }
+
+        if (StringUtils.isNotBlank(criteria.getBillingType())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" bill.additionaldetails->>'billingType' = ? ");
+            preparedStmtList.add(criteria.getBillingType());
+        }
+
+        if (StringUtils.isNotBlank(criteria.getReportStatus())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" bill.additionaldetails->'reportDetails'->>'status' = ? ");
+            preparedStmtList.add(criteria.getReportStatus());
+        }
+
 		return isCountRequired? query.toString() : addPaginationWrapper(query, billSearchRequest.getPagination(),
                 preparedStmtList);
     }
