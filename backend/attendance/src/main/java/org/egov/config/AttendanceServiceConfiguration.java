@@ -166,6 +166,12 @@ public class AttendanceServiceConfiguration {
     @Value("#{${attendance.register.status.map}}")
     private Map<String, String> attendanceRegisterStatusMap;
 
+    @Value("${attendance.register.status.field.billing.period}")
+    private String attendanceRegisterStatusFieldBillingPeriod;
+
+    @Value("${attendance.register.status.field.default}")
+    private String attendanceRegisterStatusFieldDefault;
+
     // V2 Intermediate Billing - Service Integration Config
     @Value("${egov.expense.calculator.host}")
     private String expenseCalculatorHost;

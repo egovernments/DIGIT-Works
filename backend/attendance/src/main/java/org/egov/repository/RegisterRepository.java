@@ -78,12 +78,19 @@ public class RegisterRepository {
         log.info("preparedStmtList of get register : " + preparedStmtList.toString());
 
         // Dynamically construct the SUM(CASE WHEN ...) parts
+        // Use registerPeriodStatus when billingPeriodId is present, otherwise use reviewStatus
+        String statusField = (searchCriteria.getBillingPeriodId() != null && !searchCriteria.getBillingPeriodId().isEmpty())
+                ? config.getAttendanceRegisterStatusFieldBillingPeriod()
+                : config.getAttendanceRegisterStatusFieldDefault();
+
         StringBuilder statusCountsQuery = new StringBuilder();
         if(config.getAttendanceRegisterReviewStatusEnabled()){
             for (Map.Entry<String, String> entry : config.getAttendanceRegisterStatusMap().entrySet()) {
                 String status = entry.getValue();
                 String alias = entry.getKey();
-                statusCountsQuery.append(", SUM(CASE WHEN reg.reviewstatus = '")
+                statusCountsQuery.append(", SUM(CASE WHEN reg.")
+                  .append(statusField)
+                  .append(" = '")
                   .append(status)
                   .append("' THEN 1 ELSE 0 END) AS ")
                   .append(alias);
