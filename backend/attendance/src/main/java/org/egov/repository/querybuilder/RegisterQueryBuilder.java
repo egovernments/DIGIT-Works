@@ -43,7 +43,8 @@ public class RegisterQueryBuilder {
             "reg.referenceid, " +
             "reg.servicecode, " +
             "reg.localitycode, " +
-            "reg.reviewstatus " +
+            "reg.reviewstatus, " +
+            "reg.registerperiodstatus " +
             "FROM %s.eg_wms_attendance_register reg ";
 
     private static final String JOIN_STAFF = " JOIN %s.eg_wms_attendance_staff staff ";
