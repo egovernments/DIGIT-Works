@@ -313,6 +313,9 @@ public class AttendanceRegisterService {
             );
 
             log.info("After V2 period filtering: {} registers remain", resultAttendanceRegisters.size());
+
+            // Recalculate statusCount based on registerPeriodStatus instead of reviewStatus
+            counts = recalculateStatusCountBasedOnRegisterPeriodStatus(resultAttendanceRegisters, counts);
         }
 
         attendanceRegisterResponse.setAttendanceRegister(resultAttendanceRegisters);
@@ -608,6 +611,57 @@ public class AttendanceRegisterService {
             throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND", "Attendance registers not found for the referenceId");
         }
 
+    }
+
+    /**
+     * Recalculates status count based on registerPeriodStatus field instead of reviewStatus.
+     * This method is used when billingPeriodId is provided in the search criteria.
+     *
+     * @param registers List of attendance registers with registerPeriodStatus populated
+     * @param counts Original counts map containing totalCount and status counts based on reviewStatus
+     * @return Updated counts map with status counts based on registerPeriodStatus
+     */
+    private Map<String, Long> recalculateStatusCountBasedOnRegisterPeriodStatus(
+            List<AttendanceRegister> registers,
+            Map<String, Long> counts) {
+
+        log.info("Recalculating status count based on registerPeriodStatus for {} registers", registers.size());
+
+        // Create a new map to store the updated counts
+        Map<String, Long> updatedCounts = new HashMap<>();
+
+        // Initialize all status counts to 0
+        if (attendanceServiceConfiguration.getAttendanceRegisterReviewStatusEnabled()) {
+            for (Map.Entry<String, String> entry : attendanceServiceConfiguration.getAttendanceRegisterStatusMap().entrySet()) {
+                String alias = entry.getKey();
+                updatedCounts.put(alias, 0L);
+            }
+        }
+
+        // Count registers by registerPeriodStatus
+        for (AttendanceRegister register : registers) {
+            String registerPeriodStatus = register.getRegisterPeriodStatus();
+
+            if (registerPeriodStatus != null) {
+                // Find the matching alias for this status
+                for (Map.Entry<String, String> entry : attendanceServiceConfiguration.getAttendanceRegisterStatusMap().entrySet()) {
+                    String alias = entry.getKey();
+                    String statusValue = entry.getValue();
+
+                    if (registerPeriodStatus.equals(statusValue)) {
+                        updatedCounts.put(alias, updatedCounts.getOrDefault(alias, 0L) + 1);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Update totalCount to be the actual number of registers after filtering
+        updatedCounts.put(TOTAL_COUNT, (long) registers.size());
+
+        log.info("Updated status counts based on registerPeriodStatus: {}", updatedCounts);
+
+        return updatedCounts;
     }
 
 }
