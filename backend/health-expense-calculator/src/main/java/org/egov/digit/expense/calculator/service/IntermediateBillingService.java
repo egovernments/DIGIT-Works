@@ -148,7 +148,14 @@ public class IntermediateBillingService {
         // Step 1: Extract campaign number from project reference ID
         String campaignNumber = extractCampaignNumber(project);
 
-        // Step 2: Check if specific period requested (UI-driven mode)
+        // Step 2: Check if aggregate mode requested
+        if (BILLING_PERIOD_AGGREGATE.equalsIgnoreCase(criteria.getBillingPeriodId())) {
+            log.info("Aggregate mode detected for project {}", projectId);
+            return processAggregateBilling(requestInfo, criteria, project, isDistrictLevel,
+                    billingConfig, projectId, campaignNumber);
+        }
+
+        // Step 3: Check if specific period requested (UI-driven mode)
         if (criteria.getBillingPeriodId() != null && !criteria.getBillingPeriodId().isEmpty()) {
             log.info("UI-driven mode: Processing specific period {} for project {}",
                     criteria.getBillingPeriodId(), projectId);
@@ -605,7 +612,7 @@ public class IntermediateBillingService {
                 (Map<String, Object>) bill.getAdditionalDetails() : new HashMap<>();
 
         // V2 Metadata
-        additionalDetails.put("billingType", "INTERMEDIATE");
+        additionalDetails.put("billingType", BILLING_TYPE_INTERMEDIATE);
         additionalDetails.put("billingPeriodId", period.getId());
         additionalDetails.put("periodNumber", period.getPeriodNumber());
         additionalDetails.put("periodStartDate", period.getPeriodStartDate());
@@ -659,7 +666,7 @@ public class IntermediateBillingService {
                 billStatusId,
                 bill.getTenantId(),
                 projectId,                   // Project-specific tracking
-                "INTERMEDIATE",              // billing_type
+                BILLING_TYPE_INTERMEDIATE,   // billing_type
                 period.getId(),              // period_id
                 period.getPeriodNumber(),    // period_number
                 INITIATED_STATUS,
@@ -778,7 +785,7 @@ public class IntermediateBillingService {
                 billStatusId,
                 period.getTenantId(),
                 projectId,                      // Project-specific tracking
-                "INTERMEDIATE",
+                BILLING_TYPE_INTERMEDIATE,
                 period.getId(),
                 period.getPeriodNumber(),
                 FAILED_STATUS,
@@ -816,7 +823,7 @@ public class IntermediateBillingService {
     private void enrichBill(Bill bill, Criteria criteria, Project project) {
         bill.setTenantId(criteria.getTenantId());
         bill.setBusinessService(config.getWageBusinessService());
-        bill.setStatus("ACTIVE");
+        bill.setStatus(BILL_STATUS_ACTIVE);
         bill.setReferenceId(project.getProjectHierarchy() != null ?
                 project.getProjectHierarchy() : project.getId());
         bill.setLocalityCode(criteria.getLocalityCode());
@@ -872,5 +879,515 @@ public class IntermediateBillingService {
         // Last fallback to project ID
         log.warn("No referenceID or hierarchy found, using project ID as campaign number: {}", project.getId());
         return project.getId();
+    }
+
+    // ==================== AGGREGATE BILLING METHODS ====================
+
+    /**
+     * Process aggregate billing by fetching ALL muster rolls from ALL periods
+     * and passing them to the existing bill generation logic
+     *
+     * Key Insight: The existing createWageSeekerBillsHealth() already aggregates
+     * multiple muster rolls. We just pass muster rolls from ALL periods instead of one period.
+     *
+     * @param requestInfo Request info
+     * @param criteria Billing criteria
+     * @param project Project details
+     * @param isDistrictLevel Whether project is district level
+     * @param billingConfig Billing configuration
+     * @param projectId Project reference ID
+     * @param campaignNumber Campaign number
+     * @return List containing single aggregate bill
+     */
+    private List<Bill> processAggregateBilling(RequestInfo requestInfo,
+                                               Criteria criteria,
+                                               Project project,
+                                               boolean isDistrictLevel,
+                                               BillingConfig billingConfig,
+                                               String projectId,
+                                               String campaignNumber) {
+        log.info("=== Starting Aggregate Bill Generation ===");
+        log.info("Project: {}, Campaign: {}, Tenant: {}", projectId, campaignNumber, criteria.getTenantId());
+
+        // STEP 1: Get ALL billing periods for this campaign
+        List<BillingPeriod> allPeriods = billingConfigurationService.getBillingPeriods(
+                campaignNumber,
+                criteria.getTenantId()
+        );
+
+        if (CollectionUtils.isEmpty(allPeriods)) {
+            throw new CustomException("NO_BILLING_PERIODS",
+                    "No billing periods found for campaign: " + campaignNumber);
+        }
+
+        // Sort periods by period number
+        allPeriods.sort(Comparator.comparing(BillingPeriod::getPeriodNumber));
+        log.info("Found {} billing periods for aggregate bill", allPeriods.size());
+
+        // STEP 2: Validate all periods have successful intermediate bills
+        log.info("Validating all periods have successful bills...");
+        validateAllPeriodsSuccessful(projectId, allPeriods, criteria.getTenantId());
+        log.info("✓ Validation passed - all {} periods billed successfully", allPeriods.size());
+
+        // STEP 3: Check aggregate bill doesn't already exist
+        log.info("Checking if aggregate bill already exists...");
+        if (aggregateBillAlreadyExists(projectId, criteria.getTenantId())) {
+            throw new CustomException("AGGREGATE_BILL_EXISTS",
+                    "Aggregate bill already generated for project: " + projectId +
+                            ". Cannot create duplicate aggregate bills.");
+        }
+        log.info("✓ No existing aggregate bill found");
+
+        // STEP 4: Fetch ALL muster rolls from ALL periods
+        // This is the KEY - we reuse existing fetching logic!
+        log.info("Fetching ALL muster rolls from ALL periods...");
+        List<MusterRoll> allMusterRolls = fetchAllMusterRollsForAllPeriods(
+                requestInfo,
+                criteria,
+                isDistrictLevel,
+                allPeriods
+        );
+        log.info("✓ Fetched {} muster rolls across {} periods", allMusterRolls.size(), allPeriods.size());
+
+        // STEP 5: Create virtual aggregate period spanning all periods
+        BillingPeriod firstPeriod = allPeriods.get(0);
+        BillingPeriod lastPeriod = allPeriods.get(allPeriods.size() - 1);
+        BillingPeriod aggregatePeriod = createAggregatePeriod(firstPeriod, lastPeriod, allPeriods);
+
+        log.info("Created virtual aggregate period: {} to {}",
+                formatDate(aggregatePeriod.getPeriodStartDate()),
+                formatDate(aggregatePeriod.getPeriodEndDate()));
+
+        // STEP 6: Generate aggregate bill using EXISTING logic!
+        // The same generatePeriodBill() function used for intermediate bills
+        log.info("Generating aggregate bill using existing bill generator...");
+        int totalRegisterCount = getTotalRegisterCount(allPeriods);
+
+        Bill aggregateBill = generatePeriodBill(
+                requestInfo,
+                criteria,
+                aggregatePeriod,      // Virtual period with full date range
+                allMusterRolls,       // ALL muster rolls from ALL periods
+                project,
+                totalRegisterCount,
+                billingConfig
+        );
+
+        log.info("✓ Bill generated with {} details, total amount: {}",
+                aggregateBill.getBillDetails() != null ? aggregateBill.getBillDetails().size() : 0,
+                aggregateBill.getTotalAmount());
+
+        // STEP 7: Override metadata to mark as FINAL_AGGREGATE
+        enrichAggregateMetadata(aggregateBill, allPeriods, campaignNumber);
+        log.info("✓ Enriched aggregate metadata");
+
+        // STEP 8: Submit aggregate bill
+        log.info("Submitting aggregate bill to expense service...");
+        Bill submittedBill = submitAggregateBill(
+                requestInfo,
+                aggregateBill,
+                aggregatePeriod,
+                projectId,
+                allPeriods,
+                allMusterRolls.size()
+        );
+
+        log.info("=== Aggregate Bill Generation Complete ===");
+        log.info("Bill ID: {}, Bill Number: {}, Total Amount: {}",
+                submittedBill.getId(),
+                submittedBill.getBillNumber(),
+                submittedBill.getTotalAmount());
+
+        return Collections.singletonList(submittedBill);
+    }
+
+    /**
+     * Fetch ALL muster rolls from ALL periods by reusing existing logic
+     *
+     * For each period:
+     * 1. Get registers overlapping with period (existing getRegistersForPeriod)
+     * 2. Search muster rolls for those registers (existing searchExistingMusterRollsForPeriod)
+     * 3. Accumulate all muster rolls
+     *
+     * @param requestInfo Request info
+     * @param criteria Billing criteria
+     * @param isDistrictLevel Whether to fetch children registers
+     * @param allPeriods All billing periods
+     * @return List of ALL muster rolls from ALL periods
+     */
+    private List<MusterRoll> fetchAllMusterRollsForAllPeriods(RequestInfo requestInfo,
+                                                               Criteria criteria,
+                                                               boolean isDistrictLevel,
+                                                               List<BillingPeriod> allPeriods) {
+        List<MusterRoll> allMusterRolls = new ArrayList<>();
+
+        for (BillingPeriod period : allPeriods) {
+            log.info("Fetching muster rolls for period {} ({} to {})",
+                    period.getPeriodNumber(),
+                    formatDate(period.getPeriodStartDate()),
+                    formatDate(period.getPeriodEndDate()));
+
+            try {
+                // REUSE: Get registers for this period (existing logic)
+                List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
+                        requestInfo,
+                        criteria,
+                        isDistrictLevel,
+                        period
+                );
+
+                if (periodRegisters.isEmpty()) {
+                    log.warn("No registers found for period {}, skipping", period.getPeriodNumber());
+                    continue;
+                }
+
+                log.debug("Found {} registers for period {}", periodRegisters.size(), period.getPeriodNumber());
+
+                // Get register IDs
+                List<String> registerIds = periodRegisters.stream()
+                        .map(AttendanceRegister::getId)
+                        .collect(Collectors.toList());
+
+                // REUSE: Search muster rolls (existing logic)
+                List<MusterRoll> periodMusterRolls = searchExistingMusterRollsForPeriod(
+                        requestInfo,
+                        criteria.getTenantId(),
+                        registerIds,
+                        period
+                );
+
+                if (!CollectionUtils.isEmpty(periodMusterRolls)) {
+                    allMusterRolls.addAll(periodMusterRolls);
+                    log.info("Added {} muster rolls from period {}",
+                            periodMusterRolls.size(), period.getPeriodNumber());
+                } else {
+                    log.warn("No muster rolls found for period {}", period.getPeriodNumber());
+                }
+
+            } catch (Exception e) {
+                log.error("Error fetching muster rolls for period {}: {}",
+                        period.getPeriodNumber(), e.getMessage(), e);
+                throw new CustomException("MUSTER_ROLL_FETCH_ERROR",
+                        String.format("Failed to fetch muster rolls for period %d: %s",
+                                period.getPeriodNumber(), e.getMessage()));
+            }
+        }
+
+        if (allMusterRolls.isEmpty()) {
+            throw new CustomException("NO_MUSTER_ROLLS_FOR_AGGREGATE",
+                    "No muster rolls found across any period for aggregate billing. " +
+                            "Ensure all intermediate bills have been generated successfully.");
+        }
+
+        log.info("Successfully fetched total of {} muster rolls from {} periods",
+                allMusterRolls.size(), allPeriods.size());
+        return allMusterRolls;
+    }
+
+    /**
+     * Create a virtual billing period spanning all periods
+     * Used to set fromPeriod and toPeriod in aggregate bill
+     *
+     * @param firstPeriod First billing period
+     * @param lastPeriod Last billing period
+     * @param allPeriods All billing periods
+     * @return Virtual aggregate period
+     */
+    private BillingPeriod createAggregatePeriod(BillingPeriod firstPeriod,
+                                                BillingPeriod lastPeriod,
+                                                List<BillingPeriod> allPeriods) {
+        BillingPeriod aggregatePeriod = new BillingPeriod();
+
+        // Use first period's start date and last period's end date
+        aggregatePeriod.setPeriodStartDate(firstPeriod.getPeriodStartDate());
+        aggregatePeriod.setPeriodEndDate(lastPeriod.getPeriodEndDate());
+
+        // Set period number to 0 to indicate aggregate
+        aggregatePeriod.setPeriodNumber(0);
+
+        // Copy metadata
+        aggregatePeriod.setId(UUID.randomUUID().toString());
+        aggregatePeriod.setTenantId(firstPeriod.getTenantId());
+        aggregatePeriod.setCampaignNumber(firstPeriod.getCampaignNumber());
+        aggregatePeriod.setBillingFrequency(firstPeriod.getBillingFrequency());
+
+        // Add additional details
+        Map<String, Object> additionalDetails = new HashMap<>();
+        additionalDetails.put("isAggregate", true);
+        additionalDetails.put("aggregatedPeriodCount", allPeriods.size());
+        additionalDetails.put("periodNumbers", allPeriods.stream()
+                .map(BillingPeriod::getPeriodNumber)
+                .collect(Collectors.toList()));
+        aggregatePeriod.setAdditionalDetails(additionalDetails);
+
+        return aggregatePeriod;
+    }
+
+    /**
+     * Enrich bill metadata to mark as FINAL_AGGREGATE
+     * Overrides billingType and adds aggregate-specific metadata
+     *
+     * @param bill Bill to enrich
+     * @param allPeriods All billing periods
+     * @param campaignNumber Campaign number
+     */
+    private void enrichAggregateMetadata(Bill bill,
+                                        List<BillingPeriod> allPeriods,
+                                        String campaignNumber) {
+        Map<String, Object> additionalDetails = bill.getAdditionalDetails() != null ?
+                (Map<String, Object>) bill.getAdditionalDetails() : new HashMap<>();
+
+        // Override billing type to FINAL_AGGREGATE
+        additionalDetails.put("billingType", BILLING_TYPE_FINAL_AGGREGATE);
+
+        // Remove individual period metadata
+        additionalDetails.remove("billingPeriodId");
+        additionalDetails.remove("periodNumber");
+
+        // Add aggregate-specific metadata
+        additionalDetails.put("aggregatedPeriodCount", allPeriods.size());
+        additionalDetails.put("periodNumbers", allPeriods.stream()
+                .map(BillingPeriod::getPeriodNumber)
+                .collect(Collectors.toList()));
+        additionalDetails.put("campaignNumber", campaignNumber);
+        additionalDetails.put("periodStartDate", allPeriods.get(0).getPeriodStartDate());
+        additionalDetails.put("periodEndDate", allPeriods.get(allPeriods.size() - 1).getPeriodEndDate());
+
+        bill.setAdditionalDetails(additionalDetails);
+
+        log.debug("Enriched bill with aggregate metadata for {} periods", allPeriods.size());
+    }
+
+    /**
+     * Submit aggregate bill to expense service
+     * Reuses existing submission logic but marks status as FINAL_AGGREGATE
+     *
+     * @param requestInfo Request info
+     * @param bill Bill to submit
+     * @param aggregatePeriod Virtual aggregate period
+     * @param projectId Project reference ID
+     * @param allPeriods All billing periods
+     * @param totalMusterRollCount Total muster roll count
+     * @return Submitted bill from expense service
+     */
+    private Bill submitAggregateBill(RequestInfo requestInfo,
+                                     Bill bill,
+                                     BillingPeriod aggregatePeriod,
+                                     String projectId,
+                                     List<BillingPeriod> allPeriods,
+                                     int totalMusterRollCount) {
+        log.info("Submitting aggregate bill for project {}", projectId);
+
+        // Create bill status entry BEFORE submission
+        String billStatusId = UUID.randomUUID().toString();
+        int totalRegisterCount = getTotalRegisterCount(allPeriods);
+
+        log.info("Creating aggregate bill status entry: {}", billStatusId);
+
+        expenseCalculatorRepository.createBillStatusV2(
+                billStatusId,
+                bill.getTenantId(),
+                projectId,
+                BILLING_TYPE_FINAL_AGGREGATE, // billing_type
+                null,                        // period_id (null for aggregate)
+                0,                          // period_number (0 for aggregate)
+                INITIATED_STATUS,
+                null,
+                System.currentTimeMillis(),
+                totalRegisterCount
+        );
+
+        // Submit bill using existing workflow
+        Workflow workflow = Workflow.builder()
+                .action(WF_SUBMIT_ACTION_CONSTANT)
+                .build();
+
+        try {
+            log.info("Calling expense service to create aggregate bill");
+            BillResponse response = billUtils.postCreateBill(requestInfo, bill, workflow);
+
+            if (response != null && SUCCESSFUL_CONSTANT.equalsIgnoreCase(
+                    response.getResponseInfo().getStatus())) {
+
+                if (!CollectionUtils.isEmpty(response.getBills())) {
+                    Bill submittedBill = response.getBills().get(0);
+
+                    log.info("Aggregate bill successfully created: ID={}, Number={}, Amount={}, Details={}",
+                            submittedBill.getId(),
+                            submittedBill.getBillNumber(),
+                            submittedBill.getTotalAmount(),
+                            submittedBill.getBillDetails() != null ? submittedBill.getBillDetails().size() : 0);
+
+                    // Update status to SUCCESSFUL
+                    expenseCalculatorRepository.updateBillStatusWithDetails(
+                            billStatusId,
+                            SUCCESSFUL_STATUS,
+                            null,
+                            System.currentTimeMillis(),
+                            submittedBill.getId(),
+                            submittedBill.getBillNumber() != null ? submittedBill.getBillNumber() : "N/A",
+                            submittedBill.getTotalAmount() != null ? submittedBill.getTotalAmount().toString() : "0",
+                            totalMusterRollCount
+                    );
+
+                    log.info("Updated bill status to SUCCESSFUL for aggregate bill: {}", billStatusId);
+
+                    // Trigger report generation if auto-generation is enabled
+                    if (config.isReportGenerationAuto()) {
+                        log.info("Triggering report generation for aggregate bill: {}",
+                                submittedBill.getId());
+
+                        ReportGenerationTrigger reportTrigger = ReportGenerationTrigger.builder()
+                                .requestInfo(requestInfo)
+                                .billId(submittedBill.getId())
+                                .tenantId(submittedBill.getTenantId())
+                                .createdTime(System.currentTimeMillis())
+                                .numberOfBillDetails(submittedBill.getBillDetails() != null ?
+                                        submittedBill.getBillDetails().size() : 0)
+                                .build();
+
+                        expenseCalculatorProducer.push(
+                                config.getReportGenerationTriggerTopic(),
+                                reportTrigger
+                        );
+
+                        log.info("Report generation trigger pushed to Kafka for aggregate bill");
+                    }
+
+                    return submittedBill;
+
+                } else {
+                    log.error("Aggregate bill submission returned empty bills list");
+                    expenseCalculatorRepository.updateBillStatusV2(
+                            billStatusId,
+                            FAILED_STATUS,
+                            "Empty bills list in response from expense service",
+                            System.currentTimeMillis()
+                    );
+                    throw new CustomException("AGGREGATE_BILL_SUBMISSION_FAILED",
+                            "Empty bills list returned from expense service");
+                }
+            } else {
+                String errorMsg = "Aggregate bill submission failed for project " + projectId;
+                log.error(errorMsg);
+                expenseCalculatorRepository.updateBillStatusV2(
+                        billStatusId,
+                        FAILED_STATUS,
+                        errorMsg,
+                        System.currentTimeMillis()
+                );
+                throw new CustomException("AGGREGATE_BILL_SUBMISSION_FAILED", errorMsg);
+            }
+
+        } catch (CustomException e) {
+            log.error("CustomException during aggregate bill submission: {}", e.getMessage(), e);
+            expenseCalculatorRepository.updateBillStatusV2(
+                    billStatusId,
+                    FAILED_STATUS,
+                    e.getMessage(),
+                    System.currentTimeMillis()
+            );
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error during aggregate bill submission: {}", e.getMessage(), e);
+            expenseCalculatorRepository.updateBillStatusV2(
+                    billStatusId,
+                    FAILED_STATUS,
+                    "Unexpected error: " + e.getMessage(),
+                    System.currentTimeMillis()
+            );
+            throw new CustomException("AGGREGATE_BILL_SUBMISSION_ERROR",
+                    "Failed to submit aggregate bill: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Validate all periods have successful intermediate bills
+     * Checks bill_gen_status table for INTERMEDIATE bills for all periods
+     *
+     * @param projectId Project reference ID
+     * @param allPeriods All billing periods
+     * @param tenantId Tenant ID
+     * @throws CustomException if any period is missing or not successful
+     */
+    private void validateAllPeriodsSuccessful(String projectId,
+                                             List<BillingPeriod> allPeriods,
+                                             String tenantId) {
+        log.info("Validating all {} periods have successful bills", allPeriods.size());
+
+        // Get all billed period numbers for this project
+        List<Integer> billedPeriods = expenseCalculatorRepository.getBilledPeriodNumbersForProject(
+                projectId,
+                tenantId
+        );
+
+        log.debug("Project {} has {} billed periods: {}", projectId, billedPeriods.size(), billedPeriods);
+
+        // Check for missing periods
+        List<Integer> missingPeriods = new ArrayList<>();
+        for (BillingPeriod period : allPeriods) {
+            if (!billedPeriods.contains(period.getPeriodNumber())) {
+                missingPeriods.add(period.getPeriodNumber());
+            }
+        }
+
+        if (!missingPeriods.isEmpty()) {
+            String errorMsg = String.format(
+                    "Cannot create aggregate bill for project %s. " +
+                            "Missing intermediate bills for periods: %s. " +
+                            "All intermediate bills must be generated successfully before creating aggregate bill. " +
+                            "Currently billed periods: %s",
+                    projectId,
+                    missingPeriods,
+                    billedPeriods.isEmpty() ? "None" : billedPeriods.toString()
+            );
+            log.error(errorMsg);
+            throw new CustomException("INCOMPLETE_INTERMEDIATE_BILLS", errorMsg);
+        }
+
+        log.info("✓ Validation passed: All {} periods have successful intermediate bills", allPeriods.size());
+    }
+
+    /**
+     * Check if aggregate bill already exists for project
+     * Queries bill_gen_status table for FINAL_AGGREGATE billing_type
+     *
+     * @param projectId Project reference ID
+     * @param tenantId Tenant ID
+     * @return true if aggregate bill exists, false otherwise
+     */
+    private boolean aggregateBillAlreadyExists(String projectId, String tenantId) {
+        return expenseCalculatorRepository.checkAggregateBillExists(projectId, tenantId);
+    }
+
+    /**
+     * Calculate total register count across all periods
+     * Reads from period additionalDetails
+     *
+     * @param allPeriods All billing periods
+     * @return Total register count
+     */
+    private int getTotalRegisterCount(List<BillingPeriod> allPeriods) {
+        return allPeriods.stream()
+                .mapToInt(period -> {
+                    try {
+                        if (period.getAdditionalDetails() == null) {
+                            return 0;
+                        }
+                        Map<String, Object> details = mapper.convertValue(
+                                period.getAdditionalDetails(), Map.class
+                        );
+                        Object registerCount = details.get("registerCount");
+                        if (registerCount instanceof Integer) {
+                            return (Integer) registerCount;
+                        }
+                        return 0;
+                    } catch (Exception e) {
+                        log.warn("Failed to extract registerCount from period {}: {}",
+                                period.getPeriodNumber(), e.getMessage());
+                        return 0;
+                    }
+                })
+                .sum();
     }
 }

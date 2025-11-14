@@ -6,6 +6,7 @@ import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorB
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorMusterRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorProjectRowMapper;
 import org.egov.digit.expense.calculator.util.BillStatus;
+import org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants;
 import org.egov.digit.expense.calculator.web.models.BillMapper;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -271,8 +272,8 @@ public class ExpenseCalculatorRepository {
         String sql = "SELECT COUNT(*) FROM eg_expense_bill_gen_status " +
                 "WHERE referenceid = :projectId " +
                 "AND period_id = :periodId " +
-                "AND billing_type = 'INTERMEDIATE' " +
-                "AND status = 'SUCCESSFUL'";
+                "AND billing_type = '" + ExpenseCalculatorServiceConstants.BILLING_TYPE_INTERMEDIATE + "' " +
+                "AND status = '" + ExpenseCalculatorServiceConstants.SUCCESSFUL_STATUS + "'";
 
         Map<String, Object> params = new HashMap<>();
         params.put("projectId", projectId);
@@ -294,7 +295,7 @@ public class ExpenseCalculatorRepository {
         String sql = "SELECT * FROM eg_expense_bill_gen_status " +
                 "WHERE referenceid = :projectId " +
                 "AND period_id = :periodId " +
-                "AND billing_type = 'INTERMEDIATE' " +
+                "AND billing_type = '" + ExpenseCalculatorServiceConstants.BILLING_TYPE_INTERMEDIATE + "' " +
                 "ORDER BY processing_start_time DESC " +
                 "LIMIT 1";
 
@@ -371,8 +372,8 @@ public class ExpenseCalculatorRepository {
         String sql = "SELECT COUNT(*) FROM eg_expense_bill_gen_status " +
                 "WHERE referenceid = :projectId " +
                 "AND period_id = :periodId " +
-                "AND billing_type = 'INTERMEDIATE' " +
-                "AND status = 'SUCCESSFUL'";
+                "AND billing_type = '" + ExpenseCalculatorServiceConstants.BILLING_TYPE_INTERMEDIATE + "' " +
+                "AND status = '" + ExpenseCalculatorServiceConstants.SUCCESSFUL_STATUS + "'";
 
         Map<String, Object> params = new HashMap<>();
         params.put("projectId", projectId);
@@ -394,8 +395,8 @@ public class ExpenseCalculatorRepository {
         String sql = "SELECT DISTINCT period_number FROM eg_expense_bill_gen_status " +
                 "WHERE referenceid = :projectId " +
                 "AND tenantid = :tenantId " +
-                "AND billing_type = 'INTERMEDIATE' " +
-                "AND status = 'SUCCESSFUL' " +
+                "AND billing_type = '" + ExpenseCalculatorServiceConstants.BILLING_TYPE_INTERMEDIATE + "' " +
+                "AND status = '" + ExpenseCalculatorServiceConstants.SUCCESSFUL_STATUS + "' " +
                 "AND period_number IS NOT NULL " +
                 "ORDER BY period_number";
 
@@ -404,5 +405,80 @@ public class ExpenseCalculatorRepository {
         params.put("tenantId", tenantId);
 
         return namedParameterJdbcTemplate.queryForList(sql, params, Integer.class);
+    }
+
+    /**
+     * Check if aggregate bill already exists for a project
+     * Used to prevent duplicate aggregate bill creation
+     *
+     * @param projectId Project reference ID
+     * @param tenantId Tenant ID
+     * @return true if aggregate bill exists, false otherwise
+     */
+    public boolean checkAggregateBillExists(String projectId, String tenantId) {
+        String sql = "SELECT COUNT(*) FROM eg_expense_bill_gen_status " +
+                "WHERE referenceid = :projectId " +
+                "AND tenantid = :tenantId " +
+                "AND billing_type = '" + ExpenseCalculatorServiceConstants.BILLING_TYPE_FINAL_AGGREGATE + "'";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("projectId", projectId);
+        params.put("tenantId", tenantId);
+
+        Integer count = namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
+        return count != null && count > 0;
+    }
+
+    /**
+     * Check if bill is fully generated and completed for a period.
+     * A bill is considered fully generated when:
+     * 1. Entry exists in eg_expense_bill_gen_status with status = 'SUCCESSFUL'
+     * 2. Entry exists in eg_expense_bill with status = 'ACTIVE'
+     * 3. Bill's additionalDetails.reportDetails.status = 'COMPLETED'
+     *
+     * This comprehensive check ensures the bill is not just initiated but fully processed
+     * including report generation.
+     *
+     * @param projectId Project reference ID
+     * @param billingPeriodId Billing period ID
+     * @param tenantId Tenant ID
+     * @return true if bill is fully generated and completed, false otherwise
+     */
+    public boolean isCompletedBillGeneratedForPeriod(String projectId, String billingPeriodId, String tenantId) {
+        // Step 1: Check if entry exists in bill_gen_status with SUCCESSFUL status
+        String statusCheckSql = "SELECT COUNT(*) FROM eg_expense_bill_gen_status " +
+                "WHERE referenceid = :projectId " +
+                "AND period_id = :periodId " +
+                "AND billing_type = '" + ExpenseCalculatorServiceConstants.BILLING_TYPE_INTERMEDIATE + "' " +
+                "AND status = '" + ExpenseCalculatorServiceConstants.SUCCESSFUL_STATUS + "'";
+
+        Map<String, Object> statusParams = new HashMap<>();
+        statusParams.put("projectId", projectId);
+        statusParams.put("periodId", billingPeriodId);
+
+        Integer statusCount = namedParameterJdbcTemplate.queryForObject(statusCheckSql, statusParams, Integer.class);
+
+        if (statusCount == null || statusCount == 0) {
+            return false; // No successful bill status found
+        }
+
+        // Step 2: Check eg_expense_bill table for ACTIVE status and COMPLETED report
+        // Query to check both status = 'ACTIVE' and reportDetails.status = 'COMPLETED'
+        String billCheckSql = "SELECT COUNT(*) FROM eg_expense_bill " +
+                "WHERE referenceid = :projectId " +
+                "AND tenantid = :tenantId " +
+                "AND businessservice = 'EXPENSE.WAGES' " +
+                "AND status = '" + ExpenseCalculatorServiceConstants.BILL_STATUS_ACTIVE + "' " +
+                "AND additionaldetails->>'billingPeriodId' = :periodId " +
+                "AND additionaldetails->'reportDetails'->>'status' = '" + ExpenseCalculatorServiceConstants.REPORT_STATUS_COMPLETED + "'";
+
+        Map<String, Object> billParams = new HashMap<>();
+        billParams.put("projectId", projectId);
+        billParams.put("tenantId", tenantId);
+        billParams.put("periodId", billingPeriodId);
+
+        Integer billCount = namedParameterJdbcTemplate.queryForObject(billCheckSql, billParams, Integer.class);
+
+        return billCount != null && billCount > 0;
     }
 }

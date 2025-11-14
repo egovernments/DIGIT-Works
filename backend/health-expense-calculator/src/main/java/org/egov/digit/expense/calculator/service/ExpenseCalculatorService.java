@@ -1157,4 +1157,107 @@ public class ExpenseCalculatorService {
         additionalDetails.put(NO_OF_BILL_DETAILS, bill.getBillDetails().size());
         bill.setAdditionalDetails(additionalDetails);
     }
+
+    /**
+     * Check bill status and build response for the API endpoint.
+     * Handles request parsing and response building.
+     * Follows existing coding standards by keeping logic in service layer.
+     *
+     * @param request Request map with tenantId, projectId, billingPeriodId/registerId
+     * @return Response map with isBilled status and metadata
+     */
+    public HashMap<String, Object> checkBillStatusAndBuildResponse(HashMap<String, Object> request) {
+        // Extract parameters from request
+        String tenantId = (String) request.get("tenantId");
+        String projectId = (String) request.get("projectId");
+        String billingPeriodId = (String) request.get("billingPeriodId");
+        String registerId = (String) request.get("registerId");
+
+        log.info("checkBillStatusAndBuildResponse::Processing request - tenantId: {}, projectId: {}, periodId: {}, registerId: {}",
+            tenantId, projectId, billingPeriodId, registerId);
+
+        // Check if bill exists (comprehensive check)
+        boolean isBilled = checkIfBillExists(tenantId, projectId, billingPeriodId, registerId);
+
+        // Build response
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("isBilled", isBilled);
+        response.put("tenantId", tenantId);
+        response.put("projectId", projectId);
+
+        if (billingPeriodId != null && !billingPeriodId.isEmpty()) {
+            response.put("billingPeriodId", billingPeriodId);
+            response.put("flowType", "V2");
+            response.put("checkPerformed", "COMPREHENSIVE (status + bill + report)");
+        } else if (registerId != null && !registerId.isEmpty()) {
+            response.put("registerId", registerId);
+            response.put("flowType", "V1");
+            response.put("checkPerformed", "NOT_IMPLEMENTED");
+        }
+
+        log.info("checkBillStatusAndBuildResponse::Response - isBilled: {}, flowType: {}",
+            isBilled, response.get("flowType"));
+
+        return response;
+    }
+
+    /**
+     * Check if a bill is fully generated and completed for a given period/register.
+     * Used by muster-roll service to lock periods/registers after billing.
+     *
+     * A bill is considered fully generated when:
+     * 1. Entry exists in eg_expense_bill_gen_status with status = 'SUCCESSFUL'
+     * 2. Entry exists in eg_expense_bill with status = 'ACTIVE'
+     * 3. Bill's additionalDetails.reportDetails.status = 'COMPLETED'
+     *
+     * V2 Flow: Checks by billingPeriodId if provided
+     * V1 Flow: Checks by registerId if billingPeriodId is null (not yet implemented)
+     *
+     * @param tenantId Tenant ID
+     * @param projectId Project ID (campaign number)
+     * @param billingPeriodId Billing period ID (V2 - null for V1)
+     * @param registerId Register ID (V1 - null for V2)
+     * @return true if bill is fully generated and completed, false otherwise
+     */
+    public boolean checkIfBillExists(String tenantId, String projectId,
+                                     String billingPeriodId, String registerId) {
+        log.info("checkIfBillExists::Comprehensive check - tenantId: {}, projectId: {}, periodId: {}, registerId: {}",
+            tenantId, projectId, billingPeriodId, registerId);
+
+        try {
+            if (billingPeriodId != null && !billingPeriodId.isEmpty()) {
+                // V2 Flow: Comprehensive check for completed bill
+                log.debug("checkIfBillExists::V2 mode - checking both tables + reportDetails");
+
+                // Use comprehensive check: status table + bill table + report status
+                boolean exists = expenseCalculatorRepository.isCompletedBillGeneratedForPeriod(
+                    projectId, billingPeriodId, tenantId);
+
+                if (exists) {
+                    log.info("checkIfBillExists::V2 result - BILL FULLY GENERATED AND COMPLETED (status=SUCCESSFUL, bill=ACTIVE, report=COMPLETED)");
+                } else {
+                    log.info("checkIfBillExists::V2 result - Bill NOT fully completed (missing status/bill/report)");
+                }
+
+                return exists;
+            } else if (registerId != null && !registerId.isEmpty()) {
+                // V1 Flow: Check by registerId
+                // For V1, we need to check if ANY bill exists for this register
+                log.debug("checkIfBillExists::V1 mode - checking by registerId");
+
+                // Query the bill status table for this register
+                // In V1 mode, period_id would be NULL and we'd use the register as key
+                // For now, return false (fail-open) for V1 until we implement V1 locking
+                log.warn("checkIfBillExists::V1 locking not yet implemented, returning false");
+                return false;
+            } else {
+                log.warn("checkIfBillExists::Neither periodId nor registerId provided, returning false");
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("checkIfBillExists::Error checking bill status: {}", e.getMessage(), e);
+            // Fail-open: if we can't check, allow the update
+            return false;
+        }
+    }
 }

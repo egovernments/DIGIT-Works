@@ -183,6 +183,10 @@ public class MusterRollServiceConfiguration {
     @Value("${egov.user.update.path}")
     private String userUpdateEndpoint;
 
+    // Period Locking Configuration (V2 Data Consistency)
+    @Value("${musterroll.period.locking.enabled:true}")
+    private boolean periodLockingEnabled;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));

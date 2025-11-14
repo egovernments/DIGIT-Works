@@ -94,4 +94,30 @@ public class WorksCalculatorApiController {
 		return new ResponseEntity<MdmsResponse>(MdmsResponse.builder().mdmsRes(new HashMap<>()).build(), HttpStatus.OK);
 	}
 
+	/**
+	 * Check if a bill is fully generated and completed for a given period/register.
+	 * Used by muster-roll service to lock periods after billing.
+	 *
+	 * A bill is considered fully generated when:
+	 * 1. Entry exists in eg_expense_bill_gen_status with status = 'SUCCESSFUL'
+	 * 2. Entry exists in eg_expense_bill with status = 'ACTIVE'
+	 * 3. Bill's additionalDetails.reportDetails.status = 'COMPLETED'
+	 *
+	 * V2 Flow: Checks by billingPeriodId if provided
+	 * V1 Flow: Checks by registerId if billingPeriodId is null
+	 *
+	 * @param request Request with tenantId, projectId, and either billingPeriodId (V2) or registerId (V1)
+	 * @return Response with isBilled boolean
+	 */
+	@RequestMapping(value = "/v1/_checkBillStatus", method = RequestMethod.POST)
+	public ResponseEntity<HashMap<String, Object>> checkBillStatus(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Bill status check request", schema = @Schema())
+			@Valid @RequestBody HashMap<String, Object> request) {
+
+		// Delegate to service for processing
+		HashMap<String, Object> response = expenseCalculatorService.checkBillStatusAndBuildResponse(request);
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
 }

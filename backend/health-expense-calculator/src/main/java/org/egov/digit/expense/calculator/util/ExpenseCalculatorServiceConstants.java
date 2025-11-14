@@ -79,4 +79,15 @@ public class ExpenseCalculatorServiceConstants {
     public static final String FAILED_STATUS = "FAILED";
     public static final String NO_OF_REGISTERS = "noOfRegisters";
     public static final String NO_OF_BILL_DETAILS = "noOfBillDetails";
+
+    // V2 Billing Constants
+    public static final String BILLING_PERIOD_AGGREGATE = "AGGREGATE";
+    public static final String BILLING_TYPE_INTERMEDIATE = "INTERMEDIATE";
+    public static final String BILLING_TYPE_FINAL_AGGREGATE = "FINAL_AGGREGATE";
+    public static final String BILLING_TYPE_REGULAR = "REGULAR";
+    public static final String BILL_STATUS_ACTIVE = "ACTIVE";
+    public static final String BILL_STATUS_INACTIVE = "INACTIVE";
+    public static final String REPORT_STATUS_COMPLETED = "COMPLETED";
+    public static final String REPORT_STATUS_PENDING = "PENDING";
+    public static final String REPORT_STATUS_FAILED = "FAILED";
 }

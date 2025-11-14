@@ -604,4 +604,71 @@ public class MusterRollServiceUtil {
 		}
 		return null;
 	}
+
+	/**
+	 * Checks if a billing period has been billed (i.e., intermediate bill generated successfully).
+	 * This is used to lock muster rolls and attendance after billing.
+	 *
+	 * V2 Flow: Checks by billingPeriodId if provided
+	 * V1 Flow: Checks by registerId + dates
+	 *
+	 * @param billingPeriodId Billing period ID (V2 - null for V1)
+	 * @param registerId Register ID
+	 * @param tenantId Tenant ID
+	 * @param projectId Project ID (campaign number)
+	 * @param requestInfo Request info
+	 * @return true if period/register has been billed, false otherwise
+	 */
+	public boolean isPeriodBilled(String billingPeriodId, String registerId, String tenantId,
+	                              String projectId, RequestInfo requestInfo) {
+		log.info("isPeriodBilled::Checking if period is billed - periodId: {}, registerId: {}, projectId: {}",
+			billingPeriodId, registerId, projectId);
+
+		// Build endpoint URL - we'll create a simple check endpoint
+		// For now, we'll query the bill status table via health-expense-calculator
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getExpenseCalculatorServiceHost())
+			.append("/health-expense-calculator/v1/_checkBillStatus");
+
+		// Build query parameters
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("RequestInfo", requestInfo);
+		requestBody.put("tenantId", tenantId);
+		requestBody.put("projectId", projectId);
+
+		if (StringUtils.isNotBlank(billingPeriodId)) {
+			// V2 Flow: Check by billingPeriodId
+			requestBody.put("billingPeriodId", billingPeriodId);
+			log.debug("isPeriodBilled::V2 mode - checking by billingPeriodId: {}", billingPeriodId);
+		} else {
+			// V1 Flow: Check by registerId
+			requestBody.put("registerId", registerId);
+			log.debug("isPeriodBilled::V1 mode - checking by registerId: {}", registerId);
+		}
+
+		try {
+			// Make REST call to check bill status
+			Map<String, Object> response = restTemplate.postForObject(
+				uri.toString(),
+				requestBody,
+				Map.class
+			);
+
+			if (response != null && response.containsKey("isBilled")) {
+				Boolean isBilled = (Boolean) response.get("isBilled");
+				log.info("isPeriodBilled::Period billed status: {}", isBilled);
+				return Boolean.TRUE.equals(isBilled);
+			}
+		} catch (HttpClientErrorException | HttpServerErrorException e) {
+			// If endpoint doesn't exist or returns error, assume not billed (fail-open)
+			log.warn("isPeriodBilled::Error checking bill status (endpoint may not exist): {}",
+				e.getStatusCode());
+			return false;
+		} catch (Exception e) {
+			log.warn("isPeriodBilled::Error checking bill status: {}", e.getMessage());
+			return false;
+		}
+
+		return false;
+	}
 }

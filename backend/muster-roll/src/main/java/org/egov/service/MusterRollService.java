@@ -287,6 +287,12 @@ public class MusterRollService {
     public MusterRollRequest updateMusterRoll(MusterRollRequest musterRollRequest) {
         log.info("MusterRollService::updateMusterRoll");
 
+        // CRITICAL: Check if period/register is locked due to billing (if enabled)
+        // Once a bill is generated for a period, NO edits allowed to muster roll or attendance
+        if (config.isPeriodLockingEnabled()) {
+            validatePeriodNotLocked(musterRollRequest.getMusterRoll(), musterRollRequest.getRequestInfo());
+        }
+
         musterRollValidator.validateUpdateMusterRoll(musterRollRequest);
         //If 'computeAttendance' flag is true, re-calculate the attendance from attendanceLogs and update
         boolean isComputeAttendance = isComputeAttendance(musterRollRequest.getMusterRoll());
@@ -414,6 +420,76 @@ public class MusterRollService {
 
             throw new CustomException("DUPLICATE_MUSTER_ROLL", exceptionMessage.toString());
         }
+    }
+
+    /**
+     * Validates that the period/register is not locked due to billing.
+     * Once a bill is generated for a period, NO edits are allowed to muster roll or attendance.
+     *
+     * This ensures data consistency between intermediate bills and aggregate bills.
+     *
+     * V2 Flow: Checks if billingPeriodId has been billed
+     * V1 Flow: Checks if registerId has been billed
+     *
+     * @param musterRoll Muster roll being updated
+     * @param requestInfo Request info
+     * @throws CustomException if period/register is locked
+     */
+    private void validatePeriodNotLocked(MusterRoll musterRoll, RequestInfo requestInfo) {
+        log.info("validatePeriodNotLocked::Checking if period is locked for muster roll: {}", musterRoll.getId());
+
+        // Get campaign number (project ID) from register
+        String campaignNumber = null;
+        try {
+            AttendanceRegisterResponse registerResponse = musterRollServiceUtil.fetchAttendanceRegister(
+                requestInfo, musterRoll.getTenantId(), musterRoll.getRegisterId());
+            if (registerResponse != null && !CollectionUtils.isEmpty(registerResponse.getAttendanceRegister())) {
+                campaignNumber = registerResponse.getAttendanceRegister().get(0).getReferenceId();
+            }
+        } catch (Exception e) {
+            log.warn("validatePeriodNotLocked::Could not fetch register to get campaign number: {}", e.getMessage());
+            // If we can't fetch register, fail-open (allow update)
+            return;
+        }
+
+        if (StringUtils.isBlank(campaignNumber)) {
+            log.warn("validatePeriodNotLocked::No campaign number found, skipping lock check");
+            return;
+        }
+
+        // Check if period is billed
+        boolean isBilled = musterRollServiceUtil.isPeriodBilled(
+            musterRoll.getBillingPeriodId(),  // V2: period ID, V1: null
+            musterRoll.getRegisterId(),       // Register ID for V1 fallback
+            musterRoll.getTenantId(),         // Tenant ID
+            campaignNumber,                   // Project/Campaign ID
+            requestInfo                       // Request info
+        );
+
+        if (isBilled) {
+            // Period is locked - throw error
+            String periodInfo;
+            if (StringUtils.isNotBlank(musterRoll.getBillingPeriodId())) {
+                // V2 Flow
+                periodInfo = "billing period " + musterRoll.getBillingPeriodId();
+            } else {
+                // V1 Flow
+                periodInfo = "register " + musterRoll.getRegisterId() +
+                    " (dates: " + musterRoll.getStartDate() + " to " + musterRoll.getEndDate() + ")";
+            }
+
+            String errorMessage = String.format(
+                "Cannot edit muster roll - intermediate bill already generated for %s. " +
+                "Period is locked. All data (muster rolls and attendance) is frozen after billing. " +
+                "Contact administrator to void/cancel the bill before making changes.",
+                periodInfo
+            );
+
+            log.error("validatePeriodNotLocked::PERIOD_LOCKED - {}", errorMessage);
+            throw new CustomException("PERIOD_LOCKED", errorMessage);
+        }
+
+        log.info("validatePeriodNotLocked::Period is not locked, update allowed");
     }
 
     /**
