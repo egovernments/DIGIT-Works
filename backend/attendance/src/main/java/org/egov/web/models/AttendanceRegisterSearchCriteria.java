@@ -81,28 +81,37 @@ public class AttendanceRegisterSearchCriteria {
 
     /**
      * V2 Intermediate Billing - Billing Period Filter
-     * When provided, the search will:
+     * When provided (and reviewStatus is NOT provided), the search will:
      * 1. Filter registers that overlap with the billing period dates
      * 2. Enrich each register with registerPeriodStatus (muster roll status for that period)
+     * 3. Map registerPeriodStatus to V1 status format for consistent response
+     *
+     * IMPORTANT: If reviewStatus is provided, V1 logic takes priority and this parameter is ignored.
      */
     @JsonProperty("billingPeriodId")
     private String billingPeriodId;
 
     /**
      * V2 Intermediate Billing - Register Period Status Filter
-     * When provided along with billingPeriodId, the search will:
+     * When provided along with billingPeriodId (and reviewStatus is NOT provided), the search will:
      * 1. Filter registers by their muster roll status for the billing period
-     * 2. Count registers by registerPeriodStatus values
+     * 2. Return statusCount with APPROVED and PENDING counts
      *
-     * Note: This filter only works when billingPeriodId is provided.
-     * If used without billingPeriodId, validation error will be thrown.
+     * Valid Values (only 2 values accepted):
+     * - "APPROVED": Show only registers with approved muster rolls
+     * - "PENDING": Show registers with pending muster rolls
+     *   (includes NOT_CREATED, PENDING, SENT_BACK, REJECTED muster roll statuses)
      *
-     * Possible values:
-     * - "NOT_CREATED": No muster roll exists for register+period
-     * - "PENDING": Muster roll created but awaiting approval
-     * - "APPROVED": Muster roll approved
-     * - "REJECTED": Muster roll rejected
-     * - "SENT_BACK": Muster roll sent back for corrections
+     * Response will always contain statusCount with APPROVED and PENDING (0 if none found).
+     *
+     * Validation Rules:
+     * - Must be either "APPROVED" or "PENDING" (throws error if invalid value)
+     * - Requires billingPeriodId to be provided (throws error if missing)
+     * - Ignored if reviewStatus is provided (V1 logic takes priority)
+     *
+     * Internal Mapping (how muster roll statuses map to this field):
+     * - Muster roll status "APPROVED" → APPROVED
+     * - Muster roll statuses "NOT_CREATED", "PENDING", "SENT_BACK", "REJECTED" → PENDING
      */
     @JsonProperty("registerPeriodStatus")
     private String registerPeriodStatus;

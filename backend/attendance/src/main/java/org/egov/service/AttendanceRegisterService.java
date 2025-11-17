@@ -190,18 +190,30 @@ public class AttendanceRegisterService {
     private void fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, AttendanceRegisterResponse attendanceRegisterResponse) {
         log.info("Fetching registers based on supplied search criteria");
 
-        // V2 Flow: When billingPeriodId is provided, use special handling for pagination and counting
-        boolean isV2PeriodBasedSearch = searchCriteria.getBillingPeriodId() != null &&
-                                       !searchCriteria.getBillingPeriodId().isEmpty();
+        // IMPORTANT: reviewStatus takes priority over V2 logic
+        // If reviewStatus is provided, ALWAYS use V1 flow regardless of billingPeriodId
+        boolean hasReviewStatus = StringUtils.isNotBlank(searchCriteria.getReviewStatus());
+        boolean hasBillingPeriodId = StringUtils.isNotBlank(searchCriteria.getBillingPeriodId());
 
-        if (isV2PeriodBasedSearch) {
-            log.info("V2 period-based search detected - using in-memory filtering and counting");
+        if (hasReviewStatus) {
+            // V1 Flow: reviewStatus takes priority - ignore V2 parameters
+            log.info("V1 search detected (reviewStatus provided) - using database-level filtering and counting");
+            if (hasBillingPeriodId) {
+                log.warn("billingPeriodId and registerPeriodStatus are ignored when reviewStatus is provided");
+            }
+            fetchAndFilterRegistersV1(requestInfoWrapper, searchCriteria, attendanceRegisterResponse);
+            return;
+        }
+
+        // V2 Flow: Only when billingPeriodId is provided AND reviewStatus is NOT provided
+        if (hasBillingPeriodId) {
+            log.info("V2 period-based search detected - using in-memory filtering with V1 status format");
             fetchAndFilterRegistersV2(requestInfoWrapper, searchCriteria, attendanceRegisterResponse);
             return;
         }
 
-        // V1 Flow: Original logic for backward compatibility
-        log.info("V1 search - using database-level filtering and counting");
+        // Default V1 Flow: No reviewStatus, no billingPeriodId
+        log.info("V1 search (default) - using database-level filtering and counting");
         fetchAndFilterRegistersV1(requestInfoWrapper, searchCriteria, attendanceRegisterResponse);
     }
 
@@ -474,21 +486,48 @@ public class AttendanceRegisterService {
 
         log.info("After period filtering and enrichment: {} registers remain", resultAttendanceRegisters.size());
 
+        // V2: Map registerPeriodStatus to V1 status format (APPROVED/PENDING)
+        // This ensures consistent status format across V1 and V2 responses
+        for (AttendanceRegister register : resultAttendanceRegisters) {
+            String mappedStatus = mapRegisterPeriodStatusToV1Status(register.getRegisterPeriodStatus());
+            // Store mapped status in additionalDetails for filtering and counting
+            register.setReviewStatus(mappedStatus);
+        }
+
+        log.info("Mapped registerPeriodStatus to V1 status format");
+
         // V2 Filter by registerPeriodStatus if provided
+        // User sends either "APPROVED" or "PENDING"
+        // - APPROVED → show only registers with APPROVED muster roll status
+        // - PENDING → show registers with NOT_CREATED, PENDING, SENT_BACK, REJECTED muster roll status
         if (StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus())) {
             log.info("Filtering by registerPeriodStatus: {}", searchCriteria.getRegisterPeriodStatus());
 
-            resultAttendanceRegisters = resultAttendanceRegisters.stream()
-                    .filter(register -> searchCriteria.getRegisterPeriodStatus().equals(register.getRegisterPeriodStatus()))
-                    .collect(Collectors.toList());
+            String requestedStatus = searchCriteria.getRegisterPeriodStatus().toUpperCase();
 
-            log.info("After registerPeriodStatus filtering: {} registers remain", resultAttendanceRegisters.size());
+            if (ATTENDANCE_REGISTER_APPROVED.equalsIgnoreCase(requestedStatus)) {
+                // Filter only APPROVED
+                resultAttendanceRegisters = resultAttendanceRegisters.stream()
+                        .filter(register -> ATTENDANCE_REGISTER_APPROVED.equals(register.getReviewStatus()))
+                        .collect(Collectors.toList());
+                log.info("Filtered by APPROVED status: {} registers remain", resultAttendanceRegisters.size());
+
+            } else if (ATTENDANCE_REGISTER_PENDINGFORAPPROVAL.equalsIgnoreCase(requestedStatus) || "PENDING".equalsIgnoreCase(requestedStatus)) {
+                // Filter all non-APPROVED (PENDING includes NOT_CREATED, PENDING, SENT_BACK, REJECTED)
+                resultAttendanceRegisters = resultAttendanceRegisters.stream()
+                        .filter(register -> ATTENDANCE_REGISTER_PENDINGFORAPPROVAL.equals(register.getReviewStatus()))
+                        .collect(Collectors.toList());
+                log.info("Filtered by PENDING status (all non-APPROVED): {} registers remain", resultAttendanceRegisters.size());
+
+            } else {
+                log.warn("Invalid registerPeriodStatus value: {}. Must be APPROVED or PENDING. Skipping filter.", requestedStatus);
+            }
         }
 
-        // V2 Count by registerPeriodStatus (in-memory)
-        Map<String, Long> periodStatusCounts = calculateRegisterPeriodStatusCounts(resultAttendanceRegisters);
+        // V2 Count by V1 status format (APPROVED/PENDING)
+        Map<String, Long> v1StatusCounts = calculateV1StatusCounts(resultAttendanceRegisters);
 
-        log.info("Period status counts: {}", periodStatusCounts);
+        log.info("V2 status counts (V1 format): {}", v1StatusCounts);
 
         // V2 Apply pagination in-memory
         int limit = originalLimit != null ? originalLimit : attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit();
@@ -517,29 +556,74 @@ public class AttendanceRegisterService {
         // Set response
         attendanceRegisterResponse.setAttendanceRegister(paginatedRegisters);
         attendanceRegisterResponse.setTotalCount(totalCount);
-        attendanceRegisterResponse.setStatusCount(periodStatusCounts);
+        attendanceRegisterResponse.setStatusCount(v1StatusCounts);
     }
 
     /**
-     * Calculate counts by registerPeriodStatus in-memory
-     * Returns map with status as key and count as value
+     * Map registerPeriodStatus values to V1 status format (APPROVED/PENDING)
+     *
+     * Mapping rules:
+     * - APPROVED → APPROVED
+     * - NOT_CREATED, PENDING, SENT_BACK, REJECTED → PENDING
+     *
+     * @param registerPeriodStatus The muster roll status
+     * @return V1 status (APPROVED or PENDING)
      */
-    private Map<String, Long> calculateRegisterPeriodStatusCounts(List<AttendanceRegister> registers) {
+    private String mapRegisterPeriodStatusToV1Status(String registerPeriodStatus) {
+        if (StringUtils.isBlank(registerPeriodStatus)) {
+            log.warn("registerPeriodStatus is null or blank, defaulting to PENDING");
+            return ATTENDANCE_REGISTER_PENDINGFORAPPROVAL;
+        }
+
+        switch (registerPeriodStatus.toUpperCase()) {
+            case "APPROVED":
+                return ATTENDANCE_REGISTER_APPROVED;
+
+            case "NOT_CREATED":
+            case "PENDING":
+            case "SENT_BACK":
+            case "REJECTED":
+                return ATTENDANCE_REGISTER_PENDINGFORAPPROVAL;
+
+            default:
+                log.warn("Unknown registerPeriodStatus value: {}, defaulting to PENDING", registerPeriodStatus);
+                return ATTENDANCE_REGISTER_PENDINGFORAPPROVAL;
+        }
+    }
+
+    /**
+     * Calculate counts by V1 status format (APPROVED/PENDING)
+     * Always returns both APPROVED and PENDING counts, even if 0
+     *
+     * @param registers List of registers (with reviewStatus set to mapped V1 status)
+     * @return Map with APPROVED and PENDING counts
+     */
+    private Map<String, Long> calculateV1StatusCounts(List<AttendanceRegister> registers) {
         Map<String, Long> counts = new HashMap<>();
 
+        // Always initialize both counts to 0
+        counts.put(ATTENDANCE_REGISTER_APPROVED, 0L);
+        counts.put(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL, 0L);
+
         if (CollectionUtils.isEmpty(registers)) {
+            log.info("No registers to count, returning zero counts");
             return counts;
         }
 
-        // Group by registerPeriodStatus and count
+        // Group by reviewStatus (which contains mapped V1 status) and count
         Map<String, Long> statusCounts = registers.stream()
-                .filter(register -> StringUtils.isNotBlank(register.getRegisterPeriodStatus()))
+                .filter(register -> StringUtils.isNotBlank(register.getReviewStatus()))
                 .collect(Collectors.groupingBy(
-                        AttendanceRegister::getRegisterPeriodStatus,
+                        AttendanceRegister::getReviewStatus,
                         Collectors.counting()
                 ));
 
+        // Update counts with actual values (keeping 0 for missing statuses)
         counts.putAll(statusCounts);
+
+        log.info("Calculated V1 status counts - APPROVED: {}, PENDING: {}",
+                counts.get(ATTENDANCE_REGISTER_APPROVED),
+                counts.get(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL));
 
         return counts;
     }

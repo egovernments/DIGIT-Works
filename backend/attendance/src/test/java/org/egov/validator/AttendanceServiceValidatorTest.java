@@ -190,7 +190,7 @@ public class AttendanceServiceValidatorTest {
         assertTrue(exception.getMessage().contains("INVALID_TENANT"));
     }
 
-    // V2 Tests: registerPeriodStatus validation
+    // V2 Tests: registerPeriodStatus validation and V1/V2 priority
 
     @DisplayName("Method validateSearchRegisterRequest: Should pass with valid billingPeriodId and registerPeriodStatus")
     @Test
@@ -256,6 +256,65 @@ public class AttendanceServiceValidatorTest {
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
                 .tenantId("pg.citya")
                 .reviewStatus("APPROVED")
+                .build();
+
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with reviewStatus taking priority over V2 params (warning logged)")
+    @Test
+    public void validateSearchRegisterRequest_reviewStatusTakesPriorityOverV2_shouldPassWithWarning(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        // Both reviewStatus and V2 parameters provided - reviewStatus should take priority
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .reviewStatus("APPROVED")
+                .billingPeriodId("period-123")
+                .registerPeriodStatus("PENDING")
+                .build();
+
+        // Should not throw error - just log warning
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should throw error when registerPeriodStatus is invalid (not APPROVED or PENDING)")
+    @Test
+    public void validateSearchRegisterRequest_invalidRegisterPeriodStatus_shouldThrowError(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        // Invalid registerPeriodStatus value
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .billingPeriodId("period-123")
+                .registerPeriodStatus("NOT_CREATED")  // Invalid value - only APPROVED or PENDING allowed
+                .build();
+
+        CustomException exception = assertThrows(CustomException.class,
+            () -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+
+        assertTrue(exception.getMessage().contains("INVALID_REGISTER_PERIOD_STATUS") ||
+                   exception.getMessage().contains("APPROVED or PENDING"));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with PENDING value in registerPeriodStatus")
+    @Test
+    public void validateSearchRegisterRequest_withPendingStatus_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .billingPeriodId("period-123")
+                .registerPeriodStatus("PENDING")
                 .build();
 
         assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));

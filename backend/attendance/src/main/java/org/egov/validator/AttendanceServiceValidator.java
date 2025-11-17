@@ -309,6 +309,27 @@ public class AttendanceServiceValidator {
                 "registerPeriodStatus can only be used when billingPeriodId is provided");
         }
 
+        // V2 Validation: registerPeriodStatus must be either APPROVED or PENDING
+        if (StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus())) {
+            String status = searchCriteria.getRegisterPeriodStatus().toUpperCase();
+            if (!status.equals(ATTENDANCE_REGISTER_APPROVED) &&
+                !status.equals(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL) &&
+                !status.equals("PENDING")) {
+                log.error("registerPeriodStatus must be either APPROVED or PENDING, got: {}", searchCriteria.getRegisterPeriodStatus());
+                errorMap.put("INVALID_REGISTER_PERIOD_STATUS",
+                    "registerPeriodStatus must be either APPROVED or PENDING");
+            }
+        }
+
+        // V1/V2 Priority: Warn if both reviewStatus and V2 parameters are provided
+        // reviewStatus takes priority and V2 parameters will be ignored
+        if (StringUtils.isNotBlank(searchCriteria.getReviewStatus()) &&
+            (StringUtils.isNotBlank(searchCriteria.getBillingPeriodId()) ||
+             StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus()))) {
+            log.warn("reviewStatus takes priority - billingPeriodId and registerPeriodStatus will be ignored");
+            // Note: This is just a warning, not an error - the request will proceed with V1 logic
+        }
+
         // Throw exception if required parameters are missing
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
