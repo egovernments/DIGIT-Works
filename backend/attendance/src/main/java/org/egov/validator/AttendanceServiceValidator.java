@@ -301,6 +301,14 @@ public class AttendanceServiceValidator {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
 
+        // V2 Validation: registerPeriodStatus can only be used with billingPeriodId
+        if (StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus()) &&
+            StringUtils.isBlank(searchCriteria.getBillingPeriodId())) {
+            log.error("registerPeriodStatus filter requires billingPeriodId to be provided");
+            errorMap.put("INVALID_PERIOD_STATUS_FILTER",
+                "registerPeriodStatus can only be used when billingPeriodId is provided");
+        }
+
         // Throw exception if required parameters are missing
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);

@@ -190,6 +190,32 @@ public class AttendanceRegisterService {
     private void fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, AttendanceRegisterResponse attendanceRegisterResponse) {
         log.info("Fetching registers based on supplied search criteria");
 
+        // V2 Flow: When billingPeriodId is provided, use special handling for pagination and counting
+        boolean isV2PeriodBasedSearch = searchCriteria.getBillingPeriodId() != null &&
+                                       !searchCriteria.getBillingPeriodId().isEmpty();
+
+        if (isV2PeriodBasedSearch) {
+            log.info("V2 period-based search detected - using in-memory filtering and counting");
+            fetchAndFilterRegistersV2(requestInfoWrapper, searchCriteria, attendanceRegisterResponse);
+            return;
+        }
+
+        // V1 Flow: Original logic for backward compatibility
+        log.info("V1 search - using database-level filtering and counting");
+        fetchAndFilterRegistersV1(requestInfoWrapper, searchCriteria, attendanceRegisterResponse);
+    }
+
+    /**
+     * V1 Search Flow (Original Implementation)
+     * - Uses database-level filtering by reviewStatus
+     * - SQL-based counting and pagination
+     * - Backward compatible with existing behavior
+     */
+    private void fetchAndFilterRegistersV1(RequestInfoWrapper requestInfoWrapper,
+                                           AttendanceRegisterSearchCriteria searchCriteria,
+                                           AttendanceRegisterResponse attendanceRegisterResponse) {
+        log.info("Fetching registers using V1 flow (reviewStatus-based)");
+
         if(attendanceServiceConfiguration.getAttendanceRegisterProjectSearchEnabled()){
             if((StringUtils.isBlank(searchCriteria.getReferenceId()) && !StringUtils.isBlank(searchCriteria.getLocalityCode())) || (!StringUtils.isBlank(searchCriteria.getReferenceId()) && StringUtils.isBlank(searchCriteria.getLocalityCode())) ){
                 throw new CustomException("ATTENDANCE_REGISTER_SEARCH_INVALID", "Attendance Register with only reference Id or locality code is invalid");
@@ -296,25 +322,6 @@ public class AttendanceRegisterService {
             }
         }
 
-        // V2 Intermediate Billing - Period-based filtering and enrichment
-        // Only apply when billingPeriodId is provided in search criteria
-        if (searchCriteria.getBillingPeriodId() != null &&
-            !searchCriteria.getBillingPeriodId().isEmpty()) {
-
-            log.info("V2 Request detected - applying period-based filtering and enrichment for period {}",
-                    searchCriteria.getBillingPeriodId());
-
-            // Filter registers by period dates and enrich with muster roll status
-            resultAttendanceRegisters = registerPeriodEnrichmentService.filterAndEnrichRegistersForPeriod(
-                    resultAttendanceRegisters,
-                    searchCriteria.getBillingPeriodId(),
-                    requestInfoWrapper.getRequestInfo(),
-                    searchCriteria.getTenantId()
-            );
-
-            log.info("After V2 period filtering: {} registers remain", resultAttendanceRegisters.size());
-        }
-
         attendanceRegisterResponse.setAttendanceRegister(resultAttendanceRegisters);
 
         // Set the total count of registers in the response
@@ -323,6 +330,218 @@ public class AttendanceRegisterService {
 
         // If register review status is enabled, add the status count to the response
         if(attendanceServiceConfiguration.getAttendanceRegisterReviewStatusEnabled()) attendanceRegisterResponse.setStatusCount(counts);
+    }
+
+    /**
+     * V2 Search Flow (Period-based with registerPeriodStatus)
+     * - Fetches ALL registers without pagination
+     * - Filters by billing period dates
+     * - Enriches with registerPeriodStatus from muster-roll API
+     * - Filters by registerPeriodStatus in-memory
+     * - Counts by registerPeriodStatus in-memory
+     * - Applies pagination in-memory
+     */
+    private void fetchAndFilterRegistersV2(RequestInfoWrapper requestInfoWrapper,
+                                           AttendanceRegisterSearchCriteria searchCriteria,
+                                           AttendanceRegisterResponse attendanceRegisterResponse) {
+        log.info("Fetching registers using V2 flow (registerPeriodStatus-based)");
+
+        // Save original pagination parameters
+        Integer originalLimit = searchCriteria.getLimit();
+        Integer originalOffset = searchCriteria.getOffset();
+
+        // Temporarily remove pagination to fetch ALL registers
+        // We need all registers to properly filter and count by registerPeriodStatus
+        searchCriteria.setLimit(null);
+        searchCriteria.setOffset(null);
+
+        if(attendanceServiceConfiguration.getAttendanceRegisterProjectSearchEnabled()){
+            if((StringUtils.isBlank(searchCriteria.getReferenceId()) && !StringUtils.isBlank(searchCriteria.getLocalityCode())) || (!StringUtils.isBlank(searchCriteria.getReferenceId()) && StringUtils.isBlank(searchCriteria.getLocalityCode())) ){
+                throw new CustomException("ATTENDANCE_REGISTER_SEARCH_INVALID", "Attendance Register with only reference Id or locality code is invalid");
+            }
+
+            if(!StringUtils.isBlank(searchCriteria.getReferenceId())){
+                Project projectSearch = Project.builder()
+                  .tenantId(searchCriteria.getTenantId())
+                  .id(searchCriteria.getReferenceId())
+                  .address(Address.builder().boundary(searchCriteria.getLocalityCode()).build())
+                  .build();
+
+                List<Project> projects = projectServiceUtil.getProject(
+                  searchCriteria.getTenantId(), projectSearch, requestInfoWrapper.getRequestInfo(), searchCriteria.getIsChildrenRequired(), true
+                );
+
+                if(projects.isEmpty()){
+                    throw new CustomException("ATTENDANCE_REGISTER_PROJECT_NOT_FOUND", "Project not found");
+                }
+
+                List<String> referenceId = new ArrayList<>();
+
+                projects.forEach(project -> {
+                    referenceId.add(project.getId());
+
+                    if(project.getDescendants()!=null && !project.getDescendants().isEmpty()) {
+                        project.getDescendants().forEach(child -> {
+                            referenceId.add(child.getId());
+                        });
+                    }
+                });
+                searchCriteria.setReferenceIds(referenceId);
+                searchCriteria.setReferenceId(null);
+                searchCriteria.setLocalityCode(null);
+            }
+        }
+
+        // Fetch ALL registers (without pagination)
+        List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(searchCriteria);
+
+        log.info("Fetched {} total registers before period filtering",
+                attendanceRegisters != null ? attendanceRegisters.size() : 0);
+
+        // Initialize the final list
+        List<AttendanceRegister> resultAttendanceRegisters = new ArrayList<>();
+
+        // Process registers if any were found
+        if(attendanceRegisters!=null && !attendanceRegisters.isEmpty()){
+            // Create a map with key as registerId and corresponding register list as value
+            Map<String, List<AttendanceRegister>> registerIdVsAttendanceRegisters = attendanceRegisters.stream().collect(Collectors.groupingBy(AttendanceRegister::getId));
+
+            List<String> registerIdsToSearch = new ArrayList<>();
+            registerIdsToSearch.addAll(registerIdVsAttendanceRegisters.keySet());
+
+            // Fetch and filter staff members
+            log.info("Fetch all staff members based on the supplied search criteria");
+            List<StaffPermission> staffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
+
+            // Store the original staffId from searchCriteria before modifying it
+            String staffId = searchCriteria.getStaffId();
+            searchCriteria.setStaffId(null);
+
+            // Fetch all staff members for the registers
+            List<StaffPermission> allStaffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
+
+            // Create mappings
+            Map<String, List<StaffPermission>> registerIdStaffMapping = staffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
+            Map<String, List<StaffPermission>> registerIdAllStaffMapping = allStaffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
+
+            // Enrich attendance registers with owner names
+            enrichOwnerNameOfAttendanceRegister(registerIdStaffMapping, registerIdAllStaffMapping);
+
+            // Restore the original staffId
+            searchCriteria.setStaffId(staffId);
+
+            // Update registerIDToSearch if staffId present
+            if (searchCriteria.getStaffId() != null){
+                registerIdsToSearch.clear();
+                registerIdsToSearch.addAll(registerIdStaffMapping.keySet());
+            }
+
+            // Fetch and filter attendees
+            List<IndividualEntry> attendees = fetchAllAttendeesAssociatedToRegisterIds(registerIdsToSearch,searchCriteria);
+            Map<String, List<IndividualEntry>> registerIdAttendeeMapping = attendees.stream().collect(Collectors.groupingBy(IndividualEntry::getRegisterId));
+
+            // Update registerIDToSearch if attendeeId present
+            if(searchCriteria.getAttendeeId() != null){
+                List<String> registerIdsAssociatedToAttendees = new ArrayList<>();
+                registerIdsAssociatedToAttendees.addAll(registerIdAttendeeMapping.keySet());
+                registerIdsToSearch.clear();
+                registerIdsToSearch.addAll(registerIdsAssociatedToAttendees);
+            }
+
+            // Populate registers with staff and attendees
+            for(String registerId : registerIdsToSearch ){
+                List<AttendanceRegister> registers = registerIdVsAttendanceRegisters.get(registerId);
+                for(AttendanceRegister register : registers){
+                    register.setStaff(registerIdStaffMapping.get(registerId));
+                    register.setAttendees(registerIdAttendeeMapping.get(registerId));
+                    resultAttendanceRegisters.add(register);
+                }
+            }
+        }
+
+        log.info("After staff/attendee filtering: {} registers remain", resultAttendanceRegisters.size());
+
+        // V2 Period-based filtering and enrichment
+        log.info("Applying period-based filtering and enrichment for period {}",
+                searchCriteria.getBillingPeriodId());
+
+        resultAttendanceRegisters = registerPeriodEnrichmentService.filterAndEnrichRegistersForPeriod(
+                resultAttendanceRegisters,
+                searchCriteria.getBillingPeriodId(),
+                requestInfoWrapper.getRequestInfo(),
+                searchCriteria.getTenantId()
+        );
+
+        log.info("After period filtering and enrichment: {} registers remain", resultAttendanceRegisters.size());
+
+        // V2 Filter by registerPeriodStatus if provided
+        if (StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus())) {
+            log.info("Filtering by registerPeriodStatus: {}", searchCriteria.getRegisterPeriodStatus());
+
+            resultAttendanceRegisters = resultAttendanceRegisters.stream()
+                    .filter(register -> searchCriteria.getRegisterPeriodStatus().equals(register.getRegisterPeriodStatus()))
+                    .collect(Collectors.toList());
+
+            log.info("After registerPeriodStatus filtering: {} registers remain", resultAttendanceRegisters.size());
+        }
+
+        // V2 Count by registerPeriodStatus (in-memory)
+        Map<String, Long> periodStatusCounts = calculateRegisterPeriodStatusCounts(resultAttendanceRegisters);
+
+        log.info("Period status counts: {}", periodStatusCounts);
+
+        // V2 Apply pagination in-memory
+        int limit = originalLimit != null ? originalLimit : attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit();
+        int offset = originalOffset != null ? originalOffset : attendanceServiceConfiguration.getAttendanceRegisterDefaultOffset();
+
+        // Ensure limit doesn't exceed max limit
+        if (limit > attendanceServiceConfiguration.getAttendanceRegisterMaxLimit()) {
+            limit = attendanceServiceConfiguration.getAttendanceRegisterMaxLimit();
+        }
+
+        long totalCount = resultAttendanceRegisters.size();
+
+        // Apply pagination
+        List<AttendanceRegister> paginatedRegisters = resultAttendanceRegisters.stream()
+                .skip(offset)
+                .limit(limit)
+                .collect(Collectors.toList());
+
+        log.info("After pagination (offset={}, limit={}): {} registers in page, {} total",
+                offset, limit, paginatedRegisters.size(), totalCount);
+
+        // Restore original pagination parameters
+        searchCriteria.setLimit(originalLimit);
+        searchCriteria.setOffset(originalOffset);
+
+        // Set response
+        attendanceRegisterResponse.setAttendanceRegister(paginatedRegisters);
+        attendanceRegisterResponse.setTotalCount(totalCount);
+        attendanceRegisterResponse.setStatusCount(periodStatusCounts);
+    }
+
+    /**
+     * Calculate counts by registerPeriodStatus in-memory
+     * Returns map with status as key and count as value
+     */
+    private Map<String, Long> calculateRegisterPeriodStatusCounts(List<AttendanceRegister> registers) {
+        Map<String, Long> counts = new HashMap<>();
+
+        if (CollectionUtils.isEmpty(registers)) {
+            return counts;
+        }
+
+        // Group by registerPeriodStatus and count
+        Map<String, Long> statusCounts = registers.stream()
+                .filter(register -> StringUtils.isNotBlank(register.getRegisterPeriodStatus()))
+                .collect(Collectors.groupingBy(
+                        AttendanceRegister::getRegisterPeriodStatus,
+                        Collectors.counting()
+                ));
+
+        counts.putAll(statusCounts);
+
+        return counts;
     }
 
     private void enrichOwnerNameOfAttendanceRegister(Map<String, List<StaffPermission>> registerIdStaffMapping, Map<String, List<StaffPermission>> registerIdAllStaffMapping) {

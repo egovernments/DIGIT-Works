@@ -189,4 +189,75 @@ public class AttendanceServiceValidatorTest {
         CustomException exception = assertThrows(CustomException.class,()->attendanceServiceValidator.validateCreateAttendanceRegister(attendanceRegisterRequest));
         assertTrue(exception.getMessage().contains("INVALID_TENANT"));
     }
+
+    // V2 Tests: registerPeriodStatus validation
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with valid billingPeriodId and registerPeriodStatus")
+    @Test
+    public void validateSearchRegisterRequest_withBillingPeriodIdAndRegisterPeriodStatus_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .billingPeriodId("period-123")
+                .registerPeriodStatus("APPROVED")
+                .build();
+
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should throw error when registerPeriodStatus used without billingPeriodId")
+    @Test
+    public void validateSearchRegisterRequest_withRegisterPeriodStatusButNoBillingPeriodId_shouldThrowError(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .registerPeriodStatus("APPROVED")  // registerPeriodStatus without billingPeriodId
+                .build();
+
+        CustomException exception = assertThrows(CustomException.class,
+            () -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+
+        assertTrue(exception.getMessage().contains("INVALID_PERIOD_STATUS_FILTER") ||
+                   exception.getMessage().contains("registerPeriodStatus"));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with only billingPeriodId (no registerPeriodStatus)")
+    @Test
+    public void validateSearchRegisterRequest_withOnlyBillingPeriodId_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .billingPeriodId("period-123")
+                .build();
+
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with V1 search (no billing period params)")
+    @Test
+    public void validateSearchRegisterRequest_v1SearchWithoutBillingParams_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .reviewStatus("APPROVED")
+                .build();
+
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
 }

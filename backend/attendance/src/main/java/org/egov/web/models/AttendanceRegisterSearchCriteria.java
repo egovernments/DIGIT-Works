@@ -88,6 +88,25 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("billingPeriodId")
     private String billingPeriodId;
 
+    /**
+     * V2 Intermediate Billing - Register Period Status Filter
+     * When provided along with billingPeriodId, the search will:
+     * 1. Filter registers by their muster roll status for the billing period
+     * 2. Count registers by registerPeriodStatus values
+     *
+     * Note: This filter only works when billingPeriodId is provided.
+     * If used without billingPeriodId, validation error will be thrown.
+     *
+     * Possible values:
+     * - "NOT_CREATED": No muster roll exists for register+period
+     * - "PENDING": Muster roll created but awaiting approval
+     * - "APPROVED": Muster roll approved
+     * - "REJECTED": Muster roll rejected
+     * - "SENT_BACK": Muster roll sent back for corrections
+     */
+    @JsonProperty("registerPeriodStatus")
+    private String registerPeriodStatus;
+
     public enum SortOrder {
         ASC,
         DESC
