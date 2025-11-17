@@ -496,6 +496,12 @@ public class AttendanceRegisterService {
 
         log.info("Mapped registerPeriodStatus to V1 status format");
 
+        // V2 IMPORTANT: Calculate counts BEFORE filtering (just like V1)
+        // This ensures statusCount shows ALL statuses for the period, not just the filtered one
+        Map<String, Long> v1StatusCounts = calculateV1StatusCounts(resultAttendanceRegisters);
+
+        log.info("V2 status counts (BEFORE filtering): {}", v1StatusCounts);
+
         // V2 Filter by registerPeriodStatus if provided
         // User sends either "APPROVED" or "PENDING"
         // - APPROVED → show only registers with APPROVED muster roll status
@@ -524,11 +530,6 @@ public class AttendanceRegisterService {
             }
         }
 
-        // V2 Count by V1 status format (APPROVED/PENDING)
-        Map<String, Long> v1StatusCounts = calculateV1StatusCounts(resultAttendanceRegisters);
-
-        log.info("V2 status counts (V1 format): {}", v1StatusCounts);
-
         // V2 Apply pagination in-memory
         int limit = originalLimit != null ? originalLimit : attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit();
         int offset = originalOffset != null ? originalOffset : attendanceServiceConfiguration.getAttendanceRegisterDefaultOffset();
@@ -538,6 +539,9 @@ public class AttendanceRegisterService {
             limit = attendanceServiceConfiguration.getAttendanceRegisterMaxLimit();
         }
 
+        // totalCount = count of FILTERED registers (after registerPeriodStatus filter)
+        // statusCount = count of ALL registers for the period (calculated before filtering)
+        // This matches V1 behavior where totalCount shows filtered count, statusCount shows all statuses
         long totalCount = resultAttendanceRegisters.size();
 
         // Apply pagination
