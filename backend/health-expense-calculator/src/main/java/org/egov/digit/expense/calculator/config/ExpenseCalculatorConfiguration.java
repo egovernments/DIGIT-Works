@@ -231,6 +231,8 @@ public class ExpenseCalculatorConfiguration {
 	private String attendanceLogHost;
 	@Value("${works.attendance.register.search.endpoint}")
 	private String attendanceRegisterEndpoint;
+	@Value("${works.attendance.register.update.endpoint}")
+	private String attendanceRegisterUpdateEndpoint;
 	@Value("${works.attendance.register.search.limit}")
 	private String attendanceRegisterSearchLimit;
 

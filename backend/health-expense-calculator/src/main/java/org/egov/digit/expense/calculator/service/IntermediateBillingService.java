@@ -68,6 +68,9 @@ public class IntermediateBillingService {
     private final CommonUtil commonUtil;
     private final ExpenseCalculatorProducer expenseCalculatorProducer;
 
+    private static final String REVIEW_STATUS_APPROVED = "APPROVED";
+    private static final String REVIEW_STATUS_PENDING_FOR_APPROVAL = "PENDINGFORAPPROVAL";
+
     @Autowired
     public IntermediateBillingService(BillingConfigurationService billingConfigurationService,
                                       WageSeekerBillGeneratorService wageSeekerBillGeneratorService,
@@ -776,6 +779,13 @@ public class IntermediateBillingService {
                                 submittedBill.getId(), submittedBill.getBillDetails().size());
                     }
 
+                    // V2 Enhancement: Update register reviewStatus after successful period bill generation
+                    // - If LAST period → reviewStatus = "APPROVED" (ready for aggregate billing)
+                    // - If OTHER period → reviewStatus = "PENDINGFORAPPROVAL" (bill generated, more periods pending)
+                    // This is done AFTER report trigger to ensure full workflow is initiated
+                    boolean isLast = isLastPeriod(period, bill.getTenantId());
+                    updateRegisterReviewStatusAfterPeriodBill(requestInfo, projectId, period, bill.getTenantId(), isLast);
+
                     return submittedBill;
                 } else {
                     log.error("Bill submission returned empty bills list for project {} period {}",
@@ -1431,5 +1441,97 @@ public class IntermediateBillingService {
                     }
                 })
                 .sum();
+    }
+
+    /**
+     * Check if the given period is the last period for the billing configuration.
+     * Used to determine when to update attendance register reviewStatus to APPROVED.
+     *
+     * @param period Current billing period
+     * @param tenantId Tenant ID
+     * @return true if this is the last period, false otherwise
+     */
+    private boolean isLastPeriod(BillingPeriod period, String tenantId) {
+        try {
+            // Get all periods for this billing configuration
+            BillingPeriodSearchCriteria criteria = BillingPeriodSearchCriteria.builder()
+                    .billingConfigId(period.getBillingConfigId())
+                    .tenantId(tenantId)
+                    .build();
+
+            BillingPeriodSearchResponse response = billingConfigurationService.searchBillingPeriods(
+                    BillingPeriodSearchRequest.builder()
+                            .requestInfo(new RequestInfo())
+                            .searchCriteria(criteria)
+                            .build()
+            );
+
+            if (response == null || CollectionUtils.isEmpty(response.getBillingPeriods())) {
+                log.warn("No periods found for billingConfigId: {}", period.getBillingConfigId());
+                return false;
+            }
+
+            // Find the maximum period number
+            Integer maxPeriodNumber = response.getBillingPeriods().stream()
+                    .map(BillingPeriod::getPeriodNumber)
+                    .filter(num -> num != null)
+                    .max(Integer::compareTo)
+                    .orElse(null);
+
+            if (maxPeriodNumber == null) {
+                log.warn("No valid period numbers found for billingConfigId: {}", period.getBillingConfigId());
+                return false;
+            }
+
+            boolean isLast = period.getPeriodNumber().equals(maxPeriodNumber);
+            log.info("Period {} check: maxPeriodNumber={}, isLast={}",
+                    period.getPeriodNumber(), maxPeriodNumber, isLast);
+
+            return isLast;
+
+        } catch (Exception e) {
+            log.error("Error checking if period {} is last period: {}",
+                    period.getPeriodNumber(), e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * Update attendance register reviewStatus after period bill generation.
+     *
+     * V2 Enhancement: Updates reviewStatus based on period type:
+     * - LAST period → reviewStatus = "APPROVED" (ready for aggregate billing)
+     * - OTHER periods → reviewStatus = "PENDINGFORAPPROVAL" (bill generated, more periods pending)
+     *
+     * @param requestInfo Request info
+     * @param projectId Project reference ID
+     * @param period Billing period
+     * @param tenantId Tenant ID
+     * @param isLastPeriod Whether this is the last period
+     */
+    private void updateRegisterReviewStatusAfterPeriodBill(RequestInfo requestInfo, String projectId,
+                                                           BillingPeriod period, String tenantId,
+                                                           boolean isLastPeriod) {
+        try {
+            String reviewStatus = isLastPeriod ? REVIEW_STATUS_APPROVED : REVIEW_STATUS_PENDING_FOR_APPROVAL;
+
+            log.info("Period {} ({}) billed successfully for project {}. Updating register reviewStatus to '{}'",
+                    period.getPeriodNumber(),
+                    isLastPeriod ? "LAST" : "INTERMEDIATE",
+                    projectId,
+                    reviewStatus);
+
+            attendanceUtil.updateRegisterReviewStatus(requestInfo, projectId, tenantId, reviewStatus);
+
+            log.info("Successfully updated attendance register reviewStatus to '{}' for project {} after period {}",
+                    reviewStatus, projectId, period.getPeriodNumber());
+
+        } catch (Exception e) {
+            // Log error but don't fail the bill generation
+            log.error("Failed to update register reviewStatus for project {} after period {}: {}",
+                    projectId, period.getPeriodNumber(), e.getMessage(), e);
+            log.warn("Bill generation was successful, but register reviewStatus update failed. " +
+                    "This may need manual intervention.");
+        }
     }
 }

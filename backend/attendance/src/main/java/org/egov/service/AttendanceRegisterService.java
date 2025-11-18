@@ -190,10 +190,21 @@ public class AttendanceRegisterService {
     private void fetchAndFilterRegisters(RequestInfoWrapper requestInfoWrapper,AttendanceRegisterSearchCriteria searchCriteria, AttendanceRegisterResponse attendanceRegisterResponse) {
         log.info("Fetching registers based on supplied search criteria");
 
+        // SPECIAL CASE: billingPeriodId = "AGGREGATE"
+        // When aggregate billing is requested, automatically filter by reviewStatus = "APPROVED"
+        // This indicates all periods have bills generated and project is ready for aggregate billing
+        boolean hasBillingPeriodId = StringUtils.isNotBlank(searchCriteria.getBillingPeriodId());
+        if (hasBillingPeriodId && "AGGREGATE".equalsIgnoreCase(searchCriteria.getBillingPeriodId())) {
+            log.info("AGGREGATE billing period detected - filtering by reviewStatus=APPROVED");
+            searchCriteria.setReviewStatus("APPROVED");
+            searchCriteria.setBillingPeriodId(null); // Clear billingPeriodId to use V1 flow
+            log.info("Converted AGGREGATE request to V1 search with reviewStatus=APPROVED");
+        }
+
         // IMPORTANT: reviewStatus takes priority over V2 logic
         // If reviewStatus is provided, ALWAYS use V1 flow regardless of billingPeriodId
         boolean hasReviewStatus = StringUtils.isNotBlank(searchCriteria.getReviewStatus());
-        boolean hasBillingPeriodId = StringUtils.isNotBlank(searchCriteria.getBillingPeriodId());
+        hasBillingPeriodId = StringUtils.isNotBlank(searchCriteria.getBillingPeriodId()); // Re-check after AGGREGATE handling
 
         if (hasReviewStatus) {
             // V1 Flow: reviewStatus takes priority - ignore V2 parameters
