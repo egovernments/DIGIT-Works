@@ -783,8 +783,9 @@ public class IntermediateBillingService {
                     // - If LAST period → reviewStatus = "APPROVED" (ready for aggregate billing)
                     // - If OTHER period → reviewStatus = "PENDINGFORAPPROVAL" (bill generated, more periods pending)
                     // This is done AFTER report trigger to ensure full workflow is initiated
+                    // IMPORTANT: Use bill.getReferenceId() (actual project ID) not projectId (which could be hierarchy)
                     boolean isLast = isLastPeriod(period, bill.getTenantId());
-                    updateRegisterReviewStatusAfterPeriodBill(requestInfo, projectId, period, bill.getTenantId(), isLast);
+                    updateRegisterReviewStatusAfterPeriodBill(requestInfo, bill.getReferenceId(), period, bill.getTenantId(), isLast);
 
                     return submittedBill;
                 } else {
