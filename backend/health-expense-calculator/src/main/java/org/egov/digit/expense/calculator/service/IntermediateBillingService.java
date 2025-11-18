@@ -1243,7 +1243,7 @@ public class IntermediateBillingService {
                 projectId,
                 BILLING_TYPE_FINAL_AGGREGATE, // billing_type
                 null,                        // period_id (null for aggregate)
-                0,                          // period_number (0 for aggregate)
+                null,                        // period_number kept null to satisfy positive check constraint
                 INITIATED_STATUS,
                 null,
                 System.currentTimeMillis(),
