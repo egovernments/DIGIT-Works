@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.calculator.service.BillingConfigurationService;
+import org.egov.digit.expense.calculator.web.models.BillingConfigAuditResponse;
 import org.egov.digit.expense.calculator.web.models.BillingConfigRequest;
 import org.egov.digit.expense.calculator.web.models.BillingConfigResponse;
 import org.egov.digit.expense.calculator.web.models.BillingConfigSearchRequest;
@@ -266,6 +267,64 @@ public class BillingConfigApiController {
         log.info("Search completed - Found {} periods (total: {})",
             response.getReturnedCount(),
             response.getTotalCount());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Gets audit details for billing configuration by campaign number.
+     *
+     * Returns audit information including:
+     * - Configuration ID and identifiers
+     * - Created by user and timestamp
+     * - Last modified by user and timestamp
+     * - Current status
+     *
+     * @param searchRequest Search request with campaign number
+     * @return Audit details for the billing configuration
+     */
+    @Operation(
+        summary = "Get audit details for billing configuration",
+        description = "Retrieves audit details for a billing configuration by campaign number. " +
+                     "Returns creation and modification metadata for tracking purposes.",
+        tags = {"Billing Configuration"}
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Audit details retrieved successfully",
+            content = @Content(schema = @Schema(implementation = BillingConfigAuditResponse.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid request - Campaign number is required"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Billing configuration not found for the given campaign number"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
+    @RequestMapping(value = "/billing-config/v1/_auditDetails", method = RequestMethod.POST)
+    public ResponseEntity<BillingConfigAuditResponse> getAuditDetails(
+            @Parameter(
+                in = ParameterIn.DEFAULT,
+                description = "Search request with campaign number and tenant ID",
+                required = true,
+                schema = @Schema(implementation = BillingConfigSearchRequest.class)
+            )
+            @Valid @RequestBody BillingConfigSearchRequest searchRequest) {
+
+        log.info("Received audit details request for campaign: {}",
+            searchRequest.getSearchCriteria().getCampaignNumber());
+
+        BillingConfigAuditResponse response = billingConfigurationService.getAuditDetails(searchRequest);
+
+        log.info("Successfully retrieved audit details for campaign: {}",
+            searchRequest.getSearchCriteria().getCampaignNumber());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

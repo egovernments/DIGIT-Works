@@ -7,6 +7,7 @@ import org.egov.digit.expense.calculator.repository.BillingConfigRepository;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
 import org.egov.digit.expense.calculator.validator.BillingConfigValidator;
 import org.egov.digit.expense.calculator.web.models.*;
+import org.egov.digit.expense.calculator.web.models.BillingConfigAuditResponse.BillingConfigAuditDetails;
 import org.egov.digit.expense.calculator.web.models.enums.BillingFrequency;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -640,5 +641,72 @@ public class BillingConfigurationService {
 
         log.debug("Enriched billing configuration for update - ID: {}, LastModifiedBy: {}",
             config.getId(), config.getLastModifiedBy());
+    }
+
+    /**
+     * Gets audit details for billing configuration by campaign number.
+     *
+     * Returns audit information including:
+     * - Configuration ID and identifiers
+     * - Created by user and timestamp
+     * - Last modified by user and timestamp
+     * - Current status
+     *
+     * @param request Search request with campaign number and tenant ID
+     * @return Audit details response
+     * @throws CustomException if campaign number is missing or configuration not found
+     */
+    public BillingConfigAuditResponse getAuditDetails(BillingConfigSearchRequest request) {
+        BillingConfigSearchCriteria criteria = request.getSearchCriteria();
+
+        log.info("Fetching audit details for campaign: {} in tenant: {}",
+            criteria.getCampaignNumber(), criteria.getTenantId());
+
+        // Validate that campaign number is provided
+        if (criteria.getCampaignNumber() == null || criteria.getCampaignNumber().isEmpty()) {
+            throw new CustomException("INVALID_REQUEST",
+                "Campaign number is required to fetch audit details");
+        }
+
+        // Fetch billing configuration
+        BillingConfig config = repository.findByCampaignNumber(
+            criteria.getCampaignNumber(),
+            criteria.getTenantId()
+        );
+
+        if (config == null) {
+            throw new CustomException("CONFIG_NOT_FOUND",
+                "Billing configuration not found for campaign: " + criteria.getCampaignNumber());
+        }
+
+        // Build audit details
+        BillingConfigAuditDetails auditDetails = BillingConfigAuditDetails.builder()
+            .id(config.getId())
+            .tenantId(config.getTenantId())
+            .campaignNumber(config.getCampaignNumber())
+            .projectId(config.getProjectId())
+            .status(config.getStatus())
+            .createdBy(config.getCreatedBy())
+            .createdTime(config.getCreatedTime())
+            .lastModifiedBy(config.getLastModifiedBy())
+            .lastModifiedTime(config.getLastModifiedTime())
+            .build();
+
+        // Build response
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(
+            request.getRequestInfo(), true);
+
+        BillingConfigAuditResponse response = BillingConfigAuditResponse.builder()
+            .responseInfo(responseInfo)
+            .auditDetails(auditDetails)
+            .build();
+
+        log.info("Successfully fetched audit details for campaign: {} (ID: {}, Created: {}, Modified: {})",
+            criteria.getCampaignNumber(),
+            config.getId(),
+            config.getCreatedTime(),
+            config.getLastModifiedTime());
+
+        return response;
     }
 }
