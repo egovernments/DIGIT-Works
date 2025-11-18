@@ -438,6 +438,20 @@ public class BillValidator {
 
 	private boolean hasV2Conflict(Bill existingBill, Bill newBill) {
 
+		// FINAL_AGGREGATE bills should coexist with intermediate bills.
+        // Only block if another FINAL_AGGREGATE already exists.
+		boolean newIsFinalAggregate = isFinalAggregate(newBill);
+		boolean existingIsFinalAggregate = isFinalAggregate(existingBill);
+
+		if (newIsFinalAggregate) {
+			return existingIsFinalAggregate;
+		}
+
+		// Existing FINAL_AGGREGATE should not block non-final bills
+		if (existingIsFinalAggregate) {
+			return false;
+		}
+
 		Optional<String> newBillingPeriod = getBillingPeriodId(newBill);
 		Optional<String> existingBillingPeriod = getBillingPeriodId(existingBill);
 
@@ -464,6 +478,12 @@ public class BillValidator {
 	private Optional<String> getBillingPeriodId(Bill bill) {
 		return getStringAdditionalDetail(bill, "billingPeriodId")
 				.filter(StringUtils::hasText);
+	}
+
+	private boolean isFinalAggregate(Bill bill) {
+		return getStringAdditionalDetail(bill, "billingType")
+				.map(value -> "FINAL_AGGREGATE".equalsIgnoreCase(value))
+				.orElse(false);
 	}
 
 	private Optional<String> getStringAdditionalDetail(Bill bill, String key) {
