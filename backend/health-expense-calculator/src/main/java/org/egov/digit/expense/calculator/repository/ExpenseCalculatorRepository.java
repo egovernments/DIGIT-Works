@@ -429,7 +429,8 @@ public class ExpenseCalculatorRepository {
         String sql = "SELECT COUNT(*) FROM eg_expense_bill_gen_status " +
                 "WHERE referenceid = :projectId " +
                 "AND tenantid = :tenantId " +
-                "AND billing_type = '" + ExpenseCalculatorServiceConstants.BILLING_TYPE_FINAL_AGGREGATE + "'";
+                "AND billing_type = '" + ExpenseCalculatorServiceConstants.BILLING_TYPE_FINAL_AGGREGATE + "' " +
+                "AND status != '" + ExpenseCalculatorServiceConstants.FAILED_STATUS + "'";
 
         Map<String, Object> params = new HashMap<>();
         params.put("projectId", projectId);
