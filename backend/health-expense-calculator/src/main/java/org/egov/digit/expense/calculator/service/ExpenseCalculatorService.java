@@ -1168,6 +1168,7 @@ public class ExpenseCalculatorService {
      */
     public HashMap<String, Object> checkBillStatusAndBuildResponse(HashMap<String, Object> request) {
         // Extract parameters from request
+        Object requestInfoObj = request.get("requestInfo");
         String tenantId = (String) request.get("tenantId");
         String projectId = (String) request.get("projectId");
         String billingPeriodId = (String) request.get("billingPeriodId");
@@ -1176,8 +1177,14 @@ public class ExpenseCalculatorService {
         log.info("checkBillStatusAndBuildResponse::Processing request - tenantId: {}, projectId: {}, periodId: {}, registerId: {}",
             tenantId, projectId, billingPeriodId, registerId);
 
+        // Parse RequestInfo if available
+        RequestInfo requestInfo = null;
+        if (requestInfoObj != null) {
+            requestInfo = mapper.convertValue(requestInfoObj, RequestInfo.class);
+        }
+
         // Check if bill exists (comprehensive check)
-        boolean isBilled = checkIfBillExists(tenantId, projectId, billingPeriodId, registerId);
+        boolean isBilled = checkIfBillExists(requestInfo, tenantId, projectId, billingPeriodId, registerId);
 
         // Build response
         HashMap<String, Object> response = new HashMap<>();
@@ -1205,21 +1212,26 @@ public class ExpenseCalculatorService {
      * Check if a bill is fully generated and completed for a given period/register.
      * Used by muster-roll service to lock periods/registers after billing.
      *
+     * Uses microservices architecture principles:
+     * - Checks local status table first (fast check)
+     * - Then calls Expense service API to verify actual bill and report completion
+     *
      * A bill is considered fully generated when:
      * 1. Entry exists in eg_expense_bill_gen_status with status = 'SUCCESSFUL'
-     * 2. Entry exists in eg_expense_bill with status = 'ACTIVE'
-     * 3. Bill's additionalDetails.reportDetails.status = 'COMPLETED'
+     * 2. Bill exists in expense service with status = 'ACTIVE' (verified via API)
+     * 3. Bill's additionalDetails.reportDetails.status = 'COMPLETED' (verified via API)
      *
      * V2 Flow: Checks by billingPeriodId if provided
      * V1 Flow: Checks by registerId if billingPeriodId is null (not yet implemented)
      *
+     * @param requestInfo Request info for API calls
      * @param tenantId Tenant ID
      * @param projectId Project ID (campaign number)
      * @param billingPeriodId Billing period ID (V2 - null for V1)
      * @param registerId Register ID (V1 - null for V2)
      * @return true if bill is fully generated and completed, false otherwise
      */
-    public boolean checkIfBillExists(String tenantId, String projectId,
+    public boolean checkIfBillExists(RequestInfo requestInfo, String tenantId, String projectId,
                                      String billingPeriodId, String registerId) {
         log.info("checkIfBillExists::Comprehensive check - tenantId: {}, projectId: {}, periodId: {}, registerId: {}",
             tenantId, projectId, billingPeriodId, registerId);
@@ -1227,16 +1239,24 @@ public class ExpenseCalculatorService {
         try {
             if (billingPeriodId != null && !billingPeriodId.isEmpty()) {
                 // V2 Flow: Comprehensive check for completed bill
-                log.debug("checkIfBillExists::V2 mode - checking both tables + reportDetails");
+                log.debug("checkIfBillExists::V2 mode - using BillUtils API-based check");
 
-                // Use comprehensive check: status table + bill table + report status
-                boolean exists = expenseCalculatorRepository.isCompletedBillGeneratedForPeriod(
-                    projectId, billingPeriodId, tenantId);
+                if (requestInfo == null) {
+                    log.warn("checkIfBillExists::No requestInfo provided, falling back to status table check only");
+                    // Fallback: Check status table only (partial check)
+                    boolean exists = expenseCalculatorRepository.isCompletedBillGeneratedForPeriod(
+                        projectId, billingPeriodId, tenantId);
+                    return exists;
+                }
+
+                // Use comprehensive check via BillUtils: status table + expense service API
+                boolean exists = billUtils.isCompletedBillGeneratedForPeriod(
+                    requestInfo, projectId, billingPeriodId, tenantId);
 
                 if (exists) {
-                    log.info("checkIfBillExists::V2 result - BILL FULLY GENERATED AND COMPLETED (status=SUCCESSFUL, bill=ACTIVE, report=COMPLETED)");
+                    log.info("checkIfBillExists::V2 result - BILL FULLY COMPLETED (status + bill + report verified via API)");
                 } else {
-                    log.info("checkIfBillExists::V2 result - Bill NOT fully completed (missing status/bill/report)");
+                    log.info("checkIfBillExists::V2 result - Bill NOT fully completed");
                 }
 
                 return exists;

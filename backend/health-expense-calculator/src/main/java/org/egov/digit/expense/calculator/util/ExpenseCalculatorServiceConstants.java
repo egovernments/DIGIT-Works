@@ -90,4 +90,6 @@ public class ExpenseCalculatorServiceConstants {
     public static final String REPORT_STATUS_COMPLETED = "COMPLETED";
     public static final String REPORT_STATUS_PENDING = "PENDING";
     public static final String REPORT_STATUS_FAILED = "FAILED";
+
+    public static final String EXPENSE_WAGES_BUSINESS_SERVICE = "EXPENSE.WAGES";
 }

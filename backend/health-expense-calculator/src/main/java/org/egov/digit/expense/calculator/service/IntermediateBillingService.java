@@ -218,8 +218,9 @@ public class IntermediateBillingService {
 
             try {
                 // Step 4a: Check if bill already generated for this project+period (duplicate prevention)
-                if (isBillGeneratedForProjectPeriod(projectId, period)) {
-                    log.info("Bill already generated for project {} period {}, skipping",
+                // Uses comprehensive check: status table + expense service API + report completion
+                if (isBillGeneratedForProjectPeriod(requestInfo, projectId, period, criteria.getTenantId())) {
+                    log.info("Bill already FULLY COMPLETED for project {} period {}, skipping",
                             projectId, period.getPeriodNumber());
                     continue;
                 }
@@ -279,7 +280,8 @@ public class IntermediateBillingService {
         intermediateBillingValidator.validatePeriodForProcessing(period);
 
         // Step 1.1: Validate sequential billing (previous periods must be billed first)
-        validateSequentialBillingForProject(projectId, period, criteria.getTenantId());
+        // Uses comprehensive check: validates actual bill existence and report completion
+        validateSequentialBillingForProject(requestInfo, projectId, period, criteria.getTenantId());
 
         // Step 2: Fetch registers overlapping with period dates
         List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
@@ -348,37 +350,73 @@ public class IntermediateBillingService {
     }
 
     /**
-     * Check if bill already generated for a specific project+period combination
+     * Check if bill already generated and FULLY COMPLETED for a specific project+period combination
      * Used for duplicate prevention in V2
      *
+     * This is a COMPREHENSIVE check that validates:
+     * 1. Status table has SUCCESSFUL entry
+     * 2. Actual bill exists in expense service (via API call)
+     * 3. Bill status is ACTIVE
+     * 4. Report generation is COMPLETED
+     *
+     * Following microservices architecture principles by calling Expense service API
+     * instead of directly querying its database table.
+     *
+     * @param requestInfo Request info for API calls
      * @param projectId Project reference ID
      * @param period Billing period
-     * @return true if bill already generated for this project+period, false otherwise
+     * @param tenantId Tenant ID
+     * @return true if bill is fully generated and completed, false otherwise
      */
-    private boolean isBillGeneratedForProjectPeriod(String projectId, BillingPeriod period) {
-        // Query bill_gen_status table for this project+period combination
-        boolean billExists = expenseCalculatorRepository.isBillGeneratedForProjectPeriod(
+    private boolean isBillGeneratedForProjectPeriod(RequestInfo requestInfo, String projectId,
+                                                    BillingPeriod period, String tenantId) {
+        // Step 1: Quick check - is there a SUCCESSFUL status entry? (fast local DB check)
+        boolean statusExists = expenseCalculatorRepository.isBillGeneratedForProjectPeriod(
             projectId,
             period.getId()
         );
 
-        if (billExists) {
-            log.info("Bill already generated for project {} period {}", projectId, period.getPeriodNumber());
+        if (!statusExists) {
+            log.info("No status entry found for project {} period {}", projectId, period.getPeriodNumber());
+            return false; // No status entry, definitely not billed
         }
 
-        return billExists;
+        // Step 2: Comprehensive check - verify actual bill and report completion via API
+        boolean isFullyCompleted = billUtils.isCompletedBillGeneratedForPeriod(
+            requestInfo,
+            projectId,
+            period.getId(),
+            tenantId
+        );
+
+        if (isFullyCompleted) {
+            log.info("Bill FULLY COMPLETED for project {} period {} (status + bill + report verified)",
+                    projectId, period.getPeriodNumber());
+        } else {
+            log.warn("Status shows SUCCESSFUL but bill/report not completed for project {} period {}. " +
+                    "This could indicate a partial failure. Allowing re-generation.",
+                    projectId, period.getPeriodNumber());
+        }
+
+        return isFullyCompleted;
     }
 
     /**
      * Validate sequential billing for a project
-     * Ensures periods are billed in order - Period N cannot be billed unless all periods 1 to N-1 are billed
+     * Ensures periods are billed in order - Period N cannot be billed unless all periods 1 to N-1 are FULLY COMPLETED
      *
+     * Uses comprehensive check via Expense service API to verify:
+     * - Bill exists with ACTIVE status
+     * - Report generation is COMPLETED
+     *
+     * @param requestInfo Request info for API calls
      * @param projectId Project reference ID
      * @param period Period to be billed
      * @param tenantId Tenant ID
      * @throws CustomException if sequential validation fails
      */
-    private void validateSequentialBillingForProject(String projectId, BillingPeriod period, String tenantId) {
+    private void validateSequentialBillingForProject(RequestInfo requestInfo, String projectId,
+                                                     BillingPeriod period, String tenantId) {
         Integer currentPeriodNumber = period.getPeriodNumber();
 
         // Period 1 can always be billed (no previous periods)
@@ -387,33 +425,37 @@ public class IntermediateBillingService {
             return;
         }
 
-        log.info("Validating sequential billing for project {} period {}", projectId, currentPeriodNumber);
+        log.info("Validating sequential billing for project {} period {} (using comprehensive check)",
+                projectId, currentPeriodNumber);
 
-        // Get all billed period numbers for this project
-        List<Integer> billedPeriods = expenseCalculatorRepository.getBilledPeriodNumbersForProject(
+        // Get all FULLY COMPLETED period numbers for this project
+        // This calls Expense service API to verify bills and reports are truly completed
+        List<Integer> completedPeriods = billUtils.getCompletedPeriodNumbersForProject(
+            requestInfo,
             projectId,
             tenantId
         );
 
-        log.info("Project {} has {} billed periods: {}", projectId, billedPeriods.size(), billedPeriods);
+        log.info("Project {} has {} FULLY COMPLETED periods: {}", projectId, completedPeriods.size(), completedPeriods);
 
-        // Check if all previous periods (1 to N-1) are billed
+        // Check if all previous periods (1 to N-1) are fully completed
         for (int i = 1; i < currentPeriodNumber; i++) {
-            if (!billedPeriods.contains(i)) {
+            if (!completedPeriods.contains(i)) {
                 String errorMsg = String.format(
-                    "Cannot bill period %d for project %s. Period %d must be billed first. " +
-                    "Periods must be billed sequentially. Currently billed periods: %s",
+                    "Cannot bill period %d for project %s. Period %d must be FULLY COMPLETED first " +
+                    "(bill generated AND report completed). " +
+                    "Periods must be billed sequentially. Currently completed periods: %s",
                     currentPeriodNumber,
                     projectId,
                     i,
-                    billedPeriods.isEmpty() ? "None" : billedPeriods.toString()
+                    completedPeriods.isEmpty() ? "None" : completedPeriods.toString()
                 );
                 log.error(errorMsg);
                 throw new CustomException("SEQUENTIAL_BILLING_VIOLATION", errorMsg);
             }
         }
 
-        log.info("Sequential billing validation passed for project {} period {}",
+        log.info("Sequential billing validation passed for project {} period {} - all previous periods completed",
             projectId, currentPeriodNumber);
     }
 

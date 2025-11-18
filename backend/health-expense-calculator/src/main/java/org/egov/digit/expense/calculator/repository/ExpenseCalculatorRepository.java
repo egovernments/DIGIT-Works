@@ -268,6 +268,16 @@ public class ExpenseCalculatorRepository {
      * @param periodId Billing period ID
      * @return true if bill exists with SUCCESSFUL status, false otherwise
      */
+    /**
+     * DEPRECATED: Use comprehensive check via BillUtils.isCompletedBillGeneratedForPeriod() instead
+     * This method only checks the local status table, not the actual bill or report completion.
+     *
+     * Check if bill generation status exists for project+period (status table only check)
+     * This is a PARTIAL check - does NOT verify actual bill or report completion.
+     *
+     * For comprehensive checks, use BillUtils.isCompletedBillGeneratedForPeriod()
+     */
+    @Deprecated
     public boolean isBillGeneratedForProjectPeriod(String projectId, String periodId) {
         String sql = "SELECT COUNT(*) FROM eg_expense_bill_gen_status " +
                 "WHERE referenceid = :projectId " +
