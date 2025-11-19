@@ -191,14 +191,46 @@ public class AttendanceRegisterService {
         log.info("Fetching registers based on supplied search criteria");
 
         // SPECIAL CASE: billingPeriodId = "AGGREGATE"
-        // When aggregate billing is requested, automatically filter by reviewStatus = "APPROVED"
-        // This indicates all periods have bills generated and project is ready for aggregate billing
+        // When aggregate billing is requested, fall back to V1 search using reviewStatus
+        // This allows filtering registers by their review status for aggregate bill generation
         boolean hasBillingPeriodId = StringUtils.isNotBlank(searchCriteria.getBillingPeriodId());
-        if (hasBillingPeriodId && "AGGREGATE".equalsIgnoreCase(searchCriteria.getBillingPeriodId())) {
-            log.info("AGGREGATE billing period detected - filtering by reviewStatus=APPROVED");
-            searchCriteria.setReviewStatus("APPROVED");
-            searchCriteria.setBillingPeriodId(null); // Clear billingPeriodId to use V1 flow
-            log.info("Converted AGGREGATE request to V1 search with reviewStatus=APPROVED");
+        boolean hasRegisterPeriodStatus = StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus());
+
+        if (hasBillingPeriodId && BILLING_PERIOD_AGGREGATE.equalsIgnoreCase(searchCriteria.getBillingPeriodId())) {
+            log.info("{} billing period detected - falling back to V1 search", BILLING_PERIOD_AGGREGATE);
+
+            // Map registerPeriodStatus to reviewStatus for V1 search
+            if (hasRegisterPeriodStatus) {
+                String periodStatus = searchCriteria.getRegisterPeriodStatus();
+
+                // Map the period status to review status
+                if (ATTENDANCE_REGISTER_APPROVED.equalsIgnoreCase(periodStatus)) {
+                    searchCriteria.setReviewStatus(ATTENDANCE_REGISTER_APPROVED);
+                    log.info("Converted {} request with registerPeriodStatus={} to V1 search with reviewStatus={}",
+                            BILLING_PERIOD_AGGREGATE, ATTENDANCE_REGISTER_APPROVED, ATTENDANCE_REGISTER_APPROVED);
+                } else if (ATTENDANCE_REGISTER_PENDINGFORAPPROVAL.equalsIgnoreCase(periodStatus) ||
+                           REGISTER_PERIOD_STATUS_PENDING.equalsIgnoreCase(periodStatus)) {
+                    searchCriteria.setReviewStatus(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL);
+                    log.info("Converted {} request with registerPeriodStatus={} to V1 search with reviewStatus={}",
+                            BILLING_PERIOD_AGGREGATE, periodStatus, ATTENDANCE_REGISTER_PENDINGFORAPPROVAL);
+                } else {
+                    log.warn("Invalid registerPeriodStatus value: {}. Must be {} or {}. Defaulting to {}.",
+                            periodStatus, ATTENDANCE_REGISTER_APPROVED, ATTENDANCE_REGISTER_PENDINGFORAPPROVAL, ATTENDANCE_REGISTER_APPROVED);
+                    searchCriteria.setReviewStatus(ATTENDANCE_REGISTER_APPROVED);
+                }
+            } else {
+                // If no registerPeriodStatus provided, default to APPROVED (original behavior)
+                log.info("No registerPeriodStatus provided with {} - defaulting to reviewStatus={}",
+                        BILLING_PERIOD_AGGREGATE, ATTENDANCE_REGISTER_APPROVED);
+                searchCriteria.setReviewStatus(ATTENDANCE_REGISTER_APPROVED);
+            }
+
+            // Clear V2 parameters to ensure V1 flow
+            searchCriteria.setBillingPeriodId(null);
+            searchCriteria.setRegisterPeriodStatus(null);
+
+            log.info("{} request converted to V1 search with reviewStatus={}",
+                    BILLING_PERIOD_AGGREGATE, searchCriteria.getReviewStatus());
         }
 
         // IMPORTANT: reviewStatus takes priority over V2 logic

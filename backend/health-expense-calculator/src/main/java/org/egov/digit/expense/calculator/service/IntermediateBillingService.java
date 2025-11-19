@@ -1505,7 +1505,7 @@ public class IntermediateBillingService {
      * - OTHER periods → reviewStatus = "PENDINGFORAPPROVAL" (bill generated, more periods pending)
      *
      * @param requestInfo Request info
-     * @param projectId Project reference ID
+     * @param projectId Project reference ID (may be hierarchical like "parent.child.grandchild")
      * @param period Billing period
      * @param tenantId Tenant ID
      * @param isLastPeriod Whether this is the last period
@@ -1516,16 +1516,24 @@ public class IntermediateBillingService {
         try {
             String reviewStatus = isLastPeriod ? REVIEW_STATUS_APPROVED : REVIEW_STATUS_PENDING_FOR_APPROVAL;
 
-            log.info("Period {} ({}) billed successfully for project {}. Updating register reviewStatus to '{}'",
+            log.info("Period {} ({}) billed successfully for project hierarchy {}. Updating register reviewStatus to '{}'",
                     period.getPeriodNumber(),
                     isLastPeriod ? "LAST" : "INTERMEDIATE",
                     projectId,
                     reviewStatus);
 
-            attendanceUtil.updateRegisterReviewStatus(requestInfo, projectId, tenantId, reviewStatus);
+            // Extract last project ID from hierarchical project string
+            // Example: "980326fe-8720-409c-8899-6af590cb0e13.2887850b-6b44-46ae-8032-ba24a4c6bdb8.97812602-6855-460a-8940-0e14ee43b25f"
+            // Should extract: "97812602-6855-460a-8940-0e14ee43b25f"
+            String actualProjectId = extractLastProjectIdFromHierarchy(projectId);
+
+            log.info("Extracted actual project ID '{}' from hierarchy '{}' for attendance register update",
+                    actualProjectId, projectId);
+
+            attendanceUtil.updateRegisterReviewStatus(requestInfo, actualProjectId, tenantId, reviewStatus);
 
             log.info("Successfully updated attendance register reviewStatus to '{}' for project {} after period {}",
-                    reviewStatus, projectId, period.getPeriodNumber());
+                    reviewStatus, actualProjectId, period.getPeriodNumber());
 
         } catch (Exception e) {
             // Log error but don't fail the bill generation
@@ -1534,5 +1542,57 @@ public class IntermediateBillingService {
             log.warn("Bill generation was successful, but register reviewStatus update failed. " +
                     "This may need manual intervention.");
         }
+    }
+
+    /**
+     * Extract the last project ID from a hierarchical project string.
+     * Project hierarchies are represented as dot-separated IDs where the last ID
+     * is the actual leaf project.
+     *
+     * Examples:
+     * - "parent.child.grandchild" → "grandchild"
+     * - "single-project-id" → "single-project-id"
+     * - null or empty → throws exception
+     *
+     * @param projectHierarchy Project hierarchy string (may contain dots)
+     * @return Last project ID from the hierarchy
+     * @throws CustomException if projectHierarchy is null or empty
+     */
+    private String extractLastProjectIdFromHierarchy(String projectHierarchy) {
+        // Handle null or empty
+        if (projectHierarchy == null || projectHierarchy.trim().isEmpty()) {
+            log.error("Cannot extract project ID from null or empty hierarchy");
+            throw new CustomException("INVALID_PROJECT_ID",
+                    "Project hierarchy is null or empty. Cannot update attendance registers.");
+        }
+
+        String trimmedHierarchy = projectHierarchy.trim();
+
+        // Check if hierarchy contains dots (hierarchical structure)
+        if (trimmedHierarchy.contains(".")) {
+            String[] hierarchyParts = trimmedHierarchy.split("\\.");
+
+            // Filter out empty parts (edge case: trailing or leading dots)
+            String lastProjectId = null;
+            for (int i = hierarchyParts.length - 1; i >= 0; i--) {
+                if (hierarchyParts[i] != null && !hierarchyParts[i].trim().isEmpty()) {
+                    lastProjectId = hierarchyParts[i].trim();
+                    break;
+                }
+            }
+
+            if (lastProjectId == null || lastProjectId.isEmpty()) {
+                log.error("Failed to extract valid project ID from hierarchy: {}", trimmedHierarchy);
+                throw new CustomException("INVALID_PROJECT_HIERARCHY",
+                        "Could not extract valid project ID from hierarchy: " + trimmedHierarchy);
+            }
+
+            log.debug("Extracted last project ID '{}' from hierarchy '{}'", lastProjectId, trimmedHierarchy);
+            return lastProjectId;
+        }
+
+        // No dots - single project ID
+        log.debug("Project hierarchy '{}' is a single project ID (no hierarchy)", trimmedHierarchy);
+        return trimmedHierarchy;
     }
 }

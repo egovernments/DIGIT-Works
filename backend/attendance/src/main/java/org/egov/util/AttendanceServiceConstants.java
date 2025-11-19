@@ -11,6 +11,10 @@ public class AttendanceServiceConstants {
     public static final String STAFF_NAME = "staffName";
     public static final String OWNER_NAME = "ownerName";
 
+    // V2 Billing Constants
+    public static final String BILLING_PERIOD_AGGREGATE = "AGGREGATE";
+    public static final String REGISTER_PERIOD_STATUS_PENDING = "PENDING";
+
     // Error Keys
     public static final String ERROR_KEY_ID = "ID_MISSING";
     public static final String ERROR_KEY_TENANT_ID = "TENANT_ID_MISSING";
