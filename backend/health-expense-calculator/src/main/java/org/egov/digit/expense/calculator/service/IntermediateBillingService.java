@@ -347,7 +347,7 @@ public class IntermediateBillingService {
 
         // Step 8: Submit bill to expense service
         Bill submittedBill = submitPeriodBill(requestInfo, periodBill, period, projectId,
-                periodRegisters.size(), musterRolls.size());
+                periodRegisters.size(), musterRolls.size(), criteria);
 
         return submittedBill;
     }
@@ -694,10 +694,11 @@ public class IntermediateBillingService {
      * @param projectId Project reference ID
      * @param registerCount Number of registers
      * @param musterRollCount Number of muster rolls
+     * @param criteria Original request criteria (contains referenceId and localityCode from request)
      * @return Submitted bill from expense service
      */
     private Bill submitPeriodBill(RequestInfo requestInfo, Bill bill, BillingPeriod period,
-                                  String projectId, int registerCount, int musterRollCount) {
+                                  String projectId, int registerCount, int musterRollCount, Criteria criteria) {
         log.info("Submitting bill for project {} period {} (bill has {} details)",
                 projectId, period.getPeriodNumber(),
                 bill.getBillDetails() != null ? bill.getBillDetails().size() : 0);
@@ -783,9 +784,9 @@ public class IntermediateBillingService {
                     // - If LAST period → reviewStatus = "APPROVED" (ready for aggregate billing)
                     // - If OTHER period → reviewStatus = "PENDINGFORAPPROVAL" (bill generated, more periods pending)
                     // This is done AFTER report trigger to ensure full workflow is initiated
-                    // IMPORTANT: Use bill.getReferenceId() (actual project ID) not projectId (which could be hierarchy)
+                    // IMPORTANT: Use criteria.getReferenceId() from original request (not bill.getReferenceId() which could be hierarchical)
                     boolean isLast = isLastPeriod(period, bill.getTenantId());
-                    updateRegisterReviewStatusAfterPeriodBill(requestInfo, bill.getReferenceId(), period, bill.getTenantId(), isLast);
+                    updateRegisterReviewStatusAfterPeriodBill(requestInfo, criteria.getReferenceId(), period, bill.getTenantId(), isLast, criteria.getLocalityCode());
 
                     return submittedBill;
                 } else {
@@ -1505,35 +1506,29 @@ public class IntermediateBillingService {
      * - OTHER periods → reviewStatus = "PENDINGFORAPPROVAL" (bill generated, more periods pending)
      *
      * @param requestInfo Request info
-     * @param projectId Project reference ID (may be hierarchical like "parent.child.grandchild")
+     * @param projectId Project reference ID from original request (already the correct leaf project ID)
      * @param period Billing period
      * @param tenantId Tenant ID
      * @param isLastPeriod Whether this is the last period
+     * @param localityCode Locality code from request (for attendance register search)
      */
     private void updateRegisterReviewStatusAfterPeriodBill(RequestInfo requestInfo, String projectId,
                                                            BillingPeriod period, String tenantId,
-                                                           boolean isLastPeriod) {
+                                                           boolean isLastPeriod, String localityCode) {
         try {
             String reviewStatus = isLastPeriod ? REVIEW_STATUS_APPROVED : REVIEW_STATUS_PENDING_FOR_APPROVAL;
 
-            log.info("Period {} ({}) billed successfully for project hierarchy {}. Updating register reviewStatus to '{}'",
+            log.info("Period {} ({}) billed successfully for project {}. Updating register reviewStatus to '{}'",
                     period.getPeriodNumber(),
                     isLastPeriod ? "LAST" : "INTERMEDIATE",
                     projectId,
                     reviewStatus);
 
-            // Extract last project ID from hierarchical project string
-            // Example: "980326fe-8720-409c-8899-6af590cb0e13.2887850b-6b44-46ae-8032-ba24a4c6bdb8.97812602-6855-460a-8940-0e14ee43b25f"
-            // Should extract: "97812602-6855-460a-8940-0e14ee43b25f"
-            String actualProjectId = extractLastProjectIdFromHierarchy(projectId);
-
-            log.info("Extracted actual project ID '{}' from hierarchy '{}' for attendance register update",
-                    actualProjectId, projectId);
-
-            attendanceUtil.updateRegisterReviewStatus(requestInfo, actualProjectId, tenantId, reviewStatus);
+            // Use projectId directly from request criteria - it's already the correct project ID
+            attendanceUtil.updateRegisterReviewStatus(requestInfo, projectId, tenantId, reviewStatus, localityCode);
 
             log.info("Successfully updated attendance register reviewStatus to '{}' for project {} after period {}",
-                    reviewStatus, actualProjectId, period.getPeriodNumber());
+                    reviewStatus, projectId, period.getPeriodNumber());
 
         } catch (Exception e) {
             // Log error but don't fail the bill generation

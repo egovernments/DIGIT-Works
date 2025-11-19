@@ -40,12 +40,19 @@ public class AttendanceUtil {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
-                .queryParam("tenantId", tenantId).queryParam("referenceId", referenceId)
-                .queryParam("localityCode", localityCode)
+                .queryParam("tenantId", tenantId)
+                .queryParam("referenceId", referenceId)
                 .queryParam("isChildrenRequired", isChildrenRequired)
                 .queryParam("status", Status.ACTIVE)
                 .queryParam("offset", offset)
                 .queryParam("limit", config.getRegisterBatchSize());
+
+        // Only add localityCode if it's not null/blank
+        // Attendance service validation requires BOTH referenceId AND localityCode or NEITHER
+        if (localityCode != null && !localityCode.trim().isEmpty()) {
+            uriBuilder.queryParam("localityCode", localityCode);
+        }
+
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
         AttendanceRegisterResponse attendanceRegisterResponse = null;
@@ -80,20 +87,22 @@ public class AttendanceUtil {
      * @param projectId Project reference ID
      * @param tenantId Tenant ID
      * @param reviewStatus Review status to set (typically "APPROVED")
+     * @param localityCode Locality code from original request (required for attendance search)
      */
     public void updateRegisterReviewStatus(RequestInfo requestInfo, String projectId,
-                                          String tenantId, String reviewStatus) {
+                                          String tenantId, String reviewStatus, String localityCode) {
         log.info("Updating reviewStatus to '{}' for all registers of project: {}", reviewStatus, projectId);
 
         try {
             // Fetch all registers for this project
+            // Use localityCode from request (if provided) - attendance service requires BOTH referenceId AND localityCode
             List<AttendanceRegister> allRegisters = new ArrayList<>();
             int offset = 0;
             List<AttendanceRegister> batch;
 
             do {
                 batch = fetchAttendanceRegister(projectId, tenantId, requestInfo,
-                        null, false, offset);
+                        localityCode, false, offset);
 
                 if (!CollectionUtils.isEmpty(batch)) {
                     allRegisters.addAll(batch);
