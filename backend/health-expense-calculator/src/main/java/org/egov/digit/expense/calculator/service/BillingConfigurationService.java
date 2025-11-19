@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -397,6 +398,10 @@ public class BillingConfigurationService {
                 "Billing configuration not found for campaign: " + config.getCampaignNumber());
         }
 
+        // Updates cannot modify project timeline. Force incoming dates to existing values.
+        config.setProjectStartDate(existingConfig.getProjectStartDate());
+        config.setProjectEndDate(existingConfig.getProjectEndDate());
+
         // Check if campaign has already started - prevent critical updates after start
         long currentTime = System.currentTimeMillis();
         boolean campaignStarted = currentTime >= existingConfig.getProjectStartDate();
@@ -406,13 +411,14 @@ public class BillingConfigurationService {
             !config.getBillingFrequency().equals(existingConfig.getBillingFrequency());
         boolean customFrequencyChanged = config.getCustomFrequencyDays() != null &&
             !config.getCustomFrequencyDays().equals(existingConfig.getCustomFrequencyDays());
-        boolean startDateChanged = config.getProjectStartDate() != null &&
-            !config.getProjectStartDate().equals(existingConfig.getProjectStartDate());
-        boolean endDateChanged = config.getProjectEndDate() != null &&
-            !config.getProjectEndDate().equals(existingConfig.getProjectEndDate());
+        boolean startDateChanged = false;
+        boolean endDateChanged = false;
 
         boolean configStructureChanged = frequencyChanged || customFrequencyChanged ||
             startDateChanged || endDateChanged;
+
+        // Ensure we carry forward fields that are not present in the update request
+        mergeWithExistingConfig(existingConfig, config);
 
         // Validate: Cannot update config structure after campaign start
         if (campaignStarted && configStructureChanged) {
@@ -520,7 +526,7 @@ public class BillingConfigurationService {
             log.info("Deprecating {} old billing periods", oldPeriods.size());
 
             for (BillingPeriod oldPeriod : oldPeriods) {
-                oldPeriod.setStatus("DEPRECATED");
+                oldPeriod.setIsDeprecated(true);
                 oldPeriod.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                 oldPeriod.setLastModifiedTime(System.currentTimeMillis());
 
@@ -538,10 +544,19 @@ public class BillingConfigurationService {
             log.info("No old periods to deprecate");
         }
 
+        // Determine starting period number for regenerated periods
+        int nextPeriodNumber = oldPeriods != null && !oldPeriods.isEmpty()
+            ? oldPeriods.stream()
+                .map(BillingPeriod::getPeriodNumber)
+                .filter(Objects::nonNull)
+                .max(Integer::compareTo)
+                .orElse(0) + 1
+            : 1;
+
         // Step 2: Generate new periods
         List<BillingPeriod> newPeriods;
         try {
-            newPeriods = periodGenerationService.generatePeriods(newConfig);
+            newPeriods = periodGenerationService.generatePeriods(newConfig, nextPeriodNumber);
             log.info("Generated {} new billing periods", newPeriods.size());
         } catch (Exception e) {
             log.error("Error generating new billing periods", e);
@@ -640,5 +655,45 @@ public class BillingConfigurationService {
 
         log.debug("Enriched billing configuration for update - ID: {}, LastModifiedBy: {}",
             config.getId(), config.getLastModifiedBy());
+    }
+
+    /**
+     * Merges existing configuration values into the update request wherever the request omits fields.
+     *
+     * @param existing Existing billing configuration from DB
+     * @param incoming Incoming update payload
+     */
+    private void mergeWithExistingConfig(BillingConfig existing, BillingConfig incoming) {
+        incoming.setId(existing.getId());
+        incoming.setTenantId(existing.getTenantId());
+        incoming.setProjectId(existing.getProjectId());
+        incoming.setCampaignNumber(existing.getCampaignNumber());
+
+        if (incoming.getBillingFrequency() == null) {
+            incoming.setBillingFrequency(existing.getBillingFrequency());
+        }
+
+        if (incoming.getCustomFrequencyDays() == null) {
+            incoming.setCustomFrequencyDays(existing.getCustomFrequencyDays());
+        }
+
+        incoming.setProjectStartDate(existing.getProjectStartDate());
+        incoming.setProjectEndDate(existing.getProjectEndDate());
+
+        if (incoming.getStatus() == null) {
+            incoming.setStatus(existing.getStatus());
+        }
+
+        if (incoming.getAdditionalDetails() == null) {
+            incoming.setAdditionalDetails(existing.getAdditionalDetails());
+        }
+
+        if (incoming.getCreatedBy() == null) {
+            incoming.setCreatedBy(existing.getCreatedBy());
+        }
+
+        if (incoming.getCreatedTime() == null) {
+            incoming.setCreatedTime(existing.getCreatedTime());
+        }
     }
 }

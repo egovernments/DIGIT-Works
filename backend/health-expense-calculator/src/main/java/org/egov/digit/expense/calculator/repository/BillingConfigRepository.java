@@ -326,6 +326,10 @@ public class BillingConfigRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         preparedStmtList.add(criteria.getTenantId());
 
+        if (criteria.shouldExcludeDeprecated()) {
+            countQuery.append(" AND bp.is_deprecated = false");
+        }
+
         // Add same filters as search query (without pagination)
         if (criteria.getIds() != null && !criteria.getIds().isEmpty()) {
             countQuery.append(" AND bp.id IN (");
@@ -439,6 +443,7 @@ public class BillingConfigRepository {
             "muster_roll_count = :musterRollCount, " +
             "last_modified_by = :lastModifiedBy, " +
             "last_modified_time = :lastModifiedTime, " +
+            "is_deprecated = :isDeprecated, " +
             "additional_details = :additionalDetails::jsonb " +
             "WHERE id = :id AND tenant_id = :tenantId";
 
@@ -453,6 +458,7 @@ public class BillingConfigRepository {
         params.put("musterRollCount", period.getMusterRollCount());
         params.put("lastModifiedBy", period.getLastModifiedBy());
         params.put("lastModifiedTime", period.getLastModifiedTime());
+        params.put("isDeprecated", period.getIsDeprecated() != null ? period.getIsDeprecated() : false);
         params.put("additionalDetails", convertAdditionalDetailsToJson(period.getAdditionalDetails()));
 
         int rowsUpdated = namedParameterJdbcTemplate.update(sql, params);

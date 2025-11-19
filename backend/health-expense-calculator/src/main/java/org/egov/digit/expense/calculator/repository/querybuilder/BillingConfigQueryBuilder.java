@@ -143,6 +143,8 @@ public class BillingConfigQueryBuilder {
         queryBuilder.append(" AND bp.campaign_number = ? ");
         preparedStmtList.add(campaignNumber);
 
+        queryBuilder.append(" AND bp.is_deprecated = false ");
+
         // Order by period number
         queryBuilder.append(" ORDER BY bp.period_number ASC ");
 
@@ -163,6 +165,8 @@ public class BillingConfigQueryBuilder {
 
         queryBuilder.append(" WHERE bp.billing_config_id = ? ");
         preparedStmtList.add(billingConfigId);
+
+        queryBuilder.append(" AND bp.is_deprecated = false ");
 
         // Order by period number
         queryBuilder.append(" ORDER BY bp.period_number ASC ");
@@ -186,6 +190,8 @@ public class BillingConfigQueryBuilder {
         queryBuilder.append(" WHERE bp.tenant_id = ? ");
         preparedStmtList.add(criteria.getTenantId());
 
+        boolean excludeDeprecated = criteria.shouldExcludeDeprecated();
+
         // Filter by IDs
         if (criteria.getIds() != null && !criteria.getIds().isEmpty()) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
@@ -193,6 +199,11 @@ public class BillingConfigQueryBuilder {
                        .append(createQuery(criteria.getIds()))
                        .append(") ");
             addToPreparedStatement(preparedStmtList, criteria.getIds());
+        }
+
+        if (excludeDeprecated) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" bp.is_deprecated = false ");
         }
 
         // Filter by billing config ID

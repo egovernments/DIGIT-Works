@@ -57,8 +57,12 @@ public class PeriodGenerationService {
      * @throws CustomException if period generation fails
      */
     public List<BillingPeriod> generatePeriods(BillingConfig config) {
-        log.info("Generating billing periods for campaign: {} with frequency: {}",
-            config.getCampaignNumber(), config.getBillingFrequency());
+        return generatePeriods(config, 1);
+    }
+
+    public List<BillingPeriod> generatePeriods(BillingConfig config, int startingPeriodNumber) {
+        log.info("Generating billing periods for campaign: {} with frequency: {} starting from period {}",
+            config.getCampaignNumber(), config.getBillingFrequency(), startingPeriodNumber);
 
         validateConfig(config);
 
@@ -67,23 +71,23 @@ public class PeriodGenerationService {
 
         switch (frequency) {
             case WEEKLY:
-                periods = generateWeeklyPeriods(config);
+                periods = generateWeeklyPeriods(config, startingPeriodNumber);
                 break;
 
             case BI_WEEKLY:
-                periods = generateBiWeeklyPeriods(config);
+                periods = generateBiWeeklyPeriods(config, startingPeriodNumber);
                 break;
 
             case MONTHLY:
-                periods = generateMonthlyPeriods(config);
+                periods = generateMonthlyPeriods(config, startingPeriodNumber);
                 break;
 
             case CUSTOM:
-                periods = generateCustomPeriods(config);
+                periods = generateCustomPeriods(config, startingPeriodNumber);
                 break;
 
             case END_OF_CAMPAIGN:
-                periods = generateEndOfCampaignPeriod(config);
+                periods = generateEndOfCampaignPeriod(config, startingPeriodNumber);
                 break;
 
             default:
@@ -103,9 +107,9 @@ public class PeriodGenerationService {
      * @param config Billing configuration
      * @return List of weekly periods
      */
-    private List<BillingPeriod> generateWeeklyPeriods(BillingConfig config) {
+    private List<BillingPeriod> generateWeeklyPeriods(BillingConfig config, int startingPeriodNumber) {
         log.info("Generating weekly periods");
-        return generateFixedDurationPeriods(config, ONE_WEEK_MS, BillingFrequency.WEEKLY);
+        return generateFixedDurationPeriods(config, ONE_WEEK_MS, BillingFrequency.WEEKLY, startingPeriodNumber);
     }
 
     /**
@@ -114,9 +118,9 @@ public class PeriodGenerationService {
      * @param config Billing configuration
      * @return List of bi-weekly periods
      */
-    private List<BillingPeriod> generateBiWeeklyPeriods(BillingConfig config) {
+    private List<BillingPeriod> generateBiWeeklyPeriods(BillingConfig config, int startingPeriodNumber) {
         log.info("Generating bi-weekly periods");
-        return generateFixedDurationPeriods(config, TWO_WEEKS_MS, BillingFrequency.BI_WEEKLY);
+        return generateFixedDurationPeriods(config, TWO_WEEKS_MS, BillingFrequency.BI_WEEKLY, startingPeriodNumber);
     }
 
     /**
@@ -128,9 +132,9 @@ public class PeriodGenerationService {
      * @param config Billing configuration
      * @return List of monthly periods
      */
-    private List<BillingPeriod> generateMonthlyPeriods(BillingConfig config) {
+    private List<BillingPeriod> generateMonthlyPeriods(BillingConfig config, int startingPeriodNumber) {
         log.info("Generating monthly periods (30-day intervals)");
-        return generateFixedDurationPeriods(config, THIRTY_DAYS_MS, BillingFrequency.MONTHLY);
+        return generateFixedDurationPeriods(config, THIRTY_DAYS_MS, BillingFrequency.MONTHLY, startingPeriodNumber);
     }
 
     /**
@@ -139,7 +143,7 @@ public class PeriodGenerationService {
      * @param config Billing configuration
      * @return List of custom frequency periods
      */
-    private List<BillingPeriod> generateCustomPeriods(BillingConfig config) {
+    private List<BillingPeriod> generateCustomPeriods(BillingConfig config, int startingPeriodNumber) {
         if (config.getCustomFrequencyDays() == null) {
             throw new CustomException("CUSTOM_FREQUENCY_DAYS_REQUIRED",
                 "Custom frequency days is required for CUSTOM billing frequency");
@@ -147,7 +151,7 @@ public class PeriodGenerationService {
 
         log.info("Generating custom periods with {} days frequency", config.getCustomFrequencyDays());
         long customDurationMs = config.getCustomFrequencyDays() * ONE_DAY_MS;
-        return generateFixedDurationPeriods(config, customDurationMs, BillingFrequency.CUSTOM);
+        return generateFixedDurationPeriods(config, customDurationMs, BillingFrequency.CUSTOM, startingPeriodNumber);
     }
 
     /**
@@ -158,7 +162,7 @@ public class PeriodGenerationService {
      * @param config Billing configuration
      * @return List containing single period
      */
-    private List<BillingPeriod> generateEndOfCampaignPeriod(BillingConfig config) {
+    private List<BillingPeriod> generateEndOfCampaignPeriod(BillingConfig config, int startingPeriodNumber) {
         log.info("Generating end of campaign period (single period for entire campaign)");
 
         List<BillingPeriod> periods = new ArrayList<>();
@@ -169,7 +173,7 @@ public class PeriodGenerationService {
             .projectId(config.getProjectId())
             .campaignNumber(config.getCampaignNumber())
             .billingConfigId(config.getId())
-            .periodNumber(1)
+            .periodNumber(startingPeriodNumber)
             .periodStartDate(config.getProjectStartDate())
             .periodEndDate(config.getProjectEndDate())
             .billingFrequency(BillingFrequency.END_OF_CAMPAIGN)
@@ -214,13 +218,14 @@ public class PeriodGenerationService {
      */
     private List<BillingPeriod> generateFixedDurationPeriods(BillingConfig config,
                                                             long periodDurationMs,
-                                                            BillingFrequency frequencyType) {
+                                                            BillingFrequency frequencyType,
+                                                            int startingPeriodNumber) {
         List<BillingPeriod> periods = new ArrayList<>();
 
         long projectStartMs = config.getProjectStartDate();
         long projectEndMs = config.getProjectEndDate();
 
-        int periodNumber = 1;
+        int periodNumber = startingPeriodNumber;
         long currentStart = projectStartMs;
 
         // Generate periods until we reach project end date

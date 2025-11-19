@@ -109,6 +109,10 @@ public class BillingPeriodSearchCriteria {
     @Schema(description = "Number of results to skip", example = "0", defaultValue = "0")
     private Integer offset;
 
+    @JsonProperty("includeDeprecated")
+    @Schema(description = "Include deprecated billing periods in search results", example = "false", defaultValue = "false")
+    private Boolean includeDeprecated;
+
     /**
      * Get limit with default value.
      *
@@ -134,5 +138,14 @@ public class BillingPeriodSearchCriteria {
      */
     public boolean hasFilterByBill() {
         return hasBill != null;
+    }
+
+    /**
+     * Determines if deprecated periods should be excluded from search results.
+     *
+     * @return true if deprecated periods must be filtered out
+     */
+    public boolean shouldExcludeDeprecated() {
+        return includeDeprecated == null || !includeDeprecated;
     }
 }
