@@ -62,6 +62,9 @@ public class MusterRollServiceConfiguration {
     private String updateMusterRollTopic;
     @Value("${musterroll.kafka.calculate.topic}")
     private String calculateMusterRollTopic;
+    // V2 Intermediate Billing - Event-driven status updates
+    @Value("${musterroll.kafka.status.update.topic}")
+    private String musterRollStatusUpdateTopic;
 
     //search config
     @Value("${musterroll.default.offset}")

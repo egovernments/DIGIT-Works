@@ -25,6 +25,7 @@ import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.web.models.MusterRollSearchCriteria;
+import org.egov.web.models.MusterRollStatusUpdateEvent;
 import org.egov.works.services.common.models.musterroll.Status;
 import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,6 +149,9 @@ public class MusterRollService {
         } else {
             musterRoll.setMusterRollStatus(config.getMusterRollNoWorkflowCreateStatus());
         }
+
+        // V2 Intermediate Billing - Publish status update event for newly created muster (V2 only)
+        publishMusterRollStatusUpdateEvent(musterRoll, null);
 
         // Save muster roll
         musterRollProducer.push(musterRoll.getTenantId(), serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
@@ -319,9 +323,16 @@ public class MusterRollService {
             musterRollValidator.isValidUser(existingMusterRoll, requestInfo);
             calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
+
+        // V2 Intermediate Billing - Capture previous status before workflow update
+        String previousStatus = musterRollRequest.getMusterRoll().getMusterRollStatus();
+
         if(config.isMusterRollWorkflowEnabled()) {
             workflowService.updateWorkflowStatus(musterRollRequest);
         }
+
+        // V2 Intermediate Billing - Publish status update event (for V2 muster rolls only)
+        publishMusterRollStatusUpdateEvent(musterRollRequest.getMusterRoll(), previousStatus);
         // Update attendance register status on muster approval
         // V1 Flow: Update register.reviewStatus = "APPROVED" (1:1 mapping)
         // V2 Flow: Skip register update (1:many mapping - register spans multiple periods)
@@ -564,6 +575,52 @@ public class MusterRollService {
         return attendanceRegisters.stream()
                 .map(AttendanceRegister::getId)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * V2 Intermediate Billing - Publish Muster Roll Status Update Event
+     *
+     * Publishes a Kafka event when muster roll status changes.
+     * Consumed by attendance service to update period_statuses asynchronously.
+     *
+     * This eliminates the need for synchronous API calls during attendance search,
+     * improving scalability and performance.
+     *
+     * @param musterRoll The muster roll with updated status
+     * @param previousStatus The previous status (for audit/logging)
+     */
+    private void publishMusterRollStatusUpdateEvent(MusterRoll musterRoll, String previousStatus) {
+        // Only publish for V2 muster rolls (with billingPeriodId)
+        if (StringUtils.isBlank(musterRoll.getBillingPeriodId())) {
+            log.debug("publishMusterRollStatusUpdateEvent::Skipping event for V1 muster roll: {}", musterRoll.getId());
+            return;
+        }
+
+        try {
+            MusterRollStatusUpdateEvent event = MusterRollStatusUpdateEvent.builder()
+                    .musterRollId(musterRoll.getId())
+                    .registerId(musterRoll.getRegisterId())
+                    .billingPeriodId(musterRoll.getBillingPeriodId())
+                    .status(musterRoll.getMusterRollStatus())
+                    .tenantId(musterRoll.getTenantId())
+                    .eventTime(System.currentTimeMillis())
+                    .previousStatus(previousStatus)
+                    .referenceId(musterRoll.getReferenceId())
+                    .additionalDetails(musterRoll.getAdditionalDetails())
+                    .build();
+
+            String topic = serviceConfiguration.getMusterRollStatusUpdateTopic();
+            log.info("publishMusterRollStatusUpdateEvent::Publishing event to topic: {} for muster: {} period: {} status: {}",
+                    topic, musterRoll.getId(), musterRoll.getBillingPeriodId(), musterRoll.getMusterRollStatus());
+
+            musterRollProducer.push(musterRoll.getTenantId(), topic, event);
+
+            log.info("publishMusterRollStatusUpdateEvent::Event published successfully for muster: {}", musterRoll.getId());
+        } catch (Exception e) {
+            // Log error but don't fail the main workflow
+            log.error("publishMusterRollStatusUpdateEvent::Failed to publish status update event for muster: {} - Error: {}",
+                    musterRoll.getId(), e.getMessage(), e);
+        }
     }
 
     /**

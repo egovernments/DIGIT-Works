@@ -1,10 +1,12 @@
 package org.egov.repository.rowmapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegister;
+import org.egov.web.models.RegisterPeriodStatus;
 import org.egov.web.models.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,9 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
 
             JsonNode additionalDetails = getAdditionalDetail("additionaldetails", rs);
 
+            // V2 Intermediate Billing - Parse period_statuses JSONB array
+            List<RegisterPeriodStatus> periodStatuses = getPeriodStatuses("period_statuses", rs);
+
             AttendanceRegister attendanceRegister = AttendanceRegister.builder()
                     .additionalDetails(additionalDetails)
                     .id(id)
@@ -74,6 +79,7 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
                     .auditDetails(auditDetails)
                     .localityCode(localityCode)
                     .reviewStatus(reviewstatus)
+                    .periodStatuses(periodStatuses)
                     .build();
 
             if (!attendanceRegisterMap.containsKey(id)) {
@@ -97,5 +103,35 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
         if (additionalDetails.isEmpty())
             additionalDetails = null;
         return additionalDetails;
+    }
+
+    /**
+     * V2 Intermediate Billing - Parse period_statuses JSONB array
+     *
+     * Parses the period_statuses JSONB column into a List of RegisterPeriodStatus objects.
+     * Returns null if the column is NULL or empty array.
+     *
+     * @param columnName The name of the JSONB column to parse
+     * @param rs The ResultSet containing the query results
+     * @return List of RegisterPeriodStatus objects, or null if empty
+     * @throws SQLException If there's an error reading the column
+     */
+    private List<RegisterPeriodStatus> getPeriodStatuses(String columnName, ResultSet rs) throws SQLException {
+        List<RegisterPeriodStatus> periodStatuses = null;
+        try {
+            PGobject obj = (PGobject) rs.getObject(columnName);
+            if (obj != null && obj.getValue() != null) {
+                String jsonValue = obj.getValue();
+                // Parse JSONB array into List<RegisterPeriodStatus>
+                periodStatuses = mapper.readValue(jsonValue, new TypeReference<List<RegisterPeriodStatus>>() {});
+                // Return null instead of empty list for consistency
+                if (periodStatuses != null && periodStatuses.isEmpty()) {
+                    periodStatuses = null;
+                }
+            }
+        } catch (IOException e) {
+            throw new CustomException("PARSING ERROR", "Failed to parse period_statuses JSONB array: " + e.getMessage());
+        }
+        return periodStatuses;
     }
 }

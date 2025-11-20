@@ -274,18 +274,28 @@ public class RegisterPeriodEnrichmentService {
     }
 
     /**
-     * Enrich registers with muster roll status by calling muster-roll V2 search API
+     * V2 OPTIMIZED - Enrich registers with muster roll status from DATABASE (no API calls!)
+     *
+     * Uses the pre-computed period_statuses JSONB field that is updated asynchronously
+     * via Kafka events when muster-roll status changes.
+     *
+     * Benefits:
+     * - NO synchronous API calls to muster-roll service
+     * - Scales to millions of registers
+     * - O(n) complexity instead of O(n) API calls
+     * - Pre-computed status for instant response
+     * - Event-driven, eventually consistent
      *
      * Edge cases handled:
      * - Empty register list: logs and returns
-     * - Registers with null IDs: excluded from muster roll search
-     * - Muster roll API failure: all registers get NOT_CREATED status
-     * - Missing muster roll status field: treated as NOT_CREATED
+     * - Null period_statuses field: treated as NOT_CREATED
+     * - Empty period_statuses array: treated as NOT_CREATED
+     * - Period not found in array: treated as NOT_CREATED
      *
-     * @param registers List of registers to enrich
-     * @param billingPeriodId Billing period ID
-     * @param requestInfo Request info
-     * @param tenantId Tenant ID
+     * @param registers List of registers to enrich (already loaded with period_statuses from DB)
+     * @param billingPeriodId Billing period ID to search for
+     * @param requestInfo Request info (UNUSED - kept for API compatibility)
+     * @param tenantId Tenant ID (UNUSED - kept for API compatibility)
      */
     private void enrichRegistersWithMusterRollStatus(
             List<AttendanceRegister> registers,
@@ -294,80 +304,98 @@ public class RegisterPeriodEnrichmentService {
             String tenantId) {
 
         if (CollectionUtils.isEmpty(registers)) {
-            log.info("No registers to enrich with muster roll status");
+            log.info("enrichRegistersWithMusterRollStatus::No registers to enrich with muster roll status");
             return;
         }
 
-        // Extract all valid register IDs
-        List<String> registerIds = registers.stream()
-                .map(AttendanceRegister::getId)
-                .filter(StringUtils::isNotBlank)
-                .distinct()
-                .collect(Collectors.toList());
+        log.info("enrichRegistersWithMusterRollStatus::Enriching {} registers with period status from DATABASE (no API calls) for period {}",
+                registers.size(), billingPeriodId);
 
-        if (registerIds.isEmpty()) {
-            log.warn("No valid register IDs found to fetch muster roll status");
-            // Set all registers to NOT_CREATED
-            registers.forEach(r -> r.setRegisterPeriodStatus("NOT_CREATED"));
-            return;
-        }
+        int enrichedCount = 0;
+        int notCreatedCount = 0;
+        int nullPeriodStatusesCount = 0;
 
-        log.info("Fetching muster roll status for {} registers in period {}",
-                registerIds.size(), billingPeriodId);
-
-        // Call muster-roll V2 search API
-        List<Map<String, Object>> musterRolls = searchMusterRollsForPeriod(
-                registerIds, billingPeriodId, requestInfo, tenantId);
-
-        // Build map: registerId -> muster roll status
-        Map<String, String> registerToStatusMap = new HashMap<>();
-
-        if (!CollectionUtils.isEmpty(musterRolls)) {
-            for (Map<String, Object> musterRoll : musterRolls) {
-                if (musterRoll == null) {
-                    log.warn("Encountered null muster roll entry in response");
-                    continue;
-                }
-
-                String registerId = (String) musterRoll.get("registerId");
-                String status = (String) musterRoll.get("musterRollStatus");
-
-                if (StringUtils.isNotBlank(registerId) && StringUtils.isNotBlank(status)) {
-                    registerToStatusMap.put(registerId, status);
-                    log.debug("Mapped register {} to muster roll status: {}", registerId, status);
-                } else {
-                    log.warn("Muster roll entry missing registerId or status - registerId: {}, status: {}",
-                            registerId, status);
-                }
-            }
-        }
-
-        log.info("Found {} muster rolls for {} registers",
-                registerToStatusMap.size(), registerIds.size());
-
-        // Enrich each register
+        // Enrich each register by reading from its period_statuses field
         for (AttendanceRegister register : registers) {
             if (StringUtils.isBlank(register.getId())) {
-                log.warn("Register has null/empty ID, setting status to NOT_CREATED");
+                log.warn("enrichRegistersWithMusterRollStatus::Register has null/empty ID, setting status to NOT_CREATED");
                 register.setRegisterPeriodStatus("NOT_CREATED");
+                notCreatedCount++;
                 continue;
             }
 
-            String musterStatus = registerToStatusMap.get(register.getId());
+            // Get period_statuses array from register (already loaded from DB by rowmapper)
+            List<org.egov.web.models.RegisterPeriodStatus> periodStatuses = register.getPeriodStatuses();
 
-            if (musterStatus != null) {
-                // Muster roll exists, set its status
-                register.setRegisterPeriodStatus(musterStatus);
-            } else {
-                // No muster roll found for this register+period
+            if (CollectionUtils.isEmpty(periodStatuses)) {
+                // No period statuses available - muster roll not yet created
+                log.debug("enrichRegistersWithMusterRollStatus::Register {} has no period_statuses, setting to NOT_CREATED",
+                        register.getId());
                 register.setRegisterPeriodStatus("NOT_CREATED");
+                nullPeriodStatusesCount++;
+                continue;
             }
 
-            log.debug("Register {} period status: {}", register.getId(), register.getRegisterPeriodStatus());
+            // Find the status for the requested billing period
+            String periodStatus = findStatusForPeriod(periodStatuses, billingPeriodId);
+
+            if (periodStatus != null) {
+                // Period status found in database
+                register.setRegisterPeriodStatus(periodStatus);
+                enrichedCount++;
+                log.debug("enrichRegistersWithMusterRollStatus::Register {} period status from DB: {}",
+                        register.getId(), periodStatus);
+            } else {
+                // Period exists in periodStatuses but not for this specific period
+                register.setRegisterPeriodStatus("NOT_CREATED");
+                notCreatedCount++;
+                log.debug("enrichRegistersWithMusterRollStatus::Register {} has no status for period {}, setting to NOT_CREATED",
+                        register.getId(), billingPeriodId);
+            }
         }
+
+        log.info("enrichRegistersWithMusterRollStatus::Successfully enriched {} registers - " +
+                        "Found status: {}, NOT_CREATED: {}, Null period_statuses: {}",
+                registers.size(), enrichedCount, notCreatedCount, nullPeriodStatusesCount);
     }
 
     /**
+     * Find the status for a specific billing period from the period_statuses array
+     *
+     * @param periodStatuses List of period statuses from database
+     * @param billingPeriodId Billing period ID to find
+     * @return Status string if found, null otherwise
+     */
+    private String findStatusForPeriod(
+            List<org.egov.web.models.RegisterPeriodStatus> periodStatuses,
+            String billingPeriodId) {
+
+        if (CollectionUtils.isEmpty(periodStatuses) || StringUtils.isBlank(billingPeriodId)) {
+            return null;
+        }
+
+        return periodStatuses.stream()
+                .filter(ps -> billingPeriodId.equals(ps.getPeriodId()))
+                .map(org.egov.web.models.RegisterPeriodStatus::getStatus)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * @deprecated NO LONGER USED - V2 now uses database period_statuses field (event-driven)
+     *
+     * This method made synchronous API calls to muster-roll service causing scaling issues:
+     * - URL length limits with 1000+ registers
+     * - Timeout risks
+     * - Memory overhead
+     *
+     * Replaced by: enrichRegistersWithMusterRollStatus() reading from period_statuses JSONB field
+     *
+     * Kept for reference only. Can be removed in future releases.
+     *
+     * ---
+     *
+     * OLD DOCUMENTATION (for reference):
      * Search muster rolls for specific registers and period using V1 API
      *
      * V1 API Structure:

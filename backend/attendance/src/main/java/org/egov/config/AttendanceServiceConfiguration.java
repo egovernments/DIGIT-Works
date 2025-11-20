@@ -45,6 +45,9 @@ public class AttendanceServiceConfiguration {
     private String saveAttendanceRegisterTopic;
     @Value("${attendance.register.kafka.update.topic}")
     private String updateAttendanceRegisterTopic;
+    // V2 Intermediate Billing - Consumer topic for muster-roll status updates
+    @Value("${attendance.register.kafka.muster.status.update.topic}")
+    private String musterRollStatusUpdateTopic;
 
     //Topic
     @Value("${attendance.staff.kafka.create.topic}")
