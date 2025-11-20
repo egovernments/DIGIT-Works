@@ -612,7 +612,7 @@ serviceMaps:
             - jsonPath: $.attendance.*.documentIds.*.status
 
     - version: 1.0
-      description: update Attendance
+      description: update Attendance (V2: includes period_statuses for event-driven muster status updates)
       fromTopic: update-attendance
       isTransaction: true
       isAuditEnabled: true
@@ -622,7 +622,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerNumber
       auditAttributeBasePath: $.attendanceRegister.*
       queryMaps:
-        - query: UPDATE public.eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=? where id=?;
+        - query: UPDATE public.eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=?, period_statuses=? where id=?;
           basePath: $.attendanceRegister.*
           jsonMaps:
             - jsonPath: $.attendanceRegister.*.name
@@ -645,9 +645,13 @@ serviceMaps:
 
             - jsonPath: $.attendanceRegister.*.reviewStatus
 
+            - jsonPath: $.attendanceRegister.*.periodStatuses
+              type: JSON
+              dbType: JSONB
+
             - jsonPath: $.attendanceRegister.*.id
     - version: 1.0
-      description: update Attendance
+      description: update Attendance (V2: includes period_statuses for event-driven muster status updates)
       fromTopic: mz-update-attendance
       isTransaction: true
       isAuditEnabled: true
@@ -657,7 +661,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerNumber
       auditAttributeBasePath: $.attendanceRegister.*
       queryMaps:
-        - query: UPDATE mz.eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=? where id=?;
+        - query: UPDATE mz.eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=?, period_statuses=? where id=?;
           basePath: $.attendanceRegister.*
           jsonMaps:
             - jsonPath: $.attendanceRegister.*.name
@@ -679,6 +683,10 @@ serviceMaps:
             - jsonPath: $.attendanceRegister.*.localityCode
 
             - jsonPath: $.attendanceRegister.*.reviewStatus
+
+            - jsonPath: $.attendanceRegister.*.periodStatuses
+              type: JSON
+              dbType: JSONB
 
             - jsonPath: $.attendanceRegister.*.id
 

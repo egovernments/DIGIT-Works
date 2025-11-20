@@ -3,7 +3,12 @@ package org.egov.kafka;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.service.PeriodStatusUpdateService;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.producer.Producer;
+import org.egov.repository.RegisterRepository;
+import org.egov.web.models.AttendanceRegister;
+import org.egov.web.models.AttendanceRegisterRequest;
+import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.MusterRollStatusUpdateEvent;
 import org.egov.web.models.RegisterPeriodStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +17,11 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * MusterRollStatusUpdateConsumer
@@ -20,45 +29,50 @@ import java.util.Map;
  * V2 Intermediate Billing - Kafka consumer for muster-roll status update events.
  *
  * This consumer listens for muster-roll status changes and updates the attendance
- * register's period_statuses field asynchronously.
+ * register's period_statuses field by publishing to the existing update-attendance topic.
  *
  * Benefits:
  * - Eliminates synchronous API calls during attendance search
  * - Scales to millions of registers
  * - Event-driven, non-blocking architecture
- * - Pre-computes status for fast queries
+ * - Uses persister pattern (no direct DB writes)
+ * - Reuses existing update-attendance topic (simpler architecture)
  *
- * Topic: muster-roll-status-update
+ * Topic consumed: muster-roll-status-update
  * Publisher: Muster-roll Service - MusterRollService
+ * Publishes to: update-attendance (existing topic, period_statuses field added to persister config)
  */
 @Component
 @Slf4j
 public class MusterRollStatusUpdateConsumer {
 
     private final ObjectMapper objectMapper;
-    private final PeriodStatusUpdateService periodStatusUpdateService;
+    private final RegisterRepository registerRepository;
+    private final Producer producer;
 
     @Autowired
     public MusterRollStatusUpdateConsumer(
             ObjectMapper objectMapper,
-            PeriodStatusUpdateService periodStatusUpdateService) {
+            RegisterRepository registerRepository,
+            Producer producer) {
         this.objectMapper = objectMapper;
-        this.periodStatusUpdateService = periodStatusUpdateService;
+        this.registerRepository = registerRepository;
+        this.producer = producer;
     }
 
     /**
-     * Consumes muster-roll status update events and updates period_statuses.
+     * Consumes muster-roll status update events and updates period_statuses via persister.
      *
      * Processing flow:
      * 1. Deserialize event from Kafka
      * 2. Validate event (must have billingPeriodId for V2)
-     * 3. Build RegisterPeriodStatus object
-     * 4. Update attendance register's period_statuses JSONB field
-     * 5. Log success/failure
+     * 3. Fetch register from DB to get existing period_statuses
+     * 4. Update or add the period status
+     * 5. Publish to update-attendance topic for persister (reuses existing topic)
      *
      * Error handling:
-     * - Invalid events are logged and skipped (no DLQ for now)
-     * - Database errors are logged but don't fail the consumer
+     * - Invalid events are logged and skipped
+     * - Register not found errors are logged but don't fail consumer
      * - V1 events (no billingPeriodId) are skipped gracefully
      *
      * @param consumerRecord The Kafka message as Map
@@ -96,18 +110,34 @@ public class MusterRollStatusUpdateConsumer {
                 return;
             }
 
-            // 4. Build RegisterPeriodStatus object
-            RegisterPeriodStatus periodStatus = RegisterPeriodStatus.builder()
+            // 4. Fetch existing register to get current period_statuses
+            AttendanceRegister register = fetchRegister(event.getRegisterId(), event.getTenantId());
+            if (register == null) {
+                log.error("processMusterRollStatusUpdate::Register not found: {}", event.getRegisterId());
+                return;
+            }
+
+            // 5. Build new period status
+            RegisterPeriodStatus newPeriodStatus = RegisterPeriodStatus.builder()
                     .periodId(event.getBillingPeriodId())
                     .status(event.getStatus())
                     .musterRollId(event.getMusterRollId())
                     .lastModifiedTime(event.getEventTime())
                     .build();
 
-            // 5. Update period_statuses in database
-            periodStatusUpdateService.updatePeriodStatus(event.getRegisterId(), periodStatus);
+            // 6. Merge with existing period_statuses
+            List<RegisterPeriodStatus> updatedPeriodStatuses = mergePeriodStatus(
+                    register.getPeriodStatuses(),
+                    newPeriodStatus
+            );
 
-            log.info("processMusterRollStatusUpdate::Successfully processed event for register: {} period: {} new status: {}",
+            // 7. Update register object
+            register.setPeriodStatuses(updatedPeriodStatuses);
+
+            // 8. Publish to persister topic (using same pattern as register updates)
+            publishRegisterUpdate(register, event.getTenantId());
+
+            log.info("processMusterRollStatusUpdate::Successfully published update for register: {} period: {} new status: {}",
                     event.getRegisterId(),
                     event.getBillingPeriodId(),
                     event.getStatus());
@@ -124,9 +154,96 @@ public class MusterRollStatusUpdateConsumer {
 
             log.error("processMusterRollStatusUpdate::Failed to process event for register: {} period: {} - Error: {}",
                     registerId, periodId, e.getMessage(), e);
+        }
+    }
 
-            // Future enhancement: Push to Dead Letter Queue (DLQ) for manual retry
-            // For now, just log the failure - the event will be retried on next muster update
+    /**
+     * Fetch register from repository
+     */
+    private AttendanceRegister fetchRegister(String registerId, String tenantId) {
+        try {
+            AttendanceRegisterSearchCriteria criteria = AttendanceRegisterSearchCriteria.builder()
+                    .ids(Collections.singletonList(registerId))
+                    .tenantId(tenantId)
+                    .build();
+
+            List<AttendanceRegister> registers = registerRepository.getRegister(criteria);
+
+            if (registers == null || registers.isEmpty()) {
+                log.warn("fetchRegister::Register not found for ID: {}", registerId);
+                return null;
+            }
+
+            return registers.get(0);
+
+        } catch (Exception e) {
+            log.error("fetchRegister::Error fetching register: {} - Error: {}", registerId, e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Merges new period status into existing list.
+     * If status for the period already exists, it's updated.
+     * If not, it's appended to the list.
+     */
+    private List<RegisterPeriodStatus> mergePeriodStatus(
+            List<RegisterPeriodStatus> existing,
+            RegisterPeriodStatus newStatus) {
+
+        String periodId = newStatus.getPeriodId();
+
+        // Handle null existing list
+        if (existing == null) {
+            existing = new ArrayList<>();
+        }
+
+        // Check if status for this period already exists
+        boolean periodExists = existing.stream()
+                .anyMatch(s -> s.getPeriodId().equals(periodId));
+
+        if (periodExists) {
+            // Update existing period status
+            log.debug("mergePeriodStatus::Updating existing status for period: {}", periodId);
+            return existing.stream()
+                    .map(s -> s.getPeriodId().equals(periodId) ? newStatus : s)
+                    .collect(Collectors.toList());
+        } else {
+            // Add new period status
+            log.debug("mergePeriodStatus::Adding new status for period: {}", periodId);
+            List<RegisterPeriodStatus> updated = new ArrayList<>(existing);
+            updated.add(newStatus);
+            return updated;
+        }
+    }
+
+    /**
+     * Publish register update to persister topic
+     * Uses the same pattern as AttendanceRegisterService
+     * Reuses the existing update-attendance topic (period_statuses field added to persister config)
+     */
+    private void publishRegisterUpdate(AttendanceRegister register, String tenantId) {
+        try {
+            // Build request following same pattern as AttendanceRegisterService
+            RequestInfo requestInfo = RequestInfo.builder()
+                    .build();
+
+            AttendanceRegisterRequest request = AttendanceRegisterRequest.builder()
+                    .requestInfo(requestInfo)
+                    .attendanceRegister(Collections.singletonList(register))
+                    .build();
+
+            // Publish to update-attendance topic (reusing existing topic)
+            // Persister config already includes period_statuses field in the UPDATE query
+            String topic = "update-attendance";
+            producer.push(topic, request);
+
+            log.debug("publishRegisterUpdate::Published to topic: {} for register: {}", topic, register.getId());
+
+        } catch (Exception e) {
+            log.error("publishRegisterUpdate::Failed to publish update for register: {} - Error: {}",
+                    register.getId(), e.getMessage(), e);
+            throw e;
         }
     }
 }
