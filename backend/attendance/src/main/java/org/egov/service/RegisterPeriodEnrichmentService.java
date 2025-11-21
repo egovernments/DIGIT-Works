@@ -346,11 +346,28 @@ public class RegisterPeriodEnrichmentService {
                 log.debug("enrichRegistersWithMusterRollStatus::Register {} period status from DB: {}",
                         register.getId(), periodStatus);
             } else {
-                // Period exists in periodStatuses but not for this specific period
-                register.setRegisterPeriodStatus("NOT_CREATED");
-                notCreatedCount++;
-                log.debug("enrichRegistersWithMusterRollStatus::Register {} has no status for period {}, setting to NOT_CREATED",
+                // FALLBACK: Period not found in period_statuses (Kafka event might have failed)
+                // Try fetching from muster-roll API as backup
+                log.warn("enrichRegistersWithMusterRollStatus::FALLBACK TRIGGERED - Register {} period {} not found in period_statuses. " +
+                        "Attempting muster roll API fallback to check if muster roll exists.",
                         register.getId(), billingPeriodId);
+
+                String fallbackStatus = searchMusterRollStatusForSingleRegister(
+                        register.getId(), billingPeriodId, requestInfo, tenantId);
+
+                if (fallbackStatus != null) {
+                    // Muster roll exists but wasn't in period_statuses (Kafka sync failed)
+                    register.setRegisterPeriodStatus(fallbackStatus);
+                    enrichedCount++;
+                    log.info("enrichRegistersWithMusterRollStatus::FALLBACK SUCCESS - Register {} period {} status retrieved from API: {}",
+                            register.getId(), billingPeriodId, fallbackStatus);
+                } else {
+                    // No muster roll found - genuinely NOT_CREATED
+                    register.setRegisterPeriodStatus("NOT_CREATED");
+                    notCreatedCount++;
+                    log.debug("enrichRegistersWithMusterRollStatus::FALLBACK CONFIRMED - Register {} period {} has no muster roll, status: NOT_CREATED",
+                            register.getId(), billingPeriodId);
+                }
             }
         }
 
@@ -379,6 +396,121 @@ public class RegisterPeriodEnrichmentService {
                 .map(org.egov.web.models.RegisterPeriodStatus::getStatus)
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * FALLBACK METHOD - Search muster roll for a single register and period
+     *
+     * Called when a period is missing from the period_statuses field (Kafka event failure scenario).
+     * Makes a targeted API call to muster-roll service to check if a muster roll exists.
+     *
+     * Use Case:
+     * - period_statuses has [p1, p2, p3, p5] but p4 is missing due to Kafka failure
+     * - This method checks if p4 actually has a muster roll created
+     * - Returns the actual status if found, null if not found
+     *
+     * Performance:
+     * - Targeted query: Single register + Single period
+     * - Only called when period is missing from period_statuses (rare case)
+     * - Does not impact normal flow (99% cases use period_statuses field)
+     *
+     * @param registerId Single register ID
+     * @param billingPeriodId Billing period ID
+     * @param requestInfo Request info for API call
+     * @param tenantId Tenant ID
+     * @return Muster roll status if found, null otherwise
+     */
+    private String searchMusterRollStatusForSingleRegister(
+            String registerId,
+            String billingPeriodId,
+            RequestInfo requestInfo,
+            String tenantId) {
+
+        // Validate input parameters
+        if (StringUtils.isBlank(registerId)) {
+            log.warn("searchMusterRollStatusForSingleRegister::Empty register ID provided");
+            return null;
+        }
+
+        if (StringUtils.isBlank(billingPeriodId)) {
+            log.warn("searchMusterRollStatusForSingleRegister::Empty billing period ID provided");
+            return null;
+        }
+
+        if (StringUtils.isBlank(tenantId)) {
+            log.warn("searchMusterRollStatusForSingleRegister::Empty tenant ID provided");
+            return null;
+        }
+
+        try {
+            // Build URL to muster-roll V2 search API with query parameters
+            // Targeted query: Single register + Single period
+            StringBuilder uriBuilder = new StringBuilder();
+            uriBuilder.append(config.getMusterRollHost())
+                      .append(config.getMusterRollV2SearchEndpoint())
+                      .append("?tenantId=").append(URLEncoder.encode(tenantId, StandardCharsets.UTF_8))
+                      .append("&billingPeriodId=").append(URLEncoder.encode(billingPeriodId, StandardCharsets.UTF_8))
+                      .append("&registerIds=").append(URLEncoder.encode(registerId, StandardCharsets.UTF_8));
+
+            String uri = uriBuilder.toString();
+
+            // Build request body with RequestInfo
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("RequestInfo", requestInfo);
+
+            log.debug("searchMusterRollStatusForSingleRegister::Calling muster-roll API for register {} period {}: {}",
+                    registerId, billingPeriodId, uri);
+
+            Map<String, Object> response = restTemplate.postForObject(uri, requestBody, Map.class);
+
+            // Validate response
+            if (response == null) {
+                log.debug("searchMusterRollStatusForSingleRegister::Null response from muster roll API");
+                return null;
+            }
+
+            if (!response.containsKey("musterRolls")) {
+                log.debug("searchMusterRollStatusForSingleRegister::Response missing 'musterRolls' key");
+                return null;
+            }
+
+            Object musterRollsObj = response.get("musterRolls");
+            if (!(musterRollsObj instanceof List)) {
+                log.error("searchMusterRollStatusForSingleRegister::'musterRolls' is not a List, type: {}",
+                        musterRollsObj != null ? musterRollsObj.getClass().getName() : "null");
+                return null;
+            }
+
+            List<Map<String, Object>> musterRolls = (List<Map<String, Object>>) musterRollsObj;
+
+            if (CollectionUtils.isEmpty(musterRolls)) {
+                log.debug("searchMusterRollStatusForSingleRegister::No muster roll found for register {} period {}",
+                        registerId, billingPeriodId);
+                return null;
+            }
+
+            // Extract status from first (should be only) muster roll
+            Map<String, Object> musterRoll = musterRolls.get(0);
+            Object statusObj = musterRoll.get("musterRollStatus");
+
+            if (statusObj == null) {
+                log.warn("searchMusterRollStatusForSingleRegister::Muster roll found but status field is null for register {} period {}",
+                        registerId, billingPeriodId);
+                return null;
+            }
+
+            String status = statusObj.toString();
+            log.info("searchMusterRollStatusForSingleRegister::Found muster roll for register {} period {} with status: {}",
+                    registerId, billingPeriodId, status);
+
+            return status;
+
+        } catch (Exception e) {
+            log.error("searchMusterRollStatusForSingleRegister::Error calling muster-roll API for register {} period {}: {}",
+                    registerId, billingPeriodId, e.getMessage(), e);
+            // Graceful degradation: Return null on error (will be treated as NOT_CREATED)
+            return null;
+        }
     }
 
     /**
