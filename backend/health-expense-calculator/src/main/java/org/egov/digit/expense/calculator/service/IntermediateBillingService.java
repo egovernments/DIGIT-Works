@@ -205,9 +205,9 @@ public class IntermediateBillingService {
         // Validate register IDs
         intermediateBillingValidator.validateRegisterIds(registerIds, selectedPeriod);
 
-        // Validate user permissions
-        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Validating user permissions for {} registers",
-            registerIds.size());
+        // Validate user permissions for the selected period's registers
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Validating user permissions for {} registers in period {}",
+            registerIds.size(), selectedPeriod.getPeriodNumber());
         registerPermissionValidator.validateUserPermissionForBillGeneration(
             requestInfo,
             registerIds,
@@ -215,6 +215,13 @@ public class IntermediateBillingService {
             criteria.getLocalityCode(),
             projectId
         );
+
+        // CRITICAL VALIDATION: Check if user has permission on ALL project registers
+        // After bill generation, we update reviewStatus on ALL project registers (not just period registers)
+        // If user doesn't have permission on all, the post-billing update will fail
+        // Better to fail here (pre-validation) than after async bill generation
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Validating user permissions for ALL project registers (post-billing requirement)");
+        validateUserHasPermissionForAllProjectRegisters(requestInfo, criteria, isDistrictLevel, projectId);
 
         // Validate muster roll existence and approval
         List<MusterRoll> musterRolls = searchExistingMusterRollsForPeriod(
@@ -236,6 +243,86 @@ public class IntermediateBillingService {
 
         log.info("IntermediateBillingService::validateV2BillingPrerequisites - All pre-validations passed for period {}",
             selectedPeriod.getPeriodNumber());
+    }
+
+    /**
+     * Validates that the user has permission on ALL project registers.
+     * This is critical because after bill generation, we update reviewStatus on ALL registers.
+     * If user doesn't have permission on all, the post-billing update will fail in async processing.
+     *
+     * This validation ensures we fail FAST in synchronous pre-validation rather than
+     * returning "INITIATED" and failing in background.
+     *
+     * @param requestInfo Request info with user details
+     * @param criteria Billing criteria
+     * @param isDistrictLevel Whether this is a district-level project
+     * @param projectId Project ID
+     * @throws CustomException if user doesn't have permission on all registers
+     */
+    private void validateUserHasPermissionForAllProjectRegisters(
+            RequestInfo requestInfo,
+            Criteria criteria,
+            boolean isDistrictLevel,
+            String projectId) {
+
+        try {
+            // Fetch ALL registers for the entire project (not just for the selected period)
+            List<AttendanceRegister> allProjectRegisters = new ArrayList<>();
+            int offset = 0;
+            List<AttendanceRegister> batch;
+
+            do {
+                batch = attendanceUtil.fetchAttendanceRegister(
+                    projectId,
+                    criteria.getTenantId(),
+                    requestInfo,
+                    criteria.getLocalityCode(),
+                    isDistrictLevel,
+                    offset
+                );
+
+                if (!CollectionUtils.isEmpty(batch)) {
+                    allProjectRegisters.addAll(batch);
+                    offset += batch.size();
+                }
+            } while (!CollectionUtils.isEmpty(batch) && batch.size() >= config.getRegisterBatchSize());
+
+            if (allProjectRegisters.isEmpty()) {
+                log.warn("No registers found for project {}. Skipping full permission check.", projectId);
+                return;
+            }
+
+            log.info("Found {} total project registers to validate permissions", allProjectRegisters.size());
+
+            // Extract all register IDs
+            List<String> allRegisterIds = allProjectRegisters.stream()
+                .map(AttendanceRegister::getId)
+                .collect(Collectors.toList());
+
+            // Use existing validator to check permissions on ALL registers
+            registerPermissionValidator.validateUserPermissionForBillGeneration(
+                requestInfo,
+                allRegisterIds,
+                criteria.getTenantId(),
+                criteria.getLocalityCode(),
+                projectId
+            );
+
+            log.info("✓ User has permission on all {} project registers", allProjectRegisters.size());
+
+        } catch (CustomException e) {
+            // Re-throw permission exceptions with clearer message
+            log.error("Permission validation failed for ALL project registers: {}", e.getMessage());
+            throw new CustomException("INSUFFICIENT_REGISTER_PERMISSIONS",
+                "You do not have permission to generate bills for this project. " +
+                "Bill generation requires permission on ALL project registers. " +
+                "You may be missing permission on some registers. " +
+                "Original error: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Error validating permissions for all project registers: {}", e.getMessage(), e);
+            throw new CustomException("PERMISSION_VALIDATION_ERROR",
+                "Failed to validate register permissions: " + e.getMessage());
+        }
     }
 
     /**

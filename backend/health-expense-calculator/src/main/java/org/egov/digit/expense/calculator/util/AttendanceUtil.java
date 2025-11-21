@@ -77,16 +77,20 @@ public class AttendanceUtil {
     }
 
     /**
-     * Update reviewStatus of attendance registers for a project after last period bill generation.
-     * This marks the registers as APPROVED, indicating all periods have bills generated
-     * and the project is ready for aggregate bill generation.
+     * Update reviewStatus of attendance registers for a project after period bill generation.
+     * This marks the registers status based on billing progress.
      *
-     * V2 Flow: Called after successful bill generation for the LAST period
+     * V2 Flow: Called after successful bill generation
+     * - PENDINGFORAPPROVAL: For intermediate periods
+     * - APPROVED: For the last period
+     *
+     * IMPORTANT: Permissions are validated in pre-validation phase before async processing.
+     * This method assumes the user has already been validated to have permission on all registers.
      *
      * @param requestInfo Request info
      * @param projectId Project reference ID
      * @param tenantId Tenant ID
-     * @param reviewStatus Review status to set (typically "APPROVED")
+     * @param reviewStatus Review status to set
      * @param localityCode Locality code from original request (required for attendance search)
      */
     public void updateRegisterReviewStatus(RequestInfo requestInfo, String projectId,
@@ -95,7 +99,6 @@ public class AttendanceUtil {
 
         try {
             // Fetch all registers for this project
-            // Use localityCode from request (if provided) - attendance service requires BOTH referenceId AND localityCode
             List<AttendanceRegister> allRegisters = new ArrayList<>();
             int offset = 0;
             List<AttendanceRegister> batch;
