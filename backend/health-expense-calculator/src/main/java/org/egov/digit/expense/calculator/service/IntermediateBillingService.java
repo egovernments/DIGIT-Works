@@ -15,6 +15,7 @@ import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.attendance.AttendanceRegister;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
+import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -1012,16 +1013,28 @@ public class IntermediateBillingService {
                 formatDate(aggregatePeriod.getPeriodStartDate()),
                 formatDate(aggregatePeriod.getPeriodEndDate()));
 
-        // STEP 6: Generate aggregate bill using EXISTING logic!
+        // STEP 6: Consolidate worker entries across all periods
+        // This merges individual workers who appear in multiple periods into single entries
+        // Example: Worker worked 3 days in Period 1 + 5 days in Period 2 = 8 days total
+        log.info("Consolidating worker entries across all periods...");
+        List<MusterRoll> consolidatedMusterRolls = consolidateMusterRollsForAggregate(
+                allMusterRolls,
+                aggregatePeriod
+        );
+        log.info("✓ Consolidated {} muster rolls into {} muster roll with unique workers",
+                allMusterRolls.size(), consolidatedMusterRolls.size());
+
+        // STEP 7: Generate aggregate bill using EXISTING logic!
         // The same generatePeriodBill() function used for intermediate bills
+        // Now using CONSOLIDATED muster rolls with accumulated worker data
         log.info("Generating aggregate bill using existing bill generator...");
         int totalRegisterCount = getTotalRegisterCount(allPeriods);
 
         Bill aggregateBill = generatePeriodBill(
                 requestInfo,
                 criteria,
-                aggregatePeriod,      // Virtual period with full date range
-                allMusterRolls,       // ALL muster rolls from ALL periods
+                aggregatePeriod,           // Virtual period with full date range
+                consolidatedMusterRolls,   // CONSOLIDATED muster rolls (one entry per worker)
                 project,
                 totalRegisterCount,
                 billingConfig
@@ -1031,11 +1044,11 @@ public class IntermediateBillingService {
                 aggregateBill.getBillDetails() != null ? aggregateBill.getBillDetails().size() : 0,
                 aggregateBill.getTotalAmount());
 
-        // STEP 7: Override metadata to mark as FINAL_AGGREGATE
+        // STEP 8: Override metadata to mark as FINAL_AGGREGATE
         enrichAggregateMetadata(aggregateBill, allPeriods, campaignNumber);
         log.info("✓ Enriched aggregate metadata");
 
-        // STEP 8: Submit aggregate bill
+        // STEP 9: Submit aggregate bill
         log.info("Submitting aggregate bill to expense service...");
         Bill submittedBill = submitAggregateBill(
                 requestInfo,
@@ -1136,6 +1149,120 @@ public class IntermediateBillingService {
         log.info("Successfully fetched total of {} muster rolls from {} periods",
                 allMusterRolls.size(), allPeriods.size());
         return allMusterRolls;
+    }
+
+    /**
+     * Consolidate individual entries across all muster rolls for aggregate billing
+     * Groups entries by individualId and sums attendance across all periods
+     *
+     * For example:
+     * - Period 1: Worker A worked 3 days
+     * - Period 2: Worker A worked 5 days
+     * - Consolidated: Worker A worked 8 days (single entry)
+     *
+     * @param allMusterRolls All muster rolls from all periods
+     * @param aggregatePeriod Virtual aggregate period (for dates)
+     * @return Single consolidated muster roll with merged individual entries
+     */
+    private List<MusterRoll> consolidateMusterRollsForAggregate(List<MusterRoll> allMusterRolls,
+                                                                 BillingPeriod aggregatePeriod) {
+        log.info("Consolidating {} muster rolls for aggregate billing", allMusterRolls.size());
+
+        // Map to accumulate individual entries by individualId
+        Map<String, ConsolidatedWorkerData> workerDataMap = new HashMap<>();
+
+        // Collect and consolidate all individual entries
+        for (MusterRoll musterRoll : allMusterRolls) {
+            if (musterRoll.getIndividualEntries() == null) {
+                continue;
+            }
+
+            for (IndividualEntry entry : musterRoll.getIndividualEntries()) {
+                String individualId = entry.getIndividualId();
+
+                workerDataMap.computeIfAbsent(individualId, k -> new ConsolidatedWorkerData(individualId));
+                ConsolidatedWorkerData workerData = workerDataMap.get(individualId);
+
+                // Accumulate attendance
+                if (entry.getActualTotalAttendance() != null) {
+                    workerData.totalActualAttendance = workerData.totalActualAttendance
+                            .add(entry.getActualTotalAttendance());
+                }
+                if (entry.getModifiedTotalAttendance() != null) {
+                    workerData.totalModifiedAttendance = workerData.totalModifiedAttendance
+                            .add(entry.getModifiedTotalAttendance());
+                }
+
+                // Keep first entry as template (for skill, additionalDetails, etc.)
+                if (workerData.templateEntry == null) {
+                    workerData.templateEntry = entry;
+                }
+            }
+        }
+
+        log.info("Consolidated {} workers from {} muster rolls",
+                workerDataMap.size(), allMusterRolls.size());
+
+        // Create consolidated individual entries
+        List<IndividualEntry> consolidatedEntries = new ArrayList<>();
+        for (ConsolidatedWorkerData workerData : workerDataMap.values()) {
+            IndividualEntry consolidatedEntry = IndividualEntry.builder()
+                    .id(UUID.randomUUID().toString())
+                    .individualId(workerData.individualId)
+                    .actualTotalAttendance(workerData.totalActualAttendance)
+                    .modifiedTotalAttendance(workerData.totalModifiedAttendance)
+                    .attendanceEntries(null) // Not needed for bill generation
+                    .additionalDetails(workerData.templateEntry.getAdditionalDetails())
+                    .auditDetails(workerData.templateEntry.getAuditDetails())
+                    .build();
+
+            consolidatedEntries.add(consolidatedEntry);
+
+            log.debug("Consolidated worker {}: actualAttendance={}, modifiedAttendance={}",
+                    workerData.individualId,
+                    workerData.totalActualAttendance,
+                    workerData.totalModifiedAttendance);
+        }
+
+        // Create a single synthetic muster roll with all consolidated entries
+        // Use first muster roll as template for metadata
+        MusterRoll templateMusterRoll = allMusterRolls.get(0);
+        MusterRoll consolidatedMusterRoll = MusterRoll.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(templateMusterRoll.getTenantId())
+                .registerId(templateMusterRoll.getRegisterId()) // Reference to first register
+                .musterRollNumber("AGGREGATE-" + UUID.randomUUID().toString())
+                .musterRollStatus("APPROVED") // Aggregate assumes all periods approved
+                .startDate(BigDecimal.valueOf(aggregatePeriod.getPeriodStartDate()))
+                .endDate(BigDecimal.valueOf(aggregatePeriod.getPeriodEndDate()))
+                .referenceId(templateMusterRoll.getReferenceId())
+                .serviceCode(templateMusterRoll.getServiceCode())
+                .individualEntries(consolidatedEntries)
+                .additionalDetails(templateMusterRoll.getAdditionalDetails())
+                .auditDetails(templateMusterRoll.getAuditDetails())
+                .build();
+
+        log.info("Created consolidated muster roll with {} unique workers (accumulated from {} total entries)",
+                consolidatedEntries.size(),
+                allMusterRolls.stream()
+                        .mapToInt(mr -> mr.getIndividualEntries() != null ? mr.getIndividualEntries().size() : 0)
+                        .sum());
+
+        return Collections.singletonList(consolidatedMusterRoll);
+    }
+
+    /**
+     * Helper class to accumulate worker data across periods
+     */
+    private static class ConsolidatedWorkerData {
+        String individualId;
+        BigDecimal totalActualAttendance = BigDecimal.ZERO;
+        BigDecimal totalModifiedAttendance = BigDecimal.ZERO;
+        IndividualEntry templateEntry = null;
+
+        ConsolidatedWorkerData(String individualId) {
+            this.individualId = individualId;
+        }
     }
 
     /**
