@@ -310,6 +310,34 @@ public class IntermediateBillingService {
 
             log.info("✓ User has permission on all {} project registers", allProjectRegisters.size());
 
+            // CRITICAL: Also validate review status update permissions
+            // After bill generation, the system will update reviewStatus on ALL project registers
+            // This requires specific staff types:
+            //   - PENDINGFORAPPROVAL: APPROVER or EDITOR
+            //   - APPROVED: APPROVER only
+            // We validate with APPROVED (strictest requirement) because:
+            //   1. If user is APPROVER, they can set both PENDINGFORAPPROVAL and APPROVED
+            //   2. If user is EDITOR, they can only set PENDINGFORAPPROVAL (pre-validation will fail)
+            //   3. This ensures no failures during async bill generation
+            // PERFORMANCE OPTIMIZATION: Use already-fetched registers to avoid duplicate API calls
+            log.info("Validating user has review status update permissions (StaffType: APPROVER required) for all project registers...");
+            try {
+                registerPermissionValidator.validateUserPermissionForReviewStatusUpdateWithRegisters(
+                    allProjectRegisters, // Use already-fetched registers (no duplicate fetch!)
+                    requestInfo,
+                    REVIEW_STATUS_APPROVED, // Validate for APPROVED (strictest - APPROVER only required)
+                    criteria.getTenantId()
+                );
+                log.info("✓ User has APPROVER permissions on all {} project registers (can set any review status)", allProjectRegisters.size());
+            } catch (CustomException e) {
+                log.error("Review status update permission validation failed: {} - {}", e.getCode(), e.getMessage());
+                throw new CustomException("INSUFFICIENT_REVIEW_STATUS_PERMISSIONS",
+                    "You do not have permission to update review status for this project's registers. " +
+                    "Bill generation requires APPROVER staff type on ALL project registers. " +
+                    "Please ensure you have APPROVER permissions assigned. " +
+                    "Original error: " + e.getMessage());
+            }
+
         } catch (CustomException e) {
             // Re-throw permission exceptions with clearer message
             log.error("Permission validation failed for ALL project registers: {}", e.getMessage());
@@ -1976,6 +2004,10 @@ public class IntermediateBillingService {
                     projectId,
                     reviewStatus);
 
+            // NOTE: Permission validation was already performed in validateV2BillingPrerequisites
+            // This ensures fail-fast behavior BEFORE async processing starts
+            // We can proceed directly to the update here
+
             // Use projectId directly from request criteria - it's already the correct project ID
             attendanceUtil.updateRegisterReviewStatus(requestInfo, projectId, tenantId, reviewStatus, localityCode);
 
@@ -1983,8 +2015,8 @@ public class IntermediateBillingService {
                     reviewStatus, projectId, period.getPeriodNumber());
 
         } catch (Exception e) {
-            // Log error but don't fail the bill generation
-            log.error("Failed to update register reviewStatus for project {} after period {}: {}",
+            // Log error but don't fail the bill generation for unexpected errors
+            log.error("Unexpected error updating register reviewStatus for project {} after period {}: {}",
                     projectId, period.getPeriodNumber(), e.getMessage(), e);
             log.warn("Bill generation was successful, but register reviewStatus update failed. " +
                     "This may need manual intervention.");
