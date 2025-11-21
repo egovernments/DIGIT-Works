@@ -1198,7 +1198,9 @@ public class IntermediateBillingService {
         // The same generatePeriodBill() function used for intermediate bills
         // Now using CONSOLIDATED muster rolls with accumulated worker data
         log.info("Generating aggregate bill using existing bill generator...");
-        int totalRegisterCount = getTotalRegisterCount(allPeriods);
+        // BUGFIX: Calculate actual unique register count instead of reading from additionalDetails
+        int totalRegisterCount = getTotalRegisterCountForAggregate(requestInfo, criteria, isDistrictLevel, allPeriods);
+        log.info("Aggregate bill will be generated for {} unique registers", totalRegisterCount);
 
         Bill aggregateBill = generatePeriodBill(
                 requestInfo,
@@ -1397,6 +1399,18 @@ public class IntermediateBillingService {
         // Create a single synthetic muster roll with all consolidated entries
         // Use first muster roll as template for metadata
         MusterRoll templateMusterRoll = allMusterRolls.get(0);
+
+        // BUGFIX: Store original muster roll IDs for report generation
+        // Report generator needs to lookup attendance by muster roll ID
+        Map<String, Object> aggregateAdditionalDetails = new HashMap<>();
+        if (templateMusterRoll.getAdditionalDetails() != null) {
+            aggregateAdditionalDetails.putAll((Map<String, Object>) templateMusterRoll.getAdditionalDetails());
+        }
+        // Store list of original muster roll IDs for attendance lookup in reports
+        aggregateAdditionalDetails.put("originalMusterRollIds",
+            allMusterRolls.stream().map(MusterRoll::getId).collect(Collectors.toList()));
+        aggregateAdditionalDetails.put("consolidatedFrom", allMusterRolls.size());
+
         MusterRoll consolidatedMusterRoll = MusterRoll.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(templateMusterRoll.getTenantId())
@@ -1408,7 +1422,7 @@ public class IntermediateBillingService {
                 .referenceId(templateMusterRoll.getReferenceId())
                 .serviceCode(templateMusterRoll.getServiceCode())
                 .individualEntries(consolidatedEntries)
-                .additionalDetails(templateMusterRoll.getAdditionalDetails())
+                .additionalDetails(aggregateAdditionalDetails)
                 .auditDetails(templateMusterRoll.getAuditDetails())
                 .build();
 
@@ -1478,6 +1492,10 @@ public class IntermediateBillingService {
      * Enrich bill metadata to mark as FINAL_AGGREGATE
      * Overrides billingType and adds aggregate-specific metadata
      *
+     * BUGFIX: Also store originalMusterRollIds for report generation
+     * Since consolidated muster roll is synthetic and not persisted,
+     * report generator needs access to original muster roll IDs to fetch attendance data
+     *
      * @param bill Bill to enrich
      * @param allPeriods All billing periods
      * @param campaignNumber Campaign number
@@ -1503,6 +1521,10 @@ public class IntermediateBillingService {
         additionalDetails.put("campaignNumber", campaignNumber);
         additionalDetails.put("periodStartDate", allPeriods.get(0).getPeriodStartDate());
         additionalDetails.put("periodEndDate", allPeriods.get(allPeriods.size() - 1).getPeriodEndDate());
+
+        // BUGFIX: Mark this as an aggregate bill for report generation
+        // Report generator will use this flag to handle muster roll lookups differently
+        additionalDetails.put("isAggregateBill", true);
 
         bill.setAdditionalDetails(additionalDetails);
 
@@ -1712,12 +1734,58 @@ public class IntermediateBillingService {
     }
 
     /**
-     * Calculate total register count across all periods
-     * Reads from period additionalDetails
+     * Calculate total UNIQUE register count across all periods for aggregate billing.
+     *
+     * BUGFIX: Instead of reading from period additionalDetails (which may not be populated),
+     * we fetch actual registers for all periods and count unique register IDs.
+     * This ensures accurate register count even when periods haven't been individually billed.
+     *
+     * @param requestInfo Request info for fetching registers
+     * @param criteria Billing criteria
+     * @param isDistrictLevel Whether to fetch children registers
+     * @param allPeriods All billing periods
+     * @return Total UNIQUE register count
+     */
+    private int getTotalRegisterCountForAggregate(RequestInfo requestInfo,
+                                                    Criteria criteria,
+                                                    boolean isDistrictLevel,
+                                                    List<BillingPeriod> allPeriods) {
+        Set<String> uniqueRegisterIds = new HashSet<>();
+
+        log.info("Calculating register count across {} periods for aggregate bill", allPeriods.size());
+
+        for (BillingPeriod period : allPeriods) {
+            try {
+                // Fetch registers for this period
+                List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
+                    requestInfo, criteria, isDistrictLevel, period
+                );
+
+                // Collect unique register IDs
+                periodRegisters.stream()
+                    .map(AttendanceRegister::getId)
+                    .forEach(uniqueRegisterIds::add);
+
+                log.debug("Period {}: found {} registers", period.getPeriodNumber(), periodRegisters.size());
+            } catch (Exception e) {
+                log.warn("Failed to fetch registers for period {}: {}", period.getPeriodNumber(), e.getMessage());
+            }
+        }
+
+        int totalUniqueRegisters = uniqueRegisterIds.size();
+        log.info("Total UNIQUE registers across all periods: {}", totalUniqueRegisters);
+        return totalUniqueRegisters;
+    }
+
+    /**
+     * Calculate total register count across all periods (fallback method)
+     * Reads from period additionalDetails - may return 0 if not populated
      *
      * @param allPeriods All billing periods
-     * @return Total register count
+     * @return Total register count from additionalDetails
+     * @deprecated Use getTotalRegisterCountForAggregate for accurate count
      */
+    @Deprecated
     private int getTotalRegisterCount(List<BillingPeriod> allPeriods) {
         return allPeriods.stream()
                 .mapToInt(period -> {
