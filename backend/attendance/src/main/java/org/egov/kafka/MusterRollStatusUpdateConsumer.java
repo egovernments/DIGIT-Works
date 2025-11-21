@@ -12,6 +12,7 @@ import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.MusterRollStatusUpdateEvent;
 import org.egov.web.models.RegisterPeriodStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -49,15 +50,18 @@ public class MusterRollStatusUpdateConsumer {
     private final ObjectMapper objectMapper;
     private final RegisterRepository registerRepository;
     private final Producer producer;
+    private final String updateAttendanceRegisterTopic;
 
     @Autowired
     public MusterRollStatusUpdateConsumer(
             ObjectMapper objectMapper,
             RegisterRepository registerRepository,
-            Producer producer) {
+            Producer producer,
+            @Value("${attendance.register.kafka.update.topic}") String updateAttendanceRegisterTopic) {
         this.objectMapper = objectMapper;
         this.registerRepository = registerRepository;
         this.producer = producer;
+        this.updateAttendanceRegisterTopic = updateAttendanceRegisterTopic;
     }
 
     /**
@@ -235,10 +239,9 @@ public class MusterRollStatusUpdateConsumer {
 
             // Publish to update-attendance topic (reusing existing topic)
             // Persister config already includes period_statuses field in the UPDATE query
-            String topic = "update-attendance";
-            producer.push(topic, request);
+            producer.push(updateAttendanceRegisterTopic, request);
 
-            log.debug("publishRegisterUpdate::Published to topic: {} for register: {}", topic, register.getId());
+            log.debug("publishRegisterUpdate::Published to topic: {} for register: {}", updateAttendanceRegisterTopic, register.getId());
 
         } catch (Exception e) {
             log.error("publishRegisterUpdate::Failed to publish update for register: {} - Error: {}",
