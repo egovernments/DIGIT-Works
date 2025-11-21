@@ -3,8 +3,10 @@ package org.egov.digit.expense.calculator.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.project.Project;
+import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
 import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
@@ -68,6 +70,8 @@ public class IntermediateBillingService {
     private final IntermediateBillingValidator intermediateBillingValidator;
     private final CommonUtil commonUtil;
     private final ExpenseCalculatorProducer expenseCalculatorProducer;
+    private final RegisterPermissionValidator registerPermissionValidator;
+    private final BoundaryUtil boundaryUtil;
 
     private static final String REVIEW_STATUS_APPROVED = "APPROVED";
     private static final String REVIEW_STATUS_PENDING_FOR_APPROVAL = "PENDINGFORAPPROVAL";
@@ -86,7 +90,9 @@ public class IntermediateBillingService {
                                       ProjectUtil projectUtil,
                                       IntermediateBillingValidator intermediateBillingValidator,
                                       CommonUtil commonUtil,
-                                      ExpenseCalculatorProducer expenseCalculatorProducer) {
+                                      ExpenseCalculatorProducer expenseCalculatorProducer,
+                                      RegisterPermissionValidator registerPermissionValidator,
+                                      BoundaryUtil boundaryUtil) {
         this.billingConfigurationService = billingConfigurationService;
         this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
         this.expenseCalculatorRepository = expenseCalculatorRepository;
@@ -101,6 +107,156 @@ public class IntermediateBillingService {
         this.intermediateBillingValidator = intermediateBillingValidator;
         this.commonUtil = commonUtil;
         this.expenseCalculatorProducer = expenseCalculatorProducer;
+        this.registerPermissionValidator = registerPermissionValidator;
+        this.boundaryUtil = boundaryUtil;
+    }
+
+    /**
+     * Pre-validates V2 billing prerequisites BEFORE async processing.
+     * This ensures UI gets immediate feedback if validation fails.
+     *
+     * Validates:
+     * 1. Basic request validation
+     * 2. Sequential billing (previous period must be billed)
+     * 3. User permissions on registers
+     * 4. Muster roll existence and approval
+     *
+     * @param calculationRequest Full calculation request
+     * @throws CustomException if any validation fails (returned to UI immediately)
+     */
+    public void validateV2BillingPrerequisites(CalculationRequest calculationRequest) {
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Starting V2 pre-validation");
+
+        RequestInfo requestInfo = calculationRequest.getRequestInfo();
+        Criteria criteria = calculationRequest.getCriteria();
+
+        // Fetch project details
+        ProjectResponse projectResponse = projectUtil.getProjectDetails(
+            requestInfo,
+            criteria.getTenantId(),
+            criteria.getReferenceId(),
+            criteria.getLocalityCode()
+        );
+
+        if (projectResponse == null || CollectionUtils.isEmpty(projectResponse.getProject())) {
+            throw new CustomException("PROJECT_NOT_FOUND", "Project not found for bill generation");
+        }
+
+        Project project = projectResponse.getProject().get(0);
+        String projectId = project.getProjectHierarchy() != null ? project.getProjectHierarchy() : project.getId();
+
+        // Fetch billing config
+        String campaignNumber = extractCampaignNumber(project);
+        if (campaignNumber == null) {
+            throw new CustomException("CAMPAIGN_NUMBER_NOT_FOUND", "Campaign number not found in project");
+        }
+
+        BillingConfig billingConfig = billingConfigurationService.getBillingConfigByCampaignNumber(
+            campaignNumber, criteria.getTenantId()
+        );
+
+        if (billingConfig == null) {
+            throw new CustomException("BILLING_CONFIG_NOT_FOUND",
+                "No billing configuration found for campaign: " + campaignNumber);
+        }
+
+        // Validate basic request
+        intermediateBillingValidator.validateIntermediateBillingRequest(requestInfo, criteria, project, billingConfig);
+
+        // Check if specific period requested
+        String billingPeriodId = criteria.getBillingPeriodId();
+        if (billingPeriodId == null || billingPeriodId.isEmpty() ||
+            BILLING_PERIOD_AGGREGATE.equalsIgnoreCase(billingPeriodId)) {
+            log.info("Skipping detailed pre-validation for aggregate/batch mode - will validate per period in async");
+            return; // For aggregate/batch mode, validate during async processing
+        }
+
+        // For UI-driven mode: Validate the specific period
+        BillingPeriod selectedPeriod = billingConfigurationService.getBillingPeriodById(
+            billingPeriodId, criteria.getTenantId()
+        );
+
+        if (selectedPeriod == null) {
+            throw new CustomException("PERIOD_NOT_FOUND",
+                "Billing period not found: " + billingPeriodId);
+        }
+
+        // Validate period is ready for processing
+        intermediateBillingValidator.validatePeriodForProcessing(selectedPeriod);
+
+        // Validate sequential billing
+        validateSequentialBillingForProject(requestInfo, projectId, selectedPeriod, criteria.getTenantId());
+
+        // Fetch registers for the period
+        boolean isDistrictLevel = checkIfDistrictLevel(requestInfo, criteria);
+        List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
+            requestInfo, criteria, isDistrictLevel, selectedPeriod
+        );
+
+        if (periodRegisters.isEmpty()) {
+            throw new CustomException("NO_REGISTERS_FOR_PERIOD",
+                "No attendance registers found for period " + selectedPeriod.getPeriodNumber());
+        }
+
+        List<String> registerIds = periodRegisters.stream()
+            .map(AttendanceRegister::getId)
+            .collect(Collectors.toList());
+
+        // Validate register IDs
+        intermediateBillingValidator.validateRegisterIds(registerIds, selectedPeriod);
+
+        // Validate user permissions
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Validating user permissions for {} registers",
+            registerIds.size());
+        registerPermissionValidator.validateUserPermissionForBillGeneration(
+            requestInfo,
+            registerIds,
+            criteria.getTenantId(),
+            criteria.getLocalityCode(),
+            projectId
+        );
+
+        // Validate muster roll existence and approval
+        List<MusterRoll> musterRolls = searchExistingMusterRollsForPeriod(
+            requestInfo,
+            criteria.getTenantId(),
+            registerIds,
+            selectedPeriod
+        );
+
+        if (CollectionUtils.isEmpty(musterRolls)) {
+            throw new CustomException("NO_MUSTER_ROLLS_FOR_PERIOD",
+                "No muster rolls found for period " + selectedPeriod.getPeriodNumber() + ". " +
+                "Muster rolls must be created by proximity supervisors before bill generation.");
+        }
+
+        // Validate all muster rolls are approved
+        intermediateBillingValidator.validateAllRegisterMustersApproved(periodRegisters, musterRolls, selectedPeriod);
+        intermediateBillingValidator.validateMusterRollsForBilling(musterRolls, selectedPeriod);
+
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - All pre-validations passed for period {}",
+            selectedPeriod.getPeriodNumber());
+    }
+
+    /**
+     * Helper method to check if boundary is district level
+     */
+    private boolean checkIfDistrictLevel(RequestInfo requestInfo, Criteria criteria) {
+        try {
+            List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(
+                RequestInfoWrapper.builder().requestInfo(requestInfo).build(),
+                criteria.getLocalityCode(),
+                criteria.getTenantId(),
+                false
+            );
+            return !boundaries.isEmpty() &&
+                   boundaries.get(0).getBoundary() != null &&
+                   !boundaries.get(0).getBoundary().isEmpty() &&
+                   "DISTRICT".equals(boundaries.get(0).getBoundary().get(0).getBoundaryType());
+        } catch (Exception e) {
+            log.warn("Error checking district level: {}", e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -306,6 +462,20 @@ public class IntermediateBillingService {
 
         // Step 3.1: Validate register IDs
         intermediateBillingValidator.validateRegisterIds(registerIds, period);
+
+        // Step 3.2: Validate user permissions for bill generation (V2 flow)
+        // This ensures only authorized staff can initiate billing for registers they have access to
+        log.info("IntermediateBillingService::processOnePeriod - Validating user permissions for {} registers in period {}",
+                registerIds.size(), period.getPeriodNumber());
+        registerPermissionValidator.validateUserPermissionForBillGeneration(
+            requestInfo,
+            registerIds,
+            criteria.getTenantId(),
+            criteria.getLocalityCode(),
+            projectId
+        );
+        log.info("IntermediateBillingService::processOnePeriod - Permission validation successful for user in period {}",
+                period.getPeriodNumber());
 
         // Step 4: SEARCH for existing period-specific muster rolls (DO NOT CREATE)
         // In V2, muster rolls are created by proximity supervisors BEFORE billing
