@@ -68,8 +68,11 @@ public class ExpenseCalculatorService {
     private final BillingConfigurationService billingConfigurationService;
     private final BillingVersionHelper billingVersionHelper;
 
+    // Permission Validation
+    private final RegisterPermissionValidator registerPermissionValidator;
+
     @Autowired
-    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil, BoundaryUtil boundaryUtil, ResponseInfoFactory responseInfoFactory, IntermediateBillingService intermediateBillingService, BillingConfigurationService billingConfigurationService, BillingVersionHelper billingVersionHelper) {
+    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil, BoundaryUtil boundaryUtil, ResponseInfoFactory responseInfoFactory, IntermediateBillingService intermediateBillingService, BillingConfigurationService billingConfigurationService, BillingVersionHelper billingVersionHelper, RegisterPermissionValidator registerPermissionValidator) {
         this.expenseCalculatorProducer = expenseCalculatorProducer;
         this.expenseCalculatorServiceValidator = expenseCalculatorServiceValidator;
         this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
@@ -94,6 +97,7 @@ public class ExpenseCalculatorService {
         this.intermediateBillingService = intermediateBillingService;
         this.billingConfigurationService = billingConfigurationService;
         this.billingVersionHelper = billingVersionHelper;
+        this.registerPermissionValidator = registerPermissionValidator;
     }
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
@@ -454,6 +458,23 @@ public class ExpenseCalculatorService {
             // V2: Check if billingPeriodId is present (multi-period billing)
             String billingPeriodId = calculationRequest.getCriteria().getBillingPeriodId();
             boolean isV2Request = billingPeriodId != null && !billingPeriodId.isEmpty();
+
+            // V2 PRE-VALIDATION: Run all validations BEFORE async push so UI gets immediate feedback
+            if (isV2Request) {
+                log.info("V2 Request - Running pre-validations before async push");
+                try {
+                    intermediateBillingService.validateV2BillingPrerequisites(calculationRequest);
+                    log.info("V2 pre-validation passed - proceeding with async bill generation");
+                } catch (CustomException e) {
+                    log.error("V2 pre-validation failed: {} - {}", e.getCode(), e.getMessage());
+                    // Return error immediately to UI
+                    throw e;
+                } catch (Exception e) {
+                    log.error("Unexpected error during V2 pre-validation: {}", e.getMessage(), e);
+                    throw new CustomException("VALIDATION_ERROR",
+                        "Bill generation validation failed: " + e.getMessage());
+                }
+            }
 
             // Fetch Bill Status from DB (V2: use project+period, V1: use project only)
             List<BillStatus> billStatuses;

@@ -3,8 +3,10 @@ package org.egov.digit.expense.calculator.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.project.Project;
+import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
 import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
@@ -68,6 +70,8 @@ public class IntermediateBillingService {
     private final IntermediateBillingValidator intermediateBillingValidator;
     private final CommonUtil commonUtil;
     private final ExpenseCalculatorProducer expenseCalculatorProducer;
+    private final RegisterPermissionValidator registerPermissionValidator;
+    private final BoundaryUtil boundaryUtil;
 
     private static final String REVIEW_STATUS_APPROVED = "APPROVED";
     private static final String REVIEW_STATUS_PENDING_FOR_APPROVAL = "PENDINGFORAPPROVAL";
@@ -86,7 +90,9 @@ public class IntermediateBillingService {
                                       ProjectUtil projectUtil,
                                       IntermediateBillingValidator intermediateBillingValidator,
                                       CommonUtil commonUtil,
-                                      ExpenseCalculatorProducer expenseCalculatorProducer) {
+                                      ExpenseCalculatorProducer expenseCalculatorProducer,
+                                      RegisterPermissionValidator registerPermissionValidator,
+                                      BoundaryUtil boundaryUtil) {
         this.billingConfigurationService = billingConfigurationService;
         this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
         this.expenseCalculatorRepository = expenseCalculatorRepository;
@@ -101,6 +107,271 @@ public class IntermediateBillingService {
         this.intermediateBillingValidator = intermediateBillingValidator;
         this.commonUtil = commonUtil;
         this.expenseCalculatorProducer = expenseCalculatorProducer;
+        this.registerPermissionValidator = registerPermissionValidator;
+        this.boundaryUtil = boundaryUtil;
+    }
+
+    /**
+     * Pre-validates V2 billing prerequisites BEFORE async processing.
+     * This ensures UI gets immediate feedback if validation fails.
+     *
+     * Validates:
+     * 1. Basic request validation
+     * 2. Sequential billing (previous period must be billed)
+     * 3. User permissions on registers
+     * 4. Muster roll existence and approval
+     *
+     * @param calculationRequest Full calculation request
+     * @throws CustomException if any validation fails (returned to UI immediately)
+     */
+    public void validateV2BillingPrerequisites(CalculationRequest calculationRequest) {
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Starting V2 pre-validation");
+
+        RequestInfo requestInfo = calculationRequest.getRequestInfo();
+        Criteria criteria = calculationRequest.getCriteria();
+
+        // Fetch project details
+        ProjectResponse projectResponse = projectUtil.getProjectDetails(
+            requestInfo,
+            criteria.getTenantId(),
+            criteria.getReferenceId(),
+            criteria.getLocalityCode()
+        );
+
+        if (projectResponse == null || CollectionUtils.isEmpty(projectResponse.getProject())) {
+            throw new CustomException("PROJECT_NOT_FOUND", "Project not found for bill generation");
+        }
+
+        Project project = projectResponse.getProject().get(0);
+        String projectId = project.getProjectHierarchy() != null ? project.getProjectHierarchy() : project.getId();
+
+        // Fetch billing config
+        String campaignNumber = extractCampaignNumber(project);
+        if (campaignNumber == null) {
+            throw new CustomException("CAMPAIGN_NUMBER_NOT_FOUND", "Campaign number not found in project");
+        }
+
+        BillingConfig billingConfig = billingConfigurationService.getBillingConfigByCampaignNumber(
+            campaignNumber, criteria.getTenantId()
+        );
+
+        if (billingConfig == null) {
+            throw new CustomException("BILLING_CONFIG_NOT_FOUND",
+                "No billing configuration found for campaign: " + campaignNumber);
+        }
+
+        // Validate basic request
+        intermediateBillingValidator.validateIntermediateBillingRequest(requestInfo, criteria, project, billingConfig);
+
+        // Check if specific period requested
+        String billingPeriodId = criteria.getBillingPeriodId();
+        if (billingPeriodId == null || billingPeriodId.isEmpty() ||
+            BILLING_PERIOD_AGGREGATE.equalsIgnoreCase(billingPeriodId)) {
+            log.info("Skipping detailed pre-validation for aggregate/batch mode - will validate per period in async");
+            return; // For aggregate/batch mode, validate during async processing
+        }
+
+        // For UI-driven mode: Validate the specific period
+        BillingPeriod selectedPeriod = billingConfigurationService.getBillingPeriodById(
+            billingPeriodId, criteria.getTenantId()
+        );
+
+        if (selectedPeriod == null) {
+            throw new CustomException("PERIOD_NOT_FOUND",
+                "Billing period not found: " + billingPeriodId);
+        }
+
+        // Validate period is ready for processing
+        intermediateBillingValidator.validatePeriodForProcessing(selectedPeriod);
+
+        // Validate sequential billing
+        validateSequentialBillingForProject(requestInfo, projectId, selectedPeriod, criteria.getTenantId());
+
+        // Fetch registers for the period
+        boolean isDistrictLevel = checkIfDistrictLevel(requestInfo, criteria);
+        List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
+            requestInfo, criteria, isDistrictLevel, selectedPeriod
+        );
+
+        if (periodRegisters.isEmpty()) {
+            throw new CustomException("NO_REGISTERS_FOR_PERIOD",
+                "No attendance registers found for period " + selectedPeriod.getPeriodNumber());
+        }
+
+        List<String> registerIds = periodRegisters.stream()
+            .map(AttendanceRegister::getId)
+            .collect(Collectors.toList());
+
+        // Validate register IDs
+        intermediateBillingValidator.validateRegisterIds(registerIds, selectedPeriod);
+
+        // Validate user permissions for the selected period's registers
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Validating user permissions for {} registers in period {}",
+            registerIds.size(), selectedPeriod.getPeriodNumber());
+        registerPermissionValidator.validateUserPermissionForBillGeneration(
+            requestInfo,
+            registerIds,
+            criteria.getTenantId(),
+            criteria.getLocalityCode(),
+            projectId
+        );
+
+        // CRITICAL VALIDATION: Check if user has permission on ALL project registers
+        // After bill generation, we update reviewStatus on ALL project registers (not just period registers)
+        // If user doesn't have permission on all, the post-billing update will fail
+        // Better to fail here (pre-validation) than after async bill generation
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Validating user permissions for ALL project registers (post-billing requirement)");
+        validateUserHasPermissionForAllProjectRegisters(requestInfo, criteria, isDistrictLevel, projectId);
+
+        // Validate muster roll existence and approval
+        List<MusterRoll> musterRolls = searchExistingMusterRollsForPeriod(
+            requestInfo,
+            criteria.getTenantId(),
+            registerIds,
+            selectedPeriod
+        );
+
+        if (CollectionUtils.isEmpty(musterRolls)) {
+            throw new CustomException("NO_MUSTER_ROLLS_FOR_PERIOD",
+                "No muster rolls found for period " + selectedPeriod.getPeriodNumber() + ". " +
+                "Muster rolls must be created by proximity supervisors before bill generation.");
+        }
+
+        // Validate all muster rolls are approved
+        intermediateBillingValidator.validateAllRegisterMustersApproved(periodRegisters, musterRolls, selectedPeriod);
+        intermediateBillingValidator.validateMusterRollsForBilling(musterRolls, selectedPeriod);
+
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - All pre-validations passed for period {}",
+            selectedPeriod.getPeriodNumber());
+    }
+
+    /**
+     * Validates that the user has permission on ALL project registers.
+     * This is critical because after bill generation, we update reviewStatus on ALL registers.
+     * If user doesn't have permission on all, the post-billing update will fail in async processing.
+     *
+     * This validation ensures we fail FAST in synchronous pre-validation rather than
+     * returning "INITIATED" and failing in background.
+     *
+     * @param requestInfo Request info with user details
+     * @param criteria Billing criteria
+     * @param isDistrictLevel Whether this is a district-level project
+     * @param projectId Project ID
+     * @throws CustomException if user doesn't have permission on all registers
+     */
+    private void validateUserHasPermissionForAllProjectRegisters(
+            RequestInfo requestInfo,
+            Criteria criteria,
+            boolean isDistrictLevel,
+            String projectId) {
+
+        try {
+            // Fetch ALL registers for the entire project (not just for the selected period)
+            List<AttendanceRegister> allProjectRegisters = new ArrayList<>();
+            int offset = 0;
+            List<AttendanceRegister> batch;
+
+            do {
+                batch = attendanceUtil.fetchAttendanceRegister(
+                    projectId,
+                    criteria.getTenantId(),
+                    requestInfo,
+                    criteria.getLocalityCode(),
+                    isDistrictLevel,
+                    offset
+                );
+
+                if (!CollectionUtils.isEmpty(batch)) {
+                    allProjectRegisters.addAll(batch);
+                    offset += batch.size();
+                }
+            } while (!CollectionUtils.isEmpty(batch) && batch.size() >= config.getRegisterBatchSize());
+
+            if (allProjectRegisters.isEmpty()) {
+                log.warn("No registers found for project {}. Skipping full permission check.", projectId);
+                return;
+            }
+
+            log.info("Found {} total project registers to validate permissions", allProjectRegisters.size());
+
+            // Extract all register IDs
+            List<String> allRegisterIds = allProjectRegisters.stream()
+                .map(AttendanceRegister::getId)
+                .collect(Collectors.toList());
+
+            // Use existing validator to check permissions on ALL registers
+            registerPermissionValidator.validateUserPermissionForBillGeneration(
+                requestInfo,
+                allRegisterIds,
+                criteria.getTenantId(),
+                criteria.getLocalityCode(),
+                projectId
+            );
+
+            log.info("✓ User has permission on all {} project registers", allProjectRegisters.size());
+
+            // CRITICAL: Also validate review status update permissions
+            // After bill generation, the system will update reviewStatus on ALL project registers
+            // This requires specific staff types:
+            //   - PENDINGFORAPPROVAL: APPROVER or EDITOR
+            //   - APPROVED: APPROVER only
+            // We validate with APPROVED (strictest requirement) because:
+            //   1. If user is APPROVER, they can set both PENDINGFORAPPROVAL and APPROVED
+            //   2. If user is EDITOR, they can only set PENDINGFORAPPROVAL (pre-validation will fail)
+            //   3. This ensures no failures during async bill generation
+            // PERFORMANCE OPTIMIZATION: Use already-fetched registers to avoid duplicate API calls
+            log.info("Validating user has review status update permissions (StaffType: APPROVER required) for all project registers...");
+            try {
+                registerPermissionValidator.validateUserPermissionForReviewStatusUpdateWithRegisters(
+                    allProjectRegisters, // Use already-fetched registers (no duplicate fetch!)
+                    requestInfo,
+                    REVIEW_STATUS_APPROVED, // Validate for APPROVED (strictest - APPROVER only required)
+                    criteria.getTenantId()
+                );
+                log.info("✓ User has APPROVER permissions on all {} project registers (can set any review status)", allProjectRegisters.size());
+            } catch (CustomException e) {
+                log.error("Review status update permission validation failed: {} - {}", e.getCode(), e.getMessage());
+                throw new CustomException("INSUFFICIENT_REVIEW_STATUS_PERMISSIONS",
+                    "You do not have permission to update review status for this project's registers. " +
+                    "Bill generation requires APPROVER staff type on ALL project registers. " +
+                    "Please ensure you have APPROVER permissions assigned. " +
+                    "Original error: " + e.getMessage());
+            }
+
+        } catch (CustomException e) {
+            // Re-throw permission exceptions with clearer message
+            log.error("Permission validation failed for ALL project registers: {}", e.getMessage());
+            throw new CustomException("INSUFFICIENT_REGISTER_PERMISSIONS",
+                "You do not have permission to generate bills for this project. " +
+                "Bill generation requires permission on ALL project registers. " +
+                "You may be missing permission on some registers. " +
+                "Original error: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Error validating permissions for all project registers: {}", e.getMessage(), e);
+            throw new CustomException("PERMISSION_VALIDATION_ERROR",
+                "Failed to validate register permissions: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Helper method to check if boundary is district level
+     */
+    private boolean checkIfDistrictLevel(RequestInfo requestInfo, Criteria criteria) {
+        try {
+            List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(
+                RequestInfoWrapper.builder().requestInfo(requestInfo).build(),
+                criteria.getLocalityCode(),
+                criteria.getTenantId(),
+                false
+            );
+            return !boundaries.isEmpty() &&
+                   boundaries.get(0).getBoundary() != null &&
+                   !boundaries.get(0).getBoundary().isEmpty() &&
+                   "DISTRICT".equals(boundaries.get(0).getBoundary().get(0).getBoundaryType());
+        } catch (Exception e) {
+            log.warn("Error checking district level: {}", e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -306,6 +577,20 @@ public class IntermediateBillingService {
 
         // Step 3.1: Validate register IDs
         intermediateBillingValidator.validateRegisterIds(registerIds, period);
+
+        // Step 3.2: Validate user permissions for bill generation (V2 flow)
+        // This ensures only authorized staff can initiate billing for registers they have access to
+        log.info("IntermediateBillingService::processOnePeriod - Validating user permissions for {} registers in period {}",
+                registerIds.size(), period.getPeriodNumber());
+        registerPermissionValidator.validateUserPermissionForBillGeneration(
+            requestInfo,
+            registerIds,
+            criteria.getTenantId(),
+            criteria.getLocalityCode(),
+            projectId
+        );
+        log.info("IntermediateBillingService::processOnePeriod - Permission validation successful for user in period {}",
+                period.getPeriodNumber());
 
         // Step 4: SEARCH for existing period-specific muster rolls (DO NOT CREATE)
         // In V2, muster rolls are created by proximity supervisors BEFORE billing
@@ -1028,7 +1313,9 @@ public class IntermediateBillingService {
         // The same generatePeriodBill() function used for intermediate bills
         // Now using CONSOLIDATED muster rolls with accumulated worker data
         log.info("Generating aggregate bill using existing bill generator...");
-        int totalRegisterCount = getTotalRegisterCount(allPeriods);
+        // BUGFIX: Calculate actual unique register count instead of reading from additionalDetails
+        int totalRegisterCount = getTotalRegisterCountForAggregate(requestInfo, criteria, isDistrictLevel, allPeriods);
+        log.info("Aggregate bill will be generated for {} unique registers", totalRegisterCount);
 
         Bill aggregateBill = generatePeriodBill(
                 requestInfo,
@@ -1227,6 +1514,18 @@ public class IntermediateBillingService {
         // Create a single synthetic muster roll with all consolidated entries
         // Use first muster roll as template for metadata
         MusterRoll templateMusterRoll = allMusterRolls.get(0);
+
+        // BUGFIX: Store original muster roll IDs for report generation
+        // Report generator needs to lookup attendance by muster roll ID
+        Map<String, Object> aggregateAdditionalDetails = new HashMap<>();
+        if (templateMusterRoll.getAdditionalDetails() != null) {
+            aggregateAdditionalDetails.putAll((Map<String, Object>) templateMusterRoll.getAdditionalDetails());
+        }
+        // Store list of original muster roll IDs for attendance lookup in reports
+        aggregateAdditionalDetails.put("originalMusterRollIds",
+            allMusterRolls.stream().map(MusterRoll::getId).collect(Collectors.toList()));
+        aggregateAdditionalDetails.put("consolidatedFrom", allMusterRolls.size());
+
         MusterRoll consolidatedMusterRoll = MusterRoll.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(templateMusterRoll.getTenantId())
@@ -1238,7 +1537,7 @@ public class IntermediateBillingService {
                 .referenceId(templateMusterRoll.getReferenceId())
                 .serviceCode(templateMusterRoll.getServiceCode())
                 .individualEntries(consolidatedEntries)
-                .additionalDetails(templateMusterRoll.getAdditionalDetails())
+                .additionalDetails(aggregateAdditionalDetails)
                 .auditDetails(templateMusterRoll.getAuditDetails())
                 .build();
 
@@ -1308,6 +1607,10 @@ public class IntermediateBillingService {
      * Enrich bill metadata to mark as FINAL_AGGREGATE
      * Overrides billingType and adds aggregate-specific metadata
      *
+     * BUGFIX: Also store originalMusterRollIds for report generation
+     * Since consolidated muster roll is synthetic and not persisted,
+     * report generator needs access to original muster roll IDs to fetch attendance data
+     *
      * @param bill Bill to enrich
      * @param allPeriods All billing periods
      * @param campaignNumber Campaign number
@@ -1333,6 +1636,10 @@ public class IntermediateBillingService {
         additionalDetails.put("campaignNumber", campaignNumber);
         additionalDetails.put("periodStartDate", allPeriods.get(0).getPeriodStartDate());
         additionalDetails.put("periodEndDate", allPeriods.get(allPeriods.size() - 1).getPeriodEndDate());
+
+        // BUGFIX: Mark this as an aggregate bill for report generation
+        // Report generator will use this flag to handle muster roll lookups differently
+        additionalDetails.put("isAggregateBill", true);
 
         bill.setAdditionalDetails(additionalDetails);
 
@@ -1542,12 +1849,58 @@ public class IntermediateBillingService {
     }
 
     /**
-     * Calculate total register count across all periods
-     * Reads from period additionalDetails
+     * Calculate total UNIQUE register count across all periods for aggregate billing.
+     *
+     * BUGFIX: Instead of reading from period additionalDetails (which may not be populated),
+     * we fetch actual registers for all periods and count unique register IDs.
+     * This ensures accurate register count even when periods haven't been individually billed.
+     *
+     * @param requestInfo Request info for fetching registers
+     * @param criteria Billing criteria
+     * @param isDistrictLevel Whether to fetch children registers
+     * @param allPeriods All billing periods
+     * @return Total UNIQUE register count
+     */
+    private int getTotalRegisterCountForAggregate(RequestInfo requestInfo,
+                                                    Criteria criteria,
+                                                    boolean isDistrictLevel,
+                                                    List<BillingPeriod> allPeriods) {
+        Set<String> uniqueRegisterIds = new HashSet<>();
+
+        log.info("Calculating register count across {} periods for aggregate bill", allPeriods.size());
+
+        for (BillingPeriod period : allPeriods) {
+            try {
+                // Fetch registers for this period
+                List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
+                    requestInfo, criteria, isDistrictLevel, period
+                );
+
+                // Collect unique register IDs
+                periodRegisters.stream()
+                    .map(AttendanceRegister::getId)
+                    .forEach(uniqueRegisterIds::add);
+
+                log.debug("Period {}: found {} registers", period.getPeriodNumber(), periodRegisters.size());
+            } catch (Exception e) {
+                log.warn("Failed to fetch registers for period {}: {}", period.getPeriodNumber(), e.getMessage());
+            }
+        }
+
+        int totalUniqueRegisters = uniqueRegisterIds.size();
+        log.info("Total UNIQUE registers across all periods: {}", totalUniqueRegisters);
+        return totalUniqueRegisters;
+    }
+
+    /**
+     * Calculate total register count across all periods (fallback method)
+     * Reads from period additionalDetails - may return 0 if not populated
      *
      * @param allPeriods All billing periods
-     * @return Total register count
+     * @return Total register count from additionalDetails
+     * @deprecated Use getTotalRegisterCountForAggregate for accurate count
      */
+    @Deprecated
     private int getTotalRegisterCount(List<BillingPeriod> allPeriods) {
         return allPeriods.stream()
                 .mapToInt(period -> {
@@ -1651,6 +2004,10 @@ public class IntermediateBillingService {
                     projectId,
                     reviewStatus);
 
+            // NOTE: Permission validation was already performed in validateV2BillingPrerequisites
+            // This ensures fail-fast behavior BEFORE async processing starts
+            // We can proceed directly to the update here
+
             // Use projectId directly from request criteria - it's already the correct project ID
             attendanceUtil.updateRegisterReviewStatus(requestInfo, projectId, tenantId, reviewStatus, localityCode);
 
@@ -1658,8 +2015,8 @@ public class IntermediateBillingService {
                     reviewStatus, projectId, period.getPeriodNumber());
 
         } catch (Exception e) {
-            // Log error but don't fail the bill generation
-            log.error("Failed to update register reviewStatus for project {} after period {}: {}",
+            // Log error but don't fail the bill generation for unexpected errors
+            log.error("Unexpected error updating register reviewStatus for project {} after period {}: {}",
                     projectId, period.getPeriodNumber(), e.getMessage(), e);
             log.warn("Bill generation was successful, but register reviewStatus update failed. " +
                     "This may need manual intervention.");

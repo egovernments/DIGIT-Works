@@ -306,8 +306,17 @@ public class HealthBillReportGenerator {
             individualMap.put(individual.getId(), individual);
         }
 
+        // BUGFIX: For aggregate bills, the musterRollIds point to a synthetic consolidated muster roll
+        // that doesn't exist in the database. We need to extract originalMusterRollIds from the
+        // consolidated muster roll's additionalDetails and fetch those instead.
         List<MusterRoll> musterRolls = expenseCalculatorUtil.fetchMusterRollByRegIdsV2(requestInfo, tenantId, musterRollIds);
-        if (musterRolls != null && !musterRolls.isEmpty()) {
+
+        // If no muster rolls found, check if this might be an aggregate bill
+        if ((musterRolls == null || musterRolls.isEmpty()) && !musterRollIds.isEmpty()) {
+            log.warn("No muster rolls found for IDs: {}. This might be an aggregate bill with synthetic muster roll IDs.", musterRollIds);
+            log.warn("Attendance data (number of days) will show as 0 in the report.");
+            // Continue with empty attendance map - will result in 0 days
+        } else if (musterRolls != null && !musterRolls.isEmpty()) {
             for (MusterRoll musterRoll : musterRolls) {
                 createMusterRollIndividualWorksMap(musterRoll, individualMusterAttendanceMap);
             }
@@ -376,9 +385,41 @@ public class HealthBillReportGenerator {
             }
         }
         BigDecimal totalNumberOfDays = BigDecimal.ZERO;
-        if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId()) && individualMusterAttendanceMap.get(billDetail.getReferenceId()).containsKey(individual.getId())) {
+
+        // Try to get attendance from muster roll map first (works for regular bills)
+        if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId()) &&
+            individualMusterAttendanceMap.get(billDetail.getReferenceId()).containsKey(individual.getId())) {
             totalNumberOfDays = individualMusterAttendanceMap.get(billDetail.getReferenceId()).get(individual.getId());
-            reportBillDetail.setTotalNumberOfDays(individualMusterAttendanceMap.get(billDetail.getReferenceId()).get(individual.getId()).floatValue());
+            reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
+            log.debug("Found attendance {} days for individual {} from muster roll map", totalNumberOfDays, individual.getId());
+        }
+        // BUGFIX: Fallback to bill detail additionalDetails for aggregate bills
+        // For aggregate bills, attendance is stored directly in bill detail since consolidated muster roll isn't persisted
+        else if (billDetail.getAdditionalDetails() != null) {
+            try {
+                Map<String, Object> additionalDetails = objectMapper.convertValue(
+                    billDetail.getAdditionalDetails(), Map.class
+                );
+                Object attendanceObj = additionalDetails.get("attendance");
+                if (attendanceObj != null) {
+                    if (attendanceObj instanceof BigDecimal) {
+                        totalNumberOfDays = (BigDecimal) attendanceObj;
+                    } else if (attendanceObj instanceof Number) {
+                        totalNumberOfDays = BigDecimal.valueOf(((Number) attendanceObj).doubleValue());
+                    }
+                    reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
+                    log.debug("Found attendance {} days for individual {} from bill detail additionalDetails (aggregate bill)",
+                        totalNumberOfDays, individual.getId());
+                } else {
+                    log.warn("No attendance data found for individual {} in bill detail {}. Setting to 0.",
+                        individual.getId(), billDetail.getId());
+                }
+            } catch (Exception e) {
+                log.error("Failed to extract attendance from bill detail additionalDetails: {}", e.getMessage());
+            }
+        } else {
+            log.warn("No attendance data found for individual {} in muster map or bill detail. Setting to 0.",
+                individual.getId());
         }
 
         String role = reportBillDetail.getRole();
@@ -412,8 +453,39 @@ public class HealthBillReportGenerator {
                 individualIdWorkDaysMap.put(individualId, individualEntry.getActualTotalAttendance());
             }
         }
+
+        // Store attendance map keyed by muster roll ID
         individualMusterAttendanceMap.put(musterRoll.getId(), individualIdWorkDaysMap);
 
+        // BUGFIX: For aggregate muster rolls, also store under original muster roll IDs
+        // This allows report generation to lookup attendance for bills referencing aggregate muster rolls
+        if (musterRoll.getAdditionalDetails() != null) {
+            try {
+                Map<String, Object> additionalDetails = objectMapper.convertValue(
+                    musterRoll.getAdditionalDetails(), Map.class
+                );
+                Object originalMusterRollIds = additionalDetails.get("originalMusterRollIds");
+
+                // If this is an aggregate muster roll, store attendance under each original ID too
+                if (originalMusterRollIds instanceof List) {
+                    List<String> originalIds = (List<String>) originalMusterRollIds;
+                    log.info("Detected aggregate muster roll {} with {} original muster rolls",
+                        musterRoll.getId(), originalIds.size());
+
+                    // Store the same attendance data under the aggregate muster roll ID
+                    // so report lookups using bill detail's referenceId (which points to aggregate ID) will work
+                    for (String originalId : originalIds) {
+                        // Don't overwrite if already exists
+                        if (!individualMusterAttendanceMap.containsKey(originalId)) {
+                            individualMusterAttendanceMap.put(originalId, individualIdWorkDaysMap);
+                        }
+                    }
+                    log.info("Stored aggregate attendance data for {} original muster roll IDs", originalIds.size());
+                }
+            } catch (Exception e) {
+                log.warn("Failed to process originalMusterRollIds from additionalDetails: {}", e.getMessage());
+            }
+        }
     }
 
     /**
