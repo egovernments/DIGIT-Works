@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.producer.Producer;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceRegister;
+import org.egov.web.models.AttendanceRegisterRequest;
+import org.egov.web.models.RegisterPeriodStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -37,14 +40,17 @@ public class RegisterPeriodEnrichmentService {
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
     private final AttendanceServiceConfiguration config;
+    private final Producer producer;
 
     @Autowired
     public RegisterPeriodEnrichmentService(RestTemplate restTemplate,
                                           @org.springframework.beans.factory.annotation.Qualifier("objectMapper") ObjectMapper mapper,
-                                          AttendanceServiceConfiguration config) {
+                                          AttendanceServiceConfiguration config,
+                                          Producer producer) {
         this.restTemplate = restTemplate;
         this.mapper = mapper;
         this.config = config;
+        this.producer = producer;
     }
 
     /**
@@ -333,15 +339,16 @@ public class RegisterPeriodEnrichmentService {
                                 "Attempting muster roll API fallback to confirm status.",
                         register.getId(), billingPeriodId);
 
-                String fallbackStatus = searchMusterRollStatusForSingleRegister(
+                RegisterPeriodStatus fallbackStatus = searchMusterRollStatusForSingleRegister(
                         register.getId(), billingPeriodId, requestInfo, tenantId);
 
                 if (fallbackStatus != null) {
-                    register.setRegisterPeriodStatus(fallbackStatus);
+                    register.setRegisterPeriodStatus(fallbackStatus.getStatus());
+                    upsertPeriodStatus(register, fallbackStatus, tenantId, requestInfo);
                     enrichedCount++;
                     nullPeriodStatusesCount++;
                     log.info("enrichRegistersWithMusterRollStatus::FALLBACK SUCCESS (empty period_statuses) - Register {} period {} status from API: {}",
-                            register.getId(), billingPeriodId, fallbackStatus);
+                            register.getId(), billingPeriodId, fallbackStatus.getStatus());
                 } else {
                     // No muster roll found - genuinely NOT_CREATED
                     register.setRegisterPeriodStatus("NOT_CREATED");
@@ -369,15 +376,16 @@ public class RegisterPeriodEnrichmentService {
                         "Attempting muster roll API fallback to check if muster roll exists.",
                         register.getId(), billingPeriodId);
 
-                String fallbackStatus = searchMusterRollStatusForSingleRegister(
+                RegisterPeriodStatus fallbackStatus = searchMusterRollStatusForSingleRegister(
                         register.getId(), billingPeriodId, requestInfo, tenantId);
 
                 if (fallbackStatus != null) {
                     // Muster roll exists but wasn't in period_statuses (Kafka sync failed)
-                    register.setRegisterPeriodStatus(fallbackStatus);
+                    register.setRegisterPeriodStatus(fallbackStatus.getStatus());
+                    upsertPeriodStatus(register, fallbackStatus, tenantId, requestInfo);
                     enrichedCount++;
                     log.info("enrichRegistersWithMusterRollStatus::FALLBACK SUCCESS - Register {} period {} status retrieved from API: {}",
-                            register.getId(), billingPeriodId, fallbackStatus);
+                            register.getId(), billingPeriodId, fallbackStatus.getStatus());
                 } else {
                     // No muster roll found - genuinely NOT_CREATED
                     register.setRegisterPeriodStatus("NOT_CREATED");
@@ -416,6 +424,56 @@ public class RegisterPeriodEnrichmentService {
     }
 
     /**
+     * Append (or replace) the period status on the register object and persist it to DB via Kafka.
+     * This self-heals missing period_statuses entries when the fallback API returns a valid status.
+     */
+    private void upsertPeriodStatus(AttendanceRegister register,
+                                    RegisterPeriodStatus newStatus,
+                                    String tenantId,
+                                    RequestInfo requestInfo) {
+
+        if (register == null || newStatus == null || StringUtils.isBlank(newStatus.getPeriodId())) {
+            return;
+        }
+
+        List<org.egov.web.models.RegisterPeriodStatus> existing = register.getPeriodStatuses();
+        List<org.egov.web.models.RegisterPeriodStatus> updated = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(existing)) {
+            boolean replaced = false;
+            for (org.egov.web.models.RegisterPeriodStatus status : existing) {
+                if (newStatus.getPeriodId().equals(status.getPeriodId())) {
+                    updated.add(newStatus);
+                    replaced = true;
+                } else {
+                    updated.add(status);
+                }
+            }
+            if (!replaced) {
+                updated.add(newStatus);
+            }
+        } else {
+            updated.add(newStatus);
+        }
+
+        register.setPeriodStatuses(updated);
+
+        try {
+            AttendanceRegisterRequest updateRequest = AttendanceRegisterRequest.builder()
+                    .requestInfo(requestInfo)
+                    .attendanceRegister(Collections.singletonList(register))
+                    .build();
+
+            producer.push(tenantId, config.getUpdateAttendanceRegisterTopic(), updateRequest);
+            log.info("upsertPeriodStatus::Persisted period_statuses update for register {} period {} via topic {}",
+                    register.getId(), newStatus.getPeriodId(), config.getUpdateAttendanceRegisterTopic());
+        } catch (Exception e) {
+            log.error("upsertPeriodStatus::Failed to persist period_statuses update for register {} period {}: {}",
+                    register.getId(), newStatus.getPeriodId(), e.getMessage(), e);
+        }
+    }
+
+    /**
      * FALLBACK METHOD - Search muster roll for a single register and period
      *
      * Called when a period is missing from the period_statuses field (Kafka event failure scenario).
@@ -435,9 +493,9 @@ public class RegisterPeriodEnrichmentService {
      * @param billingPeriodId Billing period ID
      * @param requestInfo Request info for API call
      * @param tenantId Tenant ID
-     * @return Muster roll status if found, null otherwise
+     * @return RegisterPeriodStatus if found, null otherwise
      */
-    private String searchMusterRollStatusForSingleRegister(
+    private RegisterPeriodStatus searchMusterRollStatusForSingleRegister(
             String registerId,
             String billingPeriodId,
             RequestInfo requestInfo,
@@ -520,7 +578,18 @@ public class RegisterPeriodEnrichmentService {
             log.info("searchMusterRollStatusForSingleRegister::Found muster roll for register {} period {} with status: {}",
                     registerId, billingPeriodId, status);
 
-            return status;
+            // Capture muster roll ID if available
+            Object musterRollIdObj = musterRoll.get("id");
+            String musterRollId = musterRollIdObj != null ? musterRollIdObj.toString() : null;
+
+            RegisterPeriodStatus periodStatus = RegisterPeriodStatus.builder()
+                    .periodId(billingPeriodId)
+                    .status(status)
+                    .musterRollId(musterRollId)
+                    .lastModifiedTime(System.currentTimeMillis())
+                    .build();
+
+            return periodStatus;
 
         } catch (Exception e) {
             log.error("searchMusterRollStatusForSingleRegister::Error calling muster-roll API for register {} period {}: {}",
