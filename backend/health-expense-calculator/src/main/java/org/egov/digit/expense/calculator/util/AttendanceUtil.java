@@ -17,7 +17,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -99,12 +101,12 @@ public class AttendanceUtil {
 
         try {
             // Fetch all registers for this project
-            List<AttendanceRegister> allRegisters = new ArrayList<>();
+            List<Map<String, Object>> allRegisters = new ArrayList<>();
             int offset = 0;
-            List<AttendanceRegister> batch;
+            List<Map<String, Object>> batch;
 
             do {
-                batch = fetchAttendanceRegister(projectId, tenantId, requestInfo,
+                batch = fetchAttendanceRegisterRaw(projectId, tenantId, requestInfo,
                         localityCode, false, offset);
 
                 if (!CollectionUtils.isEmpty(batch)) {
@@ -121,16 +123,15 @@ public class AttendanceUtil {
             log.info("Found {} registers for project {}. Updating reviewStatus to '{}'",
                     allRegisters.size(), projectId, reviewStatus);
 
-            // Update reviewStatus for each register
-            for (AttendanceRegister register : allRegisters) {
-                register.setReviewStatus(reviewStatus);
+            // Update reviewStatus for each register while preserving other fields (including periodStatuses)
+            for (Map<String, Object> register : allRegisters) {
+                register.put("reviewStatus", reviewStatus);
             }
 
-            // Build update request
-            AttendanceRegisterRequest updateRequest = AttendanceRegisterRequest.builder()
-                    .requestInfo(requestInfo)
-                    .attendanceRegister(allRegisters)
-                    .build();
+            // Build update request (Map based to retain unmapped fields)
+            Map<String, Object> updateRequest = new HashMap<>();
+            updateRequest.put("RequestInfo", requestInfo);
+            updateRequest.put("attendanceRegister", allRegisters);
 
             // Call attendance update API
             StringBuilder uri = new StringBuilder();
@@ -164,5 +165,56 @@ public class AttendanceUtil {
             throw new CustomException("ATTENDANCE_UPDATE_ERROR",
                     "Unexpected error updating attendance register reviewStatus: " + e.getMessage());
         }
+    }
+
+    /**
+     * Fetch attendance registers as raw Maps to preserve fields not present in the shared model
+     * (e.g., periodStatuses JSONB) for safe update operations.
+     */
+    private List<Map<String, Object>> fetchAttendanceRegisterRaw(String referenceId, String tenantId, RequestInfo requestInfo,
+                                                                 String localityCode, boolean isChildrenRequired, Integer offset) {
+        log.info("Fetching attendance register (raw) with tenantId:{} offset:{} batch:{}",
+                tenantId, offset, config.getRegisterBatchSize());
+
+        StringBuilder uri = new StringBuilder();
+        uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
+                .queryParam("tenantId", tenantId)
+                .queryParam("referenceId", referenceId)
+                .queryParam("isChildrenRequired", isChildrenRequired)
+                .queryParam("status", Status.ACTIVE)
+                .queryParam("offset", offset)
+                .queryParam("limit", config.getRegisterBatchSize());
+
+        if (localityCode != null && !localityCode.trim().isEmpty()) {
+            uriBuilder.queryParam("localityCode", localityCode);
+        }
+
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+        Map<String, Object> response;
+        try {
+            response = restTemplate.postForObject(uriBuilder.toUriString(), requestInfoWrapper, Map.class);
+        } catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
+            log.error("AttendanceUtil::Error thrown from attendance register service::{}", httpClientOrServerExc.getStatusCode());
+            throw new CustomException("ATTENDANCE_REGISTER_SERVICE_EXCEPTION",
+                    "Error thrown from attendance register service::" + httpClientOrServerExc.getStatusCode());
+        }
+
+        if (response == null || !response.containsKey("attendanceRegister")) {
+            log.error("Error fetching registers::{}", referenceId);
+            throw new CustomException("ERROR_FETCHING_ATTENDANCE_REGISTER",
+                    "Error fetching attendance registers");
+        }
+
+        Object registersObj = response.get("attendanceRegister");
+        if (!(registersObj instanceof List)) {
+            log.error("attendanceRegister field is not a list in response for referenceId {}", referenceId);
+            throw new CustomException("ERROR_FETCHING_ATTENDANCE_REGISTER",
+                    "Invalid attendance register response");
+        }
+
+        //noinspection unchecked
+        return (List<Map<String, Object>>) registersObj;
     }
 }
