@@ -328,11 +328,28 @@ public class RegisterPeriodEnrichmentService {
             List<org.egov.web.models.RegisterPeriodStatus> periodStatuses = register.getPeriodStatuses();
 
             if (CollectionUtils.isEmpty(periodStatuses)) {
-                // No period statuses available - muster roll not yet created
-                log.debug("enrichRegistersWithMusterRollStatus::Register {} has no period_statuses, setting to NOT_CREATED",
-                        register.getId());
-                register.setRegisterPeriodStatus("NOT_CREATED");
-                nullPeriodStatusesCount++;
+                // No period statuses available (Kafka sync failed or muster not created) - trigger API fallback
+                log.warn("enrichRegistersWithMusterRollStatus::FALLBACK TRIGGERED - Register {} has empty period_statuses for period {}. " +
+                                "Attempting muster roll API fallback to confirm status.",
+                        register.getId(), billingPeriodId);
+
+                String fallbackStatus = searchMusterRollStatusForSingleRegister(
+                        register.getId(), billingPeriodId, requestInfo, tenantId);
+
+                if (fallbackStatus != null) {
+                    register.setRegisterPeriodStatus(fallbackStatus);
+                    enrichedCount++;
+                    nullPeriodStatusesCount++;
+                    log.info("enrichRegistersWithMusterRollStatus::FALLBACK SUCCESS (empty period_statuses) - Register {} period {} status from API: {}",
+                            register.getId(), billingPeriodId, fallbackStatus);
+                } else {
+                    // No muster roll found - genuinely NOT_CREATED
+                    register.setRegisterPeriodStatus("NOT_CREATED");
+                    notCreatedCount++;
+                    nullPeriodStatusesCount++;
+                    log.debug("enrichRegistersWithMusterRollStatus::FALLBACK CONFIRMED (empty period_statuses) - Register {} period {} has no muster roll, status: NOT_CREATED",
+                            register.getId(), billingPeriodId);
+                }
                 continue;
             }
 
