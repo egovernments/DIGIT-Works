@@ -9,8 +9,13 @@ import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Skill;
 import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
+import org.egov.digit.expense.calculator.service.BillingConfigurationService;
 import org.egov.digit.expense.calculator.util.*;
 import org.egov.digit.expense.calculator.web.models.*;
+import org.egov.digit.expense.calculator.web.models.BillingPeriod;
+import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchCriteria;
+import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchRequest;
+import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchResponse;
 import org.egov.digit.expense.calculator.web.models.report.BillReportRequest;
 import org.egov.digit.expense.calculator.web.models.report.ReportBill;
 import org.egov.digit.expense.calculator.web.models.report.ReportBillDetail;
@@ -20,10 +25,14 @@ import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -46,10 +55,11 @@ public class HealthBillReportGenerator {
     private final BillUtils billUtils;
     private final ExpenseCalculatorService expenseCalculatorService;
     private final ObjectMapper objectMapper;
+    private final BillingConfigurationService billingConfigurationService;
 
 
     @Autowired
-    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper) {
+    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, BillingConfigurationService billingConfigurationService) {
         this.individualUtil = individualUtil;
         this.expenseCalculatorUtil = expenseCalculatorUtil;
         this.billExcelGenerate = billExcelGenerate;
@@ -60,6 +70,7 @@ public class HealthBillReportGenerator {
         this.billUtils = billUtils;
         this.expenseCalculatorService = expenseCalculatorService;
         this.objectMapper = objectMapper;
+        this.billingConfigurationService = billingConfigurationService;
     }
 
     /**
@@ -174,6 +185,8 @@ public class HealthBillReportGenerator {
                 ? billRequest.getRequestInfo().getUserInfo().getName()
                 : "";
 
+        BillingPeriodDisplay billingPeriodDisplay = getBillingPeriodDisplay(billRequest);
+
         ReportBill reportBill = ReportBill.builder()
                 .totalAmount(billRequest.getBill().getTotalAmount())
                 .reportTitle(config.getReportHeaderTitle())
@@ -182,6 +195,10 @@ public class HealthBillReportGenerator {
                 .campaignName(null)
                 .numberOfIndividuals(billRequest.getBill().getBillDetails().size())
                 .reportBillDetails(reportBillDetail)
+                .billingPeriodLabel(billingPeriodDisplay.label)
+                .billingPeriodDateRange(billingPeriodDisplay.dateRange)
+                .billingPeriodStartDate(billingPeriodDisplay.startDate)
+                .billingPeriodEndDate(billingPeriodDisplay.endDate)
                 .build();
 
         enrichCampaignName(reportBill, billRequest);
@@ -211,6 +228,148 @@ public class HealthBillReportGenerator {
             }
         }
         return msgId + "|" + config.getReportLocalizationLocaleCode();
+    }
+
+    private BillingPeriodDisplay getBillingPeriodDisplay(BillRequest billRequest) {
+        String billingPeriodId = extractBillingPeriodId(billRequest.getBill());
+        if (!StringUtils.hasLength(billingPeriodId)) {
+            log.info("No billingPeriodId found for bill {}, skipping billing period enrichment", billRequest.getBill().getId());
+            return BillingPeriodDisplay.empty();
+        }
+
+        BillingPeriod billingPeriod = billingConfigurationService.getBillingPeriodById(billingPeriodId, billRequest.getBill().getTenantId());
+        if (billingPeriod == null) {
+            log.warn("Billing period {} not found for bill {}, leaving period columns empty", billingPeriodId, billRequest.getBill().getId());
+            return BillingPeriodDisplay.empty();
+        }
+
+        List<BillingPeriod> periodsForConfig = fetchBillingPeriodsForConfig(billingPeriod, billRequest);
+        int displayCycleNumber = computeDisplayCycleNumber(billingPeriod, periodsForConfig);
+        String label = displayCycleNumber > 0 ? "Period " + displayCycleNumber : null;
+        String dateRange = formatPeriodRange(billingPeriod.getPeriodStartDate(), billingPeriod.getPeriodEndDate());
+
+        return new BillingPeriodDisplay(label, dateRange, billingPeriod.getPeriodStartDate(), billingPeriod.getPeriodEndDate());
+    }
+
+    private List<BillingPeriod> fetchBillingPeriodsForConfig(BillingPeriod billingPeriod, BillRequest billRequest) {
+        try {
+            BillingPeriodSearchCriteria criteria = BillingPeriodSearchCriteria.builder()
+                    .tenantId(billRequest.getBill().getTenantId())
+                    .billingConfigId(billingPeriod.getBillingConfigId())
+                    .includeDeprecated(true)
+                    .limit(200)
+                    .offset(0)
+                    .build();
+
+            BillingPeriodSearchRequest searchRequest = BillingPeriodSearchRequest.builder()
+                    .requestInfo(billRequest.getRequestInfo())
+                    .searchCriteria(criteria)
+                    .build();
+
+            BillingPeriodSearchResponse response = billingConfigurationService.searchBillingPeriods(searchRequest);
+            if (response != null && response.getBillingPeriods() != null) {
+                return response.getBillingPeriods();
+            }
+        } catch (Exception e) {
+            log.warn("Failed to fetch billing periods for config {}: {}", billingPeriod.getBillingConfigId(), e.getMessage());
+        }
+        return Collections.emptyList();
+    }
+
+    private int computeDisplayCycleNumber(BillingPeriod billingPeriod, List<BillingPeriod> periodsForConfig) {
+        if (CollectionUtils.isEmpty(periodsForConfig)) {
+            return billingPeriod.getPeriodNumber() != null ? billingPeriod.getPeriodNumber() : 0;
+        }
+
+        List<BillingPeriod> activePeriods = periodsForConfig.stream()
+                .filter(period -> period.getIsDeprecated() == null || !period.getIsDeprecated())
+                .sorted(Comparator.comparing(BillingPeriod::getPeriodStartDate, Comparator.nullsLast(Long::compareTo)))
+                .collect(Collectors.toList());
+
+        int index = findIndex(billingPeriod, activePeriods);
+        if (index >= 0) {
+            return index + 1;
+        }
+
+        List<BillingPeriod> sortedAllPeriods = periodsForConfig.stream()
+                .sorted(Comparator.comparing(BillingPeriod::getPeriodStartDate, Comparator.nullsLast(Long::compareTo)))
+                .collect(Collectors.toList());
+
+        index = findIndex(billingPeriod, sortedAllPeriods);
+        if (index >= 0) {
+            return index + 1;
+        }
+
+        return billingPeriod.getPeriodNumber() != null ? billingPeriod.getPeriodNumber() : 0;
+    }
+
+    private int findIndex(BillingPeriod billingPeriod, List<BillingPeriod> periods) {
+        for (int i = 0; i < periods.size(); i++) {
+            if (billingPeriod.getId() != null && billingPeriod.getId().equals(periods.get(i).getId())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private String formatPeriodRange(Long startDate, Long endDate) {
+        if (startDate == null || endDate == null) {
+            return null;
+        }
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                    .withZone(ZoneId.of(config.getReportDateTimeZone()));
+            return formatter.format(Instant.ofEpochMilli(startDate)) + " - " + formatter.format(Instant.ofEpochMilli(endDate));
+        } catch (Exception e) {
+            log.warn("Failed to format billing period range: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private String extractBillingPeriodId(Bill bill) {
+        try {
+            if (bill.getAdditionalDetails() == null) {
+                return null;
+            }
+            Map<String, Object> additionalDetails = objectMapper.convertValue(
+                    bill.getAdditionalDetails(),
+                    objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class)
+            );
+
+            Object directPeriodId = additionalDetails.get("billingPeriodId");
+            if (directPeriodId instanceof String && StringUtils.hasLength((String) directPeriodId)) {
+                return (String) directPeriodId;
+            }
+
+            Object nestedPeriod = additionalDetails.get("billingPeriod");
+            if (nestedPeriod instanceof Map) {
+                Object nestedId = ((Map<?, ?>) nestedPeriod).get("billingPeriodId");
+                if (nestedId instanceof String && StringUtils.hasLength((String) nestedId)) {
+                    return (String) nestedId;
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Unable to extract billingPeriodId from bill {}: {}", bill.getId(), e.getMessage());
+        }
+        return null;
+    }
+
+    private static class BillingPeriodDisplay {
+        private final String label;
+        private final String dateRange;
+        private final Long startDate;
+        private final Long endDate;
+
+        private BillingPeriodDisplay(String label, String dateRange, Long startDate, Long endDate) {
+            this.label = label;
+            this.dateRange = dateRange;
+            this.startDate = startDate;
+            this.endDate = endDate;
+        }
+
+        private static BillingPeriodDisplay empty() {
+            return new BillingPeriodDisplay(null, null, null, null);
+        }
     }
 
     /**

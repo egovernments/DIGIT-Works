@@ -72,6 +72,8 @@ public class BillExcelGenerate {
         BigDecimal totalAmountToProcess = reportBill.getTotalAmount();
         String totalNumberOfWorkers = reportBill.getNumberOfIndividuals().toString();
         String campaignName = reportBill.getCampaignName();
+        String billingPeriodLabel = reportBill.getBillingPeriodLabel() != null ? reportBill.getBillingPeriodLabel() : "";
+        String billingPeriodRange = reportBill.getBillingPeriodDateRange() != null ? reportBill.getBillingPeriodDateRange() : "";
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(campaignName);
@@ -112,10 +114,10 @@ public class BillExcelGenerate {
         Row campaignRow2 = sheet.createRow(rowNum++);
         campaignRow2.createCell(0).setCellValue("");
         campaignRow2.getCell(0).setCellStyle(otherHeaderNumValueStyle);
-        campaignRow2.createCell(1).setCellValue("");
-        campaignRow2.getCell(1).setCellStyle(otherHeaderNumValueStyle);
-        campaignRow2.createCell(2).setCellValue("");
-        campaignRow2.getCell(2).setCellStyle(otherHeaderNumValueStyle);
+        campaignRow2.createCell(1).setCellValue(billingPeriodLabel);
+        campaignRow2.getCell(1).setCellStyle(otherHeaderTxtValueStyle);
+        campaignRow2.createCell(2).setCellValue(billingPeriodRange);
+        campaignRow2.getCell(2).setCellStyle(otherHeaderTxtValueStyle);
         campaignRow2.createCell(3).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_TOTAL_NUMBER_OF_WORKERS_LABEL, BILL_EXCEL_TOTAL_NUMBER_OF_WORKERS_LABEL));
         campaignRow2.getCell(3).setCellStyle(otherHeaderLabelStyle);
         campaignRow2.createCell(4).setCellValue(totalNumberOfWorkers);

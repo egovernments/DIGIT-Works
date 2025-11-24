@@ -51,6 +51,18 @@ public class ReportBill {
     @JsonProperty("createdTime")
     private Long createdTime;
 
+    @JsonProperty("billingPeriodLabel")
+    private String billingPeriodLabel;
+
+    @JsonProperty("billingPeriodDateRange")
+    private String billingPeriodDateRange;
+
+    @JsonProperty("billingPeriodStartDate")
+    private Long billingPeriodStartDate;
+
+    @JsonProperty("billingPeriodEndDate")
+    private Long billingPeriodEndDate;
+
     @JsonProperty("billDetails")
     @NotNull
     @Valid
