@@ -494,12 +494,29 @@ public class CalculationService {
         }
 
         List<AttendanceLog> logs = attendanceLogResponse.getAttendance();
-        log.info("CalculationService::getAttendanceLogs - Fetched {} attendance logs (period: {}, {} unique individuals)",
-            logs.size(),
-            StringUtils.isNotBlank(musterRoll.getBillingPeriodId()) ? musterRoll.getBillingPeriodId() : "V1-full-register",
-            logs.stream().map(AttendanceLog::getIndividualId).distinct().count());
 
-        return logs;
+        // Defensive filter: ensure logs fall within the muster start/end window (inclusive) to avoid cross-period bleed.
+        long startMillis = fromTime.longValue();
+        long endMillis = toTime.longValue();
+        List<AttendanceLog> filteredLogs = logs.stream()
+            .filter(log -> log.getTime() != null &&
+                log.getTime().longValue() >= startMillis &&
+                log.getTime().longValue() <= endMillis)
+            .collect(Collectors.toList());
+
+        int dropped = logs.size() - filteredLogs.size();
+        if (dropped > 0) {
+            log.warn("CalculationService::getAttendanceLogs - Dropped {} attendance logs outside window {} to {} (period: {})",
+                dropped, formatTimestamp(startMillis), formatTimestamp(endMillis),
+                StringUtils.isNotBlank(musterRoll.getBillingPeriodId()) ? musterRoll.getBillingPeriodId() : "V1-full-register");
+        }
+
+        log.info("CalculationService::getAttendanceLogs - Fetched {} attendance logs after window filter (period: {}, {} unique individuals)",
+            filteredLogs.size(),
+            StringUtils.isNotBlank(musterRoll.getBillingPeriodId()) ? musterRoll.getBillingPeriodId() : "V1-full-register",
+            filteredLogs.stream().map(AttendanceLog::getIndividualId).distinct().count());
+
+        return filteredLogs;
     }
 
     /**

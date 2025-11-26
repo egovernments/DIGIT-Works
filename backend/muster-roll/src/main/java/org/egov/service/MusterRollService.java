@@ -291,6 +291,13 @@ public class MusterRollService {
     public MusterRollRequest updateMusterRoll(MusterRollRequest musterRollRequest) {
         log.info("MusterRollService::updateMusterRoll");
 
+        // V2 Flow: If billingPeriodId is present on update, recompute the period intersection
+        if (StringUtils.isNotBlank(musterRollRequest.getMusterRoll().getBillingPeriodId())) {
+            log.info("MusterRollService::updateMusterRoll - V2 flow detected (billingPeriodId: {}) - reapplying period intersection",
+                musterRollRequest.getMusterRoll().getBillingPeriodId());
+            applyPeriodAwareDates(musterRollRequest);
+        }
+
         // CRITICAL: Check if period/register is locked due to billing (if enabled)
         // Once a bill is generated for a period, NO edits allowed to muster roll or attendance
         if (config.isPeriodLockingEnabled()) {
