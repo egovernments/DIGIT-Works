@@ -1,0 +1,229 @@
+openapi: 3.0.0
+info:
+  title: Expense Service - Payments V2
+  version: 2.0.0
+  description: |
+    Payments V2 enhancements for the Expense Service. Adds period-aware bill search, register+period uniqueness,
+    and a feature flag (`expense.v2.periodic.billing.enabled`) to control V2 validations.
+
+paths:
+  /expense/bill/v1/_create:
+    post:
+      tags: [Bill]
+      summary: Create bills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillRequest'
+      responses:
+        '202':
+          description: Create request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillResponse'
+        '400':
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes'
+
+  /expense/bill/v1/_update:
+    post:
+      tags: [Bill]
+      summary: Update bills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillRequest'
+      responses:
+        '202':
+          description: Update request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillResponse'
+        '400':
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes'
+
+  /expense/bill/v1/_search:
+    post:
+      tags: [Bill]
+      summary: Search bills (Payments V2)
+      description: |
+        Supports Payments V2 period-aware filters. When `expense.v2.periodic.billing.enabled=true`, the service enforces one bill per register per billing period.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfoWrapper'
+      parameters:
+        - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/parameters/tenantId'
+        - name: billingPeriodIds
+          in: query
+          description: Filter by billing period ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: billingType
+          in: query
+          description: Bill type filter (e.g., PERIODIC, AGGREGATE)
+          schema:
+            type: string
+        - name: reportStatus
+          in: query
+          description: Payments V2 reporting status filter
+          schema:
+            type: string
+        - name: isAggregate
+          in: query
+          description: Filter aggregate bills (true) vs period bills (false)
+          schema:
+            type: boolean
+        - name: registerIds
+          in: query
+          description: Filter by register ids
+          schema:
+            type: array
+            items:
+              type: string
+        - name: billNumbers
+          in: query
+          description: Filter by bill numbers
+          schema:
+            type: array
+            items:
+              type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 0
+      responses:
+        '200':
+          description: Bill search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillResponse'
+        '400':
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes'
+
+components:
+  schemas:
+    RequestInfoWrapper:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestInfo'
+
+    BillRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestInfo'
+        Bill:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+      required: [RequestInfo, Bill]
+
+    BillResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ResponseInfo'
+        Bill:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+
+    Bill:
+      type: object
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        billNumber:
+          type: string
+        billDate:
+          type: number
+          format: int64
+        registerId:
+          type: string
+          description: Attendance register id tied to the bill
+        billingPeriodId:
+          type: string
+          description: Payments V2 - billing period identifier (enforces uniqueness with registerId)
+        billingType:
+          type: string
+          description: Bill type (PERIODIC/AGGREGATE)
+        isAggregate:
+          type: boolean
+        status:
+          type: string
+        additionalDetails:
+          type: object
+        billDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillDetail'
+
+    BillDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+          format: double
+        fromPeriod:
+          type: number
+          format: int64
+        toPeriod:
+          type: number
+          format: int64
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+
+    LineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        headCode:
+          type: string
+        amount:
+          type: number
+          format: double
+        type:
+          type: string
+          enum: [DEBIT, CREDIT]
+        additionalDetails:
+          type: object
+

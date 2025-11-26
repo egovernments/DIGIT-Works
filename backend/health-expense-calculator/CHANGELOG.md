@@ -1,6 +1,14 @@
 
 All notable changes to this module will be documented in this file.
 
+## 2.0.0 - 2025-11-24
+
+- Added Payments V2 billing configuration lifecycle (create/search/update) with period generation and constraints.
+- Introduced intermediate billing engine to generate period-aware bills, enforcing sequential periods and muster/attendance approvals.
+- Added `/v1/_checkBillStatus` for locking used by muster-roll; added Redis-backed muster status fallback + attendance patch endpoint.
+- Updated bill report generation (PDF/Excel) to include period-aware billing details.
+- Added application properties for billing config toggles, period generation, batch processing, muster period awareness, and Redis caching.
+
 ## 1.0.0 - 2025-01-27
 
 - Base version

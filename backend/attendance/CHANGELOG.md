@@ -1,5 +1,25 @@
 All notable changes to this module will be documented in this file.
 
+## 2.0.0 - 2025-11-24
+
+### Changes
+
+- Added Payments V2 period-aware register search (`billingPeriodId`, `registerPeriodStatus`) with enrichment from persisted muster-roll period statuses.
+- Introduced Kafka consumer (`muster-roll-status-update`) to sync periodStatuses JSONB and avoid synchronous muster lookups during search.
+- Added backward-compatible V1 reviewStatus mapping for aggregate billing mode.
+
+### Migrations / Persistence
+
+- Added `period_statuses` JSONB column with GIN index to `eg_wms_attendance_register` (migration `V20250320120000__add_period_statuses_to_attendance_register.sql`).
+- Updated persister to allow JSONB updates for periodStatuses from Kafka consumer.
+
+### Configuration
+
+- New properties for Payments V2:
+  - `attendance.register.kafka.muster.status.update.topic`
+  - `egov.muster.roll.host` / `egov.muster.roll.search.endpoint` (fallback lookup)
+  - `egov.expense.calculator.host` / `egov.expense.calculator.billing.period.search.endpoint`
+
 ## 1.3.0 - 2025-06-13
 
 ### Changes

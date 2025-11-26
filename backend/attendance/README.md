@@ -1,11 +1,8 @@
 # Attendance Service
 
-The attendance service provides generic attendance logging functionality based on "in" and "out" timestamps.
-IN and OUT timestamps are recorded per individual. Aggregating and calculating attendance based on these timestamps 
-is the function of the muster roll service.
+The attendance service provides generic attendance register management and logging of "in" and "out" timestamps per individual. Aggregation (muster-roll) is handled by the muster-roll service.
 
-
-### Service Dependencies
+## Service Dependencies
 
 - DIGIT backbone services
 - Individual
@@ -16,14 +13,26 @@ is the function of the muster roll service.
 
 ## Service Details
 
-- Allows creation/updation/search of an attendance register
-- Allows mapping of staff and attendees to a register and enforces permissions.
-- Logs entry and exit timestamps in epoch time for a referenced entity
+- Create/update/search attendance registers; map staff/attendees with permission enforcement.
+- Record attendance events (IN/OUT timestamps) against registers.
+- Payments V2 (period-aware) enhancements:
+  - V2 search parameters: `billingPeriodId`, `registerPeriodStatus` (APPROVED/PENDING) to filter registers overlapping a billing period.
+  - Register responses include `periodStatuses` (per-period muster status) and derived `registerPeriodStatus`.
+  - Kafka-driven sync of muster-roll statuses (`muster-roll-status-update` topic) to update `periodStatuses` JSONB; search falls back to muster-roll API only when status is missing.
+  - Backward compatibility: `reviewStatus` still works and overrides V2 filters when provided.
 
-### API Specs
+## Key configuration (Payments V2)
 
-https://raw.githubusercontent.com/egovernments/DIGIT-Specs/master/Domain%20Services/Works/Attendance-Service-v1.0.0.yaml
+- `attendance.register.kafka.muster.status.update.topic`: Topic consumed to sync period statuses from muster-roll.
+- `egov.expense.calculator.host` + `egov.expense.calculator.billing.period.search.endpoint`: Billing period metadata lookup.
+- `egov.muster.roll.host` + `egov.muster.roll.search.endpoint`: Fallback muster-roll search when a period status is absent.
 
-### Postman Collection
+## API Specs
 
-https://raw.githubusercontent.com/egovernments/DIGIT-Works/master/backend/attendance/Attendace%20Service%20Postman%20Scripts.postman_collection.json
+- Payments V2 contract: `attendance/Attendance-Service-2.0.0.yaml`
+- Legacy reference: https://raw.githubusercontent.com/egovernments/DIGIT-Specs/master/Domain%20Services/Works/Attendance-Service-v1.0.0.yaml
+
+## Postman Collection
+
+- Payments V2: `attendance/Attendance-Service-2.0.0.postman_collection.json`
+- Legacy: https://raw.githubusercontent.com/egovernments/DIGIT-Works/master/backend/attendance/Attendace%20Service%20Postman%20Scripts.postman_collection.json

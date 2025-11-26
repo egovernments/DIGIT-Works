@@ -1,0 +1,1048 @@
+openapi: 3.0.0
+info:
+  title: Muster Roll Service - V2 Period-Aware APIs
+  version: 2.0.0
+  description: |
+    # HCM Payments V2 - Muster Roll Service APIs
+
+    This document describes the new V2 APIs added to the Muster Roll Service for period-aware muster roll generation.
+
+    ## Key Features
+    - Period-specific muster roll creation for intermediate billing
+    - Automatic date intersection calculation between registers and billing periods
+    - Duplicate prevention (register + period combination)
+    - Billing lock check via calculator `/v1/_checkBillStatus` before updates
+    - Kafka status publisher for attendance periodStatuses sync
+    - **100% Backward compatible with V1** (muster rolls without billing_period_id)
+
+    ## V2 Changes
+    - **NEW ENDPOINT**: `POST /muster-roll/v1/_periodicCreate` - Generate period-specific muster rolls
+    - **ENHANCED ENDPOINT**: `POST /muster-roll/v1/_search` - New optional `billingPeriodId` parameter
+    - **MODEL ENHANCEMENT**: Added optional `billingPeriodId` field to MusterRoll model
+    - **DATABASE CHANGE**: Added nullable `billing_period_id` column to `eg_wms_muster_roll` table
+
+    ## Backward Compatibility
+
+    **V1 Mode (Legacy - No Changes Required)**:
+    - Muster rolls created without `billingPeriodId` (V1 projects)
+    - `billing_period_id = NULL` in database
+    - All existing V1 APIs work unchanged
+    - No breaking changes to existing functionality
+
+    **V2 Mode (New Features - Opt-In)**:
+    - Muster rolls created with `billingPeriodId` (V2 projects with billing config)
+    - `billing_period_id = UUID` in database
+    - New `/_periodicCreate` endpoint for period-aware creation
+    - Enhanced `/_search` with optional period filtering
+
+    **Coexistence**:
+    - V1 and V2 muster rolls exist side-by-side in same database
+    - V1 projects continue working without any changes
+    - V2 projects use new period-aware features
+    - Mode is detected automatically per muster roll
+
+    ## Helper Utilities
+
+    **MusterRollVersionHelper** - Java utility class for V1/V2 detection:
+    ```java
+    @Autowired
+    private MusterRollVersionHelper versionHelper;
+
+    // Check version
+    boolean isV2 = versionHelper.isV2MusterRoll(musterRoll);
+
+    // Filter by version
+    List<MusterRoll> v1Only = versionHelper.filterV1MusterRolls(allMusterRolls);
+    List<MusterRoll> v2Only = versionHelper.filterV2MusterRolls(allMusterRolls);
+
+    // Get version string
+    String version = versionHelper.getMusterRollVersion(musterRoll); // "V1" or "V2"
+    ```
+
+    ## Migration Path
+
+    **V1 to V2 Migration**:
+    1. Existing V1 projects continue working (no action required)
+    2. Create billing configuration in expense-calculator service
+    3. New muster rolls automatically use V2 mode with period linkage
+    4. Old V1 muster rolls remain unchanged (billingPeriodId=NULL)
+
+  version: 2.0.0
+  contact:
+    name: eGov Foundation
+    email: contact@egovernments.org
+
+servers:
+  - url: https://api.example.com
+    description: Production server
+  - url: https://staging-api.example.com
+    description: Staging server
+
+tags:
+  - name: V2 Period-Aware Muster Roll
+    description: APIs for period-specific muster roll generation
+  - name: V2 Enhanced Search
+    description: Enhanced search with period filtering support
+
+paths:
+  /muster-roll/v1/_search:
+    post:
+      tags:
+        - V2 Enhanced Search
+      summary: Search muster rolls (V1 + V2 enhanced)
+      description: |
+        Enhanced search endpoint that now supports filtering by billing period.
+
+        **V2 Enhancements:**
+        - New parameter: `billingPeriodId` - Filter muster rolls by billing period
+        - Backward compatible: All V1 parameters still work
+        - Can differentiate V1 vs V2 muster rolls
+
+        **Common Use Cases:**
+        1. **Find all muster rolls for a period**: Use `billingPeriodId` + `tenantId`
+        2. **Find muster roll for register + period**: Use `registerId` + `billingPeriodId`
+        3. **Find V1 muster rolls only**: Search without `billingPeriodId` or filter where `billingPeriodId IS NULL`
+        4. **Find V2 muster rolls only**: Search with `billingPeriodId` populated
+
+        **V1 Parameters (Still Supported):**
+        - tenantId (required)
+        - musterRollId
+        - musterRollNumber
+        - registerId
+        - startDate, endDate
+        - status
+
+      operationId: searchMusterRolls
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MusterRollSearchRequest'
+            examples:
+              searchByPeriod:
+                summary: V2 - Search all muster rolls for a billing period
+                value:
+                  RequestInfo:
+                    apiId: muster-roll-api
+                    ver: 1.0
+                    ts: 1704067200000
+                  searchCriteria:
+                    tenantId: "mz.meghalaya"
+                    billingPeriodId: "period-uuid-001"
+
+              searchByRegisterAndPeriod:
+                summary: V2 - Search muster roll for specific register + period
+                value:
+                  RequestInfo:
+                    apiId: muster-roll-api
+                    ver: 1.0
+                    ts: 1704067200000
+                  searchCriteria:
+                    tenantId: "mz.meghalaya"
+                    registerId: "reg-001"
+                    billingPeriodId: "period-uuid-001"
+
+              searchV1MusterRolls:
+                summary: V1 - Search by register (backward compatible)
+                value:
+                  RequestInfo:
+                    apiId: muster-roll-api
+                    ver: 1.0
+                    ts: 1704067200000
+                  searchCriteria:
+                    tenantId: "mz.meghalaya"
+                    registerId: "reg-001"
+
+              searchByMusterRollId:
+                summary: Search by muster roll ID
+                value:
+                  RequestInfo:
+                    apiId: muster-roll-api
+                    ver: 1.0
+                    ts: 1704067200000
+                  searchCriteria:
+                    tenantId: "mz.meghalaya"
+                    musterRollId: ["muster-001", "muster-002"]
+
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MusterRollSearchResponse'
+              examples:
+                periodMusterRolls:
+                  summary: V2 - All muster rolls for period 1
+                  value:
+                    ResponseInfo:
+                      apiId: muster-roll-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    musterRolls:
+                      - id: "muster-001"
+                        tenantId: "mz.meghalaya"
+                        registerId: "reg-001"
+                        billingPeriodId: "period-uuid-001"
+                        startDate: 1704067200
+                        endDate: 1704672000
+                        musterRollStatus: "APPROVED"
+                        individualEntries: [...]
+                      - id: "muster-002"
+                        registerId: "reg-002"
+                        billingPeriodId: "period-uuid-001"
+                        startDate: 1704067200
+                        endDate: 1704672000
+                        musterRollStatus: "APPROVED"
+                      - id: "muster-003"
+                        registerId: "reg-003"
+                        billingPeriodId: "period-uuid-001"
+                        startDate: 1704240000
+                        endDate: 1704672000
+                        musterRollStatus: "APPROVED"
+                    count: 3
+
+                registerPeriodMusterRoll:
+                  summary: V2 - Single muster roll for register + period
+                  value:
+                    ResponseInfo:
+                      apiId: muster-roll-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    musterRolls:
+                      - id: "muster-001"
+                        registerId: "reg-001"
+                        billingPeriodId: "period-uuid-001"
+                        startDate: 1704067200
+                        endDate: 1704672000
+                        musterRollStatus: "APPROVED"
+                    count: 1
+
+                v1MusterRolls:
+                  summary: V1 - Muster rolls without period linkage
+                  value:
+                    ResponseInfo:
+                      apiId: muster-roll-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    musterRolls:
+                      - id: "muster-v1-001"
+                        registerId: "reg-001"
+                        billingPeriodId: null
+                        startDate: 1704067200
+                        endDate: 1706745600
+                        musterRollStatus: "APPROVED"
+                        comment: "V1 muster roll - no period linkage"
+                    count: 1
+
+                noResults:
+                  summary: No muster rolls found
+                  value:
+                    ResponseInfo:
+                      apiId: muster-roll-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    musterRolls: []
+                    count: 0
+
+        '400':
+          description: Bad Request - Missing required parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missingTenantId:
+                  summary: Missing tenant ID
+                  value:
+                    Errors:
+                      - code: "TENANT_ID_REQUIRED"
+                        message: "TenantId is required for search"
+
+  /muster-roll/v1/_periodicCreate:
+    post:
+      tags:
+        - V2 Period-Aware Muster Roll
+      summary: Create period-specific muster rolls
+      description: |
+        Generates muster rolls for a specific billing period. This endpoint is called by the
+        health-expense-calculator service during V2 intermediate billing.
+
+        **Key Behaviors:**
+        - For each register ID, checks if muster roll already exists for register+period combination
+        - If exists, returns existing muster roll (duplicate prevention)
+        - If not exists, creates new muster roll with:
+          - Date intersection between register dates and period dates
+          - Attendance aggregation within intersection dates
+          - Link to billing period via billingPeriodId
+
+        **Date Intersection Logic:**
+        - Start Date = MAX(register.startDate, period.startDate)
+        - End Date = MIN(register.endDate, period.endDate)
+        - If Start Date > End Date, throws NO_INTERSECTION error
+
+        **Validation:**
+        - RequestInfo and UserInfo required
+        - TenantId format validation (xx.xxxxx)
+        - Register IDs: non-empty, no nulls, no duplicates, max 500
+        - Billing period dates must be sequential
+        - Period duration: 1-90 days
+
+      operationId: periodicMusterRollCreate
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PeriodicMusterRollRequest'
+            examples:
+              validRequest:
+                summary: Valid periodic muster roll request
+                value:
+                  RequestInfo:
+                    apiId: muster-roll-api
+                    ver: 1.0
+                    ts: 1704067200000
+                    action: create
+                    msgId: "msg-001"
+                    authToken: "auth-token-here"
+                    userInfo:
+                      uuid: "user-123"
+                      userName: "john.doe"
+                      name: "John Doe"
+                      type: "EMPLOYEE"
+                      roles:
+                        - code: "MUKTA_ADMIN"
+                          name: "Mukta Admin"
+                  tenantId: "mz.meghalaya"
+                  registerIds:
+                    - "reg-001"
+                    - "reg-002"
+                    - "reg-003"
+                  billingPeriod:
+                    id: "period-uuid-001"
+                    periodNumber: 1
+                    periodStartDate: 1704067200000
+                    periodEndDate: 1704672000000
+
+              multipleRegisters:
+                summary: Request with 10 registers
+                value:
+                  RequestInfo:
+                    apiId: muster-roll-api
+                    ver: 1.0
+                    ts: 1704067200000
+                    action: create
+                    msgId: "msg-002"
+                    authToken: "auth-token-here"
+                    userInfo:
+                      uuid: "user-456"
+                      userName: "jane.smith"
+                      name: "Jane Smith"
+                      type: "EMPLOYEE"
+                  tenantId: "pb.amritsar"
+                  registerIds:
+                    - "reg-101"
+                    - "reg-102"
+                    - "reg-103"
+                    - "reg-104"
+                    - "reg-105"
+                    - "reg-106"
+                    - "reg-107"
+                    - "reg-108"
+                    - "reg-109"
+                    - "reg-110"
+                  billingPeriod:
+                    id: "period-uuid-002"
+                    periodNumber: 2
+                    periodStartDate: 1704672000000
+                    periodEndDate: 1705276800000
+
+      responses:
+        '200':
+          description: Muster rolls created/retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MusterRollResponse'
+              examples:
+                successfulCreation:
+                  summary: Successfully created 3 new muster rolls
+                  value:
+                    ResponseInfo:
+                      apiId: muster-roll-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      resMsgId: "res-001"
+                      msgId: "msg-001"
+                      status: "successful"
+                    musterRolls:
+                      - id: "muster-001"
+                        tenantId: "mz.meghalaya"
+                        musterRollNumber: "MR/2024/001"
+                        registerId: "reg-001"
+                        referenceId: "project-123"
+                        serviceCode: "HEALTH-SERVICE"
+                        startDate: 1704067200
+                        endDate: 1704672000
+                        billingPeriodId: "period-uuid-001"
+                        musterRollStatus: "APPROVED"
+                        status: "ACTIVE"
+                        individualEntries:
+                          - id: "entry-001"
+                            individualId: "worker-001"
+                            totalAttendance: 5.0
+                            modifiedAttendance: 5.0
+                            actualTotalAttendance: 5.0
+                        auditDetails:
+                          createdBy: "user-123"
+                          lastModifiedBy: "user-123"
+                          createdTime: 1704067300000
+                          lastModifiedTime: 1704067300000
+                      - id: "muster-002"
+                        tenantId: "mz.meghalaya"
+                        registerId: "reg-002"
+                        startDate: 1704067200
+                        endDate: 1704672000
+                        billingPeriodId: "period-uuid-001"
+                        musterRollStatus: "APPROVED"
+                        individualEntries:
+                          - id: "entry-002"
+                            individualId: "worker-002"
+                            totalAttendance: 6.0
+                      - id: "muster-003"
+                        tenantId: "mz.meghalaya"
+                        registerId: "reg-003"
+                        startDate: 1704067200
+                        endDate: 1704672000
+                        billingPeriodId: "period-uuid-001"
+                        musterRollStatus: "APPROVED"
+                        individualEntries:
+                          - id: "entry-003"
+                            individualId: "worker-003"
+                            totalAttendance: 4.5
+                    count: 3
+
+                mixedNewAndExisting:
+                  summary: 2 existing muster rolls + 1 new muster roll
+                  value:
+                    ResponseInfo:
+                      apiId: muster-roll-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    musterRolls:
+                      - id: "muster-existing-001"
+                        registerId: "reg-001"
+                        billingPeriodId: "period-uuid-001"
+                        musterRollStatus: "APPROVED"
+                        comment: "Already exists - returned from database"
+                      - id: "muster-existing-002"
+                        registerId: "reg-002"
+                        billingPeriodId: "period-uuid-001"
+                        musterRollStatus: "APPROVED"
+                        comment: "Already exists - returned from database"
+                      - id: "muster-new-001"
+                        registerId: "reg-003"
+                        billingPeriodId: "period-uuid-001"
+                        musterRollStatus: "APPROVED"
+                        comment: "Newly created"
+                    count: 3
+
+                partialIntersection:
+                  summary: Muster rolls with partial date intersections
+                  value:
+                    ResponseInfo:
+                      apiId: muster-roll-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    musterRolls:
+                      - id: "muster-partial-001"
+                        registerId: "reg-001"
+                        startDate: 1704240000
+                        endDate: 1704672000
+                        billingPeriodId: "period-uuid-001"
+                        comment: "Register: Jan 3-7, Period: Jan 1-7, Intersection: Jan 3-7"
+                      - id: "muster-partial-002"
+                        registerId: "reg-002"
+                        startDate: 1704067200
+                        endDate: 1704499200
+                        billingPeriodId: "period-uuid-001"
+                        comment: "Register: Jan 1-5, Period: Jan 1-7, Intersection: Jan 1-5"
+                    count: 2
+
+        '400':
+          description: Bad Request - Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missingRequestInfo:
+                  summary: Missing RequestInfo
+                  value:
+                    Errors:
+                      - code: "REQUEST_INFO_MISSING"
+                        message: "RequestInfo is required in request body"
+                        description: "The RequestInfo object is mandatory for all API requests"
+                        params: []
+
+                missingUserInfo:
+                  summary: Missing UserInfo
+                  value:
+                    Errors:
+                      - code: "USER_INFO_NULL"
+                        message: "UserInfo is required in RequestInfo"
+                        description: "User information is required for audit trail"
+
+                invalidTenantId:
+                  summary: Invalid tenant ID format
+                  value:
+                    Errors:
+                      - code: "TENANT_ID_NULL"
+                        message: "TenantId is required for periodic muster roll creation"
+                      - code: "TENANT_FORMAT_WARNING"
+                        message: "TenantId format may be invalid: invalid-tenant. Expected format: xx.xxxxx"
+
+                emptyRegisterIds:
+                  summary: Empty register IDs list
+                  value:
+                    Errors:
+                      - code: "REGISTER_IDS_EMPTY"
+                        message: "At least one register ID is required for muster roll creation"
+
+                duplicateRegisterIds:
+                  summary: Duplicate register IDs
+                  value:
+                    Errors:
+                      - code: "REGISTER_IDS_DUPLICATE"
+                        message: "Duplicate register IDs found in request"
+                        description: "Each register ID must be unique in the request"
+
+                tooManyRegisters:
+                  summary: Too many register IDs (> 500)
+                  value:
+                    Errors:
+                      - code: "REGISTER_IDS_LIMIT_EXCEEDED"
+                        message: "Too many register IDs provided: 550. Maximum allowed: 500"
+
+                missingBillingPeriod:
+                  summary: Missing billing period
+                  value:
+                    Errors:
+                      - code: "BILLING_PERIOD_NULL"
+                        message: "BillingPeriod details are required for periodic muster roll creation"
+
+                invalidPeriodDates:
+                  summary: Invalid period dates
+                  value:
+                    Errors:
+                      - code: "PERIOD_DATES_INVALID"
+                        message: "Period start date must be before end date. Start: 1704672000000, End: 1704067200000"
+
+                periodDurationTooShort:
+                  summary: Period duration less than 1 day
+                  value:
+                    Errors:
+                      - code: "PERIOD_DURATION_TOO_SHORT"
+                        message: "Period duration must be at least 1 day. Current duration: 0 days"
+
+                invalidPeriodNumber:
+                  summary: Invalid period number
+                  value:
+                    Errors:
+                      - code: "PERIOD_NUMBER_INVALID"
+                        message: "Period number must be a positive integer. Current: -1"
+
+                multipleValidationErrors:
+                  summary: Multiple validation errors
+                  value:
+                    Errors:
+                      - code: "TENANT_ID_NULL"
+                        message: "TenantId is required for periodic muster roll creation"
+                      - code: "REGISTER_IDS_EMPTY"
+                        message: "At least one register ID is required for muster roll creation"
+                      - code: "BILLING_PERIOD_NULL"
+                        message: "BillingPeriod details are required for periodic muster roll creation"
+
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                registerNotFound:
+                  summary: Attendance register not found
+                  value:
+                    Errors:
+                      - code: "REGISTER_NOT_FOUND"
+                        message: "Attendance register not found for ID: reg-999"
+                        description: "The specified register does not exist or has been deleted"
+
+                noIntersection:
+                  summary: No date intersection between register and period
+                  value:
+                    Errors:
+                      - code: "NO_INTERSECTION"
+                        message: "Register dates do not overlap with billing period dates. Register: 2024-01-01 to 2024-01-10, Period: 2024-02-01 to 2024-02-07"
+                        description: "Cannot create muster roll when register and period dates don't overlap"
+
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                attendanceServiceError:
+                  summary: Error fetching attendance register
+                  value:
+                    Errors:
+                      - code: "ATTENDANCE_REGISTER_FETCH_ERROR"
+                        message: "Failed to fetch attendance register: Connection timeout"
+                        description: "Unable to connect to attendance service"
+
+                databaseError:
+                  summary: Database operation failed
+                  value:
+                    Errors:
+                      - code: "DATABASE_ERROR"
+                        message: "Failed to create muster roll: Duplicate key violation"
+                        description: "Database constraint violation occurred"
+
+components:
+  schemas:
+    MusterRollSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+        - searchCriteria
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        searchCriteria:
+          $ref: '#/components/schemas/MusterRollSearchCriteria'
+
+    MusterRollSearchCriteria:
+      type: object
+      required:
+        - tenantId
+      properties:
+        tenantId:
+          type: string
+          description: Tenant ID (required)
+          example: "mz.meghalaya"
+        musterRollId:
+          type: array
+          description: List of muster roll IDs
+          items:
+            type: string
+          example: ["muster-001", "muster-002"]
+        musterRollNumber:
+          type: string
+          description: Muster roll number
+          example: "MR/2024/001"
+        registerId:
+          type: string
+          description: Attendance register ID
+          example: "reg-001"
+        billingPeriodId:
+          type: string
+          description: |
+            **V2 Enhancement**: Billing period ID
+            - Use this to find all muster rolls for a specific period
+            - NULL values = V1 muster rolls (no period linkage)
+            - Populated values = V2 muster rolls (period-aware)
+          format: uuid
+          example: "period-uuid-001"
+          nullable: true
+        startDate:
+          type: integer
+          format: int64
+          description: Filter by start date (epoch ms)
+          nullable: true
+        endDate:
+          type: integer
+          format: int64
+          description: Filter by end date (epoch ms)
+          nullable: true
+        status:
+          type: string
+          description: Muster roll status
+          enum: [ACTIVE, INACTIVE]
+          nullable: true
+
+    MusterRollSearchResponse:
+      type: object
+      required:
+        - ResponseInfo
+        - musterRolls
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        musterRolls:
+          type: array
+          items:
+            $ref: '#/components/schemas/MusterRoll'
+        count:
+          type: integer
+          description: Total number of muster rolls returned
+          example: 3
+
+    PeriodicMusterRollRequest:
+      type: object
+      required:
+        - RequestInfo
+        - tenantId
+        - registerIds
+        - billingPeriod
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        tenantId:
+          type: string
+          description: Unique identifier of the tenant (ULB)
+          pattern: '^[a-z]{2}\.[a-z]+$'
+          example: "mz.meghalaya"
+          minLength: 2
+          maxLength: 64
+        registerIds:
+          type: array
+          description: List of attendance register IDs for which to create muster rolls
+          minItems: 1
+          maxItems: 500
+          items:
+            type: string
+            minLength: 1
+            maxLength: 256
+          example: ["reg-001", "reg-002", "reg-003"]
+        billingPeriod:
+          $ref: '#/components/schemas/BillingPeriodDetails'
+
+    BillingPeriodDetails:
+      type: object
+      required:
+        - id
+        - periodNumber
+        - periodStartDate
+        - periodEndDate
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the billing period
+          format: uuid
+          example: "period-uuid-001"
+          maxLength: 64
+        periodNumber:
+          type: integer
+          description: Sequential period number (1, 2, 3, ...)
+          minimum: 1
+          example: 1
+        periodStartDate:
+          type: integer
+          format: int64
+          description: Period start date in epoch milliseconds
+          example: 1704067200000
+        periodEndDate:
+          type: integer
+          format: int64
+          description: Period end date in epoch milliseconds
+          example: 1704672000000
+        campaignNumber:
+          type: string
+          description: Campaign number associated with the billing period (optional)
+          example: "CMP-2025-0001"
+
+    MusterRollResponse:
+      type: object
+      required:
+        - ResponseInfo
+        - musterRolls
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        musterRolls:
+          type: array
+          items:
+            $ref: '#/components/schemas/MusterRoll'
+        count:
+          type: integer
+          description: Total number of muster rolls returned
+          example: 3
+
+    MusterRoll:
+      type: object
+      properties:
+        id:
+          type: string
+          description: |
+            **V1 & V2**: Unique identifier of the muster roll
+          format: uuid
+        tenantId:
+          type: string
+          description: |
+            **V1 & V2**: Tenant ID (required for all versions)
+          example: "mz.meghalaya"
+        musterRollNumber:
+          type: string
+          description: |
+            **V1 & V2**: Human-readable muster roll number
+          example: "MR/2024/001"
+        registerId:
+          type: string
+          description: |
+            **V1 & V2**: Attendance register ID (required for all versions)
+          example: "reg-001"
+        referenceId:
+          type: string
+          description: |
+            **V1 & V2**: Project ID reference
+          example: "project-123"
+        serviceCode:
+          type: string
+          description: |
+            **V1 & V2**: Service code from register
+          example: "HEALTH-SERVICE"
+        startDate:
+          type: number
+          format: double
+          description: |
+            **V1 & V2**: Muster roll start date (intersection start)
+            - V1: Full register duration
+            - V2: Intersection of register and period dates
+          example: 1704067200
+        endDate:
+          type: number
+          format: double
+          description: |
+            **V1 & V2**: Muster roll end date (intersection end)
+            - V1: Full register duration
+            - V2: Intersection of register and period dates
+          example: 1704672000
+        billingPeriodId:
+          type: string
+          description: |
+            **V2 ONLY**: Billing period ID (optional field, V2 enhancement)
+            - V1 muster rolls: NULL (period not linked)
+            - V2 muster rolls: UUID (period linked)
+            - **Backward Compatible**: Nullable, optional parameter
+          format: uuid
+          example: "period-uuid-001"
+          nullable: true
+        musterRollStatus:
+          type: string
+          description: Muster roll workflow status
+          enum: [DRAFT, PENDING_APPROVAL, APPROVED, REJECTED]
+          example: "APPROVED"
+        status:
+          type: string
+          description: Entity status
+          enum: [ACTIVE, INACTIVE]
+          example: "ACTIVE"
+        individualEntries:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndividualEntry'
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: Additional metadata
+
+    IndividualEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Entry ID
+        individualId:
+          type: string
+          description: Worker/Individual ID
+          example: "worker-001"
+        totalAttendance:
+          type: number
+          format: double
+          description: Total attendance days
+          example: 5.0
+        modifiedAttendance:
+          type: number
+          format: double
+          description: Modified attendance (after corrections)
+          example: 5.0
+        actualTotalAttendance:
+          type: number
+          format: double
+          description: Actual total attendance
+          example: 5.0
+
+    RequestInfo:
+      type: object
+      required:
+        - apiId
+        - ver
+        - ts
+        - action
+        - msgId
+        - userInfo
+      properties:
+        apiId:
+          type: string
+          description: API identifier
+          example: "muster-roll-api"
+        ver:
+          type: string
+          description: API version
+          example: "1.0"
+        ts:
+          type: integer
+          format: int64
+          description: Request timestamp in epoch milliseconds
+          example: 1704067200000
+        action:
+          type: string
+          description: Action being performed
+          example: "create"
+        msgId:
+          type: string
+          description: Unique message ID
+          example: "msg-001"
+        authToken:
+          type: string
+          description: Authorization token
+          example: "auth-token-here"
+        userInfo:
+          $ref: '#/components/schemas/UserInfo'
+
+    UserInfo:
+      type: object
+      required:
+        - uuid
+      properties:
+        uuid:
+          type: string
+          description: User UUID
+          format: uuid
+          example: "user-123"
+        userName:
+          type: string
+          description: Username
+          example: "john.doe"
+        name:
+          type: string
+          description: Full name
+          example: "John Doe"
+        type:
+          type: string
+          description: User type
+          example: "EMPLOYEE"
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+
+    Role:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Role code
+          example: "MUKTA_ADMIN"
+        name:
+          type: string
+          description: Role name
+          example: "Mukta Admin"
+
+    ResponseInfo:
+      type: object
+      properties:
+        apiId:
+          type: string
+          example: "muster-roll-api"
+        ver:
+          type: string
+          example: "1.0"
+        ts:
+          type: integer
+          format: int64
+          example: 1704067300000
+        resMsgId:
+          type: string
+          example: "res-001"
+        msgId:
+          type: string
+          example: "msg-001"
+        status:
+          type: string
+          enum: [successful, failed]
+          example: "successful"
+
+    AuditDetails:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          example: "user-123"
+        lastModifiedBy:
+          type: string
+          example: "user-123"
+        createdTime:
+          type: integer
+          format: int64
+          example: 1704067300000
+        lastModifiedTime:
+          type: integer
+          format: int64
+          example: 1704067300000
+
+    ErrorResponse:
+      type: object
+      required:
+        - Errors
+      properties:
+        Errors:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Error'
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Error code
+          example: "VALIDATION_ERROR"
+        message:
+          type: string
+          description: Error message
+          example: "Validation failed"
+        description:
+          type: string
+          description: Detailed error description
+          example: "The request contains invalid parameters"
+        params:
+          type: array
+          description: Additional error parameters
+          items:
+            type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

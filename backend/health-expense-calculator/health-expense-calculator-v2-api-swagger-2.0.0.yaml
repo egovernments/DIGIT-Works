@@ -1,0 +1,1521 @@
+openapi: 3.0.0
+info:
+  title: Health Expense Calculator Service - V2 Intermediate Billing APIs
+  version: 2.0.0
+  description: |
+    # HCM Payments V2 - Health Expense Calculator Service APIs
+
+    This document describes the new V2 APIs added to the Health Expense Calculator Service for
+    intermediate billing with billing configurations and period-based bill generation.
+
+    ## Key Features
+    - Billing configuration management (WEEKLY, BI_WEEKLY, MONTHLY, CUSTOM, END_OF_CAMPAIGN)
+    - Automated billing period generation based on frequency
+    - Period-based bill generation (one bill per period)
+    - Period-aware PDF/Excel report generation for V2 bills
+    - **Automatic V1/V2 mode detection** (based on billing config presence)
+    - **100% backward compatibility** with V1 projects
+
+    ## V2 Changes
+    - **NEW**: Billing Configuration CRUD operations (5 endpoints)
+    - **NEW**: Billing Period search and update (2 endpoints)
+    - **ENHANCED**: Calculate endpoint now supports V2 mode (automatic detection)
+    - **DATABASE**: New tables for billing config and periods
+    - **LOGIC**: Period-aware intermediate billing service
+
+    ## Backward Compatibility
+
+    **V1 Mode (Legacy - No Changes Required)**:
+    - Projects without billing configuration
+    - Single bill generated for entire project duration
+    - All existing V1 behavior preserved
+    - No breaking changes to existing functionality
+    - Bill response format unchanged
+
+    **V2 Mode (New Features - Automatic)**:
+    - Projects with ACTIVE billing configuration
+    - Multiple bills generated (one per billing period)
+    - Period metadata included in bill additionalDetails
+    - Enhanced tracking with billing periods
+
+    **Mode Detection**:
+    ```java
+    BillingConfig config = getBillingConfig(projectId, tenantId);
+
+    if (config != null && config.isActive()) {
+        // V2 Mode: Intermediate billing
+        return intermediateBillingService.processIntermediateBilling(...);
+    } else {
+        // V1 Mode: Regular billing (unchanged)
+        return processRegularBillingV1(...);
+    }
+    ```
+
+    **Coexistence**:
+    - V1 and V2 projects run simultaneously in same system
+    - No interference between modes
+    - Mode determined per-project automatically
+    - V1 projects can be migrated to V2 by creating billing config
+
+    ## Helper Utilities
+
+    **BillingVersionHelper** - Java utility class for V1/V2 detection:
+    ```java
+    @Autowired
+    private BillingVersionHelper versionHelper;
+
+    // Detect mode
+    String mode = versionHelper.detectBillingMode(billingConfig); // "V1" or "V2"
+    boolean isV2 = versionHelper.isV2Mode(billingConfig);
+
+    // Check bill version
+    boolean isV2Bill = versionHelper.isV2Bill(bill);
+
+    // Log mode
+    versionHelper.logBillingMode(projectId, billingConfig, "CALCULATE");
+    ```
+
+    ## API Flow
+
+    **V1 Flow (Legacy)**:
+    1. Create project (no billing config)
+    2. Call calculate API
+    3. System generates single bill for entire duration
+    4. Response: 1 bill without period metadata
+
+    **V2 Flow (New)**:
+    1. Create project
+    2. **Create billing configuration** (enables V2 mode)
+    3. System auto-generates billing periods
+    4. Call calculate API (same endpoint as V1)
+    5. System detects V2 mode and generates multiple bills
+    6. Response: N bills with period metadata
+
+    ## Migration Path
+
+    **V1 to V2 Migration**:
+    1. Existing V1 projects continue working (no action required)
+    2. Create billing configuration via `/_create` endpoint
+    3. Next calculate API call automatically uses V2 mode
+    4. System generates period-based bills going forward
+
+    **Rollback (V2 to V1)**:
+    1. Update billing config status to INACTIVE
+    2. Next calculate API call automatically uses V1 mode
+    3. System reverts to single bill generation
+
+  version: 2.0.0
+  contact:
+    name: eGov Foundation
+    email: contact@egovernments.org
+
+servers:
+  - url: https://api.example.com
+    description: Production server
+  - url: https://staging-api.example.com
+    description: Staging server
+
+tags:
+  - name: V2 Billing Configuration
+    description: APIs for managing billing configurations
+  - name: V2 Billing Period
+    description: APIs for managing billing periods
+  - name: V2 Enhanced Calculate
+    description: Enhanced bill calculation with V2 support
+
+paths:
+  /expense-calculator/v1/billing-config/_create:
+    post:
+      tags:
+        - V2 Billing Configuration
+      summary: Create billing configuration
+      description: |
+        Creates a billing configuration for a project, which enables V2 intermediate billing mode.
+
+        **Key Features:**
+        - Defines billing frequency (WEEKLY, BI_WEEKLY, MONTHLY, CUSTOM, END_OF_CAMPAIGN)
+        - Automatically generates billing periods based on frequency
+        - Validates project dates and frequency settings
+        - Prevents duplicate configurations for same project
+
+        **Billing Frequencies:**
+        - **WEEKLY**: Bills every 7 days
+        - **BI_WEEKLY**: Bills every 14 days
+        - **MONTHLY**: Bills every 30 days
+        - **CUSTOM**: Bills every N days (min 3 days)
+        - **END_OF_CAMPAIGN**: Single bill at project end
+
+        **Automatic Period Generation:**
+        - System creates periods from project start to end
+        - Each period has sequential number (1, 2, 3, ...)
+        - Period dates align with frequency
+        - All periods created with status=PENDING
+
+      operationId: createBillingConfig
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingConfigRequest'
+            examples:
+              weeklyBilling:
+                summary: Weekly billing configuration
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                    action: create
+                    msgId: "msg-bc-001"
+                    userInfo:
+                      uuid: "user-123"
+                  BillingConfig:
+                    tenantId: "mz.meghalaya"
+                    projectId: "project-123"
+                    billingFrequency: "WEEKLY"
+                    projectStartDate: 1704067200000
+                    projectEndDate: 1706745600000
+                    status: "ACTIVE"
+
+              biWeeklyBilling:
+                summary: Bi-weekly billing configuration
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                    action: create
+                    msgId: "msg-bc-002"
+                    userInfo:
+                      uuid: "user-456"
+                  BillingConfig:
+                    tenantId: "pb.amritsar"
+                    projectId: "project-456"
+                    billingFrequency: "BI_WEEKLY"
+                    projectStartDate: 1704067200000
+                    projectEndDate: 1708905600000
+                    status: "ACTIVE"
+
+              customFrequency:
+                summary: Custom frequency (10 days)
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                    action: create
+                    msgId: "msg-bc-003"
+                    userInfo:
+                      uuid: "user-789"
+                  BillingConfig:
+                    tenantId: "ka.bangalore"
+                    projectId: "project-789"
+                    billingFrequency: "CUSTOM"
+                    customFrequencyDays: 10
+                    projectStartDate: 1704067200000
+                    projectEndDate: 1706745600000
+                    status: "ACTIVE"
+
+              endOfCampaign:
+                summary: End of campaign billing
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                    action: create
+                    msgId: "msg-bc-004"
+                    userInfo:
+                      uuid: "user-999"
+                  BillingConfig:
+                    tenantId: "hr.faridabad"
+                    projectId: "project-999"
+                    billingFrequency: "END_OF_CAMPAIGN"
+                    projectStartDate: 1704067200000
+                    projectEndDate: 1709481600000
+                    status: "ACTIVE"
+
+      responses:
+        '200':
+          description: Billing configuration created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingConfigResponse'
+              examples:
+                weeklyConfigCreated:
+                  summary: Weekly config with 4 periods generated
+                  value:
+                    ResponseInfo:
+                      apiId: expense-calculator-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    BillingConfig:
+                      id: "bc-uuid-001"
+                      tenantId: "mz.meghalaya"
+                      projectId: "project-123"
+                      billingFrequency: "WEEKLY"
+                      projectStartDate: 1704067200000
+                      projectEndDate: 1706745600000
+                      status: "ACTIVE"
+                      periodsGenerated: 4
+                      auditDetails:
+                        createdBy: "user-123"
+                        createdTime: 1704067300000
+                    message: "Billing configuration created successfully. 4 billing periods generated."
+
+                customConfigCreated:
+                  summary: Custom (10-day) config with 3 periods
+                  value:
+                    ResponseInfo:
+                      apiId: expense-calculator-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    BillingConfig:
+                      id: "bc-uuid-002"
+                      tenantId: "ka.bangalore"
+                      projectId: "project-789"
+                      billingFrequency: "CUSTOM"
+                      customFrequencyDays: 10
+                      projectStartDate: 1704067200000
+                      projectEndDate: 1706745600000
+                      status: "ACTIVE"
+                      periodsGenerated: 3
+                    message: "Billing configuration created successfully. 3 billing periods generated."
+
+        '400':
+          description: Bad Request - Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missingFrequency:
+                  summary: Missing billing frequency
+                  value:
+                    Errors:
+                      - code: "BILLING_FREQUENCY_NULL"
+                        message: "Billing frequency is required"
+
+                invalidCustomFrequency:
+                  summary: Custom frequency without days specified
+                  value:
+                    Errors:
+                      - code: "CUSTOM_FREQUENCY_DAYS_REQUIRED"
+                        message: "customFrequencyDays is required when billingFrequency is CUSTOM"
+
+                customFrequencyTooLow:
+                  summary: Custom frequency less than 3 days
+                  value:
+                    Errors:
+                      - code: "CUSTOM_FREQUENCY_TOO_LOW"
+                        message: "customFrequencyDays must be at least 3 days. Current: 2"
+
+                invalidProjectDates:
+                  summary: Invalid project dates
+                  value:
+                    Errors:
+                      - code: "PROJECT_DATES_INVALID"
+                        message: "Project start date must be before end date"
+
+                duplicateConfig:
+                  summary: Billing config already exists
+                  value:
+                    Errors:
+                      - code: "BILLING_CONFIG_EXISTS"
+                        message: "Billing configuration already exists for project: project-123"
+
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                projectNotFound:
+                  summary: Project does not exist
+                  value:
+                    Errors:
+                      - code: "PROJECT_NOT_FOUND"
+                        message: "Project not found for ID: project-999"
+
+  /expense-calculator/v1/billing-config/_update:
+    post:
+      tags:
+        - V2 Billing Configuration
+      summary: Update billing configuration
+      description: |
+        Updates an existing billing configuration. Only certain fields can be updated.
+
+        **Updatable Fields:**
+        - status (ACTIVE/INACTIVE)
+        - customFrequencyDays (if frequency is CUSTOM)
+
+        **Non-Updatable Fields:**
+        - billingFrequency (cannot change after creation)
+        - projectStartDate/projectEndDate (locked after creation)
+        - Generated periods are not regenerated
+
+      operationId: updateBillingConfig
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingConfigRequest'
+            examples:
+              deactivateConfig:
+                summary: Deactivate billing configuration
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704153600000
+                    action: update
+                    msgId: "msg-bc-update-001"
+                    userInfo:
+                      uuid: "user-123"
+                  BillingConfig:
+                    id: "bc-uuid-001"
+                    tenantId: "mz.meghalaya"
+                    projectId: "project-123"
+                    status: "INACTIVE"
+
+      responses:
+        '200':
+          description: Configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingConfigResponse'
+              examples:
+                configDeactivated:
+                  summary: Config deactivated successfully
+                  value:
+                    ResponseInfo:
+                      apiId: expense-calculator-api
+                      ver: 1.0
+                      ts: 1704153700000
+                      status: "successful"
+                    BillingConfig:
+                      id: "bc-uuid-001"
+                      tenantId: "mz.meghalaya"
+                      projectId: "project-123"
+                      status: "INACTIVE"
+                      auditDetails:
+                        lastModifiedBy: "user-123"
+                        lastModifiedTime: 1704153700000
+                    message: "Billing configuration updated successfully"
+
+        '400':
+          description: Invalid update request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                configNotFound:
+                  summary: Config ID not found
+                  value:
+                    Errors:
+                      - code: "BILLING_CONFIG_NOT_FOUND"
+                        message: "Billing configuration not found for ID: bc-uuid-999"
+
+  /expense-calculator/v1/billing-config/_search:
+    post:
+      tags:
+        - V2 Billing Configuration
+      summary: Search billing configurations
+      description: |
+        Searches for billing configurations based on criteria.
+
+        **Search Parameters:**
+        - projectId (required): Project identifier
+        - tenantId (required): Tenant identifier
+        - status (optional): Filter by status
+
+      operationId: searchBillingConfig
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingConfigSearchRequest'
+            examples:
+              searchByProject:
+                summary: Search by project ID
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                  searchCriteria:
+                    tenantId: "mz.meghalaya"
+                    projectId: "project-123"
+
+              searchActiveConfigs:
+                summary: Search active configs only
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                  searchCriteria:
+                    tenantId: "mz.meghalaya"
+                    projectId: "project-123"
+                    status: "ACTIVE"
+
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingConfigSearchResponse'
+              examples:
+                configFound:
+                  summary: Found 1 active config
+                  value:
+                    ResponseInfo:
+                      apiId: expense-calculator-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    BillingConfigs:
+                      - id: "bc-uuid-001"
+                        tenantId: "mz.meghalaya"
+                        projectId: "project-123"
+                        billingFrequency: "WEEKLY"
+                        projectStartDate: 1704067200000
+                        projectEndDate: 1706745600000
+                        status: "ACTIVE"
+                        periodsGenerated: 4
+                    count: 1
+
+                noConfigFound:
+                  summary: No config found
+                  value:
+                    ResponseInfo:
+                      apiId: expense-calculator-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    BillingConfigs: []
+                    count: 0
+                    message: "No billing configuration found for project"
+
+  /expense-calculator/v1/billing-period/_search:
+    post:
+      tags:
+        - V2 Billing Period
+      summary: Search billing periods
+      description: |
+        Searches for billing periods based on criteria.
+
+        **Search Parameters:**
+        - projectId (required): Project identifier
+        - tenantId (required): Tenant identifier
+        - periodNumber (optional): Specific period number
+        - status (optional): Filter by status (PENDING, PROCESSING, BILLED, FAILED)
+
+      operationId: searchBillingPeriods
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingPeriodSearchRequest'
+            examples:
+              searchAllPeriods:
+                summary: Get all periods for project
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                  searchCriteria:
+                    tenantId: "mz.meghalaya"
+                    projectId: "project-123"
+
+              searchPendingPeriods:
+                summary: Get pending periods only
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                  searchCriteria:
+                    tenantId: "mz.meghalaya"
+                    projectId: "project-123"
+                    status: "PENDING"
+
+              searchSpecificPeriod:
+                summary: Get specific period number
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                  searchCriteria:
+                    tenantId: "mz.meghalaya"
+                    projectId: "project-123"
+                    periodNumber: 2
+
+      responses:
+        '200':
+          description: Periods found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingPeriodSearchResponse'
+              examples:
+                fourPeriodsFound:
+                  summary: 4 weekly periods (2 BILLED, 2 PENDING)
+                  value:
+                    ResponseInfo:
+                      apiId: expense-calculator-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    BillingPeriods:
+                      - id: "period-001"
+                        tenantId: "mz.meghalaya"
+                        projectId: "project-123"
+                        billingConfigId: "bc-uuid-001"
+                        periodNumber: 1
+                        periodStartDate: 1704067200000
+                        periodEndDate: 1704672000000
+                        billingFrequency: "WEEKLY"
+                        status: "BILLED"
+                        billId: "bill-001"
+                        totalAmount: 50000.00
+                        registerCount: 5
+                        musterRollCount: 5
+                      - id: "period-002"
+                        periodNumber: 2
+                        periodStartDate: 1704672000000
+                        periodEndDate: 1705276800000
+                        status: "BILLED"
+                        billId: "bill-002"
+                        totalAmount: 45000.00
+                      - id: "period-003"
+                        periodNumber: 3
+                        periodStartDate: 1705276800000
+                        periodEndDate: 1705881600000
+                        status: "PENDING"
+                      - id: "period-004"
+                        periodNumber: 4
+                        periodStartDate: 1705881600000
+                        periodEndDate: 1706486400000
+                        status: "PENDING"
+                    count: 4
+
+                twoPendingPeriods:
+                  summary: 2 pending periods
+                  value:
+                    ResponseInfo:
+                      apiId: expense-calculator-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    BillingPeriods:
+                      - id: "period-003"
+                        periodNumber: 3
+                        status: "PENDING"
+                      - id: "period-004"
+                        periodNumber: 4
+                        status: "PENDING"
+                    count: 2
+
+  /expense-calculator/v1/billing-period/_update:
+    post:
+      tags:
+        - V2 Billing Period
+      summary: Update billing period
+      description: |
+        Updates a billing period. Typically used by system after bill generation.
+
+        **Updatable Fields:**
+        - status (PENDING -> PROCESSING -> BILLED/FAILED)
+        - billId (set after bill creation)
+        - totalAmount (set after bill creation)
+        - registerCount, musterRollCount (metrics)
+
+      operationId: updateBillingPeriod
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingPeriodUpdateRequest'
+            examples:
+              markAsBilled:
+                summary: Mark period as billed
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704153600000
+                    action: update
+                    msgId: "msg-bp-update-001"
+                    userInfo:
+                      uuid: "system"
+                  BillingPeriod:
+                    id: "period-003"
+                    tenantId: "mz.meghalaya"
+                    status: "BILLED"
+                    billId: "bill-003"
+                    totalAmount: 48000.00
+                    registerCount: 6
+                    musterRollCount: 6
+
+      responses:
+        '200':
+          description: Period updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingPeriodResponse'
+
+  /expense-calculator/v1/_calculate:
+    post:
+      tags:
+        - V2 Enhanced Calculate
+      summary: Calculate and generate bills (V1 + V2 modes)
+      description: |
+        Enhanced calculate endpoint that automatically detects V1 or V2 mode.
+
+        **V1 Mode (Backward Compatible):**
+        - No billing configuration exists for project
+        - Generates single bill for entire project duration
+        - Existing behavior preserved 100%
+
+        **V2 Mode (New):**
+        - Billing configuration exists for project (ACTIVE status)
+        - Generates one bill per billing period
+        - Returns multiple bills in response
+        - Updates period status after each bill
+
+        **V2 Process Flow:**
+        1. Detect billing configuration
+        2. Fetch all billing periods
+        3. For each PENDING/PROCESSING period:
+           - Check if bill already exists (duplicate prevention)
+           - Fetch registers overlapping with period
+           - Generate period-specific muster rolls (via muster-roll service)
+           - Generate bill for period
+           - Submit bill to expense service
+           - Update period status to BILLED
+        4. Return all generated bills
+
+        **Duplicate Prevention:**
+        - Bills are tracked per period ID in bill_gen_status table
+        - Periods with status=BILLED are skipped
+        - Idempotent operation (safe to retry)
+
+      operationId: calculate
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculateRequest'
+            examples:
+              v1ModeRequest:
+                summary: V1 mode - No billing config (single bill)
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                    msgId: "msg-calc-001"
+                    userInfo:
+                      uuid: "user-123"
+                  Criteria:
+                    tenantId: "mz.meghalaya"
+                    referenceId: "project-old-123"
+                    localityCode: "LOCALITY-001"
+
+              v2ModeRequest:
+                summary: V2 mode - With billing config (multiple bills)
+                value:
+                  RequestInfo:
+                    apiId: expense-calculator-api
+                    ver: 1.0
+                    ts: 1704067200000
+                    msgId: "msg-calc-002"
+                    userInfo:
+                      uuid: "user-456"
+                  Criteria:
+                    tenantId: "mz.meghalaya"
+                    referenceId: "project-123"
+                    localityCode: "LOCALITY-001"
+
+      responses:
+        '200':
+          description: Bills calculated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculateResponse'
+              examples:
+                v1SingleBill:
+                  summary: V1 mode - Single bill generated
+                  value:
+                    ResponseInfo:
+                      apiId: expense-calculator-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    Bills:
+                      - id: "bill-v1-001"
+                        tenantId: "mz.meghalaya"
+                        businessService: "EXPENSE.WAGES"
+                        referenceId: "project-old-123"
+                        fromPeriod: 1704067200000
+                        toPeriod: 1709481600000
+                        totalAmount: 250000.00
+                        status: "ACTIVE"
+                        billDetails:
+                          - id: "bd-001"
+                            fromPeriod: 1704067200000
+                            toPeriod: 1709481600000
+                            amount: 250000.00
+                        additionalDetails:
+                          billingMode: "V1"
+                    count: 1
+                    message: "V1 mode: Single bill generated for project duration"
+
+                v2MultipleBills:
+                  summary: V2 mode - 4 bills generated (one per period)
+                  value:
+                    ResponseInfo:
+                      apiId: expense-calculator-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    Bills:
+                      - id: "bill-p1-001"
+                        tenantId: "mz.meghalaya"
+                        businessService: "EXPENSE.WAGES"
+                        referenceId: "project-123"
+                        fromPeriod: 1704067200000
+                        toPeriod: 1704672000000
+                        totalAmount: 50000.00
+                        billDetails:
+                          - id: "bd-p1-001"
+                            fromPeriod: 1704067200000
+                            toPeriod: 1704672000000
+                            amount: 50000.00
+                        additionalDetails:
+                          billingType: "INTERMEDIATE"
+                          billingPeriodId: "period-001"
+                          periodNumber: 1
+                          v2Enhanced: true
+                          noOfRegisters: 5
+                      - id: "bill-p2-002"
+                        fromPeriod: 1704672000000
+                        toPeriod: 1705276800000
+                        totalAmount: 45000.00
+                        additionalDetails:
+                          billingPeriodId: "period-002"
+                          periodNumber: 2
+                      - id: "bill-p3-003"
+                        fromPeriod: 1705276800000
+                        toPeriod: 1705881600000
+                        totalAmount: 48000.00
+                        additionalDetails:
+                          billingPeriodId: "period-003"
+                          periodNumber: 3
+                      - id: "bill-p4-004"
+                        fromPeriod: 1705881600000
+                        toPeriod: 1706486400000
+                        totalAmount: 52000.00
+                        additionalDetails:
+                          billingPeriodId: "period-004"
+                          periodNumber: 4
+                    count: 4
+                    message: "V2 mode: Generated 4 bills for 4 billing periods"
+
+                v2PartialBills:
+                  summary: V2 mode - 2 new bills (2 already billed)
+                  value:
+                    ResponseInfo:
+                      apiId: expense-calculator-api
+                      ver: 1.0
+                      ts: 1704067300000
+                      status: "successful"
+                    Bills:
+                      - id: "bill-p3-003"
+                        totalAmount: 48000.00
+                        additionalDetails:
+                          periodNumber: 3
+                          status: "NEWLY_GENERATED"
+                      - id: "bill-p4-004"
+                        totalAmount: 52000.00
+                        additionalDetails:
+                          periodNumber: 4
+                          status: "NEWLY_GENERATED"
+                    count: 2
+                    message: "V2 mode: Generated 2 bills (periods 1-2 already billed)"
+
+        '400':
+          description: Validation or processing errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                noRegistersForPeriod:
+                  summary: No registers found for period
+                  value:
+                    Errors:
+                      - code: "NO_REGISTERS_FOR_PERIOD"
+                        message: "No attendance registers found for period 3. Cannot generate bill."
+                        description: "Ensure attendance registers exist with dates overlapping the billing period"
+
+                noMusterRolls:
+                  summary: No muster rolls generated
+                  value:
+                    Errors:
+                      - code: "NO_MUSTER_ROLLS"
+                        message: "No muster rolls generated for period 2. Cannot generate bill without muster rolls."
+
+                noBillsGenerated:
+                  summary: Failed to generate any bills
+                  value:
+                    Errors:
+                      - code: "NO_BILLS_GENERATED"
+                        message: "Failed to generate bills for all periods. Please check logs for details."
+                        description: "All period processing failed. Review bill_gen_status table for error details"
+
+                billingConfigNotActive:
+                  summary: Billing config not active
+                  value:
+                    Errors:
+                      - code: "BILLING_CONFIG_NOT_ACTIVE"
+                        message: "BillingConfig must be ACTIVE for intermediate billing. Current status: INACTIVE"
+
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                projectNotFound:
+                  summary: Project does not exist
+                  value:
+                    Errors:
+                      - code: "PROJECT_NOT_FOUND"
+                        message: "Project not found for ID: project-999"
+
+        '500':
+          description: Internal errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                musterRollServiceError:
+                  summary: Error calling muster-roll service
+                  value:
+                    Errors:
+                      - code: "MUSTER_ROLL_SERVICE_ERROR"
+                        message: "Failed to call muster-roll service: Connection timeout"
+
+                expenseServiceError:
+                  summary: Error submitting bill to expense service
+                  value:
+                    Errors:
+                      - code: "BILL_SUBMISSION_ERROR"
+                        message: "Failed to submit bill for period 2: Internal server error"
+
+components:
+  schemas:
+    BillingConfigRequest:
+      type: object
+      required:
+        - RequestInfo
+        - BillingConfig
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        BillingConfig:
+          $ref: '#/components/schemas/BillingConfig'
+
+    BillingConfig:
+      type: object
+      description: |
+        **V2 ONLY**: Billing configuration model (opt-in feature)
+
+        This model is used to enable V2 intermediate billing mode. When a billing configuration
+        is created for a project, that project switches from V1 mode (single bill) to V2 mode
+        (multiple period-based bills).
+
+        **Backward Compatibility Impact:**
+        - Creating a billing config switches project to V2 mode
+        - Deactivating config reverts project to V1 mode
+        - Projects without billing config remain in V1 mode
+        - V1 projects are unaffected by this new feature
+      required:
+        - tenantId
+        - campaignNumber
+        - billingFrequency
+        - projectStartDate
+        - projectEndDate
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: |
+            **V2 ONLY**: Unique identifier (auto-generated for create)
+          example: "bc-uuid-001"
+        tenantId:
+          type: string
+          description: |
+            **V2 ONLY**: Tenant ID (required)
+          example: "mz.meghalaya"
+        projectId:
+          type: string
+          description: |
+            **Deprecated (optional)**: Historical project ID used by V1 implementations.
+            Present for backward compatibility; campaignNumber should be used for new configurations.
+          example: "project-123"
+          nullable: true
+        campaignNumber:
+          type: string
+          description: |
+            **V2 ONLY**: Campaign number for which the billing configuration applies.
+            All projects under this campaign will share the generated billing periods.
+          example: "CMP-2025-0001"
+        billingFrequency:
+          type: string
+          enum: [WEEKLY, BI_WEEKLY, MONTHLY, CUSTOM, END_OF_CAMPAIGN]
+          description: |
+            **V2 ONLY**: Billing frequency for period generation
+            - WEEKLY: 7 days
+            - BI_WEEKLY: 14 days
+            - MONTHLY: Calendar month
+            - CUSTOM: Configurable days
+            - END_OF_CAMPAIGN: Single period for entire project
+          example: "WEEKLY"
+        customFrequencyDays:
+          type: integer
+          minimum: 3
+          description: |
+            **V2 ONLY**: Number of days for CUSTOM frequency (required when frequency is CUSTOM)
+          example: 10
+          nullable: true
+        projectStartDate:
+          type: integer
+          format: int64
+          description: |
+            **V2 ONLY**: Project start date (epoch ms)
+          example: 1704067200000
+        projectEndDate:
+          type: integer
+          format: int64
+          description: |
+            **V2 ONLY**: Project end date (epoch ms)
+          example: 1706745600000
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE]
+          description: |
+            **V2 ONLY**: Configuration status
+            - ACTIVE: V2 mode enabled for project
+            - INACTIVE: V2 mode disabled, project uses V1 mode
+          example: "ACTIVE"
+        periodsGenerated:
+          type: integer
+          description: |
+            **V2 ONLY**: Number of billing periods generated (read-only)
+          example: 4
+          readOnly: true
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    BillingConfigResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        BillingConfig:
+          $ref: '#/components/schemas/BillingConfig'
+        message:
+          type: string
+          example: "Billing configuration created successfully"
+
+    BillingConfigSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+        - searchCriteria
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        searchCriteria:
+          type: object
+          required:
+            - tenantId
+          properties:
+            tenantId:
+              type: string
+              example: "mz.meghalaya"
+            projectId:
+              type: string
+              example: "project-123"
+              nullable: true
+            campaignNumber:
+              type: string
+              example: "CMP-2025-0001"
+            status:
+              type: string
+              enum: [ACTIVE, INACTIVE]
+              nullable: true
+
+    BillingConfigSearchResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        BillingConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillingConfig'
+        count:
+          type: integer
+          example: 1
+        message:
+          type: string
+          nullable: true
+
+    BillingPeriodSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+        - searchCriteria
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        searchCriteria:
+          type: object
+          required:
+            - tenantId
+          properties:
+            tenantId:
+              type: string
+            projectId:
+              type: string
+              nullable: true
+            campaignNumber:
+              type: string
+            periodNumber:
+              type: integer
+              nullable: true
+            status:
+              type: string
+              enum: [PENDING, PROCESSING, BILLED, FAILED]
+              nullable: true
+
+    BillingPeriodSearchResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        BillingPeriods:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillingPeriod'
+        count:
+          type: integer
+
+    BillingPeriod:
+      type: object
+      description: |
+        **V2 ONLY**: Billing period model (generated from billing configuration)
+
+        Billing periods are automatically created when a billing configuration is created.
+        Each period represents a time slice for which bills will be generated.
+
+        **Backward Compatibility:**
+        - This is a V2-only feature
+        - V1 projects don't have billing periods
+        - Periods are automatically linked to muster rolls in V2 mode
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: |
+            **V2 ONLY**: Unique period identifier
+          example: "period-uuid-001"
+        tenantId:
+          type: string
+          description: |
+            **V2 ONLY**: Tenant ID
+          example: "mz.meghalaya"
+        projectId:
+          type: string
+          description: |
+            **Deprecated (optional)**: Historical project identifier retained for compatibility.
+            Campaign-level processing uses `campaignNumber`.
+          example: "project-123"
+          nullable: true
+        campaignNumber:
+          type: string
+          description: |
+            **V2 ONLY**: Campaign number this period belongs to.
+            All projects under the same campaign share these periods.
+          example: "CMP-2025-0001"
+        billingConfigId:
+          type: string
+          format: uuid
+          description: |
+            **V2 ONLY**: Parent billing configuration ID
+          example: "bc-uuid-001"
+        periodNumber:
+          type: integer
+          description: |
+            **V2 ONLY**: Sequential period number (1, 2, 3, ...)
+          example: 1
+        periodStartDate:
+          type: integer
+          format: int64
+          description: |
+            **V2 ONLY**: Period start date (epoch ms)
+          example: 1704067200000
+        periodEndDate:
+          type: integer
+          format: int64
+          description: |
+            **V2 ONLY**: Period end date (epoch ms)
+          example: 1704672000000
+        billingFrequency:
+          type: string
+          enum: [WEEKLY, BI_WEEKLY, MONTHLY, CUSTOM, END_OF_CAMPAIGN]
+          description: |
+            **V2 ONLY**: Billing frequency (inherited from config)
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, BILLED, FAILED]
+          description: |
+            **V2 ONLY**: Period billing status
+            - PENDING: Not yet billed
+            - PROCESSING: Bill generation in progress
+            - BILLED: Bill generated successfully
+            - FAILED: Bill generation failed
+          example: "PENDING"
+        billId:
+          type: string
+          nullable: true
+          description: |
+            **V2 ONLY**: Bill ID after generation (null if not yet billed)
+          example: "bill-uuid-001"
+        totalAmount:
+          type: number
+          format: double
+          nullable: true
+          description: |
+            **V2 ONLY**: Total billed amount for this period (null if not yet billed)
+          example: 50000.00
+        registerCount:
+          type: integer
+          nullable: true
+          description: |
+            **V2 ONLY**: Number of attendance registers in this period
+          example: 5
+        musterRollCount:
+          type: integer
+          nullable: true
+          description: |
+            **V2 ONLY**: Number of muster rolls generated for this period
+          example: 5
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    BillingPeriodUpdateRequest:
+      type: object
+      required:
+        - RequestInfo
+        - BillingPeriod
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        BillingPeriod:
+          $ref: '#/components/schemas/BillingPeriod'
+
+    BillingPeriodResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        BillingPeriod:
+          $ref: '#/components/schemas/BillingPeriod'
+
+    CalculateRequest:
+      type: object
+      required:
+        - RequestInfo
+        - Criteria
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        Criteria:
+          type: object
+          required:
+            - tenantId
+            - referenceId
+            - localityCode
+          properties:
+            tenantId:
+              type: string
+              example: "mz.meghalaya"
+            referenceId:
+              type: string
+              description: Project ID
+              example: "project-123"
+            localityCode:
+              type: string
+              example: "LOCALITY-001"
+
+    CalculateResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        Bills:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+        count:
+          type: integer
+        message:
+          type: string
+          nullable: true
+
+    Bill:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: |
+            **V1 & V2**: Unique bill identifier
+        tenantId:
+          type: string
+          description: |
+            **V1 & V2**: Tenant ID (required for all versions)
+          example: "mz.meghalaya"
+        businessService:
+          type: string
+          description: |
+            **V1 & V2**: Business service code (required for all versions)
+          example: "EXPENSE.WAGES"
+        referenceId:
+          type: string
+          description: |
+            **V1 & V2**: Project ID reference (required for all versions)
+          example: "project-123"
+        fromPeriod:
+          type: integer
+          format: int64
+          description: |
+            **V1 & V2**: Bill start date (epoch ms)
+            - V1: Project start date
+            - V2: Billing period start date
+          example: 1704067200000
+        toPeriod:
+          type: integer
+          format: int64
+          description: |
+            **V1 & V2**: Bill end date (epoch ms)
+            - V1: Project end date
+            - V2: Billing period end date
+          example: 1704672000000
+        totalAmount:
+          type: number
+          format: double
+          description: |
+            **V1 & V2**: Total bill amount (required for all versions)
+          example: 50000.00
+        status:
+          type: string
+          description: |
+            **V1 & V2**: Bill status
+          example: "ACTIVE"
+        billDetails:
+          type: array
+          description: |
+            **V1 & V2**: Bill line items (required for all versions)
+          items:
+            $ref: '#/components/schemas/BillDetail'
+        additionalDetails:
+          type: object
+          description: |
+            **V2 Enhancement**: Period metadata (optional, V2 only)
+
+            V1 bills: Empty or minimal metadata
+            ```json
+            {
+              "billingMode": "V1"
+            }
+            ```
+
+            V2 bills: Rich period metadata
+            ```json
+            {
+              "billingType": "INTERMEDIATE",
+              "billingPeriodId": "period-001",
+              "periodNumber": 1,
+              "billingFrequency": "WEEKLY",
+              "noOfRegisters": 5
+            }
+            ```
+
+            **Backward Compatible**: V1 clients can ignore this field
+          nullable: true
+
+    BillDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        fromPeriod:
+          type: integer
+          format: int64
+        toPeriod:
+          type: integer
+          format: int64
+        amount:
+          type: number
+          format: double
+
+    RequestInfo:
+      type: object
+      required:
+        - apiId
+        - ver
+        - ts
+        - msgId
+        - userInfo
+      properties:
+        apiId:
+          type: string
+        ver:
+          type: string
+        ts:
+          type: integer
+          format: int64
+        action:
+          type: string
+        msgId:
+          type: string
+        authToken:
+          type: string
+        userInfo:
+          $ref: '#/components/schemas/UserInfo'
+
+    UserInfo:
+      type: object
+      required:
+        - uuid
+      properties:
+        uuid:
+          type: string
+        userName:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+
+    Role:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+
+    ResponseInfo:
+      type: object
+      properties:
+        apiId:
+          type: string
+        ver:
+          type: string
+        ts:
+          type: integer
+          format: int64
+        resMsgId:
+          type: string
+        msgId:
+          type: string
+        status:
+          type: string
+          enum: [successful, failed]
+
+    AuditDetails:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        lastModifiedBy:
+          type: string
+        createdTime:
+          type: integer
+          format: int64
+        lastModifiedTime:
+          type: integer
+          format: int64
+
+    ErrorResponse:
+      type: object
+      required:
+        - Errors
+      properties:
+        Errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        description:
+          type: string
+        params:
+          type: array
+          items:
+            type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

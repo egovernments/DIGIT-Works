@@ -1,0 +1,75 @@
+{
+  "info": {
+    "_postman_id": "muster-roll-2-0-0",
+    "name": "Muster Roll Service - Payments V2 (2.0.0)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Period-aware muster roll APIs with billingPeriodId, lock checks, and Kafka status publishing."
+  },
+  "item": [
+    {
+      "name": "Periodic Create Muster Roll",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{muster_host}}/muster-roll/v1/_periodicCreate?tenantId={{tenantId}}",
+          "host": ["{{muster_host}}"],
+          "path": ["muster-roll", "v1", "_periodicCreate"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"registerId\": \"{{registerId}}\",\n    \"billingPeriodId\": \"{{billingPeriodId}}\",\n    \"startDate\": {{startDate}},\n    \"endDate\": {{endDate}},\n    \"individualEntries\": []\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Update Muster Roll (Lock Check)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{muster_host}}/muster-roll/v1/_update?tenantId={{tenantId}}",
+          "host": ["{{muster_host}}"],
+          "path": ["muster-roll", "v1", "_update"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"musterRoll\": {\n    \"id\": \"{{musterId}}\",\n    \"tenantId\": \"{{tenantId}}\",\n    \"billingPeriodId\": \"{{billingPeriodId}}\",\n    \"status\": \"APPROVED\"\n  }\n}"
+        }
+      },
+      "description": "Will invoke calculator `/v1/_checkBillStatus` when locking is enabled."
+    },
+    {
+      "name": "Search Muster Roll by Period",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{muster_host}}/muster-roll/v1/_search?tenantId={{tenantId}}&billingPeriodId={{billingPeriodId}}",
+          "host": ["{{muster_host}}"],
+          "path": ["muster-roll", "v1", "_search"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" },
+            { "key": "billingPeriodId", "value": "{{billingPeriodId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" }\n}"
+        }
+      }
+    }
+  ]
+}
