@@ -439,18 +439,30 @@ public class CalculationService {
      */
     private List<AttendanceLog> getAttendanceLogs(MusterRoll musterRoll, RequestInfo requestInfo){
 
-        /* UI sends the startDate and endDate. Set the toTime for attendanceLog search api as endDate+23h0m to
-        * fetch the logs till end of the endDate
-        *
-        * V2 PERIOD-AWARE: The musterRoll.startDate and musterRoll.endDate are already set to
-        * the intersection of register dates and billing period dates (see MusterRollService.applyPeriodAwareDates())
-        * This ensures attendance logs are fetched ONLY for the specific billing period.
-        */
-        BigDecimal fromTime = musterRoll.getStartDate();
-        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDate();
-        // set the endTime as endDate's date+23h0min
-        LocalDateTime endTime = endDate.atTime(23,0);
-        BigDecimal toTime = new BigDecimal(endTime.atZone(ZoneId.of(config.getTimeZone())).toInstant().toEpochMilli());
+        /*
+         * Determine the exact time window to fetch attendance logs.
+         * - V2: Prefer the billing period window to avoid any bleed across periods (in case muster dates were stale).
+         * - V1: Use muster start/end.
+         * We set toTime to end-of-day (23:59:59.999) for inclusive coverage.
+         */
+        long windowStart;
+        long windowEnd;
+        if (StringUtils.isNotBlank(musterRoll.getBillingPeriodId())) {
+            BillingPeriod period = musterRollServiceUtil.fetchBillingPeriod(
+                musterRoll.getBillingPeriodId(),
+                musterRoll.getTenantId(),
+                requestInfo
+            );
+            windowStart = period.getPeriodStartDate();
+            // end of day inclusive: add (24h - 1ms)
+            windowEnd = period.getPeriodEndDate() + (24 * 60 * 60 * 1000L) - 1;
+        } else {
+            windowStart = musterRoll.getStartDate().longValue();
+            windowEnd = musterRoll.getEndDate().longValue() + (24 * 60 * 60 * 1000L) - 1;
+        }
+
+        BigDecimal fromTime = BigDecimal.valueOf(windowStart);
+        BigDecimal toTime = BigDecimal.valueOf(windowEnd);
 
         log.info("CalculationService::getAttendanceLogs - Fetching attendance logs for register {} from {} to {} (period: {})",
             musterRoll.getRegisterId(),
@@ -508,6 +520,10 @@ public class CalculationService {
         if (dropped > 0) {
             log.warn("CalculationService::getAttendanceLogs - Dropped {} attendance logs outside window {} to {} (period: {})",
                 dropped, formatTimestamp(startMillis), formatTimestamp(endMillis),
+                StringUtils.isNotBlank(musterRoll.getBillingPeriodId()) ? musterRoll.getBillingPeriodId() : "V1-full-register");
+        } else {
+            log.info("CalculationService::getAttendanceLogs - All logs within window {} to {} (period: {})",
+                formatTimestamp(startMillis), formatTimestamp(endMillis),
                 StringUtils.isNotBlank(musterRoll.getBillingPeriodId()) ? musterRoll.getBillingPeriodId() : "V1-full-register");
         }
 
