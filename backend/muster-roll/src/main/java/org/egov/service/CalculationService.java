@@ -441,9 +441,18 @@ public class CalculationService {
 
         /*
          * Determine the exact time window to fetch attendance logs.
-         * - V2: Prefer the billing period window to avoid any bleed across periods (in case muster dates were stale).
+         * - V2: Prefer the billing period window to avoid any bleed across periods.
          * - V1: Use muster start/end.
-         * We set toTime to end-of-day (23:59:59.999) for inclusive coverage.
+         *
+         * IMPORTANT: Billing periods are stored with:
+         *   - periodStartDate = start of first day (00:00:00.000)
+         *   - periodEndDate = end of last day (23:59:59.999) - already includes time!
+         *
+         * Muster roll dates are stored as:
+         *   - startDate = start of first day (00:00:00.000)
+         *   - endDate = start of last day (00:00:00.000) - need to add 24h for end-of-day
+         *
+         * FIX: Don't add 24h to periodEndDate as it's already end-of-day!
          */
         long windowStart;
         long windowEnd;
@@ -454,9 +463,11 @@ public class CalculationService {
                 requestInfo
             );
             windowStart = period.getPeriodStartDate();
-            // end of day inclusive: add (24h - 1ms)
-            windowEnd = period.getPeriodEndDate() + (24 * 60 * 60 * 1000L) - 1;
+            // FIX: periodEndDate is already stored as end-of-day (23:59:59.999)
+            // DO NOT add 24h - that was causing cross-period bleeding!
+            windowEnd = period.getPeriodEndDate();
         } else {
+            // V1 muster roll: endDate is stored as start-of-day, so we need to add 24h-1ms
             windowStart = musterRoll.getStartDate().longValue();
             windowEnd = musterRoll.getEndDate().longValue() + (24 * 60 * 60 * 1000L) - 1;
         }
