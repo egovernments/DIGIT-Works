@@ -692,7 +692,12 @@ public class IntermediateBillingService {
 
     /**
      * Validate sequential billing for a project
-     * Ensures periods are billed in order - Period N cannot be billed unless all periods 1 to N-1 are FULLY COMPLETED
+     * Ensures periods are billed in order - Period N cannot be billed unless all previous ACTIVE periods are FULLY COMPLETED
+     *
+     * IMPORTANT: This validation only considers NON-DEPRECATED periods.
+     * When a billing config is updated (e.g., from 2-day to 3-day periods), old periods are marked as deprecated
+     * and new periods are created with higher period numbers. The validation should only check
+     * non-deprecated periods to avoid blocking billing on deprecated periods that will never be completed.
      *
      * Uses comprehensive check via Expense service API to verify:
      * - Bill exists with ACTIVE status
@@ -708,14 +713,26 @@ public class IntermediateBillingService {
                                                      BillingPeriod period, String tenantId) {
         Integer currentPeriodNumber = period.getPeriodNumber();
 
-        // Period 1 can always be billed (no previous periods)
-        if (currentPeriodNumber == null || currentPeriodNumber <= 1) {
-            log.info("Period {} is first period, no sequential validation needed", currentPeriodNumber);
+        if (currentPeriodNumber == null) {
+            log.info("Period number is null, no sequential validation needed");
             return;
         }
 
         log.info("Validating sequential billing for project {} period {} (using comprehensive check)",
                 projectId, currentPeriodNumber);
+
+        // Get minimum active (non-deprecated) period number for this project
+        // This handles the case where billing config was updated and old periods were deprecated
+        Integer minActivePeriodNumber = getMinActivePeriodNumber(requestInfo, projectId, tenantId);
+
+        log.info("Project {} has minimum active period number: {}", projectId, minActivePeriodNumber);
+
+        // If current period is the first active period, no validation needed
+        if (minActivePeriodNumber == null || currentPeriodNumber.equals(minActivePeriodNumber)) {
+            log.info("Period {} is the first active period for project {}, no sequential validation needed",
+                    currentPeriodNumber, projectId);
+            return;
+        }
 
         // Get all FULLY COMPLETED period numbers for this project
         // This calls Expense service API to verify bills and reports are truly completed
@@ -727,8 +744,9 @@ public class IntermediateBillingService {
 
         log.info("Project {} has {} FULLY COMPLETED periods: {}", projectId, completedPeriods.size(), completedPeriods);
 
-        // Check if all previous periods (1 to N-1) are fully completed
-        for (int i = 1; i < currentPeriodNumber; i++) {
+        // Check if all previous ACTIVE periods (from minActivePeriodNumber to N-1) are fully completed
+        // This excludes deprecated periods which would never be completed
+        for (int i = minActivePeriodNumber; i < currentPeriodNumber; i++) {
             if (!completedPeriods.contains(i)) {
                 String errorMsg = String.format(
                     "Cannot bill period %d for project %s. Period %d must be FULLY COMPLETED first " +
@@ -744,8 +762,63 @@ public class IntermediateBillingService {
             }
         }
 
-        log.info("Sequential billing validation passed for project {} period {} - all previous periods completed",
+        log.info("Sequential billing validation passed for project {} period {} - all previous active periods completed",
             projectId, currentPeriodNumber);
+    }
+
+    /**
+     * Get the minimum period number among non-deprecated (active) periods for a project.
+     * This is used to determine the starting point for sequential billing validation.
+     *
+     * When a billing config is updated, old periods are marked as deprecated and new periods
+     * are created. The first new period becomes the starting point for sequential billing.
+     *
+     * @param requestInfo Request info for API calls
+     * @param projectId Project reference ID
+     * @param tenantId Tenant ID
+     * @return Minimum active period number, or null if no active periods exist
+     */
+    private Integer getMinActivePeriodNumber(RequestInfo requestInfo, String projectId, String tenantId) {
+        try {
+            // Search for all non-deprecated periods for this project
+            BillingPeriodSearchCriteria criteria = BillingPeriodSearchCriteria.builder()
+                    .tenantId(tenantId)
+                    .projectId(projectId)
+                    .includeDeprecated(false) // Only get active (non-deprecated) periods
+                    .limit(1000)
+                    .offset(0)
+                    .build();
+
+            BillingPeriodSearchRequest searchRequest = BillingPeriodSearchRequest.builder()
+                    .requestInfo(requestInfo)
+                    .searchCriteria(criteria)
+                    .build();
+
+            BillingPeriodSearchResponse response = billingConfigurationService.searchBillingPeriods(searchRequest);
+
+            if (response == null || response.getBillingPeriods() == null || response.getBillingPeriods().isEmpty()) {
+                log.warn("No active billing periods found for project: {}", projectId);
+                return null;
+            }
+
+            // Find minimum period number among active periods
+            Integer minPeriodNumber = response.getBillingPeriods().stream()
+                    .map(BillingPeriod::getPeriodNumber)
+                    .filter(Objects::nonNull)
+                    .min(Integer::compareTo)
+                    .orElse(null);
+
+            log.info("Found {} active periods for project {}, minimum period number: {}",
+                    response.getBillingPeriods().size(), projectId, minPeriodNumber);
+
+            return minPeriodNumber;
+
+        } catch (Exception e) {
+            log.error("Error getting minimum active period number for project {}: {}",
+                    projectId, e.getMessage(), e);
+            // Fail-safe: return 1 to use original behavior
+            return 1;
+        }
     }
 
     /**
