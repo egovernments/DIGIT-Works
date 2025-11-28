@@ -1447,30 +1447,102 @@ public class IntermediateBillingService {
      * - Period 2: Worker A worked 5 days
      * - Consolidated: Worker A worked 8 days (single entry)
      *
+     * BUGFIX: Previously, this method accumulated actualTotalAttendance and modifiedTotalAttendance
+     * separately. This caused incorrect calculations when some periods had modifiedTotalAttendance
+     * set (from dashboard edits) and others had only actualTotalAttendance (from APK).
+     *
+     * The fix: For each period, use the "effective attendance" which is:
+     * - modifiedTotalAttendance if not null (dashboard modified/verified value)
+     * - actualTotalAttendance otherwise (original APK calculated value)
+     *
+     * This ensures the consolidated attendance correctly reflects all edits made from the dashboard.
+     *
      * @param allMusterRolls All muster rolls from all periods
      * @param aggregatePeriod Virtual aggregate period (for dates)
      * @return Single consolidated muster roll with merged individual entries
      */
     private List<MusterRoll> consolidateMusterRollsForAggregate(List<MusterRoll> allMusterRolls,
                                                                  BillingPeriod aggregatePeriod) {
+        log.info("=== AGGREGATE BILL CONSOLIDATION START ===");
         log.info("Consolidating {} muster rolls for aggregate billing", allMusterRolls.size());
 
         // Map to accumulate individual entries by individualId
-        Map<String, ConsolidatedWorkerData> workerDataMap = new HashMap<>();
+        Map<String, ConsolidatedWorkerData> workerDataMap = new LinkedHashMap<>(); // Preserve insertion order for consistent logging
+
+        // Track per-period details for debugging
+        int totalEntriesProcessed = 0;
+        int periodsWithModifications = 0;
+        int periodsWithOnlyActual = 0;
 
         // Collect and consolidate all individual entries
         for (MusterRoll musterRoll : allMusterRolls) {
-            if (musterRoll.getIndividualEntries() == null) {
+            if (musterRoll.getIndividualEntries() == null || musterRoll.getIndividualEntries().isEmpty()) {
+                log.warn("Muster roll {} has no individual entries, skipping", musterRoll.getId());
                 continue;
             }
+
+            // Extract period info for logging
+            // Note: MusterRoll from common library doesn't have billingPeriodId,
+            // so we use musterRollNumber or ID for logging
+            String periodInfo = musterRoll.getMusterRollNumber() != null ?
+                    "musterRoll=" + musterRoll.getMusterRollNumber() :
+                    "musterRollId=" + musterRoll.getId();
 
             for (IndividualEntry entry : musterRoll.getIndividualEntries()) {
                 String individualId = entry.getIndividualId();
 
+                // Edge case: Skip entries with null individualId
+                if (individualId == null || individualId.trim().isEmpty()) {
+                    log.warn("Skipping entry with null/empty individualId in muster roll {}", musterRoll.getId());
+                    continue;
+                }
+
                 workerDataMap.computeIfAbsent(individualId, k -> new ConsolidatedWorkerData(individualId));
                 ConsolidatedWorkerData workerData = workerDataMap.get(individualId);
 
-                // Accumulate attendance
+                // BUGFIX: Accumulate "effective attendance" for each period
+                // This is the value that should be used for billing:
+                // - modifiedTotalAttendance if set (dashboard verified/edited value)
+                // - actualTotalAttendance otherwise (original APK calculated value)
+                //
+                // Previously, we accumulated actual and modified separately, which caused
+                // incorrect totals when some periods had modifications and others didn't.
+                //
+                // Example of the bug:
+                // Period 1: actual=1, modified=3 -> old code: actualSum+=1, modifiedSum+=3
+                // Period 2: actual=1, modified=NULL -> old code: actualSum+=1, modifiedSum unchanged
+                // Result: actualSum=2, modifiedSum=3 (but modifiedSum is used since it's not null!)
+                // Correct: effectiveSum = 3 + 1 = 4
+
+                BigDecimal effectiveAttendance = BigDecimal.ZERO;
+                String attendanceSource;
+
+                if (entry.getModifiedTotalAttendance() != null) {
+                    effectiveAttendance = entry.getModifiedTotalAttendance();
+                    attendanceSource = "MODIFIED";
+                    periodsWithModifications++;
+                } else if (entry.getActualTotalAttendance() != null) {
+                    effectiveAttendance = entry.getActualTotalAttendance();
+                    attendanceSource = "ACTUAL";
+                    periodsWithOnlyActual++;
+                } else {
+                    // Edge case: Both actual and modified are null - treat as 0 attendance
+                    attendanceSource = "ZERO (both null)";
+                    log.warn("Both actualTotalAttendance and modifiedTotalAttendance are null for {} in {}",
+                            individualId, periodInfo);
+                }
+
+                // Accumulate the effective attendance
+                workerData.totalEffectiveAttendance = workerData.totalEffectiveAttendance.add(effectiveAttendance);
+                workerData.periodCount++;
+
+                // Log per-period contribution for debugging
+                log.info("  [{}] Worker {} | {} | effective={} (source={})",
+                        periodInfo, individualId,
+                        workerData.periodCount,
+                        effectiveAttendance, attendanceSource);
+
+                // Also track raw values for logging/debugging
                 if (entry.getActualTotalAttendance() != null) {
                     workerData.totalActualAttendance = workerData.totalActualAttendance
                             .add(entry.getActualTotalAttendance());
@@ -1478,38 +1550,75 @@ public class IntermediateBillingService {
                 if (entry.getModifiedTotalAttendance() != null) {
                     workerData.totalModifiedAttendance = workerData.totalModifiedAttendance
                             .add(entry.getModifiedTotalAttendance());
+                    workerData.hasAnyModification = true;
                 }
 
                 // Keep first entry as template (for skill, additionalDetails, etc.)
                 if (workerData.templateEntry == null) {
                     workerData.templateEntry = entry;
                 }
+
+                totalEntriesProcessed++;
             }
         }
 
-        log.info("Consolidated {} workers from {} muster rolls",
+        log.info("Processed {} total entries: {} with modifications, {} with only actual values",
+                totalEntriesProcessed, periodsWithModifications, periodsWithOnlyActual);
+        log.info("Consolidated into {} unique workers from {} muster rolls",
                 workerDataMap.size(), allMusterRolls.size());
 
         // Create consolidated individual entries
         List<IndividualEntry> consolidatedEntries = new ArrayList<>();
+        BigDecimal grandTotalEffective = BigDecimal.ZERO;
+
+        log.info("=== CONSOLIDATED WORKER SUMMARY ===");
         for (ConsolidatedWorkerData workerData : workerDataMap.values()) {
+            // Edge case: Skip workers with no template entry (shouldn't happen, but defensive)
+            if (workerData.templateEntry == null) {
+                log.error("Worker {} has no template entry, skipping", workerData.individualId);
+                continue;
+            }
+
+            // BUGFIX: Use the total effective attendance as the modifiedTotalAttendance
+            // This ensures calculateAmount() in WageSeekerBillGeneratorService uses the correct value
+            //
+            // The effective attendance is the sum of:
+            // - modifiedTotalAttendance (if set) for each period, OR
+            // - actualTotalAttendance (if modifiedTotalAttendance is null) for each period
+            //
+            // By setting this as modifiedTotalAttendance, the existing calculateAmount logic
+            // will correctly use it (since it prioritizes modifiedTotalAttendance over actualTotalAttendance)
             IndividualEntry consolidatedEntry = IndividualEntry.builder()
                     .id(UUID.randomUUID().toString())
                     .individualId(workerData.individualId)
                     .actualTotalAttendance(workerData.totalActualAttendance)
-                    .modifiedTotalAttendance(workerData.totalModifiedAttendance)
+                    .modifiedTotalAttendance(workerData.totalEffectiveAttendance) // Use effective attendance!
                     .attendanceEntries(null) // Not needed for bill generation
                     .additionalDetails(workerData.templateEntry.getAdditionalDetails())
                     .auditDetails(workerData.templateEntry.getAuditDetails())
                     .build();
 
             consolidatedEntries.add(consolidatedEntry);
+            grandTotalEffective = grandTotalEffective.add(workerData.totalEffectiveAttendance);
 
-            log.debug("Consolidated worker {}: actualAttendance={}, modifiedAttendance={}",
+            // Detailed logging for each worker
+            log.info("Worker {}: EFFECTIVE={} | periods={} | rawActual={} | rawModified={} | hasModification={}",
                     workerData.individualId,
+                    workerData.totalEffectiveAttendance,
+                    workerData.periodCount,
                     workerData.totalActualAttendance,
-                    workerData.totalModifiedAttendance);
+                    workerData.totalModifiedAttendance,
+                    workerData.hasAnyModification);
+
+            // Validation: Check if effective != actual when there are modifications
+            if (workerData.hasAnyModification &&
+                workerData.totalEffectiveAttendance.compareTo(workerData.totalActualAttendance) != 0) {
+                log.info("  ↳ Note: Effective differs from raw actual due to dashboard modifications");
+            }
         }
+
+        log.info("=== GRAND TOTAL EFFECTIVE ATTENDANCE: {} ===", grandTotalEffective);
+        log.info("=== AGGREGATE BILL CONSOLIDATION END ===");
 
         // Create a single synthetic muster roll with all consolidated entries
         // Use first muster roll as template for metadata
@@ -1552,11 +1661,24 @@ public class IntermediateBillingService {
 
     /**
      * Helper class to accumulate worker data across periods
+     *
+     * BUGFIX: Added totalEffectiveAttendance to correctly calculate attendance
+     * when some periods have modifiedTotalAttendance and others don't.
+     *
+     * Fields:
+     * - totalEffectiveAttendance: The CORRECT sum to use for billing (modified if set, else actual per period)
+     * - totalActualAttendance: Raw sum of all actualTotalAttendance values (for debugging)
+     * - totalModifiedAttendance: Raw sum of non-null modifiedTotalAttendance values (for debugging)
+     * - hasAnyModification: True if any period had modifiedTotalAttendance set
+     * - periodCount: Number of periods processed for this worker
      */
     private static class ConsolidatedWorkerData {
         String individualId;
         BigDecimal totalActualAttendance = BigDecimal.ZERO;
         BigDecimal totalModifiedAttendance = BigDecimal.ZERO;
+        BigDecimal totalEffectiveAttendance = BigDecimal.ZERO; // Sum of effective attendance per period
+        boolean hasAnyModification = false; // Track if any period had modifications
+        int periodCount = 0; // Number of periods processed
         IndividualEntry templateEntry = null;
 
         ConsolidatedWorkerData(String individualId) {
