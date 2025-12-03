@@ -22,7 +22,7 @@ public class MusterRollVersionHelper {
      * Check if a muster roll is V2 (period-aware)
      *
      * @param musterRoll Muster roll to check
-     * @return true if V2 (has billingPeriodId), false if V1 (no billingPeriodId)
+     * @return true if V2 (has non-blank billingPeriodId), false if V1 (null or blank billingPeriodId)
      */
     public boolean isV2MusterRoll(MusterRoll musterRoll) {
         if (musterRoll == null) {
@@ -35,7 +35,7 @@ public class MusterRollVersionHelper {
      * Check if a muster roll is V1 (legacy)
      *
      * @param musterRoll Muster roll to check
-     * @return true if V1 (no billingPeriodId), false if V2
+     * @return true if V1 (null or blank billingPeriodId), false if V2
      */
     public boolean isV1MusterRoll(MusterRoll musterRoll) {
         if (musterRoll == null) {
@@ -48,7 +48,7 @@ public class MusterRollVersionHelper {
      * Filter V1 muster rolls from a list
      *
      * @param musterRolls List of muster rolls
-     * @return List containing only V1 muster rolls (billingPeriodId = null)
+     * @return List containing only V1 muster rolls (null or blank billingPeriodId)
      */
     public List<MusterRoll> filterV1MusterRolls(List<MusterRoll> musterRolls) {
         if (musterRolls == null || musterRolls.isEmpty()) {
@@ -120,9 +120,12 @@ public class MusterRollVersionHelper {
      * Get muster roll version string for logging
      *
      * @param musterRoll Muster roll
-     * @return "V1" or "V2"
+     * @return "V2" if has billingPeriodId, "V1" if not, "UNKNOWN" if null
      */
     public String getMusterRollVersion(MusterRoll musterRoll) {
+        if (musterRoll == null) {
+            return "UNKNOWN";
+        }
         return isV2MusterRoll(musterRoll) ? "V2" : "V1";
     }
 
@@ -138,13 +141,22 @@ public class MusterRollVersionHelper {
         }
 
         // V1 Required fields that must always be present
-        boolean hasRequiredFields = StringUtils.isNotBlank(musterRoll.getId())
-                && StringUtils.isNotBlank(musterRoll.getTenantId())
-                && StringUtils.isNotBlank(musterRoll.getRegisterId())
-                && musterRoll.getStartDate() != null;
+        boolean hasId = StringUtils.isNotBlank(musterRoll.getId());
+        boolean hasTenantId = StringUtils.isNotBlank(musterRoll.getTenantId());
+        boolean hasRegisterId = StringUtils.isNotBlank(musterRoll.getRegisterId());
+        boolean hasStartDate = musterRoll.getStartDate() != null;
+
+        boolean hasRequiredFields = hasId && hasTenantId && hasRegisterId && hasStartDate;
 
         if (!hasRequiredFields) {
-            log.warn("Muster roll {} missing required V1 fields", musterRoll.getId());
+            log.warn(
+                "Muster roll {} missing required V1 fields (idPresent={}, tenantIdPresent={}, registerIdPresent={}, startDatePresent={})",
+                musterRoll.getId(),
+                hasId,
+                hasTenantId,
+                hasRegisterId,
+                hasStartDate
+            );
         }
 
         return hasRequiredFields;
@@ -166,8 +178,9 @@ public class MusterRollVersionHelper {
             ? " (Period: " + musterRoll.getBillingPeriodId() + ")"
             : " (No period linkage)";
 
-        log.info("{} - Muster Roll: {} | Version: {} | Register: {}{}",
+        log.info("{} - Tenant: {} | Muster Roll: {} | Version: {} | Register: {}{}",
                 operation,
+                musterRoll.getTenantId(),
                 musterRoll.getId(),
                 version,
                 musterRoll.getRegisterId(),

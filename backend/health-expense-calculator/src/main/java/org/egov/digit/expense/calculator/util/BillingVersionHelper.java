@@ -76,6 +76,7 @@ public class BillingVersionHelper {
             return false;
         }
 
+        @SuppressWarnings("unchecked")
         Map<String, Object> detailsMap = (Map<String, Object>) additionalDetails;
 
         // V2 bills have billingPeriodId in additionalDetails
@@ -140,7 +141,7 @@ public class BillingVersionHelper {
      */
     public void logBillingMode(String projectId, BillingConfig billingConfig, String operation) {
         String mode = detectBillingMode(billingConfig);
-        String configInfo = isV2Mode(billingConfig)
+        String configInfo = "V2".equals(mode)
             ? " (Frequency: " + billingConfig.getBillingFrequency() + ")"
             : " (No billing configuration)";
 

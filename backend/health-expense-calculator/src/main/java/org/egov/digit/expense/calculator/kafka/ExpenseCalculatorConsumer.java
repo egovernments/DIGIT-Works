@@ -11,6 +11,7 @@ import org.egov.digit.expense.calculator.web.models.Bill;
 import org.egov.digit.expense.calculator.web.models.BillRequest;
 import org.egov.digit.expense.calculator.web.models.CalculationRequest;
 import org.egov.digit.expense.calculator.web.models.ReportGenerationTrigger;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -118,8 +119,8 @@ public class ExpenseCalculatorConsumer {
 							objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class)
 						);
 						isV2Bill = additionalDetails.containsKey("billingPeriodId") ||
-								   additionalDetails.containsKey("billingType") &&
-								   "INTERMEDIATE".equals(additionalDetails.get("billingType"));
+								   (additionalDetails.containsKey("billingType") &&
+								   "INTERMEDIATE".equals(additionalDetails.get("billingType")));
 
 						if (isV2Bill) {
 							log.info("Bill {} is V2 bill with period: {}, billingPeriodId: {}",
@@ -148,12 +149,12 @@ public class ExpenseCalculatorConsumer {
 				BillRequest request = BillRequest.builder().requestInfo(trigger.getRequestInfo()).bill(bill).build();
 				log.info("Bill exists and validated for bill id: {} (V2: {}), tenantId: {}", bill.getId(), isV2Bill, bill.getTenantId());
 
-				if (redisService.isBillIdPresentInCache(bill.getId())) {
+				// Atomic operation to prevent concurrent duplicate processing
+				if (!redisService.setCacheIfAbsent(bill.getId())) {
 					log.info("Bill {} already in cache, skipping report generation to prevent duplicate", bill.getId());
 					return;
 				}
 
-				redisService.setCacheForBillReport(bill.getId());
 				log.info("Starting report generation for bill: {} (V2: {})", bill.getId(), isV2Bill);
 				healthBillReportGenerator.generateHealthBillReportRequest(request);
 			}
@@ -177,7 +178,7 @@ public class ExpenseCalculatorConsumer {
 					!CollectionUtils.isEmpty(bills) ? bills.get(0).getBillDetails().size() : 0
 				);
 				log.error(errorMsg);
-				throw new Exception(errorMsg);
+				throw new CustomException("BILL_NOT_FOUND", errorMsg);
 			}
 		} catch (Exception exception) {
 			log.error("Error occurred while processing the report from topic: {} for record: {}",

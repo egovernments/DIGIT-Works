@@ -407,7 +407,8 @@ public class AttendeeServiceValidator {
         Map<String, String> registerIdToNameMap = attendanceRegisterListFromDB.stream()
                 .collect(Collectors.toMap(
                         AttendanceRegister::getId,
-                        register -> register.getName() != null ? register.getName() : register.getId()
+                        register -> register.getName() != null ? register.getName() : register.getId(),
+                        (existing, replacement) -> existing
                 ));
 
 

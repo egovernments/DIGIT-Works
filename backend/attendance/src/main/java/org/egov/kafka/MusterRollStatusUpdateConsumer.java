@@ -204,13 +204,13 @@ public class MusterRollStatusUpdateConsumer {
 
         // Check if status for this period already exists
         boolean periodExists = existing.stream()
-                .anyMatch(s -> s.getPeriodId().equals(periodId));
+                .anyMatch(s -> periodId.equals(s.getPeriodId()));
 
         if (periodExists) {
             // Update existing period status
             log.debug("mergePeriodStatus::Updating existing status for period: {}", periodId);
             return existing.stream()
-                    .map(s -> s.getPeriodId().equals(periodId) ? newStatus : s)
+                    .map(s -> periodId.equals(s.getPeriodId()) ? newStatus : s)
                     .collect(Collectors.toList());
         } else {
             // Add new period status

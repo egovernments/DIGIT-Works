@@ -656,8 +656,8 @@ public class RegisterPeriodEnrichmentService {
         }
 
         try {
-            // Build URL to muster-roll V1 search API with query parameters
-            // V1 API uses @RequestBody for RequestInfo and @ModelAttribute for search criteria (query params)
+            // Build URL to muster-roll V2 search API with query parameters
+            // V2 API uses @RequestBody for RequestInfo and @ModelAttribute for search criteria (query params)
             StringBuilder uriBuilder = new StringBuilder();
             uriBuilder.append(config.getMusterRollHost())
                       .append(config.getMusterRollV2SearchEndpoint())
@@ -671,11 +671,11 @@ public class RegisterPeriodEnrichmentService {
 
             String uri = uriBuilder.toString();
 
-            // V1 API expects only RequestInfo in the request body (wrapped in RequestInfoWrapper)
+            // V2 API expects only RequestInfo in the request body (wrapped in RequestInfoWrapper)
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("RequestInfo", requestInfo);
 
-            log.info("Calling muster-roll V1 search API: {} for {} registers in period {}",
+            log.info("Calling muster-roll V2 search API: {} for {} registers in period {}",
                     uri, registerIds.size(), billingPeriodId);
 
             Map<String, Object> response = restTemplate.postForObject(uri, requestBody, Map.class);

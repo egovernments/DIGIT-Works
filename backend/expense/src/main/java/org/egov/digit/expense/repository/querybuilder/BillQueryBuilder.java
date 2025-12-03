@@ -136,9 +136,9 @@ public class BillQueryBuilder {
 
         if (!CollectionUtils.isEmpty(criteria.getBillingPeriodIds())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.additionaldetails->>'billingPeriodId' = ANY(ARRAY[")
+            query.append(" bill.additionaldetails->>'billingPeriodId' IN (")
                  .append(createQuery(criteria.getBillingPeriodIds()))
-                 .append("])");
+                 .append(")");
             addToPreparedStatement(preparedStmtList, criteria.getBillingPeriodIds());
         }
 

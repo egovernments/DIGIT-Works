@@ -26,6 +26,17 @@ import java.util.List;
 @Builder
 public class BillingConfigSearchCriteria {
 
+    /**
+     * Default limit for search results
+     */
+    private static final int DEFAULT_LIMIT = 100;
+
+    /**
+     * Maximum limit for search results to prevent resource exhaustion
+     * Should match expense.billing.search.max.limit configuration
+     */
+    private static final int MAX_LIMIT = 200;
+
     @JsonProperty("tenantId")
     @NotNull
     @Size(min = 2, max = 64)
@@ -97,12 +108,16 @@ public class BillingConfigSearchCriteria {
     }
 
     /**
-     * Get limit with default value.
+     * Get limit with default value and maximum cap.
+     * Returns the requested limit capped at MAX_LIMIT to prevent resource exhaustion.
      *
-     * @return limit or default 100
+     * @return limit (capped at MAX_LIMIT) or DEFAULT_LIMIT if not specified or invalid
      */
     public Integer getLimitOrDefault() {
-        return limit != null && limit > 0 ? limit : 100;
+        if (limit == null || limit <= 0) {
+            return DEFAULT_LIMIT;
+        }
+        return Math.min(limit, MAX_LIMIT);
     }
 
     /**

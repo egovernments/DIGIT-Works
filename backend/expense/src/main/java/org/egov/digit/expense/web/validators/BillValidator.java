@@ -531,17 +531,21 @@ public class BillValidator {
 		// V2 Periodic Billing: Check if either health context or v2 periodic billing is enabled
 		if ((configs.isHealthContextEnabled() || configs.isV2PeriodicBillingEnabled()) && isV2Bill(bill)) {
 			String periodIdentifier = getBillingPeriodId(bill)
-					.orElse(bill.getFromPeriod() + "_" + bill.getToPeriod());
+					.orElseGet(() -> {
+						Long from = bill.getFromPeriod();
+						Long to = bill.getToPeriod();
+						return (from != null && to != null) ? from + "_" + to : "unknown";
+					});
 			return "Active bill exists for the given combination of businessService : "
 					+ bill.getBusinessService()
-					+ " , refernceId : " + bill.getReferenceId()
+					+ " , referenceId : " + bill.getReferenceId()
 					+ " and billingPeriod : " + periodIdentifier
 					+ ". V2 Periodic Billing is enabled - only one bill is allowed per register per billing period.";
 		}
 
 		return "Active bill exists for the given combination of "
 				+ " businessService : " + bill.getBusinessService()
-				+ " and refernceId : " + bill.getReferenceId()
+				+ " and referenceId : " + bill.getReferenceId()
 				+ ". Only one bill is allowed per register (V1 mode).";
 	}
 }
