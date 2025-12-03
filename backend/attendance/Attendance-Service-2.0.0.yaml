@@ -457,7 +457,7 @@ components:
         reviewStatus:
           type: string
           example: PENDINGFORAPPROVAL
-          description:  Indicates whether the attendance register has been reviewed or approved
+          description: Indicates whether the attendance register has been reviewed or approved
         billingPeriodId:
           type: string
           example: b6d8e9b0-27b4-4c09-9f2f-8d7e6c91a123
@@ -465,8 +465,11 @@ components:
         registerPeriodStatus:
           type: string
           enum:
-            - APPROVED
+            - NOT_CREATED
             - PENDING
+            - APPROVED
+            - REJECTED
+            - SENT_BACK
           description: Payments V2 - derived period-level muster-roll status for the billing period.
         periodStatuses:
           type: array
@@ -479,8 +482,11 @@ components:
               status:
                 type: string
                 enum:
-                  - APPROVED
+                  - NOT_CREATED
                   - PENDING
+                  - APPROVED
+                  - REJECTED
+                  - SENT_BACK
               lastSyncedTime:
                 type: number
                 description: Epoch millis when this status was last updated.
@@ -629,12 +635,10 @@ components:
         staffType:
           type: string
           description: Defines the role assigned to a staff member within the attendance register. Roles determine the level of access and responsibilities.
-          items:
-            type: string
-            enum:
-              - EDITOR
-              - OWNER
-              - APPROVER
+          enum:
+            - EDITOR
+            - OWNER
+            - APPROVER
       required:
         - registerId
         - userId

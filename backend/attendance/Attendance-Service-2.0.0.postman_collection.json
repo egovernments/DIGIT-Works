@@ -46,7 +46,7 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"requestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"attendanceRegister\": [\n    {\n      \"id\": \"{{registerId}}\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"periodStatuses\": [\n        { \"billingPeriodId\": \"{{billingPeriodId}}\", \"status\": \"APPROVED\", \"lastSyncedTime\": {{timestamp}} }\n      ]\n    }\n  ]\n}"
+          "raw": "{\n  \"requestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"attendanceRegister\": [\n    {\n      \"id\": \"{{registerId}}\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"periodStatuses\": [\n        { \"billingPeriodId\": \"{{billingPeriodId}}\", \"status\": \"APPROVED\", \"lastSyncedTime\": \"{{timestamp}}\" }\n      ]\n    }\n  ]\n}"
         }
       },
       "description": "Use when Kafka delivery is delayed and health calculator fallback patches the register."
