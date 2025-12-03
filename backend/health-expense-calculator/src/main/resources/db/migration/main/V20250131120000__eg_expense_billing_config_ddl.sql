@@ -45,8 +45,7 @@ CREATE TABLE IF NOT EXISTS eg_expense_billing_config (
         status IN ('ACTIVE', 'INACTIVE', 'COMPLETED')
     ),
     CONSTRAINT chk_custom_frequency CHECK (
-        (billing_frequency != 'CUSTOM') OR
-        (billing_frequency = 'CUSTOM' AND custom_frequency_days >= 3)
+        billing_frequency <> 'CUSTOM' OR custom_frequency_days >= 3
     ),
     CONSTRAINT chk_project_dates CHECK (project_start_date < project_end_date)
 );

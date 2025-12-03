@@ -68,29 +68,3 @@ WHERE billing_period_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_attendance_entries_period_date
 ON eg_wms_attendance_entries (billing_period_id, date_of_attendance)
 WHERE billing_period_id IS NOT NULL;
-
--- ============================================================
--- MIGRATION VALIDATION QUERIES
--- ============================================================
--- After running this migration, verify:
---
--- 1. Check columns were added:
---    SELECT column_name, data_type, is_nullable
---    FROM information_schema.columns
---    WHERE table_name IN ('eg_wms_attendance_summary', 'eg_wms_attendance_entries')
---    AND column_name = 'billing_period_id';
---
--- 2. Check unique constraint exists:
---    SELECT indexname, indexdef
---    FROM pg_indexes
---    WHERE tablename = 'eg_wms_attendance_summary'
---    AND indexname = 'uk_attendance_summary_individual_muster_period';
---
--- 3. Check V1 data is unaffected:
---    SELECT COUNT(*) FROM eg_wms_attendance_summary WHERE billing_period_id IS NULL;
---
--- 4. Test V2 duplicate prevention:
---    -- This should fail after a V2 record is inserted:
---    -- INSERT INTO eg_wms_attendance_summary (id, individual_id, muster_roll_id, billing_period_id, ...)
---    -- VALUES ('new-id', 'same-individual', 'same-muster', 'same-period', ...);
--- ============================================================

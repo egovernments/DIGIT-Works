@@ -72,63 +72,45 @@ ON eg_expense_bill_gen_status (tenantid, status);
 CREATE INDEX IF NOT EXISTS idx_bill_status_period_status
 ON eg_expense_bill_gen_status (period_id, status);
 
--- Step 11: Add check constraint for valid billing types
+-- Step 11: Add check constraints for data validation
 DO $$
+DECLARE
+  v_table_name CONSTANT TEXT := 'eg_expense_bill_gen_status';
 BEGIN
+  -- Check constraint for valid billing types
   IF NOT EXISTS (
     SELECT 1
     FROM pg_constraint c
     WHERE c.conname = 'chk_billing_type'
-      AND c.conrelid = 'eg_expense_bill_gen_status'::regclass
+      AND c.conrelid = v_table_name::regclass
   ) THEN
-    ALTER TABLE eg_expense_bill_gen_status
-    ADD CONSTRAINT chk_billing_type
-    CHECK (billing_type IN ('REGULAR', 'INTERMEDIATE', 'FINAL_AGGREGATE'));
+    EXECUTE format('ALTER TABLE %I ADD CONSTRAINT chk_billing_type CHECK (billing_type IN (''REGULAR'', ''INTERMEDIATE'', ''FINAL_AGGREGATE''))', v_table_name);
   END IF;
-END$$;
 
--- Step 12: period_number > 0 (or NULL)
-DO $$
-BEGIN
+  -- period_number > 0 (or NULL)
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint c
     WHERE c.conname = 'chk_period_number_positive'
-      AND c.conrelid = 'eg_expense_bill_gen_status'::regclass
+      AND c.conrelid = v_table_name::regclass
   ) THEN
-    ALTER TABLE eg_expense_bill_gen_status
-    ADD CONSTRAINT chk_period_number_positive
-    CHECK (period_number IS NULL OR period_number > 0);
+    EXECUTE format('ALTER TABLE %I ADD CONSTRAINT chk_period_number_positive CHECK (period_number IS NULL OR period_number > 0)', v_table_name);
   END IF;
-END$$;
 
--- Step 13: register_count >= 0
-DO $$
-BEGIN
+  -- register_count >= 0
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint c
     WHERE c.conname = 'chk_register_count_non_negative'
-      AND c.conrelid = 'eg_expense_bill_gen_status'::regclass
+      AND c.conrelid = v_table_name::regclass
   ) THEN
-    ALTER TABLE eg_expense_bill_gen_status
-    ADD CONSTRAINT chk_register_count_non_negative
-    CHECK (register_count >= 0);
+    EXECUTE format('ALTER TABLE %I ADD CONSTRAINT chk_register_count_non_negative CHECK (register_count >= 0)', v_table_name);
   END IF;
-END$$;
 
--- Step 14: processing_end_time >= processing_start_time (when both present)
-DO $$
-BEGIN
+  -- processing_end_time >= processing_start_time (when both present)
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint c
     WHERE c.conname = 'chk_processing_time_order'
-      AND c.conrelid = 'eg_expense_bill_gen_status'::regclass
+      AND c.conrelid = v_table_name::regclass
   ) THEN
-    ALTER TABLE eg_expense_bill_gen_status
-    ADD CONSTRAINT chk_processing_time_order
-    CHECK (
-      processing_start_time IS NULL
-      OR processing_end_time IS NULL
-      OR processing_end_time >= processing_start_time
-    );
+    EXECUTE format('ALTER TABLE %I ADD CONSTRAINT chk_processing_time_order CHECK (processing_start_time IS NULL OR processing_end_time IS NULL OR processing_end_time >= processing_start_time)', v_table_name);
   END IF;
 END$$;

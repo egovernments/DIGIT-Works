@@ -19,37 +19,30 @@
 -- -----------------------------------------------------------------------------
 
 DO $$
+DECLARE
+    v_table_name CONSTANT TEXT := 'eg_expense_billing_config';
 BEGIN
     -- Check if the old constraint exists
     IF EXISTS (
         SELECT 1 FROM pg_constraint
         WHERE conname = 'uk_billing_config_project'
-        AND conrelid = 'eg_expense_billing_config'::regclass
+        AND conrelid = v_table_name::regclass
     ) THEN
         -- Drop the constraint that prevents campaign duplication
-        ALTER TABLE eg_expense_billing_config DROP CONSTRAINT uk_billing_config_project;
+        EXECUTE format('ALTER TABLE %I DROP CONSTRAINT uk_billing_config_project', v_table_name);
         RAISE NOTICE 'Dropped constraint: uk_billing_config_project';
     ELSE
         RAISE NOTICE 'Constraint uk_billing_config_project does not exist, skipping';
     END IF;
-END$$;
 
--- -----------------------------------------------------------------------------
--- Step 2: Verify the campaign-based constraint exists
--- -----------------------------------------------------------------------------
-
-DO $$
-BEGIN
     -- Ensure the campaign-based constraint exists (should be from V20250212160000)
     IF NOT EXISTS (
         SELECT 1 FROM pg_constraint
         WHERE conname = 'uk_billing_config_campaign'
-        AND conrelid = 'eg_expense_billing_config'::regclass
+        AND conrelid = v_table_name::regclass
     ) THEN
         -- If for some reason it doesn't exist, create it
-        ALTER TABLE eg_expense_billing_config
-            ADD CONSTRAINT uk_billing_config_campaign
-            UNIQUE (tenant_id, campaign_number);
+        EXECUTE format('ALTER TABLE %I ADD CONSTRAINT uk_billing_config_campaign UNIQUE (tenant_id, campaign_number)', v_table_name);
         RAISE NOTICE 'Created constraint: uk_billing_config_campaign';
     ELSE
         RAISE NOTICE 'Constraint uk_billing_config_campaign already exists';
@@ -57,16 +50,18 @@ BEGIN
 END$$;
 
 -- -----------------------------------------------------------------------------
--- Step 3: Drop the old project-based index (redundant after constraint drop)
+-- Step 2: Drop the old project-based index (redundant after constraint drop)
 -- -----------------------------------------------------------------------------
 
 DO $$
+DECLARE
+    v_table_name CONSTANT TEXT := 'eg_expense_billing_config';
 BEGIN
     -- Drop the old index if it exists (created in V20250131120000)
     IF EXISTS (
         SELECT 1 FROM pg_indexes
         WHERE indexname = 'idx_billing_config_project'
-        AND tablename = 'eg_expense_billing_config'
+        AND tablename = v_table_name
     ) THEN
         DROP INDEX IF EXISTS idx_billing_config_project;
         RAISE NOTICE 'Dropped index: idx_billing_config_project';
@@ -76,7 +71,7 @@ BEGIN
 END$$;
 
 -- -----------------------------------------------------------------------------
--- Step 4: Add composite index for common query patterns
+-- Step 3: Add composite index for common query patterns
 -- -----------------------------------------------------------------------------
 
 -- Create a new composite index for queries filtering by project and campaign

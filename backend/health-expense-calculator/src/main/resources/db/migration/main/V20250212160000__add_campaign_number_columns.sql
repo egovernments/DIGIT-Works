@@ -50,7 +50,8 @@ ALTER TABLE eg_wms_billing_period
     ADD COLUMN IF NOT EXISTS campaign_number VARCHAR(128);
 
 UPDATE eg_wms_billing_period
-SET campaign_number = COALESCE(campaign_number, project_id);
+SET campaign_number = project_id
+WHERE campaign_number IS NULL;
 
 ALTER TABLE eg_wms_billing_period
     ALTER COLUMN campaign_number SET NOT NULL;
