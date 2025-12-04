@@ -1136,6 +1136,7 @@ components:
           $ref: '#/components/schemas/ResponseInfo'
         BillingPeriods:
           type: array
+          maxItems: 100
           items:
             $ref: '#/components/schemas/BillingPeriod'
         count:
@@ -1296,6 +1297,7 @@ components:
           $ref: '#/components/schemas/ResponseInfo'
         Bills:
           type: array
+          maxItems: 100
           items:
             $ref: '#/components/schemas/Bill'
         count:

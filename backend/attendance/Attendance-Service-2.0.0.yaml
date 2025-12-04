@@ -480,8 +480,9 @@ components:
           items:
             type: object
             properties:
-              billingPeriodId:
+              periodId:
                 type: string
+                description: Billing period identifier (links to eg_wms_billing_period.id)
               status:
                 type: string
                 enum:
@@ -490,7 +491,11 @@ components:
                   - APPROVED
                   - REJECTED
                   - SENT_BACK
-              lastSyncedTime:
+                description: Muster roll status for this period
+              musterRollId:
+                type: string
+                description: Muster roll identifier (links to eg_wms_muster_roll.id). Null when status is NOT_CREATED.
+              lastModifiedTime:
                 type: number
                 description: Epoch millis when this status was last updated.
         auditDetails:

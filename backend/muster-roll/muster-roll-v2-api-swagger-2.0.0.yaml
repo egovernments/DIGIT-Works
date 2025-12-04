@@ -691,6 +691,7 @@ components:
           $ref: '#/components/schemas/ResponseInfo'
         musterRolls:
           type: array
+          maxItems: 100
           items:
             $ref: '#/components/schemas/MusterRoll'
         count:
@@ -772,6 +773,7 @@ components:
           $ref: '#/components/schemas/ResponseInfo'
         musterRolls:
           type: array
+          maxItems: 500
           items:
             $ref: '#/components/schemas/MusterRoll'
         count:
@@ -850,6 +852,7 @@ components:
           example: "ACTIVE"
         individualEntries:
           type: array
+          maxItems: 1000
           items:
             $ref: '#/components/schemas/IndividualEntry'
         auditDetails:
