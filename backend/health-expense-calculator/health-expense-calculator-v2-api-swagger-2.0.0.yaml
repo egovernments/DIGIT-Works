@@ -1066,6 +1066,9 @@ components:
           $ref: '#/components/schemas/RequestInfo'
         searchCriteria:
           type: object
+          description: |
+            Search criteria for billing configurations. At least one of projectId or campaignNumber
+            should be provided for meaningful search results. If both are provided, both filters are applied.
           required:
             - tenantId
           properties:
@@ -1079,6 +1082,7 @@ components:
             campaignNumber:
               type: string
               example: "CMP-2025-0001"
+              nullable: true
             status:
               type: string
               enum: [ACTIVE, INACTIVE]
@@ -1121,6 +1125,7 @@ components:
               nullable: true
             campaignNumber:
               type: string
+              nullable: true
             periodNumber:
               type: integer
               nullable: true
@@ -1254,7 +1259,11 @@ components:
         RequestInfo:
           $ref: '#/components/schemas/RequestInfo'
         BillingPeriod:
-          $ref: '#/components/schemas/BillingPeriod'
+          description: |
+            Only the following fields are updatable: status, billId, totalAmount, registerCount, musterRollCount.
+            All other fields are ignored during updates.
+          allOf:
+            - $ref: '#/components/schemas/BillingPeriod'
 
     BillingPeriodResponse:
       type: object
@@ -1358,6 +1367,7 @@ components:
           example: "ACTIVE"
         billDetails:
           type: array
+          maxItems: 100
           description: |
             **V1 & V2**: Bill line items (required for all versions)
           items:
@@ -1443,6 +1453,7 @@ components:
           type: string
         roles:
           type: array
+          maxItems: 100
           items:
             $ref: '#/components/schemas/Role'
 

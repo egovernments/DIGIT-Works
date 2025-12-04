@@ -442,6 +442,7 @@ components:
         staff:
           readOnly: true
           type: array
+          maxItems: 500
           items:
             allOf:
               - $ref: '#/components/schemas/StaffPermission'
@@ -449,6 +450,7 @@ components:
         attendees:
           readOnly: true
           type: array
+          maxItems: 5000
           items:
             allOf:
               - $ref: '#/components/schemas/IndividualEntry'
@@ -476,6 +478,7 @@ components:
           description: Payments V2 - derived period-level muster-roll status for the billing period.
         periodStatuses:
           type: array
+          maxItems: 100
           description: Payments V2 - persisted per-period statuses received from muster-roll Kafka events.
           items:
             type: object
@@ -516,6 +519,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendanceRegister:
           type: array
+          maxItems: 100
           items:
             allOf:
               - $ref: '#/components/schemas/AttendanceRegister'
@@ -528,6 +532,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendanceRegister:
           type: array
+          maxItems: 100
           items:
             $ref: '#/components/schemas/AttendanceRegister'
 
@@ -568,6 +573,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendees:
           type: array
+          maxItems: 500
           items:
             allOf:
               - $ref: '#/components/schemas/IndividualEntry'
@@ -584,6 +590,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendees:
           type: array
+          maxItems: 500
           items:
             $ref: '#/components/schemas/IndividualEntry'
 
@@ -594,6 +601,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendees:
           type: array
+          maxItems: 500
           items:
             allOf:
               - $ref: '#/components/schemas/IndividualEntry'
@@ -610,6 +618,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendees:
           type: array
+          maxItems: 500
           items:
             $ref: '#/components/schemas/IndividualEntry'
 
@@ -658,6 +667,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         staff:
           type: array
+          maxItems: 100
           items:
             allOf:
               - $ref: '#/components/schemas/StaffPermission'
@@ -673,6 +683,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         staff:
           type: array
+          maxItems: 100
           items:
             $ref: '#/components/schemas/StaffPermission'
 
@@ -711,6 +722,7 @@ components:
         documentIds:
           description: Used to store file store ids. Need to verify validity of them using file store service.
           type: array
+          maxItems: 20
           items:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/Document'
         additionalDetails:
@@ -729,6 +741,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/RequestInfo'
         attendance:
           type: array
+          maxItems: 1000
           items:
             $ref: '#/components/schemas/AttendanceLog'
 
@@ -739,6 +752,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/subhashini_devguide_changes/core-services/docs/common-contract.yml#/definitions/ResponseInfo'
         attendance:
           type: array
+          maxItems: 1000
           items:
             $ref: '#/components/schemas/AttendanceLog'
 
