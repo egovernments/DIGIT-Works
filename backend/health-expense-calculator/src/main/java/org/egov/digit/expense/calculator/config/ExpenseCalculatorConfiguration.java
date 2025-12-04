@@ -206,6 +206,13 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${expense.billing.search.max.limit}")
 	private Integer maxLimit;
 
+	// Bill search pagination limits
+	@Value("${expense.bill.search.default.limit:100}")
+	private Integer billSearchDefaultLimit;
+
+	@Value("${expense.bill.search.max.limit:1000}")
+	private Integer billSearchMaxLimit;
+
 	@Value("${works.estimate.host}")
 	private String estimateHost;
 

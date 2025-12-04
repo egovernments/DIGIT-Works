@@ -70,6 +70,7 @@ paths:
             type: array
             items:
               type: string
+            maxItems: 100
         - name: registerNumber
           description: Custom formatted Register id
           in: query
@@ -362,6 +363,7 @@ paths:
             type: array
             items:
               type: string
+            maxItems: 100
         - name: ids
           in: query
           description: List of ids
@@ -369,6 +371,7 @@ paths:
             type: array
             items:
               type: string
+            maxItems: 100
         - name: status
           in: query
           description: The status of the attendance log.

@@ -139,10 +139,14 @@ public class BillingConfig {
 
     /**
      * Get the duration of the project in days.
+     * Returns 0 if start or end dates are null (defensive check).
      *
-     * @return duration in days
+     * @return duration in days, or 0 if dates are null
      */
     public int getProjectDurationInDays() {
+        if (projectStartDate == null || projectEndDate == null) {
+            return 0;
+        }
         return (int) ((projectEndDate - projectStartDate) / (24 * 60 * 60 * 1000)) + 1;
     }
 }

@@ -405,10 +405,12 @@ public class AttendanceRegisterService {
         Integer originalLimit = searchCriteria.getLimit();
         Integer originalOffset = searchCriteria.getOffset();
 
-        // Temporarily remove pagination to fetch ALL registers
+        // Set high limit to fetch all registers for V2 flow
         // We need all registers to properly filter and count by registerPeriodStatus
-        searchCriteria.setLimit(null);
-        searchCriteria.setOffset(null);
+        // Using configurable max limit as safeguard against unbounded queries
+        Integer v2MaxFetchLimit = attendanceServiceConfiguration.getAttendanceRegisterV2MaxFetchLimit();
+        searchCriteria.setLimit(v2MaxFetchLimit);
+        searchCriteria.setOffset(0);
 
         if(attendanceServiceConfiguration.getAttendanceRegisterProjectSearchEnabled()){
             if((StringUtils.isBlank(searchCriteria.getReferenceId()) && !StringUtils.isBlank(searchCriteria.getLocalityCode())) || (!StringUtils.isBlank(searchCriteria.getReferenceId()) && StringUtils.isBlank(searchCriteria.getLocalityCode())) ){

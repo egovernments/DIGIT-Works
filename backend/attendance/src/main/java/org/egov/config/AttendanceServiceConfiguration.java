@@ -104,6 +104,10 @@ public class AttendanceServiceConfiguration {
     @Value("${attendance.register.search.max.limit}")
     private Integer attendanceRegisterMaxLimit;
 
+    // V2 register search - max limit for fetching all registers (for statusCount calculation)
+    @Value("${attendance.register.v2.max.fetch.limit:5000}")
+    private Integer attendanceRegisterV2MaxFetchLimit;
+
     @Value("${attendance.register.open.search.enabled.roles}")
     private String registerOpenSearchEnabledRoles;
 

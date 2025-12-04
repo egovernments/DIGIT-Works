@@ -74,6 +74,7 @@ paths:
           description: Filter by billing period ids
           schema:
             type: array
+            maxItems: 100
             items:
               type: string
         - name: billingType
@@ -96,6 +97,7 @@ paths:
           description: Filter by register ids
           schema:
             type: array
+            maxItems: 100
             items:
               type: string
         - name: billNumbers
@@ -103,6 +105,7 @@ paths:
           description: Filter by bill numbers
           schema:
             type: array
+            maxItems: 100
             items:
               type: string
         - name: limit
@@ -226,4 +229,3 @@ components:
           enum: [DEBIT, CREDIT]
         additionalDetails:
           type: object
-

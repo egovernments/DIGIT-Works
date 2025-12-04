@@ -293,7 +293,7 @@ public class AttendanceServiceValidatorTest {
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
                 .tenantId("pg.citya")
                 .billingPeriodId("period-123")
-                .registerPeriodStatus("NOT_CREATED")  // Invalid value - only APPROVED or PENDING allowed
+                .registerPeriodStatus("NOT_CREATED")  // Invalid value - only APPROVED, PENDINGFORAPPROVAL, or PENDING allowed
                 .build();
 
         CustomException exception = assertThrows(CustomException.class,
@@ -315,6 +315,23 @@ public class AttendanceServiceValidatorTest {
                 .tenantId("pg.citya")
                 .billingPeriodId("period-123")
                 .registerPeriodStatus("PENDING")
+                .build();
+
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with PENDINGFORAPPROVAL value in registerPeriodStatus")
+    @Test
+    public void validateSearchRegisterRequest_withPendingForApprovalStatus_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .billingPeriodId("period-123")
+                .registerPeriodStatus("PENDINGFORAPPROVAL")
                 .build();
 
         assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));

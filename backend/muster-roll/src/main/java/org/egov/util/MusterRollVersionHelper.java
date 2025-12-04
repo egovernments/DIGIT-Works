@@ -52,7 +52,7 @@ public class MusterRollVersionHelper {
      */
     public List<MusterRoll> filterV1MusterRolls(List<MusterRoll> musterRolls) {
         if (musterRolls == null || musterRolls.isEmpty()) {
-            return musterRolls;
+            return List.of();
         }
 
         List<MusterRoll> v1MusterRolls = musterRolls.stream()
@@ -73,7 +73,7 @@ public class MusterRollVersionHelper {
      */
     public List<MusterRoll> filterV2MusterRolls(List<MusterRoll> musterRolls) {
         if (musterRolls == null || musterRolls.isEmpty()) {
-            return musterRolls;
+            return List.of();
         }
 
         List<MusterRoll> v2MusterRolls = musterRolls.stream()

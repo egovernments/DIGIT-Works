@@ -164,7 +164,7 @@ public class BillingConfigurationService {
             log.info("Loading billing periods for {} configurations", configs.size());
 
             for (BillingConfig config : configs) {
-                List<BillingPeriod> periods = repository.findPeriodsByConfigId(config.getId());
+                List<BillingPeriod> periods = repository.findPeriodsByConfigId(config.getId(), config.getTenantId());
                 if (periods != null) {
                     allPeriods.addAll(periods);
                 }
@@ -457,7 +457,7 @@ public class BillingConfigurationService {
             periods = recalculatePeriods(existingConfig, updated, request.getRequestInfo());
         } else {
             // Just fetch existing periods
-            periods = repository.findPeriodsByConfigId(updated.getId());
+            periods = repository.findPeriodsByConfigId(updated.getId(), updated.getTenantId());
         }
 
         // Build response
@@ -520,7 +520,7 @@ public class BillingConfigurationService {
             newConfig.getId(), newConfig.getCampaignNumber());
 
         // Step 1: Deprecate old periods
-        List<BillingPeriod> oldPeriods = repository.findPeriodsByConfigId(oldConfig.getId());
+        List<BillingPeriod> oldPeriods = repository.findPeriodsByConfigId(oldConfig.getId(), oldConfig.getTenantId());
 
         if (oldPeriods != null && !oldPeriods.isEmpty()) {
             log.info("Deprecating {} old billing periods", oldPeriods.size());

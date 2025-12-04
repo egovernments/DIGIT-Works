@@ -624,11 +624,10 @@ public class MusterRollServiceUtil {
 		log.info("isPeriodBilled::Checking if period is billed - periodId: {}, registerId: {}, projectId: {}",
 			billingPeriodId, registerId, projectId);
 
-		// Build endpoint URL - we'll create a simple check endpoint
-		// For now, we'll query the bill status table via health-expense-calculator
+		// Build endpoint URL for bill status check
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getExpenseCalculatorServiceHost())
-			.append("/health-expense-calculator/v1/_checkBillStatus");
+			.append(config.getCheckBillStatusEndpoint());
 
 		// Build query parameters
 		Map<String, Object> requestBody = new HashMap<>();

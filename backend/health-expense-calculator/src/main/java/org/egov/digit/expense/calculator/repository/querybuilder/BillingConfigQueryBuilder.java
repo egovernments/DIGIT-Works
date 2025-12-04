@@ -156,15 +156,23 @@ public class BillingConfigQueryBuilder {
      * Builds query for searching billing periods by billing config ID.
      *
      * @param billingConfigId Billing configuration identifier
+     * @param tenantId Tenant identifier (optional - if null, no tenant filter applied)
      * @param preparedStmtList List to store prepared statement parameters
      * @return SQL query string
      */
     public String buildBillingPeriodByConfigIdQuery(String billingConfigId,
+                                                   String tenantId,
                                                    List<Object> preparedStmtList) {
         StringBuilder queryBuilder = new StringBuilder(BILLING_PERIOD_BASE_QUERY);
 
         queryBuilder.append(" WHERE bp.billing_config_id = ? ");
         preparedStmtList.add(billingConfigId);
+
+        // Add tenant filter if provided (for multi-tenancy consistency)
+        if (StringUtils.isNotBlank(tenantId)) {
+            queryBuilder.append(" AND bp.tenant_id = ? ");
+            preparedStmtList.add(tenantId);
+        }
 
         queryBuilder.append(" AND bp.is_deprecated = false ");
 

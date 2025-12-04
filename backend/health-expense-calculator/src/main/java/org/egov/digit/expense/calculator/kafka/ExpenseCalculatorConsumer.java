@@ -183,7 +183,10 @@ public class ExpenseCalculatorConsumer {
 		} catch (Exception exception) {
 			log.error("Error occurred while processing the report from topic: {} for record: {}",
 				topic, consumerRecord, exception);
-			producer.push(configs.getReportErrorQueueTopic(), exception.getMessage() + " : " + consumerRecord);
+			String errorDetail = exception instanceof CustomException
+				? ((CustomException) exception).getCode() + ": " + exception.getMessage()
+				: exception.getMessage();
+			producer.push(configs.getReportErrorQueueTopic(), errorDetail + " : " + consumerRecord);
 		}
 	}
 

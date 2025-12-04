@@ -7,9 +7,10 @@ import org.egov.digit.expense.calculator.web.models.enums.BillingFrequency;
 import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,8 +44,10 @@ public class PeriodGenerationService {
     private static final long TWO_WEEKS_MS = 14 * ONE_DAY_MS;
     private static final long THIRTY_DAYS_MS = 30 * ONE_DAY_MS;
 
-    // Date formatter for logging
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    // Date formatter for logging (thread-safe)
+    private static final DateTimeFormatter DATE_FORMAT =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            .withZone(ZoneId.systemDefault());
 
     /**
      * Generates billing periods based on billing configuration.
@@ -353,12 +356,13 @@ public class PeriodGenerationService {
 
     /**
      * Formats epoch milliseconds to readable date string.
+     * Uses thread-safe DateTimeFormatter.
      *
      * @param epochMs Epoch milliseconds
      * @return Formatted date string
      */
     private String formatDate(long epochMs) {
-        return DATE_FORMAT.format(new Date(epochMs));
+        return DATE_FORMAT.format(Instant.ofEpochMilli(epochMs));
     }
 
     /**

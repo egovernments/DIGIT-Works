@@ -99,6 +99,23 @@ public class BillUtils {
     }
 
     /**
+     * Helper method to parse additionalDetails object to Map.
+     * Provides consistent parsing across all methods in this class.
+     *
+     * @param additionalDetails Object to parse (typically from Bill or nested objects)
+     * @return Map representation of additionalDetails, or null if input is null
+     */
+    private Map<String, Object> parseToMap(Object additionalDetails) {
+        if (additionalDetails == null) {
+            return null;
+        }
+        return mapper.convertValue(
+                additionalDetails,
+                mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
+        );
+    }
+
+    /**
      * Comprehensive check to verify if a bill is fully generated and completed for a period.
      * Uses Expense service search API following microservices architecture principles.
      *
@@ -131,7 +148,7 @@ public class BillUtils {
             BillSearchRequest billSearchRequest = BillSearchRequest.builder()
                     .requestInfo(requestInfo)
                     .billCriteria(billCriteria)
-                    .pagination(Pagination.builder().limit(100).offSet(0).build())
+                    .pagination(Pagination.builder().limit(configs.getBillSearchDefaultLimit()).offSet(0).build())
                     .build();
 
             // Call Expense service search API
@@ -181,14 +198,11 @@ public class BillUtils {
             }
 
             // Parse additionalDetails
-            Map<String, Object> additionalDetails = mapper.convertValue(
-                    bill.getAdditionalDetails(),
-                    mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
-            );
+            Map<String, Object> additionalDetails = parseToMap(bill.getAdditionalDetails());
 
             // Check 1: Verify billingPeriodId matches
             Object billPeriodId = additionalDetails.get("billingPeriodId");
-            if (billPeriodId == null || !billingPeriodId.toString().equals(billingPeriodId)) {
+            if (billPeriodId == null || !billPeriodId.toString().equals(billingPeriodId)) {
                 log.debug("Bill {} does not match period {} (bill period: {})",
                         bill.getBillNumber(), billingPeriodId, billPeriodId);
                 return false;
@@ -201,10 +215,7 @@ public class BillUtils {
                 return false;
             }
 
-            Map<String, Object> reportDetails = mapper.convertValue(
-                    reportDetailsObj,
-                    mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
-            );
+            Map<String, Object> reportDetails = parseToMap(reportDetailsObj);
 
             Object reportStatus = reportDetails.get("status");
             if (reportStatus == null || !REPORT_STATUS_COMPLETED.equals(reportStatus.toString())) {
@@ -250,7 +261,7 @@ public class BillUtils {
             BillSearchRequest billSearchRequest = BillSearchRequest.builder()
                     .requestInfo(requestInfo)
                     .billCriteria(billCriteria)
-                    .pagination(Pagination.builder().limit(1000).offSet(0).build())
+                    .pagination(Pagination.builder().limit(configs.getBillSearchMaxLimit()).offSet(0).build())
                     .build();
 
             Object responseObj = restRepo.fetchResult(getBillSearchURI(), billSearchRequest);
@@ -300,10 +311,7 @@ public class BillUtils {
                 return null;
             }
 
-            Map<String, Object> additionalDetails = mapper.convertValue(
-                    bill.getAdditionalDetails(),
-                    mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
-            );
+            Map<String, Object> additionalDetails = parseToMap(bill.getAdditionalDetails());
 
             // Check if this is a V2 intermediate bill
             Object billingType = additionalDetails.get("billingType");
@@ -318,10 +326,7 @@ public class BillUtils {
                 return null;
             }
 
-            Map<String, Object> reportDetails = mapper.convertValue(
-                    reportDetailsObj,
-                    mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
-            );
+            Map<String, Object> reportDetails = parseToMap(reportDetailsObj);
 
             Object reportStatus = reportDetails.get("status");
             if (reportStatus == null || !REPORT_STATUS_COMPLETED.equals(reportStatus.toString())) {

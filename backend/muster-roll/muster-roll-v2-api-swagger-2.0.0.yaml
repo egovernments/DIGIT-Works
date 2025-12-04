@@ -67,7 +67,6 @@ info:
     3. New muster rolls automatically use V2 mode with period linkage
     4. Old V1 muster rolls remain unchanged (billingPeriodId=NULL)
 
-  version: 2.0.0
   contact:
     name: eGov Foundation
     email: contact@egovernments.org
@@ -644,6 +643,7 @@ components:
         musterRollId:
           type: array
           description: List of muster roll IDs
+          maxItems: 100
           items:
             type: string
           example: ["muster-001", "muster-002"]

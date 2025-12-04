@@ -730,6 +730,9 @@ public class RegisterPeriodEnrichmentService {
         if (value instanceof BigDecimal) {
             return ((BigDecimal) value).longValue();
         }
+        if (value instanceof Double) {
+            return ((Double) value).longValue();
+        }
         if (value instanceof String) {
             try {
                 return Long.parseLong((String) value);

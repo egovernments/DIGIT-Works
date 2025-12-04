@@ -266,13 +266,14 @@ public class BillingConfigRepository {
      * Finds billing periods by billing configuration ID.
      *
      * @param billingConfigId Billing configuration identifier
+     * @param tenantId Tenant identifier (optional - if null, no tenant filter applied)
      * @return List of billing periods ordered by period number
      */
-    public List<BillingPeriod> findPeriodsByConfigId(String billingConfigId) {
-        log.info("Finding billing periods for config: {}", billingConfigId);
+    public List<BillingPeriod> findPeriodsByConfigId(String billingConfigId, String tenantId) {
+        log.info("Finding billing periods for config: {} in tenant: {}", billingConfigId, tenantId);
 
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.buildBillingPeriodByConfigIdQuery(billingConfigId, preparedStmtList);
+        String query = queryBuilder.buildBillingPeriodByConfigIdQuery(billingConfigId, tenantId, preparedStmtList);
 
         log.debug("Executing query: {} with params: {}", query, preparedStmtList);
 

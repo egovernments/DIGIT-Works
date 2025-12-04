@@ -33,12 +33,26 @@ ADD COLUMN IF NOT EXISTS processing_end_time BIGINT;
 ALTER TABLE eg_expense_bill_gen_status
 ADD COLUMN IF NOT EXISTS additional_details JSONB;
 
+-- Step 6b: Add foreign key constraint for period_id (nullable FK is valid - NULL values are allowed)
+DO $$
+DECLARE
+  v_table_name CONSTANT TEXT := 'eg_expense_bill_gen_status';
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    WHERE c.conname = 'fk_bill_status_period'
+      AND c.conrelid = v_table_name::regclass
+  ) THEN
+    EXECUTE format('ALTER TABLE %I ADD CONSTRAINT fk_bill_status_period FOREIGN KEY (period_id) REFERENCES eg_wms_billing_period(id)', v_table_name);
+  END IF;
+END$$;
+
 -- Step 7: Add comments for documentation
 COMMENT ON COLUMN eg_expense_bill_gen_status.billing_type IS
 'Type of bill: REGULAR (V1), INTERMEDIATE (V2 periodic), FINAL_AGGREGATE (V2 final)';
 
 COMMENT ON COLUMN eg_expense_bill_gen_status.period_id IS
-'V2: Foreign key to eg_wms_billing_period.id (NULL for V1 bills)';
+'V2: Foreign key to eg_wms_billing_period.id (NULL for V1 bills and aggregate bills)';
 
 COMMENT ON COLUMN eg_expense_bill_gen_status.period_number IS
 'V2: Sequential period number for easy sorting and validation';
