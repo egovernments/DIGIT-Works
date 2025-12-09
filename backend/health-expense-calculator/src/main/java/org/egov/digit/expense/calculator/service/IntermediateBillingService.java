@@ -725,14 +725,21 @@ public class IntermediateBillingService {
         Integer currentPeriodNumber = period.getPeriodNumber();
 
         if (currentPeriodNumber == null) {
-            log.warn("validateSequentialBillingForProject::Period number is null for project {}, cannot validate sequential billing", projectId);
-            return;
+            log.error("validateSequentialBillingForProject:: CRITICAL - Period number is NULL for project {}! Cannot validate sequential billing. Period ID: {}",
+                projectId, period.getId());
+            // CHANGED: Throw exception instead of silently returning
+            throw new CustomException("PERIOD_NUMBER_NULL",
+                "Period number is null for period " + period.getId() + ". Cannot validate sequential billing.");
         }
 
         log.info("═══════════════════════════════════════════════════════════");
         log.info("validateSequentialBillingForProject::SEQUENTIAL BILLING VALIDATION STARTED");
         log.info("validateSequentialBillingForProject::Project: {}, Period: {}, Tenant: {}",
                 projectId, currentPeriodNumber, tenantId);
+        log.info("validateSequentialBillingForProject::Period ID: {}, Period Status: {}",
+                period.getId(), period.getStatus());
+        log.info("validateSequentialBillingForProject::Period Dates: {} to {}",
+                period.getPeriodStartDate(), period.getPeriodEndDate());
         log.info("═══════════════════════════════════════════════════════════");
 
         // Get minimum active (non-deprecated) period number for this project
@@ -742,12 +749,25 @@ public class IntermediateBillingService {
         log.info("validateSequentialBillingForProject::Minimum active period number: {}", minActivePeriodNumber);
 
         // If current period is the first active period, no validation needed
-        if (minActivePeriodNumber == null || currentPeriodNumber.equals(minActivePeriodNumber)) {
-            log.info("validateSequentialBillingForProject::✓ Period {} is the FIRST active period - no previous periods to check",
+        if (minActivePeriodNumber == null) {
+            log.warn("validateSequentialBillingForProject::⚠️  WARNING - No active periods found for project {}! " +
+                "This should not happen. Allowing P{} to proceed but this indicates data inconsistency.",
+                projectId, currentPeriodNumber);
+            log.info("═══════════════════════════════════════════════════════════");
+            return;
+        }
+
+        if (currentPeriodNumber.equals(minActivePeriodNumber)) {
+            log.info("validateSequentialBillingForProject::✓ Period {} is the FIRST active period (min={})",
+                    currentPeriodNumber, minActivePeriodNumber);
+            log.info("validateSequentialBillingForProject::✓ No previous periods to validate - allowing P{} to proceed",
                     currentPeriodNumber);
             log.info("═══════════════════════════════════════════════════════════");
             return;
         }
+
+        log.info("validateSequentialBillingForProject::Current period {} is NOT the first (min={}), validation required",
+                currentPeriodNumber, minActivePeriodNumber);
 
         // Get all FULLY COMPLETED period numbers for this project
         // This calls Expense service API to verify bills and reports are truly completed
@@ -767,13 +787,32 @@ public class IntermediateBillingService {
         log.info("validateSequentialBillingForProject::Checking ALL previous periods ({} to {}) are completed...",
                 minActivePeriodNumber, currentPeriodNumber - 1);
 
+        // CRITICAL FIX: Get all ACTIVE period numbers to handle non-sequential periods correctly
+        // Example: If periods are [3, 5, 7, 9], check only [3, 5, 7], not [3, 4, 5, 6, 7, 8]
+        List<Integer> allActivePeriodNumbers = getAllActivePeriodNumbers(requestInfo, projectId, tenantId);
+        log.info("validateSequentialBillingForProject::All active period numbers: {}", allActivePeriodNumbers);
+
+        // Filter to get only periods BEFORE current period
+        List<Integer> previousPeriodNumbers = allActivePeriodNumbers.stream()
+                .filter(p -> p < currentPeriodNumber)
+                .sorted()
+                .collect(Collectors.toList());
+
+        log.info("validateSequentialBillingForProject::Previous periods to validate: {}", previousPeriodNumbers);
+
+        if (previousPeriodNumbers.isEmpty()) {
+            log.info("validateSequentialBillingForProject::✓ No previous periods to validate");
+            log.info("═══════════════════════════════════════════════════════════");
+            return;
+        }
+
         List<Integer> missingPeriods = new ArrayList<>();
-        for (int i = minActivePeriodNumber; i < currentPeriodNumber; i++) {
-            if (!completedPeriods.contains(i)) {
-                log.error("validateSequentialBillingForProject:: VALIDATION FAILED - Period {} is NOT completed!", i);
-                missingPeriods.add(i);
+        for (Integer previousPeriod : previousPeriodNumbers) {
+            if (!completedPeriods.contains(previousPeriod)) {
+                log.error("validateSequentialBillingForProject::❌ VALIDATION FAILED - Period {} is NOT completed!", previousPeriod);
+                missingPeriods.add(previousPeriod);
             } else {
-                log.info("validateSequentialBillingForProject::✓ Period {} is completed", i);
+                log.info("validateSequentialBillingForProject::✓ Period {} is completed", previousPeriod);
             }
         }
 
@@ -799,6 +838,59 @@ public class IntermediateBillingService {
         log.info("validateSequentialBillingForProject::All {} previous periods are fully completed", currentPeriodNumber - 1);
         log.info("validateSequentialBillingForProject::Period {} can proceed with bill generation", currentPeriodNumber);
         log.info("═══════════════════════════════════════════════════════════");
+    }
+
+    /**
+     * Get ALL active period numbers for a project (handles non-sequential periods correctly).
+     * This is the FIXED version that returns actual period numbers, not assumed sequential range.
+     *
+     * Example: If periods are [3, 5, 7, 9], returns [3, 5, 7, 9], not [3, 4, 5, 6, 7, 8, 9]
+     *
+     * @param requestInfo Request info for API calls
+     * @param projectId Project reference ID
+     * @param tenantId Tenant ID
+     * @return List of all active period numbers, sorted
+     */
+    private List<Integer> getAllActivePeriodNumbers(RequestInfo requestInfo, String projectId, String tenantId) {
+        try {
+            // Search for all non-deprecated periods for this project
+            BillingPeriodSearchCriteria criteria = BillingPeriodSearchCriteria.builder()
+                    .tenantId(tenantId)
+                    .projectId(projectId)
+                    .includeDeprecated(false) // Only get active (non-deprecated) periods
+                    .limit(1000)
+                    .offset(0)
+                    .build();
+
+            BillingPeriodSearchRequest searchRequest = BillingPeriodSearchRequest.builder()
+                    .requestInfo(requestInfo)
+                    .searchCriteria(criteria)
+                    .build();
+
+            BillingPeriodSearchResponse response = billingConfigurationService.searchBillingPeriods(searchRequest);
+
+            if (response == null || response.getBillingPeriods() == null || response.getBillingPeriods().isEmpty()) {
+                log.warn("getAllActivePeriodNumbers::No active billing periods found for project: {}", projectId);
+                return new ArrayList<>();
+            }
+
+            // Collect all period numbers, sorted
+            List<Integer> allPeriodNumbers = response.getBillingPeriods().stream()
+                    .map(BillingPeriod::getPeriodNumber)
+                    .filter(Objects::nonNull)
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            log.info("getAllActivePeriodNumbers::Found {} active periods with numbers: {}",
+                    allPeriodNumbers.size(), allPeriodNumbers);
+
+            return allPeriodNumbers;
+
+        } catch (Exception e) {
+            log.error("Error getting active period numbers for project {}: {}",
+                    projectId, e.getMessage(), e);
+            return new ArrayList<>();
+        }
     }
 
     /**
@@ -832,19 +924,37 @@ public class IntermediateBillingService {
             BillingPeriodSearchResponse response = billingConfigurationService.searchBillingPeriods(searchRequest);
 
             if (response == null || response.getBillingPeriods() == null || response.getBillingPeriods().isEmpty()) {
-                log.warn("No active billing periods found for project: {}", projectId);
+                log.warn("getMinActivePeriodNumber::No active billing periods found for project: {}", projectId);
                 return null;
             }
 
-            // Find minimum period number among active periods
-            Integer minPeriodNumber = response.getBillingPeriods().stream()
+            // Collect all period numbers for debugging
+            List<Integer> allPeriodNumbers = response.getBillingPeriods().stream()
                     .map(BillingPeriod::getPeriodNumber)
                     .filter(Objects::nonNull)
-                    .min(Integer::compareTo)
-                    .orElse(null);
+                    .sorted()
+                    .collect(Collectors.toList());
 
-            log.info("Found {} active periods for project {}, minimum period number: {}",
-                    response.getBillingPeriods().size(), projectId, minPeriodNumber);
+            // Find minimum period number among active periods
+            Integer minPeriodNumber = allPeriodNumbers.isEmpty() ? null : allPeriodNumbers.get(0);
+
+            log.info("getMinActivePeriodNumber::Found {} active periods for project {}",
+                    response.getBillingPeriods().size(), projectId);
+            log.info("getMinActivePeriodNumber::All period numbers: {}", allPeriodNumbers);
+            log.info("getMinActivePeriodNumber::Minimum period number: {}", minPeriodNumber);
+
+            // CRITICAL CHECK: Verify periods are sequential
+            if (allPeriodNumbers.size() > 1) {
+                for (int i = 0; i < allPeriodNumbers.size() - 1; i++) {
+                    int current = allPeriodNumbers.get(i);
+                    int next = allPeriodNumbers.get(i + 1);
+                    if (next != current + 1) {
+                        log.warn("getMinActivePeriodNumber::⚠️  NON-SEQUENTIAL PERIODS DETECTED! " +
+                            "Period {} is followed by period {} (expected {}). This may cause validation issues.",
+                            current, next, current + 1);
+                    }
+                }
+            }
 
             return minPeriodNumber;
 
