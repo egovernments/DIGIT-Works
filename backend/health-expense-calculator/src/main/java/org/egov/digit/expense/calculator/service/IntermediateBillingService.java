@@ -168,8 +168,12 @@ public class IntermediateBillingService {
         if (billingPeriodId == null || billingPeriodId.isEmpty() ||
             BILLING_PERIOD_AGGREGATE.equalsIgnoreCase(billingPeriodId)) {
             log.info("Skipping detailed pre-validation for aggregate/batch mode - will validate per period in async");
+            // IMPORTANT: Even for aggregate/batch mode, if this is a direct period request (not batch processing),
+            // we should validate sequential billing to fail fast
             return; // For aggregate/batch mode, validate during async processing
         }
+
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - UI-driven mode detected for period: {}", billingPeriodId);
 
         // For UI-driven mode: Validate the specific period
         BillingPeriod selectedPeriod = billingConfigurationService.getBillingPeriodById(
@@ -181,11 +185,18 @@ public class IntermediateBillingService {
                 "Billing period not found: " + billingPeriodId);
         }
 
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Found period {} (number: {}) for validation",
+            selectedPeriod.getId(), selectedPeriod.getPeriodNumber());
+
         // Validate period is ready for processing
         intermediateBillingValidator.validatePeriodForProcessing(selectedPeriod);
 
-        // Validate sequential billing
+        // CRITICAL: Validate sequential billing - previous periods must be fully completed
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Validating sequential billing for period {}",
+            selectedPeriod.getPeriodNumber());
         validateSequentialBillingForProject(requestInfo, projectId, selectedPeriod, criteria.getTenantId());
+        log.info("IntermediateBillingService::validateV2BillingPrerequisites - Sequential billing validation passed for period {}",
+            selectedPeriod.getPeriodNumber());
 
         // Fetch registers for the period
         boolean isDistrictLevel = checkIfDistrictLevel(requestInfo, criteria);
@@ -714,56 +725,80 @@ public class IntermediateBillingService {
         Integer currentPeriodNumber = period.getPeriodNumber();
 
         if (currentPeriodNumber == null) {
-            log.info("Period number is null, no sequential validation needed");
+            log.warn("validateSequentialBillingForProject::Period number is null for project {}, cannot validate sequential billing", projectId);
             return;
         }
 
-        log.info("Validating sequential billing for project {} period {} (using comprehensive check)",
-                projectId, currentPeriodNumber);
+        log.info("═══════════════════════════════════════════════════════════");
+        log.info("validateSequentialBillingForProject::SEQUENTIAL BILLING VALIDATION STARTED");
+        log.info("validateSequentialBillingForProject::Project: {}, Period: {}, Tenant: {}",
+                projectId, currentPeriodNumber, tenantId);
+        log.info("═══════════════════════════════════════════════════════════");
 
         // Get minimum active (non-deprecated) period number for this project
         // This handles the case where billing config was updated and old periods were deprecated
         Integer minActivePeriodNumber = getMinActivePeriodNumber(requestInfo, projectId, tenantId);
 
-        log.info("Project {} has minimum active period number: {}", projectId, minActivePeriodNumber);
+        log.info("validateSequentialBillingForProject::Minimum active period number: {}", minActivePeriodNumber);
 
         // If current period is the first active period, no validation needed
         if (minActivePeriodNumber == null || currentPeriodNumber.equals(minActivePeriodNumber)) {
-            log.info("Period {} is the first active period for project {}, no sequential validation needed",
-                    currentPeriodNumber, projectId);
+            log.info("validateSequentialBillingForProject::✓ Period {} is the FIRST active period - no previous periods to check",
+                    currentPeriodNumber);
+            log.info("═══════════════════════════════════════════════════════════");
             return;
         }
 
         // Get all FULLY COMPLETED period numbers for this project
         // This calls Expense service API to verify bills and reports are truly completed
+        log.info("validateSequentialBillingForProject::Fetching FULLY COMPLETED periods from Expense service API...");
         List<Integer> completedPeriods = billUtils.getCompletedPeriodNumbersForProject(
             requestInfo,
             projectId,
             tenantId
         );
 
-        log.info("Project {} has {} FULLY COMPLETED periods: {}", projectId, completedPeriods.size(), completedPeriods);
+        log.info("validateSequentialBillingForProject::Found {} FULLY COMPLETED periods: {}",
+                completedPeriods.size(),
+                completedPeriods.isEmpty() ? "NONE" : completedPeriods.toString());
 
         // Check if all previous ACTIVE periods (from minActivePeriodNumber to N-1) are fully completed
         // This excludes deprecated periods which would never be completed
+        log.info("validateSequentialBillingForProject::Checking ALL previous periods ({} to {}) are completed...",
+                minActivePeriodNumber, currentPeriodNumber - 1);
+
+        List<Integer> missingPeriods = new ArrayList<>();
         for (int i = minActivePeriodNumber; i < currentPeriodNumber; i++) {
             if (!completedPeriods.contains(i)) {
-                String errorMsg = String.format(
-                    "Cannot bill period %d for project %s. Period %d must be FULLY COMPLETED first " +
-                    "(bill generated AND report completed). " +
-                    "Periods must be billed sequentially. Currently completed periods: %s",
-                    currentPeriodNumber,
-                    projectId,
-                    i,
-                    completedPeriods.isEmpty() ? "None" : completedPeriods.toString()
-                );
-                log.error(errorMsg);
-                throw new CustomException("SEQUENTIAL_BILLING_VIOLATION", errorMsg);
+                log.error("validateSequentialBillingForProject:: VALIDATION FAILED - Period {} is NOT completed!", i);
+                missingPeriods.add(i);
+            } else {
+                log.info("validateSequentialBillingForProject::✓ Period {} is completed", i);
             }
         }
 
-        log.info("Sequential billing validation passed for project {} period {} - all previous active periods completed",
-            projectId, currentPeriodNumber);
+        if (!missingPeriods.isEmpty()) {
+            String errorMsg = String.format(
+                "SEQUENTIAL BILLING VIOLATION: Cannot generate bill for period %d of project %s. " +
+                "The following previous period(s) must be FULLY COMPLETED first: %s. " +
+                "Bills MUST be generated in sequential order (P1 → P2 → P3 → ...). " +
+                "A period is 'fully completed' when: (1) Bill is generated, AND (2) Report generation is completed. " +
+                "Currently completed periods: %s",
+                currentPeriodNumber,
+                projectId,
+                missingPeriods.toString(),
+                completedPeriods.isEmpty() ? "NONE" : completedPeriods.toString()
+            );
+            log.error("═══════════════════════════════════════════════════════════");
+            log.error(errorMsg);
+            log.error("═══════════════════════════════════════════════════════════");
+            throw new CustomException("SEQUENTIAL_BILLING_VIOLATION", errorMsg);
+        }
+
+        log.info("validateSequentialBillingForProject::✓✓✓ SEQUENTIAL BILLING VALIDATION PASSED ✓✓✓");
+        log.info("validateSequentialBillingForProject::All {} previous periods are fully completed", currentPeriodNumber - 1);
+        log.info("validateSequentialBillingForProject::Period {} can proceed with bill generation", currentPeriodNumber);
+        log.info("═══════════════════════════════════════════════════════════");
     }
 
     /**
