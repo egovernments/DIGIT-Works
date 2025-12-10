@@ -23,7 +23,6 @@ The health expense calculator works with the expense service to generate bills b
     - Fetches attendance registers and muster-roll statuses (prefers persisted periodStatuses; fallback via Redis/API when missing).
     - Ensures all musters are APPROVED before bill generation.
     - Generates period-level bills and tracks bill-generation status.
-  - Bill status check API `/v1/_checkBillStatus` used by muster-roll to enforce post-billing locks.
   - Period-aware report generation (PDF/Excel) reflecting Payments V2 fields.
 
 ### Key configuration (Payments V2)
