@@ -194,7 +194,7 @@ public class IntermediateBillingService {
         // CRITICAL: Validate sequential billing - previous periods must be fully completed
         log.info("IntermediateBillingService::validateV2BillingPrerequisites - Validating sequential billing for period {}",
             selectedPeriod.getPeriodNumber());
-        validateSequentialBillingForProject(requestInfo, projectId, selectedPeriod, criteria.getTenantId());
+        validateSequentialBillingForProject(requestInfo, campaignNumber, projectId, selectedPeriod, criteria.getTenantId());
         log.info("IntermediateBillingService::validateV2BillingPrerequisites - Sequential billing validation passed for period {}",
             selectedPeriod.getPeriodNumber());
 
@@ -567,7 +567,7 @@ public class IntermediateBillingService {
 
         // Step 1.1: Validate sequential billing (previous periods must be billed first)
         // Uses comprehensive check: validates actual bill existence and report completion
-        validateSequentialBillingForProject(requestInfo, projectId, period, criteria.getTenantId());
+        validateSequentialBillingForProject(requestInfo, campaignNumber, projectId, period, criteria.getTenantId());
 
         // Step 2: Fetch registers overlapping with period dates
         List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
@@ -715,12 +715,13 @@ public class IntermediateBillingService {
      * - Report generation is COMPLETED
      *
      * @param requestInfo Request info for API calls
-     * @param projectId Project reference ID
+     * @param campaignNumber Campaign number to search billing periods
+     * @param projectId Project reference ID (used for bill search only)
      * @param period Period to be billed
      * @param tenantId Tenant ID
      * @throws CustomException if sequential validation fails
      */
-    private void validateSequentialBillingForProject(RequestInfo requestInfo, String projectId,
+    private void validateSequentialBillingForProject(RequestInfo requestInfo, String campaignNumber, String projectId,
                                                      BillingPeriod period, String tenantId) {
         Integer currentPeriodNumber = period.getPeriodNumber();
 
@@ -734,25 +735,25 @@ public class IntermediateBillingService {
 
         log.info("═══════════════════════════════════════════════════════════");
         log.info("validateSequentialBillingForProject::SEQUENTIAL BILLING VALIDATION STARTED");
-        log.info("validateSequentialBillingForProject::Project: {}, Period: {}, Tenant: {}",
-                projectId, currentPeriodNumber, tenantId);
+        log.info("validateSequentialBillingForProject::Campaign: {}, Project: {}, Period: {}, Tenant: {}",
+                campaignNumber, projectId, currentPeriodNumber, tenantId);
         log.info("validateSequentialBillingForProject::Period ID: {}, Period Status: {}",
                 period.getId(), period.getStatus());
         log.info("validateSequentialBillingForProject::Period Dates: {} to {}",
                 period.getPeriodStartDate(), period.getPeriodEndDate());
         log.info("═══════════════════════════════════════════════════════════");
 
-        // Get minimum active (non-deprecated) period number for this project
+        // Get minimum active (non-deprecated) period number for this campaign
         // This handles the case where billing config was updated and old periods were deprecated
-        Integer minActivePeriodNumber = getMinActivePeriodNumber(requestInfo, projectId, tenantId);
+        Integer minActivePeriodNumber = getMinActivePeriodNumber(requestInfo, campaignNumber, tenantId);
 
         log.info("validateSequentialBillingForProject::Minimum active period number: {}", minActivePeriodNumber);
 
         // If current period is the first active period, no validation needed
         if (minActivePeriodNumber == null) {
-            log.warn("validateSequentialBillingForProject::⚠️  WARNING - No active periods found for project {}! " +
+            log.warn("validateSequentialBillingForProject::⚠️  WARNING - No active periods found for campaign {}! " +
                 "This should not happen. Allowing P{} to proceed but this indicates data inconsistency.",
-                projectId, currentPeriodNumber);
+                campaignNumber, currentPeriodNumber);
             log.info("═══════════════════════════════════════════════════════════");
             return;
         }
@@ -789,7 +790,7 @@ public class IntermediateBillingService {
 
         // CRITICAL FIX: Get all ACTIVE period numbers to handle non-sequential periods correctly
         // Example: If periods are [3, 5, 7, 9], check only [3, 5, 7], not [3, 4, 5, 6, 7, 8]
-        List<Integer> allActivePeriodNumbers = getAllActivePeriodNumbers(requestInfo, projectId, tenantId);
+        List<Integer> allActivePeriodNumbers = getAllActivePeriodNumbers(requestInfo, campaignNumber, tenantId);
         log.info("validateSequentialBillingForProject::All active period numbers: {}", allActivePeriodNumbers);
 
         // Filter to get only periods BEFORE current period
@@ -841,22 +842,22 @@ public class IntermediateBillingService {
     }
 
     /**
-     * Get ALL active period numbers for a project (handles non-sequential periods correctly).
+     * Get ALL active period numbers for a campaign (handles non-sequential periods correctly).
      * This is the FIXED version that returns actual period numbers, not assumed sequential range.
      *
      * Example: If periods are [3, 5, 7, 9], returns [3, 5, 7, 9], not [3, 4, 5, 6, 7, 8, 9]
      *
      * @param requestInfo Request info for API calls
-     * @param projectId Project reference ID
+     * @param campaignNumber Campaign number to search billing periods
      * @param tenantId Tenant ID
      * @return List of all active period numbers, sorted
      */
-    private List<Integer> getAllActivePeriodNumbers(RequestInfo requestInfo, String projectId, String tenantId) {
+    private List<Integer> getAllActivePeriodNumbers(RequestInfo requestInfo, String campaignNumber, String tenantId) {
         try {
-            // Search for all non-deprecated periods for this project
+            // Search for all non-deprecated periods for this campaign
             BillingPeriodSearchCriteria criteria = BillingPeriodSearchCriteria.builder()
                     .tenantId(tenantId)
-                    .projectId(projectId)
+                    .campaignNumber(campaignNumber)
                     .includeDeprecated(false) // Only get active (non-deprecated) periods
                     .limit(1000)
                     .offset(0)
@@ -870,7 +871,7 @@ public class IntermediateBillingService {
             BillingPeriodSearchResponse response = billingConfigurationService.searchBillingPeriods(searchRequest);
 
             if (response == null || response.getBillingPeriods() == null || response.getBillingPeriods().isEmpty()) {
-                log.warn("getAllActivePeriodNumbers::No active billing periods found for project: {}", projectId);
+                log.warn("getAllActivePeriodNumbers::No active billing periods found for campaign: {}", campaignNumber);
                 return new ArrayList<>();
             }
 
@@ -887,30 +888,30 @@ public class IntermediateBillingService {
             return allPeriodNumbers;
 
         } catch (Exception e) {
-            log.error("Error getting active period numbers for project {}: {}",
-                    projectId, e.getMessage(), e);
+            log.error("Error getting active period numbers for campaign {}: {}",
+                    campaignNumber, e.getMessage(), e);
             return new ArrayList<>();
         }
     }
 
     /**
-     * Get the minimum period number among non-deprecated (active) periods for a project.
+     * Get the minimum period number among non-deprecated (active) periods for a campaign.
      * This is used to determine the starting point for sequential billing validation.
      *
      * When a billing config is updated, old periods are marked as deprecated and new periods
      * are created. The first new period becomes the starting point for sequential billing.
      *
      * @param requestInfo Request info for API calls
-     * @param projectId Project reference ID
+     * @param campaignNumber Campaign number to search billing periods
      * @param tenantId Tenant ID
      * @return Minimum active period number, or null if no active periods exist
      */
-    private Integer getMinActivePeriodNumber(RequestInfo requestInfo, String projectId, String tenantId) {
+    private Integer getMinActivePeriodNumber(RequestInfo requestInfo, String campaignNumber, String tenantId) {
         try {
-            // Search for all non-deprecated periods for this project
+            // Search for all non-deprecated periods for this campaign
             BillingPeriodSearchCriteria criteria = BillingPeriodSearchCriteria.builder()
                     .tenantId(tenantId)
-                    .projectId(projectId)
+                    .campaignNumber(campaignNumber)
                     .includeDeprecated(false) // Only get active (non-deprecated) periods
                     .limit(1000)
                     .offset(0)
@@ -924,7 +925,7 @@ public class IntermediateBillingService {
             BillingPeriodSearchResponse response = billingConfigurationService.searchBillingPeriods(searchRequest);
 
             if (response == null || response.getBillingPeriods() == null || response.getBillingPeriods().isEmpty()) {
-                log.warn("getMinActivePeriodNumber::No active billing periods found for project: {}", projectId);
+                log.warn("getMinActivePeriodNumber::No active billing periods found for campaign: {}", campaignNumber);
                 return null;
             }
 
@@ -938,8 +939,8 @@ public class IntermediateBillingService {
             // Find minimum period number among active periods
             Integer minPeriodNumber = allPeriodNumbers.isEmpty() ? null : allPeriodNumbers.get(0);
 
-            log.info("getMinActivePeriodNumber::Found {} active periods for project {}",
-                    response.getBillingPeriods().size(), projectId);
+            log.info("getMinActivePeriodNumber::Found {} active periods for campaign {}",
+                    response.getBillingPeriods().size(), campaignNumber);
             log.info("getMinActivePeriodNumber::All period numbers: {}", allPeriodNumbers);
             log.info("getMinActivePeriodNumber::Minimum period number: {}", minPeriodNumber);
 
@@ -959,8 +960,8 @@ public class IntermediateBillingService {
             return minPeriodNumber;
 
         } catch (Exception e) {
-            log.error("Error getting minimum active period number for project {}: {}",
-                    projectId, e.getMessage(), e);
+            log.error("Error getting minimum active period number for campaign {}: {}",
+                    campaignNumber, e.getMessage(), e);
             // Fail-safe: return 1 to use original behavior
             return 1;
         }
