@@ -231,15 +231,25 @@ public class HealthBillReportGenerator {
     }
 
     private BillingPeriodDisplay getBillingPeriodDisplay(BillRequest billRequest) {
-        String billingPeriodId = extractBillingPeriodId(billRequest.getBill());
+        Bill bill = billRequest.getBill();
+
+        // First check if this is an aggregate bill
+        BillingPeriodDisplay aggregateDisplay = getAggregateBillingPeriodDisplay(bill);
+        if (aggregateDisplay != null) {
+            log.info("Bill {} is an aggregate bill, using aggregate period display", bill.getId());
+            return aggregateDisplay;
+        }
+
+        // Regular bill flow - look for billingPeriodId
+        String billingPeriodId = extractBillingPeriodId(bill);
         if (!StringUtils.hasLength(billingPeriodId)) {
-            log.info("No billingPeriodId found for bill {}, skipping billing period enrichment", billRequest.getBill().getId());
+            log.info("No billingPeriodId found for bill {}, skipping billing period enrichment", bill.getId());
             return BillingPeriodDisplay.empty();
         }
 
-        BillingPeriod billingPeriod = billingConfigurationService.getBillingPeriodById(billingPeriodId, billRequest.getBill().getTenantId());
+        BillingPeriod billingPeriod = billingConfigurationService.getBillingPeriodById(billingPeriodId, bill.getTenantId());
         if (billingPeriod == null) {
-            log.warn("Billing period {} not found for bill {}, leaving period columns empty", billingPeriodId, billRequest.getBill().getId());
+            log.warn("Billing period {} not found for bill {}, leaving period columns empty", billingPeriodId, bill.getId());
             return BillingPeriodDisplay.empty();
         }
 
@@ -249,6 +259,71 @@ public class HealthBillReportGenerator {
         String dateRange = formatPeriodRange(billingPeriod.getPeriodStartDate(), billingPeriod.getPeriodEndDate());
 
         return new BillingPeriodDisplay(label, dateRange, billingPeriod.getPeriodStartDate(), billingPeriod.getPeriodEndDate());
+    }
+
+    /**
+     * Get billing period display for aggregate bills.
+     * For aggregate bills: Period = "Aggregate", Date Range = first period start to last period end date
+     *
+     * @param bill The bill to check
+     * @return BillingPeriodDisplay for aggregate bills, null if not an aggregate bill
+     */
+    private BillingPeriodDisplay getAggregateBillingPeriodDisplay(Bill bill) {
+        try {
+            if (bill.getAdditionalDetails() == null) {
+                return null;
+            }
+
+            Map<String, Object> additionalDetails = objectMapper.convertValue(
+                    bill.getAdditionalDetails(),
+                    objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class)
+            );
+
+            // Check if this is an aggregate bill
+            Object isAggregateBill = additionalDetails.get("isAggregateBill");
+            if (isAggregateBill == null || !Boolean.TRUE.equals(isAggregateBill)) {
+                return null;
+            }
+
+            log.info("Processing aggregate bill {} for period display", bill.getId());
+
+            // Extract period dates (first period start to last period end)
+            Long periodStartDate = extractLongValue(additionalDetails.get("periodStartDate"));
+            Long periodEndDate = extractLongValue(additionalDetails.get("periodEndDate"));
+
+            // For aggregate bills: Period = "Aggregate", Date Range = full campaign date range
+            String label = "Aggregate";
+            String dateRange = formatPeriodRange(periodStartDate, periodEndDate);
+
+            log.info("Aggregate bill period display - Label: {}, DateRange: {}", label, dateRange);
+
+            return new BillingPeriodDisplay(label, dateRange, periodStartDate, periodEndDate);
+
+        } catch (Exception e) {
+            log.warn("Error extracting aggregate billing period display for bill {}: {}",
+                    bill.getId(), e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Extract Long value from various number types (handles Integer, Long, Double from JSON)
+     */
+    private Long extractLongValue(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Long) {
+            return (Long) value;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        }
+        try {
+            return Long.parseLong(value.toString());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private List<BillingPeriod> fetchBillingPeriodsForConfig(BillingPeriod billingPeriod, BillRequest billRequest) {
