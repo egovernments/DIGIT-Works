@@ -31,13 +31,20 @@ public class BoundaryUtil {
 
     public List<TenantBoundary> fetchBoundary(RequestInfoWrapper request, String  localityCode, String tenantId, boolean includeChildren){
         try{
+            // Extract hierarchyType from localityCode (first part before underscore)
+            // e.g., MICROPLAN_MO_01_01_MOSSURILEE -> MICROPLAN
+            String hierarchyType = localityCode.contains("_")
+                    ? localityCode.substring(0, localityCode.indexOf("_"))
+                    : localityCode;
+
             Object boundarySearchResponse = restRepo.fetchResult(
                     new StringBuilder(configuration.getBoundaryServiceHost()
                             + configuration.getBoundarySearchUrl()
                             + "?limit=" + configuration.getDefaultLimit()
                             + "&offset=0&tenantId=" + tenantId
                             + "&codes=" + localityCode
-                            + "&includeChildren=" + includeChildren),
+                            + "&includeChildren=" + includeChildren
+                            + "&hierarchyType=" + hierarchyType),
                     request
             );
 
