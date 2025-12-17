@@ -226,25 +226,19 @@ public class MTNUtil {
         }
 
         try {
-
-            //TODO Undo this
-            throw new HttpClientErrorException(
-                    HttpStatus.BAD_REQUEST,
-                    "Forced MTN failure"
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
             );
-//            ResponseEntity<String> response = restTemplate.exchange(
-//                    url,
-//                    HttpMethod.POST,
-//                    requestEntity,
-//                    String.class
-//            );
-//
-//            if (response.getStatusCode() == HttpStatus.ACCEPTED) {
-//                log.info("Transfer initiated successfully. Reference ID: {}", referenceId);
-//            } else {
-//                log.error("Transfer failed. Status: {}, response: {}", response.getStatusCode(), response);
-//                throw new CustomException("MTN_TRANSFER_FAILED_" + EXCEPTION, "Unexpected response status: " + response.getStatusCode());
-//            }
+
+            if (response.getStatusCode() == HttpStatus.ACCEPTED) {
+                log.info("Transfer initiated successfully. Reference ID: {}", referenceId);
+            } else {
+                log.error("Transfer failed. Status: {}, response: {}", response.getStatusCode(), response);
+                throw new CustomException("MTN_TRANSFER_FAILED_" + EXCEPTION, "Unexpected response status: " + response.getStatusCode());
+            }
         } catch (HttpClientErrorException e) {
             log.error("Exception while initiating transfer", e);
             e.printStackTrace();
