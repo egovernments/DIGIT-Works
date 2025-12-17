@@ -12,7 +12,7 @@ part of 'muster_inbox_status.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 MusterInboxStatusList _$MusterInboxStatusListFromJson(
     Map<String, dynamic> json) {
@@ -68,11 +68,12 @@ class _$MusterInboxStatusListCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_MusterInboxStatusListCopyWith<$Res>
+abstract class _$$MusterInboxStatusListImplCopyWith<$Res>
     implements $MusterInboxStatusListCopyWith<$Res> {
-  factory _$$_MusterInboxStatusListCopyWith(_$_MusterInboxStatusList value,
-          $Res Function(_$_MusterInboxStatusList) then) =
-      __$$_MusterInboxStatusListCopyWithImpl<$Res>;
+  factory _$$MusterInboxStatusListImplCopyWith(
+          _$MusterInboxStatusListImpl value,
+          $Res Function(_$MusterInboxStatusListImpl) then) =
+      __$$MusterInboxStatusListImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -81,11 +82,12 @@ abstract class _$$_MusterInboxStatusListCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_MusterInboxStatusListCopyWithImpl<$Res>
-    extends _$MusterInboxStatusListCopyWithImpl<$Res, _$_MusterInboxStatusList>
-    implements _$$_MusterInboxStatusListCopyWith<$Res> {
-  __$$_MusterInboxStatusListCopyWithImpl(_$_MusterInboxStatusList _value,
-      $Res Function(_$_MusterInboxStatusList) _then)
+class __$$MusterInboxStatusListImplCopyWithImpl<$Res>
+    extends _$MusterInboxStatusListCopyWithImpl<$Res,
+        _$MusterInboxStatusListImpl>
+    implements _$$MusterInboxStatusListImplCopyWith<$Res> {
+  __$$MusterInboxStatusListImplCopyWithImpl(_$MusterInboxStatusListImpl _value,
+      $Res Function(_$MusterInboxStatusListImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -93,7 +95,7 @@ class __$$_MusterInboxStatusListCopyWithImpl<$Res>
   $Res call({
     Object? musterInboxStatus = freezed,
   }) {
-    return _then(_$_MusterInboxStatusList(
+    return _then(_$MusterInboxStatusListImpl(
       musterInboxStatus: freezed == musterInboxStatus
           ? _value._musterInboxStatus
           : musterInboxStatus // ignore: cast_nullable_to_non_nullable
@@ -104,14 +106,14 @@ class __$$_MusterInboxStatusListCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MusterInboxStatusList implements _MusterInboxStatusList {
-  const _$_MusterInboxStatusList(
+class _$MusterInboxStatusListImpl implements _MusterInboxStatusList {
+  const _$MusterInboxStatusListImpl(
       {@JsonKey(name: 'CBOMusterInboxConfig')
           final List<MusterInboxStatus>? musterInboxStatus})
       : _musterInboxStatus = musterInboxStatus;
 
-  factory _$_MusterInboxStatusList.fromJson(Map<String, dynamic> json) =>
-      _$$_MusterInboxStatusListFromJson(json);
+  factory _$MusterInboxStatusListImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MusterInboxStatusListImplFromJson(json);
 
   final List<MusterInboxStatus>? _musterInboxStatus;
   @override
@@ -131,10 +133,10 @@ class _$_MusterInboxStatusList implements _MusterInboxStatusList {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MusterInboxStatusList &&
+            other is _$MusterInboxStatusListImpl &&
             const DeepCollectionEquality()
                 .equals(other._musterInboxStatus, _musterInboxStatus));
   }
@@ -147,13 +149,13 @@ class _$_MusterInboxStatusList implements _MusterInboxStatusList {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MusterInboxStatusListCopyWith<_$_MusterInboxStatusList> get copyWith =>
-      __$$_MusterInboxStatusListCopyWithImpl<_$_MusterInboxStatusList>(
-          this, _$identity);
+  _$$MusterInboxStatusListImplCopyWith<_$MusterInboxStatusListImpl>
+      get copyWith => __$$MusterInboxStatusListImplCopyWithImpl<
+          _$MusterInboxStatusListImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MusterInboxStatusListToJson(
+    return _$$MusterInboxStatusListImplToJson(
       this,
     );
   }
@@ -163,18 +165,18 @@ abstract class _MusterInboxStatusList implements MusterInboxStatusList {
   const factory _MusterInboxStatusList(
           {@JsonKey(name: 'CBOMusterInboxConfig')
               final List<MusterInboxStatus>? musterInboxStatus}) =
-      _$_MusterInboxStatusList;
+      _$MusterInboxStatusListImpl;
 
   factory _MusterInboxStatusList.fromJson(Map<String, dynamic> json) =
-      _$_MusterInboxStatusList.fromJson;
+      _$MusterInboxStatusListImpl.fromJson;
 
   @override
   @JsonKey(name: 'CBOMusterInboxConfig')
   List<MusterInboxStatus>? get musterInboxStatus;
   @override
   @JsonKey(ignore: true)
-  _$$_MusterInboxStatusListCopyWith<_$_MusterInboxStatusList> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$MusterInboxStatusListImplCopyWith<_$MusterInboxStatusListImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 MusterInboxStatus _$MusterInboxStatusFromJson(Map<String, dynamic> json) {
@@ -225,22 +227,22 @@ class _$MusterInboxStatusCopyWithImpl<$Res, $Val extends MusterInboxStatus>
 }
 
 /// @nodoc
-abstract class _$$_MusterInboxStatusCopyWith<$Res>
+abstract class _$$MusterInboxStatusImplCopyWith<$Res>
     implements $MusterInboxStatusCopyWith<$Res> {
-  factory _$$_MusterInboxStatusCopyWith(_$_MusterInboxStatus value,
-          $Res Function(_$_MusterInboxStatus) then) =
-      __$$_MusterInboxStatusCopyWithImpl<$Res>;
+  factory _$$MusterInboxStatusImplCopyWith(_$MusterInboxStatusImpl value,
+          $Res Function(_$MusterInboxStatusImpl) then) =
+      __$$MusterInboxStatusImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String reSubmitCode});
 }
 
 /// @nodoc
-class __$$_MusterInboxStatusCopyWithImpl<$Res>
-    extends _$MusterInboxStatusCopyWithImpl<$Res, _$_MusterInboxStatus>
-    implements _$$_MusterInboxStatusCopyWith<$Res> {
-  __$$_MusterInboxStatusCopyWithImpl(
-      _$_MusterInboxStatus _value, $Res Function(_$_MusterInboxStatus) _then)
+class __$$MusterInboxStatusImplCopyWithImpl<$Res>
+    extends _$MusterInboxStatusCopyWithImpl<$Res, _$MusterInboxStatusImpl>
+    implements _$$MusterInboxStatusImplCopyWith<$Res> {
+  __$$MusterInboxStatusImplCopyWithImpl(_$MusterInboxStatusImpl _value,
+      $Res Function(_$MusterInboxStatusImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -248,7 +250,7 @@ class __$$_MusterInboxStatusCopyWithImpl<$Res>
   $Res call({
     Object? reSubmitCode = null,
   }) {
-    return _then(_$_MusterInboxStatus(
+    return _then(_$MusterInboxStatusImpl(
       reSubmitCode: null == reSubmitCode
           ? _value.reSubmitCode
           : reSubmitCode // ignore: cast_nullable_to_non_nullable
@@ -259,11 +261,11 @@ class __$$_MusterInboxStatusCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MusterInboxStatus implements _MusterInboxStatus {
-  const _$_MusterInboxStatus({required this.reSubmitCode});
+class _$MusterInboxStatusImpl implements _MusterInboxStatus {
+  const _$MusterInboxStatusImpl({required this.reSubmitCode});
 
-  factory _$_MusterInboxStatus.fromJson(Map<String, dynamic> json) =>
-      _$$_MusterInboxStatusFromJson(json);
+  factory _$MusterInboxStatusImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MusterInboxStatusImplFromJson(json);
 
   @override
   final String reSubmitCode;
@@ -274,10 +276,10 @@ class _$_MusterInboxStatus implements _MusterInboxStatus {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MusterInboxStatus &&
+            other is _$MusterInboxStatusImpl &&
             (identical(other.reSubmitCode, reSubmitCode) ||
                 other.reSubmitCode == reSubmitCode));
   }
@@ -289,13 +291,13 @@ class _$_MusterInboxStatus implements _MusterInboxStatus {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MusterInboxStatusCopyWith<_$_MusterInboxStatus> get copyWith =>
-      __$$_MusterInboxStatusCopyWithImpl<_$_MusterInboxStatus>(
+  _$$MusterInboxStatusImplCopyWith<_$MusterInboxStatusImpl> get copyWith =>
+      __$$MusterInboxStatusImplCopyWithImpl<_$MusterInboxStatusImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MusterInboxStatusToJson(
+    return _$$MusterInboxStatusImplToJson(
       this,
     );
   }
@@ -303,15 +305,15 @@ class _$_MusterInboxStatus implements _MusterInboxStatus {
 
 abstract class _MusterInboxStatus implements MusterInboxStatus {
   const factory _MusterInboxStatus({required final String reSubmitCode}) =
-      _$_MusterInboxStatus;
+      _$MusterInboxStatusImpl;
 
   factory _MusterInboxStatus.fromJson(Map<String, dynamic> json) =
-      _$_MusterInboxStatus.fromJson;
+      _$MusterInboxStatusImpl.fromJson;
 
   @override
   String get reSubmitCode;
   @override
   @JsonKey(ignore: true)
-  _$$_MusterInboxStatusCopyWith<_$_MusterInboxStatus> get copyWith =>
+  _$$MusterInboxStatusImplCopyWith<_$MusterInboxStatusImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

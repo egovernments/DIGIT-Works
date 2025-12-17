@@ -1,7 +1,7 @@
 .search-wrapper {
     height: 100%;
     width: 100%;
-    padding: 1rem;
+    padding: theme(digitv2.spacers.spacer6);
 
     .popup-label {
         display: flex;
@@ -60,7 +60,7 @@
 
     .search-field-wrapper {
         display: grid;
-        row-gap: 0.25rem;
+        row-gap: 1.5rem;
         column-gap: 1rem;
         &.inbox {
             grid-template-columns: repeat(3, 1fr);

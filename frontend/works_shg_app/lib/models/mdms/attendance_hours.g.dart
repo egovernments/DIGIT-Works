@@ -6,28 +6,30 @@ part of 'attendance_hours.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_AttendanceHoursList _$$_AttendanceHoursListFromJson(
+_$AttendanceHoursListImpl _$$AttendanceHoursListImplFromJson(
         Map<String, dynamic> json) =>
-    _$_AttendanceHoursList(
+    _$AttendanceHoursListImpl(
       attendanceHours: (json['AttendanceHours'] as List<dynamic>?)
           ?.map((e) => AttendanceHours.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_AttendanceHoursListToJson(
-        _$_AttendanceHoursList instance) =>
+Map<String, dynamic> _$$AttendanceHoursListImplToJson(
+        _$AttendanceHoursListImpl instance) =>
     <String, dynamic>{
       'AttendanceHours': instance.attendanceHours,
     };
 
-_$_AttendanceHours _$$_AttendanceHoursFromJson(Map<String, dynamic> json) =>
-    _$_AttendanceHours(
+_$AttendanceHoursImpl _$$AttendanceHoursImplFromJson(
+        Map<String, dynamic> json) =>
+    _$AttendanceHoursImpl(
       code: json['code'] as String,
       value: json['value'] as String,
       active: json['active'] as bool,
     );
 
-Map<String, dynamic> _$$_AttendanceHoursToJson(_$_AttendanceHours instance) =>
+Map<String, dynamic> _$$AttendanceHoursImplToJson(
+        _$AttendanceHoursImpl instance) =>
     <String, dynamic>{
       'code': instance.code,
       'value': instance.value,

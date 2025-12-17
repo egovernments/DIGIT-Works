@@ -21,7 +21,7 @@ export const handleModifyWOFiles = (uploadedDocs, docConfigData) => {
     let currentDoc = uploadedDocs?.filter((doc)=>doc?.documentType === fileKeyMapping?.value)[0];
 
     if(currentDoc?.fileStore) {
-      if(fileKeyMapping?.value === "Others") {
+      if(fileKeyMapping?.value === "OTHERS") {
         documentObject["doc_others_name"] = currentDoc?.additionalDetails?.otherCategoryName;
       }
       documentObject[fileKeyMapping?.key] = [
@@ -58,7 +58,7 @@ export const updateDefaultValues = ({createWorkOrderConfigMUKTA, isModify, sessi
     }
 
     //update default Values
-    if(!sessionFormData?.basicDetails_projectID || !sessionFormData.workOrderAmountRs || !sessionFormData.basicDetails_dateOfProposal || !sessionFormData.basicDetails_projectName || !sessionFormData.basicDetails_projectDesc ) {
+    if(!sessionFormData?.basicDetails_projectID || !sessionFormData.workOrderAmountRs || !sessionFormData.basicDetails_dateOfProposal || !sessionFormData.basicDetails_projectName || !sessionFormData.basicDetails_projectDesc || sessionFormData?.basicDetails_projectID !== project?.projectNumber ){
       if(isModify) {
         //this field is only for Modify flow
         createWorkOrderConfigMUKTA.defaultValues.basicDetails_workOrdernumber = contract?.contractNumber ? contract?.contractNumber  : "";

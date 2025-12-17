@@ -1,7 +1,7 @@
 const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, nameOfCBO}) => {
 
   return {
-    tenantId: "pg",
+    tenantId: "od",
     moduleName: "commonMuktaUiConfig",
     CreateWorkOrderConfig: [
       {
@@ -88,9 +88,9 @@ const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, 
                   optionsKey: "name",
                   error: "WORKS_REQUIRED_ERR",
                   required: false,
-                  optionsCustomStyle: {
-                    top: "2.5rem"
-                  },
+                  // optionsCustomStyle: {
+                  //   top: "2.5rem"
+                  // },
                   options : nameOfCBO
                 }
               },
@@ -117,9 +117,9 @@ const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, 
                   optionsKey: "name",
                   error: "WORKS_REQUIRED_ERR",
                   required: false,
-                  optionsCustomStyle: {
-                    top: "2.5rem"
-                  },
+                  // optionsCustomStyle: {
+                  //   top: "2.5rem"
+                  // },
                   mdmsConfig: {
                     masterName: "CBORoles",
                     moduleName: "works",
@@ -138,9 +138,9 @@ const createWorkOrderConfigMUKTA = ({defaultValues, documents, officerInCharge, 
                   optionsKey: "name",
                   error: "WORKS_REQUIRED_ERR",
                   required: false,
-                  optionsCustomStyle: {
-                    top: "2.5rem"
-                  },
+                  // optionsCustomStyle: {
+                  //   top: "2.5rem"
+                  // },
                   options : officerInCharge
                 }
               },

@@ -4,27 +4,36 @@ package org.egov.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.repository.rowmapper.EstimateQueryBuilder;
 import org.egov.repository.rowmapper.EstimateRowMapper;
+import org.egov.tracer.model.CustomException;
 import org.egov.web.models.Estimate;
+import org.egov.web.models.EstimateDetail;
+import org.egov.web.models.EstimateRequest;
 import org.egov.web.models.EstimateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Slf4j
 public class EstimateRepository {
 
-    @Autowired
-    private EstimateRowMapper rowMapper;
+    private final EstimateRowMapper rowMapper;
+
+    private final EstimateQueryBuilder queryBuilder;
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private EstimateQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public EstimateRepository(EstimateRowMapper rowMapper, EstimateQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate) {
+        this.rowMapper = rowMapper;
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
 
     /**
@@ -40,8 +49,7 @@ public class EstimateRepository {
             searchCriteria.setIsCountNeeded(Boolean.FALSE);
         }
         String query = queryBuilder.getEstimateQuery(searchCriteria, preparedStmtList);
-        List<Estimate> estimateList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-        return estimateList;
+        return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
     }
 
     /**
@@ -58,8 +66,6 @@ public class EstimateRepository {
         if (query == null)
             return 0;
 
-        Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
-        return count;
+        return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
     }
-
 }

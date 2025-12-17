@@ -1,107 +1,117 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element
+// ignore_for_file: unused_element, unnecessary_cast, override_on_non_overriding_member
+// ignore_for_file: strict_raw_type, inference_failure_on_untyped_parameter
 
 part of 'location_details_model.dart';
 
-class LocationDetailsMapper extends MapperBase<LocationDetails> {
-  static MapperContainer container = MapperContainer(
-    mappers: {LocationDetailsMapper()},
-  );
+class LocationDetailsMapper extends ClassMapperBase<LocationDetails> {
+  LocationDetailsMapper._();
 
-  @override
-  LocationDetailsMapperElement createElement(MapperContainer container) {
-    return LocationDetailsMapperElement._(this, container);
+  static LocationDetailsMapper? _instance;
+  static LocationDetailsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = LocationDetailsMapper._());
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'LocationDetails';
+  final String id = 'LocationDetails';
 
-  static final fromMap = container.fromMap<LocationDetails>;
-  static final fromJson = container.fromJson<LocationDetails>;
-}
-
-class LocationDetailsMapperElement extends MapperElementBase<LocationDetails> {
-  LocationDetailsMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  LocationDetails decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  LocationDetails fromMap(Map<String, dynamic> map) => LocationDetails(
-      pinCode: container.$getOpt(map, 'pinCode'),
-      locality: container.$getOpt(map, 'locality'),
-      ward: container.$getOpt(map, 'ward'),
-      city: container.$getOpt(map, 'city'),
-      streetName: container.$getOpt(map, 'streetName'),
-      doorNo: container.$getOpt(map, 'doorNo'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(LocationDetails v) => toMap(v);
-  Map<String, dynamic> toMap(LocationDetails l) => {
-        'pinCode': container.$enc(l.pinCode, 'pinCode'),
-        'locality': container.$enc(l.locality, 'locality'),
-        'ward': container.$enc(l.ward, 'ward'),
-        'city': container.$enc(l.city, 'city'),
-        'streetName': container.$enc(l.streetName, 'streetName'),
-        'doorNo': container.$enc(l.doorNo, 'doorNo')
-      };
+  static String? _$pinCode(LocationDetails v) => v.pinCode;
+  static const Field<LocationDetails, String> _f$pinCode =
+      Field('pinCode', _$pinCode, opt: true);
+  static String? _$locality(LocationDetails v) => v.locality;
+  static const Field<LocationDetails, String> _f$locality =
+      Field('locality', _$locality, opt: true);
+  static String? _$ward(LocationDetails v) => v.ward;
+  static const Field<LocationDetails, String> _f$ward =
+      Field('ward', _$ward, opt: true);
+  static String? _$city(LocationDetails v) => v.city;
+  static const Field<LocationDetails, String> _f$city =
+      Field('city', _$city, opt: true);
+  static String? _$streetName(LocationDetails v) => v.streetName;
+  static const Field<LocationDetails, String> _f$streetName =
+      Field('streetName', _$streetName, opt: true);
+  static String? _$doorNo(LocationDetails v) => v.doorNo;
+  static const Field<LocationDetails, String> _f$doorNo =
+      Field('doorNo', _$doorNo, opt: true);
 
   @override
-  String stringify(LocationDetails self) =>
-      'LocationDetails(pinCode: ${container.asString(self.pinCode)}, locality: ${container.asString(self.locality)}, city: ${container.asString(self.city)}, ward: ${container.asString(self.ward)}, streetName: ${container.asString(self.streetName)}, doorNo: ${container.asString(self.doorNo)})';
+  final MappableFields<LocationDetails> fields = const {
+    #pinCode: _f$pinCode,
+    #locality: _f$locality,
+    #ward: _f$ward,
+    #city: _f$city,
+    #streetName: _f$streetName,
+    #doorNo: _f$doorNo,
+  };
+
+  static LocationDetails _instantiate(DecodingData data) {
+    return LocationDetails(
+        pinCode: data.dec(_f$pinCode),
+        locality: data.dec(_f$locality),
+        ward: data.dec(_f$ward),
+        city: data.dec(_f$city),
+        streetName: data.dec(_f$streetName),
+        doorNo: data.dec(_f$doorNo));
+  }
+
   @override
-  int hash(LocationDetails self) =>
-      container.hash(self.pinCode) ^
-      container.hash(self.locality) ^
-      container.hash(self.city) ^
-      container.hash(self.ward) ^
-      container.hash(self.streetName) ^
-      container.hash(self.doorNo);
-  @override
-  bool equals(LocationDetails self, LocationDetails other) =>
-      container.isEqual(self.pinCode, other.pinCode) &&
-      container.isEqual(self.locality, other.locality) &&
-      container.isEqual(self.city, other.city) &&
-      container.isEqual(self.ward, other.ward) &&
-      container.isEqual(self.streetName, other.streetName) &&
-      container.isEqual(self.doorNo, other.doorNo);
+  final Function instantiate = _instantiate;
+
+  static LocationDetails fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<LocationDetails>(map);
+  }
+
+  static LocationDetails fromJson(String json) {
+    return ensureInitialized().decodeJson<LocationDetails>(json);
+  }
 }
 
 mixin LocationDetailsMappable {
-  String toJson() =>
-      LocationDetailsMapper.container.toJson(this as LocationDetails);
-  Map<String, dynamic> toMap() =>
-      LocationDetailsMapper.container.toMap(this as LocationDetails);
+  String toJson() {
+    return LocationDetailsMapper.ensureInitialized()
+        .encodeJson<LocationDetails>(this as LocationDetails);
+  }
+
+  Map<String, dynamic> toMap() {
+    return LocationDetailsMapper.ensureInitialized()
+        .encodeMap<LocationDetails>(this as LocationDetails);
+  }
+
   LocationDetailsCopyWith<LocationDetails, LocationDetails, LocationDetails>
       get copyWith => _LocationDetailsCopyWithImpl(
           this as LocationDetails, $identity, $identity);
   @override
-  String toString() => LocationDetailsMapper.container.asString(this);
+  String toString() {
+    return LocationDetailsMapper.ensureInitialized()
+        .stringifyValue(this as LocationDetails);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          LocationDetailsMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return LocationDetailsMapper.ensureInitialized()
+        .equalsValue(this as LocationDetails, other);
+  }
+
   @override
-  int get hashCode => LocationDetailsMapper.container.hash(this);
+  int get hashCode {
+    return LocationDetailsMapper.ensureInitialized()
+        .hashValue(this as LocationDetails);
+  }
 }
 
-extension LocationDetailsValueCopy<$R, $Out extends LocationDetails>
+extension LocationDetailsValueCopy<$R, $Out>
     on ObjectCopyWith<$R, LocationDetails, $Out> {
-  LocationDetailsCopyWith<$R, LocationDetails, $Out> get asLocationDetails =>
-      base.as((v, t, t2) => _LocationDetailsCopyWithImpl(v, t, t2));
+  LocationDetailsCopyWith<$R, LocationDetails, $Out> get $asLocationDetails =>
+      $base.as((v, t, t2) => _LocationDetailsCopyWithImpl(v, t, t2));
 }
 
-typedef LocationDetailsCopyWithBound = LocationDetails;
-
-abstract class LocationDetailsCopyWith<$R, $In extends LocationDetails,
-    $Out extends LocationDetails> implements ObjectCopyWith<$R, $In, $Out> {
-  LocationDetailsCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends LocationDetails>(
-          Then<LocationDetails, $Out2> t, Then<$Out2, $R2> t2);
+abstract class LocationDetailsCopyWith<$R, $In extends LocationDetails, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
   $R call(
       {String? pinCode,
       String? locality,
@@ -109,18 +119,18 @@ abstract class LocationDetailsCopyWith<$R, $In extends LocationDetails,
       String? city,
       String? streetName,
       String? doorNo});
+  LocationDetailsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _LocationDetailsCopyWithImpl<$R, $Out extends LocationDetails>
-    extends CopyWithBase<$R, LocationDetails, $Out>
+class _LocationDetailsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, LocationDetails, $Out>
     implements LocationDetailsCopyWith<$R, LocationDetails, $Out> {
   _LocationDetailsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  LocationDetailsCopyWith<$R2, LocationDetails, $Out2>
-      chain<$R2, $Out2 extends LocationDetails>(
-              Then<LocationDetails, $Out2> t, Then<$Out2, $R2> t2) =>
-          _LocationDetailsCopyWithImpl($value, t, t2);
 
+  @override
+  late final ClassMapperBase<LocationDetails> $mapper =
+      LocationDetailsMapper.ensureInitialized();
   @override
   $R call(
           {Object? pinCode = $none,
@@ -129,11 +139,25 @@ class _LocationDetailsCopyWithImpl<$R, $Out extends LocationDetails>
           Object? city = $none,
           Object? streetName = $none,
           Object? doorNo = $none}) =>
-      $then(LocationDetails(
-          pinCode: or(pinCode, $value.pinCode),
-          locality: or(locality, $value.locality),
-          ward: or(ward, $value.ward),
-          city: or(city, $value.city),
-          streetName: or(streetName, $value.streetName),
-          doorNo: or(doorNo, $value.doorNo)));
+      $apply(FieldCopyWithData({
+        if (pinCode != $none) #pinCode: pinCode,
+        if (locality != $none) #locality: locality,
+        if (ward != $none) #ward: ward,
+        if (city != $none) #city: city,
+        if (streetName != $none) #streetName: streetName,
+        if (doorNo != $none) #doorNo: doorNo
+      }));
+  @override
+  LocationDetails $make(CopyWithData data) => LocationDetails(
+      pinCode: data.get(#pinCode, or: $value.pinCode),
+      locality: data.get(#locality, or: $value.locality),
+      ward: data.get(#ward, or: $value.ward),
+      city: data.get(#city, or: $value.city),
+      streetName: data.get(#streetName, or: $value.streetName),
+      doorNo: data.get(#doorNo, or: $value.doorNo));
+
+  @override
+  LocationDetailsCopyWith<$R2, LocationDetails, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _LocationDetailsCopyWithImpl($value, $cast, t);
 }

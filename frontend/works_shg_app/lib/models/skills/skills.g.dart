@@ -6,28 +6,34 @@ part of 'skills.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_SkillsList _$$_SkillsListFromJson(Map<String, dynamic> json) =>
-    _$_SkillsList(
-      wageSeekerSkills: (json['WageSeekerSkills'] as List<dynamic>?)
+_$SkillsListImpl _$$SkillsListImplFromJson(Map<String, dynamic> json) =>
+    _$SkillsListImpl(
+      wageSeekerSkills: (json['SOR'] as List<dynamic>?)
           ?.map((e) => WageSeekerSkills.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_SkillsListToJson(_$_SkillsList instance) =>
+Map<String, dynamic> _$$SkillsListImplToJson(_$SkillsListImpl instance) =>
     <String, dynamic>{
-      'WageSeekerSkills': instance.wageSeekerSkills,
+      'SOR': instance.wageSeekerSkills,
     };
 
-_$_WageSeekerSkills _$$_WageSeekerSkillsFromJson(Map<String, dynamic> json) =>
-    _$_WageSeekerSkills(
-      code: json['code'] as String,
-      amount: json['amount'] as int?,
-      active: json['active'] as bool,
+_$WageSeekerSkillsImpl _$$WageSeekerSkillsImplFromJson(
+        Map<String, dynamic> json) =>
+    _$WageSeekerSkillsImpl(
+      json['code'] as String?,
+      (json['amount'] as num?)?.toInt(),
+      json['active'] as bool?,
+      json['description'] as String?,
+      json['id'] as String?,
     );
 
-Map<String, dynamic> _$$_WageSeekerSkillsToJson(_$_WageSeekerSkills instance) =>
+Map<String, dynamic> _$$WageSeekerSkillsImplToJson(
+        _$WageSeekerSkillsImpl instance) =>
     <String, dynamic>{
       'code': instance.code,
       'amount': instance.amount,
       'active': instance.active,
+      'description': instance.description,
+      'id': instance.id,
     };

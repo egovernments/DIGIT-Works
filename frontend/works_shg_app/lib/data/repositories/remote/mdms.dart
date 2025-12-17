@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
+import 'package:works_shg_app/models/skills/skills.dart';
 
 import '../../../models/attendance/muster_submission.dart';
 import '../../../models/mdms/attendance_hours.dart';
@@ -30,7 +31,7 @@ class MdmsRepository {
       return InitMdmsModel.fromJson(
         json.decode(response.toString())['MdmsRes'],
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       throw Exception(ex);
     }
@@ -52,7 +53,7 @@ class MdmsRepository {
       return MusterInboxStatusList.fromJson(
         json.decode(response.toString())['MdmsRes']['commonUiConfig'],
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -74,7 +75,7 @@ class MdmsRepository {
       return MusterSubmissionList.fromJson(
         json.decode(response.toString())['MdmsRes']['commonUiConfig'],
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -96,7 +97,7 @@ class MdmsRepository {
       return AttendanceHoursList.fromJson(
         json.decode(response.toString())['MdmsRes']['common-masters'],
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -118,9 +119,35 @@ class MdmsRepository {
       return WageSeekerMDMS.fromJson(
         json.decode(response.toString())['MdmsRes'],
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
   }
+
+
+// updated sor skills
+
+Future<List<WageSeekerSkills>> skillsMDMS({
+    required String apiEndPoint,
+    required String tenantId,
+    required List<Map> moduleDetails,
+  }) async {
+    try {
+      var response = await _client.post(apiEndPoint, data: {
+        "MdmsCriteria": {
+          "tenantId": tenantId,
+          "moduleDetails": moduleDetails,
+        },
+      });
+
+      return SkillsList.fromJson(
+        json.decode(response.toString())['MdmsRes']['WORKS-SOR'],
+      ).wageSeekerSkills??[];
+    } on DioException catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
+    }
+  }
+
 }

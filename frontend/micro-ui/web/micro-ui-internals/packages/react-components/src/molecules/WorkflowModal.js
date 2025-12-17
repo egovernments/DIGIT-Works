@@ -23,7 +23,7 @@ const CloseBtn = (props) => {
     );
 };
 
-const WorkflowModal = ({ config, onSubmit, closeModal }) => {
+const WorkflowModal = ({ config, onSubmit, closeModal, isDisabled }) => {
   const { t } = useTranslation()
 
   return <Modal
@@ -34,6 +34,7 @@ const WorkflowModal = ({ config, onSubmit, closeModal }) => {
             actionSaveLabel={t(config.label.submit)}
             actionSaveOnSubmit={() => { }}
             formId="modal-action"
+            isDisabled={isDisabled}
         >
             <FormComposer
                 config={config.form}

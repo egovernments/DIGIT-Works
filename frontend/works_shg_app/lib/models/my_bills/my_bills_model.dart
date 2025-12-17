@@ -28,10 +28,10 @@ class BillModel with BillModelMappable {
   String? id;
   int? billDate;
   int? dueDate;
-  int? netPayableAmount;
-  int? netPaidAmount;
-  int? totalAmount;
-  int? totalPaidAmount;
+  num? netPayableAmount;
+  num? netPaidAmount;
+  num? totalAmount;
+  num? totalPaidAmount;
   String? businessService;
   String? billNumber;
   String? referenceId;
@@ -158,9 +158,9 @@ class BillLineItems with BillLineItemsMappable {
   String? billDetailId;
   String tenantId;
   String? headCode;
-  int? amount;
+  num? amount;
   String? type;
-  int? paidAmount;
+  num? paidAmount;
   String? status;
   bool? isLineItemPayable;
   ContractAuditDetails? auditDetails;
@@ -183,9 +183,9 @@ class PayableLineItems with PayableLineItemsMappable {
   String? billDetailId;
   String tenantId;
   String? headCode;
-  int? amount;
+  num? amount;
   String? type;
-  int? paidAmount;
+  num? paidAmount;
   String? status;
   bool? isLineItemPayable;
   ContractAuditDetails? auditDetails;

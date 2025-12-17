@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import { useTranslation } from "react-i18next";
-import { Toast } from "@egovernments/digit-ui-react-components";
+import { Toast } from "@egovernments/digit-ui-components";
 
 const SearchContracts = () => {
     const { t } = useTranslation();
@@ -29,7 +29,7 @@ const SearchContracts = () => {
     };
 
     if(data.nameOfTheProject==="" && data.contractId==="" && data.estimateNumber==="" && !data.fromProposalDate && !data.toProposalDate ){
-      setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
+      setShowToast({ type:"warning", label: "ERR_PT_FILL_VALID_FIELDS" });
       setTimeout(() => {
         setShowToast(false);
       }, 3000);
@@ -95,8 +95,7 @@ const SearchContracts = () => {
       />
       {showToast && (
         <Toast
-          error={showToast.error}
-          warning={showToast.warning}
+          type={showToast?.type}
           label={t(showToast.label)}
           onClose={() => {
             setShowToast(null);

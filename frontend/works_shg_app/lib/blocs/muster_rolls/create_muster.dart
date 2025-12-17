@@ -57,14 +57,14 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
               },
               "individualEntries": event.skillsList ?? []
             },
-            "workflow": {"action": "SUBMIT", "comments": "Submit muster roll"}
+            "workflow": {"action": "SUBMIT", "comments": null}
           });
       if (musterRollsModel != null) {
         emit(MusterCreateState.loaded(musterRollsModel));
       } else {
         emit(const MusterCreateState.error());
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(const MusterCreateState.error());
     }
   }
@@ -83,6 +83,8 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
               }),
               body: {
             "musterRoll": {
+              "startDate":event.startDate,
+              "registerId":event.registerId,
               "tenantId": event.tenantId,
               "id": event.id,
               "additionalDetails": {"computeAttendance": "true"},
@@ -90,7 +92,7 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
             },
             "workflow": {
               "action": event.reSubmitAction ?? "RE-SUBMIT",
-              "comments": "Muster Roll ReSubmitted",
+              "comments": null,
               "assignees": []
             }
           });
@@ -99,7 +101,7 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
       } else {
         emit(const MusterCreateState.error());
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(const MusterCreateState.error());
     }
   }
@@ -133,6 +135,8 @@ class MusterCreateEvent with _$MusterCreateEvent {
       required String contractId,
       required String registerNo,
       required String registerName,
+      required int startDate,
+      required String registerId,
       String? reSubmitAction,
       List<Map<String, dynamic>>? skillsList}) = UpdateMusterEvent;
 }

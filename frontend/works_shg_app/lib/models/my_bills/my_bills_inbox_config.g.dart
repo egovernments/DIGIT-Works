@@ -6,29 +6,29 @@ part of 'my_bills_inbox_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_MyBillsInboxConfigList _$$_MyBillsInboxConfigListFromJson(
+_$MyBillsInboxConfigListImpl _$$MyBillsInboxConfigListImplFromJson(
         Map<String, dynamic> json) =>
-    _$_MyBillsInboxConfigList(
+    _$MyBillsInboxConfigListImpl(
       myBillsInboxConfig: (json['CBOBillInboxConfig'] as List<dynamic>)
           .map((e) => MyBillsInboxConfig.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_MyBillsInboxConfigListToJson(
-        _$_MyBillsInboxConfigList instance) =>
+Map<String, dynamic> _$$MyBillsInboxConfigListImplToJson(
+        _$MyBillsInboxConfigListImpl instance) =>
     <String, dynamic>{
       'CBOBillInboxConfig': instance.myBillsInboxConfig,
     };
 
-_$_MyBillsInboxConfig _$$_MyBillsInboxConfigFromJson(
+_$MyBillsInboxConfigImpl _$$MyBillsInboxConfigImplFromJson(
         Map<String, dynamic> json) =>
-    _$_MyBillsInboxConfig(
+    _$MyBillsInboxConfigImpl(
       rejectedCode: json['rejectedCode'] as String,
       approvedCode: json['approvedCode'] as String,
     );
 
-Map<String, dynamic> _$$_MyBillsInboxConfigToJson(
-        _$_MyBillsInboxConfig instance) =>
+Map<String, dynamic> _$$MyBillsInboxConfigImplToJson(
+        _$MyBillsInboxConfigImpl instance) =>
     <String, dynamic>{
       'rejectedCode': instance.rejectedCode,
       'approvedCode': instance.approvedCode,

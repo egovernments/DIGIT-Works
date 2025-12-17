@@ -1,5 +1,5 @@
 {
-    "tenantId": "pg",
+    "tenantId": "od",
     "moduleName": "commonMuktaUiConfig",
     "CreateWorkOrderConfig": [
         {
@@ -105,9 +105,6 @@
                     "optionsKey": "name",
                     "error": "WORKS_REQUIRED_ERR",
                     "required": false,
-                    "optionsCustomStyle": {
-                      "top": "2.5rem"
-                    },
                     "options": []
                   }
                 },
@@ -139,9 +136,6 @@
                     "optionsKey": "name",
                     "error": "WORKS_REQUIRED_ERR",
                     "required": false,
-                    "optionsCustomStyle": {
-                      "top": "2.5rem"
-                    },
                     "options" : []
                   }
                 },
@@ -161,9 +155,6 @@
                     "optionsKey": "name",
                     "error": "WORKS_REQUIRED_ERR",
                     "required": false,
-                    "optionsCustomStyle": {
-                      "top": "2.5rem"
-                    },
                     "options": []
                   }
                 },

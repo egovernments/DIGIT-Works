@@ -12,11 +12,15 @@ import org.egov.digit.expense.config.Configuration;
 @Component
 public class UrlShortenerUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    private final Configuration configs;
 
     @Autowired
-    private Configuration configs;
+    public UrlShortenerUtil(RestTemplate restTemplate, Configuration configs) {
+        this.restTemplate = restTemplate;
+        this.configs = configs;
+    }
 
 
     public String getShortenedUrl(String url){
@@ -28,7 +32,7 @@ public class UrlShortenerUtil {
         String res = restTemplate.postForObject(builder.toString(), body, String.class);
 
         if(StringUtils.isEmpty(res)){
-            log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url); ;
+            log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url);
             return url;
         }
         else return res;

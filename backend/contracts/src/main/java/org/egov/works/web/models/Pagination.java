@@ -10,16 +10,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.DecimalMax;
-import java.math.BigDecimal;
+import jakarta.validation.Valid;
 
 /**
  * Pagination details
  */
 @ApiModel(description = "Pagination details")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
 
 @Data
 @AllArgsConstructor

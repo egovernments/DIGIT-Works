@@ -41,7 +41,7 @@ class IndividualSearchBloc
             "Individual": {"mobileNumber": event.mobileNumber}
           });
       emit(IndividualSearchState.loaded(individualListModel));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(IndividualSearchState.error(e.response?.data['Errors'][0]['code']));
     }
   }
@@ -66,7 +66,7 @@ class IndividualSearchBloc
             }
           });
       emit(IndividualSearchState.loaded(individualListModel));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(IndividualSearchState.error(e.response?.data['Errors'][0]['code']));
     }
   }
@@ -89,7 +89,7 @@ class IndividualSearchBloc
             "Individual": {"id": event.ids}
           });
       emit(IndividualSearchState.loaded(individualListModel));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(IndividualSearchState.error(e.response?.data['Errors'][0]['code']));
     }
   }

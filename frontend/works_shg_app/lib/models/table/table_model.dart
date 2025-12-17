@@ -4,13 +4,15 @@ part 'table_model.freezed.dart';
 part 'table_model.g.dart';
 
 @freezed
+@JsonSerializable(explicitToJson: true)
 class TableDataModel with _$TableDataModel {
-  @JsonSerializable(explicitToJson: true)
+ 
   const factory TableDataModel({
     required String? name,
     String? aadhaar,
     String? individualGaurdianName,
     String? mobileNumber,
+    String? individualCode,
     String? skill,
     String? uuid,
     String? individualId,

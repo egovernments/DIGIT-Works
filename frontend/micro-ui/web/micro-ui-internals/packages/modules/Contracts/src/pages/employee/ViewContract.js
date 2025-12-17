@@ -1,10 +1,11 @@
 import React, { useState, Fragment } from "react";
-import { Header, Loader, MultiLink, ActionBar, SubmitBar, Menu} from "@egovernments/digit-ui-react-components";
+import { Header, Loader, MultiLink, SubmitBar, Menu} from "@egovernments/digit-ui-react-components";
 import { useForm } from 'react-hook-form'
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate  from "../../../../templates/ApplicationDetails"
 import getPDFData from "../../../utils/getWorksAcknowledgementData"
 import { useHistory } from "react-router-dom";
+import { ActionBar ,Button} from "@egovernments/digit-ui-components";
 
 const ProcessingModal =()=><span></span>
 const RejectLOIModal =()=><span></span>
@@ -59,39 +60,39 @@ const ViewContract = (props) => {
     
     const actionULB=[
         {
-            "name":"APPROVE_FORWARD"
+            "name":"WORKS_APPROVE_FORWARD"
         },
         {
-            "name":"REJECT"
+            "name":"WORKS_REJECT"
         } ,
         {
-            "name":"CREATE_BILL_SHG_WO"
+            "name":"WORKS_CREATE_BILL_SHG_WO"
         },
         {
-            "name":"CREATE_BILL_DEPT_WO"
+            "name":"WORKS_CREATE_BILL_DEPT_WO"
         },
         {
-            "name":"CREATE_BILL_DEPT_PO"
+            "name":"WORKS_CREATE_BILL_DEPT_PO"
         }
     ]
 
     function onActionSelect(action) {
-        if(action?.name==="FORWARD_LOI"){
+        if(action?.name==="WORKS_FORWARD_LOI"){
             setShowModal(true)
         }
-        if(action?.name==="REJECT_LOI"){
+        if(action?.name==="WORKS_REJECT_LOI"){
             setShowRejectModal(true)
         }
-         // if(action?.name==="CREATE_BILL"){
+         // if(action?.name==="WORKS_CREATE_BILL"){
         //     redirectToCreateBill()
         // }
-        if(action?.name==="CREATE_BILL_SHG_WO"){
+        if(action?.name==="WORKS_CREATE_BILL_SHG_WO"){
             redirectToCreateBill('Organisation_Work_Order')
         }
-        if(action?.name==="CREATE_BILL_DEPT_WO"){
+        if(action?.name==="WORKS_CREATE_BILL_DEPT_WO"){
             redirectToCreateBill('Department_Work_Order')
         }
-        if(action?.name==="CREATE_BILL_DEPT_PO"){
+        if(action?.name==="WORKS_CREATE_BILL_DEPT_PO"){
             redirectToCreateBill('Department_Purchase_Order')
         }
     }
@@ -145,9 +146,9 @@ const ViewContract = (props) => {
 
     return (
         <Fragment>
-            <div className={"employee-main-application-details"}>
-                <div className={"employee-application-details"}>
-                    <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_VIEW_CONTRACT")}</Header>
+            <div className={`"employee-main-application-details ${"contract-details"}`}>
+                <div className={"employee-application-details"} style={{ marginBottom: "24px" ,alignItems:"center"}}>
+                    <Header styles={{ margin: "0px", fontSize: "32px" }}>{t("WORKS_VIEW_CONTRACT")}</Header>
                     <MultiLink
                         className="multilinkWrapper employee-mulitlink-main-div"
                         onHeadClick={HandleDownloadPdf}
@@ -220,7 +221,7 @@ const ViewContract = (props) => {
                 //isInfoLabel={isInfoLabel}
                 /> */}
             </div>
-            <ActionBar>
+            {/* <ActionBar>
                 {displayMenu ?
                     <Menu
                     localeKeyPrefix={"WORKS"}
@@ -230,7 +231,27 @@ const ViewContract = (props) => {
                     onSelect={onActionSelect}
                     />:null}
                 <SubmitBar label={t("WORKS_ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-            </ActionBar>
+            </ActionBar> */}
+
+            {
+                <ActionBar
+                actionFields={[
+                  <Button
+                    type={"actionButton"}
+                    options={actionULB}
+                    label={t("WORKS_ACTIONS")}
+                    variation={"primary"}
+                    optionsKey={"name"}
+                    isSearchable={false}
+                    onOptionSelect={(option) => {
+                        onActionSelect(option)
+                    }}
+                  ></Button>
+                ]}
+                setactionFieldsToRight={true}
+                className={"new-actionbar"}
+              />
+            }
         </Fragment>
 
     )

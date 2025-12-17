@@ -16,7 +16,7 @@ const ViewDetailsCard = ({cardState,t,createScreen,...props}) => {
                   }
                   {
                     item?.values?.map((item, index) => {
-                      return (<Row className="border-none" label={`${t(item?.title)}`} text={item?.value} textStyle={{ whiteSpace: "pre" }} />)
+                      return (<Row className="border-none" label={`${t(item?.title)}`} text={item?.value} textStyle={{ whiteSpace: "pre" }} isValueLink={item?.isValueLink} navigateLinkHandler={item?.navigateLinkHandler}/>)
                     })
                   }
                 </div>

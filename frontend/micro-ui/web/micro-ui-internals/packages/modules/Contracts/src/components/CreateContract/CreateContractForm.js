@@ -280,7 +280,7 @@ const CreateContractForm = ({ onFormSubmit, estimateNumber, task, subEstimate, s
         onFormValueChange={onFormValueChange}
         onSubmit={onFormSubmit}
         fieldStyle={{ marginRight: 0 }}
-        className="form-no-margin"
+        // className="form-no-margin"
         labelBold={true}
       />
     </React.Fragment>

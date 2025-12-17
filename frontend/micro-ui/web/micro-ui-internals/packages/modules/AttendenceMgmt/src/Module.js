@@ -11,6 +11,7 @@ import Inbox from "./pages/employee/Inbox";
 import AttendenceInboxFilter from "./components/inbox/InboxFilter";
 import AttendenceInboxSearch from "./components/inbox/InboxSearch";
 import ViewAttendance from "./pages/employee/viewAttendance/ViewAttendances";
+import WarningPopUp from "./pageComponents/WarningPopUp";
 
 export const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -40,7 +41,8 @@ const componentsToRegister = {
     ViewRegister,
     ViewProjects,
     AttendenceInboxFilter,
-    AttendenceInboxSearch
+    AttendenceInboxSearch,
+    WarningPopUp
 };
 
 export const initAttendenceMgmtComponents = () => {

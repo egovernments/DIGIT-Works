@@ -12,14 +12,16 @@ class EmptyImage extends StatelessWidget {
     return Align(
         alignment: align,
         child: Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10, right: 8),
+            padding: const EdgeInsets.only(top: 30, bottom: 10, right: 8),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SvgPicture.asset('assets/svg/no_result.svg'),
                 Text(
                   label ?? '',
                 )
               ],
-            )));
+            ),),);
   }
 }

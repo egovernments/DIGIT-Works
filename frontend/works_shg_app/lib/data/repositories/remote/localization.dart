@@ -21,7 +21,7 @@ class LocalizationRepository {
       return LocalizationModel.fromJson(
         json.decode(response.toString()),
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       throw Exception(ex);
     }

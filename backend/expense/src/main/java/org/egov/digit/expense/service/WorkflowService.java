@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.egov.common.contract.models.RequestInfoWrapper;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.workflow.*;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
 import org.egov.digit.expense.web.models.Bill;
@@ -17,27 +20,24 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import digit.models.coremodels.BusinessService;
-import digit.models.coremodels.BusinessServiceResponse;
-import digit.models.coremodels.ProcessInstance;
-import digit.models.coremodels.ProcessInstanceRequest;
-import digit.models.coremodels.ProcessInstanceResponse;
-import digit.models.coremodels.RequestInfoWrapper;
-import digit.models.coremodels.Workflow;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class WorkflowService {
 
-    @Autowired
-    private Configuration serviceConfiguration;
+    private final Configuration serviceConfiguration;
+
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public WorkflowService(Configuration serviceConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     /* Call the workflow service with the given action and update the status
      * return the updated status of the application
@@ -70,7 +70,6 @@ public class WorkflowService {
         processInstance.setModuleName("expense");
         processInstance.setTenantId(contract.getTenantId());
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
-        /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComments());
 
         if (!CollectionUtils.isEmpty(workflow.getAssignes())) {

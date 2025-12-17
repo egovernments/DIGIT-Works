@@ -58,7 +58,8 @@ const ApplicationDetails = (props) => {
     modify,
     setModify,
     saveAttendanceState,
-    setSaveAttendanceState
+    setSaveAttendanceState,
+    approverList=[]
   } = props;
   
   useEffect(() => {
@@ -330,6 +331,7 @@ const ApplicationDetails = (props) => {
             businessService={businessService}
             customClass={customClass}
             setAttendanceError={setAttendanceError}
+            timeExtensionCreate={props?.timeExtensionCreate}
           />
           {showModal ? (
             <ActionModal
@@ -347,6 +349,7 @@ const ApplicationDetails = (props) => {
               workflowDetails={workflowDetails}
               moduleCode={moduleCode}
               saveAttendanceState={saveAttendanceState}
+              approverList={approverList}
             />
           ) : null}
           {isWarningPop ? (

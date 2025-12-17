@@ -6,33 +6,49 @@ part of 'my_works_search_criteria.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_MyWorksSearchCriteriaModel _$$_MyWorksSearchCriteriaModelFromJson(
+_$MyWorksSearchCriteriaModelImpl _$$MyWorksSearchCriteriaModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$_MyWorksSearchCriteriaModel(
+    _$MyWorksSearchCriteriaModelImpl(
       commonUiConfig: json['commonUiConfig'] == null
           ? null
           : CommonUIConfigModel.fromJson(
               json['commonUiConfig'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_MyWorksSearchCriteriaModelToJson(
-        _$_MyWorksSearchCriteriaModel instance) =>
+Map<String, dynamic> _$$MyWorksSearchCriteriaModelImplToJson(
+        _$MyWorksSearchCriteriaModelImpl instance) =>
     <String, dynamic>{
       'commonUiConfig': instance.commonUiConfig,
     };
 
-_$_CBOMyWorksSearchCriteriaModel _$$_CBOMyWorksSearchCriteriaModelFromJson(
-        Map<String, dynamic> json) =>
-    _$_CBOMyWorksSearchCriteriaModel(
-      searchCriteria: (json['searchCriteria'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      acceptCode: json['acceptCode'] as String?,
-    );
+_$CBOMyWorksSearchCriteriaModelImpl
+    _$$CBOMyWorksSearchCriteriaModelImplFromJson(Map<String, dynamic> json) =>
+        _$CBOMyWorksSearchCriteriaModelImpl(
+          searchCriteria: (json['searchCriteria'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
+          acceptCode: json['acceptCode'] as String?,
+        );
 
-Map<String, dynamic> _$$_CBOMyWorksSearchCriteriaModelToJson(
-        _$_CBOMyWorksSearchCriteriaModel instance) =>
+Map<String, dynamic> _$$CBOMyWorksSearchCriteriaModelImplToJson(
+        _$CBOMyWorksSearchCriteriaModelImpl instance) =>
     <String, dynamic>{
       'searchCriteria': instance.searchCriteria,
       'acceptCode': instance.acceptCode,
+    };
+
+_$CBOMyServiceRequestsConfigImpl _$$CBOMyServiceRequestsConfigImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CBOMyServiceRequestsConfigImpl(
+      editTimeExtReqCode: json['editTimeExtReqCode'] as String?,
+      editActionCode: json['editActionCode'] as String?,
+      searchCriteria: json['searchCriteria'] as String?,
+    );
+
+Map<String, dynamic> _$$CBOMyServiceRequestsConfigImplToJson(
+        _$CBOMyServiceRequestsConfigImpl instance) =>
+    <String, dynamic>{
+      'editTimeExtReqCode': instance.editTimeExtReqCode,
+      'editActionCode': instance.editActionCode,
+      'searchCriteria': instance.searchCriteria,
     };

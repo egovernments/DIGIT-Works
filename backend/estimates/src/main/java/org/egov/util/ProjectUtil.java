@@ -17,14 +17,11 @@ import static org.egov.util.EstimateServiceConstant.EQUAL_TO;
 @Slf4j
 public class ProjectUtil {
 
-    @Autowired
-    private EstimateServiceConfiguration serviceConfiguration;
+    private final EstimateServiceConfiguration serviceConfiguration;
 
-    @Autowired
-    private ServiceRequestRepository requestRepository;
+    private final ServiceRequestRepository requestRepository;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public static final String TENANT_ID = "tenantId";
     public static final String LIMIT = "limit";
@@ -36,6 +33,13 @@ public class ProjectUtil {
     public static final String PROJECTS = "Projects";
     public static final String REQUEST_INFO = "RequestInfo";
     public static final String ID = "id";
+
+    @Autowired
+    public ProjectUtil(EstimateServiceConfiguration serviceConfiguration, ServiceRequestRepository requestRepository, ObjectMapper mapper) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.requestRepository = requestRepository;
+        this.mapper = mapper;
+    }
 
     /**
      * Get the project details using project id from project service
@@ -73,9 +77,8 @@ public class ProjectUtil {
         projectSearchReqNode.putPOJO(PROJECTS, projectArrayNode);
 
         log.info("ProjectUtil::search project request -> {}",projectSearchReqNode);
-        Object projectRes = requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
 
-        return projectRes;
+        return requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
     }
 
     private StringBuilder getProjectUrl() {

@@ -6,12 +6,12 @@ import 'package:reactive_forms/reactive_forms.dart';
 ///
 class DigitReactiveTypeAhead<T, V> extends ReactiveFormField<T, V> {
   DigitReactiveTypeAhead({
-    Key? key,
-    String? formControlName,
-    FormControl<T>? formControl,
-    Map<String, ValidationMessageFunction>? validationMessages,
-    ControlValueAccessor<T, V>? valueAccessor,
-    ShowErrorsFunction? showErrors,
+    super.key,
+    super.formControlName,
+    super.formControl,
+    super.validationMessages,
+    super.valueAccessor,
+    ShowErrorsFunction? super.showErrors,
     SuggestionSelectionCallback<V>? onSuggestionSelected,
     required this.stringify,
     V Function(String)? viewDataTypeFromTextEditingValue,
@@ -59,12 +59,6 @@ class DigitReactiveTypeAhead<T, V> extends ReactiveFormField<T, V> {
     V? initialValue,
     String? initialValueText,
   }) : super(
-          key: key,
-          formControl: formControl,
-          formControlName: formControlName,
-          valueAccessor: valueAccessor,
-          validationMessages: validationMessages,
-          showErrors: showErrors,
           builder: (field) {
             final state = field as _ReactiveTypeaheadState<T, V>;
             final effectiveDecoration = textFieldConfiguration.decoration

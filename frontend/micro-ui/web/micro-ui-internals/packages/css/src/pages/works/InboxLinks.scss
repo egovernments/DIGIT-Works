@@ -5,14 +5,17 @@
     flex-direction: column;
     padding: 1rem;
     .header {
-        display: grid;
-        grid-template-columns: 20% 1fr;
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+
         .logo {
             display: flex;
             align-items: center;
             justify-content: flex-start;
             .inbox-search-icon--projects {
-                fill : #f47738;
+                fill : #C84C0E;
                 height: 2rem;
                 width: 2rem;
             }
@@ -43,11 +46,11 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
+        margin-left: -0.5rem;
         .link {
             padding: 8px;
             --text-opacity: 1;
-            color: #f47738;
-            color: rgba(244, 119, 56, var(--text-opacity));
+            color: #C84C0E;
         }
     }
 }

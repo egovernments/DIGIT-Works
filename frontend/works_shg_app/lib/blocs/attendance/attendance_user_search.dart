@@ -36,7 +36,7 @@ class AttendanceUserSearchBloc
         "mobileNumber": event.mobileNumber
       });
       emit(AttendanceUserSearchState.loaded(userSearchModel));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(AttendanceUserSearchState.error(
           e.response?.data['Errors'][0]['code']));
     }
@@ -55,7 +55,7 @@ class AttendanceUserSearchBloc
         "uuid": event.uuids
       });
       emit(AttendanceUserSearchState.loaded(userSearchModel));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(AttendanceUserSearchState.error(
           e.response?.data['Errors'][0]['code']));
     }

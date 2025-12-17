@@ -1,6 +1,5 @@
 package org.egov.repository.rowmapper;
 
-import org.egov.web.models.Identifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
@@ -17,8 +16,8 @@ public class TaxIdentifierOrgIdsRowMapper implements ResultSetExtractor<Set<Stri
         Set<String> orgIds = new HashSet<>();
 
         while (resultSet.next()) {
-            String taxIdentifier_orgId = resultSet.getString("taxIdentifier_orgId");
-            orgIds.add(taxIdentifier_orgId);
+            String taxIdentifierOrgId = resultSet.getString("taxIdentifier_orgId");
+            orgIds.add(taxIdentifierOrgId);
         }
 
         return orgIds;

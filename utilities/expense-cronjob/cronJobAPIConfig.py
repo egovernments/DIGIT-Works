@@ -24,8 +24,9 @@ def getContracts(requestInfo, tenantId, contractStatus):
         payload['tenantId'] = tenantId
         payload['status'] = contractStatus
         headers = {'Content-Type': 'application/json'}
-        
+
         hasMoreRecords = True
+        contractNumberSet= set()
         while hasMoreRecords:
             payload["pagination"] = { "limit": limit, "offSet": offset  }
             requestData = json.dumps(payload)
@@ -33,10 +34,16 @@ def getContracts(requestInfo, tenantId, contractStatus):
             # Convert the response to json
             payloadData = response.json()
             contractsData = payloadData.get("contracts", [])
+
             if (len(contractsData) > 0):
-                contracts = contracts + contractsData
+                for contract in contractsData:
+                    contract_number = contract.get("contractNumber")
+                    # Check if the contract number is not already added
+                    if contract_number not in contractNumberSet:
+                        contracts.append(contract)
+                        contractNumberSet.add(contract_number)
                 offset = limit * pageNo
-                pageNo = pageNo + 1
+                pageNo = pageNo+1
             else:
                 hasMoreRecords = False
         return contracts
@@ -44,10 +51,10 @@ def getContracts(requestInfo, tenantId, contractStatus):
         logging.info("Exception while fetching contracts for tenant id: {}".format(tenantId))
         logging.error("Exception occurred", exc_info=True)
         return contracts
-            
 
 
-def getTenants(): 
+
+def getTenants():
     try:
         mdms_host = os.getenv('MDMS_SERVICE_HOST')
         mdms_search = os.getenv('MDMS_SEARCH')
@@ -66,7 +73,7 @@ def getTenants():
         logging.error("Exception occurred", exc_info=True)
         return None
 
-def getUser(): 
+def getUser():
     try:
         userInfo = None
         user_host = os.getenv('USER_SERVICE_HOST')
@@ -129,7 +136,7 @@ def calculateExpense(contracts, requestInfo):
                 else:
                     failed = failed + 1
                     failedContractIds.append(contractNumber)
-                    if response.status_code == 400 and len(resp.get("Errors")): 
+                    if response.status_code == 400 and len(resp.get("Errors")):
                         errors = resp.get("Errors")
                         for error in errors:
                             logging.info("Error Message: {}".format(error.get("message")))
@@ -139,7 +146,7 @@ def calculateExpense(contracts, requestInfo):
                 failedContractIds.append(contractNumber)
     except Exception as ex:
         logging.error("Exception while calculating expense", exc_info=True)
-    
+
     return  [success, failed, failedContractIds]
 
 
@@ -167,7 +174,7 @@ def startExpenseCalcualtion():
                     contracts = getContracts(requestInfo=requestInfo, tenantId=tenantId, contractStatus=contractStatus)
                     logging.info("Get contracts : {}".format(len(contracts)))
                     contractsList = contractsList + contracts
-            
+
             logging.info("========Calculat expense for contracts========")
             # Calculate contract
             totalContracts = len(contractsList)

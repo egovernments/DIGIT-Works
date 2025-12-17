@@ -109,7 +109,7 @@ const SubWorkTable = ({ t, register, errors, rows, setRows, estimateDetails, set
                 {renderBody()}
                 <tr>
                     <td style={getStyles(1)}></td>
-                    <td style={{ ...getStyles(2), "textAlign": "center" }} onClick={addRow}><span><AddIcon fill={"#F47738"} styles={{ "margin": "auto", "display": "inline", "marginTop": "-2px" }} /><label style={{ "marginLeft": "10px" }}>{t("WORKS_ADD_ITEM")}</label></span></td>
+                    <td style={{ ...getStyles(2), "textAlign": "center" }} onClick={addRow}><span><AddIcon fill={"#C84C0E"} styles={{ "margin": "auto", "display": "inline", "marginTop": "-2px" }} /><label style={{ "marginLeft": "10px" }}>{t("WORKS_ADD_ITEM")}</label></span></td>
                     <td style={getStyles(3)}></td>
                     <td style={getStyles(4)}></td>
                 </tr>

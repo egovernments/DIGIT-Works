@@ -2,8 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:works_shg_app/Env/app_config.dart';
+import 'package:works_shg_app/Env/env_config.dart';
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
+import 'package:works_shg_app/utils/global_variables.dart';
 
+import '../../../models/employee/homeconfig/home_config_model.dart';
 import '../../../models/mdms/location_mdms.dart';
 import '../../../models/muster_rolls/business_service_workflow.dart';
 import '../../../models/screen_config/home_screen_config.dart';
@@ -27,7 +32,7 @@ class CommonRepository {
       return Location.fromJson(
         json.decode(response.toString()),
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -49,11 +54,47 @@ class CommonRepository {
       return HomeScreenConfigModel.fromJson(
         json.decode(response.toString())['MdmsRes'],
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
   }
+  // emp mb home screen
+
+  Future<HomeConfigModel> getEmpHomeConfig({
+    required String apiEndPoint,
+    required String tenantId,
+    required List<String> roleCodes,
+    required String actionMaster,
+    required bool enabled,
+  }) async {
+    try {
+      Dio client = Dio();
+
+      client.options.baseUrl =
+          kIsWeb && !kDebugMode ? apiBaseUrl : envConfig.variables.baseUrl;
+      var response = await client.post(apiEndPoint, data: {
+        "roleCodes": roleCodes,
+        "tenantId": tenantId,
+        "actionMaster": actionMaster,
+        "enabled": enabled,
+        "RequestInfo": {
+          "apiId": 'Rainmaker',
+          "ts": DateTime.now().millisecondsSinceEpoch,
+          "action": "_search",
+          "msgId": "",
+          "authToken": GlobalVariables.authToken,
+          "userInfo": null
+        },
+      });
+
+      return HomeConfigModel.fromJson(response.data);
+    } on DioException catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
+    }
+  }
+  
 
   Future<AppVersionModel> getAppVersion({
     required String apiEndPoint,
@@ -72,7 +113,7 @@ class CommonRepository {
         json.decode(response.toString())['MdmsRes']['common-masters']
             ['AppVersion'][0],
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -91,7 +132,7 @@ class CommonRepository {
       return BusinessServiceWorkflowModel.fromJson(
         json.decode(response.toString()),
       );
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -113,7 +154,7 @@ class CommonRepository {
       } else {
         throw Exception('Failed to download file.');
       }
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }

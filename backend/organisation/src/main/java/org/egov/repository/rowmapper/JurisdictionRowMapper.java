@@ -3,7 +3,6 @@ package org.egov.repository.rowmapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.CustomException;
-import org.egov.web.models.Identifier;
 import org.egov.web.models.Jurisdiction;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,29 +18,31 @@ import java.util.*;
 @Repository
 public class JurisdictionRowMapper implements ResultSetExtractor<List<Jurisdiction>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public JurisdictionRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Jurisdiction> extractData(ResultSet rs) throws SQLException, DataAccessException {
         Map<String, Jurisdiction> jurisdictionMap = new LinkedHashMap<>();
 
         while (rs.next()) {
-            String jurisdiction_Id = rs.getString("jurisdiction_Id");
-            String jurisdiction_orgId = rs.getString("jurisdiction_orgId");
-            String jurisdiction_code = rs.getString("jurisdiction_code");
-            JsonNode jurisdiction_additionalDetails = getAdditionalDetail("jurisdiction_additionalDetails", rs);
+            String jurisdictionId = rs.getString("jurisdiction_Id");
+            String jurisdictionOrgId = rs.getString("jurisdiction_orgId");
+            String jurisdictionCode = rs.getString("jurisdiction_code");
+            JsonNode jurisdictionAdditionalDetails = getAdditionalDetail("jurisdiction_additionalDetails", rs);
 
             Jurisdiction jurisdiction = Jurisdiction.builder()
-                    .id(jurisdiction_Id)
-                    .orgId(jurisdiction_orgId)
-                    .code(jurisdiction_code)
-                    .additionalDetails(jurisdiction_additionalDetails)
+                    .id(jurisdictionId)
+                    .orgId(jurisdictionOrgId)
+                    .code(jurisdictionCode)
+                    .additionalDetails(jurisdictionAdditionalDetails)
                     .build();
 
-            if (!jurisdictionMap.containsKey(jurisdiction_Id)) {
-                jurisdictionMap.put(jurisdiction_Id, jurisdiction);
-            }
+            jurisdictionMap.computeIfAbsent(jurisdictionId, k -> jurisdiction);
         }
 
         return new ArrayList<>(jurisdictionMap.values());

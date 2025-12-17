@@ -8,6 +8,7 @@ import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -24,8 +25,12 @@ import java.util.Map;
 @Component
 public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegister>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public RegisterRowMapper(@Qualifier("objectMapper") ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<AttendanceRegister> extractData(ResultSet rs) throws SQLException, DataAccessException {

@@ -1,0 +1,32 @@
+{
+  "serviceId": "PAG",
+  "errorMsg": null,
+  "data": [
+    {
+      "billNo": "PI-1013/2023-24/000248",
+      "ssuIaId": "1621",
+      "finYear": "2024",
+      "adviceId": "38",
+      "adviceDate": "2023-05-29",
+      "onlineBillRefNo": "202311171279",
+      "tokenNumber": "4",
+      "tokenDate": "2023-05-29",
+      "benfList": [
+        {
+          "benfName": "Chandra Kiran",
+          "benfAccountNo": "389201502452",
+          "benfBankIfscCode": "ICIC0003892",
+          "amount": "250",
+          "benfId": "BN-1013/000218"
+        },
+        {
+          "benfName": "C K",
+          "benfAccountNo": "389201502453",
+          "benfBankIfscCode": "ICIC0003892",
+          "amount": "250",
+          "benfId": "BN-1013/000217"
+        }
+      ]
+    }
+  ]
+}

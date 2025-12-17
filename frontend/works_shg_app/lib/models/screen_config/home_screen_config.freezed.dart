@@ -12,7 +12,7 @@ part of 'home_screen_config.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 HomeScreenConfigModel _$HomeScreenConfigModelFromJson(
     Map<String, dynamic> json) {
@@ -80,11 +80,12 @@ class _$HomeScreenConfigModelCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_HomeScreenConfigModelCopyWith<$Res>
+abstract class _$$HomeScreenConfigModelImplCopyWith<$Res>
     implements $HomeScreenConfigModelCopyWith<$Res> {
-  factory _$$_HomeScreenConfigModelCopyWith(_$_HomeScreenConfigModel value,
-          $Res Function(_$_HomeScreenConfigModel) then) =
-      __$$_HomeScreenConfigModelCopyWithImpl<$Res>;
+  factory _$$HomeScreenConfigModelImplCopyWith(
+          _$HomeScreenConfigModelImpl value,
+          $Res Function(_$HomeScreenConfigModelImpl) then) =
+      __$$HomeScreenConfigModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -95,11 +96,12 @@ abstract class _$$_HomeScreenConfigModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_HomeScreenConfigModelCopyWithImpl<$Res>
-    extends _$HomeScreenConfigModelCopyWithImpl<$Res, _$_HomeScreenConfigModel>
-    implements _$$_HomeScreenConfigModelCopyWith<$Res> {
-  __$$_HomeScreenConfigModelCopyWithImpl(_$_HomeScreenConfigModel _value,
-      $Res Function(_$_HomeScreenConfigModel) _then)
+class __$$HomeScreenConfigModelImplCopyWithImpl<$Res>
+    extends _$HomeScreenConfigModelCopyWithImpl<$Res,
+        _$HomeScreenConfigModelImpl>
+    implements _$$HomeScreenConfigModelImplCopyWith<$Res> {
+  __$$HomeScreenConfigModelImplCopyWithImpl(_$HomeScreenConfigModelImpl _value,
+      $Res Function(_$HomeScreenConfigModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -107,7 +109,7 @@ class __$$_HomeScreenConfigModelCopyWithImpl<$Res>
   $Res call({
     Object? commonUiConfig = freezed,
   }) {
-    return _then(_$_HomeScreenConfigModel(
+    return _then(_$HomeScreenConfigModelImpl(
       commonUiConfig: freezed == commonUiConfig
           ? _value.commonUiConfig
           : commonUiConfig // ignore: cast_nullable_to_non_nullable
@@ -118,12 +120,12 @@ class __$$_HomeScreenConfigModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_HomeScreenConfigModel implements _HomeScreenConfigModel {
-  const _$_HomeScreenConfigModel(
+class _$HomeScreenConfigModelImpl implements _HomeScreenConfigModel {
+  const _$HomeScreenConfigModelImpl(
       {@JsonKey(name: 'commonUiConfig') this.commonUiConfig});
 
-  factory _$_HomeScreenConfigModel.fromJson(Map<String, dynamic> json) =>
-      _$$_HomeScreenConfigModelFromJson(json);
+  factory _$HomeScreenConfigModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$HomeScreenConfigModelImplFromJson(json);
 
   @override
   @JsonKey(name: 'commonUiConfig')
@@ -135,10 +137,10 @@ class _$_HomeScreenConfigModel implements _HomeScreenConfigModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_HomeScreenConfigModel &&
+            other is _$HomeScreenConfigModelImpl &&
             (identical(other.commonUiConfig, commonUiConfig) ||
                 other.commonUiConfig == commonUiConfig));
   }
@@ -150,13 +152,13 @@ class _$_HomeScreenConfigModel implements _HomeScreenConfigModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_HomeScreenConfigModelCopyWith<_$_HomeScreenConfigModel> get copyWith =>
-      __$$_HomeScreenConfigModelCopyWithImpl<_$_HomeScreenConfigModel>(
-          this, _$identity);
+  _$$HomeScreenConfigModelImplCopyWith<_$HomeScreenConfigModelImpl>
+      get copyWith => __$$HomeScreenConfigModelImplCopyWithImpl<
+          _$HomeScreenConfigModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_HomeScreenConfigModelToJson(
+    return _$$HomeScreenConfigModelImplToJson(
       this,
     );
   }
@@ -166,18 +168,18 @@ abstract class _HomeScreenConfigModel implements HomeScreenConfigModel {
   const factory _HomeScreenConfigModel(
           {@JsonKey(name: 'commonUiConfig')
               final CommonUIConfigModel? commonUiConfig}) =
-      _$_HomeScreenConfigModel;
+      _$HomeScreenConfigModelImpl;
 
   factory _HomeScreenConfigModel.fromJson(Map<String, dynamic> json) =
-      _$_HomeScreenConfigModel.fromJson;
+      _$HomeScreenConfigModelImpl.fromJson;
 
   @override
   @JsonKey(name: 'commonUiConfig')
   CommonUIConfigModel? get commonUiConfig;
   @override
   @JsonKey(ignore: true)
-  _$$_HomeScreenConfigModelCopyWith<_$_HomeScreenConfigModel> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$HomeScreenConfigModelImplCopyWith<_$HomeScreenConfigModelImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 CommonUIConfigModel _$CommonUIConfigModelFromJson(Map<String, dynamic> json) {
@@ -191,6 +193,9 @@ mixin _$CommonUIConfigModel {
       throw _privateConstructorUsedError;
   @JsonKey(name: 'CBOMyWorks')
   List<CBOMyWorksSearchCriteriaModel>? get cboMyWorksSearchCriteria =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: 'CBOMyServiceRequests')
+  List<CBOMyServiceRequestsConfig>? get cboMyServiceRequestsConfig =>
       throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -209,7 +214,9 @@ abstract class $CommonUIConfigModelCopyWith<$Res> {
       {@JsonKey(name: 'CBOHomeScreenConfig')
           List<CBOHomeScreenConfigModel>? cboHomeScreenConfig,
       @JsonKey(name: 'CBOMyWorks')
-          List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria});
+          List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria,
+      @JsonKey(name: 'CBOMyServiceRequests')
+          List<CBOMyServiceRequestsConfig>? cboMyServiceRequestsConfig});
 }
 
 /// @nodoc
@@ -227,6 +234,7 @@ class _$CommonUIConfigModelCopyWithImpl<$Res, $Val extends CommonUIConfigModel>
   $Res call({
     Object? cboHomeScreenConfig = freezed,
     Object? cboMyWorksSearchCriteria = freezed,
+    Object? cboMyServiceRequestsConfig = freezed,
   }) {
     return _then(_value.copyWith(
       cboHomeScreenConfig: freezed == cboHomeScreenConfig
@@ -237,31 +245,37 @@ class _$CommonUIConfigModelCopyWithImpl<$Res, $Val extends CommonUIConfigModel>
           ? _value.cboMyWorksSearchCriteria
           : cboMyWorksSearchCriteria // ignore: cast_nullable_to_non_nullable
               as List<CBOMyWorksSearchCriteriaModel>?,
+      cboMyServiceRequestsConfig: freezed == cboMyServiceRequestsConfig
+          ? _value.cboMyServiceRequestsConfig
+          : cboMyServiceRequestsConfig // ignore: cast_nullable_to_non_nullable
+              as List<CBOMyServiceRequestsConfig>?,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$_CommonUIConfigModelCopyWith<$Res>
+abstract class _$$CommonUIConfigModelImplCopyWith<$Res>
     implements $CommonUIConfigModelCopyWith<$Res> {
-  factory _$$_CommonUIConfigModelCopyWith(_$_CommonUIConfigModel value,
-          $Res Function(_$_CommonUIConfigModel) then) =
-      __$$_CommonUIConfigModelCopyWithImpl<$Res>;
+  factory _$$CommonUIConfigModelImplCopyWith(_$CommonUIConfigModelImpl value,
+          $Res Function(_$CommonUIConfigModelImpl) then) =
+      __$$CommonUIConfigModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {@JsonKey(name: 'CBOHomeScreenConfig')
           List<CBOHomeScreenConfigModel>? cboHomeScreenConfig,
       @JsonKey(name: 'CBOMyWorks')
-          List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria});
+          List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria,
+      @JsonKey(name: 'CBOMyServiceRequests')
+          List<CBOMyServiceRequestsConfig>? cboMyServiceRequestsConfig});
 }
 
 /// @nodoc
-class __$$_CommonUIConfigModelCopyWithImpl<$Res>
-    extends _$CommonUIConfigModelCopyWithImpl<$Res, _$_CommonUIConfigModel>
-    implements _$$_CommonUIConfigModelCopyWith<$Res> {
-  __$$_CommonUIConfigModelCopyWithImpl(_$_CommonUIConfigModel _value,
-      $Res Function(_$_CommonUIConfigModel) _then)
+class __$$CommonUIConfigModelImplCopyWithImpl<$Res>
+    extends _$CommonUIConfigModelCopyWithImpl<$Res, _$CommonUIConfigModelImpl>
+    implements _$$CommonUIConfigModelImplCopyWith<$Res> {
+  __$$CommonUIConfigModelImplCopyWithImpl(_$CommonUIConfigModelImpl _value,
+      $Res Function(_$CommonUIConfigModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -269,8 +283,9 @@ class __$$_CommonUIConfigModelCopyWithImpl<$Res>
   $Res call({
     Object? cboHomeScreenConfig = freezed,
     Object? cboMyWorksSearchCriteria = freezed,
+    Object? cboMyServiceRequestsConfig = freezed,
   }) {
-    return _then(_$_CommonUIConfigModel(
+    return _then(_$CommonUIConfigModelImpl(
       cboHomeScreenConfig: freezed == cboHomeScreenConfig
           ? _value._cboHomeScreenConfig
           : cboHomeScreenConfig // ignore: cast_nullable_to_non_nullable
@@ -279,23 +294,30 @@ class __$$_CommonUIConfigModelCopyWithImpl<$Res>
           ? _value._cboMyWorksSearchCriteria
           : cboMyWorksSearchCriteria // ignore: cast_nullable_to_non_nullable
               as List<CBOMyWorksSearchCriteriaModel>?,
+      cboMyServiceRequestsConfig: freezed == cboMyServiceRequestsConfig
+          ? _value._cboMyServiceRequestsConfig
+          : cboMyServiceRequestsConfig // ignore: cast_nullable_to_non_nullable
+              as List<CBOMyServiceRequestsConfig>?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$_CommonUIConfigModel implements _CommonUIConfigModel {
-  const _$_CommonUIConfigModel(
+class _$CommonUIConfigModelImpl implements _CommonUIConfigModel {
+  const _$CommonUIConfigModelImpl(
       {@JsonKey(name: 'CBOHomeScreenConfig')
           final List<CBOHomeScreenConfigModel>? cboHomeScreenConfig,
       @JsonKey(name: 'CBOMyWorks')
-          final List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria})
+          final List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria,
+      @JsonKey(name: 'CBOMyServiceRequests')
+          final List<CBOMyServiceRequestsConfig>? cboMyServiceRequestsConfig})
       : _cboHomeScreenConfig = cboHomeScreenConfig,
-        _cboMyWorksSearchCriteria = cboMyWorksSearchCriteria;
+        _cboMyWorksSearchCriteria = cboMyWorksSearchCriteria,
+        _cboMyServiceRequestsConfig = cboMyServiceRequestsConfig;
 
-  factory _$_CommonUIConfigModel.fromJson(Map<String, dynamic> json) =>
-      _$$_CommonUIConfigModelFromJson(json);
+  factory _$CommonUIConfigModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CommonUIConfigModelImplFromJson(json);
 
   final List<CBOHomeScreenConfigModel>? _cboHomeScreenConfig;
   @override
@@ -321,20 +343,35 @@ class _$_CommonUIConfigModel implements _CommonUIConfigModel {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<CBOMyServiceRequestsConfig>? _cboMyServiceRequestsConfig;
   @override
-  String toString() {
-    return 'CommonUIConfigModel(cboHomeScreenConfig: $cboHomeScreenConfig, cboMyWorksSearchCriteria: $cboMyWorksSearchCriteria)';
+  @JsonKey(name: 'CBOMyServiceRequests')
+  List<CBOMyServiceRequestsConfig>? get cboMyServiceRequestsConfig {
+    final value = _cboMyServiceRequestsConfig;
+    if (value == null) return null;
+    if (_cboMyServiceRequestsConfig is EqualUnmodifiableListView)
+      return _cboMyServiceRequestsConfig;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
   }
 
   @override
-  bool operator ==(dynamic other) {
+  String toString() {
+    return 'CommonUIConfigModel(cboHomeScreenConfig: $cboHomeScreenConfig, cboMyWorksSearchCriteria: $cboMyWorksSearchCriteria, cboMyServiceRequestsConfig: $cboMyServiceRequestsConfig)';
+  }
+
+  @override
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_CommonUIConfigModel &&
+            other is _$CommonUIConfigModelImpl &&
             const DeepCollectionEquality()
                 .equals(other._cboHomeScreenConfig, _cboHomeScreenConfig) &&
             const DeepCollectionEquality().equals(
-                other._cboMyWorksSearchCriteria, _cboMyWorksSearchCriteria));
+                other._cboMyWorksSearchCriteria, _cboMyWorksSearchCriteria) &&
+            const DeepCollectionEquality().equals(
+                other._cboMyServiceRequestsConfig,
+                _cboMyServiceRequestsConfig));
   }
 
   @JsonKey(ignore: true)
@@ -342,18 +379,19 @@ class _$_CommonUIConfigModel implements _CommonUIConfigModel {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_cboHomeScreenConfig),
-      const DeepCollectionEquality().hash(_cboMyWorksSearchCriteria));
+      const DeepCollectionEquality().hash(_cboMyWorksSearchCriteria),
+      const DeepCollectionEquality().hash(_cboMyServiceRequestsConfig));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_CommonUIConfigModelCopyWith<_$_CommonUIConfigModel> get copyWith =>
-      __$$_CommonUIConfigModelCopyWithImpl<_$_CommonUIConfigModel>(
+  _$$CommonUIConfigModelImplCopyWith<_$CommonUIConfigModelImpl> get copyWith =>
+      __$$CommonUIConfigModelImplCopyWithImpl<_$CommonUIConfigModelImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_CommonUIConfigModelToJson(
+    return _$$CommonUIConfigModelImplToJson(
       this,
     );
   }
@@ -364,11 +402,13 @@ abstract class _CommonUIConfigModel implements CommonUIConfigModel {
       {@JsonKey(name: 'CBOHomeScreenConfig')
           final List<CBOHomeScreenConfigModel>? cboHomeScreenConfig,
       @JsonKey(name: 'CBOMyWorks')
-          final List<CBOMyWorksSearchCriteriaModel>?
-              cboMyWorksSearchCriteria}) = _$_CommonUIConfigModel;
+          final List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria,
+      @JsonKey(name: 'CBOMyServiceRequests')
+          final List<CBOMyServiceRequestsConfig>?
+              cboMyServiceRequestsConfig}) = _$CommonUIConfigModelImpl;
 
   factory _CommonUIConfigModel.fromJson(Map<String, dynamic> json) =
-      _$_CommonUIConfigModel.fromJson;
+      _$CommonUIConfigModelImpl.fromJson;
 
   @override
   @JsonKey(name: 'CBOHomeScreenConfig')
@@ -377,8 +417,11 @@ abstract class _CommonUIConfigModel implements CommonUIConfigModel {
   @JsonKey(name: 'CBOMyWorks')
   List<CBOMyWorksSearchCriteriaModel>? get cboMyWorksSearchCriteria;
   @override
+  @JsonKey(name: 'CBOMyServiceRequests')
+  List<CBOMyServiceRequestsConfig>? get cboMyServiceRequestsConfig;
+  @override
   @JsonKey(ignore: true)
-  _$$_CommonUIConfigModelCopyWith<_$_CommonUIConfigModel> get copyWith =>
+  _$$CommonUIConfigModelImplCopyWith<_$CommonUIConfigModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -461,12 +504,12 @@ class _$CBOHomeScreenConfigModelCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_CBOHomeScreenConfigModelCopyWith<$Res>
+abstract class _$$CBOHomeScreenConfigModelImplCopyWith<$Res>
     implements $CBOHomeScreenConfigModelCopyWith<$Res> {
-  factory _$$_CBOHomeScreenConfigModelCopyWith(
-          _$_CBOHomeScreenConfigModel value,
-          $Res Function(_$_CBOHomeScreenConfigModel) then) =
-      __$$_CBOHomeScreenConfigModelCopyWithImpl<$Res>;
+  factory _$$CBOHomeScreenConfigModelImplCopyWith(
+          _$CBOHomeScreenConfigModelImpl value,
+          $Res Function(_$CBOHomeScreenConfigModelImpl) then) =
+      __$$CBOHomeScreenConfigModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -478,12 +521,13 @@ abstract class _$$_CBOHomeScreenConfigModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_CBOHomeScreenConfigModelCopyWithImpl<$Res>
+class __$$CBOHomeScreenConfigModelImplCopyWithImpl<$Res>
     extends _$CBOHomeScreenConfigModelCopyWithImpl<$Res,
-        _$_CBOHomeScreenConfigModel>
-    implements _$$_CBOHomeScreenConfigModelCopyWith<$Res> {
-  __$$_CBOHomeScreenConfigModelCopyWithImpl(_$_CBOHomeScreenConfigModel _value,
-      $Res Function(_$_CBOHomeScreenConfigModel) _then)
+        _$CBOHomeScreenConfigModelImpl>
+    implements _$$CBOHomeScreenConfigModelImplCopyWith<$Res> {
+  __$$CBOHomeScreenConfigModelImplCopyWithImpl(
+      _$CBOHomeScreenConfigModelImpl _value,
+      $Res Function(_$CBOHomeScreenConfigModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -495,7 +539,7 @@ class __$$_CBOHomeScreenConfigModelCopyWithImpl<$Res>
     Object? label = freezed,
     Object? active = freezed,
   }) {
-    return _then(_$_CBOHomeScreenConfigModel(
+    return _then(_$CBOHomeScreenConfigModelImpl(
       order: null == order
           ? _value.order
           : order // ignore: cast_nullable_to_non_nullable
@@ -522,16 +566,16 @@ class __$$_CBOHomeScreenConfigModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_CBOHomeScreenConfigModel implements _CBOHomeScreenConfigModel {
-  const _$_CBOHomeScreenConfigModel(
+class _$CBOHomeScreenConfigModelImpl implements _CBOHomeScreenConfigModel {
+  const _$CBOHomeScreenConfigModelImpl(
       {required this.order,
       required this.key,
       this.displayName,
       this.label,
       this.active});
 
-  factory _$_CBOHomeScreenConfigModel.fromJson(Map<String, dynamic> json) =>
-      _$$_CBOHomeScreenConfigModelFromJson(json);
+  factory _$CBOHomeScreenConfigModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CBOHomeScreenConfigModelImplFromJson(json);
 
   @override
   final int order;
@@ -550,10 +594,10 @@ class _$_CBOHomeScreenConfigModel implements _CBOHomeScreenConfigModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_CBOHomeScreenConfigModel &&
+            other is _$CBOHomeScreenConfigModelImpl &&
             (identical(other.order, order) || other.order == order) &&
             (identical(other.key, key) || other.key == key) &&
             (identical(other.displayName, displayName) ||
@@ -570,13 +614,13 @@ class _$_CBOHomeScreenConfigModel implements _CBOHomeScreenConfigModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_CBOHomeScreenConfigModelCopyWith<_$_CBOHomeScreenConfigModel>
-      get copyWith => __$$_CBOHomeScreenConfigModelCopyWithImpl<
-          _$_CBOHomeScreenConfigModel>(this, _$identity);
+  _$$CBOHomeScreenConfigModelImplCopyWith<_$CBOHomeScreenConfigModelImpl>
+      get copyWith => __$$CBOHomeScreenConfigModelImplCopyWithImpl<
+          _$CBOHomeScreenConfigModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_CBOHomeScreenConfigModelToJson(
+    return _$$CBOHomeScreenConfigModelImplToJson(
       this,
     );
   }
@@ -588,10 +632,10 @@ abstract class _CBOHomeScreenConfigModel implements CBOHomeScreenConfigModel {
       required final String key,
       final String? displayName,
       final String? label,
-      final bool? active}) = _$_CBOHomeScreenConfigModel;
+      final bool? active}) = _$CBOHomeScreenConfigModelImpl;
 
   factory _CBOHomeScreenConfigModel.fromJson(Map<String, dynamic> json) =
-      _$_CBOHomeScreenConfigModel.fromJson;
+      _$CBOHomeScreenConfigModelImpl.fromJson;
 
   @override
   int get order;
@@ -605,6 +649,6 @@ abstract class _CBOHomeScreenConfigModel implements CBOHomeScreenConfigModel {
   bool? get active;
   @override
   @JsonKey(ignore: true)
-  _$$_CBOHomeScreenConfigModelCopyWith<_$_CBOHomeScreenConfigModel>
+  _$$CBOHomeScreenConfigModelImplCopyWith<_$CBOHomeScreenConfigModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

@@ -4,12 +4,12 @@ import { LocateIcon } from "./svgindex";
 
 const TextInput = (props) => {
   const user_type = Digit.SessionStorage.get("userType");
-  const [date, setDate] = useState(props?.type==="date"&&props?.value);
+  const [date, setDate] = useState(props?.type === "date" && props?.value);
   const data = props?.watch
     ? {
-        fromDate: props?.watch("fromDate"),
-        toDate: props?.watch("toDate"),
-      }
+      fromDate: props?.watch("fromDate"),
+      toDate: props?.watch("toDate"),
+    }
     : {};
 
   const handleDate = (event) => {
@@ -17,9 +17,23 @@ const TextInput = (props) => {
     setDate(getDDMMYYYY(value));
   };
 
+  useEffect(() => {
+    // Prevent scrolling on number inputs
+    const handleScroll = (event) => {
+      if (event.target.type === "number") {
+        event.preventDefault();
+      }
+    };
+    window.addEventListener("wheel", handleScroll, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", handleScroll);
+    };
+  }, []);
+
   return (
     <React.Fragment>
-      <div className={`text-input ${user_type === "employee" ? "" :"text-input-width"} ${props.className}`} style={props?.textInputStyle ? { ...props.textInputStyle} : {}}>
+      <div className={`text-input ${user_type === "employee" ? "" : "text-input-width"} ${props.className}`} style={props?.textInputStyle ? { ...props.textInputStyle } : {}}>
         {props.isMandatory ? (
           <input
             type={props?.validation && props.ValidationRequired ? props?.validation?.type : (props.type || "text")}
@@ -28,9 +42,9 @@ const TextInput = (props) => {
             className={`${user_type ? "employee-card-input-error" : "card-input-error"} ${props.disable && "disabled"} ${props.customClass}`}
             placeholder={props.placeholder}
             onChange={(event) => {
-              if(props?.type === "number" && props?.maxlength) {
-                if(event.target.value.length > props?.maxlength) {
-                  event.target.value = event.target.value.slice(0,-1);
+              if (props?.type === "number" && props?.maxlength) {
+                if (event.target.value.length > props?.maxlength) {
+                  event.target.value = event.target.value.slice(0, -1);
                 }
               }
               if (props?.onChange) {
@@ -50,7 +64,7 @@ const TextInput = (props) => {
             pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
             min={props.min}
             readOnly={props.disable}
-            title={props?.validation && props.ValidationRequired ? props?.validation?.title :props.title}
+            title={props?.validation && props.ValidationRequired ? props?.validation?.title : props.title}
             step={props.step}
             autoFocus={props.autoFocus}
             onBlur={props.onBlur}
@@ -65,9 +79,9 @@ const TextInput = (props) => {
             className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${props.disable && "disabled"} focus-visible ${props.errorStyle && "employee-card-input-error"} ${props.customClass}`}
             placeholder={props.placeholder}
             onChange={(event) => {
-              if(props?.type === "number" && props?.maxlength) {
-                if(event.target.value.length > props?.maxlength) {
-                  event.target.value = event.target.value.slice(0,-1);
+              if (props?.type === "number" && props?.maxlength) {
+                if (event.target.value.length > props?.maxlength) {
+                  event.target.value = event.target.value.slice(0, -1);
                 }
               }
               if (props?.onChange) {
@@ -84,11 +98,11 @@ const TextInput = (props) => {
             minLength={props.minlength}
             maxLength={props.maxlength}
             max={props.max}
-            required={props?.validation && props.ValidationRequired ? props?.validation?.isRequired :props.isRequired || (props.type === "date" && (props.name === "fromDate" ? data.toDate : data.fromDate))}
+            required={props?.validation && props.ValidationRequired ? props?.validation?.isRequired : props.isRequired || (props.type === "date" && (props.name === "fromDate" ? data.toDate : data.fromDate))}
             pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
             min={props.min}
             readOnly={props.disable}
-            title={props?.validation && props.ValidationRequired ? props?.validation?.title :props.title}
+            title={props?.validation && props.ValidationRequired ? props?.validation?.title : props.title}
             step={props.step}
             autoFocus={props.autoFocus}
             onBlur={props.onBlur}

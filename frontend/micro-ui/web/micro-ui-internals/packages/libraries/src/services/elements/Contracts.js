@@ -10,6 +10,7 @@ export const ContractService = {
         auth: true,
         userService: true,
         data: data,
+        authHeader:true,
         params: {tenantId, ...searchParams},
       })
 };

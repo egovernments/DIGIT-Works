@@ -1,0 +1,106 @@
+.sor-dropdowns {
+  margin-top: 24px;
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.sor-label {
+  display: inline-block;
+  width: 110px;
+  flex-basis: 100px;
+}
+
+.dropdown-width {
+  width: 40rem;
+  height: 2.5rem;
+  padding: 5px 10px;
+}
+
+.search-sor-container {
+  display: flex;
+  width: 70%; /* make it 69.25*/
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.search-sor-button {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+
+  @media (min-aspect-ratio: 9/16) and (max-aspect-ratio: 3/4)  {
+    /* Media query for tablets */
+    max-width: 27.5rem;
+  }
+
+  @media (max-aspect-ratio: 9/16) {
+    /* Media query for mobile */
+    max-width: 100%;
+    width: 100%;
+  }
+
+  @media (min-aspect-ratio: 3/4) {
+    /* Media query for desktop */
+    max-width: 37.5rem;
+  }
+}
+.search-sor-label {
+  margin-top: 26px;
+  max-width: 20%;
+  width: 20%;
+}
+
+.add-sor-button {
+  padding: 10px 50px 10px 50px;
+  margin-top: 20px;
+  width: 8.625rem; /*width: 8.625rem;*/ 
+  height: 2.5rem;
+}
+
+.search-sor-input {
+  width: 27.375rem;
+  height: 2.5rem;
+}
+
+.popup-view-alaysis {
+  margin-left: 35% !important;
+  margin-top: 10% !important;
+  margin-bottom: 8% !important;
+  width: 32rem;
+}
+
+.view-Analysis-button {
+  border: 3px solid;
+  width: 15%;
+  padding: 10px 15px;
+  border-color: #C84C0E;
+  color: #C84C0E !important;
+  font-size: 16px;
+}
+
+.analysis-estimate-label {
+  font-size: 16px;
+  font-style: bold;
+  font-weight: 700 !important;
+  width : 60% !important;
+}
+
+.estimate-analysis-cardheader {
+  margin-top: 14px;
+  margin-bottom: 1rem;
+}
+
+
+.view-rate-Analysis-button {
+  border: 1px solid;
+  width: 15%;
+  padding: 10px 15px;
+  border-color: #C84C0E;
+  color: #C84C0E !important;
+  font-size: 16px;
+}

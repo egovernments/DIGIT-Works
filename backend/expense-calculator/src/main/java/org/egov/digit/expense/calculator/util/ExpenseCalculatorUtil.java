@@ -4,48 +4,70 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.models.project.Project;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.*;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
+import org.egov.digit.expense.calculator.web.models.ApplicableCharge;
 import org.egov.digit.expense.calculator.web.models.Bill;
 import org.egov.digit.expense.calculator.web.models.BillCriteria;
 import org.egov.digit.expense.calculator.web.models.BillResponse;
 import org.egov.digit.expense.calculator.web.models.BillSearchRequest;
-import org.egov.digit.expense.calculator.web.models.Contract;
-import org.egov.digit.expense.calculator.web.models.ContractCriteria;
-import org.egov.digit.expense.calculator.web.models.ContractResponse;
+import org.egov.digit.expense.calculator.web.models.HeadCode;
 import org.egov.digit.expense.calculator.web.models.LineItem;
-import org.egov.digit.expense.calculator.web.models.LineItems;
-import org.egov.digit.expense.calculator.web.models.MusterRoll;
-import org.egov.digit.expense.calculator.web.models.MusterRollResponse;
 import org.egov.digit.expense.calculator.web.models.Order;
 import org.egov.digit.expense.calculator.web.models.Pagination;
 import org.egov.tracer.model.CustomException;
-import org.json.JSONObject;
+import org.egov.works.services.common.models.contract.Contract;
+import org.egov.works.services.common.models.contract.ContractCriteria;
+import org.egov.works.services.common.models.contract.ContractResponse;
+import org.egov.works.services.common.models.musterroll.MusterRoll;
+import org.egov.works.services.common.models.musterroll.MusterRollResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_APPLICABLE_CHARGES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_HEAD_CODES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_APPLICABLE_CHARGES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_HEAD_CODES;
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MUSTER_ROLL_ID_JSON_PATH;
 
 @Component
 @Slf4j
 public class ExpenseCalculatorUtil {
-    @Autowired
-    private ObjectMapper mapper;
-    @Autowired
-    private ServiceRequestRepository restRepo;
 
-    @Autowired
-    private ExpenseCalculatorConfiguration configs;
+    private final ObjectMapper mapper;
+    private final ServiceRequestRepository restRepo;
+    
+    private final MdmsUtils mdmsUtils;
+    
+    private final CommonUtil commonUtil;
 
+    private final ExpenseCalculatorConfiguration configs;
+
+    private final ExpenseCalculatorRepository expenseCalculatorRepository;
+    private static final String TENANT_ID_CLAUSE = "?tenantId=";
+    private static final String SERVICE_PLACEHOLDER = "] and service [";
+    private static final String INVALID_HEAD_CODE = "INVALID_HEAD_CODE";
+    private static final String INVALID_HEAD_CODE_PLACEHOLDER = "Invalid head code [";
+    private static final String FOR_SERVICE_PLACEHOLDER = "] for service [";
+    
     @Autowired
-    private ExpenseCalculatorRepository expenseCalculatorRepository;
+    public ExpenseCalculatorUtil(ObjectMapper mapper, ServiceRequestRepository restRepo, MdmsUtils mdmsUtils, CommonUtil commonUtil, ExpenseCalculatorConfiguration configs, ExpenseCalculatorRepository expenseCalculatorRepository) {
+        this.mapper = mapper;
+        this.restRepo = restRepo;
+        this.mdmsUtils = mdmsUtils;
+        this.commonUtil = commonUtil;
+        this.configs = configs;
+        this.expenseCalculatorRepository = expenseCalculatorRepository;
+    }
 
     public List<String> fetchListOfMusterRollIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId, boolean onlyApproved) {
         StringBuilder url = null;
@@ -83,7 +105,7 @@ public class ExpenseCalculatorUtil {
     private StringBuilder getApprovedMusterRollURI(String tenantId, List<String> musterRollId) {
         StringBuilder builder = new StringBuilder(configs.getMusterRollHost());
         builder.append(configs.getMusterRollEndPoint());
-        builder.append("?tenantId=");
+        builder.append(TENANT_ID_CLAUSE);
         builder.append(tenantId);
         builder.append("&musterRollStatus=");
         builder.append("APPROVED");
@@ -96,7 +118,7 @@ public class ExpenseCalculatorUtil {
     private StringBuilder getMusterRollURI(String tenantId, List<String> musterRollId) {
         StringBuilder builder = new StringBuilder(configs.getMusterRollHost());
         builder.append(configs.getMusterRollEndPoint());
-        builder.append("?tenantId=");
+        builder.append(TENANT_ID_CLAUSE);
         builder.append(tenantId);
         builder.append("&ids=");
         builder.append(String.join(",",musterRollId));
@@ -107,7 +129,7 @@ public class ExpenseCalculatorUtil {
     private StringBuilder getMusterRollURI(String tenantId, String contractId) {
         StringBuilder builder = new StringBuilder(configs.getMusterRollHost());
         builder.append(configs.getMusterRollEndPoint());
-        builder.append("?tenantId=");
+        builder.append(TENANT_ID_CLAUSE);
         builder.append(tenantId);
         builder.append("&referenceId=");
         builder.append(contractId);
@@ -122,14 +144,14 @@ public class ExpenseCalculatorUtil {
         MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
         List<String> musterrollIds = new ArrayList<>();
         if (response != null && !CollectionUtils.isEmpty(response.getMusterRolls())) {
-            musterrollIds = response.getMusterRolls().stream().map(muster -> muster.getMusterRollNumber()).collect(Collectors.toList());
+            musterrollIds = response.getMusterRolls().stream().map(MusterRoll::getMusterRollNumber).collect(Collectors.toList());
         }
         return musterrollIds;
     }
 
     public List<Contract> fetchContract(RequestInfo requestInfo, String tenantId, String contractId) {
         StringBuilder url = searchURI(configs.getContractHost(), configs.getContractSearchEndPoint());
-        Pagination pagination = Pagination.builder().limit(100).build();
+        org.egov.works.services.common.models.contract.Pagination pagination = org.egov.works.services.common.models.contract.Pagination.builder().limit(100).build();
         ContractCriteria searchCriteria = ContractCriteria.builder().requestInfo(requestInfo).tenantId(tenantId)
                 .contractNumber(contractId).pagination(pagination).build();
         Object responseObj = restRepo.fetchResult(url, searchCriteria);
@@ -159,7 +181,6 @@ public class ExpenseCalculatorUtil {
     }
     
     public List<Bill> fetchBillsByProject(RequestInfo requestInfo, String tenantId, List<String> projects) {
-    	//log.info("Fetching unique project numbers from the calculator repository for contractId " + contractId);
     	// fetch the bill id from the calculator DB
         List<String> billIds = expenseCalculatorRepository.getBillsByProjectNumber(tenantId, projects);
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
@@ -234,11 +255,101 @@ public class ExpenseCalculatorUtil {
 
         return bills;
     }
+    
+    public LineItem buildPayableLineItem(BigDecimal amount, String tenantId, String headCode) {
+        return LineItem.builder()
+                 .amount(amount)
+                 .paidAmount(BigDecimal.ZERO)
+                 .tenantId(tenantId)
+                 .isLineItemPayable(true)
+                 .type(LineItem.TypeEnum.PAYABLE)
+                 .headCode(headCode)
+                 .build();
+     }
+    
+    public String getCalculationType(String headCode, List<ApplicableCharge> applicableCharges, String businessService) {
+        for(ApplicableCharge applicableCharge : applicableCharges) {
+            if(applicableCharge.getCode().equalsIgnoreCase(headCode) && applicableCharge.getService().equals(businessService)) {
+            	String calculationType = applicableCharge.getCalculationType();
+                if (StringUtils.isBlank(calculationType)) {
+                    log.error("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +SERVICE_PLACEHOLDER+ businessService +"]");
+                    throw new CustomException("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +SERVICE_PLACEHOLDER+businessService+"]");
+                } else {
+                    return calculationType;
+                }
+            }
+        }
+        log.error(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+businessService+"]");
+        throw new CustomException(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+businessService+"]");
+    }
+    
+    public String getDeductionValue(String headCode, List<ApplicableCharge> applicableCharges) {
+        for(ApplicableCharge applicableCharge : applicableCharges) {
+            if(applicableCharge.getCode().equalsIgnoreCase(headCode)){
+                return applicableCharge.getValue();
+            }
+        }
+        log.error("MISSING_HEAD_CODE","HeadCode ["+headCode+"] missing in applicable charge MDMS");
+        throw new CustomException("MISSING_HEAD_CODE","HeadCode ["+headCode+"] missing in applicable charge MDMS");
+    }
+    
+    public String getHeadCodeCategory(String headCode, List<HeadCode> headCodes, String businessService) {
+        for(HeadCode hCode : headCodes) {
+            if(hCode.getCode().equalsIgnoreCase(headCode)){
+                String category = hCode.getCategory();
+                if (StringUtils.isBlank(category)) {
+                    log.error("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +SERVICE_PLACEHOLDER+businessService+"]");
+                    throw new CustomException("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +SERVICE_PLACEHOLDER+businessService+"]");
+                } else {
+                    return category;
+                }
+            }
+        }
+        log.error(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+businessService+"]");
+        throw new CustomException(INVALID_HEAD_CODE,INVALID_HEAD_CODE_PLACEHOLDER + headCode +FOR_SERVICE_PLACEHOLDER+businessService+"]");
+    }
 
     private StringBuilder searchURI(String host, String endpoint) {
         StringBuilder builder = new StringBuilder(host);
         builder.append(endpoint);
         return builder;
+    }
+    
+    public List<HeadCode> fetchHeadCodesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
+        List<HeadCode> headCodes = fetchMDMSDataForHeadCode(requestInfo, tenantId);
+        return headCodes.stream()
+                                                    .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
+    }
+    
+    public List<HeadCode> fetchMDMSDataForHeadCode(RequestInfo requestInfo, String tenantId) {
+        log.info("Fetch head code list from MDMS");
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, tenantId, MDMS_HEAD_CODES);
+        List<Object> headCodeListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_HEAD_CODES);
+        List<HeadCode> headCodes = new ArrayList<>();
+        for(Object obj : headCodeListJson){
+            HeadCode headCode = mapper.convertValue(obj, HeadCode.class);
+            headCodes.add(headCode);
+        }
+        log.info("Head codes fetched from MDMS");
+        return headCodes;
+    }
+
+    public List<ApplicableCharge> fetchApplicableChargesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
+        List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
+        return applicableCharges.stream()
+                                                                            .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
+    }
+    private List<ApplicableCharge> fetchMDMSDataForApplicableCharges(RequestInfo requestInfo, String tenantId) {
+        log.info("Fetch head code list from MDMS");
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, tenantId,MDMS_APPLICABLE_CHARGES);
+        List<Object> applicableChargesListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_APPLICABLE_CHARGES);
+        List<ApplicableCharge> applicableCharges = new ArrayList<>();
+        for(Object obj : applicableChargesListJson){
+            ApplicableCharge applicableCharge = mapper.convertValue(obj, ApplicableCharge.class);
+            applicableCharges.add(applicableCharge);
+        }
+        log.info("Head codes fetched from MDMS");
+        return applicableCharges;
     }
 
 

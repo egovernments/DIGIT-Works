@@ -35,7 +35,8 @@ class MusterRoll with _$MusterRoll {
         List<IndividualEntries>? individualEntries,
     @JsonKey(name: 'additionalDetails')
         MusterAdditionalDetails? musterAdditionalDetails,
-    @JsonKey(name: 'auditDetails') AuditDetails? musterAuditDetails,
+    @JsonKey(name: 'auditDetails')
+        AuditDetails? musterAuditDetails,
   }) = _MusterRoll;
 
   factory MusterRoll.fromJson(
@@ -89,6 +90,7 @@ class MusterIndividualAdditionalDetails
   const factory MusterIndividualAdditionalDetails({
     String? userName,
     String? fatherName,
+    String? gender,
     String? aadharNumber,
     String? bankDetails,
     String? userId,

@@ -1,0 +1,191 @@
+package org.egov.utils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.config.IfmsAdapterConfig;
+import org.egov.mdms.model.*;
+import org.egov.repository.ServiceRequestRepository;
+import org.egov.web.models.mdmsV2.MdmsResponseV2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.*;
+
+import static org.egov.config.Constants.*;
+
+@Component
+@Slf4j
+public class MdmsUtils {
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
+    
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private IfmsAdapterConfig config;
+
+	public Map<String,Map<String,JSONArray>> fetchExchangeServers(RequestInfo requestInfo, String tenantId) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V1EndPoint());
+		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, MDMS_EXCHANGE_MODULE_NAME, Arrays.asList(MDMS_EXCHANGE_SERVER_MASTER));
+		Object response = new HashMap<>();
+		MdmsResponse mdmsResponse = new MdmsResponse();
+		try {
+			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
+
+		log.info(mdmsResponse.toString());
+		return mdmsResponse.getMdmsRes();
+	}
+	public Map<String, Map<String,JSONArray>> fetchHoaAndSSUDetails(RequestInfo requestInfo, String tenantId) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V1EndPoint());
+		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, Arrays.asList(MDMS_HEAD_OF_ACCOUNT_MASTER, MDMS_SSU_DETAILS_MASTER));
+		Object response = new HashMap<>();
+		MdmsResponse mdmsResponse = new MdmsResponse();
+		try {
+			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
+
+		log.info(mdmsResponse.toString());
+		return mdmsResponse.getMdmsRes();
+	}
+
+	public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId,
+			String moduleName, List<String> masterNameList) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V1EndPoint());
+		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, moduleName, masterNameList);
+		Object response = new HashMap<>();
+		MdmsResponse mdmsResponse = new MdmsResponse();
+		try {
+			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
+
+		log.info(mdmsResponse.toString());
+		return mdmsResponse.getMdmsRes();
+	}
+
+	/**
+	 * prepares Master Data request
+	 * 
+	 * @param tenantId
+	 * @param moduleName
+	 * @param masterNames
+	 * @param requestInfo
+	 * @return
+	 */
+	public MdmsCriteriaReq prepareMdMsRequest(RequestInfo requestInfo, String tenantId, String moduleName,
+			List<String> masterNames) {
+
+		List<MasterDetail> masterDetails = new ArrayList<>();
+		masterNames.forEach(name -> masterDetails.add(MasterDetail.builder().name(name).build()));
+
+		ModuleDetail moduleDetail = ModuleDetail.builder()
+				.moduleName(moduleName)
+				.masterDetails(masterDetails)
+				.build();
+		
+		List<ModuleDetail> moduleDetails = new ArrayList<>();
+		moduleDetails.add(moduleDetail);
+		
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
+				.tenantId(tenantId)
+				.moduleDetails(moduleDetails)
+				.build();
+
+		return MdmsCriteriaReq.builder()
+				.requestInfo(requestInfo)
+				.mdmsCriteria(mdmsCriteria)
+				.build();
+	}
+
+	/**
+	 * prepares Master Data request
+	 *
+	 * @param tenantId
+	 * @param moduleName
+	 * @param masterNameList
+	 * @param requestInfo
+	 * @return
+	 */
+	public Map<String, Map<String, JSONArray>> fetchMdmsDataWithActiveFilter(RequestInfo requestInfo, String tenantId,
+															 String moduleName, List<String> masterNameList) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V1EndPoint());
+		MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequestWithActiveFilter(requestInfo, tenantId, moduleName, masterNameList);
+		Object response = new HashMap<>();
+		MdmsResponse mdmsResponse = new MdmsResponse();
+		try {
+			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
+
+		log.info(mdmsResponse.toString());
+		return mdmsResponse.getMdmsRes();
+	}
+
+	public MdmsCriteriaReq prepareMdMsRequestWithActiveFilter(RequestInfo requestInfo, String tenantId, String moduleName,
+											  List<String> masterNames) {
+
+		List<MasterDetail> masterDetails = new ArrayList<>();
+		masterNames.forEach(name -> {
+			masterDetails.add(MasterDetail.builder().name(name).filter(MDMS_COMMON_ACTIVE_FILTER).build());
+		});
+
+		ModuleDetail moduleDetail = ModuleDetail.builder()
+				.moduleName(moduleName)
+				.masterDetails(masterDetails)
+				.build();
+
+		List<ModuleDetail> moduleDetails = new ArrayList<>();
+		moduleDetails.add(moduleDetail);
+
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
+				.tenantId(tenantId)
+				.moduleDetails(moduleDetails)
+				.build();
+
+		return MdmsCriteriaReq.builder()
+				.requestInfo(requestInfo)
+				.mdmsCriteria(mdmsCriteria)
+				.build();
+	}
+
+	/**
+	 * Fetch data from mdms-v2
+	 * @param searchRequest
+	 * @return
+	 */
+	public MdmsResponseV2 fetchFromMDMSV2V2(Object searchRequest) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsV2Host()).append(config.getMdmsV2V2EndPoint());
+		Object response = new HashMap<>();
+		MdmsResponseV2 mdmsResponse = new MdmsResponseV2();
+		try {
+			response = restTemplate.postForObject(uri.toString(), searchRequest, Map.class);
+			mdmsResponse = mapper.convertValue(response, MdmsResponseV2.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
+		return mdmsResponse;
+	}
+}

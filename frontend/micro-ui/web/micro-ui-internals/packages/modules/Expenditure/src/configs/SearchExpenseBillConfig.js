@@ -1,5 +1,5 @@
 export const SearchExpenseBillConfig = {
-    "tenantId": "pg",
+    "tenantId": "od",
     "moduleName": "commonMuktaUiConfig",
     "SearchExpenseBillConfig":[
         {
@@ -50,9 +50,10 @@ export const SearchExpenseBillConfig = {
                                     type: "ward",
                                     optionsKey: "i18nKey",
                                     allowMultiSelect: false,
-                                    optionsCustomStyle : {
-                                        top : "2.3rem"
-                                    }
+                                    // optionsCustomStyle : {
+                                    //     top : "2.3rem"
+                                    // },
+                                    isDropdownWithChip:true,
                                 }
                             },
                             {
@@ -63,9 +64,9 @@ export const SearchExpenseBillConfig = {
                                 populators: {
                                   name: "billType",
                                   optionsKey: "name",
-                                  optionsCustomStyle : {
-                                    top : "2.3rem"
-                                  },
+                                //   optionsCustomStyle : {
+                                //     top : "2.3rem"
+                                //   },
                                   mdmsConfig: {
                                     masterName: "BusinessService",
                                     moduleName: "expense",
@@ -106,9 +107,9 @@ export const SearchExpenseBillConfig = {
                                 isMandatory: false,
                                 disable: false,
                                 populators: {
-                                  optionsCustomStyle: {
-                                    top: "2.3rem",
-                                  },
+                                //   optionsCustomStyle: {
+                                //     top: "2.3rem",
+                                //   },
                                   name: "status",
                                   optionsKey: "i18nKey",
                                   allowMultiSelect: false,

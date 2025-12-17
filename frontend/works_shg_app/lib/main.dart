@@ -3,7 +3,9 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
-import 'package:digit_components/theme/digit_theme.dart';
+// import 'package:digit_components/theme/digit_theme.dart';
+import 'package:digit_ui_components/digit_components.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,11 +19,17 @@ import 'package:works_shg_app/blocs/attendance/individual_search.dart';
 import 'package:works_shg_app/blocs/attendance/search_projects/search_projects.dart';
 import 'package:works_shg_app/blocs/attendance/skills/skills_bloc.dart';
 import 'package:works_shg_app/blocs/auth/otp_bloc.dart';
+import 'package:works_shg_app/blocs/employee/emp_hrms/emp_hrms.dart';
+import 'package:works_shg_app/blocs/employee/mb/mb_check.dart';
+import 'package:works_shg_app/blocs/employee/mb/mb_crud.dart';
+import 'package:works_shg_app/blocs/employee/mb/project_type.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
 import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/blocs/my_bills/my_bills_inbox_bloc.dart';
+import 'package:works_shg_app/blocs/wage_seeker_registration/wage_seeker_locality_bloc.dart';
 import 'package:works_shg_app/blocs/work_orders/decline_work_order.dart';
+import 'package:works_shg_app/data/init_client.dart';
 import 'package:works_shg_app/data/repositories/attendance_mdms.dart';
 import 'package:works_shg_app/data/repositories/common_repository/common_repository.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
@@ -40,9 +48,14 @@ import 'blocs/attendance/attendance_hours_mdms.dart';
 import 'blocs/attendance/create_attendance_register.dart';
 import 'blocs/attendance/create_attendee.dart';
 import 'blocs/attendance/de_enroll_attendee.dart';
+import 'blocs/attendance/individual_wms_search.dart';
 import 'blocs/attendance/muster_submission_mdms.dart';
 import 'blocs/attendance/search_projects/search_individual_project.dart';
 import 'blocs/auth/auth.dart';
+import 'blocs/employee/estimate/estimate.dart';
+import 'blocs/employee/mb/mb_detail_view.dart';
+import 'blocs/employee/mb/measurement_book.dart';
+import 'blocs/employee/work_order/workorder_book.dart';
 import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
 import 'blocs/muster_rolls/from_to_date_search_muster_roll.dart';
@@ -54,6 +67,10 @@ import 'blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'blocs/my_bills/search_my_bills.dart';
 import 'blocs/organisation/org_financial_bloc.dart';
 import 'blocs/organisation/org_search_bloc.dart';
+import 'blocs/time_extension_request/create_time_extension_request.dart';
+import 'blocs/time_extension_request/my_service_requests_bloc.dart';
+import 'blocs/time_extension_request/service_requests_config.dart';
+import 'blocs/time_extension_request/valid_time_extension.dart';
 import 'blocs/user/user_search.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_bank_create.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_create_bloc.dart';
@@ -71,6 +88,7 @@ import 'data/repositories/remote/mdms.dart';
 import 'models/user_details/user_details_model.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
   setPathUrlStrategy();
   if (kIsWeb && !kDebugMode) {
@@ -88,7 +106,11 @@ void main() async {
       // exit(1); /// to close the app smoothly
     };
 
-    WidgetsFlutterBinding.ensureInitialized();
+    // initialize the hiveBox database
+    await CommonMethods.initilizeHiveBox();
+    
+   
+
     if (!kIsWeb) {
       await FlutterDownloader.initialize(
           debug: true // optional: set false to disable printing logs to console
@@ -96,7 +118,10 @@ void main() async {
     }
 
     await CommonMethods.fetchPackageInfo();
-    runApp(MainApplication(appRouter: AppRouter()));
+    runApp(MainApplication(
+      appRouter: AppRouter(),
+      
+    ));
   }, (Object error, StackTrace stack) {
     if (kDebugMode) {
       print(error.toString());
@@ -106,7 +131,11 @@ void main() async {
 }
 
 class MainApplication extends StatefulWidget {
-  const MainApplication({super.key, required AppRouter appRouter});
+  
+  const MainApplication({
+    super.key,
+    required AppRouter appRouter,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -130,8 +159,7 @@ class _MainApplicationState extends State<MainApplication> {
     super.dispose();
   }
 
-  static void downloadCallback(
-      String id, DownloadTaskStatus status, int progress) {
+  static void downloadCallback(String id, int status, int progress) {
     final SendPort send =
         IsolateNameServer.lookupPortByName('downloader_send_port')!;
 
@@ -168,17 +196,49 @@ class _MainApplicationState extends State<MainApplication> {
   @override
   Widget build(BuildContext context) {
     Client client = Client();
+    InitClient initClient = InitClient();
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context)=>ProjectTypeBloc()),
+         BlocProvider(create:(context)=>MeasurementCheckBloc()),
+
+        BlocProvider(create:(context)=>EstimateBloc()),
+        BlocProvider(
+          create: (context) => EmpHRMSBloc(),
+        ),
+        BlocProvider(
+          create: (context) => MeasurementCrudBloc(),
+        ),
+        BlocProvider(
+          create: (context) => WorkOrderInboxBloc(),
+        ),
+        BlocProvider(
+          create: (context) => MeasurementDetailBloc(),
+        ),
+        BlocProvider(
+          create: (context) => MeasurementInboxBloc(),
+        ),
+        // BlocProvider(
+        //     create: (context) => LocalizationBloc(
+        //           const LocalizationState.initial(),
+        //           LocalizationRepository(initClient.init()),
+        //         )),
+        
+        BlocProvider(
+            create: (context) => LocalizationBloc(
+                  const LocalizationState.initial(),
+                  LocalizationRepository(initClient.init()),
+                )),
         BlocProvider(
           create: (context) => AppInitializationBloc(
             const AppInitializationState(),
-            MdmsRepository(client.init()),
-          )..add(const AppInitializationSetupEvent(selectedLang: 'en_IN')),
+            MdmsRepository(initClient.init()),
+            BlocProvider.of<LocalizationBloc>(context),
+          )..add(  AppInitializationSetupEvent(selectedLang: LanguageEnum.en_IN.name)),
           lazy: false,
         ),
-        BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => AuthBloc( BlocProvider.of<AppInitializationBloc>(context))),
         BlocProvider(create: (context) => OTPBloc()),
         BlocProvider(create: (context) => HomeScreenBloc()),
         BlocProvider(create: (context) => AppVersionBloc()),
@@ -186,9 +246,10 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(
           create: (_) => UserSearchBloc()..add(const SearchUserEvent()),
         ),
-        BlocProvider(
+        
+         BlocProvider(
           create: (_) =>
-              MusterRollSearchBloc()..add(const SearchMusterRollEvent()),
+              MusterRollSearchBloc(),
         ),
         BlocProvider(
           create: (_) => AttendanceProjectsSearchBloc()
@@ -219,12 +280,17 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => SearchIndividualWorkBloc()),
         BlocProvider(create: (context) => WageSeekerBloc()),
         BlocProvider(create: (context) => WageSeekerLocationBloc()),
+        BlocProvider(create: (context) => WageSeekerLocalityBloc()),
         BlocProvider(create: (context) => WageSeekerCreateBloc()),
         BlocProvider(create: (context) => WageSeekerBankCreateBloc()),
         BlocProvider(create: (context) => ORGSearchBloc()),
         BlocProvider(create: (context) => ORGFinanceBloc()),
         BlocProvider(create: (context) => MusterRollPDFBloc()),
         BlocProvider(create: (context) => WorkOrderPDFBloc()),
+        BlocProvider(create: (context) => ValidTimeExtCreationsSearchBloc()),
+        BlocProvider(create: (context) => CreateTimeExtensionRequestBloc()),
+        BlocProvider(create: (context) => ServiceRequestsConfigBloc()),
+        BlocProvider(create: (context) => SearchMyServiceRequestsBloc()),
         BlocProvider(
             create: (context) => WageSeekerMDMSBloc(
                 const WageSeekerMDMSState.initial(),
@@ -233,6 +299,9 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(
             create: (context) =>
                 IndividualSearchBloc(const IndividualSearchState.initial())),
+        BlocProvider(
+            create: (context) => IndividualWMSSearchBloc(
+                const IndividualWMSSearchState.initial())),
         BlocProvider(
             create: (context) => SkillsBloc(const SkillsBlocState.initial(),
                 AttendanceMDMSRepository(client.init()))),
@@ -250,81 +319,49 @@ class _MainApplicationState extends State<MainApplication> {
                 MdmsRepository(client.init()))),
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
-          builder: (context, appInitState) {
-        return appInitState.isInitializationCompleted &&
-                appInitState.initMdmsModel != null
-            ? BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-                return BlocProvider(
-                    create: (appInitState.initMdmsModel != null &&
-                            appInitState
-                                    .stateInfoListModel?.localizationModules !=
-                                null)
-                        ? (context) => LocalizationBloc(
-                              const LocalizationState.initial(),
-                              LocalizationRepository(client.init()),
-                            )..add(LocalizationEvent.onLoadLocalization(
-                                module:
-                                    'rainmaker-common,rainmaker-common-masters,rainmaker-${appInitState.stateInfoListModel?.code}',
-                                tenantId: appInitState.initMdmsModel!.tenant!
-                                    .tenantListModel!.first.code
-                                    .toString(),
-                                locale: appInitState.digitRowCardItems!
-                                    .firstWhere((e) => e.isSelected)
-                                    .value,
-                              ))
-                        : (context) => LocalizationBloc(
-                              const LocalizationState.initial(),
-                              LocalizationRepository(client.init()),
-                            ),
-                    child: MaterialApp.router(
-                      title: 'MUKTA CBO App',
-                      supportedLocales: appInitState.initMdmsModel != null
-                          ? appInitState.digitRowCardItems!.map((e) {
-                              final results = e.value.split('_');
+        builder: (context, appInitState) {
+          return BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, authState) {
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                title: 'MUKTASoft App',
+                supportedLocales: appInitState.initMdmsModel != null
+                    ? appInitState.digitRowCardItems!.map((e) {
+                        final results = e.value.split('_');
 
-                              return results.isNotEmpty
-                                  ? Locale(results.first, results.last)
-                                  : const Locale('en', 'IN');
-                            })
-                          : [],
-                      locale: const Locale('en', 'IN'),
-                      localizationsDelegates: const [
-                        AppLocalizations.delegate,
-                        GlobalWidgetsLocalizations.delegate,
-                        GlobalCupertinoLocalizations.delegate,
-                        GlobalMaterialLocalizations.delegate,
-                      ],
-                      localeResolutionCallback: (locale, supportedLocales) {
-                        for (var supportedLocaleLanguage in supportedLocales) {
-                          if (supportedLocaleLanguage.languageCode ==
-                                  locale?.languageCode &&
-                              supportedLocaleLanguage.countryCode ==
-                                  locale?.countryCode) {
-                            return supportedLocaleLanguage;
-                          }
-                        }
-                        return supportedLocales.first;
-                      },
-                      theme: DigitTheme.instance.mobileTheme,
-                      scaffoldMessengerKey: scaffoldMessengerKey,
-                      routeInformationParser: appRouter.defaultRouteParser(),
-                      routerDelegate: AutoRouterDelegate.declarative(
-                        appRouter,
-                        navigatorObservers: () => [AppRouterObserver()],
-                        routes: (handler) => [
-                          authState.maybeWhen(
-                              initial: () =>
-                                  const UnauthenticatedRouteWrapper(),
-                              loaded: (UserDetailsModel? userDetailsModel,
-                                      String? accessToken) =>
-                                  const AuthenticatedRouteWrapper(),
-                              orElse: () => const UnauthenticatedRouteWrapper())
-                        ],
-                      ),
-                    ));
-              })
-            : Container();
-      }),
+                        return results.isNotEmpty
+                            ? Locale(results.first, results.last)
+                            : const Locale('en', 'IN');
+                      })
+                    : [const Locale('en', 'IN')],
+                locale: const Locale('en', 'IN'),
+                localizationsDelegates: [
+                  AppLocalizations.getDelegate(),
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                ],
+                //theme: DigitTheme.instance.mobileTheme,
+                theme: DigitExtendedTheme.instance.getTheme(context),
+                scaffoldMessengerKey: scaffoldMessengerKey,
+                routeInformationParser: appRouter.defaultRouteParser(),
+                routerDelegate: AutoRouterDelegate.declarative(
+                  appRouter,
+                  navigatorObservers: () => [AppRouterObserver()],
+                  routes: (handler) => [
+                    authState.maybeWhen(
+                        initial: () => const UnauthenticatedWrapperRoute(),
+                        loaded: (UserDetailsModel? userDetailsModel,
+                                String? accessToken, RoleType? roleType) =>
+                            const AuthenticatedWrapperRoute(),
+                        orElse: () => const UnauthenticatedWrapperRoute())
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

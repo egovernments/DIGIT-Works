@@ -2,8 +2,8 @@ package org.egov.works.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.web.models.Document;
 import org.egov.works.web.models.Status;
@@ -25,8 +25,12 @@ import java.util.Map;
 @Slf4j
 public class DocumentRowMapper implements ResultSetExtractor<List<Document>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public DocumentRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Document> extractData(ResultSet rs) throws SQLException, DataAccessException {

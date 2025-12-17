@@ -12,7 +12,7 @@ part of 'muster_inbox_status_bloc.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$MusterInboxStatusMDMSEvent {
@@ -72,26 +72,28 @@ class _$MusterInboxStatusMDMSEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$MusterInboxStatusEventCopyWith<$Res> {
-  factory _$$MusterInboxStatusEventCopyWith(_$MusterInboxStatusEvent value,
-          $Res Function(_$MusterInboxStatusEvent) then) =
-      __$$MusterInboxStatusEventCopyWithImpl<$Res>;
+abstract class _$$MusterInboxStatusEventImplCopyWith<$Res> {
+  factory _$$MusterInboxStatusEventImplCopyWith(
+          _$MusterInboxStatusEventImpl value,
+          $Res Function(_$MusterInboxStatusEventImpl) then) =
+      __$$MusterInboxStatusEventImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$MusterInboxStatusEventCopyWithImpl<$Res>
+class __$$MusterInboxStatusEventImplCopyWithImpl<$Res>
     extends _$MusterInboxStatusMDMSEventCopyWithImpl<$Res,
-        _$MusterInboxStatusEvent>
-    implements _$$MusterInboxStatusEventCopyWith<$Res> {
-  __$$MusterInboxStatusEventCopyWithImpl(_$MusterInboxStatusEvent _value,
-      $Res Function(_$MusterInboxStatusEvent) _then)
+        _$MusterInboxStatusEventImpl>
+    implements _$$MusterInboxStatusEventImplCopyWith<$Res> {
+  __$$MusterInboxStatusEventImplCopyWithImpl(
+      _$MusterInboxStatusEventImpl _value,
+      $Res Function(_$MusterInboxStatusEventImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$MusterInboxStatusEvent implements MusterInboxStatusEvent {
-  const _$MusterInboxStatusEvent();
+class _$MusterInboxStatusEventImpl implements MusterInboxStatusEvent {
+  const _$MusterInboxStatusEventImpl();
 
   @override
   String toString() {
@@ -99,9 +101,10 @@ class _$MusterInboxStatusEvent implements MusterInboxStatusEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$MusterInboxStatusEvent);
+        (other.runtimeType == runtimeType &&
+            other is _$MusterInboxStatusEventImpl);
   }
 
   @override
@@ -166,7 +169,7 @@ class _$MusterInboxStatusEvent implements MusterInboxStatusEvent {
 }
 
 abstract class MusterInboxStatusEvent implements MusterInboxStatusMDMSEvent {
-  const factory MusterInboxStatusEvent() = _$MusterInboxStatusEvent;
+  const factory MusterInboxStatusEvent() = _$MusterInboxStatusEventImpl;
 }
 
 /// @nodoc
@@ -243,24 +246,25 @@ class _$MusterInboxStatusStateCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial {
+  const _$InitialImpl() : super._();
 
   @override
   String toString() {
@@ -268,9 +272,9 @@ class _$_Initial extends _Initial {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -352,29 +356,30 @@ class _$_Initial extends _Initial {
 }
 
 abstract class _Initial extends MusterInboxStatusState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString() {
@@ -382,9 +387,9 @@ class _$_Loading extends _Loading {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -466,23 +471,25 @@ class _$_Loading extends _Loading {
 }
 
 abstract class _Loading extends MusterInboxStatusState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String? sentBackToCBOCode});
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -490,7 +497,7 @@ class __$$_LoadedCopyWithImpl<$Res>
   $Res call({
     Object? sentBackToCBOCode = freezed,
   }) {
-    return _then(_$_Loaded(
+    return _then(_$LoadedImpl(
       freezed == sentBackToCBOCode
           ? _value.sentBackToCBOCode
           : sentBackToCBOCode // ignore: cast_nullable_to_non_nullable
@@ -501,8 +508,8 @@ class __$$_LoadedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded(this.sentBackToCBOCode) : super._();
+class _$LoadedImpl extends _Loaded {
+  const _$LoadedImpl(this.sentBackToCBOCode) : super._();
 
   @override
   final String? sentBackToCBOCode;
@@ -513,10 +520,10 @@ class _$_Loaded extends _Loaded {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
+            other is _$LoadedImpl &&
             (identical(other.sentBackToCBOCode, sentBackToCBOCode) ||
                 other.sentBackToCBOCode == sentBackToCBOCode));
   }
@@ -527,8 +534,8 @@ class _$_Loaded extends _Loaded {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -606,28 +613,30 @@ class _$_Loaded extends _Loaded {
 }
 
 abstract class _Loaded extends MusterInboxStatusState {
-  const factory _Loaded(final String? sentBackToCBOCode) = _$_Loaded;
+  const factory _Loaded(final String? sentBackToCBOCode) = _$LoadedImpl;
   const _Loaded._() : super._();
 
   String? get sentBackToCBOCode;
   @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String? error});
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -635,7 +644,7 @@ class __$$_ErrorCopyWithImpl<$Res>
   $Res call({
     Object? error = freezed,
   }) {
-    return _then(_$_Error(
+    return _then(_$ErrorImpl(
       freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -646,8 +655,8 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error {
-  const _$_Error(this.error) : super._();
+class _$ErrorImpl extends _Error {
+  const _$ErrorImpl(this.error) : super._();
 
   @override
   final String? error;
@@ -658,10 +667,10 @@ class _$_Error extends _Error {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Error &&
+            other is _$ErrorImpl &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -671,8 +680,8 @@ class _$_Error extends _Error {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
-      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -750,11 +759,11 @@ class _$_Error extends _Error {
 }
 
 abstract class _Error extends MusterInboxStatusState {
-  const factory _Error(final String? error) = _$_Error;
+  const factory _Error(final String? error) = _$ErrorImpl;
   const _Error._() : super._();
 
   String? get error;
   @JsonKey(ignore: true)
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

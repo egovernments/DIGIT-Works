@@ -1,0 +1,1 @@
+ALTER TABLE eg_wms_contract_line_items ADD COLUMN contract_line_item_ref character varying(256);

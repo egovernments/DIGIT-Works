@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:works_shg_app/models/skills/skills.dart';
 import 'package:works_shg_app/services/urls.dart';
 
 import '../../data/repositories/common_repository/common_repository.dart';
@@ -39,7 +40,6 @@ class WageSeekerMDMSBloc
               "moduleName": "common-masters",
               "masterDetails": [
                 {"name": "GenderType", "filter": "[?(@.active==true)]"},
-                {"name": "WageSeekerSkills", "filter": "[?(@.active==true)]"},
                 {"name": "Relationship", "filter": "[?(@.active==true)]"},
                 {"name": "SocialCategory", "filter": "[?(@.active==true)]"},
               ],
@@ -60,11 +60,32 @@ class WageSeekerMDMSBloc
               ],
             }
           ]);
+//{"name": "WageSeekerSkills", "filter": "[?(@.active==true)]"},
+      List<WageSeekerSkills> skillResult = await mdmsRepository.skillsMDMS(
+          apiEndPoint: Urls.initServices.mdmsSkill,
+          tenantId: GlobalVariables
+              .globalConfigObject!.globalConfigs!.stateTenantId
+              .toString(),
+          moduleDetails: [
+            {
+              "moduleName": "WORKS-SOR",
+              "masterDetails": [
+                {
+                  "name": "SOR",
+                  "filter": "[?(@.sorType =~ /.*L.*/i)]"
+                },
+              ],
+            }
+          ]);
 
-      if (result != null) {
-        emit(WageSeekerMDMSState.loaded(result));
+      final updatedCommonMDMS = result.copyWith(
+          commonMDMS:
+              result.commonMDMS?.copyWith(wageSeekerSkills: skillResult));
+
+      if (updatedCommonMDMS != null) {
+        emit(WageSeekerMDMSState.loaded(updatedCommonMDMS));
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(WageSeekerMDMSState.error(e.response?.data['Errors'][0]['code']));
     }
   }

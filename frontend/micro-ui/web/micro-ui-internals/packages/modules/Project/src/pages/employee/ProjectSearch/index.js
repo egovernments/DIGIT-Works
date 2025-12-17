@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
+import { Header, InboxSearchComposer, Loader} from "@egovernments/digit-ui-react-components";
 import { useHistory, useLocation } from "react-router-dom";
 // import searchConfigMUKTA from "../../../configs/searchConfigMUKTA";
+import { Button } from "@egovernments/digit-ui-components";
 
 const ProjectSearch = () => {
   const { t } = useTranslation();
@@ -55,15 +56,15 @@ const ProjectSearch = () => {
         <Header className="works-header-search">{t(configs?.label)}</Header>
         {Digit.Utils.didEmployeeHasRole(configs?.actionRole) && (
           <Button
-            label={t(configs?.actionLabel)}
-            variation="secondary"
-            icon={<AddFilled style={{height : "20px", width : "20px"}}/>}
-            onButtonClick={() => {
-              history.push(`/${window?.contextPath}/employee/${configs?.actionLink}`);
-            }}
-            type="button"
-          />
-        )}
+          label={t(configs?.actionLabel)}
+          variation="secondary"
+          icon="Add"
+          onClick={() => {
+            history.push(`/${window?.contextPath}/employee/${configs?.actionLink}`);
+          }}
+          type="button"
+        />
+      )}
       </div>
       <div className="inbox-search-wrapper">
         <InboxSearchComposer configs={configs}></InboxSearchComposer>

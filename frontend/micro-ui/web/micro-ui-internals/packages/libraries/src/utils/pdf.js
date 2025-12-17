@@ -1051,3 +1051,15 @@ export const downloadEgovPDF = async (
     downloadPdf(new Blob([response.data], { type: "application/pdf" }), fileName);
   }
 };
+
+export const downloadWorksPDF = async (
+  pdfRoute,
+  queryParams={},
+  fileName="application.pdf"
+) => {
+  const response =await CustomService.getResponse({ url:`/works-pdf/download/${pdfRoute}`, params:queryParams, useCache:false,setTimeParam:false ,userDownload:true})
+  const responseStatus = parseInt(response.status, 10);
+  if (responseStatus === 201 || responseStatus === 200) {
+    downloadPdf(new Blob([response.data], { type: "application/pdf" }), fileName);
+  }
+};

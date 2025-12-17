@@ -12,6 +12,7 @@ const assetsProxy = createProxyMiddleware({
   changeOrigin: true,
   secure: false,
 });
+
 module.exports = function (app) {
   [
     "/access/v1/actions/mdms",
@@ -41,6 +42,7 @@ module.exports = function (app) {
     "/egov-searcher/bill-genie/waterbills/_get",
     "/egov-searcher/bill-genie/seweragebills/_get",
     "/egov-pdf/download/UC/mcollect-challan",
+    "/egov-pdf/",
     "/egov-hrms/employees/_count",
     "/tl-services/v1/_create",
     "/tl-services/v1/_search",
@@ -78,6 +80,7 @@ module.exports = function (app) {
     "/expensebilling",
     "/bankaccount-service",
     "/wms",
+    "/ifms",
     "/wms/estimate/_search",
     "/expense-calculator/v1/_estimate",
     "/expense/bill",
@@ -86,7 +89,27 @@ module.exports = function (app) {
     "/egov-pdf/bill/_search",
     "/expense-calculator/v1/_search",
     "/expense/payment/",
-    "/expense-calculator/"
+    "/expense-calculator/",
+    "/measurement-service/",
+    "/mukta-services/",
+    "/mdms-v2/",
+    "/egov-idgen/",
+    "/rate-analysis/v1/_calculate",
+    "/mukta-ifix-adapter",
+    "/ifms-adapter",
+    "/boundary-service",
+    
+    //look here
+    "/statements/v1/analysis/_create",
+    "/statements/v1/analysis/_search",
+    "/works-pdf/download/analysisStatement/analysis-statement",
+    //added
+    "/works-pdf/download/utilizationStatement/utilization-statement",
+    "/statements/v1/utilization/_search",
+    "/statements/v1/utilization/_create",
+    "/rate-analysis/v1/scheduler/_search",
+    "/mdms-v2/v2/_search",
+    "/rate-analysis/v1/scheduler/_create"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

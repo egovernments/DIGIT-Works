@@ -1,6 +1,6 @@
 import {
   BreakLine,
-  Card,
+  // Card,
   CardSectionHeader,
   CardSubHeader,
   CheckPoint,
@@ -11,8 +11,14 @@ import {
   Row,
   StatusTable,
   Table,
-  WorkflowTimeline
+  WorkflowTimeline,
+  CitizenInfoLabel
 } from "@egovernments/digit-ui-react-components";
+import {
+  Card,
+  TextBlock,
+  Button
+} from "@egovernments/digit-ui-components";
 import { values } from "lodash";
 import React, { Fragment, useCallback, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,6 +50,7 @@ import MustorRollDetailsTable from "../../../Expenditure/src/components/ViewBill
 import StatusTableWithRadio from "../../../Expenditure/src/components/ViewBill/StatusTableWithRadio";
 import ShowTotalValue from "../../../Expenditure/src/components/ViewBill/ShowTotalValue";
 import SkillDetails from "./SkillDetails";
+import MBDetailes from "../../../Expenditure/src/components/CreateBill/MBDetailes";
 import Photos from "./Photos";
 
 
@@ -66,7 +73,8 @@ function ApplicationDetailsContent({
   tenantId,
   businessService,
   customClass,
-  setAttendanceError
+  setAttendanceError,
+  timeExtensionCreate=undefined
 }) {
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
@@ -172,6 +180,9 @@ function ApplicationDetailsContent({
         marginBottom:"1rem"
       }
     }
+    else if(tab?.type==="statusColor"){
+      return tab?.style
+    }
     else {
       return {};
     }
@@ -183,6 +194,7 @@ function ApplicationDetailsContent({
         width:"100%"
       }
     }
+    
     else {
       return {};
     }
@@ -211,7 +223,8 @@ function ApplicationDetailsContent({
       window.location.href.includes("employee/expenditure") 
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
-    } else if (checkLocation) {
+    } 
+    else if (checkLocation) {
       return { lineHeight: "19px", maxWidth: "600px", minWidth: "280px" };
     } else {
       return {};
@@ -222,7 +235,7 @@ function ApplicationDetailsContent({
     if (value?.skip) return value.value;
     else if (value?.isUnit) return value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("N/A");
     else if (value?.value === "Approved") return <span style={{"color":"#0B6623"}}>{ `${getTranslatedValues(value?.value, value?.isNotTranslated)}`}</span>
-    else if (value?.value === "Rejected") return <span style={{"color":"#FF0000"}}>{t(value?.value)}</span>
+    else if (value?.value === "Rejected") return <span style={{"color":"#B91900"}}>{t(value?.value)}</span>
     else return value?.value ? getTranslatedValues(value?.value, value?.isNotTranslated) : t("N/A");
   };
 
@@ -248,43 +261,70 @@ function ApplicationDetailsContent({
     return styles;
   };
 
+
   return (
-    <CollapseAndExpandGroups groupElements={applicationDetails?.CollapseConfig?.collapseAll} groupHeader={applicationDetails?.CollapseConfig?.groupHeader} headerLabel={applicationDetails?.CollapseConfig?.headerLabel} headerValue={applicationDetails?.CollapseConfig?.headerValue}>
-    <Card style={getCardStyles()} className={"employeeCard-override"}>
-      {isInfoLabel ? (
-        <InfoDetails
-          t={t}
-          userType={false}
-          infoBannerLabel={"CS_FILE_APPLICATION_INFO_LABEL"}
-          infoClickLable={"WS_CLICK_ON_LABEL"}
-          infoClickInfoLabel={getClickInfoDetails()}
-          infoClickInfoLabel1={getClickInfoDetails1()}
-        />
-      ) : null}
-      {applicationDetails?.applicationDetails?.map((detail, index) => (
-        <CollapseAndExpandGroups groupElements={detail?.expandAndCollapse?.groupComponents} groupHeader={detail?.expandAndCollapse?.groupHeader} headerLabel={detail?.expandAndCollapse?.headerLabel} headerValue={detail?.expandAndCollapse?.headerValue} customClass={detail?.expandAndCollapse?.customClass}>
-          <React.Fragment key={index}>
-          <div style={getMainDivStyles()} className={customClass}>
-            {index === 0 && !detail.asSectionHeader ? (
-              <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
-            ) : (
-              <React.Fragment>
-                <CardSectionHeader
-                  style={
-                    index == 0 && checkLocation
-                      ? { marginBottom: "16px", fontSize: "24px" } :
-                      (sectionHeadStyle ? sectionHeadStyle : { marginBottom: "16px", marginTop: "32px", fontSize: "24px" })
-                  }
-                >
-                  {isNocLocation ? `${t(detail.title)}` : t(detail.title)}
-                  
-                  {detail?.Component ? <detail.Component detail={detail} /> : null}
-                </CardSectionHeader>
-              </React.Fragment>
-            )}
-            {/* TODO, Later will move to classes */}
-            {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
-            {/* {detail?.isTable && (
+    <CollapseAndExpandGroups
+      groupElements={applicationDetails?.CollapseConfig?.collapseAll}
+      groupHeader={applicationDetails?.CollapseConfig?.groupHeader}
+      headerLabel={applicationDetails?.CollapseConfig?.headerLabel}
+      headerValue={applicationDetails?.CollapseConfig?.headerValue}
+    >
+      <Card style={getCardStyles()} className={"employeeCard-override"}>
+        {isInfoLabel ? (
+          <InfoDetails
+            t={t}
+            userType={false}
+            infoBannerLabel={"CS_FILE_APPLICATION_INFO_LABEL"}
+            infoClickLable={"WS_CLICK_ON_LABEL"}
+            infoClickInfoLabel={getClickInfoDetails()}
+            infoClickInfoLabel1={getClickInfoDetails1()}
+          />
+        ) : null}
+        {applicationDetails?.applicationDetails?.map((detail, index) => (
+          <CollapseAndExpandGroups
+            groupElements={detail?.expandAndCollapse?.groupComponents}
+            groupHeader={detail?.expandAndCollapse?.groupHeader}
+            headerLabel={detail?.expandAndCollapse?.headerLabel}
+            headerValue={detail?.expandAndCollapse?.headerValue}
+            customClass={detail?.expandAndCollapse?.customClass}
+          >
+            <React.Fragment key={index}>
+              <div style={detail.mainDivStyles ? detail.mainDivStyles : getMainDivStyles()} className={customClass}>
+                {index === 0 && !detail.asSectionHeader && detail?.title &&  detail?.title !== "" && detail?.title !== " "  ? (
+                  // <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail?.title)}</CardSubHeader>
+                  <TextBlock subHeader={t(detail?.title)} subHeaderClassName={"view-subheader"}></TextBlock>
+                ) : (
+                  ((detail?.title &&  detail?.title !=="" && detail?.title !== " ") || detail?.Component) && (
+                    <React.Fragment>
+                      <TextBlock
+                        subHeader={
+                          <>
+                            {isNocLocation ? `${t(detail?.title)}` : t(detail?.title)}
+                            {detail?.Component ? <detail.Component detail={detail} /> : null}
+                          </>
+                        }
+                        subHeaderClassName={`view-subheader`}
+                        style={sectionHeadStyle ? sectionHeadStyle : {}}
+                      ></TextBlock>
+                      {/* <CardSectionHeader
+                      style={
+                        index == 0 && checkLocation
+                          ? { marginBottom: "16px", fontSize: "24px" }
+                          : sectionHeadStyle
+                          ? sectionHeadStyle
+                          : { marginBottom: "16px", fontSize: "24px" }
+                      }
+                    >
+                      {isNocLocation ? `${t(detail.title)}` : t(detail.title)}
+
+                      {detail?.Component ? <detail.Component detail={detail} /> : null}
+                    </CardSectionHeader> */}
+                    </React.Fragment>
+                  )
+                )}
+                {/* TODO, Later will move to classes */}
+                {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
+                {/* {detail?.isTable && (
               <table style={{ tableLayout: "fixed", width: "100%", borderCollapse: "collapse" }}>
                 <tr style={{ textAlign: "left" }}>
                   {detail?.headers.map((header) => (
@@ -306,108 +346,149 @@ function ApplicationDetailsContent({
                 </tr>})}
               </table>
             )} */}
-            {detail?.isTable && <SubWorkTableDetails data={detail} />}
-
-            <StatusTable style={getTableStyles()}>
-              {detail?.title &&
-                !detail?.title.includes("NOC") &&
-                detail?.values?.map((value, index) => {
-                  if (value.map === true && value.value !== "N/A") {
-                    return <Row key={t(value.title)} label={t(value.title)} text={<img src={t(value.value)} alt="" privacy={value?.privacy} />} />;
-                  }
-                  if (value?.isLink == true) {
-                    return (
-                      <Row
-                        key={t(value.title)}
-                        label={
-                          window.location.href.includes("tl") || window.location.href.includes("ws") ? (
-                            <div style={{ width: "200%" }}>
-                              <Link to={value?.to}>
-                                <span className="link" style={{ color: "#F47738" }}>
-                                  {t(value?.title)}
-                                </span>
-                              </Link>
-                            </div>
-                          ) : isNocLocation || isBPALocation ? (
-                            `${t(value.title)}`
-                          ) : (
-                            t(value.title)
-                          )
-                        }
-                        text={
-                          <div>
-                            <Link to={value?.to}>
-                              <span className="link" style={{ color: "#F47738" }}>
-                                {value?.value}
-                              </span>
-                            </Link>
-                          </div>
-                        }
-                        last={index === detail?.values?.length - 1}
-                        caption={value.caption}
-                        className="border-none"
-                        rowContainerStyle={getRowStyles()}
-                      />
-                    );
-                  }
-                  return (
-                    <Row
-                      key={t(value.title)}
-                      label={t(value.title)}
-                      text={value?.isImages ? <ViewImages fileStoreIds={value?.fileStoreIds}
-                        tenantId={value?.tenant}
-                        onClick={() => { }} />: getTextValue(value)}
-                      last={index === detail?.values?.length - 1}
-                      caption={value.caption}
-                      className="border-none"
-                      /* privacy object set to the Row Component */
-                      privacy={value?.privacy}
-                      // TODO, Later will move to classes
-                      rowContainerStyle={getRowStyles(detail?.tab)}
-                      textStyle={getTextStyles(detail?.tab)}
-                      labelStyle={getLabelStyles(detail?.tab)}
-                    />
-                  );
-                })}
-            </StatusTable>
-          </div>
-          {detail?.additionalDetails?.statusWithRadio ? (
-            <StatusTableWithRadio
-              config={detail?.additionalDetails?.statusWithRadio?.radioConfig}
-              customClass={detail?.additionalDetails?.statusWithRadio?.customClass}
-            ></StatusTableWithRadio>
-          ) : null}
-          {detail?.additionalDetails?.dateRange ? (
-            <AttendanceDateRange
-              t={t}
-              values={localSearchParams?.range}
-              onFilterChange={handleDateRangeChange}
-              {...detail?.additionalDetails?.dateRange}
-            ></AttendanceDateRange>
-          ) : null}
-          {detail?.additionalDetails?.table
-            ? detail?.additionalDetails?.table?.weekTable?.tableHeader && (
-                <>
-                  <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
-                    {t(detail?.additionalDetails?.table?.weekTable?.tableHeader)}
-                  </CardSectionHeader>
-                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify} setSaveAttendanceState={setSaveAttendanceState} weekDates={detail?.additionalDetails?.table.weekTable.weekDates} workflowDetails={workflowDetails} setAttendanceError={setAttendanceError}/>}
-                </>
-              )
-            : null}
-            {detail?.additionalDetails?.table
-              ? detail?.additionalDetails?.table?.mustorRollTable && (
-                <MustorRollDetailsTable musterData={detail?.additionalDetails?.table?.tableData}></MustorRollDetailsTable>
-                )
-            : null}
-            {detail?.additionalDetails?.showTotal && <ShowTotalValue topBreakLine={detail?.additionalDetails?.showTotal?.topBreakLine} bottomBreakLine={detail?.additionalDetails?.showTotal?.bottomBreakLine} label={detail?.additionalDetails?.showTotal?.label} value={detail?.additionalDetails?.showTotal?.value}></ShowTotalValue>}
-          {detail?.additionalDetails?.inspectionReport && (
-            <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} />
-          )}
-          {applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending?.length > 0 && detail?.additionalDetails?.fiReport && (
-            <InspectionReport fiReport={applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending} />
-          )}
-          {/* {detail?.additionalDetails?.FIdocuments && detail?.additionalDetails?.values?.map((doc,index) => (
+                {detail?.isTable && <SubWorkTableDetails data={detail} />}
+                {detail?.isInfoLabel && (
+                  <CitizenInfoLabel
+                    info={detail?.infoHeader}
+                    text={detail?.infoText}
+                    fill={detail?.infoIconFill}zxx
+                    className={"doc-banner"}
+                    style={detail?.style}
+                    textStyle={detail?.textStyle}
+                  ></CitizenInfoLabel>
+                )}
+                {detail?.isMbDetails && <MBDetailes formdata={applicationDetails?.applicationDetails?.filter((ob) => ob?.isMbDetails)?.[0]} />}
+                <StatusTable style={getTableStyles()}>
+                  {detail?.title &&
+                    !detail?.title.includes("NOC") &&
+                    detail?.values?.map((value, index) => {
+                      if (value.map === true && value.value !== "N/A") {
+                        return (
+                          <Row key={t(value.title)} label={t(value.title)} text={<img src={t(value.value)} alt="" privacy={value?.privacy} />} />
+                        );
+                      }
+                      if (value?.isLink == true) {
+                        return (
+                          <Row
+                            key={t(value.title)}
+                            label={
+                              window.location.href.includes("tl") || window.location.href.includes("ws") ? (
+                                <div style={{ width: "200%" }}>
+                                  <Link to={value?.to}>
+                                    <span className="link" style={{ color: "#C84C0E" }}>
+                                      {t(value?.title)}
+                                    </span>
+                                  </Link>
+                                </div>
+                              ) : isNocLocation || isBPALocation ? (
+                                `${t(value.title)}`
+                              ) : (
+                                t(value.title)
+                              )
+                            }
+                            text={
+                              <div>
+                                <Link to={value?.to}>
+                                  <Button
+                                    className=""
+                                    iconFill=""
+                                    label={value?.value}
+                                    size="medium"
+                                    style={{ padding: "0px" }}
+                                    title=""
+                                    variation="link"
+                                  />
+                                </Link>
+                              </div>
+                            }
+                            last={index === detail?.values?.length - 1}
+                            caption={value.caption}
+                            className="border-none"
+                            rowContainerStyle={getRowStyles()}
+                          />
+                        );
+                      }
+                      return (
+                        <Row
+                          key={t(value.title)}
+                          label={t(value.title)}
+                          text={
+                            value?.isImages ? (
+                              <ViewImages fileStoreIds={value?.fileStoreIds} tenantId={value?.tenant} onClick={() => {}} />
+                            ) : (
+                              getTextValue(value)
+                            )
+                          }
+                          last={index === detail?.values?.length - 1}
+                          caption={value.caption}
+                          className="border-none"
+                          /* privacy object set to the Row Component */
+                          privacy={value?.privacy}
+                          // TODO, Later will move to classes
+                          rowContainerStyle={getRowStyles(detail?.tab)}
+                          textStyle={getTextStyles(value?.tab)}
+                          labelStyle={getLabelStyles(detail?.tab)}
+                          amountStyle={detail?.amountStyle}
+                        />
+                      );
+                    })}
+                </StatusTable>
+              </div>
+              {detail?.additionalDetails?.statusWithRadio ? (
+                <StatusTableWithRadio
+                  config={detail?.additionalDetails?.statusWithRadio?.radioConfig}
+                  customClass={detail?.additionalDetails?.statusWithRadio?.customClass}
+                ></StatusTableWithRadio>
+              ) : null}
+              {detail?.additionalDetails?.dateRange ? (
+                <AttendanceDateRange
+                  t={t}
+                  values={localSearchParams?.range}
+                  onFilterChange={handleDateRangeChange}
+                  {...detail?.additionalDetails?.dateRange}
+                ></AttendanceDateRange>
+              ) : null}
+              {detail?.additionalDetails?.table
+                ? detail?.additionalDetails?.table?.weekTable?.tableHeader && (
+                    <>
+                      {/* <CardSectionHeader style={{ marginBottom: "16px", fontSize: "24px" }}>
+                        {t(detail?.additionalDetails?.table?.weekTable?.tableHeader)}
+                      </CardSectionHeader> */}
+                      <TextBlock subHeader={t(detail?.additionalDetails?.table?.weekTable?.tableHeader)} subHeaderClassName={"view-subheader"}></TextBlock>
+                      {detail?.additionalDetails?.table.weekTable.renderTable && (
+                        <WeekAttendence
+                          state={state}
+                          dispatch={dispatch}
+                          modify={modify}
+                          setSaveAttendanceState={setSaveAttendanceState}
+                          weekDates={detail?.additionalDetails?.table.weekTable.weekDates}
+                          workflowDetails={workflowDetails}
+                          setAttendanceError={setAttendanceError}
+                        />
+                      )}
+                    </>
+                  )
+                : null}
+              {detail?.additionalDetails?.table
+                ? detail?.additionalDetails?.table?.mustorRollTable && (
+                    <MustorRollDetailsTable musterData={detail?.additionalDetails?.table?.tableData}></MustorRollDetailsTable>
+                  )
+                : null}
+              {detail?.additionalDetails?.showTotal && (
+                <ShowTotalValue
+                  topBreakLine={detail?.additionalDetails?.showTotal?.topBreakLine}
+                  bottomBreakLine={detail?.additionalDetails?.showTotal?.bottomBreakLine}
+                  label={detail?.additionalDetails?.showTotal?.label}
+                  value={detail?.additionalDetails?.showTotal?.value}
+                ></ShowTotalValue>
+              )}
+              {detail?.additionalDetails?.inspectionReport && (
+                <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} />
+              )}
+              {applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending?.length > 0 && detail?.additionalDetails?.fiReport && (
+                <InspectionReport fiReport={applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending} />
+              )}
+              {/* {detail?.additionalDetails?.FIdocuments && detail?.additionalDetails?.values?.map((doc,index) => (
             <div key={index}>
             {doc.isNotDuplicate && <div> 
              <StatusTable>
@@ -418,68 +499,70 @@ function ApplicationDetailsContent({
              </div>}
              </div>
           )) } */}
-          {detail?.additionalDetails?.floors && <PropertyFloors floors={detail?.additionalDetails?.floors} />}
-          {detail?.additionalDetails?.owners && <PropertyOwners owners={detail?.additionalDetails?.owners} />}
-          {detail?.additionalDetails?.units && <TLTradeUnits units={detail?.additionalDetails?.units} />}
-          {detail?.additionalDetails?.accessories && <TLTradeAccessories units={detail?.additionalDetails?.accessories} />}
-          {detail?.additionalDetails?.permissions && workflowDetails?.data?.nextActions?.length > 0 && (
-            <PermissionCheck applicationData={applicationDetails?.applicationData} t={t} permissions={detail?.additionalDetails?.permissions} />
-          )}
-          {detail?.additionalDetails?.obpsDocuments && (
-            <BPADocuments
-              t={t}
-              applicationData={applicationDetails?.applicationData}
-              docs={detail.additionalDetails.obpsDocuments}
-              bpaActionsDetails={workflowDetails}
-            />
-          )}
-          {detail?.additionalDetails?.noc && (
-            <NOCDocuments
-              t={t}
-              isNoc={true}
-              NOCdata={detail.values}
-              applicationData={applicationDetails?.applicationData}
-              docs={detail.additionalDetails.noc}
-              noc={detail.additionalDetails?.data}
-              bpaActionsDetails={workflowDetails}
-            />
-          )}
-          {detail?.additionalDetails?.scruntinyDetails && <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} />}
-          {detail?.additionalDetails?.buildingExtractionDetails && <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} />}
-          {detail?.additionalDetails?.subOccupancyTableDetails && (
-            <SubOccupancyTable edcrDetails={detail?.additionalDetails} applicationData={applicationDetails?.applicationData} />
-          )}
-          {detail?.additionalDetails?.documentsWithUrl && <DocumentsPreview documents={detail?.additionalDetails?.documentsWithUrl} />}
-          {detail?.additionalDetails?.documents && <PropertyDocuments documents={detail?.additionalDetails?.documents} />}
-          {detail?.additionalDetails?.taxHeadEstimatesCalculation && (
-            <PropertyEstimates taxHeadEstimatesCalculation={detail?.additionalDetails?.taxHeadEstimatesCalculation} />
-          )}
-          {/* {detail?.isWaterConnectionDetails && <WSAdditonalDetails wsAdditionalDetails={detail} oldValue={oldValue} />} */}
-          {detail?.additionalDetails?.redirectUrl && (
-            <div style={{ fontSize: "16px", lineHeight: "24px", fontWeight: "400", padding: "10px 0px" }}>
-              <Link to={detail?.additionalDetails?.redirectUrl?.url}>
-                <span className="link" style={{ color: "#F47738" }}>
-                  {detail?.additionalDetails?.redirectUrl?.title}
-                </span>
-              </Link>
-            </div>
-          )}
-          {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
-          {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
-          {detail?.additionalDetails?.skills  &&  <SkillDetails data={detail?.additionalDetails?.skills} />}
-          {detail?.additionalDetails?.photo  &&  <Photos data={detail?.additionalDetails?.photo} OpenImage={OpenImage}/>}
-        </React.Fragment>
-        </CollapseAndExpandGroups>
-      ))}
-      {showTimeLine && <WorkflowTimeline 
-        businessService={businessService} 
-        applicationNo={applicationNo} 
-        tenantId={tenantId} 
-        timelineStatusPrefix={timelineStatusPrefix}
-        statusAttribute={statusAttribute} 
+              {detail?.additionalDetails?.floors && <PropertyFloors floors={detail?.additionalDetails?.floors} />}
+              {detail?.additionalDetails?.owners && <PropertyOwners owners={detail?.additionalDetails?.owners} />}
+              {detail?.additionalDetails?.units && <TLTradeUnits units={detail?.additionalDetails?.units} />}
+              {detail?.additionalDetails?.accessories && <TLTradeAccessories units={detail?.additionalDetails?.accessories} />}
+              {detail?.additionalDetails?.permissions && workflowDetails?.data?.nextActions?.length > 0 && (
+                <PermissionCheck applicationData={applicationDetails?.applicationData} t={t} permissions={detail?.additionalDetails?.permissions} />
+              )}
+              {detail?.additionalDetails?.obpsDocuments && (
+                <BPADocuments
+                  t={t}
+                  applicationData={applicationDetails?.applicationData}
+                  docs={detail.additionalDetails.obpsDocuments}
+                  bpaActionsDetails={workflowDetails}
+                />
+              )}
+              {detail?.additionalDetails?.noc && (
+                <NOCDocuments
+                  t={t}
+                  isNoc={true}
+                  NOCdata={detail.values}
+                  applicationData={applicationDetails?.applicationData}
+                  docs={detail.additionalDetails.noc}
+                  noc={detail.additionalDetails?.data}
+                  bpaActionsDetails={workflowDetails}
+                />
+              )}
+              {detail?.additionalDetails?.scruntinyDetails && <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} />}
+              {detail?.additionalDetails?.buildingExtractionDetails && <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} />}
+              {detail?.additionalDetails?.subOccupancyTableDetails && (
+                <SubOccupancyTable edcrDetails={detail?.additionalDetails} applicationData={applicationDetails?.applicationData} />
+              )}
+              {detail?.additionalDetails?.documentsWithUrl && <DocumentsPreview documents={detail?.additionalDetails?.documentsWithUrl} />}
+              {detail?.additionalDetails?.documents && <PropertyDocuments documents={detail?.additionalDetails?.documents} />}
+              {detail?.additionalDetails?.taxHeadEstimatesCalculation && (
+                <PropertyEstimates taxHeadEstimatesCalculation={detail?.additionalDetails?.taxHeadEstimatesCalculation} />
+              )}
+              {/* {detail?.isWaterConnectionDetails && <WSAdditonalDetails wsAdditionalDetails={detail} oldValue={oldValue} />} */}
+              {detail?.additionalDetails?.redirectUrl && (
+                <div style={{ fontSize: "16px", lineHeight: "24px", fontWeight: "400", padding: "10px 0px" }}>
+                  <Link to={detail?.additionalDetails?.redirectUrl?.url}>
+                    <span className="link" style={{ color: "#C84C0E" }}>
+                      {detail?.additionalDetails?.redirectUrl?.title}
+                    </span>
+                  </Link>
+                </div>
+              )}
+              {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
+              {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
+              {detail?.additionalDetails?.skills && <SkillDetails data={detail?.additionalDetails?.skills} />}
+              {detail?.additionalDetails?.photo && <Photos data={detail?.additionalDetails?.photo} OpenImage={OpenImage} />}
+              {timeExtensionCreate && timeExtensionCreate.getTimeExtensionJSX()}
+            </React.Fragment>
+          </CollapseAndExpandGroups>
+        ))}
+        {showTimeLine && (
+          <WorkflowTimeline
+            businessService={businessService}
+            applicationNo={applicationNo}
+            tenantId={tenantId}
+            timelineStatusPrefix={timelineStatusPrefix}
+            statusAttribute={statusAttribute}
           />
-        }
-    </Card>
+        )}
+      </Card>
     </CollapseAndExpandGroups>
   );
 }

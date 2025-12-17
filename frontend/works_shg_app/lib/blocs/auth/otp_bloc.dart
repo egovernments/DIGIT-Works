@@ -34,7 +34,7 @@ class OTPBloc extends Bloc<OTPBlocEvent, OTPBlocState> {
         }
       });
       emit(const OTPBlocState.loaded());
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(const OTPBlocState.error());
     }
   }

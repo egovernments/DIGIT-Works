@@ -46,7 +46,7 @@ const RegisterWageSeeker = () => {
   return (
     <React.Fragment>
       <div className={"employee-main-application-details"}>
-        <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+        <div className={"employee-application-details"} style={{ marginBottom: "24px" }}>
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("MASTERS_CREATE_NEW_WAGE_SEEKER")}</Header>
         </div>
         {configs.form && (

@@ -1,5 +1,5 @@
     export const createProjectConfig = {
-        "tenantId" : "pg",
+        "tenantId" : "od",
         "moduleName" : "commonUiConfig",
         "CreateProjectConfig" : [
           {
@@ -109,9 +109,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "Department",
                           moduleName: "common-masters",
@@ -130,9 +130,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: false,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "TargetDemography",
                           moduleName: "works",
@@ -179,9 +179,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "ProjectType",
                           moduleName: "works",
@@ -203,9 +203,9 @@
                         optionsKey: "name",
                         error: "WORKS_REQUIRED_ERR",
                         required: false,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         options : []
                       },
                     },
@@ -220,9 +220,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: false,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "NatureOfWork",
                           moduleName: "works",
@@ -272,9 +272,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: false,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "EntrustmentMode",
                           moduleName: "works",
@@ -313,9 +313,9 @@
                         options: [],
                         error: "WORKS_REQUIRED_ERR",
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        }
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // }
                       },
                     },
                     {
@@ -332,9 +332,9 @@
                         optionsKey: "i18nKey",
                         error: "WORKS_REQUIRED_ERR",
                         required: false,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         options: []
                       },
                     },
@@ -352,9 +352,9 @@
                         optionsKey: "i18nKey",
                         error: "WORKS_REQUIRED_ERR",
                         required: false,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         options: []
                       },
                     },
@@ -400,9 +400,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "Fund",
                           moduleName: "finance",
@@ -421,9 +421,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "Functions",
                           moduleName: "finance",
@@ -442,9 +442,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "BudgetHead",
                           moduleName: "finance",
@@ -463,9 +463,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "Scheme",
                           moduleName: "finance",
@@ -487,9 +487,9 @@
                         optionsKey: "code",
                         error: "WORKS_REQUIRED_ERR",
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         options : []
                       },
                     },
@@ -511,9 +511,9 @@
                           optionsKey: "name",
                           error: ("WORKS_REQUIRED_ERR"),
                           required: false,
-                          optionsCustomStyle : {
-                            top : "2.5rem"
-                          },
+                          // optionsCustomStyle : {
+                          //   top : "2.5rem"
+                          // },
                           mdmsConfig: {
                             masterName: "Department",
                             moduleName: "common-masters",
@@ -532,9 +532,9 @@
                           optionsKey: "name",
                           error: ("WORKS_REQUIRED_ERR"),
                           required: false,
-                          optionsCustomStyle : {
-                            top : "2.5rem"
-                          },
+                          // optionsCustomStyle : {
+                          //   top : "2.5rem"
+                          // },
                           mdmsConfig: {
                             masterName: "TargetDemography",
                             moduleName: "works",
@@ -581,9 +581,9 @@
                         optionsKey: "name",
                         error: "WORKS_REQUIRED_ERR",
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "Fund",
                           moduleName: "finance",
@@ -602,9 +602,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "Functions",
                           moduleName: "finance",
@@ -623,9 +623,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "BudgetHead",
                           moduleName: "finance",
@@ -644,9 +644,9 @@
                         optionsKey: "name",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         mdmsConfig: {
                           masterName: "Scheme",
                           moduleName: "finance",
@@ -668,9 +668,9 @@
                         optionsKey: "code",
                         error: ("WORKS_REQUIRED_ERR"),
                         required: true,
-                        optionsCustomStyle : {
-                          top : "2.5rem"
-                        },
+                        // optionsCustomStyle : {
+                        //   top : "2.5rem"
+                        // },
                         options : []
                       },
                     },

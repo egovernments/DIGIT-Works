@@ -1,5 +1,5 @@
 export const createProjectConfigMUKTA = {
-  "tenantId": "pg",
+  "tenantId": "od",
   "moduleName": "commonMuktaUiConfig",
   "CreateProjectConfig": [
     {
@@ -131,9 +131,9 @@ export const createProjectConfigMUKTA = {
                 "optionsKey": "name",
                 "error": "WORKS_REQUIRED_ERR",
                 "required": true,
-                "optionsCustomStyle": {
-                  "top": "2.5rem"
-                },
+                // "optionsCustomStyle": {
+                //   "top": "2.5rem"
+                // },
                 "mdmsConfig": {
                   "masterName": "ProjectType",
                   "moduleName": "works",
@@ -152,9 +152,9 @@ export const createProjectConfigMUKTA = {
                 "optionsKey": "name",
                 "error": "WORKS_REQUIRED_ERR",
                 "required": false,
-                "optionsCustomStyle": {
-                  "top": "2.5rem"
-                },
+                // "optionsCustomStyle": {
+                //   "top": "2.5rem"
+                // },
                 "mdmsConfig": {
                   "masterName": "TargetDemography",
                   "moduleName": "works",
@@ -167,7 +167,7 @@ export const createProjectConfigMUKTA = {
               "label": "PROJECT_ESTIMATED_COST_IN_RS",
               "isMandatory": false,
               "key": "noSubProject_estimatedCostInRs",
-              "type": "text",
+              "type": "amount",
               "disable": false,
               "preProcess": {
                   "convertStringToRegEx": [
@@ -175,6 +175,7 @@ export const createProjectConfigMUKTA = {
                   ]
               },
               "populators": {
+                "prefix":"₹ ",
                   "name": "noSubProject_estimatedCostInRs",
                   "error": "PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST",
                   "validation": {
@@ -215,9 +216,9 @@ export const createProjectConfigMUKTA = {
                 "options": [],
                 "error": "WORKS_REQUIRED_ERR",
                 "required": true,
-                "optionsCustomStyle": {
-                  "top": "2.5rem"
-                }
+                // "optionsCustomStyle": {
+                //   "top": "2.5rem"
+                // }
               }
             },
             {
@@ -236,33 +237,25 @@ export const createProjectConfigMUKTA = {
                 "optionsKey": "i18nKey",
                 "error": "WORKS_REQUIRED_ERR",
                 "required": false,
-                "optionsCustomStyle": {
-                  "top": "2.5rem"
-                },
+                // "optionsCustomStyle": {
+                //   "top": "2.5rem"
+                // },
                 "options": []
               }
             },
             {
-              "isMandatory": true,
-              "key": "noSubProject_locality",
-              "type": "radioordropdown",
               "label": "WORKS_LOCALITY",
+              "type": "apidropdown",
+              "isMandatory": false,
               "disable": false,
-              "preProcess": {
-                "updateDependent": [
-                  "populators.options"
-                ]
-              },
               "populators": {
                 "name": "noSubProject_locality",
                 "optionsKey": "i18nKey",
-                "error": "WORKS_REQUIRED_ERR",
-                "required": false,
-                "optionsCustomStyle": {
-                  "top": "2.5rem"
-                },
-                "options": []
-              }
+                "allowMultiSelect": false,
+                "url": "/boundary-service/boundary-relationships/_search?",
+                "params": { "hierarchyType" : "ADMIN", "boundaryType": "LOCALITY" },
+                "selectFun": "return data?.boundary?.map(item => ({ code: item.code, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }))"
+               }
             }
           ]
         },

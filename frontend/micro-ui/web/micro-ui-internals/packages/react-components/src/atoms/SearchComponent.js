@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState,useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { InboxContext } from "../hoc/InboxSearchComposerContext";
@@ -6,16 +6,28 @@ import RenderFormFields from "../molecules/RenderFormFields";
 import Header from "../atoms/Header";
 import LinkLabel from '../atoms/LinkLabel';
 import SubmitBar from "../atoms/SubmitBar";
-import Toast from "../atoms/Toast";
+// import Toast from "../atoms/Toast";
 import { FilterIcon, RefreshIcon } from "./svgindex";
+import HorizontalNavV2 from "./HorizontalNavV2";
+import { Toast} from "@egovernments/digit-ui-components";
 
-const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data}) => {
+const setUIConf = (uiConfig) => {
+  if(uiConfig.additionalTabs)
+    return [{uiConfig},...uiConfig?.additionalTabs]
+  return [{uiConfig}]
+}
+
+const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data,activeLink,setActiveLink}) => {
+  
+  //whenever activeLink changes we'll change uiConfig
+  // const [activeLink,setActiveLink] = useState(uiConfig?.configNavItems?.filter(row=>row.activeByDefault)?.[0]?.name)
+  const [navConfig,setNavConfig] = useState(uiConfig?.configNavItems)
+  const [allUiConfigs,setAllUiConfigs] = useState(setUIConf(uiConfig))
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
   const [showToast,setShowToast] = useState(null)
   let updatedFields = [];
   const {apiDetails} = fullConfig
-
   if (fullConfig?.postProcessResult){
     //conditions can be added while calling postprocess function to pass different params
     Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(data, uiConfig) 
@@ -50,6 +62,10 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
     updatedFields = Object.values(formState?.dirtyFields)
   }, [formState])
 
+  useEffect(() => {
+    clearSearch()
+  }, [activeLink])
+  
   const onSubmit = (data) => {
     
     //here -> added a custom validator function, if required add in UICustomizations
@@ -60,7 +76,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
       return
     }
 
-    if(updatedFields.length >= uiConfig?.minReqFields) {
+    if(updatedFields?.length >= (activeLink ? allUiConfigs?.filter(uiConf => activeLink?.name === uiConf.uiConfig.navLink)?.[0]?.uiConfig?.minReqFields : uiConfig?.minReqFields)) {
      // here based on screenType call respective dispatch fn
       dispatch({
         type: uiConfig?.type === "filter" ? "filterForm" : "searchForm",
@@ -69,7 +85,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
         }
       })
     } else {
-      setShowToast({ warning: true, label: t("ES_COMMON_MIN_SEARCH_CRITERIA_MSG") })
+      setShowToast({ type: "warning", label: t("ES_COMMON_MIN_SEARCH_CRITERIA_MSG") })
       setTimeout(closeToast, 3000);
     }
   }
@@ -114,7 +130,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   }
 
   return (
-    <React.Fragment>
+    <HorizontalNavV2 configNavItems={navConfig?.length > 0 ? navConfig : []} showNav={navConfig?.length > 0 ? true : false} activeLink={activeLink} setActiveLink={setActiveLink} fromSearchComp={true} horizontalLine={uiConfig?.horizontalLine}>
       <div className={'search-wrapper'}>
         {header && renderHeader()}
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
@@ -122,7 +138,8 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
             {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t(uiConfig?.showFormInstruction)}</p>}
             <div className={`search-field-wrapper ${screenType} ${uiConfig?.type} ${uiConfig?.formClassName?uiConfig?.formClassName:""}`}>
               <RenderFormFields 
-                fields={uiConfig?.fields} 
+                // fields={uiConfig?.fields} 
+                fields={activeLink ? allUiConfigs?.filter(uiConf => activeLink?.name === uiConf.uiConfig.navLink)?.[0]?.uiConfig?.fields : uiConfig?.fields}
                 control={control} 
                 formData={formData}
                 errors={errors}
@@ -135,22 +152,25 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
                 apiDetails={apiDetails}
                 data={data}
               />  
-              <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
+              <div className={`search-button-wrapper ${screenType} ${uiConfig?.type} ${uiConfig?.searchWrapperClassName}`} style={uiConfig?.searchWrapperStyles} >
                 { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }
                 { uiConfig?.primaryLabel && <SubmitBar label={t(uiConfig?.primaryLabel)} submit="submit" disabled={false}/> }
               </div>
             </div>
           </div> 
         </form>
-        { showToast && <Toast 
-          error={showToast.error}
-          warning={showToast.warning}
-          label={t(showToast.label)}
+        { 
+        showToast && 
+        <Toast 
+          // error={showToast.error}
+          // warning={showToast.warning}
+          label={t(showToast?.label)}
           isDleteBtn={true}
+          type={showToast?.error ? "error" : (showToast?.type ? showToast?.type : "") }
           onClose={closeToast} />
         }
       </div>
-    </React.Fragment>
+    </HorizontalNavV2>
   )
 }
 

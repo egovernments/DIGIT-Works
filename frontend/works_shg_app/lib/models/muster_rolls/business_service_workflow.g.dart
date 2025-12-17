@@ -6,34 +6,36 @@ part of 'business_service_workflow.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_BusinessServiceWorkflowModel _$$_BusinessServiceWorkflowModelFromJson(
+_$BusinessServiceWorkflowModelImpl _$$BusinessServiceWorkflowModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$_BusinessServiceWorkflowModel(
+    _$BusinessServiceWorkflowModelImpl(
       businessServices: (json['BusinessServices'] as List<dynamic>?)
           ?.map((e) => BusinessServices.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_BusinessServiceWorkflowModelToJson(
-        _$_BusinessServiceWorkflowModel instance) =>
+Map<String, dynamic> _$$BusinessServiceWorkflowModelImplToJson(
+        _$BusinessServiceWorkflowModelImpl instance) =>
     <String, dynamic>{
       'BusinessServices': instance.businessServices,
     };
 
-_$_BusinessServices _$$_BusinessServicesFromJson(Map<String, dynamic> json) =>
-    _$_BusinessServices(
+_$BusinessServicesImpl _$$BusinessServicesImplFromJson(
+        Map<String, dynamic> json) =>
+    _$BusinessServicesImpl(
       tenantId: json['tenantId'] as String,
       uuid: json['uuid'] as String,
       businessService: json['businessService'] as String?,
       business: json['business'] as String?,
-      businessServiceSla: json['businessServiceSla'] as int?,
+      businessServiceSla: (json['businessServiceSla'] as num?)?.toInt(),
       workflowState: (json['states'] as List<dynamic>?)
           ?.map(
               (e) => BusinessWorkflowState.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_BusinessServicesToJson(_$_BusinessServices instance) =>
+Map<String, dynamic> _$$BusinessServicesImplToJson(
+        _$BusinessServicesImpl instance) =>
     <String, dynamic>{
       'tenantId': instance.tenantId,
       'uuid': instance.uuid,
@@ -43,9 +45,9 @@ Map<String, dynamic> _$$_BusinessServicesToJson(_$_BusinessServices instance) =>
       'states': instance.workflowState,
     };
 
-_$_BusinessWorkflowState _$$_BusinessWorkflowStateFromJson(
+_$BusinessWorkflowStateImpl _$$BusinessWorkflowStateImplFromJson(
         Map<String, dynamic> json) =>
-    _$_BusinessWorkflowState(
+    _$BusinessWorkflowStateImpl(
       tenantId: json['tenantId'] as String,
       businessServiceId: json['businessServiceId'] as String?,
       applicationStatus: json['applicationStatus'] as String?,
@@ -58,8 +60,8 @@ _$_BusinessWorkflowState _$$_BusinessWorkflowStateFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$_BusinessWorkflowStateToJson(
-        _$_BusinessWorkflowState instance) =>
+Map<String, dynamic> _$$BusinessWorkflowStateImplToJson(
+        _$BusinessWorkflowStateImpl instance) =>
     <String, dynamic>{
       'tenantId': instance.tenantId,
       'businessServiceId': instance.businessServiceId,
@@ -71,8 +73,8 @@ Map<String, dynamic> _$$_BusinessWorkflowStateToJson(
       'actions': instance.actions,
     };
 
-_$_StateActions _$$_StateActionsFromJson(Map<String, dynamic> json) =>
-    _$_StateActions(
+_$StateActionsImpl _$$StateActionsImplFromJson(Map<String, dynamic> json) =>
+    _$StateActionsImpl(
       tenantId: json['tenantId'] as String,
       uuid: json['uuid'] as String,
       currentState: json['currentState'] as String?,
@@ -83,7 +85,7 @@ _$_StateActions _$$_StateActionsFromJson(Map<String, dynamic> json) =>
           (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$$_StateActionsToJson(_$_StateActions instance) =>
+Map<String, dynamic> _$$StateActionsImplToJson(_$StateActionsImpl instance) =>
     <String, dynamic>{
       'tenantId': instance.tenantId,
       'uuid': instance.uuid,

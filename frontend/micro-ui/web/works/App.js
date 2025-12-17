@@ -6,6 +6,7 @@ import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
 import { initExpenditureComponents } from "@egovernments/digit-ui-module-expenditure";
 import { initContractsComponents } from "@egovernments/digit-ui-module-contracts";
+import { initMeasurementComponents } from "@egovernments/digit-ui-module-measurement";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initEstimateComponents } from "@egovernments/digit-ui-module-estimate";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
@@ -15,6 +16,7 @@ import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 // import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukta";
 import { TLCustomisations } from "./Customisations/tl/TLCustomisation";
 import { UICustomizations } from "./Customisations/UICustomizations";
+import { initRateAnalysisComponents } from "@egovernments/digit-ui-module-rate-analysis";
 
 window.contextPath = "core-ui";
 
@@ -45,6 +47,8 @@ const enabledModules = [
   "Masters",
   "Estimate",
   "Project",
+  "Measurement",
+  "RateAnalysis",
   // "Mukta"
 ];
 
@@ -58,9 +62,11 @@ const initDigitUI = () => {
   initEstimateComponents();
   initAttendenceMgmtComponents();
   initContractsComponents();
+  initMeasurementComponents();
   initExpenditureComponents();
   initMastersComponents();
   initProjectComponents();
+  initRateAnalysisComponents();
 
   window.Digit.Customizations = {
     PGR: {},

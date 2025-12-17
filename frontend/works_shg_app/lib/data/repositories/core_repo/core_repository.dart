@@ -16,7 +16,9 @@ import '../../../Env/env_config.dart';
 import '../../../utils/common_methods.dart';
 import '../../../utils/models.dart';
 import '../../../utils/save_file_mobile.dart';
-
+enum FileUploadStatus {
+  NOT_ACTIVE,STARTED,COMPLETED
+}
 class CoreRepository {
   Future<List<FileStoreModel>> uploadFiles(
       List<dynamic>? paths, String moduleName) async {
@@ -53,9 +55,8 @@ class CoreRepository {
           request.files.add(multipartFile);
         }
       }
-      request.fields['tenantId'] = GlobalVariables
-          .organisationListModel!.organisations!.first.tenantId!
-          .toString();
+      // testing
+      request.fields['tenantId'] = GlobalVariables.tenantId!;
       request.fields['module'] = moduleName;
       await request.send().then((response) async {
         if (response.statusCode == 201) {
@@ -97,7 +98,7 @@ class CoreRepository {
       final response = await http.get(Uri.parse(url));
       final bytes = response.bodyBytes;
       await saveAndLaunchFile(bytes, fileName ?? 'Common.pdf');
-    } catch (e, s) {
+    } catch (e) {
       print(e);
       // Notifiers.getToastMessage(
       //     scaffoldMessengerKey.currentContext!, e.toString(), 'ERROR');

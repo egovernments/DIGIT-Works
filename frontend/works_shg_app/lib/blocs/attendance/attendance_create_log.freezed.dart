@@ -12,7 +12,7 @@ part of 'attendance_create_log.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$AttendanceLogCreateEvent {
@@ -99,23 +99,25 @@ class _$AttendanceLogCreateEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$CreateAttendanceLogEventCopyWith<$Res>
+abstract class _$$CreateAttendanceLogEventImplCopyWith<$Res>
     implements $AttendanceLogCreateEventCopyWith<$Res> {
-  factory _$$CreateAttendanceLogEventCopyWith(_$CreateAttendanceLogEvent value,
-          $Res Function(_$CreateAttendanceLogEvent) then) =
-      __$$CreateAttendanceLogEventCopyWithImpl<$Res>;
+  factory _$$CreateAttendanceLogEventImplCopyWith(
+          _$CreateAttendanceLogEventImpl value,
+          $Res Function(_$CreateAttendanceLogEventImpl) then) =
+      __$$CreateAttendanceLogEventImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<Map<String, dynamic>>? attendanceList});
 }
 
 /// @nodoc
-class __$$CreateAttendanceLogEventCopyWithImpl<$Res>
+class __$$CreateAttendanceLogEventImplCopyWithImpl<$Res>
     extends _$AttendanceLogCreateEventCopyWithImpl<$Res,
-        _$CreateAttendanceLogEvent>
-    implements _$$CreateAttendanceLogEventCopyWith<$Res> {
-  __$$CreateAttendanceLogEventCopyWithImpl(_$CreateAttendanceLogEvent _value,
-      $Res Function(_$CreateAttendanceLogEvent) _then)
+        _$CreateAttendanceLogEventImpl>
+    implements _$$CreateAttendanceLogEventImplCopyWith<$Res> {
+  __$$CreateAttendanceLogEventImplCopyWithImpl(
+      _$CreateAttendanceLogEventImpl _value,
+      $Res Function(_$CreateAttendanceLogEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -123,7 +125,7 @@ class __$$CreateAttendanceLogEventCopyWithImpl<$Res>
   $Res call({
     Object? attendanceList = freezed,
   }) {
-    return _then(_$CreateAttendanceLogEvent(
+    return _then(_$CreateAttendanceLogEventImpl(
       attendanceList: freezed == attendanceList
           ? _value._attendanceList
           : attendanceList // ignore: cast_nullable_to_non_nullable
@@ -134,8 +136,8 @@ class __$$CreateAttendanceLogEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CreateAttendanceLogEvent implements CreateAttendanceLogEvent {
-  const _$CreateAttendanceLogEvent(
+class _$CreateAttendanceLogEventImpl implements CreateAttendanceLogEvent {
+  const _$CreateAttendanceLogEventImpl(
       {final List<Map<String, dynamic>>? attendanceList})
       : _attendanceList = attendanceList;
 
@@ -155,10 +157,10 @@ class _$CreateAttendanceLogEvent implements CreateAttendanceLogEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CreateAttendanceLogEvent &&
+            other is _$CreateAttendanceLogEventImpl &&
             const DeepCollectionEquality()
                 .equals(other._attendanceList, _attendanceList));
   }
@@ -170,10 +172,9 @@ class _$CreateAttendanceLogEvent implements CreateAttendanceLogEvent {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$CreateAttendanceLogEventCopyWith<_$CreateAttendanceLogEvent>
-      get copyWith =>
-          __$$CreateAttendanceLogEventCopyWithImpl<_$CreateAttendanceLogEvent>(
-              this, _$identity);
+  _$$CreateAttendanceLogEventImplCopyWith<_$CreateAttendanceLogEventImpl>
+      get copyWith => __$$CreateAttendanceLogEventImplCopyWithImpl<
+          _$CreateAttendanceLogEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -243,34 +244,36 @@ class _$CreateAttendanceLogEvent implements CreateAttendanceLogEvent {
 abstract class CreateAttendanceLogEvent implements AttendanceLogCreateEvent {
   const factory CreateAttendanceLogEvent(
           {final List<Map<String, dynamic>>? attendanceList}) =
-      _$CreateAttendanceLogEvent;
+      _$CreateAttendanceLogEventImpl;
 
   @override
   List<Map<String, dynamic>>? get attendanceList;
   @override
   @JsonKey(ignore: true)
-  _$$CreateAttendanceLogEventCopyWith<_$CreateAttendanceLogEvent>
+  _$$CreateAttendanceLogEventImplCopyWith<_$CreateAttendanceLogEventImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UpdateAttendanceLogEventCopyWith<$Res>
+abstract class _$$UpdateAttendanceLogEventImplCopyWith<$Res>
     implements $AttendanceLogCreateEventCopyWith<$Res> {
-  factory _$$UpdateAttendanceLogEventCopyWith(_$UpdateAttendanceLogEvent value,
-          $Res Function(_$UpdateAttendanceLogEvent) then) =
-      __$$UpdateAttendanceLogEventCopyWithImpl<$Res>;
+  factory _$$UpdateAttendanceLogEventImplCopyWith(
+          _$UpdateAttendanceLogEventImpl value,
+          $Res Function(_$UpdateAttendanceLogEventImpl) then) =
+      __$$UpdateAttendanceLogEventImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<Map<String, dynamic>>? attendanceList});
 }
 
 /// @nodoc
-class __$$UpdateAttendanceLogEventCopyWithImpl<$Res>
+class __$$UpdateAttendanceLogEventImplCopyWithImpl<$Res>
     extends _$AttendanceLogCreateEventCopyWithImpl<$Res,
-        _$UpdateAttendanceLogEvent>
-    implements _$$UpdateAttendanceLogEventCopyWith<$Res> {
-  __$$UpdateAttendanceLogEventCopyWithImpl(_$UpdateAttendanceLogEvent _value,
-      $Res Function(_$UpdateAttendanceLogEvent) _then)
+        _$UpdateAttendanceLogEventImpl>
+    implements _$$UpdateAttendanceLogEventImplCopyWith<$Res> {
+  __$$UpdateAttendanceLogEventImplCopyWithImpl(
+      _$UpdateAttendanceLogEventImpl _value,
+      $Res Function(_$UpdateAttendanceLogEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -278,7 +281,7 @@ class __$$UpdateAttendanceLogEventCopyWithImpl<$Res>
   $Res call({
     Object? attendanceList = freezed,
   }) {
-    return _then(_$UpdateAttendanceLogEvent(
+    return _then(_$UpdateAttendanceLogEventImpl(
       attendanceList: freezed == attendanceList
           ? _value._attendanceList
           : attendanceList // ignore: cast_nullable_to_non_nullable
@@ -289,8 +292,8 @@ class __$$UpdateAttendanceLogEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UpdateAttendanceLogEvent implements UpdateAttendanceLogEvent {
-  const _$UpdateAttendanceLogEvent(
+class _$UpdateAttendanceLogEventImpl implements UpdateAttendanceLogEvent {
+  const _$UpdateAttendanceLogEventImpl(
       {final List<Map<String, dynamic>>? attendanceList})
       : _attendanceList = attendanceList;
 
@@ -310,10 +313,10 @@ class _$UpdateAttendanceLogEvent implements UpdateAttendanceLogEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UpdateAttendanceLogEvent &&
+            other is _$UpdateAttendanceLogEventImpl &&
             const DeepCollectionEquality()
                 .equals(other._attendanceList, _attendanceList));
   }
@@ -325,10 +328,9 @@ class _$UpdateAttendanceLogEvent implements UpdateAttendanceLogEvent {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$UpdateAttendanceLogEventCopyWith<_$UpdateAttendanceLogEvent>
-      get copyWith =>
-          __$$UpdateAttendanceLogEventCopyWithImpl<_$UpdateAttendanceLogEvent>(
-              this, _$identity);
+  _$$UpdateAttendanceLogEventImplCopyWith<_$UpdateAttendanceLogEventImpl>
+      get copyWith => __$$UpdateAttendanceLogEventImplCopyWithImpl<
+          _$UpdateAttendanceLogEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -398,13 +400,13 @@ class _$UpdateAttendanceLogEvent implements UpdateAttendanceLogEvent {
 abstract class UpdateAttendanceLogEvent implements AttendanceLogCreateEvent {
   const factory UpdateAttendanceLogEvent(
           {final List<Map<String, dynamic>>? attendanceList}) =
-      _$UpdateAttendanceLogEvent;
+      _$UpdateAttendanceLogEventImpl;
 
   @override
   List<Map<String, dynamic>>? get attendanceList;
   @override
   @JsonKey(ignore: true)
-  _$$UpdateAttendanceLogEventCopyWith<_$UpdateAttendanceLogEvent>
+  _$$UpdateAttendanceLogEventImplCopyWith<_$UpdateAttendanceLogEventImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -415,7 +417,7 @@ mixin _$AttendanceLogCreateState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() loaded,
-    required TResult Function() error,
+    required TResult Function(String? error, String? message) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -423,7 +425,7 @@ mixin _$AttendanceLogCreateState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? loaded,
-    TResult? Function()? error,
+    TResult? Function(String? error, String? message)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -431,7 +433,7 @@ mixin _$AttendanceLogCreateState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? loaded,
-    TResult Function()? error,
+    TResult Function(String? error, String? message)? error,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -482,24 +484,25 @@ class _$AttendanceLogCreateStateCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$AttendanceLogCreateStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$AttendanceLogCreateStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial {
+  const _$InitialImpl() : super._();
 
   @override
   String toString() {
@@ -507,9 +510,9 @@ class _$_Initial extends _Initial {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -521,7 +524,7 @@ class _$_Initial extends _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() loaded,
-    required TResult Function() error,
+    required TResult Function(String? error, String? message) error,
   }) {
     return initial();
   }
@@ -532,7 +535,7 @@ class _$_Initial extends _Initial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? loaded,
-    TResult? Function()? error,
+    TResult? Function(String? error, String? message)? error,
   }) {
     return initial?.call();
   }
@@ -543,7 +546,7 @@ class _$_Initial extends _Initial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? loaded,
-    TResult Function()? error,
+    TResult Function(String? error, String? message)? error,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -591,29 +594,30 @@ class _$_Initial extends _Initial {
 }
 
 abstract class _Initial extends AttendanceLogCreateState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$AttendanceLogCreateStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$AttendanceLogCreateStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString() {
@@ -621,9 +625,9 @@ class _$_Loading extends _Loading {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -635,7 +639,7 @@ class _$_Loading extends _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() loaded,
-    required TResult Function() error,
+    required TResult Function(String? error, String? message) error,
   }) {
     return loading();
   }
@@ -646,7 +650,7 @@ class _$_Loading extends _Loading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? loaded,
-    TResult? Function()? error,
+    TResult? Function(String? error, String? message)? error,
   }) {
     return loading?.call();
   }
@@ -657,7 +661,7 @@ class _$_Loading extends _Loading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? loaded,
-    TResult Function()? error,
+    TResult Function(String? error, String? message)? error,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -705,28 +709,30 @@ class _$_Loading extends _Loading {
 }
 
 abstract class _Loading extends AttendanceLogCreateState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$AttendanceLogCreateStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$AttendanceLogCreateStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded() : super._();
+class _$LoadedImpl extends _Loaded {
+  const _$LoadedImpl() : super._();
 
   @override
   String toString() {
@@ -734,9 +740,9 @@ class _$_Loaded extends _Loaded {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loaded);
+        (other.runtimeType == runtimeType && other is _$LoadedImpl);
   }
 
   @override
@@ -748,7 +754,7 @@ class _$_Loaded extends _Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() loaded,
-    required TResult Function() error,
+    required TResult Function(String? error, String? message) error,
   }) {
     return loaded();
   }
@@ -759,7 +765,7 @@ class _$_Loaded extends _Loaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? loaded,
-    TResult? Function()? error,
+    TResult? Function(String? error, String? message)? error,
   }) {
     return loaded?.call();
   }
@@ -770,7 +776,7 @@ class _$_Loaded extends _Loaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? loaded,
-    TResult Function()? error,
+    TResult Function(String? error, String? message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -818,42 +824,78 @@ class _$_Loaded extends _Loaded {
 }
 
 abstract class _Loaded extends AttendanceLogCreateState {
-  const factory _Loaded() = _$_Loaded;
+  const factory _Loaded() = _$LoadedImpl;
   const _Loaded._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String? error, String? message});
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$AttendanceLogCreateStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$AttendanceLogCreateStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? error = freezed,
+    Object? message = freezed,
+  }) {
+    return _then(_$ErrorImpl(
+      freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 }
 
 /// @nodoc
 
-class _$_Error extends _Error {
-  const _$_Error() : super._();
+class _$ErrorImpl extends _Error {
+  const _$ErrorImpl(this.error, this.message) : super._();
+
+  @override
+  final String? error;
+  @override
+  final String? message;
 
   @override
   String toString() {
-    return 'AttendanceLogCreateState.error()';
+    return 'AttendanceLogCreateState.error(error: $error, message: $message)';
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Error);
+        (other.runtimeType == runtimeType &&
+            other is _$ErrorImpl &&
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, error, message);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -861,9 +903,9 @@ class _$_Error extends _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function() loaded,
-    required TResult Function() error,
+    required TResult Function(String? error, String? message) error,
   }) {
-    return error();
+    return error(this.error, message);
   }
 
   @override
@@ -872,9 +914,9 @@ class _$_Error extends _Error {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function()? loaded,
-    TResult? Function()? error,
+    TResult? Function(String? error, String? message)? error,
   }) {
-    return error?.call();
+    return error?.call(this.error, message);
   }
 
   @override
@@ -883,11 +925,11 @@ class _$_Error extends _Error {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function()? loaded,
-    TResult Function()? error,
+    TResult Function(String? error, String? message)? error,
     required TResult orElse(),
   }) {
     if (error != null) {
-      return error();
+      return error(this.error, message);
     }
     return orElse();
   }
@@ -931,6 +973,13 @@ class _$_Error extends _Error {
 }
 
 abstract class _Error extends AttendanceLogCreateState {
-  const factory _Error() = _$_Error;
+  const factory _Error(final String? error, final String? message) =
+      _$ErrorImpl;
   const _Error._() : super._();
+
+  String? get error;
+  String? get message;
+  @JsonKey(ignore: true)
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

@@ -1,9 +1,11 @@
 import React, { Fragment, useState, useEffect, useMemo } from "react";
-import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Dropdown, Loader, TextArea } from "@egovernments/digit-ui-react-components";
+import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Dropdown, Loader, TextArea,InputTextAmount } from "@egovernments/digit-ui-react-components";
 import { Controller } from "react-hook-form";
 import _ from "lodash";
 
-const NonSORTable = ({ control, watch, ...props }) => {
+const NonSORTable = ({ control, watch,config, ...props }) => {
+  const populators = config?.populators
+  
   const [totalAmount, setTotalAmount] = useState(0);
 
   const formFieldName = "nonSORTablev1"; // this will be the key under which the data for this table will be present on onFormSubmit
@@ -15,7 +17,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
   ];
 
   const { t, register, errors, setValue, getValues, formData, unregister } = props;
-  
+
   // const [rows, setRows] = useState(initialState);
   const [rows, setRows] = useState(
     formData?.[formFieldName]?.length > 2
@@ -50,7 +52,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
       ?.reduce((acc, curr) => acc + parseFloat(curr?.estimatedAmount || 0), 0);
 
     setTotalAmount((prevState) => {
-      return Math.round(result);
+      return (Math.round(result * 100) / 100).toFixed(2);
     });
   };
 
@@ -129,10 +131,10 @@ const NonSORTable = ({ control, watch, ...props }) => {
       formData?.[formFieldName]?.map((row,index) => {
         if(row) {
           setValue(`${formFieldName}.${index}.description`,'')
-          setValue(`${formFieldName}.${index}.rate`,'')
+          setValue(`${formFieldName}.${index}.rate`,"0")
           setValue(`${formFieldName}.${index}.uom`,'')
           setValue(`${formFieldName}.${index}.estimatedQuantity`,'')
-          setValue(`${formFieldName}.${index}.estimatedAmount`,'')
+          setValue(`${formFieldName}.${index}.estimatedAmount`,"0")
         }
       })
       
@@ -272,7 +274,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
                     render={(props) =>
                       getDropDownDataFromMDMS(t, row, "uom", props, register, "name", {
                         mdmsConfig: {
-                          masterName: "uom",
+                          masterName: "UOM",
                           moduleName: "common-masters",
                           localePrefix: "ES_COMMON_UOM",
                         },
@@ -294,21 +296,56 @@ const NonSORTable = ({ control, watch, ...props }) => {
             <td style={getStyles(4)}>
               <div style={cellContainerStyle}>
                 <div>
-                  <TextInput
+                  {/* <TextInput
                     style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
                     name={`${formFieldName}.${row.key}.rate`}
                     inputRef={register({
                       required: true,
+                      max:populators?.rate?.max,
                       // pattern: /^\d*\.?\d*$/,
                       // pattern: /^\d*(\.\d{0,2})?$/,
                       pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
                     })}
                     onChange={(e) => setAmountField(e, row)}
-                  />
+                  /> */}
+                  <Controller
+                    defaultValue={formData?.[formFieldName]?.[row?.key]?.rate}
+                    render={({ onChange, ref, value }) => (
+                      <InputTextAmount
+                        style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
+                        type={"text"}
+                        value={formData?.[formFieldName]?.[row?.key]?.rate}
+                        name={`${formFieldName}.${row.key}.rate`}
+                        onChange={(e) => {
+                          onChange(e)
+                          setAmountField(e, row)
+                        }}
+                        inputRef={ref}
+                        errorStyle={errors?.[populators.name]}
+                        max={populators?.rate?.max}
+                        min={0}
+                        disable={false}
+                        customIcon={populators?.customIcon}
+                        customClass={populators?.customClass}
+                      />
+                    )}
+                    name={`${formFieldName}.${row.key}.rate`}
+                    rules={{
+                      required: true,
+                      max:populators?.rate?.max,
+                      // pattern: /^\d*\.?\d*$/,
+                      // pattern: /^\d*(\.\d{0,2})?$/,
+                      pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
+                    }}
+                    control={control}
+                   />
                 </div>
                 <div style={errorContainerStyles}>
                   {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "pattern" && (
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_AMOUNT_ERR`)}</CardLabelError>
+                  )}
+                  {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "max" && (
+                    <CardLabelError style={errorCardStyle}>{t(`${populators?.rate?.error}`)}</CardLabelError>
                   )}
                   {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "required" && (
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
@@ -326,6 +363,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
                     inputRef={register({
                       required: true,
                       // pattern: /^[0-9]*$/,
+                      max:populators?.quantity?.max,
                       pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
                     })}
                     onChange={(e) => setAmountField(e, row)}
@@ -334,6 +372,9 @@ const NonSORTable = ({ control, watch, ...props }) => {
                 <div style={errorContainerStyles}>
                   {errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "pattern" && (
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_QT_ERR`)}</CardLabelError>
+                  )}
+                  {errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "max" && (
+                    <CardLabelError style={errorCardStyle}>{t(`${populators?.quantity?.error}`)}</CardLabelError>
                   )}
                   {errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "required" && (
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
@@ -345,7 +386,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
             <td style={getStyles(6)}>
               <div>
                 <div>
-                  <TextInput
+                  {/* <TextInput
                     style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
                     name={`${formFieldName}.${row.key}.estimatedAmount`}
                     inputRef={register({
@@ -354,7 +395,36 @@ const NonSORTable = ({ control, watch, ...props }) => {
                       // pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
                     })}
                     disable={true}
-                  />
+                  /> */}
+                  <Controller
+                    defaultValue={formData?.[formFieldName]?.[row?.key]?.estimatedAmount}
+                    // defaultValue={getValues(`${formFieldName}.${row.key}.estimatedAmount`)}
+                    render={({ onChange, ref, value }) => (
+                      <InputTextAmount
+                        value={formData?.[formFieldName]?.[row?.key]?.estimatedAmount}
+                        // value={getValues(`${formFieldName}.${row.key}.estimatedAmount`)}
+                        style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
+                        type={"text"}
+                        name={`${formFieldName}.${row.key}.estimatedAmount`}
+                        onChange= {()=>{}}
+                        // onChange={(e)=>{
+                        //   onChange(e)}
+                        // }
+                        inputRef={ref}
+                        // errorStyle={errors?.[populators.name]}
+                        disable={true}
+                        // customIcon={populators?.customIcon}
+                        // customClass={populators?.customClass}
+                      />
+                    )}
+                    name={`${formFieldName}.${row.key}.estimatedAmount`}
+                    rules={{
+                      required: true,
+                      pattern: /^\d*\.?\d*$/,
+                      // pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
+                    }}
+                    control={control}
+                   />
                 </div>
                 <div style={errorContainerStyles}>
                   {/* {errors && errors?.[formFieldName]?.[row.key]?.estimatedAmount?.type === "pattern" && (
@@ -394,7 +464,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
             {t("RT_TOTAL")}
           </td>
           <td colSpan={1} style={{ textAlign: "right" }}>
-            {Digit.Utils.dss.formatterWithoutRound(Math.round(totalAmount), "number")}
+            {Digit.Utils.dss.formatterWithoutRound(totalAmount, "number")}
           </td>
           <td colSpan={1}></td>
         </tr>
@@ -403,8 +473,8 @@ const NonSORTable = ({ control, watch, ...props }) => {
           {/* <td style={getStyles(1)}></td> */}
           <td colSpan={7} style={{ textAlign: "center" }} onClick={addRow}>
             <span>
-              <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px" }} />
-              <label style={{ marginLeft: "10px", fontWeight: "600", color: "#F47738" }}>{t("WORKS_ADD_ITEM")}</label>
+              <AddIcon fill={"#C84C0E"} styles={{ margin: "auto", display: "inline", marginTop: "-2px" }} />
+              <label style={{ marginLeft: "10px", fontWeight: "600", color: "#C84C0E" }}>{t("WORKS_ADD_ITEM")}</label>
             </span>
           </td>
           {/* <td style={getStyles(1)}></td> */}

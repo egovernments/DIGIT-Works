@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 /**
  * AmountDetail
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-12-30T13:05:25.880+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-12-30T13:05:25.880+05:30")
 
 @Getter
 @Setter
@@ -24,6 +27,8 @@ public class AmountDetail {
     private String type = null;
 
     @JsonProperty("amount")
+    @Valid
+    @NotNull
     private Double amount = null;
 
     @JsonProperty("isActive")
@@ -32,6 +37,6 @@ public class AmountDetail {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
-
+   
 }
 

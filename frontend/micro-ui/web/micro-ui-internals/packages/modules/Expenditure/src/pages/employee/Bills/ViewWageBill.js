@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
-import { Header, Toast } from '@egovernments/digit-ui-react-components';
+import { Header } from '@egovernments/digit-ui-react-components';
 import ApplicationDetails from '../../../../../templates/ApplicationDetails';
+import { Toast } from '@egovernments/digit-ui-components';
+
 
 const ViewWageBill = () => {
   const { t } = useTranslation();
@@ -48,7 +50,7 @@ const ViewWageBill = () => {
         )
       }
       {
-        showDataError && <Toast error={true} label={t("COMMON_ERROR_FETCHING_BILL_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
+        showDataError && <Toast type={"error"} label={t("COMMON_ERROR_FETCHING_BILL_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
       }
     </React.Fragment>
   )

@@ -12,7 +12,7 @@ part of 'muster_roll_pdf.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$MusterRollPDFEvent {
@@ -98,22 +98,22 @@ class _$MusterRollPDFEventCopyWithImpl<$Res, $Val extends MusterRollPDFEvent>
 }
 
 /// @nodoc
-abstract class _$$PDFEventMusterRollCopyWith<$Res>
+abstract class _$$PDFEventMusterRollImplCopyWith<$Res>
     implements $MusterRollPDFEventCopyWith<$Res> {
-  factory _$$PDFEventMusterRollCopyWith(_$PDFEventMusterRoll value,
-          $Res Function(_$PDFEventMusterRoll) then) =
-      __$$PDFEventMusterRollCopyWithImpl<$Res>;
+  factory _$$PDFEventMusterRollImplCopyWith(_$PDFEventMusterRollImpl value,
+          $Res Function(_$PDFEventMusterRollImpl) then) =
+      __$$PDFEventMusterRollImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String? tenantId, String? musterRollNumber});
 }
 
 /// @nodoc
-class __$$PDFEventMusterRollCopyWithImpl<$Res>
-    extends _$MusterRollPDFEventCopyWithImpl<$Res, _$PDFEventMusterRoll>
-    implements _$$PDFEventMusterRollCopyWith<$Res> {
-  __$$PDFEventMusterRollCopyWithImpl(
-      _$PDFEventMusterRoll _value, $Res Function(_$PDFEventMusterRoll) _then)
+class __$$PDFEventMusterRollImplCopyWithImpl<$Res>
+    extends _$MusterRollPDFEventCopyWithImpl<$Res, _$PDFEventMusterRollImpl>
+    implements _$$PDFEventMusterRollImplCopyWith<$Res> {
+  __$$PDFEventMusterRollImplCopyWithImpl(_$PDFEventMusterRollImpl _value,
+      $Res Function(_$PDFEventMusterRollImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -122,7 +122,7 @@ class __$$PDFEventMusterRollCopyWithImpl<$Res>
     Object? tenantId = freezed,
     Object? musterRollNumber = freezed,
   }) {
-    return _then(_$PDFEventMusterRoll(
+    return _then(_$PDFEventMusterRollImpl(
       tenantId: freezed == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
@@ -137,8 +137,8 @@ class __$$PDFEventMusterRollCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$PDFEventMusterRoll implements PDFEventMusterRoll {
-  const _$PDFEventMusterRoll({this.tenantId, this.musterRollNumber});
+class _$PDFEventMusterRollImpl implements PDFEventMusterRoll {
+  const _$PDFEventMusterRollImpl({this.tenantId, this.musterRollNumber});
 
   @override
   final String? tenantId;
@@ -151,10 +151,10 @@ class _$PDFEventMusterRoll implements PDFEventMusterRoll {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PDFEventMusterRoll &&
+            other is _$PDFEventMusterRollImpl &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.musterRollNumber, musterRollNumber) ||
@@ -167,8 +167,8 @@ class _$PDFEventMusterRoll implements PDFEventMusterRoll {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$PDFEventMusterRollCopyWith<_$PDFEventMusterRoll> get copyWith =>
-      __$$PDFEventMusterRollCopyWithImpl<_$PDFEventMusterRoll>(
+  _$$PDFEventMusterRollImplCopyWith<_$PDFEventMusterRollImpl> get copyWith =>
+      __$$PDFEventMusterRollImplCopyWithImpl<_$PDFEventMusterRollImpl>(
           this, _$identity);
 
   @override
@@ -234,7 +234,7 @@ class _$PDFEventMusterRoll implements PDFEventMusterRoll {
 abstract class PDFEventMusterRoll implements MusterRollPDFEvent {
   const factory PDFEventMusterRoll(
       {final String? tenantId,
-      final String? musterRollNumber}) = _$PDFEventMusterRoll;
+      final String? musterRollNumber}) = _$PDFEventMusterRollImpl;
 
   @override
   String? get tenantId;
@@ -242,7 +242,7 @@ abstract class PDFEventMusterRoll implements MusterRollPDFEvent {
   String? get musterRollNumber;
   @override
   @JsonKey(ignore: true)
-  _$$PDFEventMusterRollCopyWith<_$PDFEventMusterRoll> get copyWith =>
+  _$$PDFEventMusterRollImplCopyWith<_$PDFEventMusterRollImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -319,24 +319,25 @@ class _$MusterRollPDFStateCopyWithImpl<$Res, $Val extends MusterRollPDFState>
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$MusterRollPDFStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$MusterRollPDFStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial {
+  const _$InitialImpl() : super._();
 
   @override
   String toString() {
@@ -344,9 +345,9 @@ class _$_Initial extends _Initial {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -428,29 +429,30 @@ class _$_Initial extends _Initial {
 }
 
 abstract class _Initial extends MusterRollPDFState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$MusterRollPDFStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$MusterRollPDFStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString() {
@@ -458,9 +460,9 @@ class _$_Loading extends _Loading {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -542,28 +544,30 @@ class _$_Loading extends _Loading {
 }
 
 abstract class _Loading extends MusterRollPDFState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$MusterRollPDFStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$MusterRollPDFStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded() : super._();
+class _$LoadedImpl extends _Loaded {
+  const _$LoadedImpl() : super._();
 
   @override
   String toString() {
@@ -571,9 +575,9 @@ class _$_Loaded extends _Loaded {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loaded);
+        (other.runtimeType == runtimeType && other is _$LoadedImpl);
   }
 
   @override
@@ -655,23 +659,25 @@ class _$_Loaded extends _Loaded {
 }
 
 abstract class _Loaded extends MusterRollPDFState {
-  const factory _Loaded() = _$_Loaded;
+  const factory _Loaded() = _$LoadedImpl;
   const _Loaded._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String? error});
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$MusterRollPDFStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$MusterRollPDFStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -679,7 +685,7 @@ class __$$_ErrorCopyWithImpl<$Res>
   $Res call({
     Object? error = freezed,
   }) {
-    return _then(_$_Error(
+    return _then(_$ErrorImpl(
       freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -690,8 +696,8 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error {
-  const _$_Error(this.error) : super._();
+class _$ErrorImpl extends _Error {
+  const _$ErrorImpl(this.error) : super._();
 
   @override
   final String? error;
@@ -702,10 +708,10 @@ class _$_Error extends _Error {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Error &&
+            other is _$ErrorImpl &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -715,8 +721,8 @@ class _$_Error extends _Error {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
-      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -794,11 +800,11 @@ class _$_Error extends _Error {
 }
 
 abstract class _Error extends MusterRollPDFState {
-  const factory _Error(final String? error) = _$_Error;
+  const factory _Error(final String? error) = _$ErrorImpl;
   const _Error._() : super._();
 
   String? get error;
   @JsonKey(ignore: true)
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

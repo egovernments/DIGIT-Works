@@ -76,6 +76,7 @@ class WageSeekerCommonMDMS with _$WageSeekerCommonMDMS {
     @JsonKey(name: 'WageSeekerSkills') List<WageSeekerSkills>? wageSeekerSkills,
     @JsonKey(name: 'Relationship') List<Relationship>? relationship,
     @JsonKey(name: 'SocialCategory') List<SocialCategory>? socialCategory,
+    @JsonKey(name: 'DocumentType')  List<DocumentType>? documentType,
   }) = _WageSeekerCommonMDMS;
 
   factory WageSeekerCommonMDMS.fromJson(
@@ -129,4 +130,17 @@ class BankAccType with _$BankAccType {
 
   factory BankAccType.fromJson(Map<String, dynamic> json) =>
       _$BankAccTypeFromJson(json);
+}
+
+
+@freezed
+class DocumentType with _$DocumentType {
+  const factory DocumentType({
+    required String name,
+    required String code,
+    required bool active,
+  }) = _DocumentType;
+
+  factory DocumentType.fromJson(Map<String, dynamic> json) =>
+      _$DocumentTypeFromJson(json);
 }

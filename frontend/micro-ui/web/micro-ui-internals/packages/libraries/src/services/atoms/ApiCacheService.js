@@ -24,6 +24,11 @@ const defaultApiCachingSettings = [
       },
     ],
   },
+  {
+    serviceName: "/filestore/v1/files/url",
+    cacheTimeInSecs: 3600,
+    debounceTimeInMS: 200
+  },
 ];
 
 const storageKey = "cachingService";
@@ -39,8 +44,8 @@ const getSetting = (serviceName, moduleName) => {
   const setting = getCachedSetting();
   const serviceSetting = setting.find((item) => item.serviceName === serviceName);
   const responseSetting = {
-    cacheTimeInSecs: serviceSetting.cacheTimeInSecs,
-    debounceTimeInMS: serviceSetting.debounceTimeInMS || 100,
+    cacheTimeInSecs: serviceSetting?.cacheTimeInSecs || 100,
+    debounceTimeInMS: serviceSetting?.debounceTimeInMS || 100,
   };
   if (!moduleName) {
     return responseSetting;

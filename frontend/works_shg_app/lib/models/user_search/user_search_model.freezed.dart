@@ -12,7 +12,7 @@ part of 'user_search_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 UserSearchModel _$UserSearchModelFromJson(Map<String, dynamic> json) {
   return _UserSearchModel.fromJson(json);
@@ -63,22 +63,22 @@ class _$UserSearchModelCopyWithImpl<$Res, $Val extends UserSearchModel>
 }
 
 /// @nodoc
-abstract class _$$_UserSearchModelCopyWith<$Res>
+abstract class _$$UserSearchModelImplCopyWith<$Res>
     implements $UserSearchModelCopyWith<$Res> {
-  factory _$$_UserSearchModelCopyWith(
-          _$_UserSearchModel value, $Res Function(_$_UserSearchModel) then) =
-      __$$_UserSearchModelCopyWithImpl<$Res>;
+  factory _$$UserSearchModelImplCopyWith(_$UserSearchModelImpl value,
+          $Res Function(_$UserSearchModelImpl) then) =
+      __$$UserSearchModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({@JsonKey(name: 'user') List<UserRequestModel>? user});
 }
 
 /// @nodoc
-class __$$_UserSearchModelCopyWithImpl<$Res>
-    extends _$UserSearchModelCopyWithImpl<$Res, _$_UserSearchModel>
-    implements _$$_UserSearchModelCopyWith<$Res> {
-  __$$_UserSearchModelCopyWithImpl(
-      _$_UserSearchModel _value, $Res Function(_$_UserSearchModel) _then)
+class __$$UserSearchModelImplCopyWithImpl<$Res>
+    extends _$UserSearchModelCopyWithImpl<$Res, _$UserSearchModelImpl>
+    implements _$$UserSearchModelImplCopyWith<$Res> {
+  __$$UserSearchModelImplCopyWithImpl(
+      _$UserSearchModelImpl _value, $Res Function(_$UserSearchModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -86,7 +86,7 @@ class __$$_UserSearchModelCopyWithImpl<$Res>
   $Res call({
     Object? user = freezed,
   }) {
-    return _then(_$_UserSearchModel(
+    return _then(_$UserSearchModelImpl(
       user: freezed == user
           ? _value._user
           : user // ignore: cast_nullable_to_non_nullable
@@ -97,13 +97,13 @@ class __$$_UserSearchModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_UserSearchModel implements _UserSearchModel {
-  const _$_UserSearchModel(
+class _$UserSearchModelImpl implements _UserSearchModel {
+  const _$UserSearchModelImpl(
       {@JsonKey(name: 'user') final List<UserRequestModel>? user})
       : _user = user;
 
-  factory _$_UserSearchModel.fromJson(Map<String, dynamic> json) =>
-      _$$_UserSearchModelFromJson(json);
+  factory _$UserSearchModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UserSearchModelImplFromJson(json);
 
   final List<UserRequestModel>? _user;
   @override
@@ -122,10 +122,10 @@ class _$_UserSearchModel implements _UserSearchModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_UserSearchModel &&
+            other is _$UserSearchModelImpl &&
             const DeepCollectionEquality().equals(other._user, _user));
   }
 
@@ -137,12 +137,13 @@ class _$_UserSearchModel implements _UserSearchModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_UserSearchModelCopyWith<_$_UserSearchModel> get copyWith =>
-      __$$_UserSearchModelCopyWithImpl<_$_UserSearchModel>(this, _$identity);
+  _$$UserSearchModelImplCopyWith<_$UserSearchModelImpl> get copyWith =>
+      __$$UserSearchModelImplCopyWithImpl<_$UserSearchModelImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_UserSearchModelToJson(
+    return _$$UserSearchModelImplToJson(
       this,
     );
   }
@@ -151,16 +152,16 @@ class _$_UserSearchModel implements _UserSearchModel {
 abstract class _UserSearchModel implements UserSearchModel {
   const factory _UserSearchModel(
           {@JsonKey(name: 'user') final List<UserRequestModel>? user}) =
-      _$_UserSearchModel;
+      _$UserSearchModelImpl;
 
   factory _UserSearchModel.fromJson(Map<String, dynamic> json) =
-      _$_UserSearchModel.fromJson;
+      _$UserSearchModelImpl.fromJson;
 
   @override
   @JsonKey(name: 'user')
   List<UserRequestModel>? get user;
   @override
   @JsonKey(ignore: true)
-  _$$_UserSearchModelCopyWith<_$_UserSearchModel> get copyWith =>
+  _$$UserSearchModelImplCopyWith<_$UserSearchModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

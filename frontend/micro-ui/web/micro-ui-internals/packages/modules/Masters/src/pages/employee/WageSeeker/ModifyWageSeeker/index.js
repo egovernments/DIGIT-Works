@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
-import { Header, Loader, Toast } from '@egovernments/digit-ui-react-components';
+import { Header, Loader } from '@egovernments/digit-ui-components';
 import { CreateWageSeekerConfig } from '../../../../configs/CreateWageSeekerConfig';
 import ModifyWageSeekerForm from './ModifyWageSeekerForm';
 import { updateWageSeekerFormDefaultValues } from '../../../../utils';
+import { Toast } from '@egovernments/digit-ui-components';
 
 const ModifyWageSeeker = () => {
     const {t} = useTranslation();
@@ -41,7 +42,7 @@ const ModifyWageSeeker = () => {
 
     //Call Search Wage Seeker
     const payload = {
-        Individual: { individualId }
+        Individual: { individualId : [individualId] }
     }
     const searchParams = { offset: 0, limit: 100 }
     const {isLoading: wageSeekerDataFetching, data: wageSeekerData, isError, isSuccess, error} = Digit.Hooks.wageSeeker.useWageSeekerDetails({tenantId, data: payload, searchParams, config:{
@@ -75,7 +76,7 @@ const ModifyWageSeeker = () => {
 
     useEffect(() => {
         if(configs && !wageSeekerDataFetching) {
-            updateWageSeekerFormDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady})
+            updateWageSeekerFormDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady, t})
         }
       },[configs, wageSeekerDataFetching]);
 
@@ -97,7 +98,7 @@ const ModifyWageSeeker = () => {
                 )
             }
             {
-                showDataError && <Toast error={true} label={t("COMMON_ERROR_FETCHING_WAGE_SEEKER_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
+                showDataError && <Toast type={"error"} label={t("COMMON_ERROR_FETCHING_WAGE_SEEKER_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
             }
         </React.Fragment>
     )

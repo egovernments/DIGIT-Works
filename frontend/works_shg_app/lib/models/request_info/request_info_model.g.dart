@@ -6,23 +6,24 @@ part of 'request_info_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_RequestInfoMapperModel _$$_RequestInfoMapperModelFromJson(
+_$RequestInfoMapperModelImpl _$$RequestInfoMapperModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$_RequestInfoMapperModel(
+    _$RequestInfoMapperModelImpl(
       requestInfo: json['requestInfo'] == null
           ? null
           : RequestInfoModel.fromJson(
               json['requestInfo'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_RequestInfoMapperModelToJson(
-        _$_RequestInfoMapperModel instance) =>
+Map<String, dynamic> _$$RequestInfoMapperModelImplToJson(
+        _$RequestInfoMapperModelImpl instance) =>
     <String, dynamic>{
       'requestInfo': instance.requestInfo,
     };
 
-_$_RequestInfoModel _$$_RequestInfoModelFromJson(Map<String, dynamic> json) =>
-    _$_RequestInfoModel(
+_$RequestInfoModelImpl _$$RequestInfoModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$RequestInfoModelImpl(
       apiId: json['apiId'] as String?,
       ver: json['ver'] as String?,
       ts: json['ts'] as String?,
@@ -33,7 +34,8 @@ _$_RequestInfoModel _$$_RequestInfoModelFromJson(Map<String, dynamic> json) =>
       authToken: json['authToken'] as String?,
     );
 
-Map<String, dynamic> _$$_RequestInfoModelToJson(_$_RequestInfoModel instance) =>
+Map<String, dynamic> _$$RequestInfoModelImplToJson(
+        _$RequestInfoModelImpl instance) =>
     <String, dynamic>{
       'apiId': instance.apiId,
       'ver': instance.ver,

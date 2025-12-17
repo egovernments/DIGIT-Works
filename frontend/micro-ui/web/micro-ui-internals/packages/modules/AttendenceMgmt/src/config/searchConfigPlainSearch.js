@@ -37,9 +37,9 @@ const searchConfig = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
+                // optionsCustomStyle: {
+                //   top: "2.3rem",
+                // },
                 name: "ward",
                 type: "ward",
                 optionsKey: "i18nKey",
@@ -56,9 +56,9 @@ const searchConfig = () => {
               populators: {
                 name: "projectType",
                 optionsKey: "name",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
+                // optionsCustomStyle: {
+                //   top: "2.3rem",
+                // },
                 mdmsConfig: {
                   masterName: "ProjectType",
                   moduleName: "works",
@@ -106,9 +106,9 @@ const searchConfig = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
+                // optionsCustomStyle: {
+                //   top: "2.3rem",
+                // },
                 name: "musterRollStatus",
                 optionsKey: "i18nKey",
                 allowMultiSelect: false,

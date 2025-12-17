@@ -1,5 +1,5 @@
 export const createOrganizationConfigMUKTA = {
-    tenantId: "pg",
+    tenantId: "od",
     moduleName: "commonMuktaUiConfig",
     CreateOrganizationConfig: [
         {
@@ -108,9 +108,9 @@ export const createOrganizationConfigMUKTA = {
                             name: "funDetails_orgType",
                             optionsKey: "name",
                             error: "WORKS_REQUIRED_ERR",
-                            optionsCustomStyle: {
-                                top: "2.3rem",
-                            },
+                            // optionsCustomStyle: {
+                            //     top: "2.3rem",
+                            // },
                             options: []
                         }
                     },
@@ -127,9 +127,9 @@ export const createOrganizationConfigMUKTA = {
                             name: "funDetails_orgSubType",
                             optionsKey: "name",
                             error: "WORKS_REQUIRED_ERR",
-                            optionsCustomStyle: {
-                                top: "2.3rem",
-                            },
+                            // optionsCustomStyle: {
+                            //     top: "2.3rem",
+                            // },
                             options: []
                         }
                     },
@@ -146,9 +146,9 @@ export const createOrganizationConfigMUKTA = {
                             name: "funDetails_category",
                             optionsKey: "name",
                             error: "WORKS_REQUIRED_ERR",
-                            optionsCustomStyle: {
-                                top: "2.3rem",
-                            },
+                            // optionsCustomStyle: {
+                            //     top: "2.3rem",
+                            // },
                             options: []
                         }
                     },
@@ -162,9 +162,9 @@ export const createOrganizationConfigMUKTA = {
                             name: "funDetails_classRank",
                             optionsKey: "name",
                             error: "WORKS_REQUIRED_ERR",
-                            optionsCustomStyle: {
-                                top: "2.3rem",
-                            },
+                            // optionsCustomStyle: {
+                            //     top: "2.3rem",
+                            // },
                             mdmsConfig: {
                                 masterName: "OrgFunctionClass",
                                 moduleName: "common-masters",
@@ -220,9 +220,9 @@ export const createOrganizationConfigMUKTA = {
                             name: "locDetails_city",
                             optionsKey: "i18nKey",
                             error: "WORKS_REQUIRED_ERR",
-                            optionsCustomStyle : {
-                                top : "2.3rem"
-                            },
+                            // optionsCustomStyle : {
+                            //     top : "2.3rem"
+                            // },
                             options: []
                         }
                     },
@@ -258,9 +258,9 @@ export const createOrganizationConfigMUKTA = {
                             name: "locDetails_locality",
                             optionsKey: "i18nKey",
                             error: ("WORKS_REQUIRED_ERR"),
-                            optionsCustomStyle : {
-                            top : "2.3rem"
-                            },
+                            // optionsCustomStyle : {
+                            // top : "2.3rem"
+                            // },
                             options: []
                         }
                     },
@@ -374,9 +374,9 @@ export const createOrganizationConfigMUKTA = {
                             name: "financeDetails_accountType",
                             optionsKey: "name",
                             error: "WORKS_REQUIRED_ERR",
-                            optionsCustomStyle : {
-                                top : "2.3rem"
-                            },
+                            // optionsCustomStyle : {
+                            //     top : "2.3rem"
+                            // },
                             mdmsConfig: {
                                 masterName: "BankAccType",
                                 moduleName: "works",

@@ -23,7 +23,7 @@ class WorkFlowRepository {
       return MusterWorkFlowModel.fromJson(
         json.decode(response.toString()),
       );
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }

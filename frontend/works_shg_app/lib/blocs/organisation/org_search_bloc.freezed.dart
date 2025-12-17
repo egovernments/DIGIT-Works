@@ -12,46 +12,47 @@ part of 'org_search_bloc.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$ORGSearchEvent {
-  String get mobileNumber => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String mobileNumber) search,
+    required TResult Function(String tenantId) mbOrgsearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String mobileNumber)? search,
+    TResult? Function(String tenantId)? mbOrgsearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String mobileNumber)? search,
+    TResult Function(String tenantId)? mbOrgsearch,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SearchORGEvent value) search,
+    required TResult Function(SearchMbORGEvent value) mbOrgsearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchORGEvent value)? search,
+    TResult? Function(SearchMbORGEvent value)? mbOrgsearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchORGEvent value)? search,
+    TResult Function(SearchMbORGEvent value)? mbOrgsearch,
     required TResult orElse(),
   }) =>
-      throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $ORGSearchEventCopyWith<ORGSearchEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -60,8 +61,6 @@ abstract class $ORGSearchEventCopyWith<$Res> {
   factory $ORGSearchEventCopyWith(
           ORGSearchEvent value, $Res Function(ORGSearchEvent) then) =
       _$ORGSearchEventCopyWithImpl<$Res, ORGSearchEvent>;
-  @useResult
-  $Res call({String mobileNumber});
 }
 
 /// @nodoc
@@ -73,38 +72,23 @@ class _$ORGSearchEventCopyWithImpl<$Res, $Val extends ORGSearchEvent>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? mobileNumber = null,
-  }) {
-    return _then(_value.copyWith(
-      mobileNumber: null == mobileNumber
-          ? _value.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
 }
 
 /// @nodoc
-abstract class _$$SearchORGEventCopyWith<$Res>
-    implements $ORGSearchEventCopyWith<$Res> {
-  factory _$$SearchORGEventCopyWith(
-          _$SearchORGEvent value, $Res Function(_$SearchORGEvent) then) =
-      __$$SearchORGEventCopyWithImpl<$Res>;
-  @override
+abstract class _$$SearchORGEventImplCopyWith<$Res> {
+  factory _$$SearchORGEventImplCopyWith(_$SearchORGEventImpl value,
+          $Res Function(_$SearchORGEventImpl) then) =
+      __$$SearchORGEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String mobileNumber});
 }
 
 /// @nodoc
-class __$$SearchORGEventCopyWithImpl<$Res>
-    extends _$ORGSearchEventCopyWithImpl<$Res, _$SearchORGEvent>
-    implements _$$SearchORGEventCopyWith<$Res> {
-  __$$SearchORGEventCopyWithImpl(
-      _$SearchORGEvent _value, $Res Function(_$SearchORGEvent) _then)
+class __$$SearchORGEventImplCopyWithImpl<$Res>
+    extends _$ORGSearchEventCopyWithImpl<$Res, _$SearchORGEventImpl>
+    implements _$$SearchORGEventImplCopyWith<$Res> {
+  __$$SearchORGEventImplCopyWithImpl(
+      _$SearchORGEventImpl _value, $Res Function(_$SearchORGEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -112,7 +96,7 @@ class __$$SearchORGEventCopyWithImpl<$Res>
   $Res call({
     Object? mobileNumber = null,
   }) {
-    return _then(_$SearchORGEvent(
+    return _then(_$SearchORGEventImpl(
       null == mobileNumber
           ? _value.mobileNumber
           : mobileNumber // ignore: cast_nullable_to_non_nullable
@@ -123,8 +107,10 @@ class __$$SearchORGEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$SearchORGEvent with DiagnosticableTreeMixin implements SearchORGEvent {
-  const _$SearchORGEvent(this.mobileNumber);
+class _$SearchORGEventImpl
+    with DiagnosticableTreeMixin
+    implements SearchORGEvent {
+  const _$SearchORGEventImpl(this.mobileNumber);
 
   @override
   final String mobileNumber;
@@ -143,10 +129,10 @@ class _$SearchORGEvent with DiagnosticableTreeMixin implements SearchORGEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SearchORGEvent &&
+            other is _$SearchORGEventImpl &&
             (identical(other.mobileNumber, mobileNumber) ||
                 other.mobileNumber == mobileNumber));
   }
@@ -157,13 +143,15 @@ class _$SearchORGEvent with DiagnosticableTreeMixin implements SearchORGEvent {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SearchORGEventCopyWith<_$SearchORGEvent> get copyWith =>
-      __$$SearchORGEventCopyWithImpl<_$SearchORGEvent>(this, _$identity);
+  _$$SearchORGEventImplCopyWith<_$SearchORGEventImpl> get copyWith =>
+      __$$SearchORGEventImplCopyWithImpl<_$SearchORGEventImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String mobileNumber) search,
+    required TResult Function(String tenantId) mbOrgsearch,
   }) {
     return search(mobileNumber);
   }
@@ -172,6 +160,7 @@ class _$SearchORGEvent with DiagnosticableTreeMixin implements SearchORGEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String mobileNumber)? search,
+    TResult? Function(String tenantId)? mbOrgsearch,
   }) {
     return search?.call(mobileNumber);
   }
@@ -180,6 +169,7 @@ class _$SearchORGEvent with DiagnosticableTreeMixin implements SearchORGEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String mobileNumber)? search,
+    TResult Function(String tenantId)? mbOrgsearch,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -192,6 +182,7 @@ class _$SearchORGEvent with DiagnosticableTreeMixin implements SearchORGEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SearchORGEvent value) search,
+    required TResult Function(SearchMbORGEvent value) mbOrgsearch,
   }) {
     return search(this);
   }
@@ -200,6 +191,7 @@ class _$SearchORGEvent with DiagnosticableTreeMixin implements SearchORGEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchORGEvent value)? search,
+    TResult? Function(SearchMbORGEvent value)? mbOrgsearch,
   }) {
     return search?.call(this);
   }
@@ -208,6 +200,7 @@ class _$SearchORGEvent with DiagnosticableTreeMixin implements SearchORGEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchORGEvent value)? search,
+    TResult Function(SearchMbORGEvent value)? mbOrgsearch,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -218,13 +211,158 @@ class _$SearchORGEvent with DiagnosticableTreeMixin implements SearchORGEvent {
 }
 
 abstract class SearchORGEvent implements ORGSearchEvent {
-  const factory SearchORGEvent(final String mobileNumber) = _$SearchORGEvent;
+  const factory SearchORGEvent(final String mobileNumber) =
+      _$SearchORGEventImpl;
+
+  String get mobileNumber;
+  @JsonKey(ignore: true)
+  _$$SearchORGEventImplCopyWith<_$SearchORGEventImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SearchMbORGEventImplCopyWith<$Res> {
+  factory _$$SearchMbORGEventImplCopyWith(_$SearchMbORGEventImpl value,
+          $Res Function(_$SearchMbORGEventImpl) then) =
+      __$$SearchMbORGEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String tenantId});
+}
+
+/// @nodoc
+class __$$SearchMbORGEventImplCopyWithImpl<$Res>
+    extends _$ORGSearchEventCopyWithImpl<$Res, _$SearchMbORGEventImpl>
+    implements _$$SearchMbORGEventImplCopyWith<$Res> {
+  __$$SearchMbORGEventImplCopyWithImpl(_$SearchMbORGEventImpl _value,
+      $Res Function(_$SearchMbORGEventImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tenantId = null,
+  }) {
+    return _then(_$SearchMbORGEventImpl(
+      tenantId: null == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SearchMbORGEventImpl
+    with DiagnosticableTreeMixin
+    implements SearchMbORGEvent {
+  const _$SearchMbORGEventImpl({required this.tenantId});
 
   @override
-  String get mobileNumber;
+  final String tenantId;
+
   @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ORGSearchEvent.mbOrgsearch(tenantId: $tenantId)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ORGSearchEvent.mbOrgsearch'))
+      ..add(DiagnosticsProperty('tenantId', tenantId));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SearchMbORGEventImpl &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, tenantId);
+
   @JsonKey(ignore: true)
-  _$$SearchORGEventCopyWith<_$SearchORGEvent> get copyWith =>
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SearchMbORGEventImplCopyWith<_$SearchMbORGEventImpl> get copyWith =>
+      __$$SearchMbORGEventImplCopyWithImpl<_$SearchMbORGEventImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String mobileNumber) search,
+    required TResult Function(String tenantId) mbOrgsearch,
+  }) {
+    return mbOrgsearch(tenantId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String mobileNumber)? search,
+    TResult? Function(String tenantId)? mbOrgsearch,
+  }) {
+    return mbOrgsearch?.call(tenantId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String mobileNumber)? search,
+    TResult Function(String tenantId)? mbOrgsearch,
+    required TResult orElse(),
+  }) {
+    if (mbOrgsearch != null) {
+      return mbOrgsearch(tenantId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(SearchORGEvent value) search,
+    required TResult Function(SearchMbORGEvent value) mbOrgsearch,
+  }) {
+    return mbOrgsearch(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(SearchORGEvent value)? search,
+    TResult? Function(SearchMbORGEvent value)? mbOrgsearch,
+  }) {
+    return mbOrgsearch?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SearchORGEvent value)? search,
+    TResult Function(SearchMbORGEvent value)? mbOrgsearch,
+    required TResult orElse(),
+  }) {
+    if (mbOrgsearch != null) {
+      return mbOrgsearch(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SearchMbORGEvent implements ORGSearchEvent {
+  const factory SearchMbORGEvent({required final String tenantId}) =
+      _$SearchMbORGEventImpl;
+
+  String get tenantId;
+  @JsonKey(ignore: true)
+  _$$SearchMbORGEventImplCopyWith<_$SearchMbORGEventImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -236,7 +374,7 @@ mixin _$ORGSearchState {
     required TResult Function() loading,
     required TResult Function(OrganisationListModel? organisationListModel)
         loaded,
-    required TResult Function() error,
+    required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -244,7 +382,7 @@ mixin _$ORGSearchState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(OrganisationListModel? organisationListModel)? loaded,
-    TResult? Function()? error,
+    TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -252,7 +390,7 @@ mixin _$ORGSearchState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(OrganisationListModel? organisationListModel)? loaded,
-    TResult Function()? error,
+    TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -302,24 +440,25 @@ class _$ORGSearchStateCopyWithImpl<$Res, $Val extends ORGSearchState>
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$ORGSearchStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$ORGSearchStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial with DiagnosticableTreeMixin {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial with DiagnosticableTreeMixin {
+  const _$InitialImpl() : super._();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -333,9 +472,9 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -348,7 +487,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
     required TResult Function() loading,
     required TResult Function(OrganisationListModel? organisationListModel)
         loaded,
-    required TResult Function() error,
+    required TResult Function(String? error) error,
   }) {
     return initial();
   }
@@ -359,7 +498,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(OrganisationListModel? organisationListModel)? loaded,
-    TResult? Function()? error,
+    TResult? Function(String? error)? error,
   }) {
     return initial?.call();
   }
@@ -370,7 +509,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(OrganisationListModel? organisationListModel)? loaded,
-    TResult Function()? error,
+    TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -418,29 +557,30 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
 }
 
 abstract class _Initial extends ORGSearchState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$ORGSearchStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$ORGSearchStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading with DiagnosticableTreeMixin {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading with DiagnosticableTreeMixin {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -454,9 +594,9 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -469,7 +609,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
     required TResult Function() loading,
     required TResult Function(OrganisationListModel? organisationListModel)
         loaded,
-    required TResult Function() error,
+    required TResult Function(String? error) error,
   }) {
     return loading();
   }
@@ -480,7 +620,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(OrganisationListModel? organisationListModel)? loaded,
-    TResult? Function()? error,
+    TResult? Function(String? error)? error,
   }) {
     return loading?.call();
   }
@@ -491,7 +631,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(OrganisationListModel? organisationListModel)? loaded,
-    TResult Function()? error,
+    TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -539,14 +679,15 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
 }
 
 abstract class _Loading extends ORGSearchState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({OrganisationListModel? organisationListModel});
 
@@ -554,10 +695,11 @@ abstract class _$$_LoadedCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$ORGSearchStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$ORGSearchStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -565,7 +707,7 @@ class __$$_LoadedCopyWithImpl<$Res>
   $Res call({
     Object? organisationListModel = freezed,
   }) {
-    return _then(_$_Loaded(
+    return _then(_$LoadedImpl(
       freezed == organisationListModel
           ? _value.organisationListModel
           : organisationListModel // ignore: cast_nullable_to_non_nullable
@@ -589,8 +731,8 @@ class __$$_LoadedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
-  const _$_Loaded(this.organisationListModel) : super._();
+class _$LoadedImpl extends _Loaded with DiagnosticableTreeMixin {
+  const _$LoadedImpl(this.organisationListModel) : super._();
 
   @override
   final OrganisationListModel? organisationListModel;
@@ -610,10 +752,10 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
+            other is _$LoadedImpl &&
             (identical(other.organisationListModel, organisationListModel) ||
                 other.organisationListModel == organisationListModel));
   }
@@ -624,8 +766,8 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -634,7 +776,7 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
     required TResult Function() loading,
     required TResult Function(OrganisationListModel? organisationListModel)
         loaded,
-    required TResult Function() error,
+    required TResult Function(String? error) error,
   }) {
     return loaded(organisationListModel);
   }
@@ -645,7 +787,7 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(OrganisationListModel? organisationListModel)? loaded,
-    TResult? Function()? error,
+    TResult? Function(String? error)? error,
   }) {
     return loaded?.call(organisationListModel);
   }
@@ -656,7 +798,7 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(OrganisationListModel? organisationListModel)? loaded,
-    TResult Function()? error,
+    TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -705,53 +847,83 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
 
 abstract class _Loaded extends ORGSearchState {
   const factory _Loaded(final OrganisationListModel? organisationListModel) =
-      _$_Loaded;
+      _$LoadedImpl;
   const _Loaded._() : super._();
 
   OrganisationListModel? get organisationListModel;
   @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String? error});
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$ORGSearchStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$ORGSearchStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? error = freezed,
+  }) {
+    return _then(_$ErrorImpl(
+      freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 }
 
 /// @nodoc
 
-class _$_Error extends _Error with DiagnosticableTreeMixin {
-  const _$_Error() : super._();
+class _$ErrorImpl extends _Error with DiagnosticableTreeMixin {
+  const _$ErrorImpl(this.error) : super._();
+
+  @override
+  final String? error;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ORGSearchState.error()';
+    return 'ORGSearchState.error(error: $error)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'ORGSearchState.error'));
+    properties
+      ..add(DiagnosticsProperty('type', 'ORGSearchState.error'))
+      ..add(DiagnosticsProperty('error', error));
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Error);
+        (other.runtimeType == runtimeType &&
+            other is _$ErrorImpl &&
+            (identical(other.error, error) || other.error == error));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -760,9 +932,9 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
     required TResult Function() loading,
     required TResult Function(OrganisationListModel? organisationListModel)
         loaded,
-    required TResult Function() error,
+    required TResult Function(String? error) error,
   }) {
-    return error();
+    return error(this.error);
   }
 
   @override
@@ -771,9 +943,9 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(OrganisationListModel? organisationListModel)? loaded,
-    TResult? Function()? error,
+    TResult? Function(String? error)? error,
   }) {
-    return error?.call();
+    return error?.call(this.error);
   }
 
   @override
@@ -782,11 +954,11 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(OrganisationListModel? organisationListModel)? loaded,
-    TResult Function()? error,
+    TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (error != null) {
-      return error();
+      return error(this.error);
     }
     return orElse();
   }
@@ -830,6 +1002,11 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
 }
 
 abstract class _Error extends ORGSearchState {
-  const factory _Error() = _$_Error;
+  const factory _Error(final String? error) = _$ErrorImpl;
   const _Error._() : super._();
+
+  String? get error;
+  @JsonKey(ignore: true)
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

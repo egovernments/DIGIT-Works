@@ -116,8 +116,11 @@ export const Request = async ({
     Desc :: To send additional field in HTTP Requests inside RequestInfo Object as plainAccessRequest
     */
     const privacy = Digit.Utils.getPrivacyObject();
-    if (privacy && !url.includes("/edcr/rest/dcr/")) {
-      data.RequestInfo = { ...data.RequestInfo, plainAccessRequest: { ...privacy } };
+    
+      if (privacy && !url.includes("/edcr/rest/dcr/")) {
+        if(!noRequestInfo) {
+        data.RequestInfo = { ...data.RequestInfo, plainAccessRequest: { ...privacy } };
+      }
     }
   }
 

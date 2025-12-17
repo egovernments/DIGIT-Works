@@ -49,7 +49,7 @@ class MyWorksSearchCriteriaBloc extends Bloc<MyWorksSearchCriteriaBlocEvent,
               .commonUiConfig?.cboMyWorksSearchCriteria?.first.searchCriteria,
           configModel
               .commonUiConfig?.cboMyWorksSearchCriteria?.first.acceptCode));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(MyWorksSearchCriteriaBlocState.error(
           e.response?.data['Errors'][0]['code']));
     }

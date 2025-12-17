@@ -145,7 +145,7 @@ const ViewRegister = (props) => {
                 </div>}
 
                 <p>
-                    <span className='link' style={{ color: "#f47738" }} onClick={() => setIsExpanded(!isExpanded)}>
+                    <span className='link' style={{ color: "#C84C0E" }} onClick={() => setIsExpanded(!isExpanded)}>
                         {isExpanded ? t("HIDE_REGISTER_DETAILS") : t("VIEW_REGISTER_DETAILS")}
                     </span>
                 </p>

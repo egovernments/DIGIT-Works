@@ -5,22 +5,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
-import org.egov.digit.expense.calculator.web.models.ContractCriteria;
-import org.egov.digit.expense.calculator.web.models.ContractResponse;
+import org.egov.works.services.common.models.contract.ContractCriteria;
+import org.egov.works.services.common.models.contract.ContractResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 public class ContractUtils {
-    @Autowired
-    private ServiceRequestRepository restRepo;
+    private final ServiceRequestRepository restRepo;
+
+    private final ExpenseCalculatorConfiguration configs;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ExpenseCalculatorConfiguration configs;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public ContractUtils(ServiceRequestRepository restRepo, ExpenseCalculatorConfiguration configs, ObjectMapper mapper) {
+        this.restRepo = restRepo;
+        this.configs = configs;
+        this.mapper = mapper;
+    }
 
     public ContractResponse fetchContract (RequestInfo requestInfo, String tenantId, String contractNumber) {
         StringBuilder url = getContractSearchURI();

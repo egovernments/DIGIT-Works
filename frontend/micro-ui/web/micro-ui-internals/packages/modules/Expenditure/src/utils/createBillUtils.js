@@ -1,7 +1,6 @@
 import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
 import _ from "lodash";
 const createDocObject = (document, docType, otherDocFileName="Others", isActive, docConfigData) =>{
-
    let documentType = docConfigData?.works?.DocumentConfig?.[0]?.documents;
     //handle empty Category Name in File Type
     if((otherDocFileName.trim()).length === 0) {
@@ -12,9 +11,15 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive,
     payload_modal.fileStore = document?.[1]?.['fileStoreId']?.['fileStoreId'];
     payload_modal.documentUid = document?.[1]?.['fileStoreId']?.['fileStoreId'];
     payload_modal.key = docType;
+    
+    let fileName = "";
+    if (document?.[1]?.['file']?.['name']) fileName = document?.[1]?.['file']?.['name'];
+    else if (document?.[0]) fileName = document?.[0];
+    else  fileName = documentType?.filter(doc=>doc?.name === docType)?.[0]?.code;
+
     payload_modal.additionalDetails = {
-      fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] :  documentType?.filter(doc=>doc?.name === docType)?.[0]?.code,
-      otherCategoryName :  docType === "others" ? otherDocFileName : ""
+      fileName : fileName,
+      otherCategoryName :  docType === "doc_others" ? otherDocFileName : ""
     }
     return payload_modal;
 }
@@ -37,10 +42,11 @@ const fetchDocuments = (documents, otherDocFileName, docConfigData) => {
 
 const fetchDeductions = (deductions, tenantId) => {
 
-    let deductionsList = deductions?.filter(row => row && row.amount!=="0")?.map(row => {
+    let deductionsList = deductions?.filter(row => row && row.amount!=="0" && row.name && row.amount)?.map(row => {
+        const headCode = row?.name?.name.split("_")?.[3] // for existing rows
         return {
             "tenantId": tenantId,
-            "headCode": row?.name?.code,
+            "headCode": row?.name?.code || headCode,
             "amount": row?.amount,
             "type": "DEDUCTION",
             "paidAmount": 0,
@@ -53,8 +59,8 @@ const fetchDeductions = (deductions, tenantId) => {
     return deductionsList
 }
 
-export const createBillPayload = (data, contract,  docConfigData,workflowDetails) => {
-  
+export const createBillPayload = (data, contract,  docConfigData,workflowDetails, MBValidationData) => {
+
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
     const tenantId = Digit.ULBService.getCurrentTenantId()
     let DeductionsList = fetchDeductions(data?.deductionDetails, tenantId)
@@ -81,7 +87,7 @@ export const createBillPayload = (data, contract,  docConfigData,workflowDetails
                 "payee": {
                   "tenantId": tenantId,
                   "type": "ORG", 
-                  "identifier": data?.invoiceDetails_vendor.code,
+                  "identifier": data?.invoiceDetails_vendor?.code,
                   "status": "ACTIVE"
                 },
                 "lineItems": [
@@ -117,7 +123,9 @@ export const createBillPayload = (data, contract,  docConfigData,workflowDetails
                 "ward":contract.additionalDetails.ward,
                 "orgName":contract.additionalDetails.orgName,
                 "projectName":contract.additionalDetails.projectName,
-                "invoiceDate": convertDateToEpoch(data?.invoiceDetails_invoiceDate)
+                "invoiceDate": convertDateToEpoch(data?.invoiceDetails_invoiceDate),
+                "mbValidationData" : MBValidationData,
+                "organisationType" : data?.invoiceDetails_organisationType,
             },
             "documents": fetchDocuments(
               data?.uploadedDocs,
@@ -128,7 +136,7 @@ export const createBillPayload = (data, contract,  docConfigData,workflowDetails
         workflow: {
             "action": "SUBMIT",
             "assignees": workflowDetails.assignees,
-            "comment":workflowDetails.comment
+            "comments":workflowDetails.comment
           }
     };
     return payload;

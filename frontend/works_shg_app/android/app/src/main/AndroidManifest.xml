@@ -4,11 +4,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
    <application
         android:allowBackup="false"
         android:fullBackupContent="false"
-        android:label="MUKTA CBO App"
+        android:label="MUKTASoft App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

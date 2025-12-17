@@ -1,0 +1,7 @@
+dependency_overrides:
+  flutter_dropzone_platform_interface: 2.0.6
+  digit_ui_components:
+    git:
+      url: https://github.com/egovernments/DIGIT-UI-LIBRARIES
+      ref: enhancement-branch-flutter
+      path: ./flutter/digit-ui-components/digit_components

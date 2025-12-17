@@ -7,6 +7,10 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
+import org.egov.common.contract.user.UserDetailResponse;
+import org.egov.common.contract.user.enums.UserType;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +20,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import digit.models.coremodels.UserDetailResponse;
-import digit.models.coremodels.user.Role;
-import digit.models.coremodels.user.User;
-import digit.models.coremodels.user.enums.UserType;
-
 @Component
 @Slf4j
 public class UserUtil {
@@ -29,13 +28,14 @@ public class UserUtil {
 
 	private ServiceRequestRepository serviceRequestRepository;
 
+	private final Configuration configs;
+	private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+	private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 	@Autowired
-	private Configuration configs;
-
-	@Autowired
-	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration configs) {
 		this.mapper = mapper;
 		this.serviceRequestRepository = serviceRequestRepository;
+		this.configs = configs;
 	}
 
 	/**
@@ -56,8 +56,7 @@ public class UserUtil {
 		try {
 			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap, dobFormat);
-			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
-			return userDetailResponse;
+            return mapper.convertValue(responseMap, UserDetailResponse.class);
 		} catch (IllegalArgumentException e) {
 			throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
 		}
@@ -75,12 +74,12 @@ public class UserUtil {
 		if (users != null) {
 			users.forEach(map -> {
 				map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
-				if ((String) map.get("lastModifiedDate") != null)
-					map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
+				if ((String) map.get(LAST_MODIFIED_DATE) != null)
+					map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
 				if ((String) map.get("dob") != null)
 					map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
-				if ((String) map.get("pwdExpiryDate") != null)
-					map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
+				if ((String) map.get(PWD_EXPIRY_DATE) != null)
+					map.put(PWD_EXPIRY_DATE, dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
 			});
 		}
 	}
@@ -113,11 +112,10 @@ public class UserUtil {
 	 */
 	public void addUserDefaultFields(String mobileNumber, String tenantId, User userInfo, UserType userType) {
 		Role role = getCitizenRole(tenantId);
-		userInfo.setRoles(Collections.singleton(role));
-		userInfo.setType(userType);
-		userInfo.setUsername(mobileNumber);
+		userInfo.setRoles(Collections.singletonList(role));
+		userInfo.setType(userType.toString());
+		userInfo.setUserName(mobileNumber);
 		userInfo.setTenantId(getStateLevelTenant(tenantId));
-		userInfo.setActive(true);
 	}
 
 	/**

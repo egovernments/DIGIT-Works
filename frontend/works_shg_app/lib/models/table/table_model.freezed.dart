@@ -12,7 +12,7 @@ part of 'table_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 TableDataModel _$TableDataModelFromJson(Map<String, dynamic> json) {
   return _TableDataModel.fromJson(json);
@@ -24,6 +24,7 @@ mixin _$TableDataModel {
   String? get aadhaar => throw _privateConstructorUsedError;
   String? get individualGaurdianName => throw _privateConstructorUsedError;
   String? get mobileNumber => throw _privateConstructorUsedError;
+  String? get individualCode => throw _privateConstructorUsedError;
   String? get skill => throw _privateConstructorUsedError;
   String? get uuid => throw _privateConstructorUsedError;
   String? get individualId => throw _privateConstructorUsedError;
@@ -52,6 +53,7 @@ abstract class $TableDataModelCopyWith<$Res> {
       String? aadhaar,
       String? individualGaurdianName,
       String? mobileNumber,
+      String? individualCode,
       String? skill,
       String? uuid,
       String? individualId,
@@ -81,6 +83,7 @@ class _$TableDataModelCopyWithImpl<$Res, $Val extends TableDataModel>
     Object? aadhaar = freezed,
     Object? individualGaurdianName = freezed,
     Object? mobileNumber = freezed,
+    Object? individualCode = freezed,
     Object? skill = freezed,
     Object? uuid = freezed,
     Object? individualId = freezed,
@@ -108,6 +111,10 @@ class _$TableDataModelCopyWithImpl<$Res, $Val extends TableDataModel>
       mobileNumber: freezed == mobileNumber
           ? _value.mobileNumber
           : mobileNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      individualCode: freezed == individualCode
+          ? _value.individualCode
+          : individualCode // ignore: cast_nullable_to_non_nullable
               as String?,
       skill: freezed == skill
           ? _value.skill
@@ -154,11 +161,11 @@ class _$TableDataModelCopyWithImpl<$Res, $Val extends TableDataModel>
 }
 
 /// @nodoc
-abstract class _$$_TableDataModelCopyWith<$Res>
+abstract class _$$TableDataModelImplCopyWith<$Res>
     implements $TableDataModelCopyWith<$Res> {
-  factory _$$_TableDataModelCopyWith(
-          _$_TableDataModel value, $Res Function(_$_TableDataModel) then) =
-      __$$_TableDataModelCopyWithImpl<$Res>;
+  factory _$$TableDataModelImplCopyWith(_$TableDataModelImpl value,
+          $Res Function(_$TableDataModelImpl) then) =
+      __$$TableDataModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -166,6 +173,7 @@ abstract class _$$_TableDataModelCopyWith<$Res>
       String? aadhaar,
       String? individualGaurdianName,
       String? mobileNumber,
+      String? individualCode,
       String? skill,
       String? uuid,
       String? individualId,
@@ -179,11 +187,11 @@ abstract class _$$_TableDataModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_TableDataModelCopyWithImpl<$Res>
-    extends _$TableDataModelCopyWithImpl<$Res, _$_TableDataModel>
-    implements _$$_TableDataModelCopyWith<$Res> {
-  __$$_TableDataModelCopyWithImpl(
-      _$_TableDataModel _value, $Res Function(_$_TableDataModel) _then)
+class __$$TableDataModelImplCopyWithImpl<$Res>
+    extends _$TableDataModelCopyWithImpl<$Res, _$TableDataModelImpl>
+    implements _$$TableDataModelImplCopyWith<$Res> {
+  __$$TableDataModelImplCopyWithImpl(
+      _$TableDataModelImpl _value, $Res Function(_$TableDataModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -193,6 +201,7 @@ class __$$_TableDataModelCopyWithImpl<$Res>
     Object? aadhaar = freezed,
     Object? individualGaurdianName = freezed,
     Object? mobileNumber = freezed,
+    Object? individualCode = freezed,
     Object? skill = freezed,
     Object? uuid = freezed,
     Object? individualId = freezed,
@@ -204,7 +213,7 @@ class __$$_TableDataModelCopyWithImpl<$Res>
     Object? friIndex = freezed,
     Object? satIndex = freezed,
   }) {
-    return _then(_$_TableDataModel(
+    return _then(_$TableDataModelImpl(
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -220,6 +229,10 @@ class __$$_TableDataModelCopyWithImpl<$Res>
       mobileNumber: freezed == mobileNumber
           ? _value.mobileNumber
           : mobileNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      individualCode: freezed == individualCode
+          ? _value.individualCode
+          : individualCode // ignore: cast_nullable_to_non_nullable
               as String?,
       skill: freezed == skill
           ? _value.skill
@@ -266,14 +279,14 @@ class __$$_TableDataModelCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
-@JsonSerializable(explicitToJson: true)
-class _$_TableDataModel implements _TableDataModel {
-  const _$_TableDataModel(
+@JsonSerializable()
+class _$TableDataModelImpl implements _TableDataModel {
+  const _$TableDataModelImpl(
       {required this.name,
       this.aadhaar,
       this.individualGaurdianName,
       this.mobileNumber,
+      this.individualCode,
       this.skill,
       this.uuid,
       this.individualId,
@@ -285,8 +298,8 @@ class _$_TableDataModel implements _TableDataModel {
       this.friIndex,
       this.satIndex});
 
-  factory _$_TableDataModel.fromJson(Map<String, dynamic> json) =>
-      _$$_TableDataModelFromJson(json);
+  factory _$TableDataModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TableDataModelImplFromJson(json);
 
   @override
   final String? name;
@@ -296,6 +309,8 @@ class _$_TableDataModel implements _TableDataModel {
   final String? individualGaurdianName;
   @override
   final String? mobileNumber;
+  @override
+  final String? individualCode;
   @override
   final String? skill;
   @override
@@ -319,20 +334,22 @@ class _$_TableDataModel implements _TableDataModel {
 
   @override
   String toString() {
-    return 'TableDataModel(name: $name, aadhaar: $aadhaar, individualGaurdianName: $individualGaurdianName, mobileNumber: $mobileNumber, skill: $skill, uuid: $uuid, individualId: $individualId, bankNumber: $bankNumber, monIndex: $monIndex, tueIndex: $tueIndex, wedIndex: $wedIndex, thursIndex: $thursIndex, friIndex: $friIndex, satIndex: $satIndex)';
+    return 'TableDataModel(name: $name, aadhaar: $aadhaar, individualGaurdianName: $individualGaurdianName, mobileNumber: $mobileNumber, individualCode: $individualCode, skill: $skill, uuid: $uuid, individualId: $individualId, bankNumber: $bankNumber, monIndex: $monIndex, tueIndex: $tueIndex, wedIndex: $wedIndex, thursIndex: $thursIndex, friIndex: $friIndex, satIndex: $satIndex)';
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_TableDataModel &&
+            other is _$TableDataModelImpl &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.aadhaar, aadhaar) || other.aadhaar == aadhaar) &&
             (identical(other.individualGaurdianName, individualGaurdianName) ||
                 other.individualGaurdianName == individualGaurdianName) &&
             (identical(other.mobileNumber, mobileNumber) ||
                 other.mobileNumber == mobileNumber) &&
+            (identical(other.individualCode, individualCode) ||
+                other.individualCode == individualCode) &&
             (identical(other.skill, skill) || other.skill == skill) &&
             (identical(other.uuid, uuid) || other.uuid == uuid) &&
             (identical(other.individualId, individualId) ||
@@ -361,6 +378,7 @@ class _$_TableDataModel implements _TableDataModel {
       aadhaar,
       individualGaurdianName,
       mobileNumber,
+      individualCode,
       skill,
       uuid,
       individualId,
@@ -375,12 +393,13 @@ class _$_TableDataModel implements _TableDataModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_TableDataModelCopyWith<_$_TableDataModel> get copyWith =>
-      __$$_TableDataModelCopyWithImpl<_$_TableDataModel>(this, _$identity);
+  _$$TableDataModelImplCopyWith<_$TableDataModelImpl> get copyWith =>
+      __$$TableDataModelImplCopyWithImpl<_$TableDataModelImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_TableDataModelToJson(
+    return _$$TableDataModelImplToJson(
       this,
     );
   }
@@ -392,6 +411,7 @@ abstract class _TableDataModel implements TableDataModel {
       final String? aadhaar,
       final String? individualGaurdianName,
       final String? mobileNumber,
+      final String? individualCode,
       final String? skill,
       final String? uuid,
       final String? individualId,
@@ -401,10 +421,10 @@ abstract class _TableDataModel implements TableDataModel {
       final double? wedIndex,
       final double? thursIndex,
       final double? friIndex,
-      final double? satIndex}) = _$_TableDataModel;
+      final double? satIndex}) = _$TableDataModelImpl;
 
   factory _TableDataModel.fromJson(Map<String, dynamic> json) =
-      _$_TableDataModel.fromJson;
+      _$TableDataModelImpl.fromJson;
 
   @override
   String? get name;
@@ -414,6 +434,8 @@ abstract class _TableDataModel implements TableDataModel {
   String? get individualGaurdianName;
   @override
   String? get mobileNumber;
+  @override
+  String? get individualCode;
   @override
   String? get skill;
   @override
@@ -436,6 +458,6 @@ abstract class _TableDataModel implements TableDataModel {
   double? get satIndex;
   @override
   @JsonKey(ignore: true)
-  _$$_TableDataModelCopyWith<_$_TableDataModel> get copyWith =>
+  _$$TableDataModelImplCopyWith<_$TableDataModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

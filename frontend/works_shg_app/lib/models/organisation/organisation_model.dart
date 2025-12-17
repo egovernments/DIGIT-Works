@@ -41,8 +41,10 @@ class OrganisationModel with _$OrganisationModel {
 @freezed
 class OrgAdditionalDetails with _$OrgAdditionalDetails {
   const factory OrgAdditionalDetails({
+   
     String? registeredByDept,
     String? deptRegistrationNum,
+    bool? isLocalityMasked,
     String? locality,
   }) = _OrgAdditionalDetails;
 

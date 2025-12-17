@@ -12,7 +12,7 @@ part of 'global_config_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 GlobalConfigModel _$GlobalConfigModelFromJson(Map<String, dynamic> json) {
   return _GlobalConfigModel.fromJson(json);
@@ -77,11 +77,11 @@ class _$GlobalConfigModelCopyWithImpl<$Res, $Val extends GlobalConfigModel>
 }
 
 /// @nodoc
-abstract class _$$_GlobalConfigModelCopyWith<$Res>
+abstract class _$$GlobalConfigModelImplCopyWith<$Res>
     implements $GlobalConfigModelCopyWith<$Res> {
-  factory _$$_GlobalConfigModelCopyWith(_$_GlobalConfigModel value,
-          $Res Function(_$_GlobalConfigModel) then) =
-      __$$_GlobalConfigModelCopyWithImpl<$Res>;
+  factory _$$GlobalConfigModelImplCopyWith(_$GlobalConfigModelImpl value,
+          $Res Function(_$GlobalConfigModelImpl) then) =
+      __$$GlobalConfigModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({@JsonKey(name: 'globalConfigs') GlobalConfigs? globalConfigs});
@@ -91,11 +91,11 @@ abstract class _$$_GlobalConfigModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_GlobalConfigModelCopyWithImpl<$Res>
-    extends _$GlobalConfigModelCopyWithImpl<$Res, _$_GlobalConfigModel>
-    implements _$$_GlobalConfigModelCopyWith<$Res> {
-  __$$_GlobalConfigModelCopyWithImpl(
-      _$_GlobalConfigModel _value, $Res Function(_$_GlobalConfigModel) _then)
+class __$$GlobalConfigModelImplCopyWithImpl<$Res>
+    extends _$GlobalConfigModelCopyWithImpl<$Res, _$GlobalConfigModelImpl>
+    implements _$$GlobalConfigModelImplCopyWith<$Res> {
+  __$$GlobalConfigModelImplCopyWithImpl(_$GlobalConfigModelImpl _value,
+      $Res Function(_$GlobalConfigModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -103,7 +103,7 @@ class __$$_GlobalConfigModelCopyWithImpl<$Res>
   $Res call({
     Object? globalConfigs = freezed,
   }) {
-    return _then(_$_GlobalConfigModel(
+    return _then(_$GlobalConfigModelImpl(
       globalConfigs: freezed == globalConfigs
           ? _value.globalConfigs
           : globalConfigs // ignore: cast_nullable_to_non_nullable
@@ -114,12 +114,12 @@ class __$$_GlobalConfigModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_GlobalConfigModel implements _GlobalConfigModel {
-  const _$_GlobalConfigModel(
+class _$GlobalConfigModelImpl implements _GlobalConfigModel {
+  const _$GlobalConfigModelImpl(
       {@JsonKey(name: 'globalConfigs') this.globalConfigs});
 
-  factory _$_GlobalConfigModel.fromJson(Map<String, dynamic> json) =>
-      _$$_GlobalConfigModelFromJson(json);
+  factory _$GlobalConfigModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GlobalConfigModelImplFromJson(json);
 
   @override
   @JsonKey(name: 'globalConfigs')
@@ -131,10 +131,10 @@ class _$_GlobalConfigModel implements _GlobalConfigModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_GlobalConfigModel &&
+            other is _$GlobalConfigModelImpl &&
             (identical(other.globalConfigs, globalConfigs) ||
                 other.globalConfigs == globalConfigs));
   }
@@ -146,13 +146,13 @@ class _$_GlobalConfigModel implements _GlobalConfigModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_GlobalConfigModelCopyWith<_$_GlobalConfigModel> get copyWith =>
-      __$$_GlobalConfigModelCopyWithImpl<_$_GlobalConfigModel>(
+  _$$GlobalConfigModelImplCopyWith<_$GlobalConfigModelImpl> get copyWith =>
+      __$$GlobalConfigModelImplCopyWithImpl<_$GlobalConfigModelImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_GlobalConfigModelToJson(
+    return _$$GlobalConfigModelImplToJson(
       this,
     );
   }
@@ -161,17 +161,17 @@ class _$_GlobalConfigModel implements _GlobalConfigModel {
 abstract class _GlobalConfigModel implements GlobalConfigModel {
   const factory _GlobalConfigModel(
       {@JsonKey(name: 'globalConfigs')
-          final GlobalConfigs? globalConfigs}) = _$_GlobalConfigModel;
+          final GlobalConfigs? globalConfigs}) = _$GlobalConfigModelImpl;
 
   factory _GlobalConfigModel.fromJson(Map<String, dynamic> json) =
-      _$_GlobalConfigModel.fromJson;
+      _$GlobalConfigModelImpl.fromJson;
 
   @override
   @JsonKey(name: 'globalConfigs')
   GlobalConfigs? get globalConfigs;
   @override
   @JsonKey(ignore: true)
-  _$$_GlobalConfigModelCopyWith<_$_GlobalConfigModel> get copyWith =>
+  _$$GlobalConfigModelImplCopyWith<_$GlobalConfigModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -281,11 +281,11 @@ class _$GlobalConfigsCopyWithImpl<$Res, $Val extends GlobalConfigs>
 }
 
 /// @nodoc
-abstract class _$$_GlobalConfigsCopyWith<$Res>
+abstract class _$$GlobalConfigsImplCopyWith<$Res>
     implements $GlobalConfigsCopyWith<$Res> {
-  factory _$$_GlobalConfigsCopyWith(
-          _$_GlobalConfigs value, $Res Function(_$_GlobalConfigs) then) =
-      __$$_GlobalConfigsCopyWithImpl<$Res>;
+  factory _$$GlobalConfigsImplCopyWith(
+          _$GlobalConfigsImpl value, $Res Function(_$GlobalConfigsImpl) then) =
+      __$$GlobalConfigsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -300,11 +300,11 @@ abstract class _$$_GlobalConfigsCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_GlobalConfigsCopyWithImpl<$Res>
-    extends _$GlobalConfigsCopyWithImpl<$Res, _$_GlobalConfigs>
-    implements _$$_GlobalConfigsCopyWith<$Res> {
-  __$$_GlobalConfigsCopyWithImpl(
-      _$_GlobalConfigs _value, $Res Function(_$_GlobalConfigs) _then)
+class __$$GlobalConfigsImplCopyWithImpl<$Res>
+    extends _$GlobalConfigsCopyWithImpl<$Res, _$GlobalConfigsImpl>
+    implements _$$GlobalConfigsImplCopyWith<$Res> {
+  __$$GlobalConfigsImplCopyWithImpl(
+      _$GlobalConfigsImpl _value, $Res Function(_$GlobalConfigsImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -319,7 +319,7 @@ class __$$_GlobalConfigsCopyWithImpl<$Res>
     Object? centralInstanceEnabled = freezed,
     Object? assetS3Bucket = freezed,
   }) {
-    return _then(_$_GlobalConfigs(
+    return _then(_$GlobalConfigsImpl(
       stateTenantId: null == stateTenantId
           ? _value.stateTenantId
           : stateTenantId // ignore: cast_nullable_to_non_nullable
@@ -358,8 +358,8 @@ class __$$_GlobalConfigsCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_GlobalConfigs implements _GlobalConfigs {
-  const _$_GlobalConfigs(
+class _$GlobalConfigsImpl implements _GlobalConfigs {
+  const _$GlobalConfigsImpl(
       {@JsonKey(name: 'stateTenantId') required this.stateTenantId,
       @JsonKey(name: 'gmaps_api_key') this.gmaps_api_key,
       @JsonKey(name: 'finEnv') this.finEnv,
@@ -369,8 +369,8 @@ class _$_GlobalConfigs implements _GlobalConfigs {
       @JsonKey(name: 'centralInstanceEnabled') this.centralInstanceEnabled,
       @JsonKey(name: 'assetS3Bucket') this.assetS3Bucket});
 
-  factory _$_GlobalConfigs.fromJson(Map<String, dynamic> json) =>
-      _$$_GlobalConfigsFromJson(json);
+  factory _$GlobalConfigsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GlobalConfigsImplFromJson(json);
 
   @override
   @JsonKey(name: 'stateTenantId')
@@ -403,10 +403,10 @@ class _$_GlobalConfigs implements _GlobalConfigs {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_GlobalConfigs &&
+            other is _$GlobalConfigsImpl &&
             (identical(other.stateTenantId, stateTenantId) ||
                 other.stateTenantId == stateTenantId) &&
             (identical(other.gmaps_api_key, gmaps_api_key) ||
@@ -440,12 +440,12 @@ class _$_GlobalConfigs implements _GlobalConfigs {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_GlobalConfigsCopyWith<_$_GlobalConfigs> get copyWith =>
-      __$$_GlobalConfigsCopyWithImpl<_$_GlobalConfigs>(this, _$identity);
+  _$$GlobalConfigsImplCopyWith<_$GlobalConfigsImpl> get copyWith =>
+      __$$GlobalConfigsImplCopyWithImpl<_$GlobalConfigsImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_GlobalConfigsToJson(
+    return _$$GlobalConfigsImplToJson(
       this,
     );
   }
@@ -468,10 +468,10 @@ abstract class _GlobalConfigs implements GlobalConfigs {
       @JsonKey(name: 'centralInstanceEnabled')
           final bool? centralInstanceEnabled,
       @JsonKey(name: 'assetS3Bucket')
-          final String? assetS3Bucket}) = _$_GlobalConfigs;
+          final String? assetS3Bucket}) = _$GlobalConfigsImpl;
 
   factory _GlobalConfigs.fromJson(Map<String, dynamic> json) =
-      _$_GlobalConfigs.fromJson;
+      _$GlobalConfigsImpl.fromJson;
 
   @override
   @JsonKey(name: 'stateTenantId')
@@ -499,6 +499,6 @@ abstract class _GlobalConfigs implements GlobalConfigs {
   String? get assetS3Bucket;
   @override
   @JsonKey(ignore: true)
-  _$$_GlobalConfigsCopyWith<_$_GlobalConfigs> get copyWith =>
+  _$$GlobalConfigsImplCopyWith<_$GlobalConfigsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

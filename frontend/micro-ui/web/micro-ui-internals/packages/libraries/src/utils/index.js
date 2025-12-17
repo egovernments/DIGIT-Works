@@ -5,12 +5,16 @@ import * as locale from "./locale";
 import * as obps from "./obps";
 import * as pt from "./pt";
 import * as privacy from "./privacy";
-import PDFUtil, { downloadReceipt, downloadPDFFromLink, downloadBill, getFileUrl, downloadEgovPDF, getDocumentName } from "./pdf";
+import { debouncing } from "./debouncing";
+import PDFUtil, { downloadReceipt, downloadPDFFromLink, downloadBill, getFileUrl, downloadEgovPDF, getDocumentName, downloadWorksPDF } from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
 import preProcessMDMSConfig from "./preProcessMDMSConfig";
+import { configUpdater } from "./configUpdater";
 import preProcessMDMSConfigInboxSearch from "./preProcessMDMSConfigInboxSearch";
 import Urls from "../services/atoms/urls";
 import { getLoggedInUserDetails } from "./user";
+import { statusBasedNavigation } from "./statusBasedNavigation";
+import { getThumbnails } from "./thumbnail";
 
 const GetParamFromUrl = (key, fallback, search) => {
   if (typeof window !== "undefined") {
@@ -19,6 +23,10 @@ const GetParamFromUrl = (key, fallback, search) => {
     return params.has(key) ? params.get(key) : fallback;
   }
   return fallback;
+};
+
+const getMultiRootTenant = () => {
+  return window?.globalConfigs?.getConfig("MULTI_ROOT_TENANT") || false;
 };
 
 const getPattern = (type) => {
@@ -293,8 +301,40 @@ const getConfigModuleName = () => {
   return window?.globalConfigs?.getConfig("UICONFIG_MODULENAME") || "commonUiConfig";
 };
 
+const trimStringsInObject =  ( obj ) => {
+  if (typeof obj !== 'object' || obj === null) {
+    // If the input is not an object or is null, return as is
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    // If the input is an array, trim the strings in each element
+    return obj.map((item) => trimStringsInObject(item));
+  }
+
+  // If the input is an object, recursively trim strings in each value
+  const trimmedObj = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'string') {
+      trimmedObj[key] = value.trim();
+    } else {
+      trimmedObj[key] = trimStringsInObject(value);
+    }
+  }
+  return trimmedObj;
+}
+
+const getRoleBasedHomeCard = () => {
+  return window?.globalConfigs?.getConfig("ROLE_BASED_HOMECARD") || false;
+};
+
+const getOTPBasedLogin = () => {
+  return window?.globalConfigs?.getConfig("OTP_BASED_LOGIN") || false;
+};
+
 export default {
   pdf: PDFUtil,
+  downloadWorksPDF,
   downloadReceipt,
   downloadBill,
   downloadPDFFromLink,
@@ -337,4 +377,12 @@ export default {
   ...privacy,
   getConfigModuleName,
   createFunction,
+  configUpdater,
+  trimStringsInObject,
+  statusBasedNavigation,
+  getThumbnails,
+  debouncing,
+  getMultiRootTenant,
+  getRoleBasedHomeCard,
+  getOTPBasedLogin
 };

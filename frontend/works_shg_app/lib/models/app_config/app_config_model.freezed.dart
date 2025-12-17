@@ -12,7 +12,7 @@ part of 'app_config_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 AppConfigModel _$AppConfigModelFromJson(Map<String, dynamic> json) {
   return _AppConfigModel.fromJson(json);
@@ -89,11 +89,11 @@ class _$AppConfigModelCopyWithImpl<$Res, $Val extends AppConfigModel>
 }
 
 /// @nodoc
-abstract class _$$_AppConfigModelCopyWith<$Res>
+abstract class _$$AppConfigModelImplCopyWith<$Res>
     implements $AppConfigModelCopyWith<$Res> {
-  factory _$$_AppConfigModelCopyWith(
-          _$_AppConfigModel value, $Res Function(_$_AppConfigModel) then) =
-      __$$_AppConfigModelCopyWithImpl<$Res>;
+  factory _$$AppConfigModelImplCopyWith(_$AppConfigModelImpl value,
+          $Res Function(_$AppConfigModelImpl) then) =
+      __$$AppConfigModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -104,11 +104,11 @@ abstract class _$$_AppConfigModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_AppConfigModelCopyWithImpl<$Res>
-    extends _$AppConfigModelCopyWithImpl<$Res, _$_AppConfigModel>
-    implements _$$_AppConfigModelCopyWith<$Res> {
-  __$$_AppConfigModelCopyWithImpl(
-      _$_AppConfigModel _value, $Res Function(_$_AppConfigModel) _then)
+class __$$AppConfigModelImplCopyWithImpl<$Res>
+    extends _$AppConfigModelCopyWithImpl<$Res, _$AppConfigModelImpl>
+    implements _$$AppConfigModelImplCopyWith<$Res> {
+  __$$AppConfigModelImplCopyWithImpl(
+      _$AppConfigModelImpl _value, $Res Function(_$AppConfigModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -118,7 +118,7 @@ class __$$_AppConfigModelCopyWithImpl<$Res>
     Object? moduleName = null,
     Object? configuration = freezed,
   }) {
-    return _then(_$_AppConfigModel(
+    return _then(_$AppConfigModelImpl(
       tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
@@ -137,12 +137,12 @@ class __$$_AppConfigModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_AppConfigModel implements _AppConfigModel {
-  const _$_AppConfigModel(
+class _$AppConfigModelImpl implements _AppConfigModel {
+  const _$AppConfigModelImpl(
       {required this.tenantId, required this.moduleName, this.configuration});
 
-  factory _$_AppConfigModel.fromJson(Map<String, dynamic> json) =>
-      _$$_AppConfigModelFromJson(json);
+  factory _$AppConfigModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AppConfigModelImplFromJson(json);
 
   @override
   final String tenantId;
@@ -157,10 +157,10 @@ class _$_AppConfigModel implements _AppConfigModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AppConfigModel &&
+            other is _$AppConfigModelImpl &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.moduleName, moduleName) ||
@@ -177,12 +177,13 @@ class _$_AppConfigModel implements _AppConfigModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AppConfigModelCopyWith<_$_AppConfigModel> get copyWith =>
-      __$$_AppConfigModelCopyWithImpl<_$_AppConfigModel>(this, _$identity);
+  _$$AppConfigModelImplCopyWith<_$AppConfigModelImpl> get copyWith =>
+      __$$AppConfigModelImplCopyWithImpl<_$AppConfigModelImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_AppConfigModelToJson(
+    return _$$AppConfigModelImplToJson(
       this,
     );
   }
@@ -192,10 +193,10 @@ abstract class _AppConfigModel implements AppConfigModel {
   const factory _AppConfigModel(
       {required final String tenantId,
       required final String moduleName,
-      final ConfigurationModel? configuration}) = _$_AppConfigModel;
+      final ConfigurationModel? configuration}) = _$AppConfigModelImpl;
 
   factory _AppConfigModel.fromJson(Map<String, dynamic> json) =
-      _$_AppConfigModel.fromJson;
+      _$AppConfigModelImpl.fromJson;
 
   @override
   String get tenantId;
@@ -205,7 +206,7 @@ abstract class _AppConfigModel implements AppConfigModel {
   ConfigurationModel? get configuration;
   @override
   @JsonKey(ignore: true)
-  _$$_AppConfigModelCopyWith<_$_AppConfigModel> get copyWith =>
+  _$$AppConfigModelImplCopyWith<_$AppConfigModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -273,11 +274,11 @@ class _$ConfigurationModelCopyWithImpl<$Res, $Val extends ConfigurationModel>
 }
 
 /// @nodoc
-abstract class _$$_ConfigurationModelCopyWith<$Res>
+abstract class _$$ConfigurationModelImplCopyWith<$Res>
     implements $ConfigurationModelCopyWith<$Res> {
-  factory _$$_ConfigurationModelCopyWith(_$_ConfigurationModel value,
-          $Res Function(_$_ConfigurationModel) then) =
-      __$$_ConfigurationModelCopyWithImpl<$Res>;
+  factory _$$ConfigurationModelImplCopyWith(_$ConfigurationModelImpl value,
+          $Res Function(_$ConfigurationModelImpl) then) =
+      __$$ConfigurationModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({int configVersion, AppConfig appConfig});
@@ -287,11 +288,11 @@ abstract class _$$_ConfigurationModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_ConfigurationModelCopyWithImpl<$Res>
-    extends _$ConfigurationModelCopyWithImpl<$Res, _$_ConfigurationModel>
-    implements _$$_ConfigurationModelCopyWith<$Res> {
-  __$$_ConfigurationModelCopyWithImpl(
-      _$_ConfigurationModel _value, $Res Function(_$_ConfigurationModel) _then)
+class __$$ConfigurationModelImplCopyWithImpl<$Res>
+    extends _$ConfigurationModelCopyWithImpl<$Res, _$ConfigurationModelImpl>
+    implements _$$ConfigurationModelImplCopyWith<$Res> {
+  __$$ConfigurationModelImplCopyWithImpl(_$ConfigurationModelImpl _value,
+      $Res Function(_$ConfigurationModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -300,7 +301,7 @@ class __$$_ConfigurationModelCopyWithImpl<$Res>
     Object? configVersion = null,
     Object? appConfig = null,
   }) {
-    return _then(_$_ConfigurationModel(
+    return _then(_$ConfigurationModelImpl(
       configVersion: null == configVersion
           ? _value.configVersion
           : configVersion // ignore: cast_nullable_to_non_nullable
@@ -315,12 +316,12 @@ class __$$_ConfigurationModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_ConfigurationModel implements _ConfigurationModel {
-  const _$_ConfigurationModel(
+class _$ConfigurationModelImpl implements _ConfigurationModel {
+  const _$ConfigurationModelImpl(
       {required this.configVersion, required this.appConfig});
 
-  factory _$_ConfigurationModel.fromJson(Map<String, dynamic> json) =>
-      _$$_ConfigurationModelFromJson(json);
+  factory _$ConfigurationModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ConfigurationModelImplFromJson(json);
 
   @override
   final int configVersion;
@@ -333,10 +334,10 @@ class _$_ConfigurationModel implements _ConfigurationModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ConfigurationModel &&
+            other is _$ConfigurationModelImpl &&
             (identical(other.configVersion, configVersion) ||
                 other.configVersion == configVersion) &&
             (identical(other.appConfig, appConfig) ||
@@ -350,13 +351,13 @@ class _$_ConfigurationModel implements _ConfigurationModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ConfigurationModelCopyWith<_$_ConfigurationModel> get copyWith =>
-      __$$_ConfigurationModelCopyWithImpl<_$_ConfigurationModel>(
+  _$$ConfigurationModelImplCopyWith<_$ConfigurationModelImpl> get copyWith =>
+      __$$ConfigurationModelImplCopyWithImpl<_$ConfigurationModelImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_ConfigurationModelToJson(
+    return _$$ConfigurationModelImplToJson(
       this,
     );
   }
@@ -365,10 +366,10 @@ class _$_ConfigurationModel implements _ConfigurationModel {
 abstract class _ConfigurationModel implements ConfigurationModel {
   const factory _ConfigurationModel(
       {required final int configVersion,
-      required final AppConfig appConfig}) = _$_ConfigurationModel;
+      required final AppConfig appConfig}) = _$ConfigurationModelImpl;
 
   factory _ConfigurationModel.fromJson(Map<String, dynamic> json) =
-      _$_ConfigurationModel.fromJson;
+      _$ConfigurationModelImpl.fromJson;
 
   @override
   int get configVersion;
@@ -376,7 +377,7 @@ abstract class _ConfigurationModel implements ConfigurationModel {
   AppConfig get appConfig;
   @override
   @JsonKey(ignore: true)
-  _$$_ConfigurationModelCopyWith<_$_ConfigurationModel> get copyWith =>
+  _$$ConfigurationModelImplCopyWith<_$ConfigurationModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -440,10 +441,11 @@ class _$AppConfigCopyWithImpl<$Res, $Val extends AppConfig>
 }
 
 /// @nodoc
-abstract class _$$_AppConfigCopyWith<$Res> implements $AppConfigCopyWith<$Res> {
-  factory _$$_AppConfigCopyWith(
-          _$_AppConfig value, $Res Function(_$_AppConfig) then) =
-      __$$_AppConfigCopyWithImpl<$Res>;
+abstract class _$$AppConfigImplCopyWith<$Res>
+    implements $AppConfigCopyWith<$Res> {
+  factory _$$AppConfigImplCopyWith(
+          _$AppConfigImpl value, $Res Function(_$AppConfigImpl) then) =
+      __$$AppConfigImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -454,11 +456,11 @@ abstract class _$$_AppConfigCopyWith<$Res> implements $AppConfigCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_AppConfigCopyWithImpl<$Res>
-    extends _$AppConfigCopyWithImpl<$Res, _$_AppConfig>
-    implements _$$_AppConfigCopyWith<$Res> {
-  __$$_AppConfigCopyWithImpl(
-      _$_AppConfig _value, $Res Function(_$_AppConfig) _then)
+class __$$AppConfigImplCopyWithImpl<$Res>
+    extends _$AppConfigCopyWithImpl<$Res, _$AppConfigImpl>
+    implements _$$AppConfigImplCopyWith<$Res> {
+  __$$AppConfigImplCopyWithImpl(
+      _$AppConfigImpl _value, $Res Function(_$AppConfigImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -467,7 +469,7 @@ class __$$_AppConfigCopyWithImpl<$Res>
     Object? languages = null,
     Object? localizationModules = freezed,
   }) {
-    return _then(_$_AppConfig(
+    return _then(_$AppConfigImpl(
       languages: null == languages
           ? _value._languages
           : languages // ignore: cast_nullable_to_non_nullable
@@ -482,8 +484,8 @@ class __$$_AppConfigCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_AppConfig implements _AppConfig {
-  _$_AppConfig(
+class _$AppConfigImpl implements _AppConfig {
+  _$AppConfigImpl(
       {@JsonKey(name: 'LANGUAGES')
           required final List<Languages> languages,
       @JsonKey(name: 'LOCALIZATION_MODULES')
@@ -491,8 +493,8 @@ class _$_AppConfig implements _AppConfig {
       : _languages = languages,
         _localizationModules = localizationModules;
 
-  factory _$_AppConfig.fromJson(Map<String, dynamic> json) =>
-      _$$_AppConfigFromJson(json);
+  factory _$AppConfigImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AppConfigImplFromJson(json);
 
   final List<Languages> _languages;
   @override
@@ -521,10 +523,10 @@ class _$_AppConfig implements _AppConfig {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AppConfig &&
+            other is _$AppConfigImpl &&
             const DeepCollectionEquality()
                 .equals(other._languages, _languages) &&
             const DeepCollectionEquality()
@@ -541,12 +543,12 @@ class _$_AppConfig implements _AppConfig {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AppConfigCopyWith<_$_AppConfig> get copyWith =>
-      __$$_AppConfigCopyWithImpl<_$_AppConfig>(this, _$identity);
+  _$$AppConfigImplCopyWith<_$AppConfigImpl> get copyWith =>
+      __$$AppConfigImplCopyWithImpl<_$AppConfigImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_AppConfigToJson(
+    return _$$AppConfigImplToJson(
       this,
     );
   }
@@ -558,10 +560,10 @@ abstract class _AppConfig implements AppConfig {
               required final List<Languages> languages,
           @JsonKey(name: 'LOCALIZATION_MODULES')
               required final List<LocalizationModules>? localizationModules}) =
-      _$_AppConfig;
+      _$AppConfigImpl;
 
   factory _AppConfig.fromJson(Map<String, dynamic> json) =
-      _$_AppConfig.fromJson;
+      _$AppConfigImpl.fromJson;
 
   @override
   @JsonKey(name: 'LANGUAGES')
@@ -571,7 +573,7 @@ abstract class _AppConfig implements AppConfig {
   List<LocalizationModules>? get localizationModules;
   @override
   @JsonKey(ignore: true)
-  _$$_AppConfigCopyWith<_$_AppConfig> get copyWith =>
+  _$$AppConfigImplCopyWith<_$AppConfigImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -624,22 +626,22 @@ class _$LanguagesListCopyWithImpl<$Res, $Val extends LanguagesList>
 }
 
 /// @nodoc
-abstract class _$$_LanguagesListCopyWith<$Res>
+abstract class _$$LanguagesListImplCopyWith<$Res>
     implements $LanguagesListCopyWith<$Res> {
-  factory _$$_LanguagesListCopyWith(
-          _$_LanguagesList value, $Res Function(_$_LanguagesList) then) =
-      __$$_LanguagesListCopyWithImpl<$Res>;
+  factory _$$LanguagesListImplCopyWith(
+          _$LanguagesListImpl value, $Res Function(_$LanguagesListImpl) then) =
+      __$$LanguagesListImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({@JsonKey(name: 'languages') List<Languages>? languages});
 }
 
 /// @nodoc
-class __$$_LanguagesListCopyWithImpl<$Res>
-    extends _$LanguagesListCopyWithImpl<$Res, _$_LanguagesList>
-    implements _$$_LanguagesListCopyWith<$Res> {
-  __$$_LanguagesListCopyWithImpl(
-      _$_LanguagesList _value, $Res Function(_$_LanguagesList) _then)
+class __$$LanguagesListImplCopyWithImpl<$Res>
+    extends _$LanguagesListCopyWithImpl<$Res, _$LanguagesListImpl>
+    implements _$$LanguagesListImplCopyWith<$Res> {
+  __$$LanguagesListImplCopyWithImpl(
+      _$LanguagesListImpl _value, $Res Function(_$LanguagesListImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -647,7 +649,7 @@ class __$$_LanguagesListCopyWithImpl<$Res>
   $Res call({
     Object? languages = freezed,
   }) {
-    return _then(_$_LanguagesList(
+    return _then(_$LanguagesListImpl(
       languages: freezed == languages
           ? _value._languages
           : languages // ignore: cast_nullable_to_non_nullable
@@ -658,13 +660,13 @@ class __$$_LanguagesListCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_LanguagesList implements _LanguagesList {
-  _$_LanguagesList(
+class _$LanguagesListImpl implements _LanguagesList {
+  _$LanguagesListImpl(
       {@JsonKey(name: 'languages') required final List<Languages>? languages})
       : _languages = languages;
 
-  factory _$_LanguagesList.fromJson(Map<String, dynamic> json) =>
-      _$$_LanguagesListFromJson(json);
+  factory _$LanguagesListImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LanguagesListImplFromJson(json);
 
   final List<Languages>? _languages;
   @override
@@ -683,10 +685,10 @@ class _$_LanguagesList implements _LanguagesList {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LanguagesList &&
+            other is _$LanguagesListImpl &&
             const DeepCollectionEquality()
                 .equals(other._languages, _languages));
   }
@@ -699,12 +701,12 @@ class _$_LanguagesList implements _LanguagesList {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LanguagesListCopyWith<_$_LanguagesList> get copyWith =>
-      __$$_LanguagesListCopyWithImpl<_$_LanguagesList>(this, _$identity);
+  _$$LanguagesListImplCopyWith<_$LanguagesListImpl> get copyWith =>
+      __$$LanguagesListImplCopyWithImpl<_$LanguagesListImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_LanguagesListToJson(
+    return _$$LanguagesListImplToJson(
       this,
     );
   }
@@ -713,17 +715,17 @@ class _$_LanguagesList implements _LanguagesList {
 abstract class _LanguagesList implements LanguagesList {
   factory _LanguagesList(
       {@JsonKey(name: 'languages')
-          required final List<Languages>? languages}) = _$_LanguagesList;
+          required final List<Languages>? languages}) = _$LanguagesListImpl;
 
   factory _LanguagesList.fromJson(Map<String, dynamic> json) =
-      _$_LanguagesList.fromJson;
+      _$LanguagesListImpl.fromJson;
 
   @override
   @JsonKey(name: 'languages')
   List<Languages>? get languages;
   @override
   @JsonKey(ignore: true)
-  _$$_LanguagesListCopyWith<_$_LanguagesList> get copyWith =>
+  _$$LanguagesListImplCopyWith<_$LanguagesListImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -786,21 +788,22 @@ class _$LanguagesCopyWithImpl<$Res, $Val extends Languages>
 }
 
 /// @nodoc
-abstract class _$$_LanguagesCopyWith<$Res> implements $LanguagesCopyWith<$Res> {
-  factory _$$_LanguagesCopyWith(
-          _$_Languages value, $Res Function(_$_Languages) then) =
-      __$$_LanguagesCopyWithImpl<$Res>;
+abstract class _$$LanguagesImplCopyWith<$Res>
+    implements $LanguagesCopyWith<$Res> {
+  factory _$$LanguagesImplCopyWith(
+          _$LanguagesImpl value, $Res Function(_$LanguagesImpl) then) =
+      __$$LanguagesImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String label, String value, bool isSelected});
 }
 
 /// @nodoc
-class __$$_LanguagesCopyWithImpl<$Res>
-    extends _$LanguagesCopyWithImpl<$Res, _$_Languages>
-    implements _$$_LanguagesCopyWith<$Res> {
-  __$$_LanguagesCopyWithImpl(
-      _$_Languages _value, $Res Function(_$_Languages) _then)
+class __$$LanguagesImplCopyWithImpl<$Res>
+    extends _$LanguagesCopyWithImpl<$Res, _$LanguagesImpl>
+    implements _$$LanguagesImplCopyWith<$Res> {
+  __$$LanguagesImplCopyWithImpl(
+      _$LanguagesImpl _value, $Res Function(_$LanguagesImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -810,7 +813,7 @@ class __$$_LanguagesCopyWithImpl<$Res>
     Object? value = null,
     Object? isSelected = null,
   }) {
-    return _then(_$_Languages(
+    return _then(_$LanguagesImpl(
       label: null == label
           ? _value.label
           : label // ignore: cast_nullable_to_non_nullable
@@ -829,12 +832,12 @@ class __$$_LanguagesCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_Languages implements _Languages {
-  _$_Languages(
+class _$LanguagesImpl implements _Languages {
+  _$LanguagesImpl(
       {required this.label, required this.value, this.isSelected = false});
 
-  factory _$_Languages.fromJson(Map<String, dynamic> json) =>
-      _$$_LanguagesFromJson(json);
+  factory _$LanguagesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LanguagesImplFromJson(json);
 
   @override
   final String label;
@@ -850,10 +853,10 @@ class _$_Languages implements _Languages {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Languages &&
+            other is _$LanguagesImpl &&
             (identical(other.label, label) || other.label == label) &&
             (identical(other.value, value) || other.value == value) &&
             (identical(other.isSelected, isSelected) ||
@@ -867,12 +870,12 @@ class _$_Languages implements _Languages {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LanguagesCopyWith<_$_Languages> get copyWith =>
-      __$$_LanguagesCopyWithImpl<_$_Languages>(this, _$identity);
+  _$$LanguagesImplCopyWith<_$LanguagesImpl> get copyWith =>
+      __$$LanguagesImplCopyWithImpl<_$LanguagesImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_LanguagesToJson(
+    return _$$LanguagesImplToJson(
       this,
     );
   }
@@ -882,10 +885,10 @@ abstract class _Languages implements Languages {
   factory _Languages(
       {required final String label,
       required final String value,
-      final bool isSelected}) = _$_Languages;
+      final bool isSelected}) = _$LanguagesImpl;
 
   factory _Languages.fromJson(Map<String, dynamic> json) =
-      _$_Languages.fromJson;
+      _$LanguagesImpl.fromJson;
 
   @override
   String get label;
@@ -895,7 +898,7 @@ abstract class _Languages implements Languages {
   bool get isSelected;
   @override
   @JsonKey(ignore: true)
-  _$$_LanguagesCopyWith<_$_Languages> get copyWith =>
+  _$$LanguagesImplCopyWith<_$LanguagesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -953,22 +956,22 @@ class _$LocalizationModulesCopyWithImpl<$Res, $Val extends LocalizationModules>
 }
 
 /// @nodoc
-abstract class _$$_LocalizationModulesCopyWith<$Res>
+abstract class _$$LocalizationModulesImplCopyWith<$Res>
     implements $LocalizationModulesCopyWith<$Res> {
-  factory _$$_LocalizationModulesCopyWith(_$_LocalizationModules value,
-          $Res Function(_$_LocalizationModules) then) =
-      __$$_LocalizationModulesCopyWithImpl<$Res>;
+  factory _$$LocalizationModulesImplCopyWith(_$LocalizationModulesImpl value,
+          $Res Function(_$LocalizationModulesImpl) then) =
+      __$$LocalizationModulesImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String label, String value});
 }
 
 /// @nodoc
-class __$$_LocalizationModulesCopyWithImpl<$Res>
-    extends _$LocalizationModulesCopyWithImpl<$Res, _$_LocalizationModules>
-    implements _$$_LocalizationModulesCopyWith<$Res> {
-  __$$_LocalizationModulesCopyWithImpl(_$_LocalizationModules _value,
-      $Res Function(_$_LocalizationModules) _then)
+class __$$LocalizationModulesImplCopyWithImpl<$Res>
+    extends _$LocalizationModulesCopyWithImpl<$Res, _$LocalizationModulesImpl>
+    implements _$$LocalizationModulesImplCopyWith<$Res> {
+  __$$LocalizationModulesImplCopyWithImpl(_$LocalizationModulesImpl _value,
+      $Res Function(_$LocalizationModulesImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -977,7 +980,7 @@ class __$$_LocalizationModulesCopyWithImpl<$Res>
     Object? label = null,
     Object? value = null,
   }) {
-    return _then(_$_LocalizationModules(
+    return _then(_$LocalizationModulesImpl(
       label: null == label
           ? _value.label
           : label // ignore: cast_nullable_to_non_nullable
@@ -992,11 +995,11 @@ class __$$_LocalizationModulesCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_LocalizationModules implements _LocalizationModules {
-  _$_LocalizationModules({required this.label, required this.value});
+class _$LocalizationModulesImpl implements _LocalizationModules {
+  _$LocalizationModulesImpl({required this.label, required this.value});
 
-  factory _$_LocalizationModules.fromJson(Map<String, dynamic> json) =>
-      _$$_LocalizationModulesFromJson(json);
+  factory _$LocalizationModulesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LocalizationModulesImplFromJson(json);
 
   @override
   final String label;
@@ -1009,10 +1012,10 @@ class _$_LocalizationModules implements _LocalizationModules {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LocalizationModules &&
+            other is _$LocalizationModulesImpl &&
             (identical(other.label, label) || other.label == label) &&
             (identical(other.value, value) || other.value == value));
   }
@@ -1024,13 +1027,13 @@ class _$_LocalizationModules implements _LocalizationModules {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LocalizationModulesCopyWith<_$_LocalizationModules> get copyWith =>
-      __$$_LocalizationModulesCopyWithImpl<_$_LocalizationModules>(
+  _$$LocalizationModulesImplCopyWith<_$LocalizationModulesImpl> get copyWith =>
+      __$$LocalizationModulesImplCopyWithImpl<_$LocalizationModulesImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_LocalizationModulesToJson(
+    return _$$LocalizationModulesImplToJson(
       this,
     );
   }
@@ -1039,10 +1042,10 @@ class _$_LocalizationModules implements _LocalizationModules {
 abstract class _LocalizationModules implements LocalizationModules {
   factory _LocalizationModules(
       {required final String label,
-      required final String value}) = _$_LocalizationModules;
+      required final String value}) = _$LocalizationModulesImpl;
 
   factory _LocalizationModules.fromJson(Map<String, dynamic> json) =
-      _$_LocalizationModules.fromJson;
+      _$LocalizationModulesImpl.fromJson;
 
   @override
   String get label;
@@ -1050,6 +1053,6 @@ abstract class _LocalizationModules implements LocalizationModules {
   String get value;
   @override
   @JsonKey(ignore: true)
-  _$$_LocalizationModulesCopyWith<_$_LocalizationModules> get copyWith =>
+  _$$LocalizationModulesImplCopyWith<_$LocalizationModulesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

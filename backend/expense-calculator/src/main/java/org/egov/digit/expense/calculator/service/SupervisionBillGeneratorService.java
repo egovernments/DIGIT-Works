@@ -7,6 +7,7 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.PAYEE_TYPE_SUPERVISIONBILL;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +20,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
-import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
 import org.egov.digit.expense.calculator.repository.IdGenRepository;
 import org.egov.digit.expense.calculator.util.CommonUtil;
 import org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants;
@@ -30,12 +30,12 @@ import org.egov.digit.expense.calculator.web.models.BillDetail;
 import org.egov.digit.expense.calculator.web.models.CalcDetail;
 import org.egov.digit.expense.calculator.web.models.CalcEstimate;
 import org.egov.digit.expense.calculator.web.models.Calculation;
-import org.egov.digit.expense.calculator.web.models.Contract;
 import org.egov.digit.expense.calculator.web.models.Criteria;
 import org.egov.digit.expense.calculator.web.models.LineItem;
 import org.egov.digit.expense.calculator.web.models.Party;
 import org.egov.digit.expense.calculator.web.models.Payer;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.services.common.models.contract.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -51,29 +51,32 @@ import net.minidev.json.JSONArray;
 @Component
 public class SupervisionBillGeneratorService {
 
-	@Autowired
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
+
+
+	private final ExpenseCalculatorUtil expenseCalculatorUtil;
+
+	private final IdGenRepository idGenRepository;
+
+	private final ExpenseCalculatorConfiguration config;
+
+	private final MdmsUtils mdmsUtils;
+
+	private final CommonUtil commonUtil;
 
 	@Autowired
-	private ExpenseCalculatorRepository expenseCalculatorRepository;
+	public SupervisionBillGeneratorService(ObjectMapper mapper, ExpenseCalculatorUtil expenseCalculatorUtil, IdGenRepository idGenRepository, ExpenseCalculatorConfiguration config, MdmsUtils mdmsUtils, CommonUtil commonUtil) {
+		this.mapper = mapper;
+		this.expenseCalculatorUtil = expenseCalculatorUtil;
+		this.idGenRepository = idGenRepository;
+		this.config = config;
+		this.mdmsUtils = mdmsUtils;
+		this.commonUtil = commonUtil;
+	}
 
-	@Autowired
-	private ExpenseCalculatorUtil expenseCalculatorUtil;
-
-	@Autowired
-	private IdGenRepository idGenRepository;
-
-	@Autowired
-	private ExpenseCalculatorConfiguration config;
-
-	@Autowired
-	private MdmsUtils mdmsUtils;
-
-	@Autowired
-	private CommonUtil commonUtil;
 
 	private Map<String, Bill> createMap(List<Bill> bills) {
-		Map<String, Bill> map = new HashMap<String, Bill>();
+		Map<String, Bill> map = new HashMap<>();
 		for (Bill b : bills) {
 			map.put(b.getBillNumber(),b);
 		}
@@ -106,8 +109,8 @@ public class SupervisionBillGeneratorService {
 		// bills
 		Set<String> existingBills = new HashSet<>();
 
-		Set<String> wageAndPurchaseBills = new HashSet<String>();
-		List<String> supervisionBills = new ArrayList<String>();
+		Set<String> wageAndPurchaseBills = new HashSet<>();
+		List<String> supervisionBills = new ArrayList<>();
 
 		// TODO: Account for partially paid bills esp in Wage bills. Check bill status.
 		// Loop through all bills. Separate out wage, purchase and supervision bills.
@@ -121,7 +124,7 @@ public class SupervisionBillGeneratorService {
 				supervisionBills.add(bill.getId());
 				// Fetch all referenceIds (existing bill Ids) and store in a list
 				List<BillDetail> billDetailList = bill.getBillDetails();
-				List<String> existing = billDetailList.stream().map(billDetail -> billDetail.getReferenceId())
+				List<String> existing = billDetailList.stream().map(BillDetail::getReferenceId)
 						.collect(Collectors.toList());
 				if (!existing.isEmpty()) {
 					existingBills.addAll(existing);
@@ -175,9 +178,8 @@ public class SupervisionBillGeneratorService {
 	 * @param expenseBills
 	 * @return
 	 */
-	public List<Bill> createSupervisionBill(RequestInfo requestInfo, Criteria criteria, Calculation calculation,
-			List<Bill> expenseBills) {
-		log.info("Preparing supervision bill payload");	
+	public List<Bill> createSupervisionBill(RequestInfo requestInfo, Criteria criteria, Calculation calculation) {
+		log.info("Preparing supervision bill payload");
 		List<Bill> bills = new ArrayList<>();
 		if (null != calculation && calculation.getEstimates()!=null){
 
@@ -185,6 +187,12 @@ public class SupervisionBillGeneratorService {
 			// Transfer calculation details onto bill details
 			List<BillDetail> billDetails = new ArrayList<>();
 			for (CalcDetail calc : calcEstimate.getCalcDetails()) {
+				// if payable line item of a bill is not greater than zero, do not generate supervision bill for that bill
+				if (calc.getPayableLineItem().get(0).getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+					log.info("Supervision bill amount is not grater then ZERO, so supervision bill can not be generated for bill [" + calc.getReferenceId() + "]");
+					continue;
+				}
+
 				BillDetail billDetail = null;
 				// Build BillDetail
 				billDetail = BillDetail.builder().billId(null).referenceId(calc.getReferenceId())// wage billId or
@@ -196,6 +204,12 @@ public class SupervisionBillGeneratorService {
 						.lineItems(calc.getLineItems()).payableLineItems(calc.getPayableLineItem()).build();
 				billDetails.add(billDetail);
 
+			}
+			if (billDetails.isEmpty()) {
+				log.error("SUPERVISION_BILL_ZERO_AMOUNT",
+						"Supervision bill can not be generated, because amount is not grater then ZERO for contract " + calcEstimate.getReferenceId());
+				throw new CustomException("SUPERVISION_BILL_ZERO_AMOUNT",
+						"Supervision bill can not be generated, because amount is not grater then ZERO for contract " + calcEstimate.getReferenceId());
 			}
 
 			Party payer = this.buildParty(requestInfo, config.getPayerType(), criteria.getTenantId());
@@ -228,7 +242,6 @@ public class SupervisionBillGeneratorService {
 			bills.add(bill);
 			log.info("Bill created:" + bill.toString());
 		}
-
 		return bills;
 	}
 
@@ -270,8 +283,8 @@ public class SupervisionBillGeneratorService {
 		String jsonFilter = String.format("$[?(@.code==\"%s\")].value",HEAD_CODE_SUPERVISION);
         List<Object> superCharge = JsonPath.read(mdmsData.get(ExpenseCalculatorServiceConstants.EXPENSE_MODULE)
         		.get(ExpenseCalculatorServiceConstants.MDMS_APPLICABLE_CHARGES),jsonFilter);
-        double temp = Double.valueOf((String)superCharge.get(0));
-        BigDecimal supervisionRate = new BigDecimal(temp); 
+        double temp = Double.parseDouble((String)superCharge.get(0));
+        BigDecimal supervisionRate = BigDecimal.valueOf(temp);
 
 		// Calculate supervision charge
 		List<CalcDetail> calcDetails = new ArrayList<>();
@@ -281,7 +294,7 @@ public class SupervisionBillGeneratorService {
 				log.info("Computing supervision for bill ID: " + bill.getBillNumber());
 				// Build lineItem. Single line item per bill detail
 				LineItem lineItem = buildLineItem(tenantId, bill, supervisionRate);
-				ArrayList<LineItem> items = new ArrayList<LineItem>();
+				ArrayList<LineItem> items = new ArrayList<>();
 				items.add(lineItem);
 				// Build CalcDetails. This will be one per bill
 				CalcDetail calcDetail = CalcDetail.builder().payee(payee).lineItems(items)
@@ -305,9 +318,7 @@ public class SupervisionBillGeneratorService {
 		calcEstimates.add(calcEstimate);
 
 		// Build Calculation
-		Calculation calculation = Calculation.builder().tenantId(tenantId).estimates(calcEstimates).build();
-
-		return calculation;
+		return Calculation.builder().tenantId(tenantId).estimates(calcEstimates).build();
 	}
 
 	/**
@@ -342,32 +353,12 @@ public class SupervisionBillGeneratorService {
 		return isIncluded;
 	}
 
-	/**
-	 * Calculates the total bill amount
-	 * 
-	 * @param bills
-	 * @param businessService
-	 * @return
-	 */
-	private BigDecimal calculateTotalBillAmount(List<Bill> bills, String businessService) {
-		BigDecimal totalBillAmount = BigDecimal.ZERO;
-		List<BigDecimal> billAmountList = bills.stream()
-				.filter(bill -> bill.getBusinessService().equalsIgnoreCase(businessService))
-				.map(bill -> bill.getTotalAmount()).collect(Collectors.toList());
-
-		for (BigDecimal billAmount : billAmountList) {
-			totalBillAmount = totalBillAmount.add(billAmount);
-		}
-		return totalBillAmount;
-	}
-
 	private Party buildParty(String orgId, String type, String tenantId) {
 		return Party.builder().identifier(orgId).type(type).tenantId(tenantId).status("ACTIVE").build();
 	}
 
 	private Party buildParty(RequestInfo requestInfo, String type, String tenantId) {
-		String rootTenantId = tenantId.split("\\.")[0];
-		Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, rootTenantId);
+		Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, tenantId);
 		List<Object> payerList = commonUtil.readJSONPathValue(mdmsResp, JSON_PATH_FOR_PAYER);
 		for (Object obj : payerList) {
 			Payer payer = mapper.convertValue(obj, Payer.class);
@@ -384,10 +375,10 @@ public class SupervisionBillGeneratorService {
 	private LineItem buildLineItem(String tenantId, Bill bill, BigDecimal supervisionRate) {
 		BigDecimal billAmount = bill.getTotalAmount();
 		BigDecimal supervisionAmt = billAmount.multiply(supervisionRate).divide(new BigDecimal(100));
-		LineItem lineItem = LineItem.builder().amount(supervisionAmt).paidAmount(new BigDecimal(0)).headCode(HEAD_CODE_SUPERVISION) // TODO fetch from
-																										// mdms
+		// Round the supervision amount to 0 decimal place
+		BigDecimal roundedNumber = supervisionAmt.setScale(0, RoundingMode.HALF_UP);
+		return LineItem.builder().amount(roundedNumber).paidAmount(new BigDecimal(0)).headCode(HEAD_CODE_SUPERVISION)
 				.tenantId(tenantId).type(LineItem.TypeEnum.PAYABLE).build();
-		return lineItem;
 	}
 
 	/**

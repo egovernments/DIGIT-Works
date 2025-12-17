@@ -1,7 +1,5 @@
 package org.egov.service;
 
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.config.Configuration;

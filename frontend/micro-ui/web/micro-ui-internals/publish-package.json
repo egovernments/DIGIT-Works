@@ -1,0 +1,78 @@
+{
+  "name": "egovernments",
+  "version": "1.0.0",
+  "main": "index.js",
+  "workspaces": [
+    "packages/libraries",
+    "packages/react-components",
+    "packages/modules/*",
+    "packages/Mukta"
+  ],
+  "author": "JaganKumar <jagan.kumar@egov.org.in>",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "start": "SKIP_PREFLIGHT_CHECK=true run-s build start:dev",
+    "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
+    "start:dev": "run-p dev:**",
+    "start:script": "./scripts/create.sh",
+    "dev:css": "cd packages/css && yarn start",
+    "publish:css": "cd packages/css && yarn publish --access public",
+    "dev:libraries": "cd packages/libraries && yarn start",
+    "dev:components": "cd packages/react-components && yarn start",
+    "dev:contracts": "cd packages/modules/Contracts && yarn start",
+    "dev:attendencemgmt": "cd packages/modules/AttendenceMgmt && yarn start",
+    "dev:masters": "cd packages/modules/Masters && yarn start",
+    "dev:measurement": "cd packages/modules/Measurement && yarn start",
+    "dev:project": "cd packages/modules/Project && yarn start",
+    "dev:estimate": "cd packages/modules/Estimate && yarn start",
+    "dev:mukta": "cd packages/Mukta && yarn start",
+    "devD:works": "cd packages/modules/works && yarn start",
+    "dev:expenditure": "cd packages/modules/Expenditure && yarn start",
+    "dev:rateAnalysis":"cd packages/modules/RateAnalysis && yarn start",
+    "dev:example": "cd example && yarn start",
+    "build": "run-p build:** &&yarn buildD",
+    "buildD": "run-p buildD:**",
+    "build:libraries": "cd packages/libraries && yarn build",
+    "build:components": "cd packages/react-components && yarn build",
+    "buildD:attendencemgmt": "cd packages/modules/AttendenceMgmt && yarn build",
+    "buildD:contracts": "cd packages/modules/Contracts && yarn build",
+    "buildD:masters": "cd packages/modules/Masters && yarn build",
+    "build:estimate": "cd packages/modules/Estimate && yarn build",
+    "buildD:measurement": "cd packages/modules/Measurement && yarn build",
+    "build:mukta": "cd packages/Mukta && yarn build",
+    "buildD:project": "cd packages/modules/Project && yarn build",
+    "buildD:works": "cd packages/modules/works && yarn build",
+    "buildD:expenditure": "cd packages/modules/Expenditure && yarn build",
+    "build:rateAnalysis":"cd packages/modules/RateAnalysis && yarn build",
+    "deploy:jenkins": "./scripts/jenkins.sh",
+    "clean": "rm -rf node_modules"
+  },
+  "devDependencies": {
+    "husky": "7.0.4",
+    "lint-staged": "12.3.7",
+    "npm-run-all": "4.1.5",
+    "prettier": "2.1.2",
+    "react-responsive": "9.0.2"
+  },
+  "husky": {},
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "react-google-recaptcha": "^3.1.0",
+    "lodash": "^4.17.21",
+    "microbundle-crl": "0.13.11",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-hook-form": "6.15.8",
+    "react-i18next": "11.16.2",
+    "react-query": "3.6.1",
+    "react-router-dom": "5.3.0",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-unicode-property-regex": "^7.18.6"
+  }
+}

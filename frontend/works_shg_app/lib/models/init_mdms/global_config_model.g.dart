@@ -6,22 +6,23 @@ part of 'global_config_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_GlobalConfigModel _$$_GlobalConfigModelFromJson(Map<String, dynamic> json) =>
-    _$_GlobalConfigModel(
+_$GlobalConfigModelImpl _$$GlobalConfigModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$GlobalConfigModelImpl(
       globalConfigs: json['globalConfigs'] == null
           ? null
           : GlobalConfigs.fromJson(
               json['globalConfigs'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_GlobalConfigModelToJson(
-        _$_GlobalConfigModel instance) =>
+Map<String, dynamic> _$$GlobalConfigModelImplToJson(
+        _$GlobalConfigModelImpl instance) =>
     <String, dynamic>{
       'globalConfigs': instance.globalConfigs,
     };
 
-_$_GlobalConfigs _$$_GlobalConfigsFromJson(Map<String, dynamic> json) =>
-    _$_GlobalConfigs(
+_$GlobalConfigsImpl _$$GlobalConfigsImplFromJson(Map<String, dynamic> json) =>
+    _$GlobalConfigsImpl(
       stateTenantId: json['stateTenantId'] as String,
       gmaps_api_key: json['gmaps_api_key'] as String?,
       finEnv: json['finEnv'] as String?,
@@ -32,7 +33,7 @@ _$_GlobalConfigs _$$_GlobalConfigsFromJson(Map<String, dynamic> json) =>
       assetS3Bucket: json['assetS3Bucket'] as String?,
     );
 
-Map<String, dynamic> _$$_GlobalConfigsToJson(_$_GlobalConfigs instance) =>
+Map<String, dynamic> _$$GlobalConfigsImplToJson(_$GlobalConfigsImpl instance) =>
     <String, dynamic>{
       'stateTenantId': instance.stateTenantId,
       'gmaps_api_key': instance.gmaps_api_key,

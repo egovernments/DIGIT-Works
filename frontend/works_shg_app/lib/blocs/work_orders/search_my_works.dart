@@ -30,6 +30,7 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
           await MyWorksRepository(client.init()).searchMyWorks(
               url: Urls.workServices.myWorks,
               body: {
+                // "status":"ACTIVE",
                 "tenantId": GlobalVariables
                     .organisationListModel?.organisations?.first.tenantId,
                 "orgIds": [
@@ -50,8 +51,10 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
                 "msgId": "search with from and to values"
               }));
       await Future.delayed(const Duration(seconds: 1));
-      emit(SearchMyWorksState.loaded(contractsModel));
-    } on DioError catch (e) {
+      emit(SearchMyWorksState.loaded(ContractsModel(
+          contracts: contractsModel.contracts
+             )));
+    } on DioException catch (e) {
       emit(SearchMyWorksState.error(e.response?.data['Errors'][0]['code']));
     }
   }

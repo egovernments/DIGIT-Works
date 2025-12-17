@@ -1,8 +1,10 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { FormComposer, Loader, Toast } from '@egovernments/digit-ui-react-components';
+import { FormComposer, Loader } from '@egovernments/digit-ui-react-components';
 import { getTomorrowsDate, getBankAccountUpdatePayload, getOrgPayload } from '../../../../utils';
+import debounce from 'lodash/debounce';
+import { Toast } from '@egovernments/digit-ui-components';
 
 const navConfig =  [
     {
@@ -31,15 +33,19 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
     const [selectedOrg, setSelectedOrg] = useState('')
     const [showDuplicateUserError, setShowDuplicateUserError] = useState(false)
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+    const [showDuplicateContactToast, setShowDuplicateContactToast] = useState(false)
+    const [showValidToError, setShowValidToError] = useState(false)
+    const [showCBOToVendorError, setShowCBOToVendorError] = useState(false)
 
     const { mutate: CreateOrganisationMutation } = Digit.Hooks.organisation.useCreateOrganisation();
     const { mutate: UpdateOrganisationMutation } = Digit.Hooks.organisation.useUpdateOrganisation();
 
     const { mutate: CreateBankAccountMutation } = Digit.Hooks.bankAccount.useCreateBankAccount();
     const { mutate: UpdateBankAccountMutation } = Digit.Hooks.bankAccount.useUpdateBankAccount();
-
     //location data
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
+    const ORG_VALIDTO_DATE = '2099-03-31';
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
 
@@ -49,15 +55,15 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
           select: (data) => {
               const wards = []
               const localities = {}
-              data?.TenantBoundary[0]?.boundary.forEach((item) => {
-                  localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label : item?.label }))
-                  wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
+              data?.TenantBoundary[0]?.boundary.sort((a, b) => a.code.localeCompare(b.code)).forEach((item) => {
+                  localities[item?.code] = item?.children.map(item => ({ code: item.code, name: t(`${headerLocale}_ADMIN_${item?.code}`), i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label : item?.label }))
+                  wards.push({ code: item.code, name: t(`${headerLocale}_ADMIN_${item?.code}`), i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
               });
              return {
                   wards, localities
              }
           }
-      });
+      },true);
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
 
     //org data 
@@ -159,6 +165,13 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         }
     },[showDuplicateUserError]);
 
+    useEffect(() => {
+        if(showValidToError) {
+            setTimeout(()=>{
+                setShowValidToError(false);
+            },3000);
+        }
+    },[showValidToError]);
     const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
@@ -212,7 +225,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     }
     const sendDataToResponsePage = (orgId, isSuccess, message, showId, otherMessage = "") => {
         history.push({
-            pathname: `/${window?.contextPath}/employee/masters/response`,
+            pathname: `/${window?.contextPath}/employee/masters/response-org`,
             search: orgId ? `?tenantId=${tenantId}&orgId=${orgId}` : '',
             state : {
                 message,
@@ -225,18 +238,29 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     }
 
     const handleResponseForUpdate = async (orgPayload, bankAccountPayload) => {
-        await UpdateOrganisationMutation(orgPayload, {
-            onError: async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
-            onSuccess: async (responseData) => {
-                await UpdateBankAccountMutation(bankAccountPayload, {
-                    onError :  async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
-                    onSuccess: async (responseData) => {
-                        sendDataToResponsePage(orgId, true, "MASTERS_ORG_MODIFICATION_SUCCESS", true)
-                        clearSessionFormData()
+            await UpdateOrganisationMutation(orgPayload, {
+                onError: async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
+                onSuccess: async (responseData) => {
+                    if(orgDataFromAPI?.bankDetails && orgDataFromAPI?.bankDetails?.length > 0)
+                        await UpdateBankAccountMutation(bankAccountPayload, {
+                            onError :  async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
+                            onSuccess: async (responseData) => {
+                                setIsButtonDisabled(false);
+                                sendDataToResponsePage(orgId, true, "MASTERS_ORG_MODIFICATION_SUCCESS", true)
+                                clearSessionFormData()
+                            }
+                        })
+                    else
+                        await CreateBankAccountMutation(bankAccountPayload, {
+                            onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_ORG_MODIFICATION_FAIL", false),
+                            onSuccess: async (bankResponseData) => {
+                                setIsButtonDisabled(false);
+                                sendDataToResponsePage(orgId, true, "MASTERS_ORG_MODIFICATION_SUCCESS")
+                                clearSessionFormData()
+                            }
+                        }) 
                     }
-                })
-            }
-        });
+            });
     }
 
     const handleResponseForCreate = async (orgPayload, data) => {
@@ -248,6 +272,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 await CreateBankAccountMutation(bankAccountPayload, {
                     onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_ORG_CREATION_FAIL", false),
                     onSuccess: async (bankResponseData) => {
+                        setIsButtonDisabled(false);
                         sendDataToResponsePage(responseData?.organisations?.[0].orgNumber, true, "MASTERS_ORG_CREATION_SUCCESS", true, "MASTERS_ORG_CREATION_SUCCESS_MESSAGE")
                         clearSessionFormData()
                     }
@@ -256,50 +281,121 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         });
     }
 
-    const onSubmit = async (data) => {
-        const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
+    const closeToast = () => {
+        setTimeout(() => {
+            setShowDuplicateContactToast(false)
+            setShowCBOToVendorError(false)
+        }, 10000);
+    }
+    
+
+
+    const OnModalSubmit = async (data) => {
+        setIsButtonDisabled(true);
+        data = Digit.Utils.trimStringsInObject(data)
+        //here call org search with mobile number and see if number is already there with some other org , do an early return
+        
+        const contactNumber = data?.contactDetails_mobile
+        const orgNumber = data?.basicDetails_orgId
+       
+        const searchOrgResponse = await Digit.WorksService.searchOrg({
+            SearchCriteria: {
+                "tenantId": tenantId,
+                "contactMobileNumber": contactNumber
+            }
+          })
+
+        // let doEarlyReturn = false
+        // searchOrgResponse?.organisations?.forEach(row => {
+        //     if(row?.orgNumber === orgNumber){
+        //         setShowDuplicateContactToast(true)
+        //         doEarlyReturn = true
+        //         return 
+        //     }
+        // })
+        // if(doEarlyReturn) return
+        
+        //check if another org associated with entered number
+        if(searchOrgResponse?.organisations?.length>0 && searchOrgResponse?.organisations?.[0]?.orgNumber !== orgNumber ){
+            setIsButtonDisabled(false);
+            setShowDuplicateContactToast(true)
+            closeToast()
+            return 
+        }
+
+        if((data?.funDetails_validTo ? Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validTo) : Digit.Utils.pt.convertDateToEpoch(ORG_VALIDTO_DATE)) < Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validFrom)){
+            setIsButtonDisabled(false);
+            setShowValidToError(true);
+        }
+        else{
+            const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
-            const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
-            handleResponseForUpdate(orgPayload, bankAccountPayload);
+            if(searchOrgResponse?.organisations?.length>0 && data?.funDetails_orgType?.code === 'VEN' && searchOrgResponse?.organisations?.[0]?.functions?.[0]?.type.includes("CBO")){
+                setIsButtonDisabled(false);
+                setShowCBOToVendorError(true);
+            }
+            else{
+                const bankAccountPayload = orgDataFromAPI?.bankDetails && orgDataFromAPI?.bankDetails?.length > 0 ? getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false}) : getBankAccountUpdatePayload({formData: data, apiData: '', tenantId, isModify:false, referenceId: orgDataFromAPI?.organisation?.id});
+                handleResponseForUpdate(orgPayload, bankAccountPayload);
+            }
         }else {
             const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {})
-            if(userData?.user?.length > 0) {
+            if(userData?.user?.length > 0 && userData?.user?.[0]?.roles.some(role => role.code === "ORG_ADMIN")) {
+                setIsButtonDisabled(false);
                 setShowDuplicateUserError(true)
                 return
             }
             handleResponseForCreate(orgPayload, data);
         }
-    }   
+    }
+    };  
+
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
+
+    const handleSubmit = (_data) => {
+        // Call the debounced version of onModalSubmit
+        debouncedOnModalSubmit(_data);
+      };
 
     if(locationDataFetching || orgDataFetching) return <Loader/>
     return (
-        <React.Fragment>
-            <FormComposer
-                label={isModify ? "CORE_COMMON_SAVE" : t("MASTERS_CREATE_ORGANISATION")}
-                config={config?.form}
-                onSubmit={onSubmit}
-                submitInForm={false}
-                fieldStyle={{ marginRight: 0 }}
-                inline={false}
-                className="form-no-margin"
-                defaultValues={sessionFormData}
-                showWrapperContainers={false}
-                isDescriptionBold={false}
-                noBreakLine={true}
-                showNavs={config?.metaData?.showNavs}
-                showFormInNav={true}
-                showMultipleCardsWithoutNavs={false}
-                showMultipleCardsInNavs={false}
-                horizontalNavConfig={navConfig}
-                onFormValueChange={onFormValueChange}
-                cardClassName = "mukta-header-card"
-                labelBold={true}
-            />
-            {
-                showDuplicateUserError && <Toast error={true} label={t("ES_COMMON_MOBILE_EXISTS_ERROR")} isDleteBtn={true} onClose={() => setShowDuplicateUserError(false)} />
-            }
-        </React.Fragment>
-    )
+      <React.Fragment>
+        <FormComposer
+          label={isModify ? "CORE_COMMON_SAVE" : t("MASTERS_CREATE_ORGANISATION")}
+          config={config?.form}
+          onSubmit={handleSubmit}
+          submitInForm={false}
+          fieldStyle={{ marginRight: 0 }}
+          inline={false}
+        //   className={`form-no-margin ${"wageseeker-update-form"}`}
+          defaultValues={sessionFormData}
+          showWrapperContainers={false}
+          isDescriptionBold={false}
+          noBreakLine={true}
+          showNavs={config?.metaData?.showNavs}
+          showFormInNav={true}
+          showMultipleCardsWithoutNavs={false}
+          showMultipleCardsInNavs={false}
+          horizontalNavConfig={navConfig}
+          onFormValueChange={onFormValueChange}
+          cardClassName="mukta-header-card"
+          labelBold={true}
+          isDisabled={isButtonDisabled}
+        />
+        {showDuplicateUserError && (
+          <Toast type={"error"} label={t("ES_COMMON_MOBILE_EXISTS_ERROR")} isDleteBtn={true} onClose={() => setShowDuplicateUserError(false)} />
+        )}
+        {showValidToError && (
+          <Toast type={"error"} label={t("DATE_VALIDATION_VALID_TO_VALID_FROM_MSG")} isDleteBtn={true} onClose={() => setShowValidToError(false)} />
+        )}
+        {showDuplicateContactToast && (
+          <Toast type={"warning"} label={t("ES_COMMON_ORG_EXISTS_WITH_MOBILE_NUMBER")} isDleteBtn={true} onClose={() => setShowDuplicateContactToast(false)} />
+        )}
+        {showCBOToVendorError && (
+          <Toast type={"warning"} label={t("ORG_CBO_CANNOT_BE_CHANGE_TO_VENDOR")} isDleteBtn={true} onClose={() => setShowCBOToVendorError(false)} />
+        )}
+      </React.Fragment>
+    );
 }
 
 export default CreateOrganizationForm;

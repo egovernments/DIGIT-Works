@@ -44,7 +44,7 @@ class AppVersionBloc extends Bloc<AppVersionBlocEvent, AppVersionBlocState> {
           ]);
 
       emit(AppVersionBlocState.loaded(appVersionModel));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(AppVersionBlocState.error(e.response?.data['Errors'][0]['code']));
     }
   }

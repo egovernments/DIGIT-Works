@@ -23,7 +23,7 @@ class MyBillsRepository {
           queryParameters: queryParameters, data: body ?? {}, options: options);
       return MyBillsListModelMapper.fromMap(
           response.data as Map<String, dynamic>);
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -45,7 +45,7 @@ class MyBillsRepository {
       return MyBillsInboxConfigList.fromJson(
         json.decode(response.toString())['MdmsRes']['commonUiConfig'],
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }

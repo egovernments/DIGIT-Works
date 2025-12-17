@@ -1,12 +1,12 @@
 const Urls = {
-  MDMS: `/egov-mdms-service/v1/_search`,
+   MDMS: `/mdms-v2/v1/_search`,
   WorkFlow: `/egov-workflow-v2/egov-wf/businessservice/_search`,
   WorkFlowProcessSearch: `/egov-workflow-v2/egov-wf/process/_search`,
   localization: `/localization/messages/v1/_search`,
   location: {
-    localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
-    wards: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Ward`,
-    revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
+    localities: `/boundary-service/boundary-relationships/_search?hierarchyType=ADMIN&boundaryType=locality`,
+    wards: `/boundary-service/boundary-relationships/_search?hierarchyType=ADMIN&boundaryType=Ward`,
+    revenue_localities: `/boundary-service/boundary-relationships/_search?hierarchyType=REVENUE&boundaryType=locality`,
   },
 
   pgr_search: `/pgr-services/v2/request/_search`,
@@ -45,7 +45,12 @@ const Urls = {
     download_pdf: "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
     createProject: "/project/v1/_create",
     searchProject: "/project/v1/_search",
+    wmsSearchProject: "/wms/project/_search",
     updateProject: "/project/v1/_update",
+    //look here add your own url
+    analysisStatementcreate : "/statements/v1/analysis/_create",
+    // added
+    utilizationCreate:"/statements/v1/utilization/_create",
   },
 
   contracts: {
@@ -87,15 +92,19 @@ const Urls = {
     obps_Reciept_Search: "/collection-services/payments/_search",
     billAmendmentSearch: "/billing-service/amendment/_search",
     getBulkPdfRecordsDetails: "/pdf-service/v1/_getBulkPdfRecordsDetails",
-    createPayment: "/expense/payment/v1/_create"
+    createPayment: "/expense/payment/v1/_create",
+    ifms_funds_search : "/ifms-adapter/funds/v1/_search"
   },
-expense:{
-  createPayment: "/expense/payment/v1/_create",
-  searchPayment: "/expense/payment/v1/_search",
-  updatePayment: "/expense/payment/v1/_update",
-  regenerate : '/egov-pdf/bill/_generate'
-
-},
+  expense:{
+    createPayment: "/expense/payment/v1/_create",
+    searchPayment: "/mukta-ifix-adapter/v1/pi/_search",
+    updatePayment: "/expense/payment/v1/_update",
+    regenerate : '/egov-pdf/bill/_generate',
+    searchPaymentWMS:"/wms/mukta-pi/_search",
+    updatePI:"/mukta-ifix-adapter/v1/disburse/_create",
+    searchPA:"/expense/payment/v1/_search",
+    generateExcel: "/wms/report/payment-tracker/_create"
+  },
   pt: {
     fectch_property: "/property-services/property/_search",
     fetch_payment_details: "/billing-service/bill/v2/_fetchbill",
@@ -227,7 +236,8 @@ expense:{
 
   wageseeker: {
     create: "/individual/v1/_create",
-    search: "/individual/v1/_search",
+    search: "/mukta-services/individual/v1/_search",
+    wmssearch: "/wms/individual/_search",
     update: "/individual/v1/_update",
     delete: "/individual/v1/_delete",
   },
@@ -247,14 +257,15 @@ expense:{
   },
 
   organisation: {
-    search: "/org-services/organisation/v1/_search",
+    search: "/mukta-services/org-services/organisation/v1/_search",
     create: "/org-services/organisation/v1/_create",
     update: "/org-services/organisation/v1/_update",
   },
 
   bankaccount: {
     create: "/bankaccount-service/bankaccount/v1/_create",
-    search: "/bankaccount-service/bankaccount/v1/_search",
+    //changed here for privacy
+    search: "/mukta-services/bankaccount/v1/_search",
     update: "/bankaccount-service/bankaccount/v1/_update",
   },
 
@@ -268,6 +279,21 @@ expense:{
 
   calculator: {
     expenseBill: "/expense-calculator/v1/_estimate",
+  },
+
+  measurement : {
+    search : "/measurement-service/v1/_search",
+    update : "/measurement-service/v1/_update",
+    
+  }
+  ,
+
+  rateAnalysis:{
+    search:"/rate-analysis/v1/_calculate",
+  },
+
+  mdms_v2: {
+    search: "/mdms-v2/v2/_search",
   },
 };
 

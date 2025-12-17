@@ -6,28 +6,30 @@ part of 'muster_submission.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_MusterSubmissionList _$$_MusterSubmissionListFromJson(
+_$MusterSubmissionListImpl _$$MusterSubmissionListImplFromJson(
         Map<String, dynamic> json) =>
-    _$_MusterSubmissionList(
+    _$MusterSubmissionListImpl(
       musterSubmission: (json['CBOMusterSubmission'] as List<dynamic>?)
           ?.map((e) => MusterSubmission.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_MusterSubmissionListToJson(
-        _$_MusterSubmissionList instance) =>
+Map<String, dynamic> _$$MusterSubmissionListImplToJson(
+        _$MusterSubmissionListImpl instance) =>
     <String, dynamic>{
       'CBOMusterSubmission': instance.musterSubmission,
     };
 
-_$_MusterSubmission _$$_MusterSubmissionFromJson(Map<String, dynamic> json) =>
-    _$_MusterSubmission(
+_$MusterSubmissionImpl _$$MusterSubmissionImplFromJson(
+        Map<String, dynamic> json) =>
+    _$MusterSubmissionImpl(
       code: json['code'] as String,
       value: json['value'] as String,
       active: json['active'] as bool,
     );
 
-Map<String, dynamic> _$$_MusterSubmissionToJson(_$_MusterSubmission instance) =>
+Map<String, dynamic> _$$MusterSubmissionImplToJson(
+        _$MusterSubmissionImpl instance) =>
     <String, dynamic>{
       'code': instance.code,
       'value': instance.value,

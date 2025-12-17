@@ -1,4 +1,5 @@
-import 'package:digit_components/digit_components.dart';
+// import 'package:digit_components/digit_components.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
     as i18;
@@ -54,8 +55,8 @@ class _DropDownDialogState extends State<DropDownDialog> {
                 decoration: BoxDecoration(
                   border: Border.all(
                       color: widget.isDisabled
-                          ? const Color.fromRGBO(149, 148, 148, 1)
-                          : const DigitColors().black),
+                          ? const Color.fromRGBO(149, 148, 148, 0.5)
+                          : Colors.black),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
@@ -63,8 +64,7 @@ class _DropDownDialogState extends State<DropDownDialog> {
                     SizedBox(
                       width: 80,
                       child: Text(
-                        widget.selectedOption != null &&
-                                widget.selectedOption.isNotEmpty
+                        widget.selectedOption.isNotEmpty
                             ? AppLocalizations.of(context).translate(
                                 'COMMON_MASTERS_SKILLS_${widget.selectedOption}')
                             : '',
@@ -73,11 +73,14 @@ class _DropDownDialogState extends State<DropDownDialog> {
                             fontSize: 12,
                             color: widget.isDisabled
                                 ? const Color.fromRGBO(149, 148, 148, 1)
-                                : const DigitColors().black),
+                                :  Colors.black),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.arrow_drop_down,
+                      color: widget.isDisabled
+                          ? const Color.fromRGBO(149, 148, 148, 1)
+                          : Colors.black,
                       size: 20,
                     ),
                   ],
@@ -105,7 +108,7 @@ class _DropDownDialogState extends State<DropDownDialog> {
                 fontWeight: FontWeight.w700,
                 color: widget.isDisabled
                     ? const Color.fromRGBO(149, 148, 148, 1)
-                    : const DigitColors().black),
+                    : Colors.black),
           ),
           content: SizedBox(
             height:

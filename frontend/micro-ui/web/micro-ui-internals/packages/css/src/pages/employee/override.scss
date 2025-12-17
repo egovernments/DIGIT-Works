@@ -1,0 +1,372 @@
+.totalEstimateAmoutCrad {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.view-composer-subheader {
+  color: theme(digitv2.lightTheme.text-primary) !important;
+  margin-bottom: theme(digitv2.spacers.spacer4);
+}
+
+.employee-main-application-details {
+
+  &.project-details,
+  &.estimate-details,
+  &.contract-details,
+  &.analysis-details {
+    padding: theme(digitv2.spacers.spacer0) !important;
+  }
+}
+
+
+.row {
+  .extension-label {
+    color: theme(digitv2.lightTheme.primary-1) !important;
+  }
+}
+
+.digit-employee-card {
+  .card-label {
+    color: theme(digitv2.lightTheme.primary-1) !important;
+  }
+}
+
+.total_amount_wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: theme(digitv2.spacers.spacer4);
+  border: 0.063rem solid theme(digitv2.lightTheme.generic-divider);
+  border-radius: theme(digitv2.spacers.spacer1);
+  width: fit-content;
+}
+
+.table_total_amount {
+  margin-right: theme(digitv2.spacers.spacer4);
+  width: fit-content;
+  color: theme(digitv2.lightTheme.primary-2) !important;
+}
+
+.table_total_amount_value {
+  width: fit-content;
+  color: theme(digitv2.lightTheme.primary-2) !important;
+}
+
+.view-subheader,
+.create-header {
+  margin-bottom: theme(digitv2.spacers.spacer6);
+  color: theme(digitv2.lightTheme.text-primary) !important;
+}
+
+.create-est-viewAnalysis-totalEstAmt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.digit-home-ground {
+  padding: theme(digitv2.spacers.spacer5);
+}
+
+.digit-home-moduleCardWrapper {
+  padding: theme(digitv2.spacers.spacer0);
+}
+
+.inbox-search-wrapper {
+  .inbox-search-component-wrapper {
+    .sections-parent {
+      &.search {
+        .search-wrapper .search-button-wrapper {
+          gap: theme(digitv2.spacers.spacer6);
+        }
+      }
+
+      &.inbox {
+        .section {
+          &.search {
+            .search-button-wrapper {
+              gap: theme(digitv2.spacers.spacer6);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.digit-action-bar-wrap {
+  &.new-actionbar {
+    div {
+      width: unset;
+    }
+  }
+}
+
+.digit-toast-success {
+  transform: translateX(-50%);
+  left: 50%;
+  bottom: -100%;
+}
+
+@keyframes slideInFromBottom {
+  from {
+    bottom: -100%;
+  }
+
+  to {
+    bottom: 4.5rem;
+  }
+}
+
+.digit-toast-success.animate {
+  animation: slideInFromBottom 0.5s ease forwards;
+}
+
+.digit-topbar .digit-logo-ulb-wrapper .digit-topbar-logo {
+  width: fit-content;
+}
+
+.msb-sidebar {
+  z-index: 1000;
+}
+
+.digit-header-content {
+  &.label {
+    font-family: theme(digitv2.fontFamily.sans);
+    font-style: theme(digitv2.fontStyle.normal);
+    font-weight: theme(digitv2.fontWeight.regular);
+    line-height: theme(digitv2.lineHeight.lineheight2);
+
+    @media (max-aspect-ratio: 9/16) {
+      /* Media query for mobile */
+      font-size: theme(digitv2.fontSize.label.mobile);
+    }
+
+    @media (min-aspect-ratio: 9/16) and (max-aspect-ratio: 3/4) {
+      /* Media query for tablets */
+      font-size: theme(digitv2.fontSize.label.tablet);
+    }
+
+    @media (min-aspect-ratio: 3/4) {
+      /* Media query for desktop */
+      font-size: theme(digitv2.fontSize.label.desktop);
+    }
+  }
+}
+
+.digit-sidebar {
+  top: 4.5rem;
+}
+
+.digit-bread-crumb {
+  margin-bottom: 1.5rem;
+}
+
+
+th {
+  background-color: theme(digitv2.lightTheme.paper-primary);
+}
+
+.uploadfile-composer-textfield {
+  margin-bottom: 1.5rem;
+}
+
+.digit-header-content {
+  &.label {
+    margin-top: 0.565rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .digit-action-bar-wrap {
+    height: fit-content;
+  }
+}
+
+.digit-action-bar-wrap {
+  .digit-action-bar-fields {
+    .action-bar-individual-action-field {
+      button {
+        min-width: 14rem;
+      }
+    }
+  }
+}
+
+.viewstatement-viewamount-wrapper,
+.totalEstimateAmoutCrad {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.viewstatement-viewamount-wrapper-create {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+
+.table-included-section {
+  .digit-label-field-pair {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .digit-label-field-pair::-webkit-scrollbar {
+    height: 0.375rem;
+    background-color: theme(digitv2.lightTheme.generic-background);
+  }
+
+  .digit-label-field-pair::-webkit-scrollbar-track {
+    background-color: theme(digitv2.lightTheme.generic-background);
+    border-radius: 0.563rem;
+  }
+
+  .digit-label-field-pair::-webkit-scrollbar-thumb {
+    background-color: theme(digitv2.lightTheme.generic-divider);
+    border-radius: 0.563rem;
+  }
+}
+
+.total_amount_wrapper {
+  .digit-text-block-wrap {
+    margin-top: 0rem;
+  }
+}
+
+.checkbox-status-filter-label {
+  color: theme(digitv2.lightTheme.text-primary);
+  font-family: theme(digitv2.fontFamily.sans);
+  font-style: theme(digitv2.fontStyle.normal);
+  font-weight: theme(digitv2.fontWeight.bold);
+  line-height: theme(digitv2.lineHeight.lineheight1);
+
+  @media (max-aspect-ratio: 9/16) {
+    /* Media query for mobile */
+    font-size: theme(digitv2.fontSize.heading-s.mobile);
+  }
+
+  @media (min-aspect-ratio: 9/16) and (max-aspect-ratio: 3/4) {
+    /* Media query for tablets */
+    font-size: theme(digitv2.fontSize.heading-s.tablet);
+  }
+
+  @media (min-aspect-ratio: 3/4) {
+    /* Media query for desktop */
+    font-size: theme(digitv2.fontSize.heading-s.desktop);
+  }
+
+  .label-styles {
+    color: theme(digitv2.lightTheme.text-primary);
+    font-family: theme(digitv2.fontFamily.sans);
+    font-style: theme(digitv2.fontStyle.normal);
+    font-weight: theme(digitv2.fontWeight.bold);
+    line-height: theme(digitv2.lineHeight.lineheight1);
+
+    @media (max-aspect-ratio: 9/16) {
+      /* Media query for mobile */
+      font-size: theme(digitv2.fontSize.heading-s.mobile);
+    }
+
+    @media (min-aspect-ratio: 9/16) and (max-aspect-ratio: 3/4) {
+      /* Media query for tablets */
+      font-size: theme(digitv2.fontSize.heading-s.tablet);
+    }
+
+    @media (min-aspect-ratio: 3/4) {
+      /* Media query for desktop */
+      font-size: theme(digitv2.fontSize.heading-s.desktop);
+    }
+  }
+}
+
+.search-component-table::-webkit-scrollbar {
+  height: 0.375rem;
+  background-color: theme(digitv2.lightTheme.generic-background);
+}
+
+.search-component-table::-webkit-scrollbar-track {
+  background-color: theme(digitv2.lightTheme.generic-background);
+  border-radius: 0.563rem;
+}
+
+.search-component-table::-webkit-scrollbar-thumb {
+  background-color: theme(digitv2.lightTheme.generic-divider);
+  border-radius: 0.563rem;
+}
+
+.view-composer-custom-class {
+  max-width: 100%;
+  overflow-x: auto;
+
+  &.mbhistory-wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+.view-composer-custom-class::-webkit-scrollbar {
+  height: 0.375rem;
+  background-color: theme(digitv2.lightTheme.generic-background);
+}
+
+.view-composer-custom-class::-webkit-scrollbar-track {
+  background-color: theme(digitv2.lightTheme.generic-background);
+  border-radius: 0.563rem;
+}
+
+.view-composer-custom-class::-webkit-scrollbar-thumb {
+  background-color: theme(digitv2.lightTheme.generic-divider);
+  border-radius: 0.563rem;
+}
+
+.search-field-wrapper{
+  &.search{
+    .search-button-wrapper{
+      &.search{
+        margin-top: 21.91px;
+      }
+    }
+  }
+}
+
+.mb-create-label,
+.purchase-bill-label{
+  width: 17rem !important;
+  font-weight: 500 !important;
+}
+
+.digit-infobanner-wrap{
+  max-width: 100%;
+}
+
+.employeeForgotPassword {
+  .digit-dropdown-select {
+    margin-bottom: 0rem;
+  }
+}
+
+
+.loginCardClassName{
+  .digit-dropdown-employee-select-wrap {
+    .digit-dropdown-options-card{
+      max-height: 10vmax;
+    }
+  }
+}
+
+.employeeForgotPassword{
+  .digit-dropdown-employee-select-wrap {
+    .digit-dropdown-options-card{
+      max-height: 10vmax;
+    }
+  }
+}
+
+.user-profile > div:first-of-type {
+  margin: 64px !important;
+}

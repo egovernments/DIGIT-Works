@@ -1,4 +1,5 @@
-import 'package:digit_components/digit_components.dart';
+// import 'package:digit_components/digit_components.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
@@ -19,7 +20,7 @@ class DigitSearchDropdown<T> extends StatelessWidget {
   final Map<String, String Function(Object object)>? validationMessages;
 
   const DigitSearchDropdown({
-    Key? key,
+    super.key,
     required this.suggestionsCallback,
     this.onSuggestionSelected,
     required this.label,
@@ -31,7 +32,7 @@ class DigitSearchDropdown<T> extends StatelessWidget {
     this.onChanged,
     this.validationMessages,
     this.initialValueText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,7 @@ class DigitSearchDropdown<T> extends StatelessWidget {
             ),
             itemBuilder: (context, item) {
               return Padding(
-                padding: const EdgeInsets.all(kPadding * 2),
+                padding:  EdgeInsets.all(Theme.of(context).spacerTheme.spacer4),
                 child: Text(
                   valueMapper(item),
                   style: Theme.of(context).textTheme.bodyLarge,

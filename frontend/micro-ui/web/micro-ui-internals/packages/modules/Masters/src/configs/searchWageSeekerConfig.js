@@ -88,9 +88,9 @@ const searchWageSeekerConfig = () => {
               populators: {
                 name: "socialCategory",
                 optionsKey: "code",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
+                // optionsCustomStyle: {
+                //   top: "2.3rem",
+                // },
                 mdmsConfig: {
                   masterName: "SocialCategory",
                   moduleName: "common-masters",

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:works_shg_app/models/adharModel/adhar_response.dart';
 
 part 'individual_details_model.mapper.dart';
 
@@ -18,17 +19,27 @@ class IndividualDetails with IndividualDetailsMappable {
   final File? imageFile;
   final Uint8List? bytes;
   final String? photo;
+  final String? documentType;
 
-  IndividualDetails(
-      {this.aadhaarNo,
-      this.name,
-      this.fatherName,
-      this.relationship,
-      this.dateOfBirth,
-      this.gender,
-      this.socialCategory,
-      this.mobileNumber,
-      this.imageFile,
-      this.bytes,
-      this.photo});
+  final bool? adharVerified;
+  final int? timeStamp;
+  final AdharCardResponse? adharCardResponse;
+
+  IndividualDetails({
+    this.aadhaarNo,
+    this.name,
+    this.fatherName,
+    this.relationship,
+    this.dateOfBirth,
+    this.gender,
+    this.socialCategory,
+    this.mobileNumber,
+    this.imageFile,
+    this.bytes,
+    this.photo,
+    this.adharVerified,
+    this.documentType,
+    this.timeStamp,
+    this.adharCardResponse
+  });
 }

@@ -32,12 +32,11 @@
   justify-content: flex-end;
   background-color: rgba(255, 255, 255, var(--bg-opacity));
   border-top: 1px solid rgb(214, 213, 212);
-  padding: 20px 40px 20px 0px;
+  padding: 20px 20px 20px 0px;
   color: rgb(80, 90, 95);
 
   border-radius: 0 0 4px 4px;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.16);
-  border-inline-width: 24px;
   border-inline-color: white;
 
   svg {
@@ -62,7 +61,7 @@
 
   th,
   td {
-    text-align: right;
+    text-align: left;
     border-bottom: 1px solid #b1b4b6;
     padding: 15px 10px;
   }
@@ -95,7 +94,7 @@
     td:first-child {
       position: sticky;
       background: #fff;
-      color: #f47738;
+      color: #C84C0E;
       left: 0;
       border-right: 1px solid #b1b4b6;
     }
@@ -197,7 +196,8 @@
 }
 
 .reports-table {
-  margin-top: 2rem;
+  /*margin-top: 2rem;*/
+  margin-top: 0px !important;
   thead {
     th {
       &:first-child {
@@ -419,4 +419,13 @@
       padding: 20px 18px;
     }
   }
+}
+
+.measure-table-header {
+  float: right;
+  margin-top: -2rem;
+}
+
+.mb-history-table{
+  box-shadow: none;
 }

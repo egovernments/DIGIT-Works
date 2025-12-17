@@ -6,8 +6,9 @@ part of 'user_details_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_UserDetailsModel _$$_UserDetailsModelFromJson(Map<String, dynamic> json) =>
-    _$_UserDetailsModel(
+_$UserDetailsModelImpl _$$UserDetailsModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$UserDetailsModelImpl(
       userRequestModel: json['UserRequest'] == null
           ? null
           : UserRequestModel.fromJson(
@@ -15,11 +16,12 @@ _$_UserDetailsModel _$$_UserDetailsModelFromJson(Map<String, dynamic> json) =>
       access_token: json['access_token'] as String?,
       token_type: json['token_type'] as String?,
       refresh_token: json['refresh_token'] as String?,
-      expires_in: json['expires_in'] as int?,
+      expires_in: (json['expires_in'] as num?)?.toInt(),
       scope: json['scope'] as String?,
     );
 
-Map<String, dynamic> _$$_UserDetailsModelToJson(_$_UserDetailsModel instance) =>
+Map<String, dynamic> _$$UserDetailsModelImplToJson(
+        _$UserDetailsModelImpl instance) =>
     <String, dynamic>{
       'UserRequest': instance.userRequestModel,
       'access_token': instance.access_token,
@@ -29,10 +31,11 @@ Map<String, dynamic> _$$_UserDetailsModelToJson(_$_UserDetailsModel instance) =>
       'scope': instance.scope,
     };
 
-_$_UserRequestModel _$$_UserRequestModelFromJson(Map<String, dynamic> json) =>
-    _$_UserRequestModel(
+_$UserRequestModelImpl _$$UserRequestModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$UserRequestModelImpl(
       active: json['active'] as bool?,
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       emailId: json['emailId'] as String?,
       mobileNumber: json['mobileNumber'] as String?,
       name: json['name'] as String?,
@@ -46,7 +49,8 @@ _$_UserRequestModel _$$_UserRequestModelFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$$_UserRequestModelToJson(_$_UserRequestModel instance) =>
+Map<String, dynamic> _$$UserRequestModelImplToJson(
+        _$UserRequestModelImpl instance) =>
     <String, dynamic>{
       'active': instance.active,
       'id': instance.id,
@@ -61,14 +65,14 @@ Map<String, dynamic> _$$_UserRequestModelToJson(_$_UserRequestModel instance) =>
       'roles': instance.rolesModel,
     };
 
-_$_RolesModel _$$_RolesModelFromJson(Map<String, dynamic> json) =>
-    _$_RolesModel(
+_$RolesModelImpl _$$RolesModelImplFromJson(Map<String, dynamic> json) =>
+    _$RolesModelImpl(
       code: json['code'] as String?,
       name: json['name'] as String?,
       tenantId: json['tenantId'] as String?,
     );
 
-Map<String, dynamic> _$$_RolesModelToJson(_$_RolesModel instance) =>
+Map<String, dynamic> _$$RolesModelImplToJson(_$RolesModelImpl instance) =>
     <String, dynamic>{
       'code': instance.code,
       'name': instance.name,

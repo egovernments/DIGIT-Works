@@ -37,7 +37,7 @@ class AttendeeCreateBloc
               body: {"attendees": event.attendeeList});
       await Future.delayed(const Duration(seconds: 1));
       emit(const AttendeeCreateState.loaded());
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(AttendeeCreateState.error(e.response?.data['Errors'][0]['code']));
     }
   }

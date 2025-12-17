@@ -21,7 +21,7 @@ auth_token = config.auth_token;
 async function search_projectDetails(tenantId, requestinfo, projectId) {
   var params = {
     tenantId: tenantId,
-    limit: 1,
+    limit: 11,
     offset: 0
   };
 
@@ -54,6 +54,28 @@ async function search_musterRoll(tenantId, requestinfo, musterRollNumber) {
     params,
   });
 }
+
+async function search_individual(individualIds, tenantId, requestinfo) {
+  var params = {
+    tenantId: tenantId,
+    limit: 100,
+    offset: 0,
+  };
+  var data = {
+    // "apiOperation": "SEARCH",
+    "Individual": {
+      individualId: individualIds
+    }
+  }
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.mukta_service, config.paths.masked_ind_search),
+    data: Object.assign(requestinfo, data),
+    params,
+  });
+}
+
 async function search_contract(tenantId, requestinfo, contractId) {
   var params = {
     tenantId: tenantId,
@@ -76,7 +98,7 @@ async function search_organisation(tenantId, requestinfo, orgId) {
     offset: 0
   };
   var data = {
-    "apiOperation": "SEARCH",
+    // "apiOperation": "SEARCH",
     "SearchCriteria": {
       "tenantId": tenantId,
       "id": [orgId]
@@ -101,11 +123,11 @@ async function search_mdmsLabourCharges(tenantId, requestinfo) {
     masterName: "LabourCharges",
   };
 
-  var searchEndpoint = config.paths.mdms_get;
+  var searchEndpoint = config.paths.mukta_service_get;
 
   return await axios({
     method: "post",
-    url: url.resolve(config.host.mdms, searchEndpoint),
+    url: url.resolve(config.host.mukta_service, searchEndpoint),
     data: Object.assign(requestinfo),
     params
 
@@ -137,7 +159,30 @@ async function search_estimateDetails(tenantId, requestinfo, estimateNumber) {
   var params = {
     tenantId: tenantId,
     estimateNumber: estimateNumber,
-    limit: 1,
+    limit: 100,
+    _offset: 0,
+    get offset() {
+      return this._offset;
+    },
+    set offset(value) {
+      this._offset = value;
+    },
+  };
+
+  var searchEndpoint = config.paths.estimate_search;
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.estimates, searchEndpoint),
+    data: Object.assign(requestinfo),
+    params,
+  });
+}
+
+async function search_revisedEstimateDetails(tenantId, requestinfo, revisionNumber) {
+  var params = {
+    tenantId: tenantId,
+    revisionNumber: revisionNumber,
+    limit: 100,
     _offset: 0,
     get offset() {
       return this._offset;
@@ -169,10 +214,11 @@ async function search_user(uuid, tenantId, requestinfo) {
 }
 
 
-async function search_workflow(applicationNumber, tenantId, requestinfo) {
+async function search_workflow(applicationNumber, tenantId, requestinfo,history) {
   var params = {
     tenantId: tenantId,
     businessIds: applicationNumber,
+    history: history,
   };
   return await axios({
     method: "post",
@@ -190,12 +236,16 @@ async function search_mdms(request) {
   });
 }
 
-async function search_localization(request, params) {
+async function search_localization(request, lang, module, tenantId) {
   return await axios({
     method: "post",
     url: url.resolve(config.host.localization, config.paths.localization_search),
     data: request,
-    params: params
+    params: {
+      "locale": lang,
+      "module": module,
+      "tenantId": tenantId.split(".")[0]
+    }
   });
 }
 
@@ -471,6 +521,180 @@ async function create_bulk_pdf_pt(kafkaData) {
 
 }
 
+async function search_hrms(tenantId, requestinfo) {
+  var params = {
+    tenantId: tenantId,
+    sortOrder: "ASC",
+  };
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.hrms, config.paths.hrms_search),
+    data: requestinfo,
+    params,
+  });
+}
+
+async function search_mdms_terms_and_conditions(tenantId, requestinfo) { 
+  var params = {
+    tenantId: tenantId.split(".")[0],
+    moduleName: "tenant",
+    masterName: "footer",
+  };
+
+  var searchEndpoint = config.paths.mukta_service_get;
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.mukta_service, searchEndpoint),
+    data: Object.assign(requestinfo),
+    params
+
+  });
+}
+
+async function search_measurementBookDetails(tenantId, requestinfo,contractNumber, measurementBookNumber, key) {
+
+  const searchEndpoint = config.paths.measurement_book_search;
+  const data = {
+    "contractNumber": contractNumber,
+    "measurementNumber": measurementBookNumber,
+    "tenantId": tenantId,
+    "key": key
+  }
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.measurements, searchEndpoint),
+    data: Object.assign(requestinfo, data)
+  });
+}
+
+async function search_mdmsV2(tenantId) {
+  const params = {
+    MdmsCriteria: {
+      moduleDetails: [
+        {
+          moduleName: "WORKS-SOR",
+          masterDetails: [
+            {
+              name: "Rates"
+            }
+          ]
+        }
+      ],
+      tenantId: tenantId
+    }
+  };
+
+  const searchEndpoint = config.paths.mdmsV2_search;
+
+  try {
+    const response = await axios({
+      method: "post",
+      url: url.resolve(config.host.mdmsV2, searchEndpoint),
+      data: params
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error searching MDMS v2:', error);
+    throw error;
+  }
+}
+
+async function search_rateAnalysisStatementDetails(tenantId, requestinfo, referenceId) {
+  const search_endpoint = config.paths.analysis_statement_search;
+  const url = new URL(search_endpoint, config.host.statements);
+  requestinfo = requestinfo.RequestInfo;
+  const data = {
+    RequestInfo: requestinfo,
+    searchCriteria: {
+      tenantId: tenantId,
+      referenceId: referenceId
+    }
+  };
+
+  return await axios.post(url.href, data);
+}
+async function search_rateAnalysisUtilizationDetails(tenantId, requestinfo, referenceId) {
+  const search_endpoint = config.paths.analysis_utilization_search;
+  const url = new URL(search_endpoint, config.host.statements);
+  requestinfo = requestinfo.RequestInfo;
+  const data = {
+    RequestInfo: requestinfo,
+    searchCriteria: {
+      tenantId: tenantId,
+      referenceId: referenceId
+    }
+  };
+
+  return await axios.post(url.href, data);
+}
+
+async function search_projectDetails_by_ID(tenantId, requestinfo, projectId) {
+  var params = {
+    tenantId: tenantId,
+    limit: 1,
+    offset: 0
+  };
+
+  var searchEndpoint = config.paths.projectDetails_search;
+  var data = {
+    "Projects": [{
+      "tenantId": tenantId,
+      "id": projectId
+    }]
+  }
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.projectDetails, searchEndpoint),
+    data: Object.assign(requestinfo, data),
+    params,
+  });
+}
+
+async function search_payment_instruction(tenantId, requestinfo, projectNum) {
+
+  const searchEndpoint = config.paths.payment_instruction_search;
+  const data = {
+    "inbox": {
+      "moduleSearchCriteria": {
+        "tenantId": tenantId,
+        "projectId": projectNum
+      },
+      "tenantId": tenantId,
+      "limit": 100,
+      "offset": 0
+    },
+    "RequestInfo": requestinfo
+  };
+  return await axios({
+      method: "post",
+      url: url.resolve(config.host.paymentTracker, searchEndpoint),
+      data: data
+  });
+}
+
+async function search_report_paymentTracker(tenantId, requestinfo, projectNum) {
+
+  const searchEndpoint = config.paths.report_paymentTracker_search;
+  const data = {
+    "searchCriteria": {
+      "moduleSearchCriteria": {
+        "projectId": projectNum
+      },
+      "tenantId": tenantId,
+      "limit": 10
+    },
+    "RequestInfo": requestinfo
+  };
+  return await axios({
+      method: "post",
+      url: url.resolve(config.host.paymentTracker, searchEndpoint),
+      data: data
+  });
+}
+
+
 module.exports = {
   pool,
   create_pdf,
@@ -480,7 +704,9 @@ module.exports = {
   search_workflow,
   search_projectDetails,
   search_estimateDetails,
+  search_revisedEstimateDetails,
   search_musterRoll,
+  search_individual,
   search_contract,
   search_mdms,
   search_localization,
@@ -494,5 +720,14 @@ module.exports = {
   upload_file_using_filestore,
   create_eg_payments_excel,
   reset_eg_payments_excel,
-  exec_query_eg_payments_excel
+  exec_query_eg_payments_excel,
+  search_hrms,
+  search_mdms_terms_and_conditions,
+  search_measurementBookDetails,
+  search_mdmsV2,
+  search_rateAnalysisStatementDetails,
+  search_projectDetails_by_ID,
+  search_rateAnalysisUtilizationDetails,
+  search_payment_instruction,
+  search_report_paymentTracker
 };

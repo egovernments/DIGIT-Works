@@ -1,47 +1,58 @@
-import React from "react";
+import React,{Fragment} from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ActionBar, Banner, Card, CardText, Loader, SubmitBar, LinkLabel, EditIcon, AddNewIcon} from "@egovernments/digit-ui-react-components";
+import { PanelCard, Button } from "@egovernments/digit-ui-components";
 
-const CreateOrganizationSuccess = ({isSuccess, setCreateOrgStatus}) => {
-    const {t} = useTranslation()
+const CreateOrganizationSuccess = ({ isSuccess, setCreateOrgStatus }) => {
+  const { t } = useTranslation();
 
-    const modifyOrg = () => {
-        setCreateOrgStatus(null)
-    }
+  const modifyOrg = () => {
+    setCreateOrgStatus(null);
+  };
 
-    const createOrg = () => {
-        setCreateOrgStatus(null)
-    }
+  const createOrg = () => {
+    setCreateOrgStatus(null);
+  };
 
-    return (
-        <Card>
-            <Banner 
-                successful={isSuccess}
-                message={`${isSuccess ? t("MASTERS_ORGANISATION_CREATED") : t("MASTERS_ORGANISATION_CREATE_FAILURE")}`}
-                info={`${isSuccess ? t("WORKS_ORGANISATION_CODE") : ""}`}
-                applicationNumber={`${isSuccess ? "DH21M20129" : ""}`}
-                whichSvg={`${isSuccess ? "tick" : null}`}
-            />
+  const children = [
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <Button
+        label={t("MASTERS_ORGANISATION_MODIFY")}
+        variation="link"
+        icon={"EditIcon"}
+        onClick={modifyOrg}
+        type="button"
+        style={{ display: "flex" }}
+      />
+      <Button
+        label={t("MASTERS_CREATE_NEW_ORGANISATION")}
+        variation="link"
+        icon={"AddNewIcon"}
+        onClick={createOrg}
+        type="button"
+        style={{ display: "flex" }}
+      />
+    </div>,
+  ];
 
-            {isSuccess && <CardText>{t("MASTERS_ORGANISATION_CREATED_SUCCESS")}</CardText>}
+  const footerChildren = [
+    <Link to={`/${window.contextPath}/employee`}>
+      <Button label={t("CORE_COMMON_GO_TO_HOME")} variation="primary" type="button" />
+    </Link>,
+  ];
 
-            <div style={{display: "flex", justifyContent:"space-between"}}>
-                <LinkLabel style={{ display: "flex" }} onClick={modifyOrg}>
-                    <EditIcon style={{marginRight: "8px"}}/>{t("MASTERS_ORGANISATION_MODIFY")}
-                </LinkLabel>
-                <LinkLabel style={{ display: "flex" }} onClick={createOrg}>
-                    <AddNewIcon style={{marginRight: "8px"}}/>{t("MASTERS_CREATE_NEW_ORGANISATION")}
-                </LinkLabel>     
-            </div>
-                  
-            <ActionBar>
-                <Link to={`/${window.contextPath}/employee`}>
-                    <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-                </Link>
-            </ActionBar>
-        </Card>
-    )
-}
+  return (
+    <>
+      <PanelCard
+        type={isSuccess ? "success" : "error"}
+        message={`${isSuccess ? t("MASTERS_ORGANISATION_CREATED") : t("MASTERS_ORGANISATION_CREATE_FAILURE")}`}
+        info={`${isSuccess ? t("WORKS_ORGANISATION_CODE") : ""}`}
+        footerChildren={footerChildren}
+        children={children}
+        response={`${isSuccess ? "DH21M20129" : ""}`}
+      />
+    </>
+  );
+};
 
 export default CreateOrganizationSuccess;

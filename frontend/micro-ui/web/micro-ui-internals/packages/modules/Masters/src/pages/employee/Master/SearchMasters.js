@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import { useTranslation } from "react-i18next";
-import { Toast } from "@egovernments/digit-ui-react-components";
+import { Toast } from "@egovernments/digit-ui-components";
 
 const SearchMasters = () => {
     const { t } = useTranslation();
@@ -14,7 +14,7 @@ const SearchMasters = () => {
     }
   const onSubmit = async (data) => {
       if(!data?.nameOfTheOrg){
-        setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
+        setShowToast({type: "warning", label: "ERR_PT_FILL_VALID_FIELDS" });
         setTimeout(() => {
           setShowToast(false);
         }, 3000);
@@ -91,8 +91,7 @@ const SearchMasters = () => {
       />
       {showToast && (
         <Toast
-          error={showToast.error}
-          warning={showToast.warning}
+          type={showToast?.type}
           label={t(showToast.label)}
           onClose={() => {
             setShowToast(null);

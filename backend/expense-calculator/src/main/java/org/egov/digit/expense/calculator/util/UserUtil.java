@@ -23,19 +23,19 @@ import digit.models.coremodels.user.enums.UserType;
 @Component
 public class UserUtil {
 
-	@Autowired
-	private ObjectMapper mapper;
+	private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+	private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
+	private final ObjectMapper mapper;
+
+	private final ServiceRequestRepository serviceRequestRepository;
+
+	private final ExpenseCalculatorConfiguration configs;
 
 	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-
-	@Autowired
-	private ExpenseCalculatorConfiguration configs;
-
-	@Autowired
-	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, ExpenseCalculatorConfiguration configs) {
 		this.mapper = mapper;
 		this.serviceRequestRepository = serviceRequestRepository;
+		this.configs = configs;
 	}
 
 	/**
@@ -56,8 +56,7 @@ public class UserUtil {
 		try {
 			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap, dobFormat);
-			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
-			return userDetailResponse;
+            return mapper.convertValue(responseMap, UserDetailResponse.class);
 		} catch (IllegalArgumentException e) {
 			throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
 		}
@@ -75,12 +74,12 @@ public class UserUtil {
 		if (users != null) {
 			users.forEach(map -> {
 				map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
-				if ((String) map.get("lastModifiedDate") != null)
-					map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
+				if ((String) map.get(LAST_MODIFIED_DATE) != null)
+					map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
 				if ((String) map.get("dob") != null)
 					map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
-				if ((String) map.get("pwdExpiryDate") != null)
-					map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
+				if ((String) map.get(PWD_EXPIRY_DATE) != null)
+					map.put(PWD_EXPIRY_DATE, dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
 			});
 		}
 	}

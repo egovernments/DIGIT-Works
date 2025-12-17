@@ -1,7 +1,8 @@
 import React from "react";
 import { Switch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { PrivateRoute, AppContainer, BreadCrumb } from "@egovernments/digit-ui-react-components";
+import { PrivateRoute, AppContainer } from "@egovernments/digit-ui-react-components";
+import { BreadCrumb } from "@egovernments/digit-ui-components";
 import Response from "../../components/Response";
 import SearchAttendance from "./SearchAttendance";
 import SearchAttendancePlainSearch from "./SearchAttendencePlainSearch";
@@ -41,7 +42,7 @@ const AttendanceBreadCrumbs = ({ location }) => {
       isBack: fromScreen && true,
     }
   ];
-  return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
+  return <BreadCrumb crumbs={crumbs} />;
 };
 
 const App = ({ path }) => {
@@ -51,17 +52,12 @@ const App = ({ path }) => {
 
   return (
     <Switch>
-      <AppContainer className="ground-container">
+      <AppContainer>
         <React.Fragment>
           <AttendanceBreadCrumbs location={location} />
         </React.Fragment>
         <PrivateRoute path={`${path}/view-attendance`} component={ViewAttendanceApp} />
-        <PrivateRoute
-          path={`${path}/inbox`}
-          component={() => (
-            <Inbox parentRoute={path} initialStates={{}}/>
-          )}
-        />
+        <PrivateRoute path={`${path}/inbox`} component={() => <Inbox parentRoute={path} initialStates={{}} />} />
         <PrivateRoute path={`${path}/response`} component={Response} />
         <PrivateRoute path={`${path}/search-attendance`} component={SearchAttendance} />
         <PrivateRoute path={`${path}/search-attendance-plain`} component={SearchAttendancePlainSearch} />

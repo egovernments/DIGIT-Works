@@ -12,7 +12,7 @@ part of 'muster_roll_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 MusterRollsModel _$MusterRollsModelFromJson(Map<String, dynamic> json) {
   return _MusterRollsModel.fromJson(json);
@@ -72,11 +72,11 @@ class _$MusterRollsModelCopyWithImpl<$Res, $Val extends MusterRollsModel>
 }
 
 /// @nodoc
-abstract class _$$_MusterRollsModelCopyWith<$Res>
+abstract class _$$MusterRollsModelImplCopyWith<$Res>
     implements $MusterRollsModelCopyWith<$Res> {
-  factory _$$_MusterRollsModelCopyWith(
-          _$_MusterRollsModel value, $Res Function(_$_MusterRollsModel) then) =
-      __$$_MusterRollsModelCopyWithImpl<$Res>;
+  factory _$$MusterRollsModelImplCopyWith(_$MusterRollsModelImpl value,
+          $Res Function(_$MusterRollsModelImpl) then) =
+      __$$MusterRollsModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -85,11 +85,11 @@ abstract class _$$_MusterRollsModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_MusterRollsModelCopyWithImpl<$Res>
-    extends _$MusterRollsModelCopyWithImpl<$Res, _$_MusterRollsModel>
-    implements _$$_MusterRollsModelCopyWith<$Res> {
-  __$$_MusterRollsModelCopyWithImpl(
-      _$_MusterRollsModel _value, $Res Function(_$_MusterRollsModel) _then)
+class __$$MusterRollsModelImplCopyWithImpl<$Res>
+    extends _$MusterRollsModelCopyWithImpl<$Res, _$MusterRollsModelImpl>
+    implements _$$MusterRollsModelImplCopyWith<$Res> {
+  __$$MusterRollsModelImplCopyWithImpl(_$MusterRollsModelImpl _value,
+      $Res Function(_$MusterRollsModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -98,7 +98,7 @@ class __$$_MusterRollsModelCopyWithImpl<$Res>
     Object? musterRoll = freezed,
     Object? count = freezed,
   }) {
-    return _then(_$_MusterRollsModel(
+    return _then(_$MusterRollsModelImpl(
       musterRoll: freezed == musterRoll
           ? _value._musterRoll
           : musterRoll // ignore: cast_nullable_to_non_nullable
@@ -113,14 +113,14 @@ class __$$_MusterRollsModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MusterRollsModel implements _MusterRollsModel {
-  const _$_MusterRollsModel(
+class _$MusterRollsModelImpl implements _MusterRollsModel {
+  const _$MusterRollsModelImpl(
       {@JsonKey(name: 'musterRolls') final List<MusterRoll>? musterRoll,
       @JsonKey(name: 'count') this.count})
       : _musterRoll = musterRoll;
 
-  factory _$_MusterRollsModel.fromJson(Map<String, dynamic> json) =>
-      _$$_MusterRollsModelFromJson(json);
+  factory _$MusterRollsModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MusterRollsModelImplFromJson(json);
 
   final List<MusterRoll>? _musterRoll;
   @override
@@ -143,10 +143,10 @@ class _$_MusterRollsModel implements _MusterRollsModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MusterRollsModel &&
+            other is _$MusterRollsModelImpl &&
             const DeepCollectionEquality()
                 .equals(other._musterRoll, _musterRoll) &&
             (identical(other.count, count) || other.count == count));
@@ -160,12 +160,13 @@ class _$_MusterRollsModel implements _MusterRollsModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MusterRollsModelCopyWith<_$_MusterRollsModel> get copyWith =>
-      __$$_MusterRollsModelCopyWithImpl<_$_MusterRollsModel>(this, _$identity);
+  _$$MusterRollsModelImplCopyWith<_$MusterRollsModelImpl> get copyWith =>
+      __$$MusterRollsModelImplCopyWithImpl<_$MusterRollsModelImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MusterRollsModelToJson(
+    return _$$MusterRollsModelImplToJson(
       this,
     );
   }
@@ -174,10 +175,10 @@ class _$_MusterRollsModel implements _MusterRollsModel {
 abstract class _MusterRollsModel implements MusterRollsModel {
   const factory _MusterRollsModel(
       {@JsonKey(name: 'musterRolls') final List<MusterRoll>? musterRoll,
-      @JsonKey(name: 'count') final int? count}) = _$_MusterRollsModel;
+      @JsonKey(name: 'count') final int? count}) = _$MusterRollsModelImpl;
 
   factory _MusterRollsModel.fromJson(Map<String, dynamic> json) =
-      _$_MusterRollsModel.fromJson;
+      _$MusterRollsModelImpl.fromJson;
 
   @override
   @JsonKey(name: 'musterRolls')
@@ -187,7 +188,7 @@ abstract class _MusterRollsModel implements MusterRollsModel {
   int? get count;
   @override
   @JsonKey(ignore: true)
-  _$$_MusterRollsModelCopyWith<_$_MusterRollsModel> get copyWith =>
+  _$$MusterRollsModelImplCopyWith<_$MusterRollsModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -360,11 +361,11 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
 }
 
 /// @nodoc
-abstract class _$$_MusterRollCopyWith<$Res>
+abstract class _$$MusterRollImplCopyWith<$Res>
     implements $MusterRollCopyWith<$Res> {
-  factory _$$_MusterRollCopyWith(
-          _$_MusterRoll value, $Res Function(_$_MusterRoll) then) =
-      __$$_MusterRollCopyWithImpl<$Res>;
+  factory _$$MusterRollImplCopyWith(
+          _$MusterRollImpl value, $Res Function(_$MusterRollImpl) then) =
+      __$$MusterRollImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -392,11 +393,11 @@ abstract class _$$_MusterRollCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_MusterRollCopyWithImpl<$Res>
-    extends _$MusterRollCopyWithImpl<$Res, _$_MusterRoll>
-    implements _$$_MusterRollCopyWith<$Res> {
-  __$$_MusterRollCopyWithImpl(
-      _$_MusterRoll _value, $Res Function(_$_MusterRoll) _then)
+class __$$MusterRollImplCopyWithImpl<$Res>
+    extends _$MusterRollCopyWithImpl<$Res, _$MusterRollImpl>
+    implements _$$MusterRollImplCopyWith<$Res> {
+  __$$MusterRollImplCopyWithImpl(
+      _$MusterRollImpl _value, $Res Function(_$MusterRollImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -416,7 +417,7 @@ class __$$_MusterRollCopyWithImpl<$Res>
     Object? musterAdditionalDetails = freezed,
     Object? musterAuditDetails = freezed,
   }) {
-    return _then(_$_MusterRoll(
+    return _then(_$MusterRollImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -475,8 +476,8 @@ class __$$_MusterRollCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MusterRoll implements _MusterRoll {
-  const _$_MusterRoll(
+class _$MusterRollImpl implements _MusterRoll {
+  const _$MusterRollImpl(
       {this.id,
       required this.tenantId,
       this.musterRollNumber,
@@ -495,8 +496,8 @@ class _$_MusterRoll implements _MusterRoll {
           this.musterAuditDetails})
       : _individualEntries = individualEntries;
 
-  factory _$_MusterRoll.fromJson(Map<String, dynamic> json) =>
-      _$$_MusterRollFromJson(json);
+  factory _$MusterRollImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MusterRollImplFromJson(json);
 
   @override
   final String? id;
@@ -543,10 +544,10 @@ class _$_MusterRoll implements _MusterRoll {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MusterRoll &&
+            other is _$MusterRollImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
@@ -594,12 +595,12 @@ class _$_MusterRoll implements _MusterRoll {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MusterRollCopyWith<_$_MusterRoll> get copyWith =>
-      __$$_MusterRollCopyWithImpl<_$_MusterRoll>(this, _$identity);
+  _$$MusterRollImplCopyWith<_$MusterRollImpl> get copyWith =>
+      __$$MusterRollImplCopyWithImpl<_$MusterRollImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MusterRollToJson(
+    return _$$MusterRollImplToJson(
       this,
     );
   }
@@ -622,10 +623,10 @@ abstract class _MusterRoll implements MusterRoll {
       @JsonKey(name: 'additionalDetails')
           final MusterAdditionalDetails? musterAdditionalDetails,
       @JsonKey(name: 'auditDetails')
-          final AuditDetails? musterAuditDetails}) = _$_MusterRoll;
+          final AuditDetails? musterAuditDetails}) = _$MusterRollImpl;
 
   factory _MusterRoll.fromJson(Map<String, dynamic> json) =
-      _$_MusterRoll.fromJson;
+      _$MusterRollImpl.fromJson;
 
   @override
   String? get id;
@@ -658,7 +659,7 @@ abstract class _MusterRoll implements MusterRoll {
   AuditDetails? get musterAuditDetails;
   @override
   @JsonKey(ignore: true)
-  _$$_MusterRollCopyWith<_$_MusterRoll> get copyWith =>
+  _$$MusterRollImplCopyWith<_$MusterRollImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -765,11 +766,11 @@ class _$IndividualEntriesCopyWithImpl<$Res, $Val extends IndividualEntries>
 }
 
 /// @nodoc
-abstract class _$$_IndividualEntriesCopyWith<$Res>
+abstract class _$$IndividualEntriesImplCopyWith<$Res>
     implements $IndividualEntriesCopyWith<$Res> {
-  factory _$$_IndividualEntriesCopyWith(_$_IndividualEntries value,
-          $Res Function(_$_IndividualEntries) then) =
-      __$$_IndividualEntriesCopyWithImpl<$Res>;
+  factory _$$IndividualEntriesImplCopyWith(_$IndividualEntriesImpl value,
+          $Res Function(_$IndividualEntriesImpl) then) =
+      __$$IndividualEntriesImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -788,11 +789,11 @@ abstract class _$$_IndividualEntriesCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_IndividualEntriesCopyWithImpl<$Res>
-    extends _$IndividualEntriesCopyWithImpl<$Res, _$_IndividualEntries>
-    implements _$$_IndividualEntriesCopyWith<$Res> {
-  __$$_IndividualEntriesCopyWithImpl(
-      _$_IndividualEntries _value, $Res Function(_$_IndividualEntries) _then)
+class __$$IndividualEntriesImplCopyWithImpl<$Res>
+    extends _$IndividualEntriesCopyWithImpl<$Res, _$IndividualEntriesImpl>
+    implements _$$IndividualEntriesImplCopyWith<$Res> {
+  __$$IndividualEntriesImplCopyWithImpl(_$IndividualEntriesImpl _value,
+      $Res Function(_$IndividualEntriesImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -804,7 +805,7 @@ class __$$_IndividualEntriesCopyWithImpl<$Res>
     Object? attendanceEntries = freezed,
     Object? musterIndividualAdditionalDetails = freezed,
   }) {
-    return _then(_$_IndividualEntries(
+    return _then(_$IndividualEntriesImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -832,8 +833,8 @@ class __$$_IndividualEntriesCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_IndividualEntries implements _IndividualEntries {
-  const _$_IndividualEntries(
+class _$IndividualEntriesImpl implements _IndividualEntries {
+  const _$IndividualEntriesImpl(
       {this.id,
       this.individualId,
       this.totalAttendance,
@@ -843,8 +844,8 @@ class _$_IndividualEntries implements _IndividualEntries {
           this.musterIndividualAdditionalDetails})
       : _attendanceEntries = attendanceEntries;
 
-  factory _$_IndividualEntries.fromJson(Map<String, dynamic> json) =>
-      _$$_IndividualEntriesFromJson(json);
+  factory _$IndividualEntriesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$IndividualEntriesImplFromJson(json);
 
   @override
   final String? id;
@@ -874,10 +875,10 @@ class _$_IndividualEntries implements _IndividualEntries {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_IndividualEntries &&
+            other is _$IndividualEntriesImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.individualId, individualId) ||
                 other.individualId == individualId) &&
@@ -904,13 +905,13 @@ class _$_IndividualEntries implements _IndividualEntries {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_IndividualEntriesCopyWith<_$_IndividualEntries> get copyWith =>
-      __$$_IndividualEntriesCopyWithImpl<_$_IndividualEntries>(
+  _$$IndividualEntriesImplCopyWith<_$IndividualEntriesImpl> get copyWith =>
+      __$$IndividualEntriesImplCopyWithImpl<_$IndividualEntriesImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_IndividualEntriesToJson(
+    return _$$IndividualEntriesImplToJson(
       this,
     );
   }
@@ -925,10 +926,10 @@ abstract class _IndividualEntries implements IndividualEntries {
           final List<AttendanceEntries>? attendanceEntries,
       @JsonKey(name: 'additionalDetails')
           final MusterIndividualAdditionalDetails?
-              musterIndividualAdditionalDetails}) = _$_IndividualEntries;
+              musterIndividualAdditionalDetails}) = _$IndividualEntriesImpl;
 
   factory _IndividualEntries.fromJson(Map<String, dynamic> json) =
-      _$_IndividualEntries.fromJson;
+      _$IndividualEntriesImpl.fromJson;
 
   @override
   String? get id;
@@ -944,7 +945,7 @@ abstract class _IndividualEntries implements IndividualEntries {
   MusterIndividualAdditionalDetails? get musterIndividualAdditionalDetails;
   @override
   @JsonKey(ignore: true)
-  _$$_IndividualEntriesCopyWith<_$_IndividualEntries> get copyWith =>
+  _$$IndividualEntriesImplCopyWith<_$IndividualEntriesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1062,11 +1063,12 @@ class _$MusterAdditionalDetailsCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_MusterAdditionalDetailsCopyWith<$Res>
+abstract class _$$MusterAdditionalDetailsImplCopyWith<$Res>
     implements $MusterAdditionalDetailsCopyWith<$Res> {
-  factory _$$_MusterAdditionalDetailsCopyWith(_$_MusterAdditionalDetails value,
-          $Res Function(_$_MusterAdditionalDetails) then) =
-      __$$_MusterAdditionalDetailsCopyWithImpl<$Res>;
+  factory _$$MusterAdditionalDetailsImplCopyWith(
+          _$MusterAdditionalDetailsImpl value,
+          $Res Function(_$MusterAdditionalDetailsImpl) then) =
+      __$$MusterAdditionalDetailsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -1083,12 +1085,13 @@ abstract class _$$_MusterAdditionalDetailsCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
+class __$$MusterAdditionalDetailsImplCopyWithImpl<$Res>
     extends _$MusterAdditionalDetailsCopyWithImpl<$Res,
-        _$_MusterAdditionalDetails>
-    implements _$$_MusterAdditionalDetailsCopyWith<$Res> {
-  __$$_MusterAdditionalDetailsCopyWithImpl(_$_MusterAdditionalDetails _value,
-      $Res Function(_$_MusterAdditionalDetails) _then)
+        _$MusterAdditionalDetailsImpl>
+    implements _$$MusterAdditionalDetailsImplCopyWith<$Res> {
+  __$$MusterAdditionalDetailsImplCopyWithImpl(
+      _$MusterAdditionalDetailsImpl _value,
+      $Res Function(_$MusterAdditionalDetailsImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1105,7 +1108,7 @@ class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
     Object? projectDesc = freezed,
     Object? contractId = freezed,
   }) {
-    return _then(_$_MusterAdditionalDetails(
+    return _then(_$MusterAdditionalDetailsImpl(
       attendanceRegisterName: freezed == attendanceRegisterName
           ? _value.attendanceRegisterName
           : attendanceRegisterName // ignore: cast_nullable_to_non_nullable
@@ -1152,8 +1155,8 @@ class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
-  const _$_MusterAdditionalDetails(
+class _$MusterAdditionalDetailsImpl implements _MusterAdditionalDetails {
+  const _$MusterAdditionalDetailsImpl(
       {this.attendanceRegisterName,
       this.attendanceRegisterNo,
       this.orgName,
@@ -1165,8 +1168,8 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
       this.projectDesc,
       this.contractId});
 
-  factory _$_MusterAdditionalDetails.fromJson(Map<String, dynamic> json) =>
-      _$$_MusterAdditionalDetailsFromJson(json);
+  factory _$MusterAdditionalDetailsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MusterAdditionalDetailsImplFromJson(json);
 
   @override
   final String? attendanceRegisterName;
@@ -1195,10 +1198,10 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MusterAdditionalDetails &&
+            other is _$MusterAdditionalDetailsImpl &&
             (identical(other.attendanceRegisterName, attendanceRegisterName) ||
                 other.attendanceRegisterName == attendanceRegisterName) &&
             (identical(other.attendanceRegisterNo, attendanceRegisterNo) ||
@@ -1237,14 +1240,13 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MusterAdditionalDetailsCopyWith<_$_MusterAdditionalDetails>
-      get copyWith =>
-          __$$_MusterAdditionalDetailsCopyWithImpl<_$_MusterAdditionalDetails>(
-              this, _$identity);
+  _$$MusterAdditionalDetailsImplCopyWith<_$MusterAdditionalDetailsImpl>
+      get copyWith => __$$MusterAdditionalDetailsImplCopyWithImpl<
+          _$MusterAdditionalDetailsImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MusterAdditionalDetailsToJson(
+    return _$$MusterAdditionalDetailsImplToJson(
       this,
     );
   }
@@ -1261,10 +1263,10 @@ abstract class _MusterAdditionalDetails implements MusterAdditionalDetails {
       final String? projectId,
       final String? projectName,
       final String? projectDesc,
-      final String? contractId}) = _$_MusterAdditionalDetails;
+      final String? contractId}) = _$MusterAdditionalDetailsImpl;
 
   factory _MusterAdditionalDetails.fromJson(Map<String, dynamic> json) =
-      _$_MusterAdditionalDetails.fromJson;
+      _$MusterAdditionalDetailsImpl.fromJson;
 
   @override
   String? get attendanceRegisterName;
@@ -1288,7 +1290,7 @@ abstract class _MusterAdditionalDetails implements MusterAdditionalDetails {
   String? get contractId;
   @override
   @JsonKey(ignore: true)
-  _$$_MusterAdditionalDetailsCopyWith<_$_MusterAdditionalDetails>
+  _$$MusterAdditionalDetailsImplCopyWith<_$MusterAdditionalDetailsImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -1301,6 +1303,7 @@ MusterIndividualAdditionalDetails _$MusterIndividualAdditionalDetailsFromJson(
 mixin _$MusterIndividualAdditionalDetails {
   String? get userName => throw _privateConstructorUsedError;
   String? get fatherName => throw _privateConstructorUsedError;
+  String? get gender => throw _privateConstructorUsedError;
   String? get aadharNumber => throw _privateConstructorUsedError;
   String? get bankDetails => throw _privateConstructorUsedError;
   String? get userId => throw _privateConstructorUsedError;
@@ -1326,6 +1329,7 @@ abstract class $MusterIndividualAdditionalDetailsCopyWith<$Res> {
   $Res call(
       {String? userName,
       String? fatherName,
+      String? gender,
       String? aadharNumber,
       String? bankDetails,
       String? userId,
@@ -1351,6 +1355,7 @@ class _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
   $Res call({
     Object? userName = freezed,
     Object? fatherName = freezed,
+    Object? gender = freezed,
     Object? aadharNumber = freezed,
     Object? bankDetails = freezed,
     Object? userId = freezed,
@@ -1367,6 +1372,10 @@ class _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
       fatherName: freezed == fatherName
           ? _value.fatherName
           : fatherName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gender: freezed == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
               as String?,
       aadharNumber: freezed == aadharNumber
           ? _value.aadharNumber
@@ -1401,17 +1410,18 @@ class _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_MusterIndividualAdditionalDetailsCopyWith<$Res>
+abstract class _$$MusterIndividualAdditionalDetailsImplCopyWith<$Res>
     implements $MusterIndividualAdditionalDetailsCopyWith<$Res> {
-  factory _$$_MusterIndividualAdditionalDetailsCopyWith(
-          _$_MusterIndividualAdditionalDetails value,
-          $Res Function(_$_MusterIndividualAdditionalDetails) then) =
-      __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>;
+  factory _$$MusterIndividualAdditionalDetailsImplCopyWith(
+          _$MusterIndividualAdditionalDetailsImpl value,
+          $Res Function(_$MusterIndividualAdditionalDetailsImpl) then) =
+      __$$MusterIndividualAdditionalDetailsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {String? userName,
       String? fatherName,
+      String? gender,
       String? aadharNumber,
       String? bankDetails,
       String? userId,
@@ -1422,13 +1432,13 @@ abstract class _$$_MusterIndividualAdditionalDetailsCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
+class __$$MusterIndividualAdditionalDetailsImplCopyWithImpl<$Res>
     extends _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
-        _$_MusterIndividualAdditionalDetails>
-    implements _$$_MusterIndividualAdditionalDetailsCopyWith<$Res> {
-  __$$_MusterIndividualAdditionalDetailsCopyWithImpl(
-      _$_MusterIndividualAdditionalDetails _value,
-      $Res Function(_$_MusterIndividualAdditionalDetails) _then)
+        _$MusterIndividualAdditionalDetailsImpl>
+    implements _$$MusterIndividualAdditionalDetailsImplCopyWith<$Res> {
+  __$$MusterIndividualAdditionalDetailsImplCopyWithImpl(
+      _$MusterIndividualAdditionalDetailsImpl _value,
+      $Res Function(_$MusterIndividualAdditionalDetailsImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1436,6 +1446,7 @@ class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
   $Res call({
     Object? userName = freezed,
     Object? fatherName = freezed,
+    Object? gender = freezed,
     Object? aadharNumber = freezed,
     Object? bankDetails = freezed,
     Object? userId = freezed,
@@ -1444,7 +1455,7 @@ class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
     Object? skillCode = freezed,
     Object? skillValue = freezed,
   }) {
-    return _then(_$_MusterIndividualAdditionalDetails(
+    return _then(_$MusterIndividualAdditionalDetailsImpl(
       userName: freezed == userName
           ? _value.userName
           : userName // ignore: cast_nullable_to_non_nullable
@@ -1452,6 +1463,10 @@ class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
       fatherName: freezed == fatherName
           ? _value.fatherName
           : fatherName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gender: freezed == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
               as String?,
       aadharNumber: freezed == aadharNumber
           ? _value.aadharNumber
@@ -1487,11 +1502,12 @@ class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MusterIndividualAdditionalDetails
+class _$MusterIndividualAdditionalDetailsImpl
     implements _MusterIndividualAdditionalDetails {
-  const _$_MusterIndividualAdditionalDetails(
+  const _$MusterIndividualAdditionalDetailsImpl(
       {this.userName,
       this.fatherName,
+      this.gender,
       this.aadharNumber,
       this.bankDetails,
       this.userId,
@@ -1500,14 +1516,16 @@ class _$_MusterIndividualAdditionalDetails
       this.skillCode,
       this.skillValue});
 
-  factory _$_MusterIndividualAdditionalDetails.fromJson(
+  factory _$MusterIndividualAdditionalDetailsImpl.fromJson(
           Map<String, dynamic> json) =>
-      _$$_MusterIndividualAdditionalDetailsFromJson(json);
+      _$$MusterIndividualAdditionalDetailsImplFromJson(json);
 
   @override
   final String? userName;
   @override
   final String? fatherName;
+  @override
+  final String? gender;
   @override
   final String? aadharNumber;
   @override
@@ -1525,18 +1543,19 @@ class _$_MusterIndividualAdditionalDetails
 
   @override
   String toString() {
-    return 'MusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, aadharNumber: $aadharNumber, bankDetails: $bankDetails, userId: $userId, accountHolderName: $accountHolderName, accountType: $accountType, skillCode: $skillCode, skillValue: $skillValue)';
+    return 'MusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, gender: $gender, aadharNumber: $aadharNumber, bankDetails: $bankDetails, userId: $userId, accountHolderName: $accountHolderName, accountType: $accountType, skillCode: $skillCode, skillValue: $skillValue)';
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MusterIndividualAdditionalDetails &&
+            other is _$MusterIndividualAdditionalDetailsImpl &&
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
             (identical(other.fatherName, fatherName) ||
                 other.fatherName == fatherName) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.aadharNumber, aadharNumber) ||
                 other.aadharNumber == aadharNumber) &&
             (identical(other.bankDetails, bankDetails) ||
@@ -1558,6 +1577,7 @@ class _$_MusterIndividualAdditionalDetails
       runtimeType,
       userName,
       fatherName,
+      gender,
       aadharNumber,
       bankDetails,
       userId,
@@ -1569,14 +1589,14 @@ class _$_MusterIndividualAdditionalDetails
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MusterIndividualAdditionalDetailsCopyWith<
-          _$_MusterIndividualAdditionalDetails>
-      get copyWith => __$$_MusterIndividualAdditionalDetailsCopyWithImpl<
-          _$_MusterIndividualAdditionalDetails>(this, _$identity);
+  _$$MusterIndividualAdditionalDetailsImplCopyWith<
+          _$MusterIndividualAdditionalDetailsImpl>
+      get copyWith => __$$MusterIndividualAdditionalDetailsImplCopyWithImpl<
+          _$MusterIndividualAdditionalDetailsImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MusterIndividualAdditionalDetailsToJson(
+    return _$$MusterIndividualAdditionalDetailsImplToJson(
       this,
     );
   }
@@ -1587,22 +1607,25 @@ abstract class _MusterIndividualAdditionalDetails
   const factory _MusterIndividualAdditionalDetails(
       {final String? userName,
       final String? fatherName,
+      final String? gender,
       final String? aadharNumber,
       final String? bankDetails,
       final String? userId,
       final String? accountHolderName,
       final String? accountType,
       final String? skillCode,
-      final String? skillValue}) = _$_MusterIndividualAdditionalDetails;
+      final String? skillValue}) = _$MusterIndividualAdditionalDetailsImpl;
 
   factory _MusterIndividualAdditionalDetails.fromJson(
           Map<String, dynamic> json) =
-      _$_MusterIndividualAdditionalDetails.fromJson;
+      _$MusterIndividualAdditionalDetailsImpl.fromJson;
 
   @override
   String? get userName;
   @override
   String? get fatherName;
+  @override
+  String? get gender;
   @override
   String? get aadharNumber;
   @override
@@ -1619,8 +1642,8 @@ abstract class _MusterIndividualAdditionalDetails
   String? get skillValue;
   @override
   @JsonKey(ignore: true)
-  _$$_MusterIndividualAdditionalDetailsCopyWith<
-          _$_MusterIndividualAdditionalDetails>
+  _$$MusterIndividualAdditionalDetailsImplCopyWith<
+          _$MusterIndividualAdditionalDetailsImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -1737,11 +1760,11 @@ class _$AttendanceEntriesCopyWithImpl<$Res, $Val extends AttendanceEntries>
 }
 
 /// @nodoc
-abstract class _$$_AttendanceEntriesCopyWith<$Res>
+abstract class _$$AttendanceEntriesImplCopyWith<$Res>
     implements $AttendanceEntriesCopyWith<$Res> {
-  factory _$$_AttendanceEntriesCopyWith(_$_AttendanceEntries value,
-          $Res Function(_$_AttendanceEntries) then) =
-      __$$_AttendanceEntriesCopyWithImpl<$Res>;
+  factory _$$AttendanceEntriesImplCopyWith(_$AttendanceEntriesImpl value,
+          $Res Function(_$AttendanceEntriesImpl) then) =
+      __$$AttendanceEntriesImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -1761,11 +1784,11 @@ abstract class _$$_AttendanceEntriesCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_AttendanceEntriesCopyWithImpl<$Res>
-    extends _$AttendanceEntriesCopyWithImpl<$Res, _$_AttendanceEntries>
-    implements _$$_AttendanceEntriesCopyWith<$Res> {
-  __$$_AttendanceEntriesCopyWithImpl(
-      _$_AttendanceEntries _value, $Res Function(_$_AttendanceEntries) _then)
+class __$$AttendanceEntriesImplCopyWithImpl<$Res>
+    extends _$AttendanceEntriesCopyWithImpl<$Res, _$AttendanceEntriesImpl>
+    implements _$$AttendanceEntriesImplCopyWith<$Res> {
+  __$$AttendanceEntriesImplCopyWithImpl(_$AttendanceEntriesImpl _value,
+      $Res Function(_$AttendanceEntriesImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1777,7 +1800,7 @@ class __$$_AttendanceEntriesCopyWithImpl<$Res>
     Object? auditDetails = freezed,
     Object? attendanceEntriesAdditionalDetails = freezed,
   }) {
-    return _then(_$_AttendanceEntries(
+    return _then(_$AttendanceEntriesImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -1805,8 +1828,8 @@ class __$$_AttendanceEntriesCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_AttendanceEntries implements _AttendanceEntries {
-  const _$_AttendanceEntries(
+class _$AttendanceEntriesImpl implements _AttendanceEntries {
+  const _$AttendanceEntriesImpl(
       {this.id,
       this.attendance,
       this.time,
@@ -1814,8 +1837,8 @@ class _$_AttendanceEntries implements _AttendanceEntries {
       @JsonKey(name: 'additionalDetails')
           this.attendanceEntriesAdditionalDetails});
 
-  factory _$_AttendanceEntries.fromJson(Map<String, dynamic> json) =>
-      _$$_AttendanceEntriesFromJson(json);
+  factory _$AttendanceEntriesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AttendanceEntriesImplFromJson(json);
 
   @override
   final String? id;
@@ -1835,10 +1858,10 @@ class _$_AttendanceEntries implements _AttendanceEntries {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AttendanceEntries &&
+            other is _$AttendanceEntriesImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.attendance, attendance) ||
                 other.attendance == attendance) &&
@@ -1859,13 +1882,13 @@ class _$_AttendanceEntries implements _AttendanceEntries {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AttendanceEntriesCopyWith<_$_AttendanceEntries> get copyWith =>
-      __$$_AttendanceEntriesCopyWithImpl<_$_AttendanceEntries>(
+  _$$AttendanceEntriesImplCopyWith<_$AttendanceEntriesImpl> get copyWith =>
+      __$$AttendanceEntriesImplCopyWithImpl<_$AttendanceEntriesImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_AttendanceEntriesToJson(
+    return _$$AttendanceEntriesImplToJson(
       this,
     );
   }
@@ -1879,10 +1902,10 @@ abstract class _AttendanceEntries implements AttendanceEntries {
       final AuditDetails? auditDetails,
       @JsonKey(name: 'additionalDetails')
           final AttendanceEntriesAdditionalDetails?
-              attendanceEntriesAdditionalDetails}) = _$_AttendanceEntries;
+              attendanceEntriesAdditionalDetails}) = _$AttendanceEntriesImpl;
 
   factory _AttendanceEntries.fromJson(Map<String, dynamic> json) =
-      _$_AttendanceEntries.fromJson;
+      _$AttendanceEntriesImpl.fromJson;
 
   @override
   String? get id;
@@ -1897,7 +1920,7 @@ abstract class _AttendanceEntries implements AttendanceEntries {
   AttendanceEntriesAdditionalDetails? get attendanceEntriesAdditionalDetails;
   @override
   @JsonKey(ignore: true)
-  _$$_AttendanceEntriesCopyWith<_$_AttendanceEntries> get copyWith =>
+  _$$AttendanceEntriesImplCopyWith<_$AttendanceEntriesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1960,25 +1983,25 @@ class _$AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_AttendanceEntriesAdditionalDetailsCopyWith<$Res>
+abstract class _$$AttendanceEntriesAdditionalDetailsImplCopyWith<$Res>
     implements $AttendanceEntriesAdditionalDetailsCopyWith<$Res> {
-  factory _$$_AttendanceEntriesAdditionalDetailsCopyWith(
-          _$_AttendanceEntriesAdditionalDetails value,
-          $Res Function(_$_AttendanceEntriesAdditionalDetails) then) =
-      __$$_AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res>;
+  factory _$$AttendanceEntriesAdditionalDetailsImplCopyWith(
+          _$AttendanceEntriesAdditionalDetailsImpl value,
+          $Res Function(_$AttendanceEntriesAdditionalDetailsImpl) then) =
+      __$$AttendanceEntriesAdditionalDetailsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String? entryAttendanceLogId, String? exitAttendanceLogId});
 }
 
 /// @nodoc
-class __$$_AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res>
+class __$$AttendanceEntriesAdditionalDetailsImplCopyWithImpl<$Res>
     extends _$AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res,
-        _$_AttendanceEntriesAdditionalDetails>
-    implements _$$_AttendanceEntriesAdditionalDetailsCopyWith<$Res> {
-  __$$_AttendanceEntriesAdditionalDetailsCopyWithImpl(
-      _$_AttendanceEntriesAdditionalDetails _value,
-      $Res Function(_$_AttendanceEntriesAdditionalDetails) _then)
+        _$AttendanceEntriesAdditionalDetailsImpl>
+    implements _$$AttendanceEntriesAdditionalDetailsImplCopyWith<$Res> {
+  __$$AttendanceEntriesAdditionalDetailsImplCopyWithImpl(
+      _$AttendanceEntriesAdditionalDetailsImpl _value,
+      $Res Function(_$AttendanceEntriesAdditionalDetailsImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1987,7 +2010,7 @@ class __$$_AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res>
     Object? entryAttendanceLogId = freezed,
     Object? exitAttendanceLogId = freezed,
   }) {
-    return _then(_$_AttendanceEntriesAdditionalDetails(
+    return _then(_$AttendanceEntriesAdditionalDetailsImpl(
       entryAttendanceLogId: freezed == entryAttendanceLogId
           ? _value.entryAttendanceLogId
           : entryAttendanceLogId // ignore: cast_nullable_to_non_nullable
@@ -2002,14 +2025,14 @@ class __$$_AttendanceEntriesAdditionalDetailsCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_AttendanceEntriesAdditionalDetails
+class _$AttendanceEntriesAdditionalDetailsImpl
     implements _AttendanceEntriesAdditionalDetails {
-  const _$_AttendanceEntriesAdditionalDetails(
+  const _$AttendanceEntriesAdditionalDetailsImpl(
       {this.entryAttendanceLogId, this.exitAttendanceLogId});
 
-  factory _$_AttendanceEntriesAdditionalDetails.fromJson(
+  factory _$AttendanceEntriesAdditionalDetailsImpl.fromJson(
           Map<String, dynamic> json) =>
-      _$$_AttendanceEntriesAdditionalDetailsFromJson(json);
+      _$$AttendanceEntriesAdditionalDetailsImplFromJson(json);
 
   @override
   final String? entryAttendanceLogId;
@@ -2022,10 +2045,10 @@ class _$_AttendanceEntriesAdditionalDetails
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AttendanceEntriesAdditionalDetails &&
+            other is _$AttendanceEntriesAdditionalDetailsImpl &&
             (identical(other.entryAttendanceLogId, entryAttendanceLogId) ||
                 other.entryAttendanceLogId == entryAttendanceLogId) &&
             (identical(other.exitAttendanceLogId, exitAttendanceLogId) ||
@@ -2040,14 +2063,14 @@ class _$_AttendanceEntriesAdditionalDetails
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AttendanceEntriesAdditionalDetailsCopyWith<
-          _$_AttendanceEntriesAdditionalDetails>
-      get copyWith => __$$_AttendanceEntriesAdditionalDetailsCopyWithImpl<
-          _$_AttendanceEntriesAdditionalDetails>(this, _$identity);
+  _$$AttendanceEntriesAdditionalDetailsImplCopyWith<
+          _$AttendanceEntriesAdditionalDetailsImpl>
+      get copyWith => __$$AttendanceEntriesAdditionalDetailsImplCopyWithImpl<
+          _$AttendanceEntriesAdditionalDetailsImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_AttendanceEntriesAdditionalDetailsToJson(
+    return _$$AttendanceEntriesAdditionalDetailsImplToJson(
       this,
     );
   }
@@ -2058,11 +2081,11 @@ abstract class _AttendanceEntriesAdditionalDetails
   const factory _AttendanceEntriesAdditionalDetails(
           {final String? entryAttendanceLogId,
           final String? exitAttendanceLogId}) =
-      _$_AttendanceEntriesAdditionalDetails;
+      _$AttendanceEntriesAdditionalDetailsImpl;
 
   factory _AttendanceEntriesAdditionalDetails.fromJson(
           Map<String, dynamic> json) =
-      _$_AttendanceEntriesAdditionalDetails.fromJson;
+      _$AttendanceEntriesAdditionalDetailsImpl.fromJson;
 
   @override
   String? get entryAttendanceLogId;
@@ -2070,8 +2093,8 @@ abstract class _AttendanceEntriesAdditionalDetails
   String? get exitAttendanceLogId;
   @override
   @JsonKey(ignore: true)
-  _$$_AttendanceEntriesAdditionalDetailsCopyWith<
-          _$_AttendanceEntriesAdditionalDetails>
+  _$$AttendanceEntriesAdditionalDetailsImplCopyWith<
+          _$AttendanceEntriesAdditionalDetailsImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -2145,11 +2168,11 @@ class _$AuditDetailsCopyWithImpl<$Res, $Val extends AuditDetails>
 }
 
 /// @nodoc
-abstract class _$$_AuditDetailsCopyWith<$Res>
+abstract class _$$AuditDetailsImplCopyWith<$Res>
     implements $AuditDetailsCopyWith<$Res> {
-  factory _$$_AuditDetailsCopyWith(
-          _$_AuditDetails value, $Res Function(_$_AuditDetails) then) =
-      __$$_AuditDetailsCopyWithImpl<$Res>;
+  factory _$$AuditDetailsImplCopyWith(
+          _$AuditDetailsImpl value, $Res Function(_$AuditDetailsImpl) then) =
+      __$$AuditDetailsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -2160,11 +2183,11 @@ abstract class _$$_AuditDetailsCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_AuditDetailsCopyWithImpl<$Res>
-    extends _$AuditDetailsCopyWithImpl<$Res, _$_AuditDetails>
-    implements _$$_AuditDetailsCopyWith<$Res> {
-  __$$_AuditDetailsCopyWithImpl(
-      _$_AuditDetails _value, $Res Function(_$_AuditDetails) _then)
+class __$$AuditDetailsImplCopyWithImpl<$Res>
+    extends _$AuditDetailsCopyWithImpl<$Res, _$AuditDetailsImpl>
+    implements _$$AuditDetailsImplCopyWith<$Res> {
+  __$$AuditDetailsImplCopyWithImpl(
+      _$AuditDetailsImpl _value, $Res Function(_$AuditDetailsImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -2175,7 +2198,7 @@ class __$$_AuditDetailsCopyWithImpl<$Res>
     Object? createdTime = freezed,
     Object? lastModifiedTime = freezed,
   }) {
-    return _then(_$_AuditDetails(
+    return _then(_$AuditDetailsImpl(
       createdBy: freezed == createdBy
           ? _value.createdBy
           : createdBy // ignore: cast_nullable_to_non_nullable
@@ -2198,15 +2221,15 @@ class __$$_AuditDetailsCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_AuditDetails implements _AuditDetails {
-  const _$_AuditDetails(
+class _$AuditDetailsImpl implements _AuditDetails {
+  const _$AuditDetailsImpl(
       {this.createdBy,
       this.lastModifiedBy,
       this.createdTime,
       this.lastModifiedTime});
 
-  factory _$_AuditDetails.fromJson(Map<String, dynamic> json) =>
-      _$$_AuditDetailsFromJson(json);
+  factory _$AuditDetailsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AuditDetailsImplFromJson(json);
 
   @override
   final String? createdBy;
@@ -2223,10 +2246,10 @@ class _$_AuditDetails implements _AuditDetails {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AuditDetails &&
+            other is _$AuditDetailsImpl &&
             (identical(other.createdBy, createdBy) ||
                 other.createdBy == createdBy) &&
             (identical(other.lastModifiedBy, lastModifiedBy) ||
@@ -2245,12 +2268,12 @@ class _$_AuditDetails implements _AuditDetails {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AuditDetailsCopyWith<_$_AuditDetails> get copyWith =>
-      __$$_AuditDetailsCopyWithImpl<_$_AuditDetails>(this, _$identity);
+  _$$AuditDetailsImplCopyWith<_$AuditDetailsImpl> get copyWith =>
+      __$$AuditDetailsImplCopyWithImpl<_$AuditDetailsImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_AuditDetailsToJson(
+    return _$$AuditDetailsImplToJson(
       this,
     );
   }
@@ -2261,10 +2284,10 @@ abstract class _AuditDetails implements AuditDetails {
       {final String? createdBy,
       final String? lastModifiedBy,
       final int? createdTime,
-      final int? lastModifiedTime}) = _$_AuditDetails;
+      final int? lastModifiedTime}) = _$AuditDetailsImpl;
 
   factory _AuditDetails.fromJson(Map<String, dynamic> json) =
-      _$_AuditDetails.fromJson;
+      _$AuditDetailsImpl.fromJson;
 
   @override
   String? get createdBy;
@@ -2276,6 +2299,6 @@ abstract class _AuditDetails implements AuditDetails {
   int? get lastModifiedTime;
   @override
   @JsonKey(ignore: true)
-  _$$_AuditDetailsCopyWith<_$_AuditDetails> get copyWith =>
+  _$$AuditDetailsImplCopyWith<_$AuditDetailsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

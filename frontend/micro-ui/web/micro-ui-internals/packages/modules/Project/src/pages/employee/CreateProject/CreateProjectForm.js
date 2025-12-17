@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import CreateProjectUtils from "../../../utils/createProjectUtils";
 import { useHistory } from "react-router-dom";
+import debounce from 'lodash/debounce';
 
 const whenHasProjectsHorizontalNavConfig =  [
   {
@@ -39,6 +40,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const [withSubProjectSubSchemeOptions, setWithSubProjectSubSchemeOptions] = useState([]);
     const [noSubProjectSubSchemeOptions, setNoSubProjectSubSchemeOptions] = useState([]);
     const [selectedWard, setSelectedWard] = useState('');
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false)
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const [currentFormCategory, setCurrentFormCategory] = useState(createProjectConfig?.metaData?.currentFormCategory ? createProjectConfig?.metaData?.currentFormCategory : "project");
@@ -55,15 +57,15 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
           select: (data) => {
               const wards = []
               const localities = {}
-              data?.TenantBoundary[0]?.boundary.forEach((item) => {
-                  localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label : item?.label }))
-                  wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
+              data?.TenantBoundary[0]?.boundary.sort((a, b) => a.code.localeCompare(b.code)).forEach((item) => {
+                  localities[item?.code] = item?.children.map(item => ({ code: item.code, name: t(`${headerLocale}_ADMIN_${item?.code}`), i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label : item?.label }))
+                  wards.push({ code: item.code, name: t(`${headerLocale}_ADMIN_${item?.code}`), i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
               });
              return {
                   wards, localities
              }
           }
-      });
+      },true);
     const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
     const config = useMemo(
       () => Digit.Utils.preProcessMDMSConfig(t, createProjectConfig, {
@@ -209,9 +211,10 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
     const { mutate: UpdateProjectMutation } = Digit.Hooks.works.useUpdateProject();
 
-    const onSubmit = (data) => {
+    const OnModalSubmit = async (data) => {
+      const trimmedData = Digit.Utils.trimStringsInObject(data)
       //Transforming Payload to categories of Basic Details, Projects and Sub-Projects
-      const transformedPayload = CreateProjectUtils.payload.transform(data);
+      const transformedPayload = CreateProjectUtils.payload.transform(trimmedData);
 
       const modifyParams = {
         modify_projectID,
@@ -223,15 +226,18 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
       let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId, docConfigData, modifyParams, createProjectConfig);
 
       if(!isModify) {
+        setIsButtonDisabled(true)
         handleResponseForCreate(payload);
       }else {
         handleResponseForUpdate(payload);
       }
-    }
+    };
 
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
     const handleResponseForCreate = async (payload) => {
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {
+            setIsButtonDisabled(false);
             sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
         },
         onSuccess: async (responseData, variables) => {
@@ -241,26 +247,33 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             let parentProjectNumber = responseData?.Project[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
+                  setIsButtonDisabled(false);
                   sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
               },
               onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
+                  setIsButtonDisabled(false);
                   setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors?.[0]?.message, error : true}));
                 }else if(responseData?.ResponseInfo?.status){
+                  setIsButtonDisabled(false);
                   sendDataToResponsePage(responseData?.Project?.[0]?.projectNumber, true, "WORKS_PROJECT_CREATED", true);
                   clearSessionFormData();
                 }else{
+                  setIsButtonDisabled(false);
                   setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
                 }
               }
             })
           }else{
             if(responseData?.ResponseInfo?.Errors) {
+              setIsButtonDisabled(false);
               sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
             }else if(responseData?.ResponseInfo?.status){
+              setIsButtonDisabled(false);
               sendDataToResponsePage(responseData?.Project?.[0]?.projectNumber, true, "WORKS_PROJECT_CREATED", true);
               clearSessionFormData();
             }else{
+              setIsButtonDisabled(false);
               sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
             }
           }
@@ -343,6 +356,11 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
         }
     },[selectedProjectType]);
 
+    const handleSubmit = (_data) => {
+      // Call the debounced version of onModalSubmit
+      debouncedOnModalSubmit(_data);
+    };
+
 
     return (
         <React.Fragment>
@@ -357,16 +375,17 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
                     body: config?.body.filter((a) => !a.hideInEmployee),
                   };
                 })}
-                onSubmit={onSubmit}
+                onSubmit={handleSubmit}
                 submitInForm={false}
                 fieldStyle={{ marginRight: 0 }}
                 inline={false}
-                className="form-no-margin"
+                // className={`form-no-margin ${"project-create-form"}`}
                 defaultValues={sessionFormData}
                 showWrapperContainers={false}
                 isDescriptionBold={false}
                 noBreakLine={true}
                 showNavs={config?.metaData?.showNavs}
+                isDisabled={isButtonDisabled}
                 showFormInNav={true}
                 showMultipleCardsWithoutNavs={false}
                 showMultipleCardsInNavs={false}

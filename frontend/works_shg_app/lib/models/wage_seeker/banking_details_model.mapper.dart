@@ -1,219 +1,243 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element
+// ignore_for_file: unused_element, unnecessary_cast, override_on_non_overriding_member
+// ignore_for_file: strict_raw_type, inference_failure_on_untyped_parameter
 
 part of 'banking_details_model.dart';
 
-class BankingDetailsModelMapper extends MapperBase<BankingDetailsModel> {
-  static MapperContainer container = MapperContainer(
-    mappers: {BankingDetailsModelMapper()},
-  )..linkAll({BankAccountsMapper.container});
+class BankingDetailsModelMapper extends ClassMapperBase<BankingDetailsModel> {
+  BankingDetailsModelMapper._();
 
-  @override
-  BankingDetailsModelMapperElement createElement(MapperContainer container) {
-    return BankingDetailsModelMapperElement._(this, container);
+  static BankingDetailsModelMapper? _instance;
+  static BankingDetailsModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = BankingDetailsModelMapper._());
+      BankAccountsMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'BankingDetailsModel';
+  final String id = 'BankingDetailsModel';
 
-  static final fromMap = container.fromMap<BankingDetailsModel>;
-  static final fromJson = container.fromJson<BankingDetailsModel>;
-}
-
-class BankingDetailsModelMapperElement
-    extends MapperElementBase<BankingDetailsModel> {
-  BankingDetailsModelMapperElement._(super.mapper, super.container);
+  static List<BankAccounts>? _$bankAccounts(BankingDetailsModel v) =>
+      v.bankAccounts;
+  static const Field<BankingDetailsModel, List<BankAccounts>> _f$bankAccounts =
+      Field('bankAccounts', _$bankAccounts, opt: true);
 
   @override
-  Function get decoder => decode;
-  BankingDetailsModel decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  BankingDetailsModel fromMap(Map<String, dynamic> map) =>
-      BankingDetailsModel(bankAccounts: container.$getOpt(map, 'bankAccounts'));
+  final MappableFields<BankingDetailsModel> fields = const {
+    #bankAccounts: _f$bankAccounts,
+  };
+
+  static BankingDetailsModel _instantiate(DecodingData data) {
+    return BankingDetailsModel(bankAccounts: data.dec(_f$bankAccounts));
+  }
 
   @override
-  Function get encoder => encode;
-  dynamic encode(BankingDetailsModel v) => toMap(v);
-  Map<String, dynamic> toMap(BankingDetailsModel b) =>
-      {'bankAccounts': container.$enc(b.bankAccounts, 'bankAccounts')};
+  final Function instantiate = _instantiate;
 
-  @override
-  String stringify(BankingDetailsModel self) =>
-      'BankingDetailsModel(bankAccounts: ${container.asString(self.bankAccounts)})';
-  @override
-  int hash(BankingDetailsModel self) => container.hash(self.bankAccounts);
-  @override
-  bool equals(BankingDetailsModel self, BankingDetailsModel other) =>
-      container.isEqual(self.bankAccounts, other.bankAccounts);
+  static BankingDetailsModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BankingDetailsModel>(map);
+  }
+
+  static BankingDetailsModel fromJson(String json) {
+    return ensureInitialized().decodeJson<BankingDetailsModel>(json);
+  }
 }
 
 mixin BankingDetailsModelMappable {
-  String toJson() =>
-      BankingDetailsModelMapper.container.toJson(this as BankingDetailsModel);
-  Map<String, dynamic> toMap() =>
-      BankingDetailsModelMapper.container.toMap(this as BankingDetailsModel);
+  String toJson() {
+    return BankingDetailsModelMapper.ensureInitialized()
+        .encodeJson<BankingDetailsModel>(this as BankingDetailsModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BankingDetailsModelMapper.ensureInitialized()
+        .encodeMap<BankingDetailsModel>(this as BankingDetailsModel);
+  }
+
   BankingDetailsModelCopyWith<BankingDetailsModel, BankingDetailsModel,
           BankingDetailsModel>
       get copyWith => _BankingDetailsModelCopyWithImpl(
           this as BankingDetailsModel, $identity, $identity);
   @override
-  String toString() => BankingDetailsModelMapper.container.asString(this);
+  String toString() {
+    return BankingDetailsModelMapper.ensureInitialized()
+        .stringifyValue(this as BankingDetailsModel);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          BankingDetailsModelMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return BankingDetailsModelMapper.ensureInitialized()
+        .equalsValue(this as BankingDetailsModel, other);
+  }
+
   @override
-  int get hashCode => BankingDetailsModelMapper.container.hash(this);
+  int get hashCode {
+    return BankingDetailsModelMapper.ensureInitialized()
+        .hashValue(this as BankingDetailsModel);
+  }
 }
 
-extension BankingDetailsModelValueCopy<$R, $Out extends BankingDetailsModel>
+extension BankingDetailsModelValueCopy<$R, $Out>
     on ObjectCopyWith<$R, BankingDetailsModel, $Out> {
   BankingDetailsModelCopyWith<$R, BankingDetailsModel, $Out>
-      get asBankingDetailsModel =>
-          base.as((v, t, t2) => _BankingDetailsModelCopyWithImpl(v, t, t2));
+      get $asBankingDetailsModel =>
+          $base.as((v, t, t2) => _BankingDetailsModelCopyWithImpl(v, t, t2));
 }
 
-typedef BankingDetailsModelCopyWithBound = BankingDetailsModel;
-
 abstract class BankingDetailsModelCopyWith<$R, $In extends BankingDetailsModel,
-    $Out extends BankingDetailsModel> implements ObjectCopyWith<$R, $In, $Out> {
-  BankingDetailsModelCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends BankingDetailsModel>(
-          Then<BankingDetailsModel, $Out2> t, Then<$Out2, $R2> t2);
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, BankAccounts,
       BankAccountsCopyWith<$R, BankAccounts, BankAccounts>>? get bankAccounts;
   $R call({List<BankAccounts>? bankAccounts});
+  BankingDetailsModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _BankingDetailsModelCopyWithImpl<$R, $Out extends BankingDetailsModel>
-    extends CopyWithBase<$R, BankingDetailsModel, $Out>
+class _BankingDetailsModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, BankingDetailsModel, $Out>
     implements BankingDetailsModelCopyWith<$R, BankingDetailsModel, $Out> {
   _BankingDetailsModelCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  BankingDetailsModelCopyWith<$R2, BankingDetailsModel, $Out2>
-      chain<$R2, $Out2 extends BankingDetailsModel>(
-              Then<BankingDetailsModel, $Out2> t, Then<$Out2, $R2> t2) =>
-          _BankingDetailsModelCopyWithImpl($value, t, t2);
 
+  @override
+  late final ClassMapperBase<BankingDetailsModel> $mapper =
+      BankingDetailsModelMapper.ensureInitialized();
   @override
   ListCopyWith<$R, BankAccounts,
           BankAccountsCopyWith<$R, BankAccounts, BankAccounts>>?
       get bankAccounts => $value.bankAccounts != null
-          ? ListCopyWith(
-              $value.bankAccounts!,
-              (v, t) => v.copyWith.chain<$R, BankAccounts>($identity, t),
+          ? ListCopyWith($value.bankAccounts!, (v, t) => v.copyWith.$chain(t),
               (v) => call(bankAccounts: v))
           : null;
   @override
-  $R call({Object? bankAccounts = $none}) => $then(
-      BankingDetailsModel(bankAccounts: or(bankAccounts, $value.bankAccounts)));
-}
-
-class BankAccountsMapper extends MapperBase<BankAccounts> {
-  static MapperContainer container = MapperContainer(
-    mappers: {BankAccountsMapper()},
-  )..linkAll({
-      BankAccountDetailsMapper.container,
-      ContractAuditDetailsMapper.container
-    });
+  $R call({Object? bankAccounts = $none}) => $apply(FieldCopyWithData(
+      {if (bankAccounts != $none) #bankAccounts: bankAccounts}));
+  @override
+  BankingDetailsModel $make(CopyWithData data) => BankingDetailsModel(
+      bankAccounts: data.get(#bankAccounts, or: $value.bankAccounts));
 
   @override
-  BankAccountsMapperElement createElement(MapperContainer container) {
-    return BankAccountsMapperElement._(this, container);
+  BankingDetailsModelCopyWith<$R2, BankingDetailsModel, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _BankingDetailsModelCopyWithImpl($value, $cast, t);
+}
+
+class BankAccountsMapper extends ClassMapperBase<BankAccounts> {
+  BankAccountsMapper._();
+
+  static BankAccountsMapper? _instance;
+  static BankAccountsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = BankAccountsMapper._());
+      BankAccountDetailsMapper.ensureInitialized();
+      ContractAuditDetailsMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'BankAccounts';
+  final String id = 'BankAccounts';
 
-  static final fromMap = container.fromMap<BankAccounts>;
-  static final fromJson = container.fromJson<BankAccounts>;
-}
-
-class BankAccountsMapperElement extends MapperElementBase<BankAccounts> {
-  BankAccountsMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  BankAccounts decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  BankAccounts fromMap(Map<String, dynamic> map) => BankAccounts(
-      id: container.$getOpt(map, 'id'),
-      tenantId: container.$getOpt(map, 'tenantId'),
-      referenceId: container.$getOpt(map, 'referenceId'),
-      serviceCode: container.$getOpt(map, 'serviceCode'),
-      bankAccountDetails: container.$getOpt(map, 'bankAccountDetails'),
-      indID: container.$getOpt(map, 'indID'),
-      auditDetails: container.$getOpt(map, 'auditDetails'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(BankAccounts v) => toMap(v);
-  Map<String, dynamic> toMap(BankAccounts b) => {
-        'id': container.$enc(b.id, 'id'),
-        'tenantId': container.$enc(b.tenantId, 'tenantId'),
-        'referenceId': container.$enc(b.referenceId, 'referenceId'),
-        'serviceCode': container.$enc(b.serviceCode, 'serviceCode'),
-        'bankAccountDetails':
-            container.$enc(b.bankAccountDetails, 'bankAccountDetails'),
-        'indID': container.$enc(b.indID, 'indID'),
-        'auditDetails': container.$enc(b.auditDetails, 'auditDetails')
-      };
+  static String? _$id(BankAccounts v) => v.id;
+  static const Field<BankAccounts, String> _f$id = Field('id', _$id, opt: true);
+  static String? _$tenantId(BankAccounts v) => v.tenantId;
+  static const Field<BankAccounts, String> _f$tenantId =
+      Field('tenantId', _$tenantId, opt: true);
+  static String? _$referenceId(BankAccounts v) => v.referenceId;
+  static const Field<BankAccounts, String> _f$referenceId =
+      Field('referenceId', _$referenceId, opt: true);
+  static String? _$serviceCode(BankAccounts v) => v.serviceCode;
+  static const Field<BankAccounts, String> _f$serviceCode =
+      Field('serviceCode', _$serviceCode, opt: true);
+  static List<BankAccountDetails>? _$bankAccountDetails(BankAccounts v) =>
+      v.bankAccountDetails;
+  static const Field<BankAccounts, List<BankAccountDetails>>
+      _f$bankAccountDetails =
+      Field('bankAccountDetails', _$bankAccountDetails, opt: true);
+  static String? _$indID(BankAccounts v) => v.indID;
+  static const Field<BankAccounts, String> _f$indID =
+      Field('indID', _$indID, opt: true);
+  static ContractAuditDetails? _$auditDetails(BankAccounts v) => v.auditDetails;
+  static const Field<BankAccounts, ContractAuditDetails> _f$auditDetails =
+      Field('auditDetails', _$auditDetails, opt: true);
 
   @override
-  String stringify(BankAccounts self) =>
-      'BankAccounts(serviceCode: ${container.asString(self.serviceCode)}, tenantId: ${container.asString(self.tenantId)}, referenceId: ${container.asString(self.referenceId)}, id: ${container.asString(self.id)}, indID: ${container.asString(self.indID)}, auditDetails: ${container.asString(self.auditDetails)}, bankAccountDetails: ${container.asString(self.bankAccountDetails)})';
+  final MappableFields<BankAccounts> fields = const {
+    #id: _f$id,
+    #tenantId: _f$tenantId,
+    #referenceId: _f$referenceId,
+    #serviceCode: _f$serviceCode,
+    #bankAccountDetails: _f$bankAccountDetails,
+    #indID: _f$indID,
+    #auditDetails: _f$auditDetails,
+  };
+
+  static BankAccounts _instantiate(DecodingData data) {
+    return BankAccounts(
+        id: data.dec(_f$id),
+        tenantId: data.dec(_f$tenantId),
+        referenceId: data.dec(_f$referenceId),
+        serviceCode: data.dec(_f$serviceCode),
+        bankAccountDetails: data.dec(_f$bankAccountDetails),
+        indID: data.dec(_f$indID),
+        auditDetails: data.dec(_f$auditDetails));
+  }
+
   @override
-  int hash(BankAccounts self) =>
-      container.hash(self.serviceCode) ^
-      container.hash(self.tenantId) ^
-      container.hash(self.referenceId) ^
-      container.hash(self.id) ^
-      container.hash(self.indID) ^
-      container.hash(self.auditDetails) ^
-      container.hash(self.bankAccountDetails);
-  @override
-  bool equals(BankAccounts self, BankAccounts other) =>
-      container.isEqual(self.serviceCode, other.serviceCode) &&
-      container.isEqual(self.tenantId, other.tenantId) &&
-      container.isEqual(self.referenceId, other.referenceId) &&
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.indID, other.indID) &&
-      container.isEqual(self.auditDetails, other.auditDetails) &&
-      container.isEqual(self.bankAccountDetails, other.bankAccountDetails);
+  final Function instantiate = _instantiate;
+
+  static BankAccounts fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BankAccounts>(map);
+  }
+
+  static BankAccounts fromJson(String json) {
+    return ensureInitialized().decodeJson<BankAccounts>(json);
+  }
 }
 
 mixin BankAccountsMappable {
-  String toJson() => BankAccountsMapper.container.toJson(this as BankAccounts);
-  Map<String, dynamic> toMap() =>
-      BankAccountsMapper.container.toMap(this as BankAccounts);
+  String toJson() {
+    return BankAccountsMapper.ensureInitialized()
+        .encodeJson<BankAccounts>(this as BankAccounts);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BankAccountsMapper.ensureInitialized()
+        .encodeMap<BankAccounts>(this as BankAccounts);
+  }
+
   BankAccountsCopyWith<BankAccounts, BankAccounts, BankAccounts> get copyWith =>
       _BankAccountsCopyWithImpl(this as BankAccounts, $identity, $identity);
   @override
-  String toString() => BankAccountsMapper.container.asString(this);
+  String toString() {
+    return BankAccountsMapper.ensureInitialized()
+        .stringifyValue(this as BankAccounts);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          BankAccountsMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return BankAccountsMapper.ensureInitialized()
+        .equalsValue(this as BankAccounts, other);
+  }
+
   @override
-  int get hashCode => BankAccountsMapper.container.hash(this);
+  int get hashCode {
+    return BankAccountsMapper.ensureInitialized()
+        .hashValue(this as BankAccounts);
+  }
 }
 
-extension BankAccountsValueCopy<$R, $Out extends BankAccounts>
+extension BankAccountsValueCopy<$R, $Out>
     on ObjectCopyWith<$R, BankAccounts, $Out> {
-  BankAccountsCopyWith<$R, BankAccounts, $Out> get asBankAccounts =>
-      base.as((v, t, t2) => _BankAccountsCopyWithImpl(v, t, t2));
+  BankAccountsCopyWith<$R, BankAccounts, $Out> get $asBankAccounts =>
+      $base.as((v, t, t2) => _BankAccountsCopyWithImpl(v, t, t2));
 }
 
-typedef BankAccountsCopyWithBound = BankAccounts;
-
-abstract class BankAccountsCopyWith<$R, $In extends BankAccounts,
-    $Out extends BankAccounts> implements ObjectCopyWith<$R, $In, $Out> {
-  BankAccountsCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends BankAccounts>(
-      Then<BankAccounts, $Out2> t, Then<$Out2, $R2> t2);
+abstract class BankAccountsCopyWith<$R, $In extends BankAccounts, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<
       $R,
       BankAccountDetails,
@@ -229,18 +253,17 @@ abstract class BankAccountsCopyWith<$R, $In extends BankAccounts,
       List<BankAccountDetails>? bankAccountDetails,
       String? indID,
       ContractAuditDetails? auditDetails});
+  BankAccountsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
-class _BankAccountsCopyWithImpl<$R, $Out extends BankAccounts>
-    extends CopyWithBase<$R, BankAccounts, $Out>
+class _BankAccountsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, BankAccounts, $Out>
     implements BankAccountsCopyWith<$R, BankAccounts, $Out> {
   _BankAccountsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  BankAccountsCopyWith<$R2, BankAccounts, $Out2>
-      chain<$R2, $Out2 extends BankAccounts>(
-              Then<BankAccounts, $Out2> t, Then<$Out2, $R2> t2) =>
-          _BankAccountsCopyWithImpl($value, t, t2);
 
+  @override
+  late final ClassMapperBase<BankAccounts> $mapper =
+      BankAccountsMapper.ensureInitialized();
   @override
   ListCopyWith<
       $R,
@@ -250,13 +273,13 @@ class _BankAccountsCopyWithImpl<$R, $Out extends BankAccounts>
       $value.bankAccountDetails != null
           ? ListCopyWith(
               $value.bankAccountDetails!,
-              (v, t) => v.copyWith.chain<$R, BankAccountDetails>($identity, t),
+              (v, t) => v.copyWith.$chain(t),
               (v) => call(bankAccountDetails: v))
           : null;
   @override
   ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
   @override
   $R call(
           {Object? id = $none,
@@ -266,126 +289,155 @@ class _BankAccountsCopyWithImpl<$R, $Out extends BankAccounts>
           Object? bankAccountDetails = $none,
           Object? indID = $none,
           Object? auditDetails = $none}) =>
-      $then(BankAccounts(
-          id: or(id, $value.id),
-          tenantId: or(tenantId, $value.tenantId),
-          referenceId: or(referenceId, $value.referenceId),
-          serviceCode: or(serviceCode, $value.serviceCode),
-          bankAccountDetails: or(bankAccountDetails, $value.bankAccountDetails),
-          indID: or(indID, $value.indID),
-          auditDetails: or(auditDetails, $value.auditDetails)));
-}
-
-class BankAccountDetailsMapper extends MapperBase<BankAccountDetails> {
-  static MapperContainer container = MapperContainer(
-    mappers: {BankAccountDetailsMapper()},
-  )..linkAll({BankBranchIdentifierMapper.container});
+      $apply(FieldCopyWithData({
+        if (id != $none) #id: id,
+        if (tenantId != $none) #tenantId: tenantId,
+        if (referenceId != $none) #referenceId: referenceId,
+        if (serviceCode != $none) #serviceCode: serviceCode,
+        if (bankAccountDetails != $none)
+          #bankAccountDetails: bankAccountDetails,
+        if (indID != $none) #indID: indID,
+        if (auditDetails != $none) #auditDetails: auditDetails
+      }));
+  @override
+  BankAccounts $make(CopyWithData data) => BankAccounts(
+      id: data.get(#id, or: $value.id),
+      tenantId: data.get(#tenantId, or: $value.tenantId),
+      referenceId: data.get(#referenceId, or: $value.referenceId),
+      serviceCode: data.get(#serviceCode, or: $value.serviceCode),
+      bankAccountDetails:
+          data.get(#bankAccountDetails, or: $value.bankAccountDetails),
+      indID: data.get(#indID, or: $value.indID),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails));
 
   @override
-  BankAccountDetailsMapperElement createElement(MapperContainer container) {
-    return BankAccountDetailsMapperElement._(this, container);
+  BankAccountsCopyWith<$R2, BankAccounts, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _BankAccountsCopyWithImpl($value, $cast, t);
+}
+
+class BankAccountDetailsMapper extends ClassMapperBase<BankAccountDetails> {
+  BankAccountDetailsMapper._();
+
+  static BankAccountDetailsMapper? _instance;
+  static BankAccountDetailsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = BankAccountDetailsMapper._());
+      BankBranchIdentifierMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'BankAccountDetails';
+  final String id = 'BankAccountDetails';
 
-  static final fromMap = container.fromMap<BankAccountDetails>;
-  static final fromJson = container.fromJson<BankAccountDetails>;
-}
-
-class BankAccountDetailsMapperElement
-    extends MapperElementBase<BankAccountDetails> {
-  BankAccountDetailsMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  BankAccountDetails decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  BankAccountDetails fromMap(Map<String, dynamic> map) => BankAccountDetails(
-      id: container.$getOpt(map, 'id'),
-      tenantId: container.$getOpt(map, 'tenantId'),
-      accountHolderName: container.$getOpt(map, 'accountHolderName'),
-      accountNumber: container.$getOpt(map, 'accountNumber'),
-      accountType: container.$getOpt(map, 'accountType'),
-      bankBranchIdentifier: container.$getOpt(map, 'bankBranchIdentifier'),
-      isPrimary: container.$getOpt(map, 'isPrimary'),
-      isActive: container.$getOpt(map, 'isActive'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(BankAccountDetails v) => toMap(v);
-  Map<String, dynamic> toMap(BankAccountDetails b) => {
-        'id': container.$enc(b.id, 'id'),
-        'tenantId': container.$enc(b.tenantId, 'tenantId'),
-        'accountHolderName':
-            container.$enc(b.accountHolderName, 'accountHolderName'),
-        'accountNumber': container.$enc(b.accountNumber, 'accountNumber'),
-        'accountType': container.$enc(b.accountType, 'accountType'),
-        'bankBranchIdentifier':
-            container.$enc(b.bankBranchIdentifier, 'bankBranchIdentifier'),
-        'isPrimary': container.$enc(b.isPrimary, 'isPrimary'),
-        'isActive': container.$enc(b.isActive, 'isActive')
-      };
+  static String? _$id(BankAccountDetails v) => v.id;
+  static const Field<BankAccountDetails, String> _f$id =
+      Field('id', _$id, opt: true);
+  static String? _$tenantId(BankAccountDetails v) => v.tenantId;
+  static const Field<BankAccountDetails, String> _f$tenantId =
+      Field('tenantId', _$tenantId, opt: true);
+  static String? _$accountHolderName(BankAccountDetails v) =>
+      v.accountHolderName;
+  static const Field<BankAccountDetails, String> _f$accountHolderName =
+      Field('accountHolderName', _$accountHolderName, opt: true);
+  static String? _$accountNumber(BankAccountDetails v) => v.accountNumber;
+  static const Field<BankAccountDetails, String> _f$accountNumber =
+      Field('accountNumber', _$accountNumber, opt: true);
+  static String? _$accountType(BankAccountDetails v) => v.accountType;
+  static const Field<BankAccountDetails, String> _f$accountType =
+      Field('accountType', _$accountType, opt: true);
+  static BankBranchIdentifier? _$bankBranchIdentifier(BankAccountDetails v) =>
+      v.bankBranchIdentifier;
+  static const Field<BankAccountDetails, BankBranchIdentifier>
+      _f$bankBranchIdentifier =
+      Field('bankBranchIdentifier', _$bankBranchIdentifier, opt: true);
+  static bool? _$isPrimary(BankAccountDetails v) => v.isPrimary;
+  static const Field<BankAccountDetails, bool> _f$isPrimary =
+      Field('isPrimary', _$isPrimary, opt: true);
+  static bool? _$isActive(BankAccountDetails v) => v.isActive;
+  static const Field<BankAccountDetails, bool> _f$isActive =
+      Field('isActive', _$isActive, opt: true);
 
   @override
-  String stringify(BankAccountDetails self) =>
-      'BankAccountDetails(accountHolderName: ${container.asString(self.accountHolderName)}, tenantId: ${container.asString(self.tenantId)}, accountNumber: ${container.asString(self.accountNumber)}, id: ${container.asString(self.id)}, accountType: ${container.asString(self.accountType)}, isActive: ${container.asString(self.isActive)}, isPrimary: ${container.asString(self.isPrimary)}, bankBranchIdentifier: ${container.asString(self.bankBranchIdentifier)})';
+  final MappableFields<BankAccountDetails> fields = const {
+    #id: _f$id,
+    #tenantId: _f$tenantId,
+    #accountHolderName: _f$accountHolderName,
+    #accountNumber: _f$accountNumber,
+    #accountType: _f$accountType,
+    #bankBranchIdentifier: _f$bankBranchIdentifier,
+    #isPrimary: _f$isPrimary,
+    #isActive: _f$isActive,
+  };
+
+  static BankAccountDetails _instantiate(DecodingData data) {
+    return BankAccountDetails(
+        id: data.dec(_f$id),
+        tenantId: data.dec(_f$tenantId),
+        accountHolderName: data.dec(_f$accountHolderName),
+        accountNumber: data.dec(_f$accountNumber),
+        accountType: data.dec(_f$accountType),
+        bankBranchIdentifier: data.dec(_f$bankBranchIdentifier),
+        isPrimary: data.dec(_f$isPrimary),
+        isActive: data.dec(_f$isActive));
+  }
+
   @override
-  int hash(BankAccountDetails self) =>
-      container.hash(self.accountHolderName) ^
-      container.hash(self.tenantId) ^
-      container.hash(self.accountNumber) ^
-      container.hash(self.id) ^
-      container.hash(self.accountType) ^
-      container.hash(self.isActive) ^
-      container.hash(self.isPrimary) ^
-      container.hash(self.bankBranchIdentifier);
-  @override
-  bool equals(BankAccountDetails self, BankAccountDetails other) =>
-      container.isEqual(self.accountHolderName, other.accountHolderName) &&
-      container.isEqual(self.tenantId, other.tenantId) &&
-      container.isEqual(self.accountNumber, other.accountNumber) &&
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.accountType, other.accountType) &&
-      container.isEqual(self.isActive, other.isActive) &&
-      container.isEqual(self.isPrimary, other.isPrimary) &&
-      container.isEqual(self.bankBranchIdentifier, other.bankBranchIdentifier);
+  final Function instantiate = _instantiate;
+
+  static BankAccountDetails fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BankAccountDetails>(map);
+  }
+
+  static BankAccountDetails fromJson(String json) {
+    return ensureInitialized().decodeJson<BankAccountDetails>(json);
+  }
 }
 
 mixin BankAccountDetailsMappable {
-  String toJson() =>
-      BankAccountDetailsMapper.container.toJson(this as BankAccountDetails);
-  Map<String, dynamic> toMap() =>
-      BankAccountDetailsMapper.container.toMap(this as BankAccountDetails);
+  String toJson() {
+    return BankAccountDetailsMapper.ensureInitialized()
+        .encodeJson<BankAccountDetails>(this as BankAccountDetails);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BankAccountDetailsMapper.ensureInitialized()
+        .encodeMap<BankAccountDetails>(this as BankAccountDetails);
+  }
+
   BankAccountDetailsCopyWith<BankAccountDetails, BankAccountDetails,
           BankAccountDetails>
       get copyWith => _BankAccountDetailsCopyWithImpl(
           this as BankAccountDetails, $identity, $identity);
   @override
-  String toString() => BankAccountDetailsMapper.container.asString(this);
+  String toString() {
+    return BankAccountDetailsMapper.ensureInitialized()
+        .stringifyValue(this as BankAccountDetails);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          BankAccountDetailsMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return BankAccountDetailsMapper.ensureInitialized()
+        .equalsValue(this as BankAccountDetails, other);
+  }
+
   @override
-  int get hashCode => BankAccountDetailsMapper.container.hash(this);
+  int get hashCode {
+    return BankAccountDetailsMapper.ensureInitialized()
+        .hashValue(this as BankAccountDetails);
+  }
 }
 
-extension BankAccountDetailsValueCopy<$R, $Out extends BankAccountDetails>
+extension BankAccountDetailsValueCopy<$R, $Out>
     on ObjectCopyWith<$R, BankAccountDetails, $Out> {
   BankAccountDetailsCopyWith<$R, BankAccountDetails, $Out>
-      get asBankAccountDetails =>
-          base.as((v, t, t2) => _BankAccountDetailsCopyWithImpl(v, t, t2));
+      get $asBankAccountDetails =>
+          $base.as((v, t, t2) => _BankAccountDetailsCopyWithImpl(v, t, t2));
 }
 
-typedef BankAccountDetailsCopyWithBound = BankAccountDetails;
-
 abstract class BankAccountDetailsCopyWith<$R, $In extends BankAccountDetails,
-    $Out extends BankAccountDetails> implements ObjectCopyWith<$R, $In, $Out> {
-  BankAccountDetailsCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends BankAccountDetails>(
-          Then<BankAccountDetails, $Out2> t, Then<$Out2, $R2> t2);
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   BankBranchIdentifierCopyWith<$R, BankBranchIdentifier, BankBranchIdentifier>?
       get bankBranchIdentifier;
   $R call(
@@ -397,22 +449,22 @@ abstract class BankAccountDetailsCopyWith<$R, $In extends BankAccountDetails,
       BankBranchIdentifier? bankBranchIdentifier,
       bool? isPrimary,
       bool? isActive});
+  BankAccountDetailsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _BankAccountDetailsCopyWithImpl<$R, $Out extends BankAccountDetails>
-    extends CopyWithBase<$R, BankAccountDetails, $Out>
+class _BankAccountDetailsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, BankAccountDetails, $Out>
     implements BankAccountDetailsCopyWith<$R, BankAccountDetails, $Out> {
   _BankAccountDetailsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  BankAccountDetailsCopyWith<$R2, BankAccountDetails, $Out2>
-      chain<$R2, $Out2 extends BankAccountDetails>(
-              Then<BankAccountDetails, $Out2> t, Then<$Out2, $R2> t2) =>
-          _BankAccountDetailsCopyWithImpl($value, t, t2);
 
+  @override
+  late final ClassMapperBase<BankAccountDetails> $mapper =
+      BankAccountDetailsMapper.ensureInitialized();
   @override
   BankBranchIdentifierCopyWith<$R, BankBranchIdentifier, BankBranchIdentifier>?
       get bankBranchIdentifier => $value.bankBranchIdentifier?.copyWith
-          .chain($identity, (v) => call(bankBranchIdentifier: v));
+          .$chain((v) => call(bankBranchIdentifier: v));
   @override
   $R call(
           {Object? id = $none,
@@ -423,113 +475,139 @@ class _BankAccountDetailsCopyWithImpl<$R, $Out extends BankAccountDetails>
           Object? bankBranchIdentifier = $none,
           Object? isPrimary = $none,
           Object? isActive = $none}) =>
-      $then(BankAccountDetails(
-          id: or(id, $value.id),
-          tenantId: or(tenantId, $value.tenantId),
-          accountHolderName: or(accountHolderName, $value.accountHolderName),
-          accountNumber: or(accountNumber, $value.accountNumber),
-          accountType: or(accountType, $value.accountType),
-          bankBranchIdentifier:
-              or(bankBranchIdentifier, $value.bankBranchIdentifier),
-          isPrimary: or(isPrimary, $value.isPrimary),
-          isActive: or(isActive, $value.isActive)));
-}
-
-class BankBranchIdentifierMapper extends MapperBase<BankBranchIdentifier> {
-  static MapperContainer container = MapperContainer(
-    mappers: {BankBranchIdentifierMapper()},
-  )..linkAll({BranchAdditionalDetailsMapper.container});
+      $apply(FieldCopyWithData({
+        if (id != $none) #id: id,
+        if (tenantId != $none) #tenantId: tenantId,
+        if (accountHolderName != $none) #accountHolderName: accountHolderName,
+        if (accountNumber != $none) #accountNumber: accountNumber,
+        if (accountType != $none) #accountType: accountType,
+        if (bankBranchIdentifier != $none)
+          #bankBranchIdentifier: bankBranchIdentifier,
+        if (isPrimary != $none) #isPrimary: isPrimary,
+        if (isActive != $none) #isActive: isActive
+      }));
+  @override
+  BankAccountDetails $make(CopyWithData data) => BankAccountDetails(
+      id: data.get(#id, or: $value.id),
+      tenantId: data.get(#tenantId, or: $value.tenantId),
+      accountHolderName:
+          data.get(#accountHolderName, or: $value.accountHolderName),
+      accountNumber: data.get(#accountNumber, or: $value.accountNumber),
+      accountType: data.get(#accountType, or: $value.accountType),
+      bankBranchIdentifier:
+          data.get(#bankBranchIdentifier, or: $value.bankBranchIdentifier),
+      isPrimary: data.get(#isPrimary, or: $value.isPrimary),
+      isActive: data.get(#isActive, or: $value.isActive));
 
   @override
-  BankBranchIdentifierMapperElement createElement(MapperContainer container) {
-    return BankBranchIdentifierMapperElement._(this, container);
+  BankAccountDetailsCopyWith<$R2, BankAccountDetails, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _BankAccountDetailsCopyWithImpl($value, $cast, t);
+}
+
+class BankBranchIdentifierMapper extends ClassMapperBase<BankBranchIdentifier> {
+  BankBranchIdentifierMapper._();
+
+  static BankBranchIdentifierMapper? _instance;
+  static BankBranchIdentifierMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = BankBranchIdentifierMapper._());
+      BranchAdditionalDetailsMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'BankBranchIdentifier';
+  final String id = 'BankBranchIdentifier';
 
-  static final fromMap = container.fromMap<BankBranchIdentifier>;
-  static final fromJson = container.fromJson<BankBranchIdentifier>;
-}
-
-class BankBranchIdentifierMapperElement
-    extends MapperElementBase<BankBranchIdentifier> {
-  BankBranchIdentifierMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  BankBranchIdentifier decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  BankBranchIdentifier fromMap(Map<String, dynamic> map) =>
-      BankBranchIdentifier(
-          type: container.$getOpt(map, 'type'),
-          id: container.$getOpt(map, 'id'),
-          code: container.$getOpt(map, 'code'),
-          additionalDetails: container.$getOpt(map, 'additionalDetails'));
+  static String? _$type(BankBranchIdentifier v) => v.type;
+  static const Field<BankBranchIdentifier, String> _f$type =
+      Field('type', _$type, opt: true);
+  static String? _$id(BankBranchIdentifier v) => v.id;
+  static const Field<BankBranchIdentifier, String> _f$id =
+      Field('id', _$id, opt: true);
+  static String? _$code(BankBranchIdentifier v) => v.code;
+  static const Field<BankBranchIdentifier, String> _f$code =
+      Field('code', _$code, opt: true);
+  static BranchAdditionalDetails? _$additionalDetails(BankBranchIdentifier v) =>
+      v.additionalDetails;
+  static const Field<BankBranchIdentifier, BranchAdditionalDetails>
+      _f$additionalDetails =
+      Field('additionalDetails', _$additionalDetails, opt: true);
 
   @override
-  Function get encoder => encode;
-  dynamic encode(BankBranchIdentifier v) => toMap(v);
-  Map<String, dynamic> toMap(BankBranchIdentifier b) => {
-        'type': container.$enc(b.type, 'type'),
-        'id': container.$enc(b.id, 'id'),
-        'code': container.$enc(b.code, 'code'),
-        'additionalDetails':
-            container.$enc(b.additionalDetails, 'additionalDetails')
-      };
+  final MappableFields<BankBranchIdentifier> fields = const {
+    #type: _f$type,
+    #id: _f$id,
+    #code: _f$code,
+    #additionalDetails: _f$additionalDetails,
+  };
+
+  static BankBranchIdentifier _instantiate(DecodingData data) {
+    return BankBranchIdentifier(
+        type: data.dec(_f$type),
+        id: data.dec(_f$id),
+        code: data.dec(_f$code),
+        additionalDetails: data.dec(_f$additionalDetails));
+  }
 
   @override
-  String stringify(BankBranchIdentifier self) =>
-      'BankBranchIdentifier(type: ${container.asString(self.type)}, code: ${container.asString(self.code)}, id: ${container.asString(self.id)}, additionalDetails: ${container.asString(self.additionalDetails)})';
-  @override
-  int hash(BankBranchIdentifier self) =>
-      container.hash(self.type) ^
-      container.hash(self.code) ^
-      container.hash(self.id) ^
-      container.hash(self.additionalDetails);
-  @override
-  bool equals(BankBranchIdentifier self, BankBranchIdentifier other) =>
-      container.isEqual(self.type, other.type) &&
-      container.isEqual(self.code, other.code) &&
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.additionalDetails, other.additionalDetails);
+  final Function instantiate = _instantiate;
+
+  static BankBranchIdentifier fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BankBranchIdentifier>(map);
+  }
+
+  static BankBranchIdentifier fromJson(String json) {
+    return ensureInitialized().decodeJson<BankBranchIdentifier>(json);
+  }
 }
 
 mixin BankBranchIdentifierMappable {
-  String toJson() =>
-      BankBranchIdentifierMapper.container.toJson(this as BankBranchIdentifier);
-  Map<String, dynamic> toMap() =>
-      BankBranchIdentifierMapper.container.toMap(this as BankBranchIdentifier);
+  String toJson() {
+    return BankBranchIdentifierMapper.ensureInitialized()
+        .encodeJson<BankBranchIdentifier>(this as BankBranchIdentifier);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BankBranchIdentifierMapper.ensureInitialized()
+        .encodeMap<BankBranchIdentifier>(this as BankBranchIdentifier);
+  }
+
   BankBranchIdentifierCopyWith<BankBranchIdentifier, BankBranchIdentifier,
           BankBranchIdentifier>
       get copyWith => _BankBranchIdentifierCopyWithImpl(
           this as BankBranchIdentifier, $identity, $identity);
   @override
-  String toString() => BankBranchIdentifierMapper.container.asString(this);
+  String toString() {
+    return BankBranchIdentifierMapper.ensureInitialized()
+        .stringifyValue(this as BankBranchIdentifier);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          BankBranchIdentifierMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return BankBranchIdentifierMapper.ensureInitialized()
+        .equalsValue(this as BankBranchIdentifier, other);
+  }
+
   @override
-  int get hashCode => BankBranchIdentifierMapper.container.hash(this);
+  int get hashCode {
+    return BankBranchIdentifierMapper.ensureInitialized()
+        .hashValue(this as BankBranchIdentifier);
+  }
 }
 
-extension BankBranchIdentifierValueCopy<$R, $Out extends BankBranchIdentifier>
+extension BankBranchIdentifierValueCopy<$R, $Out>
     on ObjectCopyWith<$R, BankBranchIdentifier, $Out> {
   BankBranchIdentifierCopyWith<$R, BankBranchIdentifier, $Out>
-      get asBankBranchIdentifier =>
-          base.as((v, t, t2) => _BankBranchIdentifierCopyWithImpl(v, t, t2));
+      get $asBankBranchIdentifier =>
+          $base.as((v, t, t2) => _BankBranchIdentifierCopyWithImpl(v, t, t2));
 }
 
-typedef BankBranchIdentifierCopyWithBound = BankBranchIdentifier;
-
-abstract class BankBranchIdentifierCopyWith<$R,
-        $In extends BankBranchIdentifier, $Out extends BankBranchIdentifier>
-    implements ObjectCopyWith<$R, $In, $Out> {
-  BankBranchIdentifierCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends BankBranchIdentifier>(
-          Then<BankBranchIdentifier, $Out2> t, Then<$Out2, $R2> t2);
+abstract class BankBranchIdentifierCopyWith<
+    $R,
+    $In extends BankBranchIdentifier,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   BranchAdditionalDetailsCopyWith<$R, BranchAdditionalDetails,
       BranchAdditionalDetails>? get additionalDetails;
   $R call(
@@ -537,136 +615,158 @@ abstract class BankBranchIdentifierCopyWith<$R,
       String? id,
       String? code,
       BranchAdditionalDetails? additionalDetails});
+  BankBranchIdentifierCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _BankBranchIdentifierCopyWithImpl<$R, $Out extends BankBranchIdentifier>
-    extends CopyWithBase<$R, BankBranchIdentifier, $Out>
+class _BankBranchIdentifierCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, BankBranchIdentifier, $Out>
     implements BankBranchIdentifierCopyWith<$R, BankBranchIdentifier, $Out> {
   _BankBranchIdentifierCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  BankBranchIdentifierCopyWith<$R2, BankBranchIdentifier, $Out2>
-      chain<$R2, $Out2 extends BankBranchIdentifier>(
-              Then<BankBranchIdentifier, $Out2> t, Then<$Out2, $R2> t2) =>
-          _BankBranchIdentifierCopyWithImpl($value, t, t2);
 
+  @override
+  late final ClassMapperBase<BankBranchIdentifier> $mapper =
+      BankBranchIdentifierMapper.ensureInitialized();
   @override
   BranchAdditionalDetailsCopyWith<$R, BranchAdditionalDetails,
           BranchAdditionalDetails>?
       get additionalDetails => $value.additionalDetails?.copyWith
-          .chain($identity, (v) => call(additionalDetails: v));
+          .$chain((v) => call(additionalDetails: v));
   @override
   $R call(
           {Object? type = $none,
           Object? id = $none,
           Object? code = $none,
           Object? additionalDetails = $none}) =>
-      $then(BankBranchIdentifier(
-          type: or(type, $value.type),
-          id: or(id, $value.id),
-          code: or(code, $value.code),
-          additionalDetails: or(additionalDetails, $value.additionalDetails)));
+      $apply(FieldCopyWithData({
+        if (type != $none) #type: type,
+        if (id != $none) #id: id,
+        if (code != $none) #code: code,
+        if (additionalDetails != $none) #additionalDetails: additionalDetails
+      }));
+  @override
+  BankBranchIdentifier $make(CopyWithData data) => BankBranchIdentifier(
+      type: data.get(#type, or: $value.type),
+      id: data.get(#id, or: $value.id),
+      code: data.get(#code, or: $value.code),
+      additionalDetails:
+          data.get(#additionalDetails, or: $value.additionalDetails));
+
+  @override
+  BankBranchIdentifierCopyWith<$R2, BankBranchIdentifier, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _BankBranchIdentifierCopyWithImpl($value, $cast, t);
 }
 
 class BranchAdditionalDetailsMapper
-    extends MapperBase<BranchAdditionalDetails> {
-  static MapperContainer container = MapperContainer(
-    mappers: {BranchAdditionalDetailsMapper()},
-  );
+    extends ClassMapperBase<BranchAdditionalDetails> {
+  BranchAdditionalDetailsMapper._();
 
-  @override
-  BranchAdditionalDetailsMapperElement createElement(
-      MapperContainer container) {
-    return BranchAdditionalDetailsMapperElement._(this, container);
+  static BranchAdditionalDetailsMapper? _instance;
+  static BranchAdditionalDetailsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals
+          .use(_instance = BranchAdditionalDetailsMapper._());
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'BranchAdditionalDetails';
+  final String id = 'BranchAdditionalDetails';
 
-  static final fromMap = container.fromMap<BranchAdditionalDetails>;
-  static final fromJson = container.fromJson<BranchAdditionalDetails>;
-}
-
-class BranchAdditionalDetailsMapperElement
-    extends MapperElementBase<BranchAdditionalDetails> {
-  BranchAdditionalDetailsMapperElement._(super.mapper, super.container);
+  static String? _$ifsccode(BranchAdditionalDetails v) => v.ifsccode;
+  static const Field<BranchAdditionalDetails, String> _f$ifsccode =
+      Field('ifsccode', _$ifsccode, opt: true);
 
   @override
-  Function get decoder => decode;
-  BranchAdditionalDetails decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  BranchAdditionalDetails fromMap(Map<String, dynamic> map) =>
-      BranchAdditionalDetails(ifsccode: container.$getOpt(map, 'ifsccode'));
+  final MappableFields<BranchAdditionalDetails> fields = const {
+    #ifsccode: _f$ifsccode,
+  };
+
+  static BranchAdditionalDetails _instantiate(DecodingData data) {
+    return BranchAdditionalDetails(ifsccode: data.dec(_f$ifsccode));
+  }
 
   @override
-  Function get encoder => encode;
-  dynamic encode(BranchAdditionalDetails v) => toMap(v);
-  Map<String, dynamic> toMap(BranchAdditionalDetails b) =>
-      {'ifsccode': container.$enc(b.ifsccode, 'ifsccode')};
+  final Function instantiate = _instantiate;
 
-  @override
-  String stringify(BranchAdditionalDetails self) =>
-      'BranchAdditionalDetails(ifsccode: ${container.asString(self.ifsccode)})';
-  @override
-  int hash(BranchAdditionalDetails self) => container.hash(self.ifsccode);
-  @override
-  bool equals(BranchAdditionalDetails self, BranchAdditionalDetails other) =>
-      container.isEqual(self.ifsccode, other.ifsccode);
+  static BranchAdditionalDetails fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BranchAdditionalDetails>(map);
+  }
+
+  static BranchAdditionalDetails fromJson(String json) {
+    return ensureInitialized().decodeJson<BranchAdditionalDetails>(json);
+  }
 }
 
 mixin BranchAdditionalDetailsMappable {
-  String toJson() => BranchAdditionalDetailsMapper.container
-      .toJson(this as BranchAdditionalDetails);
-  Map<String, dynamic> toMap() => BranchAdditionalDetailsMapper.container
-      .toMap(this as BranchAdditionalDetails);
+  String toJson() {
+    return BranchAdditionalDetailsMapper.ensureInitialized()
+        .encodeJson<BranchAdditionalDetails>(this as BranchAdditionalDetails);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BranchAdditionalDetailsMapper.ensureInitialized()
+        .encodeMap<BranchAdditionalDetails>(this as BranchAdditionalDetails);
+  }
+
   BranchAdditionalDetailsCopyWith<BranchAdditionalDetails,
           BranchAdditionalDetails, BranchAdditionalDetails>
       get copyWith => _BranchAdditionalDetailsCopyWithImpl(
           this as BranchAdditionalDetails, $identity, $identity);
   @override
-  String toString() => BranchAdditionalDetailsMapper.container.asString(this);
+  String toString() {
+    return BranchAdditionalDetailsMapper.ensureInitialized()
+        .stringifyValue(this as BranchAdditionalDetails);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          BranchAdditionalDetailsMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return BranchAdditionalDetailsMapper.ensureInitialized()
+        .equalsValue(this as BranchAdditionalDetails, other);
+  }
+
   @override
-  int get hashCode => BranchAdditionalDetailsMapper.container.hash(this);
+  int get hashCode {
+    return BranchAdditionalDetailsMapper.ensureInitialized()
+        .hashValue(this as BranchAdditionalDetails);
+  }
 }
 
-extension BranchAdditionalDetailsValueCopy<$R,
-        $Out extends BranchAdditionalDetails>
+extension BranchAdditionalDetailsValueCopy<$R, $Out>
     on ObjectCopyWith<$R, BranchAdditionalDetails, $Out> {
   BranchAdditionalDetailsCopyWith<$R, BranchAdditionalDetails, $Out>
-      get asBranchAdditionalDetails =>
-          base.as((v, t, t2) => _BranchAdditionalDetailsCopyWithImpl(v, t, t2));
+      get $asBranchAdditionalDetails => $base
+          .as((v, t, t2) => _BranchAdditionalDetailsCopyWithImpl(v, t, t2));
 }
-
-typedef BranchAdditionalDetailsCopyWithBound = BranchAdditionalDetails;
 
 abstract class BranchAdditionalDetailsCopyWith<
-        $R,
-        $In extends BranchAdditionalDetails,
-        $Out extends BranchAdditionalDetails>
-    implements ObjectCopyWith<$R, $In, $Out> {
-  BranchAdditionalDetailsCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends BranchAdditionalDetails>(
-          Then<BranchAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2);
+    $R,
+    $In extends BranchAdditionalDetails,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   $R call({String? ifsccode});
+  BranchAdditionalDetailsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _BranchAdditionalDetailsCopyWithImpl<$R,
-        $Out extends BranchAdditionalDetails>
-    extends CopyWithBase<$R, BranchAdditionalDetails, $Out>
+class _BranchAdditionalDetailsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, BranchAdditionalDetails, $Out>
     implements
         BranchAdditionalDetailsCopyWith<$R, BranchAdditionalDetails, $Out> {
   _BranchAdditionalDetailsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  BranchAdditionalDetailsCopyWith<$R2, BranchAdditionalDetails, $Out2>
-      chain<$R2, $Out2 extends BranchAdditionalDetails>(
-              Then<BranchAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2) =>
-          _BranchAdditionalDetailsCopyWithImpl($value, t, t2);
 
   @override
+  late final ClassMapperBase<BranchAdditionalDetails> $mapper =
+      BranchAdditionalDetailsMapper.ensureInitialized();
+  @override
   $R call({Object? ifsccode = $none}) =>
-      $then(BranchAdditionalDetails(ifsccode: or(ifsccode, $value.ifsccode)));
+      $apply(FieldCopyWithData({if (ifsccode != $none) #ifsccode: ifsccode}));
+  @override
+  BranchAdditionalDetails $make(CopyWithData data) => BranchAdditionalDetails(
+      ifsccode: data.get(#ifsccode, or: $value.ifsccode));
+
+  @override
+  BranchAdditionalDetailsCopyWith<$R2, BranchAdditionalDetails, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _BranchAdditionalDetailsCopyWithImpl($value, $cast, t);
 }

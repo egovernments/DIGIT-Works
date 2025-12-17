@@ -9,13 +9,19 @@ const CitizenInfoLabel = (props) => {
   
   return (
     <div className={`info-banner-wrap ${props?.className ? props?.className : ""}`} style={props?.style}>
-      {showInfo && <div>
-        <InfoBannerIcon fill={props?.fill} />
-        <h2 style={props?.textStyle}>{props?.info}</h2>
-      </div>
-      }
-      <p style={props?.textStyle}>{props?.text}</p>
+      {showInfo && (
+        <div>
+          <InfoBannerIcon fill={props?.fill} />
+          <h2 style={props?.textStyle}>{props?.info}</h2>
+        </div>
+      )}
+      {props?.textType === "Component" ? (
+        props?.text
+      ) : (
+        <p style={props?.textStyle}>{props?.text}</p>
+      )}
     </div>
+    
   );
 };
 

@@ -1,6 +1,6 @@
 # Docker flutter tags https://hub.docker.com/r/cirrusci/flutter/tags?page=1&name=1.16
 
-FROM cirrusci/flutter:3.7.1 AS build
+FROM ghcr.io/cirruslabs/flutter:3.16.5 AS build
 ARG WORK_DIR
 WORKDIR /app
 # copy the project files

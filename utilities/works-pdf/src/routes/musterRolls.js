@@ -6,7 +6,8 @@ var config = require("../config");
 var { search_musterRoll, create_pdf, search_localization } = require("../api");
 var {searchEstimateFormusterRoll,create_pdf  }= require("../api");
 var { search_contract, create_pdf } = require("../api");
-var { search_mdmsLabourCharges, create_pdf } = require("../api");
+var { search_mdmsV2, create_pdf } = require("../api");
+var { search_individual, create_pdf } = require("../api");
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 const { calculateAttendenceDetails, calculateAttendenceTotal, getDateMonth } = require("../utils/calculateMusterData");
 const get = require("lodash.get");
@@ -53,16 +54,54 @@ router.post(
             }
             try {
 
-                resMdms = await search_mdmsLabourCharges(tenantId, requestinfo);
+                resMdms = await search_mdmsV2(tenantId);
 
             }
             catch (ex) {
                 if (ex.response && ex.response.data) console.log(ex.response.data);
-                return renderError(res, "Failed to query details of the mdms service", 500);
+                return renderError(res, "Failed to query details of the mdms v2 service", 500);
+            }
+            try {
+                individualIds = resMuster.data.musterRolls[0].individualEntries.map(ind => ind.additionalDetails.userId);
+                resIndividuals = await search_individual(individualIds, tenantId, requestinfo);
+            }
+            catch (ex) {
+                if (ex.response && ex.response.data) console.log(ex.response.data);
+                return renderError(res, "Failed to query details of the individual service", 500);
             }
             var muster = resMuster.data;
+            muster.musterRolls[0] = enrichIndividualEntries(muster.musterRolls[0], resIndividuals.data.Individual);
+            muster.musterRolls[0] = filterIndividualEntries(muster.musterRolls[0]);
+
+            function enrichIndividualEntries(muster_roll, individuals) {
+                if (Array.isArray(muster_roll.individualEntries)) {
+                  muster_roll.individualEntries = muster_roll.individualEntries.map(entry => {
+                    const individual = individuals.find(i => i.individualId === entry.additionalDetails.userId);
+                    const additionalDetails = {
+                        fatherName: individual.fatherName,
+                        userName: individual.name.givenName,
+                        gender: individual.gender,
+                        mobileNumber: individual.mobileNumber,
+                        userId: individual.individualId,
+                        skillCode: entry.additionalDetails.skillCode,
+                    }
+                    return { ...entry, additionalDetails };
+                  })
+                }
+                return muster_roll;
+            }
+
+            function filterIndividualEntries(muster_roll) {
+                if (Array.isArray(muster_roll.individualEntries)) {
+                  muster_roll.individualEntries = muster_roll.individualEntries.filter(entry => {
+                    const additionalDetails = get(entry, 'additionalDetails', {});
+                    return additionalDetails.hasOwnProperty('skillCode') && !additionalDetails.hasOwnProperty('skillValue');
+                  });
+                }
+                return muster_roll;
+            }
             var contract = resContract.data;
-            var mdms = get(resMdms, 'data.MdmsRes.expense.LabourCharges', []);
+            var mdms = get(resMdms, 'data.MdmsRes.WORKS-SOR.Rates', []);
             
             // Get estimate using expense calculator
             let estimateCalc = {}
@@ -92,12 +131,8 @@ router.post(
                     msgId = msgId.split("|")
                     lang = msgId.length == 2 ? msgId[1] : lang;
                 }
-                let params = {
-                    "locale": lang,
-                    "module": "rainmaker-common,rainmaker-common-masters",
-                    "tenantId": tenantId.split(".")[0]
-                }
-                let localizations = await search_localization(localizationReq, params);
+                let module = "rainmaker-common,rainmaker-common-masters";
+                let localizations = await search_localization(localizationReq, lang, module,tenantId );
                 if (localizations?.data?.messages?.length) {
                     localizations.data.messages.forEach(localObj => {
                         localizationMap[localObj.code] = localObj.message;
@@ -126,9 +161,11 @@ router.post(
                     muster.musterRolls[0].projectId = 'NA'; 
                     muster.musterRolls[0].totalWageAmount= 'NA';                  
                 }
-                
-                var labourCharges = mdms.reduce((modified, actual) => {
-                    modified[actual.code] = actual.amount;
+                const createdTime = muster.musterRolls[0].auditDetails.createdTime;
+                const filteredMdmsLabourCharges = mdms.filter(item => createdTime >= item.validFrom && (createdTime <= item.validTo || item.validTo == null));
+
+                var labourCharges = filteredMdmsLabourCharges.reduce((modified, actual) => {
+                    modified[actual.sorId] = actual.rate;
                     return modified;
                 }, {})
                 

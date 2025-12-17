@@ -110,7 +110,7 @@ const CreateProject = () => {
       }
     },[configs, isProjectLoading, isDocConfigLoading]);
 
-    // if(isLoading) return <Loader />
+    if(isLoading) return <Loader />
     return (
       <React.Fragment>
         {isFormReady && 

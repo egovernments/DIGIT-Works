@@ -44,6 +44,8 @@ import { CustomService } from "./services/elements/CustomService";
 import { WageSeekerService } from "./services/elements/WageSeeker";
 import { OrganisationService } from "./services/elements/Organisation";
 import { BankAccountService } from "./services/elements/BankAccount";
+import { MeasurementService } from "./services/elements/Measurement";
+import { RateAnalysisService } from "./services/elements/rateAnalysis";
 
 const setupLibraries = (Library, props) => {
   window.Digit = window.Digit || {};
@@ -94,7 +96,10 @@ const initLibraries = () => {
   setupLibraries("CustomService", CustomService);
   setupLibraries("WageSeekerService", WageSeekerService);
   setupLibraries("OrganisationService", OrganisationService);
-  setupLibraries("BankAccountService", BankAccountService)
+  setupLibraries("BankAccountService", BankAccountService);
+
+  setupLibraries("MeasurementService", MeasurementService);
+  setupLibraries("RateAnalysisService", RateAnalysisService);
 
   return new Promise((resolve) => {
     initI18n(resolve);

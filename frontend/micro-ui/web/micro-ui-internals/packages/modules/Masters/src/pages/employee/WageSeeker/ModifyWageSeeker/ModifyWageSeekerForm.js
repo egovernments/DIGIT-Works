@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
 import { FormComposer } from '@egovernments/digit-ui-react-components';
 import { getWageSeekerUpdatePayload, getBankAccountUpdatePayload, getWageSeekerSkillDeletePayload } from '../../../../utils';
+import debounce from 'lodash/debounce';
+import { Loader, Toast } from '@egovernments/digit-ui-components';
 
 const navConfig =  [{
     name:"Wage_Seeker_Details",
@@ -12,6 +14,7 @@ const navConfig =  [{
 const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessionFormData, clearSessionFormData, isModify, wageSeekerDataFromAPI }) => {
     const { t } = useTranslation();
     const history = useHistory()
+    const [showToast,setShowToast] = useState(null)
     const individualId = wageSeekerDataFromAPI?.individual?.individualId
 
     const [financeDetailsUpdated, setFinanceDetailsUpdated] = useState(false)
@@ -31,19 +34,48 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     const { mutate: CreateBankAccountMutation } = Digit.Hooks.bankAccount.useCreateBankAccount();
     const { mutate: DeleteWageSeeker } = Digit.Hooks.wageSeeker.useDeleteWageSeeker();
 
-    //Skill data
-    const {isLoading: skillDataFetching, data: skillData } = Digit.Hooks.useCustomMDMS(
-        stateTenant,
-        "common-masters",
-        [ { "name": "WageSeekerSkills" }],
-        {
+const requestCriteria = {
+    url: "/mdms-v2/v1/_search",
+    body: {
+      MdmsCriteria: {
+        moduleDetails : [
+
+          {
+            "moduleName": "WORKS-SOR",
+            "masterDetails": [
+                {
+                    "name": "SOR",
+                    "filter": "[?(@.sorType=='L')]"
+                    
+                }  
+            ]
+        },
+        ],
+        "tenantId": Digit.ULBService.getCurrentTenantId(),
+      },
+    },
+    config: {
             select: (data) => {
-                return data?.["common-masters"]?.WageSeekerSkills?.filter(item => item?.active)?.map(skill => ({
-                    code: skill?.code, name: `COMMON_MASTERS_SKILLS_${skill?.code}`
-                }))  
+              const optionsData = _.get(data?.MdmsRes, `${"WORKS-SOR"}.${"SOR"}`, []);
+              return optionsData?.filter((opt) => opt?.active === undefined || opt?.active === true).map((opt) => ({name: `${t(opt?.sorSubType)} - ${opt?.description}`, code: opt?.id}));
             }
-        }
-    );
+          },
+  };
+  const { isLoading, data : skillData} = Digit.Hooks.useCustomAPIHook(requestCriteria);
+
+    // Skill data
+    // const {isLoading: skillDataFetching, data: skillData } = Digit.Hooks.useCustomMDMS(
+    //     stateTenant,
+    //     "common-masters",
+    //     [ { "name": "WageSeekerSkills" }],
+    //     {
+    //         select: (data) => {
+    //             return data?.["common-masters"]?.WageSeekerSkills?.filter(item => item?.active)?.map(skill => ({
+    //                 code: skill?.code, name: `COMMON_MASTERS_SKILLS_${skill?.code}`
+    //             }))  
+    //         }
+    //     }
+    // );
 
     //location data
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
@@ -55,16 +87,20 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
           select: (data) => {
               const wards = []
               const localities = {}
-              data?.TenantBoundary[0]?.boundary.forEach((item) => {
-                  localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label : item?.label }))
-                  wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
+              data?.TenantBoundary[0]?.boundary.sort((a, b) => a.code.localeCompare(b.code)).forEach((item) => {
+                  localities[item?.code] = item?.children.map(item => ({ code: item.code, name: t(`${headerLocale}_ADMIN_${item?.code}`), i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label : t(`${headerLocale}_ADMIN_${item?.code}`)}))
+                  wards.push({ code: item.code, name: t(`${headerLocale}_ADMIN_${item?.code}`), i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
               });
              return {
                   wards, localities
              }
           }
-      });
-    const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
+      },true);
+    // const filteredLocalities = wardsAndLocalities?.localities[selectedWard];
+    let filteredLocalities = []
+    wardsAndLocalities ? Object.values(wardsAndLocalities?.localities).forEach(localities => {
+        filteredLocalities = filteredLocalities.concat(localities)
+    }) : []
 
     //wage seeker form config
     const config = useMemo(
@@ -88,7 +124,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         },
         {
             key : 'locDetails_locality',
-            value : [filteredLocalities]
+            value : [filteredLocalities.sort((a, b) => a.code.localeCompare(b.code))]
         },
         {
             key : "basicDetails_wageSeekerId",
@@ -102,7 +138,40 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     }),
     [skillData, wardsAndLocalities, filteredLocalities, ULBOptions]);
 
+    const closeToast = () => {
+      setTimeout(() => {
+        setShowToast(null);
+      }, 5000);
+    };
+
+    const validateSelectedSkills = (formData) => {
+      //write logic to validate skills selected
+      let validateCheckPass = true
+      const countSkillsInCategory = {}
+      formData.skillDetails_skill.map(skill => {
+        countSkillsInCategory[skill.code.split('.')[1]?skill.code.split('.')[1]:skill.code.split('.')[0]] = countSkillsInCategory[skill.code.split('.')[1]?skill.code.split('.')[1]:skill.code.split('.')[0]] ? countSkillsInCategory[skill.code.split('.')[1]?skill.code.split('.')[1]:skill.code.split('.')[0]] + 1 : 1
+      });
+
+      if(Object.keys(countSkillsInCategory)?.length <= 0)
+        validateCheckPass = false;
+    
+      Object.keys(countSkillsInCategory).forEach(key => {
+        if(countSkillsInCategory[key] > 1){
+            validateCheckPass = false 
+        }
+      })
+
+      if(!validateCheckPass){
+        setShowToast({ label: t("SKILLS_SELECTION_INVALID") });
+        closeToast();
+        return true
+      }else{
+        return false
+      }
+    };
+
     const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+        
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
@@ -126,6 +195,8 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 setIsBirthDateValid(!(ageInYear < 18));
             }
             if(formData.financeDetails_ifsc) {
+                //capitalize ifsc
+                setValue("financeDetails_ifsc",formData?.financeDetails_ifsc?.toUpperCase())
                 if(formData.financeDetails_ifsc?.length > 10) {
                     setTimeout(() => {
                         fetchIFSCDetails(formData.financeDetails_ifsc, 'financeDetails_branchName', setValue, setError, clearErrors);
@@ -151,7 +222,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
 
     const sendDataToResponsePage = (individualId, isSuccess, message, showId) => {
         history.push({
-            pathname: `/${window?.contextPath}/employee/masters/response`,
+            pathname: `/${window?.contextPath}/employee/masters/response-wage-seeker`,
             search: individualId ? `?tenantId=${tenantId}&individualId=${individualId}` : '',
             state : {
                 message,
@@ -185,13 +256,25 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 }
               });
         } else if(!individualDetailsUpdated && financeDetailsUpdated) {
-            await UpdateBankAccountMutation(bankAccountPayload, {
-                onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
-                onSuccess: async (responseData) => {
-                    sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
-                    clearSessionFormData()
-                }
-              })
+            if(wageSeekerDataFromAPI?.bankDetails && wageSeekerDataFromAPI?.bankDetails?.length > 0)
+            {    await UpdateBankAccountMutation(bankAccountPayload, {
+                    onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                    onSuccess: async (responseData) => {
+                        sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                        clearSessionFormData()
+                    }
+                })
+            }
+            else
+            {
+                await CreateBankAccountMutation(bankAccountPayload, {
+                    onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", false),
+                    onSuccess: async (bankResponseData) => {
+                        sendDataToResponsePage(wageSeekerDataFromAPI?.individual?.individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                        clearSessionFormData()
+                    }
+                })
+            }
         } else if(individualDetailsUpdated && financeDetailsUpdated) {
             await UpdateWageSeekerMutation(wageSeekerPayload, {
                 onError: async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
@@ -201,16 +284,30 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                         await DeleteWageSeeker(wageSeekerSkillDeletePayload, {
                             onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
                             onSuccess: async (responseData) => {
-                                await UpdateBankAccountMutation(bankAccountPayload, {
-                                    onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
-                                    onSuccess: async (responseData) => {
-                                        sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
-                                        clearSessionFormData()
-                                    }
-                                })
+                                if(wageSeekerDataFromAPI?.bankDetails && wageSeekerDataFromAPI?.bankDetails?.length > 0)
+                                {   
+                                    await UpdateBankAccountMutation(bankAccountPayload, {
+                                        onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
+                                        onSuccess: async (responseData) => {
+                                            sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                                            clearSessionFormData()
+                                        }
+                                    })
+                                }
+                                else
+                                {
+                                    await CreateBankAccountMutation(bankAccountPayload, {
+                                        onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", false),
+                                        onSuccess: async (bankResponseData) => {
+                                            sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                                            clearSessionFormData()
+                                        }
+                                    })
+                                }
                             }
                         })
                     } else {
+                        if(wageSeekerDataFromAPI?.bankDetails && wageSeekerDataFromAPI?.bankDetails?.length > 0){
                         await UpdateBankAccountMutation(bankAccountPayload, {
                             onError :  async (error) => sendDataToResponsePage(individualId, false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", true),
                             onSuccess: async (responseData) => {
@@ -218,6 +315,17 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                                 clearSessionFormData()
                             }
                         })
+                        }
+                        else
+                        {
+                            await CreateBankAccountMutation(bankAccountPayload, {
+                                onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_WAGE_SEEKER_MODIFICATION_FAIL", false),
+                                onSuccess: async (bankResponseData) => {
+                                    sendDataToResponsePage(individualId, true, "MASTERS_WAGE_SEEKER_MODIFICATION_SUCCESS", true)
+                                    clearSessionFormData()
+                                }
+                            })
+                        }
                     }
                 },
             });
@@ -241,26 +349,38 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         });
     }
 
-    const onSubmit = (data) => {
+    const OnModalSubmit = (data) => {
+        data = Digit.Utils.trimStringsInObject(data)
+        const validationError = validateSelectedSkills(data)
+        if(validationError) return
         const wageSeekerPayload = getWageSeekerUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify})
         if(isModify) {
-            const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: wageSeekerDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: true});
+            const bankAccountPayload = wageSeekerDataFromAPI?.bankDetails && wageSeekerDataFromAPI?.bankDetails?.length>0 ? getBankAccountUpdatePayload({formData: data, apiData: wageSeekerDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: true}) : getBankAccountUpdatePayload({formData: data, apiData: '', tenantId, isModify: false, referenceId: wageSeekerDataFromAPI?.individual?.id, isWageSeeker: true});;
             handleResponseForUpdate(wageSeekerPayload, bankAccountPayload);
         }else {
             handleResponseForCreate(wageSeekerPayload, data);
         }
-    }
+    };
+
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
+
+    const handleSubmit = (_data) => {
+        // Call the debounced version of onModalSubmit
+        debouncedOnModalSubmit(_data);
+      };
+
+      if(isLoading) return <Loader/>
 
     return (
         <React.Fragment>
            <FormComposer
                 label={isModify ? "CORE_COMMON_SAVE" : "ACTION_TEST_MASTERS_CREATE_WAGESEEKER"}
                 config={config?.form}
-                onSubmit={onSubmit}
+                onSubmit={handleSubmit}
                 submitInForm={false}
                 fieldStyle={{ marginRight: 0 }}
                 inline={false}
-                className="form-no-margin"
+                // className={`form-no-margin ${"wageseeker-update-form"}`}
                 defaultValues={sessionFormData}
                 showWrapperContainers={false}
                 isDescriptionBold={false}
@@ -275,6 +395,9 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 cardClassName = "mukta-header-card"
                 labelBold={true}
             />
+            {showToast && <Toast label={showToast?.label} type={"error"} isDleteBtn={true} onClose={()=>{
+                setShowToast(null)
+            }}></Toast>}
         </React.Fragment>
     )
 }

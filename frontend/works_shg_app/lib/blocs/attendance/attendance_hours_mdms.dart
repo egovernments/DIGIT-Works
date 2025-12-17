@@ -40,10 +40,8 @@ class AttendanceHoursBloc
             }
           ]);
 
-      if (result != null) {
-        emit(AttendanceHoursState.loaded(result));
-      }
-    } on DioError catch (e) {
+      emit(AttendanceHoursState.loaded(result));
+    } on DioException catch (e) {
       emit(AttendanceHoursState.error(e.response?.data['Errors'][0]['code']));
     }
   }

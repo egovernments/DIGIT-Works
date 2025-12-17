@@ -12,7 +12,7 @@ part of 'my_works_search_criteria.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 MyWorksSearchCriteriaModel _$MyWorksSearchCriteriaModelFromJson(
     Map<String, dynamic> json) {
@@ -81,12 +81,12 @@ class _$MyWorksSearchCriteriaModelCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_MyWorksSearchCriteriaModelCopyWith<$Res>
+abstract class _$$MyWorksSearchCriteriaModelImplCopyWith<$Res>
     implements $MyWorksSearchCriteriaModelCopyWith<$Res> {
-  factory _$$_MyWorksSearchCriteriaModelCopyWith(
-          _$_MyWorksSearchCriteriaModel value,
-          $Res Function(_$_MyWorksSearchCriteriaModel) then) =
-      __$$_MyWorksSearchCriteriaModelCopyWithImpl<$Res>;
+  factory _$$MyWorksSearchCriteriaModelImplCopyWith(
+          _$MyWorksSearchCriteriaModelImpl value,
+          $Res Function(_$MyWorksSearchCriteriaModelImpl) then) =
+      __$$MyWorksSearchCriteriaModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -97,13 +97,13 @@ abstract class _$$_MyWorksSearchCriteriaModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_MyWorksSearchCriteriaModelCopyWithImpl<$Res>
+class __$$MyWorksSearchCriteriaModelImplCopyWithImpl<$Res>
     extends _$MyWorksSearchCriteriaModelCopyWithImpl<$Res,
-        _$_MyWorksSearchCriteriaModel>
-    implements _$$_MyWorksSearchCriteriaModelCopyWith<$Res> {
-  __$$_MyWorksSearchCriteriaModelCopyWithImpl(
-      _$_MyWorksSearchCriteriaModel _value,
-      $Res Function(_$_MyWorksSearchCriteriaModel) _then)
+        _$MyWorksSearchCriteriaModelImpl>
+    implements _$$MyWorksSearchCriteriaModelImplCopyWith<$Res> {
+  __$$MyWorksSearchCriteriaModelImplCopyWithImpl(
+      _$MyWorksSearchCriteriaModelImpl _value,
+      $Res Function(_$MyWorksSearchCriteriaModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -111,7 +111,7 @@ class __$$_MyWorksSearchCriteriaModelCopyWithImpl<$Res>
   $Res call({
     Object? commonUiConfig = freezed,
   }) {
-    return _then(_$_MyWorksSearchCriteriaModel(
+    return _then(_$MyWorksSearchCriteriaModelImpl(
       commonUiConfig: freezed == commonUiConfig
           ? _value.commonUiConfig
           : commonUiConfig // ignore: cast_nullable_to_non_nullable
@@ -122,12 +122,13 @@ class __$$_MyWorksSearchCriteriaModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MyWorksSearchCriteriaModel implements _MyWorksSearchCriteriaModel {
-  const _$_MyWorksSearchCriteriaModel(
+class _$MyWorksSearchCriteriaModelImpl implements _MyWorksSearchCriteriaModel {
+  const _$MyWorksSearchCriteriaModelImpl(
       {@JsonKey(name: 'commonUiConfig') this.commonUiConfig});
 
-  factory _$_MyWorksSearchCriteriaModel.fromJson(Map<String, dynamic> json) =>
-      _$$_MyWorksSearchCriteriaModelFromJson(json);
+  factory _$MyWorksSearchCriteriaModelImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$MyWorksSearchCriteriaModelImplFromJson(json);
 
   @override
   @JsonKey(name: 'commonUiConfig')
@@ -139,10 +140,10 @@ class _$_MyWorksSearchCriteriaModel implements _MyWorksSearchCriteriaModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MyWorksSearchCriteriaModel &&
+            other is _$MyWorksSearchCriteriaModelImpl &&
             (identical(other.commonUiConfig, commonUiConfig) ||
                 other.commonUiConfig == commonUiConfig));
   }
@@ -154,13 +155,13 @@ class _$_MyWorksSearchCriteriaModel implements _MyWorksSearchCriteriaModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MyWorksSearchCriteriaModelCopyWith<_$_MyWorksSearchCriteriaModel>
-      get copyWith => __$$_MyWorksSearchCriteriaModelCopyWithImpl<
-          _$_MyWorksSearchCriteriaModel>(this, _$identity);
+  _$$MyWorksSearchCriteriaModelImplCopyWith<_$MyWorksSearchCriteriaModelImpl>
+      get copyWith => __$$MyWorksSearchCriteriaModelImplCopyWithImpl<
+          _$MyWorksSearchCriteriaModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MyWorksSearchCriteriaModelToJson(
+    return _$$MyWorksSearchCriteriaModelImplToJson(
       this,
     );
   }
@@ -171,17 +172,17 @@ abstract class _MyWorksSearchCriteriaModel
   const factory _MyWorksSearchCriteriaModel(
           {@JsonKey(name: 'commonUiConfig')
               final CommonUIConfigModel? commonUiConfig}) =
-      _$_MyWorksSearchCriteriaModel;
+      _$MyWorksSearchCriteriaModelImpl;
 
   factory _MyWorksSearchCriteriaModel.fromJson(Map<String, dynamic> json) =
-      _$_MyWorksSearchCriteriaModel.fromJson;
+      _$MyWorksSearchCriteriaModelImpl.fromJson;
 
   @override
   @JsonKey(name: 'commonUiConfig')
   CommonUIConfigModel? get commonUiConfig;
   @override
   @JsonKey(ignore: true)
-  _$$_MyWorksSearchCriteriaModelCopyWith<_$_MyWorksSearchCriteriaModel>
+  _$$MyWorksSearchCriteriaModelImplCopyWith<_$MyWorksSearchCriteriaModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -243,25 +244,25 @@ class _$CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_CBOMyWorksSearchCriteriaModelCopyWith<$Res>
+abstract class _$$CBOMyWorksSearchCriteriaModelImplCopyWith<$Res>
     implements $CBOMyWorksSearchCriteriaModelCopyWith<$Res> {
-  factory _$$_CBOMyWorksSearchCriteriaModelCopyWith(
-          _$_CBOMyWorksSearchCriteriaModel value,
-          $Res Function(_$_CBOMyWorksSearchCriteriaModel) then) =
-      __$$_CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res>;
+  factory _$$CBOMyWorksSearchCriteriaModelImplCopyWith(
+          _$CBOMyWorksSearchCriteriaModelImpl value,
+          $Res Function(_$CBOMyWorksSearchCriteriaModelImpl) then) =
+      __$$CBOMyWorksSearchCriteriaModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<String>? searchCriteria, String? acceptCode});
 }
 
 /// @nodoc
-class __$$_CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res>
+class __$$CBOMyWorksSearchCriteriaModelImplCopyWithImpl<$Res>
     extends _$CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res,
-        _$_CBOMyWorksSearchCriteriaModel>
-    implements _$$_CBOMyWorksSearchCriteriaModelCopyWith<$Res> {
-  __$$_CBOMyWorksSearchCriteriaModelCopyWithImpl(
-      _$_CBOMyWorksSearchCriteriaModel _value,
-      $Res Function(_$_CBOMyWorksSearchCriteriaModel) _then)
+        _$CBOMyWorksSearchCriteriaModelImpl>
+    implements _$$CBOMyWorksSearchCriteriaModelImplCopyWith<$Res> {
+  __$$CBOMyWorksSearchCriteriaModelImplCopyWithImpl(
+      _$CBOMyWorksSearchCriteriaModelImpl _value,
+      $Res Function(_$CBOMyWorksSearchCriteriaModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -270,7 +271,7 @@ class __$$_CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res>
     Object? searchCriteria = freezed,
     Object? acceptCode = freezed,
   }) {
-    return _then(_$_CBOMyWorksSearchCriteriaModel(
+    return _then(_$CBOMyWorksSearchCriteriaModelImpl(
       searchCriteria: freezed == searchCriteria
           ? _value._searchCriteria
           : searchCriteria // ignore: cast_nullable_to_non_nullable
@@ -285,15 +286,15 @@ class __$$_CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_CBOMyWorksSearchCriteriaModel
+class _$CBOMyWorksSearchCriteriaModelImpl
     implements _CBOMyWorksSearchCriteriaModel {
-  const _$_CBOMyWorksSearchCriteriaModel(
+  const _$CBOMyWorksSearchCriteriaModelImpl(
       {final List<String>? searchCriteria, this.acceptCode})
       : _searchCriteria = searchCriteria;
 
-  factory _$_CBOMyWorksSearchCriteriaModel.fromJson(
+  factory _$CBOMyWorksSearchCriteriaModelImpl.fromJson(
           Map<String, dynamic> json) =>
-      _$$_CBOMyWorksSearchCriteriaModelFromJson(json);
+      _$$CBOMyWorksSearchCriteriaModelImplFromJson(json);
 
   final List<String>? _searchCriteria;
   @override
@@ -314,10 +315,10 @@ class _$_CBOMyWorksSearchCriteriaModel
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_CBOMyWorksSearchCriteriaModel &&
+            other is _$CBOMyWorksSearchCriteriaModelImpl &&
             const DeepCollectionEquality()
                 .equals(other._searchCriteria, _searchCriteria) &&
             (identical(other.acceptCode, acceptCode) ||
@@ -332,13 +333,14 @@ class _$_CBOMyWorksSearchCriteriaModel
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_CBOMyWorksSearchCriteriaModelCopyWith<_$_CBOMyWorksSearchCriteriaModel>
-      get copyWith => __$$_CBOMyWorksSearchCriteriaModelCopyWithImpl<
-          _$_CBOMyWorksSearchCriteriaModel>(this, _$identity);
+  _$$CBOMyWorksSearchCriteriaModelImplCopyWith<
+          _$CBOMyWorksSearchCriteriaModelImpl>
+      get copyWith => __$$CBOMyWorksSearchCriteriaModelImplCopyWithImpl<
+          _$CBOMyWorksSearchCriteriaModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_CBOMyWorksSearchCriteriaModelToJson(
+    return _$$CBOMyWorksSearchCriteriaModelImplToJson(
       this,
     );
   }
@@ -348,10 +350,10 @@ abstract class _CBOMyWorksSearchCriteriaModel
     implements CBOMyWorksSearchCriteriaModel {
   const factory _CBOMyWorksSearchCriteriaModel(
       {final List<String>? searchCriteria,
-      final String? acceptCode}) = _$_CBOMyWorksSearchCriteriaModel;
+      final String? acceptCode}) = _$CBOMyWorksSearchCriteriaModelImpl;
 
   factory _CBOMyWorksSearchCriteriaModel.fromJson(Map<String, dynamic> json) =
-      _$_CBOMyWorksSearchCriteriaModel.fromJson;
+      _$CBOMyWorksSearchCriteriaModelImpl.fromJson;
 
   @override
   List<String>? get searchCriteria;
@@ -359,6 +361,198 @@ abstract class _CBOMyWorksSearchCriteriaModel
   String? get acceptCode;
   @override
   @JsonKey(ignore: true)
-  _$$_CBOMyWorksSearchCriteriaModelCopyWith<_$_CBOMyWorksSearchCriteriaModel>
+  _$$CBOMyWorksSearchCriteriaModelImplCopyWith<
+          _$CBOMyWorksSearchCriteriaModelImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+CBOMyServiceRequestsConfig _$CBOMyServiceRequestsConfigFromJson(
+    Map<String, dynamic> json) {
+  return _CBOMyServiceRequestsConfig.fromJson(json);
+}
+
+/// @nodoc
+mixin _$CBOMyServiceRequestsConfig {
+  String? get editTimeExtReqCode => throw _privateConstructorUsedError;
+  String? get editActionCode => throw _privateConstructorUsedError;
+  String? get searchCriteria => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $CBOMyServiceRequestsConfigCopyWith<CBOMyServiceRequestsConfig>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CBOMyServiceRequestsConfigCopyWith<$Res> {
+  factory $CBOMyServiceRequestsConfigCopyWith(CBOMyServiceRequestsConfig value,
+          $Res Function(CBOMyServiceRequestsConfig) then) =
+      _$CBOMyServiceRequestsConfigCopyWithImpl<$Res,
+          CBOMyServiceRequestsConfig>;
+  @useResult
+  $Res call(
+      {String? editTimeExtReqCode,
+      String? editActionCode,
+      String? searchCriteria});
+}
+
+/// @nodoc
+class _$CBOMyServiceRequestsConfigCopyWithImpl<$Res,
+        $Val extends CBOMyServiceRequestsConfig>
+    implements $CBOMyServiceRequestsConfigCopyWith<$Res> {
+  _$CBOMyServiceRequestsConfigCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? editTimeExtReqCode = freezed,
+    Object? editActionCode = freezed,
+    Object? searchCriteria = freezed,
+  }) {
+    return _then(_value.copyWith(
+      editTimeExtReqCode: freezed == editTimeExtReqCode
+          ? _value.editTimeExtReqCode
+          : editTimeExtReqCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      editActionCode: freezed == editActionCode
+          ? _value.editActionCode
+          : editActionCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      searchCriteria: freezed == searchCriteria
+          ? _value.searchCriteria
+          : searchCriteria // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$CBOMyServiceRequestsConfigImplCopyWith<$Res>
+    implements $CBOMyServiceRequestsConfigCopyWith<$Res> {
+  factory _$$CBOMyServiceRequestsConfigImplCopyWith(
+          _$CBOMyServiceRequestsConfigImpl value,
+          $Res Function(_$CBOMyServiceRequestsConfigImpl) then) =
+      __$$CBOMyServiceRequestsConfigImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? editTimeExtReqCode,
+      String? editActionCode,
+      String? searchCriteria});
+}
+
+/// @nodoc
+class __$$CBOMyServiceRequestsConfigImplCopyWithImpl<$Res>
+    extends _$CBOMyServiceRequestsConfigCopyWithImpl<$Res,
+        _$CBOMyServiceRequestsConfigImpl>
+    implements _$$CBOMyServiceRequestsConfigImplCopyWith<$Res> {
+  __$$CBOMyServiceRequestsConfigImplCopyWithImpl(
+      _$CBOMyServiceRequestsConfigImpl _value,
+      $Res Function(_$CBOMyServiceRequestsConfigImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? editTimeExtReqCode = freezed,
+    Object? editActionCode = freezed,
+    Object? searchCriteria = freezed,
+  }) {
+    return _then(_$CBOMyServiceRequestsConfigImpl(
+      editTimeExtReqCode: freezed == editTimeExtReqCode
+          ? _value.editTimeExtReqCode
+          : editTimeExtReqCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      editActionCode: freezed == editActionCode
+          ? _value.editActionCode
+          : editActionCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      searchCriteria: freezed == searchCriteria
+          ? _value.searchCriteria
+          : searchCriteria // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$CBOMyServiceRequestsConfigImpl implements _CBOMyServiceRequestsConfig {
+  const _$CBOMyServiceRequestsConfigImpl(
+      {this.editTimeExtReqCode, this.editActionCode, this.searchCriteria});
+
+  factory _$CBOMyServiceRequestsConfigImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$CBOMyServiceRequestsConfigImplFromJson(json);
+
+  @override
+  final String? editTimeExtReqCode;
+  @override
+  final String? editActionCode;
+  @override
+  final String? searchCriteria;
+
+  @override
+  String toString() {
+    return 'CBOMyServiceRequestsConfig(editTimeExtReqCode: $editTimeExtReqCode, editActionCode: $editActionCode, searchCriteria: $searchCriteria)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CBOMyServiceRequestsConfigImpl &&
+            (identical(other.editTimeExtReqCode, editTimeExtReqCode) ||
+                other.editTimeExtReqCode == editTimeExtReqCode) &&
+            (identical(other.editActionCode, editActionCode) ||
+                other.editActionCode == editActionCode) &&
+            (identical(other.searchCriteria, searchCriteria) ||
+                other.searchCriteria == searchCriteria));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, editTimeExtReqCode, editActionCode, searchCriteria);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CBOMyServiceRequestsConfigImplCopyWith<_$CBOMyServiceRequestsConfigImpl>
+      get copyWith => __$$CBOMyServiceRequestsConfigImplCopyWithImpl<
+          _$CBOMyServiceRequestsConfigImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CBOMyServiceRequestsConfigImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _CBOMyServiceRequestsConfig
+    implements CBOMyServiceRequestsConfig {
+  const factory _CBOMyServiceRequestsConfig(
+      {final String? editTimeExtReqCode,
+      final String? editActionCode,
+      final String? searchCriteria}) = _$CBOMyServiceRequestsConfigImpl;
+
+  factory _CBOMyServiceRequestsConfig.fromJson(Map<String, dynamic> json) =
+      _$CBOMyServiceRequestsConfigImpl.fromJson;
+
+  @override
+  String? get editTimeExtReqCode;
+  @override
+  String? get editActionCode;
+  @override
+  String? get searchCriteria;
+  @override
+  @JsonKey(ignore: true)
+  _$$CBOMyServiceRequestsConfigImplCopyWith<_$CBOMyServiceRequestsConfigImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

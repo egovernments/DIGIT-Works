@@ -8,6 +8,32 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Constants {
+	public static final String REQUEST_INFO = "RequestInfo";
+	public static final String TENANT_ID = "tenantId";
+	public static final String CONTRACT_NUMBER = "contractNumber";
+	public static final String ORG_ID_PATH = "$.contracts.*.orgId";
+	public static final String ID = "id";
+	public static final String SEARCH_CRITERIA = "SearchCriteria";
+	public static final String INDIVIDUAL = "Individual";
+	public static final String ORG_NAME_PATH = "$.organisations.*.name";
+	public static final String INDIVIDUAL_GENDER_PATH = "$.Individual.*.gender";
+	public static final String CONTACT_NAME_PATH = "$.organisations.*.contactDetails.*.contactName";
+	public static final String CONTACT_MOBILE_NUMBER_PATH = "$.organisations.*.contactDetails.*.contactMobileNumber";
+	public static final String ORG_NAME = "orgName";
+	public static final String GENDER = "gender";
+	public static final String CONTACT_NAME = "contactName";
+	public static final String EXPENSE_CALCULATOR_LOCALIZATION_CODE_JSONPATH = "$.messages.*.code";
+	public static final String EXPENSE_CALCULATOR_LOCALIZATION_MESSAGE_JSONPATH = "$.messages.*.message";
+	public static final String HRMS_USER_USERNAME_CODE = "$.Employees.*.user.userName";
+	public static final String HRMS_USER_MOBILE_NO = "$.Employees.*.user.mobileNumber";
+	public static final String CONTACT_MOBILE_NUMBER = "contactMobileNumber";
+	public static final String EXPENSE_CALCULATOR_MODULE_CODE = "rainmaker-common-masters";
+	public static final String APPROVE_CODE = "APPROVE";
+	public static final String REJECT_CODE = "REJECT";
+	public static final String MOBILE_NUMBER_CODE = "mobileNumber";
+	public static final String PURCHASE_BILL_APPROVE_TO_VENDOR_LOCALIZATION_CODE = "PURCHASE_BILL_APPROVE_TO_VENDOR";
+	public static final String PURCHASE_BILL_REJECT_TO_CREATOR_LOCALIZATION_CODE = "PURCHASE_BILL_REJECT_TO_CREATOR";
+	public static final String SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO_LOCALIZATION_CODE = "SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO";
 
 	public static final String TENANT_MODULE_NAME = "tenant";
 
@@ -27,21 +53,27 @@ public class Constants {
 	public static final String BILL_ID_FORMAT_SUFFIX = ".bill.number";
 	
 	public static final String PAYMENT_ID_FORMAT_NAME = "expense.payment.number";
+
+	public static final String EFFECTIVE_FROM_FIELD_MDMS = "effectiveFrom";
+	public static final String EFFECTIVE_TO_FIELD_MDMS = "effectiveTo";
+	public static final String ACTIVE_FIELD_MDMS = "active";
 	
-	public static final List<String> MDMS_MASTER_NAMES = Collections
+	public static final List<String> EXPENSE_MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME, BUSINESS_SERVICE_MASTERNAME));
 
 	public static final List<String> TENANT_MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(TENANT_MASTERNAME));
-	
-	
+
+
+
 	private static final String INNER_JOIN = "INNER JOIN";
 
 	public static final String PAYMENT_QUERY = "SELECT "
 			
 			
 			+ " payment.id as p_id, payment.tenantid as p_tenantid, netpayableamount, netpaidamount,"
-			+ " payment.status as p_status, payment.createdby as p_createdby, payment.createdtime as p_createdtime,"
+			+ " payment.status as p_status, payment.referencestatus as p_referencestatus,"
+			+ " payment.createdby as p_createdby, payment.createdtime as p_createdtime,"
 			+ " payment.lastmodifiedby as p_lastmodifiedby, payment.lastmodifiedtime as p_lastmodifiedtime,"
 			+ " payment.additionaldetails as p_additionaldetails, paymentnumber, "
 			
@@ -72,6 +104,12 @@ public class Constants {
 			
 			+ INNER_JOIN + " eg_expense_payment_lineitem li ON li.paymentbilldetailid = paymentbd.id"
 					+ " AND li.tenantid=paymentbd.tenantid ";
+
+	public static final String PAYMENT_COUNT_QUERY = "SELECT distinct(payment.id) " +
+			"FROM eg_expense_payment payment "
+
+			+ INNER_JOIN + " eg_expense_payment_bill paymentbill ON paymentbill.paymentid = payment.id"
+					+ " AND paymentbill.tenantid = payment.tenantid ";
 			
 	
 	public static final Set<String> SORTABLE_BILL_COLUMNS = Collections.unmodifiableSet(
@@ -99,17 +137,20 @@ public class Constants {
 			
 			+ " payer.id as payer_id, payer.tenantid as payer_tenantid, payer.type as payer_type, payer.identifier as payer_identifier, payer.parentid as payer_parentid, "
 			+ " payer.createdby as payer_createdby, payer.createdtime as payer_createdtime, payer.lastmodifiedby as payer_lastmodifiedby, "
-			+ "	payer.lastmodifiedtime as payer_lastmodifiedtime, payer.additionaldetails as payer_additionaldetails, payer.status as payer_status "
+			+ "payer.lastmodifiedtime as payer_lastmodifiedtime, payer.additionaldetails as payer_additionaldetails, payer.status as payer_status "
 			
-			+ "	FROM eg_expense_bill bill "
+			+ "FROM eg_expense_bill bill "
 			
-			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYER 	ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
+			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYER ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_BILLDETAIL BD 	ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
+			+ INNER_JOIN + " EG_EXPENSE_BILLDETAIL BD ON bill.id = bd.billid AND bd.tenantid = bill.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_LINEITEM LI 	ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
+			+ INNER_JOIN + " EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
 			
-			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYEE 	ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
-	
-	
+			+ INNER_JOIN + " EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
+
+	public static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+	public static final String BILL_COUNT_QUERY = "SELECT distinct(bill.id) " +
+             "FROM eg_expense_bill bill ";
 }

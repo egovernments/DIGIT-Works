@@ -50,7 +50,7 @@ class MyBillInboxBloc extends Bloc<MyBillsInboxMDMSEvent, MyBillsInboxState> {
       } else {
         emit(const MyBillsInboxState.error('MDMS_CONFIG_MISSING'));
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(MyBillsInboxState.error(e.response?.data['Errors'][0]['code']));
     }
   }

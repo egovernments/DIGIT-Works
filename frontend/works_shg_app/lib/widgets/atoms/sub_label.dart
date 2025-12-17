@@ -1,4 +1,4 @@
-import 'package:digit_components/digit_components.dart';
+// import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 
 class SubLabelText extends StatelessWidget {
@@ -18,7 +18,7 @@ class SubLabelText extends StatelessWidget {
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
-                  color: DigitTheme.instance.colorScheme.shadow),
+                  color:  Theme.of(context).colorScheme.secondaryContainer),
               textAlign: TextAlign.left,
             ),
           ));

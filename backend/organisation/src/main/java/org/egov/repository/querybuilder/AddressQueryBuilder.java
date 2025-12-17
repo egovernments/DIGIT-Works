@@ -75,9 +75,7 @@ public class AddressQueryBuilder {
     }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+        ids.forEach(preparedStmtList::add);
     }
 
 }

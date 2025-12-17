@@ -12,7 +12,7 @@ part of 'muster_submission.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 MusterSubmissionList _$MusterSubmissionListFromJson(Map<String, dynamic> json) {
   return _MusterSubmissionList.fromJson(json);
@@ -67,11 +67,11 @@ class _$MusterSubmissionListCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_MusterSubmissionListCopyWith<$Res>
+abstract class _$$MusterSubmissionListImplCopyWith<$Res>
     implements $MusterSubmissionListCopyWith<$Res> {
-  factory _$$_MusterSubmissionListCopyWith(_$_MusterSubmissionList value,
-          $Res Function(_$_MusterSubmissionList) then) =
-      __$$_MusterSubmissionListCopyWithImpl<$Res>;
+  factory _$$MusterSubmissionListImplCopyWith(_$MusterSubmissionListImpl value,
+          $Res Function(_$MusterSubmissionListImpl) then) =
+      __$$MusterSubmissionListImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -80,11 +80,11 @@ abstract class _$$_MusterSubmissionListCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_MusterSubmissionListCopyWithImpl<$Res>
-    extends _$MusterSubmissionListCopyWithImpl<$Res, _$_MusterSubmissionList>
-    implements _$$_MusterSubmissionListCopyWith<$Res> {
-  __$$_MusterSubmissionListCopyWithImpl(_$_MusterSubmissionList _value,
-      $Res Function(_$_MusterSubmissionList) _then)
+class __$$MusterSubmissionListImplCopyWithImpl<$Res>
+    extends _$MusterSubmissionListCopyWithImpl<$Res, _$MusterSubmissionListImpl>
+    implements _$$MusterSubmissionListImplCopyWith<$Res> {
+  __$$MusterSubmissionListImplCopyWithImpl(_$MusterSubmissionListImpl _value,
+      $Res Function(_$MusterSubmissionListImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -92,7 +92,7 @@ class __$$_MusterSubmissionListCopyWithImpl<$Res>
   $Res call({
     Object? musterSubmission = freezed,
   }) {
-    return _then(_$_MusterSubmissionList(
+    return _then(_$MusterSubmissionListImpl(
       musterSubmission: freezed == musterSubmission
           ? _value._musterSubmission
           : musterSubmission // ignore: cast_nullable_to_non_nullable
@@ -103,14 +103,14 @@ class __$$_MusterSubmissionListCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MusterSubmissionList implements _MusterSubmissionList {
-  const _$_MusterSubmissionList(
+class _$MusterSubmissionListImpl implements _MusterSubmissionList {
+  const _$MusterSubmissionListImpl(
       {@JsonKey(name: 'CBOMusterSubmission')
           final List<MusterSubmission>? musterSubmission})
       : _musterSubmission = musterSubmission;
 
-  factory _$_MusterSubmissionList.fromJson(Map<String, dynamic> json) =>
-      _$$_MusterSubmissionListFromJson(json);
+  factory _$MusterSubmissionListImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MusterSubmissionListImplFromJson(json);
 
   final List<MusterSubmission>? _musterSubmission;
   @override
@@ -130,10 +130,10 @@ class _$_MusterSubmissionList implements _MusterSubmissionList {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MusterSubmissionList &&
+            other is _$MusterSubmissionListImpl &&
             const DeepCollectionEquality()
                 .equals(other._musterSubmission, _musterSubmission));
   }
@@ -146,13 +146,14 @@ class _$_MusterSubmissionList implements _MusterSubmissionList {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MusterSubmissionListCopyWith<_$_MusterSubmissionList> get copyWith =>
-      __$$_MusterSubmissionListCopyWithImpl<_$_MusterSubmissionList>(
-          this, _$identity);
+  _$$MusterSubmissionListImplCopyWith<_$MusterSubmissionListImpl>
+      get copyWith =>
+          __$$MusterSubmissionListImplCopyWithImpl<_$MusterSubmissionListImpl>(
+              this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MusterSubmissionListToJson(
+    return _$$MusterSubmissionListImplToJson(
       this,
     );
   }
@@ -162,18 +163,18 @@ abstract class _MusterSubmissionList implements MusterSubmissionList {
   const factory _MusterSubmissionList(
           {@JsonKey(name: 'CBOMusterSubmission')
               final List<MusterSubmission>? musterSubmission}) =
-      _$_MusterSubmissionList;
+      _$MusterSubmissionListImpl;
 
   factory _MusterSubmissionList.fromJson(Map<String, dynamic> json) =
-      _$_MusterSubmissionList.fromJson;
+      _$MusterSubmissionListImpl.fromJson;
 
   @override
   @JsonKey(name: 'CBOMusterSubmission')
   List<MusterSubmission>? get musterSubmission;
   @override
   @JsonKey(ignore: true)
-  _$$_MusterSubmissionListCopyWith<_$_MusterSubmissionList> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$MusterSubmissionListImplCopyWith<_$MusterSubmissionListImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 MusterSubmission _$MusterSubmissionFromJson(Map<String, dynamic> json) {
@@ -236,22 +237,22 @@ class _$MusterSubmissionCopyWithImpl<$Res, $Val extends MusterSubmission>
 }
 
 /// @nodoc
-abstract class _$$_MusterSubmissionCopyWith<$Res>
+abstract class _$$MusterSubmissionImplCopyWith<$Res>
     implements $MusterSubmissionCopyWith<$Res> {
-  factory _$$_MusterSubmissionCopyWith(
-          _$_MusterSubmission value, $Res Function(_$_MusterSubmission) then) =
-      __$$_MusterSubmissionCopyWithImpl<$Res>;
+  factory _$$MusterSubmissionImplCopyWith(_$MusterSubmissionImpl value,
+          $Res Function(_$MusterSubmissionImpl) then) =
+      __$$MusterSubmissionImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String code, String value, bool active});
 }
 
 /// @nodoc
-class __$$_MusterSubmissionCopyWithImpl<$Res>
-    extends _$MusterSubmissionCopyWithImpl<$Res, _$_MusterSubmission>
-    implements _$$_MusterSubmissionCopyWith<$Res> {
-  __$$_MusterSubmissionCopyWithImpl(
-      _$_MusterSubmission _value, $Res Function(_$_MusterSubmission) _then)
+class __$$MusterSubmissionImplCopyWithImpl<$Res>
+    extends _$MusterSubmissionCopyWithImpl<$Res, _$MusterSubmissionImpl>
+    implements _$$MusterSubmissionImplCopyWith<$Res> {
+  __$$MusterSubmissionImplCopyWithImpl(_$MusterSubmissionImpl _value,
+      $Res Function(_$MusterSubmissionImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -261,7 +262,7 @@ class __$$_MusterSubmissionCopyWithImpl<$Res>
     Object? value = null,
     Object? active = null,
   }) {
-    return _then(_$_MusterSubmission(
+    return _then(_$MusterSubmissionImpl(
       code: null == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -280,12 +281,12 @@ class __$$_MusterSubmissionCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MusterSubmission implements _MusterSubmission {
-  const _$_MusterSubmission(
+class _$MusterSubmissionImpl implements _MusterSubmission {
+  const _$MusterSubmissionImpl(
       {required this.code, required this.value, required this.active});
 
-  factory _$_MusterSubmission.fromJson(Map<String, dynamic> json) =>
-      _$$_MusterSubmissionFromJson(json);
+  factory _$MusterSubmissionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MusterSubmissionImplFromJson(json);
 
   @override
   final String code;
@@ -300,10 +301,10 @@ class _$_MusterSubmission implements _MusterSubmission {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MusterSubmission &&
+            other is _$MusterSubmissionImpl &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.value, value) || other.value == value) &&
             (identical(other.active, active) || other.active == active));
@@ -316,12 +317,13 @@ class _$_MusterSubmission implements _MusterSubmission {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MusterSubmissionCopyWith<_$_MusterSubmission> get copyWith =>
-      __$$_MusterSubmissionCopyWithImpl<_$_MusterSubmission>(this, _$identity);
+  _$$MusterSubmissionImplCopyWith<_$MusterSubmissionImpl> get copyWith =>
+      __$$MusterSubmissionImplCopyWithImpl<_$MusterSubmissionImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MusterSubmissionToJson(
+    return _$$MusterSubmissionImplToJson(
       this,
     );
   }
@@ -331,10 +333,10 @@ abstract class _MusterSubmission implements MusterSubmission {
   const factory _MusterSubmission(
       {required final String code,
       required final String value,
-      required final bool active}) = _$_MusterSubmission;
+      required final bool active}) = _$MusterSubmissionImpl;
 
   factory _MusterSubmission.fromJson(Map<String, dynamic> json) =
-      _$_MusterSubmission.fromJson;
+      _$MusterSubmissionImpl.fromJson;
 
   @override
   String get code;
@@ -344,6 +346,6 @@ abstract class _MusterSubmission implements MusterSubmission {
   bool get active;
   @override
   @JsonKey(ignore: true)
-  _$$_MusterSubmissionCopyWith<_$_MusterSubmission> get copyWith =>
+  _$$MusterSubmissionImplCopyWith<_$MusterSubmissionImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

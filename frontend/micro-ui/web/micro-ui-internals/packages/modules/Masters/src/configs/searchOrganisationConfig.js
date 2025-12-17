@@ -45,9 +45,9 @@ const searchOrganisationConfig = () => {
                 name: "boundaryCode",
                 type: "ward",
                 optionsKey: "i18nKey",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
+                // optionsCustomStyle: {
+                //   top: "2.3rem",
+                // },
                 defaultText: "COMMON_SELECT_WARD",
                 selectedText: "COMMON_SELECTED",
                 allowMultiSelect: false,
@@ -61,9 +61,9 @@ const searchOrganisationConfig = () => {
               populators: {
                 name: "type",
                 optionsKey: "name",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
+                // optionsCustomStyle: {
+                //   top: "2.3rem",
+                // },
                 mdmsConfig: {
                   masterName: "OrgType",
                   moduleName: "common-masters",

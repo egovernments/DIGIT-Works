@@ -12,7 +12,7 @@ part of 'create_attendee.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$AttendeeCreateEvent {
@@ -75,20 +75,20 @@ class _$AttendeeCreateEventCopyWithImpl<$Res, $Val extends AttendeeCreateEvent>
 }
 
 /// @nodoc
-abstract class _$$CreateAttendeeEventCopyWith<$Res> {
-  factory _$$CreateAttendeeEventCopyWith(_$CreateAttendeeEvent value,
-          $Res Function(_$CreateAttendeeEvent) then) =
-      __$$CreateAttendeeEventCopyWithImpl<$Res>;
+abstract class _$$CreateAttendeeEventImplCopyWith<$Res> {
+  factory _$$CreateAttendeeEventImplCopyWith(_$CreateAttendeeEventImpl value,
+          $Res Function(_$CreateAttendeeEventImpl) then) =
+      __$$CreateAttendeeEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call({List<Map<String, dynamic>> attendeeList});
 }
 
 /// @nodoc
-class __$$CreateAttendeeEventCopyWithImpl<$Res>
-    extends _$AttendeeCreateEventCopyWithImpl<$Res, _$CreateAttendeeEvent>
-    implements _$$CreateAttendeeEventCopyWith<$Res> {
-  __$$CreateAttendeeEventCopyWithImpl(
-      _$CreateAttendeeEvent _value, $Res Function(_$CreateAttendeeEvent) _then)
+class __$$CreateAttendeeEventImplCopyWithImpl<$Res>
+    extends _$AttendeeCreateEventCopyWithImpl<$Res, _$CreateAttendeeEventImpl>
+    implements _$$CreateAttendeeEventImplCopyWith<$Res> {
+  __$$CreateAttendeeEventImplCopyWithImpl(_$CreateAttendeeEventImpl _value,
+      $Res Function(_$CreateAttendeeEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -96,7 +96,7 @@ class __$$CreateAttendeeEventCopyWithImpl<$Res>
   $Res call({
     Object? attendeeList = null,
   }) {
-    return _then(_$CreateAttendeeEvent(
+    return _then(_$CreateAttendeeEventImpl(
       attendeeList: null == attendeeList
           ? _value._attendeeList
           : attendeeList // ignore: cast_nullable_to_non_nullable
@@ -107,8 +107,8 @@ class __$$CreateAttendeeEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CreateAttendeeEvent implements CreateAttendeeEvent {
-  const _$CreateAttendeeEvent(
+class _$CreateAttendeeEventImpl implements CreateAttendeeEvent {
+  const _$CreateAttendeeEventImpl(
       {required final List<Map<String, dynamic>> attendeeList})
       : _attendeeList = attendeeList;
 
@@ -126,10 +126,10 @@ class _$CreateAttendeeEvent implements CreateAttendeeEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CreateAttendeeEvent &&
+            other is _$CreateAttendeeEventImpl &&
             const DeepCollectionEquality()
                 .equals(other._attendeeList, _attendeeList));
   }
@@ -141,8 +141,8 @@ class _$CreateAttendeeEvent implements CreateAttendeeEvent {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$CreateAttendeeEventCopyWith<_$CreateAttendeeEvent> get copyWith =>
-      __$$CreateAttendeeEventCopyWithImpl<_$CreateAttendeeEvent>(
+  _$$CreateAttendeeEventImplCopyWith<_$CreateAttendeeEventImpl> get copyWith =>
+      __$$CreateAttendeeEventImplCopyWithImpl<_$CreateAttendeeEventImpl>(
           this, _$identity);
 
   @override
@@ -211,37 +211,37 @@ class _$CreateAttendeeEvent implements CreateAttendeeEvent {
 abstract class CreateAttendeeEvent implements AttendeeCreateEvent {
   const factory CreateAttendeeEvent(
           {required final List<Map<String, dynamic>> attendeeList}) =
-      _$CreateAttendeeEvent;
+      _$CreateAttendeeEventImpl;
 
   List<Map<String, dynamic>> get attendeeList;
   @JsonKey(ignore: true)
-  _$$CreateAttendeeEventCopyWith<_$CreateAttendeeEvent> get copyWith =>
+  _$$CreateAttendeeEventImplCopyWith<_$CreateAttendeeEventImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$CreateAttendeeDisposeEventCopyWith<$Res> {
-  factory _$$CreateAttendeeDisposeEventCopyWith(
-          _$CreateAttendeeDisposeEvent value,
-          $Res Function(_$CreateAttendeeDisposeEvent) then) =
-      __$$CreateAttendeeDisposeEventCopyWithImpl<$Res>;
+abstract class _$$CreateAttendeeDisposeEventImplCopyWith<$Res> {
+  factory _$$CreateAttendeeDisposeEventImplCopyWith(
+          _$CreateAttendeeDisposeEventImpl value,
+          $Res Function(_$CreateAttendeeDisposeEventImpl) then) =
+      __$$CreateAttendeeDisposeEventImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$CreateAttendeeDisposeEventCopyWithImpl<$Res>
+class __$$CreateAttendeeDisposeEventImplCopyWithImpl<$Res>
     extends _$AttendeeCreateEventCopyWithImpl<$Res,
-        _$CreateAttendeeDisposeEvent>
-    implements _$$CreateAttendeeDisposeEventCopyWith<$Res> {
-  __$$CreateAttendeeDisposeEventCopyWithImpl(
-      _$CreateAttendeeDisposeEvent _value,
-      $Res Function(_$CreateAttendeeDisposeEvent) _then)
+        _$CreateAttendeeDisposeEventImpl>
+    implements _$$CreateAttendeeDisposeEventImplCopyWith<$Res> {
+  __$$CreateAttendeeDisposeEventImplCopyWithImpl(
+      _$CreateAttendeeDisposeEventImpl _value,
+      $Res Function(_$CreateAttendeeDisposeEventImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$CreateAttendeeDisposeEvent implements CreateAttendeeDisposeEvent {
-  const _$CreateAttendeeDisposeEvent();
+class _$CreateAttendeeDisposeEventImpl implements CreateAttendeeDisposeEvent {
+  const _$CreateAttendeeDisposeEventImpl();
 
   @override
   String toString() {
@@ -249,10 +249,10 @@ class _$CreateAttendeeDisposeEvent implements CreateAttendeeDisposeEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CreateAttendeeDisposeEvent);
+            other is _$CreateAttendeeDisposeEventImpl);
   }
 
   @override
@@ -322,7 +322,7 @@ class _$CreateAttendeeDisposeEvent implements CreateAttendeeDisposeEvent {
 }
 
 abstract class CreateAttendeeDisposeEvent implements AttendeeCreateEvent {
-  const factory CreateAttendeeDisposeEvent() = _$CreateAttendeeDisposeEvent;
+  const factory CreateAttendeeDisposeEvent() = _$CreateAttendeeDisposeEventImpl;
 }
 
 /// @nodoc
@@ -398,24 +398,25 @@ class _$AttendeeCreateStateCopyWithImpl<$Res, $Val extends AttendeeCreateState>
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial {
+  const _$InitialImpl() : super._();
 
   @override
   String toString() {
@@ -423,9 +424,9 @@ class _$_Initial extends _Initial {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -507,29 +508,30 @@ class _$_Initial extends _Initial {
 }
 
 abstract class _Initial extends AttendeeCreateState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString() {
@@ -537,9 +539,9 @@ class _$_Loading extends _Loading {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -621,28 +623,30 @@ class _$_Loading extends _Loading {
 }
 
 abstract class _Loading extends AttendeeCreateState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded() : super._();
+class _$LoadedImpl extends _Loaded {
+  const _$LoadedImpl() : super._();
 
   @override
   String toString() {
@@ -650,9 +654,9 @@ class _$_Loaded extends _Loaded {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loaded);
+        (other.runtimeType == runtimeType && other is _$LoadedImpl);
   }
 
   @override
@@ -734,23 +738,25 @@ class _$_Loaded extends _Loaded {
 }
 
 abstract class _Loaded extends AttendeeCreateState {
-  const factory _Loaded() = _$_Loaded;
+  const factory _Loaded() = _$LoadedImpl;
   const _Loaded._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String? error});
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$AttendeeCreateStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -758,7 +764,7 @@ class __$$_ErrorCopyWithImpl<$Res>
   $Res call({
     Object? error = freezed,
   }) {
-    return _then(_$_Error(
+    return _then(_$ErrorImpl(
       freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -769,8 +775,8 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error {
-  const _$_Error(this.error) : super._();
+class _$ErrorImpl extends _Error {
+  const _$ErrorImpl(this.error) : super._();
 
   @override
   final String? error;
@@ -781,10 +787,10 @@ class _$_Error extends _Error {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Error &&
+            other is _$ErrorImpl &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -794,8 +800,8 @@ class _$_Error extends _Error {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
-      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -873,11 +879,11 @@ class _$_Error extends _Error {
 }
 
 abstract class _Error extends AttendeeCreateState {
-  const factory _Error(final String? error) = _$_Error;
+  const factory _Error(final String? error) = _$ErrorImpl;
   const _Error._() : super._();
 
   String? get error;
   @JsonKey(ignore: true)
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -7,11 +7,12 @@ const getWOModalConfig = ({
     selectedApprover,
     setSelectedApprover,
     approverLoading = false,
+    isModify
 }) => {
     let checkConditions = true
     return {
         label: {
-            heading: `COMMON_CHECK_FORWARD`,
+            heading: isModify ? 'CONTRACT_UPDATE_FORWARD':'COMMON_CHECK_FORWARD',
             submit: `WORKS_FORWARD`,
             cancel: "WORKS_CANCEL",
         },
@@ -31,6 +32,7 @@ const getWOModalConfig = ({
                                 id="fieldInspector"
                                 select={setSelectedApprover}
                                 selected={selectedApprover}
+                                optionCardStyles={{"top":"2.3rem"}}
                             />
                         ),
                     },

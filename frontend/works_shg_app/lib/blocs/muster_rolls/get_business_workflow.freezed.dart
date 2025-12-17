@@ -12,7 +12,7 @@ part of 'get_business_workflow.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$BusinessWorkflowEvent {
@@ -76,21 +76,23 @@ class _$BusinessWorkflowEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$GetBusinessWorkflowEventCopyWith<$Res> {
-  factory _$$GetBusinessWorkflowEventCopyWith(_$GetBusinessWorkflowEvent value,
-          $Res Function(_$GetBusinessWorkflowEvent) then) =
-      __$$GetBusinessWorkflowEventCopyWithImpl<$Res>;
+abstract class _$$GetBusinessWorkflowEventImplCopyWith<$Res> {
+  factory _$$GetBusinessWorkflowEventImplCopyWith(
+          _$GetBusinessWorkflowEventImpl value,
+          $Res Function(_$GetBusinessWorkflowEventImpl) then) =
+      __$$GetBusinessWorkflowEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String tenantId, String businessService});
 }
 
 /// @nodoc
-class __$$GetBusinessWorkflowEventCopyWithImpl<$Res>
+class __$$GetBusinessWorkflowEventImplCopyWithImpl<$Res>
     extends _$BusinessWorkflowEventCopyWithImpl<$Res,
-        _$GetBusinessWorkflowEvent>
-    implements _$$GetBusinessWorkflowEventCopyWith<$Res> {
-  __$$GetBusinessWorkflowEventCopyWithImpl(_$GetBusinessWorkflowEvent _value,
-      $Res Function(_$GetBusinessWorkflowEvent) _then)
+        _$GetBusinessWorkflowEventImpl>
+    implements _$$GetBusinessWorkflowEventImplCopyWith<$Res> {
+  __$$GetBusinessWorkflowEventImplCopyWithImpl(
+      _$GetBusinessWorkflowEventImpl _value,
+      $Res Function(_$GetBusinessWorkflowEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -99,7 +101,7 @@ class __$$GetBusinessWorkflowEventCopyWithImpl<$Res>
     Object? tenantId = null,
     Object? businessService = null,
   }) {
-    return _then(_$GetBusinessWorkflowEvent(
+    return _then(_$GetBusinessWorkflowEventImpl(
       tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
@@ -114,8 +116,8 @@ class __$$GetBusinessWorkflowEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$GetBusinessWorkflowEvent implements GetBusinessWorkflowEvent {
-  const _$GetBusinessWorkflowEvent(
+class _$GetBusinessWorkflowEventImpl implements GetBusinessWorkflowEvent {
+  const _$GetBusinessWorkflowEventImpl(
       {required this.tenantId, required this.businessService});
 
   @override
@@ -129,10 +131,10 @@ class _$GetBusinessWorkflowEvent implements GetBusinessWorkflowEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$GetBusinessWorkflowEvent &&
+            other is _$GetBusinessWorkflowEventImpl &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.businessService, businessService) ||
@@ -145,10 +147,9 @@ class _$GetBusinessWorkflowEvent implements GetBusinessWorkflowEvent {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$GetBusinessWorkflowEventCopyWith<_$GetBusinessWorkflowEvent>
-      get copyWith =>
-          __$$GetBusinessWorkflowEventCopyWithImpl<_$GetBusinessWorkflowEvent>(
-              this, _$identity);
+  _$$GetBusinessWorkflowEventImplCopyWith<_$GetBusinessWorkflowEventImpl>
+      get copyWith => __$$GetBusinessWorkflowEventImplCopyWithImpl<
+          _$GetBusinessWorkflowEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -216,38 +217,39 @@ class _$GetBusinessWorkflowEvent implements GetBusinessWorkflowEvent {
 abstract class GetBusinessWorkflowEvent implements BusinessWorkflowEvent {
   const factory GetBusinessWorkflowEvent(
       {required final String tenantId,
-      required final String businessService}) = _$GetBusinessWorkflowEvent;
+      required final String businessService}) = _$GetBusinessWorkflowEventImpl;
 
   String get tenantId;
   String get businessService;
   @JsonKey(ignore: true)
-  _$$GetBusinessWorkflowEventCopyWith<_$GetBusinessWorkflowEvent>
+  _$$GetBusinessWorkflowEventImplCopyWith<_$GetBusinessWorkflowEventImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$DisposeBusinessWorkflowEventCopyWith<$Res> {
-  factory _$$DisposeBusinessWorkflowEventCopyWith(
-          _$DisposeBusinessWorkflowEvent value,
-          $Res Function(_$DisposeBusinessWorkflowEvent) then) =
-      __$$DisposeBusinessWorkflowEventCopyWithImpl<$Res>;
+abstract class _$$DisposeBusinessWorkflowEventImplCopyWith<$Res> {
+  factory _$$DisposeBusinessWorkflowEventImplCopyWith(
+          _$DisposeBusinessWorkflowEventImpl value,
+          $Res Function(_$DisposeBusinessWorkflowEventImpl) then) =
+      __$$DisposeBusinessWorkflowEventImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$DisposeBusinessWorkflowEventCopyWithImpl<$Res>
+class __$$DisposeBusinessWorkflowEventImplCopyWithImpl<$Res>
     extends _$BusinessWorkflowEventCopyWithImpl<$Res,
-        _$DisposeBusinessWorkflowEvent>
-    implements _$$DisposeBusinessWorkflowEventCopyWith<$Res> {
-  __$$DisposeBusinessWorkflowEventCopyWithImpl(
-      _$DisposeBusinessWorkflowEvent _value,
-      $Res Function(_$DisposeBusinessWorkflowEvent) _then)
+        _$DisposeBusinessWorkflowEventImpl>
+    implements _$$DisposeBusinessWorkflowEventImplCopyWith<$Res> {
+  __$$DisposeBusinessWorkflowEventImplCopyWithImpl(
+      _$DisposeBusinessWorkflowEventImpl _value,
+      $Res Function(_$DisposeBusinessWorkflowEventImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$DisposeBusinessWorkflowEvent implements DisposeBusinessWorkflowEvent {
-  const _$DisposeBusinessWorkflowEvent();
+class _$DisposeBusinessWorkflowEventImpl
+    implements DisposeBusinessWorkflowEvent {
+  const _$DisposeBusinessWorkflowEventImpl();
 
   @override
   String toString() {
@@ -255,10 +257,10 @@ class _$DisposeBusinessWorkflowEvent implements DisposeBusinessWorkflowEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DisposeBusinessWorkflowEvent);
+            other is _$DisposeBusinessWorkflowEventImpl);
   }
 
   @override
@@ -328,7 +330,8 @@ class _$DisposeBusinessWorkflowEvent implements DisposeBusinessWorkflowEvent {
 }
 
 abstract class DisposeBusinessWorkflowEvent implements BusinessWorkflowEvent {
-  const factory DisposeBusinessWorkflowEvent() = _$DisposeBusinessWorkflowEvent;
+  const factory DisposeBusinessWorkflowEvent() =
+      _$DisposeBusinessWorkflowEventImpl;
 }
 
 /// @nodoc
@@ -409,24 +412,25 @@ class _$BusinessGetWorkflowStateCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$BusinessGetWorkflowStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$BusinessGetWorkflowStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial {
+  const _$InitialImpl() : super._();
 
   @override
   String toString() {
@@ -434,9 +438,9 @@ class _$_Initial extends _Initial {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -522,29 +526,30 @@ class _$_Initial extends _Initial {
 }
 
 abstract class _Initial extends BusinessGetWorkflowState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$BusinessGetWorkflowStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$BusinessGetWorkflowStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString() {
@@ -552,9 +557,9 @@ class _$_Loading extends _Loading {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -640,14 +645,15 @@ class _$_Loading extends _Loading {
 }
 
 abstract class _Loading extends BusinessGetWorkflowState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({BusinessServiceWorkflowModel? businessWorkFlowModel});
 
@@ -655,10 +661,11 @@ abstract class _$$_LoadedCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$BusinessGetWorkflowStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$BusinessGetWorkflowStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -666,7 +673,7 @@ class __$$_LoadedCopyWithImpl<$Res>
   $Res call({
     Object? businessWorkFlowModel = freezed,
   }) {
-    return _then(_$_Loaded(
+    return _then(_$LoadedImpl(
       businessWorkFlowModel: freezed == businessWorkFlowModel
           ? _value.businessWorkFlowModel
           : businessWorkFlowModel // ignore: cast_nullable_to_non_nullable
@@ -690,8 +697,8 @@ class __$$_LoadedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded({this.businessWorkFlowModel}) : super._();
+class _$LoadedImpl extends _Loaded {
+  const _$LoadedImpl({this.businessWorkFlowModel}) : super._();
 
   @override
   final BusinessServiceWorkflowModel? businessWorkFlowModel;
@@ -702,10 +709,10 @@ class _$_Loaded extends _Loaded {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
+            other is _$LoadedImpl &&
             (identical(other.businessWorkFlowModel, businessWorkFlowModel) ||
                 other.businessWorkFlowModel == businessWorkFlowModel));
   }
@@ -716,8 +723,8 @@ class _$_Loaded extends _Loaded {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -800,33 +807,36 @@ class _$_Loaded extends _Loaded {
 
 abstract class _Loaded extends BusinessGetWorkflowState {
   const factory _Loaded(
-      {final BusinessServiceWorkflowModel? businessWorkFlowModel}) = _$_Loaded;
+          {final BusinessServiceWorkflowModel? businessWorkFlowModel}) =
+      _$LoadedImpl;
   const _Loaded._() : super._();
 
   BusinessServiceWorkflowModel? get businessWorkFlowModel;
   @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$BusinessGetWorkflowStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$BusinessGetWorkflowStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Error extends _Error {
-  const _$_Error() : super._();
+class _$ErrorImpl extends _Error {
+  const _$ErrorImpl() : super._();
 
   @override
   String toString() {
@@ -834,9 +844,9 @@ class _$_Error extends _Error {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Error);
+        (other.runtimeType == runtimeType && other is _$ErrorImpl);
   }
 
   @override
@@ -922,6 +932,6 @@ class _$_Error extends _Error {
 }
 
 abstract class _Error extends BusinessGetWorkflowState {
-  const factory _Error() = _$_Error;
+  const factory _Error() = _$ErrorImpl;
   const _Error._() : super._();
 }

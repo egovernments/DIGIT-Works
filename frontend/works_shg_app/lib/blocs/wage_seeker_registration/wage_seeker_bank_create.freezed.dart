@@ -12,7 +12,7 @@ part of 'wage_seeker_bank_create.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$WageSeekerBankCreateEvent {
@@ -103,11 +103,11 @@ class _$WageSeekerBankCreateEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$CreateBankWageSeekerEventCopyWith<$Res> {
-  factory _$$CreateBankWageSeekerEventCopyWith(
-          _$CreateBankWageSeekerEvent value,
-          $Res Function(_$CreateBankWageSeekerEvent) then) =
-      __$$CreateBankWageSeekerEventCopyWithImpl<$Res>;
+abstract class _$$CreateBankWageSeekerEventImplCopyWith<$Res> {
+  factory _$$CreateBankWageSeekerEventImplCopyWith(
+          _$CreateBankWageSeekerEventImpl value,
+          $Res Function(_$CreateBankWageSeekerEventImpl) then) =
+      __$$CreateBankWageSeekerEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
       {String? tenantId,
@@ -121,12 +121,13 @@ abstract class _$$CreateBankWageSeekerEventCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$CreateBankWageSeekerEventCopyWithImpl<$Res>
+class __$$CreateBankWageSeekerEventImplCopyWithImpl<$Res>
     extends _$WageSeekerBankCreateEventCopyWithImpl<$Res,
-        _$CreateBankWageSeekerEvent>
-    implements _$$CreateBankWageSeekerEventCopyWith<$Res> {
-  __$$CreateBankWageSeekerEventCopyWithImpl(_$CreateBankWageSeekerEvent _value,
-      $Res Function(_$CreateBankWageSeekerEvent) _then)
+        _$CreateBankWageSeekerEventImpl>
+    implements _$$CreateBankWageSeekerEventImplCopyWith<$Res> {
+  __$$CreateBankWageSeekerEventImplCopyWithImpl(
+      _$CreateBankWageSeekerEventImpl _value,
+      $Res Function(_$CreateBankWageSeekerEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -141,7 +142,7 @@ class __$$CreateBankWageSeekerEventCopyWithImpl<$Res>
     Object? indId = freezed,
     Object? bankName = freezed,
   }) {
-    return _then(_$CreateBankWageSeekerEvent(
+    return _then(_$CreateBankWageSeekerEventImpl(
       tenantId: freezed == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
@@ -180,8 +181,8 @@ class __$$CreateBankWageSeekerEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
-  const _$CreateBankWageSeekerEvent(
+class _$CreateBankWageSeekerEventImpl implements CreateBankWageSeekerEvent {
+  const _$CreateBankWageSeekerEventImpl(
       {this.tenantId,
       this.accountHolderName,
       this.accountNo,
@@ -214,10 +215,10 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CreateBankWageSeekerEvent &&
+            other is _$CreateBankWageSeekerEventImpl &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.accountHolderName, accountHolderName) ||
@@ -242,9 +243,9 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$CreateBankWageSeekerEventCopyWith<_$CreateBankWageSeekerEvent>
-      get copyWith => __$$CreateBankWageSeekerEventCopyWithImpl<
-          _$CreateBankWageSeekerEvent>(this, _$identity);
+  _$$CreateBankWageSeekerEventImplCopyWith<_$CreateBankWageSeekerEventImpl>
+      get copyWith => __$$CreateBankWageSeekerEventImplCopyWithImpl<
+          _$CreateBankWageSeekerEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -348,7 +349,7 @@ abstract class CreateBankWageSeekerEvent implements WageSeekerBankCreateEvent {
       final String? ifscCode,
       final String? referenceId,
       final String? indId,
-      final String? bankName}) = _$CreateBankWageSeekerEvent;
+      final String? bankName}) = _$CreateBankWageSeekerEventImpl;
 
   String? get tenantId;
   String? get accountHolderName;
@@ -359,34 +360,34 @@ abstract class CreateBankWageSeekerEvent implements WageSeekerBankCreateEvent {
   String? get indId;
   String? get bankName;
   @JsonKey(ignore: true)
-  _$$CreateBankWageSeekerEventCopyWith<_$CreateBankWageSeekerEvent>
+  _$$CreateBankWageSeekerEventImplCopyWith<_$CreateBankWageSeekerEventImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$CreateBankWageSeekerDisposeEventCopyWith<$Res> {
-  factory _$$CreateBankWageSeekerDisposeEventCopyWith(
-          _$CreateBankWageSeekerDisposeEvent value,
-          $Res Function(_$CreateBankWageSeekerDisposeEvent) then) =
-      __$$CreateBankWageSeekerDisposeEventCopyWithImpl<$Res>;
+abstract class _$$CreateBankWageSeekerDisposeEventImplCopyWith<$Res> {
+  factory _$$CreateBankWageSeekerDisposeEventImplCopyWith(
+          _$CreateBankWageSeekerDisposeEventImpl value,
+          $Res Function(_$CreateBankWageSeekerDisposeEventImpl) then) =
+      __$$CreateBankWageSeekerDisposeEventImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$CreateBankWageSeekerDisposeEventCopyWithImpl<$Res>
+class __$$CreateBankWageSeekerDisposeEventImplCopyWithImpl<$Res>
     extends _$WageSeekerBankCreateEventCopyWithImpl<$Res,
-        _$CreateBankWageSeekerDisposeEvent>
-    implements _$$CreateBankWageSeekerDisposeEventCopyWith<$Res> {
-  __$$CreateBankWageSeekerDisposeEventCopyWithImpl(
-      _$CreateBankWageSeekerDisposeEvent _value,
-      $Res Function(_$CreateBankWageSeekerDisposeEvent) _then)
+        _$CreateBankWageSeekerDisposeEventImpl>
+    implements _$$CreateBankWageSeekerDisposeEventImplCopyWith<$Res> {
+  __$$CreateBankWageSeekerDisposeEventImplCopyWithImpl(
+      _$CreateBankWageSeekerDisposeEventImpl _value,
+      $Res Function(_$CreateBankWageSeekerDisposeEventImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$CreateBankWageSeekerDisposeEvent
+class _$CreateBankWageSeekerDisposeEventImpl
     implements CreateBankWageSeekerDisposeEvent {
-  const _$CreateBankWageSeekerDisposeEvent();
+  const _$CreateBankWageSeekerDisposeEventImpl();
 
   @override
   String toString() {
@@ -394,10 +395,10 @@ class _$CreateBankWageSeekerDisposeEvent
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CreateBankWageSeekerDisposeEvent);
+            other is _$CreateBankWageSeekerDisposeEventImpl);
   }
 
   @override
@@ -496,7 +497,7 @@ class _$CreateBankWageSeekerDisposeEvent
 abstract class CreateBankWageSeekerDisposeEvent
     implements WageSeekerBankCreateEvent {
   const factory CreateBankWageSeekerDisposeEvent() =
-      _$CreateBankWageSeekerDisposeEvent;
+      _$CreateBankWageSeekerDisposeEventImpl;
 }
 
 /// @nodoc
@@ -579,24 +580,25 @@ class _$WageSeekerBankCreateStateCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$WageSeekerBankCreateStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$WageSeekerBankCreateStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial {
+  const _$InitialImpl() : super._();
 
   @override
   String toString() {
@@ -604,9 +606,9 @@ class _$_Initial extends _Initial {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -694,29 +696,30 @@ class _$_Initial extends _Initial {
 }
 
 abstract class _Initial extends WageSeekerBankCreateState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$WageSeekerBankCreateStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$WageSeekerBankCreateStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString() {
@@ -724,9 +727,9 @@ class _$_Loading extends _Loading {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -814,24 +817,26 @@ class _$_Loading extends _Loading {
 }
 
 abstract class _Loading extends WageSeekerBankCreateState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
       {BankingDetailsModel? bankingDetailsModel, BankAccounts? bankAccounts});
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$WageSeekerBankCreateStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$WageSeekerBankCreateStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -840,7 +845,7 @@ class __$$_LoadedCopyWithImpl<$Res>
     Object? bankingDetailsModel = freezed,
     Object? bankAccounts = freezed,
   }) {
-    return _then(_$_Loaded(
+    return _then(_$LoadedImpl(
       freezed == bankingDetailsModel
           ? _value.bankingDetailsModel
           : bankingDetailsModel // ignore: cast_nullable_to_non_nullable
@@ -855,8 +860,8 @@ class __$$_LoadedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded(this.bankingDetailsModel, this.bankAccounts) : super._();
+class _$LoadedImpl extends _Loaded {
+  const _$LoadedImpl(this.bankingDetailsModel, this.bankAccounts) : super._();
 
   @override
   final BankingDetailsModel? bankingDetailsModel;
@@ -869,10 +874,10 @@ class _$_Loaded extends _Loaded {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
+            other is _$LoadedImpl &&
             (identical(other.bankingDetailsModel, bankingDetailsModel) ||
                 other.bankingDetailsModel == bankingDetailsModel) &&
             (identical(other.bankAccounts, bankAccounts) ||
@@ -886,8 +891,8 @@ class _$_Loaded extends _Loaded {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -972,29 +977,31 @@ class _$_Loaded extends _Loaded {
 
 abstract class _Loaded extends WageSeekerBankCreateState {
   const factory _Loaded(final BankingDetailsModel? bankingDetailsModel,
-      final BankAccounts? bankAccounts) = _$_Loaded;
+      final BankAccounts? bankAccounts) = _$LoadedImpl;
   const _Loaded._() : super._();
 
   BankingDetailsModel? get bankingDetailsModel;
   BankAccounts? get bankAccounts;
   @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String? error});
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$WageSeekerBankCreateStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$WageSeekerBankCreateStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1002,7 +1009,7 @@ class __$$_ErrorCopyWithImpl<$Res>
   $Res call({
     Object? error = freezed,
   }) {
-    return _then(_$_Error(
+    return _then(_$ErrorImpl(
       freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -1013,8 +1020,8 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error {
-  const _$_Error(this.error) : super._();
+class _$ErrorImpl extends _Error {
+  const _$ErrorImpl(this.error) : super._();
 
   @override
   final String? error;
@@ -1025,10 +1032,10 @@ class _$_Error extends _Error {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Error &&
+            other is _$ErrorImpl &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -1038,8 +1045,8 @@ class _$_Error extends _Error {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
-      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1123,11 +1130,11 @@ class _$_Error extends _Error {
 }
 
 abstract class _Error extends WageSeekerBankCreateState {
-  const factory _Error(final String? error) = _$_Error;
+  const factory _Error(final String? error) = _$ErrorImpl;
   const _Error._() : super._();
 
   String? get error;
   @JsonKey(ignore: true)
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

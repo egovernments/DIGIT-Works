@@ -1,73 +1,56 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:universal_html/html.dart' as html;
-import 'package:works_shg_app/blocs/localization/localization.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:works_shg_app/data/schema/localization.dart';
 
-import '../../models/localization/localization_model.dart';
-import '../../services/local_storage.dart';
-import '../../utils/constants.dart';
 import 'app_localizations_delegate.dart';
 
 class AppLocalizations {
-  final Locale? locale;
+  final Locale locale;
 
-  AppLocalizations(this.locale);
+  AppLocalizations(
+    this.locale,
+  );
   static AppLocalizations of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static List<LocalizationMessageModel> localizedStrings =
-      <LocalizationMessageModel>[];
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      AppLocalizationsDelegate();
+  static List<dynamic> localizedStrings = <dynamic>[];
 
-  Future<List<LocalizationMessageModel>?> getLocalizationLabels() async {
-    dynamic localLabelResponse;
-    if (kIsWeb) {
-      localLabelResponse = html.window.sessionStorage[
-          '${locale?.languageCode}_${locale?.countryCode}' ?? ''];
-    } else {
-      localLabelResponse = await storage.read(
-          key: '${locale?.languageCode}_${locale?.countryCode}');
-    }
-    await Future.delayed(const Duration(seconds: 1));
-    if (localLabelResponse != null && localLabelResponse.trim().isNotEmpty) {
-      return localizedStrings = jsonDecode(localLabelResponse)
-          .map<LocalizationMessageModel>(
-              (e) => LocalizationMessageModel.fromJson(e))
-          .toList();
-    } else {
-      localizedStrings = BlocProvider.of<LocalizationBloc>(
-                  scaffoldMessengerKey.currentContext!)
-              .state
-              .maybeWhen(
-                  orElse: () => [],
-                  loaded: (List<LocalizationMessageModel>? localization) {
-                    return localization;
-                  }) ??
-          [];
+// Returns instance of custom localizations delegate
+  static LocalizationsDelegate<AppLocalizations> getDelegate() =>
+      const AppLocalizationsDelegate();
 
-      return localizedStrings;
-    }
-  }
+/* it fetches data from hive box based on the locale selection:
+  - store the list of data to localizedStrings
+  - for searching increasing efficiency
+*/
+  Future<bool> load({required String locale}) async {
+    // Clear the list before loading localized strings
+    localizedStrings.clear();
 
-  Future<bool> load() async {
-    if (scaffoldMessengerKey.currentContext != null) {
-      await getLocalizationLabels();
-      return true;
-    } else {
-      return false;
+    // Get box for  localization
+    final box = Hive.box<KeyLocaleModel>('keyValueModel');
+    // Convert values to list
+    final List<KeyLocaleModel> ll = box.values.toList();
+    if (ll.isNotEmpty) {
+      final localizationList =
+          ll.firstWhere((element) => element.locale == locale);
+
+      if (localizationList.localizationsList != null) {
+        localizedStrings.addAll(localizationList.localizationsList!);
+      }
     }
+
+    return true;
   }
 
   translate(
     String localizedValues,
   ) {
+    // Find index of localized string
     var index =
         localizedStrings.indexWhere((medium) => medium.code == localizedValues);
+    // Return localized string if found, otherwise return original value
     return index != -1 ? localizedStrings[index].message : localizedValues;
   }
 }

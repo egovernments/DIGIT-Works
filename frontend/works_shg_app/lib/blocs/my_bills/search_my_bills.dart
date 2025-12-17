@@ -52,7 +52,7 @@ class SearchMyBillsBloc extends Bloc<SearchMyBillsEvent, SearchMyBillsState> {
               }));
       await Future.delayed(const Duration(seconds: 1));
       emit(SearchMyBillsState.loaded(billsModel));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(SearchMyBillsState.error(e.response?.data['Errors'][0]['code']));
     }
   }

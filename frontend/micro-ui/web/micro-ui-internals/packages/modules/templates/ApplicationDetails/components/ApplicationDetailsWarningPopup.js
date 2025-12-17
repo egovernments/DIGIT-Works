@@ -46,7 +46,6 @@ return (
         </div>
       </Card>
    </Modal>
-  )
     </React.Fragment>
 )
 }

@@ -44,7 +44,7 @@ class IndividualMusterRollSearchBloc extends Bloc<
               }));
       await Future.delayed(const Duration(seconds: 1));
       emit(IndividualMusterRollSearchState.loaded(individualMuster));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(IndividualMusterRollSearchState.error(
           e.response?.data['Errors'][0]['code']));
     }

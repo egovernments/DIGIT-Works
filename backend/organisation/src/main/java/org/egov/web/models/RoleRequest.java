@@ -1,10 +1,10 @@
 package org.egov.web.models;
 
-import digit.models.coremodels.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.egov.common.models.core.Role;
 
 @Getter
 @Builder

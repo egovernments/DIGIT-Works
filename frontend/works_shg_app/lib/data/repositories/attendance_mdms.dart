@@ -23,9 +23,9 @@ class AttendanceMDMSRepository {
       });
 
       return SkillsList.fromJson(
-        json.decode(response.toString())['MdmsRes']['common-masters'],
+        json.decode(response.toString())['MdmsRes']['WORKS-SOR'],
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }

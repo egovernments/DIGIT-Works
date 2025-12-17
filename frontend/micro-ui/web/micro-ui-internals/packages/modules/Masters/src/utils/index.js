@@ -12,14 +12,14 @@ export const getTomorrowsDate = () => {
     return tomorrow.toISOString().split("T")[0]
 }
 
-export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady }) => {
+export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady, t }) => {
 
     const individual = wageSeekerData?.individual
     const bankAccountDetails = wageSeekerData?.bankDetails?.[0]?.bankAccountDetails?.[0]
 
     const adhaar = individual?.identifiers?.find(item => item?.identifierType === 'AADHAAR')
     const socialCategory = individual?.additionalFields?.fields?.find(item => item?.key === "SOCIAL_CATEGORY")
-    const skills = individual?.skills?.length > 0 ? individual?.skills?.map(skill => ({code: `${skill?.level}.${skill?.type}`, name: `COMMON_MASTERS_SKILLS_${skill?.level}.${skill?.type}`})) : ""
+    const skills = individual?.skills?.length > 0 ? individual?.skills?.map(skill => ({code: `${skill?.level}`, name: t(`COMMON_MASTERS_SKILLS_${skill?.level}`)})) : ""
     
     let photo = ''
     try {
@@ -66,17 +66,34 @@ export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sess
 const getSkillsToUpdate = (formData, wageSeekerDataFromAPI) => {
     let updatedSkills = formData?.skillDetails_skill
     //added code field in existing skills to find difference
-    let existingSkills = wageSeekerDataFromAPI?.individual?.skills?.map(item => ({ ...item, code : `${item?.level}.${item?.type}`}))
+    let existingSkills = wageSeekerDataFromAPI?.individual?.skills?.map(item => ({ ...item, code : `${item?.level}`}))
 
     let set1 = new Set(updatedSkills.map(({ code }) => code))
     let set2 = new Set(existingSkills.map(({ code }) => code))
     let extraSkillsTobeAdded = updatedSkills.filter(({ code }) => !set2.has(code))
     let extraSkillsTobeRemoved = existingSkills.filter(({ code }) => !set1.has(code))
 
-    let skillsTobeAdded = extraSkillsTobeAdded?.map(item => ({ level: item?.code?.split('.')?.[0], type: item?.code?.split('.')?.[1]}))
+    let filterExistingSkills = existingSkills?.filter(item => {
+        //remove skillsToBeRemoved from existingSkills if present
+        let takeIt = true
+        extraSkillsTobeRemoved?.forEach(row => {
+            if(row?.code === item?.code){
+                takeIt = false
+            }
+        })
+        return takeIt
+    })
+
+    let skillsTobeAdded = extraSkillsTobeAdded?.map(item => {
+        //const separator = item?.code.includes('.') ? '.' : '_';
+        //const [level, type] = item?.code.split(separator);
+        const level = item?.code;
+        const type = item?.code;
+        return { level, type };
+    });
     let skillsTobeRemoved = extraSkillsTobeRemoved?.map(item => ({ ...item, isDeleted: true }))
     return {
-        skillsTobeAdded: [...existingSkills, ...skillsTobeAdded],
+        skillsTobeAdded: [...filterExistingSkills, ...skillsTobeAdded],
         skillsTobeRemoved
     }
 }
@@ -89,16 +106,17 @@ export const getWageSeekerUpdatePayload = ({formData, wageSeekerDataFromAPI, ten
         givenName: formData?.basicDetails_wageSeekerName
     }
     Individual.dateOfBirth = Digit.DateUtils.ConvertTimestampToDate(new Date(formData?.basicDetails_dateOfBirth), 'dd/MM/yyyy')
-    Individual.gender = formData?.basicDetails_gender?.code
+    if(!(formData?.basicDetails_gender?.code?.includes("UNDISCLOSED"))) Individual.gender = formData?.basicDetails_gender?.code
     Individual.mobileNumber = formData?.basicDetails_mobileNumber
     Individual.fatherName = formData?.basicDetails_fatherHusbandName
-    Individual.relationship = formData?.basicDetails_relationShip?.code
-    Individual.skills = formData?.skillDetails_skill?.map(skill => ({ level: skill?.code?.split('.')?.[0], type: skill?.code?.split('.')?.[1]}))
+    if(!(formData?.basicDetails_relationShip?.code?.includes("UNDISCLOSED")))Individual.relationship = formData?.basicDetails_relationShip?.code
+    // Individual.skills = formData?.skillDetails_skill?.map(skill => ({ level: skill?.code?.split('.')?.[0], type: skill?.code?.split('.')?.[1]}))
     Individual.photo = formData?.basicDetails_photograph?.[0]?.[1]?.fileStoreId?.fileStoreId
 
+    //DPP update here as well for socialCategory
     if(formData?.basicDetails_socialCategory?.code) {
         Individual.additionalFields = {
-            fields: [{
+            fields: [...wageSeekerDataFromAPI?.individual?.additionalFields.fields.filter((ob) => ob?.key !== "SOCIAL_CATEGORY"),{
                 key: "SOCIAL_CATEGORY",
                 value: formData?.basicDetails_socialCategory?.code
             }]
@@ -130,6 +148,7 @@ export const getWageSeekerUpdatePayload = ({formData, wageSeekerDataFromAPI, ten
     }
 
     if(isModify) {
+        Individual.auditDetails = wageSeekerDataFromAPI?.individual?.auditDetails
         Individual.id = wageSeekerDataFromAPI?.individual?.id
         Individual.individualId = formData?.basicDetails_wageSeekerId
         Individual.address = [{
@@ -157,21 +176,22 @@ export const getWageSeekerUpdatePayload = ({formData, wageSeekerDataFromAPI, ten
         //here set the identifiers on Individual object
         Individual.identifiers = wageSeekerDataFromAPI?.individual?.identifiers
     }
-
+    
     return {
         Individual
     }
 }
 
 export const getWageSeekerSkillDeletePayload = ({wageSeekerDataFromAPI, tenantId, skillsTobeRemoved}) => {
-    let Individual = {}
+    let Individual = {...wageSeekerDataFromAPI?.Individual}
     Individual.id = wageSeekerDataFromAPI?.Individual?.id
     Individual.tenantId = tenantId
     Individual.name = wageSeekerDataFromAPI?.Individual?.name
     Individual.rowVersion = parseInt(wageSeekerDataFromAPI?.Individual?.rowVersion)
     Individual.skills = skillsTobeRemoved
+    Individual.additionalFields = wageSeekerDataFromAPI?.Individual?.additionalFields
     return {
-        Individual
+       Individual
     }
 }
 
@@ -201,8 +221,20 @@ export const getBankAccountUpdatePayload = ({formData, apiData, tenantId, isModi
 
         let bankAccountDetails = bankAccounts?.[0]?.bankAccountDetails?.[0]
         if(bankAccountDetails) {
-            bankAccountDetails.isActive = false
-            bankAccountDetails.isPrimary = false
+            bankAccountDetails.isActive = true
+            bankAccountDetails.isPrimary = true
+            bankAccountDetails.accountHolderName = formData?.financeDetails_accountHolderName
+            bankAccountDetails.accountNumber = formData?.financeDetails_accountNumber
+            bankAccountDetails.accountType = formData?.financeDetails_accountType?.code
+            bankAccountDetails.tenantId = tenantId
+            bankAccountDetails.bankBranchIdentifier = {
+                type: "IFSC",
+                code: isWageSeeker? formData?.financeDetails_ifsc : formData?.transferCodesData?.[0]?.value,
+                additionalDetails: {
+                    ifsccode: formData?.financeDetails_branchName
+                },
+                id: isModify ? bankAccountDetails.bankBranchIdentifier?.id : null
+            }
         }
         delete bankAccountDetails?.auditDetails
     } else {
@@ -319,14 +351,14 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
         geoLocation: {}
     }]
     organisation.additionalDetails = {
-        locality: formData?.locDetails_locality?.code,
+        locality: formData?.locDetails_locality?.code || formData?.locDetails_locality?.[0]?.code,
         registeredByDept: formData?.basicDetails_regDept,
         deptRegistrationNum: formData?.basicDetails_regDeptNo
     }
     organisation.contactDetails = [{
         contactName: formData?.contactDetails_name, 
         contactMobileNumber: formData?.contactDetails_mobile,
-        contactEmail: formData?.contactDetails_email
+        contactEmail: formData?.contactDetails_email != '' ? formData?.contactDetails_email : null
     }]
     organisation.functions = [{
         type: `${formData?.funDetails_orgType?.code}.${formData?.funDetails_orgSubType?.code}`,
@@ -349,7 +381,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
                 isActive: true
             }  
         }
-    })
+    }).filter(item=> item)
 
     if(isModify) {
         organisation.id = orgDataFromAPI?.organisation?.id
@@ -373,10 +405,10 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
             tenantId: tenantId,
             contactName: formData?.contactDetails_name, 
             contactMobileNumber: formData?.contactDetails_mobile,
-            contactEmail: formData?.contactDetails_email
+            contactEmail: formData?.contactDetails_email !== "" ? formData?.contactDetails_email : null
         }]
 
-        organisation.identifiers = getOrgIdentifiersToUpdate(formData, orgDataFromAPI)
+        organisation.identifiers = getOrgIdentifiersToUpdate(formData, orgDataFromAPI).filter(item=> item)
 
         organisation.functions[0].id = orgDataFromAPI?.organisation?.functions?.[0]?.id
         organisation.functions[0].orgId = orgDataFromAPI?.organisation?.id

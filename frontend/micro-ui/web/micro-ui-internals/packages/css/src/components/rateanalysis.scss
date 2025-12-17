@@ -1,0 +1,9 @@
+.toast-success{
+    max-width: 540px;
+}
+
+.view-scheduled-jobs-serach-wrapper{
+    &.search {
+        grid-column: 4 / span 2 !important;
+    }
+}

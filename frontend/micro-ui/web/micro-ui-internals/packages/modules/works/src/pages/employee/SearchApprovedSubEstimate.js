@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Fragment } from "react";
-import { Toast } from "@egovernments/digit-ui-react-components";
+import { Toast } from "@egovernments/digit-ui-components";
 
 
 const SearchApprovedSubEstimate = () => {
@@ -30,7 +30,7 @@ const SearchApprovedSubEstimate = () => {
         };
  
         if (data.estimateNumber === "" && data.adminSanctionNumber === "" && !data.department && !data.estimateDetailNumber && !data.fromProposalDate && !data.toProposalDate) {
-            setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
+            setShowToast({ type:"warning", label: "ERR_PT_FILL_VALID_FIELDS" });
             setTimeout(() => {
                 setShowToast(false);
             }, 3000);
@@ -89,8 +89,7 @@ const SearchApprovedSubEstimate = () => {
             />
             {showToast && (
                 <Toast
-                error={showToast.error}
-                warning={showToast.warning}
+                type={showToast?.type}
                 label={t(showToast.label)}
                 onClose={() => {
                     setShowToast(null);

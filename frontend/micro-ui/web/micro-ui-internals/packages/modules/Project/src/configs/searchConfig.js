@@ -82,9 +82,9 @@ const searchConfig = () => {
                           populators: {
                             name: "projectType",
                             optionsKey: "code",
-                            optionsCustomStyle : {
-                                top : "2.3rem"
-                            },
+                            // optionsCustomStyle : {
+                            //     top : "2.3rem"
+                            // },
                             mdmsConfig: {
                               masterName: "ProjectType",
                               moduleName: "works",

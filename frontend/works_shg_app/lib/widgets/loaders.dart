@@ -1,9 +1,15 @@
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:works_shg_app/blocs/localization/app_localization.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 
 class Loaders {
   static circularLoader(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () async => false,
+   final String msg= AppLocalizations.of(context).translate(i18.common.loading).toString();
+    return PopScope(
+        onPopInvoked: null,
+        canPop: true,
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
@@ -14,15 +20,15 @@ class Loaders {
                 Center(
                   child: Column(children: [
                     CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(context).colorTheme.primary.primary1,
                     ),
                     const SizedBox(
                       height: 10,
                     ),
-                    const Text(
-                      'Loading...',
-                      style: TextStyle(
-                          color: Color.fromRGBO(0, 0, 0, 1),
+                     Text(
+                       msg.toString().contains("_")==true?'Loading' :msg,
+                      style:  TextStyle(
+                          color: Theme.of(context).colorTheme.primary.primary1,
                           fontFamily: 'Roboto',
                           fontSize: 16,
                           fontWeight: FontWeight.w700),
@@ -39,8 +45,9 @@ class Loaders {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return WillPopScope(
-              onWillPop: () async => false,
+          return PopScope(
+              onPopInvoked: null,
+              canPop: true,
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
@@ -56,7 +63,7 @@ class Loaders {
 //                            controller: AnimationController(vsync: this, duration: const Duration(milliseconds: 1200)),
                           // ),
                           CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorTheme.primary.primary1,
                           ),
                           const SizedBox(
                             height: 10,

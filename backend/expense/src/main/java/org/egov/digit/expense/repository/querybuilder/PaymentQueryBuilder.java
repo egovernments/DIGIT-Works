@@ -7,6 +7,7 @@ import java.util.Set;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.util.QueryBuilderUtils;
+import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.Pagination;
 import org.egov.digit.expense.web.models.PaymentCriteria;
 import org.egov.digit.expense.web.models.PaymentSearchRequest;
@@ -18,17 +19,26 @@ import org.springframework.util.StringUtils;
 @Component
 public class PaymentQueryBuilder {
 	
-	@Autowired
-	private QueryBuilderUtils builderUtils;
+	private final QueryBuilderUtils builderUtils;
 	
-	@Autowired
-	private Configuration configs;
+	private final Configuration configs;
 
-	public String getPaymentQuery(PaymentSearchRequest paymentSearchRequest, List<Object> preparedStatementValues) {
+	@Autowired
+	public PaymentQueryBuilder(QueryBuilderUtils builderUtils, Configuration configs) {
+		this.builderUtils = builderUtils;
+		this.configs = configs;
+	}
+
+	public String getPaymentQuery(PaymentSearchRequest paymentSearchRequest, List<Object> preparedStatementValues, boolean isCountRequired) {
 
 		PaymentCriteria paymentCriteria = paymentSearchRequest.getPaymentCriteria();
 		
-		StringBuilder paymentSearchQuery = new StringBuilder(Constants.PAYMENT_QUERY);
+		StringBuilder paymentSearchQuery = null;
+		if (isCountRequired) {
+			paymentSearchQuery = new StringBuilder(Constants.PAYMENT_COUNT_QUERY);
+		} else {
+			paymentSearchQuery = new StringBuilder(Constants.PAYMENT_QUERY);
+		}
 		builderUtils.addClauseIfRequired(preparedStatementValues, paymentSearchQuery);
 
 		paymentSearchQuery.append(" payment.tenantId = ? ");
@@ -39,6 +49,13 @@ public class PaymentQueryBuilder {
 			builderUtils.addClauseIfRequired(preparedStatementValues, paymentSearchQuery);
 			paymentSearchQuery.append(" payment.status = ? ");
 			preparedStatementValues.add(paymentCriteria.getStatus());
+		}
+
+		if (!StringUtils.isEmpty(paymentCriteria.getReferenceStatus())) {
+
+			builderUtils.addClauseIfRequired(preparedStatementValues, paymentSearchQuery);
+			paymentSearchQuery.append(" payment.referencestatus = ? ");
+			preparedStatementValues.add(paymentCriteria.getReferenceStatus());
 		}
 		
 		Set<String> paymentNums = paymentCriteria.getPaymentNumbers();
@@ -64,7 +81,7 @@ public class PaymentQueryBuilder {
 			paymentSearchQuery.append("payment.id IN (").append(builderUtils.createQuery(ids)).append(")");
 			builderUtils.addToPreparedStatement(preparedStatementValues, ids);
 		}
-		return addPaginationWrapper(paymentSearchQuery, paymentSearchRequest.getPagination(), preparedStatementValues);
+		return isCountRequired? paymentSearchQuery.toString() :addPaginationWrapper(paymentSearchQuery, paymentSearchRequest.getPagination(), preparedStatementValues);
 	}
 	
 
@@ -99,9 +116,17 @@ public class PaymentQueryBuilder {
     }
 
     
-    private static String WRAPPER_QUERY = "SELECT * FROM " +
+    private static final String WRAPPER_QUERY = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY p_id {orderBy}) offset_ FROM " +
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
+
+	public String getSearchCountQueryString(PaymentSearchRequest paymentSearchRequest, List<Object> preparedStmtList) {
+        String query = getPaymentQuery(paymentSearchRequest, preparedStmtList,true);
+        if (query != null)
+            return Constants.COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        else
+            return query;
+    }
 }

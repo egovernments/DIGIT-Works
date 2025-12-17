@@ -19,37 +19,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.List;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
 
 @Controller
 @RequestMapping("/v1")
 public class ContractApiController {
 
-    @Autowired
-    private final ObjectMapper objectMapper;
+    private final ContractService contractService;
+
+    private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    private final HttpServletRequest request;
-    @Autowired
-    private ContractService contractService;
-
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
-
-    @Autowired
-    public ContractApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
+    public ContractApiController(ContractService contractService, ResponseInfoFactory responseInfoFactory) {
+        this.contractService = contractService;
+        this.responseInfoFactory = responseInfoFactory;
     }
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<ContractResponse> createContractV1(@ApiParam(value = "Details for the new contract.", required = true) @Valid @RequestBody ContractRequest contractRequest) {
         ContractResponse contractResponse = contractService.createContract(contractRequest);
-        return new ResponseEntity<ContractResponse>(contractResponse, HttpStatus.OK);
+        return new ResponseEntity<>(contractResponse, HttpStatus.OK);
     }
 
 
@@ -59,13 +52,13 @@ public class ContractApiController {
         List<Contract> contracts = contractService.searchContracts(contractCriteria);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
         ContractResponse contractResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(contracts).pagination(contractCriteria.getPagination()).build();
-        return new ResponseEntity<ContractResponse>(contractResponse, HttpStatus.OK);
+        return new ResponseEntity<>(contractResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/_update", method = RequestMethod.POST)
     public ResponseEntity<ContractResponse> contractV1UpdatePost(@ApiParam(value = "", required = true) @Valid @RequestBody ContractRequest contractRequest) {
         ContractResponse contractResponse = contractService.updateContract(contractRequest);
-        return new ResponseEntity<ContractResponse>(contractResponse, HttpStatus.OK);
+        return new ResponseEntity<>(contractResponse, HttpStatus.OK);
     }
 
 }

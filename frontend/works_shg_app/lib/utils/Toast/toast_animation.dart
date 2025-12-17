@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SlideInToastMessageAnimation extends StatelessWidget {
   final Widget child;
 
-  SlideInToastMessageAnimation(this.child);
+  const SlideInToastMessageAnimation(this.child, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +13,6 @@ class SlideInToastMessageAnimation extends StatelessWidget {
         opacity: 1.0,
         duration: const Duration(seconds: 5),
         // The green box must be a child of the AnimatedOpacity widget.
-        child: this.child);
+        child: child);
   }
 }

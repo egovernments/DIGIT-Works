@@ -34,7 +34,7 @@ class DeclineWorkOrderBloc
       emit(const DeclineWorkOrderState.loading());
 
       ContractsModel contractsModel =
-          await MyWorksRepository(client.init()).acceptOrDeclineWorkOrder(
+          await MyWorksRepository(client.init()).updateOrCreateContract(
               url: Urls.workServices.updateWorkOrder,
               body: {
                 "contract": event.contractsModel,
@@ -52,7 +52,7 @@ class DeclineWorkOrderBloc
               }));
       await Future.delayed(const Duration(seconds: 1));
       emit(DeclineWorkOrderState.loaded(contractsModel));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(DeclineWorkOrderState.error(e.response?.data['Errors'][0]['code']));
     }
   }

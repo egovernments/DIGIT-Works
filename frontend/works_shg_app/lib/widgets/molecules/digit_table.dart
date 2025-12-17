@@ -1,9 +1,9 @@
-import 'package:digit_components/digit_components.dart';
+// import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 
 import '../../utils/models.dart';
-import '../ScrollParent.dart';
+import '../scroll_parent.dart';
 
 class DigitTable extends StatelessWidget {
   final List<TableHeader> headerList;
@@ -32,7 +32,7 @@ class DigitTable extends StatelessWidget {
           leftHandSideColumnWidth: leftColumnWidth,
           rightHandSideColumnWidth: rightColumnWidth,
           isFixedHeader: true,
-          headerWidgets: _getTitleWidget(),
+          headerWidgets: _getTitleWidget(context),
           leftSideItemBuilder: _generateFirstColumnRow,
           rightSideItemBuilder: _generateRightHandSideColumnRow,
           itemCount: tableData.length,
@@ -59,7 +59,7 @@ class DigitTable extends StatelessWidget {
     );
   }
 
-  List<Widget> _getTitleWidget() {
+  List<Widget> _getTitleWidget(BuildContext context) {
     var index = 0;
     return headerList.where((e) => e.hide != true).map((e) {
       index++;
@@ -69,18 +69,18 @@ class DigitTable extends StatelessWidget {
               padding: EdgeInsets.zero,
             ),
             onPressed: e.callBack == null ? null : () => e.callBack!(e),
-            child: _getTitleItemWidget((e.label),
+            child: _getTitleItemWidget((e.label),context,
                 subLabel: e.subLabel ?? '',
                 isAscending: e.isAscendingOrder,
                 isBorderRequired: true));
       } else {
-        return _getTitleItemWidget(e.label,
+        return _getTitleItemWidget(e.label,context,
             subLabel: e.subLabel ?? '', isBorderRequired: true);
       }
     }).toList();
   }
 
-  Widget _getTitleItemWidget(String label,
+  Widget _getTitleItemWidget(String label, BuildContext context,
       {bool? isAscending, String? subLabel, bool isBorderRequired = false}) {
     var textWidget = Text(label,
         style: const TextStyle(
@@ -116,7 +116,7 @@ class DigitTable extends StatelessWidget {
                   subLabel ?? '',
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
-                    color: const DigitColors().davyGray,
+                    color:  Theme.of(context).colorScheme.secondary,
                     fontSize: 12,
                   ),
                 )
@@ -128,7 +128,7 @@ class DigitTable extends StatelessWidget {
                 Text(
                   subLabel ?? '',
                   style: TextStyle(
-                      color: const DigitColors().davyGray,
+                      color: Theme.of(context).colorScheme.secondary,
                       fontSize: 12,
                       fontWeight: FontWeight.w400),
                 )
@@ -172,7 +172,7 @@ class DigitTable extends StatelessWidget {
             child: Text(
               tableData[index].tableRow.first.label ?? '',
               style: tableData[index].tableRow.first.style ??
-                  TextStyle(color: DigitTheme.instance.colorScheme.onSurface),
+                  TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
           ),
         ));

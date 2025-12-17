@@ -63,7 +63,7 @@ class AttendanceRegisterCreateBloc
       } else {
         emit(const AttendanceRegisterCreateState.error());
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(const AttendanceRegisterCreateState.error());
     }
   }

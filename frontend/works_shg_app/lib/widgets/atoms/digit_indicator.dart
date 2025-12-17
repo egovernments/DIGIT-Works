@@ -1,4 +1,5 @@
-import 'package:digit_components/digit_components.dart';
+// import 'package:digit_components/digit_components.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/material.dart';
 
 class DigitIndicator extends StatelessWidget {
@@ -25,7 +26,7 @@ class DigitIndicator extends StatelessWidget {
   final bool isTextWidget;
 
   /// The border width of this indicator when it is selected.
-  final activeBorderWidth;
+  final double activeBorderWidth;
 
   /// Radius of this indicator.
   final double radius;
@@ -66,7 +67,7 @@ class DigitIndicator extends StatelessWidget {
               border: isSelected
                   ? Border.all(
                       color: activeBorderColor ??
-                          const DigitColors().burningOrange,
+                          Theme.of(context).colorTheme.primary.primary1,
                       width: 0,
                     )
                   : null,

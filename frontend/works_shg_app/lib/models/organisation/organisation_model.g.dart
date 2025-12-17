@@ -6,22 +6,23 @@ part of 'organisation_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_OrganisationListModel _$$_OrganisationListModelFromJson(
+_$OrganisationListModelImpl _$$OrganisationListModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$_OrganisationListModel(
+    _$OrganisationListModelImpl(
       organisations: (json['organisations'] as List<dynamic>?)
           ?.map((e) => OrganisationModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_OrganisationListModelToJson(
-        _$_OrganisationListModel instance) =>
+Map<String, dynamic> _$$OrganisationListModelImplToJson(
+        _$OrganisationListModelImpl instance) =>
     <String, dynamic>{
       'organisations': instance.organisations,
     };
 
-_$_OrganisationModel _$$_OrganisationModelFromJson(Map<String, dynamic> json) =>
-    _$_OrganisationModel(
+_$OrganisationModelImpl _$$OrganisationModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$OrganisationModelImpl(
       name: json['name'] as String?,
       applicationNumber: json['applicationNumber'] as String?,
       tenantId: json['tenantId'] as String,
@@ -45,11 +46,11 @@ _$_OrganisationModel _$$_OrganisationModelFromJson(Map<String, dynamic> json) =>
           ? null
           : OrgAdditionalDetails.fromJson(
               json['additionalDetails'] as Map<String, dynamic>),
-      dateOfIncorporation: json['dateOfIncorporation'] as int?,
+      dateOfIncorporation: (json['dateOfIncorporation'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$$_OrganisationModelToJson(
-        _$_OrganisationModel instance) =>
+Map<String, dynamic> _$$OrganisationModelImplToJson(
+        _$OrganisationModelImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'applicationNumber': instance.applicationNumber,
@@ -66,24 +67,26 @@ Map<String, dynamic> _$$_OrganisationModelToJson(
       'dateOfIncorporation': instance.dateOfIncorporation,
     };
 
-_$_OrgAdditionalDetails _$$_OrgAdditionalDetailsFromJson(
+_$OrgAdditionalDetailsImpl _$$OrgAdditionalDetailsImplFromJson(
         Map<String, dynamic> json) =>
-    _$_OrgAdditionalDetails(
+    _$OrgAdditionalDetailsImpl(
       registeredByDept: json['registeredByDept'] as String?,
       deptRegistrationNum: json['deptRegistrationNum'] as String?,
+      isLocalityMasked: json['isLocalityMasked'] as bool?,
       locality: json['locality'] as String?,
     );
 
-Map<String, dynamic> _$$_OrgAdditionalDetailsToJson(
-        _$_OrgAdditionalDetails instance) =>
+Map<String, dynamic> _$$OrgAdditionalDetailsImplToJson(
+        _$OrgAdditionalDetailsImpl instance) =>
     <String, dynamic>{
       'registeredByDept': instance.registeredByDept,
       'deptRegistrationNum': instance.deptRegistrationNum,
+      'isLocalityMasked': instance.isLocalityMasked,
       'locality': instance.locality,
     };
 
-_$_OrgAddress _$$_OrgAddressFromJson(Map<String, dynamic> json) =>
-    _$_OrgAddress(
+_$OrgAddressImpl _$$OrgAddressImplFromJson(Map<String, dynamic> json) =>
+    _$OrgAddressImpl(
       id: json['id'] as String?,
       orgId: json['orgId'] as String?,
       tenantId: json['tenantId'] as String,
@@ -102,7 +105,7 @@ _$_OrgAddress _$$_OrgAddressFromJson(Map<String, dynamic> json) =>
       boundaryCode: json['boundaryCode'] as String?,
     );
 
-Map<String, dynamic> _$$_OrgAddressToJson(_$_OrgAddress instance) =>
+Map<String, dynamic> _$$OrgAddressImplToJson(_$OrgAddressImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'orgId': instance.orgId,
@@ -122,8 +125,8 @@ Map<String, dynamic> _$$_OrgAddressToJson(_$_OrgAddress instance) =>
       'boundaryCode': instance.boundaryCode,
     };
 
-_$_OrgContact _$$_OrgContactFromJson(Map<String, dynamic> json) =>
-    _$_OrgContact(
+_$OrgContactImpl _$$OrgContactImplFromJson(Map<String, dynamic> json) =>
+    _$OrgContactImpl(
       id: json['id'] as String?,
       orgId: json['orgId'] as String?,
       tenantId: json['tenantId'] as String,
@@ -132,7 +135,7 @@ _$_OrgContact _$$_OrgContactFromJson(Map<String, dynamic> json) =>
       contactEmail: json['contactEmail'] as String?,
     );
 
-Map<String, dynamic> _$$_OrgContactToJson(_$_OrgContact instance) =>
+Map<String, dynamic> _$$OrgContactImplToJson(_$OrgContactImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'orgId': instance.orgId,
@@ -142,15 +145,15 @@ Map<String, dynamic> _$$_OrgContactToJson(_$_OrgContact instance) =>
       'contactEmail': instance.contactEmail,
     };
 
-_$_OrgIdentifier _$$_OrgIdentifierFromJson(Map<String, dynamic> json) =>
-    _$_OrgIdentifier(
+_$OrgIdentifierImpl _$$OrgIdentifierImplFromJson(Map<String, dynamic> json) =>
+    _$OrgIdentifierImpl(
       id: json['id'] as String?,
       orgId: json['orgId'] as String?,
       type: json['type'] as String?,
       value: json['value'] as String?,
     );
 
-Map<String, dynamic> _$$_OrgIdentifierToJson(_$_OrgIdentifier instance) =>
+Map<String, dynamic> _$$OrgIdentifierImplToJson(_$OrgIdentifierImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'orgId': instance.orgId,
@@ -158,8 +161,8 @@ Map<String, dynamic> _$$_OrgIdentifierToJson(_$_OrgIdentifier instance) =>
       'value': instance.value,
     };
 
-_$_OrgFunctions _$$_OrgFunctionsFromJson(Map<String, dynamic> json) =>
-    _$_OrgFunctions(
+_$OrgFunctionsImpl _$$OrgFunctionsImplFromJson(Map<String, dynamic> json) =>
+    _$OrgFunctionsImpl(
       id: json['id'] as String?,
       orgId: json['orgId'] as String?,
       applicationNumber: json['applicationNumber'] as String?,
@@ -167,12 +170,12 @@ _$_OrgFunctions _$$_OrgFunctionsFromJson(Map<String, dynamic> json) =>
       organisationType: json['organisationType'] as String?,
       category: json['category'] as String?,
       orgClass: json['class'] as String?,
-      validFrom: json['validFrom'] as int?,
-      validTo: json['validTo'] as int?,
+      validFrom: (json['validFrom'] as num?)?.toInt(),
+      validTo: (json['validTo'] as num?)?.toInt(),
       isActive: json['isActive'] as bool?,
     );
 
-Map<String, dynamic> _$$_OrgFunctionsToJson(_$_OrgFunctions instance) =>
+Map<String, dynamic> _$$OrgFunctionsImplToJson(_$OrgFunctionsImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'orgId': instance.orgId,

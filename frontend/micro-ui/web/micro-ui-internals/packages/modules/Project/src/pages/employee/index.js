@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { Switch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { PrivateRoute, AppContainer, BreadCrumb } from "@egovernments/digit-ui-react-components";
+import { PrivateRoute, AppContainer} from "@egovernments/digit-ui-react-components";
+import { BreadCrumb } from "@egovernments/digit-ui-components";
 import WorkflowCompTest from "./WorkflowCompTest";
+import SampleComp from "./SampleComp";
 
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
@@ -27,7 +29,7 @@ const ProjectBreadCrumb = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
-      path: `/${window.contextPath}/employee/project/project-details`,
+      // path: `/${window.contextPath}/employee/project/project-details`,
       content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_PROJECT_DETAILS")}` : t("WORKS_PROJECT_DETAILS"),
       show: location.pathname.includes("/project/project-details") ? true : false,
       isBack: fromScreen && true,
@@ -39,13 +41,13 @@ const ProjectBreadCrumb = ({ location }) => {
       isBack: fromScreen && true,
     }
   ];
-  return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
+  return <BreadCrumb crumbs={crumbs}/>;
 };
 
 const App = ({ path }) => {
   const CreateProjectComponent = Digit?.ComponentRegistryService?.getComponent("CreateProject");
   const ProjectDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ProjectDetails");
-  const ProjectSearchComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearch");
+  const ProjectSearchComponent = Digit?.ComponentRegistryService?.getComponent("ProjectWMSSearch");
   const ProjectSearchAndInboxComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearchAndInbox");
   const CreateProjectResponseComponent = Digit?.ComponentRegistryService?.getComponent("CreateProjectResponse");
   const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
@@ -71,16 +73,17 @@ const App = ({ path }) => {
 
   return (
     <Switch>
-      <AppContainer className="ground-container">
+      <AppContainer>
         <React.Fragment>
           <ProjectBreadCrumb location={location} />
         </React.Fragment>
-        <PrivateRoute path={`${path}/create-project`} component={() => <CreateProjectComponent parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/project-details`} component={() => <ProjectDetailsComponent parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/search-project`} component={() => <ProjectSearchComponent parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/inbox`} component={() => <ProjectSearchAndInboxComponent parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/create-project-response`} component={() => <CreateProjectResponseComponent parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/create-project`} component={() => <CreateProjectComponent parentRoute={path} />} />
+        <PrivateRoute path={`${path}/project-details`} component={() => <ProjectDetailsComponent parentRoute={path} />} />
+        <PrivateRoute path={`${path}/search-project`} component={() => <ProjectSearchComponent parentRoute={path} />} />
+        <PrivateRoute path={`${path}/inbox`} component={() => <ProjectSearchAndInboxComponent parentRoute={path} />} />
+        <PrivateRoute path={`${path}/create-project-response`} component={() => <CreateProjectResponseComponent parentRoute={path} />} />
         <PrivateRoute path={`${path}/workflow`} component={() => <WorkflowCompTest parentRoute={path} />} />
+        <PrivateRoute path={`${path}/sample`} component={() => <SampleComp parentRoute={path} />} />
       </AppContainer>
     </Switch>
   );

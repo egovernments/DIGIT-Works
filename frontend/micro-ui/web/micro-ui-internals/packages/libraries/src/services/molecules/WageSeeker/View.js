@@ -5,7 +5,7 @@ import { WageSeekerService } from "../../elements/WageSeeker";
 const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     if(data?.Individual?.length === 0) throw new Error('No data found');
     
-    const individual = data.Individual[0]
+    const individual = data?.Individual?.[0]
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
 
     const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "IND", referenceId: [individual?.id] } }
@@ -17,22 +17,22 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       thumbnails = individual?.photo && await getThumbnails([individual?.photo], tenantId)
     } catch (error) {}
     
-    const socialCategory = individual?.additionalFields?.fields?.find(item => item?.key === "SOCIAL_CATEGORY")
-    const adhaar = individual?.identifiers?.find(item => item?.identifierType === 'AADHAAR')
+    const socialCategory = (individual?.additionalFields?.fields && Array.isArray(individual?.additionalFields?.fields)) ? individual?.additionalFields?.fields?.find(item => item?.key === "SOCIAL_CATEGORY") : undefined;
+    const adhaar = (individual?.identifiers && Array.isArray(individual.identifiers)) ? individual?.identifiers?.find(item => item?.identifierType === 'AADHAAR') : undefined;
 
     const headerDetails = {
         title: " ",
         asSectionHeader: true,
         values: [
             { title: "MASTERS_WAGE_SEEKER_ID", value: individual?.individualId || t("NA")},
-            { title: "ES_COMMON_AADHAR", value: adhaar ? adhaar?.identifierId : t("NA")},
+            { title: "ES_COMMON_AADHAR", value: adhaar ? t(adhaar?.identifierId) : t("NA")},
             { title: "MASTERS_NAME_OF_WAGE_SEEKER", value: individual?.name?.givenName || t("NA")},
             { title: "MASTERS_FATHER_HUSBAND_NAME", value: individual?.fatherName || t("NA")},
-            { title: "ES_COMMON_RELATIONSHIP", value: individual?.relationship ? `COMMON_MASTERS_RELATIONSHIP_${individual?.relationship}` : t("NA")},
+            { title: "ES_COMMON_RELATIONSHIP", value: individual?.relationship ? (individual?.relationship?.includes("UNDISCLOSED")? t(individual?.relationship): `COMMON_MASTERS_RELATIONSHIP_${individual?.relationship}`) : t("NA")},
             { title: "ES_COMMON_BIRTHDATE", value: individual?.dateOfBirth || t("NA")},
-            { title: "CORE_COMMON_PROFILE_GENDER", value: individual?.gender ? `COMMON_MASTERS_GENDER_${individual?.gender}` : t("NA")},
+            { title: "CORE_COMMON_PROFILE_GENDER", value: individual?.gender ?(individual?.gender?.includes("UNDISCLOSED") ? t(individual?.gender) : `COMMON_MASTERS_GENDER_${individual?.gender}`) : t("NA")},
             { title: "CORE_COMMON_PROFILE_MOBILE_NUMBER", value: individual?.mobileNumber || t("NA")},
-            { title: "MASTERS_SOCIAL_CATEGORY", value: socialCategory ? `COMMON_MASTERS_SOCIAL_${socialCategory?.value}` : t("NA")}
+            { title: "MASTERS_SOCIAL_CATEGORY", value: socialCategory ? (socialCategory?.value?.includes("UNDISCLOSED")? t(socialCategory?.value): `COMMON_MASTERS_SOCIAL_${socialCategory?.value}`) : t("CS_COMMON_UNDISCLOSED")}
         ],
         additionalDetails: {
           skills: {
@@ -41,7 +41,8 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
           },
           photo : {
             title: "ES_COMMON_PHOTOGRAPH",
-            thumbnailsToShow: thumbnails          
+            thumbnailsToShow: thumbnails && individual?.additionalFields?.isPhotoMasked == true ? '' : thumbnails,
+            isMasked : thumbnails && individual?.additionalFields?.isPhotoMasked == true ? "CS_COMMON_UNDISCLOSED" : false         
           }
         }
     }
@@ -49,9 +50,9 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
         title: "ES_COMMON_LOCATION_DETAILS",
         asSectionHeader: true,
         values: [
-            { title: "CORE_COMMON_PROFILE_CITY", value: individual?.address?.[0]?.tenantId ? Digit.Utils.locale.getCityLocale(individual?.address?.[0]?.tenantId) : t("NA")},
-            { title: "COMMON_WARD", value: individual?.address?.[0]?.ward?.code ? Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.ward?.code, tenantId) : t("NA")},
-            { title: "COMMON_LOCALITY", value: individual?.address?.[0]?.locality?.code ? Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.locality?.code, tenantId) : t("NA")},
+            { title: "CORE_COMMON_PROFILE_CITY", value: individual?.address?.[0]?.tenantId ? (individual?.address?.[0]?.city?.includes("*") ? getAddressMasked(t(Digit.Utils.locale.getCityLocale(individual?.address?.[0]?.tenantId))) : Digit.Utils.locale.getCityLocale(individual?.address?.[0]?.tenantId)) : t("NA")},
+            { title: "COMMON_WARD", value: individual?.address?.[0]?.ward?.code ? (individual?.address?.[0]?.ward?.additionalDetails?.isMasked ? getAddressMasked(t(Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.ward?.code, tenantId))) : Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.ward?.code, tenantId)) : t("NA")},
+            { title: "COMMON_LOCALITY", value: individual?.address?.[0]?.locality?.code ? (individual?.address?.[0]?.locality?.additionalDetails?.isMasked ? getAddressMasked(t(Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.locality?.code, tenantId))) : Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.locality?.code, tenantId)) : t("NA")},
             { title: "ES_COMMON_STREET", value: individual?.address?.[0]?.street || t("NA")},
             { title: "ES_COMMON_DOOR_NO", value: individual?.address?.[0]?.doorNo || t("NA")},
         ]
@@ -81,6 +82,11 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     processInstancesDetails: {},
     workflowDetails: {}
   }
+}
+
+const getAddressMasked = (value) => {
+  return value.replace(/.(?=.{1,}$)/g, '*');
+
 }
 
 const fetchBankDetails = async (data, tenantId) => {

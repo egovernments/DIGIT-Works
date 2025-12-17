@@ -1,11 +1,13 @@
-import { FormComposer, Header, Toast, WorkflowModal } from "@egovernments/digit-ui-react-components";
+import { Button, CardText, FormComposer, Header, PopUp, WorkflowModal, Card, CardHeader, CardSubHeader, AlertPopUp } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Toast } from "@egovernments/digit-ui-components";
 import _ from "lodash";
 import { useHistory } from "react-router-dom";
 import { createBillPayload } from "../../../utils/createBillUtils";
 import { updateBillPayload } from "../../../utils/updateBillPayload";
 import getModalConfig from "./config";
+import debounce from 'lodash/debounce';
 
 const navConfig =  [
     {
@@ -23,10 +25,11 @@ const CreatePurchaseBillForm = ({
     preProcessData,
     isModify,
     docConfigData,
-    bill
+    bill,
+    MBValidationData
 }) => {
     const {t} = useTranslation();
-    const [toast, setToast] = useState({show : false, label : "", error : false});
+    const [toast, setToast] = useState({show : false, label : "", type : ""});
     const history = useHistory();
     const tenantId = Digit.ULBService.getCurrentTenantId();
 
@@ -36,13 +39,19 @@ const CreatePurchaseBillForm = ({
     const [selectedApprover, setSelectedApprover] = useState({});
     const [inputFormData,setInputFormData] = useState({})
     const [config, setConfig] = useState({});
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false)
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     createPurchaseBillConfig = useMemo(
         () => Digit.Utils.preProcessMDMSConfig(t, createPurchaseBillConfig, {
             updateDependent : [
               {
+                  key : 'invoiceDetails_organisationType',
+                  value : [preProcessData?.organisationTypes]
+              },
+              {
                   key : 'invoiceDetails_vendor',
-                  value : [preProcessData?.nameOfVendor]
+                  value : [sessionFormData?.invoiceDetails_organisationType?.code === "CBO" ? preProcessData?.nameOfCbo : preProcessData?.nameOfVendor]
               },
               {
                 key : 'basicDetails_purchaseBillNumber',
@@ -58,7 +67,7 @@ const CreatePurchaseBillForm = ({
               },
             ]
           }),
-      [preProcessData?.nameOfVendor]);
+      [preProcessData?.nameOfVendor, preProcessData?.nameOfCbo, sessionFormData?.invoiceDetails_organisationType]);
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
@@ -72,6 +81,50 @@ const CreatePurchaseBillForm = ({
                 let gstAmount = formData.invoiceDetails_gst ? formData.invoiceDetails_gst : 0;
                 setValue("billDetails_billAmt", parseInt(formData.invoiceDetails_materialCost)+parseInt(gstAmount));
             }
+
+            if (formData?.invoiceDetails_organisationType?.code === "CBO") {
+                setValue("invoiceDetails_vendor",  {code: contract.additionalDetails?.cboCode, name: contract.additionalDetails?.cboName, orgNumber: contract.additionalDetails?.cboOrgNumber});
+                setValue("invoiceDetails_vendorId", contract.additionalDetails?.cboOrgNumber);
+            
+                let organizationDetailsSection = createPurchaseBillConfig.form.find(item => item.head === "EXP_ORGANIZATION_DETAILS");
+                
+                if (organizationDetailsSection) {
+                    let vendorField = organizationDetailsSection.body.find(item => item.key === "invoiceDetails_vendor");
+                    
+                    if (vendorField) {
+                        // Disabling and converting the field to text input
+                        vendorField.disable = true;
+                        // vendorField.type = "text";
+                        vendorField.populators.customClass = "disabled-text-field";
+                    }
+                }
+            }
+
+            if (difference?.invoiceDetails_organisationType && formData?.invoiceDetails_organisationType?.code === "VEN") {
+
+                setValue("invoiceDetails_vendor", '');
+                setValue("invoiceDetails_vendorId", '');
+            
+                let organizationDetailsSection = createPurchaseBillConfig.form.find(item => item.head === "EXP_ORGANIZATION_DETAILS");
+                
+                if (organizationDetailsSection) {
+                    let vendorField = organizationDetailsSection.body.find(item => item.key === "invoiceDetails_vendor");
+                    
+                    if (vendorField) {
+                        // Enabling and converting back to dropdown
+                        vendorField.disable = false;
+                        vendorField.type = "dropdown";
+                        vendorField.populators.customClass = undefined;
+                    }
+                }
+            }
+            
+
+            // if(difference?.invoiceDetails_organisationType)
+            // {
+            //     setValue("invoiceDetails_vendor", '');
+            //     setValue("invoiceDetails_vendorId", undefined);  
+            // }
 
             if(formData.billDetails_billAmt) {
                 let gstAmount = formData.invoiceDetails_gst ? formData.invoiceDetails_gst : 0;
@@ -87,8 +140,8 @@ const CreatePurchaseBillForm = ({
             }
 
             if(difference?.billDetails_billAmt){
-                let billAmount = parseFloat(Digit.Utils.dss.convertFormatterToNumber(formData?.billDetails_billAmt));
-                formData?.deductionDetails?.forEach((data, index)=>{
+                let billAmount = parseFloat(Digit.Utils.dss.convertFormatterToNumber(formData.invoiceDetails_materialCost));
+                formData?.deductionDetails && formData?.deductionDetails?.forEach((data, index)=>{
                   if(data?.name?.calculationType === "percentage") {
                     const amount = billAmount ? (billAmount * (parseFloat(data?.name?.value)/100)).toFixed(1) : 0
                     setValue(`deductionDetails.${index}.amount`, amount);
@@ -101,7 +154,7 @@ const CreatePurchaseBillForm = ({
     }
 
     const handleToastClose = () => {
-        setToast({show : false, label : "", error : false});
+        setToast({show : false, label : "", type : ""});
     }
 
     //remove Toast after 3s
@@ -133,6 +186,7 @@ const CreatePurchaseBillForm = ({
                 selectedApprover,
                 setSelectedApprover,
                 approverLoading,
+                isModify
                 // designation,
                 // selectedDesignation,
                 // setSelectedDesignation,
@@ -145,16 +199,17 @@ const CreatePurchaseBillForm = ({
     }, [approvers])
 
 
-    const onModalSubmit = async (_data) => {
-        
+    const OnModalSubmit = async (_data) => {
+        setIsButtonDisabled(true);
+        _data = Digit.Utils.trimStringsInObject(_data)
         //here make complete data in combination with _data and inputFormData and create payload accordingly
         //also test edit flow with this change
         
         const workflowDetails = {
-            assignees:selectedApprover ? [selectedApprover.uuid]: [],
+            assignees:selectedApprover.uuid ? [selectedApprover.uuid]: [],
             comment:_data.comments ? _data.comments : ""
         }
-        const payload = createBillPayload(inputFormData, contract, docConfigData,workflowDetails);
+        const payload = createBillPayload(inputFormData, contract, docConfigData,workflowDetails, MBValidationData);
         
         if(isModify){
             const updatedBillObject = updateBillPayload(bill,payload)
@@ -177,19 +232,33 @@ const CreatePurchaseBillForm = ({
 
             await CreatePurchaseBillMutation(payload, {
                 onError: async (error, variables) => {
+                    setIsButtonDisabled(false);
                     sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
                 },
                 onSuccess: async (responseData, variables) => {
+                setIsButtonDisabled(false);
                 sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
                 },
             });
         }
-    }
+    };
+
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
 
     const onFormSubmit = async(data) => {
-
+        data = Digit.Utils.trimStringsInObject(data)
         setInputFormData((prevState) => data)
-
+        if(MBValidationData?.allMeasurementsIds?.length <= 0)
+            setToast({show : true, label : t("WORKS_NOT_ALLOWED_TO_CREATED_PB_NO_MB"), type : "error"})
+        // else if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills <=0)
+        //     setToast({show : true, label : t("WORKS_NOT_ALLOWED_TO_CREATED_PB_UNPAID"), type : "error"})
+        else if(MBValidationData?.totalMaterialAmount - MBValidationData?.totalPaidAmountForSuccessfulBills < data?.totalBillAmount)
+         { 
+            setIsPopupOpen(true);
+         }
+        else if(data?.totalBillAmount <= 0)
+        setToast({show : true, label : t("EXPENDITURE_VALUE_CANNOT_BE_ZERO"), type : "error"})
+        else
         setShowModal(true);
         //transform formdata to Payload
         
@@ -214,12 +283,18 @@ const CreatePurchaseBillForm = ({
         };
     });
 
+    const handleSubmit = (_data) => {
+        // Call the debounced version of onModalSubmit
+        debouncedOnModalSubmit(_data);
+      };
+
     return (
         <React.Fragment>
                 {showModal && <WorkflowModal
                     closeModal={() => setShowModal(false)}
-                    onSubmit={onModalSubmit}
+                    onSubmit={handleSubmit}
                     config={config}
+                    isDisabled = {isButtonDisabled}
                 />
                 }
 
@@ -237,7 +312,7 @@ const CreatePurchaseBillForm = ({
                         submitInForm={false}
                         fieldStyle={{ marginRight: 0 }}
                         inline={false}
-                        className="form-no-margin"
+                        // className="form-no-margin"
                         defaultValues={sessionFormData}
                         showWrapperContainers={false}
                         isDescriptionBold={false}
@@ -245,13 +320,16 @@ const CreatePurchaseBillForm = ({
                         showNavs={createPurchaseBillConfig?.metaData?.showNavs}
                         showFormInNav={true}
                         showMultipleCardsWithoutNavs={false}
-                        showMultipleCardsInNavs={false}
+                        showMultipleCardsInNavs={true}
                         horizontalNavConfig={navConfig}
                         onFormValueChange={onFormValueChange}
+                        sectionHeadStyle={{ marginTop: "2rem", marginBottom : "2rem" }}
+                        labelBold={true}
                         cardClassName = "mukta-header-card"
                     />)
                 }
-               {toast?.show && <Toast error={toast?.error} label={toast?.label} isDleteBtn={true} onClose={handleToastClose} />}
+                {isPopupOpen && <AlertPopUp setIsPopupOpen={setIsPopupOpen} setShowModal={setShowModal} t={t} label={"WORKS_UNPAID_AMT_MSG"} />}
+               {toast?.show && <Toast type={toast?.type} label={toast?.label} isDleteBtn={true} onClose={handleToastClose} />}
         </React.Fragment>
     )
 }

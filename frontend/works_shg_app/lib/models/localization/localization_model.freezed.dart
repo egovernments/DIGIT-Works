@@ -12,7 +12,7 @@ part of 'localization_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 LocalizationModel _$LocalizationModelFromJson(Map<String, dynamic> json) {
   return _LocalizationModel.fromJson(json);
@@ -63,22 +63,22 @@ class _$LocalizationModelCopyWithImpl<$Res, $Val extends LocalizationModel>
 }
 
 /// @nodoc
-abstract class _$$_LocalizationModelCopyWith<$Res>
+abstract class _$$LocalizationModelImplCopyWith<$Res>
     implements $LocalizationModelCopyWith<$Res> {
-  factory _$$_LocalizationModelCopyWith(_$_LocalizationModel value,
-          $Res Function(_$_LocalizationModel) then) =
-      __$$_LocalizationModelCopyWithImpl<$Res>;
+  factory _$$LocalizationModelImplCopyWith(_$LocalizationModelImpl value,
+          $Res Function(_$LocalizationModelImpl) then) =
+      __$$LocalizationModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<LocalizationMessageModel> messages});
 }
 
 /// @nodoc
-class __$$_LocalizationModelCopyWithImpl<$Res>
-    extends _$LocalizationModelCopyWithImpl<$Res, _$_LocalizationModel>
-    implements _$$_LocalizationModelCopyWith<$Res> {
-  __$$_LocalizationModelCopyWithImpl(
-      _$_LocalizationModel _value, $Res Function(_$_LocalizationModel) _then)
+class __$$LocalizationModelImplCopyWithImpl<$Res>
+    extends _$LocalizationModelCopyWithImpl<$Res, _$LocalizationModelImpl>
+    implements _$$LocalizationModelImplCopyWith<$Res> {
+  __$$LocalizationModelImplCopyWithImpl(_$LocalizationModelImpl _value,
+      $Res Function(_$LocalizationModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -86,7 +86,7 @@ class __$$_LocalizationModelCopyWithImpl<$Res>
   $Res call({
     Object? messages = null,
   }) {
-    return _then(_$_LocalizationModel(
+    return _then(_$LocalizationModelImpl(
       messages: null == messages
           ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
@@ -98,13 +98,13 @@ class __$$_LocalizationModelCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _$_LocalizationModel implements _LocalizationModel {
-  const _$_LocalizationModel(
+class _$LocalizationModelImpl implements _LocalizationModel {
+  const _$LocalizationModelImpl(
       {final List<LocalizationMessageModel> messages = const []})
       : _messages = messages;
 
-  factory _$_LocalizationModel.fromJson(Map<String, dynamic> json) =>
-      _$$_LocalizationModelFromJson(json);
+  factory _$LocalizationModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LocalizationModelImplFromJson(json);
 
   final List<LocalizationMessageModel> _messages;
   @override
@@ -121,10 +121,10 @@ class _$_LocalizationModel implements _LocalizationModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LocalizationModel &&
+            other is _$LocalizationModelImpl &&
             const DeepCollectionEquality().equals(other._messages, _messages));
   }
 
@@ -136,13 +136,13 @@ class _$_LocalizationModel implements _LocalizationModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LocalizationModelCopyWith<_$_LocalizationModel> get copyWith =>
-      __$$_LocalizationModelCopyWithImpl<_$_LocalizationModel>(
+  _$$LocalizationModelImplCopyWith<_$LocalizationModelImpl> get copyWith =>
+      __$$LocalizationModelImplCopyWithImpl<_$LocalizationModelImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_LocalizationModelToJson(
+    return _$$LocalizationModelImplToJson(
       this,
     );
   }
@@ -150,16 +150,17 @@ class _$_LocalizationModel implements _LocalizationModel {
 
 abstract class _LocalizationModel implements LocalizationModel {
   const factory _LocalizationModel(
-      {final List<LocalizationMessageModel> messages}) = _$_LocalizationModel;
+          {final List<LocalizationMessageModel> messages}) =
+      _$LocalizationModelImpl;
 
   factory _LocalizationModel.fromJson(Map<String, dynamic> json) =
-      _$_LocalizationModel.fromJson;
+      _$LocalizationModelImpl.fromJson;
 
   @override
   List<LocalizationMessageModel> get messages;
   @override
   @JsonKey(ignore: true)
-  _$$_LocalizationModelCopyWith<_$_LocalizationModel> get copyWith =>
+  _$$LocalizationModelImplCopyWith<_$LocalizationModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -231,24 +232,25 @@ class _$LocalizationMessageModelCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_LocalizationMessageModelCopyWith<$Res>
+abstract class _$$LocalizationMessageModelImplCopyWith<$Res>
     implements $LocalizationMessageModelCopyWith<$Res> {
-  factory _$$_LocalizationMessageModelCopyWith(
-          _$_LocalizationMessageModel value,
-          $Res Function(_$_LocalizationMessageModel) then) =
-      __$$_LocalizationMessageModelCopyWithImpl<$Res>;
+  factory _$$LocalizationMessageModelImplCopyWith(
+          _$LocalizationMessageModelImpl value,
+          $Res Function(_$LocalizationMessageModelImpl) then) =
+      __$$LocalizationMessageModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String code, String message, String module, String locale});
 }
 
 /// @nodoc
-class __$$_LocalizationMessageModelCopyWithImpl<$Res>
+class __$$LocalizationMessageModelImplCopyWithImpl<$Res>
     extends _$LocalizationMessageModelCopyWithImpl<$Res,
-        _$_LocalizationMessageModel>
-    implements _$$_LocalizationMessageModelCopyWith<$Res> {
-  __$$_LocalizationMessageModelCopyWithImpl(_$_LocalizationMessageModel _value,
-      $Res Function(_$_LocalizationMessageModel) _then)
+        _$LocalizationMessageModelImpl>
+    implements _$$LocalizationMessageModelImplCopyWith<$Res> {
+  __$$LocalizationMessageModelImplCopyWithImpl(
+      _$LocalizationMessageModelImpl _value,
+      $Res Function(_$LocalizationMessageModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -259,7 +261,7 @@ class __$$_LocalizationMessageModelCopyWithImpl<$Res>
     Object? module = null,
     Object? locale = null,
   }) {
-    return _then(_$_LocalizationMessageModel(
+    return _then(_$LocalizationMessageModelImpl(
       code: null == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -283,15 +285,15 @@ class __$$_LocalizationMessageModelCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
-class _$_LocalizationMessageModel implements _LocalizationMessageModel {
-  const _$_LocalizationMessageModel(
+class _$LocalizationMessageModelImpl implements _LocalizationMessageModel {
+  const _$LocalizationMessageModelImpl(
       {required this.code,
       required this.message,
       required this.module,
       required this.locale});
 
-  factory _$_LocalizationMessageModel.fromJson(Map<String, dynamic> json) =>
-      _$$_LocalizationMessageModelFromJson(json);
+  factory _$LocalizationMessageModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LocalizationMessageModelImplFromJson(json);
 
   @override
   final String code;
@@ -308,10 +310,10 @@ class _$_LocalizationMessageModel implements _LocalizationMessageModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LocalizationMessageModel &&
+            other is _$LocalizationMessageModelImpl &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.module, module) || other.module == module) &&
@@ -325,13 +327,13 @@ class _$_LocalizationMessageModel implements _LocalizationMessageModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LocalizationMessageModelCopyWith<_$_LocalizationMessageModel>
-      get copyWith => __$$_LocalizationMessageModelCopyWithImpl<
-          _$_LocalizationMessageModel>(this, _$identity);
+  _$$LocalizationMessageModelImplCopyWith<_$LocalizationMessageModelImpl>
+      get copyWith => __$$LocalizationMessageModelImplCopyWithImpl<
+          _$LocalizationMessageModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_LocalizationMessageModelToJson(
+    return _$$LocalizationMessageModelImplToJson(
       this,
     );
   }
@@ -342,10 +344,10 @@ abstract class _LocalizationMessageModel implements LocalizationMessageModel {
       {required final String code,
       required final String message,
       required final String module,
-      required final String locale}) = _$_LocalizationMessageModel;
+      required final String locale}) = _$LocalizationMessageModelImpl;
 
   factory _LocalizationMessageModel.fromJson(Map<String, dynamic> json) =
-      _$_LocalizationMessageModel.fromJson;
+      _$LocalizationMessageModelImpl.fromJson;
 
   @override
   String get code;
@@ -357,6 +359,6 @@ abstract class _LocalizationMessageModel implements LocalizationMessageModel {
   String get locale;
   @override
   @JsonKey(ignore: true)
-  _$$_LocalizationMessageModelCopyWith<_$_LocalizationMessageModel>
+  _$$LocalizationMessageModelImplCopyWith<_$LocalizationMessageModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

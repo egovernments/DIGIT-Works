@@ -12,7 +12,7 @@ part of 'location_mdms.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 Location _$LocationFromJson(Map<String, dynamic> json) {
   return _Location.fromJson(json);
@@ -65,10 +65,11 @@ class _$LocationCopyWithImpl<$Res, $Val extends Location>
 }
 
 /// @nodoc
-abstract class _$$_LocationCopyWith<$Res> implements $LocationCopyWith<$Res> {
-  factory _$$_LocationCopyWith(
-          _$_Location value, $Res Function(_$_Location) then) =
-      __$$_LocationCopyWithImpl<$Res>;
+abstract class _$$LocationImplCopyWith<$Res>
+    implements $LocationCopyWith<$Res> {
+  factory _$$LocationImplCopyWith(
+          _$LocationImpl value, $Res Function(_$LocationImpl) then) =
+      __$$LocationImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -77,11 +78,11 @@ abstract class _$$_LocationCopyWith<$Res> implements $LocationCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_LocationCopyWithImpl<$Res>
-    extends _$LocationCopyWithImpl<$Res, _$_Location>
-    implements _$$_LocationCopyWith<$Res> {
-  __$$_LocationCopyWithImpl(
-      _$_Location _value, $Res Function(_$_Location) _then)
+class __$$LocationImplCopyWithImpl<$Res>
+    extends _$LocationCopyWithImpl<$Res, _$LocationImpl>
+    implements _$$LocationImplCopyWith<$Res> {
+  __$$LocationImplCopyWithImpl(
+      _$LocationImpl _value, $Res Function(_$LocationImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -89,7 +90,7 @@ class __$$_LocationCopyWithImpl<$Res>
   $Res call({
     Object? tenantBoundaryList = freezed,
   }) {
-    return _then(_$_Location(
+    return _then(_$LocationImpl(
       tenantBoundaryList: freezed == tenantBoundaryList
           ? _value._tenantBoundaryList
           : tenantBoundaryList // ignore: cast_nullable_to_non_nullable
@@ -100,14 +101,14 @@ class __$$_LocationCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_Location implements _Location {
-  const _$_Location(
+class _$LocationImpl implements _Location {
+  const _$LocationImpl(
       {@JsonKey(name: 'TenantBoundary')
           final List<TenantBoundary>? tenantBoundaryList})
       : _tenantBoundaryList = tenantBoundaryList;
 
-  factory _$_Location.fromJson(Map<String, dynamic> json) =>
-      _$$_LocationFromJson(json);
+  factory _$LocationImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LocationImplFromJson(json);
 
   final List<TenantBoundary>? _tenantBoundaryList;
   @override
@@ -127,10 +128,10 @@ class _$_Location implements _Location {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Location &&
+            other is _$LocationImpl &&
             const DeepCollectionEquality()
                 .equals(other._tenantBoundaryList, _tenantBoundaryList));
   }
@@ -143,12 +144,12 @@ class _$_Location implements _Location {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LocationCopyWith<_$_Location> get copyWith =>
-      __$$_LocationCopyWithImpl<_$_Location>(this, _$identity);
+  _$$LocationImplCopyWith<_$LocationImpl> get copyWith =>
+      __$$LocationImplCopyWithImpl<_$LocationImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_LocationToJson(
+    return _$$LocationImplToJson(
       this,
     );
   }
@@ -157,16 +158,17 @@ class _$_Location implements _Location {
 abstract class _Location implements Location {
   const factory _Location(
       {@JsonKey(name: 'TenantBoundary')
-          final List<TenantBoundary>? tenantBoundaryList}) = _$_Location;
+          final List<TenantBoundary>? tenantBoundaryList}) = _$LocationImpl;
 
-  factory _Location.fromJson(Map<String, dynamic> json) = _$_Location.fromJson;
+  factory _Location.fromJson(Map<String, dynamic> json) =
+      _$LocationImpl.fromJson;
 
   @override
   @JsonKey(name: 'TenantBoundary')
   List<TenantBoundary>? get tenantBoundaryList;
   @override
   @JsonKey(ignore: true)
-  _$$_LocationCopyWith<_$_Location> get copyWith =>
+  _$$LocationImplCopyWith<_$LocationImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -219,22 +221,22 @@ class _$TenantBoundaryCopyWithImpl<$Res, $Val extends TenantBoundary>
 }
 
 /// @nodoc
-abstract class _$$_TenantBoundaryCopyWith<$Res>
+abstract class _$$TenantBoundaryImplCopyWith<$Res>
     implements $TenantBoundaryCopyWith<$Res> {
-  factory _$$_TenantBoundaryCopyWith(
-          _$_TenantBoundary value, $Res Function(_$_TenantBoundary) then) =
-      __$$_TenantBoundaryCopyWithImpl<$Res>;
+  factory _$$TenantBoundaryImplCopyWith(_$TenantBoundaryImpl value,
+          $Res Function(_$TenantBoundaryImpl) then) =
+      __$$TenantBoundaryImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({@JsonKey(name: 'boundary') List<WardBoundary>? boundaryList});
 }
 
 /// @nodoc
-class __$$_TenantBoundaryCopyWithImpl<$Res>
-    extends _$TenantBoundaryCopyWithImpl<$Res, _$_TenantBoundary>
-    implements _$$_TenantBoundaryCopyWith<$Res> {
-  __$$_TenantBoundaryCopyWithImpl(
-      _$_TenantBoundary _value, $Res Function(_$_TenantBoundary) _then)
+class __$$TenantBoundaryImplCopyWithImpl<$Res>
+    extends _$TenantBoundaryCopyWithImpl<$Res, _$TenantBoundaryImpl>
+    implements _$$TenantBoundaryImplCopyWith<$Res> {
+  __$$TenantBoundaryImplCopyWithImpl(
+      _$TenantBoundaryImpl _value, $Res Function(_$TenantBoundaryImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -242,7 +244,7 @@ class __$$_TenantBoundaryCopyWithImpl<$Res>
   $Res call({
     Object? boundaryList = freezed,
   }) {
-    return _then(_$_TenantBoundary(
+    return _then(_$TenantBoundaryImpl(
       boundaryList: freezed == boundaryList
           ? _value._boundaryList
           : boundaryList // ignore: cast_nullable_to_non_nullable
@@ -253,13 +255,13 @@ class __$$_TenantBoundaryCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_TenantBoundary implements _TenantBoundary {
-  const _$_TenantBoundary(
+class _$TenantBoundaryImpl implements _TenantBoundary {
+  const _$TenantBoundaryImpl(
       {@JsonKey(name: 'boundary') final List<WardBoundary>? boundaryList})
       : _boundaryList = boundaryList;
 
-  factory _$_TenantBoundary.fromJson(Map<String, dynamic> json) =>
-      _$$_TenantBoundaryFromJson(json);
+  factory _$TenantBoundaryImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TenantBoundaryImplFromJson(json);
 
   final List<WardBoundary>? _boundaryList;
   @override
@@ -278,10 +280,10 @@ class _$_TenantBoundary implements _TenantBoundary {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_TenantBoundary &&
+            other is _$TenantBoundaryImpl &&
             const DeepCollectionEquality()
                 .equals(other._boundaryList, _boundaryList));
   }
@@ -294,12 +296,13 @@ class _$_TenantBoundary implements _TenantBoundary {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_TenantBoundaryCopyWith<_$_TenantBoundary> get copyWith =>
-      __$$_TenantBoundaryCopyWithImpl<_$_TenantBoundary>(this, _$identity);
+  _$$TenantBoundaryImplCopyWith<_$TenantBoundaryImpl> get copyWith =>
+      __$$TenantBoundaryImplCopyWithImpl<_$TenantBoundaryImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_TenantBoundaryToJson(
+    return _$$TenantBoundaryImplToJson(
       this,
     );
   }
@@ -308,17 +311,17 @@ class _$_TenantBoundary implements _TenantBoundary {
 abstract class _TenantBoundary implements TenantBoundary {
   const factory _TenantBoundary(
           {@JsonKey(name: 'boundary') final List<WardBoundary>? boundaryList}) =
-      _$_TenantBoundary;
+      _$TenantBoundaryImpl;
 
   factory _TenantBoundary.fromJson(Map<String, dynamic> json) =
-      _$_TenantBoundary.fromJson;
+      _$TenantBoundaryImpl.fromJson;
 
   @override
   @JsonKey(name: 'boundary')
   List<WardBoundary>? get boundaryList;
   @override
   @JsonKey(ignore: true)
-  _$$_TenantBoundaryCopyWith<_$_TenantBoundary> get copyWith =>
+  _$$TenantBoundaryImplCopyWith<_$TenantBoundaryImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -389,11 +392,11 @@ class _$WardBoundaryCopyWithImpl<$Res, $Val extends WardBoundary>
 }
 
 /// @nodoc
-abstract class _$$_WardBoundaryCopyWith<$Res>
+abstract class _$$WardBoundaryImplCopyWith<$Res>
     implements $WardBoundaryCopyWith<$Res> {
-  factory _$$_WardBoundaryCopyWith(
-          _$_WardBoundary value, $Res Function(_$_WardBoundary) then) =
-      __$$_WardBoundaryCopyWithImpl<$Res>;
+  factory _$$WardBoundaryImplCopyWith(
+          _$WardBoundaryImpl value, $Res Function(_$WardBoundaryImpl) then) =
+      __$$WardBoundaryImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -403,11 +406,11 @@ abstract class _$$_WardBoundaryCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_WardBoundaryCopyWithImpl<$Res>
-    extends _$WardBoundaryCopyWithImpl<$Res, _$_WardBoundary>
-    implements _$$_WardBoundaryCopyWith<$Res> {
-  __$$_WardBoundaryCopyWithImpl(
-      _$_WardBoundary _value, $Res Function(_$_WardBoundary) _then)
+class __$$WardBoundaryImplCopyWithImpl<$Res>
+    extends _$WardBoundaryCopyWithImpl<$Res, _$WardBoundaryImpl>
+    implements _$$WardBoundaryImplCopyWith<$Res> {
+  __$$WardBoundaryImplCopyWithImpl(
+      _$WardBoundaryImpl _value, $Res Function(_$WardBoundaryImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -417,7 +420,7 @@ class __$$_WardBoundaryCopyWithImpl<$Res>
     Object? name = freezed,
     Object? localityChildren = freezed,
   }) {
-    return _then(_$_WardBoundary(
+    return _then(_$WardBoundaryImpl(
       code: freezed == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -436,15 +439,15 @@ class __$$_WardBoundaryCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_WardBoundary implements _WardBoundary {
-  const _$_WardBoundary(
+class _$WardBoundaryImpl implements _WardBoundary {
+  const _$WardBoundaryImpl(
       {@JsonKey(name: 'code') this.code,
       @JsonKey(name: 'name') this.name,
       @JsonKey(name: 'children') final List<LocalityChild>? localityChildren})
       : _localityChildren = localityChildren;
 
-  factory _$_WardBoundary.fromJson(Map<String, dynamic> json) =>
-      _$$_WardBoundaryFromJson(json);
+  factory _$WardBoundaryImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WardBoundaryImplFromJson(json);
 
   @override
   @JsonKey(name: 'code')
@@ -470,10 +473,10 @@ class _$_WardBoundary implements _WardBoundary {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_WardBoundary &&
+            other is _$WardBoundaryImpl &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.name, name) || other.name == name) &&
             const DeepCollectionEquality()
@@ -488,12 +491,12 @@ class _$_WardBoundary implements _WardBoundary {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_WardBoundaryCopyWith<_$_WardBoundary> get copyWith =>
-      __$$_WardBoundaryCopyWithImpl<_$_WardBoundary>(this, _$identity);
+  _$$WardBoundaryImplCopyWith<_$WardBoundaryImpl> get copyWith =>
+      __$$WardBoundaryImplCopyWithImpl<_$WardBoundaryImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_WardBoundaryToJson(
+    return _$$WardBoundaryImplToJson(
       this,
     );
   }
@@ -506,10 +509,10 @@ abstract class _WardBoundary implements WardBoundary {
       @JsonKey(name: 'name')
           final String? name,
       @JsonKey(name: 'children')
-          final List<LocalityChild>? localityChildren}) = _$_WardBoundary;
+          final List<LocalityChild>? localityChildren}) = _$WardBoundaryImpl;
 
   factory _WardBoundary.fromJson(Map<String, dynamic> json) =
-      _$_WardBoundary.fromJson;
+      _$WardBoundaryImpl.fromJson;
 
   @override
   @JsonKey(name: 'code')
@@ -522,7 +525,7 @@ abstract class _WardBoundary implements WardBoundary {
   List<LocalityChild>? get localityChildren;
   @override
   @JsonKey(ignore: true)
-  _$$_WardBoundaryCopyWith<_$_WardBoundary> get copyWith =>
+  _$$WardBoundaryImplCopyWith<_$WardBoundaryImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -600,11 +603,11 @@ class _$LocalityChildCopyWithImpl<$Res, $Val extends LocalityChild>
 }
 
 /// @nodoc
-abstract class _$$_LocalityChildCopyWith<$Res>
+abstract class _$$LocalityChildImplCopyWith<$Res>
     implements $LocalityChildCopyWith<$Res> {
-  factory _$$_LocalityChildCopyWith(
-          _$_LocalityChild value, $Res Function(_$_LocalityChild) then) =
-      __$$_LocalityChildCopyWithImpl<$Res>;
+  factory _$$LocalityChildImplCopyWith(
+          _$LocalityChildImpl value, $Res Function(_$LocalityChildImpl) then) =
+      __$$LocalityChildImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -615,11 +618,11 @@ abstract class _$$_LocalityChildCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_LocalityChildCopyWithImpl<$Res>
-    extends _$LocalityChildCopyWithImpl<$Res, _$_LocalityChild>
-    implements _$$_LocalityChildCopyWith<$Res> {
-  __$$_LocalityChildCopyWithImpl(
-      _$_LocalityChild _value, $Res Function(_$_LocalityChild) _then)
+class __$$LocalityChildImplCopyWithImpl<$Res>
+    extends _$LocalityChildCopyWithImpl<$Res, _$LocalityChildImpl>
+    implements _$$LocalityChildImplCopyWith<$Res> {
+  __$$LocalityChildImplCopyWithImpl(
+      _$LocalityChildImpl _value, $Res Function(_$LocalityChildImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -630,7 +633,7 @@ class __$$_LocalityChildCopyWithImpl<$Res>
     Object? latitude = freezed,
     Object? longitude = freezed,
   }) {
-    return _then(_$_LocalityChild(
+    return _then(_$LocalityChildImpl(
       code: freezed == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -653,15 +656,15 @@ class __$$_LocalityChildCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_LocalityChild implements _LocalityChild {
-  const _$_LocalityChild(
+class _$LocalityChildImpl implements _LocalityChild {
+  const _$LocalityChildImpl(
       {@JsonKey(name: 'code') this.code,
       @JsonKey(name: 'name') this.name,
       @JsonKey(name: 'latitude') this.latitude,
       @JsonKey(name: 'longitude') this.longitude});
 
-  factory _$_LocalityChild.fromJson(Map<String, dynamic> json) =>
-      _$$_LocalityChildFromJson(json);
+  factory _$LocalityChildImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LocalityChildImplFromJson(json);
 
   @override
   @JsonKey(name: 'code')
@@ -682,10 +685,10 @@ class _$_LocalityChild implements _LocalityChild {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LocalityChild &&
+            other is _$LocalityChildImpl &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.latitude, latitude) ||
@@ -701,12 +704,12 @@ class _$_LocalityChild implements _LocalityChild {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LocalityChildCopyWith<_$_LocalityChild> get copyWith =>
-      __$$_LocalityChildCopyWithImpl<_$_LocalityChild>(this, _$identity);
+  _$$LocalityChildImplCopyWith<_$LocalityChildImpl> get copyWith =>
+      __$$LocalityChildImplCopyWithImpl<_$LocalityChildImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_LocalityChildToJson(
+    return _$$LocalityChildImplToJson(
       this,
     );
   }
@@ -714,13 +717,14 @@ class _$_LocalityChild implements _LocalityChild {
 
 abstract class _LocalityChild implements LocalityChild {
   const factory _LocalityChild(
-      {@JsonKey(name: 'code') final String? code,
-      @JsonKey(name: 'name') final String? name,
-      @JsonKey(name: 'latitude') final String? latitude,
-      @JsonKey(name: 'longitude') final String? longitude}) = _$_LocalityChild;
+          {@JsonKey(name: 'code') final String? code,
+          @JsonKey(name: 'name') final String? name,
+          @JsonKey(name: 'latitude') final String? latitude,
+          @JsonKey(name: 'longitude') final String? longitude}) =
+      _$LocalityChildImpl;
 
   factory _LocalityChild.fromJson(Map<String, dynamic> json) =
-      _$_LocalityChild.fromJson;
+      _$LocalityChildImpl.fromJson;
 
   @override
   @JsonKey(name: 'code')
@@ -736,6 +740,6 @@ abstract class _LocalityChild implements LocalityChild {
   String? get longitude;
   @override
   @JsonKey(ignore: true)
-  _$$_LocalityChildCopyWith<_$_LocalityChild> get copyWith =>
+  _$$LocalityChildImplCopyWith<_$LocalityChildImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,0 +1,5 @@
+elastic-transport==8.13.1
+elasticsearch==8.13.2
+requests==2.31.0
+urllib3==2.1.0
+confluent-kafka==2.3.0

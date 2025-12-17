@@ -1,0 +1,259 @@
+ServiceMaps:
+  serviceName: expense-bill indexer
+  version: 1.0.0
+  mappings:
+   - topic: expense-bill-create
+     configKey: INDEX
+     indexes:
+       - name: expense-bill-index
+         type: general
+         id: $.id,$.tenantId
+         jsonPath: $.bill
+         isBulk: false
+         timeStampField: $.auditDetails.createdTime
+         customJsonMapping:
+           indexMapping: { "Data":{"id":"","tenantId":"","billNumber":"","billDate":"","dueDate":"","totalAmount":"","totalPaidAmount":"","businessService":"","referenceId":"","fromPeriod":"","toPeriod":"","paymentStatus":"","status":"","payer":{},"billDetails":[],"additionalDetails":{},"auditDetails":{},"currentProcessInstance":{},"history":{}}}
+           fieldMapping:
+           - inJsonPath: $.id
+             outJsonPath: $.Data.id
+           - inJsonPath: $.tenantId
+             outJsonPath: $.Data.tenantId
+           - inJsonPath: $.billNumber
+             outJsonPath: $.Data.billNumber  
+           - inJsonPath: $.billDate
+             outJsonPath: $.Data.billDate
+           - inJsonPath: $.dueDate
+             outJsonPath: $.Data.dueDate
+           - inJsonPath: $.totalAmount
+             outJsonPath: $.Data.totalAmount
+           - inJsonPath: $.totalPaidAmount
+             outJsonPath: $.Data.totalPaidAmount
+           - inJsonPath: $.businessService
+             outJsonPath: $.Data.businessService
+           - inJsonPath: $.referenceId
+             outJsonPath: $.Data.referenceId
+           - inJsonPath: $.fromPeriod
+             outJsonPath: $.Data.fromPeriod
+           - inJsonPath: $.toPeriod
+             outJsonPath: $.Data.toPeriod
+           - inJsonPath: $.paymentStatus
+             outJsonPath: $.Data.paymentStatus
+           - inJsonPath: $.status
+             outJsonPath: $.Data.status   
+           - inJsonPath: $.payer
+             outJsonPath: $.Data.payer
+           - inJsonPath: $.billDetails
+             outJsonPath: $.Data.billDetails
+           - inJsonPath: $.additionalDetails
+             outJsonPath: $.Data.additionalDetails
+           - inJsonPath: $.auditDetails
+             outJsonPath: $.Data.auditDetails
+           - inJsonPath: $.additionalDetails.locality
+             outJsonPath: $.Data.locality
+           - inJsonPath: $.additionalDetails.ward
+             outJsonPath: $.Data.ward
+           - inJsonPath: $.additionalDetails.projectName
+             outJsonPath: $.Data.projectName  
+           - inJsonPath: $.additionalDetails.orgName
+             outJsonPath: $.Data.orgName
+           externalUriMapping:
+           - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+             queryParam: businessIds=$.billNumber,history=true,tenantId=$.tenantId
+             apiRequest: {"RequestInfo":{"apiId":"org.egov.bill","ver":"1.0","ts":1502890899493,"action":"asd","did":"4354648646","key":"xyz","msgId":"654654","requesterId":"61","authToken":"96878232-c25e-4b36-95ea-43856aadfd0b","userInfo":{"id":1,"uuid":"1fec8102-0e02-4d0a-b283-cd80d5dab067","type":"EMPLOYEE","tenantId":"pg.citya","roles":[{"name":"Employee","code":"EMPLOYEE","tenantId":"pg.citya"}]}}}
+             uriResponseMapping:
+             - inJsonPath: $.ProcessInstances
+               outJsonPath: $.Data.history
+             - inJsonPath: $.ProcessInstances[0]
+               outJsonPath: $.Data.currentProcessInstance
+
+   - topic: expense-bill-update
+     configKey: INDEX
+     indexes:
+       - name: expense-bill-index
+         type: general
+         id: $.id,$.tenantId
+         jsonPath: $.bill
+         isBulk: false
+         timeStampField: $.auditDetails.createdTime
+         customJsonMapping:
+           indexMapping: { "Data":{"id":"","tenantId":"","billNumber":"","billDate":"","dueDate":"","totalAmount":"","totalPaidAmount":"","businessService":"","referenceId":"","fromPeriod":"","toPeriod":"","paymentStatus":"","status":"","payer":{},"billDetails":[],"additionalDetails":{},"auditDetails":{},"currentProcessInstance":{},"history":{}}}
+           fieldMapping:
+           - inJsonPath: $.id
+             outJsonPath: $.Data.id
+           - inJsonPath: $.tenantId
+             outJsonPath: $.Data.tenantId
+           - inJsonPath: $.billNumber
+             outJsonPath: $.Data.billNumber 
+           - inJsonPath: $.billDate
+             outJsonPath: $.Data.billDate
+           - inJsonPath: $.dueDate
+             outJsonPath: $.Data.dueDate
+           - inJsonPath: $.totalAmount
+             outJsonPath: $.Data.totalAmount
+           - inJsonPath: $.totalPaidAmount
+             outJsonPath: $.Data.totalPaidAmount
+           - inJsonPath: $.businessService
+             outJsonPath: $.Data.businessService
+           - inJsonPath: $.referenceId
+             outJsonPath: $.Data.referenceId
+           - inJsonPath: $.fromPeriod
+             outJsonPath: $.Data.fromPeriod
+           - inJsonPath: $.toPeriod
+             outJsonPath: $.Data.toPeriod
+           - inJsonPath: $.paymentStatus
+             outJsonPath: $.Data.paymentStatus
+           - inJsonPath: $.status
+             outJsonPath: $.Data.status   
+           - inJsonPath: $.payer
+             outJsonPath: $.Data.payer
+           - inJsonPath: $.billDetails
+             outJsonPath: $.Data.billDetails
+           - inJsonPath: $.additionalDetails
+             outJsonPath: $.Data.additionalDetails
+           - inJsonPath: $.auditDetails
+             outJsonPath: $.Data.auditDetails
+           - inJsonPath: $.additionalDetails.locality
+             outJsonPath: $.Data.locality
+           - inJsonPath: $.additionalDetails.ward
+             outJsonPath: $.Data.ward
+           - inJsonPath: $.additionalDetails.projectName
+             outJsonPath: $.Data.projectName  
+           - inJsonPath: $.additionalDetails.orgName
+             outJsonPath: $.Data.orgName
+           externalUriMapping:
+           - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+             queryParam: businessIds=$.billNumber,history=true,tenantId=$.tenantId
+             apiRequest: {"RequestInfo":{"apiId":"org.egov.bill","ver":"1.0","ts":1502890899493,"action":"asd","did":"4354648646","key":"xyz","msgId":"654654","requesterId":"61","authToken":"d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo":{"id":1,"uuid":"1fec8102-0e02-4d0a-b283-cd80d5dab067","type":"EMPLOYEE","tenantId":"pg.citya","roles":[{"name":"Employee","code":"EMPLOYEE","tenantId":"pg.citya"}]}}}
+             uriResponseMapping:
+             - inJsonPath: $.ProcessInstances
+               outJsonPath: $.Data.history
+             - inJsonPath: $.ProcessInstances[0]
+               outJsonPath: $.Data.currentProcessInstance
+
+   - topic: expense-bill-legacyIndex
+     configKey: LEGACYINDEX
+     indexes:
+       - name: expense-bill-legacyIndex
+         type: general
+         id: $.id,$.tenantId
+         jsonPath: $.bill
+         isBulk: false
+         timeStampField: $.auditDetails.createdTime
+         customJsonMapping:
+           indexMapping: { "Data":{"id":"","tenantId":"","billNumber":"","billDate":"","dueDate":"","totalAmount":"","totalPaidAmount":"","businessService":"","referenceId":"","fromPeriod":"","toPeriod":"","paymentStatus":"","status":"","payer":{},"billDetails":[],"additionalDetails":{},"auditDetails":{},"history":{}}}
+           fieldMapping:
+           - inJsonPath: $.id
+             outJsonPath: $.Data.id
+           - inJsonPath: $.tenantId
+             outJsonPath: $.Data.tenantId
+           - inJsonPath: $.billNumber
+             outJsonPath: $.Data.billNumber
+           - inJsonPath: $.billDate
+             outJsonPath: $.Data.billDate
+           - inJsonPath: $.dueDate
+             outJsonPath: $.Data.dueDate
+           - inJsonPath: $.totalAmount
+             outJsonPath: $.Data.totalAmount
+           - inJsonPath: $.totalPaidAmount
+             outJsonPath: $.Data.totalPaidAmount
+           - inJsonPath: $.businessService
+             outJsonPath: $.Data.businessService
+           - inJsonPath: $.referenceId
+             outJsonPath: $.Data.referenceId
+           - inJsonPath: $.fromPeriod
+             outJsonPath: $.Data.fromPeriod
+           - inJsonPath: $.toPeriod
+             outJsonPath: $.Data.toPeriod
+           - inJsonPath: $.paymentStatus
+             outJsonPath: $.Data.paymentStatus
+           - inJsonPath: $.status
+             outJsonPath: $.Data.status   
+           - inJsonPath: $.payer
+             outJsonPath: $.Data.payer
+           - inJsonPath: $.billDetails
+             outJsonPath: $.Data.billDetails
+           - inJsonPath: $.additionalDetails
+             outJsonPath: $.Data.additionalDetails
+           - inJsonPath: $.auditDetails
+             outJsonPath: $.Data.auditDetails
+           - inJsonPath: $.additionalDetails.locality
+             outJsonPath: $.Data.locality
+           - inJsonPath: $.additionalDetails.ward
+             outJsonPath: $.Data.ward
+           - inJsonPath: $.additionalDetails.projectName
+             outJsonPath: $.Data.projectName  
+           - inJsonPath: $.additionalDetails.orgName
+             outJsonPath: $.Data.orgName
+           externalUriMapping:
+           - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+             queryParam: businessIds=$.billNumber,history=true,tenantId=$.tenantId
+             apiRequest: {"RequestInfo":{"apiId":"org.egov.bill","ver":"1.0","ts":1502890899493,"action":"asd","did":"4354648646","key":"xyz","msgId":"654654","requesterId":"61","authToken":"d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo":{"id":1,"uuid":"1fec8102-0e02-4d0a-b283-cd80d5dab067","type":"EMPLOYEE","tenantId":"pg.citya","roles":[{"name":"Employee","code":"EMPLOYEE","tenantId":"pg.citya"}]}}}
+             uriResponseMapping:
+             - inJsonPath: $.ProcessInstances
+               outJsonPath: $.Data.history
+             - inJsonPath: $.ProcessInstances[0]
+               outJsonPath: $.Data.currentProcessInstance
+
+   - topic: migrate-expense-bill
+     configKey: INDEX
+     indexes:
+      - name: expense-bill-index-migrate
+        type: general
+        id: $.id,$.tenantId
+        jsonPath: $.bill
+        isBulk: false
+        timeStampField: $.auditDetails.createdTime
+        customJsonMapping:
+          indexMapping: { "Data":{"id":"","tenantId":"","billNumber":"","billDate":"","dueDate":"","totalAmount":"","totalPaidAmount":"","businessService":"","referenceId":"","fromPeriod":"","toPeriod":"","paymentStatus":"","status":"","payer":{},"billDetails":[],"additionalDetails":{},"auditDetails":{},"currentProcessInstance":{},"history":{}}}
+          fieldMapping:
+          - inJsonPath: $.id
+            outJsonPath: $.Data.id
+          - inJsonPath: $.tenantId
+            outJsonPath: $.Data.tenantId
+          - inJsonPath: $.billNumber
+            outJsonPath: $.Data.billNumber  
+          - inJsonPath: $.billDate
+            outJsonPath: $.Data.billDate
+          - inJsonPath: $.dueDate
+            outJsonPath: $.Data.dueDate
+          - inJsonPath: $.totalAmount
+            outJsonPath: $.Data.totalAmount
+          - inJsonPath: $.totalPaidAmount
+            outJsonPath: $.Data.totalPaidAmount
+          - inJsonPath: $.businessService
+            outJsonPath: $.Data.businessService
+          - inJsonPath: $.referenceId
+            outJsonPath: $.Data.referenceId
+          - inJsonPath: $.fromPeriod
+            outJsonPath: $.Data.fromPeriod
+          - inJsonPath: $.toPeriod
+            outJsonPath: $.Data.toPeriod
+          - inJsonPath: $.paymentStatus
+            outJsonPath: $.Data.paymentStatus
+          - inJsonPath: $.status
+            outJsonPath: $.Data.status   
+          - inJsonPath: $.payer
+            outJsonPath: $.Data.payer
+          - inJsonPath: $.billDetails
+            outJsonPath: $.Data.billDetails
+          - inJsonPath: $.additionalDetails
+            outJsonPath: $.Data.additionalDetails
+          - inJsonPath: $.auditDetails
+            outJsonPath: $.Data.auditDetails
+          - inJsonPath: $.additionalDetails.locality
+            outJsonPath: $.Data.locality
+          - inJsonPath: $.additionalDetails.ward
+            outJsonPath: $.Data.ward
+          - inJsonPath: $.additionalDetails.projectName
+            outJsonPath: $.Data.projectName  
+          - inJsonPath: $.additionalDetails.orgName
+            outJsonPath: $.Data.orgName
+          externalUriMapping:
+          - path: https://mukta-uat.digit.org/egov-workflow-v2/egov-wf/process/_search
+            queryParam: businessIds=$.billNumber,history=true,tenantId=$.tenantId
+            apiRequest: {"RequestInfo":{"apiId":"org.egov.bill","ver":"1.0","ts":1502890899493,"action":"asd","did":"4354648646","key":"xyz","msgId":"654654","requesterId":"61","authToken":"ecf33997-f3cf-48bc-99d9-f228ddd40bba","userInfo":{"id":1,"uuid":"1fec8102-0e02-4d0a-b283-cd80d5dab067","type":"EMPLOYEE","tenantId":"od.dhenkanal","roles":[{"name":"Employee","code":"EMPLOYEE","tenantId":"od.dhenkanal"}]}}}
+            uriResponseMapping:
+            - inJsonPath: $.ProcessInstances
+              outJsonPath: $.Data.history
+            - inJsonPath: $.ProcessInstances[0]
+              outJsonPath: $.Data.currentProcessInstance

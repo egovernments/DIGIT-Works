@@ -112,3 +112,38 @@
     }
   }
 }
+
+
+.rate-data-table {
+  @apply text-text-primary;
+
+  .row {
+    @apply flex border-black border-border pb-sm mb-sm;
+
+    span {
+      width: 10%;
+      display: contents;
+    }
+
+    h2 {
+      width: 70%;
+      @apply font-bold text-heading-s;
+    }
+
+    .value {
+      width: 35%;
+      @apply text-heading-s;
+      word-break: break-all;
+    }
+    .caption {
+      width: 30%;
+      @apply text-heading-s text-text-secondary;
+    }
+  }
+
+  .last {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+}

@@ -326,20 +326,21 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
           return Digit.Utils.dss.formatterWithoutRound(value, 'number');
         },
       },
-      {
-        Header: () => <p>{t("ATM_BANK_ACCOUNT_DETAILS")}</p>,
-        accessor: "bankAccountDetails",
-        Cell: ({ value, column, row }) => {
-          return renderBankAccountDetails(value);
-        },
-      },
-      {
-        Header: () => <p>{t("ATM_WAGE_SEEKER_AADHAR")}</p>,
-        accessor: "aadharNumber",
-        Cell: ({ value, column, row }) => {
-          return String(t(value));
-        }
-      }
+      // removed for DPP
+      // {
+      //   Header: () => <p>{t("ATM_BANK_ACCOUNT_DETAILS")}</p>,
+      //   accessor: "bankAccountDetails",
+      //   Cell: ({ value, column, row }) => {
+      //     return renderBankAccountDetails(value);
+      //   },
+      // },
+      // {
+      //   Header: () => <p>{t("ATM_WAGE_SEEKER_AADHAR")}</p>,
+      //   accessor: "aadharNumber",
+      //   Cell: ({ value, column, row }) => {
+      //     return String(t(value));
+      //   }
+      // }
     ]
     let colsToReturn = [];
     // if(showFullTableReadOnly || editable) {
@@ -364,6 +365,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
           initSortId="S N "
           data={tableRow}
           totalRecords={tableRow.length}
+          pageSizeLimit={tableRow.length}
           columns={tableColumns}
           isPaginationRequired={false}
           getCellProps={(cellInfo) => {

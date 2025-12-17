@@ -35,6 +35,7 @@ import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
 import useGenderMDMS from "./useGenderMDMS";
 import useCustomAPIHook from "./useCustomAPIHook";
+import useCustomAPIMutationHook from "./useCustomAPIMutationHook";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
@@ -106,6 +107,8 @@ import useCreateLOI from "./works/useCreateLOI";
 import useEstimateSearchWorks from "./works/useSearch";
 import useCreateEstimate from "./works/useCreateEstimate";
 import useCreateEstimateNew from "./works/useCreateEstimateNew";
+import useCreateAnalysisStatement from "./works/useCreateAnalysisStatement";
+import useCreateUtilizationStatement from "./works/useCreateUtilizationStatement";
 import useSearchEstimate from "./works/useSearchEstimate";
 import useApplicationActionsLOI from "./works/useApplicationActions";
 import useApplicationActionsEstimate from "./works/useUpdateEstimate";
@@ -159,6 +162,20 @@ import useCreatePurchaseBill from "./bills/useCreatePurchaseBill";
 import useUpdatePurchaseBill from "./bills/useUpdatePurchaseBill";
 import useSearchBill from "./bills/useSearchBill";
 
+import useViewPaymentInstruction from "./payments/useViewPaymentInstruction";
+import useViewPayment from "./payments/useViewPayment";
+import useUpdatePI from "./expenditure/useUpdatePI";
+import useMBDataForPB from "./expenditure/useMBDataForPB";
+import useViewPaymentTracker from "./expenditure/useViewPaymentTracker";
+import useGenerateExcel from "./expenditure/useGenerateExcel";
+
+import useViewMeasurement from "./measurement/useViewMeasurement";
+import useEstimateSearchValidation from "./mukta/useEstimateSearchValidation";
+import useTEorMBCreateValidation from "./mukta/useTEorMBCreateValidation";
+import fetchContractDetails from"./rateAnalysis/useviewcontractdetails";
+import useViewRateAnalysisDetails from "./rateAnalysis/useviewcontractdetails";
+import { paymentTrackerReport } from "./paymentTrackerReport";
+
 const works = {
   useViewEstimateDetails,
   useViewProjectDetails,
@@ -172,6 +189,12 @@ const works = {
   useSearchWORKS,
   useCreateEstimate,
   useCreateEstimateNew,
+  //look here to import and export
+  useCreateAnalysisStatement,
+  // added
+  useCreateUtilizationStatement,
+
+
   useSearchEstimate,
   useApplicationActionsLOI,
   useUpdateEstimate:useUpdateEstimateWorks,
@@ -306,6 +329,26 @@ const bankAccount = {
   useCreateBankAccount
 }
 
+const paymentInstruction = {
+  useViewPaymentInstruction,
+  useUpdatePI,
+  useMBDataForPB,
+  useViewPayment,
+  useViewPaymentTracker
+}
+
+const measurement = {
+  useViewMeasurement
+}
+const mukta = {
+  useEstimateSearchValidation,
+  useTEorMBCreateValidation
+}
+const rateAnalysis={
+  fetchContractDetails,
+  useViewRateAnalysisDetails
+}
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -314,6 +357,7 @@ const Hooks = {
   useFetchCitizenBillsForBuissnessService,
   useFetchBillsForBuissnessService,
   useGetPaymentRulesForBusinessServices,
+  useGenerateExcel,
   useWorkflowDetails,
   useWorkflowDetailsWorks,
   useInitStore,
@@ -335,6 +379,7 @@ const Hooks = {
   useNotificationCount,
   useStore,
   useDocumentSearch,
+  paymentTrackerReport,
   useTenants,
   useAccessControl,
   usePrivacyContext,
@@ -353,6 +398,7 @@ const Hooks = {
   useRouteSubscription,
   useCustomMDMS,
   useCustomAPIHook,
+  useCustomAPIMutationHook,
   useGetHowItWorksJSON,
   useGetFAQsJSON,
   useGetDSSFAQsJSON,
@@ -370,7 +416,11 @@ const Hooks = {
   project,
   wageSeeker,
   organisation,
-  bankAccount
+  bankAccount,
+  paymentInstruction,
+  measurement,
+  mukta,
+  rateAnalysis,
 };
 
 export default Hooks;

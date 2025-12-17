@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 const EstimateInbox = () => {
     const { t } = useTranslation();
     const location = useLocation()
+    sessionStorage.getItem("Digit.NEW_ESTIMATE_CREATE") ? sessionStorage.removeItem("Digit.NEW_ESTIMATE_CREATE") : "";
     
     //fetch this config from mdms and pass it to the preProcess fn
     // let configs = inboxConfigMukta(t);

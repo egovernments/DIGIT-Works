@@ -7,6 +7,19 @@ WorkOrder workOrder = const WorkOrder();
 WageSeeker wageSeeker = const WageSeeker();
 AttendanceMgmt attendanceMgmt = const AttendanceMgmt();
 MyBills myBills = const MyBills();
+MyServiceRequests myServiceRequests = const MyServiceRequests();
+MeasurementBook measurementBook = const MeasurementBook();
+
+PrivacyPolicy privacyPolicy=const PrivacyPolicy();
+class PrivacyPolicy {
+  const PrivacyPolicy();
+  String get byClick => 'ES_BY_CLICKING';
+  String get privacyPolicyLink => 'ES_PRIVACY_POLICY';
+  String get accept=>'DIGIT_I_ACCEPT';
+  String get decline=>'DIGIT_I_DO_NOT_ACCEPT';
+  String get privacyPolicyValidationText=>"PRIVACY_POLICY_VALIDATION_ERROR";
+  
+}
 
 class Login {
   const Login();
@@ -24,10 +37,20 @@ class Login {
   String get enteredMobileNotRegistered =>
       'ENTERED_MOBILE_NO_NOT_REGISTERED_AS_CBO';
   String get pleaseEnterMobile => 'ENTER_REGISTERED_MOBILE';
+  String get forgotPasswordMsg => "CORE_COMMON_FORGOT_MESSAGE";
 }
 
 class Common {
   const Common();
+  String get wentWrong=>"CORE_SOMETHING_WENT_WRONG";
+  String get statementnotfound=>"WORK_ORDER_STATEMENT_NOT_FOUND";
+  String get noFileSelected=>"WORKS_NO_FILE_SELECTED";
+  String get comments=>"WF_COMMON_COMMENTS";
+  String get photoInfo=>"WORKS_DOC_UPLOAD_HINT";
+  String get searchCriteria=>"ES_COMMON_MIN_SEARCH_CRITERIA_MSG";
+  String get workOrderNotFound=>"COMMON_WO_NOT_FOUND";
+  String get notFound=>"ES_COMMON_NO_DATA";
+  String get empLoginError=>"ES_INVALID_LOGIN_CREDENTIALS";
   String get continueLabel => 'CORE_COMMON_CONTINUE';
   String get nameLabel => 'CORE_COMMON_NAME';
   String get continueToLogin => 'CONTINUE_TO_LOGIN';
@@ -87,6 +110,7 @@ class Common {
   String get total => 'TOTAL';
   String get attachments => 'CS_COMMON_ATTACHMENTS';
   String get apply => 'ES_COMMON_APPLY';
+  String get noItems => 'ES_COMMON_NO_ITEMS';
   String get cancel => 'CS_ACTION_CANCEL';
   String get close => 'CS_ACTION_CLOSE';
   String get startDate => 'EVENTS_START_DATE_LABEL';
@@ -98,6 +122,7 @@ class Common {
   String get action => 'CS_COMMON_ACTION';
   String get next => 'CS_COMMON_NEXT';
   String get fileSize => 'FILE_SIZE';
+  String get invalidImageFile => 'CS_COMMON_INVALID_IMAGE_FILE';
   String get chooseFile => 'CHOOSE_FILE';
   String get noFileUploaded => 'NO_FILE_UPLOADED';
   String get camera => 'CAMERA';
@@ -114,6 +139,7 @@ class Common {
   String get branchName => 'COMMON_BRANCH_NAME';
   String get photoGraph => 'COMMON_PHOTOGRAPH';
   String get inProgress => 'IN_PROGRESS_LABEL';
+  String get wageSeekerID => 'MASTERS_WAGESEEKER_ID';
   String get completed => 'COMPLETED_LABEL';
   String get info => 'ES_COMMON_INFO';
   String get clickToAddPhoto => 'CLICK_TO_ADD_PHOTO';
@@ -134,6 +160,8 @@ class Common {
   String get validTo => 'ORG_VALID_TO';
   String get contactPersonName => 'ORG_CONTACT_PERSON_NAME';
   String get download => "COMMON_DOWNLOAD";
+   String get workOrderdownload => "COMMON_WORK_ORDER_DOWNLOAD";
+   String get analysisdownload => "COMMON_ANALYSIS_STATEMENT_DOWNLOAD";
   String get showWorkflowTimeline => 'SHOW_WORKFLOW_TIMELINE';
   String get hideWorkflowTimeline => 'HIDE_WORKFLOW_TIMELINE';
   String get workflowTimeline => 'WORKS_WORKFLOW_TIMELINE';
@@ -142,6 +170,22 @@ class Common {
   String get validPhotoGraph => 'PHOTOGRAPH_VALID_SIZE';
   String get individualAlreadyAdded => 'IND_ALREADY_ADDED_TO_THE_TABLE';
   String get noValue => 'ES_COMMON_NA';
+  String get noOrgLinkedWithMob => 'ES_COMMON_NO_ORG_LINKED_WITH_MOBILE_NUMBER';
+  String get takeAction => 'ES_COMMON_TAKE_ACTION';
+  String get assignee => "COMMON_ASSIGNEE";
+  String get commonWorkflowStates => "COMMON_WORKFLOW_STATES";
+  String get supportingDocumentHeader => "WORKFLOW_MODAL_UPLOAD_FILES";
+  String get date => "ES_COMMON_DATE";
+  String get filter => "ES_COMMON_FILTER";
+  String get musterRollId => "ES_COMMON_MUSTER_ROLL_ID";
+  String get allFieldsMandatory =>
+      "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS";
+  String get slaDaysRemaining => "COMMON_SLA_DAYS";
+  String get issuedDate => "WORKS_CONTRACT_ISSUE_DATE";
+  String get loading=>"ES_COMMON_LOADING";
+  String get uploading=>"ES_COMMON_UPLOADING";
+
+  
 }
 
 class Home {
@@ -183,6 +227,35 @@ class WorkOrder {
   String get relevantDocuments => 'WORK_RELEVANT_DOCUMENTS';
   String get workStartDate => 'WORKS_START_DATE';
   String get workEndDate => 'WORKS_END_DATE';
+  String get extensionReqInDays => 'WORKS_EXTENSION_REQ_IN_DAYS';
+  String get reasonForExtension => 'WORKS_REASON_FOR_EXTENSION';
+  String get extensionReqInDaysIsRequired => 'EXTENSION_DAYS_IS_REQUIRED';
+  String get reasonForExtensionIsRequired =>
+      'WORKS_REASON_FOR_EXTENSION_IS_REQUIRED';
+  String get extensionReqInDaysMinVal => 'WORKS_EXTENSION_DAYS_MIN_VALUE';
+  String get extensionReqInDaysMaxVal => 'WORKS_EXTENSION_DAYS_MAX_VALUE';
+  String get reasonForExtensionMinChar =>
+      'WORKS_REASON_FOR_EXTENSION_MIN_CHARS';
+  String get reasonForExtensionMaxChar =>
+      'WORKS_REASON_FOR_EXTENSION_MAX_CHARS';
+  String get timeExtensionRequestedSuccess =>
+      'WORKS_TIME_EXTENSION_REQ_SUCCESSFULLY';
+  String get requestID => 'WORKS_TIME_EXT_REQUEST_ID';
+  String get timeExtensionRequestedSuccessSubText =>
+      'WORKS_TIME_EXTENSION_REQ_SUCCESSFULLY_SUB_TEXT';
+  String get timeExtensionRequestedUpdatedSuccessfully =>
+      'WORKS_TIME_EXTENSION_REQ_UPDATED_SUCCESSFULLY';
+  String get requestTimeExtension => 'ACTION_TEST_TIME_EXTENSION';
+  String get projectClosure => 'ACTION_TEST_PROJECT_CLOSURE';
+  String get errNoMusterRollExists => 'ERR_NO_MUSTER_EXISTS';
+  String get errTimeExtReqAlreadyRaised => 'ERR_TIME_EXT_REQ_ALREADY_RAISED';
+  String get closureRequests => 'WORKS_CLOSURE_REQUESTS';
+  String get timeExtRequests => 'WORKS_TIME_EXT_REQUESTS';
+
+  String get estimateRevisionError=>"WORKS_REVISION_ESTIMATE_IN_WORKFLOW_CREATE_MEASUREMENT";
+  String get timeExtensionError=>"WORKS_TIME_EXTENSION_IN_WORKFLOW_CREATE_MEASUREMENT";
+  String get existingMBCreateError=>"MB_EXISTING_IN_WORKFLOW_CREATE_MEASUREMENT";
+
 }
 
 class MyBills {
@@ -210,6 +283,7 @@ class WageSeeker {
   String get minMobileCharacters => 'MIN_MOBILE_CHARCTERS_REQUIRED';
   String get minAadhaarCharacters => 'MIN_AADHAAR_CHARCTERS_REQUIRED';
   String get maxMobileCharacters => 'MAX_MOBILE_CHARCTERS_REQUIRED';
+  String get validMobileCharacters => 'MAX_VALID_MOBILE_CHARCTERS_REQUIRED';
   String get maxAadhaarCharacters => 'MAX_AADHAAR_CHARCTERS_REQUIRED';
   String get pinCodeRequired => 'PINCODE_IS_REQUIRED';
   String get localityRequired => 'LOCALITY_IS_REQUIRED';
@@ -240,6 +314,20 @@ class WageSeeker {
   String get pinCodeValidation => 'COMMON_PINCODE_VALIDATION';
   String get maxStreetCharacters => 'MAX_STREET_NAME_CHARACTERS';
   String get maxDoorNoCharacters => 'MAX_DOOR_NO_CHARACTERS';
+
+  // wage seeker indentification flow
+
+  String get identificationHeader => 'WAGE_SEEKER_IDENTIFICATION_HEADER';
+  String get personalDetailHeader => 'WAGE_SEEKER_PERSONAL_DETAIL_HEADER';
+  String get identityDocumentLabel => 'WAGE_SEEKER_IDENTITY_DOCUMENT_LABEL';
+  String get identityNumberLabel => 'WAGE_SEEKER_IDENTITY_NUMBER_LABEL';
+  String get identityNameLabel => 'WAGE_SEEKER_IDENTITY_NAME_LABEL';
+  String get adharValidate => 'AADHAAR_VALIDATE';
+  String get adharVerifySuccess => 'WAGE_SEEKER_AADHAAR_VERIFY_SUCCESS';
+  String get adharVerifyError => 'WAGE_SEEKER_AADHAAR_VERIFY_ERROR';
+  String get adharVerifyFailed => 'WAGE_SEEKER_AADHAAR_VERIFY_FAILED';
+  String get individualSkillHeader => 'WAGE_SEEKER_SKILL_DETAIL_HEADER';
+  String get individualPhotoHeader => 'WAGE_SEEKER_PHOTO_DETAIL_HEADER';
 }
 
 class AttendanceMgmt {
@@ -286,6 +374,7 @@ class AttendanceMgmt {
   String get skill => 'ATM_SKILLS';
   String get skillDetails => 'ATM_SKILLS_DETAILS';
   String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
+  String get noSkillPresent => 'ATM_NO_SKILL_IS_PRESENT';
   String get attendanceChangedValidation =>
       'ATM_ATT_CHANGED_CLICK_SAVE_DRAFT_FIRST';
   String get individualDetails => 'ATM_INDIVIDUAL_DETAILS';
@@ -297,4 +386,117 @@ class AttendanceMgmt {
   String get halfDay => 'ATM_HALF_DAY';
   String get absent => 'ATM_ABSENT';
   String get toMarkAttendance => 'ATM_INFO_TO_MARK_ATTENDANCE';
+
+  String get individualID=>"ATM_INDIVIDUAL_ID";
+  String get name=>"ATM_NAME";
+  String get attendanceAlert=>"ES_COMMON_ALERT";
+  String get sameDayAttendanceError=>"ATM_SAME_DAY_ATTENDANCE_ERROR";
+  
+}
+
+class MyServiceRequests {
+  const MyServiceRequests();
+
+  String get serviceRequestsLabel => 'WORKS_SERVICE_REQUESTS';
+  String get timeExtRequestId => 'WORKS_TIME_EXT_REQUEST_ID';
+  String get revisedEndDate => 'WORKS_REVISED_END_DATE';
+  String get editAction => 'WF_CONTRACT_ACTION_EDIT';
+  String get noServiceRequests => 'SR_NO_SERVICE_REQUEST_FOUND';
+}
+
+class MeasurementBook {
+  const MeasurementBook();
+
+  String get measurementBookTitle => "MEASUREMENT_BOOK_TITLE";
+  String get primaryDetails => "PRIMARY_DETAILS";
+  String get mbNumber => "MB_NUMBER";
+  String get mbSlaDaysRemaining => "MB_SLA_DAYS_REMAINING";
+  String get mbShowHistory => "MB_SHOW_HISTORY";
+  String get mbWorksitePhotos => "MB_WORKSITE_PHOTOS";
+  String get mbNonSor => "MB_NONSOR";
+  String get mbSor => "MB_SORS";
+  String get projectName => "MB_PROJECT_NAME";
+  String get workflowState => "MB_WORKFLOW_STATE";
+  String get mbAmount => "MB_AMOUNT";
+  String get assignedToAll => "MB_ASSIGNED_TO_ALL";
+  String get unit => "MB_UNIT";
+  String get description => "MB_DESCRIPTION";
+  String get rate => "MB_RATE";
+  String get approvedQty => "MB_APPROVER_QUANT";
+  String get consumedQty => "MB_CONSUMED_QUANT";
+  String get mbStatus => "MB_STATUS";
+  String get mbHistory => "MB_HISTORY";
+  String get workOrderNumber => "MB_SEARCH_REFERENCE_NUMBER";
+  String get measurementPeriod => "MB_MEASUREMENT_PERIOD";
+  String get yes=>"MB_YES";
+ String get no=>"MB_NO";
+ String get widthLabel=>"MB_WIDTH";
+ String get lengthLabel=>"MB_LENGTH";
+ 
+ String get quantityLabel=>"MB_QUANTITY";
+
+  // I updated
+  String get totalSorAmount => "MB_TOTAL_SOR_AMT";
+  String get forCurrentEntry => "MB_FOR_CURRENT_ENTRY";
+  String get totalNonSorAmount => "MB_TOTAL_NON_SOR_AMT";
+  String get totalMbAmount => "MB_TOTAL_MB_AMT";
+  String get openMbBook => "MB_OPEN_BOOK";
+  String get currentMBEntry => "CURRENT_MB_ENTRY";
+  String get mbAmtCurrentEntry => "MB_AMT_CURRENT_ENTRY";
+  String get mbAction => "MB_ACTION";
+  String get projectDescription => "MB_PROJECT_DESC";
+  String get mbWorkflowState => "MB_WORKFLOW_STATUS";
+  String get mbInbox => "MB_INBOX";
+
+  String get createMb => "MB_BUTTON_LEVEL_CREATE";
+  String get sort => "MB_SORT";
+  String get backToTop => "MB_BACK_TO_TOP";
+  String get workOrderInbox => "MB_WORK_ORDER_INBOX";
+  String get filter => "MB_FILTER";
+  String get clear => "MB_CLEAR";
+  String get numberLabel=>"MB_LABEL_NUMBER";
+
+// sort
+
+
+  String get workFlowState => "WORK_FLOW_STATE";
+  String get amountLowToHigh => "AMOUNT_LOW_HIGH";
+  String get amountHighToLow => "AMOUNT_HIGH_LOW";
+
+  String get cboName => "CBO_NAME";
+  String get sortBy => "SORT_BY";
+ String get mbQtyErrMsg=>"MB_MEASUREMENT_QTY_ERROR";
+ String get isDeduction=>"MB_IS_DEDUCTION";
+ String get item=>"MB_ITEM";
+String get heightLabel=>"MB_LABEL_HEIGHT";
+String get addMeasurement=>"MB_ADD_MEASUREMENT";
+ 
+ String get workOrderNumberInbox=>"MB_WORK_ORDER_NUMBER";
+ String get cboRole=>"CBO_ROLE";
+ String get officerInChargeName=>"OFFICER_INCHARGE";
+ String get workValue=>"MB_WORK_VALUE";
+ String get workSitePhotos=>"MB_WORK_SITE_PHOTO";
+ String get noDocumentFound=>"NO_DOCUMENT_FOUND";
+ String get delete=>"MB_DELETE";
+ String get preConsumedKey=>"MB_CONSUMED_QUANT_KEY";
+ String get preConsumedPre=>"MB_CONSUMED_QUANT_KEY_PRE";
+ String get mbWorkOrderLabel=>"MB_WORK_ORDERS";
+ String get mbMeasurementNumber=>"ACTION_TEST_5MEASUREMENT";
+ String get mbCbo=>"MB_CBO";
+ String get mbEmployee=>"MB_EMPLOYEE";
+ String get mbPhotoInfo=>"MEASUREMENT_UPLOAD_BANNER_LABEL";
+ String get searchHint=>"MB_SEARCH_HINT";
+ String get projectId=>"MB_PROJECT_ID";
+ String get projectType=>"MB_PROJECT_TYPE";
+ String get mbcreateLabel=>"WORKS_SUBMIT_MEASUREMENT";
+ String get mbSubmitLabel=>"WORKS_MB_FORWARD";
+ String get mbCancel=>"WORKS_MB_CANCEL";
+ String get noService=>"NO_SERVICE_AVAILABLE";
+ String get infoImageTip=>"INFO_CARD_IMAGE";
+ String get mbNotFound=>"MB_NUMBER_NOT_FOUND";
+ String get imageLimit=>"MB_IMGAE_LIMIT";
+ String get imageSize=>"MB_FILE_SIZE";
+
+ String get measurementSummaryLabel=>"MB_SUMMARY_LABEL";
+
 }

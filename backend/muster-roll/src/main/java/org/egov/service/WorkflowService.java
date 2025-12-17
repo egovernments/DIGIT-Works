@@ -1,16 +1,17 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.*;
+import org.egov.common.contract.models.RequestInfoWrapper;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.workflow.*;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
-import org.egov.web.models.Workflow;
-import org.egov.web.models.Status;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,14 +23,18 @@ import java.util.List;
 @Service
 public class WorkflowService {
 
-    @Autowired
-    private MusterRollServiceConfiguration serviceConfiguration;
+    private final MusterRollServiceConfiguration serviceConfiguration;
+
+    private final ServiceRequestRepository repository;
+
+    private final ObjectMapper mapper;
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public WorkflowService(MusterRollServiceConfiguration serviceConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     /* Call the workflow service with the given action and update the status
      * return the updated status of the application
@@ -57,15 +62,13 @@ public class WorkflowService {
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(serviceConfiguration.getMusterRollWFModuleName());
         processInstance.setTenantId(musterRoll.getTenantId());
-        //processInstance.setBusinessService(getBusinessService(request).getBusinessService());
         processInstance.setBusinessService(serviceConfiguration.getMusterRollWFBusinessService());
-        /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
-        processInstance.setComment(workflow.getComment());
+        processInstance.setComment(workflow.getComments());
 
-        if (!CollectionUtils.isEmpty(workflow.getAssignees())) {
+        if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
             List<User> users = new ArrayList<>();
 
-            workflow.getAssignees().forEach(uuid -> {
+            workflow.getAssignes().forEach(uuid -> {
                 User user = new User();
                 user.setUuid(uuid);
                 users.add(user);

@@ -13,7 +13,7 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
           tenantId, 'Locality', 
           {
               select: (data) => {
-                  return data?.TenantBoundary[0]?.boundary.map((item) => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }));
+                  return data?.TenantBoundary[0]?.boundary.map((item) => ({ code: item.code, name: t(`${headerLocale}_ADMIN_${item?.code}`), i18nKey: `${headerLocale}_ADMIN_${item?.code}` }));
               },
           })
 
@@ -21,7 +21,7 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
       tenantId, 'Ward', 
       {
           select: (data) => {
-              return data?.TenantBoundary[0]?.boundary.map((item) => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }));
+              return data?.TenantBoundary[0]?.boundary.sort((a, b) => a.code.localeCompare(b.code)).map((item) => ({ code: item.code, name: t(`${headerLocale}_ADMIN_${item?.code}`), i18nKey: `${headerLocale}_ADMIN_${item?.code}` }));
           },
       })
 
@@ -107,9 +107,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               name: "genders",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
+              // optionsCustomStyle : {
+              //   top : "2.5rem"
+              // },
               mdmsConfig: {
                 masterName: "GenderType",
                 moduleName: "common-masters",
@@ -127,9 +127,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               name: "SocialCategory",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
+              // optionsCustomStyle : {
+              //   top : "2.5rem"
+              // },
               mdmsConfig: {
                 masterName: "SocialCategory",
                 moduleName: "common-masters",
@@ -168,9 +168,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
+              // optionsCustomStyle : {
+              //   top : "2.5rem"
+              // },
               mdmsConfig: {
                 masterName: "WageSeekerSkills",
                 moduleName: "common-masters",
@@ -189,9 +189,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
+              // optionsCustomStyle : {
+              //   top : "2.5rem"
+              // },
               mdmsConfig: {
                 masterName: "WageSeekerSubSkills",
                 moduleName: "common-masters",
@@ -210,9 +210,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
+              // optionsCustomStyle : {
+              //   top : "2.5rem"
+              // },
               options : [
                 {
                   name : "MASTERS_ORG_1",
@@ -249,9 +249,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               error: t("WORKS_REQUIRED_ERR"),
               required: true,
               options: wardOptions,
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
+              // optionsCustomStyle : {
+              //   top : "2.5rem"
+              // },
             },
           },
           {
@@ -262,9 +262,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             disable: false,
             populators: {
               error: t("WORKS_REQUIRED_ERR"),
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
+              // optionsCustomStyle : {
+              //   top : "2.5rem"
+              // },
               name: "ulb",
               optionsKey: "i18nKey",
               options: ULBOptions
@@ -278,9 +278,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             disable: false,
             populators: {
                 error :t("WORKS_REQUIRED_ERR"),
-                optionsCustomStyle : {
-                  top : "2.5rem"
-                },
+                // optionsCustomStyle : {
+                //   top : "2.5rem"
+                // },
                 name: "district",
                 optionsKey: "i18nKey",
                 options: districtOptions
@@ -311,9 +311,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
               name: "BankAccType",
               optionsKey: "name",
               error: t("WORKS_REQUIRED_ERR"),
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
+              // optionsCustomStyle : {
+              //   top : "2.5rem"
+              // },
               mdmsConfig: {
                 masterName: "BankAccType",
                 moduleName: "works",
@@ -339,9 +339,9 @@ const ConfigWageSeekerRegistrationForm =  ({selectFile, uploadedFile, setUploade
             populators: {
               name: "Bank",
               optionsKey: "name",
-              optionsCustomStyle : {
-                top : "2.5rem"
-              },
+              // optionsCustomStyle : {
+              //   top : "2.5rem"
+              // },
               mdmsConfig: {
                 masterName: "Bank",
                 moduleName: "finance",

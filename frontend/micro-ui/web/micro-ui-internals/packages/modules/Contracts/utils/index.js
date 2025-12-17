@@ -43,3 +43,33 @@ export const mdmsData = async (tenantId,t) => {
   }
   return obj
 }
+
+
+export const isWorkEndInPreviousWeek = (workEndEpoch, mbValidationStartEpoch) => {
+  const IST_OFFSET = 5.5 * 60 * 60 * 1000; // Offset for India Standard Time (IST)
+
+  // Adjust epoch timestamps to India time zone (IST)
+  const workEndDate = new Date(workEndEpoch + IST_OFFSET);
+  const mbValidationStartDate = new Date(mbValidationStartEpoch + IST_OFFSET);
+
+  // Adjust project start date to India time zone (UTC+5:30)
+  mbValidationStartDate.setUTCHours(0, 0, 0, 0);
+
+  // Find the Monday of the week before the project starting date
+  const previousWeekStart = new Date(mbValidationStartDate);
+  previousWeekStart.setDate(mbValidationStartDate.getDate() - mbValidationStartDate.getDay() - 6);
+
+  // Find the Sunday of the previous week
+  const previousWeekEnd = new Date(previousWeekStart);
+  previousWeekEnd.setDate(previousWeekStart.getDate() + 6);
+
+   // Set the end of the previous week to 23:59:59
+   previousWeekEnd.setHours(23, 59, 59, 999);
+
+  // Convert dates to epoch timestamps
+  const previousWeekEndEpoch = previousWeekEnd.getTime();
+  const workEndEpochTime = workEndDate.getTime() - IST_OFFSET;
+
+  // Check if the work end date falls before the previous week
+  return workEndEpochTime <= previousWeekEndEpoch;
+}

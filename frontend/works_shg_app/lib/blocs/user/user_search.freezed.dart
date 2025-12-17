@@ -12,7 +12,7 @@ part of 'user_search.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$UserSearchEvent {
@@ -69,27 +69,27 @@ class _$UserSearchEventCopyWithImpl<$Res, $Val extends UserSearchEvent>
 }
 
 /// @nodoc
-abstract class _$$SearchUserEventCopyWith<$Res> {
-  factory _$$SearchUserEventCopyWith(
-          _$SearchUserEvent value, $Res Function(_$SearchUserEvent) then) =
-      __$$SearchUserEventCopyWithImpl<$Res>;
+abstract class _$$SearchUserEventImplCopyWith<$Res> {
+  factory _$$SearchUserEventImplCopyWith(_$SearchUserEventImpl value,
+          $Res Function(_$SearchUserEventImpl) then) =
+      __$$SearchUserEventImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$SearchUserEventCopyWithImpl<$Res>
-    extends _$UserSearchEventCopyWithImpl<$Res, _$SearchUserEvent>
-    implements _$$SearchUserEventCopyWith<$Res> {
-  __$$SearchUserEventCopyWithImpl(
-      _$SearchUserEvent _value, $Res Function(_$SearchUserEvent) _then)
+class __$$SearchUserEventImplCopyWithImpl<$Res>
+    extends _$UserSearchEventCopyWithImpl<$Res, _$SearchUserEventImpl>
+    implements _$$SearchUserEventImplCopyWith<$Res> {
+  __$$SearchUserEventImplCopyWithImpl(
+      _$SearchUserEventImpl _value, $Res Function(_$SearchUserEventImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$SearchUserEvent
+class _$SearchUserEventImpl
     with DiagnosticableTreeMixin
     implements SearchUserEvent {
-  const _$SearchUserEvent();
+  const _$SearchUserEventImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -103,9 +103,9 @@ class _$SearchUserEvent
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$SearchUserEvent);
+        (other.runtimeType == runtimeType && other is _$SearchUserEventImpl);
   }
 
   @override
@@ -169,7 +169,7 @@ class _$SearchUserEvent
 }
 
 abstract class SearchUserEvent implements UserSearchEvent {
-  const factory SearchUserEvent() = _$SearchUserEvent;
+  const factory SearchUserEvent() = _$SearchUserEventImpl;
 }
 
 /// @nodoc
@@ -235,11 +235,11 @@ class _$UserSearchStateCopyWithImpl<$Res, $Val extends UserSearchState>
 }
 
 /// @nodoc
-abstract class _$$_UserSearchStateCopyWith<$Res>
+abstract class _$$UserSearchStateImplCopyWith<$Res>
     implements $UserSearchStateCopyWith<$Res> {
-  factory _$$_UserSearchStateCopyWith(
-          _$_UserSearchState value, $Res Function(_$_UserSearchState) then) =
-      __$$_UserSearchStateCopyWithImpl<$Res>;
+  factory _$$UserSearchStateImplCopyWith(_$UserSearchStateImpl value,
+          $Res Function(_$UserSearchStateImpl) then) =
+      __$$UserSearchStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({bool loading, UserSearchModel? userSearchModel});
@@ -249,11 +249,11 @@ abstract class _$$_UserSearchStateCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_UserSearchStateCopyWithImpl<$Res>
-    extends _$UserSearchStateCopyWithImpl<$Res, _$_UserSearchState>
-    implements _$$_UserSearchStateCopyWith<$Res> {
-  __$$_UserSearchStateCopyWithImpl(
-      _$_UserSearchState _value, $Res Function(_$_UserSearchState) _then)
+class __$$UserSearchStateImplCopyWithImpl<$Res>
+    extends _$UserSearchStateCopyWithImpl<$Res, _$UserSearchStateImpl>
+    implements _$$UserSearchStateImplCopyWith<$Res> {
+  __$$UserSearchStateImplCopyWithImpl(
+      _$UserSearchStateImpl _value, $Res Function(_$UserSearchStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -262,7 +262,7 @@ class __$$_UserSearchStateCopyWithImpl<$Res>
     Object? loading = null,
     Object? userSearchModel = freezed,
   }) {
-    return _then(_$_UserSearchState(
+    return _then(_$UserSearchStateImpl(
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -277,8 +277,9 @@ class __$$_UserSearchStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_UserSearchState extends _UserSearchState with DiagnosticableTreeMixin {
-  const _$_UserSearchState({this.loading = false, this.userSearchModel})
+class _$UserSearchStateImpl extends _UserSearchState
+    with DiagnosticableTreeMixin {
+  const _$UserSearchStateImpl({this.loading = false, this.userSearchModel})
       : super._();
 
   @override
@@ -302,10 +303,10 @@ class _$_UserSearchState extends _UserSearchState with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_UserSearchState &&
+            other is _$UserSearchStateImpl &&
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.userSearchModel, userSearchModel) ||
                 other.userSearchModel == userSearchModel));
@@ -317,14 +318,15 @@ class _$_UserSearchState extends _UserSearchState with DiagnosticableTreeMixin {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_UserSearchStateCopyWith<_$_UserSearchState> get copyWith =>
-      __$$_UserSearchStateCopyWithImpl<_$_UserSearchState>(this, _$identity);
+  _$$UserSearchStateImplCopyWith<_$UserSearchStateImpl> get copyWith =>
+      __$$UserSearchStateImplCopyWithImpl<_$UserSearchStateImpl>(
+          this, _$identity);
 }
 
 abstract class _UserSearchState extends UserSearchState {
   const factory _UserSearchState(
       {final bool loading,
-      final UserSearchModel? userSearchModel}) = _$_UserSearchState;
+      final UserSearchModel? userSearchModel}) = _$UserSearchStateImpl;
   const _UserSearchState._() : super._();
 
   @override
@@ -333,6 +335,6 @@ abstract class _UserSearchState extends UserSearchState {
   UserSearchModel? get userSearchModel;
   @override
   @JsonKey(ignore: true)
-  _$$_UserSearchStateCopyWith<_$_UserSearchState> get copyWith =>
+  _$$UserSearchStateImplCopyWith<_$UserSearchStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

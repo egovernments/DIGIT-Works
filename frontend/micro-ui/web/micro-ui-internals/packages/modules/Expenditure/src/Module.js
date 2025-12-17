@@ -17,13 +17,20 @@ import PayableAmt from "./components/PayableAmt";
 import DownloadBill from "./pages/employee/Bills/DownloadBill";
 import ViewPurchaseBill from "./components/ViewBill/ViewPurchaseBill";
 import TotalBillAmountView from "./pageComponents/ViewTotalBillAmount";
+import ViewPaymentInstruction from "./pages/employee/Payments/viewPaymentInstruction";
+import ViewPayment from "./pages/employee/Payments/ViewPayment";
+import MBDetailes from "./components/CreateBill/MBDetailes";
+import PaymentTrackerSearch from "./pages/employee/paymentTrackerSearch";
+import PaymentTrackerView from "./pages/employee/paymentTrackerView";
+import PaymentTrackerTable from "./components/PaymentTrackerTable";
+import ViewTotalPaymentAmount from "./components/ViewTotalPaymentAmount";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const moduleCode = ["Expenditure","common-masters","workflow",tenantId];
+    const moduleCode = ["Expenditure","common-masters","workflow","ifms",tenantId];
     const { isLoading, data: store } = Digit.Services.useStore({
         stateCode,
         moduleCode,
@@ -56,7 +63,17 @@ const componentsToRegister = {
     ViewPurchaseBill,
     PayableAmt,
     DownloadBill,
-    TotalBillAmountView
+    TotalBillAmountView,
+    //new
+    ViewPaymentInstruction,
+    ViewPayment,
+    MBDetailes,
+
+    //new
+    PaymentTrackerSearch,
+    PaymentTrackerView,
+    PaymentTrackerTable,
+    ViewTotalPaymentAmount
 };
 
 export const initExpenditureComponents = () => {

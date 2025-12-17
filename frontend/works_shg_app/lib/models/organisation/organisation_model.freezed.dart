@@ -12,7 +12,7 @@ part of 'organisation_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 OrganisationListModel _$OrganisationListModelFromJson(
     Map<String, dynamic> json) {
@@ -65,22 +65,24 @@ class _$OrganisationListModelCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_OrganisationListModelCopyWith<$Res>
+abstract class _$$OrganisationListModelImplCopyWith<$Res>
     implements $OrganisationListModelCopyWith<$Res> {
-  factory _$$_OrganisationListModelCopyWith(_$_OrganisationListModel value,
-          $Res Function(_$_OrganisationListModel) then) =
-      __$$_OrganisationListModelCopyWithImpl<$Res>;
+  factory _$$OrganisationListModelImplCopyWith(
+          _$OrganisationListModelImpl value,
+          $Res Function(_$OrganisationListModelImpl) then) =
+      __$$OrganisationListModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<OrganisationModel>? organisations});
 }
 
 /// @nodoc
-class __$$_OrganisationListModelCopyWithImpl<$Res>
-    extends _$OrganisationListModelCopyWithImpl<$Res, _$_OrganisationListModel>
-    implements _$$_OrganisationListModelCopyWith<$Res> {
-  __$$_OrganisationListModelCopyWithImpl(_$_OrganisationListModel _value,
-      $Res Function(_$_OrganisationListModel) _then)
+class __$$OrganisationListModelImplCopyWithImpl<$Res>
+    extends _$OrganisationListModelCopyWithImpl<$Res,
+        _$OrganisationListModelImpl>
+    implements _$$OrganisationListModelImplCopyWith<$Res> {
+  __$$OrganisationListModelImplCopyWithImpl(_$OrganisationListModelImpl _value,
+      $Res Function(_$OrganisationListModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -88,7 +90,7 @@ class __$$_OrganisationListModelCopyWithImpl<$Res>
   $Res call({
     Object? organisations = freezed,
   }) {
-    return _then(_$_OrganisationListModel(
+    return _then(_$OrganisationListModelImpl(
       organisations: freezed == organisations
           ? _value._organisations
           : organisations // ignore: cast_nullable_to_non_nullable
@@ -99,12 +101,13 @@ class __$$_OrganisationListModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_OrganisationListModel implements _OrganisationListModel {
-  const _$_OrganisationListModel({final List<OrganisationModel>? organisations})
+class _$OrganisationListModelImpl implements _OrganisationListModel {
+  const _$OrganisationListModelImpl(
+      {final List<OrganisationModel>? organisations})
       : _organisations = organisations;
 
-  factory _$_OrganisationListModel.fromJson(Map<String, dynamic> json) =>
-      _$$_OrganisationListModelFromJson(json);
+  factory _$OrganisationListModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OrganisationListModelImplFromJson(json);
 
   final List<OrganisationModel>? _organisations;
   @override
@@ -122,10 +125,10 @@ class _$_OrganisationListModel implements _OrganisationListModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_OrganisationListModel &&
+            other is _$OrganisationListModelImpl &&
             const DeepCollectionEquality()
                 .equals(other._organisations, _organisations));
   }
@@ -138,13 +141,13 @@ class _$_OrganisationListModel implements _OrganisationListModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OrganisationListModelCopyWith<_$_OrganisationListModel> get copyWith =>
-      __$$_OrganisationListModelCopyWithImpl<_$_OrganisationListModel>(
-          this, _$identity);
+  _$$OrganisationListModelImplCopyWith<_$OrganisationListModelImpl>
+      get copyWith => __$$OrganisationListModelImplCopyWithImpl<
+          _$OrganisationListModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_OrganisationListModelToJson(
+    return _$$OrganisationListModelImplToJson(
       this,
     );
   }
@@ -153,17 +156,17 @@ class _$_OrganisationListModel implements _OrganisationListModel {
 abstract class _OrganisationListModel implements OrganisationListModel {
   const factory _OrganisationListModel(
           {final List<OrganisationModel>? organisations}) =
-      _$_OrganisationListModel;
+      _$OrganisationListModelImpl;
 
   factory _OrganisationListModel.fromJson(Map<String, dynamic> json) =
-      _$_OrganisationListModel.fromJson;
+      _$OrganisationListModelImpl.fromJson;
 
   @override
   List<OrganisationModel>? get organisations;
   @override
   @JsonKey(ignore: true)
-  _$$_OrganisationListModelCopyWith<_$_OrganisationListModel> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$OrganisationListModelImplCopyWith<_$OrganisationListModelImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 OrganisationModel _$OrganisationModelFromJson(Map<String, dynamic> json) {
@@ -315,11 +318,11 @@ class _$OrganisationModelCopyWithImpl<$Res, $Val extends OrganisationModel>
 }
 
 /// @nodoc
-abstract class _$$_OrganisationModelCopyWith<$Res>
+abstract class _$$OrganisationModelImplCopyWith<$Res>
     implements $OrganisationModelCopyWith<$Res> {
-  factory _$$_OrganisationModelCopyWith(_$_OrganisationModel value,
-          $Res Function(_$_OrganisationModel) then) =
-      __$$_OrganisationModelCopyWithImpl<$Res>;
+  factory _$$OrganisationModelImplCopyWith(_$OrganisationModelImpl value,
+          $Res Function(_$OrganisationModelImpl) then) =
+      __$$OrganisationModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -342,11 +345,11 @@ abstract class _$$_OrganisationModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_OrganisationModelCopyWithImpl<$Res>
-    extends _$OrganisationModelCopyWithImpl<$Res, _$_OrganisationModel>
-    implements _$$_OrganisationModelCopyWith<$Res> {
-  __$$_OrganisationModelCopyWithImpl(
-      _$_OrganisationModel _value, $Res Function(_$_OrganisationModel) _then)
+class __$$OrganisationModelImplCopyWithImpl<$Res>
+    extends _$OrganisationModelCopyWithImpl<$Res, _$OrganisationModelImpl>
+    implements _$$OrganisationModelImplCopyWith<$Res> {
+  __$$OrganisationModelImplCopyWithImpl(_$OrganisationModelImpl _value,
+      $Res Function(_$OrganisationModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -366,7 +369,7 @@ class __$$_OrganisationModelCopyWithImpl<$Res>
     Object? additionalDetails = freezed,
     Object? dateOfIncorporation = freezed,
   }) {
-    return _then(_$_OrganisationModel(
+    return _then(_$OrganisationModelImpl(
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -425,8 +428,8 @@ class __$$_OrganisationModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_OrganisationModel implements _OrganisationModel {
-  const _$_OrganisationModel(
+class _$OrganisationModelImpl implements _OrganisationModel {
+  const _$OrganisationModelImpl(
       {this.name,
       this.applicationNumber,
       required this.tenantId,
@@ -445,8 +448,8 @@ class _$_OrganisationModel implements _OrganisationModel {
         _identifiers = identifiers,
         _functions = functions;
 
-  factory _$_OrganisationModel.fromJson(Map<String, dynamic> json) =>
-      _$$_OrganisationModelFromJson(json);
+  factory _$OrganisationModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OrganisationModelImplFromJson(json);
 
   @override
   final String? name;
@@ -513,10 +516,10 @@ class _$_OrganisationModel implements _OrganisationModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_OrganisationModel &&
+            other is _$OrganisationModelImpl &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.applicationNumber, applicationNumber) ||
                 other.applicationNumber == applicationNumber) &&
@@ -564,13 +567,13 @@ class _$_OrganisationModel implements _OrganisationModel {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OrganisationModelCopyWith<_$_OrganisationModel> get copyWith =>
-      __$$_OrganisationModelCopyWithImpl<_$_OrganisationModel>(
+  _$$OrganisationModelImplCopyWith<_$OrganisationModelImpl> get copyWith =>
+      __$$OrganisationModelImplCopyWithImpl<_$OrganisationModelImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_OrganisationModelToJson(
+    return _$$OrganisationModelImplToJson(
       this,
     );
   }
@@ -590,10 +593,10 @@ abstract class _OrganisationModel implements OrganisationModel {
       final List<OrgIdentifier>? identifiers,
       final List<OrgFunctions>? functions,
       final OrgAdditionalDetails? additionalDetails,
-      final int? dateOfIncorporation}) = _$_OrganisationModel;
+      final int? dateOfIncorporation}) = _$OrganisationModelImpl;
 
   factory _OrganisationModel.fromJson(Map<String, dynamic> json) =
-      _$_OrganisationModel.fromJson;
+      _$OrganisationModelImpl.fromJson;
 
   @override
   String? get name;
@@ -623,7 +626,7 @@ abstract class _OrganisationModel implements OrganisationModel {
   int? get dateOfIncorporation;
   @override
   @JsonKey(ignore: true)
-  _$$_OrganisationModelCopyWith<_$_OrganisationModel> get copyWith =>
+  _$$OrganisationModelImplCopyWith<_$OrganisationModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -635,6 +638,7 @@ OrgAdditionalDetails _$OrgAdditionalDetailsFromJson(Map<String, dynamic> json) {
 mixin _$OrgAdditionalDetails {
   String? get registeredByDept => throw _privateConstructorUsedError;
   String? get deptRegistrationNum => throw _privateConstructorUsedError;
+  bool? get isLocalityMasked => throw _privateConstructorUsedError;
   String? get locality => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -652,6 +656,7 @@ abstract class $OrgAdditionalDetailsCopyWith<$Res> {
   $Res call(
       {String? registeredByDept,
       String? deptRegistrationNum,
+      bool? isLocalityMasked,
       String? locality});
 }
 
@@ -671,6 +676,7 @@ class _$OrgAdditionalDetailsCopyWithImpl<$Res,
   $Res call({
     Object? registeredByDept = freezed,
     Object? deptRegistrationNum = freezed,
+    Object? isLocalityMasked = freezed,
     Object? locality = freezed,
   }) {
     return _then(_value.copyWith(
@@ -682,6 +688,10 @@ class _$OrgAdditionalDetailsCopyWithImpl<$Res,
           ? _value.deptRegistrationNum
           : deptRegistrationNum // ignore: cast_nullable_to_non_nullable
               as String?,
+      isLocalityMasked: freezed == isLocalityMasked
+          ? _value.isLocalityMasked
+          : isLocalityMasked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       locality: freezed == locality
           ? _value.locality
           : locality // ignore: cast_nullable_to_non_nullable
@@ -691,25 +701,26 @@ class _$OrgAdditionalDetailsCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_OrgAdditionalDetailsCopyWith<$Res>
+abstract class _$$OrgAdditionalDetailsImplCopyWith<$Res>
     implements $OrgAdditionalDetailsCopyWith<$Res> {
-  factory _$$_OrgAdditionalDetailsCopyWith(_$_OrgAdditionalDetails value,
-          $Res Function(_$_OrgAdditionalDetails) then) =
-      __$$_OrgAdditionalDetailsCopyWithImpl<$Res>;
+  factory _$$OrgAdditionalDetailsImplCopyWith(_$OrgAdditionalDetailsImpl value,
+          $Res Function(_$OrgAdditionalDetailsImpl) then) =
+      __$$OrgAdditionalDetailsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {String? registeredByDept,
       String? deptRegistrationNum,
+      bool? isLocalityMasked,
       String? locality});
 }
 
 /// @nodoc
-class __$$_OrgAdditionalDetailsCopyWithImpl<$Res>
-    extends _$OrgAdditionalDetailsCopyWithImpl<$Res, _$_OrgAdditionalDetails>
-    implements _$$_OrgAdditionalDetailsCopyWith<$Res> {
-  __$$_OrgAdditionalDetailsCopyWithImpl(_$_OrgAdditionalDetails _value,
-      $Res Function(_$_OrgAdditionalDetails) _then)
+class __$$OrgAdditionalDetailsImplCopyWithImpl<$Res>
+    extends _$OrgAdditionalDetailsCopyWithImpl<$Res, _$OrgAdditionalDetailsImpl>
+    implements _$$OrgAdditionalDetailsImplCopyWith<$Res> {
+  __$$OrgAdditionalDetailsImplCopyWithImpl(_$OrgAdditionalDetailsImpl _value,
+      $Res Function(_$OrgAdditionalDetailsImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -717,9 +728,10 @@ class __$$_OrgAdditionalDetailsCopyWithImpl<$Res>
   $Res call({
     Object? registeredByDept = freezed,
     Object? deptRegistrationNum = freezed,
+    Object? isLocalityMasked = freezed,
     Object? locality = freezed,
   }) {
-    return _then(_$_OrgAdditionalDetails(
+    return _then(_$OrgAdditionalDetailsImpl(
       registeredByDept: freezed == registeredByDept
           ? _value.registeredByDept
           : registeredByDept // ignore: cast_nullable_to_non_nullable
@@ -728,6 +740,10 @@ class __$$_OrgAdditionalDetailsCopyWithImpl<$Res>
           ? _value.deptRegistrationNum
           : deptRegistrationNum // ignore: cast_nullable_to_non_nullable
               as String?,
+      isLocalityMasked: freezed == isLocalityMasked
+          ? _value.isLocalityMasked
+          : isLocalityMasked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       locality: freezed == locality
           ? _value.locality
           : locality // ignore: cast_nullable_to_non_nullable
@@ -738,53 +754,61 @@ class __$$_OrgAdditionalDetailsCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_OrgAdditionalDetails implements _OrgAdditionalDetails {
-  const _$_OrgAdditionalDetails(
-      {this.registeredByDept, this.deptRegistrationNum, this.locality});
+class _$OrgAdditionalDetailsImpl implements _OrgAdditionalDetails {
+  const _$OrgAdditionalDetailsImpl(
+      {this.registeredByDept,
+      this.deptRegistrationNum,
+      this.isLocalityMasked,
+      this.locality});
 
-  factory _$_OrgAdditionalDetails.fromJson(Map<String, dynamic> json) =>
-      _$$_OrgAdditionalDetailsFromJson(json);
+  factory _$OrgAdditionalDetailsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OrgAdditionalDetailsImplFromJson(json);
 
   @override
   final String? registeredByDept;
   @override
   final String? deptRegistrationNum;
   @override
+  final bool? isLocalityMasked;
+  @override
   final String? locality;
 
   @override
   String toString() {
-    return 'OrgAdditionalDetails(registeredByDept: $registeredByDept, deptRegistrationNum: $deptRegistrationNum, locality: $locality)';
+    return 'OrgAdditionalDetails(registeredByDept: $registeredByDept, deptRegistrationNum: $deptRegistrationNum, isLocalityMasked: $isLocalityMasked, locality: $locality)';
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_OrgAdditionalDetails &&
+            other is _$OrgAdditionalDetailsImpl &&
             (identical(other.registeredByDept, registeredByDept) ||
                 other.registeredByDept == registeredByDept) &&
             (identical(other.deptRegistrationNum, deptRegistrationNum) ||
                 other.deptRegistrationNum == deptRegistrationNum) &&
+            (identical(other.isLocalityMasked, isLocalityMasked) ||
+                other.isLocalityMasked == isLocalityMasked) &&
             (identical(other.locality, locality) ||
                 other.locality == locality));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, registeredByDept, deptRegistrationNum, locality);
+  int get hashCode => Object.hash(runtimeType, registeredByDept,
+      deptRegistrationNum, isLocalityMasked, locality);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OrgAdditionalDetailsCopyWith<_$_OrgAdditionalDetails> get copyWith =>
-      __$$_OrgAdditionalDetailsCopyWithImpl<_$_OrgAdditionalDetails>(
-          this, _$identity);
+  _$$OrgAdditionalDetailsImplCopyWith<_$OrgAdditionalDetailsImpl>
+      get copyWith =>
+          __$$OrgAdditionalDetailsImplCopyWithImpl<_$OrgAdditionalDetailsImpl>(
+              this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_OrgAdditionalDetailsToJson(
+    return _$$OrgAdditionalDetailsImplToJson(
       this,
     );
   }
@@ -794,21 +818,24 @@ abstract class _OrgAdditionalDetails implements OrgAdditionalDetails {
   const factory _OrgAdditionalDetails(
       {final String? registeredByDept,
       final String? deptRegistrationNum,
-      final String? locality}) = _$_OrgAdditionalDetails;
+      final bool? isLocalityMasked,
+      final String? locality}) = _$OrgAdditionalDetailsImpl;
 
   factory _OrgAdditionalDetails.fromJson(Map<String, dynamic> json) =
-      _$_OrgAdditionalDetails.fromJson;
+      _$OrgAdditionalDetailsImpl.fromJson;
 
   @override
   String? get registeredByDept;
   @override
   String? get deptRegistrationNum;
   @override
+  bool? get isLocalityMasked;
+  @override
   String? get locality;
   @override
   @JsonKey(ignore: true)
-  _$$_OrgAdditionalDetailsCopyWith<_$_OrgAdditionalDetails> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$OrgAdditionalDetailsImplCopyWith<_$OrgAdditionalDetailsImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 OrgAddress _$OrgAddressFromJson(Map<String, dynamic> json) {
@@ -965,11 +992,11 @@ class _$OrgAddressCopyWithImpl<$Res, $Val extends OrgAddress>
 }
 
 /// @nodoc
-abstract class _$$_OrgAddressCopyWith<$Res>
+abstract class _$$OrgAddressImplCopyWith<$Res>
     implements $OrgAddressCopyWith<$Res> {
-  factory _$$_OrgAddressCopyWith(
-          _$_OrgAddress value, $Res Function(_$_OrgAddress) then) =
-      __$$_OrgAddressCopyWithImpl<$Res>;
+  factory _$$OrgAddressImplCopyWith(
+          _$OrgAddressImpl value, $Res Function(_$OrgAddressImpl) then) =
+      __$$OrgAddressImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -992,11 +1019,11 @@ abstract class _$$_OrgAddressCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_OrgAddressCopyWithImpl<$Res>
-    extends _$OrgAddressCopyWithImpl<$Res, _$_OrgAddress>
-    implements _$$_OrgAddressCopyWith<$Res> {
-  __$$_OrgAddressCopyWithImpl(
-      _$_OrgAddress _value, $Res Function(_$_OrgAddress) _then)
+class __$$OrgAddressImplCopyWithImpl<$Res>
+    extends _$OrgAddressCopyWithImpl<$Res, _$OrgAddressImpl>
+    implements _$$OrgAddressImplCopyWith<$Res> {
+  __$$OrgAddressImplCopyWithImpl(
+      _$OrgAddressImpl _value, $Res Function(_$OrgAddressImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1019,7 +1046,7 @@ class __$$_OrgAddressCopyWithImpl<$Res>
     Object? boundaryType = freezed,
     Object? boundaryCode = freezed,
   }) {
-    return _then(_$_OrgAddress(
+    return _then(_$OrgAddressImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -1090,8 +1117,8 @@ class __$$_OrgAddressCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_OrgAddress implements _OrgAddress {
-  const _$_OrgAddress(
+class _$OrgAddressImpl implements _OrgAddress {
+  const _$OrgAddressImpl(
       {this.id,
       this.orgId,
       required this.tenantId,
@@ -1109,8 +1136,8 @@ class _$_OrgAddress implements _OrgAddress {
       this.boundaryType,
       this.boundaryCode});
 
-  factory _$_OrgAddress.fromJson(Map<String, dynamic> json) =>
-      _$$_OrgAddressFromJson(json);
+  factory _$OrgAddressImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OrgAddressImplFromJson(json);
 
   @override
   final String? id;
@@ -1151,10 +1178,10 @@ class _$_OrgAddress implements _OrgAddress {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_OrgAddress &&
+            other is _$OrgAddressImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.orgId, orgId) || other.orgId == orgId) &&
             (identical(other.tenantId, tenantId) ||
@@ -1203,12 +1230,12 @@ class _$_OrgAddress implements _OrgAddress {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OrgAddressCopyWith<_$_OrgAddress> get copyWith =>
-      __$$_OrgAddressCopyWithImpl<_$_OrgAddress>(this, _$identity);
+  _$$OrgAddressImplCopyWith<_$OrgAddressImpl> get copyWith =>
+      __$$OrgAddressImplCopyWithImpl<_$OrgAddressImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_OrgAddressToJson(
+    return _$$OrgAddressImplToJson(
       this,
     );
   }
@@ -1231,10 +1258,10 @@ abstract class _OrgAddress implements OrgAddress {
       final String? buildingName,
       final String? street,
       final String? boundaryType,
-      final String? boundaryCode}) = _$_OrgAddress;
+      final String? boundaryCode}) = _$OrgAddressImpl;
 
   factory _OrgAddress.fromJson(Map<String, dynamic> json) =
-      _$_OrgAddress.fromJson;
+      _$OrgAddressImpl.fromJson;
 
   @override
   String? get id;
@@ -1270,7 +1297,7 @@ abstract class _OrgAddress implements OrgAddress {
   String? get boundaryCode;
   @override
   @JsonKey(ignore: true)
-  _$$_OrgAddressCopyWith<_$_OrgAddress> get copyWith =>
+  _$$OrgAddressImplCopyWith<_$OrgAddressImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1358,11 +1385,11 @@ class _$OrgContactCopyWithImpl<$Res, $Val extends OrgContact>
 }
 
 /// @nodoc
-abstract class _$$_OrgContactCopyWith<$Res>
+abstract class _$$OrgContactImplCopyWith<$Res>
     implements $OrgContactCopyWith<$Res> {
-  factory _$$_OrgContactCopyWith(
-          _$_OrgContact value, $Res Function(_$_OrgContact) then) =
-      __$$_OrgContactCopyWithImpl<$Res>;
+  factory _$$OrgContactImplCopyWith(
+          _$OrgContactImpl value, $Res Function(_$OrgContactImpl) then) =
+      __$$OrgContactImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -1375,11 +1402,11 @@ abstract class _$$_OrgContactCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_OrgContactCopyWithImpl<$Res>
-    extends _$OrgContactCopyWithImpl<$Res, _$_OrgContact>
-    implements _$$_OrgContactCopyWith<$Res> {
-  __$$_OrgContactCopyWithImpl(
-      _$_OrgContact _value, $Res Function(_$_OrgContact) _then)
+class __$$OrgContactImplCopyWithImpl<$Res>
+    extends _$OrgContactCopyWithImpl<$Res, _$OrgContactImpl>
+    implements _$$OrgContactImplCopyWith<$Res> {
+  __$$OrgContactImplCopyWithImpl(
+      _$OrgContactImpl _value, $Res Function(_$OrgContactImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1392,7 +1419,7 @@ class __$$_OrgContactCopyWithImpl<$Res>
     Object? contactMobileNumber = freezed,
     Object? contactEmail = freezed,
   }) {
-    return _then(_$_OrgContact(
+    return _then(_$OrgContactImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -1423,8 +1450,8 @@ class __$$_OrgContactCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_OrgContact implements _OrgContact {
-  const _$_OrgContact(
+class _$OrgContactImpl implements _OrgContact {
+  const _$OrgContactImpl(
       {this.id,
       this.orgId,
       required this.tenantId,
@@ -1432,8 +1459,8 @@ class _$_OrgContact implements _OrgContact {
       this.contactMobileNumber,
       this.contactEmail});
 
-  factory _$_OrgContact.fromJson(Map<String, dynamic> json) =>
-      _$$_OrgContactFromJson(json);
+  factory _$OrgContactImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OrgContactImplFromJson(json);
 
   @override
   final String? id;
@@ -1454,10 +1481,10 @@ class _$_OrgContact implements _OrgContact {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_OrgContact &&
+            other is _$OrgContactImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.orgId, orgId) || other.orgId == orgId) &&
             (identical(other.tenantId, tenantId) ||
@@ -1478,12 +1505,12 @@ class _$_OrgContact implements _OrgContact {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OrgContactCopyWith<_$_OrgContact> get copyWith =>
-      __$$_OrgContactCopyWithImpl<_$_OrgContact>(this, _$identity);
+  _$$OrgContactImplCopyWith<_$OrgContactImpl> get copyWith =>
+      __$$OrgContactImplCopyWithImpl<_$OrgContactImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_OrgContactToJson(
+    return _$$OrgContactImplToJson(
       this,
     );
   }
@@ -1496,10 +1523,10 @@ abstract class _OrgContact implements OrgContact {
       required final String tenantId,
       final String? contactName,
       final String? contactMobileNumber,
-      final String? contactEmail}) = _$_OrgContact;
+      final String? contactEmail}) = _$OrgContactImpl;
 
   factory _OrgContact.fromJson(Map<String, dynamic> json) =
-      _$_OrgContact.fromJson;
+      _$OrgContactImpl.fromJson;
 
   @override
   String? get id;
@@ -1515,7 +1542,7 @@ abstract class _OrgContact implements OrgContact {
   String? get contactEmail;
   @override
   @JsonKey(ignore: true)
-  _$$_OrgContactCopyWith<_$_OrgContact> get copyWith =>
+  _$$OrgContactImplCopyWith<_$OrgContactImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1585,22 +1612,22 @@ class _$OrgIdentifierCopyWithImpl<$Res, $Val extends OrgIdentifier>
 }
 
 /// @nodoc
-abstract class _$$_OrgIdentifierCopyWith<$Res>
+abstract class _$$OrgIdentifierImplCopyWith<$Res>
     implements $OrgIdentifierCopyWith<$Res> {
-  factory _$$_OrgIdentifierCopyWith(
-          _$_OrgIdentifier value, $Res Function(_$_OrgIdentifier) then) =
-      __$$_OrgIdentifierCopyWithImpl<$Res>;
+  factory _$$OrgIdentifierImplCopyWith(
+          _$OrgIdentifierImpl value, $Res Function(_$OrgIdentifierImpl) then) =
+      __$$OrgIdentifierImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String? id, String? orgId, String? type, String? value});
 }
 
 /// @nodoc
-class __$$_OrgIdentifierCopyWithImpl<$Res>
-    extends _$OrgIdentifierCopyWithImpl<$Res, _$_OrgIdentifier>
-    implements _$$_OrgIdentifierCopyWith<$Res> {
-  __$$_OrgIdentifierCopyWithImpl(
-      _$_OrgIdentifier _value, $Res Function(_$_OrgIdentifier) _then)
+class __$$OrgIdentifierImplCopyWithImpl<$Res>
+    extends _$OrgIdentifierCopyWithImpl<$Res, _$OrgIdentifierImpl>
+    implements _$$OrgIdentifierImplCopyWith<$Res> {
+  __$$OrgIdentifierImplCopyWithImpl(
+      _$OrgIdentifierImpl _value, $Res Function(_$OrgIdentifierImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1611,7 +1638,7 @@ class __$$_OrgIdentifierCopyWithImpl<$Res>
     Object? type = freezed,
     Object? value = freezed,
   }) {
-    return _then(_$_OrgIdentifier(
+    return _then(_$OrgIdentifierImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -1634,11 +1661,11 @@ class __$$_OrgIdentifierCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_OrgIdentifier implements _OrgIdentifier {
-  const _$_OrgIdentifier({this.id, this.orgId, this.type, this.value});
+class _$OrgIdentifierImpl implements _OrgIdentifier {
+  const _$OrgIdentifierImpl({this.id, this.orgId, this.type, this.value});
 
-  factory _$_OrgIdentifier.fromJson(Map<String, dynamic> json) =>
-      _$$_OrgIdentifierFromJson(json);
+  factory _$OrgIdentifierImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OrgIdentifierImplFromJson(json);
 
   @override
   final String? id;
@@ -1655,10 +1682,10 @@ class _$_OrgIdentifier implements _OrgIdentifier {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_OrgIdentifier &&
+            other is _$OrgIdentifierImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.orgId, orgId) || other.orgId == orgId) &&
             (identical(other.type, type) || other.type == type) &&
@@ -1672,12 +1699,12 @@ class _$_OrgIdentifier implements _OrgIdentifier {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OrgIdentifierCopyWith<_$_OrgIdentifier> get copyWith =>
-      __$$_OrgIdentifierCopyWithImpl<_$_OrgIdentifier>(this, _$identity);
+  _$$OrgIdentifierImplCopyWith<_$OrgIdentifierImpl> get copyWith =>
+      __$$OrgIdentifierImplCopyWithImpl<_$OrgIdentifierImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_OrgIdentifierToJson(
+    return _$$OrgIdentifierImplToJson(
       this,
     );
   }
@@ -1688,10 +1715,10 @@ abstract class _OrgIdentifier implements OrgIdentifier {
       {final String? id,
       final String? orgId,
       final String? type,
-      final String? value}) = _$_OrgIdentifier;
+      final String? value}) = _$OrgIdentifierImpl;
 
   factory _OrgIdentifier.fromJson(Map<String, dynamic> json) =
-      _$_OrgIdentifier.fromJson;
+      _$OrgIdentifierImpl.fromJson;
 
   @override
   String? get id;
@@ -1703,7 +1730,7 @@ abstract class _OrgIdentifier implements OrgIdentifier {
   String? get value;
   @override
   @JsonKey(ignore: true)
-  _$$_OrgIdentifierCopyWith<_$_OrgIdentifier> get copyWith =>
+  _$$OrgIdentifierImplCopyWith<_$OrgIdentifierImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1820,11 +1847,11 @@ class _$OrgFunctionsCopyWithImpl<$Res, $Val extends OrgFunctions>
 }
 
 /// @nodoc
-abstract class _$$_OrgFunctionsCopyWith<$Res>
+abstract class _$$OrgFunctionsImplCopyWith<$Res>
     implements $OrgFunctionsCopyWith<$Res> {
-  factory _$$_OrgFunctionsCopyWith(
-          _$_OrgFunctions value, $Res Function(_$_OrgFunctions) then) =
-      __$$_OrgFunctionsCopyWithImpl<$Res>;
+  factory _$$OrgFunctionsImplCopyWith(
+          _$OrgFunctionsImpl value, $Res Function(_$OrgFunctionsImpl) then) =
+      __$$OrgFunctionsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -1841,11 +1868,11 @@ abstract class _$$_OrgFunctionsCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_OrgFunctionsCopyWithImpl<$Res>
-    extends _$OrgFunctionsCopyWithImpl<$Res, _$_OrgFunctions>
-    implements _$$_OrgFunctionsCopyWith<$Res> {
-  __$$_OrgFunctionsCopyWithImpl(
-      _$_OrgFunctions _value, $Res Function(_$_OrgFunctions) _then)
+class __$$OrgFunctionsImplCopyWithImpl<$Res>
+    extends _$OrgFunctionsCopyWithImpl<$Res, _$OrgFunctionsImpl>
+    implements _$$OrgFunctionsImplCopyWith<$Res> {
+  __$$OrgFunctionsImplCopyWithImpl(
+      _$OrgFunctionsImpl _value, $Res Function(_$OrgFunctionsImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1862,7 +1889,7 @@ class __$$_OrgFunctionsCopyWithImpl<$Res>
     Object? validTo = freezed,
     Object? isActive = freezed,
   }) {
-    return _then(_$_OrgFunctions(
+    return _then(_$OrgFunctionsImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -1909,8 +1936,8 @@ class __$$_OrgFunctionsCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_OrgFunctions implements _OrgFunctions {
-  const _$_OrgFunctions(
+class _$OrgFunctionsImpl implements _OrgFunctions {
+  const _$OrgFunctionsImpl(
       {this.id,
       this.orgId,
       this.applicationNumber,
@@ -1922,8 +1949,8 @@ class _$_OrgFunctions implements _OrgFunctions {
       this.validTo,
       this.isActive});
 
-  factory _$_OrgFunctions.fromJson(Map<String, dynamic> json) =>
-      _$$_OrgFunctionsFromJson(json);
+  factory _$OrgFunctionsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OrgFunctionsImplFromJson(json);
 
   @override
   final String? id;
@@ -1953,10 +1980,10 @@ class _$_OrgFunctions implements _OrgFunctions {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_OrgFunctions &&
+            other is _$OrgFunctionsImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.orgId, orgId) || other.orgId == orgId) &&
             (identical(other.applicationNumber, applicationNumber) ||
@@ -1983,12 +2010,12 @@ class _$_OrgFunctions implements _OrgFunctions {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OrgFunctionsCopyWith<_$_OrgFunctions> get copyWith =>
-      __$$_OrgFunctionsCopyWithImpl<_$_OrgFunctions>(this, _$identity);
+  _$$OrgFunctionsImplCopyWith<_$OrgFunctionsImpl> get copyWith =>
+      __$$OrgFunctionsImplCopyWithImpl<_$OrgFunctionsImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_OrgFunctionsToJson(
+    return _$$OrgFunctionsImplToJson(
       this,
     );
   }
@@ -2005,10 +2032,10 @@ abstract class _OrgFunctions implements OrgFunctions {
       @JsonKey(name: 'class') final String? orgClass,
       final int? validFrom,
       final int? validTo,
-      final bool? isActive}) = _$_OrgFunctions;
+      final bool? isActive}) = _$OrgFunctionsImpl;
 
   factory _OrgFunctions.fromJson(Map<String, dynamic> json) =
-      _$_OrgFunctions.fromJson;
+      _$OrgFunctionsImpl.fromJson;
 
   @override
   String? get id;
@@ -2033,6 +2060,6 @@ abstract class _OrgFunctions implements OrgFunctions {
   bool? get isActive;
   @override
   @JsonKey(ignore: true)
-  _$$_OrgFunctionsCopyWith<_$_OrgFunctions> get copyWith =>
+  _$$OrgFunctionsImplCopyWith<_$OrgFunctionsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

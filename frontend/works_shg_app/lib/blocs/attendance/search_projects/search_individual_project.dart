@@ -55,7 +55,7 @@ class AttendanceIndividualProjectSearchBloc extends Bloc<
         emit(AttendanceIndividualProjectSearchState.loaded(
             attendanceRegistersModel));
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(AttendanceIndividualProjectSearchState.error(
           e.response?.data['Errors'][0]['code']));
     }
@@ -85,7 +85,7 @@ class AttendanceIndividualProjectSearchBloc extends Bloc<
         emit(AttendanceIndividualProjectSearchState.loaded(
             attendanceRegistersModel));
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(AttendanceIndividualProjectSearchState.error(
           e.response?.data['Errors'][0]['code']));
     }

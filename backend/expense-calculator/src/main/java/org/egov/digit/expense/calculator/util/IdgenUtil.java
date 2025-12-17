@@ -22,14 +22,18 @@ import digit.models.coremodels.IdResponse;
 @Component
 public class IdgenUtil {
 
-	@Autowired
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
+
+	private final ServiceRequestRepository restRepo;
+
+	private final ExpenseCalculatorConfiguration configs;
 
 	@Autowired
-	private ServiceRequestRepository restRepo;
-
-	@Autowired
-	private ExpenseCalculatorConfiguration configs;
+	public IdgenUtil(ObjectMapper mapper, ServiceRequestRepository restRepo, ExpenseCalculatorConfiguration configs) {
+		this.mapper = mapper;
+		this.restRepo = restRepo;
+		this.configs = configs;
+	}
 
 	public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat,
 			Integer count) {

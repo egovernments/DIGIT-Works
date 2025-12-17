@@ -23,7 +23,7 @@ class ORGFinanceBloc extends Bloc<ORGFinanceEvent, ORGFinanceState> {
     Client client = Client();
     emit(const ORGFinanceState.loading());
     BankingDetailsModel bankingDetailsModel = await ORGRepository(client.init())
-        .searchORGFinance(url: Urls.orgServices.financeSearch, body: {
+        .searchORGFinance(url: Urls.orgServices.bfffinanceSearch, body: {
       "bankAccountDetails": {
         "tenantId": event.tenantId,
         "referenceId": [event.referenceId]

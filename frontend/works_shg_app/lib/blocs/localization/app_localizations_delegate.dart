@@ -14,7 +14,7 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
     Locale locale,
   ) async {
     AppLocalizations appLocalizations = AppLocalizations(locale);
-    await appLocalizations.load();
+    await appLocalizations.load(locale: "${locale.languageCode}_${locale.countryCode}");
 
     return appLocalizations;
   }

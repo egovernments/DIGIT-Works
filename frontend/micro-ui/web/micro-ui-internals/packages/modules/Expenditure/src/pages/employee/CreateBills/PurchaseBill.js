@@ -13,27 +13,74 @@ const PurchaseBill = () => {
     const billNumber = queryStrings?.billNumber
     const isModify = billNumber ? true : false;
     const [nameOfVendor, setNameOfVendor] = useState([]);
+    const [nameOfCbo, setNameOfCbo] = useState([]);
     const [isFormReady, setIsFormReady] = useState(false);
     const stateTenant = Digit.ULBService.getStateId();
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
 
-    const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
-    stateTenant,
-    Digit.Utils.getConfigModuleName(),
-    [
+    const organisationTypes = [
         {
-            "name": "CreatePurchaseBillConfig"
+            code : "CBO",
+            name : t("COMMON_MASTERS_ORG_CBO")
+        },
+        {
+            code : "VEN",
+            name : t("COMMON_MASTERS_ORG_VEN")
         }
-    ],
-    {
-      select: (data) => {
-          return data?.[Digit.Utils.getConfigModuleName()]?.CreatePurchaseBillConfig[0];
-      },
+    ]
+
+    const searchVendorPayload = {
+        "SearchCriteria": {
+            "tenantId": tenantId,
+            "functions" : {
+                "type" : "VEN" //hardcoded
+            }
+        }
     }
-    );
+
+    const searchCBOPayload = {
+        "SearchCriteria": {
+            "tenantId": tenantId,
+            "functions" : {
+                "type" : "CBO" //hardcoded
+            }
+        }
+    }
+
+    //vendor search
+    const { isLoading : isOrgSearchLoading, data : vendorOptions } = Digit.Hooks.organisation.useSearchOrg(searchVendorPayload, {
+        cacheTime: 0
+    });
+
+    const { isLoading : isCBOOrgSearchLoading, data : cboOptions } = Digit.Hooks.organisation.useSearchOrg(searchCBOPayload, {
+        cacheTime: 0
+    });
+
+    const { allMeasurementsIds, totalMaterialAmount, totalPaidAmountForSuccessfulBills } = Digit.Hooks.paymentInstruction.useMBDataForPB({workOrderNumber:contractNumber,tenantId});
+    let MBValidationData = {
+        allMeasurementsIds,
+        totalMaterialAmount,
+        totalPaidAmountForSuccessfulBills
+    }
+
+
+    // const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
+    // stateTenant,
+    // Digit.Utils.getConfigModuleName(),
+    // [
+    //     {
+    //         "name": "CreatePurchaseBillConfig"
+    //     }
+    // ],
+    // {
+    //   select: (data) => {
+    //       return data?.[Digit.Utils.getConfigModuleName()]?.CreatePurchaseBillConfig[0];
+    //   },
+    // }
+    // );
 
     //local config
-    //let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
+    let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
 
     const tenant = Digit.ULBService.getStateId();
 
@@ -70,18 +117,7 @@ const PurchaseBill = () => {
     const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = PurchaseBillSession;
 
-    const searchVendorPayload = {
-        "SearchCriteria": {
-            "tenantId": tenantId,
-            "functions" : {
-                "type" : "VEN" //hardcoded
-            }
-        }
-    }
-
-    //vendor search
-    const { isLoading : isOrgSearchLoading, data : vendorOptions } = Digit.Hooks.organisation.useSearchOrg(searchVendorPayload);
-
+    
     const createNameOfVendorObject = (vendorOptions) => {
         return vendorOptions?.organisations?.map(vendorOption => ( {code : vendorOption?.id, name : vendorOption?.name, applicationNumber : vendorOption?.applicationNumber, orgNumber : vendorOption?.orgNumber } ))
     }
@@ -100,6 +136,20 @@ const PurchaseBill = () => {
         cacheTime:0
     }})
 
+    const orgSearch = {
+        "SearchCriteria": {
+            "tenantId": tenantId,
+            id: [billData?.bills?.[0]?.billDetails?.[0]?.payee?.identifier]
+        }
+    }
+
+    //vendor search
+    const { isLoading : isOrgSearchLoadingModify, data : vendorOptionsModify } = Digit.Hooks.organisation.useSearchOrg(orgSearch,{
+        enabled:billData ? true : false,
+        cacheTime:0
+    });
+
+
     const { isLoading : isChargesLoading, data : charges} = Digit.Hooks.useCustomMDMS( 
     Digit.ULBService.getStateId(),
     "expense",
@@ -116,20 +166,21 @@ const PurchaseBill = () => {
     );
 
     useEffect(()=>{
-        if((configs && !isOrgSearchLoading && !isContractLoading && !isDocConfigLoading && !isDocConfigLoading && !isBillSearchLoading)) {
-            updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract, docConfigData, billData, setIsFormReady,charges});
+        if((configs && !isOrgSearchLoading && !isCBOOrgSearchLoading && !isContractLoading && !isDocConfigLoading && !isDocConfigLoading && !isBillSearchLoading && !isOrgSearchLoadingModify)) {
+            updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract, docConfigData, billData, setIsFormReady,charges,org:vendorOptionsModify?.organisations?.[0]});
             setNameOfVendor(createNameOfVendorObject(vendorOptions));
+            setNameOfCbo(createNameOfVendorObject(cboOptions));
         }
-    },[isContractLoading, isOrgSearchLoading, isDocConfigLoading, isBillSearchLoading,isChargesLoading,isConfigLoading]);
+    },[isContractLoading, isOrgSearchLoading, isCBOOrgSearchLoading, isDocConfigLoading, isBillSearchLoading,isChargesLoading,isOrgSearchLoadingModify]);
 
     
     // if(isConfigLoading) return <Loader></Loader>
 
-    if(isContractLoading || isOrgSearchLoading || isDocConfigLoading || isBillSearchLoading || isChargesLoading || isConfigLoading) return <Loader />
+    // if(isContractLoading || isOrgSearchLoading || isCBOOrgSearchLoading || isDocConfigLoading || isBillSearchLoading || isChargesLoading) return <Loader />
 
     return (
         <React.Fragment>
-            <Header styles={{fontSize: "32px"}}>{isModify ? t("EXP_MODIFY_PB") : t("ACTION_TEST_CREATE_PB")}</Header>
+            <Header >{isModify ? t("EXP_MODIFY_PB") : t("ACTION_TEST_CREATE_PB")}</Header>
             {
                 isFormReady && <CreatePurchaseBillForm 
                 createPurchaseBillConfig={configs} 
@@ -137,10 +188,11 @@ const PurchaseBill = () => {
                 setSessionFormData={setSessionFormData} 
                 clearSessionFormData={clearSessionFormData} 
                 contract={contract} 
-                preProcessData={{nameOfVendor}}
+                preProcessData={{nameOfVendor, nameOfCbo, organisationTypes}}
                 isModify={isModify} 
                 docConfigData={docConfigData}
                 bill={isModify?billData?.bills?.[0]:null}
+                MBValidationData={MBValidationData}
                 ></CreatePurchaseBillForm>
             }
         </React.Fragment>

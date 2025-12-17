@@ -10,8 +10,10 @@ part 'init_mdms_model.g.dart';
 class InitMdmsModel with _$InitMdmsModel {
   const factory InitMdmsModel({
     @JsonKey(name: 'common-masters')
-        final CommonMastersModel? commonMastersModel,
+    final CommonMastersModel? commonMastersModel,
     @JsonKey(name: 'tenant') final TenantModel? tenant,
+    @JsonKey(name: 'commonUiConfig')
+    final CommonUIConfigModel? commonUIConfigModel,
   }) = _InitMdmsModel;
 
   factory InitMdmsModel.fromJson(
@@ -102,3 +104,92 @@ class CityModuleModel with _$CityModuleModel {
   factory CityModuleModel.fromJson(Map<String, dynamic> json) =>
       _$CityModuleModelFromJson(json);
 }
+
+
+
+@freezed
+class CommonUIConfigModel with _$CommonUIConfigModel{
+  const factory CommonUIConfigModel({
+     @JsonKey(name: 'PrivacyPolicy') List<PrivacyPolicyModel>? privacyPolicyModels
+  }) = _CommonUIConfigModel;
+   factory CommonUIConfigModel.fromJson(Map<String, dynamic> json) =>
+      _$CommonUIConfigModelFromJson(json);
+}
+
+
+@freezed
+class PrivacyPolicyModel with _$PrivacyPolicyModel {
+  const factory PrivacyPolicyModel({
+    final String? header,
+    final bool? active,
+    final String? module,
+    final List<ContentModel>? contents,
+  }) = _PrivacyPolicyModel;
+
+  factory PrivacyPolicyModel.fromJson(Map<String, dynamic> json) =>
+      _$PrivacyPolicyModelFromJson(json);
+}
+
+// class PrivacyPolicy {
+//   late String header;
+//   late String module;
+//   late bool? active;
+//   late List<Content>? contents;
+// }
+
+@freezed
+class ContentModel with _$ContentModel {
+  const factory ContentModel(
+      {final String? header,
+      final List<DescriptionModel>? descriptions}) = _ContentModel;
+
+  factory ContentModel.fromJson(Map<String, dynamic> json) =>
+      _$ContentModelFromJson(json);
+}
+// @embedded
+// class Content {
+//   late String? header;
+//   late List<Description>? descriptions;
+// }
+
+@freezed
+class DescriptionModel with _$DescriptionModel {
+  const factory DescriptionModel({
+    final String? text,
+    final String? type,
+    final bool? isBold,
+    final List<SubDescriptionModel>? subDescriptions,
+  }) = _DescriptionModel;
+
+  factory DescriptionModel.fromJson(Map<String, dynamic> json) =>
+      _$DescriptionModelFromJson(json);
+}
+
+// @embedded
+// class Description {
+//   late String? text;
+//   late String? type;
+//   late bool? isBold;
+//   late List<SubDescription>? subDescriptions;
+// }
+
+@freezed
+class SubDescriptionModel with _$SubDescriptionModel {
+  const factory SubDescriptionModel({
+    final String? text,
+    final String? type,
+    final bool? isBold,
+    final bool? isSpaceRequired,
+  }) = _SubDescriptionModel;
+
+  factory SubDescriptionModel.fromJson(Map<String, dynamic> json) =>
+      _$SubDescriptionModelFromJson(json);
+}
+
+// @embedded
+// class SubDescription {
+//   late String? text;
+//   late String? type;
+//   late bool? isBold;
+//   late bool? isSpaceRequired;
+// }

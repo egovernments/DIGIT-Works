@@ -1,0 +1,33 @@
+.icon-label-download{
+  align-items: center;
+  p {
+  color:#f18f5e !important
+  }
+}
+
+.dss-header-label-secondary {
+  margin-bottom: 16px;
+  margin-top:16px;
+}
+
+
+.multilink-block-wrapper{
+  @apply relative;
+  .multilink-labelWrap{
+      margin: 0 !important;
+      top: unset;
+      @apply relative !important;
+      color:#0B0C0C !important;
+      svg{
+          fill: #f18f5e;
+      }
+      span{
+          color:#f18f5e !important;
+      }
+  }
+  .multilink-optionWrap{
+      top: 8px;
+      right: -50%;
+      @apply block !important;
+  }
+}

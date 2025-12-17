@@ -1,229 +1,250 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element
+// ignore_for_file: unused_element, unnecessary_cast, override_on_non_overriding_member
+// ignore_for_file: strict_raw_type, inference_failure_on_untyped_parameter
 
 part of 'file_store_model.dart';
 
-class FileStoreListModelMapper extends MapperBase<FileStoreListModel> {
-  static MapperContainer container = MapperContainer(
-    mappers: {FileStoreListModelMapper()},
-  )..linkAll({FileStoreModelMapper.container});
+class FileStoreListModelMapper extends ClassMapperBase<FileStoreListModel> {
+  FileStoreListModelMapper._();
 
-  @override
-  FileStoreListModelMapperElement createElement(MapperContainer container) {
-    return FileStoreListModelMapperElement._(this, container);
+  static FileStoreListModelMapper? _instance;
+  static FileStoreListModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = FileStoreListModelMapper._());
+      FileStoreModelMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'FileStoreListModel';
+  final String id = 'FileStoreListModel';
 
-  static final fromMap = container.fromMap<FileStoreListModel>;
-  static final fromJson = container.fromJson<FileStoreListModel>;
-}
-
-class FileStoreListModelMapperElement
-    extends MapperElementBase<FileStoreListModel> {
-  FileStoreListModelMapperElement._(super.mapper, super.container);
+  static List<FileStoreModel>? _$fileStoreIds(FileStoreListModel v) =>
+      v.fileStoreIds;
+  static const Field<FileStoreListModel, List<FileStoreModel>> _f$fileStoreIds =
+      Field('fileStoreIds', _$fileStoreIds, opt: true);
 
   @override
-  Function get decoder => decode;
-  FileStoreListModel decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  FileStoreListModel fromMap(Map<String, dynamic> map) =>
-      FileStoreListModel(fileStoreIds: container.$getOpt(map, 'fileStoreIds'));
+  final MappableFields<FileStoreListModel> fields = const {
+    #fileStoreIds: _f$fileStoreIds,
+  };
+
+  static FileStoreListModel _instantiate(DecodingData data) {
+    return FileStoreListModel(fileStoreIds: data.dec(_f$fileStoreIds));
+  }
 
   @override
-  Function get encoder => encode;
-  dynamic encode(FileStoreListModel v) => toMap(v);
-  Map<String, dynamic> toMap(FileStoreListModel f) =>
-      {'fileStoreIds': container.$enc(f.fileStoreIds, 'fileStoreIds')};
+  final Function instantiate = _instantiate;
 
-  @override
-  String stringify(FileStoreListModel self) =>
-      'FileStoreListModel(fileStoreIds: ${container.asString(self.fileStoreIds)})';
-  @override
-  int hash(FileStoreListModel self) => container.hash(self.fileStoreIds);
-  @override
-  bool equals(FileStoreListModel self, FileStoreListModel other) =>
-      container.isEqual(self.fileStoreIds, other.fileStoreIds);
+  static FileStoreListModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<FileStoreListModel>(map);
+  }
+
+  static FileStoreListModel fromJson(String json) {
+    return ensureInitialized().decodeJson<FileStoreListModel>(json);
+  }
 }
 
 mixin FileStoreListModelMappable {
-  String toJson() =>
-      FileStoreListModelMapper.container.toJson(this as FileStoreListModel);
-  Map<String, dynamic> toMap() =>
-      FileStoreListModelMapper.container.toMap(this as FileStoreListModel);
+  String toJson() {
+    return FileStoreListModelMapper.ensureInitialized()
+        .encodeJson<FileStoreListModel>(this as FileStoreListModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return FileStoreListModelMapper.ensureInitialized()
+        .encodeMap<FileStoreListModel>(this as FileStoreListModel);
+  }
+
   FileStoreListModelCopyWith<FileStoreListModel, FileStoreListModel,
           FileStoreListModel>
       get copyWith => _FileStoreListModelCopyWithImpl(
           this as FileStoreListModel, $identity, $identity);
   @override
-  String toString() => FileStoreListModelMapper.container.asString(this);
+  String toString() {
+    return FileStoreListModelMapper.ensureInitialized()
+        .stringifyValue(this as FileStoreListModel);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          FileStoreListModelMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return FileStoreListModelMapper.ensureInitialized()
+        .equalsValue(this as FileStoreListModel, other);
+  }
+
   @override
-  int get hashCode => FileStoreListModelMapper.container.hash(this);
+  int get hashCode {
+    return FileStoreListModelMapper.ensureInitialized()
+        .hashValue(this as FileStoreListModel);
+  }
 }
 
-extension FileStoreListModelValueCopy<$R, $Out extends FileStoreListModel>
+extension FileStoreListModelValueCopy<$R, $Out>
     on ObjectCopyWith<$R, FileStoreListModel, $Out> {
   FileStoreListModelCopyWith<$R, FileStoreListModel, $Out>
-      get asFileStoreListModel =>
-          base.as((v, t, t2) => _FileStoreListModelCopyWithImpl(v, t, t2));
+      get $asFileStoreListModel =>
+          $base.as((v, t, t2) => _FileStoreListModelCopyWithImpl(v, t, t2));
 }
 
-typedef FileStoreListModelCopyWithBound = FileStoreListModel;
-
 abstract class FileStoreListModelCopyWith<$R, $In extends FileStoreListModel,
-    $Out extends FileStoreListModel> implements ObjectCopyWith<$R, $In, $Out> {
-  FileStoreListModelCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends FileStoreListModel>(
-          Then<FileStoreListModel, $Out2> t, Then<$Out2, $R2> t2);
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, FileStoreModel,
           FileStoreModelCopyWith<$R, FileStoreModel, FileStoreModel>>?
       get fileStoreIds;
   $R call({List<FileStoreModel>? fileStoreIds});
+  FileStoreListModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _FileStoreListModelCopyWithImpl<$R, $Out extends FileStoreListModel>
-    extends CopyWithBase<$R, FileStoreListModel, $Out>
+class _FileStoreListModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, FileStoreListModel, $Out>
     implements FileStoreListModelCopyWith<$R, FileStoreListModel, $Out> {
   _FileStoreListModelCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  FileStoreListModelCopyWith<$R2, FileStoreListModel, $Out2>
-      chain<$R2, $Out2 extends FileStoreListModel>(
-              Then<FileStoreListModel, $Out2> t, Then<$Out2, $R2> t2) =>
-          _FileStoreListModelCopyWithImpl($value, t, t2);
 
+  @override
+  late final ClassMapperBase<FileStoreListModel> $mapper =
+      FileStoreListModelMapper.ensureInitialized();
   @override
   ListCopyWith<$R, FileStoreModel,
           FileStoreModelCopyWith<$R, FileStoreModel, FileStoreModel>>?
       get fileStoreIds => $value.fileStoreIds != null
-          ? ListCopyWith(
-              $value.fileStoreIds!,
-              (v, t) => v.copyWith.chain<$R, FileStoreModel>($identity, t),
+          ? ListCopyWith($value.fileStoreIds!, (v, t) => v.copyWith.$chain(t),
               (v) => call(fileStoreIds: v))
           : null;
   @override
-  $R call({Object? fileStoreIds = $none}) => $then(
-      FileStoreListModel(fileStoreIds: or(fileStoreIds, $value.fileStoreIds)));
-}
-
-class FileStoreModelMapper extends MapperBase<FileStoreModel> {
-  static MapperContainer container = MapperContainer(
-    mappers: {FileStoreModelMapper()},
-  );
+  $R call({Object? fileStoreIds = $none}) => $apply(FieldCopyWithData(
+      {if (fileStoreIds != $none) #fileStoreIds: fileStoreIds}));
+  @override
+  FileStoreListModel $make(CopyWithData data) => FileStoreListModel(
+      fileStoreIds: data.get(#fileStoreIds, or: $value.fileStoreIds));
 
   @override
-  FileStoreModelMapperElement createElement(MapperContainer container) {
-    return FileStoreModelMapperElement._(this, container);
+  FileStoreListModelCopyWith<$R2, FileStoreListModel, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _FileStoreListModelCopyWithImpl($value, $cast, t);
+}
+
+class FileStoreModelMapper extends ClassMapperBase<FileStoreModel> {
+  FileStoreModelMapper._();
+
+  static FileStoreModelMapper? _instance;
+  static FileStoreModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = FileStoreModelMapper._());
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'FileStoreModel';
+  final String id = 'FileStoreModel';
 
-  static final fromMap = container.fromMap<FileStoreModel>;
-  static final fromJson = container.fromJson<FileStoreModel>;
-}
-
-class FileStoreModelMapperElement extends MapperElementBase<FileStoreModel> {
-  FileStoreModelMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  FileStoreModel decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  FileStoreModel fromMap(Map<String, dynamic> map) => FileStoreModel(
-      name: container.$getOpt(map, 'name'),
-      id: container.$getOpt(map, 'id'),
-      url: container.$getOpt(map, 'url'),
-      fileStoreId: container.$getOpt(map, 'fileStoreId'),
-      tenantId: container.$getOpt(map, 'tenantId'));
+  static String? _$name(FileStoreModel v) => v.name;
+  static const Field<FileStoreModel, String> _f$name =
+      Field('name', _$name, opt: true);
+  static String? _$id(FileStoreModel v) => v.id;
+  static const Field<FileStoreModel, String> _f$id =
+      Field('id', _$id, opt: true);
+  static String? _$url(FileStoreModel v) => v.url;
+  static const Field<FileStoreModel, String> _f$url =
+      Field('url', _$url, opt: true);
+  static String? _$fileStoreId(FileStoreModel v) => v.fileStoreId;
+  static const Field<FileStoreModel, String> _f$fileStoreId =
+      Field('fileStoreId', _$fileStoreId, opt: true);
+  static String? _$tenantId(FileStoreModel v) => v.tenantId;
+  static const Field<FileStoreModel, String> _f$tenantId =
+      Field('tenantId', _$tenantId, opt: true);
 
   @override
-  Function get encoder => encode;
-  dynamic encode(FileStoreModel v) => toMap(v);
-  Map<String, dynamic> toMap(FileStoreModel f) => {
-        'name': container.$enc(f.name, 'name'),
-        'id': container.$enc(f.id, 'id'),
-        'url': container.$enc(f.url, 'url'),
-        'fileStoreId': container.$enc(f.fileStoreId, 'fileStoreId'),
-        'tenantId': container.$enc(f.tenantId, 'tenantId')
-      };
+  final MappableFields<FileStoreModel> fields = const {
+    #name: _f$name,
+    #id: _f$id,
+    #url: _f$url,
+    #fileStoreId: _f$fileStoreId,
+    #tenantId: _f$tenantId,
+  };
+
+  static FileStoreModel _instantiate(DecodingData data) {
+    return FileStoreModel(
+        name: data.dec(_f$name),
+        id: data.dec(_f$id),
+        url: data.dec(_f$url),
+        fileStoreId: data.dec(_f$fileStoreId),
+        tenantId: data.dec(_f$tenantId));
+  }
 
   @override
-  String stringify(FileStoreModel self) =>
-      'FileStoreModel(name: ${container.asString(self.name)}, fileStoreId: ${container.asString(self.fileStoreId)}, tenantId: ${container.asString(self.tenantId)}, id: ${container.asString(self.id)}, url: ${container.asString(self.url)})';
-  @override
-  int hash(FileStoreModel self) =>
-      container.hash(self.name) ^
-      container.hash(self.fileStoreId) ^
-      container.hash(self.tenantId) ^
-      container.hash(self.id) ^
-      container.hash(self.url);
-  @override
-  bool equals(FileStoreModel self, FileStoreModel other) =>
-      container.isEqual(self.name, other.name) &&
-      container.isEqual(self.fileStoreId, other.fileStoreId) &&
-      container.isEqual(self.tenantId, other.tenantId) &&
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.url, other.url);
+  final Function instantiate = _instantiate;
+
+  static FileStoreModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<FileStoreModel>(map);
+  }
+
+  static FileStoreModel fromJson(String json) {
+    return ensureInitialized().decodeJson<FileStoreModel>(json);
+  }
 }
 
 mixin FileStoreModelMappable {
-  String toJson() =>
-      FileStoreModelMapper.container.toJson(this as FileStoreModel);
-  Map<String, dynamic> toMap() =>
-      FileStoreModelMapper.container.toMap(this as FileStoreModel);
+  String toJson() {
+    return FileStoreModelMapper.ensureInitialized()
+        .encodeJson<FileStoreModel>(this as FileStoreModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return FileStoreModelMapper.ensureInitialized()
+        .encodeMap<FileStoreModel>(this as FileStoreModel);
+  }
+
   FileStoreModelCopyWith<FileStoreModel, FileStoreModel, FileStoreModel>
       get copyWith => _FileStoreModelCopyWithImpl(
           this as FileStoreModel, $identity, $identity);
   @override
-  String toString() => FileStoreModelMapper.container.asString(this);
+  String toString() {
+    return FileStoreModelMapper.ensureInitialized()
+        .stringifyValue(this as FileStoreModel);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          FileStoreModelMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return FileStoreModelMapper.ensureInitialized()
+        .equalsValue(this as FileStoreModel, other);
+  }
+
   @override
-  int get hashCode => FileStoreModelMapper.container.hash(this);
+  int get hashCode {
+    return FileStoreModelMapper.ensureInitialized()
+        .hashValue(this as FileStoreModel);
+  }
 }
 
-extension FileStoreModelValueCopy<$R, $Out extends FileStoreModel>
+extension FileStoreModelValueCopy<$R, $Out>
     on ObjectCopyWith<$R, FileStoreModel, $Out> {
-  FileStoreModelCopyWith<$R, FileStoreModel, $Out> get asFileStoreModel =>
-      base.as((v, t, t2) => _FileStoreModelCopyWithImpl(v, t, t2));
+  FileStoreModelCopyWith<$R, FileStoreModel, $Out> get $asFileStoreModel =>
+      $base.as((v, t, t2) => _FileStoreModelCopyWithImpl(v, t, t2));
 }
 
-typedef FileStoreModelCopyWithBound = FileStoreModel;
-
-abstract class FileStoreModelCopyWith<$R, $In extends FileStoreModel,
-    $Out extends FileStoreModel> implements ObjectCopyWith<$R, $In, $Out> {
-  FileStoreModelCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends FileStoreModel>(
-          Then<FileStoreModel, $Out2> t, Then<$Out2, $R2> t2);
+abstract class FileStoreModelCopyWith<$R, $In extends FileStoreModel, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
   $R call(
       {String? name,
       String? id,
       String? url,
       String? fileStoreId,
       String? tenantId});
+  FileStoreModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _FileStoreModelCopyWithImpl<$R, $Out extends FileStoreModel>
-    extends CopyWithBase<$R, FileStoreModel, $Out>
+class _FileStoreModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, FileStoreModel, $Out>
     implements FileStoreModelCopyWith<$R, FileStoreModel, $Out> {
   _FileStoreModelCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  FileStoreModelCopyWith<$R2, FileStoreModel, $Out2>
-      chain<$R2, $Out2 extends FileStoreModel>(
-              Then<FileStoreModel, $Out2> t, Then<$Out2, $R2> t2) =>
-          _FileStoreModelCopyWithImpl($value, t, t2);
 
+  @override
+  late final ClassMapperBase<FileStoreModel> $mapper =
+      FileStoreModelMapper.ensureInitialized();
   @override
   $R call(
           {Object? name = $none,
@@ -231,10 +252,23 @@ class _FileStoreModelCopyWithImpl<$R, $Out extends FileStoreModel>
           Object? url = $none,
           Object? fileStoreId = $none,
           Object? tenantId = $none}) =>
-      $then(FileStoreModel(
-          name: or(name, $value.name),
-          id: or(id, $value.id),
-          url: or(url, $value.url),
-          fileStoreId: or(fileStoreId, $value.fileStoreId),
-          tenantId: or(tenantId, $value.tenantId)));
+      $apply(FieldCopyWithData({
+        if (name != $none) #name: name,
+        if (id != $none) #id: id,
+        if (url != $none) #url: url,
+        if (fileStoreId != $none) #fileStoreId: fileStoreId,
+        if (tenantId != $none) #tenantId: tenantId
+      }));
+  @override
+  FileStoreModel $make(CopyWithData data) => FileStoreModel(
+      name: data.get(#name, or: $value.name),
+      id: data.get(#id, or: $value.id),
+      url: data.get(#url, or: $value.url),
+      fileStoreId: data.get(#fileStoreId, or: $value.fileStoreId),
+      tenantId: data.get(#tenantId, or: $value.tenantId));
+
+  @override
+  FileStoreModelCopyWith<$R2, FileStoreModel, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _FileStoreModelCopyWithImpl($value, $cast, t);
 }

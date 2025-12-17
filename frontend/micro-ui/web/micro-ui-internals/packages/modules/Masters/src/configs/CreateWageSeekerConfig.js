@@ -1,5 +1,5 @@
 export const CreateWageSeekerConfig = {
-  "tenantId" : "pg",
+  "tenantId" : "od",
   "moduleName" : "commonUiConfig",
   "CreateWageSeekerConfig" : [
     {
@@ -87,9 +87,9 @@ export const CreateWageSeekerConfig = {
                 name: "basicDetails_relationShip",
                 optionsKey: "name",
                 error: "WORKS_REQUIRED_ERR",
-                optionsCustomStyle : {
-                  top : "2.3rem"
-                },
+                // optionsCustomStyle : {
+                //   top : "2.3rem"
+                // },
                 mdmsConfig: {
                   masterName: "Relationship",
                   moduleName: "common-masters",
@@ -125,9 +125,9 @@ export const CreateWageSeekerConfig = {
                 name: "basicDetails_gender",
                 optionsKey: "name",
                 error: "WORKS_REQUIRED_ERR",
-                optionsCustomStyle : {
-                  top : "2.3rem"
-                },
+                // optionsCustomStyle : {
+                //   top : "2.3rem"
+                // },
                 mdmsConfig: {
                   masterName: "GenderType",
                   moduleName: "common-masters",
@@ -156,9 +156,9 @@ export const CreateWageSeekerConfig = {
               populators: {
                 name: "basicDetails_socialCategory",
                 optionsKey: "name",
-                optionsCustomStyle : {
-                  top : "2.3rem"
-                },
+                // optionsCustomStyle : {
+                //   top : "2.3rem"
+                // },
                 mdmsConfig: {
                   masterName: "SocialCategory",
                   moduleName: "common-masters",
@@ -203,7 +203,8 @@ export const CreateWageSeekerConfig = {
                 defaultText: 'COMMON_SELECT_SKILL',
                 selectedText: "COMMON_SELECTED",
                 allowMultiSelect: true,
-                options: []
+                options: [],
+                isDropdownWithChip: true
               }
             }
           ]
@@ -225,9 +226,9 @@ export const CreateWageSeekerConfig = {
                 name: "locDetails_city",
                 optionsKey: "i18nKey",
                 error: "WORKS_REQUIRED_ERR",
-                optionsCustomStyle : {
-                  top : "2.3rem"
-                },
+                // optionsCustomStyle : {
+                //   top : "2.3rem"
+                // },
                 options: []
               }
             },
@@ -244,9 +245,9 @@ export const CreateWageSeekerConfig = {
                 name: "locDetails_ward",
                 optionsKey: "i18nKey",
                 error: "WORKS_REQUIRED_ERR",
-                optionsCustomStyle : {
-                  top : "2.3rem"
-                },
+                // optionsCustomStyle : {
+                //   top : "2.3rem"
+                // },
                 options: []
               }
             },
@@ -263,9 +264,9 @@ export const CreateWageSeekerConfig = {
                 name: "locDetails_locality",
                 optionsKey: "i18nKey",
                 error: "WORKS_REQUIRED_ERR",
-                optionsCustomStyle : {
-                  top : "2.3rem"
-                },
+                // optionsCustomStyle : {
+                //   top : "2.3rem"
+                // },
                 options: []
               }
             },
@@ -344,9 +345,9 @@ export const CreateWageSeekerConfig = {
                 name: "financeDetails_accountType",
                 optionsKey: "name",
                 error: "WORKS_REQUIRED_ERR",
-                optionsCustomStyle : {
-                  top : "2.3rem"
-                },
+                // optionsCustomStyle : {
+                //   top : "2.3rem"
+                // },
                 mdmsConfig: {
                   masterName: "BankAccType",
                   moduleName: "works",

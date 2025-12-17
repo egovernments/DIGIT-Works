@@ -12,7 +12,7 @@ part of 'app_initilization.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$AppInitializationEvent {
@@ -93,25 +93,25 @@ class _$AppInitializationEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$AppInitializationSetupEventCopyWith<$Res>
+abstract class _$$AppInitializationSetupEventImplCopyWith<$Res>
     implements $AppInitializationEventCopyWith<$Res> {
-  factory _$$AppInitializationSetupEventCopyWith(
-          _$AppInitializationSetupEvent value,
-          $Res Function(_$AppInitializationSetupEvent) then) =
-      __$$AppInitializationSetupEventCopyWithImpl<$Res>;
+  factory _$$AppInitializationSetupEventImplCopyWith(
+          _$AppInitializationSetupEventImpl value,
+          $Res Function(_$AppInitializationSetupEventImpl) then) =
+      __$$AppInitializationSetupEventImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String selectedLang});
 }
 
 /// @nodoc
-class __$$AppInitializationSetupEventCopyWithImpl<$Res>
+class __$$AppInitializationSetupEventImplCopyWithImpl<$Res>
     extends _$AppInitializationEventCopyWithImpl<$Res,
-        _$AppInitializationSetupEvent>
-    implements _$$AppInitializationSetupEventCopyWith<$Res> {
-  __$$AppInitializationSetupEventCopyWithImpl(
-      _$AppInitializationSetupEvent _value,
-      $Res Function(_$AppInitializationSetupEvent) _then)
+        _$AppInitializationSetupEventImpl>
+    implements _$$AppInitializationSetupEventImplCopyWith<$Res> {
+  __$$AppInitializationSetupEventImplCopyWithImpl(
+      _$AppInitializationSetupEventImpl _value,
+      $Res Function(_$AppInitializationSetupEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -119,7 +119,7 @@ class __$$AppInitializationSetupEventCopyWithImpl<$Res>
   $Res call({
     Object? selectedLang = null,
   }) {
-    return _then(_$AppInitializationSetupEvent(
+    return _then(_$AppInitializationSetupEventImpl(
       selectedLang: null == selectedLang
           ? _value.selectedLang
           : selectedLang // ignore: cast_nullable_to_non_nullable
@@ -130,10 +130,10 @@ class __$$AppInitializationSetupEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AppInitializationSetupEvent
+class _$AppInitializationSetupEventImpl
     with DiagnosticableTreeMixin
     implements AppInitializationSetupEvent {
-  const _$AppInitializationSetupEvent({required this.selectedLang});
+  const _$AppInitializationSetupEventImpl({required this.selectedLang});
 
   @override
   final String selectedLang;
@@ -153,10 +153,10 @@ class _$AppInitializationSetupEvent
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AppInitializationSetupEvent &&
+            other is _$AppInitializationSetupEventImpl &&
             (identical(other.selectedLang, selectedLang) ||
                 other.selectedLang == selectedLang));
   }
@@ -167,9 +167,9 @@ class _$AppInitializationSetupEvent
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$AppInitializationSetupEventCopyWith<_$AppInitializationSetupEvent>
-      get copyWith => __$$AppInitializationSetupEventCopyWithImpl<
-          _$AppInitializationSetupEvent>(this, _$identity);
+  _$$AppInitializationSetupEventImplCopyWith<_$AppInitializationSetupEventImpl>
+      get copyWith => __$$AppInitializationSetupEventImplCopyWithImpl<
+          _$AppInitializationSetupEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -233,13 +233,13 @@ class _$AppInitializationSetupEvent
 
 abstract class AppInitializationSetupEvent implements AppInitializationEvent {
   const factory AppInitializationSetupEvent(
-      {required final String selectedLang}) = _$AppInitializationSetupEvent;
+      {required final String selectedLang}) = _$AppInitializationSetupEventImpl;
 
   @override
   String get selectedLang;
   @override
   @JsonKey(ignore: true)
-  _$$AppInitializationSetupEventCopyWith<_$AppInitializationSetupEvent>
+  _$$AppInitializationSetupEventImplCopyWith<_$AppInitializationSetupEventImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -339,11 +339,12 @@ class _$AppInitializationStateCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_AppInitializationStateCopyWith<$Res>
+abstract class _$$AppInitializationStateImplCopyWith<$Res>
     implements $AppInitializationStateCopyWith<$Res> {
-  factory _$$_AppInitializationStateCopyWith(_$_AppInitializationState value,
-          $Res Function(_$_AppInitializationState) then) =
-      __$$_AppInitializationStateCopyWithImpl<$Res>;
+  factory _$$AppInitializationStateImplCopyWith(
+          _$AppInitializationStateImpl value,
+          $Res Function(_$AppInitializationStateImpl) then) =
+      __$$AppInitializationStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -359,12 +360,13 @@ abstract class _$$_AppInitializationStateCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_AppInitializationStateCopyWithImpl<$Res>
+class __$$AppInitializationStateImplCopyWithImpl<$Res>
     extends _$AppInitializationStateCopyWithImpl<$Res,
-        _$_AppInitializationState>
-    implements _$$_AppInitializationStateCopyWith<$Res> {
-  __$$_AppInitializationStateCopyWithImpl(_$_AppInitializationState _value,
-      $Res Function(_$_AppInitializationState) _then)
+        _$AppInitializationStateImpl>
+    implements _$$AppInitializationStateImplCopyWith<$Res> {
+  __$$AppInitializationStateImplCopyWithImpl(
+      _$AppInitializationStateImpl _value,
+      $Res Function(_$AppInitializationStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -375,7 +377,7 @@ class __$$_AppInitializationStateCopyWithImpl<$Res>
     Object? stateInfoListModel = freezed,
     Object? digitRowCardItems = freezed,
   }) {
-    return _then(_$_AppInitializationState(
+    return _then(_$AppInitializationStateImpl(
       isInitializationCompleted: null == isInitializationCompleted
           ? _value.isInitializationCompleted
           : isInitializationCompleted // ignore: cast_nullable_to_non_nullable
@@ -398,9 +400,9 @@ class __$$_AppInitializationStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_AppInitializationState extends _AppInitializationState
+class _$AppInitializationStateImpl extends _AppInitializationState
     with DiagnosticableTreeMixin {
-  const _$_AppInitializationState(
+  const _$AppInitializationStateImpl(
       {this.isInitializationCompleted = false,
       this.initMdmsModel,
       this.stateInfoListModel,
@@ -444,10 +446,10 @@ class _$_AppInitializationState extends _AppInitializationState
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AppInitializationState &&
+            other is _$AppInitializationStateImpl &&
             (identical(other.isInitializationCompleted,
                     isInitializationCompleted) ||
                 other.isInitializationCompleted == isInitializationCompleted) &&
@@ -470,9 +472,9 @@ class _$_AppInitializationState extends _AppInitializationState
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AppInitializationStateCopyWith<_$_AppInitializationState> get copyWith =>
-      __$$_AppInitializationStateCopyWithImpl<_$_AppInitializationState>(
-          this, _$identity);
+  _$$AppInitializationStateImplCopyWith<_$AppInitializationStateImpl>
+      get copyWith => __$$AppInitializationStateImplCopyWithImpl<
+          _$AppInitializationStateImpl>(this, _$identity);
 }
 
 abstract class _AppInitializationState extends AppInitializationState {
@@ -481,7 +483,7 @@ abstract class _AppInitializationState extends AppInitializationState {
           final InitMdmsModel? initMdmsModel,
           final StateInfoListModel? stateInfoListModel,
           final List<DigitRowCardModel>? digitRowCardItems}) =
-      _$_AppInitializationState;
+      _$AppInitializationStateImpl;
   const _AppInitializationState._() : super._();
 
   @override
@@ -494,6 +496,6 @@ abstract class _AppInitializationState extends AppInitializationState {
   List<DigitRowCardModel>? get digitRowCardItems;
   @override
   @JsonKey(ignore: true)
-  _$$_AppInitializationStateCopyWith<_$_AppInitializationState> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$AppInitializationStateImplCopyWith<_$AppInitializationStateImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }

@@ -39,6 +39,33 @@ export const ExpenseService = {
       userService: false,
       data: data,
       params: { tenantId}
+    }),
+    updatePI: (data) => 
+      Request({
+        url: Urls.expense.updatePI,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: false,
+        data: data
+      }),
+    searchPA: (data) => 
+    Request({
+      url: Urls.expense.searchPA,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: false,
+      data: data
+    }),
+    generateExcel: (data) =>
+    Request({
+      url: Urls.expense.generateExcel,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: false,
+      data: data
     })
 
 };

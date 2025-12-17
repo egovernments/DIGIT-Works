@@ -12,7 +12,7 @@ part of 'my_bills_inbox_config.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 MyBillsInboxConfigList _$MyBillsInboxConfigListFromJson(
     Map<String, dynamic> json) {
@@ -68,11 +68,12 @@ class _$MyBillsInboxConfigListCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_MyBillsInboxConfigListCopyWith<$Res>
+abstract class _$$MyBillsInboxConfigListImplCopyWith<$Res>
     implements $MyBillsInboxConfigListCopyWith<$Res> {
-  factory _$$_MyBillsInboxConfigListCopyWith(_$_MyBillsInboxConfigList value,
-          $Res Function(_$_MyBillsInboxConfigList) then) =
-      __$$_MyBillsInboxConfigListCopyWithImpl<$Res>;
+  factory _$$MyBillsInboxConfigListImplCopyWith(
+          _$MyBillsInboxConfigListImpl value,
+          $Res Function(_$MyBillsInboxConfigListImpl) then) =
+      __$$MyBillsInboxConfigListImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -81,12 +82,13 @@ abstract class _$$_MyBillsInboxConfigListCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_MyBillsInboxConfigListCopyWithImpl<$Res>
+class __$$MyBillsInboxConfigListImplCopyWithImpl<$Res>
     extends _$MyBillsInboxConfigListCopyWithImpl<$Res,
-        _$_MyBillsInboxConfigList>
-    implements _$$_MyBillsInboxConfigListCopyWith<$Res> {
-  __$$_MyBillsInboxConfigListCopyWithImpl(_$_MyBillsInboxConfigList _value,
-      $Res Function(_$_MyBillsInboxConfigList) _then)
+        _$MyBillsInboxConfigListImpl>
+    implements _$$MyBillsInboxConfigListImplCopyWith<$Res> {
+  __$$MyBillsInboxConfigListImplCopyWithImpl(
+      _$MyBillsInboxConfigListImpl _value,
+      $Res Function(_$MyBillsInboxConfigListImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -94,7 +96,7 @@ class __$$_MyBillsInboxConfigListCopyWithImpl<$Res>
   $Res call({
     Object? myBillsInboxConfig = null,
   }) {
-    return _then(_$_MyBillsInboxConfigList(
+    return _then(_$MyBillsInboxConfigListImpl(
       myBillsInboxConfig: null == myBillsInboxConfig
           ? _value._myBillsInboxConfig
           : myBillsInboxConfig // ignore: cast_nullable_to_non_nullable
@@ -105,14 +107,14 @@ class __$$_MyBillsInboxConfigListCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MyBillsInboxConfigList implements _MyBillsInboxConfigList {
-  const _$_MyBillsInboxConfigList(
+class _$MyBillsInboxConfigListImpl implements _MyBillsInboxConfigList {
+  const _$MyBillsInboxConfigListImpl(
       {@JsonKey(name: 'CBOBillInboxConfig')
           required final List<MyBillsInboxConfig> myBillsInboxConfig})
       : _myBillsInboxConfig = myBillsInboxConfig;
 
-  factory _$_MyBillsInboxConfigList.fromJson(Map<String, dynamic> json) =>
-      _$$_MyBillsInboxConfigListFromJson(json);
+  factory _$MyBillsInboxConfigListImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MyBillsInboxConfigListImplFromJson(json);
 
   final List<MyBillsInboxConfig> _myBillsInboxConfig;
   @override
@@ -130,10 +132,10 @@ class _$_MyBillsInboxConfigList implements _MyBillsInboxConfigList {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MyBillsInboxConfigList &&
+            other is _$MyBillsInboxConfigListImpl &&
             const DeepCollectionEquality()
                 .equals(other._myBillsInboxConfig, _myBillsInboxConfig));
   }
@@ -146,13 +148,13 @@ class _$_MyBillsInboxConfigList implements _MyBillsInboxConfigList {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MyBillsInboxConfigListCopyWith<_$_MyBillsInboxConfigList> get copyWith =>
-      __$$_MyBillsInboxConfigListCopyWithImpl<_$_MyBillsInboxConfigList>(
-          this, _$identity);
+  _$$MyBillsInboxConfigListImplCopyWith<_$MyBillsInboxConfigListImpl>
+      get copyWith => __$$MyBillsInboxConfigListImplCopyWithImpl<
+          _$MyBillsInboxConfigListImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MyBillsInboxConfigListToJson(
+    return _$$MyBillsInboxConfigListImplToJson(
       this,
     );
   }
@@ -162,18 +164,18 @@ abstract class _MyBillsInboxConfigList implements MyBillsInboxConfigList {
   const factory _MyBillsInboxConfigList(
           {@JsonKey(name: 'CBOBillInboxConfig')
               required final List<MyBillsInboxConfig> myBillsInboxConfig}) =
-      _$_MyBillsInboxConfigList;
+      _$MyBillsInboxConfigListImpl;
 
   factory _MyBillsInboxConfigList.fromJson(Map<String, dynamic> json) =
-      _$_MyBillsInboxConfigList.fromJson;
+      _$MyBillsInboxConfigListImpl.fromJson;
 
   @override
   @JsonKey(name: 'CBOBillInboxConfig')
   List<MyBillsInboxConfig> get myBillsInboxConfig;
   @override
   @JsonKey(ignore: true)
-  _$$_MyBillsInboxConfigListCopyWith<_$_MyBillsInboxConfigList> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$MyBillsInboxConfigListImplCopyWith<_$MyBillsInboxConfigListImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 MyBillsInboxConfig _$MyBillsInboxConfigFromJson(Map<String, dynamic> json) {
@@ -230,22 +232,22 @@ class _$MyBillsInboxConfigCopyWithImpl<$Res, $Val extends MyBillsInboxConfig>
 }
 
 /// @nodoc
-abstract class _$$_MyBillsInboxConfigCopyWith<$Res>
+abstract class _$$MyBillsInboxConfigImplCopyWith<$Res>
     implements $MyBillsInboxConfigCopyWith<$Res> {
-  factory _$$_MyBillsInboxConfigCopyWith(_$_MyBillsInboxConfig value,
-          $Res Function(_$_MyBillsInboxConfig) then) =
-      __$$_MyBillsInboxConfigCopyWithImpl<$Res>;
+  factory _$$MyBillsInboxConfigImplCopyWith(_$MyBillsInboxConfigImpl value,
+          $Res Function(_$MyBillsInboxConfigImpl) then) =
+      __$$MyBillsInboxConfigImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String rejectedCode, String approvedCode});
 }
 
 /// @nodoc
-class __$$_MyBillsInboxConfigCopyWithImpl<$Res>
-    extends _$MyBillsInboxConfigCopyWithImpl<$Res, _$_MyBillsInboxConfig>
-    implements _$$_MyBillsInboxConfigCopyWith<$Res> {
-  __$$_MyBillsInboxConfigCopyWithImpl(
-      _$_MyBillsInboxConfig _value, $Res Function(_$_MyBillsInboxConfig) _then)
+class __$$MyBillsInboxConfigImplCopyWithImpl<$Res>
+    extends _$MyBillsInboxConfigCopyWithImpl<$Res, _$MyBillsInboxConfigImpl>
+    implements _$$MyBillsInboxConfigImplCopyWith<$Res> {
+  __$$MyBillsInboxConfigImplCopyWithImpl(_$MyBillsInboxConfigImpl _value,
+      $Res Function(_$MyBillsInboxConfigImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -254,7 +256,7 @@ class __$$_MyBillsInboxConfigCopyWithImpl<$Res>
     Object? rejectedCode = null,
     Object? approvedCode = null,
   }) {
-    return _then(_$_MyBillsInboxConfig(
+    return _then(_$MyBillsInboxConfigImpl(
       rejectedCode: null == rejectedCode
           ? _value.rejectedCode
           : rejectedCode // ignore: cast_nullable_to_non_nullable
@@ -269,12 +271,12 @@ class __$$_MyBillsInboxConfigCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_MyBillsInboxConfig implements _MyBillsInboxConfig {
-  const _$_MyBillsInboxConfig(
+class _$MyBillsInboxConfigImpl implements _MyBillsInboxConfig {
+  const _$MyBillsInboxConfigImpl(
       {required this.rejectedCode, required this.approvedCode});
 
-  factory _$_MyBillsInboxConfig.fromJson(Map<String, dynamic> json) =>
-      _$$_MyBillsInboxConfigFromJson(json);
+  factory _$MyBillsInboxConfigImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MyBillsInboxConfigImplFromJson(json);
 
   @override
   final String rejectedCode;
@@ -287,10 +289,10 @@ class _$_MyBillsInboxConfig implements _MyBillsInboxConfig {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_MyBillsInboxConfig &&
+            other is _$MyBillsInboxConfigImpl &&
             (identical(other.rejectedCode, rejectedCode) ||
                 other.rejectedCode == rejectedCode) &&
             (identical(other.approvedCode, approvedCode) ||
@@ -304,13 +306,13 @@ class _$_MyBillsInboxConfig implements _MyBillsInboxConfig {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_MyBillsInboxConfigCopyWith<_$_MyBillsInboxConfig> get copyWith =>
-      __$$_MyBillsInboxConfigCopyWithImpl<_$_MyBillsInboxConfig>(
+  _$$MyBillsInboxConfigImplCopyWith<_$MyBillsInboxConfigImpl> get copyWith =>
+      __$$MyBillsInboxConfigImplCopyWithImpl<_$MyBillsInboxConfigImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_MyBillsInboxConfigToJson(
+    return _$$MyBillsInboxConfigImplToJson(
       this,
     );
   }
@@ -319,10 +321,10 @@ class _$_MyBillsInboxConfig implements _MyBillsInboxConfig {
 abstract class _MyBillsInboxConfig implements MyBillsInboxConfig {
   const factory _MyBillsInboxConfig(
       {required final String rejectedCode,
-      required final String approvedCode}) = _$_MyBillsInboxConfig;
+      required final String approvedCode}) = _$MyBillsInboxConfigImpl;
 
   factory _MyBillsInboxConfig.fromJson(Map<String, dynamic> json) =
-      _$_MyBillsInboxConfig.fromJson;
+      _$MyBillsInboxConfigImpl.fromJson;
 
   @override
   String get rejectedCode;
@@ -330,6 +332,6 @@ abstract class _MyBillsInboxConfig implements MyBillsInboxConfig {
   String get approvedCode;
   @override
   @JsonKey(ignore: true)
-  _$$_MyBillsInboxConfigCopyWith<_$_MyBillsInboxConfig> get copyWith =>
+  _$$MyBillsInboxConfigImplCopyWith<_$MyBillsInboxConfigImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -6,8 +6,8 @@ part of 'wage_seeker_mdms.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_WageSeekerMDMS _$$_WageSeekerMDMSFromJson(Map<String, dynamic> json) =>
-    _$_WageSeekerMDMS(
+_$WageSeekerMDMSImpl _$$WageSeekerMDMSImplFromJson(Map<String, dynamic> json) =>
+    _$WageSeekerMDMSImpl(
       commonMDMS: json['common-masters'] == null
           ? null
           : WageSeekerCommonMDMS.fromJson(
@@ -20,51 +20,52 @@ _$_WageSeekerMDMS _$$_WageSeekerMDMSFromJson(Map<String, dynamic> json) =>
           : TenantMDMS.fromJson(json['tenant'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_WageSeekerMDMSToJson(_$_WageSeekerMDMS instance) =>
+Map<String, dynamic> _$$WageSeekerMDMSImplToJson(
+        _$WageSeekerMDMSImpl instance) =>
     <String, dynamic>{
       'common-masters': instance.commonMDMS,
       'works': instance.worksMDMS,
       'tenant': instance.tenantMDMS,
     };
 
-_$_WageSeekerWorksMDMS _$$_WageSeekerWorksMDMSFromJson(
+_$WageSeekerWorksMDMSImpl _$$WageSeekerWorksMDMSImplFromJson(
         Map<String, dynamic> json) =>
-    _$_WageSeekerWorksMDMS(
+    _$WageSeekerWorksMDMSImpl(
       bankAccType: (json['BankAccType'] as List<dynamic>?)
           ?.map((e) => BankAccType.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_WageSeekerWorksMDMSToJson(
-        _$_WageSeekerWorksMDMS instance) =>
+Map<String, dynamic> _$$WageSeekerWorksMDMSImplToJson(
+        _$WageSeekerWorksMDMSImpl instance) =>
     <String, dynamic>{
       'BankAccType': instance.bankAccType,
     };
 
-_$_TenantMDMS _$$_TenantMDMSFromJson(Map<String, dynamic> json) =>
-    _$_TenantMDMS(
+_$TenantMDMSImpl _$$TenantMDMSImplFromJson(Map<String, dynamic> json) =>
+    _$TenantMDMSImpl(
       cityModule: (json['citymodule'] as List<dynamic>?)
           ?.map((e) => CityModule.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_TenantMDMSToJson(_$_TenantMDMS instance) =>
+Map<String, dynamic> _$$TenantMDMSImplToJson(_$TenantMDMSImpl instance) =>
     <String, dynamic>{
       'citymodule': instance.cityModule,
     };
 
-_$_CityModule _$$_CityModuleFromJson(Map<String, dynamic> json) =>
-    _$_CityModule(
+_$CityModuleImpl _$$CityModuleImplFromJson(Map<String, dynamic> json) =>
+    _$CityModuleImpl(
       active: json['active'] as bool?,
       code: json['code'] as String?,
       module: json['module'] as String?,
-      order: json['order'] as int?,
+      order: (json['order'] as num?)?.toInt(),
       tenants: (json['tenants'] as List<dynamic>?)
           ?.map((e) => TenantList.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_CityModuleToJson(_$_CityModule instance) =>
+Map<String, dynamic> _$$CityModuleImplToJson(_$CityModuleImpl instance) =>
     <String, dynamic>{
       'active': instance.active,
       'code': instance.code,
@@ -73,19 +74,19 @@ Map<String, dynamic> _$$_CityModuleToJson(_$_CityModule instance) =>
       'tenants': instance.tenants,
     };
 
-_$_TenantList _$$_TenantListFromJson(Map<String, dynamic> json) =>
-    _$_TenantList(
+_$TenantListImpl _$$TenantListImplFromJson(Map<String, dynamic> json) =>
+    _$TenantListImpl(
       code: json['code'] as String?,
     );
 
-Map<String, dynamic> _$$_TenantListToJson(_$_TenantList instance) =>
+Map<String, dynamic> _$$TenantListImplToJson(_$TenantListImpl instance) =>
     <String, dynamic>{
       'code': instance.code,
     };
 
-_$_WageSeekerCommonMDMS _$$_WageSeekerCommonMDMSFromJson(
+_$WageSeekerCommonMDMSImpl _$$WageSeekerCommonMDMSImplFromJson(
         Map<String, dynamic> json) =>
-    _$_WageSeekerCommonMDMS(
+    _$WageSeekerCommonMDMSImpl(
       genderType: (json['GenderType'] as List<dynamic>?)
           ?.map((e) => GenderType.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -98,65 +99,84 @@ _$_WageSeekerCommonMDMS _$$_WageSeekerCommonMDMSFromJson(
       socialCategory: (json['SocialCategory'] as List<dynamic>?)
           ?.map((e) => SocialCategory.fromJson(e as Map<String, dynamic>))
           .toList(),
+      documentType: (json['DocumentType'] as List<dynamic>?)
+          ?.map((e) => DocumentType.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
-Map<String, dynamic> _$$_WageSeekerCommonMDMSToJson(
-        _$_WageSeekerCommonMDMS instance) =>
+Map<String, dynamic> _$$WageSeekerCommonMDMSImplToJson(
+        _$WageSeekerCommonMDMSImpl instance) =>
     <String, dynamic>{
       'GenderType': instance.genderType,
       'WageSeekerSkills': instance.wageSeekerSkills,
       'Relationship': instance.relationship,
       'SocialCategory': instance.socialCategory,
+      'DocumentType': instance.documentType,
     };
 
-_$_GenderType _$$_GenderTypeFromJson(Map<String, dynamic> json) =>
-    _$_GenderType(
+_$GenderTypeImpl _$$GenderTypeImplFromJson(Map<String, dynamic> json) =>
+    _$GenderTypeImpl(
       code: json['code'] as String,
       active: json['active'] as bool,
     );
 
-Map<String, dynamic> _$$_GenderTypeToJson(_$_GenderType instance) =>
+Map<String, dynamic> _$$GenderTypeImplToJson(_$GenderTypeImpl instance) =>
     <String, dynamic>{
       'code': instance.code,
       'active': instance.active,
     };
 
-_$_Relationship _$$_RelationshipFromJson(Map<String, dynamic> json) =>
-    _$_Relationship(
+_$RelationshipImpl _$$RelationshipImplFromJson(Map<String, dynamic> json) =>
+    _$RelationshipImpl(
       name: json['name'] as String,
       code: json['code'] as String,
       active: json['active'] as bool,
     );
 
-Map<String, dynamic> _$$_RelationshipToJson(_$_Relationship instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'code': instance.code,
-      'active': instance.active,
-    };
-
-_$_SocialCategory _$$_SocialCategoryFromJson(Map<String, dynamic> json) =>
-    _$_SocialCategory(
-      name: json['name'] as String,
-      code: json['code'] as String,
-      active: json['active'] as bool,
-    );
-
-Map<String, dynamic> _$$_SocialCategoryToJson(_$_SocialCategory instance) =>
+Map<String, dynamic> _$$RelationshipImplToJson(_$RelationshipImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'code': instance.code,
       'active': instance.active,
     };
 
-_$_BankAccType _$$_BankAccTypeFromJson(Map<String, dynamic> json) =>
-    _$_BankAccType(
+_$SocialCategoryImpl _$$SocialCategoryImplFromJson(Map<String, dynamic> json) =>
+    _$SocialCategoryImpl(
       name: json['name'] as String,
       code: json['code'] as String,
       active: json['active'] as bool,
     );
 
-Map<String, dynamic> _$$_BankAccTypeToJson(_$_BankAccType instance) =>
+Map<String, dynamic> _$$SocialCategoryImplToJson(
+        _$SocialCategoryImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'code': instance.code,
+      'active': instance.active,
+    };
+
+_$BankAccTypeImpl _$$BankAccTypeImplFromJson(Map<String, dynamic> json) =>
+    _$BankAccTypeImpl(
+      name: json['name'] as String,
+      code: json['code'] as String,
+      active: json['active'] as bool,
+    );
+
+Map<String, dynamic> _$$BankAccTypeImplToJson(_$BankAccTypeImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'code': instance.code,
+      'active': instance.active,
+    };
+
+_$DocumentTypeImpl _$$DocumentTypeImplFromJson(Map<String, dynamic> json) =>
+    _$DocumentTypeImpl(
+      name: json['name'] as String,
+      code: json['code'] as String,
+      active: json['active'] as bool,
+    );
+
+Map<String, dynamic> _$$DocumentTypeImplToJson(_$DocumentTypeImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'code': instance.code,

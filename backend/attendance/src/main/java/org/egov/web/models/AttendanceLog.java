@@ -5,7 +5,7 @@ import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,6 @@ import java.util.UUID;
  * AttendanceLog
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T14:44:21.051+05:30")
 
 @Getter
 @Setter
@@ -25,6 +24,9 @@ import java.util.UUID;
 public class AttendanceLog {
     @JsonProperty("id")
     private String id = null;
+
+    @JsonProperty("clientReferenceId")
+    private String clientReferenceId = null;
 
     @JsonProperty("registerId")
     private String registerId = null;
@@ -50,6 +52,9 @@ public class AttendanceLog {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
+
+    @JsonProperty("clientAuditDetails")
+    private AuditDetails clientAuditDetails = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;

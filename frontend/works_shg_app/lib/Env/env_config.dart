@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:digit_components/digit_components.dart';
+import 'package:digit_ui_components/utils/app_logger.dart';
+// import 'package:digit_components/digit_components.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 EnvironmentConfiguration envConfig = EnvironmentConfiguration.instance;
@@ -25,7 +26,7 @@ class EnvironmentConfiguration {
       await _dotEnv.load();
       _variables = Variables(dotEnv: _dotEnv);
     } catch (error) {
-      print('catch Error');
+     
       AppLogger.instance.error(
         title: runtimeType.toString(),
         message: 'Error while accessing .env file. Using fallback values',
@@ -72,6 +73,10 @@ class Variables {
     'SEND_TIMEOUT',
     '$_connectTimeoutValue',
   );
+static const _aadhaarUrl = EnvEntry(
+    'AADHAAR_VERIFY_PATH',
+    'http://164.100.141.79/authekycv4/api/authenticate',
+  );
 
   static const _baseUrl = EnvEntry(
     'BASE_URL',
@@ -96,6 +101,8 @@ class Variables {
     this.useFallbackValues = false,
     required DotEnv dotEnv,
   }) : _dotEnv = dotEnv;
+
+String get aadharUrl =>useFallbackValues?_aadhaarUrl.value:_dotEnv.get(_aadhaarUrl.key, fallback: _aadhaarUrl.value);
 
   String get baseUrl => useFallbackValues
       ? _baseUrl.value

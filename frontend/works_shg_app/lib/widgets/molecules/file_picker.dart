@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:digit_components/theme/colors.dart';
-import 'package:digit_components/theme/digit_theme.dart';
+// import 'package:digit_components/theme/colors.dart';
+// import 'package:digit_components/theme/digit_theme.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ import 'package:works_shg_app/models/file_store/file_store_model.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
     as i18;
 import 'package:works_shg_app/utils/models/file_picker_data.dart';
-import 'package:works_shg_app/widgets/ButtonLink.dart';
+import 'package:works_shg_app/widgets/button_link.dart';
 
 import '../../data/repositories/core_repo/core_repository.dart';
 import '../../utils/common_methods.dart';
@@ -26,12 +27,11 @@ class SHGFilePicker extends StatefulWidget {
   final List<String>? extensions;
 
   const SHGFilePicker(
-      {Key? key,
+      {super.key,
       required this.callBack,
       required this.moduleName,
       this.extensions,
-      required this.label})
-      : super(key: key);
+      required this.label});
   @override
   SHGFilePickerState createState() => SHGFilePickerState();
 }
@@ -39,9 +39,7 @@ class SHGFilePicker extends StatefulWidget {
 class SHGFilePickerState extends State<SHGFilePicker> {
   List<dynamic> _selectedFiles = <dynamic>[];
   List<FileStoreModel> fileStoreList = <FileStoreModel>[];
-  String? _directoryPath;
   String? _extension;
-  bool _loadingPath = false;
   bool multiPick = false;
   FileType pickingType = FileType.custom;
   TextEditingController controller = TextEditingController();
@@ -54,9 +52,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
   }
 
   void _openFileExplorer(BuildContext context) async {
-    setState(() => _loadingPath = true);
     try {
-      _directoryPath = null;
       var paths = (await FilePicker.platform.pickFiles(
         type: pickingType,
         allowMultiple: multiPick,
@@ -69,15 +65,25 @@ class SHGFilePickerState extends State<SHGFilePicker> {
 
       if (paths != null) {
         var isNotValidSize = false;
+        var isNotValidFile = false;
 
         for (var path in paths) {
           if (!(await CommonMethods.isValidFileSize(path.size))) {
             isNotValidSize = true;
           }
+          if (!CommonMethods.validateImageFileExtension(path.extension ?? '',
+              widget.extensions ?? ['png', 'jpeg', 'jpg'])) {
+            isNotValidFile = true;
+          }
         }
 
         if (isNotValidSize) {
           Notifiers.getToastMessage(context, i18.common.fileSize, 'ERROR');
+          return;
+        }
+        if (isNotValidFile) {
+          Notifiers.getToastMessage(
+              context, i18.common.invalidImageFile, 'ERROR');
           return;
         }
         if (multiPick) {
@@ -101,13 +107,12 @@ class SHGFilePickerState extends State<SHGFilePicker> {
         uploadFiles(files);
       }
     } on PlatformException catch (e) {
-      print("Unsupported operation$e");
+     
     } catch (ex) {
-      print(ex);
+      
     }
     if (!mounted) return;
     setState(() {
-      _loadingPath = false;
     });
   }
 
@@ -136,7 +141,8 @@ class SHGFilePickerState extends State<SHGFilePicker> {
                   style: TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 16,
-                      color: DigitTheme.instance.colorScheme.onSurface)))),
+                      color: Theme.of(context).colorScheme.onSurface,
+                      )))),
       Container(
         width: constraints.maxWidth > 760
             ? MediaQuery.of(context).size.width / 2.5
@@ -188,7 +194,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
                         children: [
                           Icon(
                             Icons.camera_enhance,
-                            color: DigitTheme.instance.colorScheme.primary,
+                            color: Theme.of(context).colorScheme.primary,
                             size: 50,
                           ),
                           ButtonLink(
@@ -211,7 +217,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
             style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
-                color: const DigitColors().cloudGray)),
+                color:  Theme.of(context).colorScheme.secondary)),
       )
     ];
   }
@@ -341,7 +347,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
             uploadFiles(<File>[file]);
             return;
           } else {
-            return null;
+            return;
           }
         } else {
           _openFileExplorer(context);
@@ -366,7 +372,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
             iconSize: 45,
             icon: Icon(
               icon,
-              color: DigitTheme.instance.colorScheme.primary,
+              color:  Theme.of(context).colorScheme.primary,
             )),
         Text(
           AppLocalizations.of(context).translate(label),

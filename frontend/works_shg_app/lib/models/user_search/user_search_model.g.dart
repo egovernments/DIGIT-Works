@@ -6,14 +6,16 @@ part of 'user_search_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_UserSearchModel _$$_UserSearchModelFromJson(Map<String, dynamic> json) =>
-    _$_UserSearchModel(
+_$UserSearchModelImpl _$$UserSearchModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$UserSearchModelImpl(
       user: (json['user'] as List<dynamic>?)
           ?.map((e) => UserRequestModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_UserSearchModelToJson(_$_UserSearchModel instance) =>
+Map<String, dynamic> _$$UserSearchModelImplToJson(
+        _$UserSearchModelImpl instance) =>
     <String, dynamic>{
       'user': instance.user,
     };

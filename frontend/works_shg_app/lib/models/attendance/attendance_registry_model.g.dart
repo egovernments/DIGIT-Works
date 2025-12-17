@@ -6,31 +6,31 @@ part of 'attendance_registry_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_AttendanceRegistersModel _$$_AttendanceRegistersModelFromJson(
+_$AttendanceRegistersModelImpl _$$AttendanceRegistersModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$_AttendanceRegistersModel(
+    _$AttendanceRegistersModelImpl(
       attendanceRegister: (json['attendanceRegister'] as List<dynamic>?)
           ?.map((e) => AttendanceRegister.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_AttendanceRegistersModelToJson(
-        _$_AttendanceRegistersModel instance) =>
+Map<String, dynamic> _$$AttendanceRegistersModelImplToJson(
+        _$AttendanceRegistersModelImpl instance) =>
     <String, dynamic>{
       'attendanceRegister': instance.attendanceRegister,
     };
 
-_$_AttendanceRegister _$$_AttendanceRegisterFromJson(
+_$AttendanceRegisterImpl _$$AttendanceRegisterImplFromJson(
         Map<String, dynamic> json) =>
-    _$_AttendanceRegister(
+    _$AttendanceRegisterImpl(
       id: json['id'] as String?,
       tenantId: json['tenantId'] as String,
       registerNumber: json['registerNumber'] as String?,
       serviceCode: json['serviceCode'] as String?,
       referenceId: json['referenceId'] as String?,
       name: json['name'] as String?,
-      startDate: json['startDate'] as int?,
-      endDate: json['endDate'] as int?,
+      startDate: (json['startDate'] as num?)?.toInt(),
+      endDate: (json['endDate'] as num?)?.toInt(),
       status: json['status'] as String?,
       attendanceRegisterAdditionalDetails: json['additionalDetails'] == null
           ? null
@@ -48,8 +48,8 @@ _$_AttendanceRegister _$$_AttendanceRegisterFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$_AttendanceRegisterToJson(
-        _$_AttendanceRegister instance) =>
+Map<String, dynamic> _$$AttendanceRegisterImplToJson(
+        _$AttendanceRegisterImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'tenantId': instance.tenantId,
@@ -66,10 +66,10 @@ Map<String, dynamic> _$$_AttendanceRegisterToJson(
       'attendees': instance.attendeesEntries,
     };
 
-_$_AttendanceRegisterAdditionalDetails
-    _$$_AttendanceRegisterAdditionalDetailsFromJson(
+_$AttendanceRegisterAdditionalDetailsImpl
+    _$$AttendanceRegisterAdditionalDetailsImplFromJson(
             Map<String, dynamic> json) =>
-        _$_AttendanceRegisterAdditionalDetails(
+        _$AttendanceRegisterAdditionalDetailsImpl(
           contractId: json['contractId'] as String?,
           orgName: json['orgName'] as String?,
           officerInCharge: json['officerInCharge'] as String?,
@@ -80,11 +80,11 @@ _$_AttendanceRegisterAdditionalDetails
           projectDesc: json['projectDesc'] as String?,
           locality: json['locality'] as String?,
           ward: json['ward'] as String?,
-          amount: json['amount'] as int?,
+          amount: (json['amount'] as num?)?.toInt(),
         );
 
-Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
-        _$_AttendanceRegisterAdditionalDetails instance) =>
+Map<String, dynamic> _$$AttendanceRegisterAdditionalDetailsImplToJson(
+        _$AttendanceRegisterAdditionalDetailsImpl instance) =>
     <String, dynamic>{
       'contractId': instance.contractId,
       'orgName': instance.orgName,
@@ -99,17 +99,17 @@ Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
       'amount': instance.amount,
     };
 
-_$_RegisterAuditDetails _$$_RegisterAuditDetailsFromJson(
+_$RegisterAuditDetailsImpl _$$RegisterAuditDetailsImplFromJson(
         Map<String, dynamic> json) =>
-    _$_RegisterAuditDetails(
+    _$RegisterAuditDetailsImpl(
       createdBy: json['createdBy'] as String?,
       lastModifiedBy: json['lastModifiedBy'] as String?,
-      createdTime: json['createdTime'] as int?,
-      lastModifiedTime: json['lastModifiedTime'] as int?,
+      createdTime: (json['createdTime'] as num?)?.toInt(),
+      lastModifiedTime: (json['lastModifiedTime'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$$_RegisterAuditDetailsToJson(
-        _$_RegisterAuditDetails instance) =>
+Map<String, dynamic> _$$RegisterAuditDetailsImplToJson(
+        _$RegisterAuditDetailsImpl instance) =>
     <String, dynamic>{
       'createdBy': instance.createdBy,
       'lastModifiedBy': instance.lastModifiedBy,
@@ -117,15 +117,15 @@ Map<String, dynamic> _$$_RegisterAuditDetailsToJson(
       'lastModifiedTime': instance.lastModifiedTime,
     };
 
-_$_StaffEntries _$$_StaffEntriesFromJson(Map<String, dynamic> json) =>
-    _$_StaffEntries(
+_$StaffEntriesImpl _$$StaffEntriesImplFromJson(Map<String, dynamic> json) =>
+    _$StaffEntriesImpl(
       id: json['id'] as String?,
       userId: json['userId'] as String?,
       registerId: json['registerId'] as String?,
-      enrollmentDate: json['enrollmentDate'] as int?,
+      enrollmentDate: (json['enrollmentDate'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$$_StaffEntriesToJson(_$_StaffEntries instance) =>
+Map<String, dynamic> _$$StaffEntriesImplToJson(_$StaffEntriesImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'userId': instance.userId,
@@ -133,21 +133,23 @@ Map<String, dynamic> _$$_StaffEntriesToJson(_$_StaffEntries instance) =>
       'enrollmentDate': instance.enrollmentDate,
     };
 
-_$_AttendeesEntries _$$_AttendeesEntriesFromJson(Map<String, dynamic> json) =>
-    _$_AttendeesEntries(
+_$AttendeesEntriesImpl _$$AttendeesEntriesImplFromJson(
+        Map<String, dynamic> json) =>
+    _$AttendeesEntriesImpl(
       id: json['id'] as String?,
       tenantId: json['tenantId'] as String,
       registerId: json['registerId'] as String?,
       individualId: json['individualId'] as String?,
-      enrollmentDate: json['enrollmentDate'] as int?,
-      denrollmentDate: json['denrollmentDate'] as int?,
+      enrollmentDate: (json['enrollmentDate'] as num?)?.toInt(),
+      denrollmentDate: (json['denrollmentDate'] as num?)?.toInt(),
       additionalDetails: json['additionalDetails'] == null
           ? null
           : AttendeesAdditionalDetails.fromJson(
               json['additionalDetails'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_AttendeesEntriesToJson(_$_AttendeesEntries instance) =>
+Map<String, dynamic> _$$AttendeesEntriesImplToJson(
+        _$AttendeesEntriesImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'tenantId': instance.tenantId,
@@ -158,20 +160,22 @@ Map<String, dynamic> _$$_AttendeesEntriesToJson(_$_AttendeesEntries instance) =>
       'additionalDetails': instance.additionalDetails,
     };
 
-_$_AttendeesAdditionalDetails _$$_AttendeesAdditionalDetailsFromJson(
+_$AttendeesAdditionalDetailsImpl _$$AttendeesAdditionalDetailsImplFromJson(
         Map<String, dynamic> json) =>
-    _$_AttendeesAdditionalDetails(
+    _$AttendeesAdditionalDetailsImpl(
       individualName: json['individualName'] as String?,
+      gender: json['gender'] as String?,
       individualGaurdianName: json['individualGaurdianName'] as String?,
       individualID: json['individualID'] as String?,
       identifierId: json['identifierId'] as String?,
       bankNumber: json['bankNumber'] as String?,
     );
 
-Map<String, dynamic> _$$_AttendeesAdditionalDetailsToJson(
-        _$_AttendeesAdditionalDetails instance) =>
+Map<String, dynamic> _$$AttendeesAdditionalDetailsImplToJson(
+        _$AttendeesAdditionalDetailsImpl instance) =>
     <String, dynamic>{
       'individualName': instance.individualName,
+      'gender': instance.gender,
       'individualGaurdianName': instance.individualGaurdianName,
       'individualID': instance.individualID,
       'identifierId': instance.identifierId,

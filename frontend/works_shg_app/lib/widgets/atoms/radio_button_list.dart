@@ -1,9 +1,9 @@
-import 'package:digit_components/digit_components.dart';
+// import 'package:digit_components/digit_components.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class DigitRadioButtonList<T> extends StatelessWidget {
-  final BuildContext context;
   final String labelText;
   final bool isRequired;
   final String formControlName;
@@ -17,8 +17,7 @@ class DigitRadioButtonList<T> extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? labelPadding;
 
-  const DigitRadioButtonList(
-    this.context, {
+  const DigitRadioButtonList({
     super.key,
     this.isEnabled,
     required this.formControlName,
@@ -51,12 +50,11 @@ class DigitRadioButtonList<T> extends StatelessWidget {
                         labelText,
                         textAlign: TextAlign.left,
                         style:
-                            DigitTheme.instance.mobileTheme.textTheme.bodyLarge,
+                           Theme.of(context).digitTextTheme(context).bodyL,
                       ),
-                      Text(isRequired ? '*' : '',
+                      Text(isRequired ? ' *' : '',
                           textAlign: TextAlign.left,
-                          style: DigitTheme
-                              .instance.mobileTheme.textTheme.bodyLarge),
+                          style:  Theme.of(context).digitTextTheme(context).bodyL),
                     ]))),
           ),
           Column(

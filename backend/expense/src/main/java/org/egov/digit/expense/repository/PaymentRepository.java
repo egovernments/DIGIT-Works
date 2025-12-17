@@ -3,7 +3,7 @@ package org.egov.digit.expense.repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.digit.expense.repository.querybuilder.PaymentQueryBuilder;
 import org.egov.digit.expense.repository.rowmapper.PaymentRowMapper;
@@ -16,21 +16,29 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class PaymentRepository {
 	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
 	
-	@Autowired
-	private PaymentQueryBuilder queryBuilder;
+	private final PaymentQueryBuilder queryBuilder;
 	
+	private final PaymentRowMapper paymentBillRowMapper;
+
 	@Autowired
-	private PaymentRowMapper paymentBillRowMapper;
+	public PaymentRepository(JdbcTemplate jdbcTemplate, PaymentQueryBuilder queryBuilder, PaymentRowMapper paymentBillRowMapper) {
+		this.jdbcTemplate = jdbcTemplate;
+		this.queryBuilder = queryBuilder;
+		this.paymentBillRowMapper = paymentBillRowMapper;
+	}
 
 	public List<Payment> search(@Valid PaymentSearchRequest paymentSearchRequest) {
 
 		List<Object> preparedStatementValues = new ArrayList<>();
-		String queryStr = queryBuilder.getPaymentQuery(paymentSearchRequest, preparedStatementValues);
+		String queryStr = queryBuilder.getPaymentQuery(paymentSearchRequest, preparedStatementValues, false);
 		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), paymentBillRowMapper);
 	}
 
-	
+	public Integer count(@Valid PaymentSearchRequest paymentSearchRequest) {
+		List<Object> preparedStatementValues = new ArrayList<>();
+		String queryStr = queryBuilder.getSearchCountQueryString(paymentSearchRequest, preparedStatementValues);
+		return jdbcTemplate.queryForObject(queryStr, preparedStatementValues.toArray(), Integer.class);
+	}
 }

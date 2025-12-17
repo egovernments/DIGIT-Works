@@ -1,5 +1,5 @@
 import React, { Fragment, useReducer, useState } from 'react'
-import { Toast } from '@egovernments/digit-ui-react-components';
+import { Toast } from '@egovernments/digit-ui-components';
 import { useTranslation } from 'react-i18next';
 import CreateLoiForm from '../../../components/CreateLOI/CreateLoiForm';
 import { useHistory,useLocation } from 'react-router-dom';
@@ -72,7 +72,7 @@ const CreateLOI = (props) => {
                 onError: (error, variables) => {
                     
                     //Show toast here with error message
-                    setShowToast({ error: true, label: "CORE_SOMETHING_WENT_WRONG" });
+                    setShowToast({ type:"error" , label: "CORE_SOMETHING_WENT_WRONG" });
                     setTimeout(() => {
                         setShowToast(false);
                     }, 3000);
@@ -114,7 +114,7 @@ const CreateLOI = (props) => {
         await LOIMutation(letterOfIndent, {
             onError: (error, variables) => {
                 //Show toast here with error message
-                setShowToast({ error: true, label: "CORE_SOMETHING_WENT_WRONG" });
+                setShowToast({ type:"error", label: "CORE_SOMETHING_WENT_WRONG" });
                 setTimeout(() => {
                     setShowToast(false);
                 }, 3000);
@@ -162,8 +162,7 @@ const CreateLOI = (props) => {
             {showToast && (
                 <Toast
                     style={{"zIndex":"9999999"}}
-                    error={showToast.error}
-                    warning={showToast.warning}
+                    type={showToast?.type}
                     label={t(showToast.label)}
                     onClose={() => {
                         setShowToast(null);

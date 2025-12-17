@@ -1,6 +1,6 @@
 package org.egov.digit.expense.web.models.enums;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -15,6 +15,8 @@ public enum PaymentStatus {
 	SUCCESSFUL("SUCCESSFUL"),
 
 	FAILED("FAILED"),
+
+	PARTIAL("PARTIAL"),
 
 	CANCELLED("CANCELLED");
 

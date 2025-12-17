@@ -1,0 +1,11 @@
+{
+  "serviceID": "FTPS",
+  "params": {
+    "jitCorBillNo": "COR/MUKTA2399",
+    "jitCorBillDate": "2023-03-30 16:26:42",
+    "jitCorBillDeptCode": "MUKTA",
+    "jitOrgBillRefNo": "202211033261",
+    "jitOrgBillNo": "MUKTA2399",
+    "jitOrgBillDate": "2023-03-16 16:26:42"
+  }
+}

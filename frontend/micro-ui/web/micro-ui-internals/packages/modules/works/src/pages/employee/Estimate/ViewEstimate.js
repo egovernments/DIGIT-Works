@@ -174,7 +174,7 @@ const ViewEstimate = (props) => {
     return (
         <Fragment>
             <div className={"employee-main-application-details"}>
-                <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+                <div className={"employee-application-details"} style={{ marginBottom: "24px" }}>
                     <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{estimateStatus?t("WORKS_VIEW_APPROVED_ESTIMATE"):t("WORKS_VIEW_ESTIMATE")}</Header>
                     <MultiLink
                         className="multilinkWrapper employee-mulitlink-main-div"

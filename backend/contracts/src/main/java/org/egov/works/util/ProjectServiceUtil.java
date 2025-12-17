@@ -9,7 +9,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.ServiceRequestRepository;
-import org.egov.works.web.models.Estimate;
+import org.egov.works.services.common.models.estimate.Estimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,12 +33,16 @@ public class ProjectServiceUtil {
     public static final String REQUEST_INFO = "RequestInfo";
     public static final String ID = "id";
     public static final String EQUAL_TO = "=";
+    private final ContractServiceConfiguration serviceConfiguration;
+    private final ServiceRequestRepository requestRepository;
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ContractServiceConfiguration serviceConfiguration;
-    @Autowired
-    private ServiceRequestRepository requestRepository;
-    @Autowired
-    private ObjectMapper mapper;
+    public ProjectServiceUtil(ContractServiceConfiguration serviceConfiguration, ServiceRequestRepository requestRepository, ObjectMapper mapper) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.requestRepository = requestRepository;
+        this.mapper = mapper;
+    }
 
     /**
      * Get the project details using project id from project service
@@ -71,11 +75,13 @@ public class ProjectServiceUtil {
         Object projectRes = requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
 
         Map<String, String> projectDetails = new HashMap<>();
+        List<String> projectNumber = null;
         List<String> projectNames = null;
         List<String> boundaries = null;
         List<String> boundaryTypes=null;
 
         try {
+            projectNumber = JsonPath.read(projectRes, PROJECT_NUMBER_CODE);
             projectNames = JsonPath.read(projectRes, PROJECT_NAME_CODE);
             boundaries = JsonPath.read(projectRes,PROJECT_BOUNDARY_CODE);
             boundaryTypes = JsonPath.read(projectRes,PROJECT_BOUNDARY_TYPE_CODE);
@@ -87,6 +93,7 @@ public class ProjectServiceUtil {
         projectDetails.put("projectName", projectNames.get(0));
         projectDetails.put("boundary", boundaries.get(0));
         projectDetails.put("boundaryType", boundaryTypes.get(0));
+        projectDetails.put("projectNumber", projectNumber.get(0));
 
         return projectDetails;
     }

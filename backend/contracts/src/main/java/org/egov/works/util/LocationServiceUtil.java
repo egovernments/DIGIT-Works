@@ -1,8 +1,8 @@
 package org.egov.works.util;
 
 import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
@@ -21,11 +21,15 @@ import static org.egov.works.util.ContractServiceConstants.LOCATION_BOUNDARY_NAM
 @Slf4j
 public class LocationServiceUtil {
 
-    @Autowired
-    private ContractServiceConfiguration config;
+    private final ContractServiceConfiguration config;
+
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    public LocationServiceUtil(ContractServiceConfiguration config, ServiceRequestRepository serviceRequestRepository) {
+        this.config = config;
+        this.serviceRequestRepository = serviceRequestRepository;
+    }
 
     public Map<String, String> getLocationName(String tenantId, RequestInfo requestInfo, String boundaryCode, String boundaryType) {
         StringBuilder uri = getLocationURI(tenantId, boundaryCode,boundaryType);

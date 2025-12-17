@@ -18,6 +18,7 @@ class MusterGetWorkflowBloc
     extends Bloc<MusterGetWorkflowEvent, MusterGetWorkflowState> {
   MusterGetWorkflowBloc() : super(const MusterGetWorkflowState.initial()) {
     on<GetMusterWorkflowEvent>(_onGetWorkflow);
+    on<FetchMBWorkFlowEvent>(_onGetMBWorkflow);
     on<DisposeMusterRollWorkflowEvent>(_onDispose);
   }
 
@@ -45,10 +46,40 @@ class MusterGetWorkflowBloc
           musterWorkFlowModel: musterWorkFlowModel,
           isInWorkflow: !(musterWorkFlowModel.processInstances!.isNotEmpty &&
               state!.state == event.musterSentBackCode)));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(const MusterGetWorkflowState.error());
     }
   }
+  // mb 
+  FutureOr<void> _onGetMBWorkflow(
+      FetchMBWorkFlowEvent event, MusterGetWorkflowEmitter emit) async {
+    Client client = Client();
+    try {
+      emit(const MusterGetWorkflowState.initial());
+      emit(const MusterGetWorkflowState.loading());
+      MusterWorkFlowModel musterWorkFlowModel =
+          await WorkFlowRepository(client.init()).getWorkFlow(
+              url: Urls.commonServices.workflow,
+              options:
+                  Options(extra: {"accessToken": GlobalVariables.authToken}),
+              queryParameters: {
+            "history": "true",
+            "tenantId": event.tenantId,
+          
+            "businessIds": event.mbNumber,
+          });
+      WorkflowState? state =
+          musterWorkFlowModel.processInstances?.first.workflowState;
+      
+
+      emit(MusterGetWorkflowState.loaded(
+          musterWorkFlowModel: musterWorkFlowModel,
+          isInWorkflow: true));
+    } on DioException catch (e) {
+      emit(const MusterGetWorkflowState.error());
+    }
+  }
+
 
   FutureOr<void> _onDispose(DisposeMusterRollWorkflowEvent event,
       MusterGetWorkflowEmitter emit) async {
@@ -62,6 +93,12 @@ class MusterGetWorkflowEvent with _$MusterGetWorkflowEvent {
       {required String tenantId,
       required String musterRollNumber,
       required String musterSentBackCode}) = GetMusterWorkflowEvent;
+const factory MusterGetWorkflowEvent.fetch(
+      {required String tenantId,
+      required String mbNumber,
+     
+      }) = FetchMBWorkFlowEvent;
+
   const factory MusterGetWorkflowEvent.dispose() =
       DisposeMusterRollWorkflowEvent;
 }
@@ -73,7 +110,11 @@ class MusterGetWorkflowState with _$MusterGetWorkflowState {
   const factory MusterGetWorkflowState.loading() = _Loading;
   const factory MusterGetWorkflowState.loaded(
       {MusterWorkFlowModel? musterWorkFlowModel,
-      @Default(false) bool isInWorkflow}) = _Loaded;
+
+      @Default(false) bool isInWorkflow,
+      
+      
+      }) = _Loaded;
   const factory MusterGetWorkflowState.error() = _Error;
 
   // const factory MusterGetWorkflowState({

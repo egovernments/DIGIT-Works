@@ -1,4 +1,5 @@
-import 'package:digit_components/digit_components.dart';
+// import 'package:digit_components/digit_components.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/material.dart';
 
 class TabButton extends StatelessWidget {
@@ -20,12 +21,12 @@ class TabButton extends StatelessWidget {
         height: 35,
         decoration: (isMainTab ?? false)
             ? BoxDecoration(
-                color: const DigitColors().white,
+                color: Colors.white,
                 shape: BoxShape.rectangle,
                 border: Border.all(
                   color: (isSelected ?? false)
-                      ? DigitTheme.instance.colorScheme.primary
-                      : const DigitColors().white,
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.white,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(0.0))
@@ -40,8 +41,8 @@ class TabButton extends StatelessWidget {
             buttonLabel,
             style: TextStyle(
                 color: (isMainTab ?? false) && !(isSelected ?? false)
-                    ? const DigitColors().cloudGray
-                    : DigitTheme.instance.colorScheme.primary,
+                    ? Theme.of(context).colorTheme.paper.secondary
+                    : Theme.of(context).colorTheme.primary.primary1,
                 fontSize: 16.0,
                 fontWeight: FontWeight.w700),
             textAlign: TextAlign.center,

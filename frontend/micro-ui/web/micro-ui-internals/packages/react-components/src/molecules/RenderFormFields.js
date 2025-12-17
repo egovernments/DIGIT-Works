@@ -2,20 +2,24 @@ import React from 'react';
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
 import CardLabelError from "../atoms/CardLabelError";
-import LabelFieldPair from '../atoms/LabelFieldPair';
+// import LabelFieldPair from '../atoms/LabelFieldPair';
 import CardLabel from "../atoms/CardLabel";
-import TextInput from "../atoms/TextInput";
-import TextArea from "../atoms/TextArea";
-import CustomDropdown from './CustomDropdown';
+// import TextInput from "../atoms/TextInput";
+// import TextArea from "../atoms/TextArea";
+// import CustomDropdown from './CustomDropdown';
 import MobileNumber from '../atoms/MobileNumber';
 import DateRangeNew from './DateRangeNew';
 import MultiUploadWrapper from "./MultiUploadWrapper";
-import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
+// import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
 import LocationDropdownWrapper from './LocationDropdownWrapper';
 import WorkflowStatusFilter from './WorkflowStatusFilter';
 import ApiDropdown from './ApiDropdown';
+
+
+
+import { CustomDropdown, MultiSelectDropdown, TextArea, TextInput, LabelFieldPair,ErrorMessage ,StringManipulator,Header} from "@egovernments/digit-ui-components";
+
 const RenderFormFields = ({data,...props}) => {
-  
     const { t } = useTranslation();
     const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors, apiDetails} = props
     
@@ -24,36 +28,42 @@ const RenderFormFields = ({data,...props}) => {
         let customValidations = config?.additionalValidation ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalValidations(config?.additionalValidation?.type, formData, config?.additionalValidation?.keys) : null
         const customRules = customValidations ? { validate: customValidations} : {}
         switch (type) {
-            case "date":
-            case "text":
-            case "number":
-            case "password":
-            case "time":
-                return (
-                    <Controller
-                        defaultValue={formData?.[populators.name]}
-                        render={({ onChange, ref, value }) => (
-                        <TextInput
-                            value={formData?.[populators.name]}
-                            type={type}
-                            name={populators.name}
-                            onChange={onChange}
-                            inputRef={ref}
-                            errorStyle={errors?.[populators.name]}
-                            max={populators.max}
-                            disable={disable}
-                            style={type === "date" ? { paddingRight: "3px" } : ""}
-                            maxlength={populators?.validation?.maxlength}
-                            minlength={populators?.validation?.minlength}
-                        />
-                        )}
-                        name={populators.name}
-                        rules={{required: isMandatory, ...populators.validation, ...customRules }}
-                        control={control}
-                    />
-                );
-    
-            case "textarea":
+          case "date":
+          case "text":
+          case "number":
+          case "password":
+          case "time":
+          case "search":
+          case "numeric":
+            return (
+              <Controller
+                defaultValue={formData?.[populators.name]}
+                render={({ onChange, ref, value }) => (
+                  <TextInput
+                    value={formData?.[populators.name]}
+                    type={type}
+                    name={populators.name}
+                    onChange={onChange}
+                    inputRef={ref}
+                    errorStyle={errors?.[populators.name]}
+                    max={populators.max}
+                    disabled={disable}
+                    // style={type === "date" ? { paddingRight: "3px" } : ""}
+                    maxlength={populators?.validation?.maxlength}
+                    minlength={populators?.validation?.minlength}
+                    step={config?.step}
+                    customIcon={populators?.customIcon}
+                    customClass={populators?.customClass}
+                    onIconSelection={populators?.onIconSelection}
+                  />
+                )}
+                name={populators.name}
+                rules={{ required: isMandatory, ...populators.validation, ...customRules }}
+                control={control}
+              />
+            );
+
+          case "textarea":
             return (
               <Controller
                 defaultValue={formData?.[populators.name]}
@@ -65,7 +75,7 @@ const RenderFormFields = ({data,...props}) => {
                     name={populators.name}
                     onChange={onChange}
                     inputRef={ref}
-                    disable={disable}
+                    disabled={disable}
                     errorStyle={errors?.[populators.name]}
                   />
                 )}
@@ -74,7 +84,7 @@ const RenderFormFields = ({data,...props}) => {
                 control={control}
               />
             );
-            case "mobileNumber":
+          case "mobileNumber":
             return (
               <Controller
                 render={(props) => (
@@ -94,109 +104,130 @@ const RenderFormFields = ({data,...props}) => {
                 control={control}
               />
             );
-            case "multiupload":
-                return (
-                  <Controller
-                    name={`${populators.name}`}
-                    control={control}
-                    rules={{ required: false }}
-                    render={({ onChange, ref, value = [] }) => {
-                      function getFileStoreData(filesData) {
-                        const numberOfFiles = filesData.length;
-                        let finalDocumentData = [];
-                        if (numberOfFiles > 0) {
-                          filesData.forEach((value) => {
-                            finalDocumentData.push({
-                              fileName: value?.[0],
-                              fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
-                              documentType: value?.[1]?.file?.type,
-                            });
-                          });
-                        }
-                        onChange(numberOfFiles>0?filesData:[]);
-                      }
-                      return (
-                        <MultiUploadWrapper
-                          t={t}
-                          module="works"
-                          tenantId={Digit.ULBService.getCurrentTenantId()}
-                          getFormState={getFileStoreData}
-                          showHintBelow={populators?.showHintBelow ? true : false}
-                          setuploadedstate={value}
-                          allowedFileTypesRegex={populators.allowedFileTypes}
-                          allowedMaxSizeInMB={populators.allowedMaxSizeInMB}
-                          hintText={populators.hintText}
-                          maxFilesAllowed={populators.maxFilesAllowed}
-                          extraStyleName={{ padding: "0.5rem" }}
-                          customClass={populators?.customClass}
-                        />
-                      );
-                    }}
-                  />
-                );
-            case "custom":
-                return (
-                <Controller
-                    render={(props) => populators.component({ ...props, setValue }, populators.customProps)}
-                    defaultValue={populators.defaultValue}
-                    name={populators?.name}
-                    control={control}
-                />
-                );
-
-            case "radio":
-            case "dropdown":
-                return (
-                <Controller
-                    render={(props) => (
-                    <CustomDropdown
-                        t={t}
-                        label={config?.label}
-                        type={type}
-                        onBlur={props.onBlur}
-                        value={props.value}
-                        inputRef={props.ref}
-                        onChange={props.onChange}
-                        config={populators}
-                        disable={config?.disable}
-                        errorStyle={errors?.[populators.name]}
+          case "multiupload":
+            return (
+              <Controller
+                name={`${populators.name}`}
+                control={control}
+                rules={{ required: false }}
+                render={({ onChange, ref, value = [] }) => {
+                  function getFileStoreData(filesData) {
+                    const numberOfFiles = filesData.length;
+                    let finalDocumentData = [];
+                    if (numberOfFiles > 0) {
+                      filesData.forEach((value) => {
+                        finalDocumentData.push({
+                          fileName: value?.[0],
+                          fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
+                          documentType: value?.[1]?.file?.type,
+                        });
+                      });
+                    }
+                    onChange(numberOfFiles > 0 ? filesData : []);
+                  }
+                  return (
+                    <MultiUploadWrapper
+                      t={t}
+                      module="works"
+                      tenantId={Digit.ULBService.getCurrentTenantId()}
+                      getFormState={getFileStoreData}
+                      showHintBelow={populators?.showHintBelow ? true : false}
+                      setuploadedstate={value}
+                      allowedFileTypesRegex={populators.allowedFileTypes}
+                      allowedMaxSizeInMB={populators.allowedMaxSizeInMB}
+                      hintText={populators.hintText}
+                      maxFilesAllowed={populators.maxFilesAllowed}
+                      extraStyleName={{ padding: "0.5rem" }}
+                      customClass={populators?.customClass}
                     />
-                    )}
-                    rules={{ required: isMandatory, ...populators.validation }}
-                    defaultValue={formData?.[populators.name]}
-                    name={populators?.name}
-                    control={control}
+                  );
+                }}
+              />
+            );
+          case "custom":
+            return (
+              <Controller
+                render={(props) => populators.component({ ...props, setValue }, populators.customProps)}
+                defaultValue={populators.defaultValue}
+                name={populators?.name}
+                control={control}
+              />
+            );
+
+          case "radio":
+          case "dropdown":
+            return (
+              <Controller
+                render={(props) => (
+                  <CustomDropdown
+                    t={t}
+                    label={config?.label}
+                    type={type}
+                    onBlur={props.onBlur}
+                    value={props.value}
+                    inputRef={props.ref}
+                    onChange={props.onChange}
+                    config={populators}
+                    disabled={config?.disable}
+                    errorStyle={errors?.[populators?.name]}
+                    variant={
+                      populators?.variant
+                        ? populators?.variant
+                        : errors?.[populators.name]
+                        ? "digit-field-error"
+                        : ""
+                    }
                   />
-                );
-            
-            case "multiselectdropdown":
-              return (
-                <Controller
-                  name={`${populators.name}`}
-                  control={control}
-                  defaultValue={formData?.[populators.name]}
-                  rules={{ required: populators?.isMandatory }}
-                  render={(props) => {
-                    return (
-                      <div style={{ display: "grid", gridAutoFlow: "row" }}>
-                        <MultiSelectDropdown
-                          options={populators?.options}
-                          optionsKey={populators?.optionsKey}
-                          props={props}
-                          isPropsNeeded={true}
-                          onSelect={(e) => {
-                            props.onChange(e?.map(row=>{return row?.[1] ? row[1] : null}).filter(e=>e))
-                          }}
-                          selected={props?.value}
-                          defaultLabel={t(populators?.defaultText)}
-                          defaultUnit={t(populators?.selectedText)}
-                          config={populators}
-                        />
-                      </div>
-                    );
-                  }}
-                />
-              );
+                )}
+                rules={{ required: isMandatory, ...populators.validation }}
+                defaultValue={formData?.[populators?.name]}
+                name={populators?.name}
+                control={control}
+              />
+            );
+
+          case "multiselectdropdown":
+            return (
+              <Controller
+                name={`${populators.name}`}
+                control={control}
+                defaultValue={formData?.[populators.name]}
+                rules={{ required: populators?.isMandatory }}
+                render={(props) => {
+                  return (
+                    <div style={{ display: "grid", gridAutoFlow: "row" ,width:"100%"}}>
+                      <MultiSelectDropdown
+                        options={populators?.options}
+                        optionsKey={populators?.optionsKey}
+                        props={props}
+                        isPropsNeeded={true}
+                        onSelect={(e) => {
+                          props.onChange(
+                            e
+                              ?.map((row) => {
+                                return row?.[1] ? row[1] : null;
+                              })
+                              .filter((e) => e)
+                          );
+                        }}
+                        selected={props?.value}
+                        defaultLabel={t(populators?.defaultText)}
+                        defaultUnit={t(populators?.selectedText)}
+                        config={populators}
+                        disabled={disable}
+                        variant={populators?.variant}
+                        addSelectAllCheck={populators?.addSelectAllCheck}
+                        addCategorySelectAllCheck={populators?.addCategorySelectAllCheck}
+                        selectAllLabel={populators?.selectAllLabel}
+                        categorySelectAllLabel={populators?.categorySelectAllLabel}
+                        restrictSelection={populators?.restrictSelection}
+                        isDropdownWithChip={populators?.isDropdownWithChip}
+                      />
+                    </div>
+                  );
+                }}
+              />
+            );
 
           case "locationdropdown":
             return (
@@ -207,7 +238,7 @@ const RenderFormFields = ({data,...props}) => {
                 rules={{ required: populators?.isMandatory, ...populators.validation }}
                 render={(props) => {
                   return (
-                    <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                    <div style={{ display: "grid", gridAutoFlow: "row",width:"100%" }}>
                       <LocationDropdownWrapper
                         props={props}
                         populators={populators}
@@ -222,7 +253,7 @@ const RenderFormFields = ({data,...props}) => {
               />
             );
 
-            case "apidropdown":
+          case "apidropdown":
             return (
               <Controller
                 name={`${populators.name}`}
@@ -231,22 +262,15 @@ const RenderFormFields = ({data,...props}) => {
                 rules={{ required: populators?.isMandatory, ...populators.validation }}
                 render={(props) => {
                   return (
-                    <div style={{ display: "grid", gridAutoFlow: "row" }}>
-                      <ApiDropdown
-                        props={props}
-                        populators={populators}
-                        formData={formData}
-                        inputRef={props.ref}
-                        errors={errors}
-                      />
+                    <div style={{ display: "grid", gridAutoFlow: "row",width:"100%" }}>
+                      <ApiDropdown props={props} populators={populators} formData={formData} inputRef={props.ref} errors={errors} />
                     </div>
                   );
                 }}
               />
             );
 
-
-            case "workflowstatesfilter":
+          case "workflowstatesfilter":
             return (
               <Controller
                 name={`${populators.name}`}
@@ -255,40 +279,34 @@ const RenderFormFields = ({data,...props}) => {
                 rules={{ required: populators?.isMandatory }}
                 render={(props) => {
                   return (
-                    <div style={{ display: "grid", gridAutoFlow: "row" }}>
-                      <WorkflowStatusFilter
-                        inboxResponse={data}
-                        props={props}
-                        populators={populators}
-                        t={t}
-                        formData={formData}
-                      />
+                    <div style={{ display: "grid", gridAutoFlow: "row",width:"100%"}}>
+                      <WorkflowStatusFilter inboxResponse={data} props={props} populators={populators} t={t} formData={formData} />
                     </div>
                   );
                 }}
               />
             );
-            case "dateRange":
-              return (
-                <Controller
-                  render={(props) => (
-                    <DateRangeNew
-                      t={t}
-                      values={formData?.[populators.name]?.range}
-                      name={populators.name}
-                      onFilterChange={props.onChange}
-                      inputRef={props.ref}
-                      errorStyle={errors?.[populators.name]}
-                    />                  
-                  )}
-                  rules={{ required: isMandatory, ...populators.validation }}
-                  defaultValue={formData?.[populators.name]}
-                  name={populators?.name}
-                  control={control}
-                />
-              );
+          case "dateRange":
+            return (
+              <Controller
+                render={(props) => (
+                  <DateRangeNew
+                    t={t}
+                    values={formData?.[populators.name]?.range}
+                    name={populators.name}
+                    onFilterChange={props.onChange}
+                    inputRef={props.ref}
+                    errorStyle={errors?.[populators.name]}
+                  />
+                )}
+                rules={{ required: isMandatory, ...populators.validation }}
+                defaultValue={formData?.[populators.name]}
+                name={populators?.name}
+                control={control}
+              />
+            );
 
-            case "component":
+          case "component":
             return (
               <Controller
                 render={(props) => (
@@ -314,9 +332,9 @@ const RenderFormFields = ({data,...props}) => {
                 control={control}
               />
             );
-                    
-            default:
-                return populators?.dependency !== false ? populators : null;
+
+          default:
+            return populators?.dependency !== false ? populators : null;
         }
     };
 
@@ -324,22 +342,41 @@ const RenderFormFields = ({data,...props}) => {
       <React.Fragment>
         {fields?.map((item, index) => {
           return (
-            <LabelFieldPair key={index}>
-                { item.label && (
-                  <CardLabel style={{...props.labelStyle,marginBottom:"0.4rem"}}>
-                    {t(item.label)}{ item?.isMandatory ? " * " : null }
-                  </CardLabel>) 
-                }
+            <LabelFieldPair vertical={true} key={index} style={item.hideInForm ? { display: "none",marginBottom:"0px" } : {marginBottom:"0px"}}>
+              {/* {item.label && (
+                <CardLabel style={{ ...props.labelStyle, marginBottom: "0.4rem" }}>
+                  {t(item.label)}
+                  {item?.isMandatory ? " * " : null}
+                </CardLabel>
+              )} */}
+              {
+                item.label && (
+                  <Header className={`label ${item?.labelClassName}`} styles={{width:"100%"}}>
+                  <div className={`label-container`}>
+                    <div className={`label-styles`}>
+                      {StringManipulator(
+                        "TOSENTENCECASE",
+                        t(item.label)
+                      )}
+                    </div>
+                    <div style={{ color: "#B91900" }}>{item?.isMandatory ? " * " : null}</div>
+                  </div>
+                </Header>
+                )
+              }
 
-                { fieldSelector(item.type, item.populators, item.isMandatory, item?.disable, item?.component, item) }
-                
-                { item?.populators?.name && errors && errors[item?.populators?.name] && Object.keys(errors[item?.populators?.name]).length ? (
+              {fieldSelector(item.type, item.populators, item.isMandatory, item?.disable, item?.component, item)}
+
+              {/* { item?.populators?.name && errors && errors[item?.populators?.name] && Object.keys(errors[item?.populators?.name]).length ? (
                   <CardLabelError style={{ fontSize: "12px", marginTop: "-20px" }}>
                     {t(item?.populators?.error)}
                   </CardLabelError> ) : null
-                }
+                } */}
+              {item?.populators?.name && errors && errors[item?.populators?.name] && Object.keys(errors[item?.populators?.name]).length ? (
+                <ErrorMessage message={t(item?.populators?.error)} truncateMessage={true} maxLength={256} showIcon={true}></ErrorMessage>
+              ) : null}
             </LabelFieldPair>
-          )
+          );
         })}
       </React.Fragment>
     )

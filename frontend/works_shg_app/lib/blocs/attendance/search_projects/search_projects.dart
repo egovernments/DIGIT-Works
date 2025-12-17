@@ -50,7 +50,7 @@ class AttendanceProjectsSearchBloc
       );
       await Future.delayed(const Duration(seconds: 1));
       emit(AttendanceProjectsSearchState.loaded(attendanceRegistersModel));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(AttendanceProjectsSearchState.error(
           e.response?.data['Errors'][0]['code']));
     }

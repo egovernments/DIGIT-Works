@@ -37,14 +37,16 @@ class WageSeekerBankCreateBloc
             "bankAccountDetails": [
               {
                 "tenantId": event.tenantId,
-                "accountHolderName": event.accountHolderName,
-                "accountNumber": event.accountNo,
+                "accountHolderName": event.accountHolderName?.trim().toString(),
+                "accountNumber": event.accountNo?.trim().toString(),
                 "accountType": event.accountType,
                 "isPrimary": true,
                 "bankBranchIdentifier": {
                   "type": "IFSC",
                   "code": event.ifscCode,
-                  "additionalDetails": {"ifsccode": event.bankName}
+                  "additionalDetails": {
+                    "ifsccode": event.bankName?.trim().toString()
+                  }
                 },
                 "isActive": true,
                 "documents": [],
@@ -59,7 +61,7 @@ class WageSeekerBankCreateBloc
           bankingDetailsModel,
           bankingDetailsModel.bankAccounts?.first
               .copyWith(indID: event.indId)));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(WageSeekerBankCreateState.error(
           e.response?.data['Errors'][0]['code']));
     }

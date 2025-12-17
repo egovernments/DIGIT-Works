@@ -12,7 +12,7 @@ part of 'get_muster_workflow.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$MusterGetWorkflowEvent {
@@ -21,6 +21,7 @@ mixin _$MusterGetWorkflowEvent {
     required TResult Function(
             String tenantId, String musterRollNumber, String musterSentBackCode)
         get,
+    required TResult Function(String tenantId, String mbNumber) fetch,
     required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
@@ -29,6 +30,7 @@ mixin _$MusterGetWorkflowEvent {
     TResult? Function(String tenantId, String musterRollNumber,
             String musterSentBackCode)?
         get,
+    TResult? Function(String tenantId, String mbNumber)? fetch,
     TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
@@ -37,6 +39,7 @@ mixin _$MusterGetWorkflowEvent {
     TResult Function(String tenantId, String musterRollNumber,
             String musterSentBackCode)?
         get,
+    TResult Function(String tenantId, String mbNumber)? fetch,
     TResult Function()? dispose,
     required TResult orElse(),
   }) =>
@@ -44,18 +47,21 @@ mixin _$MusterGetWorkflowEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GetMusterWorkflowEvent value) get,
+    required TResult Function(FetchMBWorkFlowEvent value) fetch,
     required TResult Function(DisposeMusterRollWorkflowEvent value) dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(GetMusterWorkflowEvent value)? get,
+    TResult? Function(FetchMBWorkFlowEvent value)? fetch,
     TResult? Function(DisposeMusterRollWorkflowEvent value)? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(GetMusterWorkflowEvent value)? get,
+    TResult Function(FetchMBWorkFlowEvent value)? fetch,
     TResult Function(DisposeMusterRollWorkflowEvent value)? dispose,
     required TResult orElse(),
   }) =>
@@ -82,21 +88,24 @@ class _$MusterGetWorkflowEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$GetMusterWorkflowEventCopyWith<$Res> {
-  factory _$$GetMusterWorkflowEventCopyWith(_$GetMusterWorkflowEvent value,
-          $Res Function(_$GetMusterWorkflowEvent) then) =
-      __$$GetMusterWorkflowEventCopyWithImpl<$Res>;
+abstract class _$$GetMusterWorkflowEventImplCopyWith<$Res> {
+  factory _$$GetMusterWorkflowEventImplCopyWith(
+          _$GetMusterWorkflowEventImpl value,
+          $Res Function(_$GetMusterWorkflowEventImpl) then) =
+      __$$GetMusterWorkflowEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
       {String tenantId, String musterRollNumber, String musterSentBackCode});
 }
 
 /// @nodoc
-class __$$GetMusterWorkflowEventCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowEventCopyWithImpl<$Res, _$GetMusterWorkflowEvent>
-    implements _$$GetMusterWorkflowEventCopyWith<$Res> {
-  __$$GetMusterWorkflowEventCopyWithImpl(_$GetMusterWorkflowEvent _value,
-      $Res Function(_$GetMusterWorkflowEvent) _then)
+class __$$GetMusterWorkflowEventImplCopyWithImpl<$Res>
+    extends _$MusterGetWorkflowEventCopyWithImpl<$Res,
+        _$GetMusterWorkflowEventImpl>
+    implements _$$GetMusterWorkflowEventImplCopyWith<$Res> {
+  __$$GetMusterWorkflowEventImplCopyWithImpl(
+      _$GetMusterWorkflowEventImpl _value,
+      $Res Function(_$GetMusterWorkflowEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -106,7 +115,7 @@ class __$$GetMusterWorkflowEventCopyWithImpl<$Res>
     Object? musterRollNumber = null,
     Object? musterSentBackCode = null,
   }) {
-    return _then(_$GetMusterWorkflowEvent(
+    return _then(_$GetMusterWorkflowEventImpl(
       tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
@@ -125,8 +134,8 @@ class __$$GetMusterWorkflowEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
-  const _$GetMusterWorkflowEvent(
+class _$GetMusterWorkflowEventImpl implements GetMusterWorkflowEvent {
+  const _$GetMusterWorkflowEventImpl(
       {required this.tenantId,
       required this.musterRollNumber,
       required this.musterSentBackCode});
@@ -144,10 +153,10 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$GetMusterWorkflowEvent &&
+            other is _$GetMusterWorkflowEventImpl &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.musterRollNumber, musterRollNumber) ||
@@ -163,9 +172,9 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$GetMusterWorkflowEventCopyWith<_$GetMusterWorkflowEvent> get copyWith =>
-      __$$GetMusterWorkflowEventCopyWithImpl<_$GetMusterWorkflowEvent>(
-          this, _$identity);
+  _$$GetMusterWorkflowEventImplCopyWith<_$GetMusterWorkflowEventImpl>
+      get copyWith => __$$GetMusterWorkflowEventImplCopyWithImpl<
+          _$GetMusterWorkflowEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -173,6 +182,7 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
     required TResult Function(
             String tenantId, String musterRollNumber, String musterSentBackCode)
         get,
+    required TResult Function(String tenantId, String mbNumber) fetch,
     required TResult Function() dispose,
   }) {
     return get(tenantId, musterRollNumber, musterSentBackCode);
@@ -184,6 +194,7 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
     TResult? Function(String tenantId, String musterRollNumber,
             String musterSentBackCode)?
         get,
+    TResult? Function(String tenantId, String mbNumber)? fetch,
     TResult? Function()? dispose,
   }) {
     return get?.call(tenantId, musterRollNumber, musterSentBackCode);
@@ -195,6 +206,7 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
     TResult Function(String tenantId, String musterRollNumber,
             String musterSentBackCode)?
         get,
+    TResult Function(String tenantId, String mbNumber)? fetch,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
@@ -208,6 +220,7 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GetMusterWorkflowEvent value) get,
+    required TResult Function(FetchMBWorkFlowEvent value) fetch,
     required TResult Function(DisposeMusterRollWorkflowEvent value) dispose,
   }) {
     return get(this);
@@ -217,6 +230,7 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(GetMusterWorkflowEvent value)? get,
+    TResult? Function(FetchMBWorkFlowEvent value)? fetch,
     TResult? Function(DisposeMusterRollWorkflowEvent value)? dispose,
   }) {
     return get?.call(this);
@@ -226,6 +240,7 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(GetMusterWorkflowEvent value)? get,
+    TResult Function(FetchMBWorkFlowEvent value)? fetch,
     TResult Function(DisposeMusterRollWorkflowEvent value)? dispose,
     required TResult orElse(),
   }) {
@@ -240,40 +255,202 @@ abstract class GetMusterWorkflowEvent implements MusterGetWorkflowEvent {
   const factory GetMusterWorkflowEvent(
       {required final String tenantId,
       required final String musterRollNumber,
-      required final String musterSentBackCode}) = _$GetMusterWorkflowEvent;
+      required final String musterSentBackCode}) = _$GetMusterWorkflowEventImpl;
 
   String get tenantId;
   String get musterRollNumber;
   String get musterSentBackCode;
   @JsonKey(ignore: true)
-  _$$GetMusterWorkflowEventCopyWith<_$GetMusterWorkflowEvent> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$GetMusterWorkflowEventImplCopyWith<_$GetMusterWorkflowEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$DisposeMusterRollWorkflowEventCopyWith<$Res> {
-  factory _$$DisposeMusterRollWorkflowEventCopyWith(
-          _$DisposeMusterRollWorkflowEvent value,
-          $Res Function(_$DisposeMusterRollWorkflowEvent) then) =
-      __$$DisposeMusterRollWorkflowEventCopyWithImpl<$Res>;
+abstract class _$$FetchMBWorkFlowEventImplCopyWith<$Res> {
+  factory _$$FetchMBWorkFlowEventImplCopyWith(_$FetchMBWorkFlowEventImpl value,
+          $Res Function(_$FetchMBWorkFlowEventImpl) then) =
+      __$$FetchMBWorkFlowEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String tenantId, String mbNumber});
 }
 
 /// @nodoc
-class __$$DisposeMusterRollWorkflowEventCopyWithImpl<$Res>
+class __$$FetchMBWorkFlowEventImplCopyWithImpl<$Res>
     extends _$MusterGetWorkflowEventCopyWithImpl<$Res,
-        _$DisposeMusterRollWorkflowEvent>
-    implements _$$DisposeMusterRollWorkflowEventCopyWith<$Res> {
-  __$$DisposeMusterRollWorkflowEventCopyWithImpl(
-      _$DisposeMusterRollWorkflowEvent _value,
-      $Res Function(_$DisposeMusterRollWorkflowEvent) _then)
+        _$FetchMBWorkFlowEventImpl>
+    implements _$$FetchMBWorkFlowEventImplCopyWith<$Res> {
+  __$$FetchMBWorkFlowEventImplCopyWithImpl(_$FetchMBWorkFlowEventImpl _value,
+      $Res Function(_$FetchMBWorkFlowEventImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tenantId = null,
+    Object? mbNumber = null,
+  }) {
+    return _then(_$FetchMBWorkFlowEventImpl(
+      tenantId: null == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String,
+      mbNumber: null == mbNumber
+          ? _value.mbNumber
+          : mbNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$FetchMBWorkFlowEventImpl implements FetchMBWorkFlowEvent {
+  const _$FetchMBWorkFlowEventImpl(
+      {required this.tenantId, required this.mbNumber});
+
+  @override
+  final String tenantId;
+  @override
+  final String mbNumber;
+
+  @override
+  String toString() {
+    return 'MusterGetWorkflowEvent.fetch(tenantId: $tenantId, mbNumber: $mbNumber)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$FetchMBWorkFlowEventImpl &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId) &&
+            (identical(other.mbNumber, mbNumber) ||
+                other.mbNumber == mbNumber));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, tenantId, mbNumber);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$FetchMBWorkFlowEventImplCopyWith<_$FetchMBWorkFlowEventImpl>
+      get copyWith =>
+          __$$FetchMBWorkFlowEventImplCopyWithImpl<_$FetchMBWorkFlowEventImpl>(
+              this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(
+            String tenantId, String musterRollNumber, String musterSentBackCode)
+        get,
+    required TResult Function(String tenantId, String mbNumber) fetch,
+    required TResult Function() dispose,
+  }) {
+    return fetch(tenantId, mbNumber);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String tenantId, String musterRollNumber,
+            String musterSentBackCode)?
+        get,
+    TResult? Function(String tenantId, String mbNumber)? fetch,
+    TResult? Function()? dispose,
+  }) {
+    return fetch?.call(tenantId, mbNumber);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String tenantId, String musterRollNumber,
+            String musterSentBackCode)?
+        get,
+    TResult Function(String tenantId, String mbNumber)? fetch,
+    TResult Function()? dispose,
+    required TResult orElse(),
+  }) {
+    if (fetch != null) {
+      return fetch(tenantId, mbNumber);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(GetMusterWorkflowEvent value) get,
+    required TResult Function(FetchMBWorkFlowEvent value) fetch,
+    required TResult Function(DisposeMusterRollWorkflowEvent value) dispose,
+  }) {
+    return fetch(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(GetMusterWorkflowEvent value)? get,
+    TResult? Function(FetchMBWorkFlowEvent value)? fetch,
+    TResult? Function(DisposeMusterRollWorkflowEvent value)? dispose,
+  }) {
+    return fetch?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(GetMusterWorkflowEvent value)? get,
+    TResult Function(FetchMBWorkFlowEvent value)? fetch,
+    TResult Function(DisposeMusterRollWorkflowEvent value)? dispose,
+    required TResult orElse(),
+  }) {
+    if (fetch != null) {
+      return fetch(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class FetchMBWorkFlowEvent implements MusterGetWorkflowEvent {
+  const factory FetchMBWorkFlowEvent(
+      {required final String tenantId,
+      required final String mbNumber}) = _$FetchMBWorkFlowEventImpl;
+
+  String get tenantId;
+  String get mbNumber;
+  @JsonKey(ignore: true)
+  _$$FetchMBWorkFlowEventImplCopyWith<_$FetchMBWorkFlowEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DisposeMusterRollWorkflowEventImplCopyWith<$Res> {
+  factory _$$DisposeMusterRollWorkflowEventImplCopyWith(
+          _$DisposeMusterRollWorkflowEventImpl value,
+          $Res Function(_$DisposeMusterRollWorkflowEventImpl) then) =
+      __$$DisposeMusterRollWorkflowEventImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$DisposeMusterRollWorkflowEventImplCopyWithImpl<$Res>
+    extends _$MusterGetWorkflowEventCopyWithImpl<$Res,
+        _$DisposeMusterRollWorkflowEventImpl>
+    implements _$$DisposeMusterRollWorkflowEventImplCopyWith<$Res> {
+  __$$DisposeMusterRollWorkflowEventImplCopyWithImpl(
+      _$DisposeMusterRollWorkflowEventImpl _value,
+      $Res Function(_$DisposeMusterRollWorkflowEventImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$DisposeMusterRollWorkflowEvent
+class _$DisposeMusterRollWorkflowEventImpl
     implements DisposeMusterRollWorkflowEvent {
-  const _$DisposeMusterRollWorkflowEvent();
+  const _$DisposeMusterRollWorkflowEventImpl();
 
   @override
   String toString() {
@@ -281,10 +458,10 @@ class _$DisposeMusterRollWorkflowEvent
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DisposeMusterRollWorkflowEvent);
+            other is _$DisposeMusterRollWorkflowEventImpl);
   }
 
   @override
@@ -296,6 +473,7 @@ class _$DisposeMusterRollWorkflowEvent
     required TResult Function(
             String tenantId, String musterRollNumber, String musterSentBackCode)
         get,
+    required TResult Function(String tenantId, String mbNumber) fetch,
     required TResult Function() dispose,
   }) {
     return dispose();
@@ -307,6 +485,7 @@ class _$DisposeMusterRollWorkflowEvent
     TResult? Function(String tenantId, String musterRollNumber,
             String musterSentBackCode)?
         get,
+    TResult? Function(String tenantId, String mbNumber)? fetch,
     TResult? Function()? dispose,
   }) {
     return dispose?.call();
@@ -318,6 +497,7 @@ class _$DisposeMusterRollWorkflowEvent
     TResult Function(String tenantId, String musterRollNumber,
             String musterSentBackCode)?
         get,
+    TResult Function(String tenantId, String mbNumber)? fetch,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
@@ -331,6 +511,7 @@ class _$DisposeMusterRollWorkflowEvent
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GetMusterWorkflowEvent value) get,
+    required TResult Function(FetchMBWorkFlowEvent value) fetch,
     required TResult Function(DisposeMusterRollWorkflowEvent value) dispose,
   }) {
     return dispose(this);
@@ -340,6 +521,7 @@ class _$DisposeMusterRollWorkflowEvent
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(GetMusterWorkflowEvent value)? get,
+    TResult? Function(FetchMBWorkFlowEvent value)? fetch,
     TResult? Function(DisposeMusterRollWorkflowEvent value)? dispose,
   }) {
     return dispose?.call(this);
@@ -349,6 +531,7 @@ class _$DisposeMusterRollWorkflowEvent
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(GetMusterWorkflowEvent value)? get,
+    TResult Function(FetchMBWorkFlowEvent value)? fetch,
     TResult Function(DisposeMusterRollWorkflowEvent value)? dispose,
     required TResult orElse(),
   }) {
@@ -362,7 +545,7 @@ class _$DisposeMusterRollWorkflowEvent
 abstract class DisposeMusterRollWorkflowEvent
     implements MusterGetWorkflowEvent {
   const factory DisposeMusterRollWorkflowEvent() =
-      _$DisposeMusterRollWorkflowEvent;
+      _$DisposeMusterRollWorkflowEventImpl;
 }
 
 /// @nodoc
@@ -445,24 +628,25 @@ class _$MusterGetWorkflowStateCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial {
+  const _$InitialImpl() : super._();
 
   @override
   String toString() {
@@ -470,9 +654,9 @@ class _$_Initial extends _Initial {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -560,29 +744,30 @@ class _$_Initial extends _Initial {
 }
 
 abstract class _Initial extends MusterGetWorkflowState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString() {
@@ -590,9 +775,9 @@ class _$_Loading extends _Loading {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -680,14 +865,15 @@ class _$_Loading extends _Loading {
 }
 
 abstract class _Loading extends MusterGetWorkflowState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkflow});
 
@@ -695,10 +881,11 @@ abstract class _$$_LoadedCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -707,7 +894,7 @@ class __$$_LoadedCopyWithImpl<$Res>
     Object? musterWorkFlowModel = freezed,
     Object? isInWorkflow = null,
   }) {
-    return _then(_$_Loaded(
+    return _then(_$LoadedImpl(
       musterWorkFlowModel: freezed == musterWorkFlowModel
           ? _value.musterWorkFlowModel
           : musterWorkFlowModel // ignore: cast_nullable_to_non_nullable
@@ -735,8 +922,8 @@ class __$$_LoadedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded({this.musterWorkFlowModel, this.isInWorkflow = false})
+class _$LoadedImpl extends _Loaded {
+  const _$LoadedImpl({this.musterWorkFlowModel, this.isInWorkflow = false})
       : super._();
 
   @override
@@ -751,10 +938,10 @@ class _$_Loaded extends _Loaded {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
+            other is _$LoadedImpl &&
             (identical(other.musterWorkFlowModel, musterWorkFlowModel) ||
                 other.musterWorkFlowModel == musterWorkFlowModel) &&
             (identical(other.isInWorkflow, isInWorkflow) ||
@@ -768,8 +955,8 @@ class _$_Loaded extends _Loaded {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -855,34 +1042,36 @@ class _$_Loaded extends _Loaded {
 abstract class _Loaded extends MusterGetWorkflowState {
   const factory _Loaded(
       {final MusterWorkFlowModel? musterWorkFlowModel,
-      final bool isInWorkflow}) = _$_Loaded;
+      final bool isInWorkflow}) = _$LoadedImpl;
   const _Loaded._() : super._();
 
   MusterWorkFlowModel? get musterWorkFlowModel;
   bool get isInWorkflow;
   @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$MusterGetWorkflowStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Error extends _Error {
-  const _$_Error() : super._();
+class _$ErrorImpl extends _Error {
+  const _$ErrorImpl() : super._();
 
   @override
   String toString() {
@@ -890,9 +1079,9 @@ class _$_Error extends _Error {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Error);
+        (other.runtimeType == runtimeType && other is _$ErrorImpl);
   }
 
   @override
@@ -980,6 +1169,6 @@ class _$_Error extends _Error {
 }
 
 abstract class _Error extends MusterGetWorkflowState {
-  const factory _Error() = _$_Error;
+  const factory _Error() = _$ErrorImpl;
   const _Error._() : super._();
 }

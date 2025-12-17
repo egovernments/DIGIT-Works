@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 		"org.egov.digit.expense.config" })
 public class ExpenseApplication {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		SpringApplication.run(ExpenseApplication.class, args);
 	}
 

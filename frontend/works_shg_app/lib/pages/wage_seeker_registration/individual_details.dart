@@ -1,24 +1,35 @@
-import 'package:digit_components/digit_components.dart';
+// import 'package:digit_components/digit_components.dart';
+import 'package:digit_ui_components/digit_components.dart' as ui_component;
+import 'package:digit_ui_components/digit_components.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
+import 'package:digit_ui_components/widgets/atoms/text_block.dart';
+
+import 'package:digit_ui_components/widgets/molecules/digit_card.dart'
+    as ui_card;
+import 'package:digit_ui_components/utils/validators/validator.dart'
+    as ui_validation;
+import 'package:digit_ui_components/widgets/molecules/digit_footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
+import 'package:works_shg_app/models/adharModel/adhar_response.dart';
 import 'package:works_shg_app/models/wage_seeker/financial_details_model.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
     as i18;
-import 'package:works_shg_app/utils/models/file_picker_data.dart';
-import 'package:works_shg_app/widgets/atoms/radio_button_list.dart';
 
+import '../../blocs/wage_seeker_registration/wage_seeker_create_bloc.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
-import '../../models/file_store/file_store_model.dart';
 import '../../models/mdms/wage_seeker_mdms.dart';
 import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/location_details_model.dart';
 import '../../models/wage_seeker/skill_details_model.dart';
-import '../../utils/notifiers.dart';
-import '../../widgets/atoms/multiselect_checkbox.dart';
-import '../../widgets/molecules/file_picker.dart';
+import '../../utils/constants.dart';
+import '../../widgets/common_info_card.dart';
+import 'indi_detail_sub.dart';
+import 'indi_photo_sub.dart';
+import 'indi_skill_sub.dart';
 
 class IndividualDetailsPage extends StatefulWidget {
   final void Function() onPressed;
@@ -39,14 +50,11 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
   SkillDetails? skillDetails = SkillDetails();
   FinancialDetails? financialDetails = FinancialDetails();
   String nameKey = 'name';
-  String fatherNameKey = 'fatherName';
   String aadhaarNoKey = 'aadhaarNo';
-  String relationshipKey = 'relationship';
-  String dobKey = 'dob';
-  String genderKey = 'gender';
-  String socialCategoryKey = 'socialCategory';
-  String mobileKey = 'mobileNo';
-  List<String> selectedOptions = [];
+  String identityDocument = "identityDocument";
+  int switchPage = 0;
+  bool adhar = false;
+  bool isVerified = false;
 
   @override
   void initState() {
@@ -56,27 +64,42 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
     skillDetails = registrationState.skillDetails;
     locationDetails = registrationState.locationDetails;
     financialDetails = registrationState.financialDetails;
+  }
 
-    if (registrationState.skillDetails != null &&
-        registrationState.skillDetails?.individualSkills != null) {
-      selectedOptions = registrationState.skillDetails!.individualSkills!
-              .any((a) => a.type == null)
-          ? []
-          : registrationState.skillDetails!.individualSkills!
-              .where((e) => e.type != null)
-              .map((e) => '${e.level}.${e.type}')
-              .toList();
+  void _onPageChange(int count) {
+    if (count == 4) {
+      widget.onPressed();
+    } else {
+      setState(() {
+        switchPage = count;
+      });
     }
   }
 
-  void _onSelectedOptionsChanged(List<String> options) {
+  void updateAdhar(String adharName) {
+    context
+        .read<WageSeekerCreateBloc>()
+        .add(const CreateWageSeekerDisposeEvent());
+    if (adharName == "AADHAAR") {
+      setState(() {
+        adhar = true;
+      });
+    } else {
+      setState(() {
+        adhar = false;
+      });
+    }
+  }
+
+  void isVerifyDone(bool value) {
     setState(() {
-      selectedOptions = options;
+      isVerified = value;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // Localization object
     final t = AppLocalizations.of(context);
     String? photo;
     List<String> relationship = widget.wageSeekerMDMS!.commonMDMS!.relationship!
@@ -92,348 +115,369 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
     List<String> skills =
         widget.wageSeekerMDMS!.commonMDMS!.wageSeekerSkills != null
             ? widget.wageSeekerMDMS!.commonMDMS!.wageSeekerSkills!
-                .map((e) => e.code)
+                .map((e) => e.id!)
                 .toList()
             : [];
-
-    return ReactiveFormBuilder(
-      form: buildForm,
-      builder: (context, form, child) {
-        if (individualDetails != null) {
-          form.control(nameKey).value =
-              individualDetails?.name ?? form.control(nameKey).value;
-          form.control(fatherNameKey).value = individualDetails?.fatherName ??
-              form.control(fatherNameKey).value;
-          form.control(aadhaarNoKey).value =
-              individualDetails?.aadhaarNo ?? form.control(aadhaarNoKey).value;
-          form.control(relationshipKey).value =
-              individualDetails?.relationship ??
-                  form.control(relationshipKey).value;
-          form.control(socialCategoryKey).value =
-              individualDetails?.socialCategory ??
-                  form.control(socialCategoryKey).value;
-          form.control(genderKey).value =
-              individualDetails?.gender ?? form.control(genderKey).value;
-          form.control(dobKey).value =
-              individualDetails?.dateOfBirth ?? form.control(dobKey).value;
-          form.control(mobileKey).value =
-              individualDetails?.mobileNumber ?? form.control(mobileKey).value;
-        }
-        return GestureDetector(
-          onTap: () {
-            if (FocusScope.of(context).hasFocus) {
-              FocusScope.of(context).unfocus();
-            }
+// Returning appropriate subpage based on the switchPage variable
+    switch (switchPage) {
+      case 0:
+        return identificationMethod(
+            context,
+            t,
+            relationship,
+            gender,
+            socialCategory,
+            skills,
+            photo,
+            individualDetails,
+            adhar,
+            (adhar) {
+              updateAdhar(adhar);
+            },
+            isVerified,
+            (value) {
+              isVerifyDone(value);
+            });
+      case 1:
+        return IndividualSubDetailPage(
+          gender: gender,
+          photo: photo,
+          relationship: relationship,
+          skills: skills,
+          socialCategory: socialCategory,
+          onPageChanged: (int page) {
+            _onPageChange(page);
           },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              DigitCard(
-                margin: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      t.translate(i18.attendanceMgmt.individualDetails),
-                      style: DigitTheme
-                          .instance.mobileTheme.textTheme.displayMedium
-                          ?.apply(color: const DigitColors().black),
-                    ),
-                    Column(children: [
-                      DigitTextFormField(
-                        formControlName: aadhaarNoKey,
-                        label: t.translate(i18.common.aadhaarNumber),
-                        isRequired: true,
-                        minLength: 12,
-                        maxLength: 12,
-                        keyboardType: TextInputType.number,
-                        inputFormatter: [
-                          FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                        ],
-                        validationMessages: {
-                          'required': (_) => t.translate(
-                                i18.wageSeeker.aadhaarRequired,
-                              ),
-                          'minLength': (_) => t.translate(
-                                i18.wageSeeker.minAadhaarCharacters,
-                              ),
-                          'maxLength': (_) => t.translate(
-                                i18.wageSeeker.maxAadhaarCharacters,
-                              ),
-                        },
-                      ),
-                      DigitTextFormField(
-                        padding: const EdgeInsets.only(top: 0),
-                        formControlName: nameKey,
-                        isRequired: true,
-                        label: t.translate(i18.common.nameLabel),
-                        inputFormatter: [
-                          FilteringTextInputFormatter.allow(RegExp("[A-Za-z ]"))
-                        ],
-                        validationMessages: {
-                          'required': (_) => t.translate(
-                                i18.wageSeeker.nameRequired,
-                              ),
-                          'minLength': (_) => t.translate(
-                                i18.wageSeeker.minNameCharacters,
-                              ),
-                          'maxLength': (_) => t.translate(
-                                i18.wageSeeker.maxNameCharacters,
-                              ),
-                        },
-                      ),
-                      DigitTextFormField(
-                        formControlName: fatherNameKey,
-                        isRequired: true,
-                        label: t.translate(i18.common.guardianName),
-                        inputFormatter: [
-                          FilteringTextInputFormatter.allow(RegExp("[A-Za-z ]"))
-                        ],
-                        validationMessages: {
-                          'required': (_) => t.translate(
-                                i18.wageSeeker.fatherNameRequired,
-                              ),
-                          'minLength': (_) => t.translate(
-                                i18.wageSeeker.minFatherNameCharacters,
-                              ),
-                          'maxLength': (_) => t.translate(
-                                i18.wageSeeker.maxFatherNameCharacters,
-                              ),
-                        },
-                      ),
-                      DigitReactiveDropdown<String>(
-                        label: t.translate(i18.common.relationship),
-                        menuItems:
-                            relationship.map((e) => e.toString()).toList(),
-                        isRequired: true,
-                        formControlName: relationshipKey,
-                        valueMapper: (value) =>
-                            t.translate('CORE_COMMON_$value'),
-                        onChanged: (value) {},
-                        validationMessages: {
-                          'required': (_) => t.translate(
-                                i18.wageSeeker.relationshipRequired,
-                              ),
-                        },
-                      ),
-                      DigitDateFormPicker(
-                        label: t.translate(i18.common.dateOfBirth),
-                        padding: const EdgeInsets.only(top: 32.0),
-                        isRequired: true,
-                        cancelText: t.translate(i18.common.cancel),
-                        confirmText: t.translate(i18.common.oK),
-                        icon: Icons.info_outline_rounded,
-                        toolTipMsg: t.translate(i18.wageSeeker.ageValidation),
-                        formControlName: dobKey,
-                        autoValidation: AutovalidateMode.always,
-                        requiredMessage:
-                            t.translate(i18.wageSeeker.dobRequired),
-                        validationMessages: {
-                          'required': (_) => t.translate(
-                                i18.wageSeeker.dobRequired,
-                              ),
-                          'max': (_) =>
-                              t.translate(i18.wageSeeker.ageValidation)
-                        },
-                      ),
-                      StatefulBuilder(builder:
-                          (BuildContext context, StateSetter setState) {
-                        return DigitRadioButtonList<String>(
-                          context,
-                          labelText: t.translate(i18.common.gender),
-                          formControlName: genderKey,
-                          options: gender.map((e) => e.toString()).toList(),
-                          isRequired: true,
-                          valueMapper: (value) => t.translate(value),
-                          onValueChange: (value) {
-                            genderController = value;
-                          },
-                        );
-                      }),
-                      DigitReactiveDropdown<String>(
-                        label: t.translate(i18.common.socialCategory),
-                        menuItems:
-                            socialCategory.map((e) => e.toString()).toList(),
-                        formControlName: socialCategoryKey,
-                        valueMapper: (value) =>
-                            t.translate('COMMON_MASTERS_SOCIAL_$value'),
-                        onChanged: (value) {},
-                      ),
-                      DigitTextFormField(
-                        label: t.translate(i18.common.mobileNumber),
-                        padding: const EdgeInsets.only(top: 32),
-                        formControlName: mobileKey,
-                        prefixText: '+91 - ',
-                        isRequired: true,
-                        minLength: 10,
-                        maxLength: 10,
-                        keyboardType: TextInputType.phone,
-                        inputFormatter: [
-                          FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                        ],
-                        validationMessages: {
-                          'required': (_) => t.translate(
-                                i18.wageSeeker.mobileRequired,
-                              ),
-                          'minLength': (_) => t.translate(
-                                i18.wageSeeker.minMobileCharacters,
-                              ),
-                          'maxLength': (_) => t.translate(
-                                i18.wageSeeker.maxMobileCharacters,
-                              ),
-                        },
-                      ),
-                      // StatefulBuilder(
-                      //     builder: (BuildContext context, StateSetter setState) {
-                      MultiSelectSearchCheckBox(
-                        label: t.translate(i18.attendanceMgmt.skill) + '*',
-                        onChange: _onSelectedOptionsChanged,
-                        options: skills,
-                        selectedOptions: selectedOptions,
-                      ),
-                      // }),
-                      SHGFilePicker(
-                        callBack: (List<FileStoreModel>? fileStore) {
-                          if (fileStore != null && fileStore.isNotEmpty) {
-                            // setState(() {
-                            photo = fileStore.first.fileStoreId;
-                            // });
-                          } else {
-                            // setState(() {
-                            photo = '';
-                            // });
-                          }
-                        },
-                        extensions: const ['jpg', 'png', 'jpeg'],
-                        moduleName: 'works',
-                        label: t.translate(i18.common.photoGraph),
-                      )
-                    ]),
-                    const SizedBox(height: 16),
-                    Center(
-                      child: DigitElevatedButton(
-                          onPressed: () {
-                            form.markAllAsTouched(updateParent: false);
-                            if (!form.valid) return;
-                            if (form.value[genderKey] == null ||
-                                form.value[genderKey].toString().isEmpty) {
-                              Notifiers.getToastMessage(
-                                  context,
-                                  t.translate(i18.wageSeeker.genderRequired),
-                                  'ERROR');
-                            } else if (!getSkillsValid()) {
-                              Notifiers.getToastMessage(
-                                  context,
-                                  i18.wageSeeker.selectSkillValidation,
-                                  'ERROR');
-                            } else if (selectedOptions.isEmpty) {
-                              Notifiers.getToastMessage(context,
-                                  i18.wageSeeker.skillsRequired, 'ERROR');
-                            } else {
-                              final individualDetails = IndividualDetails(
-                                  name: form.value[nameKey].toString(),
-                                  fatherName:
-                                      form.value[fatherNameKey].toString(),
-                                  aadhaarNo:
-                                      form.value[aadhaarNoKey].toString(),
-                                  relationship:
-                                      form.value[relationshipKey].toString(),
-                                  socialCategory:
-                                      form.value[socialCategoryKey].toString(),
-                                  dateOfBirth: form.value[dobKey] as DateTime,
-                                  mobileNumber:
-                                      form.value[mobileKey].toString(),
-                                  gender: form.value[genderKey].toString(),
-                                  imageFile: FilePickerData.imageFile,
-                                  bytes: FilePickerData.bytes,
-                                  photo: photo);
-                              final skillList = SkillDetails(
-                                  individualSkills: selectedOptions
-                                      .map((e) => IndividualSkill(
-                                          type: e.toString().split('.').last,
-                                          level: e.toString().split('.').first))
-                                      .toList());
+          individualDetails: individualDetails,
+        );
+      case 2:
+        return IndividualSkillSubPage(
+          gender: gender,
+          photo: photo,
+          relationship: relationship,
+          skills: skills,
+          socialCategory: socialCategory,
+          onPageChanged: (int page) {
+            _onPageChange(page);
+          },
+          skillDetails: skillDetails,
+        );
+      case 3:
+        return IndividualPhotoSubPage(
+          onPageChanged: (int page) {
+            _onPageChange(page);
+          },
+          photo: individualDetails?.photo ?? '',
+        );
+      default:
+        return identificationMethod(
+            context,
+            t,
+            relationship,
+            gender,
+            socialCategory,
+            skills,
+            photo,
+            individualDetails,
+            adhar,
+            (adhar) {
+              updateAdhar(adhar);
+            },
+            isVerified,
+            (value) {
+              isVerifyDone(value);
+            });
+    }
+  }
 
-                              BlocProvider.of<WageSeekerBloc>(context).add(
-                                WageSeekerCreateEvent(
-                                    individualDetails: individualDetails,
-                                    skillDetails: skillList,
-                                    locationDetails: locationDetails,
-                                    financialDetails: financialDetails),
-                              );
-                              widget.onPressed();
-                            }
-                          },
-                          child: Center(
-                            child: Text(t.translate(i18.common.next)),
-                          )),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
+// Widget for displaying identification method form
+  BlocListener identificationMethod(
+    BuildContext context,
+    AppLocalizations t,
+    List<String> relationship,
+    List<String> gender,
+    List<String> socialCategory,
+    List<String> skills,
+    String? photo,
+    IndividualDetails? individualDetails,
+    bool adhar,
+    final Function(String adhar) adharSelect,
+    bool isVerified,
+    final Function(bool value) isVerifyFunction,
+  ) {
+    return BlocListener<WageSeekerCreateBloc, WageSeekerCreateState>(
+      listener: (context, state) {
+        // Listen to state changes in WageSeekerCreateBloc
+        state.maybeMap(
+          orElse: () => {const SizedBox.shrink()},
+          verified: (adharCardResponse) {
+            // Update Aadhaar verification status
+            isVerified = adharCardResponse.adharCardResponse!.status ==
+                    Constants.verifyAdhar
+                ? true
+                : false;
+
+            isVerifyDone(isVerified);
+          },
+          error: (error) {
+            isVerified = false;
+            isVerifyDone(isVerified);
+          },
         );
       },
+      child: ReactiveFormBuilder(
+        form: () =>
+            identificationBuildForm(individualDetails ?? IndividualDetails()),
+        builder: (context, form, child) {
+          return GestureDetector(
+            onTap: () {
+              if (FocusScope.of(context).hasFocus) {
+                FocusScope.of(context).unfocus();
+              }
+            },
+            child: SizedBox(
+              height: MediaQuery.sizeOf(context).height * 0.719,
+              child: ScrollableContent(
+                backgroundColor: Theme.of(context).colorTheme.generic.background,
+                
+                footer: DigitFooter(actions: [
+                  FooterAction(button: 
+                   Button(
+                          label: t.translate(i18.common.next),
+                          onPressed: () {
+                            form.markAllAsTouched(updateParent: false);
+                            // setState(() {});
+                            if (!form.valid) return;
+
+                            context.read<WageSeekerBloc>().add(
+                                  WageSeekerIdentificationCreateEvent(
+                                      adharVerified: false,
+                                      documentType: form.value[identityDocument]
+                                          .toString(),
+                                      name: form.value[nameKey].toString(),
+                                      number:
+                                          form.value[aadhaarNoKey].toString(),
+                                      timeStamp:
+                                          DateTime.now().millisecondsSinceEpoch,
+                                      adharCardResponse:
+                                          const AdharCardResponse()),
+                                );
+                            setState(() {
+                              switchPage = 1;
+                            });
+                          },
+                          type: ButtonType.primary,
+                          size: ButtonSize.large,
+                          mainAxisSize: MainAxisSize.max,
+                        )
+                  )
+                ]),
+
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ui_card.DigitCard(
+                    margin:
+                        EdgeInsets.all(Theme.of(context).spacerTheme.spacer2),
+                    cardType: CardType.primary,
+                    children: [
+                      DigitTextBlock(
+                        heading: t.translate(
+                          i18.wageSeeker.identificationHeader,
+                        ),
+                        // style: DigitTheme
+                        //     .instance.mobileTheme.textTheme.displayMedium
+                        //     ?.apply(color: const DigitColors().black),
+                      ),
+
+                      ui_component.DigitDropdown(
+                        selectedOption: DropdownItem(
+                            name: t.translate('CBO_CORE_COMMON_AADHAAR'),
+                            code: "AADHAAR".toString()),
+                        items: [
+                          "AADHAAR",
+                        ]
+                            .map((e) => DropdownItem(
+                                name: t.translate('CBO_CORE_COMMON_$e'),
+                                code: e.toString()))
+                            .toList(),
+                      ),
+
+                      ui_component.LabeledField(
+                        label: t.translate(i18.wageSeeker.identityNumberLabel),
+                        isRequired: true,
+                        child: ReactiveWrapperField(
+                          formControlName: aadhaarNoKey,
+                          validationMessages: {
+                            'required': (error) =>
+                                t.translate(i18.wageSeeker.aadhaarRequired),
+                            'minLength': (error) => t
+                                .translate(i18.wageSeeker.minAadhaarCharacters),
+                            'maxLength': (error) => t
+                                .translate(i18.wageSeeker.maxAadhaarCharacters),
+                          },
+                          showErrors: (control) =>
+                              control.invalid && control.touched,
+                          builder: (field) {
+                            return DigitTextFormInput(
+                              controller: TextEditingController()
+                                ..text = form.control(aadhaarNoKey).value,
+                              isRequired: true,
+                              // minLength: 12,
+                              // maxLength: 12,
+                              onChange: (value) {
+                                field.control.markAsTouched();
+
+                                form.control(aadhaarNoKey).value = value;
+                              },
+                              charCount: true,
+
+                              errorMessage: field.errorText,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp("[0-9]"))
+                              ],
+                              validations: [
+                                ui_validation.Validator(
+                                    ui_validation.ValidatorType.minLength, 12,
+                                    errorMessage: t.translate(
+                                        i18.wageSeeker.minAadhaarCharacters)),
+                                ui_validation.Validator(
+                                    ui_validation.ValidatorType.maxLength, 12,
+                                    errorMessage: t.translate(
+                                        i18.wageSeeker.maxAadhaarCharacters)),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+
+                      ui_component.LabeledField(
+                        isRequired: true,
+                        label: t.translate(i18.wageSeeker.identityNameLabel),
+                        child: ReactiveWrapperField(
+                          validationMessages: {
+                            'required': (error) => t.translate(
+                                  i18.wageSeeker.aadhaarRequired,
+                                ),
+                            'minLength': (error) => t.translate(
+                                  i18.wageSeeker.minNameCharacters,
+                                ),
+                            'maxLength': (error) => t.translate(
+                                  i18.wageSeeker.maxNameCharacters,
+                                ),
+                          },
+                          showErrors: (control) =>
+                              control.invalid && control.touched,
+                          formControlName: nameKey,
+                          builder: (field) {
+                            return DigitTextFormInput(
+                              errorMessage: field.errorText,
+                              controller: TextEditingController()
+                                ..text = form.control(nameKey).value,
+                              isRequired: true,
+                              // minLength: 12,
+                              // maxLength: 12,
+                              onChange: (value) {
+                                field.control.markAsTouched();
+                                form.control(nameKey).value = value;
+                              },
+
+                              validations: [
+                                ui_validation.Validator(
+                                    ui_validation.ValidatorType.minLength, 2,
+                                    errorMessage: t.translate(
+                                      i18.wageSeeker.minNameCharacters,
+                                    )),
+                                ui_validation.Validator(
+                                  ui_validation.ValidatorType.required,
+                                  "",
+                                  errorMessage: t.translate(
+                                    i18.wageSeeker.aadhaarRequired,
+                                  ),
+                                ),
+                              ],
+                              keyboardType: TextInputType.text,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp("[A-Za-z ]"))
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+
+                      // Button(
+                      //   label: t.translate(i18.common.next),
+                      //   onPressed: () {
+                      //     form.markAllAsTouched(updateParent: false);
+                      //     // setState(() {});
+                      //     if (!form.valid) return;
+
+                      //     context.read<WageSeekerBloc>().add(
+                      //           WageSeekerIdentificationCreateEvent(
+                      //               adharVerified: false,
+                      //               documentType:
+                      //                   form.value[identityDocument].toString(),
+                      //               name: form.value[nameKey].toString(),
+                      //               number: form.value[aadhaarNoKey].toString(),
+                      //               timeStamp: DateTime.now().millisecondsSinceEpoch,
+                      //               adharCardResponse: const AdharCardResponse()),
+                      //         );
+                      //     setState(() {
+                      //       switchPage = 1;
+                      //     });
+                      //   },
+                      //   type: ButtonType.primary,
+                      //   size: ButtonSize.large,
+                      //   mainAxisSize: MainAxisSize.max,
+                      // )
+                    ],
+                  ),
+                 const Align(
+                alignment: Alignment.bottomCenter,
+                child: PoweredByDigit(
+                  version: Constants.appVersion,
+                ),
+              )
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
-  bool getSkillsValid() {
-    Map<String, int> beforeDotCount = {};
-    Map<String, int> afterDotCount = {};
-
-    for (String skill in selectedOptions) {
-      List<String> skillParts = skill.split(".");
-      String beforeDot = skillParts[0];
-      String afterDot = skillParts[1];
-
-      beforeDotCount[beforeDot] = (beforeDotCount[beforeDot] ?? 0) + 1;
-      afterDotCount[afterDot] = (afterDotCount[afterDot] ?? 0) + 1;
-    }
-
-    // int countBeforeDot =
-    //     beforeDotCount.values.where((count) => count > 1).length;
-    int countAfterDot = afterDotCount.values.where((count) => count > 1).length;
-
-    if (countAfterDot > 0) {
-      return false;
-    }
-    return true;
-  }
-
-  FormGroup buildForm() => fb.group(<String, Object>{
-        aadhaarNoKey: FormControl<String>(value: '', validators: [
-          Validators.required,
-          Validators.minLength(12),
-          Validators.maxLength(12)
-        ]),
-        nameKey: FormControl<String>(value: '', validators: [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(128)
-        ]),
-        genderKey: FormControl<String>(value: null),
-        fatherNameKey: FormControl<String>(value: '', validators: [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(128)
-        ]),
-        relationshipKey:
-            FormControl<String>(value: null, validators: [Validators.required]),
-        dobKey: FormControl<DateTime>(
-          value: null,
-          validators: [
-            Validators.required,
-            Validators.max(DateTime(DateTime.now().year - 18,
-                DateTime.now().month, DateTime.now().day))
-          ],
-        ),
-        socialCategoryKey: FormControl<String>(value: null),
-        mobileKey: FormControl<String>(value: '', validators: [
-          Validators.required,
-          Validators.minLength(10),
-          Validators.maxLength(10)
-        ])
+  // Build Reactive Forms FormGroup for identification details
+  FormGroup identificationBuildForm(
+    IndividualDetails individualDetails,
+  ) =>
+      fb.group(<String, Object>{
+        aadhaarNoKey: FormControl<String>(
+            value: individualDetails.aadhaarNo ?? '',
+            validators: adhar
+                ? [
+                    Validators.required,
+                    Validators.minLength(12),
+                    Validators.maxLength(12)
+                  ]
+                : [
+                    Validators.required,
+                    Validators.minLength(12),
+                    Validators.maxLength(12)
+                  ]),
+        nameKey: FormControl<String>(
+            value: individualDetails.name ?? '',
+            validators: [
+              Validators.required,
+              Validators.minLength(2),
+              Validators.maxLength(128)
+            ]),
+        identityDocument: FormControl<String>(
+            value: individualDetails.documentType ?? "AADHAAR",
+            validators: [
+              Validators.required,
+            ]),
       });
 }

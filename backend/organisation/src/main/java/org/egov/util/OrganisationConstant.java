@@ -15,9 +15,18 @@ public class OrganisationConstant {
     public static final String MASTER_ORG_TRANSFER_CODE = "OrgTransferCode";
 
     //Role
-    public static final String ORG_CITIZEN_ROLE_CODE = "ORG_ADMIN";
-    public static final String ORG_CITIZEN_ROLE_NAME = "Organization admin";
+    public static final String ORG_ADMIN_ROLE_CODE = "ORG_ADMIN";
+    public static final String ORG_ADMIN_ROLE_NAME = "Organization admin";
     public static final String ORG_CITIZEN_TYPE = "CITIZEN";
+
+    public static final String VIEW_ORG_UNMASKED_CODE = "VIEW_ORG_UNMASKED";
+    public static final String VIEW_ORG_UNMASKED_NAME = "View ORG Unmasked";
+
+    public static final String VIEW_DED_UNMASKED_CODE = "VIEW_DED_UNMASKED";
+    public static final String VIEW_DED_UNMASKED_NAME = "View DED Unmasked";
+
+    public static final String VIEW_WS_UNMASKED_CODE = "VIEW_WS_UNMASKED";
+    public static final String VIEW_WS_UNMASKED_NAME = "View Ws Unmasked";
 
 
     public static final String PATTERN_NAME = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]*$";
@@ -45,7 +54,7 @@ public class OrganisationConstant {
 
     public static final String HRMS_USER_MOBILE_NO = "$.Employees.*.user.mobileNumber";
 
-
+    public static final String ORGANISATION_ENCRYPT_KEY = "Organisation";
 
 
 }

@@ -24,12 +24,12 @@ const TrackAttendenceTable = ({state,dispatch,searchQuery}) => {
     const classSelector = (state) => {
       switch (state) {
         case "half":
-          return ["radio-outer-circle selected", "radio-half-inner-circle"]
+          return ["radio-outer-circle attendence-selected", "radio-half-inner-circle"]
         case "full":
-          return ["radio-outer-circle selected", "radio-full-inner-circle"]
+          return ["radio-outer-circle attendence-selected", "radio-full-inner-circle"]
 
         default:
-          return ["radio-outer-circle unselected", ""]
+          return ["radio-outer-circle attendence-unselected", ""]
       }
     }
 

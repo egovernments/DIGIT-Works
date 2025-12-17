@@ -3,13 +3,13 @@ package org.egov.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.AttendanceEntry;
 import org.egov.web.models.IndividualEntry;
 import org.egov.web.models.MusterRoll;
-import org.egov.web.models.Status;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -28,8 +28,12 @@ import java.util.Map;
 @Repository
 public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>> {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public MusterRollRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<MusterRoll> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -89,7 +93,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
         Long createdtime = rs.getLong("indCreatedTime");
         Long lastmodifiedtime = rs.getLong("indModifiedTime");
 
-        if (StringUtils.isNotBlank(musterId) && musterId.equalsIgnoreCase(musterRoll.getId().toString())) {
+        if (StringUtils.isNotBlank(musterId) && musterId.equalsIgnoreCase(musterRoll.getId())) {
 
             JsonNode additionalDetails = getAdditionalDetail("indAddlDetails", rs);
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
@@ -128,7 +132,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
         Long createdtime = rs.getLong("attnCreatedTime");
         Long lastmodifiedtime = rs.getLong("attnModifiedTime");
 
-        if (StringUtils.isNotBlank(summaryId) && summaryId.equalsIgnoreCase(individualEntry.getId().toString())) {
+        if (StringUtils.isNotBlank(summaryId) && summaryId.equalsIgnoreCase(individualEntry.getId())) {
 
             JsonNode additionalDetails = getAdditionalDetail("attnAddlDetails", rs);
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)

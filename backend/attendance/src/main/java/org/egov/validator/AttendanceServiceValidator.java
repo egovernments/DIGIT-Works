@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +25,17 @@ import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
 @Slf4j
 public class AttendanceServiceValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+    private final MDMSUtils mdmsUtils;
+
+    private final RegisterRepository registerRepository;
+    private final IndividualServiceUtil individualServiceUtil;
 
     @Autowired
-    private RegisterRepository registerRepository;
+    public AttendanceServiceValidator(MDMSUtils mdmsUtils, RegisterRepository registerRepository, IndividualServiceUtil individualServiceUtil) {
+        this.mdmsUtils = mdmsUtils;
+        this.registerRepository = registerRepository;
+        this.individualServiceUtil = individualServiceUtil;
+    }
 
     /* Validates create Attendance Register request body */
     public void validateCreateAttendanceRegister(AttendanceRegisterRequest request) {
@@ -49,10 +56,9 @@ public class AttendanceServiceValidator {
         log.info("Attendance registers referenceId and ServiceCode are validated");
 
         String tenantId = attendanceRegisters.get(0).getTenantId();
-        String rootTenantId = tenantId.split("\\.")[0];
 
         //Get MDMS data using create attendance register request and tenantId
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
 
@@ -105,10 +111,9 @@ public class AttendanceServiceValidator {
         }
 
         String tenantId = attendanceRegisters.get(0).getTenantId();
-        String rootTenantId = tenantId.split("\\.")[0];
 
         //Get MDMS data using create attendance register request and tenantId
-        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
         validateMDMSData(attendanceRegisters, mdmsData, errorMap);
         log.info("Request data validated with MDMS");
 
@@ -117,7 +122,7 @@ public class AttendanceServiceValidator {
     }
 
     /* Validates attendance register data in update request against attendance register data fetched from database */
-    public void validateUpdateAgainstDB(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegistersFromDB) {
+    public void validateUpdateAgainstDB(AttendanceRegisterRequest attendanceRegisterRequest, List<AttendanceRegister> attendanceRegistersFromDB, Boolean registerFirstStaffInsertEnabled) {
         if (CollectionUtils.isEmpty(attendanceRegistersFromDB)) {
             log.error("The record that you are trying to update does not exists in the system");
             throw new CustomException("INVALID_REGISTER_MODIFY", "The record that you are trying to update does not exists in the system");
@@ -134,11 +139,12 @@ public class AttendanceServiceValidator {
             // If the user who is trying to update the register is not associated with the register, throw error that the user does not have permission to modify the attendance register
             if (registerFromDB.getStaff() != null) {
                 Set<String> staffUserIdsFromDB = registerFromDB.getStaff().stream().map(StaffPermission:: getUserId).collect(Collectors.toSet());
-                if (!staffUserIdsFromDB.contains(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid())) {
+                String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceRegisterRequest.getRequestInfo().getUserInfo().getId(),attendanceRegisterRequest.getRequestInfo(), registerFromRequest.getTenantId()).get(0).getId();
+                if (!staffUserIdsFromDB.contains(individualId)) {
                     log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                     throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 }
-            } else {
+            } else if(registerFirstStaffInsertEnabled) {
                 log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
             }

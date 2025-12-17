@@ -6,8 +6,8 @@ part of 'app_config_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_AppConfigModel _$$_AppConfigModelFromJson(Map<String, dynamic> json) =>
-    _$_AppConfigModel(
+_$AppConfigModelImpl _$$AppConfigModelImplFromJson(Map<String, dynamic> json) =>
+    _$AppConfigModelImpl(
       tenantId: json['tenantId'] as String,
       moduleName: json['moduleName'] as String,
       configuration: json['configuration'] == null
@@ -16,28 +16,30 @@ _$_AppConfigModel _$$_AppConfigModelFromJson(Map<String, dynamic> json) =>
               json['configuration'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_AppConfigModelToJson(_$_AppConfigModel instance) =>
+Map<String, dynamic> _$$AppConfigModelImplToJson(
+        _$AppConfigModelImpl instance) =>
     <String, dynamic>{
       'tenantId': instance.tenantId,
       'moduleName': instance.moduleName,
       'configuration': instance.configuration,
     };
 
-_$_ConfigurationModel _$$_ConfigurationModelFromJson(
+_$ConfigurationModelImpl _$$ConfigurationModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$_ConfigurationModel(
-      configVersion: json['configVersion'] as int,
+    _$ConfigurationModelImpl(
+      configVersion: (json['configVersion'] as num).toInt(),
       appConfig: AppConfig.fromJson(json['appConfig'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_ConfigurationModelToJson(
-        _$_ConfigurationModel instance) =>
+Map<String, dynamic> _$$ConfigurationModelImplToJson(
+        _$ConfigurationModelImpl instance) =>
     <String, dynamic>{
       'configVersion': instance.configVersion,
       'appConfig': instance.appConfig,
     };
 
-_$_AppConfig _$$_AppConfigFromJson(Map<String, dynamic> json) => _$_AppConfig(
+_$AppConfigImpl _$$AppConfigImplFromJson(Map<String, dynamic> json) =>
+    _$AppConfigImpl(
       languages: (json['LANGUAGES'] as List<dynamic>)
           .map((e) => Languages.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -46,46 +48,47 @@ _$_AppConfig _$$_AppConfigFromJson(Map<String, dynamic> json) => _$_AppConfig(
           .toList(),
     );
 
-Map<String, dynamic> _$$_AppConfigToJson(_$_AppConfig instance) =>
+Map<String, dynamic> _$$AppConfigImplToJson(_$AppConfigImpl instance) =>
     <String, dynamic>{
       'LANGUAGES': instance.languages,
       'LOCALIZATION_MODULES': instance.localizationModules,
     };
 
-_$_LanguagesList _$$_LanguagesListFromJson(Map<String, dynamic> json) =>
-    _$_LanguagesList(
+_$LanguagesListImpl _$$LanguagesListImplFromJson(Map<String, dynamic> json) =>
+    _$LanguagesListImpl(
       languages: (json['languages'] as List<dynamic>?)
           ?.map((e) => Languages.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_LanguagesListToJson(_$_LanguagesList instance) =>
+Map<String, dynamic> _$$LanguagesListImplToJson(_$LanguagesListImpl instance) =>
     <String, dynamic>{
       'languages': instance.languages,
     };
 
-_$_Languages _$$_LanguagesFromJson(Map<String, dynamic> json) => _$_Languages(
+_$LanguagesImpl _$$LanguagesImplFromJson(Map<String, dynamic> json) =>
+    _$LanguagesImpl(
       label: json['label'] as String,
       value: json['value'] as String,
       isSelected: json['isSelected'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$$_LanguagesToJson(_$_Languages instance) =>
+Map<String, dynamic> _$$LanguagesImplToJson(_$LanguagesImpl instance) =>
     <String, dynamic>{
       'label': instance.label,
       'value': instance.value,
       'isSelected': instance.isSelected,
     };
 
-_$_LocalizationModules _$$_LocalizationModulesFromJson(
+_$LocalizationModulesImpl _$$LocalizationModulesImplFromJson(
         Map<String, dynamic> json) =>
-    _$_LocalizationModules(
+    _$LocalizationModulesImpl(
       label: json['label'] as String,
       value: json['value'] as String,
     );
 
-Map<String, dynamic> _$$_LocalizationModulesToJson(
-        _$_LocalizationModules instance) =>
+Map<String, dynamic> _$$LocalizationModulesImplToJson(
+        _$LocalizationModulesImpl instance) =>
     <String, dynamic>{
       'label': instance.label,
       'value': instance.value,

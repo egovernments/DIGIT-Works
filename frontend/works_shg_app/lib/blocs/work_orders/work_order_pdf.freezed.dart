@@ -12,42 +12,51 @@ part of 'work_order_pdf.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$WorkOrderPDFEvent {
   String? get tenantId => throw _privateConstructorUsedError;
-  String? get contractId => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String? tenantId, String? contractId)
         onWorkOrderPDF,
+    required TResult Function(
+            String? tenantId, String? estimateId, String? workorder)
+        onAnalysisPDF,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String? tenantId, String? contractId)? onWorkOrderPDF,
+    TResult? Function(String? tenantId, String? estimateId, String? workorder)?
+        onAnalysisPDF,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String? tenantId, String? contractId)? onWorkOrderPDF,
+    TResult Function(String? tenantId, String? estimateId, String? workorder)?
+        onAnalysisPDF,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PDFEventWorkOrder value) onWorkOrderPDF,
+    required TResult Function(PDFEventAnalysis value) onAnalysisPDF,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PDFEventWorkOrder value)? onWorkOrderPDF,
+    TResult? Function(PDFEventAnalysis value)? onAnalysisPDF,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PDFEventWorkOrder value)? onWorkOrderPDF,
+    TResult Function(PDFEventAnalysis value)? onAnalysisPDF,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -63,7 +72,7 @@ abstract class $WorkOrderPDFEventCopyWith<$Res> {
           WorkOrderPDFEvent value, $Res Function(WorkOrderPDFEvent) then) =
       _$WorkOrderPDFEventCopyWithImpl<$Res, WorkOrderPDFEvent>;
   @useResult
-  $Res call({String? tenantId, String? contractId});
+  $Res call({String? tenantId});
 }
 
 /// @nodoc
@@ -80,38 +89,33 @@ class _$WorkOrderPDFEventCopyWithImpl<$Res, $Val extends WorkOrderPDFEvent>
   @override
   $Res call({
     Object? tenantId = freezed,
-    Object? contractId = freezed,
   }) {
     return _then(_value.copyWith(
       tenantId: freezed == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
               as String?,
-      contractId: freezed == contractId
-          ? _value.contractId
-          : contractId // ignore: cast_nullable_to_non_nullable
-              as String?,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$PDFEventWorkOrderCopyWith<$Res>
+abstract class _$$PDFEventWorkOrderImplCopyWith<$Res>
     implements $WorkOrderPDFEventCopyWith<$Res> {
-  factory _$$PDFEventWorkOrderCopyWith(
-          _$PDFEventWorkOrder value, $Res Function(_$PDFEventWorkOrder) then) =
-      __$$PDFEventWorkOrderCopyWithImpl<$Res>;
+  factory _$$PDFEventWorkOrderImplCopyWith(_$PDFEventWorkOrderImpl value,
+          $Res Function(_$PDFEventWorkOrderImpl) then) =
+      __$$PDFEventWorkOrderImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String? tenantId, String? contractId});
 }
 
 /// @nodoc
-class __$$PDFEventWorkOrderCopyWithImpl<$Res>
-    extends _$WorkOrderPDFEventCopyWithImpl<$Res, _$PDFEventWorkOrder>
-    implements _$$PDFEventWorkOrderCopyWith<$Res> {
-  __$$PDFEventWorkOrderCopyWithImpl(
-      _$PDFEventWorkOrder _value, $Res Function(_$PDFEventWorkOrder) _then)
+class __$$PDFEventWorkOrderImplCopyWithImpl<$Res>
+    extends _$WorkOrderPDFEventCopyWithImpl<$Res, _$PDFEventWorkOrderImpl>
+    implements _$$PDFEventWorkOrderImplCopyWith<$Res> {
+  __$$PDFEventWorkOrderImplCopyWithImpl(_$PDFEventWorkOrderImpl _value,
+      $Res Function(_$PDFEventWorkOrderImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -120,7 +124,7 @@ class __$$PDFEventWorkOrderCopyWithImpl<$Res>
     Object? tenantId = freezed,
     Object? contractId = freezed,
   }) {
-    return _then(_$PDFEventWorkOrder(
+    return _then(_$PDFEventWorkOrderImpl(
       tenantId: freezed == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
@@ -135,8 +139,8 @@ class __$$PDFEventWorkOrderCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$PDFEventWorkOrder implements PDFEventWorkOrder {
-  const _$PDFEventWorkOrder({this.tenantId, this.contractId});
+class _$PDFEventWorkOrderImpl implements PDFEventWorkOrder {
+  const _$PDFEventWorkOrderImpl({this.tenantId, this.contractId});
 
   @override
   final String? tenantId;
@@ -149,10 +153,10 @@ class _$PDFEventWorkOrder implements PDFEventWorkOrder {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PDFEventWorkOrder &&
+            other is _$PDFEventWorkOrderImpl &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.contractId, contractId) ||
@@ -165,14 +169,18 @@ class _$PDFEventWorkOrder implements PDFEventWorkOrder {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$PDFEventWorkOrderCopyWith<_$PDFEventWorkOrder> get copyWith =>
-      __$$PDFEventWorkOrderCopyWithImpl<_$PDFEventWorkOrder>(this, _$identity);
+  _$$PDFEventWorkOrderImplCopyWith<_$PDFEventWorkOrderImpl> get copyWith =>
+      __$$PDFEventWorkOrderImplCopyWithImpl<_$PDFEventWorkOrderImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String? tenantId, String? contractId)
         onWorkOrderPDF,
+    required TResult Function(
+            String? tenantId, String? estimateId, String? workorder)
+        onAnalysisPDF,
   }) {
     return onWorkOrderPDF(tenantId, contractId);
   }
@@ -181,6 +189,8 @@ class _$PDFEventWorkOrder implements PDFEventWorkOrder {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String? tenantId, String? contractId)? onWorkOrderPDF,
+    TResult? Function(String? tenantId, String? estimateId, String? workorder)?
+        onAnalysisPDF,
   }) {
     return onWorkOrderPDF?.call(tenantId, contractId);
   }
@@ -189,6 +199,8 @@ class _$PDFEventWorkOrder implements PDFEventWorkOrder {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String? tenantId, String? contractId)? onWorkOrderPDF,
+    TResult Function(String? tenantId, String? estimateId, String? workorder)?
+        onAnalysisPDF,
     required TResult orElse(),
   }) {
     if (onWorkOrderPDF != null) {
@@ -201,6 +213,7 @@ class _$PDFEventWorkOrder implements PDFEventWorkOrder {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PDFEventWorkOrder value) onWorkOrderPDF,
+    required TResult Function(PDFEventAnalysis value) onAnalysisPDF,
   }) {
     return onWorkOrderPDF(this);
   }
@@ -209,6 +222,7 @@ class _$PDFEventWorkOrder implements PDFEventWorkOrder {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PDFEventWorkOrder value)? onWorkOrderPDF,
+    TResult? Function(PDFEventAnalysis value)? onAnalysisPDF,
   }) {
     return onWorkOrderPDF?.call(this);
   }
@@ -217,6 +231,7 @@ class _$PDFEventWorkOrder implements PDFEventWorkOrder {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PDFEventWorkOrder value)? onWorkOrderPDF,
+    TResult Function(PDFEventAnalysis value)? onAnalysisPDF,
     required TResult orElse(),
   }) {
     if (onWorkOrderPDF != null) {
@@ -228,15 +243,183 @@ class _$PDFEventWorkOrder implements PDFEventWorkOrder {
 
 abstract class PDFEventWorkOrder implements WorkOrderPDFEvent {
   const factory PDFEventWorkOrder(
-      {final String? tenantId, final String? contractId}) = _$PDFEventWorkOrder;
+      {final String? tenantId,
+      final String? contractId}) = _$PDFEventWorkOrderImpl;
 
   @override
   String? get tenantId;
-  @override
   String? get contractId;
   @override
   @JsonKey(ignore: true)
-  _$$PDFEventWorkOrderCopyWith<_$PDFEventWorkOrder> get copyWith =>
+  _$$PDFEventWorkOrderImplCopyWith<_$PDFEventWorkOrderImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$PDFEventAnalysisImplCopyWith<$Res>
+    implements $WorkOrderPDFEventCopyWith<$Res> {
+  factory _$$PDFEventAnalysisImplCopyWith(_$PDFEventAnalysisImpl value,
+          $Res Function(_$PDFEventAnalysisImpl) then) =
+      __$$PDFEventAnalysisImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? tenantId, String? estimateId, String? workorder});
+}
+
+/// @nodoc
+class __$$PDFEventAnalysisImplCopyWithImpl<$Res>
+    extends _$WorkOrderPDFEventCopyWithImpl<$Res, _$PDFEventAnalysisImpl>
+    implements _$$PDFEventAnalysisImplCopyWith<$Res> {
+  __$$PDFEventAnalysisImplCopyWithImpl(_$PDFEventAnalysisImpl _value,
+      $Res Function(_$PDFEventAnalysisImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tenantId = freezed,
+    Object? estimateId = freezed,
+    Object? workorder = freezed,
+  }) {
+    return _then(_$PDFEventAnalysisImpl(
+      tenantId: freezed == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      estimateId: freezed == estimateId
+          ? _value.estimateId
+          : estimateId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      workorder: freezed == workorder
+          ? _value.workorder
+          : workorder // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$PDFEventAnalysisImpl implements PDFEventAnalysis {
+  const _$PDFEventAnalysisImpl(
+      {this.tenantId, this.estimateId, this.workorder});
+
+  @override
+  final String? tenantId;
+  @override
+  final String? estimateId;
+  @override
+  final String? workorder;
+
+  @override
+  String toString() {
+    return 'WorkOrderPDFEvent.onAnalysisPDF(tenantId: $tenantId, estimateId: $estimateId, workorder: $workorder)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PDFEventAnalysisImpl &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId) &&
+            (identical(other.estimateId, estimateId) ||
+                other.estimateId == estimateId) &&
+            (identical(other.workorder, workorder) ||
+                other.workorder == workorder));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, tenantId, estimateId, workorder);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PDFEventAnalysisImplCopyWith<_$PDFEventAnalysisImpl> get copyWith =>
+      __$$PDFEventAnalysisImplCopyWithImpl<_$PDFEventAnalysisImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? tenantId, String? contractId)
+        onWorkOrderPDF,
+    required TResult Function(
+            String? tenantId, String? estimateId, String? workorder)
+        onAnalysisPDF,
+  }) {
+    return onAnalysisPDF(tenantId, estimateId, workorder);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? tenantId, String? contractId)? onWorkOrderPDF,
+    TResult? Function(String? tenantId, String? estimateId, String? workorder)?
+        onAnalysisPDF,
+  }) {
+    return onAnalysisPDF?.call(tenantId, estimateId, workorder);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? tenantId, String? contractId)? onWorkOrderPDF,
+    TResult Function(String? tenantId, String? estimateId, String? workorder)?
+        onAnalysisPDF,
+    required TResult orElse(),
+  }) {
+    if (onAnalysisPDF != null) {
+      return onAnalysisPDF(tenantId, estimateId, workorder);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(PDFEventWorkOrder value) onWorkOrderPDF,
+    required TResult Function(PDFEventAnalysis value) onAnalysisPDF,
+  }) {
+    return onAnalysisPDF(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(PDFEventWorkOrder value)? onWorkOrderPDF,
+    TResult? Function(PDFEventAnalysis value)? onAnalysisPDF,
+  }) {
+    return onAnalysisPDF?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(PDFEventWorkOrder value)? onWorkOrderPDF,
+    TResult Function(PDFEventAnalysis value)? onAnalysisPDF,
+    required TResult orElse(),
+  }) {
+    if (onAnalysisPDF != null) {
+      return onAnalysisPDF(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class PDFEventAnalysis implements WorkOrderPDFEvent {
+  const factory PDFEventAnalysis(
+      {final String? tenantId,
+      final String? estimateId,
+      final String? workorder}) = _$PDFEventAnalysisImpl;
+
+  @override
+  String? get tenantId;
+  String? get estimateId;
+  String? get workorder;
+  @override
+  @JsonKey(ignore: true)
+  _$$PDFEventAnalysisImplCopyWith<_$PDFEventAnalysisImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -313,24 +496,25 @@ class _$WorkOrderPDFStateCopyWithImpl<$Res, $Val extends WorkOrderPDFState>
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$WorkOrderPDFStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$WorkOrderPDFStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial {
+  const _$InitialImpl() : super._();
 
   @override
   String toString() {
@@ -338,9 +522,9 @@ class _$_Initial extends _Initial {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -422,29 +606,30 @@ class _$_Initial extends _Initial {
 }
 
 abstract class _Initial extends WorkOrderPDFState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$WorkOrderPDFStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$WorkOrderPDFStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString() {
@@ -452,9 +637,9 @@ class _$_Loading extends _Loading {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -536,28 +721,30 @@ class _$_Loading extends _Loading {
 }
 
 abstract class _Loading extends WorkOrderPDFState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$WorkOrderPDFStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$WorkOrderPDFStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded() : super._();
+class _$LoadedImpl extends _Loaded {
+  const _$LoadedImpl() : super._();
 
   @override
   String toString() {
@@ -565,9 +752,9 @@ class _$_Loaded extends _Loaded {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loaded);
+        (other.runtimeType == runtimeType && other is _$LoadedImpl);
   }
 
   @override
@@ -649,23 +836,25 @@ class _$_Loaded extends _Loaded {
 }
 
 abstract class _Loaded extends WorkOrderPDFState {
-  const factory _Loaded() = _$_Loaded;
+  const factory _Loaded() = _$LoadedImpl;
   const _Loaded._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String? error});
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$WorkOrderPDFStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$WorkOrderPDFStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -673,7 +862,7 @@ class __$$_ErrorCopyWithImpl<$Res>
   $Res call({
     Object? error = freezed,
   }) {
-    return _then(_$_Error(
+    return _then(_$ErrorImpl(
       freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -684,8 +873,8 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error {
-  const _$_Error(this.error) : super._();
+class _$ErrorImpl extends _Error {
+  const _$ErrorImpl(this.error) : super._();
 
   @override
   final String? error;
@@ -696,10 +885,10 @@ class _$_Error extends _Error {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Error &&
+            other is _$ErrorImpl &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -709,8 +898,8 @@ class _$_Error extends _Error {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
-      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -788,11 +977,11 @@ class _$_Error extends _Error {
 }
 
 abstract class _Error extends WorkOrderPDFState {
-  const factory _Error(final String? error) = _$_Error;
+  const factory _Error(final String? error) = _$ErrorImpl;
   const _Error._() : super._();
 
   String? get error;
   @JsonKey(ignore: true)
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

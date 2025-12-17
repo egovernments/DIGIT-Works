@@ -32,6 +32,7 @@ return  {
           "projectType": "",
           "projectName": "",
           "workOrderNumber": "",
+          "revisedWorkOrderNumber": "",
           "status":"",
           "createdFrom": "",
           "createdTo": ""
@@ -59,9 +60,9 @@ return  {
             "populators": { 
               "name": "projectType", 
               "optionsKey": "name",
-              "optionsCustomStyle": {
-                  "top": "2.3rem"
-                },
+              // "optionsCustomStyle": {
+              //     "top": "2.3rem"
+              //   },
                 "mdmsConfig": {
                   "masterName": "ProjectType",
                   "moduleName": "works",
@@ -89,7 +90,7 @@ return  {
               }
           },
           {
-              "label": "WORKS_ORDER_ID",
+              "label": "WORKS_SEARCH_ORDER_ID",
               "type": "text",
               "isMandatory": false,
               "disable": false,
@@ -102,7 +103,7 @@ return  {
                 "name": "workOrderNumber",
                 "error": "CONTRACT_PATTERN_ERR_MSG",
                 "validation": {
-                    "pattern": "WO\/[0-9]+-[0-9]+\/[0-9]+",
+                    "pattern": "WO|TE\/[0-9]+-[0-9]+\/[0-9]+",
                     "minlength": 2
                 }
               }
@@ -113,9 +114,9 @@ return  {
               "isMandatory": false,
               "disable": false,
               "populators": {
-                "optionsCustomStyle": {
-                  "top": "2.3rem"
-                },
+                // "optionsCustomStyle": {
+                //   "top": "2.3rem"
+                // },
                 "name": "status",
                 "optionsKey": "i18nKey",
                 "allowMultiSelect": false,
@@ -158,7 +159,7 @@ return  {
       "uiConfig": {
         "columns": [
           {
-            "label": "WORKS_ORDER_ID",
+            "label": "WORKS_SEARCH_ORDER_ID",
             "jsonPath": "businessObject.contractNumber",
             "additionalCustomization": true
           },

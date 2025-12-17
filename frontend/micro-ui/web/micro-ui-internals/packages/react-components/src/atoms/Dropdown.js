@@ -102,6 +102,11 @@ const Dropdown = (props) => {
     setSelectedOption(props.selected);
   }, [props.selected]);
 
+  useEffect(() => {
+
+    props?.onTextChange?.(filterVal);
+  },[filterVal])
+
   function dropdownSwitch() {
     if (!props.disable) {
       var current = dropdownStatus;
@@ -199,6 +204,7 @@ const Dropdown = (props) => {
             placeholder={props.placeholder}
             onBlur={props?.onBlur}
             inputRef={props.ref}
+            onChange={props?.onChange}
           />
           {props.showSearchIcon ?null:<ArrowDown onClick={dropdownSwitch} className="cp" disable={props.disable} />}
           {props.showSearchIcon ?<SearchIcon onClick={dropdownSwitch} className="cp" disable={props.disable} />:null}

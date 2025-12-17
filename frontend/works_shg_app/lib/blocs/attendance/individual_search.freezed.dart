@@ -12,7 +12,7 @@ part of 'individual_search.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$IndividualSearchEvent {
@@ -88,20 +88,22 @@ class _$IndividualSearchEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$SearchIndividualEventCopyWith<$Res> {
-  factory _$$SearchIndividualEventCopyWith(_$SearchIndividualEvent value,
-          $Res Function(_$SearchIndividualEvent) then) =
-      __$$SearchIndividualEventCopyWithImpl<$Res>;
+abstract class _$$SearchIndividualEventImplCopyWith<$Res> {
+  factory _$$SearchIndividualEventImplCopyWith(
+          _$SearchIndividualEventImpl value,
+          $Res Function(_$SearchIndividualEventImpl) then) =
+      __$$SearchIndividualEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String tenant, String mobileNumber});
 }
 
 /// @nodoc
-class __$$SearchIndividualEventCopyWithImpl<$Res>
-    extends _$IndividualSearchEventCopyWithImpl<$Res, _$SearchIndividualEvent>
-    implements _$$SearchIndividualEventCopyWith<$Res> {
-  __$$SearchIndividualEventCopyWithImpl(_$SearchIndividualEvent _value,
-      $Res Function(_$SearchIndividualEvent) _then)
+class __$$SearchIndividualEventImplCopyWithImpl<$Res>
+    extends _$IndividualSearchEventCopyWithImpl<$Res,
+        _$SearchIndividualEventImpl>
+    implements _$$SearchIndividualEventImplCopyWith<$Res> {
+  __$$SearchIndividualEventImplCopyWithImpl(_$SearchIndividualEventImpl _value,
+      $Res Function(_$SearchIndividualEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -110,7 +112,7 @@ class __$$SearchIndividualEventCopyWithImpl<$Res>
     Object? tenant = null,
     Object? mobileNumber = null,
   }) {
-    return _then(_$SearchIndividualEvent(
+    return _then(_$SearchIndividualEventImpl(
       tenant: null == tenant
           ? _value.tenant
           : tenant // ignore: cast_nullable_to_non_nullable
@@ -125,10 +127,10 @@ class __$$SearchIndividualEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$SearchIndividualEvent
+class _$SearchIndividualEventImpl
     with DiagnosticableTreeMixin
     implements SearchIndividualEvent {
-  const _$SearchIndividualEvent(
+  const _$SearchIndividualEventImpl(
       {required this.tenant, required this.mobileNumber});
 
   @override
@@ -151,10 +153,10 @@ class _$SearchIndividualEvent
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SearchIndividualEvent &&
+            other is _$SearchIndividualEventImpl &&
             (identical(other.tenant, tenant) || other.tenant == tenant) &&
             (identical(other.mobileNumber, mobileNumber) ||
                 other.mobileNumber == mobileNumber));
@@ -166,9 +168,9 @@ class _$SearchIndividualEvent
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SearchIndividualEventCopyWith<_$SearchIndividualEvent> get copyWith =>
-      __$$SearchIndividualEventCopyWithImpl<_$SearchIndividualEvent>(
-          this, _$identity);
+  _$$SearchIndividualEventImplCopyWith<_$SearchIndividualEventImpl>
+      get copyWith => __$$SearchIndividualEventImplCopyWithImpl<
+          _$SearchIndividualEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -248,32 +250,33 @@ class _$SearchIndividualEvent
 abstract class SearchIndividualEvent implements IndividualSearchEvent {
   const factory SearchIndividualEvent(
       {required final String tenant,
-      required final String mobileNumber}) = _$SearchIndividualEvent;
+      required final String mobileNumber}) = _$SearchIndividualEventImpl;
 
   String get tenant;
   String get mobileNumber;
   @JsonKey(ignore: true)
-  _$$SearchIndividualEventCopyWith<_$SearchIndividualEvent> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$SearchIndividualEventImplCopyWith<_$SearchIndividualEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$SearchIndividualNameEventCopyWith<$Res> {
-  factory _$$SearchIndividualNameEventCopyWith(
-          _$SearchIndividualNameEvent value,
-          $Res Function(_$SearchIndividualNameEvent) then) =
-      __$$SearchIndividualNameEventCopyWithImpl<$Res>;
+abstract class _$$SearchIndividualNameEventImplCopyWith<$Res> {
+  factory _$$SearchIndividualNameEventImplCopyWith(
+          _$SearchIndividualNameEventImpl value,
+          $Res Function(_$SearchIndividualNameEventImpl) then) =
+      __$$SearchIndividualNameEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String tenant, String name});
 }
 
 /// @nodoc
-class __$$SearchIndividualNameEventCopyWithImpl<$Res>
+class __$$SearchIndividualNameEventImplCopyWithImpl<$Res>
     extends _$IndividualSearchEventCopyWithImpl<$Res,
-        _$SearchIndividualNameEvent>
-    implements _$$SearchIndividualNameEventCopyWith<$Res> {
-  __$$SearchIndividualNameEventCopyWithImpl(_$SearchIndividualNameEvent _value,
-      $Res Function(_$SearchIndividualNameEvent) _then)
+        _$SearchIndividualNameEventImpl>
+    implements _$$SearchIndividualNameEventImplCopyWith<$Res> {
+  __$$SearchIndividualNameEventImplCopyWithImpl(
+      _$SearchIndividualNameEventImpl _value,
+      $Res Function(_$SearchIndividualNameEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -282,7 +285,7 @@ class __$$SearchIndividualNameEventCopyWithImpl<$Res>
     Object? tenant = null,
     Object? name = null,
   }) {
-    return _then(_$SearchIndividualNameEvent(
+    return _then(_$SearchIndividualNameEventImpl(
       tenant: null == tenant
           ? _value.tenant
           : tenant // ignore: cast_nullable_to_non_nullable
@@ -297,10 +300,11 @@ class __$$SearchIndividualNameEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$SearchIndividualNameEvent
+class _$SearchIndividualNameEventImpl
     with DiagnosticableTreeMixin
     implements SearchIndividualNameEvent {
-  const _$SearchIndividualNameEvent({required this.tenant, required this.name});
+  const _$SearchIndividualNameEventImpl(
+      {required this.tenant, required this.name});
 
   @override
   final String tenant;
@@ -322,10 +326,10 @@ class _$SearchIndividualNameEvent
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SearchIndividualNameEvent &&
+            other is _$SearchIndividualNameEventImpl &&
             (identical(other.tenant, tenant) || other.tenant == tenant) &&
             (identical(other.name, name) || other.name == name));
   }
@@ -336,9 +340,9 @@ class _$SearchIndividualNameEvent
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SearchIndividualNameEventCopyWith<_$SearchIndividualNameEvent>
-      get copyWith => __$$SearchIndividualNameEventCopyWithImpl<
-          _$SearchIndividualNameEvent>(this, _$identity);
+  _$$SearchIndividualNameEventImplCopyWith<_$SearchIndividualNameEventImpl>
+      get copyWith => __$$SearchIndividualNameEventImplCopyWithImpl<
+          _$SearchIndividualNameEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -418,30 +422,33 @@ class _$SearchIndividualNameEvent
 abstract class SearchIndividualNameEvent implements IndividualSearchEvent {
   const factory SearchIndividualNameEvent(
       {required final String tenant,
-      required final String name}) = _$SearchIndividualNameEvent;
+      required final String name}) = _$SearchIndividualNameEventImpl;
 
   String get tenant;
   String get name;
   @JsonKey(ignore: true)
-  _$$SearchIndividualNameEventCopyWith<_$SearchIndividualNameEvent>
+  _$$SearchIndividualNameEventImplCopyWith<_$SearchIndividualNameEventImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$SearchIndividualIdEventCopyWith<$Res> {
-  factory _$$SearchIndividualIdEventCopyWith(_$SearchIndividualIdEvent value,
-          $Res Function(_$SearchIndividualIdEvent) then) =
-      __$$SearchIndividualIdEventCopyWithImpl<$Res>;
+abstract class _$$SearchIndividualIdEventImplCopyWith<$Res> {
+  factory _$$SearchIndividualIdEventImplCopyWith(
+          _$SearchIndividualIdEventImpl value,
+          $Res Function(_$SearchIndividualIdEventImpl) then) =
+      __$$SearchIndividualIdEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String tenant, List<String>? ids});
 }
 
 /// @nodoc
-class __$$SearchIndividualIdEventCopyWithImpl<$Res>
-    extends _$IndividualSearchEventCopyWithImpl<$Res, _$SearchIndividualIdEvent>
-    implements _$$SearchIndividualIdEventCopyWith<$Res> {
-  __$$SearchIndividualIdEventCopyWithImpl(_$SearchIndividualIdEvent _value,
-      $Res Function(_$SearchIndividualIdEvent) _then)
+class __$$SearchIndividualIdEventImplCopyWithImpl<$Res>
+    extends _$IndividualSearchEventCopyWithImpl<$Res,
+        _$SearchIndividualIdEventImpl>
+    implements _$$SearchIndividualIdEventImplCopyWith<$Res> {
+  __$$SearchIndividualIdEventImplCopyWithImpl(
+      _$SearchIndividualIdEventImpl _value,
+      $Res Function(_$SearchIndividualIdEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -450,7 +457,7 @@ class __$$SearchIndividualIdEventCopyWithImpl<$Res>
     Object? tenant = null,
     Object? ids = freezed,
   }) {
-    return _then(_$SearchIndividualIdEvent(
+    return _then(_$SearchIndividualIdEventImpl(
       tenant: null == tenant
           ? _value.tenant
           : tenant // ignore: cast_nullable_to_non_nullable
@@ -465,10 +472,10 @@ class __$$SearchIndividualIdEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$SearchIndividualIdEvent
+class _$SearchIndividualIdEventImpl
     with DiagnosticableTreeMixin
     implements SearchIndividualIdEvent {
-  const _$SearchIndividualIdEvent(
+  const _$SearchIndividualIdEventImpl(
       {required this.tenant, final List<String>? ids})
       : _ids = ids;
 
@@ -499,10 +506,10 @@ class _$SearchIndividualIdEvent
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SearchIndividualIdEvent &&
+            other is _$SearchIndividualIdEventImpl &&
             (identical(other.tenant, tenant) || other.tenant == tenant) &&
             const DeepCollectionEquality().equals(other._ids, _ids));
   }
@@ -514,9 +521,9 @@ class _$SearchIndividualIdEvent
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SearchIndividualIdEventCopyWith<_$SearchIndividualIdEvent> get copyWith =>
-      __$$SearchIndividualIdEventCopyWithImpl<_$SearchIndividualIdEvent>(
-          this, _$identity);
+  _$$SearchIndividualIdEventImplCopyWith<_$SearchIndividualIdEventImpl>
+      get copyWith => __$$SearchIndividualIdEventImplCopyWithImpl<
+          _$SearchIndividualIdEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -596,40 +603,40 @@ class _$SearchIndividualIdEvent
 abstract class SearchIndividualIdEvent implements IndividualSearchEvent {
   const factory SearchIndividualIdEvent(
       {required final String tenant,
-      final List<String>? ids}) = _$SearchIndividualIdEvent;
+      final List<String>? ids}) = _$SearchIndividualIdEventImpl;
 
   String get tenant;
   List<String>? get ids;
   @JsonKey(ignore: true)
-  _$$SearchIndividualIdEventCopyWith<_$SearchIndividualIdEvent> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$SearchIndividualIdEventImplCopyWith<_$SearchIndividualIdEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$DisposeSearchIndividualEventCopyWith<$Res> {
-  factory _$$DisposeSearchIndividualEventCopyWith(
-          _$DisposeSearchIndividualEvent value,
-          $Res Function(_$DisposeSearchIndividualEvent) then) =
-      __$$DisposeSearchIndividualEventCopyWithImpl<$Res>;
+abstract class _$$DisposeSearchIndividualEventImplCopyWith<$Res> {
+  factory _$$DisposeSearchIndividualEventImplCopyWith(
+          _$DisposeSearchIndividualEventImpl value,
+          $Res Function(_$DisposeSearchIndividualEventImpl) then) =
+      __$$DisposeSearchIndividualEventImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$DisposeSearchIndividualEventCopyWithImpl<$Res>
+class __$$DisposeSearchIndividualEventImplCopyWithImpl<$Res>
     extends _$IndividualSearchEventCopyWithImpl<$Res,
-        _$DisposeSearchIndividualEvent>
-    implements _$$DisposeSearchIndividualEventCopyWith<$Res> {
-  __$$DisposeSearchIndividualEventCopyWithImpl(
-      _$DisposeSearchIndividualEvent _value,
-      $Res Function(_$DisposeSearchIndividualEvent) _then)
+        _$DisposeSearchIndividualEventImpl>
+    implements _$$DisposeSearchIndividualEventImplCopyWith<$Res> {
+  __$$DisposeSearchIndividualEventImplCopyWithImpl(
+      _$DisposeSearchIndividualEventImpl _value,
+      $Res Function(_$DisposeSearchIndividualEventImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$DisposeSearchIndividualEvent
+class _$DisposeSearchIndividualEventImpl
     with DiagnosticableTreeMixin
     implements DisposeSearchIndividualEvent {
-  const _$DisposeSearchIndividualEvent();
+  const _$DisposeSearchIndividualEventImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -644,10 +651,10 @@ class _$DisposeSearchIndividualEvent
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DisposeSearchIndividualEvent);
+            other is _$DisposeSearchIndividualEventImpl);
   }
 
   @override
@@ -729,7 +736,8 @@ class _$DisposeSearchIndividualEvent
 }
 
 abstract class DisposeSearchIndividualEvent implements IndividualSearchEvent {
-  const factory DisposeSearchIndividualEvent() = _$DisposeSearchIndividualEvent;
+  const factory DisposeSearchIndividualEvent() =
+      _$DisposeSearchIndividualEventImpl;
 }
 
 /// @nodoc
@@ -806,24 +814,25 @@ class _$IndividualSearchStateCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$IndividualSearchStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$IndividualSearchStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial with DiagnosticableTreeMixin {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial with DiagnosticableTreeMixin {
+  const _$InitialImpl() : super._();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -838,9 +847,9 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -922,29 +931,30 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
 }
 
 abstract class _Initial extends IndividualSearchState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$IndividualSearchStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$IndividualSearchStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading with DiagnosticableTreeMixin {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading with DiagnosticableTreeMixin {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -959,9 +969,9 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -1043,23 +1053,25 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
 }
 
 abstract class _Loading extends IndividualSearchState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({IndividualListModel? individualListModel});
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$IndividualSearchStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$IndividualSearchStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1067,7 +1079,7 @@ class __$$_LoadedCopyWithImpl<$Res>
   $Res call({
     Object? individualListModel = freezed,
   }) {
-    return _then(_$_Loaded(
+    return _then(_$LoadedImpl(
       freezed == individualListModel
           ? _value.individualListModel
           : individualListModel // ignore: cast_nullable_to_non_nullable
@@ -1078,8 +1090,8 @@ class __$$_LoadedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
-  const _$_Loaded(this.individualListModel) : super._();
+class _$LoadedImpl extends _Loaded with DiagnosticableTreeMixin {
+  const _$LoadedImpl(this.individualListModel) : super._();
 
   @override
   final IndividualListModel? individualListModel;
@@ -1098,10 +1110,10 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
+            other is _$LoadedImpl &&
             (identical(other.individualListModel, individualListModel) ||
                 other.individualListModel == individualListModel));
   }
@@ -1112,8 +1124,8 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1192,28 +1204,30 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
 
 abstract class _Loaded extends IndividualSearchState {
   const factory _Loaded(final IndividualListModel? individualListModel) =
-      _$_Loaded;
+      _$LoadedImpl;
   const _Loaded._() : super._();
 
   IndividualListModel? get individualListModel;
   @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String? error});
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$IndividualSearchStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$IndividualSearchStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1221,7 +1235,7 @@ class __$$_ErrorCopyWithImpl<$Res>
   $Res call({
     Object? error = freezed,
   }) {
-    return _then(_$_Error(
+    return _then(_$ErrorImpl(
       freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -1232,8 +1246,8 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error with DiagnosticableTreeMixin {
-  const _$_Error(this.error) : super._();
+class _$ErrorImpl extends _Error with DiagnosticableTreeMixin {
+  const _$ErrorImpl(this.error) : super._();
 
   @override
   final String? error;
@@ -1252,10 +1266,10 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Error &&
+            other is _$ErrorImpl &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -1265,8 +1279,8 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
-      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1344,11 +1358,11 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
 }
 
 abstract class _Error extends IndividualSearchState {
-  const factory _Error(final String? error) = _$_Error;
+  const factory _Error(final String? error) = _$ErrorImpl;
   const _Error._() : super._();
 
   String? get error;
   @JsonKey(ignore: true)
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

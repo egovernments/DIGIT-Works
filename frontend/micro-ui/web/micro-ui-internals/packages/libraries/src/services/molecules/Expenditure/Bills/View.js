@@ -1,24 +1,30 @@
 import BillingService from "../../../elements/Bill";
 import { ContractService } from "../../../elements/Contracts";
 import AttendanceService from "../../../elements/Attendance";
+import { WageSeekerService } from "../../../elements/WageSeeker";
 
-const getBeneficiaryData = async (wageBillDetails, tenantId, musterRoll, t) => {
+const getBeneficiaryData = async (wageBillDetails, tenantId, musterRoll, t, indResponse) => {
   let tableData = {}
-  const individuals = musterRoll?.individualEntries
+  const individuals = indResponse?.Individual
   if(wageBillDetails?.length > 0) {
     wageBillDetails?.forEach((item, index) => {
       let tableRow = {}
-      const individual = individuals?.find(ind => ind?.individualId === item?.payee?.identifier)
+      const individual = individuals?.find(ind => ind?.id === item?.payee?.identifier)
       tableRow.id = item?.id
       tableRow.sno = index + 1
-      tableRow.registerId = individual?.additionalDetails?.userId || t("NA")
-      tableRow.nameOfIndividual = individual?.additionalDetails?.userName || t("NA")
-      tableRow.guardianName = individual?.additionalDetails?.fatherName || t("NA")
-      tableRow.amount = item?.payableLineItems?.[0]?.amount || 0 //check if correct
-      tableRow.bankAccountDetails = {
-        accountNo : individual?.additionalDetails?.bankDetails || t("NA"), 
-        ifscCode : null
-      }
+      //tableRow.registerId = individual?.individualId || t("NA")
+      tableRow.registerId = {to:`/works-ui/employee/masters/view-wageseeker?tenantId=${tenantId}&individualId=${individual?.individualId}`, label:individual?.individualId, isLink:true}
+      tableRow.nameOfIndividual = individual?.name?.givenName || t("NA")
+      tableRow.guardianName = individual?.fatherName || t("NA")
+      // tableRow.amount = item?.payableLineItems?.[0]?.amount || 0 //check if correct(add all payable here)
+      tableRow.amount = item?.payableLineItems?.reduce((acc,item)=>{
+        if(item?.type==="PAYABLE") return acc + item.amount
+        return acc 
+      },0) || 0 //check if correct(add all payable here)
+      // tableRow.bankAccountDetails = {
+      //   accountNo : individual?.additionalDetails?.bankDetails || t("NA"), 
+      //   ifscCode : null
+      // }
       //update this id
       tableData[item.id] = tableRow
     });
@@ -31,7 +37,7 @@ const getBeneficiaryData = async (wageBillDetails, tenantId, musterRoll, t) => {
     totalRow.nameOfIndividual = "DNR"
     totalRow.guardianName = "DNR"
     totalRow.amount = 0
-    totalRow.bankAccountDetails = ""
+    //totalRow.bankAccountDetails = ""
             
     tableData['total'] = totalRow
   }
@@ -66,8 +72,18 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   //get muster details
   const musterRes = await AttendanceService.search(tenantId, { musterRollNumber: musterRollNum });
   const musterRoll = musterRes?.musterRolls?.[0]
+
+  let IndsToSearch = musterRes?.musterRolls?.[0].individualEntries.map((ob) => ob?.individualId)
+
+  let indPayload =IndsToSearch?.length!==0 ? {
+    Individual:{
+      id:IndsToSearch
+    }
+  } : null
+
+  const indResponse = await WageSeekerService.search(tenantId, indPayload, {tenantId,offset:0,limit:100});
   
-  const beneficiaryData = await getBeneficiaryData(wageBill?.billDetails, tenantId, musterRoll, t)
+  const beneficiaryData = await getBeneficiaryData(wageBill?.billDetails, tenantId, musterRoll, t, indResponse)
 
   const billDetails = {
     title: " ",
@@ -86,7 +102,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     title: "EXP_BENEFICIARY_DETAILS",
     asSectionHeader: true,
     values: [
-        { title: "ES_COMMON_MUSTER_ROLL_ID", value: musterRollNum || t("ES_COMMON_NA")},
+        { title: "ES_COMMON_MUSTER_ROLL_ID", value: musterRollNum || t("ES_COMMON_NA"), isLink : true, to : `/works-ui/employee/attendencemgmt/view-attendance?tenantId=${tenantId}&musterRollNumber=${musterRollNum}`},
         { title: "ES_COMMON_MUSTER_ROLL_PERIOD", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("ES_COMMON_NA") }
     ],
     additionalDetails : {
@@ -96,20 +112,33 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       }
     }
   }
+ 
+  const calcDeductions = wageBill?.billDetails
+    ?.map((item) => {
+      return item.payableLineItems.filter((item) => item.headCode === "LC");
+    })
+    ?.reduce((acc, item) => {
+      return (item?.[0]?.amount ? item?.[0]?.amount : 0) + acc;
+    }, 0);
 
   const billAmount = {
     title: "EXP_BILL_DETAILS",
     asSectionHeader: true,
     values: [
-        { title: "EXP_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(wageBill?.totalAmount, "number") || t("ES_COMMON_NA")},
-    ]
+        { title: "EXP_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(Math.round(wageBill?.totalAmount), "number") || t("ES_COMMON_NA")},
+        { title: "WB_DEDUCTIONS", value: Digit.Utils.dss.formatterWithoutRound(calcDeductions.toFixed(2), "number") || t("ES_COMMON_NA")},
+    ],
+    amountStyle: {
+      width:"8rem",
+      textAlign:"right"
+    }
   }
 
   const netPayable = {
     title: " ",
     asSectionHeader: true,
     Component: Digit.ComponentRegistryService.getComponent("PayableAmt"),
-    value: Digit.Utils.dss.formatterWithoutRound(wageBill?.totalAmount, "number") || t("ES_COMMON_NA")
+    value: Digit.Utils.dss.formatterWithoutRound(Math.round(wageBill?.totalAmount-calcDeductions), "number") || t("ES_COMMON_NA")
 }
 
   const applicationDetails = { applicationDetails: [billDetails, beneficiaryDetails, billAmount, netPayable] };

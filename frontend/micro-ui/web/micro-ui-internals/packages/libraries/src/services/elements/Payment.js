@@ -149,5 +149,14 @@ export const PaymentService = {
       auth: true,
       userService: true,
       data: data
-    })
+    }),
+    ifms_funds_search: (data) =>
+    Request({
+      url: Urls.payment.ifms_funds_search,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      data: data
+    }),
 };

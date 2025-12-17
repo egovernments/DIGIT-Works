@@ -1,5 +1,5 @@
 export const SearchBillConfig = {
-    "tenantId": "pg",
+    "tenantId": "od",
     "moduleName": "commonMuktaUiConfig",
     "SearchBillConfig": [
       {
@@ -50,9 +50,9 @@ export const SearchBillConfig = {
                     "type": "ward",
                     "optionsKey": "i18nKey",
                     "allowMultiSelect": false,
-                    "optionsCustomStyle": {
-                      "top": "2.3rem"
-                    }
+                    // "optionsCustomStyle": {
+                    //   "top": "2.3rem"
+                    // }
                   }
                 },
                 {
@@ -63,9 +63,9 @@ export const SearchBillConfig = {
                   "populators": {
                     "name": "billType",
                     "optionsKey": "name",
-                    "optionsCustomStyle": {
-                      "top": "2.3rem"
-                    },
+                    // "optionsCustomStyle": {
+                    //   "top": "2.3rem"
+                    // },
                     "mdmsConfig": {
                       "masterName": "BusinessService",
                       "moduleName": "expense",
@@ -113,9 +113,9 @@ export const SearchBillConfig = {
                   "isMandatory": false,
                   "disable": false,
                   "populators": {
-                    "optionsCustomStyle": {
-                      "top": "2.3rem"
-                    },
+                    // "optionsCustomStyle": {
+                    //   "top": "2.3rem"
+                    // },
                     "name": "status",
                     "optionsKey": "i18nKey",
                     "allowMultiSelect": false,

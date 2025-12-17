@@ -99,7 +99,7 @@ const DesktopInbox = ({tableConfig,resultOk, filterComponent,columns, isLoading,
       );
     } else if (resultOk) {
     result= (
-      <div style={{overflowX:"scroll"}}>
+      <div>
     <ApplicationTable
       t={t}
       data={data.table}

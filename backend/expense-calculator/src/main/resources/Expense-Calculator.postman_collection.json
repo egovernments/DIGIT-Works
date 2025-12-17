@@ -1,0 +1,220 @@
+{
+	"info": {
+		"_postman_id": "fd94e842-6efb-46a8-ac03-70e99b2fbdfc",
+		"name": "Expense-Calculator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21974110"
+	},
+	"item": [
+		{
+			"name": "Create supervision",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"ver\": \".01\",\n        \"action\": \"\",\n        \"did\": \"1\",\n        \"key\": \"\",\n        \"msgId\": \"20170310130900|en_IN\",\n        \"requesterId\": \"\",\n        \"authToken\": \"b346b398-7b2f-4c38-a7a6-cfdbfa7fabe9\",\n        \"userInfo\": {\n            \"id\": 261,\n            \"uuid\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n            \"userName\": \"EMP33\",\n            \"name\": \"Jagankumar\",\n            \"mobileNumber\": \"8877006677\",\n            \"emailId\": \"abcd9890@dev.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"HRMS Admin\",\n                    \"code\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_VERIFIER\",\n                    \"code\": \"BILL_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"ESTIMATE VERIFIER\",\n                    \"code\": \"ESTIMATE_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"WORK ORDER CREATOR\",\n                    \"code\": \"WORK_ORDER_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"ESTIMATE APPROVER\",\n                    \"code\": \"ESTIMATE_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"WORK ORDER VERIFIER\",\n                    \"code\": \"WORK_ORDER_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"PROJECT VIEWER\",\n                    \"code\": \"PROJECT_VIEWER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_APPROVER\",\n                    \"code\": \"BILL_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"MUSTER ROLL VERIFIER\",\n                    \"code\": \"MUSTER_ROLL_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"PROJECT CREATOR\",\n                    \"code\": \"PROJECT_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Employee Common\",\n                    \"code\": \"EMPLOYEE_COMMON\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_VIEWER\",\n                    \"code\": \"BILL_VIEWER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"TECHNICAL SANCTIONER\",\n                    \"code\": \"TECHNICAL_SANCTIONER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_CREATOR\",\n                    \"code\": \"BILL_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"MUSTER ROLL APPROVER\",\n                    \"code\": \"MUSTER_ROLL_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"WORK ORDER APPROVER\",\n                    \"code\": \"WORK_ORDER_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"ESTIMATE CREATOR\",\n                    \"code\": \"ESTIMATE_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"MUKTA Admin\",\n                    \"code\": \"MUKTA_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        }\n    },\n    \"criteria\": {\n        \"tenantId\": \"pg.citya\",\n        \"contractId\": \"WO/2023-24/000706\"\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8087/expense-calculator/v1/_calculate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"expense-calculator",
+						"v1",
+						"_calculate"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create supervision",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"ver\": \".01\",\n        \"action\": \"\",\n        \"did\": \"1\",\n        \"key\": \"\",\n        \"msgId\": \"20170310130900|en_IN\",\n        \"requesterId\": \"\",\n        \"authToken\": \"46220fe9-90b8-4480-b804-9858f468beaf\",\n        \"userInfo\": {\n            \"id\": 261,\n            \"uuid\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n            \"userName\": \"EMP33\",\n            \"name\": \"Jagankumar\",\n            \"mobileNumber\": \"8877006677\",\n            \"emailId\": \"abcd9890@dev.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"HRMS Admin\",\n                    \"code\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_VERIFIER\",\n                    \"code\": \"BILL_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"ESTIMATE VERIFIER\",\n                    \"code\": \"ESTIMATE_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"WORK ORDER CREATOR\",\n                    \"code\": \"WORK_ORDER_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"ESTIMATE APPROVER\",\n                    \"code\": \"ESTIMATE_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"WORK ORDER VERIFIER\",\n                    \"code\": \"WORK_ORDER_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"PROJECT VIEWER\",\n                    \"code\": \"PROJECT_VIEWER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_APPROVER\",\n                    \"code\": \"BILL_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"MUSTER ROLL VERIFIER\",\n                    \"code\": \"MUSTER_ROLL_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"PROJECT CREATOR\",\n                    \"code\": \"PROJECT_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Employee Common\",\n                    \"code\": \"EMPLOYEE_COMMON\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_VIEWER\",\n                    \"code\": \"BILL_VIEWER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"TECHNICAL SANCTIONER\",\n                    \"code\": \"TECHNICAL_SANCTIONER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_CREATOR\",\n                    \"code\": \"BILL_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"MUSTER ROLL APPROVER\",\n                    \"code\": \"MUSTER_ROLL_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"WORK ORDER APPROVER\",\n                    \"code\": \"WORK_ORDER_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"ESTIMATE CREATOR\",\n                    \"code\": \"ESTIMATE_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"MUKTA Admin\",\n                    \"code\": \"MUKTA_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        }\n    },\n    \"criteria\": {\n        \"tenantId\": \"pg.citya\",\n        \"contractId\": \"WO/2023-24/000669\"\n    }\n}"
+						},
+						"url": {
+							"raw": "https://works-dev.digit.org/expense-calculator/v1/_calculate",
+							"protocol": "https",
+							"host": [
+								"works-dev",
+								"digit",
+								"org"
+							],
+							"path": [
+								"expense-calculator",
+								"v1",
+								"_calculate"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 09 May 2023 16:04:48 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=63072000; includeSubdomains; preload"
+						},
+						{
+							"key": "X-Lua-Resty-WAF-ID",
+							"value": "cbb545304696d872f5aa"
+						},
+						{
+							"key": "x-correlation-id",
+							"value": "369cf269-ab27-4238-b080-2e06b11dddd2"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "no-referrer-when-downgrade"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Download-Options",
+							"value": "noopen"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "sameorigin"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"ver\": \".01\",\n        \"ts\": null,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"20170310130900|en_IN\",\n        \"status\": \"successful\"\n    },\n    \"bills\": [\n        {\n            \"id\": \"fd5a4f9b-fc59-4ae4-b932-c072943055d8\",\n            \"tenantId\": \"pg.citya\",\n            \"billDate\": 1683648287829,\n            \"dueDate\": null,\n            \"totalAmount\": 2250.75,\n            \"totalPaidAmount\": 0,\n            \"businessService\": \"EXPENSE.SUPERVISION\",\n            \"referenceId\": \"WO/2023-24/000669_SR_000058\",\n            \"fromPeriod\": null,\n            \"toPeriod\": null,\n            \"paymentStatus\": null,\n            \"status\": \"ACTIVE\",\n            \"billNumber\": \"SB/2023-24/000061\",\n            \"payer\": {\n                \"id\": \"ca5668e7-b092-4f97-b385-13eea1acf44e\",\n                \"parentId\": \"fd5a4f9b-fc59-4ae4-b932-c072943055d8\",\n                \"tenantId\": \"pg.citya\",\n                \"type\": \"pg.citya\",\n                \"identifier\": \"001\",\n                \"status\": \"ACTIVE\",\n                \"additionalDetails\": null,\n                \"auditDetails\": {\n                    \"createdBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                    \"lastModifiedBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                    \"createdTime\": 1683648287893,\n                    \"lastModifiedTime\": 1683648287893\n                }\n            },\n            \"billDetails\": [\n                {\n                    \"id\": \"11a14dfd-ac3f-4c74-9c0c-3f7acc008f04\",\n                    \"tenantId\": \"pg.citya\",\n                    \"billId\": \"fd5a4f9b-fc59-4ae4-b932-c072943055d8\",\n                    \"totalAmount\": 0.75,\n                    \"totalPaidAmount\": 0,\n                    \"netLineItemAmount\": 0,\n                    \"referenceId\": \"WB/2023-24/000096\",\n                    \"paymentStatus\": null,\n                    \"fromPeriod\": null,\n                    \"toPeriod\": null,\n                    \"payee\": {\n                        \"id\": \"6d8f7268-6a73-4ac1-8207-3ef29f2231fe\",\n                        \"parentId\": \"fd5a4f9b-fc59-4ae4-b932-c072943055d8\",\n                        \"tenantId\": \"pg.citya\",\n                        \"type\": \"ORGANIZATION\",\n                        \"identifier\": \"e0ae6cea-0f59-40dd-8e1a-04502eb5647a\",\n                        \"status\": \"ACTIVE\",\n                        \"additionalDetails\": null,\n                        \"auditDetails\": {\n                            \"createdBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                            \"lastModifiedBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                            \"createdTime\": 1683648287893,\n                            \"lastModifiedTime\": 1683648287893\n                        }\n                    },\n                    \"lineItems\": [\n                        {\n                            \"id\": \"7d3fb358-c79d-4f26-86ac-d5b6e8ae8f92\",\n                            \"billDetailId\": \"11a14dfd-ac3f-4c74-9c0c-3f7acc008f04\",\n                            \"tenantId\": \"pg.citya\",\n                            \"headCode\": \"SC\",\n                            \"amount\": 0.75,\n                            \"type\": \"PAYABLE\",\n                            \"paidAmount\": 0,\n                            \"status\": \"ACTIVE\",\n                            \"isLineItemPayable\": null,\n                            \"additionalDetails\": null,\n                            \"auditDetails\": {\n                                \"createdBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                                \"lastModifiedBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                                \"createdTime\": 1683648287893,\n                                \"lastModifiedTime\": 1683648287893\n                            }\n                        }\n                    ],\n                    \"payableLineItems\": [\n                        {\n                            \"id\": \"4f9519d2-d6f7-4e68-9f6e-85d8d099aa9e\",\n                            \"billDetailId\": \"11a14dfd-ac3f-4c74-9c0c-3f7acc008f04\",\n                            \"tenantId\": \"pg.citya\",\n                            \"headCode\": \"SC\",\n                            \"amount\": 0.75,\n                            \"type\": \"PAYABLE\",\n                            \"paidAmount\": 0,\n                            \"status\": \"ACTIVE\",\n                            \"isLineItemPayable\": null,\n                            \"additionalDetails\": null,\n                            \"auditDetails\": {\n                                \"createdBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                                \"lastModifiedBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                                \"createdTime\": 1683648287893,\n                                \"lastModifiedTime\": 1683648287893\n                            }\n                        }\n                    ],\n                    \"auditDetails\": {\n                        \"createdBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                        \"lastModifiedBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                        \"createdTime\": 1683648287893,\n                        \"lastModifiedTime\": 1683648287893\n                    },\n                    \"additionalDetails\": null\n                },\n                {\n                    \"id\": \"b14228e4-618f-40ec-8ad0-150f978b9c21\",\n                    \"tenantId\": \"pg.citya\",\n                    \"billId\": \"fd5a4f9b-fc59-4ae4-b932-c072943055d8\",\n                    \"totalAmount\": 2250,\n                    \"totalPaidAmount\": 0,\n                    \"netLineItemAmount\": 0,\n                    \"referenceId\": \"PB/2023-24/000315\",\n                    \"paymentStatus\": null,\n                    \"fromPeriod\": null,\n                    \"toPeriod\": null,\n                    \"payee\": {\n                        \"id\": \"bef3c5cf-2377-45ea-b9bf-20bb146466a1\",\n                        \"parentId\": \"fd5a4f9b-fc59-4ae4-b932-c072943055d8\",\n                        \"tenantId\": \"pg.citya\",\n                        \"type\": \"ORGANIZATION\",\n                        \"identifier\": \"e0ae6cea-0f59-40dd-8e1a-04502eb5647a\",\n                        \"status\": \"ACTIVE\",\n                        \"additionalDetails\": null,\n                        \"auditDetails\": {\n                            \"createdBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                            \"lastModifiedBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                            \"createdTime\": 1683648287893,\n                            \"lastModifiedTime\": 1683648287893\n                        }\n                    },\n                    \"lineItems\": [\n                        {\n                            \"id\": \"cd3fa37a-fc00-4d6e-8f22-ee1839edc5f4\",\n                            \"billDetailId\": \"b14228e4-618f-40ec-8ad0-150f978b9c21\",\n                            \"tenantId\": \"pg.citya\",\n                            \"headCode\": \"SC\",\n                            \"amount\": 2250,\n                            \"type\": \"PAYABLE\",\n                            \"paidAmount\": 0,\n                            \"status\": \"ACTIVE\",\n                            \"isLineItemPayable\": null,\n                            \"additionalDetails\": null,\n                            \"auditDetails\": {\n                                \"createdBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                                \"lastModifiedBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                                \"createdTime\": 1683648287893,\n                                \"lastModifiedTime\": 1683648287893\n                            }\n                        }\n                    ],\n                    \"payableLineItems\": [\n                        {\n                            \"id\": \"72c8a0fa-1b2c-493a-a4bf-99a0cd3e915e\",\n                            \"billDetailId\": \"b14228e4-618f-40ec-8ad0-150f978b9c21\",\n                            \"tenantId\": \"pg.citya\",\n                            \"headCode\": \"SC\",\n                            \"amount\": 2250,\n                            \"type\": \"PAYABLE\",\n                            \"paidAmount\": 0,\n                            \"status\": \"ACTIVE\",\n                            \"isLineItemPayable\": null,\n                            \"additionalDetails\": null,\n                            \"auditDetails\": {\n                                \"createdBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                                \"lastModifiedBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                                \"createdTime\": 1683648287893,\n                                \"lastModifiedTime\": 1683648287893\n                            }\n                        }\n                    ],\n                    \"auditDetails\": {\n                        \"createdBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                        \"lastModifiedBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                        \"createdTime\": 1683648287893,\n                        \"lastModifiedTime\": 1683648287893\n                    },\n                    \"additionalDetails\": null\n                }\n            ],\n            \"additionalDetails\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                \"lastModifiedBy\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n                \"createdTime\": 1683648287893,\n                \"lastModifiedTime\": 1683648287893\n            },\n            \"wfStatus\": null\n        }\n    ],\n    \"pagination\": null\n}"
+				}
+			]
+		},
+		{
+			"name": "Calculator Search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/works-ui/employee/expenditure/search-bill-plain"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"113\", \"Chromium\";v=\"113\", \"Not-A.Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchCriteria\": {\n        \"tenantId\": \"pg.citya\",\n        \"boundary\": \"B1\"\n    },\n    \"pagination\": {\n        \"limit\": 10,\n        \"offset\": 0\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"4a076b3a-49fb-4611-a744-a50d5e91eab3\",\n        \"userInfo\": {\n            \"id\": 261,\n            \"uuid\": \"1b348954-c257-4d18-afac-1b19fc3d86da\",\n            \"userName\": \"EMP33\",\n            \"name\": \"Jagankumar\",\n            \"mobileNumber\": \"8877006677\",\n            \"emailId\": \"abcd9890@dev.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"HRMS Admin\",\n                    \"code\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_VERIFIER\",\n                    \"code\": \"BILL_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"ESTIMATE VERIFIER\",\n                    \"code\": \"ESTIMATE_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"WORK ORDER CREATOR\",\n                    \"code\": \"WORK_ORDER_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"ESTIMATE APPROVER\",\n                    \"code\": \"ESTIMATE_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"WORK ORDER VERIFIER\",\n                    \"code\": \"WORK_ORDER_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"PROJECT VIEWER\",\n                    \"code\": \"PROJECT_VIEWER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_APPROVER\",\n                    \"code\": \"BILL_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"MUSTER ROLL VERIFIER\",\n                    \"code\": \"MUSTER_ROLL_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"PROJECT CREATOR\",\n                    \"code\": \"PROJECT_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Employee Common\",\n                    \"code\": \"EMPLOYEE_COMMON\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_VIEWER\",\n                    \"code\": \"BILL_VIEWER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"TECHNICAL SANCTIONER\",\n                    \"code\": \"TECHNICAL_SANCTIONER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BILL_CREATOR\",\n                    \"code\": \"BILL_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"MUSTER ROLL APPROVER\",\n                    \"code\": \"MUSTER_ROLL_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"WORK ORDER APPROVER\",\n                    \"code\": \"WORK_ORDER_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"ESTIMATE CREATOR\",\n                    \"code\": \"ESTIMATE_CREATOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"MUKTA Admin\",\n                    \"code\": \"MUKTA_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1683892873874|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8087/expense-calculator/v1/_search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"expense-calculator",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

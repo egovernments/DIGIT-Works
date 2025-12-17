@@ -1,8 +1,11 @@
 import React, { Fragment } from "react";
 import { ArrowRightInbox } from "./svgindex";
-import { Link } from "react-router-dom";
+import { useHistory, useLocation, Link } from "react-router-dom";
+
 
 const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen = false, className, styles, longModuleName=false }) => {
+  const history = useHistory();
+
   return (
     <div className={className ? className : "employeeCard customEmployeeCard card-home home-action-cards"} style={styles ? styles : {}}>
       <div className="complaint-links-container">
@@ -30,12 +33,12 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
             </div>
           )}
           <div className="links-wrapper" style={{ width: "80%" }}>
-            {links.map(({ count, label, link }, index) => (
+            {links.map(({ count, label, link, target }, index) => (
               <span className="link" key={index}>
-                {link ? <Link to={{ pathname:link, state: {count} }}>{label}</Link> : null}
+                {link ? (link?.includes(`${window?.contextPath}/`)?<span className="link" onClick={()=> history.push(`${link}`,{count})}>{label}</span>:<a href={link} target={target?"_blank":"_self"}>{label}</a>) : null}
                 {count ? (
                   <>
-                    <span className={"inbox-total"}>{count || "-"}</span>
+                    <span className={"inbox-total"} onClick={()=>history.push(`${link}`)}>{count || "-"}</span>
                     <Link to={{ pathname:link, state: {count} }}>
                       <ArrowRightInbox />
                     </Link>
@@ -58,7 +61,7 @@ const ModuleCardFullWidth = ({ moduleName,  links = [], isCitizen = false, class
           <span className="text removeHeight">{moduleName}</span>
           <span className="link">
             <a href={subHeaderLink}>
-              <span className={"inbox-total"} style={{ display: "flex", alignItems: "center", color: "#F47738", fontWeight: "bold" }}>
+              <span className={"inbox-total"} style={{ display: "flex", alignItems: "center", color: "#C84C0E", fontWeight: "bold" }} onClick={()=>history.push(`${link}`)}>
                 {subHeader || "-"}
                 <span style={{ marginLeft: "10px" }}>
                   {" "}

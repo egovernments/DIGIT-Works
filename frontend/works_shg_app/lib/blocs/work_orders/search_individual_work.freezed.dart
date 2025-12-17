@@ -12,25 +12,29 @@ part of 'search_individual_work.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$SearchIndividualWorkEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? contractNumber) search,
+    required TResult Function(
+            String? contractNumber, Map<dynamic, dynamic>? body)
+        search,
     required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber)? search,
+    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber)? search,
+    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult Function()? dispose,
     required TResult orElse(),
   }) =>
@@ -76,52 +80,69 @@ class _$SearchIndividualWorkEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$IndividualWorkSearchEventCopyWith<$Res> {
-  factory _$$IndividualWorkSearchEventCopyWith(
-          _$IndividualWorkSearchEvent value,
-          $Res Function(_$IndividualWorkSearchEvent) then) =
-      __$$IndividualWorkSearchEventCopyWithImpl<$Res>;
+abstract class _$$IndividualWorkSearchEventImplCopyWith<$Res> {
+  factory _$$IndividualWorkSearchEventImplCopyWith(
+          _$IndividualWorkSearchEventImpl value,
+          $Res Function(_$IndividualWorkSearchEventImpl) then) =
+      __$$IndividualWorkSearchEventImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String? contractNumber});
+  $Res call({String? contractNumber, Map<dynamic, dynamic>? body});
 }
 
 /// @nodoc
-class __$$IndividualWorkSearchEventCopyWithImpl<$Res>
+class __$$IndividualWorkSearchEventImplCopyWithImpl<$Res>
     extends _$SearchIndividualWorkEventCopyWithImpl<$Res,
-        _$IndividualWorkSearchEvent>
-    implements _$$IndividualWorkSearchEventCopyWith<$Res> {
-  __$$IndividualWorkSearchEventCopyWithImpl(_$IndividualWorkSearchEvent _value,
-      $Res Function(_$IndividualWorkSearchEvent) _then)
+        _$IndividualWorkSearchEventImpl>
+    implements _$$IndividualWorkSearchEventImplCopyWith<$Res> {
+  __$$IndividualWorkSearchEventImplCopyWithImpl(
+      _$IndividualWorkSearchEventImpl _value,
+      $Res Function(_$IndividualWorkSearchEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? contractNumber = freezed,
+    Object? body = freezed,
   }) {
-    return _then(_$IndividualWorkSearchEvent(
+    return _then(_$IndividualWorkSearchEventImpl(
       contractNumber: freezed == contractNumber
           ? _value.contractNumber
           : contractNumber // ignore: cast_nullable_to_non_nullable
               as String?,
+      body: freezed == body
+          ? _value._body
+          : body // ignore: cast_nullable_to_non_nullable
+              as Map<dynamic, dynamic>?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$IndividualWorkSearchEvent
+class _$IndividualWorkSearchEventImpl
     with DiagnosticableTreeMixin
     implements IndividualWorkSearchEvent {
-  const _$IndividualWorkSearchEvent({this.contractNumber = ''});
+  const _$IndividualWorkSearchEventImpl(
+      {this.contractNumber = '', final Map<dynamic, dynamic>? body})
+      : _body = body;
 
   @override
   @JsonKey()
   final String? contractNumber;
+  final Map<dynamic, dynamic>? _body;
+  @override
+  Map<dynamic, dynamic>? get body {
+    final value = _body;
+    if (value == null) return null;
+    if (_body is EqualUnmodifiableMapView) return _body;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkEvent.search(contractNumber: $contractNumber)';
+    return 'SearchIndividualWorkEvent.search(contractNumber: $contractNumber, body: $body)';
   }
 
   @override
@@ -129,55 +150,62 @@ class _$IndividualWorkSearchEvent
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'SearchIndividualWorkEvent.search'))
-      ..add(DiagnosticsProperty('contractNumber', contractNumber));
+      ..add(DiagnosticsProperty('contractNumber', contractNumber))
+      ..add(DiagnosticsProperty('body', body));
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$IndividualWorkSearchEvent &&
+            other is _$IndividualWorkSearchEventImpl &&
             (identical(other.contractNumber, contractNumber) ||
-                other.contractNumber == contractNumber));
+                other.contractNumber == contractNumber) &&
+            const DeepCollectionEquality().equals(other._body, _body));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, contractNumber);
+  int get hashCode => Object.hash(
+      runtimeType, contractNumber, const DeepCollectionEquality().hash(_body));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$IndividualWorkSearchEventCopyWith<_$IndividualWorkSearchEvent>
-      get copyWith => __$$IndividualWorkSearchEventCopyWithImpl<
-          _$IndividualWorkSearchEvent>(this, _$identity);
+  _$$IndividualWorkSearchEventImplCopyWith<_$IndividualWorkSearchEventImpl>
+      get copyWith => __$$IndividualWorkSearchEventImplCopyWithImpl<
+          _$IndividualWorkSearchEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? contractNumber) search,
+    required TResult Function(
+            String? contractNumber, Map<dynamic, dynamic>? body)
+        search,
     required TResult Function() dispose,
   }) {
-    return search(contractNumber);
+    return search(contractNumber, body);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber)? search,
+    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult? Function()? dispose,
   }) {
-    return search?.call(contractNumber);
+    return search?.call(contractNumber, body);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber)? search,
+    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (search != null) {
-      return search(contractNumber);
+      return search(contractNumber, body);
     }
     return orElse();
   }
@@ -215,39 +243,42 @@ class _$IndividualWorkSearchEvent
 }
 
 abstract class IndividualWorkSearchEvent implements SearchIndividualWorkEvent {
-  const factory IndividualWorkSearchEvent({final String? contractNumber}) =
-      _$IndividualWorkSearchEvent;
+  const factory IndividualWorkSearchEvent(
+      {final String? contractNumber,
+      final Map<dynamic, dynamic>? body}) = _$IndividualWorkSearchEventImpl;
 
   String? get contractNumber;
+  Map<dynamic, dynamic>? get body;
   @JsonKey(ignore: true)
-  _$$IndividualWorkSearchEventCopyWith<_$IndividualWorkSearchEvent>
+  _$$IndividualWorkSearchEventImplCopyWith<_$IndividualWorkSearchEventImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$DisposeIndividualContractCopyWith<$Res> {
-  factory _$$DisposeIndividualContractCopyWith(
-          _$DisposeIndividualContract value,
-          $Res Function(_$DisposeIndividualContract) then) =
-      __$$DisposeIndividualContractCopyWithImpl<$Res>;
+abstract class _$$DisposeIndividualContractImplCopyWith<$Res> {
+  factory _$$DisposeIndividualContractImplCopyWith(
+          _$DisposeIndividualContractImpl value,
+          $Res Function(_$DisposeIndividualContractImpl) then) =
+      __$$DisposeIndividualContractImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$DisposeIndividualContractCopyWithImpl<$Res>
+class __$$DisposeIndividualContractImplCopyWithImpl<$Res>
     extends _$SearchIndividualWorkEventCopyWithImpl<$Res,
-        _$DisposeIndividualContract>
-    implements _$$DisposeIndividualContractCopyWith<$Res> {
-  __$$DisposeIndividualContractCopyWithImpl(_$DisposeIndividualContract _value,
-      $Res Function(_$DisposeIndividualContract) _then)
+        _$DisposeIndividualContractImpl>
+    implements _$$DisposeIndividualContractImplCopyWith<$Res> {
+  __$$DisposeIndividualContractImplCopyWithImpl(
+      _$DisposeIndividualContractImpl _value,
+      $Res Function(_$DisposeIndividualContractImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$DisposeIndividualContract
+class _$DisposeIndividualContractImpl
     with DiagnosticableTreeMixin
     implements DisposeIndividualContract {
-  const _$DisposeIndividualContract();
+  const _$DisposeIndividualContractImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -262,10 +293,10 @@ class _$DisposeIndividualContract
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DisposeIndividualContract);
+            other is _$DisposeIndividualContractImpl);
   }
 
   @override
@@ -274,7 +305,9 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? contractNumber) search,
+    required TResult Function(
+            String? contractNumber, Map<dynamic, dynamic>? body)
+        search,
     required TResult Function() dispose,
   }) {
     return dispose();
@@ -283,7 +316,8 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber)? search,
+    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult? Function()? dispose,
   }) {
     return dispose?.call();
@@ -292,7 +326,8 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber)? search,
+    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
@@ -335,7 +370,7 @@ class _$DisposeIndividualContract
 }
 
 abstract class DisposeIndividualContract implements SearchIndividualWorkEvent {
-  const factory DisposeIndividualContract() = _$DisposeIndividualContract;
+  const factory DisposeIndividualContract() = _$DisposeIndividualContractImpl;
 }
 
 /// @nodoc
@@ -412,24 +447,25 @@ class _$SearchIndividualWorkStateCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial with DiagnosticableTreeMixin {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial with DiagnosticableTreeMixin {
+  const _$InitialImpl() : super._();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -444,9 +480,9 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -528,29 +564,30 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
 }
 
 abstract class _Initial extends SearchIndividualWorkState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading with DiagnosticableTreeMixin {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading with DiagnosticableTreeMixin {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -565,9 +602,9 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -649,23 +686,25 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
 }
 
 abstract class _Loading extends SearchIndividualWorkState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({ContractsModel? contractsModel});
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -673,7 +712,7 @@ class __$$_LoadedCopyWithImpl<$Res>
   $Res call({
     Object? contractsModel = freezed,
   }) {
-    return _then(_$_Loaded(
+    return _then(_$LoadedImpl(
       freezed == contractsModel
           ? _value.contractsModel
           : contractsModel // ignore: cast_nullable_to_non_nullable
@@ -684,8 +723,8 @@ class __$$_LoadedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
-  const _$_Loaded(this.contractsModel) : super._();
+class _$LoadedImpl extends _Loaded with DiagnosticableTreeMixin {
+  const _$LoadedImpl(this.contractsModel) : super._();
 
   @override
   final ContractsModel? contractsModel;
@@ -704,10 +743,10 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
+            other is _$LoadedImpl &&
             (identical(other.contractsModel, contractsModel) ||
                 other.contractsModel == contractsModel));
   }
@@ -718,8 +757,8 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -797,28 +836,30 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
 }
 
 abstract class _Loaded extends SearchIndividualWorkState {
-  const factory _Loaded(final ContractsModel? contractsModel) = _$_Loaded;
+  const factory _Loaded(final ContractsModel? contractsModel) = _$LoadedImpl;
   const _Loaded._() : super._();
 
   ContractsModel? get contractsModel;
   @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String? error});
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -826,7 +867,7 @@ class __$$_ErrorCopyWithImpl<$Res>
   $Res call({
     Object? error = freezed,
   }) {
-    return _then(_$_Error(
+    return _then(_$ErrorImpl(
       freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -837,8 +878,8 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error with DiagnosticableTreeMixin {
-  const _$_Error(this.error) : super._();
+class _$ErrorImpl extends _Error with DiagnosticableTreeMixin {
+  const _$ErrorImpl(this.error) : super._();
 
   @override
   final String? error;
@@ -857,10 +898,10 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Error &&
+            other is _$ErrorImpl &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -870,8 +911,8 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
-      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -949,11 +990,11 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
 }
 
 abstract class _Error extends SearchIndividualWorkState {
-  const factory _Error(final String? error) = _$_Error;
+  const factory _Error(final String? error) = _$ErrorImpl;
   const _Error._() : super._();
 
   String? get error;
   @JsonKey(ignore: true)
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

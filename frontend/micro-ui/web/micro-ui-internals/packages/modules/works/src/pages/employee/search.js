@@ -1,6 +1,6 @@
 import React, { useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { Toast } from "@egovernments/digit-ui-react-components";
+import { Toast } from "@egovernments/digit-ui-components";
 import { searchEstimatePayload } from "../../utils/searchEstimatePayload";
 
 const Search = ({ path }) => {
@@ -28,7 +28,7 @@ const Search = ({ path }) => {
       );
       
     if(data.adminSanctionNumber==="" && data.estimateNumber==="" && data.subEstimateNumber==="" && !data.department && !data.fromProposalDate && !data.toProposalDate ){
-      setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
+      setShowToast({ type:"warning", label: "ERR_PT_FILL_VALID_FIELDS" });
       setTimeout(() => {
         setShowToast(false);
       }, 3000);
@@ -53,8 +53,7 @@ const Search = ({ path }) => {
       />
       {showToast && (
         <Toast
-          error={showToast.error}
-          warning={showToast.warning}
+          type={showToast?.type}
           label={t(showToast.label)}
           onClose={() => {
             setShowToast(null);

@@ -1,4 +1,5 @@
-import 'package:digit_components/theme/digit_theme.dart';
+// import 'package:digit_components/theme/digit_theme.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/material.dart';
 
 class CustomInfoCard extends StatelessWidget {
@@ -31,7 +32,7 @@ class CustomInfoCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      margin: margin ?? DigitTheme.instance.containerMargin,
+      margin: margin ?? EdgeInsets.all( Theme.of(context).spacerTheme.spacer2),
       padding: padding ?? const EdgeInsets.all(8),
       decoration: ShapeDecoration(
         shape: const RoundedRectangleBorder(
@@ -61,7 +62,7 @@ class CustomInfoCard extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(kPadding),
+            padding:  EdgeInsets.all(Theme.of(context).spacerTheme.spacer2),
             child: Text(
               description,
               style: theme.textTheme.bodyLarge,
@@ -69,7 +70,7 @@ class CustomInfoCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(kPadding),
+            padding:  EdgeInsets.all(Theme.of(context).spacerTheme.spacer2),
             child: child ?? const SizedBox.shrink(),
           )
         ],

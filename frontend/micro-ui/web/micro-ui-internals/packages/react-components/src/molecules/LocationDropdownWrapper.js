@@ -1,8 +1,12 @@
 import React,{Fragment,useState,useEffect} from 'react'
-import MultiSelectDropdown from '../atoms/MultiSelectDropdown'
-import Dropdown from '../atoms/Dropdown'
+// import MultiSelectDropdown from '../atoms/MultiSelectDropdown'
+// import Dropdown from '../atoms/Dropdown'
 import { Loader } from '../atoms/Loader'
 import { useTranslation } from 'react-i18next'
+
+import {MultiSelectDropdown } from "@egovernments/digit-ui-components";
+import {Dropdown } from "@egovernments/digit-ui-components";
+
 const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors,setValue}) => {
     //based on type (ward/locality) we will render dropdowns respectively
     //here we will render two types of dropdown based on allowMultiSelect boolean 
@@ -20,16 +24,16 @@ const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors,setV
                 
                 const wards = []
                 const localities = {}
-                data?.TenantBoundary[0]?.boundary.forEach((item) => {
-                    localities[item?.code] = item?.children.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label: item?.label }))
-                    wards.push({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
+                data?.TenantBoundary[0]?.boundary.sort((a, b) => a.code.localeCompare(b.code)).forEach((item) => {
+                    localities[item?.code] = item?.children.map(item => ({ code: item.code, name: t(`${headerLocale}_ADMIN_${item?.code}`), i18nKey: `${headerLocale}_ADMIN_${item?.code}`, label: item?.label }))
+                    wards.push({ code: item.code, name: t(`${headerLocale}_ADMIN_${item?.code}`), i18nKey: `${headerLocale}_ADMIN_${item?.code}` })
                 });
                 
                 return {
                     wards, localities
                 }
             }
-        });
+        },true);
 
     
     useEffect(() => {
@@ -49,7 +53,6 @@ const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors,setV
     }
     }, [wardsAndLocalities,formData?.ward])
     
-        
     if(isLoading) return <Loader/>
 
   return (
@@ -68,9 +71,15 @@ const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors,setV
                   }}
                   selected={props?.value}
                   defaultLabel={t(populators?.defaultText)}
-                  defaultUnit={t(populators?.selectedText)}
+                //   defaultUnit={t(populators?.selectedText)}
                   config={populators}
-              />
+                  variant={populators?.variant}
+                  addSelectAllCheck={populators?.addSelectAllCheck}
+                  addCategorySelectAllCheck={populators?.addCategorySelectAllCheck}
+                  selectAllLabel={populators?.selectAllLabel}
+                  categorySelectAllLabel={populators?.categorySelectAllLabel}
+                  restrictSelection={populators?.restrictSelection}
+              />    
           </div>}
           {!populators.allowMultiSelect  &&
               <Dropdown
@@ -87,7 +96,7 @@ const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors,setV
                   defaultValue={props.value?.[0] || populators.defaultValue}
                   t={t}
                   errorStyle={errors?.[populators.name]}
-                  optionCardStyles={populators?.optionsCustomStyle}
+                  optionCardStyles={populators?.optionsCustomStyle ? populators?.optionsCustomStyle : {top:"2.3rem"}}
               />
           }
     </>

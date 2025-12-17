@@ -9,7 +9,15 @@
             grid-template-columns: 20% 1fr;
             gap : 1rem;
             &.inbox {
-
+                .links{
+                    .inbox-links-icon{
+                        color:#C84C0E;
+                        fill:#C84C0E;
+                        path{
+                            fill:#C84C0E;
+                        }
+                    }
+                }
             }
             &.search {
                 display: flex;
@@ -26,6 +34,11 @@
                     .search-field-wrapper.search.custom-both-clear-search{
                         .search-button-wrapper.search {
                             grid-column: initial;
+                            
+                        }
+                        .search-button-wrapper.search.customIndSearchButton {
+                            grid-column: 4;
+                            
                         }
                     .search-button-wrapper{
                         .link-label{
@@ -54,7 +67,7 @@
                 }
                 &.links {
                     height: 100%;
-                    color : #f47738;
+                    color : #C84C0E;
                     .inbox-search-links-component {
                         height: 100% !important;
                         width: 100%;
@@ -81,7 +94,6 @@
                     &.search-results {
                     }
                     &.links {
-                       
                     }
                     &.filter {
                        

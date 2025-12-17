@@ -25,9 +25,9 @@ class BackNavigationHelpHeaderWidget extends StatelessWidget {
               foregroundColor: theme.colorScheme.onBackground,
               padding: EdgeInsets.zero,
             ),
-            onPressed: () => context.router.pop(),
-            child: Row(
-              children: const [
+            onPressed: () => context.router.maybePopTop(),
+            child: const Row(
+              children: [
                 Icon(Icons.arrow_left_sharp),
                 Text('Back'),
               ],
@@ -39,8 +39,8 @@ class BackNavigationHelpHeaderWidget extends StatelessWidget {
           TextButton(
             style: TextButton.styleFrom(padding: EdgeInsets.zero),
             onPressed: null,
-            child: Row(
-              children: const [
+            child: const Row(
+              children: [
                 Text('Help'),
                 Icon(Icons.help_outline_outlined),
               ],

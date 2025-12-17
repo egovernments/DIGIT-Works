@@ -21,15 +21,16 @@ class MyWorksRepository {
       // var formData = FormData.fromMap(body);
       final response = await _client.post(url,
           queryParameters: queryParameters, data: body ?? {}, options: options);
+
       return ContractsModelMapper.fromMap(
           response.data as Map<String, dynamic>);
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
   }
 
-  Future<ContractsModel> acceptOrDeclineWorkOrder({
+  Future<ContractsModel> updateOrCreateContract({
     Map<String, String>? queryParameters,
     dynamic body,
     required Options options,
@@ -42,7 +43,7 @@ class MyWorksRepository {
 
       return ContractsModelMapper.fromMap(
           response.data as Map<String, dynamic>);
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -64,7 +65,7 @@ class MyWorksRepository {
       return MyWorksSearchCriteriaModel.fromJson(
         json.decode(response.toString())['MdmsRes'],
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }

@@ -3,9 +3,9 @@ import { Loader, WorkflowActions, WorkflowTimeline } from '@egovernments/digit-u
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
-const ContractDetails = (props) => {
+const ContractDetails = ({revisedWONumber,...props}) => {
     const { t } = useTranslation()
-    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")
+    const businessService = revisedWONumber ? Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("revisedWO") : Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")
 
     if (props.isLoading) return <Loader />
     return (
@@ -20,7 +20,7 @@ const ContractDetails = (props) => {
                 businessService={businessService}
                 // forcedActionPrefix={"ACTION_"}
                 tenantId={props.tenantId}
-                applicationNo={props.contractNumber}
+                applicationNo={revisedWONumber ? revisedWONumber : props.contractNumber}
                 statusAttribute={"state"}
             />
         </div>

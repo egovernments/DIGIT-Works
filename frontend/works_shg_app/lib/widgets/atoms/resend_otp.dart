@@ -1,6 +1,9 @@
 import 'dart:async';
 
-import 'package:digit_components/digit_components.dart';
+// import 'package:digit_components/digit_components.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
+import 'package:digit_ui_components/widgets/atoms/text_block.dart';
+
 import 'package:flutter/material.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
@@ -67,16 +70,19 @@ class ResendOTPState extends State<ResendOTP> {
               widget.onPressed!();
             }
           : null,
-      child: Text(
-        _canResendOTP
+      child: DigitTextBlock(
+      caption:  _canResendOTP
             ? AppLocalizations.of(context).translate(i18.login.resendOTP)
             : localizationText,
-        textAlign: TextAlign.left,
-        style: TextStyle(
-          color: _canResendOTP
-              ? const DigitColors().burningOrange
-              : DigitTheme.instance.colorScheme.shadow,
-        ),
+       
+        // style: TextStyle(
+        //   color: _canResendOTP
+        //       ? const DigitColors().burningOrange
+        //       : DigitTheme.instance.colorScheme.shadow,
+        //),
+        captionStyle: Theme.of(context).digitTextTheme(context).headingS.copyWith(
+                    color: _canResendOTP?Theme.of(context).colorTheme.primary.primary1:Theme.of(context).colorTheme.text.secondary
+                  ),
       ),
     );
   }

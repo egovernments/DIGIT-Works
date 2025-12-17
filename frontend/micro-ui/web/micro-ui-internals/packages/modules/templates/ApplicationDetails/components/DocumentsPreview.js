@@ -1,16 +1,20 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { CardSubHeader, PDFSvg } from "@egovernments/digit-ui-react-components";
+import {
+    TextBlock
+  } from "@egovernments/digit-ui-components";
 
 function DocumentsPreview({ documents, svgStyles = {}, isSendBackFlow = false, isHrLine = false, titleStyles }) {
     const { t } = useTranslation();
     const isStakeholderApplication = window.location.href.includes("stakeholder");
 
     return (
-        <div style={{ marginTop: "19px" }}>
+        <div>
             {!isStakeholderApplication && documents?.map((document, index) => (
                 <React.Fragment key={index}>
-                    {document?.title ? <CardSubHeader style={titleStyles ? titleStyles : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null}
+                    {/* {document?.title ? <CardSubHeader style={titleStyles ? titleStyles : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null} */}
+                    {document?.title ? <TextBlock subHeader={t(document?.title)} subHeaderClassName={"view-subheader"}></TextBlock> : null}
                     <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
                         {document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
                             <a target="_" href={value?.url} style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto", minWidth: "100px" }} key={index}>
@@ -27,7 +31,9 @@ function DocumentsPreview({ documents, svgStyles = {}, isSendBackFlow = false, i
             ))}
             {isStakeholderApplication && documents?.map((document, index) => (
                 <React.Fragment key={index}>
-                    {document?.title ? <CardSubHeader style={{ marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null}
+                    {/* {document?.title ? <CardSubHeader style={{ marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null}
+                     */}
+                     {document?.title ? <TextBlock subHeader={t(document?.title)} subHeaderClassName={"view-subheader"}></TextBlock> : null}
                     <div>
                         {document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
                             <a target="_" href={value?.url} style={{ minWidth: svgStyles?.minWidth ? svgStyles?.minWidth : "160px", marginRight: "20px" }} key={index}>

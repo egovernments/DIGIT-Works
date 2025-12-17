@@ -12,7 +12,7 @@ part of 'decline_work_order.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$DeclineWorkOrderEvent {
@@ -82,21 +82,23 @@ class _$DeclineWorkOrderEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$WorkOrderDeclineEventCopyWith<$Res> {
-  factory _$$WorkOrderDeclineEventCopyWith(_$WorkOrderDeclineEvent value,
-          $Res Function(_$WorkOrderDeclineEvent) then) =
-      __$$WorkOrderDeclineEventCopyWithImpl<$Res>;
+abstract class _$$WorkOrderDeclineEventImplCopyWith<$Res> {
+  factory _$$WorkOrderDeclineEventImplCopyWith(
+          _$WorkOrderDeclineEventImpl value,
+          $Res Function(_$WorkOrderDeclineEventImpl) then) =
+      __$$WorkOrderDeclineEventImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
       {Map<String, dynamic>? contractsModel, String action, String comments});
 }
 
 /// @nodoc
-class __$$WorkOrderDeclineEventCopyWithImpl<$Res>
-    extends _$DeclineWorkOrderEventCopyWithImpl<$Res, _$WorkOrderDeclineEvent>
-    implements _$$WorkOrderDeclineEventCopyWith<$Res> {
-  __$$WorkOrderDeclineEventCopyWithImpl(_$WorkOrderDeclineEvent _value,
-      $Res Function(_$WorkOrderDeclineEvent) _then)
+class __$$WorkOrderDeclineEventImplCopyWithImpl<$Res>
+    extends _$DeclineWorkOrderEventCopyWithImpl<$Res,
+        _$WorkOrderDeclineEventImpl>
+    implements _$$WorkOrderDeclineEventImplCopyWith<$Res> {
+  __$$WorkOrderDeclineEventImplCopyWithImpl(_$WorkOrderDeclineEventImpl _value,
+      $Res Function(_$WorkOrderDeclineEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -106,7 +108,7 @@ class __$$WorkOrderDeclineEventCopyWithImpl<$Res>
     Object? action = null,
     Object? comments = null,
   }) {
-    return _then(_$WorkOrderDeclineEvent(
+    return _then(_$WorkOrderDeclineEventImpl(
       contractsModel: freezed == contractsModel
           ? _value._contractsModel
           : contractsModel // ignore: cast_nullable_to_non_nullable
@@ -125,10 +127,10 @@ class __$$WorkOrderDeclineEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$WorkOrderDeclineEvent
+class _$WorkOrderDeclineEventImpl
     with DiagnosticableTreeMixin
     implements WorkOrderDeclineEvent {
-  const _$WorkOrderDeclineEvent(
+  const _$WorkOrderDeclineEventImpl(
       {required final Map<String, dynamic>? contractsModel,
       required this.action,
       this.comments = ''})
@@ -166,10 +168,10 @@ class _$WorkOrderDeclineEvent
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$WorkOrderDeclineEvent &&
+            other is _$WorkOrderDeclineEventImpl &&
             const DeepCollectionEquality()
                 .equals(other._contractsModel, _contractsModel) &&
             (identical(other.action, action) || other.action == action) &&
@@ -184,9 +186,9 @@ class _$WorkOrderDeclineEvent
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$WorkOrderDeclineEventCopyWith<_$WorkOrderDeclineEvent> get copyWith =>
-      __$$WorkOrderDeclineEventCopyWithImpl<_$WorkOrderDeclineEvent>(
-          this, _$identity);
+  _$$WorkOrderDeclineEventImplCopyWith<_$WorkOrderDeclineEventImpl>
+      get copyWith => __$$WorkOrderDeclineEventImplCopyWithImpl<
+          _$WorkOrderDeclineEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -261,38 +263,38 @@ abstract class WorkOrderDeclineEvent implements DeclineWorkOrderEvent {
   const factory WorkOrderDeclineEvent(
       {required final Map<String, dynamic>? contractsModel,
       required final String action,
-      final String comments}) = _$WorkOrderDeclineEvent;
+      final String comments}) = _$WorkOrderDeclineEventImpl;
 
   Map<String, dynamic>? get contractsModel;
   String get action;
   String get comments;
   @JsonKey(ignore: true)
-  _$$WorkOrderDeclineEventCopyWith<_$WorkOrderDeclineEvent> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$WorkOrderDeclineEventImplCopyWith<_$WorkOrderDeclineEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$DisposeDeclineEventCopyWith<$Res> {
-  factory _$$DisposeDeclineEventCopyWith(_$DisposeDeclineEvent value,
-          $Res Function(_$DisposeDeclineEvent) then) =
-      __$$DisposeDeclineEventCopyWithImpl<$Res>;
+abstract class _$$DisposeDeclineEventImplCopyWith<$Res> {
+  factory _$$DisposeDeclineEventImplCopyWith(_$DisposeDeclineEventImpl value,
+          $Res Function(_$DisposeDeclineEventImpl) then) =
+      __$$DisposeDeclineEventImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$DisposeDeclineEventCopyWithImpl<$Res>
-    extends _$DeclineWorkOrderEventCopyWithImpl<$Res, _$DisposeDeclineEvent>
-    implements _$$DisposeDeclineEventCopyWith<$Res> {
-  __$$DisposeDeclineEventCopyWithImpl(
-      _$DisposeDeclineEvent _value, $Res Function(_$DisposeDeclineEvent) _then)
+class __$$DisposeDeclineEventImplCopyWithImpl<$Res>
+    extends _$DeclineWorkOrderEventCopyWithImpl<$Res, _$DisposeDeclineEventImpl>
+    implements _$$DisposeDeclineEventImplCopyWith<$Res> {
+  __$$DisposeDeclineEventImplCopyWithImpl(_$DisposeDeclineEventImpl _value,
+      $Res Function(_$DisposeDeclineEventImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$DisposeDeclineEvent
+class _$DisposeDeclineEventImpl
     with DiagnosticableTreeMixin
     implements DisposeDeclineEvent {
-  const _$DisposeDeclineEvent();
+  const _$DisposeDeclineEventImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -307,9 +309,10 @@ class _$DisposeDeclineEvent
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$DisposeDeclineEvent);
+        (other.runtimeType == runtimeType &&
+            other is _$DisposeDeclineEventImpl);
   }
 
   @override
@@ -385,7 +388,7 @@ class _$DisposeDeclineEvent
 }
 
 abstract class DisposeDeclineEvent implements DeclineWorkOrderEvent {
-  const factory DisposeDeclineEvent() = _$DisposeDeclineEvent;
+  const factory DisposeDeclineEvent() = _$DisposeDeclineEventImpl;
 }
 
 /// @nodoc
@@ -462,24 +465,25 @@ class _$DeclineWorkOrderStateCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$DeclineWorkOrderStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$DeclineWorkOrderStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial with DiagnosticableTreeMixin {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial with DiagnosticableTreeMixin {
+  const _$InitialImpl() : super._();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -494,9 +498,9 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -578,29 +582,30 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
 }
 
 abstract class _Initial extends DeclineWorkOrderState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$DeclineWorkOrderStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$DeclineWorkOrderStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading with DiagnosticableTreeMixin {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading with DiagnosticableTreeMixin {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -615,9 +620,9 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -699,23 +704,25 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
 }
 
 abstract class _Loading extends DeclineWorkOrderState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({ContractsModel? contractsModel});
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$DeclineWorkOrderStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$DeclineWorkOrderStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -723,7 +730,7 @@ class __$$_LoadedCopyWithImpl<$Res>
   $Res call({
     Object? contractsModel = freezed,
   }) {
-    return _then(_$_Loaded(
+    return _then(_$LoadedImpl(
       freezed == contractsModel
           ? _value.contractsModel
           : contractsModel // ignore: cast_nullable_to_non_nullable
@@ -734,8 +741,8 @@ class __$$_LoadedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
-  const _$_Loaded(this.contractsModel) : super._();
+class _$LoadedImpl extends _Loaded with DiagnosticableTreeMixin {
+  const _$LoadedImpl(this.contractsModel) : super._();
 
   @override
   final ContractsModel? contractsModel;
@@ -754,10 +761,10 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
+            other is _$LoadedImpl &&
             (identical(other.contractsModel, contractsModel) ||
                 other.contractsModel == contractsModel));
   }
@@ -768,8 +775,8 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -847,28 +854,30 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
 }
 
 abstract class _Loaded extends DeclineWorkOrderState {
-  const factory _Loaded(final ContractsModel? contractsModel) = _$_Loaded;
+  const factory _Loaded(final ContractsModel? contractsModel) = _$LoadedImpl;
   const _Loaded._() : super._();
 
   ContractsModel? get contractsModel;
   @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String? error});
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$DeclineWorkOrderStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$DeclineWorkOrderStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -876,7 +885,7 @@ class __$$_ErrorCopyWithImpl<$Res>
   $Res call({
     Object? error = freezed,
   }) {
-    return _then(_$_Error(
+    return _then(_$ErrorImpl(
       freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -887,8 +896,8 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error with DiagnosticableTreeMixin {
-  const _$_Error(this.error) : super._();
+class _$ErrorImpl extends _Error with DiagnosticableTreeMixin {
+  const _$ErrorImpl(this.error) : super._();
 
   @override
   final String? error;
@@ -907,10 +916,10 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Error &&
+            other is _$ErrorImpl &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -920,8 +929,8 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
-      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -999,11 +1008,11 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
 }
 
 abstract class _Error extends DeclineWorkOrderState {
-  const factory _Error(final String? error) = _$_Error;
+  const factory _Error(final String? error) = _$ErrorImpl;
   const _Error._() : super._();
 
   String? get error;
   @JsonKey(ignore: true)
-  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

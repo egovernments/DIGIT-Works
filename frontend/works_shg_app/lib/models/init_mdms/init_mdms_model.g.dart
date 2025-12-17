@@ -6,8 +6,8 @@ part of 'init_mdms_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_InitMdmsModel _$$_InitMdmsModelFromJson(Map<String, dynamic> json) =>
-    _$_InitMdmsModel(
+_$InitMdmsModelImpl _$$InitMdmsModelImplFromJson(Map<String, dynamic> json) =>
+    _$InitMdmsModelImpl(
       commonMastersModel: json['common-masters'] == null
           ? null
           : CommonMastersModel.fromJson(
@@ -15,16 +15,21 @@ _$_InitMdmsModel _$$_InitMdmsModelFromJson(Map<String, dynamic> json) =>
       tenant: json['tenant'] == null
           ? null
           : TenantModel.fromJson(json['tenant'] as Map<String, dynamic>),
+      commonUIConfigModel: json['commonUiConfig'] == null
+          ? null
+          : CommonUIConfigModel.fromJson(
+              json['commonUiConfig'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_InitMdmsModelToJson(_$_InitMdmsModel instance) =>
+Map<String, dynamic> _$$InitMdmsModelImplToJson(_$InitMdmsModelImpl instance) =>
     <String, dynamic>{
       'common-masters': instance.commonMastersModel,
       'tenant': instance.tenant,
+      'commonUiConfig': instance.commonUIConfigModel,
     };
 
-_$_TenantModel _$$_TenantModelFromJson(Map<String, dynamic> json) =>
-    _$_TenantModel(
+_$TenantModelImpl _$$TenantModelImplFromJson(Map<String, dynamic> json) =>
+    _$TenantModelImpl(
       tenantListModel: (json['tenants'] as List<dynamic>?)
           ?.map((e) => TenantListModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -33,15 +38,15 @@ _$_TenantModel _$$_TenantModelFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$$_TenantModelToJson(_$_TenantModel instance) =>
+Map<String, dynamic> _$$TenantModelImplToJson(_$TenantModelImpl instance) =>
     <String, dynamic>{
       'tenants': instance.tenantListModel,
       'citymodule': instance.cityModuleModel,
     };
 
-_$_CommonMastersModel _$$_CommonMastersModelFromJson(
+_$CommonMastersModelImpl _$$CommonMastersModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$_CommonMastersModel(
+    _$CommonMastersModelImpl(
       stateInfoListModel: (json['StateInfo'] as List<dynamic>?)
           ?.map((e) => StateInfoListModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -50,30 +55,32 @@ _$_CommonMastersModel _$$_CommonMastersModelFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$$_CommonMastersModelToJson(
-        _$_CommonMastersModel instance) =>
+Map<String, dynamic> _$$CommonMastersModelImplToJson(
+        _$CommonMastersModelImpl instance) =>
     <String, dynamic>{
       'StateInfo': instance.stateInfoListModel,
       'AppVersion': instance.appVersionModel,
     };
 
-_$_AppVersionModel _$$_AppVersionModelFromJson(Map<String, dynamic> json) =>
-    _$_AppVersionModel(
+_$AppVersionModelImpl _$$AppVersionModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$AppVersionModelImpl(
       version: json['version'] as String?,
       packageName: json['packageName'] as String?,
       iOSId: json['iOSId'] as String?,
     );
 
-Map<String, dynamic> _$$_AppVersionModelToJson(_$_AppVersionModel instance) =>
+Map<String, dynamic> _$$AppVersionModelImplToJson(
+        _$AppVersionModelImpl instance) =>
     <String, dynamic>{
       'version': instance.version,
       'packageName': instance.packageName,
       'iOSId': instance.iOSId,
     };
 
-_$_StateInfoListModel _$$_StateInfoListModelFromJson(
+_$StateInfoListModelImpl _$$StateInfoListModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$_StateInfoListModel(
+    _$StateInfoListModelImpl(
       bannerUrl: json['bannerUrl'] as String?,
       code: json['code'] as String?,
       hasLocalisation: json['hasLocalisation'] as bool?,
@@ -89,8 +96,8 @@ _$_StateInfoListModel _$$_StateInfoListModelFromJson(
       qrCodeURL: json['qrCodeURL'] as String?,
     );
 
-Map<String, dynamic> _$$_StateInfoListModelToJson(
-        _$_StateInfoListModel instance) =>
+Map<String, dynamic> _$$StateInfoListModelImplToJson(
+        _$StateInfoListModelImpl instance) =>
     <String, dynamic>{
       'bannerUrl': instance.bannerUrl,
       'code': instance.code,
@@ -103,8 +110,9 @@ Map<String, dynamic> _$$_StateInfoListModelToJson(
       'qrCodeURL': instance.qrCodeURL,
     };
 
-_$_TenantListModel _$$_TenantListModelFromJson(Map<String, dynamic> json) =>
-    _$_TenantListModel(
+_$TenantListModelImpl _$$TenantListModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$TenantListModelImpl(
       code: json['code'] as String?,
       contactNumber: json['contactNumber'] as String?,
       imageId: json['imageId'] as String?,
@@ -113,7 +121,8 @@ _$_TenantListModel _$$_TenantListModelFromJson(Map<String, dynamic> json) =>
       pdfHeader: json['pdfHeader'] as String?,
     );
 
-Map<String, dynamic> _$$_TenantListModelToJson(_$_TenantListModel instance) =>
+Map<String, dynamic> _$$TenantListModelImplToJson(
+        _$TenantListModelImpl instance) =>
     <String, dynamic>{
       'code': instance.code,
       'contactNumber': instance.contactNumber,
@@ -123,18 +132,106 @@ Map<String, dynamic> _$$_TenantListModelToJson(_$_TenantListModel instance) =>
       'pdfHeader': instance.pdfHeader,
     };
 
-_$_CityModuleModel _$$_CityModuleModelFromJson(Map<String, dynamic> json) =>
-    _$_CityModuleModel(
+_$CityModuleModelImpl _$$CityModuleModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CityModuleModelImpl(
       active: json['active'] as bool?,
       code: json['code'] as String?,
       module: json['module'] as String?,
-      order: json['order'] as int?,
+      order: (json['order'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$$_CityModuleModelToJson(_$_CityModuleModel instance) =>
+Map<String, dynamic> _$$CityModuleModelImplToJson(
+        _$CityModuleModelImpl instance) =>
     <String, dynamic>{
       'active': instance.active,
       'code': instance.code,
       'module': instance.module,
       'order': instance.order,
+    };
+
+_$CommonUIConfigModelImpl _$$CommonUIConfigModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CommonUIConfigModelImpl(
+      privacyPolicyModels: (json['PrivacyPolicy'] as List<dynamic>?)
+          ?.map((e) => PrivacyPolicyModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$CommonUIConfigModelImplToJson(
+        _$CommonUIConfigModelImpl instance) =>
+    <String, dynamic>{
+      'PrivacyPolicy': instance.privacyPolicyModels,
+    };
+
+_$PrivacyPolicyModelImpl _$$PrivacyPolicyModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$PrivacyPolicyModelImpl(
+      header: json['header'] as String?,
+      active: json['active'] as bool?,
+      module: json['module'] as String?,
+      contents: (json['contents'] as List<dynamic>?)
+          ?.map((e) => ContentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$PrivacyPolicyModelImplToJson(
+        _$PrivacyPolicyModelImpl instance) =>
+    <String, dynamic>{
+      'header': instance.header,
+      'active': instance.active,
+      'module': instance.module,
+      'contents': instance.contents,
+    };
+
+_$ContentModelImpl _$$ContentModelImplFromJson(Map<String, dynamic> json) =>
+    _$ContentModelImpl(
+      header: json['header'] as String?,
+      descriptions: (json['descriptions'] as List<dynamic>?)
+          ?.map((e) => DescriptionModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$ContentModelImplToJson(_$ContentModelImpl instance) =>
+    <String, dynamic>{
+      'header': instance.header,
+      'descriptions': instance.descriptions,
+    };
+
+_$DescriptionModelImpl _$$DescriptionModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$DescriptionModelImpl(
+      text: json['text'] as String?,
+      type: json['type'] as String?,
+      isBold: json['isBold'] as bool?,
+      subDescriptions: (json['subDescriptions'] as List<dynamic>?)
+          ?.map((e) => SubDescriptionModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$DescriptionModelImplToJson(
+        _$DescriptionModelImpl instance) =>
+    <String, dynamic>{
+      'text': instance.text,
+      'type': instance.type,
+      'isBold': instance.isBold,
+      'subDescriptions': instance.subDescriptions,
+    };
+
+_$SubDescriptionModelImpl _$$SubDescriptionModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$SubDescriptionModelImpl(
+      text: json['text'] as String?,
+      type: json['type'] as String?,
+      isBold: json['isBold'] as bool?,
+      isSpaceRequired: json['isSpaceRequired'] as bool?,
+    );
+
+Map<String, dynamic> _$$SubDescriptionModelImplToJson(
+        _$SubDescriptionModelImpl instance) =>
+    <String, dynamic>{
+      'text': instance.text,
+      'type': instance.type,
+      'isBold': instance.isBold,
+      'isSpaceRequired': instance.isSpaceRequired,
     };

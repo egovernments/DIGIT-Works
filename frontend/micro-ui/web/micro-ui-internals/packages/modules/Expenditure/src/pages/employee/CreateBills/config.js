@@ -7,6 +7,7 @@ const getModalConfig = ({
     selectedApprover,
     setSelectedApprover,
     approverLoading = false,
+    isModify
 }) => {
 
     let checkConditions = true
@@ -15,8 +16,8 @@ const getModalConfig = ({
 
     return {
         label: {
-            heading: `EXP_CREATE_PURCHASE_BILL`,
-            submit: `CORE_COMMON_SUBMIT`,
+            heading: isModify?`EXP_UPDATE_AND_FORWARD`:`EXP_CREATE_AND_FORWARD`,
+            submit: `EXP_FORWARD`,
             cancel: "WORKS_CANCEL",
         },
         form: [
@@ -36,6 +37,7 @@ const getModalConfig = ({
                                 id="fieldInspector"
                                 select={setSelectedApprover}
                                 selected={selectedApprover}
+                                optionCardStyles={{"top":"2.3rem"}}
                             />
                         ),
                     },

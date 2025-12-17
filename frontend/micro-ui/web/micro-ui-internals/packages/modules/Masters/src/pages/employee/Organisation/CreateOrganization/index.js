@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from "react-i18next";
-import { Header, Loader, Toast } from '@egovernments/digit-ui-react-components';
+import { Header, Loader } from '@egovernments/digit-ui-react-components';
 import CreateOrganizationForm from './CreateOrganizationForm';
 import { createOrganizationConfigMUKTA } from '../../../../configs/createOrganizationConfigMUKTA';
 import { updateOrganisationFormDefaultValues } from '../../../../utils/index'
+import { Toast } from '@egovernments/digit-ui-components';
 
 const CreateOrganisation = () => {
     const {t} = useTranslation();
@@ -13,6 +14,8 @@ const CreateOrganisation = () => {
 
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
+    const { orgId } = Digit.Hooks.useQueryParams()
+    const isModify = orgId ? true : false;
     
     const { isLoading, data: configs } = Digit.Hooks.useCustomMDMS(
         stateTenant,
@@ -24,7 +27,7 @@ const CreateOrganisation = () => {
         ],
         {
             select: (data) => {
-                return data?.[Digit.Utils.getConfigModuleName()]?.CreateOrganizationConfig[0];
+                return  data?.[Digit.Utils.getConfigModuleName()]?.CreateOrganizationConfig[0];
             },
         }
     );
@@ -37,8 +40,6 @@ const CreateOrganisation = () => {
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
-    const { orgId } = Digit.Hooks.useQueryParams()
-    const isModify = orgId ? true : false;
 
     //Call Search Wage Seeker
     const payload = {
@@ -96,7 +97,7 @@ const CreateOrganisation = () => {
                 )
             }
             {
-                showDataError && <Toast error={true} label={t("COMMON_ERROR_FETCHING_ORG_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
+                showDataError && <Toast type={"error"} label={t("COMMON_ERROR_FETCHING_ORG_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
             }
         </React.Fragment>
     )

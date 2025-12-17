@@ -76,7 +76,7 @@ const handleTermsAndConditions = (data) => {
   return data.WOTermsAndConditions;
 }
 
-export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams, docConfigData}) => {
+export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams, docConfigData, isModify}) => {
     return {
         contract : {
             "id" : modifyParams?.contractID,
@@ -94,7 +94,7 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
             "endDate": 0,
             "status" : "ACTIVE",
             "completionPeriod": inputFormdata?.projectCompletionPeriodInDays,
-            "lineItems": [
+            "lineItems": isModify ? modifyParams?.lineItems : [
                 {
                     "id" : modifyParams?.lineItems?.[0]?.id,
                     "estimateId": estimate?.id,

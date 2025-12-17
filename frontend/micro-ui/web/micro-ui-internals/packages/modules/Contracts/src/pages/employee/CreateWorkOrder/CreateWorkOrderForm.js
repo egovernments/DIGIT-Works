@@ -1,10 +1,12 @@
-import { FormComposer, Header, Toast, WorkflowModal } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, WorkflowModal } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { createWorkOrderUtils } from "../../../../utils/createWorkOrderUtils";
 import { useHistory } from "react-router-dom";
 import getWOModalConfig from "../../../configs/getWOModalConfig";
+import debounce from 'lodash/debounce';
+import {Toast} from '@egovernments/digit-ui-components'
 
 const navConfig =  [
     {
@@ -19,13 +21,14 @@ const navConfig =  [
 
 const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify, contractID, lineItems, contractAuditDetails, contractNumber, roleOfCBOOptions, docConfigData}) => {
     const {t} = useTranslation();
-    const [toast, setToast] = useState({show : false, label : "", error : false});
+    const [toast, setToast] = useState({show : false, label : "", type : ""});
     const history = useHistory();
     const [showModal, setShowModal] = useState(false);
     const [createWOModalConfig, setCreateWOModalConfig] = useState({});
     const rolesForThisAction = "WORK_ORDER_VERIFIER" //hardcoded for now
     const [approvers, setApprovers] = useState([]);
     const [selectedApprover, setSelectedApprover] = useState({});
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [inputFormdata, setInputFormData] = useState([]);
     const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
@@ -102,7 +105,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     }
 
     const handleToastClose = () => {
-        setToast({show : false, label : "", error : false});
+        setToast({show : false, label : "", type : ""});
     }
 
     const { mutate: CreateWOMutation } = Digit.Hooks.contracts.useCreateWO();
@@ -124,12 +127,14 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                 approvers,
                 selectedApprover,
                 setSelectedApprover,
-                approverLoading
+                approverLoading,
+                isModify
             })
         )
     }, [approvers]);
 
     const onFormSubmit = (_data) => {
+        _data = Digit.Utils.trimStringsInObject(_data)
         setInputFormData(_data);
         setShowModal(true);
     }
@@ -141,30 +146,35 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
             },
             onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
-                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), type : "error"}));
                     }else if(responseData?.ResponseInfo?.status){
                         sendDataToResponsePage(contractNumber, true, "CONTRACTS_MODIFIED", true);
                         clearSessionFormData();
                     }else{
-                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), type : "error"}));
                     }
             },
         });
     }
 
     const handleResponseForCreateWO = async(payload) => {
+        setIsButtonDisabled(true);
         await CreateWOMutation(payload, {
             onError: async (error, variables) => {
+                setIsButtonDisabled(false);
                 sendDataToResponsePage("", false, "CONTRACTS_WO_FAILED", false);
             },
             onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
-                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                        setIsButtonDisabled(false)
+                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), type : "error"}));
                     }else if(responseData?.ResponseInfo?.status){
+                        setIsButtonDisabled(false);
                         sendDataToResponsePage(responseData?.contracts?.[0]?.contractNumber, true, "CONTRACTS_WO_CREATED_FORWARDED", true);
                         clearSessionFormData();
                     }else{
-                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                        setIsButtonDisabled(false);
+                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), type : "error"}));
                     }
             },
         });
@@ -178,14 +188,22 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         updateAction : isModify ? "EDIT" : "",
     }
 
-    const onModalSubmit = async (modalData) => {
-        const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams, docConfigData});
+    const OnModalSubmit = async (modalData) => {
+        modalData = Digit.Utils.trimStringsInObject(modalData)
+        const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams, docConfigData, isModify});
         if(isModify) {
             handleResponseForUpdate(payload);
         }else {
             handleResponseForCreateWO(payload);
         }
-    }
+    };
+
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
+
+    const handleSubmit = (_data) => {
+        // Call the debounced version of onModalSubmit
+        debouncedOnModalSubmit(_data);
+      };
 
     const sendDataToResponsePage = (contractNumber, isSuccess, message, showID) => {
         history.push({
@@ -204,8 +222,9 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                 showModal && 
                 <WorkflowModal
                     closeModal={() => setShowModal(false)}
-                    onSubmit={onModalSubmit}
+                    onSubmit={handleSubmit}
                     config={createWOModalConfig}
+                    isDisabled={isButtonDisabled}
                 />
             }
             <Header styles={{fontSize: "32px"}}>{isModify ? t("COMMON_MODIFY_WO") : t("ACTION_TEST_CREATE_WO")}</Header>
@@ -223,7 +242,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                         submitInForm={false}
                         fieldStyle={{ marginRight: 0 }}
                         inline={false}
-                        className="form-no-margin"
+                        // className="form-no-margin"
                         defaultValues={sessionFormData}
                         showWrapperContainers={false}
                         isDescriptionBold={false}
@@ -239,7 +258,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                     />
                     )
                 }
-               {toast?.show && <Toast error={toast?.error} label={toast?.label} isDleteBtn={true} onClose={handleToastClose} />}
+               {toast?.show && <Toast type={toast?.type} label={toast?.label} isDleteBtn={true} onClose={handleToastClose} />}
         </React.Fragment>
     )
 }

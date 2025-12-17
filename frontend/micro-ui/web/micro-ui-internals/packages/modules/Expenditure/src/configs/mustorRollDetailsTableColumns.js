@@ -56,16 +56,17 @@ export const mustorRollDetailsTableColumns = (t) => [
     Header: () => <p>{t("EXP_TOTAL_WAGE")}</p>,
     accessor: "amount",
     Cell: ({ value, column, row }) => {
-      return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+      return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
     }
   },
-  {
-    Header: () => <p>{t("EXP_BANK_ACCOUNT_DETAILS")}</p>,
-    accessor: "bankAccountDetails",
-    Cell: ({ value, column, row }) => {
-      return renderBankAccountDetails(value);
-    }
-  },
+  //removed for DPP
+  // {
+  //   Header: () => <p>{t("EXP_BANK_ACCOUNT_DETAILS")}</p>,
+  //   accessor: "bankAccountDetails",
+  //   Cell: ({ value, column, row }) => {
+  //     return renderBankAccountDetails(value);
+  //   }
+  // },
   // {
   //   Header: () => <p>{t("ES_COMMON_PAYMENT_STATUS")}</p>,
   //   accessor: "paymentStatus",
@@ -77,7 +78,7 @@ export const mustorRollDetailsTableColumns = (t) => [
   //       return <span style={{ "color":"#00703C"}}>{t(`BILL_STATUS_${value}`)}</span>
   //     } 
   //     else if(value==="PAYMENT_PENDING"){
-  //       return <span style={{ "color": "#F47738" }}>{t(`BILL_STATUS_${value}`)}</span>
+  //       return <span style={{ "color": "#C84C0E" }}>{t(`BILL_STATUS_${value}`)}</span>
   //     }
   //     else {
   //       return <span style={{ "color":"#ff0000"}}>{t(`BILL_STATUS_${value}`)}</span>

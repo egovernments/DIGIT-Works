@@ -1,0 +1,282 @@
+{
+  "tenantId": "od",
+  "moduleName": "muktaNotification",
+  "NotificationTemplateAndActionMapping": [
+    {
+      "templateCode": "CONTRACTS_NOTIFICATION_WORKFLOW_REJECT_ACTION",
+      "templateId": "1007949146289052224",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "CONTRACTS_NOTIFICATION_WORKFLOW_REJECT_ACTION",
+      "templateId": "1007258360999050519",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CBOADMIN_WORKFLOW_APPROVE_ACTION",
+      "templateId": "1007496256023845888",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "CONTRACTS_NOTIFICATION_WORKFLOW_REJECT_ACTION",
+      "templateId": "1007553237067533780",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CREATOR_WORKFLOW_DECLINE_ACTION",
+      "templateId": "1007793324495692315",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CREATOR_WORKFLOW_DECLINE_ACTION",
+      "templateId": "1007082068242568132",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION",
+      "templateId": "1007872770235530151",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION",
+      "templateId": "1007359504491459055",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL",
+      "templateId": "1007838371096094186",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL",
+      "templateId": "1007859052044728515",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_FOR_RE-SUBMIT",
+      "templateId": "1007450394198920689",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_FOR_RE-SUBMIT",
+      "templateId": "1007396531976414011",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO",
+      "templateId": "1007676563787119031",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO",
+      "templateId": "1007896420204503387",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "PURCHASE_BILL_APPROVE_TO_VENDOR",
+      "templateId": "1007773556449936479",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "PURCHASE_BILL_APPROVE_TO_VENDOR",
+      "templateId": "1007637531088056549",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "PURCHASE_BILL_REJECT_TO_CREATOR",
+      "templateId": "1007512219272073019",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "PURCHASE_BILL_REJECT_TO_CREATOR",
+      "templateId": "1007430590402664184",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "sms.expenditure.ws.payment.success",
+      "templateId": "1007855940411409064",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "sms.expenditure.ws.payment.success",
+      "templateId": "1007853786443118512",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "INDIVIDUAL_NOTIFICATION_ON_CREATE",
+      "templateId": "1007925866336668287",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "INDIVIDUAL_NOTIFICATION_ON_CREATE",
+      "templateId": "1007547298050256885",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "INDIVIDUAL_NOTIFICATION_ON_UPDATE",
+      "templateId": "1007866442877419640",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "INDIVIDUAL_NOTIFICATION_ON_UPDATE",
+      "templateId": "1007247849380291321",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "ORGANISATION_NOTIFICATION_ON_CREATE",
+      "templateId": "1007588123534796919",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "ORGANISATION_NOTIFICATION_ON_CREATE",
+      "templateId": "1007721179472881625",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "ORGANISATION_NOTIFICATION_ON_UPDATE",
+      "templateId": "1007453521231889028",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "ORGANISATION_NOTIFICATION_ON_UPDATE",
+      "templateId": "1007921356421390117",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "hrms.employee.create.notification",
+      "templateId": "1007925866336668287",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "hrms.employee.create.notification",
+      "templateId": "1007194454278897474",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "hrms.employee.create.notification",
+      "templateId": "1007925866336668287",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "hrms.employee.create.notification",
+      "templateId": "1007194454278897474",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "ESTIMATE_NOTIFICATION_TO_CREATOR_WF_REJECT_ACTION",
+      "templateId": "1007197687044765669",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "ESTIMATE_NOTIFICATION_TO_CREATOR_WF_REJECT_ACTION",
+      "templateId": "1007371827961479358",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "ESTIMATE_NOTIFICATION_TO_CREATOR_WF_APPROVE_ACTION",
+      "templateId": "1007101735801759964",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "ESTIMATE_NOTIFICATION_TO_CREATOR_WF_APPROVE_ACTION",
+      "templateId": "1007493470980035270",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "",
+      "templateId": "1007118206615760717",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "",
+      "templateId": "1007901012549947122",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "",
+      "templateId": "1007666124633841565",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "",
+      "templateId": "1007640295353091347",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "",
+      "templateId": "1007591982299676892",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "",
+      "templateId": "1007209723898268863",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "",
+      "templateId": "1007790917061993395",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "",
+      "templateId": "1007129773634783732",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    },
+    {
+      "templateCode": "",
+      "templateId": "1007790917061993395",
+      "action": "singleSMS",
+      "locale": "en_IN"
+    },
+    {
+      "templateCode": "",
+      "templateId": "1007129773634783732",
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN"
+    }
+  ]
+}

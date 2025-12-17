@@ -29,7 +29,7 @@ class ORGRepository {
       return OrganisationListModel.fromJson(
         json.decode(response.toString()),
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -51,7 +51,7 @@ class ORGRepository {
 
       return BankingDetailsModelMapper.fromMap(
           response.data as Map<String, dynamic>);
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }

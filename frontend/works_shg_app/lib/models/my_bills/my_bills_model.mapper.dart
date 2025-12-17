@@ -1,383 +1,434 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element
+// ignore_for_file: unused_element, unnecessary_cast, override_on_non_overriding_member
+// ignore_for_file: strict_raw_type, inference_failure_on_untyped_parameter
 
 part of 'my_bills_model.dart';
 
-class MyBillsListModelMapper extends MapperBase<MyBillsListModel> {
-  static MapperContainer container = MapperContainer(
-    mappers: {MyBillsListModelMapper()},
-  )..linkAll({MyBillModelMapper.container});
+class MyBillsListModelMapper extends ClassMapperBase<MyBillsListModel> {
+  MyBillsListModelMapper._();
 
-  @override
-  MyBillsListModelMapperElement createElement(MapperContainer container) {
-    return MyBillsListModelMapperElement._(this, container);
+  static MyBillsListModelMapper? _instance;
+  static MyBillsListModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = MyBillsListModelMapper._());
+      MyBillModelMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'MyBillsListModel';
+  final String id = 'MyBillsListModel';
 
-  static final fromMap = container.fromMap<MyBillsListModel>;
-  static final fromJson = container.fromJson<MyBillsListModel>;
-}
-
-class MyBillsListModelMapperElement
-    extends MapperElementBase<MyBillsListModel> {
-  MyBillsListModelMapperElement._(super.mapper, super.container);
+  static List<MyBillModel>? _$bills(MyBillsListModel v) => v.bills;
+  static const Field<MyBillsListModel, List<MyBillModel>> _f$bills =
+      Field('bills', _$bills, opt: true);
 
   @override
-  Function get decoder => decode;
-  MyBillsListModel decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  MyBillsListModel fromMap(Map<String, dynamic> map) =>
-      MyBillsListModel(bills: container.$getOpt(map, 'bills'));
+  final MappableFields<MyBillsListModel> fields = const {
+    #bills: _f$bills,
+  };
+
+  static MyBillsListModel _instantiate(DecodingData data) {
+    return MyBillsListModel(bills: data.dec(_f$bills));
+  }
 
   @override
-  Function get encoder => encode;
-  dynamic encode(MyBillsListModel v) => toMap(v);
-  Map<String, dynamic> toMap(MyBillsListModel m) =>
-      {'bills': container.$enc(m.bills, 'bills')};
+  final Function instantiate = _instantiate;
 
-  @override
-  String stringify(MyBillsListModel self) =>
-      'MyBillsListModel(bills: ${container.asString(self.bills)})';
-  @override
-  int hash(MyBillsListModel self) => container.hash(self.bills);
-  @override
-  bool equals(MyBillsListModel self, MyBillsListModel other) =>
-      container.isEqual(self.bills, other.bills);
+  static MyBillsListModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<MyBillsListModel>(map);
+  }
+
+  static MyBillsListModel fromJson(String json) {
+    return ensureInitialized().decodeJson<MyBillsListModel>(json);
+  }
 }
 
 mixin MyBillsListModelMappable {
-  String toJson() =>
-      MyBillsListModelMapper.container.toJson(this as MyBillsListModel);
-  Map<String, dynamic> toMap() =>
-      MyBillsListModelMapper.container.toMap(this as MyBillsListModel);
+  String toJson() {
+    return MyBillsListModelMapper.ensureInitialized()
+        .encodeJson<MyBillsListModel>(this as MyBillsListModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return MyBillsListModelMapper.ensureInitialized()
+        .encodeMap<MyBillsListModel>(this as MyBillsListModel);
+  }
+
   MyBillsListModelCopyWith<MyBillsListModel, MyBillsListModel, MyBillsListModel>
       get copyWith => _MyBillsListModelCopyWithImpl(
           this as MyBillsListModel, $identity, $identity);
   @override
-  String toString() => MyBillsListModelMapper.container.asString(this);
+  String toString() {
+    return MyBillsListModelMapper.ensureInitialized()
+        .stringifyValue(this as MyBillsListModel);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          MyBillsListModelMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return MyBillsListModelMapper.ensureInitialized()
+        .equalsValue(this as MyBillsListModel, other);
+  }
+
   @override
-  int get hashCode => MyBillsListModelMapper.container.hash(this);
+  int get hashCode {
+    return MyBillsListModelMapper.ensureInitialized()
+        .hashValue(this as MyBillsListModel);
+  }
 }
 
-extension MyBillsListModelValueCopy<$R, $Out extends MyBillsListModel>
+extension MyBillsListModelValueCopy<$R, $Out>
     on ObjectCopyWith<$R, MyBillsListModel, $Out> {
-  MyBillsListModelCopyWith<$R, MyBillsListModel, $Out> get asMyBillsListModel =>
-      base.as((v, t, t2) => _MyBillsListModelCopyWithImpl(v, t, t2));
+  MyBillsListModelCopyWith<$R, MyBillsListModel, $Out>
+      get $asMyBillsListModel =>
+          $base.as((v, t, t2) => _MyBillsListModelCopyWithImpl(v, t, t2));
 }
 
-typedef MyBillsListModelCopyWithBound = MyBillsListModel;
-
-abstract class MyBillsListModelCopyWith<$R, $In extends MyBillsListModel,
-    $Out extends MyBillsListModel> implements ObjectCopyWith<$R, $In, $Out> {
-  MyBillsListModelCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends MyBillsListModel>(
-          Then<MyBillsListModel, $Out2> t, Then<$Out2, $R2> t2);
+abstract class MyBillsListModelCopyWith<$R, $In extends MyBillsListModel, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, MyBillModel,
       MyBillModelCopyWith<$R, MyBillModel, MyBillModel>>? get bills;
   $R call({List<MyBillModel>? bills});
+  MyBillsListModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _MyBillsListModelCopyWithImpl<$R, $Out extends MyBillsListModel>
-    extends CopyWithBase<$R, MyBillsListModel, $Out>
+class _MyBillsListModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, MyBillsListModel, $Out>
     implements MyBillsListModelCopyWith<$R, MyBillsListModel, $Out> {
   _MyBillsListModelCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  MyBillsListModelCopyWith<$R2, MyBillsListModel, $Out2>
-      chain<$R2, $Out2 extends MyBillsListModel>(
-              Then<MyBillsListModel, $Out2> t, Then<$Out2, $R2> t2) =>
-          _MyBillsListModelCopyWithImpl($value, t, t2);
 
+  @override
+  late final ClassMapperBase<MyBillsListModel> $mapper =
+      MyBillsListModelMapper.ensureInitialized();
   @override
   ListCopyWith<$R, MyBillModel,
           MyBillModelCopyWith<$R, MyBillModel, MyBillModel>>?
       get bills => $value.bills != null
-          ? ListCopyWith(
-              $value.bills!,
-              (v, t) => v.copyWith.chain<$R, MyBillModel>($identity, t),
+          ? ListCopyWith($value.bills!, (v, t) => v.copyWith.$chain(t),
               (v) => call(bills: v))
           : null;
   @override
   $R call({Object? bills = $none}) =>
-      $then(MyBillsListModel(bills: or(bills, $value.bills)));
-}
-
-class MyBillModelMapper extends MapperBase<MyBillModel> {
-  static MapperContainer container = MapperContainer(
-    mappers: {MyBillModelMapper()},
-  )..linkAll({BillModelMapper.container});
+      $apply(FieldCopyWithData({if (bills != $none) #bills: bills}));
+  @override
+  MyBillsListModel $make(CopyWithData data) =>
+      MyBillsListModel(bills: data.get(#bills, or: $value.bills));
 
   @override
-  MyBillModelMapperElement createElement(MapperContainer container) {
-    return MyBillModelMapperElement._(this, container);
+  MyBillsListModelCopyWith<$R2, MyBillsListModel, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _MyBillsListModelCopyWithImpl($value, $cast, t);
+}
+
+class MyBillModelMapper extends ClassMapperBase<MyBillModel> {
+  MyBillModelMapper._();
+
+  static MyBillModelMapper? _instance;
+  static MyBillModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = MyBillModelMapper._());
+      BillModelMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'MyBillModel';
+  final String id = 'MyBillModel';
 
-  static final fromMap = container.fromMap<MyBillModel>;
-  static final fromJson = container.fromJson<MyBillModel>;
-}
-
-class MyBillModelMapperElement extends MapperElementBase<MyBillModel> {
-  MyBillModelMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  MyBillModel decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  MyBillModel fromMap(Map<String, dynamic> map) => MyBillModel(
-      bill: container.$getOpt(map, 'bill'),
-      musterRollNumber: container.$getOpt(map, 'musterRollNumber'),
-      contractNumber: container.$getOpt(map, 'contractNumber'));
+  static BillModel? _$bill(MyBillModel v) => v.bill;
+  static const Field<MyBillModel, BillModel> _f$bill =
+      Field('bill', _$bill, opt: true);
+  static String? _$musterRollNumber(MyBillModel v) => v.musterRollNumber;
+  static const Field<MyBillModel, String> _f$musterRollNumber =
+      Field('musterRollNumber', _$musterRollNumber, opt: true);
+  static String? _$contractNumber(MyBillModel v) => v.contractNumber;
+  static const Field<MyBillModel, String> _f$contractNumber =
+      Field('contractNumber', _$contractNumber, opt: true);
 
   @override
-  Function get encoder => encode;
-  dynamic encode(MyBillModel v) => toMap(v);
-  Map<String, dynamic> toMap(MyBillModel m) => {
-        'bill': container.$enc(m.bill, 'bill'),
-        'musterRollNumber':
-            container.$enc(m.musterRollNumber, 'musterRollNumber'),
-        'contractNumber': container.$enc(m.contractNumber, 'contractNumber')
-      };
+  final MappableFields<MyBillModel> fields = const {
+    #bill: _f$bill,
+    #musterRollNumber: _f$musterRollNumber,
+    #contractNumber: _f$contractNumber,
+  };
+
+  static MyBillModel _instantiate(DecodingData data) {
+    return MyBillModel(
+        bill: data.dec(_f$bill),
+        musterRollNumber: data.dec(_f$musterRollNumber),
+        contractNumber: data.dec(_f$contractNumber));
+  }
 
   @override
-  String stringify(MyBillModel self) =>
-      'MyBillModel(contractNumber: ${container.asString(self.contractNumber)}, musterRollNumber: ${container.asString(self.musterRollNumber)}, bill: ${container.asString(self.bill)})';
-  @override
-  int hash(MyBillModel self) =>
-      container.hash(self.contractNumber) ^
-      container.hash(self.musterRollNumber) ^
-      container.hash(self.bill);
-  @override
-  bool equals(MyBillModel self, MyBillModel other) =>
-      container.isEqual(self.contractNumber, other.contractNumber) &&
-      container.isEqual(self.musterRollNumber, other.musterRollNumber) &&
-      container.isEqual(self.bill, other.bill);
+  final Function instantiate = _instantiate;
+
+  static MyBillModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<MyBillModel>(map);
+  }
+
+  static MyBillModel fromJson(String json) {
+    return ensureInitialized().decodeJson<MyBillModel>(json);
+  }
 }
 
 mixin MyBillModelMappable {
-  String toJson() => MyBillModelMapper.container.toJson(this as MyBillModel);
-  Map<String, dynamic> toMap() =>
-      MyBillModelMapper.container.toMap(this as MyBillModel);
+  String toJson() {
+    return MyBillModelMapper.ensureInitialized()
+        .encodeJson<MyBillModel>(this as MyBillModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return MyBillModelMapper.ensureInitialized()
+        .encodeMap<MyBillModel>(this as MyBillModel);
+  }
+
   MyBillModelCopyWith<MyBillModel, MyBillModel, MyBillModel> get copyWith =>
       _MyBillModelCopyWithImpl(this as MyBillModel, $identity, $identity);
   @override
-  String toString() => MyBillModelMapper.container.asString(this);
+  String toString() {
+    return MyBillModelMapper.ensureInitialized()
+        .stringifyValue(this as MyBillModel);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          MyBillModelMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return MyBillModelMapper.ensureInitialized()
+        .equalsValue(this as MyBillModel, other);
+  }
+
   @override
-  int get hashCode => MyBillModelMapper.container.hash(this);
+  int get hashCode {
+    return MyBillModelMapper.ensureInitialized().hashValue(this as MyBillModel);
+  }
 }
 
-extension MyBillModelValueCopy<$R, $Out extends MyBillModel>
+extension MyBillModelValueCopy<$R, $Out>
     on ObjectCopyWith<$R, MyBillModel, $Out> {
-  MyBillModelCopyWith<$R, MyBillModel, $Out> get asMyBillModel =>
-      base.as((v, t, t2) => _MyBillModelCopyWithImpl(v, t, t2));
+  MyBillModelCopyWith<$R, MyBillModel, $Out> get $asMyBillModel =>
+      $base.as((v, t, t2) => _MyBillModelCopyWithImpl(v, t, t2));
 }
 
-typedef MyBillModelCopyWithBound = MyBillModel;
-
-abstract class MyBillModelCopyWith<$R, $In extends MyBillModel,
-    $Out extends MyBillModel> implements ObjectCopyWith<$R, $In, $Out> {
-  MyBillModelCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends MyBillModel>(
-      Then<MyBillModel, $Out2> t, Then<$Out2, $R2> t2);
+abstract class MyBillModelCopyWith<$R, $In extends MyBillModel, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
   BillModelCopyWith<$R, BillModel, BillModel>? get bill;
   $R call({BillModel? bill, String? musterRollNumber, String? contractNumber});
+  MyBillModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
-class _MyBillModelCopyWithImpl<$R, $Out extends MyBillModel>
-    extends CopyWithBase<$R, MyBillModel, $Out>
+class _MyBillModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, MyBillModel, $Out>
     implements MyBillModelCopyWith<$R, MyBillModel, $Out> {
   _MyBillModelCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  MyBillModelCopyWith<$R2, MyBillModel, $Out2>
-      chain<$R2, $Out2 extends MyBillModel>(
-              Then<MyBillModel, $Out2> t, Then<$Out2, $R2> t2) =>
-          _MyBillModelCopyWithImpl($value, t, t2);
 
   @override
+  late final ClassMapperBase<MyBillModel> $mapper =
+      MyBillModelMapper.ensureInitialized();
+  @override
   BillModelCopyWith<$R, BillModel, BillModel>? get bill =>
-      $value.bill?.copyWith.chain($identity, (v) => call(bill: v));
+      $value.bill?.copyWith.$chain((v) => call(bill: v));
   @override
   $R call(
           {Object? bill = $none,
           Object? musterRollNumber = $none,
           Object? contractNumber = $none}) =>
-      $then(MyBillModel(
-          bill: or(bill, $value.bill),
-          musterRollNumber: or(musterRollNumber, $value.musterRollNumber),
-          contractNumber: or(contractNumber, $value.contractNumber)));
-}
-
-class BillModelMapper extends MapperBase<BillModel> {
-  static MapperContainer container = MapperContainer(
-    mappers: {BillModelMapper()},
-  )..linkAll({
-      ContractAuditDetailsMapper.container,
-      BillDetailsMapper.container,
-      PayerMapper.container,
-      BillAdditionalDetailsMapper.container,
-    });
+      $apply(FieldCopyWithData({
+        if (bill != $none) #bill: bill,
+        if (musterRollNumber != $none) #musterRollNumber: musterRollNumber,
+        if (contractNumber != $none) #contractNumber: contractNumber
+      }));
+  @override
+  MyBillModel $make(CopyWithData data) => MyBillModel(
+      bill: data.get(#bill, or: $value.bill),
+      musterRollNumber:
+          data.get(#musterRollNumber, or: $value.musterRollNumber),
+      contractNumber: data.get(#contractNumber, or: $value.contractNumber));
 
   @override
-  BillModelMapperElement createElement(MapperContainer container) {
-    return BillModelMapperElement._(this, container);
+  MyBillModelCopyWith<$R2, MyBillModel, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _MyBillModelCopyWithImpl($value, $cast, t);
+}
+
+class BillModelMapper extends ClassMapperBase<BillModel> {
+  BillModelMapper._();
+
+  static BillModelMapper? _instance;
+  static BillModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = BillModelMapper._());
+      ContractAuditDetailsMapper.ensureInitialized();
+      BillDetailsMapper.ensureInitialized();
+      PayerMapper.ensureInitialized();
+      BillAdditionalDetailsMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'BillModel';
+  final String id = 'BillModel';
 
-  static final fromMap = container.fromMap<BillModel>;
-  static final fromJson = container.fromJson<BillModel>;
-}
-
-class BillModelMapperElement extends MapperElementBase<BillModel> {
-  BillModelMapperElement._(super.mapper, super.container);
+  static String? _$id(BillModel v) => v.id;
+  static const Field<BillModel, String> _f$id = Field('id', _$id, opt: true);
+  static String _$tenantId(BillModel v) => v.tenantId;
+  static const Field<BillModel, String> _f$tenantId =
+      Field('tenantId', _$tenantId);
+  static String? _$referenceId(BillModel v) => v.referenceId;
+  static const Field<BillModel, String> _f$referenceId =
+      Field('referenceId', _$referenceId, opt: true);
+  static String? _$status(BillModel v) => v.status;
+  static const Field<BillModel, String> _f$status =
+      Field('status', _$status, opt: true);
+  static int? _$dueDate(BillModel v) => v.dueDate;
+  static const Field<BillModel, int> _f$dueDate =
+      Field('dueDate', _$dueDate, opt: true);
+  static ContractAuditDetails? _$auditDetails(BillModel v) => v.auditDetails;
+  static const Field<BillModel, ContractAuditDetails> _f$auditDetails =
+      Field('auditDetails', _$auditDetails, opt: true);
+  static String? _$paymentStatus(BillModel v) => v.paymentStatus;
+  static const Field<BillModel, String> _f$paymentStatus =
+      Field('paymentStatus', _$paymentStatus, opt: true);
+  static int? _$billDate(BillModel v) => v.billDate;
+  static const Field<BillModel, int> _f$billDate =
+      Field('billDate', _$billDate, opt: true);
+  static List<BillDetails>? _$billDetails(BillModel v) => v.billDetails;
+  static const Field<BillModel, List<BillDetails>> _f$billDetails =
+      Field('billDetails', _$billDetails, opt: true);
+  static String? _$businessService(BillModel v) => v.businessService;
+  static const Field<BillModel, String> _f$businessService =
+      Field('businessService', _$businessService, opt: true);
+  static int? _$fromPeriod(BillModel v) => v.fromPeriod;
+  static const Field<BillModel, int> _f$fromPeriod =
+      Field('fromPeriod', _$fromPeriod, opt: true);
+  static num? _$netPaidAmount(BillModel v) => v.netPaidAmount;
+  static const Field<BillModel, num> _f$netPaidAmount =
+      Field('netPaidAmount', _$netPaidAmount, opt: true);
+  static num? _$netPayableAmount(BillModel v) => v.netPayableAmount;
+  static const Field<BillModel, num> _f$netPayableAmount =
+      Field('netPayableAmount', _$netPayableAmount, opt: true);
+  static Payer? _$payer(BillModel v) => v.payer;
+  static const Field<BillModel, Payer> _f$payer =
+      Field('payer', _$payer, opt: true);
+  static int? _$toPeriod(BillModel v) => v.toPeriod;
+  static const Field<BillModel, int> _f$toPeriod =
+      Field('toPeriod', _$toPeriod, opt: true);
+  static String? _$billNumber(BillModel v) => v.billNumber;
+  static const Field<BillModel, String> _f$billNumber =
+      Field('billNumber', _$billNumber, opt: true);
+  static String? _$wfStatus(BillModel v) => v.wfStatus;
+  static const Field<BillModel, String> _f$wfStatus =
+      Field('wfStatus', _$wfStatus, opt: true);
+  static BillAdditionalDetails? _$additionalDetails(BillModel v) =>
+      v.additionalDetails;
+  static const Field<BillModel, BillAdditionalDetails> _f$additionalDetails =
+      Field('additionalDetails', _$additionalDetails, opt: true);
+  static num? _$totalAmount(BillModel v) => v.totalAmount;
+  static const Field<BillModel, num> _f$totalAmount =
+      Field('totalAmount', _$totalAmount, opt: true);
+  static num? _$totalPaidAmount(BillModel v) => v.totalPaidAmount;
+  static const Field<BillModel, num> _f$totalPaidAmount =
+      Field('totalPaidAmount', _$totalPaidAmount, opt: true);
 
   @override
-  Function get decoder => decode;
-  BillModel decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  BillModel fromMap(Map<String, dynamic> map) => BillModel(
-      id: container.$getOpt(map, 'id'),
-      tenantId: container.$get(map, 'tenantId'),
-      referenceId: container.$getOpt(map, 'referenceId'),
-      status: container.$getOpt(map, 'status'),
-      dueDate: container.$getOpt(map, 'dueDate'),
-      auditDetails: container.$getOpt(map, 'auditDetails'),
-      paymentStatus: container.$getOpt(map, 'paymentStatus'),
-      billDate: container.$getOpt(map, 'billDate'),
-      billDetails: container.$getOpt(map, 'billDetails'),
-      businessService: container.$getOpt(map, 'businessService'),
-      fromPeriod: container.$getOpt(map, 'fromPeriod'),
-      netPaidAmount: container.$getOpt(map, 'netPaidAmount'),
-      netPayableAmount: container.$getOpt(map, 'netPayableAmount'),
-      payer: container.$getOpt(map, 'payer'),
-      toPeriod: container.$getOpt(map, 'toPeriod'),
-      billNumber: container.$getOpt(map, 'billNumber'),
-      wfStatus: container.$getOpt(map, 'wfStatus'),
-      additionalDetails: container.$getOpt(map, 'additionalDetails'),
-      totalAmount: container.$getOpt(map, 'totalAmount'),
-      totalPaidAmount: container.$getOpt(map, 'totalPaidAmount'));
+  final MappableFields<BillModel> fields = const {
+    #id: _f$id,
+    #tenantId: _f$tenantId,
+    #referenceId: _f$referenceId,
+    #status: _f$status,
+    #dueDate: _f$dueDate,
+    #auditDetails: _f$auditDetails,
+    #paymentStatus: _f$paymentStatus,
+    #billDate: _f$billDate,
+    #billDetails: _f$billDetails,
+    #businessService: _f$businessService,
+    #fromPeriod: _f$fromPeriod,
+    #netPaidAmount: _f$netPaidAmount,
+    #netPayableAmount: _f$netPayableAmount,
+    #payer: _f$payer,
+    #toPeriod: _f$toPeriod,
+    #billNumber: _f$billNumber,
+    #wfStatus: _f$wfStatus,
+    #additionalDetails: _f$additionalDetails,
+    #totalAmount: _f$totalAmount,
+    #totalPaidAmount: _f$totalPaidAmount,
+  };
+
+  static BillModel _instantiate(DecodingData data) {
+    return BillModel(
+        id: data.dec(_f$id),
+        tenantId: data.dec(_f$tenantId),
+        referenceId: data.dec(_f$referenceId),
+        status: data.dec(_f$status),
+        dueDate: data.dec(_f$dueDate),
+        auditDetails: data.dec(_f$auditDetails),
+        paymentStatus: data.dec(_f$paymentStatus),
+        billDate: data.dec(_f$billDate),
+        billDetails: data.dec(_f$billDetails),
+        businessService: data.dec(_f$businessService),
+        fromPeriod: data.dec(_f$fromPeriod),
+        netPaidAmount: data.dec(_f$netPaidAmount),
+        netPayableAmount: data.dec(_f$netPayableAmount),
+        payer: data.dec(_f$payer),
+        toPeriod: data.dec(_f$toPeriod),
+        billNumber: data.dec(_f$billNumber),
+        wfStatus: data.dec(_f$wfStatus),
+        additionalDetails: data.dec(_f$additionalDetails),
+        totalAmount: data.dec(_f$totalAmount),
+        totalPaidAmount: data.dec(_f$totalPaidAmount));
+  }
 
   @override
-  Function get encoder => encode;
-  dynamic encode(BillModel v) => toMap(v);
-  Map<String, dynamic> toMap(BillModel b) => {
-        'id': container.$enc(b.id, 'id'),
-        'tenantId': container.$enc(b.tenantId, 'tenantId'),
-        'referenceId': container.$enc(b.referenceId, 'referenceId'),
-        'status': container.$enc(b.status, 'status'),
-        'dueDate': container.$enc(b.dueDate, 'dueDate'),
-        'auditDetails': container.$enc(b.auditDetails, 'auditDetails'),
-        'paymentStatus': container.$enc(b.paymentStatus, 'paymentStatus'),
-        'billDate': container.$enc(b.billDate, 'billDate'),
-        'billDetails': container.$enc(b.billDetails, 'billDetails'),
-        'businessService': container.$enc(b.businessService, 'businessService'),
-        'fromPeriod': container.$enc(b.fromPeriod, 'fromPeriod'),
-        'netPaidAmount': container.$enc(b.netPaidAmount, 'netPaidAmount'),
-        'netPayableAmount':
-            container.$enc(b.netPayableAmount, 'netPayableAmount'),
-        'payer': container.$enc(b.payer, 'payer'),
-        'toPeriod': container.$enc(b.toPeriod, 'toPeriod'),
-        'billNumber': container.$enc(b.billNumber, 'billNumber'),
-        'wfStatus': container.$enc(b.wfStatus, 'wfStatus'),
-        'additionalDetails':
-            container.$enc(b.additionalDetails, 'additionalDetails'),
-        'totalAmount': container.$enc(b.totalAmount, 'totalAmount'),
-        'totalPaidAmount': container.$enc(b.totalPaidAmount, 'totalPaidAmount')
-      };
+  final Function instantiate = _instantiate;
 
-  @override
-  String stringify(BillModel self) =>
-      'BillModel(tenantId: ${container.asString(self.tenantId)}, id: ${container.asString(self.id)}, billDate: ${container.asString(self.billDate)}, dueDate: ${container.asString(self.dueDate)}, netPayableAmount: ${container.asString(self.netPayableAmount)}, netPaidAmount: ${container.asString(self.netPaidAmount)}, totalAmount: ${container.asString(self.totalAmount)}, totalPaidAmount: ${container.asString(self.totalPaidAmount)}, businessService: ${container.asString(self.businessService)}, billNumber: ${container.asString(self.billNumber)}, referenceId: ${container.asString(self.referenceId)}, fromPeriod: ${container.asString(self.fromPeriod)}, toPeriod: ${container.asString(self.toPeriod)}, paymentStatus: ${container.asString(self.paymentStatus)}, status: ${container.asString(self.status)}, wfStatus: ${container.asString(self.wfStatus)}, payer: ${container.asString(self.payer)}, additionalDetails: ${container.asString(self.additionalDetails)}, billDetails: ${container.asString(self.billDetails)}, auditDetails: ${container.asString(self.auditDetails)})';
-  @override
-  int hash(BillModel self) =>
-      container.hash(self.tenantId) ^
-      container.hash(self.id) ^
-      container.hash(self.billDate) ^
-      container.hash(self.dueDate) ^
-      container.hash(self.netPayableAmount) ^
-      container.hash(self.netPaidAmount) ^
-      container.hash(self.totalAmount) ^
-      container.hash(self.totalPaidAmount) ^
-      container.hash(self.businessService) ^
-      container.hash(self.billNumber) ^
-      container.hash(self.referenceId) ^
-      container.hash(self.fromPeriod) ^
-      container.hash(self.toPeriod) ^
-      container.hash(self.paymentStatus) ^
-      container.hash(self.status) ^
-      container.hash(self.wfStatus) ^
-      container.hash(self.payer) ^
-      container.hash(self.additionalDetails) ^
-      container.hash(self.billDetails) ^
-      container.hash(self.auditDetails);
-  @override
-  bool equals(BillModel self, BillModel other) =>
-      container.isEqual(self.tenantId, other.tenantId) &&
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.billDate, other.billDate) &&
-      container.isEqual(self.dueDate, other.dueDate) &&
-      container.isEqual(self.netPayableAmount, other.netPayableAmount) &&
-      container.isEqual(self.netPaidAmount, other.netPaidAmount) &&
-      container.isEqual(self.totalAmount, other.totalAmount) &&
-      container.isEqual(self.totalPaidAmount, other.totalPaidAmount) &&
-      container.isEqual(self.businessService, other.businessService) &&
-      container.isEqual(self.billNumber, other.billNumber) &&
-      container.isEqual(self.referenceId, other.referenceId) &&
-      container.isEqual(self.fromPeriod, other.fromPeriod) &&
-      container.isEqual(self.toPeriod, other.toPeriod) &&
-      container.isEqual(self.paymentStatus, other.paymentStatus) &&
-      container.isEqual(self.status, other.status) &&
-      container.isEqual(self.wfStatus, other.wfStatus) &&
-      container.isEqual(self.payer, other.payer) &&
-      container.isEqual(self.additionalDetails, other.additionalDetails) &&
-      container.isEqual(self.billDetails, other.billDetails) &&
-      container.isEqual(self.auditDetails, other.auditDetails);
+  static BillModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BillModel>(map);
+  }
+
+  static BillModel fromJson(String json) {
+    return ensureInitialized().decodeJson<BillModel>(json);
+  }
 }
 
 mixin BillModelMappable {
-  String toJson() => BillModelMapper.container.toJson(this as BillModel);
-  Map<String, dynamic> toMap() =>
-      BillModelMapper.container.toMap(this as BillModel);
+  String toJson() {
+    return BillModelMapper.ensureInitialized()
+        .encodeJson<BillModel>(this as BillModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BillModelMapper.ensureInitialized()
+        .encodeMap<BillModel>(this as BillModel);
+  }
+
   BillModelCopyWith<BillModel, BillModel, BillModel> get copyWith =>
       _BillModelCopyWithImpl(this as BillModel, $identity, $identity);
   @override
-  String toString() => BillModelMapper.container.asString(this);
+  String toString() {
+    return BillModelMapper.ensureInitialized()
+        .stringifyValue(this as BillModel);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          BillModelMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return BillModelMapper.ensureInitialized()
+        .equalsValue(this as BillModel, other);
+  }
+
   @override
-  int get hashCode => BillModelMapper.container.hash(this);
+  int get hashCode {
+    return BillModelMapper.ensureInitialized().hashValue(this as BillModel);
+  }
 }
 
-extension BillModelValueCopy<$R, $Out extends BillModel>
-    on ObjectCopyWith<$R, BillModel, $Out> {
-  BillModelCopyWith<$R, BillModel, $Out> get asBillModel =>
-      base.as((v, t, t2) => _BillModelCopyWithImpl(v, t, t2));
+extension BillModelValueCopy<$R, $Out> on ObjectCopyWith<$R, BillModel, $Out> {
+  BillModelCopyWith<$R, BillModel, $Out> get $asBillModel =>
+      $base.as((v, t, t2) => _BillModelCopyWithImpl(v, t, t2));
 }
 
-typedef BillModelCopyWithBound = BillModel;
-
-abstract class BillModelCopyWith<$R, $In extends BillModel,
-    $Out extends BillModel> implements ObjectCopyWith<$R, $In, $Out> {
-  BillModelCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends BillModel>(
-      Then<BillModel, $Out2> t, Then<$Out2, $R2> t2);
+abstract class BillModelCopyWith<$R, $In extends BillModel, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
   ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
       get auditDetails;
   ListCopyWith<$R, BillDetails,
@@ -397,47 +448,45 @@ abstract class BillModelCopyWith<$R, $In extends BillModel,
       List<BillDetails>? billDetails,
       String? businessService,
       int? fromPeriod,
-      int? netPaidAmount,
-      int? netPayableAmount,
+      num? netPaidAmount,
+      num? netPayableAmount,
       Payer? payer,
       int? toPeriod,
       String? billNumber,
       String? wfStatus,
       BillAdditionalDetails? additionalDetails,
-      int? totalAmount,
-      int? totalPaidAmount});
+      num? totalAmount,
+      num? totalPaidAmount});
+  BillModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
-class _BillModelCopyWithImpl<$R, $Out extends BillModel>
-    extends CopyWithBase<$R, BillModel, $Out>
+class _BillModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, BillModel, $Out>
     implements BillModelCopyWith<$R, BillModel, $Out> {
   _BillModelCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  BillModelCopyWith<$R2, BillModel, $Out2> chain<$R2, $Out2 extends BillModel>(
-          Then<BillModel, $Out2> t, Then<$Out2, $R2> t2) =>
-      _BillModelCopyWithImpl($value, t, t2);
 
   @override
+  late final ClassMapperBase<BillModel> $mapper =
+      BillModelMapper.ensureInitialized();
+  @override
   ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
   @override
   ListCopyWith<$R, BillDetails,
           BillDetailsCopyWith<$R, BillDetails, BillDetails>>?
       get billDetails => $value.billDetails != null
-          ? ListCopyWith(
-              $value.billDetails!,
-              (v, t) => v.copyWith.chain<$R, BillDetails>($identity, t),
+          ? ListCopyWith($value.billDetails!, (v, t) => v.copyWith.$chain(t),
               (v) => call(billDetails: v))
           : null;
   @override
   PayerCopyWith<$R, Payer, Payer>? get payer =>
-      $value.payer?.copyWith.chain($identity, (v) => call(payer: v));
+      $value.payer?.copyWith.$chain((v) => call(payer: v));
   @override
   BillAdditionalDetailsCopyWith<$R, BillAdditionalDetails,
           BillAdditionalDetails>?
       get additionalDetails => $value.additionalDetails?.copyWith
-          .chain($identity, (v) => call(additionalDetails: v));
+          .$chain((v) => call(additionalDetails: v));
   @override
   $R call(
           {Object? id = $none,
@@ -460,279 +509,187 @@ class _BillModelCopyWithImpl<$R, $Out extends BillModel>
           Object? additionalDetails = $none,
           Object? totalAmount = $none,
           Object? totalPaidAmount = $none}) =>
-      $then(BillModel(
-          id: or(id, $value.id),
-          tenantId: tenantId ?? $value.tenantId,
-          referenceId: or(referenceId, $value.referenceId),
-          status: or(status, $value.status),
-          dueDate: or(dueDate, $value.dueDate),
-          auditDetails: or(auditDetails, $value.auditDetails),
-          paymentStatus: or(paymentStatus, $value.paymentStatus),
-          billDate: or(billDate, $value.billDate),
-          billDetails: or(billDetails, $value.billDetails),
-          businessService: or(businessService, $value.businessService),
-          fromPeriod: or(fromPeriod, $value.fromPeriod),
-          netPaidAmount: or(netPaidAmount, $value.netPaidAmount),
-          netPayableAmount: or(netPayableAmount, $value.netPayableAmount),
-          payer: or(payer, $value.payer),
-          toPeriod: or(toPeriod, $value.toPeriod),
-          billNumber: or(billNumber, $value.billNumber),
-          wfStatus: or(wfStatus, $value.wfStatus),
-          additionalDetails: or(additionalDetails, $value.additionalDetails),
-          totalAmount: or(totalAmount, $value.totalAmount),
-          totalPaidAmount: or(totalPaidAmount, $value.totalPaidAmount)));
-}
-
-class PayerMapper extends MapperBase<Payer> {
-  static MapperContainer container = MapperContainer(
-    mappers: {PayerMapper()},
-  )..linkAll({ContractAuditDetailsMapper.container});
+      $apply(FieldCopyWithData({
+        if (id != $none) #id: id,
+        if (tenantId != null) #tenantId: tenantId,
+        if (referenceId != $none) #referenceId: referenceId,
+        if (status != $none) #status: status,
+        if (dueDate != $none) #dueDate: dueDate,
+        if (auditDetails != $none) #auditDetails: auditDetails,
+        if (paymentStatus != $none) #paymentStatus: paymentStatus,
+        if (billDate != $none) #billDate: billDate,
+        if (billDetails != $none) #billDetails: billDetails,
+        if (businessService != $none) #businessService: businessService,
+        if (fromPeriod != $none) #fromPeriod: fromPeriod,
+        if (netPaidAmount != $none) #netPaidAmount: netPaidAmount,
+        if (netPayableAmount != $none) #netPayableAmount: netPayableAmount,
+        if (payer != $none) #payer: payer,
+        if (toPeriod != $none) #toPeriod: toPeriod,
+        if (billNumber != $none) #billNumber: billNumber,
+        if (wfStatus != $none) #wfStatus: wfStatus,
+        if (additionalDetails != $none) #additionalDetails: additionalDetails,
+        if (totalAmount != $none) #totalAmount: totalAmount,
+        if (totalPaidAmount != $none) #totalPaidAmount: totalPaidAmount
+      }));
+  @override
+  BillModel $make(CopyWithData data) => BillModel(
+      id: data.get(#id, or: $value.id),
+      tenantId: data.get(#tenantId, or: $value.tenantId),
+      referenceId: data.get(#referenceId, or: $value.referenceId),
+      status: data.get(#status, or: $value.status),
+      dueDate: data.get(#dueDate, or: $value.dueDate),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails),
+      paymentStatus: data.get(#paymentStatus, or: $value.paymentStatus),
+      billDate: data.get(#billDate, or: $value.billDate),
+      billDetails: data.get(#billDetails, or: $value.billDetails),
+      businessService: data.get(#businessService, or: $value.businessService),
+      fromPeriod: data.get(#fromPeriod, or: $value.fromPeriod),
+      netPaidAmount: data.get(#netPaidAmount, or: $value.netPaidAmount),
+      netPayableAmount:
+          data.get(#netPayableAmount, or: $value.netPayableAmount),
+      payer: data.get(#payer, or: $value.payer),
+      toPeriod: data.get(#toPeriod, or: $value.toPeriod),
+      billNumber: data.get(#billNumber, or: $value.billNumber),
+      wfStatus: data.get(#wfStatus, or: $value.wfStatus),
+      additionalDetails:
+          data.get(#additionalDetails, or: $value.additionalDetails),
+      totalAmount: data.get(#totalAmount, or: $value.totalAmount),
+      totalPaidAmount: data.get(#totalPaidAmount, or: $value.totalPaidAmount));
 
   @override
-  PayerMapperElement createElement(MapperContainer container) {
-    return PayerMapperElement._(this, container);
+  BillModelCopyWith<$R2, BillModel, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _BillModelCopyWithImpl($value, $cast, t);
+}
+
+class BillDetailsMapper extends ClassMapperBase<BillDetails> {
+  BillDetailsMapper._();
+
+  static BillDetailsMapper? _instance;
+  static BillDetailsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = BillDetailsMapper._());
+      ContractAuditDetailsMapper.ensureInitialized();
+      BillLineItemsMapper.ensureInitialized();
+      PayableLineItemsMapper.ensureInitialized();
+      PayeeMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'Payer';
+  final String id = 'BillDetails';
 
-  static final fromMap = container.fromMap<Payer>;
-  static final fromJson = container.fromJson<Payer>;
-}
-
-class PayerMapperElement extends MapperElementBase<Payer> {
-  PayerMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  Payer decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  Payer fromMap(Map<String, dynamic> map) => Payer(
-      id: container.$getOpt(map, 'id'),
-      status: container.$getOpt(map, 'status'),
-      auditDetails: container.$getOpt(map, 'auditDetails'),
-      type: container.$getOpt(map, 'type'),
-      identifier: container.$getOpt(map, 'identifier'),
-      parentId: container.$getOpt(map, 'parentId'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(Payer v) => toMap(v);
-  Map<String, dynamic> toMap(Payer p) => {
-        'id': container.$enc(p.id, 'id'),
-        'status': container.$enc(p.status, 'status'),
-        'auditDetails': container.$enc(p.auditDetails, 'auditDetails'),
-        'type': container.$enc(p.type, 'type'),
-        'identifier': container.$enc(p.identifier, 'identifier'),
-        'parentId': container.$enc(p.parentId, 'parentId')
-      };
-
-  @override
-  String stringify(Payer self) =>
-      'Payer(parentId: ${container.asString(self.parentId)}, identifier: ${container.asString(self.identifier)}, type: ${container.asString(self.type)}, id: ${container.asString(self.id)}, status: ${container.asString(self.status)}, auditDetails: ${container.asString(self.auditDetails)})';
-  @override
-  int hash(Payer self) =>
-      container.hash(self.parentId) ^
-      container.hash(self.identifier) ^
-      container.hash(self.type) ^
-      container.hash(self.id) ^
-      container.hash(self.status) ^
-      container.hash(self.auditDetails);
-  @override
-  bool equals(Payer self, Payer other) =>
-      container.isEqual(self.parentId, other.parentId) &&
-      container.isEqual(self.identifier, other.identifier) &&
-      container.isEqual(self.type, other.type) &&
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.status, other.status) &&
-      container.isEqual(self.auditDetails, other.auditDetails);
-}
-
-mixin PayerMappable {
-  String toJson() => PayerMapper.container.toJson(this as Payer);
-  Map<String, dynamic> toMap() => PayerMapper.container.toMap(this as Payer);
-  PayerCopyWith<Payer, Payer, Payer> get copyWith =>
-      _PayerCopyWithImpl(this as Payer, $identity, $identity);
-  @override
-  String toString() => PayerMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          PayerMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => PayerMapper.container.hash(this);
-}
-
-extension PayerValueCopy<$R, $Out extends Payer>
-    on ObjectCopyWith<$R, Payer, $Out> {
-  PayerCopyWith<$R, Payer, $Out> get asPayer =>
-      base.as((v, t, t2) => _PayerCopyWithImpl(v, t, t2));
-}
-
-typedef PayerCopyWithBound = Payer;
-
-abstract class PayerCopyWith<$R, $In extends Payer, $Out extends Payer>
-    implements ObjectCopyWith<$R, $In, $Out> {
-  PayerCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends Payer>(
-      Then<Payer, $Out2> t, Then<$Out2, $R2> t2);
-  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails;
-  $R call(
-      {String? id,
-      String? status,
-      ContractAuditDetails? auditDetails,
-      String? type,
-      String? identifier,
-      String? parentId});
-}
-
-class _PayerCopyWithImpl<$R, $Out extends Payer>
-    extends CopyWithBase<$R, Payer, $Out>
-    implements PayerCopyWith<$R, Payer, $Out> {
-  _PayerCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  PayerCopyWith<$R2, Payer, $Out2> chain<$R2, $Out2 extends Payer>(
-          Then<Payer, $Out2> t, Then<$Out2, $R2> t2) =>
-      _PayerCopyWithImpl($value, t, t2);
+  static String? _$id(BillDetails v) => v.id;
+  static const Field<BillDetails, String> _f$id = Field('id', _$id, opt: true);
+  static String? _$referenceId(BillDetails v) => v.referenceId;
+  static const Field<BillDetails, String> _f$referenceId =
+      Field('referenceId', _$referenceId, opt: true);
+  static String? _$billId(BillDetails v) => v.billId;
+  static const Field<BillDetails, String> _f$billId =
+      Field('billId', _$billId, opt: true);
+  static ContractAuditDetails? _$auditDetails(BillDetails v) => v.auditDetails;
+  static const Field<BillDetails, ContractAuditDetails> _f$auditDetails =
+      Field('auditDetails', _$auditDetails, opt: true);
+  static int? _$toPeriod(BillDetails v) => v.toPeriod;
+  static const Field<BillDetails, int> _f$toPeriod =
+      Field('toPeriod', _$toPeriod, opt: true);
+  static int? _$fromPeriod(BillDetails v) => v.fromPeriod;
+  static const Field<BillDetails, int> _f$fromPeriod =
+      Field('fromPeriod', _$fromPeriod, opt: true);
+  static String? _$paymentStatus(BillDetails v) => v.paymentStatus;
+  static const Field<BillDetails, String> _f$paymentStatus =
+      Field('paymentStatus', _$paymentStatus, opt: true);
+  static List<BillLineItems>? _$lineItems(BillDetails v) => v.lineItems;
+  static const Field<BillDetails, List<BillLineItems>> _f$lineItems =
+      Field('lineItems', _$lineItems, opt: true);
+  static List<PayableLineItems>? _$payableLineItems(BillDetails v) =>
+      v.payableLineItems;
+  static const Field<BillDetails, List<PayableLineItems>> _f$payableLineItems =
+      Field('payableLineItems', _$payableLineItems, opt: true);
+  static Payee? _$payee(BillDetails v) => v.payee;
+  static const Field<BillDetails, Payee> _f$payee =
+      Field('payee', _$payee, opt: true);
 
   @override
-  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
-  @override
-  $R call(
-          {Object? id = $none,
-          Object? status = $none,
-          Object? auditDetails = $none,
-          Object? type = $none,
-          Object? identifier = $none,
-          Object? parentId = $none}) =>
-      $then(Payer(
-          id: or(id, $value.id),
-          status: or(status, $value.status),
-          auditDetails: or(auditDetails, $value.auditDetails),
-          type: or(type, $value.type),
-          identifier: or(identifier, $value.identifier),
-          parentId: or(parentId, $value.parentId)));
-}
+  final MappableFields<BillDetails> fields = const {
+    #id: _f$id,
+    #referenceId: _f$referenceId,
+    #billId: _f$billId,
+    #auditDetails: _f$auditDetails,
+    #toPeriod: _f$toPeriod,
+    #fromPeriod: _f$fromPeriod,
+    #paymentStatus: _f$paymentStatus,
+    #lineItems: _f$lineItems,
+    #payableLineItems: _f$payableLineItems,
+    #payee: _f$payee,
+  };
 
-class BillDetailsMapper extends MapperBase<BillDetails> {
-  static MapperContainer container = MapperContainer(
-    mappers: {BillDetailsMapper()},
-  )..linkAll({
-      ContractAuditDetailsMapper.container,
-      BillLineItemsMapper.container,
-      PayableLineItemsMapper.container,
-      PayeeMapper.container,
-    });
-
-  @override
-  BillDetailsMapperElement createElement(MapperContainer container) {
-    return BillDetailsMapperElement._(this, container);
+  static BillDetails _instantiate(DecodingData data) {
+    return BillDetails(
+        id: data.dec(_f$id),
+        referenceId: data.dec(_f$referenceId),
+        billId: data.dec(_f$billId),
+        auditDetails: data.dec(_f$auditDetails),
+        toPeriod: data.dec(_f$toPeriod),
+        fromPeriod: data.dec(_f$fromPeriod),
+        paymentStatus: data.dec(_f$paymentStatus),
+        lineItems: data.dec(_f$lineItems),
+        payableLineItems: data.dec(_f$payableLineItems),
+        payee: data.dec(_f$payee));
   }
 
   @override
-  String get id => 'BillDetails';
+  final Function instantiate = _instantiate;
 
-  static final fromMap = container.fromMap<BillDetails>;
-  static final fromJson = container.fromJson<BillDetails>;
-}
+  static BillDetails fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BillDetails>(map);
+  }
 
-class BillDetailsMapperElement extends MapperElementBase<BillDetails> {
-  BillDetailsMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  BillDetails decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  BillDetails fromMap(Map<String, dynamic> map) => BillDetails(
-      id: container.$getOpt(map, 'id'),
-      referenceId: container.$getOpt(map, 'referenceId'),
-      billId: container.$getOpt(map, 'billId'),
-      auditDetails: container.$getOpt(map, 'auditDetails'),
-      toPeriod: container.$getOpt(map, 'toPeriod'),
-      fromPeriod: container.$getOpt(map, 'fromPeriod'),
-      paymentStatus: container.$getOpt(map, 'paymentStatus'),
-      lineItems: container.$getOpt(map, 'lineItems'),
-      payableLineItems: container.$getOpt(map, 'payableLineItems'),
-      payee: container.$getOpt(map, 'payee'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(BillDetails v) => toMap(v);
-  Map<String, dynamic> toMap(BillDetails b) => {
-        'id': container.$enc(b.id, 'id'),
-        'referenceId': container.$enc(b.referenceId, 'referenceId'),
-        'billId': container.$enc(b.billId, 'billId'),
-        'auditDetails': container.$enc(b.auditDetails, 'auditDetails'),
-        'toPeriod': container.$enc(b.toPeriod, 'toPeriod'),
-        'fromPeriod': container.$enc(b.fromPeriod, 'fromPeriod'),
-        'paymentStatus': container.$enc(b.paymentStatus, 'paymentStatus'),
-        'lineItems': container.$enc(b.lineItems, 'lineItems'),
-        'payableLineItems':
-            container.$enc(b.payableLineItems, 'payableLineItems'),
-        'payee': container.$enc(b.payee, 'payee')
-      };
-
-  @override
-  String stringify(BillDetails self) =>
-      'BillDetails(billId: ${container.asString(self.billId)}, referenceId: ${container.asString(self.referenceId)}, id: ${container.asString(self.id)}, paymentStatus: ${container.asString(self.paymentStatus)}, fromPeriod: ${container.asString(self.fromPeriod)}, toPeriod: ${container.asString(self.toPeriod)}, payee: ${container.asString(self.payee)}, lineItems: ${container.asString(self.lineItems)}, payableLineItems: ${container.asString(self.payableLineItems)}, auditDetails: ${container.asString(self.auditDetails)})';
-  @override
-  int hash(BillDetails self) =>
-      container.hash(self.billId) ^
-      container.hash(self.referenceId) ^
-      container.hash(self.id) ^
-      container.hash(self.paymentStatus) ^
-      container.hash(self.fromPeriod) ^
-      container.hash(self.toPeriod) ^
-      container.hash(self.payee) ^
-      container.hash(self.lineItems) ^
-      container.hash(self.payableLineItems) ^
-      container.hash(self.auditDetails);
-  @override
-  bool equals(BillDetails self, BillDetails other) =>
-      container.isEqual(self.billId, other.billId) &&
-      container.isEqual(self.referenceId, other.referenceId) &&
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.paymentStatus, other.paymentStatus) &&
-      container.isEqual(self.fromPeriod, other.fromPeriod) &&
-      container.isEqual(self.toPeriod, other.toPeriod) &&
-      container.isEqual(self.payee, other.payee) &&
-      container.isEqual(self.lineItems, other.lineItems) &&
-      container.isEqual(self.payableLineItems, other.payableLineItems) &&
-      container.isEqual(self.auditDetails, other.auditDetails);
+  static BillDetails fromJson(String json) {
+    return ensureInitialized().decodeJson<BillDetails>(json);
+  }
 }
 
 mixin BillDetailsMappable {
-  String toJson() => BillDetailsMapper.container.toJson(this as BillDetails);
-  Map<String, dynamic> toMap() =>
-      BillDetailsMapper.container.toMap(this as BillDetails);
+  String toJson() {
+    return BillDetailsMapper.ensureInitialized()
+        .encodeJson<BillDetails>(this as BillDetails);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BillDetailsMapper.ensureInitialized()
+        .encodeMap<BillDetails>(this as BillDetails);
+  }
+
   BillDetailsCopyWith<BillDetails, BillDetails, BillDetails> get copyWith =>
       _BillDetailsCopyWithImpl(this as BillDetails, $identity, $identity);
   @override
-  String toString() => BillDetailsMapper.container.asString(this);
+  String toString() {
+    return BillDetailsMapper.ensureInitialized()
+        .stringifyValue(this as BillDetails);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          BillDetailsMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return BillDetailsMapper.ensureInitialized()
+        .equalsValue(this as BillDetails, other);
+  }
+
   @override
-  int get hashCode => BillDetailsMapper.container.hash(this);
+  int get hashCode {
+    return BillDetailsMapper.ensureInitialized().hashValue(this as BillDetails);
+  }
 }
 
-extension BillDetailsValueCopy<$R, $Out extends BillDetails>
+extension BillDetailsValueCopy<$R, $Out>
     on ObjectCopyWith<$R, BillDetails, $Out> {
-  BillDetailsCopyWith<$R, BillDetails, $Out> get asBillDetails =>
-      base.as((v, t, t2) => _BillDetailsCopyWithImpl(v, t, t2));
+  BillDetailsCopyWith<$R, BillDetails, $Out> get $asBillDetails =>
+      $base.as((v, t, t2) => _BillDetailsCopyWithImpl(v, t, t2));
 }
 
-typedef BillDetailsCopyWithBound = BillDetails;
-
-abstract class BillDetailsCopyWith<$R, $In extends BillDetails,
-    $Out extends BillDetails> implements ObjectCopyWith<$R, $In, $Out> {
-  BillDetailsCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends BillDetails>(
-      Then<BillDetails, $Out2> t, Then<$Out2, $R2> t2);
+abstract class BillDetailsCopyWith<$R, $In extends BillDetails, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
   ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
       get auditDetails;
   ListCopyWith<$R, BillLineItems,
@@ -752,43 +709,38 @@ abstract class BillDetailsCopyWith<$R, $In extends BillDetails,
       List<BillLineItems>? lineItems,
       List<PayableLineItems>? payableLineItems,
       Payee? payee});
+  BillDetailsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
-class _BillDetailsCopyWithImpl<$R, $Out extends BillDetails>
-    extends CopyWithBase<$R, BillDetails, $Out>
+class _BillDetailsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, BillDetails, $Out>
     implements BillDetailsCopyWith<$R, BillDetails, $Out> {
   _BillDetailsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  BillDetailsCopyWith<$R2, BillDetails, $Out2>
-      chain<$R2, $Out2 extends BillDetails>(
-              Then<BillDetails, $Out2> t, Then<$Out2, $R2> t2) =>
-          _BillDetailsCopyWithImpl($value, t, t2);
 
   @override
+  late final ClassMapperBase<BillDetails> $mapper =
+      BillDetailsMapper.ensureInitialized();
+  @override
   ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
   @override
   ListCopyWith<$R, BillLineItems,
           BillLineItemsCopyWith<$R, BillLineItems, BillLineItems>>?
       get lineItems => $value.lineItems != null
-          ? ListCopyWith(
-              $value.lineItems!,
-              (v, t) => v.copyWith.chain<$R, BillLineItems>($identity, t),
+          ? ListCopyWith($value.lineItems!, (v, t) => v.copyWith.$chain(t),
               (v) => call(lineItems: v))
           : null;
   @override
   ListCopyWith<$R, PayableLineItems,
           PayableLineItemsCopyWith<$R, PayableLineItems, PayableLineItems>>?
       get payableLineItems => $value.payableLineItems != null
-          ? ListCopyWith(
-              $value.payableLineItems!,
-              (v, t) => v.copyWith.chain<$R, PayableLineItems>($identity, t),
-              (v) => call(payableLineItems: v))
+          ? ListCopyWith($value.payableLineItems!,
+              (v, t) => v.copyWith.$chain(t), (v) => call(payableLineItems: v))
           : null;
   @override
   PayeeCopyWith<$R, Payee, Payee>? get payee =>
-      $value.payee?.copyWith.chain($identity, (v) => call(payee: v));
+      $value.payee?.copyWith.$chain((v) => call(payee: v));
   @override
   $R call(
           {Object? id = $none,
@@ -801,133 +753,867 @@ class _BillDetailsCopyWithImpl<$R, $Out extends BillDetails>
           Object? lineItems = $none,
           Object? payableLineItems = $none,
           Object? payee = $none}) =>
-      $then(BillDetails(
-          id: or(id, $value.id),
-          referenceId: or(referenceId, $value.referenceId),
-          billId: or(billId, $value.billId),
-          auditDetails: or(auditDetails, $value.auditDetails),
-          toPeriod: or(toPeriod, $value.toPeriod),
-          fromPeriod: or(fromPeriod, $value.fromPeriod),
-          paymentStatus: or(paymentStatus, $value.paymentStatus),
-          lineItems: or(lineItems, $value.lineItems),
-          payableLineItems: or(payableLineItems, $value.payableLineItems),
-          payee: or(payee, $value.payee)));
-}
-
-class BillAdditionalDetailsMapper extends MapperBase<BillAdditionalDetails> {
-  static MapperContainer container = MapperContainer(
-    mappers: {BillAdditionalDetailsMapper()},
-  );
+      $apply(FieldCopyWithData({
+        if (id != $none) #id: id,
+        if (referenceId != $none) #referenceId: referenceId,
+        if (billId != $none) #billId: billId,
+        if (auditDetails != $none) #auditDetails: auditDetails,
+        if (toPeriod != $none) #toPeriod: toPeriod,
+        if (fromPeriod != $none) #fromPeriod: fromPeriod,
+        if (paymentStatus != $none) #paymentStatus: paymentStatus,
+        if (lineItems != $none) #lineItems: lineItems,
+        if (payableLineItems != $none) #payableLineItems: payableLineItems,
+        if (payee != $none) #payee: payee
+      }));
+  @override
+  BillDetails $make(CopyWithData data) => BillDetails(
+      id: data.get(#id, or: $value.id),
+      referenceId: data.get(#referenceId, or: $value.referenceId),
+      billId: data.get(#billId, or: $value.billId),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails),
+      toPeriod: data.get(#toPeriod, or: $value.toPeriod),
+      fromPeriod: data.get(#fromPeriod, or: $value.fromPeriod),
+      paymentStatus: data.get(#paymentStatus, or: $value.paymentStatus),
+      lineItems: data.get(#lineItems, or: $value.lineItems),
+      payableLineItems:
+          data.get(#payableLineItems, or: $value.payableLineItems),
+      payee: data.get(#payee, or: $value.payee));
 
   @override
-  BillAdditionalDetailsMapperElement createElement(MapperContainer container) {
-    return BillAdditionalDetailsMapperElement._(this, container);
+  BillDetailsCopyWith<$R2, BillDetails, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _BillDetailsCopyWithImpl($value, $cast, t);
+}
+
+class BillLineItemsMapper extends ClassMapperBase<BillLineItems> {
+  BillLineItemsMapper._();
+
+  static BillLineItemsMapper? _instance;
+  static BillLineItemsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = BillLineItemsMapper._());
+      ContractAuditDetailsMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'BillAdditionalDetails';
+  final String id = 'BillLineItems';
 
-  static final fromMap = container.fromMap<BillAdditionalDetails>;
-  static final fromJson = container.fromJson<BillAdditionalDetails>;
+  static String? _$id(BillLineItems v) => v.id;
+  static const Field<BillLineItems, String> _f$id =
+      Field('id', _$id, opt: true);
+  static ContractAuditDetails? _$auditDetails(BillLineItems v) =>
+      v.auditDetails;
+  static const Field<BillLineItems, ContractAuditDetails> _f$auditDetails =
+      Field('auditDetails', _$auditDetails, opt: true);
+  static String _$tenantId(BillLineItems v) => v.tenantId;
+  static const Field<BillLineItems, String> _f$tenantId =
+      Field('tenantId', _$tenantId);
+  static num? _$amount(BillLineItems v) => v.amount;
+  static const Field<BillLineItems, num> _f$amount =
+      Field('amount', _$amount, opt: true);
+  static String? _$type(BillLineItems v) => v.type;
+  static const Field<BillLineItems, String> _f$type =
+      Field('type', _$type, opt: true);
+  static String? _$status(BillLineItems v) => v.status;
+  static const Field<BillLineItems, String> _f$status =
+      Field('status', _$status, opt: true);
+  static String? _$billDetailId(BillLineItems v) => v.billDetailId;
+  static const Field<BillLineItems, String> _f$billDetailId =
+      Field('billDetailId', _$billDetailId, opt: true);
+  static String? _$headCode(BillLineItems v) => v.headCode;
+  static const Field<BillLineItems, String> _f$headCode =
+      Field('headCode', _$headCode, opt: true);
+  static bool? _$isLineItemPayable(BillLineItems v) => v.isLineItemPayable;
+  static const Field<BillLineItems, bool> _f$isLineItemPayable =
+      Field('isLineItemPayable', _$isLineItemPayable, opt: true);
+  static num? _$paidAmount(BillLineItems v) => v.paidAmount;
+  static const Field<BillLineItems, num> _f$paidAmount =
+      Field('paidAmount', _$paidAmount, opt: true);
+
+  @override
+  final MappableFields<BillLineItems> fields = const {
+    #id: _f$id,
+    #auditDetails: _f$auditDetails,
+    #tenantId: _f$tenantId,
+    #amount: _f$amount,
+    #type: _f$type,
+    #status: _f$status,
+    #billDetailId: _f$billDetailId,
+    #headCode: _f$headCode,
+    #isLineItemPayable: _f$isLineItemPayable,
+    #paidAmount: _f$paidAmount,
+  };
+
+  static BillLineItems _instantiate(DecodingData data) {
+    return BillLineItems(
+        id: data.dec(_f$id),
+        auditDetails: data.dec(_f$auditDetails),
+        tenantId: data.dec(_f$tenantId),
+        amount: data.dec(_f$amount),
+        type: data.dec(_f$type),
+        status: data.dec(_f$status),
+        billDetailId: data.dec(_f$billDetailId),
+        headCode: data.dec(_f$headCode),
+        isLineItemPayable: data.dec(_f$isLineItemPayable),
+        paidAmount: data.dec(_f$paidAmount));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static BillLineItems fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BillLineItems>(map);
+  }
+
+  static BillLineItems fromJson(String json) {
+    return ensureInitialized().decodeJson<BillLineItems>(json);
+  }
 }
 
-class BillAdditionalDetailsMapperElement
-    extends MapperElementBase<BillAdditionalDetails> {
-  BillAdditionalDetailsMapperElement._(super.mapper, super.container);
+mixin BillLineItemsMappable {
+  String toJson() {
+    return BillLineItemsMapper.ensureInitialized()
+        .encodeJson<BillLineItems>(this as BillLineItems);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BillLineItemsMapper.ensureInitialized()
+        .encodeMap<BillLineItems>(this as BillLineItems);
+  }
+
+  BillLineItemsCopyWith<BillLineItems, BillLineItems, BillLineItems>
+      get copyWith => _BillLineItemsCopyWithImpl(
+          this as BillLineItems, $identity, $identity);
+  @override
+  String toString() {
+    return BillLineItemsMapper.ensureInitialized()
+        .stringifyValue(this as BillLineItems);
+  }
 
   @override
-  Function get decoder => decode;
-  BillAdditionalDetails decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  BillAdditionalDetails fromMap(Map<String, dynamic> map) =>
-      BillAdditionalDetails(
-          invoiceNumber: container.$getOpt(map, 'invoiceNumber'),
-          locality: container.$getOpt(map, 'locality'),
-          orgName: container.$getOpt(map, 'orgName'),
-          projectDesc: container.$getOpt(map, 'projectDesc'),
-          projectName: container.$getOpt(map, 'projectName'),
-          projectId: container.$getOpt(map, 'projectId'),
-          ward: container.$getOpt(map, 'ward'),
-          totalBillAmount: container.$getOpt(map, 'totalBillAmount'),
-          invoiceDate: container.$getOpt(map, 'invoiceDate'));
+  bool operator ==(Object other) {
+    return BillLineItemsMapper.ensureInitialized()
+        .equalsValue(this as BillLineItems, other);
+  }
 
   @override
-  Function get encoder => encode;
-  dynamic encode(BillAdditionalDetails v) => toMap(v);
-  Map<String, dynamic> toMap(BillAdditionalDetails b) => {
-        'invoiceNumber': container.$enc(b.invoiceNumber, 'invoiceNumber'),
-        'locality': container.$enc(b.locality, 'locality'),
-        'orgName': container.$enc(b.orgName, 'orgName'),
-        'projectDesc': container.$enc(b.projectDesc, 'projectDesc'),
-        'projectName': container.$enc(b.projectName, 'projectName'),
-        'projectId': container.$enc(b.projectId, 'projectId'),
-        'ward': container.$enc(b.ward, 'ward'),
-        'totalBillAmount': container.$enc(b.totalBillAmount, 'totalBillAmount'),
-        'invoiceDate': container.$enc(b.invoiceDate, 'invoiceDate')
-      };
+  int get hashCode {
+    return BillLineItemsMapper.ensureInitialized()
+        .hashValue(this as BillLineItems);
+  }
+}
+
+extension BillLineItemsValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, BillLineItems, $Out> {
+  BillLineItemsCopyWith<$R, BillLineItems, $Out> get $asBillLineItems =>
+      $base.as((v, t, t2) => _BillLineItemsCopyWithImpl(v, t, t2));
+}
+
+abstract class BillLineItemsCopyWith<$R, $In extends BillLineItems, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
+      get auditDetails;
+  $R call(
+      {String? id,
+      ContractAuditDetails? auditDetails,
+      String? tenantId,
+      num? amount,
+      String? type,
+      String? status,
+      String? billDetailId,
+      String? headCode,
+      bool? isLineItemPayable,
+      num? paidAmount});
+  BillLineItemsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _BillLineItemsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, BillLineItems, $Out>
+    implements BillLineItemsCopyWith<$R, BillLineItems, $Out> {
+  _BillLineItemsCopyWithImpl(super.value, super.then, super.then2);
 
   @override
-  String stringify(BillAdditionalDetails self) =>
-      'BillAdditionalDetails(invoiceNumber: ${container.asString(self.invoiceNumber)}, invoiceDate: ${container.asString(self.invoiceDate)}, locality: ${container.asString(self.locality)}, orgName: ${container.asString(self.orgName)}, projectDesc: ${container.asString(self.projectDesc)}, projectName: ${container.asString(self.projectName)}, projectId: ${container.asString(self.projectId)}, totalBillAmount: ${container.asString(self.totalBillAmount)}, ward: ${container.asString(self.ward)})';
+  late final ClassMapperBase<BillLineItems> $mapper =
+      BillLineItemsMapper.ensureInitialized();
   @override
-  int hash(BillAdditionalDetails self) =>
-      container.hash(self.invoiceNumber) ^
-      container.hash(self.invoiceDate) ^
-      container.hash(self.locality) ^
-      container.hash(self.orgName) ^
-      container.hash(self.projectDesc) ^
-      container.hash(self.projectName) ^
-      container.hash(self.projectId) ^
-      container.hash(self.totalBillAmount) ^
-      container.hash(self.ward);
+  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
   @override
-  bool equals(BillAdditionalDetails self, BillAdditionalDetails other) =>
-      container.isEqual(self.invoiceNumber, other.invoiceNumber) &&
-      container.isEqual(self.invoiceDate, other.invoiceDate) &&
-      container.isEqual(self.locality, other.locality) &&
-      container.isEqual(self.orgName, other.orgName) &&
-      container.isEqual(self.projectDesc, other.projectDesc) &&
-      container.isEqual(self.projectName, other.projectName) &&
-      container.isEqual(self.projectId, other.projectId) &&
-      container.isEqual(self.totalBillAmount, other.totalBillAmount) &&
-      container.isEqual(self.ward, other.ward);
+  $R call(
+          {Object? id = $none,
+          Object? auditDetails = $none,
+          String? tenantId,
+          Object? amount = $none,
+          Object? type = $none,
+          Object? status = $none,
+          Object? billDetailId = $none,
+          Object? headCode = $none,
+          Object? isLineItemPayable = $none,
+          Object? paidAmount = $none}) =>
+      $apply(FieldCopyWithData({
+        if (id != $none) #id: id,
+        if (auditDetails != $none) #auditDetails: auditDetails,
+        if (tenantId != null) #tenantId: tenantId,
+        if (amount != $none) #amount: amount,
+        if (type != $none) #type: type,
+        if (status != $none) #status: status,
+        if (billDetailId != $none) #billDetailId: billDetailId,
+        if (headCode != $none) #headCode: headCode,
+        if (isLineItemPayable != $none) #isLineItemPayable: isLineItemPayable,
+        if (paidAmount != $none) #paidAmount: paidAmount
+      }));
+  @override
+  BillLineItems $make(CopyWithData data) => BillLineItems(
+      id: data.get(#id, or: $value.id),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails),
+      tenantId: data.get(#tenantId, or: $value.tenantId),
+      amount: data.get(#amount, or: $value.amount),
+      type: data.get(#type, or: $value.type),
+      status: data.get(#status, or: $value.status),
+      billDetailId: data.get(#billDetailId, or: $value.billDetailId),
+      headCode: data.get(#headCode, or: $value.headCode),
+      isLineItemPayable:
+          data.get(#isLineItemPayable, or: $value.isLineItemPayable),
+      paidAmount: data.get(#paidAmount, or: $value.paidAmount));
+
+  @override
+  BillLineItemsCopyWith<$R2, BillLineItems, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _BillLineItemsCopyWithImpl($value, $cast, t);
+}
+
+class PayableLineItemsMapper extends ClassMapperBase<PayableLineItems> {
+  PayableLineItemsMapper._();
+
+  static PayableLineItemsMapper? _instance;
+  static PayableLineItemsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = PayableLineItemsMapper._());
+      ContractAuditDetailsMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'PayableLineItems';
+
+  static String? _$id(PayableLineItems v) => v.id;
+  static const Field<PayableLineItems, String> _f$id =
+      Field('id', _$id, opt: true);
+  static ContractAuditDetails? _$auditDetails(PayableLineItems v) =>
+      v.auditDetails;
+  static const Field<PayableLineItems, ContractAuditDetails> _f$auditDetails =
+      Field('auditDetails', _$auditDetails, opt: true);
+  static String _$tenantId(PayableLineItems v) => v.tenantId;
+  static const Field<PayableLineItems, String> _f$tenantId =
+      Field('tenantId', _$tenantId);
+  static num? _$amount(PayableLineItems v) => v.amount;
+  static const Field<PayableLineItems, num> _f$amount =
+      Field('amount', _$amount, opt: true);
+  static String? _$type(PayableLineItems v) => v.type;
+  static const Field<PayableLineItems, String> _f$type =
+      Field('type', _$type, opt: true);
+  static String? _$status(PayableLineItems v) => v.status;
+  static const Field<PayableLineItems, String> _f$status =
+      Field('status', _$status, opt: true);
+  static String? _$billDetailId(PayableLineItems v) => v.billDetailId;
+  static const Field<PayableLineItems, String> _f$billDetailId =
+      Field('billDetailId', _$billDetailId, opt: true);
+  static String? _$headCode(PayableLineItems v) => v.headCode;
+  static const Field<PayableLineItems, String> _f$headCode =
+      Field('headCode', _$headCode, opt: true);
+  static bool? _$isLineItemPayable(PayableLineItems v) => v.isLineItemPayable;
+  static const Field<PayableLineItems, bool> _f$isLineItemPayable =
+      Field('isLineItemPayable', _$isLineItemPayable, opt: true);
+  static num? _$paidAmount(PayableLineItems v) => v.paidAmount;
+  static const Field<PayableLineItems, num> _f$paidAmount =
+      Field('paidAmount', _$paidAmount, opt: true);
+
+  @override
+  final MappableFields<PayableLineItems> fields = const {
+    #id: _f$id,
+    #auditDetails: _f$auditDetails,
+    #tenantId: _f$tenantId,
+    #amount: _f$amount,
+    #type: _f$type,
+    #status: _f$status,
+    #billDetailId: _f$billDetailId,
+    #headCode: _f$headCode,
+    #isLineItemPayable: _f$isLineItemPayable,
+    #paidAmount: _f$paidAmount,
+  };
+
+  static PayableLineItems _instantiate(DecodingData data) {
+    return PayableLineItems(
+        id: data.dec(_f$id),
+        auditDetails: data.dec(_f$auditDetails),
+        tenantId: data.dec(_f$tenantId),
+        amount: data.dec(_f$amount),
+        type: data.dec(_f$type),
+        status: data.dec(_f$status),
+        billDetailId: data.dec(_f$billDetailId),
+        headCode: data.dec(_f$headCode),
+        isLineItemPayable: data.dec(_f$isLineItemPayable),
+        paidAmount: data.dec(_f$paidAmount));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static PayableLineItems fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<PayableLineItems>(map);
+  }
+
+  static PayableLineItems fromJson(String json) {
+    return ensureInitialized().decodeJson<PayableLineItems>(json);
+  }
+}
+
+mixin PayableLineItemsMappable {
+  String toJson() {
+    return PayableLineItemsMapper.ensureInitialized()
+        .encodeJson<PayableLineItems>(this as PayableLineItems);
+  }
+
+  Map<String, dynamic> toMap() {
+    return PayableLineItemsMapper.ensureInitialized()
+        .encodeMap<PayableLineItems>(this as PayableLineItems);
+  }
+
+  PayableLineItemsCopyWith<PayableLineItems, PayableLineItems, PayableLineItems>
+      get copyWith => _PayableLineItemsCopyWithImpl(
+          this as PayableLineItems, $identity, $identity);
+  @override
+  String toString() {
+    return PayableLineItemsMapper.ensureInitialized()
+        .stringifyValue(this as PayableLineItems);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return PayableLineItemsMapper.ensureInitialized()
+        .equalsValue(this as PayableLineItems, other);
+  }
+
+  @override
+  int get hashCode {
+    return PayableLineItemsMapper.ensureInitialized()
+        .hashValue(this as PayableLineItems);
+  }
+}
+
+extension PayableLineItemsValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, PayableLineItems, $Out> {
+  PayableLineItemsCopyWith<$R, PayableLineItems, $Out>
+      get $asPayableLineItems =>
+          $base.as((v, t, t2) => _PayableLineItemsCopyWithImpl(v, t, t2));
+}
+
+abstract class PayableLineItemsCopyWith<$R, $In extends PayableLineItems, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
+      get auditDetails;
+  $R call(
+      {String? id,
+      ContractAuditDetails? auditDetails,
+      String? tenantId,
+      num? amount,
+      String? type,
+      String? status,
+      String? billDetailId,
+      String? headCode,
+      bool? isLineItemPayable,
+      num? paidAmount});
+  PayableLineItemsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _PayableLineItemsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, PayableLineItems, $Out>
+    implements PayableLineItemsCopyWith<$R, PayableLineItems, $Out> {
+  _PayableLineItemsCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<PayableLineItems> $mapper =
+      PayableLineItemsMapper.ensureInitialized();
+  @override
+  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
+  @override
+  $R call(
+          {Object? id = $none,
+          Object? auditDetails = $none,
+          String? tenantId,
+          Object? amount = $none,
+          Object? type = $none,
+          Object? status = $none,
+          Object? billDetailId = $none,
+          Object? headCode = $none,
+          Object? isLineItemPayable = $none,
+          Object? paidAmount = $none}) =>
+      $apply(FieldCopyWithData({
+        if (id != $none) #id: id,
+        if (auditDetails != $none) #auditDetails: auditDetails,
+        if (tenantId != null) #tenantId: tenantId,
+        if (amount != $none) #amount: amount,
+        if (type != $none) #type: type,
+        if (status != $none) #status: status,
+        if (billDetailId != $none) #billDetailId: billDetailId,
+        if (headCode != $none) #headCode: headCode,
+        if (isLineItemPayable != $none) #isLineItemPayable: isLineItemPayable,
+        if (paidAmount != $none) #paidAmount: paidAmount
+      }));
+  @override
+  PayableLineItems $make(CopyWithData data) => PayableLineItems(
+      id: data.get(#id, or: $value.id),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails),
+      tenantId: data.get(#tenantId, or: $value.tenantId),
+      amount: data.get(#amount, or: $value.amount),
+      type: data.get(#type, or: $value.type),
+      status: data.get(#status, or: $value.status),
+      billDetailId: data.get(#billDetailId, or: $value.billDetailId),
+      headCode: data.get(#headCode, or: $value.headCode),
+      isLineItemPayable:
+          data.get(#isLineItemPayable, or: $value.isLineItemPayable),
+      paidAmount: data.get(#paidAmount, or: $value.paidAmount));
+
+  @override
+  PayableLineItemsCopyWith<$R2, PayableLineItems, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _PayableLineItemsCopyWithImpl($value, $cast, t);
+}
+
+class PayeeMapper extends ClassMapperBase<Payee> {
+  PayeeMapper._();
+
+  static PayeeMapper? _instance;
+  static PayeeMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = PayeeMapper._());
+      ContractAuditDetailsMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'Payee';
+
+  static String? _$id(Payee v) => v.id;
+  static const Field<Payee, String> _f$id = Field('id', _$id, opt: true);
+  static ContractAuditDetails? _$auditDetails(Payee v) => v.auditDetails;
+  static const Field<Payee, ContractAuditDetails> _f$auditDetails =
+      Field('auditDetails', _$auditDetails, opt: true);
+  static String? _$parentId(Payee v) => v.parentId;
+  static const Field<Payee, String> _f$parentId =
+      Field('parentId', _$parentId, opt: true);
+  static String? _$identifier(Payee v) => v.identifier;
+  static const Field<Payee, String> _f$identifier =
+      Field('identifier', _$identifier, opt: true);
+  static String? _$type(Payee v) => v.type;
+  static const Field<Payee, String> _f$type = Field('type', _$type, opt: true);
+  static String? _$status(Payee v) => v.status;
+  static const Field<Payee, String> _f$status =
+      Field('status', _$status, opt: true);
+
+  @override
+  final MappableFields<Payee> fields = const {
+    #id: _f$id,
+    #auditDetails: _f$auditDetails,
+    #parentId: _f$parentId,
+    #identifier: _f$identifier,
+    #type: _f$type,
+    #status: _f$status,
+  };
+
+  static Payee _instantiate(DecodingData data) {
+    return Payee(
+        id: data.dec(_f$id),
+        auditDetails: data.dec(_f$auditDetails),
+        parentId: data.dec(_f$parentId),
+        identifier: data.dec(_f$identifier),
+        type: data.dec(_f$type),
+        status: data.dec(_f$status));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static Payee fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<Payee>(map);
+  }
+
+  static Payee fromJson(String json) {
+    return ensureInitialized().decodeJson<Payee>(json);
+  }
+}
+
+mixin PayeeMappable {
+  String toJson() {
+    return PayeeMapper.ensureInitialized().encodeJson<Payee>(this as Payee);
+  }
+
+  Map<String, dynamic> toMap() {
+    return PayeeMapper.ensureInitialized().encodeMap<Payee>(this as Payee);
+  }
+
+  PayeeCopyWith<Payee, Payee, Payee> get copyWith =>
+      _PayeeCopyWithImpl(this as Payee, $identity, $identity);
+  @override
+  String toString() {
+    return PayeeMapper.ensureInitialized().stringifyValue(this as Payee);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return PayeeMapper.ensureInitialized().equalsValue(this as Payee, other);
+  }
+
+  @override
+  int get hashCode {
+    return PayeeMapper.ensureInitialized().hashValue(this as Payee);
+  }
+}
+
+extension PayeeValueCopy<$R, $Out> on ObjectCopyWith<$R, Payee, $Out> {
+  PayeeCopyWith<$R, Payee, $Out> get $asPayee =>
+      $base.as((v, t, t2) => _PayeeCopyWithImpl(v, t, t2));
+}
+
+abstract class PayeeCopyWith<$R, $In extends Payee, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
+      get auditDetails;
+  $R call(
+      {String? id,
+      ContractAuditDetails? auditDetails,
+      String? parentId,
+      String? identifier,
+      String? type,
+      String? status});
+  PayeeCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _PayeeCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Payee, $Out>
+    implements PayeeCopyWith<$R, Payee, $Out> {
+  _PayeeCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<Payee> $mapper = PayeeMapper.ensureInitialized();
+  @override
+  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
+  @override
+  $R call(
+          {Object? id = $none,
+          Object? auditDetails = $none,
+          Object? parentId = $none,
+          Object? identifier = $none,
+          Object? type = $none,
+          Object? status = $none}) =>
+      $apply(FieldCopyWithData({
+        if (id != $none) #id: id,
+        if (auditDetails != $none) #auditDetails: auditDetails,
+        if (parentId != $none) #parentId: parentId,
+        if (identifier != $none) #identifier: identifier,
+        if (type != $none) #type: type,
+        if (status != $none) #status: status
+      }));
+  @override
+  Payee $make(CopyWithData data) => Payee(
+      id: data.get(#id, or: $value.id),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails),
+      parentId: data.get(#parentId, or: $value.parentId),
+      identifier: data.get(#identifier, or: $value.identifier),
+      type: data.get(#type, or: $value.type),
+      status: data.get(#status, or: $value.status));
+
+  @override
+  PayeeCopyWith<$R2, Payee, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+      _PayeeCopyWithImpl($value, $cast, t);
+}
+
+class PayerMapper extends ClassMapperBase<Payer> {
+  PayerMapper._();
+
+  static PayerMapper? _instance;
+  static PayerMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = PayerMapper._());
+      ContractAuditDetailsMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'Payer';
+
+  static String? _$id(Payer v) => v.id;
+  static const Field<Payer, String> _f$id = Field('id', _$id, opt: true);
+  static String? _$status(Payer v) => v.status;
+  static const Field<Payer, String> _f$status =
+      Field('status', _$status, opt: true);
+  static ContractAuditDetails? _$auditDetails(Payer v) => v.auditDetails;
+  static const Field<Payer, ContractAuditDetails> _f$auditDetails =
+      Field('auditDetails', _$auditDetails, opt: true);
+  static String? _$type(Payer v) => v.type;
+  static const Field<Payer, String> _f$type = Field('type', _$type, opt: true);
+  static String? _$identifier(Payer v) => v.identifier;
+  static const Field<Payer, String> _f$identifier =
+      Field('identifier', _$identifier, opt: true);
+  static String? _$parentId(Payer v) => v.parentId;
+  static const Field<Payer, String> _f$parentId =
+      Field('parentId', _$parentId, opt: true);
+
+  @override
+  final MappableFields<Payer> fields = const {
+    #id: _f$id,
+    #status: _f$status,
+    #auditDetails: _f$auditDetails,
+    #type: _f$type,
+    #identifier: _f$identifier,
+    #parentId: _f$parentId,
+  };
+
+  static Payer _instantiate(DecodingData data) {
+    return Payer(
+        id: data.dec(_f$id),
+        status: data.dec(_f$status),
+        auditDetails: data.dec(_f$auditDetails),
+        type: data.dec(_f$type),
+        identifier: data.dec(_f$identifier),
+        parentId: data.dec(_f$parentId));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static Payer fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<Payer>(map);
+  }
+
+  static Payer fromJson(String json) {
+    return ensureInitialized().decodeJson<Payer>(json);
+  }
+}
+
+mixin PayerMappable {
+  String toJson() {
+    return PayerMapper.ensureInitialized().encodeJson<Payer>(this as Payer);
+  }
+
+  Map<String, dynamic> toMap() {
+    return PayerMapper.ensureInitialized().encodeMap<Payer>(this as Payer);
+  }
+
+  PayerCopyWith<Payer, Payer, Payer> get copyWith =>
+      _PayerCopyWithImpl(this as Payer, $identity, $identity);
+  @override
+  String toString() {
+    return PayerMapper.ensureInitialized().stringifyValue(this as Payer);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return PayerMapper.ensureInitialized().equalsValue(this as Payer, other);
+  }
+
+  @override
+  int get hashCode {
+    return PayerMapper.ensureInitialized().hashValue(this as Payer);
+  }
+}
+
+extension PayerValueCopy<$R, $Out> on ObjectCopyWith<$R, Payer, $Out> {
+  PayerCopyWith<$R, Payer, $Out> get $asPayer =>
+      $base.as((v, t, t2) => _PayerCopyWithImpl(v, t, t2));
+}
+
+abstract class PayerCopyWith<$R, $In extends Payer, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
+      get auditDetails;
+  $R call(
+      {String? id,
+      String? status,
+      ContractAuditDetails? auditDetails,
+      String? type,
+      String? identifier,
+      String? parentId});
+  PayerCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _PayerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Payer, $Out>
+    implements PayerCopyWith<$R, Payer, $Out> {
+  _PayerCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<Payer> $mapper = PayerMapper.ensureInitialized();
+  @override
+  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
+  @override
+  $R call(
+          {Object? id = $none,
+          Object? status = $none,
+          Object? auditDetails = $none,
+          Object? type = $none,
+          Object? identifier = $none,
+          Object? parentId = $none}) =>
+      $apply(FieldCopyWithData({
+        if (id != $none) #id: id,
+        if (status != $none) #status: status,
+        if (auditDetails != $none) #auditDetails: auditDetails,
+        if (type != $none) #type: type,
+        if (identifier != $none) #identifier: identifier,
+        if (parentId != $none) #parentId: parentId
+      }));
+  @override
+  Payer $make(CopyWithData data) => Payer(
+      id: data.get(#id, or: $value.id),
+      status: data.get(#status, or: $value.status),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails),
+      type: data.get(#type, or: $value.type),
+      identifier: data.get(#identifier, or: $value.identifier),
+      parentId: data.get(#parentId, or: $value.parentId));
+
+  @override
+  PayerCopyWith<$R2, Payer, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+      _PayerCopyWithImpl($value, $cast, t);
+}
+
+class BillAdditionalDetailsMapper
+    extends ClassMapperBase<BillAdditionalDetails> {
+  BillAdditionalDetailsMapper._();
+
+  static BillAdditionalDetailsMapper? _instance;
+  static BillAdditionalDetailsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = BillAdditionalDetailsMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'BillAdditionalDetails';
+
+  static String? _$invoiceNumber(BillAdditionalDetails v) => v.invoiceNumber;
+  static const Field<BillAdditionalDetails, String> _f$invoiceNumber =
+      Field('invoiceNumber', _$invoiceNumber, opt: true);
+  static String? _$locality(BillAdditionalDetails v) => v.locality;
+  static const Field<BillAdditionalDetails, String> _f$locality =
+      Field('locality', _$locality, opt: true);
+  static String? _$orgName(BillAdditionalDetails v) => v.orgName;
+  static const Field<BillAdditionalDetails, String> _f$orgName =
+      Field('orgName', _$orgName, opt: true);
+  static String? _$projectDesc(BillAdditionalDetails v) => v.projectDesc;
+  static const Field<BillAdditionalDetails, String> _f$projectDesc =
+      Field('projectDesc', _$projectDesc, opt: true);
+  static String? _$projectName(BillAdditionalDetails v) => v.projectName;
+  static const Field<BillAdditionalDetails, String> _f$projectName =
+      Field('projectName', _$projectName, opt: true);
+  static String? _$projectId(BillAdditionalDetails v) => v.projectId;
+  static const Field<BillAdditionalDetails, String> _f$projectId =
+      Field('projectId', _$projectId, opt: true);
+  static String? _$ward(BillAdditionalDetails v) => v.ward;
+  static const Field<BillAdditionalDetails, String> _f$ward =
+      Field('ward', _$ward, opt: true);
+  static String? _$totalBillAmount(BillAdditionalDetails v) =>
+      v.totalBillAmount;
+  static const Field<BillAdditionalDetails, String> _f$totalBillAmount =
+      Field('totalBillAmount', _$totalBillAmount, opt: true);
+  static int? _$invoiceDate(BillAdditionalDetails v) => v.invoiceDate;
+  static const Field<BillAdditionalDetails, int> _f$invoiceDate =
+      Field('invoiceDate', _$invoiceDate, opt: true);
+
+  @override
+  final MappableFields<BillAdditionalDetails> fields = const {
+    #invoiceNumber: _f$invoiceNumber,
+    #locality: _f$locality,
+    #orgName: _f$orgName,
+    #projectDesc: _f$projectDesc,
+    #projectName: _f$projectName,
+    #projectId: _f$projectId,
+    #ward: _f$ward,
+    #totalBillAmount: _f$totalBillAmount,
+    #invoiceDate: _f$invoiceDate,
+  };
+
+  static BillAdditionalDetails _instantiate(DecodingData data) {
+    return BillAdditionalDetails(
+        invoiceNumber: data.dec(_f$invoiceNumber),
+        locality: data.dec(_f$locality),
+        orgName: data.dec(_f$orgName),
+        projectDesc: data.dec(_f$projectDesc),
+        projectName: data.dec(_f$projectName),
+        projectId: data.dec(_f$projectId),
+        ward: data.dec(_f$ward),
+        totalBillAmount: data.dec(_f$totalBillAmount),
+        invoiceDate: data.dec(_f$invoiceDate));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static BillAdditionalDetails fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BillAdditionalDetails>(map);
+  }
+
+  static BillAdditionalDetails fromJson(String json) {
+    return ensureInitialized().decodeJson<BillAdditionalDetails>(json);
+  }
 }
 
 mixin BillAdditionalDetailsMappable {
-  String toJson() => BillAdditionalDetailsMapper.container
-      .toJson(this as BillAdditionalDetails);
-  Map<String, dynamic> toMap() => BillAdditionalDetailsMapper.container
-      .toMap(this as BillAdditionalDetails);
+  String toJson() {
+    return BillAdditionalDetailsMapper.ensureInitialized()
+        .encodeJson<BillAdditionalDetails>(this as BillAdditionalDetails);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BillAdditionalDetailsMapper.ensureInitialized()
+        .encodeMap<BillAdditionalDetails>(this as BillAdditionalDetails);
+  }
+
   BillAdditionalDetailsCopyWith<BillAdditionalDetails, BillAdditionalDetails,
           BillAdditionalDetails>
       get copyWith => _BillAdditionalDetailsCopyWithImpl(
           this as BillAdditionalDetails, $identity, $identity);
   @override
-  String toString() => BillAdditionalDetailsMapper.container.asString(this);
+  String toString() {
+    return BillAdditionalDetailsMapper.ensureInitialized()
+        .stringifyValue(this as BillAdditionalDetails);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          BillAdditionalDetailsMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return BillAdditionalDetailsMapper.ensureInitialized()
+        .equalsValue(this as BillAdditionalDetails, other);
+  }
+
   @override
-  int get hashCode => BillAdditionalDetailsMapper.container.hash(this);
+  int get hashCode {
+    return BillAdditionalDetailsMapper.ensureInitialized()
+        .hashValue(this as BillAdditionalDetails);
+  }
 }
 
-extension BillAdditionalDetailsValueCopy<$R, $Out extends BillAdditionalDetails>
+extension BillAdditionalDetailsValueCopy<$R, $Out>
     on ObjectCopyWith<$R, BillAdditionalDetails, $Out> {
   BillAdditionalDetailsCopyWith<$R, BillAdditionalDetails, $Out>
-      get asBillAdditionalDetails =>
-          base.as((v, t, t2) => _BillAdditionalDetailsCopyWithImpl(v, t, t2));
+      get $asBillAdditionalDetails =>
+          $base.as((v, t, t2) => _BillAdditionalDetailsCopyWithImpl(v, t, t2));
 }
 
-typedef BillAdditionalDetailsCopyWithBound = BillAdditionalDetails;
-
-abstract class BillAdditionalDetailsCopyWith<$R,
-        $In extends BillAdditionalDetails, $Out extends BillAdditionalDetails>
-    implements ObjectCopyWith<$R, $In, $Out> {
-  BillAdditionalDetailsCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends BillAdditionalDetails>(
-          Then<BillAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2);
+abstract class BillAdditionalDetailsCopyWith<
+    $R,
+    $In extends BillAdditionalDetails,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   $R call(
       {String? invoiceNumber,
       String? locality,
@@ -938,18 +1624,18 @@ abstract class BillAdditionalDetailsCopyWith<$R,
       String? ward,
       String? totalBillAmount,
       int? invoiceDate});
+  BillAdditionalDetailsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _BillAdditionalDetailsCopyWithImpl<$R, $Out extends BillAdditionalDetails>
-    extends CopyWithBase<$R, BillAdditionalDetails, $Out>
+class _BillAdditionalDetailsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, BillAdditionalDetails, $Out>
     implements BillAdditionalDetailsCopyWith<$R, BillAdditionalDetails, $Out> {
   _BillAdditionalDetailsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  BillAdditionalDetailsCopyWith<$R2, BillAdditionalDetails, $Out2>
-      chain<$R2, $Out2 extends BillAdditionalDetails>(
-              Then<BillAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2) =>
-          _BillAdditionalDetailsCopyWithImpl($value, t, t2);
 
+  @override
+  late final ClassMapperBase<BillAdditionalDetails> $mapper =
+      BillAdditionalDetailsMapper.ensureInitialized();
   @override
   $R call(
           {Object? invoiceNumber = $none,
@@ -961,485 +1647,31 @@ class _BillAdditionalDetailsCopyWithImpl<$R, $Out extends BillAdditionalDetails>
           Object? ward = $none,
           Object? totalBillAmount = $none,
           Object? invoiceDate = $none}) =>
-      $then(BillAdditionalDetails(
-          invoiceNumber: or(invoiceNumber, $value.invoiceNumber),
-          locality: or(locality, $value.locality),
-          orgName: or(orgName, $value.orgName),
-          projectDesc: or(projectDesc, $value.projectDesc),
-          projectName: or(projectName, $value.projectName),
-          projectId: or(projectId, $value.projectId),
-          ward: or(ward, $value.ward),
-          totalBillAmount: or(totalBillAmount, $value.totalBillAmount),
-          invoiceDate: or(invoiceDate, $value.invoiceDate)));
-}
-
-class PayeeMapper extends MapperBase<Payee> {
-  static MapperContainer container = MapperContainer(
-    mappers: {PayeeMapper()},
-  )..linkAll({ContractAuditDetailsMapper.container});
+      $apply(FieldCopyWithData({
+        if (invoiceNumber != $none) #invoiceNumber: invoiceNumber,
+        if (locality != $none) #locality: locality,
+        if (orgName != $none) #orgName: orgName,
+        if (projectDesc != $none) #projectDesc: projectDesc,
+        if (projectName != $none) #projectName: projectName,
+        if (projectId != $none) #projectId: projectId,
+        if (ward != $none) #ward: ward,
+        if (totalBillAmount != $none) #totalBillAmount: totalBillAmount,
+        if (invoiceDate != $none) #invoiceDate: invoiceDate
+      }));
+  @override
+  BillAdditionalDetails $make(CopyWithData data) => BillAdditionalDetails(
+      invoiceNumber: data.get(#invoiceNumber, or: $value.invoiceNumber),
+      locality: data.get(#locality, or: $value.locality),
+      orgName: data.get(#orgName, or: $value.orgName),
+      projectDesc: data.get(#projectDesc, or: $value.projectDesc),
+      projectName: data.get(#projectName, or: $value.projectName),
+      projectId: data.get(#projectId, or: $value.projectId),
+      ward: data.get(#ward, or: $value.ward),
+      totalBillAmount: data.get(#totalBillAmount, or: $value.totalBillAmount),
+      invoiceDate: data.get(#invoiceDate, or: $value.invoiceDate));
 
   @override
-  PayeeMapperElement createElement(MapperContainer container) {
-    return PayeeMapperElement._(this, container);
-  }
-
-  @override
-  String get id => 'Payee';
-
-  static final fromMap = container.fromMap<Payee>;
-  static final fromJson = container.fromJson<Payee>;
-}
-
-class PayeeMapperElement extends MapperElementBase<Payee> {
-  PayeeMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  Payee decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  Payee fromMap(Map<String, dynamic> map) => Payee(
-      id: container.$getOpt(map, 'id'),
-      auditDetails: container.$getOpt(map, 'auditDetails'),
-      parentId: container.$getOpt(map, 'parentId'),
-      identifier: container.$getOpt(map, 'identifier'),
-      type: container.$getOpt(map, 'type'),
-      status: container.$getOpt(map, 'status'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(Payee v) => toMap(v);
-  Map<String, dynamic> toMap(Payee p) => {
-        'id': container.$enc(p.id, 'id'),
-        'auditDetails': container.$enc(p.auditDetails, 'auditDetails'),
-        'parentId': container.$enc(p.parentId, 'parentId'),
-        'identifier': container.$enc(p.identifier, 'identifier'),
-        'type': container.$enc(p.type, 'type'),
-        'status': container.$enc(p.status, 'status')
-      };
-
-  @override
-  String stringify(Payee self) =>
-      'Payee(id: ${container.asString(self.id)}, parentId: ${container.asString(self.parentId)}, type: ${container.asString(self.type)}, identifier: ${container.asString(self.identifier)}, status: ${container.asString(self.status)}, auditDetails: ${container.asString(self.auditDetails)})';
-  @override
-  int hash(Payee self) =>
-      container.hash(self.id) ^
-      container.hash(self.parentId) ^
-      container.hash(self.type) ^
-      container.hash(self.identifier) ^
-      container.hash(self.status) ^
-      container.hash(self.auditDetails);
-  @override
-  bool equals(Payee self, Payee other) =>
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.parentId, other.parentId) &&
-      container.isEqual(self.type, other.type) &&
-      container.isEqual(self.identifier, other.identifier) &&
-      container.isEqual(self.status, other.status) &&
-      container.isEqual(self.auditDetails, other.auditDetails);
-}
-
-mixin PayeeMappable {
-  String toJson() => PayeeMapper.container.toJson(this as Payee);
-  Map<String, dynamic> toMap() => PayeeMapper.container.toMap(this as Payee);
-  PayeeCopyWith<Payee, Payee, Payee> get copyWith =>
-      _PayeeCopyWithImpl(this as Payee, $identity, $identity);
-  @override
-  String toString() => PayeeMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          PayeeMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => PayeeMapper.container.hash(this);
-}
-
-extension PayeeValueCopy<$R, $Out extends Payee>
-    on ObjectCopyWith<$R, Payee, $Out> {
-  PayeeCopyWith<$R, Payee, $Out> get asPayee =>
-      base.as((v, t, t2) => _PayeeCopyWithImpl(v, t, t2));
-}
-
-typedef PayeeCopyWithBound = Payee;
-
-abstract class PayeeCopyWith<$R, $In extends Payee, $Out extends Payee>
-    implements ObjectCopyWith<$R, $In, $Out> {
-  PayeeCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends Payee>(
-      Then<Payee, $Out2> t, Then<$Out2, $R2> t2);
-  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails;
-  $R call(
-      {String? id,
-      ContractAuditDetails? auditDetails,
-      String? parentId,
-      String? identifier,
-      String? type,
-      String? status});
-}
-
-class _PayeeCopyWithImpl<$R, $Out extends Payee>
-    extends CopyWithBase<$R, Payee, $Out>
-    implements PayeeCopyWith<$R, Payee, $Out> {
-  _PayeeCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  PayeeCopyWith<$R2, Payee, $Out2> chain<$R2, $Out2 extends Payee>(
-          Then<Payee, $Out2> t, Then<$Out2, $R2> t2) =>
-      _PayeeCopyWithImpl($value, t, t2);
-
-  @override
-  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
-  @override
-  $R call(
-          {Object? id = $none,
-          Object? auditDetails = $none,
-          Object? parentId = $none,
-          Object? identifier = $none,
-          Object? type = $none,
-          Object? status = $none}) =>
-      $then(Payee(
-          id: or(id, $value.id),
-          auditDetails: or(auditDetails, $value.auditDetails),
-          parentId: or(parentId, $value.parentId),
-          identifier: or(identifier, $value.identifier),
-          type: or(type, $value.type),
-          status: or(status, $value.status)));
-}
-
-class BillLineItemsMapper extends MapperBase<BillLineItems> {
-  static MapperContainer container = MapperContainer(
-    mappers: {BillLineItemsMapper()},
-  )..linkAll({ContractAuditDetailsMapper.container});
-
-  @override
-  BillLineItemsMapperElement createElement(MapperContainer container) {
-    return BillLineItemsMapperElement._(this, container);
-  }
-
-  @override
-  String get id => 'BillLineItems';
-
-  static final fromMap = container.fromMap<BillLineItems>;
-  static final fromJson = container.fromJson<BillLineItems>;
-}
-
-class BillLineItemsMapperElement extends MapperElementBase<BillLineItems> {
-  BillLineItemsMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  BillLineItems decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  BillLineItems fromMap(Map<String, dynamic> map) => BillLineItems(
-      id: container.$getOpt(map, 'id'),
-      auditDetails: container.$getOpt(map, 'auditDetails'),
-      tenantId: container.$get(map, 'tenantId'),
-      amount: container.$getOpt(map, 'amount'),
-      type: container.$getOpt(map, 'type'),
-      status: container.$getOpt(map, 'status'),
-      billDetailId: container.$getOpt(map, 'billDetailId'),
-      headCode: container.$getOpt(map, 'headCode'),
-      isLineItemPayable: container.$getOpt(map, 'isLineItemPayable'),
-      paidAmount: container.$getOpt(map, 'paidAmount'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(BillLineItems v) => toMap(v);
-  Map<String, dynamic> toMap(BillLineItems b) => {
-        'id': container.$enc(b.id, 'id'),
-        'auditDetails': container.$enc(b.auditDetails, 'auditDetails'),
-        'tenantId': container.$enc(b.tenantId, 'tenantId'),
-        'amount': container.$enc(b.amount, 'amount'),
-        'type': container.$enc(b.type, 'type'),
-        'status': container.$enc(b.status, 'status'),
-        'billDetailId': container.$enc(b.billDetailId, 'billDetailId'),
-        'headCode': container.$enc(b.headCode, 'headCode'),
-        'isLineItemPayable':
-            container.$enc(b.isLineItemPayable, 'isLineItemPayable'),
-        'paidAmount': container.$enc(b.paidAmount, 'paidAmount')
-      };
-
-  @override
-  String stringify(BillLineItems self) =>
-      'BillLineItems(id: ${container.asString(self.id)}, billDetailId: ${container.asString(self.billDetailId)}, tenantId: ${container.asString(self.tenantId)}, headCode: ${container.asString(self.headCode)}, amount: ${container.asString(self.amount)}, type: ${container.asString(self.type)}, paidAmount: ${container.asString(self.paidAmount)}, status: ${container.asString(self.status)}, isLineItemPayable: ${container.asString(self.isLineItemPayable)}, auditDetails: ${container.asString(self.auditDetails)})';
-  @override
-  int hash(BillLineItems self) =>
-      container.hash(self.id) ^
-      container.hash(self.billDetailId) ^
-      container.hash(self.tenantId) ^
-      container.hash(self.headCode) ^
-      container.hash(self.amount) ^
-      container.hash(self.type) ^
-      container.hash(self.paidAmount) ^
-      container.hash(self.status) ^
-      container.hash(self.isLineItemPayable) ^
-      container.hash(self.auditDetails);
-  @override
-  bool equals(BillLineItems self, BillLineItems other) =>
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.billDetailId, other.billDetailId) &&
-      container.isEqual(self.tenantId, other.tenantId) &&
-      container.isEqual(self.headCode, other.headCode) &&
-      container.isEqual(self.amount, other.amount) &&
-      container.isEqual(self.type, other.type) &&
-      container.isEqual(self.paidAmount, other.paidAmount) &&
-      container.isEqual(self.status, other.status) &&
-      container.isEqual(self.isLineItemPayable, other.isLineItemPayable) &&
-      container.isEqual(self.auditDetails, other.auditDetails);
-}
-
-mixin BillLineItemsMappable {
-  String toJson() =>
-      BillLineItemsMapper.container.toJson(this as BillLineItems);
-  Map<String, dynamic> toMap() =>
-      BillLineItemsMapper.container.toMap(this as BillLineItems);
-  BillLineItemsCopyWith<BillLineItems, BillLineItems, BillLineItems>
-      get copyWith => _BillLineItemsCopyWithImpl(
-          this as BillLineItems, $identity, $identity);
-  @override
-  String toString() => BillLineItemsMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          BillLineItemsMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => BillLineItemsMapper.container.hash(this);
-}
-
-extension BillLineItemsValueCopy<$R, $Out extends BillLineItems>
-    on ObjectCopyWith<$R, BillLineItems, $Out> {
-  BillLineItemsCopyWith<$R, BillLineItems, $Out> get asBillLineItems =>
-      base.as((v, t, t2) => _BillLineItemsCopyWithImpl(v, t, t2));
-}
-
-typedef BillLineItemsCopyWithBound = BillLineItems;
-
-abstract class BillLineItemsCopyWith<$R, $In extends BillLineItems,
-    $Out extends BillLineItems> implements ObjectCopyWith<$R, $In, $Out> {
-  BillLineItemsCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends BillLineItems>(
-          Then<BillLineItems, $Out2> t, Then<$Out2, $R2> t2);
-  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails;
-  $R call(
-      {String? id,
-      ContractAuditDetails? auditDetails,
-      String? tenantId,
-      int? amount,
-      String? type,
-      String? status,
-      String? billDetailId,
-      String? headCode,
-      bool? isLineItemPayable,
-      int? paidAmount});
-}
-
-class _BillLineItemsCopyWithImpl<$R, $Out extends BillLineItems>
-    extends CopyWithBase<$R, BillLineItems, $Out>
-    implements BillLineItemsCopyWith<$R, BillLineItems, $Out> {
-  _BillLineItemsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  BillLineItemsCopyWith<$R2, BillLineItems, $Out2>
-      chain<$R2, $Out2 extends BillLineItems>(
-              Then<BillLineItems, $Out2> t, Then<$Out2, $R2> t2) =>
-          _BillLineItemsCopyWithImpl($value, t, t2);
-
-  @override
-  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
-  @override
-  $R call(
-          {Object? id = $none,
-          Object? auditDetails = $none,
-          String? tenantId,
-          Object? amount = $none,
-          Object? type = $none,
-          Object? status = $none,
-          Object? billDetailId = $none,
-          Object? headCode = $none,
-          Object? isLineItemPayable = $none,
-          Object? paidAmount = $none}) =>
-      $then(BillLineItems(
-          id: or(id, $value.id),
-          auditDetails: or(auditDetails, $value.auditDetails),
-          tenantId: tenantId ?? $value.tenantId,
-          amount: or(amount, $value.amount),
-          type: or(type, $value.type),
-          status: or(status, $value.status),
-          billDetailId: or(billDetailId, $value.billDetailId),
-          headCode: or(headCode, $value.headCode),
-          isLineItemPayable: or(isLineItemPayable, $value.isLineItemPayable),
-          paidAmount: or(paidAmount, $value.paidAmount)));
-}
-
-class PayableLineItemsMapper extends MapperBase<PayableLineItems> {
-  static MapperContainer container = MapperContainer(
-    mappers: {PayableLineItemsMapper()},
-  )..linkAll({ContractAuditDetailsMapper.container});
-
-  @override
-  PayableLineItemsMapperElement createElement(MapperContainer container) {
-    return PayableLineItemsMapperElement._(this, container);
-  }
-
-  @override
-  String get id => 'PayableLineItems';
-
-  static final fromMap = container.fromMap<PayableLineItems>;
-  static final fromJson = container.fromJson<PayableLineItems>;
-}
-
-class PayableLineItemsMapperElement
-    extends MapperElementBase<PayableLineItems> {
-  PayableLineItemsMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  PayableLineItems decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  PayableLineItems fromMap(Map<String, dynamic> map) => PayableLineItems(
-      id: container.$getOpt(map, 'id'),
-      auditDetails: container.$getOpt(map, 'auditDetails'),
-      tenantId: container.$get(map, 'tenantId'),
-      amount: container.$getOpt(map, 'amount'),
-      type: container.$getOpt(map, 'type'),
-      status: container.$getOpt(map, 'status'),
-      billDetailId: container.$getOpt(map, 'billDetailId'),
-      headCode: container.$getOpt(map, 'headCode'),
-      isLineItemPayable: container.$getOpt(map, 'isLineItemPayable'),
-      paidAmount: container.$getOpt(map, 'paidAmount'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(PayableLineItems v) => toMap(v);
-  Map<String, dynamic> toMap(PayableLineItems p) => {
-        'id': container.$enc(p.id, 'id'),
-        'auditDetails': container.$enc(p.auditDetails, 'auditDetails'),
-        'tenantId': container.$enc(p.tenantId, 'tenantId'),
-        'amount': container.$enc(p.amount, 'amount'),
-        'type': container.$enc(p.type, 'type'),
-        'status': container.$enc(p.status, 'status'),
-        'billDetailId': container.$enc(p.billDetailId, 'billDetailId'),
-        'headCode': container.$enc(p.headCode, 'headCode'),
-        'isLineItemPayable':
-            container.$enc(p.isLineItemPayable, 'isLineItemPayable'),
-        'paidAmount': container.$enc(p.paidAmount, 'paidAmount')
-      };
-
-  @override
-  String stringify(PayableLineItems self) =>
-      'PayableLineItems(id: ${container.asString(self.id)}, billDetailId: ${container.asString(self.billDetailId)}, tenantId: ${container.asString(self.tenantId)}, headCode: ${container.asString(self.headCode)}, amount: ${container.asString(self.amount)}, type: ${container.asString(self.type)}, paidAmount: ${container.asString(self.paidAmount)}, status: ${container.asString(self.status)}, isLineItemPayable: ${container.asString(self.isLineItemPayable)}, auditDetails: ${container.asString(self.auditDetails)})';
-  @override
-  int hash(PayableLineItems self) =>
-      container.hash(self.id) ^
-      container.hash(self.billDetailId) ^
-      container.hash(self.tenantId) ^
-      container.hash(self.headCode) ^
-      container.hash(self.amount) ^
-      container.hash(self.type) ^
-      container.hash(self.paidAmount) ^
-      container.hash(self.status) ^
-      container.hash(self.isLineItemPayable) ^
-      container.hash(self.auditDetails);
-  @override
-  bool equals(PayableLineItems self, PayableLineItems other) =>
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.billDetailId, other.billDetailId) &&
-      container.isEqual(self.tenantId, other.tenantId) &&
-      container.isEqual(self.headCode, other.headCode) &&
-      container.isEqual(self.amount, other.amount) &&
-      container.isEqual(self.type, other.type) &&
-      container.isEqual(self.paidAmount, other.paidAmount) &&
-      container.isEqual(self.status, other.status) &&
-      container.isEqual(self.isLineItemPayable, other.isLineItemPayable) &&
-      container.isEqual(self.auditDetails, other.auditDetails);
-}
-
-mixin PayableLineItemsMappable {
-  String toJson() =>
-      PayableLineItemsMapper.container.toJson(this as PayableLineItems);
-  Map<String, dynamic> toMap() =>
-      PayableLineItemsMapper.container.toMap(this as PayableLineItems);
-  PayableLineItemsCopyWith<PayableLineItems, PayableLineItems, PayableLineItems>
-      get copyWith => _PayableLineItemsCopyWithImpl(
-          this as PayableLineItems, $identity, $identity);
-  @override
-  String toString() => PayableLineItemsMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          PayableLineItemsMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => PayableLineItemsMapper.container.hash(this);
-}
-
-extension PayableLineItemsValueCopy<$R, $Out extends PayableLineItems>
-    on ObjectCopyWith<$R, PayableLineItems, $Out> {
-  PayableLineItemsCopyWith<$R, PayableLineItems, $Out> get asPayableLineItems =>
-      base.as((v, t, t2) => _PayableLineItemsCopyWithImpl(v, t, t2));
-}
-
-typedef PayableLineItemsCopyWithBound = PayableLineItems;
-
-abstract class PayableLineItemsCopyWith<$R, $In extends PayableLineItems,
-    $Out extends PayableLineItems> implements ObjectCopyWith<$R, $In, $Out> {
-  PayableLineItemsCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends PayableLineItems>(
-          Then<PayableLineItems, $Out2> t, Then<$Out2, $R2> t2);
-  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails;
-  $R call(
-      {String? id,
-      ContractAuditDetails? auditDetails,
-      String? tenantId,
-      int? amount,
-      String? type,
-      String? status,
-      String? billDetailId,
-      String? headCode,
-      bool? isLineItemPayable,
-      int? paidAmount});
-}
-
-class _PayableLineItemsCopyWithImpl<$R, $Out extends PayableLineItems>
-    extends CopyWithBase<$R, PayableLineItems, $Out>
-    implements PayableLineItemsCopyWith<$R, PayableLineItems, $Out> {
-  _PayableLineItemsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  PayableLineItemsCopyWith<$R2, PayableLineItems, $Out2>
-      chain<$R2, $Out2 extends PayableLineItems>(
-              Then<PayableLineItems, $Out2> t, Then<$Out2, $R2> t2) =>
-          _PayableLineItemsCopyWithImpl($value, t, t2);
-
-  @override
-  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
-  @override
-  $R call(
-          {Object? id = $none,
-          Object? auditDetails = $none,
-          String? tenantId,
-          Object? amount = $none,
-          Object? type = $none,
-          Object? status = $none,
-          Object? billDetailId = $none,
-          Object? headCode = $none,
-          Object? isLineItemPayable = $none,
-          Object? paidAmount = $none}) =>
-      $then(PayableLineItems(
-          id: or(id, $value.id),
-          auditDetails: or(auditDetails, $value.auditDetails),
-          tenantId: tenantId ?? $value.tenantId,
-          amount: or(amount, $value.amount),
-          type: or(type, $value.type),
-          status: or(status, $value.status),
-          billDetailId: or(billDetailId, $value.billDetailId),
-          headCode: or(headCode, $value.headCode),
-          isLineItemPayable: or(isLineItemPayable, $value.isLineItemPayable),
-          paidAmount: or(paidAmount, $value.paidAmount)));
+  BillAdditionalDetailsCopyWith<$R2, BillAdditionalDetails, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _BillAdditionalDetailsCopyWithImpl($value, $cast, t);
 }

@@ -1,5 +1,5 @@
 export const DownloadBillConfig = {
-    "tenantId": "pg",
+    "tenantId": "od",
     "moduleName": "commonMuktaUiConfig",
     "DownloadBillConfig":[
         {

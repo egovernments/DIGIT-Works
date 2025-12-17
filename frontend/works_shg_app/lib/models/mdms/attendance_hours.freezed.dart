@@ -12,7 +12,7 @@ part of 'attendance_hours.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 AttendanceHoursList _$AttendanceHoursListFromJson(Map<String, dynamic> json) {
   return _AttendanceHoursList.fromJson(json);
@@ -66,11 +66,11 @@ class _$AttendanceHoursListCopyWithImpl<$Res, $Val extends AttendanceHoursList>
 }
 
 /// @nodoc
-abstract class _$$_AttendanceHoursListCopyWith<$Res>
+abstract class _$$AttendanceHoursListImplCopyWith<$Res>
     implements $AttendanceHoursListCopyWith<$Res> {
-  factory _$$_AttendanceHoursListCopyWith(_$_AttendanceHoursList value,
-          $Res Function(_$_AttendanceHoursList) then) =
-      __$$_AttendanceHoursListCopyWithImpl<$Res>;
+  factory _$$AttendanceHoursListImplCopyWith(_$AttendanceHoursListImpl value,
+          $Res Function(_$AttendanceHoursListImpl) then) =
+      __$$AttendanceHoursListImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -79,11 +79,11 @@ abstract class _$$_AttendanceHoursListCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_AttendanceHoursListCopyWithImpl<$Res>
-    extends _$AttendanceHoursListCopyWithImpl<$Res, _$_AttendanceHoursList>
-    implements _$$_AttendanceHoursListCopyWith<$Res> {
-  __$$_AttendanceHoursListCopyWithImpl(_$_AttendanceHoursList _value,
-      $Res Function(_$_AttendanceHoursList) _then)
+class __$$AttendanceHoursListImplCopyWithImpl<$Res>
+    extends _$AttendanceHoursListCopyWithImpl<$Res, _$AttendanceHoursListImpl>
+    implements _$$AttendanceHoursListImplCopyWith<$Res> {
+  __$$AttendanceHoursListImplCopyWithImpl(_$AttendanceHoursListImpl _value,
+      $Res Function(_$AttendanceHoursListImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -91,7 +91,7 @@ class __$$_AttendanceHoursListCopyWithImpl<$Res>
   $Res call({
     Object? attendanceHours = freezed,
   }) {
-    return _then(_$_AttendanceHoursList(
+    return _then(_$AttendanceHoursListImpl(
       attendanceHours: freezed == attendanceHours
           ? _value._attendanceHours
           : attendanceHours // ignore: cast_nullable_to_non_nullable
@@ -102,14 +102,14 @@ class __$$_AttendanceHoursListCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_AttendanceHoursList implements _AttendanceHoursList {
-  const _$_AttendanceHoursList(
+class _$AttendanceHoursListImpl implements _AttendanceHoursList {
+  const _$AttendanceHoursListImpl(
       {@JsonKey(name: 'AttendanceHours')
           final List<AttendanceHours>? attendanceHours})
       : _attendanceHours = attendanceHours;
 
-  factory _$_AttendanceHoursList.fromJson(Map<String, dynamic> json) =>
-      _$$_AttendanceHoursListFromJson(json);
+  factory _$AttendanceHoursListImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AttendanceHoursListImplFromJson(json);
 
   final List<AttendanceHours>? _attendanceHours;
   @override
@@ -128,10 +128,10 @@ class _$_AttendanceHoursList implements _AttendanceHoursList {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AttendanceHoursList &&
+            other is _$AttendanceHoursListImpl &&
             const DeepCollectionEquality()
                 .equals(other._attendanceHours, _attendanceHours));
   }
@@ -144,13 +144,13 @@ class _$_AttendanceHoursList implements _AttendanceHoursList {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AttendanceHoursListCopyWith<_$_AttendanceHoursList> get copyWith =>
-      __$$_AttendanceHoursListCopyWithImpl<_$_AttendanceHoursList>(
+  _$$AttendanceHoursListImplCopyWith<_$AttendanceHoursListImpl> get copyWith =>
+      __$$AttendanceHoursListImplCopyWithImpl<_$AttendanceHoursListImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_AttendanceHoursListToJson(
+    return _$$AttendanceHoursListImplToJson(
       this,
     );
   }
@@ -160,17 +160,17 @@ abstract class _AttendanceHoursList implements AttendanceHoursList {
   const factory _AttendanceHoursList(
           {@JsonKey(name: 'AttendanceHours')
               final List<AttendanceHours>? attendanceHours}) =
-      _$_AttendanceHoursList;
+      _$AttendanceHoursListImpl;
 
   factory _AttendanceHoursList.fromJson(Map<String, dynamic> json) =
-      _$_AttendanceHoursList.fromJson;
+      _$AttendanceHoursListImpl.fromJson;
 
   @override
   @JsonKey(name: 'AttendanceHours')
   List<AttendanceHours>? get attendanceHours;
   @override
   @JsonKey(ignore: true)
-  _$$_AttendanceHoursListCopyWith<_$_AttendanceHoursList> get copyWith =>
+  _$$AttendanceHoursListImplCopyWith<_$AttendanceHoursListImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -234,22 +234,22 @@ class _$AttendanceHoursCopyWithImpl<$Res, $Val extends AttendanceHours>
 }
 
 /// @nodoc
-abstract class _$$_AttendanceHoursCopyWith<$Res>
+abstract class _$$AttendanceHoursImplCopyWith<$Res>
     implements $AttendanceHoursCopyWith<$Res> {
-  factory _$$_AttendanceHoursCopyWith(
-          _$_AttendanceHours value, $Res Function(_$_AttendanceHours) then) =
-      __$$_AttendanceHoursCopyWithImpl<$Res>;
+  factory _$$AttendanceHoursImplCopyWith(_$AttendanceHoursImpl value,
+          $Res Function(_$AttendanceHoursImpl) then) =
+      __$$AttendanceHoursImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String code, String value, bool active});
 }
 
 /// @nodoc
-class __$$_AttendanceHoursCopyWithImpl<$Res>
-    extends _$AttendanceHoursCopyWithImpl<$Res, _$_AttendanceHours>
-    implements _$$_AttendanceHoursCopyWith<$Res> {
-  __$$_AttendanceHoursCopyWithImpl(
-      _$_AttendanceHours _value, $Res Function(_$_AttendanceHours) _then)
+class __$$AttendanceHoursImplCopyWithImpl<$Res>
+    extends _$AttendanceHoursCopyWithImpl<$Res, _$AttendanceHoursImpl>
+    implements _$$AttendanceHoursImplCopyWith<$Res> {
+  __$$AttendanceHoursImplCopyWithImpl(
+      _$AttendanceHoursImpl _value, $Res Function(_$AttendanceHoursImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -259,7 +259,7 @@ class __$$_AttendanceHoursCopyWithImpl<$Res>
     Object? value = null,
     Object? active = null,
   }) {
-    return _then(_$_AttendanceHours(
+    return _then(_$AttendanceHoursImpl(
       code: null == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -278,12 +278,12 @@ class __$$_AttendanceHoursCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_AttendanceHours implements _AttendanceHours {
-  const _$_AttendanceHours(
+class _$AttendanceHoursImpl implements _AttendanceHours {
+  const _$AttendanceHoursImpl(
       {required this.code, required this.value, required this.active});
 
-  factory _$_AttendanceHours.fromJson(Map<String, dynamic> json) =>
-      _$$_AttendanceHoursFromJson(json);
+  factory _$AttendanceHoursImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AttendanceHoursImplFromJson(json);
 
   @override
   final String code;
@@ -298,10 +298,10 @@ class _$_AttendanceHours implements _AttendanceHours {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AttendanceHours &&
+            other is _$AttendanceHoursImpl &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.value, value) || other.value == value) &&
             (identical(other.active, active) || other.active == active));
@@ -314,12 +314,13 @@ class _$_AttendanceHours implements _AttendanceHours {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AttendanceHoursCopyWith<_$_AttendanceHours> get copyWith =>
-      __$$_AttendanceHoursCopyWithImpl<_$_AttendanceHours>(this, _$identity);
+  _$$AttendanceHoursImplCopyWith<_$AttendanceHoursImpl> get copyWith =>
+      __$$AttendanceHoursImplCopyWithImpl<_$AttendanceHoursImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_AttendanceHoursToJson(
+    return _$$AttendanceHoursImplToJson(
       this,
     );
   }
@@ -329,10 +330,10 @@ abstract class _AttendanceHours implements AttendanceHours {
   const factory _AttendanceHours(
       {required final String code,
       required final String value,
-      required final bool active}) = _$_AttendanceHours;
+      required final bool active}) = _$AttendanceHoursImpl;
 
   factory _AttendanceHours.fromJson(Map<String, dynamic> json) =
-      _$_AttendanceHours.fromJson;
+      _$AttendanceHoursImpl.fromJson;
 
   @override
   String get code;
@@ -342,6 +343,6 @@ abstract class _AttendanceHours implements AttendanceHours {
   bool get active;
   @override
   @JsonKey(ignore: true)
-  _$$_AttendanceHoursCopyWith<_$_AttendanceHours> get copyWith =>
+  _$$AttendanceHoursImplCopyWith<_$AttendanceHoursImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

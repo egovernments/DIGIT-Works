@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:works_shg_app/blocs/auth/auth.dart';
 import 'package:works_shg_app/data/repositories/work_order_repository/my_works_repository.dart';
 import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
@@ -40,16 +41,19 @@ class SearchIndividualWorkBloc
             await MyWorksRepository(client.init()).searchMyWorks(
                 url: Urls.workServices.myWorks,
                 body: {
-                  "tenantId": GlobalVariables
-                      .organisationListModel!.organisations!.first.tenantId,
+                  ...?event.body,
+                  "tenantId": GlobalVariables.roleType == RoleType.employee
+                      ? GlobalVariables.tenantId
+                      : GlobalVariables
+                          .organisationListModel!.organisations!.first.tenantId,
                   "orgIds": [],
                   "contractNumber": event.contractNumber,
-                  // "pagination": {
-                  //   "limit": "100",
-                  //   "offSet": "0",
-                  //   "sortBy": "lastModifiedTime",
-                  //   "order": "desc"
-                  // }
+                  "pagination": {
+                    "limit": "100",
+                    "offSet": "0",
+                    "sortBy": "lastModifiedTime",
+                    "order": "desc"
+                  }
                 },
                 options: Options(extra: {
                   "userInfo": GlobalVariables.userRequestModel,
@@ -58,9 +62,11 @@ class SearchIndividualWorkBloc
                   "msgId": "search with from and to values"
                 }));
         await Future.delayed(const Duration(seconds: 1));
-        emit(SearchIndividualWorkState.loaded(contractsModel));
+        emit(SearchIndividualWorkState.loaded(ContractsModel(
+            contracts: contractsModel.contracts
+                )));
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(SearchIndividualWorkState.error(
           e.response?.data['Errors'][0]['code']));
     }
@@ -69,8 +75,10 @@ class SearchIndividualWorkBloc
 
 @freezed
 class SearchIndividualWorkEvent with _$SearchIndividualWorkEvent {
-  const factory SearchIndividualWorkEvent.search(
-      {@Default('') String? contractNumber}) = IndividualWorkSearchEvent;
+  const factory SearchIndividualWorkEvent.search({
+    @Default('') String? contractNumber,
+    Map? body,
+  }) = IndividualWorkSearchEvent;
   const factory SearchIndividualWorkEvent.dispose() = DisposeIndividualContract;
 }
 

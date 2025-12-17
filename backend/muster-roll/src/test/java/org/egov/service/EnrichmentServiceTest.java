@@ -1,8 +1,8 @@
 package org.egov.service;
 
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.idgen.IdGenerationResponse;
+import org.egov.common.contract.idgen.IdResponse;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.helper.MusterRollRequestBuilderTest;
 import org.egov.repository.IdGenRepository;
@@ -11,7 +11,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.MusterRollRequest;
-import org.egov.web.models.Status;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class EnrichmentServiceTest {
+class EnrichmentServiceTest {
 
     @InjectMocks
     private EnrichmentService enrichmentService;
@@ -57,7 +57,7 @@ public class EnrichmentServiceTest {
         idGenResponseSuccess();
         MusterRollRequest musterRollRequest = MusterRollRequestBuilderTest.builder().withMusterForCreateSuccess();
         enrichmentService.enrichMusterRollOnCreate(musterRollRequest);
-        assertEquals(musterRollRequest.getMusterRoll().getMusterRollNumber(),"MR/2022-23/01/05/000131");
+        assertEquals("MR/2022-23/01/05/000131", musterRollRequest.getMusterRoll().getMusterRollNumber());
     }
 
     @Test
@@ -82,8 +82,13 @@ public class EnrichmentServiceTest {
         List<IdResponse> idResponses = new ArrayList<>();
         idResponses.add(idResponse);
         IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
-        when(idGenRepository.getId(eq(MusterRollRequestBuilderTest.builder().getRequestInfo()), eq("pb"), eq(null), eq(""), eq(1)))
-                .thenReturn(idGenerationResponse);
+        when(idGenRepository.getId(
+                MusterRollRequestBuilderTest.builder().getRequestInfo(),
+                "pb.amritsar",
+                null,
+                "",
+                1
+        )).thenReturn(idGenerationResponse);
     }
 
 
@@ -91,7 +96,7 @@ public class EnrichmentServiceTest {
         //MOCK Idgen Response
         List<IdResponse> idResponses = new ArrayList<>();
         IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
-        lenient().when(idGenRepository.getId(eq(MusterRollRequestBuilderTest.builder().getRequestInfo()), eq("pb"), eq(null), eq(""), eq(1)))
+        lenient().when(idGenRepository.getId(eq(MusterRollRequestBuilderTest.builder().getRequestInfo()), eq("pb.amritsar"), eq(null), eq(""), eq(1)))
                 .thenReturn(idGenerationResponse);
     }
 

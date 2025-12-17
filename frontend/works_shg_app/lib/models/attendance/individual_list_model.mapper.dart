@@ -1,395 +1,332 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element
+// ignore_for_file: unused_element, unnecessary_cast, override_on_non_overriding_member
+// ignore_for_file: strict_raw_type, inference_failure_on_untyped_parameter
 
 part of 'individual_list_model.dart';
 
-class IndividualListModelMapper extends MapperBase<IndividualListModel> {
-  static MapperContainer container = MapperContainer(
-    mappers: {IndividualListModelMapper()},
-  )..linkAll({IndividualModelMapper.container});
+class IndividualListModelMapper extends ClassMapperBase<IndividualListModel> {
+  IndividualListModelMapper._();
 
-  @override
-  IndividualListModelMapperElement createElement(MapperContainer container) {
-    return IndividualListModelMapperElement._(this, container);
+  static IndividualListModelMapper? _instance;
+  static IndividualListModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = IndividualListModelMapper._());
+      IndividualModelMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'IndividualListModel';
+  final String id = 'IndividualListModel';
 
-  static final fromMap = container.fromMap<IndividualListModel>;
-  static final fromJson = container.fromJson<IndividualListModel>;
-}
-
-class IndividualListModelMapperElement
-    extends MapperElementBase<IndividualListModel> {
-  IndividualListModelMapperElement._(super.mapper, super.container);
+  static List<IndividualModel>? _$Individual(IndividualListModel v) =>
+      v.Individual;
+  static const Field<IndividualListModel, List<IndividualModel>> _f$Individual =
+      Field('Individual', _$Individual, opt: true);
 
   @override
-  Function get decoder => decode;
-  IndividualListModel decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  IndividualListModel fromMap(Map<String, dynamic> map) =>
-      IndividualListModel(Individual: container.$getOpt(map, 'Individual'));
+  final MappableFields<IndividualListModel> fields = const {
+    #Individual: _f$Individual,
+  };
+
+  static IndividualListModel _instantiate(DecodingData data) {
+    return IndividualListModel(Individual: data.dec(_f$Individual));
+  }
 
   @override
-  Function get encoder => encode;
-  dynamic encode(IndividualListModel v) => toMap(v);
-  Map<String, dynamic> toMap(IndividualListModel i) =>
-      {'Individual': container.$enc(i.Individual, 'Individual')};
+  final Function instantiate = _instantiate;
 
-  @override
-  String stringify(IndividualListModel self) =>
-      'IndividualListModel(Individual: ${container.asString(self.Individual)})';
-  @override
-  int hash(IndividualListModel self) => container.hash(self.Individual);
-  @override
-  bool equals(IndividualListModel self, IndividualListModel other) =>
-      container.isEqual(self.Individual, other.Individual);
+  static IndividualListModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<IndividualListModel>(map);
+  }
+
+  static IndividualListModel fromJson(String json) {
+    return ensureInitialized().decodeJson<IndividualListModel>(json);
+  }
 }
 
 mixin IndividualListModelMappable {
-  String toJson() =>
-      IndividualListModelMapper.container.toJson(this as IndividualListModel);
-  Map<String, dynamic> toMap() =>
-      IndividualListModelMapper.container.toMap(this as IndividualListModel);
+  String toJson() {
+    return IndividualListModelMapper.ensureInitialized()
+        .encodeJson<IndividualListModel>(this as IndividualListModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return IndividualListModelMapper.ensureInitialized()
+        .encodeMap<IndividualListModel>(this as IndividualListModel);
+  }
+
   IndividualListModelCopyWith<IndividualListModel, IndividualListModel,
           IndividualListModel>
       get copyWith => _IndividualListModelCopyWithImpl(
           this as IndividualListModel, $identity, $identity);
   @override
-  String toString() => IndividualListModelMapper.container.asString(this);
+  String toString() {
+    return IndividualListModelMapper.ensureInitialized()
+        .stringifyValue(this as IndividualListModel);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          IndividualListModelMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return IndividualListModelMapper.ensureInitialized()
+        .equalsValue(this as IndividualListModel, other);
+  }
+
   @override
-  int get hashCode => IndividualListModelMapper.container.hash(this);
+  int get hashCode {
+    return IndividualListModelMapper.ensureInitialized()
+        .hashValue(this as IndividualListModel);
+  }
 }
 
-extension IndividualListModelValueCopy<$R, $Out extends IndividualListModel>
+extension IndividualListModelValueCopy<$R, $Out>
     on ObjectCopyWith<$R, IndividualListModel, $Out> {
   IndividualListModelCopyWith<$R, IndividualListModel, $Out>
-      get asIndividualListModel =>
-          base.as((v, t, t2) => _IndividualListModelCopyWithImpl(v, t, t2));
+      get $asIndividualListModel =>
+          $base.as((v, t, t2) => _IndividualListModelCopyWithImpl(v, t, t2));
 }
 
-typedef IndividualListModelCopyWithBound = IndividualListModel;
-
 abstract class IndividualListModelCopyWith<$R, $In extends IndividualListModel,
-    $Out extends IndividualListModel> implements ObjectCopyWith<$R, $In, $Out> {
-  IndividualListModelCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends IndividualListModel>(
-          Then<IndividualListModel, $Out2> t, Then<$Out2, $R2> t2);
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, IndividualModel,
           IndividualModelCopyWith<$R, IndividualModel, IndividualModel>>?
       get Individual;
   $R call({List<IndividualModel>? Individual});
+  IndividualListModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _IndividualListModelCopyWithImpl<$R, $Out extends IndividualListModel>
-    extends CopyWithBase<$R, IndividualListModel, $Out>
+class _IndividualListModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, IndividualListModel, $Out>
     implements IndividualListModelCopyWith<$R, IndividualListModel, $Out> {
   _IndividualListModelCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  IndividualListModelCopyWith<$R2, IndividualListModel, $Out2>
-      chain<$R2, $Out2 extends IndividualListModel>(
-              Then<IndividualListModel, $Out2> t, Then<$Out2, $R2> t2) =>
-          _IndividualListModelCopyWithImpl($value, t, t2);
 
+  @override
+  late final ClassMapperBase<IndividualListModel> $mapper =
+      IndividualListModelMapper.ensureInitialized();
   @override
   ListCopyWith<$R, IndividualModel,
           IndividualModelCopyWith<$R, IndividualModel, IndividualModel>>?
       get Individual => $value.Individual != null
-          ? ListCopyWith(
-              $value.Individual!,
-              (v, t) => v.copyWith.chain<$R, IndividualModel>($identity, t),
+          ? ListCopyWith($value.Individual!, (v, t) => v.copyWith.$chain(t),
               (v) => call(Individual: v))
           : null;
   @override
-  $R call({Object? Individual = $none}) =>
-      $then(IndividualListModel(Individual: or(Individual, $value.Individual)));
-}
-
-class SingleIndividualModelMapper extends MapperBase<SingleIndividualModel> {
-  static MapperContainer container = MapperContainer(
-    mappers: {SingleIndividualModelMapper()},
-  )..linkAll({IndividualModelMapper.container});
+  $R call({Object? Individual = $none}) => $apply(
+      FieldCopyWithData({if (Individual != $none) #Individual: Individual}));
+  @override
+  IndividualListModel $make(CopyWithData data) => IndividualListModel(
+      Individual: data.get(#Individual, or: $value.Individual));
 
   @override
-  SingleIndividualModelMapperElement createElement(MapperContainer container) {
-    return SingleIndividualModelMapperElement._(this, container);
+  IndividualListModelCopyWith<$R2, IndividualListModel, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _IndividualListModelCopyWithImpl($value, $cast, t);
+}
+
+class IndividualModelMapper extends ClassMapperBase<IndividualModel> {
+  IndividualModelMapper._();
+
+  static IndividualModelMapper? _instance;
+  static IndividualModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = IndividualModelMapper._());
+      IndividualNameMapper.ensureInitialized();
+      CommonAuditDetailsMapper.ensureInitialized();
+      IndividualSkillsMapper.ensureInitialized();
+      IndividualAdditionalFieldsMapper.ensureInitialized();
+      IndividualAddressMapper.ensureInitialized();
+      IndividualIdentifiersMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'SingleIndividualModel';
+  final String id = 'IndividualModel';
 
-  static final fromMap = container.fromMap<SingleIndividualModel>;
-  static final fromJson = container.fromJson<SingleIndividualModel>;
-}
-
-class SingleIndividualModelMapperElement
-    extends MapperElementBase<SingleIndividualModel> {
-  SingleIndividualModelMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  SingleIndividualModel decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  SingleIndividualModel fromMap(Map<String, dynamic> map) =>
-      SingleIndividualModel(Individual: container.$getOpt(map, 'Individual'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(SingleIndividualModel v) => toMap(v);
-  Map<String, dynamic> toMap(SingleIndividualModel s) =>
-      {'Individual': container.$enc(s.Individual, 'Individual')};
-
-  @override
-  String stringify(SingleIndividualModel self) =>
-      'SingleIndividualModel(Individual: ${container.asString(self.Individual)})';
-  @override
-  int hash(SingleIndividualModel self) => container.hash(self.Individual);
-  @override
-  bool equals(SingleIndividualModel self, SingleIndividualModel other) =>
-      container.isEqual(self.Individual, other.Individual);
-}
-
-mixin SingleIndividualModelMappable {
-  String toJson() => SingleIndividualModelMapper.container
-      .toJson(this as SingleIndividualModel);
-  Map<String, dynamic> toMap() => SingleIndividualModelMapper.container
-      .toMap(this as SingleIndividualModel);
-  SingleIndividualModelCopyWith<SingleIndividualModel, SingleIndividualModel,
-          SingleIndividualModel>
-      get copyWith => _SingleIndividualModelCopyWithImpl(
-          this as SingleIndividualModel, $identity, $identity);
-  @override
-  String toString() => SingleIndividualModelMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          SingleIndividualModelMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => SingleIndividualModelMapper.container.hash(this);
-}
-
-extension SingleIndividualModelValueCopy<$R, $Out extends SingleIndividualModel>
-    on ObjectCopyWith<$R, SingleIndividualModel, $Out> {
-  SingleIndividualModelCopyWith<$R, SingleIndividualModel, $Out>
-      get asSingleIndividualModel =>
-          base.as((v, t, t2) => _SingleIndividualModelCopyWithImpl(v, t, t2));
-}
-
-typedef SingleIndividualModelCopyWithBound = SingleIndividualModel;
-
-abstract class SingleIndividualModelCopyWith<$R,
-        $In extends SingleIndividualModel, $Out extends SingleIndividualModel>
-    implements ObjectCopyWith<$R, $In, $Out> {
-  SingleIndividualModelCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends SingleIndividualModel>(
-          Then<SingleIndividualModel, $Out2> t, Then<$Out2, $R2> t2);
-  IndividualModelCopyWith<$R, IndividualModel, IndividualModel>? get Individual;
-  $R call({IndividualModel? Individual});
-}
-
-class _SingleIndividualModelCopyWithImpl<$R, $Out extends SingleIndividualModel>
-    extends CopyWithBase<$R, SingleIndividualModel, $Out>
-    implements SingleIndividualModelCopyWith<$R, SingleIndividualModel, $Out> {
-  _SingleIndividualModelCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  SingleIndividualModelCopyWith<$R2, SingleIndividualModel, $Out2>
-      chain<$R2, $Out2 extends SingleIndividualModel>(
-              Then<SingleIndividualModel, $Out2> t, Then<$Out2, $R2> t2) =>
-          _SingleIndividualModelCopyWithImpl($value, t, t2);
+  static String? _$id(IndividualModel v) => v.id;
+  static const Field<IndividualModel, String> _f$id =
+      Field('id', _$id, opt: true);
+  static IndividualName? _$name(IndividualModel v) => v.name;
+  static const Field<IndividualModel, IndividualName> _f$name =
+      Field('name', _$name, opt: true);
+  static String _$tenantId(IndividualModel v) => v.tenantId;
+  static const Field<IndividualModel, String> _f$tenantId =
+      Field('tenantId', _$tenantId);
+  static CommonAuditDetails? _$auditDetails(IndividualModel v) =>
+      v.auditDetails;
+  static const Field<IndividualModel, CommonAuditDetails> _f$auditDetails =
+      Field('auditDetails', _$auditDetails, opt: true);
+  static List<IndividualSkills>? _$skills(IndividualModel v) => v.skills;
+  static const Field<IndividualModel, List<IndividualSkills>> _f$skills =
+      Field('skills', _$skills, opt: true);
+  static String? _$mobileNumber(IndividualModel v) => v.mobileNumber;
+  static const Field<IndividualModel, String> _f$mobileNumber =
+      Field('mobileNumber', _$mobileNumber, opt: true);
+  static String? _$individualId(IndividualModel v) => v.individualId;
+  static const Field<IndividualModel, String> _f$individualId =
+      Field('individualId', _$individualId, opt: true);
+  static String? _$gender(IndividualModel v) => v.gender;
+  static const Field<IndividualModel, String> _f$gender =
+      Field('gender', _$gender, opt: true);
+  static String? _$userId(IndividualModel v) => v.userId;
+  static const Field<IndividualModel, String> _f$userId =
+      Field('userId', _$userId, opt: true);
+  static IndividualAdditionalFields? _$additionalFields(IndividualModel v) =>
+      v.additionalFields;
+  static const Field<IndividualModel, IndividualAdditionalFields>
+      _f$additionalFields =
+      Field('additionalFields', _$additionalFields, opt: true);
+  static List<IndividualAddress>? _$address(IndividualModel v) => v.address;
+  static const Field<IndividualModel, List<IndividualAddress>> _f$address =
+      Field('address', _$address, opt: true);
+  static String? _$altContactNumber(IndividualModel v) => v.altContactNumber;
+  static const Field<IndividualModel, String> _f$altContactNumber =
+      Field('altContactNumber', _$altContactNumber, opt: true);
+  static String? _$bloodGroup(IndividualModel v) => v.bloodGroup;
+  static const Field<IndividualModel, String> _f$bloodGroup =
+      Field('bloodGroup', _$bloodGroup, opt: true);
+  static String? _$clientReferenceId(IndividualModel v) => v.clientReferenceId;
+  static const Field<IndividualModel, String> _f$clientReferenceId =
+      Field('clientReferenceId', _$clientReferenceId, opt: true);
+  static String? _$dateOfBirth(IndividualModel v) => v.dateOfBirth;
+  static const Field<IndividualModel, String> _f$dateOfBirth =
+      Field('dateOfBirth', _$dateOfBirth, opt: true);
+  static String? _$email(IndividualModel v) => v.email;
+  static const Field<IndividualModel, String> _f$email =
+      Field('email', _$email, opt: true);
+  static String? _$fatherName(IndividualModel v) => v.fatherName;
+  static const Field<IndividualModel, String> _f$fatherName =
+      Field('fatherName', _$fatherName, opt: true);
+  static String? _$husbandName(IndividualModel v) => v.husbandName;
+  static const Field<IndividualModel, String> _f$husbandName =
+      Field('husbandName', _$husbandName, opt: true);
+  static List<IndividualIdentifiers>? _$identifiers(IndividualModel v) =>
+      v.identifiers;
+  static const Field<IndividualModel, List<IndividualIdentifiers>>
+      _f$identifiers = Field('identifiers', _$identifiers, opt: true);
+  static bool? _$isDeleted(IndividualModel v) => v.isDeleted;
+  static const Field<IndividualModel, bool> _f$isDeleted =
+      Field('isDeleted', _$isDeleted, opt: true);
+  static String? _$photo(IndividualModel v) => v.photo;
+  static const Field<IndividualModel, String> _f$photo =
+      Field('photo', _$photo, opt: true);
+  static String? _$relationship(IndividualModel v) => v.relationship;
+  static const Field<IndividualModel, String> _f$relationship =
+      Field('relationship', _$relationship, opt: true);
+  static int? _$rowVersion(IndividualModel v) => v.rowVersion;
+  static const Field<IndividualModel, int> _f$rowVersion =
+      Field('rowVersion', _$rowVersion, opt: true);
 
   @override
-  IndividualModelCopyWith<$R, IndividualModel, IndividualModel>?
-      get Individual => $value.Individual?.copyWith
-          .chain($identity, (v) => call(Individual: v));
-  @override
-  $R call({Object? Individual = $none}) => $then(
-      SingleIndividualModel(Individual: or(Individual, $value.Individual)));
-}
+  final MappableFields<IndividualModel> fields = const {
+    #id: _f$id,
+    #name: _f$name,
+    #tenantId: _f$tenantId,
+    #auditDetails: _f$auditDetails,
+    #skills: _f$skills,
+    #mobileNumber: _f$mobileNumber,
+    #individualId: _f$individualId,
+    #gender: _f$gender,
+    #userId: _f$userId,
+    #additionalFields: _f$additionalFields,
+    #address: _f$address,
+    #altContactNumber: _f$altContactNumber,
+    #bloodGroup: _f$bloodGroup,
+    #clientReferenceId: _f$clientReferenceId,
+    #dateOfBirth: _f$dateOfBirth,
+    #email: _f$email,
+    #fatherName: _f$fatherName,
+    #husbandName: _f$husbandName,
+    #identifiers: _f$identifiers,
+    #isDeleted: _f$isDeleted,
+    #photo: _f$photo,
+    #relationship: _f$relationship,
+    #rowVersion: _f$rowVersion,
+  };
 
-class IndividualModelMapper extends MapperBase<IndividualModel> {
-  static MapperContainer container = MapperContainer(
-    mappers: {IndividualModelMapper()},
-  )..linkAll({
-      IndividualNameMapper.container,
-      CommonAuditDetailsMapper.container,
-      IndividualSkillsMapper.container,
-      IndividualAdditionalFieldsMapper.container,
-      IndividualAddressMapper.container,
-      IndividualIdentifiersMapper.container,
-    });
-
-  @override
-  IndividualModelMapperElement createElement(MapperContainer container) {
-    return IndividualModelMapperElement._(this, container);
+  static IndividualModel _instantiate(DecodingData data) {
+    return IndividualModel(
+        id: data.dec(_f$id),
+        name: data.dec(_f$name),
+        tenantId: data.dec(_f$tenantId),
+        auditDetails: data.dec(_f$auditDetails),
+        skills: data.dec(_f$skills),
+        mobileNumber: data.dec(_f$mobileNumber),
+        individualId: data.dec(_f$individualId),
+        gender: data.dec(_f$gender),
+        userId: data.dec(_f$userId),
+        additionalFields: data.dec(_f$additionalFields),
+        address: data.dec(_f$address),
+        altContactNumber: data.dec(_f$altContactNumber),
+        bloodGroup: data.dec(_f$bloodGroup),
+        clientReferenceId: data.dec(_f$clientReferenceId),
+        dateOfBirth: data.dec(_f$dateOfBirth),
+        email: data.dec(_f$email),
+        fatherName: data.dec(_f$fatherName),
+        husbandName: data.dec(_f$husbandName),
+        identifiers: data.dec(_f$identifiers),
+        isDeleted: data.dec(_f$isDeleted),
+        photo: data.dec(_f$photo),
+        relationship: data.dec(_f$relationship),
+        rowVersion: data.dec(_f$rowVersion));
   }
 
   @override
-  String get id => 'IndividualModel';
+  final Function instantiate = _instantiate;
 
-  static final fromMap = container.fromMap<IndividualModel>;
-  static final fromJson = container.fromJson<IndividualModel>;
-}
+  static IndividualModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<IndividualModel>(map);
+  }
 
-class IndividualModelMapperElement extends MapperElementBase<IndividualModel> {
-  IndividualModelMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  IndividualModel decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  IndividualModel fromMap(Map<String, dynamic> map) => IndividualModel(
-      id: container.$getOpt(map, 'id'),
-      name: container.$getOpt(map, 'name'),
-      tenantId: container.$get(map, 'tenantId'),
-      auditDetails: container.$getOpt(map, 'auditDetails'),
-      skills: container.$getOpt(map, 'skills'),
-      mobileNumber: container.$getOpt(map, 'mobileNumber'),
-      individualId: container.$getOpt(map, 'individualId'),
-      gender: container.$getOpt(map, 'gender'),
-      userId: container.$getOpt(map, 'userId'),
-      additionalFields: container.$getOpt(map, 'additionalFields'),
-      address: container.$getOpt(map, 'address'),
-      altContactNumber: container.$getOpt(map, 'altContactNumber'),
-      bloodGroup: container.$getOpt(map, 'bloodGroup'),
-      clientReferenceId: container.$getOpt(map, 'clientReferenceId'),
-      dateOfBirth: container.$getOpt(map, 'dateOfBirth'),
-      email: container.$getOpt(map, 'email'),
-      fatherName: container.$getOpt(map, 'fatherName'),
-      husbandName: container.$getOpt(map, 'husbandName'),
-      identifiers: container.$getOpt(map, 'identifiers'),
-      isDeleted: container.$getOpt(map, 'isDeleted'),
-      photo: container.$getOpt(map, 'photo'),
-      relationship: container.$getOpt(map, 'relationship'),
-      rowVersion: container.$getOpt(map, 'rowVersion'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(IndividualModel v) => toMap(v);
-  Map<String, dynamic> toMap(IndividualModel i) => {
-        'id': container.$enc(i.id, 'id'),
-        'name': container.$enc(i.name, 'name'),
-        'tenantId': container.$enc(i.tenantId, 'tenantId'),
-        'auditDetails': container.$enc(i.auditDetails, 'auditDetails'),
-        'skills': container.$enc(i.skills, 'skills'),
-        'mobileNumber': container.$enc(i.mobileNumber, 'mobileNumber'),
-        'individualId': container.$enc(i.individualId, 'individualId'),
-        'gender': container.$enc(i.gender, 'gender'),
-        'userId': container.$enc(i.userId, 'userId'),
-        'additionalFields':
-            container.$enc(i.additionalFields, 'additionalFields'),
-        'address': container.$enc(i.address, 'address'),
-        'altContactNumber':
-            container.$enc(i.altContactNumber, 'altContactNumber'),
-        'bloodGroup': container.$enc(i.bloodGroup, 'bloodGroup'),
-        'clientReferenceId':
-            container.$enc(i.clientReferenceId, 'clientReferenceId'),
-        'dateOfBirth': container.$enc(i.dateOfBirth, 'dateOfBirth'),
-        'email': container.$enc(i.email, 'email'),
-        'fatherName': container.$enc(i.fatherName, 'fatherName'),
-        'husbandName': container.$enc(i.husbandName, 'husbandName'),
-        'identifiers': container.$enc(i.identifiers, 'identifiers'),
-        'isDeleted': container.$enc(i.isDeleted, 'isDeleted'),
-        'photo': container.$enc(i.photo, 'photo'),
-        'relationship': container.$enc(i.relationship, 'relationship'),
-        'rowVersion': container.$enc(i.rowVersion, 'rowVersion')
-      };
-
-  @override
-  String stringify(IndividualModel self) =>
-      'IndividualModel(id: ${container.asString(self.id)}, individualId: ${container.asString(self.individualId)}, tenantId: ${container.asString(self.tenantId)}, clientReferenceId: ${container.asString(self.clientReferenceId)}, userId: ${container.asString(self.userId)}, name: ${container.asString(self.name)}, dateOfBirth: ${container.asString(self.dateOfBirth)}, gender: ${container.asString(self.gender)}, bloodGroup: ${container.asString(self.bloodGroup)}, mobileNumber: ${container.asString(self.mobileNumber)}, altContactNumber: ${container.asString(self.altContactNumber)}, email: ${container.asString(self.email)}, address: ${container.asString(self.address)}, fatherName: ${container.asString(self.fatherName)}, husbandName: ${container.asString(self.husbandName)}, relationship: ${container.asString(self.relationship)}, identifiers: ${container.asString(self.identifiers)}, skills: ${container.asString(self.skills)}, photo: ${container.asString(self.photo)}, additionalFields: ${container.asString(self.additionalFields)}, isDeleted: ${container.asString(self.isDeleted)}, rowVersion: ${container.asString(self.rowVersion)}, auditDetails: ${container.asString(self.auditDetails)})';
-  @override
-  int hash(IndividualModel self) =>
-      container.hash(self.id) ^
-      container.hash(self.individualId) ^
-      container.hash(self.tenantId) ^
-      container.hash(self.clientReferenceId) ^
-      container.hash(self.userId) ^
-      container.hash(self.name) ^
-      container.hash(self.dateOfBirth) ^
-      container.hash(self.gender) ^
-      container.hash(self.bloodGroup) ^
-      container.hash(self.mobileNumber) ^
-      container.hash(self.altContactNumber) ^
-      container.hash(self.email) ^
-      container.hash(self.address) ^
-      container.hash(self.fatherName) ^
-      container.hash(self.husbandName) ^
-      container.hash(self.relationship) ^
-      container.hash(self.identifiers) ^
-      container.hash(self.skills) ^
-      container.hash(self.photo) ^
-      container.hash(self.additionalFields) ^
-      container.hash(self.isDeleted) ^
-      container.hash(self.rowVersion) ^
-      container.hash(self.auditDetails);
-  @override
-  bool equals(IndividualModel self, IndividualModel other) =>
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.individualId, other.individualId) &&
-      container.isEqual(self.tenantId, other.tenantId) &&
-      container.isEqual(self.clientReferenceId, other.clientReferenceId) &&
-      container.isEqual(self.userId, other.userId) &&
-      container.isEqual(self.name, other.name) &&
-      container.isEqual(self.dateOfBirth, other.dateOfBirth) &&
-      container.isEqual(self.gender, other.gender) &&
-      container.isEqual(self.bloodGroup, other.bloodGroup) &&
-      container.isEqual(self.mobileNumber, other.mobileNumber) &&
-      container.isEqual(self.altContactNumber, other.altContactNumber) &&
-      container.isEqual(self.email, other.email) &&
-      container.isEqual(self.address, other.address) &&
-      container.isEqual(self.fatherName, other.fatherName) &&
-      container.isEqual(self.husbandName, other.husbandName) &&
-      container.isEqual(self.relationship, other.relationship) &&
-      container.isEqual(self.identifiers, other.identifiers) &&
-      container.isEqual(self.skills, other.skills) &&
-      container.isEqual(self.photo, other.photo) &&
-      container.isEqual(self.additionalFields, other.additionalFields) &&
-      container.isEqual(self.isDeleted, other.isDeleted) &&
-      container.isEqual(self.rowVersion, other.rowVersion) &&
-      container.isEqual(self.auditDetails, other.auditDetails);
+  static IndividualModel fromJson(String json) {
+    return ensureInitialized().decodeJson<IndividualModel>(json);
+  }
 }
 
 mixin IndividualModelMappable {
-  String toJson() =>
-      IndividualModelMapper.container.toJson(this as IndividualModel);
-  Map<String, dynamic> toMap() =>
-      IndividualModelMapper.container.toMap(this as IndividualModel);
+  String toJson() {
+    return IndividualModelMapper.ensureInitialized()
+        .encodeJson<IndividualModel>(this as IndividualModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return IndividualModelMapper.ensureInitialized()
+        .encodeMap<IndividualModel>(this as IndividualModel);
+  }
+
   IndividualModelCopyWith<IndividualModel, IndividualModel, IndividualModel>
       get copyWith => _IndividualModelCopyWithImpl(
           this as IndividualModel, $identity, $identity);
   @override
-  String toString() => IndividualModelMapper.container.asString(this);
+  String toString() {
+    return IndividualModelMapper.ensureInitialized()
+        .stringifyValue(this as IndividualModel);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          IndividualModelMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return IndividualModelMapper.ensureInitialized()
+        .equalsValue(this as IndividualModel, other);
+  }
+
   @override
-  int get hashCode => IndividualModelMapper.container.hash(this);
+  int get hashCode {
+    return IndividualModelMapper.ensureInitialized()
+        .hashValue(this as IndividualModel);
+  }
 }
 
-extension IndividualModelValueCopy<$R, $Out extends IndividualModel>
+extension IndividualModelValueCopy<$R, $Out>
     on ObjectCopyWith<$R, IndividualModel, $Out> {
-  IndividualModelCopyWith<$R, IndividualModel, $Out> get asIndividualModel =>
-      base.as((v, t, t2) => _IndividualModelCopyWithImpl(v, t, t2));
+  IndividualModelCopyWith<$R, IndividualModel, $Out> get $asIndividualModel =>
+      $base.as((v, t, t2) => _IndividualModelCopyWithImpl(v, t, t2));
 }
 
-typedef IndividualModelCopyWithBound = IndividualModel;
-
-abstract class IndividualModelCopyWith<$R, $In extends IndividualModel,
-    $Out extends IndividualModel> implements ObjectCopyWith<$R, $In, $Out> {
-  IndividualModelCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends IndividualModel>(
-          Then<IndividualModel, $Out2> t, Then<$Out2, $R2> t2);
+abstract class IndividualModelCopyWith<$R, $In extends IndividualModel, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
   IndividualNameCopyWith<$R, IndividualName, IndividualName>? get name;
   CommonAuditDetailsCopyWith<$R, CommonAuditDetails, CommonAuditDetails>?
       get auditDetails;
@@ -430,46 +367,42 @@ abstract class IndividualModelCopyWith<$R, $In extends IndividualModel,
       String? photo,
       String? relationship,
       int? rowVersion});
+  IndividualModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _IndividualModelCopyWithImpl<$R, $Out extends IndividualModel>
-    extends CopyWithBase<$R, IndividualModel, $Out>
+class _IndividualModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, IndividualModel, $Out>
     implements IndividualModelCopyWith<$R, IndividualModel, $Out> {
   _IndividualModelCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  IndividualModelCopyWith<$R2, IndividualModel, $Out2>
-      chain<$R2, $Out2 extends IndividualModel>(
-              Then<IndividualModel, $Out2> t, Then<$Out2, $R2> t2) =>
-          _IndividualModelCopyWithImpl($value, t, t2);
 
   @override
+  late final ClassMapperBase<IndividualModel> $mapper =
+      IndividualModelMapper.ensureInitialized();
+  @override
   IndividualNameCopyWith<$R, IndividualName, IndividualName>? get name =>
-      $value.name?.copyWith.chain($identity, (v) => call(name: v));
+      $value.name?.copyWith.$chain((v) => call(name: v));
   @override
   CommonAuditDetailsCopyWith<$R, CommonAuditDetails, CommonAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
   @override
   ListCopyWith<$R, IndividualSkills,
           IndividualSkillsCopyWith<$R, IndividualSkills, IndividualSkills>>?
       get skills => $value.skills != null
-          ? ListCopyWith(
-              $value.skills!,
-              (v, t) => v.copyWith.chain<$R, IndividualSkills>($identity, t),
+          ? ListCopyWith($value.skills!, (v, t) => v.copyWith.$chain(t),
               (v) => call(skills: v))
           : null;
   @override
   IndividualAdditionalFieldsCopyWith<$R, IndividualAdditionalFields,
           IndividualAdditionalFields>?
       get additionalFields => $value.additionalFields?.copyWith
-          .chain($identity, (v) => call(additionalFields: v));
+          .$chain((v) => call(additionalFields: v));
   @override
   ListCopyWith<$R, IndividualAddress,
           IndividualAddressCopyWith<$R, IndividualAddress, IndividualAddress>>?
       get address => $value.address != null
-          ? ListCopyWith(
-              $value.address!,
-              (v, t) => v.copyWith.chain<$R, IndividualAddress>($identity, t),
+          ? ListCopyWith($value.address!, (v, t) => v.copyWith.$chain(t),
               (v) => call(address: v))
           : null;
   @override
@@ -478,9 +411,7 @@ class _IndividualModelCopyWithImpl<$R, $Out extends IndividualModel>
       IndividualIdentifiers,
       IndividualIdentifiersCopyWith<$R, IndividualIdentifiers,
           IndividualIdentifiers>>? get identifiers => $value.identifiers != null
-      ? ListCopyWith(
-          $value.identifiers!,
-          (v, t) => v.copyWith.chain<$R, IndividualIdentifiers>($identity, t),
+      ? ListCopyWith($value.identifiers!, (v, t) => v.copyWith.$chain(t),
           (v) => call(identifiers: v))
       : null;
   @override
@@ -508,194 +439,1018 @@ class _IndividualModelCopyWithImpl<$R, $Out extends IndividualModel>
           Object? photo = $none,
           Object? relationship = $none,
           Object? rowVersion = $none}) =>
-      $then(IndividualModel(
-          id: or(id, $value.id),
-          name: or(name, $value.name),
-          tenantId: tenantId ?? $value.tenantId,
-          auditDetails: or(auditDetails, $value.auditDetails),
-          skills: or(skills, $value.skills),
-          mobileNumber: or(mobileNumber, $value.mobileNumber),
-          individualId: or(individualId, $value.individualId),
-          gender: or(gender, $value.gender),
-          userId: or(userId, $value.userId),
-          additionalFields: or(additionalFields, $value.additionalFields),
-          address: or(address, $value.address),
-          altContactNumber: or(altContactNumber, $value.altContactNumber),
-          bloodGroup: or(bloodGroup, $value.bloodGroup),
-          clientReferenceId: or(clientReferenceId, $value.clientReferenceId),
-          dateOfBirth: or(dateOfBirth, $value.dateOfBirth),
-          email: or(email, $value.email),
-          fatherName: or(fatherName, $value.fatherName),
-          husbandName: or(husbandName, $value.husbandName),
-          identifiers: or(identifiers, $value.identifiers),
-          isDeleted: or(isDeleted, $value.isDeleted),
-          photo: or(photo, $value.photo),
-          relationship: or(relationship, $value.relationship),
-          rowVersion: or(rowVersion, $value.rowVersion)));
-}
-
-class IndividualAddressMapper extends MapperBase<IndividualAddress> {
-  static MapperContainer container = MapperContainer(
-    mappers: {IndividualAddressMapper()},
-  )..linkAll({
-      CommonAuditDetailsMapper.container,
-      AddressWardMapper.container,
-      AddressLocalityMapper.container,
-    });
+      $apply(FieldCopyWithData({
+        if (id != $none) #id: id,
+        if (name != $none) #name: name,
+        if (tenantId != null) #tenantId: tenantId,
+        if (auditDetails != $none) #auditDetails: auditDetails,
+        if (skills != $none) #skills: skills,
+        if (mobileNumber != $none) #mobileNumber: mobileNumber,
+        if (individualId != $none) #individualId: individualId,
+        if (gender != $none) #gender: gender,
+        if (userId != $none) #userId: userId,
+        if (additionalFields != $none) #additionalFields: additionalFields,
+        if (address != $none) #address: address,
+        if (altContactNumber != $none) #altContactNumber: altContactNumber,
+        if (bloodGroup != $none) #bloodGroup: bloodGroup,
+        if (clientReferenceId != $none) #clientReferenceId: clientReferenceId,
+        if (dateOfBirth != $none) #dateOfBirth: dateOfBirth,
+        if (email != $none) #email: email,
+        if (fatherName != $none) #fatherName: fatherName,
+        if (husbandName != $none) #husbandName: husbandName,
+        if (identifiers != $none) #identifiers: identifiers,
+        if (isDeleted != $none) #isDeleted: isDeleted,
+        if (photo != $none) #photo: photo,
+        if (relationship != $none) #relationship: relationship,
+        if (rowVersion != $none) #rowVersion: rowVersion
+      }));
+  @override
+  IndividualModel $make(CopyWithData data) => IndividualModel(
+      id: data.get(#id, or: $value.id),
+      name: data.get(#name, or: $value.name),
+      tenantId: data.get(#tenantId, or: $value.tenantId),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails),
+      skills: data.get(#skills, or: $value.skills),
+      mobileNumber: data.get(#mobileNumber, or: $value.mobileNumber),
+      individualId: data.get(#individualId, or: $value.individualId),
+      gender: data.get(#gender, or: $value.gender),
+      userId: data.get(#userId, or: $value.userId),
+      additionalFields:
+          data.get(#additionalFields, or: $value.additionalFields),
+      address: data.get(#address, or: $value.address),
+      altContactNumber:
+          data.get(#altContactNumber, or: $value.altContactNumber),
+      bloodGroup: data.get(#bloodGroup, or: $value.bloodGroup),
+      clientReferenceId:
+          data.get(#clientReferenceId, or: $value.clientReferenceId),
+      dateOfBirth: data.get(#dateOfBirth, or: $value.dateOfBirth),
+      email: data.get(#email, or: $value.email),
+      fatherName: data.get(#fatherName, or: $value.fatherName),
+      husbandName: data.get(#husbandName, or: $value.husbandName),
+      identifiers: data.get(#identifiers, or: $value.identifiers),
+      isDeleted: data.get(#isDeleted, or: $value.isDeleted),
+      photo: data.get(#photo, or: $value.photo),
+      relationship: data.get(#relationship, or: $value.relationship),
+      rowVersion: data.get(#rowVersion, or: $value.rowVersion));
 
   @override
-  IndividualAddressMapperElement createElement(MapperContainer container) {
-    return IndividualAddressMapperElement._(this, container);
+  IndividualModelCopyWith<$R2, IndividualModel, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _IndividualModelCopyWithImpl($value, $cast, t);
+}
+
+class IndividualNameMapper extends ClassMapperBase<IndividualName> {
+  IndividualNameMapper._();
+
+  static IndividualNameMapper? _instance;
+  static IndividualNameMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = IndividualNameMapper._());
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'IndividualAddress';
+  final String id = 'IndividualName';
 
-  static final fromMap = container.fromMap<IndividualAddress>;
-  static final fromJson = container.fromJson<IndividualAddress>;
+  static String? _$familyName(IndividualName v) => v.familyName;
+  static const Field<IndividualName, String> _f$familyName =
+      Field('familyName', _$familyName, opt: true);
+  static String? _$givenName(IndividualName v) => v.givenName;
+  static const Field<IndividualName, String> _f$givenName =
+      Field('givenName', _$givenName, opt: true);
+  static String? _$otherNames(IndividualName v) => v.otherNames;
+  static const Field<IndividualName, String> _f$otherNames =
+      Field('otherNames', _$otherNames, opt: true);
+
+  @override
+  final MappableFields<IndividualName> fields = const {
+    #familyName: _f$familyName,
+    #givenName: _f$givenName,
+    #otherNames: _f$otherNames,
+  };
+
+  static IndividualName _instantiate(DecodingData data) {
+    return IndividualName(
+        familyName: data.dec(_f$familyName),
+        givenName: data.dec(_f$givenName),
+        otherNames: data.dec(_f$otherNames));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static IndividualName fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<IndividualName>(map);
+  }
+
+  static IndividualName fromJson(String json) {
+    return ensureInitialized().decodeJson<IndividualName>(json);
+  }
 }
 
-class IndividualAddressMapperElement
-    extends MapperElementBase<IndividualAddress> {
-  IndividualAddressMapperElement._(super.mapper, super.container);
+mixin IndividualNameMappable {
+  String toJson() {
+    return IndividualNameMapper.ensureInitialized()
+        .encodeJson<IndividualName>(this as IndividualName);
+  }
+
+  Map<String, dynamic> toMap() {
+    return IndividualNameMapper.ensureInitialized()
+        .encodeMap<IndividualName>(this as IndividualName);
+  }
+
+  IndividualNameCopyWith<IndividualName, IndividualName, IndividualName>
+      get copyWith => _IndividualNameCopyWithImpl(
+          this as IndividualName, $identity, $identity);
+  @override
+  String toString() {
+    return IndividualNameMapper.ensureInitialized()
+        .stringifyValue(this as IndividualName);
+  }
 
   @override
-  Function get decoder => decode;
-  IndividualAddress decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  IndividualAddress fromMap(Map<String, dynamic> map) => IndividualAddress(
-      id: container.$getOpt(map, 'id'),
-      tenantId: container.$getOpt(map, 'tenantId'),
-      auditDetails: container.$getOpt(map, 'auditDetails'),
-      isDeleted: container.$getOpt(map, 'isDeleted'),
-      clientReferenceId: container.$getOpt(map, 'clientReferenceId'),
-      individualId: container.$getOpt(map, 'individualId'),
-      ward: container.$getOpt(map, 'ward'),
-      type: container.$getOpt(map, 'type'),
-      addressLine1: container.$getOpt(map, 'addressLine1'),
-      addressLine2: container.$getOpt(map, 'addressLine2'),
-      buildingName: container.$getOpt(map, 'buildingName'),
-      city: container.$getOpt(map, 'city'),
-      doorNo: container.$getOpt(map, 'doorNo'),
-      landmark: container.$getOpt(map, 'landmark'),
-      latitude: container.$getOpt(map, 'latitude'),
-      locality: container.$getOpt(map, 'locality'),
-      locationAccuracy: container.$getOpt(map, 'locationAccuracy'),
-      longitude: container.$getOpt(map, 'longitude'),
-      pincode: container.$getOpt(map, 'pincode'),
-      street: container.$getOpt(map, 'street'));
+  bool operator ==(Object other) {
+    return IndividualNameMapper.ensureInitialized()
+        .equalsValue(this as IndividualName, other);
+  }
 
   @override
-  Function get encoder => encode;
-  dynamic encode(IndividualAddress v) => toMap(v);
-  Map<String, dynamic> toMap(IndividualAddress i) => {
-        'id': container.$enc(i.id, 'id'),
-        'tenantId': container.$enc(i.tenantId, 'tenantId'),
-        'auditDetails': container.$enc(i.auditDetails, 'auditDetails'),
-        'isDeleted': container.$enc(i.isDeleted, 'isDeleted'),
-        'clientReferenceId':
-            container.$enc(i.clientReferenceId, 'clientReferenceId'),
-        'individualId': container.$enc(i.individualId, 'individualId'),
-        'ward': container.$enc(i.ward, 'ward'),
-        'type': container.$enc(i.type, 'type'),
-        'addressLine1': container.$enc(i.addressLine1, 'addressLine1'),
-        'addressLine2': container.$enc(i.addressLine2, 'addressLine2'),
-        'buildingName': container.$enc(i.buildingName, 'buildingName'),
-        'city': container.$enc(i.city, 'city'),
-        'doorNo': container.$enc(i.doorNo, 'doorNo'),
-        'landmark': container.$enc(i.landmark, 'landmark'),
-        'latitude': container.$enc(i.latitude, 'latitude'),
-        'locality': container.$enc(i.locality, 'locality'),
-        'locationAccuracy':
-            container.$enc(i.locationAccuracy, 'locationAccuracy'),
-        'longitude': container.$enc(i.longitude, 'longitude'),
-        'pincode': container.$enc(i.pincode, 'pincode'),
-        'street': container.$enc(i.street, 'street')
-      };
+  int get hashCode {
+    return IndividualNameMapper.ensureInitialized()
+        .hashValue(this as IndividualName);
+  }
+}
+
+extension IndividualNameValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, IndividualName, $Out> {
+  IndividualNameCopyWith<$R, IndividualName, $Out> get $asIndividualName =>
+      $base.as((v, t, t2) => _IndividualNameCopyWithImpl(v, t, t2));
+}
+
+abstract class IndividualNameCopyWith<$R, $In extends IndividualName, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? familyName, String? givenName, String? otherNames});
+  IndividualNameCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _IndividualNameCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, IndividualName, $Out>
+    implements IndividualNameCopyWith<$R, IndividualName, $Out> {
+  _IndividualNameCopyWithImpl(super.value, super.then, super.then2);
 
   @override
-  String stringify(IndividualAddress self) =>
-      'IndividualAddress(id: ${container.asString(self.id)}, clientReferenceId: ${container.asString(self.clientReferenceId)}, individualId: ${container.asString(self.individualId)}, tenantId: ${container.asString(self.tenantId)}, doorNo: ${container.asString(self.doorNo)}, latitude: ${container.asString(self.latitude)}, longitude: ${container.asString(self.longitude)}, locationAccuracy: ${container.asString(self.locationAccuracy)}, type: ${container.asString(self.type)}, addressLine1: ${container.asString(self.addressLine1)}, addressLine2: ${container.asString(self.addressLine2)}, landmark: ${container.asString(self.landmark)}, city: ${container.asString(self.city)}, pincode: ${container.asString(self.pincode)}, buildingName: ${container.asString(self.buildingName)}, street: ${container.asString(self.street)}, locality: ${container.asString(self.locality)}, ward: ${container.asString(self.ward)}, isDeleted: ${container.asString(self.isDeleted)}, auditDetails: ${container.asString(self.auditDetails)})';
+  late final ClassMapperBase<IndividualName> $mapper =
+      IndividualNameMapper.ensureInitialized();
   @override
-  int hash(IndividualAddress self) =>
-      container.hash(self.id) ^
-      container.hash(self.clientReferenceId) ^
-      container.hash(self.individualId) ^
-      container.hash(self.tenantId) ^
-      container.hash(self.doorNo) ^
-      container.hash(self.latitude) ^
-      container.hash(self.longitude) ^
-      container.hash(self.locationAccuracy) ^
-      container.hash(self.type) ^
-      container.hash(self.addressLine1) ^
-      container.hash(self.addressLine2) ^
-      container.hash(self.landmark) ^
-      container.hash(self.city) ^
-      container.hash(self.pincode) ^
-      container.hash(self.buildingName) ^
-      container.hash(self.street) ^
-      container.hash(self.locality) ^
-      container.hash(self.ward) ^
-      container.hash(self.isDeleted) ^
-      container.hash(self.auditDetails);
+  $R call(
+          {Object? familyName = $none,
+          Object? givenName = $none,
+          Object? otherNames = $none}) =>
+      $apply(FieldCopyWithData({
+        if (familyName != $none) #familyName: familyName,
+        if (givenName != $none) #givenName: givenName,
+        if (otherNames != $none) #otherNames: otherNames
+      }));
   @override
-  bool equals(IndividualAddress self, IndividualAddress other) =>
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.clientReferenceId, other.clientReferenceId) &&
-      container.isEqual(self.individualId, other.individualId) &&
-      container.isEqual(self.tenantId, other.tenantId) &&
-      container.isEqual(self.doorNo, other.doorNo) &&
-      container.isEqual(self.latitude, other.latitude) &&
-      container.isEqual(self.longitude, other.longitude) &&
-      container.isEqual(self.locationAccuracy, other.locationAccuracy) &&
-      container.isEqual(self.type, other.type) &&
-      container.isEqual(self.addressLine1, other.addressLine1) &&
-      container.isEqual(self.addressLine2, other.addressLine2) &&
-      container.isEqual(self.landmark, other.landmark) &&
-      container.isEqual(self.city, other.city) &&
-      container.isEqual(self.pincode, other.pincode) &&
-      container.isEqual(self.buildingName, other.buildingName) &&
-      container.isEqual(self.street, other.street) &&
-      container.isEqual(self.locality, other.locality) &&
-      container.isEqual(self.ward, other.ward) &&
-      container.isEqual(self.isDeleted, other.isDeleted) &&
-      container.isEqual(self.auditDetails, other.auditDetails);
+  IndividualName $make(CopyWithData data) => IndividualName(
+      familyName: data.get(#familyName, or: $value.familyName),
+      givenName: data.get(#givenName, or: $value.givenName),
+      otherNames: data.get(#otherNames, or: $value.otherNames));
+
+  @override
+  IndividualNameCopyWith<$R2, IndividualName, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _IndividualNameCopyWithImpl($value, $cast, t);
+}
+
+class CommonAuditDetailsMapper extends ClassMapperBase<CommonAuditDetails> {
+  CommonAuditDetailsMapper._();
+
+  static CommonAuditDetailsMapper? _instance;
+  static CommonAuditDetailsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = CommonAuditDetailsMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'CommonAuditDetails';
+
+  static int? _$createdTime(CommonAuditDetails v) => v.createdTime;
+  static const Field<CommonAuditDetails, int> _f$createdTime =
+      Field('createdTime', _$createdTime, opt: true);
+  static int? _$lastModifiedTime(CommonAuditDetails v) => v.lastModifiedTime;
+  static const Field<CommonAuditDetails, int> _f$lastModifiedTime =
+      Field('lastModifiedTime', _$lastModifiedTime, opt: true);
+  static String? _$createdBy(CommonAuditDetails v) => v.createdBy;
+  static const Field<CommonAuditDetails, String> _f$createdBy =
+      Field('createdBy', _$createdBy, opt: true);
+  static String? _$lastModifiedBy(CommonAuditDetails v) => v.lastModifiedBy;
+  static const Field<CommonAuditDetails, String> _f$lastModifiedBy =
+      Field('lastModifiedBy', _$lastModifiedBy, opt: true);
+
+  @override
+  final MappableFields<CommonAuditDetails> fields = const {
+    #createdTime: _f$createdTime,
+    #lastModifiedTime: _f$lastModifiedTime,
+    #createdBy: _f$createdBy,
+    #lastModifiedBy: _f$lastModifiedBy,
+  };
+
+  static CommonAuditDetails _instantiate(DecodingData data) {
+    return CommonAuditDetails(
+        createdTime: data.dec(_f$createdTime),
+        lastModifiedTime: data.dec(_f$lastModifiedTime),
+        createdBy: data.dec(_f$createdBy),
+        lastModifiedBy: data.dec(_f$lastModifiedBy));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static CommonAuditDetails fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<CommonAuditDetails>(map);
+  }
+
+  static CommonAuditDetails fromJson(String json) {
+    return ensureInitialized().decodeJson<CommonAuditDetails>(json);
+  }
+}
+
+mixin CommonAuditDetailsMappable {
+  String toJson() {
+    return CommonAuditDetailsMapper.ensureInitialized()
+        .encodeJson<CommonAuditDetails>(this as CommonAuditDetails);
+  }
+
+  Map<String, dynamic> toMap() {
+    return CommonAuditDetailsMapper.ensureInitialized()
+        .encodeMap<CommonAuditDetails>(this as CommonAuditDetails);
+  }
+
+  CommonAuditDetailsCopyWith<CommonAuditDetails, CommonAuditDetails,
+          CommonAuditDetails>
+      get copyWith => _CommonAuditDetailsCopyWithImpl(
+          this as CommonAuditDetails, $identity, $identity);
+  @override
+  String toString() {
+    return CommonAuditDetailsMapper.ensureInitialized()
+        .stringifyValue(this as CommonAuditDetails);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return CommonAuditDetailsMapper.ensureInitialized()
+        .equalsValue(this as CommonAuditDetails, other);
+  }
+
+  @override
+  int get hashCode {
+    return CommonAuditDetailsMapper.ensureInitialized()
+        .hashValue(this as CommonAuditDetails);
+  }
+}
+
+extension CommonAuditDetailsValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, CommonAuditDetails, $Out> {
+  CommonAuditDetailsCopyWith<$R, CommonAuditDetails, $Out>
+      get $asCommonAuditDetails =>
+          $base.as((v, t, t2) => _CommonAuditDetailsCopyWithImpl(v, t, t2));
+}
+
+abstract class CommonAuditDetailsCopyWith<$R, $In extends CommonAuditDetails,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
+  $R call(
+      {int? createdTime,
+      int? lastModifiedTime,
+      String? createdBy,
+      String? lastModifiedBy});
+  CommonAuditDetailsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _CommonAuditDetailsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, CommonAuditDetails, $Out>
+    implements CommonAuditDetailsCopyWith<$R, CommonAuditDetails, $Out> {
+  _CommonAuditDetailsCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<CommonAuditDetails> $mapper =
+      CommonAuditDetailsMapper.ensureInitialized();
+  @override
+  $R call(
+          {Object? createdTime = $none,
+          Object? lastModifiedTime = $none,
+          Object? createdBy = $none,
+          Object? lastModifiedBy = $none}) =>
+      $apply(FieldCopyWithData({
+        if (createdTime != $none) #createdTime: createdTime,
+        if (lastModifiedTime != $none) #lastModifiedTime: lastModifiedTime,
+        if (createdBy != $none) #createdBy: createdBy,
+        if (lastModifiedBy != $none) #lastModifiedBy: lastModifiedBy
+      }));
+  @override
+  CommonAuditDetails $make(CopyWithData data) => CommonAuditDetails(
+      createdTime: data.get(#createdTime, or: $value.createdTime),
+      lastModifiedTime:
+          data.get(#lastModifiedTime, or: $value.lastModifiedTime),
+      createdBy: data.get(#createdBy, or: $value.createdBy),
+      lastModifiedBy: data.get(#lastModifiedBy, or: $value.lastModifiedBy));
+
+  @override
+  CommonAuditDetailsCopyWith<$R2, CommonAuditDetails, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _CommonAuditDetailsCopyWithImpl($value, $cast, t);
+}
+
+class IndividualSkillsMapper extends ClassMapperBase<IndividualSkills> {
+  IndividualSkillsMapper._();
+
+  static IndividualSkillsMapper? _instance;
+  static IndividualSkillsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = IndividualSkillsMapper._());
+      CommonAuditDetailsMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'IndividualSkills';
+
+  static String? _$individualId(IndividualSkills v) => v.individualId;
+  static const Field<IndividualSkills, String> _f$individualId =
+      Field('individualId', _$individualId, opt: true);
+  static String? _$clientReferenceId(IndividualSkills v) => v.clientReferenceId;
+  static const Field<IndividualSkills, String> _f$clientReferenceId =
+      Field('clientReferenceId', _$clientReferenceId, opt: true);
+  static bool? _$isDeleted(IndividualSkills v) => v.isDeleted;
+  static const Field<IndividualSkills, bool> _f$isDeleted =
+      Field('isDeleted', _$isDeleted, opt: true);
+  static String? _$id(IndividualSkills v) => v.id;
+  static const Field<IndividualSkills, String> _f$id =
+      Field('id', _$id, opt: true);
+  static CommonAuditDetails? _$auditDetails(IndividualSkills v) =>
+      v.auditDetails;
+  static const Field<IndividualSkills, CommonAuditDetails> _f$auditDetails =
+      Field('auditDetails', _$auditDetails, opt: true);
+  static String? _$type(IndividualSkills v) => v.type;
+  static const Field<IndividualSkills, String> _f$type =
+      Field('type', _$type, opt: true);
+  static String? _$experience(IndividualSkills v) => v.experience;
+  static const Field<IndividualSkills, String> _f$experience =
+      Field('experience', _$experience, opt: true);
+  static String? _$level(IndividualSkills v) => v.level;
+  static const Field<IndividualSkills, String> _f$level =
+      Field('level', _$level, opt: true);
+
+  @override
+  final MappableFields<IndividualSkills> fields = const {
+    #individualId: _f$individualId,
+    #clientReferenceId: _f$clientReferenceId,
+    #isDeleted: _f$isDeleted,
+    #id: _f$id,
+    #auditDetails: _f$auditDetails,
+    #type: _f$type,
+    #experience: _f$experience,
+    #level: _f$level,
+  };
+
+  static IndividualSkills _instantiate(DecodingData data) {
+    return IndividualSkills(
+        individualId: data.dec(_f$individualId),
+        clientReferenceId: data.dec(_f$clientReferenceId),
+        isDeleted: data.dec(_f$isDeleted),
+        id: data.dec(_f$id),
+        auditDetails: data.dec(_f$auditDetails),
+        type: data.dec(_f$type),
+        experience: data.dec(_f$experience),
+        level: data.dec(_f$level));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static IndividualSkills fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<IndividualSkills>(map);
+  }
+
+  static IndividualSkills fromJson(String json) {
+    return ensureInitialized().decodeJson<IndividualSkills>(json);
+  }
+}
+
+mixin IndividualSkillsMappable {
+  String toJson() {
+    return IndividualSkillsMapper.ensureInitialized()
+        .encodeJson<IndividualSkills>(this as IndividualSkills);
+  }
+
+  Map<String, dynamic> toMap() {
+    return IndividualSkillsMapper.ensureInitialized()
+        .encodeMap<IndividualSkills>(this as IndividualSkills);
+  }
+
+  IndividualSkillsCopyWith<IndividualSkills, IndividualSkills, IndividualSkills>
+      get copyWith => _IndividualSkillsCopyWithImpl(
+          this as IndividualSkills, $identity, $identity);
+  @override
+  String toString() {
+    return IndividualSkillsMapper.ensureInitialized()
+        .stringifyValue(this as IndividualSkills);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return IndividualSkillsMapper.ensureInitialized()
+        .equalsValue(this as IndividualSkills, other);
+  }
+
+  @override
+  int get hashCode {
+    return IndividualSkillsMapper.ensureInitialized()
+        .hashValue(this as IndividualSkills);
+  }
+}
+
+extension IndividualSkillsValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, IndividualSkills, $Out> {
+  IndividualSkillsCopyWith<$R, IndividualSkills, $Out>
+      get $asIndividualSkills =>
+          $base.as((v, t, t2) => _IndividualSkillsCopyWithImpl(v, t, t2));
+}
+
+abstract class IndividualSkillsCopyWith<$R, $In extends IndividualSkills, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  CommonAuditDetailsCopyWith<$R, CommonAuditDetails, CommonAuditDetails>?
+      get auditDetails;
+  $R call(
+      {String? individualId,
+      String? clientReferenceId,
+      bool? isDeleted,
+      String? id,
+      CommonAuditDetails? auditDetails,
+      String? type,
+      String? experience,
+      String? level});
+  IndividualSkillsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _IndividualSkillsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, IndividualSkills, $Out>
+    implements IndividualSkillsCopyWith<$R, IndividualSkills, $Out> {
+  _IndividualSkillsCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<IndividualSkills> $mapper =
+      IndividualSkillsMapper.ensureInitialized();
+  @override
+  CommonAuditDetailsCopyWith<$R, CommonAuditDetails, CommonAuditDetails>?
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
+  @override
+  $R call(
+          {Object? individualId = $none,
+          Object? clientReferenceId = $none,
+          Object? isDeleted = $none,
+          Object? id = $none,
+          Object? auditDetails = $none,
+          Object? type = $none,
+          Object? experience = $none,
+          Object? level = $none}) =>
+      $apply(FieldCopyWithData({
+        if (individualId != $none) #individualId: individualId,
+        if (clientReferenceId != $none) #clientReferenceId: clientReferenceId,
+        if (isDeleted != $none) #isDeleted: isDeleted,
+        if (id != $none) #id: id,
+        if (auditDetails != $none) #auditDetails: auditDetails,
+        if (type != $none) #type: type,
+        if (experience != $none) #experience: experience,
+        if (level != $none) #level: level
+      }));
+  @override
+  IndividualSkills $make(CopyWithData data) => IndividualSkills(
+      individualId: data.get(#individualId, or: $value.individualId),
+      clientReferenceId:
+          data.get(#clientReferenceId, or: $value.clientReferenceId),
+      isDeleted: data.get(#isDeleted, or: $value.isDeleted),
+      id: data.get(#id, or: $value.id),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails),
+      type: data.get(#type, or: $value.type),
+      experience: data.get(#experience, or: $value.experience),
+      level: data.get(#level, or: $value.level));
+
+  @override
+  IndividualSkillsCopyWith<$R2, IndividualSkills, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _IndividualSkillsCopyWithImpl($value, $cast, t);
+}
+
+class IndividualAdditionalFieldsMapper
+    extends ClassMapperBase<IndividualAdditionalFields> {
+  IndividualAdditionalFieldsMapper._();
+
+  static IndividualAdditionalFieldsMapper? _instance;
+  static IndividualAdditionalFieldsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals
+          .use(_instance = IndividualAdditionalFieldsMapper._());
+      AdditionalIndividualFieldsMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'IndividualAdditionalFields';
+
+  static String? _$status(IndividualAdditionalFields v) => v.status;
+  static const Field<IndividualAdditionalFields, String> _f$status =
+      Field('status', _$status, opt: true);
+  static String? _$version(IndividualAdditionalFields v) => v.version;
+  static const Field<IndividualAdditionalFields, String> _f$version =
+      Field('version', _$version, opt: true);
+  static String? _$documentType(IndividualAdditionalFields v) => v.documentType;
+  static const Field<IndividualAdditionalFields, String> _f$documentType =
+      Field('documentType', _$documentType, opt: true);
+  static List<AdditionalIndividualFields>? _$fields(
+          IndividualAdditionalFields v) =>
+      v.fields;
+  static const Field<IndividualAdditionalFields,
+          List<AdditionalIndividualFields>> _f$fields =
+      Field('fields', _$fields, opt: true);
+  static String? _$documentUid(IndividualAdditionalFields v) => v.documentUid;
+  static const Field<IndividualAdditionalFields, String> _f$documentUid =
+      Field('documentUid', _$documentUid, opt: true);
+  static String? _$fileStore(IndividualAdditionalFields v) => v.fileStore;
+  static const Field<IndividualAdditionalFields, String> _f$fileStore =
+      Field('fileStore', _$fileStore, opt: true);
+  static String? _$schema(IndividualAdditionalFields v) => v.schema;
+  static const Field<IndividualAdditionalFields, String> _f$schema =
+      Field('schema', _$schema, opt: true);
+
+  @override
+  final MappableFields<IndividualAdditionalFields> fields = const {
+    #status: _f$status,
+    #version: _f$version,
+    #documentType: _f$documentType,
+    #fields: _f$fields,
+    #documentUid: _f$documentUid,
+    #fileStore: _f$fileStore,
+    #schema: _f$schema,
+  };
+
+  static IndividualAdditionalFields _instantiate(DecodingData data) {
+    return IndividualAdditionalFields(
+        status: data.dec(_f$status),
+        version: data.dec(_f$version),
+        documentType: data.dec(_f$documentType),
+        fields: data.dec(_f$fields),
+        documentUid: data.dec(_f$documentUid),
+        fileStore: data.dec(_f$fileStore),
+        schema: data.dec(_f$schema));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static IndividualAdditionalFields fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<IndividualAdditionalFields>(map);
+  }
+
+  static IndividualAdditionalFields fromJson(String json) {
+    return ensureInitialized().decodeJson<IndividualAdditionalFields>(json);
+  }
+}
+
+mixin IndividualAdditionalFieldsMappable {
+  String toJson() {
+    return IndividualAdditionalFieldsMapper.ensureInitialized()
+        .encodeJson<IndividualAdditionalFields>(
+            this as IndividualAdditionalFields);
+  }
+
+  Map<String, dynamic> toMap() {
+    return IndividualAdditionalFieldsMapper.ensureInitialized()
+        .encodeMap<IndividualAdditionalFields>(
+            this as IndividualAdditionalFields);
+  }
+
+  IndividualAdditionalFieldsCopyWith<IndividualAdditionalFields,
+          IndividualAdditionalFields, IndividualAdditionalFields>
+      get copyWith => _IndividualAdditionalFieldsCopyWithImpl(
+          this as IndividualAdditionalFields, $identity, $identity);
+  @override
+  String toString() {
+    return IndividualAdditionalFieldsMapper.ensureInitialized()
+        .stringifyValue(this as IndividualAdditionalFields);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return IndividualAdditionalFieldsMapper.ensureInitialized()
+        .equalsValue(this as IndividualAdditionalFields, other);
+  }
+
+  @override
+  int get hashCode {
+    return IndividualAdditionalFieldsMapper.ensureInitialized()
+        .hashValue(this as IndividualAdditionalFields);
+  }
+}
+
+extension IndividualAdditionalFieldsValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, IndividualAdditionalFields, $Out> {
+  IndividualAdditionalFieldsCopyWith<$R, IndividualAdditionalFields, $Out>
+      get $asIndividualAdditionalFields => $base
+          .as((v, t, t2) => _IndividualAdditionalFieldsCopyWithImpl(v, t, t2));
+}
+
+abstract class IndividualAdditionalFieldsCopyWith<
+    $R,
+    $In extends IndividualAdditionalFields,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
+  ListCopyWith<
+      $R,
+      AdditionalIndividualFields,
+      AdditionalIndividualFieldsCopyWith<$R, AdditionalIndividualFields,
+          AdditionalIndividualFields>>? get fields;
+  $R call(
+      {String? status,
+      String? version,
+      String? documentType,
+      List<AdditionalIndividualFields>? fields,
+      String? documentUid,
+      String? fileStore,
+      String? schema});
+  IndividualAdditionalFieldsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _IndividualAdditionalFieldsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, IndividualAdditionalFields, $Out>
+    implements
+        IndividualAdditionalFieldsCopyWith<$R, IndividualAdditionalFields,
+            $Out> {
+  _IndividualAdditionalFieldsCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<IndividualAdditionalFields> $mapper =
+      IndividualAdditionalFieldsMapper.ensureInitialized();
+  @override
+  ListCopyWith<
+      $R,
+      AdditionalIndividualFields,
+      AdditionalIndividualFieldsCopyWith<$R, AdditionalIndividualFields,
+          AdditionalIndividualFields>>? get fields => $value.fields != null
+      ? ListCopyWith($value.fields!, (v, t) => v.copyWith.$chain(t),
+          (v) => call(fields: v))
+      : null;
+  @override
+  $R call(
+          {Object? status = $none,
+          Object? version = $none,
+          Object? documentType = $none,
+          Object? fields = $none,
+          Object? documentUid = $none,
+          Object? fileStore = $none,
+          Object? schema = $none}) =>
+      $apply(FieldCopyWithData({
+        if (status != $none) #status: status,
+        if (version != $none) #version: version,
+        if (documentType != $none) #documentType: documentType,
+        if (fields != $none) #fields: fields,
+        if (documentUid != $none) #documentUid: documentUid,
+        if (fileStore != $none) #fileStore: fileStore,
+        if (schema != $none) #schema: schema
+      }));
+  @override
+  IndividualAdditionalFields $make(CopyWithData data) =>
+      IndividualAdditionalFields(
+          status: data.get(#status, or: $value.status),
+          version: data.get(#version, or: $value.version),
+          documentType: data.get(#documentType, or: $value.documentType),
+          fields: data.get(#fields, or: $value.fields),
+          documentUid: data.get(#documentUid, or: $value.documentUid),
+          fileStore: data.get(#fileStore, or: $value.fileStore),
+          schema: data.get(#schema, or: $value.schema));
+
+  @override
+  IndividualAdditionalFieldsCopyWith<$R2, IndividualAdditionalFields, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _IndividualAdditionalFieldsCopyWithImpl($value, $cast, t);
+}
+
+class AdditionalIndividualFieldsMapper
+    extends ClassMapperBase<AdditionalIndividualFields> {
+  AdditionalIndividualFieldsMapper._();
+
+  static AdditionalIndividualFieldsMapper? _instance;
+  static AdditionalIndividualFieldsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals
+          .use(_instance = AdditionalIndividualFieldsMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'AdditionalIndividualFields';
+
+  static String? _$key(AdditionalIndividualFields v) => v.key;
+  static const Field<AdditionalIndividualFields, String> _f$key =
+      Field('key', _$key, opt: true);
+  static String? _$value(AdditionalIndividualFields v) => v.value;
+  static const Field<AdditionalIndividualFields, String> _f$value =
+      Field('value', _$value, opt: true);
+
+  @override
+  final MappableFields<AdditionalIndividualFields> fields = const {
+    #key: _f$key,
+    #value: _f$value,
+  };
+
+  static AdditionalIndividualFields _instantiate(DecodingData data) {
+    return AdditionalIndividualFields(
+        key: data.dec(_f$key), value: data.dec(_f$value));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static AdditionalIndividualFields fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<AdditionalIndividualFields>(map);
+  }
+
+  static AdditionalIndividualFields fromJson(String json) {
+    return ensureInitialized().decodeJson<AdditionalIndividualFields>(json);
+  }
+}
+
+mixin AdditionalIndividualFieldsMappable {
+  String toJson() {
+    return AdditionalIndividualFieldsMapper.ensureInitialized()
+        .encodeJson<AdditionalIndividualFields>(
+            this as AdditionalIndividualFields);
+  }
+
+  Map<String, dynamic> toMap() {
+    return AdditionalIndividualFieldsMapper.ensureInitialized()
+        .encodeMap<AdditionalIndividualFields>(
+            this as AdditionalIndividualFields);
+  }
+
+  AdditionalIndividualFieldsCopyWith<AdditionalIndividualFields,
+          AdditionalIndividualFields, AdditionalIndividualFields>
+      get copyWith => _AdditionalIndividualFieldsCopyWithImpl(
+          this as AdditionalIndividualFields, $identity, $identity);
+  @override
+  String toString() {
+    return AdditionalIndividualFieldsMapper.ensureInitialized()
+        .stringifyValue(this as AdditionalIndividualFields);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return AdditionalIndividualFieldsMapper.ensureInitialized()
+        .equalsValue(this as AdditionalIndividualFields, other);
+  }
+
+  @override
+  int get hashCode {
+    return AdditionalIndividualFieldsMapper.ensureInitialized()
+        .hashValue(this as AdditionalIndividualFields);
+  }
+}
+
+extension AdditionalIndividualFieldsValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, AdditionalIndividualFields, $Out> {
+  AdditionalIndividualFieldsCopyWith<$R, AdditionalIndividualFields, $Out>
+      get $asAdditionalIndividualFields => $base
+          .as((v, t, t2) => _AdditionalIndividualFieldsCopyWithImpl(v, t, t2));
+}
+
+abstract class AdditionalIndividualFieldsCopyWith<
+    $R,
+    $In extends AdditionalIndividualFields,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? key, String? value});
+  AdditionalIndividualFieldsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _AdditionalIndividualFieldsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, AdditionalIndividualFields, $Out>
+    implements
+        AdditionalIndividualFieldsCopyWith<$R, AdditionalIndividualFields,
+            $Out> {
+  _AdditionalIndividualFieldsCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<AdditionalIndividualFields> $mapper =
+      AdditionalIndividualFieldsMapper.ensureInitialized();
+  @override
+  $R call({Object? key = $none, Object? value = $none}) =>
+      $apply(FieldCopyWithData(
+          {if (key != $none) #key: key, if (value != $none) #value: value}));
+  @override
+  AdditionalIndividualFields $make(CopyWithData data) =>
+      AdditionalIndividualFields(
+          key: data.get(#key, or: $value.key),
+          value: data.get(#value, or: $value.value));
+
+  @override
+  AdditionalIndividualFieldsCopyWith<$R2, AdditionalIndividualFields, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _AdditionalIndividualFieldsCopyWithImpl($value, $cast, t);
+}
+
+class IndividualAddressMapper extends ClassMapperBase<IndividualAddress> {
+  IndividualAddressMapper._();
+
+  static IndividualAddressMapper? _instance;
+  static IndividualAddressMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = IndividualAddressMapper._());
+      CommonAuditDetailsMapper.ensureInitialized();
+      AddressWardMapper.ensureInitialized();
+      AddressLocalityMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'IndividualAddress';
+
+  static String? _$id(IndividualAddress v) => v.id;
+  static const Field<IndividualAddress, String> _f$id =
+      Field('id', _$id, opt: true);
+  static String? _$tenantId(IndividualAddress v) => v.tenantId;
+  static const Field<IndividualAddress, String> _f$tenantId =
+      Field('tenantId', _$tenantId, opt: true);
+  static CommonAuditDetails? _$auditDetails(IndividualAddress v) =>
+      v.auditDetails;
+  static const Field<IndividualAddress, CommonAuditDetails> _f$auditDetails =
+      Field('auditDetails', _$auditDetails, opt: true);
+  static bool? _$isDeleted(IndividualAddress v) => v.isDeleted;
+  static const Field<IndividualAddress, bool> _f$isDeleted =
+      Field('isDeleted', _$isDeleted, opt: true);
+  static String? _$clientReferenceId(IndividualAddress v) =>
+      v.clientReferenceId;
+  static const Field<IndividualAddress, String> _f$clientReferenceId =
+      Field('clientReferenceId', _$clientReferenceId, opt: true);
+  static String? _$individualId(IndividualAddress v) => v.individualId;
+  static const Field<IndividualAddress, String> _f$individualId =
+      Field('individualId', _$individualId, opt: true);
+  static AddressWard? _$ward(IndividualAddress v) => v.ward;
+  static const Field<IndividualAddress, AddressWard> _f$ward =
+      Field('ward', _$ward, opt: true);
+  static String? _$type(IndividualAddress v) => v.type;
+  static const Field<IndividualAddress, String> _f$type =
+      Field('type', _$type, opt: true);
+  static String? _$addressLine1(IndividualAddress v) => v.addressLine1;
+  static const Field<IndividualAddress, String> _f$addressLine1 =
+      Field('addressLine1', _$addressLine1, opt: true);
+  static String? _$addressLine2(IndividualAddress v) => v.addressLine2;
+  static const Field<IndividualAddress, String> _f$addressLine2 =
+      Field('addressLine2', _$addressLine2, opt: true);
+  static String? _$buildingName(IndividualAddress v) => v.buildingName;
+  static const Field<IndividualAddress, String> _f$buildingName =
+      Field('buildingName', _$buildingName, opt: true);
+  static String? _$city(IndividualAddress v) => v.city;
+  static const Field<IndividualAddress, String> _f$city =
+      Field('city', _$city, opt: true);
+  static String? _$doorNo(IndividualAddress v) => v.doorNo;
+  static const Field<IndividualAddress, String> _f$doorNo =
+      Field('doorNo', _$doorNo, opt: true);
+  static String? _$landmark(IndividualAddress v) => v.landmark;
+  static const Field<IndividualAddress, String> _f$landmark =
+      Field('landmark', _$landmark, opt: true);
+  static double? _$latitude(IndividualAddress v) => v.latitude;
+  static const Field<IndividualAddress, double> _f$latitude =
+      Field('latitude', _$latitude, opt: true);
+  static AddressLocality? _$locality(IndividualAddress v) => v.locality;
+  static const Field<IndividualAddress, AddressLocality> _f$locality =
+      Field('locality', _$locality, opt: true);
+  static double? _$locationAccuracy(IndividualAddress v) => v.locationAccuracy;
+  static const Field<IndividualAddress, double> _f$locationAccuracy =
+      Field('locationAccuracy', _$locationAccuracy, opt: true);
+  static double? _$longitude(IndividualAddress v) => v.longitude;
+  static const Field<IndividualAddress, double> _f$longitude =
+      Field('longitude', _$longitude, opt: true);
+  static String? _$pincode(IndividualAddress v) => v.pincode;
+  static const Field<IndividualAddress, String> _f$pincode =
+      Field('pincode', _$pincode, opt: true);
+  static String? _$street(IndividualAddress v) => v.street;
+  static const Field<IndividualAddress, String> _f$street =
+      Field('street', _$street, opt: true);
+
+  @override
+  final MappableFields<IndividualAddress> fields = const {
+    #id: _f$id,
+    #tenantId: _f$tenantId,
+    #auditDetails: _f$auditDetails,
+    #isDeleted: _f$isDeleted,
+    #clientReferenceId: _f$clientReferenceId,
+    #individualId: _f$individualId,
+    #ward: _f$ward,
+    #type: _f$type,
+    #addressLine1: _f$addressLine1,
+    #addressLine2: _f$addressLine2,
+    #buildingName: _f$buildingName,
+    #city: _f$city,
+    #doorNo: _f$doorNo,
+    #landmark: _f$landmark,
+    #latitude: _f$latitude,
+    #locality: _f$locality,
+    #locationAccuracy: _f$locationAccuracy,
+    #longitude: _f$longitude,
+    #pincode: _f$pincode,
+    #street: _f$street,
+  };
+
+  static IndividualAddress _instantiate(DecodingData data) {
+    return IndividualAddress(
+        id: data.dec(_f$id),
+        tenantId: data.dec(_f$tenantId),
+        auditDetails: data.dec(_f$auditDetails),
+        isDeleted: data.dec(_f$isDeleted),
+        clientReferenceId: data.dec(_f$clientReferenceId),
+        individualId: data.dec(_f$individualId),
+        ward: data.dec(_f$ward),
+        type: data.dec(_f$type),
+        addressLine1: data.dec(_f$addressLine1),
+        addressLine2: data.dec(_f$addressLine2),
+        buildingName: data.dec(_f$buildingName),
+        city: data.dec(_f$city),
+        doorNo: data.dec(_f$doorNo),
+        landmark: data.dec(_f$landmark),
+        latitude: data.dec(_f$latitude),
+        locality: data.dec(_f$locality),
+        locationAccuracy: data.dec(_f$locationAccuracy),
+        longitude: data.dec(_f$longitude),
+        pincode: data.dec(_f$pincode),
+        street: data.dec(_f$street));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static IndividualAddress fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<IndividualAddress>(map);
+  }
+
+  static IndividualAddress fromJson(String json) {
+    return ensureInitialized().decodeJson<IndividualAddress>(json);
+  }
 }
 
 mixin IndividualAddressMappable {
-  String toJson() =>
-      IndividualAddressMapper.container.toJson(this as IndividualAddress);
-  Map<String, dynamic> toMap() =>
-      IndividualAddressMapper.container.toMap(this as IndividualAddress);
+  String toJson() {
+    return IndividualAddressMapper.ensureInitialized()
+        .encodeJson<IndividualAddress>(this as IndividualAddress);
+  }
+
+  Map<String, dynamic> toMap() {
+    return IndividualAddressMapper.ensureInitialized()
+        .encodeMap<IndividualAddress>(this as IndividualAddress);
+  }
+
   IndividualAddressCopyWith<IndividualAddress, IndividualAddress,
           IndividualAddress>
       get copyWith => _IndividualAddressCopyWithImpl(
           this as IndividualAddress, $identity, $identity);
   @override
-  String toString() => IndividualAddressMapper.container.asString(this);
+  String toString() {
+    return IndividualAddressMapper.ensureInitialized()
+        .stringifyValue(this as IndividualAddress);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          IndividualAddressMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return IndividualAddressMapper.ensureInitialized()
+        .equalsValue(this as IndividualAddress, other);
+  }
+
   @override
-  int get hashCode => IndividualAddressMapper.container.hash(this);
+  int get hashCode {
+    return IndividualAddressMapper.ensureInitialized()
+        .hashValue(this as IndividualAddress);
+  }
 }
 
-extension IndividualAddressValueCopy<$R, $Out extends IndividualAddress>
+extension IndividualAddressValueCopy<$R, $Out>
     on ObjectCopyWith<$R, IndividualAddress, $Out> {
   IndividualAddressCopyWith<$R, IndividualAddress, $Out>
-      get asIndividualAddress =>
-          base.as((v, t, t2) => _IndividualAddressCopyWithImpl(v, t, t2));
+      get $asIndividualAddress =>
+          $base.as((v, t, t2) => _IndividualAddressCopyWithImpl(v, t, t2));
 }
 
-typedef IndividualAddressCopyWithBound = IndividualAddress;
-
 abstract class IndividualAddressCopyWith<$R, $In extends IndividualAddress,
-    $Out extends IndividualAddress> implements ObjectCopyWith<$R, $In, $Out> {
-  IndividualAddressCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends IndividualAddress>(
-          Then<IndividualAddress, $Out2> t, Then<$Out2, $R2> t2);
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   CommonAuditDetailsCopyWith<$R, CommonAuditDetails, CommonAuditDetails>?
       get auditDetails;
   AddressWardCopyWith<$R, AddressWard, AddressWard>? get ward;
@@ -721,28 +1476,28 @@ abstract class IndividualAddressCopyWith<$R, $In extends IndividualAddress,
       double? longitude,
       String? pincode,
       String? street});
+  IndividualAddressCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _IndividualAddressCopyWithImpl<$R, $Out extends IndividualAddress>
-    extends CopyWithBase<$R, IndividualAddress, $Out>
+class _IndividualAddressCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, IndividualAddress, $Out>
     implements IndividualAddressCopyWith<$R, IndividualAddress, $Out> {
   _IndividualAddressCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  IndividualAddressCopyWith<$R2, IndividualAddress, $Out2>
-      chain<$R2, $Out2 extends IndividualAddress>(
-              Then<IndividualAddress, $Out2> t, Then<$Out2, $R2> t2) =>
-          _IndividualAddressCopyWithImpl($value, t, t2);
 
   @override
+  late final ClassMapperBase<IndividualAddress> $mapper =
+      IndividualAddressMapper.ensureInitialized();
+  @override
   CommonAuditDetailsCopyWith<$R, CommonAuditDetails, CommonAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
   @override
   AddressWardCopyWith<$R, AddressWard, AddressWard>? get ward =>
-      $value.ward?.copyWith.chain($identity, (v) => call(ward: v));
+      $value.ward?.copyWith.$chain((v) => call(ward: v));
   @override
   AddressLocalityCopyWith<$R, AddressLocality, AddressLocality>? get locality =>
-      $value.locality?.copyWith.chain($identity, (v) => call(locality: v));
+      $value.locality?.copyWith.$chain((v) => call(locality: v));
   @override
   $R call(
           {Object? id = $none,
@@ -765,245 +1520,489 @@ class _IndividualAddressCopyWithImpl<$R, $Out extends IndividualAddress>
           Object? longitude = $none,
           Object? pincode = $none,
           Object? street = $none}) =>
-      $then(IndividualAddress(
-          id: or(id, $value.id),
-          tenantId: or(tenantId, $value.tenantId),
-          auditDetails: or(auditDetails, $value.auditDetails),
-          isDeleted: or(isDeleted, $value.isDeleted),
-          clientReferenceId: or(clientReferenceId, $value.clientReferenceId),
-          individualId: or(individualId, $value.individualId),
-          ward: or(ward, $value.ward),
-          type: or(type, $value.type),
-          addressLine1: or(addressLine1, $value.addressLine1),
-          addressLine2: or(addressLine2, $value.addressLine2),
-          buildingName: or(buildingName, $value.buildingName),
-          city: or(city, $value.city),
-          doorNo: or(doorNo, $value.doorNo),
-          landmark: or(landmark, $value.landmark),
-          latitude: or(latitude, $value.latitude),
-          locality: or(locality, $value.locality),
-          locationAccuracy: or(locationAccuracy, $value.locationAccuracy),
-          longitude: or(longitude, $value.longitude),
-          pincode: or(pincode, $value.pincode),
-          street: or(street, $value.street)));
-}
-
-class IndividualNameMapper extends MapperBase<IndividualName> {
-  static MapperContainer container = MapperContainer(
-    mappers: {IndividualNameMapper()},
-  );
+      $apply(FieldCopyWithData({
+        if (id != $none) #id: id,
+        if (tenantId != $none) #tenantId: tenantId,
+        if (auditDetails != $none) #auditDetails: auditDetails,
+        if (isDeleted != $none) #isDeleted: isDeleted,
+        if (clientReferenceId != $none) #clientReferenceId: clientReferenceId,
+        if (individualId != $none) #individualId: individualId,
+        if (ward != $none) #ward: ward,
+        if (type != $none) #type: type,
+        if (addressLine1 != $none) #addressLine1: addressLine1,
+        if (addressLine2 != $none) #addressLine2: addressLine2,
+        if (buildingName != $none) #buildingName: buildingName,
+        if (city != $none) #city: city,
+        if (doorNo != $none) #doorNo: doorNo,
+        if (landmark != $none) #landmark: landmark,
+        if (latitude != $none) #latitude: latitude,
+        if (locality != $none) #locality: locality,
+        if (locationAccuracy != $none) #locationAccuracy: locationAccuracy,
+        if (longitude != $none) #longitude: longitude,
+        if (pincode != $none) #pincode: pincode,
+        if (street != $none) #street: street
+      }));
+  @override
+  IndividualAddress $make(CopyWithData data) => IndividualAddress(
+      id: data.get(#id, or: $value.id),
+      tenantId: data.get(#tenantId, or: $value.tenantId),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails),
+      isDeleted: data.get(#isDeleted, or: $value.isDeleted),
+      clientReferenceId:
+          data.get(#clientReferenceId, or: $value.clientReferenceId),
+      individualId: data.get(#individualId, or: $value.individualId),
+      ward: data.get(#ward, or: $value.ward),
+      type: data.get(#type, or: $value.type),
+      addressLine1: data.get(#addressLine1, or: $value.addressLine1),
+      addressLine2: data.get(#addressLine2, or: $value.addressLine2),
+      buildingName: data.get(#buildingName, or: $value.buildingName),
+      city: data.get(#city, or: $value.city),
+      doorNo: data.get(#doorNo, or: $value.doorNo),
+      landmark: data.get(#landmark, or: $value.landmark),
+      latitude: data.get(#latitude, or: $value.latitude),
+      locality: data.get(#locality, or: $value.locality),
+      locationAccuracy:
+          data.get(#locationAccuracy, or: $value.locationAccuracy),
+      longitude: data.get(#longitude, or: $value.longitude),
+      pincode: data.get(#pincode, or: $value.pincode),
+      street: data.get(#street, or: $value.street));
 
   @override
-  IndividualNameMapperElement createElement(MapperContainer container) {
-    return IndividualNameMapperElement._(this, container);
+  IndividualAddressCopyWith<$R2, IndividualAddress, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _IndividualAddressCopyWithImpl($value, $cast, t);
+}
+
+class AddressWardMapper extends ClassMapperBase<AddressWard> {
+  AddressWardMapper._();
+
+  static AddressWardMapper? _instance;
+  static AddressWardMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = AddressWardMapper._());
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'IndividualName';
+  final String id = 'AddressWard';
 
-  static final fromMap = container.fromMap<IndividualName>;
-  static final fromJson = container.fromJson<IndividualName>;
+  static String? _$code(AddressWard v) => v.code;
+  static const Field<AddressWard, String> _f$code =
+      Field('code', _$code, opt: true);
+  static String? _$name(AddressWard v) => v.name;
+  static const Field<AddressWard, String> _f$name =
+      Field('name', _$name, opt: true);
+  static String? _$label(AddressWard v) => v.label;
+  static const Field<AddressWard, String> _f$label =
+      Field('label', _$label, opt: true);
+  static double? _$latitude(AddressWard v) => v.latitude;
+  static const Field<AddressWard, double> _f$latitude =
+      Field('latitude', _$latitude, opt: true);
+  static double? _$longitude(AddressWard v) => v.longitude;
+  static const Field<AddressWard, double> _f$longitude =
+      Field('longitude', _$longitude, opt: true);
+  static String? _$materializedPath(AddressWard v) => v.materializedPath;
+  static const Field<AddressWard, String> _f$materializedPath =
+      Field('materializedPath', _$materializedPath, opt: true);
+
+  @override
+  final MappableFields<AddressWard> fields = const {
+    #code: _f$code,
+    #name: _f$name,
+    #label: _f$label,
+    #latitude: _f$latitude,
+    #longitude: _f$longitude,
+    #materializedPath: _f$materializedPath,
+  };
+
+  static AddressWard _instantiate(DecodingData data) {
+    return AddressWard(
+        code: data.dec(_f$code),
+        name: data.dec(_f$name),
+        label: data.dec(_f$label),
+        latitude: data.dec(_f$latitude),
+        longitude: data.dec(_f$longitude),
+        materializedPath: data.dec(_f$materializedPath));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static AddressWard fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<AddressWard>(map);
+  }
+
+  static AddressWard fromJson(String json) {
+    return ensureInitialized().decodeJson<AddressWard>(json);
+  }
 }
 
-class IndividualNameMapperElement extends MapperElementBase<IndividualName> {
-  IndividualNameMapperElement._(super.mapper, super.container);
+mixin AddressWardMappable {
+  String toJson() {
+    return AddressWardMapper.ensureInitialized()
+        .encodeJson<AddressWard>(this as AddressWard);
+  }
+
+  Map<String, dynamic> toMap() {
+    return AddressWardMapper.ensureInitialized()
+        .encodeMap<AddressWard>(this as AddressWard);
+  }
+
+  AddressWardCopyWith<AddressWard, AddressWard, AddressWard> get copyWith =>
+      _AddressWardCopyWithImpl(this as AddressWard, $identity, $identity);
+  @override
+  String toString() {
+    return AddressWardMapper.ensureInitialized()
+        .stringifyValue(this as AddressWard);
+  }
 
   @override
-  Function get decoder => decode;
-  IndividualName decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  IndividualName fromMap(Map<String, dynamic> map) => IndividualName(
-      familyName: container.$getOpt(map, 'familyName'),
-      givenName: container.$getOpt(map, 'givenName'),
-      otherNames: container.$getOpt(map, 'otherNames'));
+  bool operator ==(Object other) {
+    return AddressWardMapper.ensureInitialized()
+        .equalsValue(this as AddressWard, other);
+  }
 
   @override
-  Function get encoder => encode;
-  dynamic encode(IndividualName v) => toMap(v);
-  Map<String, dynamic> toMap(IndividualName i) => {
-        'familyName': container.$enc(i.familyName, 'familyName'),
-        'givenName': container.$enc(i.givenName, 'givenName'),
-        'otherNames': container.$enc(i.otherNames, 'otherNames')
-      };
-
-  @override
-  String stringify(IndividualName self) =>
-      'IndividualName(givenName: ${container.asString(self.givenName)}, familyName: ${container.asString(self.familyName)}, otherNames: ${container.asString(self.otherNames)})';
-  @override
-  int hash(IndividualName self) =>
-      container.hash(self.givenName) ^
-      container.hash(self.familyName) ^
-      container.hash(self.otherNames);
-  @override
-  bool equals(IndividualName self, IndividualName other) =>
-      container.isEqual(self.givenName, other.givenName) &&
-      container.isEqual(self.familyName, other.familyName) &&
-      container.isEqual(self.otherNames, other.otherNames);
+  int get hashCode {
+    return AddressWardMapper.ensureInitialized().hashValue(this as AddressWard);
+  }
 }
 
-mixin IndividualNameMappable {
-  String toJson() =>
-      IndividualNameMapper.container.toJson(this as IndividualName);
-  Map<String, dynamic> toMap() =>
-      IndividualNameMapper.container.toMap(this as IndividualName);
-  IndividualNameCopyWith<IndividualName, IndividualName, IndividualName>
-      get copyWith => _IndividualNameCopyWithImpl(
-          this as IndividualName, $identity, $identity);
-  @override
-  String toString() => IndividualNameMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          IndividualNameMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => IndividualNameMapper.container.hash(this);
+extension AddressWardValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, AddressWard, $Out> {
+  AddressWardCopyWith<$R, AddressWard, $Out> get $asAddressWard =>
+      $base.as((v, t, t2) => _AddressWardCopyWithImpl(v, t, t2));
 }
 
-extension IndividualNameValueCopy<$R, $Out extends IndividualName>
-    on ObjectCopyWith<$R, IndividualName, $Out> {
-  IndividualNameCopyWith<$R, IndividualName, $Out> get asIndividualName =>
-      base.as((v, t, t2) => _IndividualNameCopyWithImpl(v, t, t2));
+abstract class AddressWardCopyWith<$R, $In extends AddressWard, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call(
+      {String? code,
+      String? name,
+      String? label,
+      double? latitude,
+      double? longitude,
+      String? materializedPath});
+  AddressWardCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
-typedef IndividualNameCopyWithBound = IndividualName;
+class _AddressWardCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, AddressWard, $Out>
+    implements AddressWardCopyWith<$R, AddressWard, $Out> {
+  _AddressWardCopyWithImpl(super.value, super.then, super.then2);
 
-abstract class IndividualNameCopyWith<$R, $In extends IndividualName,
-    $Out extends IndividualName> implements ObjectCopyWith<$R, $In, $Out> {
-  IndividualNameCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends IndividualName>(
-          Then<IndividualName, $Out2> t, Then<$Out2, $R2> t2);
-  $R call({String? familyName, String? givenName, String? otherNames});
-}
-
-class _IndividualNameCopyWithImpl<$R, $Out extends IndividualName>
-    extends CopyWithBase<$R, IndividualName, $Out>
-    implements IndividualNameCopyWith<$R, IndividualName, $Out> {
-  _IndividualNameCopyWithImpl(super.value, super.then, super.then2);
   @override
-  IndividualNameCopyWith<$R2, IndividualName, $Out2>
-      chain<$R2, $Out2 extends IndividualName>(
-              Then<IndividualName, $Out2> t, Then<$Out2, $R2> t2) =>
-          _IndividualNameCopyWithImpl($value, t, t2);
-
+  late final ClassMapperBase<AddressWard> $mapper =
+      AddressWardMapper.ensureInitialized();
   @override
   $R call(
-          {Object? familyName = $none,
-          Object? givenName = $none,
-          Object? otherNames = $none}) =>
-      $then(IndividualName(
-          familyName: or(familyName, $value.familyName),
-          givenName: or(givenName, $value.givenName),
-          otherNames: or(otherNames, $value.otherNames)));
-}
-
-class IndividualIdentifiersMapper extends MapperBase<IndividualIdentifiers> {
-  static MapperContainer container = MapperContainer(
-    mappers: {IndividualIdentifiersMapper()},
-  )..linkAll({CommonAuditDetailsMapper.container});
+          {Object? code = $none,
+          Object? name = $none,
+          Object? label = $none,
+          Object? latitude = $none,
+          Object? longitude = $none,
+          Object? materializedPath = $none}) =>
+      $apply(FieldCopyWithData({
+        if (code != $none) #code: code,
+        if (name != $none) #name: name,
+        if (label != $none) #label: label,
+        if (latitude != $none) #latitude: latitude,
+        if (longitude != $none) #longitude: longitude,
+        if (materializedPath != $none) #materializedPath: materializedPath
+      }));
+  @override
+  AddressWard $make(CopyWithData data) => AddressWard(
+      code: data.get(#code, or: $value.code),
+      name: data.get(#name, or: $value.name),
+      label: data.get(#label, or: $value.label),
+      latitude: data.get(#latitude, or: $value.latitude),
+      longitude: data.get(#longitude, or: $value.longitude),
+      materializedPath:
+          data.get(#materializedPath, or: $value.materializedPath));
 
   @override
-  IndividualIdentifiersMapperElement createElement(MapperContainer container) {
-    return IndividualIdentifiersMapperElement._(this, container);
+  AddressWardCopyWith<$R2, AddressWard, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _AddressWardCopyWithImpl($value, $cast, t);
+}
+
+class AddressLocalityMapper extends ClassMapperBase<AddressLocality> {
+  AddressLocalityMapper._();
+
+  static AddressLocalityMapper? _instance;
+  static AddressLocalityMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = AddressLocalityMapper._());
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'IndividualIdentifiers';
+  final String id = 'AddressLocality';
 
-  static final fromMap = container.fromMap<IndividualIdentifiers>;
-  static final fromJson = container.fromJson<IndividualIdentifiers>;
+  static String? _$code(AddressLocality v) => v.code;
+  static const Field<AddressLocality, String> _f$code =
+      Field('code', _$code, opt: true);
+  static String? _$name(AddressLocality v) => v.name;
+  static const Field<AddressLocality, String> _f$name =
+      Field('name', _$name, opt: true);
+  static String? _$label(AddressLocality v) => v.label;
+  static const Field<AddressLocality, String> _f$label =
+      Field('label', _$label, opt: true);
+  static double? _$latitude(AddressLocality v) => v.latitude;
+  static const Field<AddressLocality, double> _f$latitude =
+      Field('latitude', _$latitude, opt: true);
+  static double? _$longitude(AddressLocality v) => v.longitude;
+  static const Field<AddressLocality, double> _f$longitude =
+      Field('longitude', _$longitude, opt: true);
+  static String? _$materializedPath(AddressLocality v) => v.materializedPath;
+  static const Field<AddressLocality, String> _f$materializedPath =
+      Field('materializedPath', _$materializedPath, opt: true);
+
+  @override
+  final MappableFields<AddressLocality> fields = const {
+    #code: _f$code,
+    #name: _f$name,
+    #label: _f$label,
+    #latitude: _f$latitude,
+    #longitude: _f$longitude,
+    #materializedPath: _f$materializedPath,
+  };
+
+  static AddressLocality _instantiate(DecodingData data) {
+    return AddressLocality(
+        code: data.dec(_f$code),
+        name: data.dec(_f$name),
+        label: data.dec(_f$label),
+        latitude: data.dec(_f$latitude),
+        longitude: data.dec(_f$longitude),
+        materializedPath: data.dec(_f$materializedPath));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static AddressLocality fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<AddressLocality>(map);
+  }
+
+  static AddressLocality fromJson(String json) {
+    return ensureInitialized().decodeJson<AddressLocality>(json);
+  }
 }
 
-class IndividualIdentifiersMapperElement
-    extends MapperElementBase<IndividualIdentifiers> {
-  IndividualIdentifiersMapperElement._(super.mapper, super.container);
+mixin AddressLocalityMappable {
+  String toJson() {
+    return AddressLocalityMapper.ensureInitialized()
+        .encodeJson<AddressLocality>(this as AddressLocality);
+  }
+
+  Map<String, dynamic> toMap() {
+    return AddressLocalityMapper.ensureInitialized()
+        .encodeMap<AddressLocality>(this as AddressLocality);
+  }
+
+  AddressLocalityCopyWith<AddressLocality, AddressLocality, AddressLocality>
+      get copyWith => _AddressLocalityCopyWithImpl(
+          this as AddressLocality, $identity, $identity);
+  @override
+  String toString() {
+    return AddressLocalityMapper.ensureInitialized()
+        .stringifyValue(this as AddressLocality);
+  }
 
   @override
-  Function get decoder => decode;
-  IndividualIdentifiers decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  IndividualIdentifiers fromMap(Map<String, dynamic> map) =>
-      IndividualIdentifiers(
-          individualId: container.$getOpt(map, 'individualId'),
-          clientReferenceId: container.$getOpt(map, 'clientReferenceId'),
-          isDeleted: container.$getOpt(map, 'isDeleted'),
-          id: container.$getOpt(map, 'id'),
-          auditDetails: container.$getOpt(map, 'auditDetails'),
-          identifierId: container.$getOpt(map, 'identifierId'),
-          identifierType: container.$getOpt(map, 'identifierType'));
+  bool operator ==(Object other) {
+    return AddressLocalityMapper.ensureInitialized()
+        .equalsValue(this as AddressLocality, other);
+  }
 
   @override
-  Function get encoder => encode;
-  dynamic encode(IndividualIdentifiers v) => toMap(v);
-  Map<String, dynamic> toMap(IndividualIdentifiers i) => {
-        'individualId': container.$enc(i.individualId, 'individualId'),
-        'clientReferenceId':
-            container.$enc(i.clientReferenceId, 'clientReferenceId'),
-        'isDeleted': container.$enc(i.isDeleted, 'isDeleted'),
-        'id': container.$enc(i.id, 'id'),
-        'auditDetails': container.$enc(i.auditDetails, 'auditDetails'),
-        'identifierId': container.$enc(i.identifierId, 'identifierId'),
-        'identifierType': container.$enc(i.identifierType, 'identifierType')
-      };
+  int get hashCode {
+    return AddressLocalityMapper.ensureInitialized()
+        .hashValue(this as AddressLocality);
+  }
+}
+
+extension AddressLocalityValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, AddressLocality, $Out> {
+  AddressLocalityCopyWith<$R, AddressLocality, $Out> get $asAddressLocality =>
+      $base.as((v, t, t2) => _AddressLocalityCopyWithImpl(v, t, t2));
+}
+
+abstract class AddressLocalityCopyWith<$R, $In extends AddressLocality, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call(
+      {String? code,
+      String? name,
+      String? label,
+      double? latitude,
+      double? longitude,
+      String? materializedPath});
+  AddressLocalityCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _AddressLocalityCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, AddressLocality, $Out>
+    implements AddressLocalityCopyWith<$R, AddressLocality, $Out> {
+  _AddressLocalityCopyWithImpl(super.value, super.then, super.then2);
 
   @override
-  String stringify(IndividualIdentifiers self) =>
-      'IndividualIdentifiers(id: ${container.asString(self.id)}, clientReferenceId: ${container.asString(self.clientReferenceId)}, individualId: ${container.asString(self.individualId)}, identifierType: ${container.asString(self.identifierType)}, identifierId: ${container.asString(self.identifierId)}, isDeleted: ${container.asString(self.isDeleted)}, auditDetails: ${container.asString(self.auditDetails)})';
+  late final ClassMapperBase<AddressLocality> $mapper =
+      AddressLocalityMapper.ensureInitialized();
   @override
-  int hash(IndividualIdentifiers self) =>
-      container.hash(self.id) ^
-      container.hash(self.clientReferenceId) ^
-      container.hash(self.individualId) ^
-      container.hash(self.identifierType) ^
-      container.hash(self.identifierId) ^
-      container.hash(self.isDeleted) ^
-      container.hash(self.auditDetails);
+  $R call(
+          {Object? code = $none,
+          Object? name = $none,
+          Object? label = $none,
+          Object? latitude = $none,
+          Object? longitude = $none,
+          Object? materializedPath = $none}) =>
+      $apply(FieldCopyWithData({
+        if (code != $none) #code: code,
+        if (name != $none) #name: name,
+        if (label != $none) #label: label,
+        if (latitude != $none) #latitude: latitude,
+        if (longitude != $none) #longitude: longitude,
+        if (materializedPath != $none) #materializedPath: materializedPath
+      }));
   @override
-  bool equals(IndividualIdentifiers self, IndividualIdentifiers other) =>
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.clientReferenceId, other.clientReferenceId) &&
-      container.isEqual(self.individualId, other.individualId) &&
-      container.isEqual(self.identifierType, other.identifierType) &&
-      container.isEqual(self.identifierId, other.identifierId) &&
-      container.isEqual(self.isDeleted, other.isDeleted) &&
-      container.isEqual(self.auditDetails, other.auditDetails);
+  AddressLocality $make(CopyWithData data) => AddressLocality(
+      code: data.get(#code, or: $value.code),
+      name: data.get(#name, or: $value.name),
+      label: data.get(#label, or: $value.label),
+      latitude: data.get(#latitude, or: $value.latitude),
+      longitude: data.get(#longitude, or: $value.longitude),
+      materializedPath:
+          data.get(#materializedPath, or: $value.materializedPath));
+
+  @override
+  AddressLocalityCopyWith<$R2, AddressLocality, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _AddressLocalityCopyWithImpl($value, $cast, t);
+}
+
+class IndividualIdentifiersMapper
+    extends ClassMapperBase<IndividualIdentifiers> {
+  IndividualIdentifiersMapper._();
+
+  static IndividualIdentifiersMapper? _instance;
+  static IndividualIdentifiersMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = IndividualIdentifiersMapper._());
+      CommonAuditDetailsMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'IndividualIdentifiers';
+
+  static String? _$individualId(IndividualIdentifiers v) => v.individualId;
+  static const Field<IndividualIdentifiers, String> _f$individualId =
+      Field('individualId', _$individualId, opt: true);
+  static String? _$clientReferenceId(IndividualIdentifiers v) =>
+      v.clientReferenceId;
+  static const Field<IndividualIdentifiers, String> _f$clientReferenceId =
+      Field('clientReferenceId', _$clientReferenceId, opt: true);
+  static bool? _$isDeleted(IndividualIdentifiers v) => v.isDeleted;
+  static const Field<IndividualIdentifiers, bool> _f$isDeleted =
+      Field('isDeleted', _$isDeleted, opt: true);
+  static String? _$id(IndividualIdentifiers v) => v.id;
+  static const Field<IndividualIdentifiers, String> _f$id =
+      Field('id', _$id, opt: true);
+  static CommonAuditDetails? _$auditDetails(IndividualIdentifiers v) =>
+      v.auditDetails;
+  static const Field<IndividualIdentifiers, CommonAuditDetails>
+      _f$auditDetails = Field('auditDetails', _$auditDetails, opt: true);
+  static String? _$identifierId(IndividualIdentifiers v) => v.identifierId;
+  static const Field<IndividualIdentifiers, String> _f$identifierId =
+      Field('identifierId', _$identifierId, opt: true);
+  static String? _$identifierType(IndividualIdentifiers v) => v.identifierType;
+  static const Field<IndividualIdentifiers, String> _f$identifierType =
+      Field('identifierType', _$identifierType, opt: true);
+
+  @override
+  final MappableFields<IndividualIdentifiers> fields = const {
+    #individualId: _f$individualId,
+    #clientReferenceId: _f$clientReferenceId,
+    #isDeleted: _f$isDeleted,
+    #id: _f$id,
+    #auditDetails: _f$auditDetails,
+    #identifierId: _f$identifierId,
+    #identifierType: _f$identifierType,
+  };
+
+  static IndividualIdentifiers _instantiate(DecodingData data) {
+    return IndividualIdentifiers(
+        individualId: data.dec(_f$individualId),
+        clientReferenceId: data.dec(_f$clientReferenceId),
+        isDeleted: data.dec(_f$isDeleted),
+        id: data.dec(_f$id),
+        auditDetails: data.dec(_f$auditDetails),
+        identifierId: data.dec(_f$identifierId),
+        identifierType: data.dec(_f$identifierType));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static IndividualIdentifiers fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<IndividualIdentifiers>(map);
+  }
+
+  static IndividualIdentifiers fromJson(String json) {
+    return ensureInitialized().decodeJson<IndividualIdentifiers>(json);
+  }
 }
 
 mixin IndividualIdentifiersMappable {
-  String toJson() => IndividualIdentifiersMapper.container
-      .toJson(this as IndividualIdentifiers);
-  Map<String, dynamic> toMap() => IndividualIdentifiersMapper.container
-      .toMap(this as IndividualIdentifiers);
+  String toJson() {
+    return IndividualIdentifiersMapper.ensureInitialized()
+        .encodeJson<IndividualIdentifiers>(this as IndividualIdentifiers);
+  }
+
+  Map<String, dynamic> toMap() {
+    return IndividualIdentifiersMapper.ensureInitialized()
+        .encodeMap<IndividualIdentifiers>(this as IndividualIdentifiers);
+  }
+
   IndividualIdentifiersCopyWith<IndividualIdentifiers, IndividualIdentifiers,
           IndividualIdentifiers>
       get copyWith => _IndividualIdentifiersCopyWithImpl(
           this as IndividualIdentifiers, $identity, $identity);
   @override
-  String toString() => IndividualIdentifiersMapper.container.asString(this);
+  String toString() {
+    return IndividualIdentifiersMapper.ensureInitialized()
+        .stringifyValue(this as IndividualIdentifiers);
+  }
+
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          IndividualIdentifiersMapper.container.isEqual(this, other));
+  bool operator ==(Object other) {
+    return IndividualIdentifiersMapper.ensureInitialized()
+        .equalsValue(this as IndividualIdentifiers, other);
+  }
+
   @override
-  int get hashCode => IndividualIdentifiersMapper.container.hash(this);
+  int get hashCode {
+    return IndividualIdentifiersMapper.ensureInitialized()
+        .hashValue(this as IndividualIdentifiers);
+  }
 }
 
-extension IndividualIdentifiersValueCopy<$R, $Out extends IndividualIdentifiers>
+extension IndividualIdentifiersValueCopy<$R, $Out>
     on ObjectCopyWith<$R, IndividualIdentifiers, $Out> {
   IndividualIdentifiersCopyWith<$R, IndividualIdentifiers, $Out>
-      get asIndividualIdentifiers =>
-          base.as((v, t, t2) => _IndividualIdentifiersCopyWithImpl(v, t, t2));
+      get $asIndividualIdentifiers =>
+          $base.as((v, t, t2) => _IndividualIdentifiersCopyWithImpl(v, t, t2));
 }
 
-typedef IndividualIdentifiersCopyWithBound = IndividualIdentifiers;
-
-abstract class IndividualIdentifiersCopyWith<$R,
-        $In extends IndividualIdentifiers, $Out extends IndividualIdentifiers>
-    implements ObjectCopyWith<$R, $In, $Out> {
-  IndividualIdentifiersCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends IndividualIdentifiers>(
-          Then<IndividualIdentifiers, $Out2> t, Then<$Out2, $R2> t2);
+abstract class IndividualIdentifiersCopyWith<
+    $R,
+    $In extends IndividualIdentifiers,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   CommonAuditDetailsCopyWith<$R, CommonAuditDetails, CommonAuditDetails>?
       get auditDetails;
   $R call(
@@ -1014,22 +2013,22 @@ abstract class IndividualIdentifiersCopyWith<$R,
       CommonAuditDetails? auditDetails,
       String? identifierId,
       String? identifierType});
+  IndividualIdentifiersCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _IndividualIdentifiersCopyWithImpl<$R, $Out extends IndividualIdentifiers>
-    extends CopyWithBase<$R, IndividualIdentifiers, $Out>
+class _IndividualIdentifiersCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, IndividualIdentifiers, $Out>
     implements IndividualIdentifiersCopyWith<$R, IndividualIdentifiers, $Out> {
   _IndividualIdentifiersCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  IndividualIdentifiersCopyWith<$R2, IndividualIdentifiers, $Out2>
-      chain<$R2, $Out2 extends IndividualIdentifiers>(
-              Then<IndividualIdentifiers, $Out2> t, Then<$Out2, $R2> t2) =>
-          _IndividualIdentifiersCopyWithImpl($value, t, t2);
 
   @override
+  late final ClassMapperBase<IndividualIdentifiers> $mapper =
+      IndividualIdentifiersMapper.ensureInitialized();
+  @override
   CommonAuditDetailsCopyWith<$R, CommonAuditDetails, CommonAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
+      get auditDetails =>
+          $value.auditDetails?.copyWith.$chain((v) => call(auditDetails: v));
   @override
   $R call(
           {Object? individualId = $none,
@@ -1039,841 +2038,395 @@ class _IndividualIdentifiersCopyWithImpl<$R, $Out extends IndividualIdentifiers>
           Object? auditDetails = $none,
           Object? identifierId = $none,
           Object? identifierType = $none}) =>
-      $then(IndividualIdentifiers(
-          individualId: or(individualId, $value.individualId),
-          clientReferenceId: or(clientReferenceId, $value.clientReferenceId),
-          isDeleted: or(isDeleted, $value.isDeleted),
-          id: or(id, $value.id),
-          auditDetails: or(auditDetails, $value.auditDetails),
-          identifierId: or(identifierId, $value.identifierId),
-          identifierType: or(identifierType, $value.identifierType)));
-}
-
-class IndividualSkillsMapper extends MapperBase<IndividualSkills> {
-  static MapperContainer container = MapperContainer(
-    mappers: {IndividualSkillsMapper()},
-  )..linkAll({CommonAuditDetailsMapper.container});
+      $apply(FieldCopyWithData({
+        if (individualId != $none) #individualId: individualId,
+        if (clientReferenceId != $none) #clientReferenceId: clientReferenceId,
+        if (isDeleted != $none) #isDeleted: isDeleted,
+        if (id != $none) #id: id,
+        if (auditDetails != $none) #auditDetails: auditDetails,
+        if (identifierId != $none) #identifierId: identifierId,
+        if (identifierType != $none) #identifierType: identifierType
+      }));
+  @override
+  IndividualIdentifiers $make(CopyWithData data) => IndividualIdentifiers(
+      individualId: data.get(#individualId, or: $value.individualId),
+      clientReferenceId:
+          data.get(#clientReferenceId, or: $value.clientReferenceId),
+      isDeleted: data.get(#isDeleted, or: $value.isDeleted),
+      id: data.get(#id, or: $value.id),
+      auditDetails: data.get(#auditDetails, or: $value.auditDetails),
+      identifierId: data.get(#identifierId, or: $value.identifierId),
+      identifierType: data.get(#identifierType, or: $value.identifierType));
 
   @override
-  IndividualSkillsMapperElement createElement(MapperContainer container) {
-    return IndividualSkillsMapperElement._(this, container);
+  IndividualIdentifiersCopyWith<$R2, IndividualIdentifiers, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _IndividualIdentifiersCopyWithImpl($value, $cast, t);
+}
+
+class SingleIndividualModelMapper
+    extends ClassMapperBase<SingleIndividualModel> {
+  SingleIndividualModelMapper._();
+
+  static SingleIndividualModelMapper? _instance;
+  static SingleIndividualModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = SingleIndividualModelMapper._());
+      IndividualModelMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'IndividualSkills';
+  final String id = 'SingleIndividualModel';
 
-  static final fromMap = container.fromMap<IndividualSkills>;
-  static final fromJson = container.fromJson<IndividualSkills>;
-}
-
-class IndividualSkillsMapperElement
-    extends MapperElementBase<IndividualSkills> {
-  IndividualSkillsMapperElement._(super.mapper, super.container);
+  static IndividualModel? _$Individual(SingleIndividualModel v) => v.Individual;
+  static const Field<SingleIndividualModel, IndividualModel> _f$Individual =
+      Field('Individual', _$Individual, opt: true);
 
   @override
-  Function get decoder => decode;
-  IndividualSkills decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  IndividualSkills fromMap(Map<String, dynamic> map) => IndividualSkills(
-      individualId: container.$getOpt(map, 'individualId'),
-      clientReferenceId: container.$getOpt(map, 'clientReferenceId'),
-      isDeleted: container.$getOpt(map, 'isDeleted'),
-      id: container.$getOpt(map, 'id'),
-      auditDetails: container.$getOpt(map, 'auditDetails'),
-      type: container.$getOpt(map, 'type'),
-      experience: container.$getOpt(map, 'experience'),
-      level: container.$getOpt(map, 'level'));
+  final MappableFields<SingleIndividualModel> fields = const {
+    #Individual: _f$Individual,
+  };
 
-  @override
-  Function get encoder => encode;
-  dynamic encode(IndividualSkills v) => toMap(v);
-  Map<String, dynamic> toMap(IndividualSkills i) => {
-        'individualId': container.$enc(i.individualId, 'individualId'),
-        'clientReferenceId':
-            container.$enc(i.clientReferenceId, 'clientReferenceId'),
-        'isDeleted': container.$enc(i.isDeleted, 'isDeleted'),
-        'id': container.$enc(i.id, 'id'),
-        'auditDetails': container.$enc(i.auditDetails, 'auditDetails'),
-        'type': container.$enc(i.type, 'type'),
-        'experience': container.$enc(i.experience, 'experience'),
-        'level': container.$enc(i.level, 'level')
-      };
-
-  @override
-  String stringify(IndividualSkills self) =>
-      'IndividualSkills(id: ${container.asString(self.id)}, clientReferenceId: ${container.asString(self.clientReferenceId)}, individualId: ${container.asString(self.individualId)}, type: ${container.asString(self.type)}, level: ${container.asString(self.level)}, experience: ${container.asString(self.experience)}, isDeleted: ${container.asString(self.isDeleted)}, auditDetails: ${container.asString(self.auditDetails)})';
-  @override
-  int hash(IndividualSkills self) =>
-      container.hash(self.id) ^
-      container.hash(self.clientReferenceId) ^
-      container.hash(self.individualId) ^
-      container.hash(self.type) ^
-      container.hash(self.level) ^
-      container.hash(self.experience) ^
-      container.hash(self.isDeleted) ^
-      container.hash(self.auditDetails);
-  @override
-  bool equals(IndividualSkills self, IndividualSkills other) =>
-      container.isEqual(self.id, other.id) &&
-      container.isEqual(self.clientReferenceId, other.clientReferenceId) &&
-      container.isEqual(self.individualId, other.individualId) &&
-      container.isEqual(self.type, other.type) &&
-      container.isEqual(self.level, other.level) &&
-      container.isEqual(self.experience, other.experience) &&
-      container.isEqual(self.isDeleted, other.isDeleted) &&
-      container.isEqual(self.auditDetails, other.auditDetails);
-}
-
-mixin IndividualSkillsMappable {
-  String toJson() =>
-      IndividualSkillsMapper.container.toJson(this as IndividualSkills);
-  Map<String, dynamic> toMap() =>
-      IndividualSkillsMapper.container.toMap(this as IndividualSkills);
-  IndividualSkillsCopyWith<IndividualSkills, IndividualSkills, IndividualSkills>
-      get copyWith => _IndividualSkillsCopyWithImpl(
-          this as IndividualSkills, $identity, $identity);
-  @override
-  String toString() => IndividualSkillsMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          IndividualSkillsMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => IndividualSkillsMapper.container.hash(this);
-}
-
-extension IndividualSkillsValueCopy<$R, $Out extends IndividualSkills>
-    on ObjectCopyWith<$R, IndividualSkills, $Out> {
-  IndividualSkillsCopyWith<$R, IndividualSkills, $Out> get asIndividualSkills =>
-      base.as((v, t, t2) => _IndividualSkillsCopyWithImpl(v, t, t2));
-}
-
-typedef IndividualSkillsCopyWithBound = IndividualSkills;
-
-abstract class IndividualSkillsCopyWith<$R, $In extends IndividualSkills,
-    $Out extends IndividualSkills> implements ObjectCopyWith<$R, $In, $Out> {
-  IndividualSkillsCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends IndividualSkills>(
-          Then<IndividualSkills, $Out2> t, Then<$Out2, $R2> t2);
-  CommonAuditDetailsCopyWith<$R, CommonAuditDetails, CommonAuditDetails>?
-      get auditDetails;
-  $R call(
-      {String? individualId,
-      String? clientReferenceId,
-      bool? isDeleted,
-      String? id,
-      CommonAuditDetails? auditDetails,
-      String? type,
-      String? experience,
-      String? level});
-}
-
-class _IndividualSkillsCopyWithImpl<$R, $Out extends IndividualSkills>
-    extends CopyWithBase<$R, IndividualSkills, $Out>
-    implements IndividualSkillsCopyWith<$R, IndividualSkills, $Out> {
-  _IndividualSkillsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  IndividualSkillsCopyWith<$R2, IndividualSkills, $Out2>
-      chain<$R2, $Out2 extends IndividualSkills>(
-              Then<IndividualSkills, $Out2> t, Then<$Out2, $R2> t2) =>
-          _IndividualSkillsCopyWithImpl($value, t, t2);
-
-  @override
-  CommonAuditDetailsCopyWith<$R, CommonAuditDetails, CommonAuditDetails>?
-      get auditDetails => $value.auditDetails?.copyWith
-          .chain($identity, (v) => call(auditDetails: v));
-  @override
-  $R call(
-          {Object? individualId = $none,
-          Object? clientReferenceId = $none,
-          Object? isDeleted = $none,
-          Object? id = $none,
-          Object? auditDetails = $none,
-          Object? type = $none,
-          Object? experience = $none,
-          Object? level = $none}) =>
-      $then(IndividualSkills(
-          individualId: or(individualId, $value.individualId),
-          clientReferenceId: or(clientReferenceId, $value.clientReferenceId),
-          isDeleted: or(isDeleted, $value.isDeleted),
-          id: or(id, $value.id),
-          auditDetails: or(auditDetails, $value.auditDetails),
-          type: or(type, $value.type),
-          experience: or(experience, $value.experience),
-          level: or(level, $value.level)));
-}
-
-class CommonAuditDetailsMapper extends MapperBase<CommonAuditDetails> {
-  static MapperContainer container = MapperContainer(
-    mappers: {CommonAuditDetailsMapper()},
-  );
-
-  @override
-  CommonAuditDetailsMapperElement createElement(MapperContainer container) {
-    return CommonAuditDetailsMapperElement._(this, container);
+  static SingleIndividualModel _instantiate(DecodingData data) {
+    return SingleIndividualModel(Individual: data.dec(_f$Individual));
   }
 
   @override
-  String get id => 'CommonAuditDetails';
+  final Function instantiate = _instantiate;
 
-  static final fromMap = container.fromMap<CommonAuditDetails>;
-  static final fromJson = container.fromJson<CommonAuditDetails>;
+  static SingleIndividualModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<SingleIndividualModel>(map);
+  }
+
+  static SingleIndividualModel fromJson(String json) {
+    return ensureInitialized().decodeJson<SingleIndividualModel>(json);
+  }
 }
 
-class CommonAuditDetailsMapperElement
-    extends MapperElementBase<CommonAuditDetails> {
-  CommonAuditDetailsMapperElement._(super.mapper, super.container);
+mixin SingleIndividualModelMappable {
+  String toJson() {
+    return SingleIndividualModelMapper.ensureInitialized()
+        .encodeJson<SingleIndividualModel>(this as SingleIndividualModel);
+  }
 
-  @override
-  Function get decoder => decode;
-  CommonAuditDetails decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  CommonAuditDetails fromMap(Map<String, dynamic> map) => CommonAuditDetails(
-      createdTime: container.$getOpt(map, 'createdTime'),
-      lastModifiedTime: container.$getOpt(map, 'lastModifiedTime'),
-      createdBy: container.$getOpt(map, 'createdBy'),
-      lastModifiedBy: container.$getOpt(map, 'lastModifiedBy'));
+  Map<String, dynamic> toMap() {
+    return SingleIndividualModelMapper.ensureInitialized()
+        .encodeMap<SingleIndividualModel>(this as SingleIndividualModel);
+  }
 
+  SingleIndividualModelCopyWith<SingleIndividualModel, SingleIndividualModel,
+          SingleIndividualModel>
+      get copyWith => _SingleIndividualModelCopyWithImpl(
+          this as SingleIndividualModel, $identity, $identity);
   @override
-  Function get encoder => encode;
-  dynamic encode(CommonAuditDetails v) => toMap(v);
-  Map<String, dynamic> toMap(CommonAuditDetails c) => {
-        'createdTime': container.$enc(c.createdTime, 'createdTime'),
-        'lastModifiedTime':
-            container.$enc(c.lastModifiedTime, 'lastModifiedTime'),
-        'createdBy': container.$enc(c.createdBy, 'createdBy'),
-        'lastModifiedBy': container.$enc(c.lastModifiedBy, 'lastModifiedBy')
-      };
-
-  @override
-  String stringify(CommonAuditDetails self) =>
-      'CommonAuditDetails(createdBy: ${container.asString(self.createdBy)}, lastModifiedBy: ${container.asString(self.lastModifiedBy)}, createdTime: ${container.asString(self.createdTime)}, lastModifiedTime: ${container.asString(self.lastModifiedTime)})';
-  @override
-  int hash(CommonAuditDetails self) =>
-      container.hash(self.createdBy) ^
-      container.hash(self.lastModifiedBy) ^
-      container.hash(self.createdTime) ^
-      container.hash(self.lastModifiedTime);
-  @override
-  bool equals(CommonAuditDetails self, CommonAuditDetails other) =>
-      container.isEqual(self.createdBy, other.createdBy) &&
-      container.isEqual(self.lastModifiedBy, other.lastModifiedBy) &&
-      container.isEqual(self.createdTime, other.createdTime) &&
-      container.isEqual(self.lastModifiedTime, other.lastModifiedTime);
-}
-
-mixin CommonAuditDetailsMappable {
-  String toJson() =>
-      CommonAuditDetailsMapper.container.toJson(this as CommonAuditDetails);
-  Map<String, dynamic> toMap() =>
-      CommonAuditDetailsMapper.container.toMap(this as CommonAuditDetails);
-  CommonAuditDetailsCopyWith<CommonAuditDetails, CommonAuditDetails,
-          CommonAuditDetails>
-      get copyWith => _CommonAuditDetailsCopyWithImpl(
-          this as CommonAuditDetails, $identity, $identity);
-  @override
-  String toString() => CommonAuditDetailsMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          CommonAuditDetailsMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => CommonAuditDetailsMapper.container.hash(this);
-}
-
-extension CommonAuditDetailsValueCopy<$R, $Out extends CommonAuditDetails>
-    on ObjectCopyWith<$R, CommonAuditDetails, $Out> {
-  CommonAuditDetailsCopyWith<$R, CommonAuditDetails, $Out>
-      get asCommonAuditDetails =>
-          base.as((v, t, t2) => _CommonAuditDetailsCopyWithImpl(v, t, t2));
-}
-
-typedef CommonAuditDetailsCopyWithBound = CommonAuditDetails;
-
-abstract class CommonAuditDetailsCopyWith<$R, $In extends CommonAuditDetails,
-    $Out extends CommonAuditDetails> implements ObjectCopyWith<$R, $In, $Out> {
-  CommonAuditDetailsCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends CommonAuditDetails>(
-          Then<CommonAuditDetails, $Out2> t, Then<$Out2, $R2> t2);
-  $R call(
-      {int? createdTime,
-      int? lastModifiedTime,
-      String? createdBy,
-      String? lastModifiedBy});
-}
-
-class _CommonAuditDetailsCopyWithImpl<$R, $Out extends CommonAuditDetails>
-    extends CopyWithBase<$R, CommonAuditDetails, $Out>
-    implements CommonAuditDetailsCopyWith<$R, CommonAuditDetails, $Out> {
-  _CommonAuditDetailsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  CommonAuditDetailsCopyWith<$R2, CommonAuditDetails, $Out2>
-      chain<$R2, $Out2 extends CommonAuditDetails>(
-              Then<CommonAuditDetails, $Out2> t, Then<$Out2, $R2> t2) =>
-          _CommonAuditDetailsCopyWithImpl($value, t, t2);
-
-  @override
-  $R call(
-          {Object? createdTime = $none,
-          Object? lastModifiedTime = $none,
-          Object? createdBy = $none,
-          Object? lastModifiedBy = $none}) =>
-      $then(CommonAuditDetails(
-          createdTime: or(createdTime, $value.createdTime),
-          lastModifiedTime: or(lastModifiedTime, $value.lastModifiedTime),
-          createdBy: or(createdBy, $value.createdBy),
-          lastModifiedBy: or(lastModifiedBy, $value.lastModifiedBy)));
-}
-
-class IndividualAdditionalFieldsMapper
-    extends MapperBase<IndividualAdditionalFields> {
-  static MapperContainer container = MapperContainer(
-    mappers: {IndividualAdditionalFieldsMapper()},
-  )..linkAll({AdditionalIndividualFieldsMapper.container});
-
-  @override
-  IndividualAdditionalFieldsMapperElement createElement(
-      MapperContainer container) {
-    return IndividualAdditionalFieldsMapperElement._(this, container);
+  String toString() {
+    return SingleIndividualModelMapper.ensureInitialized()
+        .stringifyValue(this as SingleIndividualModel);
   }
 
   @override
-  String get id => 'IndividualAdditionalFields';
+  bool operator ==(Object other) {
+    return SingleIndividualModelMapper.ensureInitialized()
+        .equalsValue(this as SingleIndividualModel, other);
+  }
 
-  static final fromMap = container.fromMap<IndividualAdditionalFields>;
-  static final fromJson = container.fromJson<IndividualAdditionalFields>;
+  @override
+  int get hashCode {
+    return SingleIndividualModelMapper.ensureInitialized()
+        .hashValue(this as SingleIndividualModel);
+  }
 }
 
-class IndividualAdditionalFieldsMapperElement
-    extends MapperElementBase<IndividualAdditionalFields> {
-  IndividualAdditionalFieldsMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  IndividualAdditionalFields decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  IndividualAdditionalFields fromMap(Map<String, dynamic> map) =>
-      IndividualAdditionalFields(
-          status: container.$getOpt(map, 'status'),
-          version: container.$getOpt(map, 'version'),
-          documentType: container.$getOpt(map, 'documentType'),
-          fields: container.$getOpt(map, 'fields'),
-          documentUid: container.$getOpt(map, 'documentUid'),
-          fileStore: container.$getOpt(map, 'fileStore'),
-          schema: container.$getOpt(map, 'schema'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(IndividualAdditionalFields v) => toMap(v);
-  Map<String, dynamic> toMap(IndividualAdditionalFields i) => {
-        'status': container.$enc(i.status, 'status'),
-        'version': container.$enc(i.version, 'version'),
-        'documentType': container.$enc(i.documentType, 'documentType'),
-        'fields': container.$enc(i.fields, 'fields'),
-        'documentUid': container.$enc(i.documentUid, 'documentUid'),
-        'fileStore': container.$enc(i.fileStore, 'fileStore'),
-        'schema': container.$enc(i.schema, 'schema')
-      };
-
-  @override
-  String stringify(IndividualAdditionalFields self) =>
-      'IndividualAdditionalFields(schema: ${container.asString(self.schema)}, version: ${container.asString(self.version)}, fields: ${container.asString(self.fields)}, documentType: ${container.asString(self.documentType)}, fileStore: ${container.asString(self.fileStore)}, documentUid: ${container.asString(self.documentUid)}, status: ${container.asString(self.status)})';
-  @override
-  int hash(IndividualAdditionalFields self) =>
-      container.hash(self.schema) ^
-      container.hash(self.version) ^
-      container.hash(self.fields) ^
-      container.hash(self.documentType) ^
-      container.hash(self.fileStore) ^
-      container.hash(self.documentUid) ^
-      container.hash(self.status);
-  @override
-  bool equals(
-          IndividualAdditionalFields self, IndividualAdditionalFields other) =>
-      container.isEqual(self.schema, other.schema) &&
-      container.isEqual(self.version, other.version) &&
-      container.isEqual(self.fields, other.fields) &&
-      container.isEqual(self.documentType, other.documentType) &&
-      container.isEqual(self.fileStore, other.fileStore) &&
-      container.isEqual(self.documentUid, other.documentUid) &&
-      container.isEqual(self.status, other.status);
+extension SingleIndividualModelValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, SingleIndividualModel, $Out> {
+  SingleIndividualModelCopyWith<$R, SingleIndividualModel, $Out>
+      get $asSingleIndividualModel =>
+          $base.as((v, t, t2) => _SingleIndividualModelCopyWithImpl(v, t, t2));
 }
 
-mixin IndividualAdditionalFieldsMappable {
-  String toJson() => IndividualAdditionalFieldsMapper.container
-      .toJson(this as IndividualAdditionalFields);
-  Map<String, dynamic> toMap() => IndividualAdditionalFieldsMapper.container
-      .toMap(this as IndividualAdditionalFields);
-  IndividualAdditionalFieldsCopyWith<IndividualAdditionalFields,
-          IndividualAdditionalFields, IndividualAdditionalFields>
-      get copyWith => _IndividualAdditionalFieldsCopyWithImpl(
-          this as IndividualAdditionalFields, $identity, $identity);
-  @override
-  String toString() =>
-      IndividualAdditionalFieldsMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          IndividualAdditionalFieldsMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => IndividualAdditionalFieldsMapper.container.hash(this);
+abstract class SingleIndividualModelCopyWith<
+    $R,
+    $In extends SingleIndividualModel,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
+  IndividualModelCopyWith<$R, IndividualModel, IndividualModel>? get Individual;
+  $R call({IndividualModel? Individual});
+  SingleIndividualModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-extension IndividualAdditionalFieldsValueCopy<$R,
-        $Out extends IndividualAdditionalFields>
-    on ObjectCopyWith<$R, IndividualAdditionalFields, $Out> {
-  IndividualAdditionalFieldsCopyWith<$R, IndividualAdditionalFields, $Out>
-      get asIndividualAdditionalFields => base
-          .as((v, t, t2) => _IndividualAdditionalFieldsCopyWithImpl(v, t, t2));
+class _SingleIndividualModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, SingleIndividualModel, $Out>
+    implements SingleIndividualModelCopyWith<$R, SingleIndividualModel, $Out> {
+  _SingleIndividualModelCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<SingleIndividualModel> $mapper =
+      SingleIndividualModelMapper.ensureInitialized();
+  @override
+  IndividualModelCopyWith<$R, IndividualModel, IndividualModel>?
+      get Individual =>
+          $value.Individual?.copyWith.$chain((v) => call(Individual: v));
+  @override
+  $R call({Object? Individual = $none}) => $apply(
+      FieldCopyWithData({if (Individual != $none) #Individual: Individual}));
+  @override
+  SingleIndividualModel $make(CopyWithData data) => SingleIndividualModel(
+      Individual: data.get(#Individual, or: $value.Individual));
+
+  @override
+  SingleIndividualModelCopyWith<$R2, SingleIndividualModel, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _SingleIndividualModelCopyWithImpl($value, $cast, t);
 }
 
-typedef IndividualAdditionalFieldsCopyWithBound = IndividualAdditionalFields;
+class WMSIndividualListModelMapper
+    extends ClassMapperBase<WMSIndividualListModel> {
+  WMSIndividualListModelMapper._();
 
-abstract class IndividualAdditionalFieldsCopyWith<
-        $R,
-        $In extends IndividualAdditionalFields,
-        $Out extends IndividualAdditionalFields>
-    implements ObjectCopyWith<$R, $In, $Out> {
-  IndividualAdditionalFieldsCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends IndividualAdditionalFields>(
-          Then<IndividualAdditionalFields, $Out2> t, Then<$Out2, $R2> t2);
+  static WMSIndividualListModelMapper? _instance;
+  static WMSIndividualListModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = WMSIndividualListModelMapper._());
+      SingleWMSIndividualModelMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'WMSIndividualListModel';
+
+  static List<SingleWMSIndividualModel>? _$items(WMSIndividualListModel v) =>
+      v.items;
+  static const Field<WMSIndividualListModel, List<SingleWMSIndividualModel>>
+      _f$items = Field('items', _$items, opt: true);
+
+  @override
+  final MappableFields<WMSIndividualListModel> fields = const {
+    #items: _f$items,
+  };
+
+  static WMSIndividualListModel _instantiate(DecodingData data) {
+    return WMSIndividualListModel(items: data.dec(_f$items));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static WMSIndividualListModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<WMSIndividualListModel>(map);
+  }
+
+  static WMSIndividualListModel fromJson(String json) {
+    return ensureInitialized().decodeJson<WMSIndividualListModel>(json);
+  }
+}
+
+mixin WMSIndividualListModelMappable {
+  String toJson() {
+    return WMSIndividualListModelMapper.ensureInitialized()
+        .encodeJson<WMSIndividualListModel>(this as WMSIndividualListModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return WMSIndividualListModelMapper.ensureInitialized()
+        .encodeMap<WMSIndividualListModel>(this as WMSIndividualListModel);
+  }
+
+  WMSIndividualListModelCopyWith<WMSIndividualListModel, WMSIndividualListModel,
+          WMSIndividualListModel>
+      get copyWith => _WMSIndividualListModelCopyWithImpl(
+          this as WMSIndividualListModel, $identity, $identity);
+  @override
+  String toString() {
+    return WMSIndividualListModelMapper.ensureInitialized()
+        .stringifyValue(this as WMSIndividualListModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return WMSIndividualListModelMapper.ensureInitialized()
+        .equalsValue(this as WMSIndividualListModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return WMSIndividualListModelMapper.ensureInitialized()
+        .hashValue(this as WMSIndividualListModel);
+  }
+}
+
+extension WMSIndividualListModelValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, WMSIndividualListModel, $Out> {
+  WMSIndividualListModelCopyWith<$R, WMSIndividualListModel, $Out>
+      get $asWMSIndividualListModel =>
+          $base.as((v, t, t2) => _WMSIndividualListModelCopyWithImpl(v, t, t2));
+}
+
+abstract class WMSIndividualListModelCopyWith<
+    $R,
+    $In extends WMSIndividualListModel,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<
       $R,
-      AdditionalIndividualFields,
-      AdditionalIndividualFieldsCopyWith<$R, AdditionalIndividualFields,
-          AdditionalIndividualFields>>? get fields;
-  $R call(
-      {String? status,
-      String? version,
-      String? documentType,
-      List<AdditionalIndividualFields>? fields,
-      String? documentUid,
-      String? fileStore,
-      String? schema});
+      SingleWMSIndividualModel,
+      SingleWMSIndividualModelCopyWith<$R, SingleWMSIndividualModel,
+          SingleWMSIndividualModel>>? get items;
+  $R call({List<SingleWMSIndividualModel>? items});
+  WMSIndividualListModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _IndividualAdditionalFieldsCopyWithImpl<$R,
-        $Out extends IndividualAdditionalFields>
-    extends CopyWithBase<$R, IndividualAdditionalFields, $Out>
+class _WMSIndividualListModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, WMSIndividualListModel, $Out>
     implements
-        IndividualAdditionalFieldsCopyWith<$R, IndividualAdditionalFields,
-            $Out> {
-  _IndividualAdditionalFieldsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  IndividualAdditionalFieldsCopyWith<$R2, IndividualAdditionalFields, $Out2>
-      chain<$R2, $Out2 extends IndividualAdditionalFields>(
-              Then<IndividualAdditionalFields, $Out2> t, Then<$Out2, $R2> t2) =>
-          _IndividualAdditionalFieldsCopyWithImpl($value, t, t2);
+        WMSIndividualListModelCopyWith<$R, WMSIndividualListModel, $Out> {
+  _WMSIndividualListModelCopyWithImpl(super.value, super.then, super.then2);
 
+  @override
+  late final ClassMapperBase<WMSIndividualListModel> $mapper =
+      WMSIndividualListModelMapper.ensureInitialized();
   @override
   ListCopyWith<
       $R,
-      AdditionalIndividualFields,
-      AdditionalIndividualFieldsCopyWith<$R, AdditionalIndividualFields,
-          AdditionalIndividualFields>>? get fields => $value.fields != null
+      SingleWMSIndividualModel,
+      SingleWMSIndividualModelCopyWith<$R, SingleWMSIndividualModel,
+          SingleWMSIndividualModel>>? get items => $value.items != null
       ? ListCopyWith(
-          $value.fields!,
-          (v, t) =>
-              v.copyWith.chain<$R, AdditionalIndividualFields>($identity, t),
-          (v) => call(fields: v))
+          $value.items!, (v, t) => v.copyWith.$chain(t), (v) => call(items: v))
       : null;
   @override
-  $R call(
-          {Object? status = $none,
-          Object? version = $none,
-          Object? documentType = $none,
-          Object? fields = $none,
-          Object? documentUid = $none,
-          Object? fileStore = $none,
-          Object? schema = $none}) =>
-      $then(IndividualAdditionalFields(
-          status: or(status, $value.status),
-          version: or(version, $value.version),
-          documentType: or(documentType, $value.documentType),
-          fields: or(fields, $value.fields),
-          documentUid: or(documentUid, $value.documentUid),
-          fileStore: or(fileStore, $value.fileStore),
-          schema: or(schema, $value.schema)));
-}
-
-class AddressLocalityMapper extends MapperBase<AddressLocality> {
-  static MapperContainer container = MapperContainer(
-    mappers: {AddressLocalityMapper()},
-  );
+  $R call({Object? items = $none}) =>
+      $apply(FieldCopyWithData({if (items != $none) #items: items}));
+  @override
+  WMSIndividualListModel $make(CopyWithData data) =>
+      WMSIndividualListModel(items: data.get(#items, or: $value.items));
 
   @override
-  AddressLocalityMapperElement createElement(MapperContainer container) {
-    return AddressLocalityMapperElement._(this, container);
+  WMSIndividualListModelCopyWith<$R2, WMSIndividualListModel, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _WMSIndividualListModelCopyWithImpl($value, $cast, t);
+}
+
+class SingleWMSIndividualModelMapper
+    extends ClassMapperBase<SingleWMSIndividualModel> {
+  SingleWMSIndividualModelMapper._();
+
+  static SingleWMSIndividualModelMapper? _instance;
+  static SingleWMSIndividualModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals
+          .use(_instance = SingleWMSIndividualModelMapper._());
+      IndividualModelMapper.ensureInitialized();
+    }
+    return _instance!;
   }
 
   @override
-  String get id => 'AddressLocality';
+  final String id = 'SingleWMSIndividualModel';
 
-  static final fromMap = container.fromMap<AddressLocality>;
-  static final fromJson = container.fromJson<AddressLocality>;
-}
-
-class AddressLocalityMapperElement extends MapperElementBase<AddressLocality> {
-  AddressLocalityMapperElement._(super.mapper, super.container);
+  static IndividualModel? _$businessObject(SingleWMSIndividualModel v) =>
+      v.businessObject;
+  static const Field<SingleWMSIndividualModel, IndividualModel>
+      _f$businessObject = Field('businessObject', _$businessObject, opt: true);
 
   @override
-  Function get decoder => decode;
-  AddressLocality decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  AddressLocality fromMap(Map<String, dynamic> map) => AddressLocality(
-      code: container.$getOpt(map, 'code'),
-      name: container.$getOpt(map, 'name'),
-      label: container.$getOpt(map, 'label'),
-      latitude: container.$getOpt(map, 'latitude'),
-      longitude: container.$getOpt(map, 'longitude'),
-      materializedPath: container.$getOpt(map, 'materializedPath'));
+  final MappableFields<SingleWMSIndividualModel> fields = const {
+    #businessObject: _f$businessObject,
+  };
 
-  @override
-  Function get encoder => encode;
-  dynamic encode(AddressLocality v) => toMap(v);
-  Map<String, dynamic> toMap(AddressLocality a) => {
-        'code': container.$enc(a.code, 'code'),
-        'name': container.$enc(a.name, 'name'),
-        'label': container.$enc(a.label, 'label'),
-        'latitude': container.$enc(a.latitude, 'latitude'),
-        'longitude': container.$enc(a.longitude, 'longitude'),
-        'materializedPath':
-            container.$enc(a.materializedPath, 'materializedPath')
-      };
-
-  @override
-  String stringify(AddressLocality self) =>
-      'AddressLocality(code: ${container.asString(self.code)}, name: ${container.asString(self.name)}, label: ${container.asString(self.label)}, latitude: ${container.asString(self.latitude)}, longitude: ${container.asString(self.longitude)}, materializedPath: ${container.asString(self.materializedPath)})';
-  @override
-  int hash(AddressLocality self) =>
-      container.hash(self.code) ^
-      container.hash(self.name) ^
-      container.hash(self.label) ^
-      container.hash(self.latitude) ^
-      container.hash(self.longitude) ^
-      container.hash(self.materializedPath);
-  @override
-  bool equals(AddressLocality self, AddressLocality other) =>
-      container.isEqual(self.code, other.code) &&
-      container.isEqual(self.name, other.name) &&
-      container.isEqual(self.label, other.label) &&
-      container.isEqual(self.latitude, other.latitude) &&
-      container.isEqual(self.longitude, other.longitude) &&
-      container.isEqual(self.materializedPath, other.materializedPath);
-}
-
-mixin AddressLocalityMappable {
-  String toJson() =>
-      AddressLocalityMapper.container.toJson(this as AddressLocality);
-  Map<String, dynamic> toMap() =>
-      AddressLocalityMapper.container.toMap(this as AddressLocality);
-  AddressLocalityCopyWith<AddressLocality, AddressLocality, AddressLocality>
-      get copyWith => _AddressLocalityCopyWithImpl(
-          this as AddressLocality, $identity, $identity);
-  @override
-  String toString() => AddressLocalityMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          AddressLocalityMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => AddressLocalityMapper.container.hash(this);
-}
-
-extension AddressLocalityValueCopy<$R, $Out extends AddressLocality>
-    on ObjectCopyWith<$R, AddressLocality, $Out> {
-  AddressLocalityCopyWith<$R, AddressLocality, $Out> get asAddressLocality =>
-      base.as((v, t, t2) => _AddressLocalityCopyWithImpl(v, t, t2));
-}
-
-typedef AddressLocalityCopyWithBound = AddressLocality;
-
-abstract class AddressLocalityCopyWith<$R, $In extends AddressLocality,
-    $Out extends AddressLocality> implements ObjectCopyWith<$R, $In, $Out> {
-  AddressLocalityCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends AddressLocality>(
-          Then<AddressLocality, $Out2> t, Then<$Out2, $R2> t2);
-  $R call(
-      {String? code,
-      String? name,
-      String? label,
-      double? latitude,
-      double? longitude,
-      String? materializedPath});
-}
-
-class _AddressLocalityCopyWithImpl<$R, $Out extends AddressLocality>
-    extends CopyWithBase<$R, AddressLocality, $Out>
-    implements AddressLocalityCopyWith<$R, AddressLocality, $Out> {
-  _AddressLocalityCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  AddressLocalityCopyWith<$R2, AddressLocality, $Out2>
-      chain<$R2, $Out2 extends AddressLocality>(
-              Then<AddressLocality, $Out2> t, Then<$Out2, $R2> t2) =>
-          _AddressLocalityCopyWithImpl($value, t, t2);
-
-  @override
-  $R call(
-          {Object? code = $none,
-          Object? name = $none,
-          Object? label = $none,
-          Object? latitude = $none,
-          Object? longitude = $none,
-          Object? materializedPath = $none}) =>
-      $then(AddressLocality(
-          code: or(code, $value.code),
-          name: or(name, $value.name),
-          label: or(label, $value.label),
-          latitude: or(latitude, $value.latitude),
-          longitude: or(longitude, $value.longitude),
-          materializedPath: or(materializedPath, $value.materializedPath)));
-}
-
-class AddressWardMapper extends MapperBase<AddressWard> {
-  static MapperContainer container = MapperContainer(
-    mappers: {AddressWardMapper()},
-  );
-
-  @override
-  AddressWardMapperElement createElement(MapperContainer container) {
-    return AddressWardMapperElement._(this, container);
+  static SingleWMSIndividualModel _instantiate(DecodingData data) {
+    return SingleWMSIndividualModel(
+        businessObject: data.dec(_f$businessObject));
   }
 
   @override
-  String get id => 'AddressWard';
+  final Function instantiate = _instantiate;
 
-  static final fromMap = container.fromMap<AddressWard>;
-  static final fromJson = container.fromJson<AddressWard>;
+  static SingleWMSIndividualModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<SingleWMSIndividualModel>(map);
+  }
+
+  static SingleWMSIndividualModel fromJson(String json) {
+    return ensureInitialized().decodeJson<SingleWMSIndividualModel>(json);
+  }
 }
 
-class AddressWardMapperElement extends MapperElementBase<AddressWard> {
-  AddressWardMapperElement._(super.mapper, super.container);
+mixin SingleWMSIndividualModelMappable {
+  String toJson() {
+    return SingleWMSIndividualModelMapper.ensureInitialized()
+        .encodeJson<SingleWMSIndividualModel>(this as SingleWMSIndividualModel);
+  }
 
-  @override
-  Function get decoder => decode;
-  AddressWard decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  AddressWard fromMap(Map<String, dynamic> map) => AddressWard(
-      code: container.$getOpt(map, 'code'),
-      name: container.$getOpt(map, 'name'),
-      label: container.$getOpt(map, 'label'),
-      latitude: container.$getOpt(map, 'latitude'),
-      longitude: container.$getOpt(map, 'longitude'),
-      materializedPath: container.$getOpt(map, 'materializedPath'));
+  Map<String, dynamic> toMap() {
+    return SingleWMSIndividualModelMapper.ensureInitialized()
+        .encodeMap<SingleWMSIndividualModel>(this as SingleWMSIndividualModel);
+  }
 
+  SingleWMSIndividualModelCopyWith<SingleWMSIndividualModel,
+          SingleWMSIndividualModel, SingleWMSIndividualModel>
+      get copyWith => _SingleWMSIndividualModelCopyWithImpl(
+          this as SingleWMSIndividualModel, $identity, $identity);
   @override
-  Function get encoder => encode;
-  dynamic encode(AddressWard v) => toMap(v);
-  Map<String, dynamic> toMap(AddressWard a) => {
-        'code': container.$enc(a.code, 'code'),
-        'name': container.$enc(a.name, 'name'),
-        'label': container.$enc(a.label, 'label'),
-        'latitude': container.$enc(a.latitude, 'latitude'),
-        'longitude': container.$enc(a.longitude, 'longitude'),
-        'materializedPath':
-            container.$enc(a.materializedPath, 'materializedPath')
-      };
-
-  @override
-  String stringify(AddressWard self) =>
-      'AddressWard(code: ${container.asString(self.code)}, name: ${container.asString(self.name)}, label: ${container.asString(self.label)}, latitude: ${container.asString(self.latitude)}, longitude: ${container.asString(self.longitude)}, materializedPath: ${container.asString(self.materializedPath)})';
-  @override
-  int hash(AddressWard self) =>
-      container.hash(self.code) ^
-      container.hash(self.name) ^
-      container.hash(self.label) ^
-      container.hash(self.latitude) ^
-      container.hash(self.longitude) ^
-      container.hash(self.materializedPath);
-  @override
-  bool equals(AddressWard self, AddressWard other) =>
-      container.isEqual(self.code, other.code) &&
-      container.isEqual(self.name, other.name) &&
-      container.isEqual(self.label, other.label) &&
-      container.isEqual(self.latitude, other.latitude) &&
-      container.isEqual(self.longitude, other.longitude) &&
-      container.isEqual(self.materializedPath, other.materializedPath);
-}
-
-mixin AddressWardMappable {
-  String toJson() => AddressWardMapper.container.toJson(this as AddressWard);
-  Map<String, dynamic> toMap() =>
-      AddressWardMapper.container.toMap(this as AddressWard);
-  AddressWardCopyWith<AddressWard, AddressWard, AddressWard> get copyWith =>
-      _AddressWardCopyWithImpl(this as AddressWard, $identity, $identity);
-  @override
-  String toString() => AddressWardMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          AddressWardMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => AddressWardMapper.container.hash(this);
-}
-
-extension AddressWardValueCopy<$R, $Out extends AddressWard>
-    on ObjectCopyWith<$R, AddressWard, $Out> {
-  AddressWardCopyWith<$R, AddressWard, $Out> get asAddressWard =>
-      base.as((v, t, t2) => _AddressWardCopyWithImpl(v, t, t2));
-}
-
-typedef AddressWardCopyWithBound = AddressWard;
-
-abstract class AddressWardCopyWith<$R, $In extends AddressWard,
-    $Out extends AddressWard> implements ObjectCopyWith<$R, $In, $Out> {
-  AddressWardCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends AddressWard>(
-      Then<AddressWard, $Out2> t, Then<$Out2, $R2> t2);
-  $R call(
-      {String? code,
-      String? name,
-      String? label,
-      double? latitude,
-      double? longitude,
-      String? materializedPath});
-}
-
-class _AddressWardCopyWithImpl<$R, $Out extends AddressWard>
-    extends CopyWithBase<$R, AddressWard, $Out>
-    implements AddressWardCopyWith<$R, AddressWard, $Out> {
-  _AddressWardCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  AddressWardCopyWith<$R2, AddressWard, $Out2>
-      chain<$R2, $Out2 extends AddressWard>(
-              Then<AddressWard, $Out2> t, Then<$Out2, $R2> t2) =>
-          _AddressWardCopyWithImpl($value, t, t2);
-
-  @override
-  $R call(
-          {Object? code = $none,
-          Object? name = $none,
-          Object? label = $none,
-          Object? latitude = $none,
-          Object? longitude = $none,
-          Object? materializedPath = $none}) =>
-      $then(AddressWard(
-          code: or(code, $value.code),
-          name: or(name, $value.name),
-          label: or(label, $value.label),
-          latitude: or(latitude, $value.latitude),
-          longitude: or(longitude, $value.longitude),
-          materializedPath: or(materializedPath, $value.materializedPath)));
-}
-
-class AdditionalIndividualFieldsMapper
-    extends MapperBase<AdditionalIndividualFields> {
-  static MapperContainer container = MapperContainer(
-    mappers: {AdditionalIndividualFieldsMapper()},
-  );
-
-  @override
-  AdditionalIndividualFieldsMapperElement createElement(
-      MapperContainer container) {
-    return AdditionalIndividualFieldsMapperElement._(this, container);
+  String toString() {
+    return SingleWMSIndividualModelMapper.ensureInitialized()
+        .stringifyValue(this as SingleWMSIndividualModel);
   }
 
   @override
-  String get id => 'AdditionalIndividualFields';
+  bool operator ==(Object other) {
+    return SingleWMSIndividualModelMapper.ensureInitialized()
+        .equalsValue(this as SingleWMSIndividualModel, other);
+  }
 
-  static final fromMap = container.fromMap<AdditionalIndividualFields>;
-  static final fromJson = container.fromJson<AdditionalIndividualFields>;
+  @override
+  int get hashCode {
+    return SingleWMSIndividualModelMapper.ensureInitialized()
+        .hashValue(this as SingleWMSIndividualModel);
+  }
 }
 
-class AdditionalIndividualFieldsMapperElement
-    extends MapperElementBase<AdditionalIndividualFields> {
-  AdditionalIndividualFieldsMapperElement._(super.mapper, super.container);
-
-  @override
-  Function get decoder => decode;
-  AdditionalIndividualFields decode(dynamic v) =>
-      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  AdditionalIndividualFields fromMap(Map<String, dynamic> map) =>
-      AdditionalIndividualFields(
-          key: container.$getOpt(map, 'key'),
-          value: container.$getOpt(map, 'value'));
-
-  @override
-  Function get encoder => encode;
-  dynamic encode(AdditionalIndividualFields v) => toMap(v);
-  Map<String, dynamic> toMap(AdditionalIndividualFields a) => {
-        'key': container.$enc(a.key, 'key'),
-        'value': container.$enc(a.value, 'value')
-      };
-
-  @override
-  String stringify(AdditionalIndividualFields self) =>
-      'AdditionalIndividualFields(key: ${container.asString(self.key)}, value: ${container.asString(self.value)})';
-  @override
-  int hash(AdditionalIndividualFields self) =>
-      container.hash(self.key) ^ container.hash(self.value);
-  @override
-  bool equals(
-          AdditionalIndividualFields self, AdditionalIndividualFields other) =>
-      container.isEqual(self.key, other.key) &&
-      container.isEqual(self.value, other.value);
+extension SingleWMSIndividualModelValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, SingleWMSIndividualModel, $Out> {
+  SingleWMSIndividualModelCopyWith<$R, SingleWMSIndividualModel, $Out>
+      get $asSingleWMSIndividualModel => $base
+          .as((v, t, t2) => _SingleWMSIndividualModelCopyWithImpl(v, t, t2));
 }
 
-mixin AdditionalIndividualFieldsMappable {
-  String toJson() => AdditionalIndividualFieldsMapper.container
-      .toJson(this as AdditionalIndividualFields);
-  Map<String, dynamic> toMap() => AdditionalIndividualFieldsMapper.container
-      .toMap(this as AdditionalIndividualFields);
-  AdditionalIndividualFieldsCopyWith<AdditionalIndividualFields,
-          AdditionalIndividualFields, AdditionalIndividualFields>
-      get copyWith => _AdditionalIndividualFieldsCopyWithImpl(
-          this as AdditionalIndividualFields, $identity, $identity);
-  @override
-  String toString() =>
-      AdditionalIndividualFieldsMapper.container.asString(this);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (runtimeType == other.runtimeType &&
-          AdditionalIndividualFieldsMapper.container.isEqual(this, other));
-  @override
-  int get hashCode => AdditionalIndividualFieldsMapper.container.hash(this);
+abstract class SingleWMSIndividualModelCopyWith<
+    $R,
+    $In extends SingleWMSIndividualModel,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
+  IndividualModelCopyWith<$R, IndividualModel, IndividualModel>?
+      get businessObject;
+  $R call({IndividualModel? businessObject});
+  SingleWMSIndividualModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-extension AdditionalIndividualFieldsValueCopy<$R,
-        $Out extends AdditionalIndividualFields>
-    on ObjectCopyWith<$R, AdditionalIndividualFields, $Out> {
-  AdditionalIndividualFieldsCopyWith<$R, AdditionalIndividualFields, $Out>
-      get asAdditionalIndividualFields => base
-          .as((v, t, t2) => _AdditionalIndividualFieldsCopyWithImpl(v, t, t2));
-}
-
-typedef AdditionalIndividualFieldsCopyWithBound = AdditionalIndividualFields;
-
-abstract class AdditionalIndividualFieldsCopyWith<
-        $R,
-        $In extends AdditionalIndividualFields,
-        $Out extends AdditionalIndividualFields>
-    implements ObjectCopyWith<$R, $In, $Out> {
-  AdditionalIndividualFieldsCopyWith<$R2, $In, $Out2>
-      chain<$R2, $Out2 extends AdditionalIndividualFields>(
-          Then<AdditionalIndividualFields, $Out2> t, Then<$Out2, $R2> t2);
-  $R call({String? key, String? value});
-}
-
-class _AdditionalIndividualFieldsCopyWithImpl<$R,
-        $Out extends AdditionalIndividualFields>
-    extends CopyWithBase<$R, AdditionalIndividualFields, $Out>
+class _SingleWMSIndividualModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, SingleWMSIndividualModel, $Out>
     implements
-        AdditionalIndividualFieldsCopyWith<$R, AdditionalIndividualFields,
-            $Out> {
-  _AdditionalIndividualFieldsCopyWithImpl(super.value, super.then, super.then2);
-  @override
-  AdditionalIndividualFieldsCopyWith<$R2, AdditionalIndividualFields, $Out2>
-      chain<$R2, $Out2 extends AdditionalIndividualFields>(
-              Then<AdditionalIndividualFields, $Out2> t, Then<$Out2, $R2> t2) =>
-          _AdditionalIndividualFieldsCopyWithImpl($value, t, t2);
+        SingleWMSIndividualModelCopyWith<$R, SingleWMSIndividualModel, $Out> {
+  _SingleWMSIndividualModelCopyWithImpl(super.value, super.then, super.then2);
 
   @override
-  $R call({Object? key = $none, Object? value = $none}) =>
-      $then(AdditionalIndividualFields(
-          key: or(key, $value.key), value: or(value, $value.value)));
+  late final ClassMapperBase<SingleWMSIndividualModel> $mapper =
+      SingleWMSIndividualModelMapper.ensureInitialized();
+  @override
+  IndividualModelCopyWith<$R, IndividualModel, IndividualModel>?
+      get businessObject => $value.businessObject?.copyWith
+          .$chain((v) => call(businessObject: v));
+  @override
+  $R call({Object? businessObject = $none}) => $apply(FieldCopyWithData(
+      {if (businessObject != $none) #businessObject: businessObject}));
+  @override
+  SingleWMSIndividualModel $make(CopyWithData data) => SingleWMSIndividualModel(
+      businessObject: data.get(#businessObject, or: $value.businessObject));
+
+  @override
+  SingleWMSIndividualModelCopyWith<$R2, SingleWMSIndividualModel, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _SingleWMSIndividualModelCopyWithImpl($value, $cast, t);
 }

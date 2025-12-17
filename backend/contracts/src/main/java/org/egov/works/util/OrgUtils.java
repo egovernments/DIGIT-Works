@@ -7,6 +7,8 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.ServiceRequestRepository;
+import org.egov.works.services.common.models.organization.OrgSearchCriteria;
+import org.egov.works.services.common.models.organization.OrgSearchRequest;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,14 +25,16 @@ import static org.egov.works.util.ContractServiceConstants.ORGANISATION_MOBILE_N
 @Slf4j
 public class OrgUtils {
 
-    @Autowired
-    private ObjectMapper mapper;
+
+    private final ServiceRequestRepository restRepo;
+
+    private final ContractServiceConfiguration configs;
 
     @Autowired
-    private ServiceRequestRepository restRepo;
-
-    @Autowired
-    private ContractServiceConfiguration configs;
+    public OrgUtils(ServiceRequestRepository restRepo, ContractServiceConfiguration configs) {
+        this.restRepo = restRepo;
+        this.configs = configs;
+    }
 
     public Object fetchOrg(RequestInfo requestInfo, String tenantId, List<String> ids){
         OrgSearchRequest orgSearchRequest = getOrgSearchRequest(requestInfo,tenantId,ids);

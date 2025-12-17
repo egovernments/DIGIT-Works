@@ -136,6 +136,7 @@ import {
   SearchIcon,
   DeleteIcon,
   CreateLoiIcon,
+  AlertIcon,
   OBPSIconSolidBg,
   DocumentIconSolid,
   PMBIconSolid,
@@ -162,6 +163,7 @@ import {
   PGRIcon,
   TLIcon,
   BillsIcon,
+  BillsNewIcon,
   ErrorIcon,
   PrintBtnCommon,
   WhatsappIconGreen,
@@ -190,6 +192,9 @@ import {
   NoResultsFoundIcon,
   WorksMgmtIcon,
   BioMetricIcon,
+  MeasurementIcon,
+  MeasurementMuktaIcon,
+  MeasurementInboxIcon,
   MuktaHomeIcon,
   HRIcon,
   ProjectIcon,
@@ -200,12 +205,14 @@ import {
   OrganisationIcon,
   HelperIcon,
   DashboardIcon,
-  ExpenditureIcon
+  ExpenditureIcon,
+  PaymentIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
 import { Phone } from "./atoms/svgindex";
 import TextArea from "./atoms/TextArea";
+import InputTextAmount from "./atoms/InputTextAmount";
 import TextInput from "./atoms/TextInput";
 import Toast from "./atoms/Toast";
 import TopBar from "./atoms/TopBar";
@@ -218,6 +225,8 @@ import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
 import { FormComposer } from "./hoc/FormComposer";
+import ViewComposer from "./hoc/ViewComposer";
+import { FormComposer as FormComposerV2 } from "./hoc/FormComposer";
 import RenderFormFields from "./molecules/RenderFormFields";
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
@@ -254,6 +263,7 @@ import ToggleSwitch from "./atoms/ToggleSwitch";
 import WeekPicker from "./atoms/WeekPicker";
 import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
 import HorizontalNav from "./atoms/HorizontalNav";
+import HorizontalNavV2 from "./atoms/HorizontalNavV2";
 import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
 import InboxSearchComposer from "./hoc/InboxSearchComposer";
@@ -266,7 +276,9 @@ import WorkflowTimeline from "./atoms/WorkflowTimeline";
 import WorkflowActions from "./atoms/WorkflowActions";
 import Amount from "./atoms/Amount";
 import Paragraph from "./atoms/Paragraph";
+import AlertPopUp from "./atoms/AlertPopUp";
 export {
+  InputTextAmount,
   Button,
   ViewImages,
   Phone,
@@ -359,6 +371,7 @@ export {
   ViewDetailsCard,
   CollapseAndExpandGroups,
   HorizontalNav,
+  HorizontalNavV2,
   NoResultsFound,
   Amount,
   // Icons
@@ -423,6 +436,7 @@ export {
   CustomDropdown,
   // hoc
   FormComposer,
+  FormComposerV2,
   RenderFormFields,
   WorkflowTimeline,
   WorkflowActions,
@@ -448,6 +462,7 @@ export {
   ResultsTable,
   InboxSearchLinks,
   UploadFileComposer,
+  ViewComposer,
   // Icons
   FilterIcon,
   FilterSvg,
@@ -481,6 +496,7 @@ export {
   SearchIcon,
   DeleteIcon,
   CreateLoiIcon,
+  AlertIcon,
   WSICon,
   CameraIcon,
   EditPencilIcon,
@@ -502,6 +518,7 @@ export {
   PGRIcon,
   TLIcon,
   BillsIcon,
+  BillsNewIcon,
   ErrorIcon,
   DownloadBtnCommon,
   PrintBtnCommon,
@@ -518,6 +535,7 @@ export {
   InboxIcon,
   UnMaskComponent,
   PrivacyMaskIcon,
+  AlertPopUp,
   DeathIcon,
   BirthIcon,
   FirenocIcon,
@@ -530,6 +548,9 @@ export {
   NoResultsFoundIcon,
   WorksMgmtIcon,
   BioMetricIcon,
+  MeasurementIcon,
+  MeasurementMuktaIcon,
+  MeasurementInboxIcon,
   MuktaHomeIcon,
   HRIcon,
   ProjectIcon,
@@ -540,5 +561,6 @@ export {
   OrganisationIcon,
   HelperIcon,
   DashboardIcon,
-  ExpenditureIcon
+  ExpenditureIcon,
+  PaymentIcon
 };

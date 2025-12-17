@@ -53,7 +53,7 @@ class MusterSubmissionBloc
       } else {
         emit(const MusterSubmissionState.loaded(false));
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(MusterSubmissionState.error(e.response?.data['Errors'][0]['code']));
     }
   }

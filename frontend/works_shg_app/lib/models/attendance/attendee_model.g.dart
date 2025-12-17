@@ -6,31 +6,33 @@ part of 'attendee_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_AttendeeModel _$$_AttendeeModelFromJson(Map<String, dynamic> json) =>
-    _$_AttendeeModel(
+_$AttendeeModelImpl _$$AttendeeModelImplFromJson(Map<String, dynamic> json) =>
+    _$AttendeeModelImpl(
       attendanceRegister: (json['attendanceRegister'] as List<dynamic>?)
           ?.map((e) => AttendanceRegister.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_AttendeeModelToJson(_$_AttendeeModel instance) =>
+Map<String, dynamic> _$$AttendeeModelImplToJson(_$AttendeeModelImpl instance) =>
     <String, dynamic>{
       'attendanceRegister': instance.attendanceRegister,
     };
 
-_$_AttendeeTrackListModel _$$_AttendeeTrackListModelFromJson(
+_$AttendeeTrackListModelImpl _$$AttendeeTrackListModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$_AttendeeTrackListModel();
+    _$AttendeeTrackListModelImpl();
 
-Map<String, dynamic> _$$_AttendeeTrackListModelToJson(
-        _$_AttendeeTrackListModel instance) =>
+Map<String, dynamic> _$$AttendeeTrackListModelImplToJson(
+        _$AttendeeTrackListModelImpl instance) =>
     <String, dynamic>{};
 
-_$_AttendeesTrackList _$$_AttendeesTrackListFromJson(
+_$AttendeesTrackListImpl _$$AttendeesTrackListImplFromJson(
         Map<String, dynamic> json) =>
-    _$_AttendeesTrackList(
+    _$AttendeesTrackListImpl(
+      deenrollment: (json['deenrollment'] as num?)?.toInt(),
       name: json['name'] as String?,
       aadhaar: json['aadhaar'] as String?,
+      gender: json['gender'] as String?,
       individualGaurdianName: json['individualGaurdianName'] as String?,
       individualId: json['individualId'] as String?,
       id: json['id'] as String?,
@@ -64,11 +66,13 @@ _$_AttendeesTrackList _$$_AttendeesTrackListFromJson(
           : AuditDetails.fromJson(json['auditDetails'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_AttendeesTrackListToJson(
-        _$_AttendeesTrackList instance) =>
+Map<String, dynamic> _$$AttendeesTrackListImplToJson(
+        _$AttendeesTrackListImpl instance) =>
     <String, dynamic>{
+      'deenrollment': instance.deenrollment,
       'name': instance.name,
       'aadhaar': instance.aadhaar,
+      'gender': instance.gender,
       'individualGaurdianName': instance.individualGaurdianName,
       'individualId': instance.individualId,
       'id': instance.id,
@@ -98,17 +102,17 @@ Map<String, dynamic> _$$_AttendeesTrackListToJson(
       'auditDetails': instance.auditDetails,
     };
 
-_$_AttendeeAuditDetails _$$_AttendeeAuditDetailsFromJson(
+_$AttendeeAuditDetailsImpl _$$AttendeeAuditDetailsImplFromJson(
         Map<String, dynamic> json) =>
-    _$_AttendeeAuditDetails(
+    _$AttendeeAuditDetailsImpl(
       createdBy: json['createdBy'] as String?,
       lastModifiedBy: json['lastModifiedBy'] as String?,
-      createdTime: json['createdTime'] as int?,
-      lastModifiedTime: json['lastModifiedTime'] as int?,
+      createdTime: (json['createdTime'] as num?)?.toInt(),
+      lastModifiedTime: (json['lastModifiedTime'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$$_AttendeeAuditDetailsToJson(
-        _$_AttendeeAuditDetails instance) =>
+Map<String, dynamic> _$$AttendeeAuditDetailsImplToJson(
+        _$AttendeeAuditDetailsImpl instance) =>
     <String, dynamic>{
       'createdBy': instance.createdBy,
       'lastModifiedBy': instance.lastModifiedBy,

@@ -1,8 +1,9 @@
-import { Card, StatusTable, Row, DetailsCard, SearchIcon, Dropdown, SearchableDropdown,Table, DeleteIcon,SubmitBar,Toast} from '@egovernments/digit-ui-react-components'
+import { Card, StatusTable, Row, DetailsCard, SearchIcon, Dropdown, SearchableDropdown,Table, DeleteIcon,SubmitBar} from '@egovernments/digit-ui-react-components'
 import React,{useMemo,useState} from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { Link, useLocation } from "react-router-dom"
+import {Toast} from '@egovernments/digit-ui-components'
 import useDebounce from '../../../pageComponents/useDebounce'
 
 const sampleTableData = {
@@ -189,7 +190,7 @@ const ViewProject = ({isLoading=false,resultOk=true,data={}}) => {
           </div>: null}
 
           <p>
-            <span className='link' style={{ color: "#f47738" }} onClick={() => setIsExpanded(!isExpanded)}>
+            <span className='link' style={{ color: "#C84C0E" }} onClick={() => setIsExpanded(!isExpanded)}>
               {isExpanded ? t("HIDE_REGISTER_DETAILS") : t("VIEW_REGISTER_DETAILS")}
             </span>
           </p>

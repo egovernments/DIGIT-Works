@@ -59,7 +59,9 @@ const Table = ({
   isReportTable = false,
   showCheckBox = false,
   actionLabel = 'CS_COMMON_DOWNLOAD',
-  tableSelectionHandler = () => {}
+  tableSelectionHandler = () => {},
+  stickyFooter,
+  paginationValues
 }) => {
   const {
     getTableProps,
@@ -138,7 +140,7 @@ const Table = ({
   const handleSelection = async () => {
     const selectedRows = rows?.filter(ele => Object.keys(selectedRowIds)?.includes(ele?.id))
     const response = await tableSelectionHandler(selectedRows,t)
-    setToast({show: true, label: t(response?.label), error: !response?.isSuccess})
+    setToast({show: true, label: response?.label, error: !response?.isSuccess})
   }
 
   const handleToastClose = () => {
@@ -149,7 +151,7 @@ const Table = ({
     if(toast?.show) {
       setTimeout(()=>{
         handleToastClose();
-      },3000);
+      },10000);
     }
   },[toast?.show])
 
@@ -185,6 +187,8 @@ const Table = ({
                 <tr {...row.getRowProps()}>
                   {showAutoSerialNo && <td>{i + 1}</td>}
                   {row.cells.map((cell) => {
+                     const cellValue = cell.value;
+                     const isLinkObject = cellValue && typeof cellValue === "object" && cellValue.isLink;
                     return (
                       <td
                         // style={{ padding: "20px 18px", fontSize: "16px", borderTop: "1px solid grey", textAlign: "left", verticalAlign: "middle" }}
@@ -197,9 +201,9 @@ const Table = ({
                           getCellProps(cell),
                         ])}
                       >
-                        {cell.attachment_link ? (
-                          <a style={{ color: "#1D70B8" }} href={cell.attachment_link}>
-                            {cell.render("Cell")}
+                        {cell.attachment_link || isLinkObject ? (
+                          <a style={{ color: isLinkObject ? "#c84c0e" :"#1D70B8" }}  href={cell.attachment_link || cellValue?.to}>
+                            {isLinkObject? cellValue?.label : cell.render("Cell")}
                           </a>
                         ) : (
                           <React.Fragment> {cell.render("Cell")} </React.Fragment>
@@ -210,6 +214,16 @@ const Table = ({
                 </tr>
               );
             })}
+
+            {stickyFooter && (
+              <tr>
+                {stickyFooter?.map(el => (
+                  <td style={{ ...getCellProps().style, ...el?.style}}>
+                    <span>{el?.value}</span>
+                  </td>
+                ))}
+              </tr>
+            )}
           </tbody>
         </table>
       </span>
@@ -222,7 +236,7 @@ const Table = ({
             style={{ marginRight: "15px" }}
             onChange={manualPagination ? onPageSizeChange : (e) => setPageSize(Number(e.target.value))}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
+            {(paginationValues ? paginationValues : [10, 20, 30, 40, 50]).map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>

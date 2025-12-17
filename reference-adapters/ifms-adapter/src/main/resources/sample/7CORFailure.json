@@ -1,0 +1,10 @@
+{
+  "serviceId": "COR",
+  "errorMsgs": [
+    {
+      "errorCode": "322",
+      "errorMsg": "Wrong IFSC provided in Beneficiary Details for BenefId 16032023001"
+    }
+  ],
+  "data": []
+}

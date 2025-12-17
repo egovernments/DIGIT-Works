@@ -1,0 +1,198 @@
+@import "../../typography.scss";
+
+/* language selection issue*/
+.customBtn-selected {
+  background-color: theme(digitv2.lightTheme.primary-1) !important;
+}
+
+/* login  screen  issue*/
+
+.primary-label-btn {
+  color: theme(digitv2.lightTheme.primary-1) !important;
+}
+
+/* landing  screen  issue*/
+
+.employeeCard {
+  .complaint-links-container .header .logo {
+    background-color: theme(digitv2.lightTheme.primary-1) !important;
+  }
+
+  .complaint-links-container .body {
+    &.link {
+      color: theme(digitv2.lightTheme.primary-1) !important;
+    }
+    .inbox-total {
+      background-color: theme(digitv2.lightTheme.primary-1) !important;
+    }
+  }
+}
+
+.employee .topbar .right .user-img-txt {
+  background-color: theme(digitv2.lightTheme.primary-1) !important;
+}
+/* button component   issue*/
+
+.action-bar-wrap {
+  .submit-bar {
+    background-color: theme(digitv2.lightTheme.primary-1) !important;
+  }
+}
+
+.jk-digit-secondary-btn {
+  color: theme(digitv2.lightTheme.primary-1) !important;
+  border-color: theme(digitv2.lightTheme.primary-1) !important;
+
+  svg {
+    fill: theme(digitv2.lightTheme.primary-1) !important;
+
+    path {
+      fill: theme(digitv2.lightTheme.primary-1) !important;
+    }
+  }
+}
+.error-boundary .error-container button {
+  background-color: theme(digitv2.lightTheme.primary-1) !important;
+}
+
+/* inbox  screen  issue*/
+
+.inbox-search-wrapper {
+  .search-tabs-container .search-tab-head-selected {
+    color: theme(digitv2.lightTheme.primary-1) !important;
+    border-color: theme(digitv2.lightTheme.primary-1) !important;
+  }
+  .submit-bar {
+    background-color: theme(digitv2.lightTheme.primary-1) !important;
+  }
+  .search-component-table .link {
+    color: theme(digitv2.lightTheme.primary-1) !important;
+  }
+  .link-label {
+    color: theme(digitv2.lightTheme.primary-1) !important;
+  }
+}
+.drag-drop-container .drag-drop-text .browse-text {
+  color: theme(digitv2.lightTheme.primary-1) !important;
+}
+/* toast new componnet css added */
+
+.toast-success {
+  gap: theme(digitv2.spacers.spacer2);
+  height: theme(digitv2.spacers.spacer12);
+  padding: theme(digitv2.spacers.spacer3) theme(digitv2.spacers.spacer2) theme(digitv2.spacers.spacer3) theme(digitv2.spacers.spacer3) !important;
+  background-color: theme(digitv2.lightTheme.alert-success);
+  transition: bottom 0.5s ease;
+  grid-gap: theme(digitv2.spacers.spacer2);
+  &.error {
+    background-color: theme(digitv2.lightTheme.alert-error) !important;
+  }
+
+  &.warning {
+    background-color: theme(digitv2.lightTheme.alert-warning);
+
+    &.warning-buttons {
+      @apply block;
+    }
+  }
+
+  h2 {
+    @apply text-left overflow-hidden flex-grow flex items-center h-6;
+    letter-spacing: theme(digitv2.spacers.spacer0);
+    color: theme(digitv2.lightTheme.paper-primary);
+    margin: theme(digitv2.spacers.spacer0);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: theme(digitv2.spacers.spacer5);
+    font-style: normal;
+  }
+  svg {
+    @apply flex-shrink-0;
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    bottom: -3rem;
+  }
+  to {
+    bottom: 4.5rem;
+  }
+}
+
+.toast-success.animate {
+  animation: slideInFromBottom 0.5s ease forwards;
+}
+
+@media screen and (max-width: 768px) {
+  .topbar {
+    background: theme(digitv2.lightTheme.primary-2) !important;
+    color: theme(digitv2.lightTheme.paper-primary);
+  }
+}
+
+.digit-button-primary{
+  background-color: theme(digitv2.lightTheme.primary-1) !important;
+}
+.digit-button-secondary{
+  .icon-label-container{
+    h2{
+      color: theme(digitv2.lightTheme.primary-1) !important;
+    }
+  }
+}
+
+.employee{
+  .digit-employeeSidebar{
+    .sidebar{
+      z-index:999 !important
+    }
+  }
+}
+
+.inbox-search-wrapper .inbox-search-component-wrapper .sections-parent.inbox .links .inbox-links-icon{
+  color: theme(digitv2.lightTheme.primary-1) !important;
+  fill: theme(digitv2.lightTheme.primary-1) !important;
+}
+
+.inbox-search-wrapper .inbox-search-component-wrapper .sections-parent.inbox .links .inbox-links-icon path{
+  fill: theme(digitv2.lightTheme.primary-1) !important;
+}
+
+.link-label{
+  color: theme(digitv2.lightTheme.primary-1) !important;
+}
+
+.bread-crumb{
+  margin-bottom: theme(digitv2.spacers.spacer6);
+}
+
+.table{
+  border-bottom: 0.063rem solid theme(digitv2.lightTheme.generic-divider);
+}
+
+.pagination{
+  border: none;
+}
+
+.employee-data-table {
+  .border-none{
+      justify-content: unset;
+  
+      h2{
+          width: 17rem;
+      }
+  }
+}
+
+.employee-download-btn-className{
+  svg{
+    color: theme(digitv2.lightTheme.primary-1);
+  }
+}
+
+.multilink-link-button{
+  color: theme(digitv2.lightTheme.primary-1) !important;
+}

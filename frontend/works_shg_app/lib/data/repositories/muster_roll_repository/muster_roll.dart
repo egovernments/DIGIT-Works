@@ -25,7 +25,7 @@ class MusterRollRepository {
       return MusterRollsModel.fromJson(
         json.decode(response.toString()),
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -45,7 +45,7 @@ class MusterRollRepository {
       return EstimateMusterRollsModel.fromJson(
         json.decode(response.toString()),
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }
@@ -65,7 +65,7 @@ class MusterRollRepository {
       return MusterRollsModel.fromJson(
         json.decode(response.toString()),
       );
-    } on DioError catch (ex) {
+    } on DioException catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }

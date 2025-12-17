@@ -1,10 +1,10 @@
 package org.egov.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.IdGenerationRequest;
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdRequest;
-import digit.models.coremodels.IdResponse;
+import org.egov.common.contract.idgen.IdGenerationRequest;
+import org.egov.common.contract.idgen.IdGenerationResponse;
+import org.egov.common.contract.idgen.IdResponse;
+import org.egov.common.contract.idgen.IdRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
@@ -26,11 +26,15 @@ public class IdgenUtil {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+    private final ServiceRequestRepository restRepo;
 
     @Autowired
-    private ServiceRequestRepository restRepo;
+    public IdgenUtil(ObjectMapper mapper, ServiceRequestRepository restRepo) {
+        this.mapper = mapper;
+        this.restRepo = restRepo;
+    }
 
     public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
         List<IdRequest> reqList = new ArrayList<>();

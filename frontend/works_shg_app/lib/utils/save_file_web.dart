@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html';
+import 'package:universal_html/html.dart';
 
 ///To save the file in the device
 Future<void> saveAndLaunchFile(List<int> bytes, String fileName) async {

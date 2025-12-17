@@ -39,7 +39,7 @@ class BusinessWorkflowBloc
       emit(BusinessGetWorkflowState.loaded(
         businessWorkFlowModel: businessWorkFlowModel,
       ));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(const BusinessGetWorkflowState.error());
     }
   }

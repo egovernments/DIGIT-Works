@@ -8,7 +8,7 @@ const inboxConfigMukta = () => {
       requestBody: {
         inbox: {
           processSearchCriteria: {
-            businessService: ["mukta-estimate"],
+            businessService: ["estimate"],
             moduleName: "estimate-service",
           },
           moduleSearchCriteria: {},
@@ -36,7 +36,7 @@ const inboxConfigMukta = () => {
           },
           fields: [
             {
-              label: "ESTIMATE_ESTIMATE_NO",
+              label: "ESTIMATE_INBOX_ESTIMATE_NO",
               type: "text",
               isMandatory: false,
               disable: false,
@@ -77,9 +77,9 @@ const inboxConfigMukta = () => {
               populators: {
                 name: "projectType",
                 optionsKey: "name",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
+                // optionsCustomStyle: {
+                //   top: "2.3rem",
+                // },
                 mdmsConfig: {
                   masterName: "ProjectType",
                   moduleName: "works",
@@ -104,7 +104,7 @@ const inboxConfigMukta = () => {
         uiConfig: {
           columns: [
             {
-              label: "ESTIMATE_ESTIMATE_NO",
+              label: "ESTIMATE_INBOX_ESTIMATE_NO",
               jsonPath: "ProcessInstance.businessId",
               key: "estimateNumber",
               additionalCustomization: true,
@@ -223,15 +223,16 @@ const inboxConfigMukta = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
+                // optionsCustomStyle: {
+                //   top: "2.3rem",
+                // },
                 name: "ward",
                 type: "ward",
                 optionsKey: "i18nKey",
                 defaultText: "COMMON_SELECT_WARD",
                 selectedText: "COMMON_SELECTED",
                 allowMultiSelect: true,
+                isDropdownWithChip:true,
               },
             },
             {
@@ -246,17 +247,19 @@ const inboxConfigMukta = () => {
                 defaultText: "COMMON_SELECT_LOCALITY",
                 selectedText: "COMMON_SELECTED",
                 allowMultiSelect: true,
+                isDropdownWithChip:true,
               },
             },
             {
               label: "COMMON_WORKFLOW_STATES",
               type: "workflowstatesfilter",
+              labelClassName:"checkbox-status-filter-label" ,
               isMandatory: false,
               disable: false,
               populators: {
                 name: "state",
                 labelPrefix: "WF_EST_",
-                businessService: "mukta-estimate",
+                businessService: "estimate",
               },
             },
           ],

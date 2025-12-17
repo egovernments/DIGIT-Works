@@ -1,5 +1,8 @@
-import 'package:digit_components/digit_components.dart';
+// import 'package:digit_components/digit_components.dart';
+import 'package:digit_ui_components/theme/digit_extended_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:works_shg_app/blocs/auth/auth.dart';
+import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../models/file_store/file_store_model.dart';
@@ -7,8 +10,10 @@ import '../../utils/common_methods.dart';
 
 class Attachments extends StatelessWidget {
   final String label;
+  final TextStyle? labelStyle;
   final List<FileStoreModel>? fileStoreList;
-  const Attachments(this.label, this.fileStoreList, {super.key});
+  const Attachments(this.label, this.fileStoreList,
+      {this.labelStyle, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +29,9 @@ class Attachments extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     label,
-                    style: DigitTheme
-                        .instance.mobileTheme.textTheme.headlineLarge
-                        ?.apply(color: const DigitColors().black),
+                    style: labelStyle ??
+                        Theme.of(context).digitTextTheme(context).headingL.copyWith(color: Colors.black),
+                            
                     textAlign: TextAlign.left,
                   ),
                 )
@@ -37,10 +42,15 @@ class Attachments extends StatelessWidget {
                       .map<Widget>((e) => InkWell(
                             onTap: () => CommonMethods().onTapOfAttachment(
                                 e,
-                                e.tenantId ??
+                                e.tenantId==null?
+                                GlobalVariables.roleType==RoleType.employee?
+                                GlobalVariables.tenantId!:
                                     GlobalVariables.stateInfoListModel!.code
-                                        .toString(),
-                                context),
+                                        .toString():e.tenantId!,
+                               // "od.testing",
+                                context,
+                               roleType: GlobalVariables.roleType==RoleType.employee?RoleType.employee:RoleType.cbo
+                                ),
                             child: Container(
                                 width: 50,
                                 margin: const EdgeInsets.symmetric(
@@ -49,7 +59,8 @@ class Attachments extends StatelessWidget {
                                     Wrap(runSpacing: 5, spacing: 8, children: [
                                   Image.asset('assets/png/attachment.png'),
                                   Text(
-                                    e.name.toString(),
+                                    AppLocalizations.of(context)
+                                        .translate(e.name.toString()),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   )

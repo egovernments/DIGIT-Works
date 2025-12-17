@@ -35,9 +35,9 @@ class AttendeeDeEnrollBloc
               }),
               body: {"attendees": event.attendeeList});
       await Future.delayed(const Duration(seconds: 1));
-      emit(const AttendeeDeEnrollState.loaded());
-    } on DioError catch (e) {
-      emit(AttendeeDeEnrollState.error(e.response?.data['Errors'][0]['code']));
+      emit( AttendeeDeEnrollState.loaded(uuid: event.uuid));
+    } on DioException catch (e) {
+      emit(AttendeeDeEnrollState.error(e.response?.data['Errors'][0]['code'], uuid: event.uuid,));
     }
   }
 
@@ -50,7 +50,10 @@ class AttendeeDeEnrollBloc
 @freezed
 class AttendeeDeEnrollEvent with _$AttendeeDeEnrollEvent {
   const factory AttendeeDeEnrollEvent.deEnroll(
-          {required List<Map<String, dynamic>> attendeeList}) =
+          {required List<Map<String, dynamic>> attendeeList,
+          required String uuid,
+          }
+          ) =
       DeEnrollAttendeeEvent;
   const factory AttendeeDeEnrollEvent.dispose() = DeEnrollAttendeeDisposeEvent;
 }
@@ -61,6 +64,8 @@ class AttendeeDeEnrollState with _$AttendeeDeEnrollState {
 
   const factory AttendeeDeEnrollState.initial() = _Initial;
   const factory AttendeeDeEnrollState.loading() = _Loading;
-  const factory AttendeeDeEnrollState.loaded() = _Loaded;
-  const factory AttendeeDeEnrollState.error(String? error) = _Error;
+  const factory AttendeeDeEnrollState.loaded(
+    {required String uuid,}
+  ) = _Loaded;
+  const factory AttendeeDeEnrollState.error(String? error, {required String uuid}) = _Error;
 }

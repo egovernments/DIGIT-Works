@@ -10,7 +10,7 @@ const Photos = ({ data, OpenImage }) => {
             <CardLabel style={{fontSize: "16px", fontWeight: "600", marginBottom: "8px", marginTop: "20px"}}>{t(data?.title)}</CardLabel>
             { data?.thumbnailsToShow ? 
                 <DisplayPhotos style={{maxWidth: "850px", paddingTop: 0}} srcs={data?.thumbnailsToShow?.thumbs} onClick={(src, index) => { OpenImage(src, index, data?.thumbnailsToShow) }}/>
-                : <CardLabel >{t('NA')}</CardLabel>
+                : <CardLabel >{data?.isMasked ? t(data?.isMasked) : t('NA')}</CardLabel>
             }
         </React.Fragment>
     )

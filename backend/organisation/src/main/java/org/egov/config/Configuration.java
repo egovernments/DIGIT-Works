@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @Component
@@ -130,12 +130,18 @@ public class Configuration {
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
 
+    @Value("${kafka.topics.works.notification.sms.name}")
+    private String muktaNotificationTopic;
+
     //topic config
     @Value("${org.kafka.create.topic}")
     private String orgKafkaCreateTopic;
 
     @Value("${org.kafka.update.topic}")
     private String orgKafkaUpdateTopic;
+
+    @Value("${org.contact.details.update.topic}")
+    private String organisationContactDetailsUpdateTopic;
 
     //search config
     @Value("${org.search.max.limit}")
@@ -185,5 +191,19 @@ public class Configuration {
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
+    // Encryption Config
+    @Value("${egov.enc.host}")
+    private String encryptionHost;
 
+    @Value("${egov.enc.encrypt.endpoint}")
+    private String encryptionEndpoint;
+
+    @Value("${egov.enc.decrypt.endpoint}")
+    private String decryptionEndpoint;
+
+    @Value("${state.level.tenant.id}")
+    private String stateLevelTenantId;
+	
+	@Value("${sms.isAdditonalFieldRequired}")
+    private boolean isAdditonalFieldRequired;
 }

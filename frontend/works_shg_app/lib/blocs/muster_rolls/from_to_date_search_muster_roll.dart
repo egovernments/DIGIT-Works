@@ -44,9 +44,9 @@ class MusterRollFromToDateSearchBloc extends Bloc<
                 "apiId": "asset-services",
                 "msgId": "search with from and to values"
               }));
-      await Future.delayed(const Duration(seconds: 1));
+     // await Future.delayed(const Duration(seconds: 1));
       emit(MusterRollFromToDateSearchState.loaded(musterRollsSearch));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       emit(MusterRollFromToDateSearchState.error(
           e.response?.data['Errors'][0]['code']));
     }

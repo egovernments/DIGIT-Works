@@ -6,27 +6,28 @@ part of 'muster_inbox_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_MusterInboxStatusList _$$_MusterInboxStatusListFromJson(
+_$MusterInboxStatusListImpl _$$MusterInboxStatusListImplFromJson(
         Map<String, dynamic> json) =>
-    _$_MusterInboxStatusList(
+    _$MusterInboxStatusListImpl(
       musterInboxStatus: (json['CBOMusterInboxConfig'] as List<dynamic>?)
           ?.map((e) => MusterInboxStatus.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$_MusterInboxStatusListToJson(
-        _$_MusterInboxStatusList instance) =>
+Map<String, dynamic> _$$MusterInboxStatusListImplToJson(
+        _$MusterInboxStatusListImpl instance) =>
     <String, dynamic>{
       'CBOMusterInboxConfig': instance.musterInboxStatus,
     };
 
-_$_MusterInboxStatus _$$_MusterInboxStatusFromJson(Map<String, dynamic> json) =>
-    _$_MusterInboxStatus(
+_$MusterInboxStatusImpl _$$MusterInboxStatusImplFromJson(
+        Map<String, dynamic> json) =>
+    _$MusterInboxStatusImpl(
       reSubmitCode: json['reSubmitCode'] as String,
     );
 
-Map<String, dynamic> _$$_MusterInboxStatusToJson(
-        _$_MusterInboxStatus instance) =>
+Map<String, dynamic> _$$MusterInboxStatusImplToJson(
+        _$MusterInboxStatusImpl instance) =>
     <String, dynamic>{
       'reSubmitCode': instance.reSubmitCode,
     };

@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Toast } from "@egovernments/digit-ui-react-components";
+import { Toast } from "@egovernments/digit-ui-components";
 import { useTranslation } from "react-i18next";
 import CreateEstimateForm from "../../../components/CreateEstimate/CreateEstimateForm";
 import { createEstimatePayload } from "../../../utils/createEstimatePayload";
@@ -35,7 +35,7 @@ const CreateEstimate = (props) => {
 
     await EstimateMutation(estimate, {
       onError: (error, variables) => {
-        setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+        setShowToast({ type:"warning", label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
         setTimeout(() => {
           setShowToast(false);
         }, 5000);
@@ -84,8 +84,7 @@ const CreateEstimate = (props) => {
       {showToast && (
         <Toast
           style={{ zIndex: "9999999" }}
-          error={showToast.error}
-          warning={showToast.warning}
+          type={showToast?.type}
           label={t(showToast.label)}
           onClose={() => {
             setShowToast(null);

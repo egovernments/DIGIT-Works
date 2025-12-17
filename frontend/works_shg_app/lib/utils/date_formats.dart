@@ -243,4 +243,24 @@ class DateFormats {
       return '';
     }
   }
+
+  static int getNextDayMillis = 24 * 60 * 60 * 1000;
+
+ static bool isEpochDateLessThan(int epochTime1, int epochTime2) {
+  // Convert epoch times to DateTime objects
+  DateTime date1 = DateTime.fromMillisecondsSinceEpoch(epochTime1);
+  DateTime date2 = DateTime.fromMillisecondsSinceEpoch(epochTime2);
+  
+  // Compare only the year, month, and day
+  if (date1.year < date2.year) {
+    return true;
+  } else if (date1.year == date2.year) {
+    if (date1.month < date2.month) {
+      return true;
+    } else if (date1.month == date2.month) {
+      return date1.day < date2.day;
+    }
+  }
+  return false;
+}
 }

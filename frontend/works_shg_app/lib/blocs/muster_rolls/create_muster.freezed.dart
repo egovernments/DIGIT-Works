@@ -12,15 +12,17 @@ part of 'create_muster.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$MusterCreateEvent {
   String get tenantId => throw _privateConstructorUsedError;
+  String get registerId => throw _privateConstructorUsedError;
   String get contractId => throw _privateConstructorUsedError;
   String get orgName => throw _privateConstructorUsedError;
   String get registerNo => throw _privateConstructorUsedError;
   String get registerName => throw _privateConstructorUsedError;
+  int get startDate => throw _privateConstructorUsedError;
   List<Map<String, dynamic>>? get skillsList =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -52,6 +54,8 @@ mixin _$MusterCreateEvent {
             String contractId,
             String registerNo,
             String registerName,
+            int startDate,
+            String registerId,
             String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)
         update,
@@ -86,6 +90,8 @@ mixin _$MusterCreateEvent {
             String contractId,
             String registerNo,
             String registerName,
+            int startDate,
+            String registerId,
             String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
@@ -120,6 +126,8 @@ mixin _$MusterCreateEvent {
             String contractId,
             String registerNo,
             String registerName,
+            int startDate,
+            String registerId,
             String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
@@ -159,10 +167,12 @@ abstract class $MusterCreateEventCopyWith<$Res> {
   @useResult
   $Res call(
       {String tenantId,
+      String registerId,
       String contractId,
       String orgName,
       String registerNo,
       String registerName,
+      int startDate,
       List<Map<String, dynamic>>? skillsList});
 }
 
@@ -180,16 +190,22 @@ class _$MusterCreateEventCopyWithImpl<$Res, $Val extends MusterCreateEvent>
   @override
   $Res call({
     Object? tenantId = null,
+    Object? registerId = null,
     Object? contractId = null,
     Object? orgName = null,
     Object? registerNo = null,
     Object? registerName = null,
+    Object? startDate = null,
     Object? skillsList = freezed,
   }) {
     return _then(_value.copyWith(
       tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
+              as String,
+      registerId: null == registerId
+          ? _value.registerId
+          : registerId // ignore: cast_nullable_to_non_nullable
               as String,
       contractId: null == contractId
           ? _value.contractId
@@ -207,6 +223,10 @@ class _$MusterCreateEventCopyWithImpl<$Res, $Val extends MusterCreateEvent>
           ? _value.registerName
           : registerName // ignore: cast_nullable_to_non_nullable
               as String,
+      startDate: null == startDate
+          ? _value.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as int,
       skillsList: freezed == skillsList
           ? _value.skillsList
           : skillsList // ignore: cast_nullable_to_non_nullable
@@ -216,11 +236,11 @@ class _$MusterCreateEventCopyWithImpl<$Res, $Val extends MusterCreateEvent>
 }
 
 /// @nodoc
-abstract class _$$CreateMusterEventCopyWith<$Res>
+abstract class _$$CreateMusterEventImplCopyWith<$Res>
     implements $MusterCreateEventCopyWith<$Res> {
-  factory _$$CreateMusterEventCopyWith(
-          _$CreateMusterEvent value, $Res Function(_$CreateMusterEvent) then) =
-      __$$CreateMusterEventCopyWithImpl<$Res>;
+  factory _$$CreateMusterEventImplCopyWith(_$CreateMusterEventImpl value,
+          $Res Function(_$CreateMusterEventImpl) then) =
+      __$$CreateMusterEventImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -245,11 +265,11 @@ abstract class _$$CreateMusterEventCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$CreateMusterEventCopyWithImpl<$Res>
-    extends _$MusterCreateEventCopyWithImpl<$Res, _$CreateMusterEvent>
-    implements _$$CreateMusterEventCopyWith<$Res> {
-  __$$CreateMusterEventCopyWithImpl(
-      _$CreateMusterEvent _value, $Res Function(_$CreateMusterEvent) _then)
+class __$$CreateMusterEventImplCopyWithImpl<$Res>
+    extends _$MusterCreateEventCopyWithImpl<$Res, _$CreateMusterEventImpl>
+    implements _$$CreateMusterEventImplCopyWith<$Res> {
+  __$$CreateMusterEventImplCopyWithImpl(_$CreateMusterEventImpl _value,
+      $Res Function(_$CreateMusterEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -274,7 +294,7 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
     Object? executingAuthority = freezed,
     Object? skillsList = freezed,
   }) {
-    return _then(_$CreateMusterEvent(
+    return _then(_$CreateMusterEventImpl(
       tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
@@ -353,8 +373,8 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CreateMusterEvent implements CreateMusterEvent {
-  const _$CreateMusterEvent(
+class _$CreateMusterEventImpl implements CreateMusterEvent {
+  const _$CreateMusterEventImpl(
       {required this.tenantId,
       required this.registerId,
       required this.contractId,
@@ -425,10 +445,10 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CreateMusterEvent &&
+            other is _$CreateMusterEventImpl &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.registerId, registerId) ||
@@ -489,8 +509,9 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$CreateMusterEventCopyWith<_$CreateMusterEvent> get copyWith =>
-      __$$CreateMusterEventCopyWithImpl<_$CreateMusterEvent>(this, _$identity);
+  _$$CreateMusterEventImplCopyWith<_$CreateMusterEventImpl> get copyWith =>
+      __$$CreateMusterEventImplCopyWithImpl<_$CreateMusterEventImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -522,6 +543,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            int startDate,
+            String registerId,
             String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)
         update,
@@ -577,6 +600,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            int startDate,
+            String registerId,
             String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
@@ -632,6 +657,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            int startDate,
+            String registerId,
             String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
@@ -712,10 +739,11 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
       final String? ward,
       final int? amount,
       final String? executingAuthority,
-      final List<Map<String, dynamic>>? skillsList}) = _$CreateMusterEvent;
+      final List<Map<String, dynamic>>? skillsList}) = _$CreateMusterEventImpl;
 
   @override
   String get tenantId;
+  @override
   String get registerId;
   @override
   String get contractId;
@@ -725,6 +753,7 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
   String get registerNo;
   @override
   String get registerName;
+  @override
   int get startDate;
   String? get serviceCode;
   String? get referenceId;
@@ -740,16 +769,16 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
   List<Map<String, dynamic>>? get skillsList;
   @override
   @JsonKey(ignore: true)
-  _$$CreateMusterEventCopyWith<_$CreateMusterEvent> get copyWith =>
+  _$$CreateMusterEventImplCopyWith<_$CreateMusterEventImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UpdateMusterEventCopyWith<$Res>
+abstract class _$$UpdateMusterEventImplCopyWith<$Res>
     implements $MusterCreateEventCopyWith<$Res> {
-  factory _$$UpdateMusterEventCopyWith(
-          _$UpdateMusterEvent value, $Res Function(_$UpdateMusterEvent) then) =
-      __$$UpdateMusterEventCopyWithImpl<$Res>;
+  factory _$$UpdateMusterEventImplCopyWith(_$UpdateMusterEventImpl value,
+          $Res Function(_$UpdateMusterEventImpl) then) =
+      __$$UpdateMusterEventImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -759,16 +788,18 @@ abstract class _$$UpdateMusterEventCopyWith<$Res>
       String contractId,
       String registerNo,
       String registerName,
+      int startDate,
+      String registerId,
       String? reSubmitAction,
       List<Map<String, dynamic>>? skillsList});
 }
 
 /// @nodoc
-class __$$UpdateMusterEventCopyWithImpl<$Res>
-    extends _$MusterCreateEventCopyWithImpl<$Res, _$UpdateMusterEvent>
-    implements _$$UpdateMusterEventCopyWith<$Res> {
-  __$$UpdateMusterEventCopyWithImpl(
-      _$UpdateMusterEvent _value, $Res Function(_$UpdateMusterEvent) _then)
+class __$$UpdateMusterEventImplCopyWithImpl<$Res>
+    extends _$MusterCreateEventCopyWithImpl<$Res, _$UpdateMusterEventImpl>
+    implements _$$UpdateMusterEventImplCopyWith<$Res> {
+  __$$UpdateMusterEventImplCopyWithImpl(_$UpdateMusterEventImpl _value,
+      $Res Function(_$UpdateMusterEventImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -780,10 +811,12 @@ class __$$UpdateMusterEventCopyWithImpl<$Res>
     Object? contractId = null,
     Object? registerNo = null,
     Object? registerName = null,
+    Object? startDate = null,
+    Object? registerId = null,
     Object? reSubmitAction = freezed,
     Object? skillsList = freezed,
   }) {
-    return _then(_$UpdateMusterEvent(
+    return _then(_$UpdateMusterEventImpl(
       tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
@@ -808,6 +841,14 @@ class __$$UpdateMusterEventCopyWithImpl<$Res>
           ? _value.registerName
           : registerName // ignore: cast_nullable_to_non_nullable
               as String,
+      startDate: null == startDate
+          ? _value.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as int,
+      registerId: null == registerId
+          ? _value.registerId
+          : registerId // ignore: cast_nullable_to_non_nullable
+              as String,
       reSubmitAction: freezed == reSubmitAction
           ? _value.reSubmitAction
           : reSubmitAction // ignore: cast_nullable_to_non_nullable
@@ -822,14 +863,16 @@ class __$$UpdateMusterEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UpdateMusterEvent implements UpdateMusterEvent {
-  const _$UpdateMusterEvent(
+class _$UpdateMusterEventImpl implements UpdateMusterEvent {
+  const _$UpdateMusterEventImpl(
       {required this.tenantId,
       required this.id,
       required this.orgName,
       required this.contractId,
       required this.registerNo,
       required this.registerName,
+      required this.startDate,
+      required this.registerId,
       this.reSubmitAction,
       final List<Map<String, dynamic>>? skillsList})
       : _skillsList = skillsList;
@@ -847,6 +890,10 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
   @override
   final String registerName;
   @override
+  final int startDate;
+  @override
+  final String registerId;
+  @override
   final String? reSubmitAction;
   final List<Map<String, dynamic>>? _skillsList;
   @override
@@ -860,14 +907,14 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
 
   @override
   String toString() {
-    return 'MusterCreateEvent.update(tenantId: $tenantId, id: $id, orgName: $orgName, contractId: $contractId, registerNo: $registerNo, registerName: $registerName, reSubmitAction: $reSubmitAction, skillsList: $skillsList)';
+    return 'MusterCreateEvent.update(tenantId: $tenantId, id: $id, orgName: $orgName, contractId: $contractId, registerNo: $registerNo, registerName: $registerName, startDate: $startDate, registerId: $registerId, reSubmitAction: $reSubmitAction, skillsList: $skillsList)';
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UpdateMusterEvent &&
+            other is _$UpdateMusterEventImpl &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.id, id) || other.id == id) &&
@@ -878,6 +925,10 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
                 other.registerNo == registerNo) &&
             (identical(other.registerName, registerName) ||
                 other.registerName == registerName) &&
+            (identical(other.startDate, startDate) ||
+                other.startDate == startDate) &&
+            (identical(other.registerId, registerId) ||
+                other.registerId == registerId) &&
             (identical(other.reSubmitAction, reSubmitAction) ||
                 other.reSubmitAction == reSubmitAction) &&
             const DeepCollectionEquality()
@@ -893,14 +944,17 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
       contractId,
       registerNo,
       registerName,
+      startDate,
+      registerId,
       reSubmitAction,
       const DeepCollectionEquality().hash(_skillsList));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$UpdateMusterEventCopyWith<_$UpdateMusterEvent> get copyWith =>
-      __$$UpdateMusterEventCopyWithImpl<_$UpdateMusterEvent>(this, _$identity);
+  _$$UpdateMusterEventImplCopyWith<_$UpdateMusterEventImpl> get copyWith =>
+      __$$UpdateMusterEventImplCopyWithImpl<_$UpdateMusterEventImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -932,12 +986,14 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            int startDate,
+            String registerId,
             String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)
         update,
   }) {
     return update(tenantId, id, orgName, contractId, registerNo, registerName,
-        reSubmitAction, skillsList);
+        startDate, registerId, reSubmitAction, skillsList);
   }
 
   @override
@@ -970,12 +1026,14 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            int startDate,
+            String registerId,
             String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
   }) {
     return update?.call(tenantId, id, orgName, contractId, registerNo,
-        registerName, reSubmitAction, skillsList);
+        registerName, startDate, registerId, reSubmitAction, skillsList);
   }
 
   @override
@@ -1008,6 +1066,8 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            int startDate,
+            String registerId,
             String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
@@ -1015,7 +1075,7 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
   }) {
     if (update != null) {
       return update(tenantId, id, orgName, contractId, registerNo, registerName,
-          reSubmitAction, skillsList);
+          startDate, registerId, reSubmitAction, skillsList);
     }
     return orElse();
   }
@@ -1060,8 +1120,10 @@ abstract class UpdateMusterEvent implements MusterCreateEvent {
       required final String contractId,
       required final String registerNo,
       required final String registerName,
+      required final int startDate,
+      required final String registerId,
       final String? reSubmitAction,
-      final List<Map<String, dynamic>>? skillsList}) = _$UpdateMusterEvent;
+      final List<Map<String, dynamic>>? skillsList}) = _$UpdateMusterEventImpl;
 
   @override
   String get tenantId;
@@ -1074,12 +1136,16 @@ abstract class UpdateMusterEvent implements MusterCreateEvent {
   String get registerNo;
   @override
   String get registerName;
+  @override
+  int get startDate;
+  @override
+  String get registerId;
   String? get reSubmitAction;
   @override
   List<Map<String, dynamic>>? get skillsList;
   @override
   @JsonKey(ignore: true)
-  _$$UpdateMusterEventCopyWith<_$UpdateMusterEvent> get copyWith =>
+  _$$UpdateMusterEventImplCopyWith<_$UpdateMusterEventImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1156,24 +1222,25 @@ class _$MusterCreateStateCopyWithImpl<$Res, $Val extends MusterCreateState>
 }
 
 /// @nodoc
-abstract class _$$_InitialCopyWith<$Res> {
-  factory _$$_InitialCopyWith(
-          _$_Initial value, $Res Function(_$_Initial) then) =
-      __$$_InitialCopyWithImpl<$Res>;
+abstract class _$$InitialImplCopyWith<$Res> {
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
+      __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_InitialCopyWithImpl<$Res>
-    extends _$MusterCreateStateCopyWithImpl<$Res, _$_Initial>
-    implements _$$_InitialCopyWith<$Res> {
-  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$MusterCreateStateCopyWithImpl<$Res, _$InitialImpl>
+    implements _$$InitialImplCopyWith<$Res> {
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
-  const _$_Initial() : super._();
+class _$InitialImpl extends _Initial {
+  const _$InitialImpl() : super._();
 
   @override
   String toString() {
@@ -1181,9 +1248,9 @@ class _$_Initial extends _Initial {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Initial);
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -1265,29 +1332,30 @@ class _$_Initial extends _Initial {
 }
 
 abstract class _Initial extends MusterCreateState {
-  const factory _Initial() = _$_Initial;
+  const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadingCopyWith<$Res> {
-  factory _$$_LoadingCopyWith(
-          _$_Loading value, $Res Function(_$_Loading) then) =
-      __$$_LoadingCopyWithImpl<$Res>;
+abstract class _$$LoadingImplCopyWith<$Res> {
+  factory _$$LoadingImplCopyWith(
+          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
+      __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadingCopyWithImpl<$Res>
-    extends _$MusterCreateStateCopyWithImpl<$Res, _$_Loading>
-    implements _$$_LoadingCopyWith<$Res> {
-  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+class __$$LoadingImplCopyWithImpl<$Res>
+    extends _$MusterCreateStateCopyWithImpl<$Res, _$LoadingImpl>
+    implements _$$LoadingImplCopyWith<$Res> {
+  __$$LoadingImplCopyWithImpl(
+      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loading extends _Loading {
-  const _$_Loading() : super._();
+class _$LoadingImpl extends _Loading {
+  const _$LoadingImpl() : super._();
 
   @override
   String toString() {
@@ -1295,9 +1363,9 @@ class _$_Loading extends _Loading {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading);
+        (other.runtimeType == runtimeType && other is _$LoadingImpl);
   }
 
   @override
@@ -1379,14 +1447,15 @@ class _$_Loading extends _Loading {
 }
 
 abstract class _Loading extends MusterCreateState {
-  const factory _Loading() = _$_Loading;
+  const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({MusterRollsModel? musterRollsModel});
 
@@ -1394,10 +1463,11 @@ abstract class _$$_LoadedCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$MusterCreateStateCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$MusterCreateStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1405,7 +1475,7 @@ class __$$_LoadedCopyWithImpl<$Res>
   $Res call({
     Object? musterRollsModel = freezed,
   }) {
-    return _then(_$_Loaded(
+    return _then(_$LoadedImpl(
       freezed == musterRollsModel
           ? _value.musterRollsModel
           : musterRollsModel // ignore: cast_nullable_to_non_nullable
@@ -1428,8 +1498,8 @@ class __$$_LoadedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded {
-  const _$_Loaded(this.musterRollsModel) : super._();
+class _$LoadedImpl extends _Loaded {
+  const _$LoadedImpl(this.musterRollsModel) : super._();
 
   @override
   final MusterRollsModel? musterRollsModel;
@@ -1440,10 +1510,10 @@ class _$_Loaded extends _Loaded {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Loaded &&
+            other is _$LoadedImpl &&
             (identical(other.musterRollsModel, musterRollsModel) ||
                 other.musterRollsModel == musterRollsModel));
   }
@@ -1454,8 +1524,8 @@ class _$_Loaded extends _Loaded {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
-      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1533,33 +1603,36 @@ class _$_Loaded extends _Loaded {
 }
 
 abstract class _Loaded extends MusterCreateState {
-  const factory _Loaded(final MusterRollsModel? musterRollsModel) = _$_Loaded;
+  const factory _Loaded(final MusterRollsModel? musterRollsModel) =
+      _$LoadedImpl;
   const _Loaded._() : super._();
 
   MusterRollsModel? get musterRollsModel;
   @JsonKey(ignore: true)
-  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ErrorCopyWith<$Res> {
-  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
-      __$$_ErrorCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_ErrorCopyWithImpl<$Res>
-    extends _$MusterCreateStateCopyWithImpl<$Res, _$_Error>
-    implements _$$_ErrorCopyWith<$Res> {
-  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$MusterCreateStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Error extends _Error {
-  const _$_Error() : super._();
+class _$ErrorImpl extends _Error {
+  const _$ErrorImpl() : super._();
 
   @override
   String toString() {
@@ -1567,9 +1640,9 @@ class _$_Error extends _Error {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Error);
+        (other.runtimeType == runtimeType && other is _$ErrorImpl);
   }
 
   @override
@@ -1651,6 +1724,6 @@ class _$_Error extends _Error {
 }
 
 abstract class _Error extends MusterCreateState {
-  const factory _Error() = _$_Error;
+  const factory _Error() = _$ErrorImpl;
   const _Error._() : super._();
 }
