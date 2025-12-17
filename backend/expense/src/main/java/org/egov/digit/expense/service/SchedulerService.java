@@ -33,7 +33,7 @@ public class SchedulerService {
     private ObjectMapper mapper;
 
     @Autowired
-    public SchedulerService(Configuration config, MTNService mtnService, TaskRepository taskRepository, ExpenseProducer expenseProducer,ObjectMapper mapper) {
+    public SchedulerService(Configuration config, MTNService mtnService, TaskRepository taskRepository, ExpenseProducer expenseProducer, ObjectMapper mapper) {
         this.config = config;
         this.mtnService = mtnService;
         this.taskRepository = taskRepository;
@@ -43,7 +43,7 @@ public class SchedulerService {
 
     @Scheduled(fixedRateString = "${bill.scheduled.task.fixed.rate.millisec}") // every 1 minute
     public void updateInProgressPaymentStatus() {
-        List<Task> inProgressPaymentTasks = taskRepository.getInProgressTasks(config.getScheduledTaskDelay().toString(),Task.Type.Transfer.toString());
+        List<Task> inProgressPaymentTasks = taskRepository.getInProgressTasks(config.getScheduledTaskDelay().toString(), Task.Type.Transfer.toString());
 
         for (Task task : inProgressPaymentTasks) {
             try {
@@ -52,9 +52,9 @@ public class SchedulerService {
                 TaskRequest taskRequest
                         = TaskRequest
                         .builder()
-                            .requestInfo(requestInfo)
-                            .task(task)
-                            .bill(Bill.builder().id(task.getBillId()).tenantId(requestInfo.getUserInfo().getTenantId()).build())
+                        .requestInfo(requestInfo)
+                        .task(task)
+                        .bill(Bill.builder().id(task.getBillId()).tenantId(requestInfo.getUserInfo().getTenantId()).build())
                         .build();
                 mtnService.updatePaymentTaskStatus(taskRequest);
                 List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId());
@@ -66,12 +66,12 @@ public class SchedulerService {
                 }
 
             } catch (Exception e) {
-                log.error("Error in Updating payment status for task {}", task.getId(),e);
+                log.error("Error in Updating payment status for task {}", task.getId(), e);
 
             } finally {
                 AuditDetails auditDetails = task.getAuditDetails();
                 auditDetails.setLastModifiedTime(System.currentTimeMillis());
-                expenseProducer.push(config.getTaskUpdateTopic(),task);
+                expenseProducer.push(config.getTaskUpdateTopic(), task);
             }
         }
     }
