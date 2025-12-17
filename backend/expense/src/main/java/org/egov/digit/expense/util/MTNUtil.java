@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.config.Configuration;
+import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.web.models.PaymentTransferRequest;
 import org.egov.digit.expense.web.models.PaymentTransferResponse;
 import org.egov.tracer.model.CustomException;
@@ -59,15 +60,15 @@ public class MTNUtil {
                 log.info("Access token retrieved successfully");
                 return accessToken;
             } else {
-                throw new CustomException("TOKEN_FETCH_FAILED",
+                throw new CustomException("TOKEN_FETCH_FAILED_"+EXCEPTION,
                         "Failed to fetch token. Status: " + response.getStatusCode());
             }
         } catch (HttpClientErrorException e) {
             log.error("Error from MTN service", e);
-            throw new CustomException("MTN_SERVICE_EXCEPTION", e.getMessage());
+            throw new CustomException("MTN_SERVICE_"+EXCEPTION, e.getMessage());
         } catch (Exception e) {
             log.error("Exception while fetching access token", e);
-            throw new CustomException("TOKEN_FETCH_EXCEPTION", e.getMessage());
+            throw new CustomException("TOKEN_FETCH_"+EXCEPTION, e.getMessage());
         }
     }
 
@@ -109,15 +110,15 @@ public class MTNUtil {
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 return JsonPath.read(response.getBody(), "$.result");
             } else {
-                throw new CustomException("MTN_ACCOUNT_STATUS_ERROR",
+                throw new CustomException("MTN_ACCOUNT_STATUS_"+EXCEPTION,
                         "Unexpected response status: " + response.getStatusCode());
             }
         } catch (HttpClientErrorException e) {
             log.error("Error from MTN service {}", msisdn, e);
-            throw new CustomException("MTN_SERVICE_EXCEPTION", e.getMessage());
+            throw new CustomException("MTN_SERVICE_"+EXCEPTION, e.getMessage());
         } catch (Exception e) {
             log.error("Error checking MTN account status for MSISDN {}", msisdn, e);
-            throw new CustomException("MTN_ACCOUNT_STATUS_EXCEPTION", e.getMessage());
+            throw new CustomException("MTN_ACCOUNT_STATUS_"+EXCEPTION, e.getMessage());
         }
     }
 
@@ -146,16 +147,16 @@ public class MTNUtil {
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 return (ObjectNode) objectMapper.readTree(response.getBody());
             } else {
-                throw new CustomException("MTN_BASIC_USERINFO_ERROR",
+                throw new CustomException("MTN_BASIC_USERINFO_"+EXCEPTION,
                         "Unexpected response status: " + response.getStatusCode());
             }
 
         } catch (HttpClientErrorException e) {
             log.error("Error from MTN service {}", msisdn, e);
-            throw new CustomException("MTN_SERVICE_EXCEPTION", e.getMessage());
+            throw new CustomException("MTN_SERVICE_"+EXCEPTION, e.getMessage());
         } catch (Exception e) {
             log.error("Error fetching basic user info for MSISDN {}", msisdn, e);
-            throw new CustomException("MTN_BASIC_USERINFO_EXCEPTION", e.getMessage());
+            throw new CustomException("MTN_BASIC_USERINFO_"+EXCEPTION, e.getMessage());
         }
     }
 
@@ -178,7 +179,7 @@ public class MTNUtil {
 
         if (!isActive) {
             log.warn("Inactive MTN account for MSISDN: {}", msisdn);
-            throw new CustomException("MTN_ACCOUNT_INACTIVE", "Account is not active for MSISDN: " + msisdn);
+            throw new CustomException("MTN_ACCOUNT_INACTIVE_"+EXCEPTION, "Account is not active for MSISDN: " + msisdn);
         }
 
         try {
@@ -191,13 +192,13 @@ public class MTNUtil {
                 return name;
             } else {
                 log.error("Missing 'given_name' in user info response for MSISDN: {}", msisdn);
-                throw new CustomException("MTN_USERINFO_MISSING_NAME", "Given name is missing in user info for MSISDN: " + msisdn);
+                throw new CustomException("MTN_USERINFO_MISSING_NAME_"+EXCEPTION, "Given name is missing in user info for MSISDN: " + msisdn);
             }
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error fetching basic user info for MSISDN {}", msisdn, e);
-            throw new CustomException("MTN_USERINFO_FETCH_FAILED", "Could not retrieve user info: " + e.getMessage());
+            throw new CustomException("MTN_USERINFO_FETCH_FAILED_"+EXCEPTION, "Could not retrieve user info: " + e.getMessage());
         }
     }
 
@@ -213,14 +214,14 @@ public class MTNUtil {
         headers.set(MTN_AUTHORIZATION_HEADER_NAME, MTN_ACCESS_TOKEN_TYPE + accessToken);
         headers.set(MTN_X_REFERENCE_HEADER_NAME, referenceId);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        
+
         HttpEntity<String> requestEntity;
         try {
             String requestBody = objectMapper.writeValueAsString(paymentTransferRequest);
             requestEntity = new HttpEntity<>(requestBody, headers);
         } catch (Exception e) {
             log.error("Error serializing transfer request body", e);
-            throw new CustomException("MTN_REQUEST_SERIALIZATION_ERROR", e.getMessage());
+            throw new CustomException("MTN_REQUEST_SERIALIZATION_"+EXCEPTION, e.getMessage());
         }
 
         try {
@@ -235,16 +236,16 @@ public class MTNUtil {
                 log.info("Transfer initiated successfully. Reference ID: {}", referenceId);
             } else {
                 log.error("Transfer failed. Status: {}, response: {}", response.getStatusCode(), response);
-                throw new CustomException("MTN_TRANSFER_FAILED", "Unexpected response status: " + response.getStatusCode());
+                throw new CustomException("MTN_TRANSFER_FAILED_"+EXCEPTION, "Unexpected response status: " + response.getStatusCode());
             }
         }catch (HttpClientErrorException e) {
             log.error("Exception while initiating transfer", e);
             e.printStackTrace();
-            throw new CustomException("MTN_SERVICE_EXCEPTION", e.getMessage());
+            throw new CustomException("MTN_SERVICE_"+EXCEPTION, e.getMessage());
         } catch (Exception e) {
             log.error("Exception while initiating transfer", e);
             e.printStackTrace();
-            throw new CustomException("MTN_TRANSFER_EXCEPTION", e.getMessage());
+            throw new CustomException("MTN_TRANSFER_"+EXCEPTION, e.getMessage());
         }
     }
 
@@ -267,7 +268,7 @@ public class MTNUtil {
 
         if (!isActive) {
             log.warn("Inactive MTN account for MSISDN: {}", paymentTransferRequest.getPayee().getPartyId());
-            throw new CustomException("MTN_ACCOUNT_INACTIVE", "The recipient account is not active for transfers");
+            throw new CustomException("MTN_ACCOUNT_INACTIVE_"+EXCEPTION, "The recipient account is not active for transfers");
         }
 
         try {
@@ -309,16 +310,16 @@ public class MTNUtil {
                 log.info("Transfer status retrieved for referenceId {}", referenceId);
                 return objectMapper.readValue(response.getBody(), PaymentTransferResponse.class); // Or parse specific fields if needed
             } else {
-                throw new CustomException("MTN_TRANSFER_STATUS_ERROR",
+                throw new CustomException("MTN_TRANSFER_STATUS_"+EXCEPTION,
                         "Unexpected response status while fetching transfer status: " + response.getStatusCode());
             }
 
         } catch (HttpClientErrorException e) {
             log.error("Error from MTN service", e);
-            throw new CustomException("MTN_SERVICE_EXCEPTION", e.getMessage());
+            throw new CustomException("MTN_SERVICE_"+EXCEPTION, e.getMessage());
         } catch (Exception e) {
             log.error("Error while retrieving transfer status for referenceId {}", referenceId, e);
-            throw new CustomException("MTN_TRANSFER_STATUS_EXCEPTION", e.getMessage());
+            throw new CustomException("MTN_TRANSFER_STATUS_"+EXCEPTION, e.getMessage());
         }
     }
 

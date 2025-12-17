@@ -29,6 +29,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.egov.digit.expense.config.Constants.ERROR;
+import static org.egov.digit.expense.config.Constants.EXCEPTION;
+
 @Service
 @Slf4j
 public class MTNService {
@@ -165,7 +168,7 @@ public class MTNService {
 				try {
 					String name = mtnUtil.getNameIfActive(individualDetails.getPhoneNumber());
 
-					if (!name.equals(individualDetails.getName())) {
+					if (!name.equalsIgnoreCase(individualDetails.getName())) {
 						workflow.setAction(Actions.REFUTE.toString());
 						taskDetails.setReasonForFailure("NAME_MISMATCH");
 						taskDetails.setResponseMessage("Please check the name");
@@ -173,7 +176,7 @@ public class MTNService {
 						workflow.setAction(Actions.VERIFY.toString());
 					}
 				} catch (CustomException e) {
-					if(Objects.equals(e.getCode(), "MTN_SERVICE_EXCEPTION")){
+					if(Objects.equals(e.getCode(), "MTN_SERVICE_"+EXCEPTION)){
 						updateBillDetailWorkflow = false;
 					}
 					else{
@@ -279,7 +282,7 @@ public class MTNService {
 		if (null == taskFromRequest.getId()
 				&& (null == taskFromRequest.getBillId()
 						|| null == taskFromRequest.getType())){
-			throw new CustomException("TASK_SEARCH_ERROR", "either task id or bill id with type is required for search");
+			throw new CustomException("TASK_SEARCH_"+EXCEPTION, "either task id or bill id with type is required for search");
 		}
 		Task taskFromSearch = taskRepository.searchTask(taskFromRequest);
 
@@ -317,7 +320,7 @@ public class MTNService {
 
 
 		for (BillDetail billDetail: billDetailsToBeupdatedById.values() ){
-			if(billDetail.getStatus()==Status.VERIFIED || billDetail.getStatus()==Status.PAYMENT_FAILED) {
+			if(billDetail.getStatus() == Status.VERIFIED || billDetail.getStatus() == Status.PAYMENT_FAILED) {
 				IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(),billFromSearch.getTenantId(),billDetail.getPayee().getIdentifier());
 				TaskDetails taskDetails = TaskDetails.builder()
 						.id(UUID.randomUUID().toString())
@@ -334,7 +337,7 @@ public class MTNService {
 					//ZERO Amt check
 				if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
 					taskDetails.setResponseMessage("Payment couldn't be processed as total amount is 0.");
-					taskDetails.setReasonForFailure("TOTAL_AMOUNT_ZERO_EXCEPTION");
+					taskDetails.setReasonForFailure("TOTAL_AMOUNT_ZERO_"+EXCEPTION);
 					expenseProducer.push(config.getBillTaskDetailsTopic(),taskDetails);
 					log.info("payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
 				}
@@ -511,6 +514,15 @@ public class MTNService {
 						billDetailWorkflow.setAction(Actions.DECLINE.toString());
 						taskDetail.setStatus(Status.DONE);
 						log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
+					}
+					else if(
+							(taskDetail.getReasonForFailure() != null && !taskDetail.getReasonForFailure().isBlank()) &&
+							(taskDetail.getReasonForFailure().toLowerCase().contains(EXCEPTION) || taskDetail.getReasonForFailure().toLowerCase().contains(ERROR))
+					){
+						billDetailWorkflow.setAction(Actions.DECLINE.toString());
+						taskDetail.setStatus(Status.DONE);
+						log.info("Payment couldn't be processed for bill detail id {} : {}", billDetail.getId(),
+								taskDetail.getReasonForFailure()+" "+taskDetail.getResponseMessage());
 					}
 					else {
 						PaymentTransferResponse paymentTransferResponse = mtnUtil.getTransferStatus(taskDetail.getId());

@@ -13,6 +13,10 @@ public class Constants {
 	public static final String CONTRACT_NUMBER = "contractNumber";
 	public static final String ORG_ID_PATH = "$.contracts.*.orgId";
 	public static final String ID = "id";
+
+	public static final String EXCEPTION = "exception";
+	public static final String ERROR = "error";
+
 	public static final String SEARCH_CRITERIA = "SearchCriteria";
 	public static final String INDIVIDUAL = "Individual";
 	public static final String ORG_NAME_PATH = "$.organisations.*.name";
