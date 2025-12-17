@@ -176,6 +176,7 @@ public class MTNService {
                         workflow.setAction(Actions.VERIFY.toString());
                     }
                 } catch (CustomException e) {
+                    log.error("Exception while verifying MSISDN : {} ",individualDetails.getPhoneNumber(),e);
                     if (Objects.equals(e.getCode(), "MTN_SERVICE_" + EXCEPTION)) {
                         updateBillDetailWorkflow = false;
                     } else {
@@ -514,7 +515,7 @@ public class MTNService {
                         log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
                     } else if (
                             (taskDetail.getReasonForFailure() != null && !taskDetail.getReasonForFailure().isBlank()) &&
-                                    (taskDetail.getReasonForFailure().toLowerCase().contains(EXCEPTION) || taskDetail.getReasonForFailure().toLowerCase().contains(ERROR))
+                                    (taskDetail.getReasonForFailure().toLowerCase().contains(EXCEPTION.toLowerCase()) || taskDetail.getReasonForFailure().toLowerCase().contains(ERROR.toLowerCase()))
                     ) {
                         billDetailWorkflow.setAction(Actions.DECLINE.toString());
                         taskDetail.setStatus(Status.DONE);
