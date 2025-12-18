@@ -125,12 +125,16 @@ public class BillExcelGenerate {
         campaignRow2.createCell(5).setCellValue(totalNumberOfWorkers);
         campaignRow2.getCell(5).setCellStyle(otherHeaderNumValueStyle);
 
-        // fill empty cells of header
-        for (int i = 6; i < columns.length; i++) {
+        // fill empty cells of header with green background (same as other header cells)
+        // campaignRow1 has cells 0-4 created, campaignRow2 has cells 0-5 created
+        // Fill remaining cells (5 onwards for row1, 6 onwards for row2) with green style
+        for (int i = 5; i < columns.length; i++) {
             campaignRow1.createCell(i).setCellValue("");
-            campaignRow1.getCell(i).setCellStyle(headerStyle);
+            campaignRow1.getCell(i).setCellStyle(otherHeaderLabelStyle);
+        }
+        for (int i = 6; i < columns.length; i++) {
             campaignRow2.createCell(i).setCellValue("");
-            campaignRow2.getCell(i).setCellStyle(headerStyle);
+            campaignRow2.getCell(i).setCellStyle(otherHeaderLabelStyle);
         }
 
         // Write column headers
