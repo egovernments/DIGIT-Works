@@ -765,6 +765,9 @@ expense.calculator.create.topic=save-calculator
 expense.calculator.error.topic=calculate-error
 expense.calculator.create.bill.topic=calculate-billmeta
 
+# Bill Indexing Topic (Added for project enrichment)
+expense.billing.bill.index=expense-bill-index-topic
+
 # Business Service Configuration
 egov.works.expense.wage.head.code=WEG
 egov.works.expense.payer.type=ULB
@@ -1063,9 +1066,20 @@ graph LR
    - **Payload**: BillRequest
    - **Trigger**: Bill creation/update
    - **Business Logic**:
-     - Enriches bills with project information
-     - Adds project name, number, ward details
-     - Re-indexes enriched bill
+     - Enriches bills with comprehensive project information
+     - Adds project name, number, ward, description, creation date
+     - Re-indexes enriched bill for enhanced search capabilities
+     - **Enhanced Project Enrichment Process**:
+       - Extracts work order number from bill reference ID
+       - Fetches contract details using Contract Service
+       - Retrieves estimate information from Estimate Service
+       - Gets comprehensive project details from Project Service
+       - Enriches bill.additionalDetails with:
+         - `projectName`: Full project name
+         - `projectNumber`: Project identifier
+         - `ward`: Project location/boundary
+         - `projectDescription`: Detailed project description
+         - `projectCreatedDate`: Project creation timestamp
 
 ### Event Flow Diagrams
 
@@ -1134,7 +1148,13 @@ sequenceDiagram
     "businessService": "EXPENSE.WAGES",
     "referenceId": "MUSTER_001",
     "billDetails": [...],
-    "additionalDetails": {}
+    "additionalDetails": {
+      "projectName": "Road Construction Project",
+      "projectNumber": "PR/2024-25/001",
+      "ward": "Ward 15",
+      "projectDescription": "Construction of 2km concrete road with drainage",
+      "projectCreatedDate": 1672531200000
+    }
   },
   "workflow": {
     "action": "SUBMIT",
@@ -1169,6 +1189,73 @@ sequenceDiagram
   }
 }
 ```
+
+#### Bill Enrichment with Project Details Flow
+
+```mermaid
+sequenceDiagram
+    participant ExpenseService
+    participant Kafka
+    participant ExpenseCalculator
+    participant ContractService
+    participant EstimateService
+    participant ProjectService
+    participant Indexer
+
+    ExpenseService->>Kafka: Bill create/update event
+    Kafka->>ExpenseCalculator: Bill enrichment request
+    ExpenseCalculator->>ExpenseCalculator: Extract work order from referenceId
+    Note over ExpenseCalculator: Parse referenceId format:<br/>"WORKORDER_123" → "WORKORDER"
+    
+    ExpenseCalculator->>ContractService: Fetch contract by work order
+    ContractService->>ExpenseCalculator: Contract with line items
+    
+    ExpenseCalculator->>ExpenseCalculator: Extract estimate ID from contract
+    Note over ExpenseCalculator: Get estimateId from first line item
+    
+    ExpenseCalculator->>EstimateService: Fetch estimate details
+    EstimateService->>ExpenseCalculator: Estimate with project ID
+    
+    ExpenseCalculator->>ProjectService: Fetch project by project ID
+    ProjectService->>ExpenseCalculator: Complete project information
+    
+    ExpenseCalculator->>ExpenseCalculator: Enrich bill additionalDetails
+    Note over ExpenseCalculator: Add comprehensive project data:<br/>• projectName<br/>• projectNumber<br/>• ward (boundary)<br/>• projectDescription<br/>• projectCreatedDate
+    
+    ExpenseCalculator->>Kafka: Publish enriched bill
+    Note over Kafka: Topic: expense-bill-index-topic
+    Kafka->>Indexer: Index enriched bill with searchable fields
+```
+
+**Enhanced Project Enrichment Logic**:
+
+The Expense Calculator Service implements a sophisticated bill enrichment process:
+
+1. **Reference ID Parsing**: 
+   ```java
+   String workOrderNumber = referenceId.split("_")[0];
+   ```
+
+2. **Contract Lookup**: Fetches contract using work order number to get estimate reference
+
+3. **Estimate Resolution**: Retrieves estimate details to obtain project ID
+
+4. **Project Enrichment**: Adds comprehensive project information to bill:
+   ```java
+   additionalDetails.put("projectName", project.getName());
+   additionalDetails.put("projectNumber", project.getProjectNumber());
+   additionalDetails.put("ward", project.getAddress().getBoundary());
+   additionalDetails.put("projectDescription", project.getDescription());
+   additionalDetails.put("projectCreatedDate", project.getAuditDetails().getCreatedTime());
+   ```
+
+5. **Re-indexing**: Publishes enriched bill to index topic for enhanced search capabilities
+
+This enrichment enables:
+- **Enhanced Search**: Bills searchable by project name and ward
+- **Better Reporting**: Project context available in all bill reports
+- **Improved UX**: Users can identify bills by project details
+- **Data Consistency**: Ensures project information is denormalized for performance
 
 ### Error Handling
 
