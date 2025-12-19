@@ -123,6 +123,26 @@ public class MTNUtil {
         }
     }
 
+    public boolean isMsisdnActive(String msisdn) {
+        String accessToken;
+        try {
+            accessToken = getAccessToken();
+        } catch (CustomException e) {
+            log.error("Failed to retrieve access token", e);
+            throw new CustomException(e.getCode(), e.getMessage());
+        }
+
+        try {
+            return isAccountHolderActive(
+                    config.getPhoneCodePrefix() + msisdn,
+                    accessToken
+            );
+        } catch (CustomException e) {
+            log.error("Failed to verify account status for MSISDN {}", msisdn, e);
+            throw new CustomException(e.getCode(), e.getMessage());
+        }
+    }
+
     private ObjectNode getBasicUserInfo(String msisdn, String accessToken) {
 
         String url = UriComponentsBuilder

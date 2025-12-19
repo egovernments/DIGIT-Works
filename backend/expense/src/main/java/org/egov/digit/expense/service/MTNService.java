@@ -166,25 +166,44 @@ public class MTNService {
                 boolean updateBillDetailWorkflow = true;
                 Workflow workflow = Workflow.builder().build();
                 try {
-                    String name = mtnUtil.getNameIfActive(individualDetails.getPhoneNumber());
+                    boolean isActive = mtnUtil.isMsisdnActive(individualDetails.getPhoneNumber());
 
-                    if (!name.equalsIgnoreCase(individualDetails.getName())) {
-                        workflow.setAction(Actions.REFUTE.toString());
-                        taskDetails.setReasonForFailure("NAME_MISMATCH");
-                        taskDetails.setResponseMessage("Please check the name");
-                    } else {
+                    if (isActive) {
                         workflow.setAction(Actions.VERIFY.toString());
-                    }
-                } catch (CustomException e) {
-                    log.error("Exception while verifying MSISDN : {} ",individualDetails.getPhoneNumber(),e);
-                    if (Objects.equals(e.getCode(), "MTN_SERVICE_" + EXCEPTION)) {
-                        updateBillDetailWorkflow = false;
                     } else {
                         workflow.setAction(Actions.REFUTE.toString());
+                        taskDetails.setReasonForFailure("MTN_ACCOUNT_INACTIVE_" + EXCEPTION);
+                        taskDetails.setResponseMessage("Account is not active");
                     }
+
+                } catch (CustomException e) {
+                    log.error("Exception while verifying MSISDN : {}",
+                            individualDetails.getPhoneNumber(), e);
+                        workflow.setAction(Actions.REFUTE.toString());
+
                     taskDetails.setResponseMessage(e.getMessage());
                     taskDetails.setReasonForFailure(e.getCode());
                 }
+//                try {
+//                    String name = mtnUtil.getNameIfActive(individualDetails.getPhoneNumber());
+//
+//                    if (!name.equalsIgnoreCase(individualDetails.getName())) {
+//                        workflow.setAction(Actions.REFUTE.toString());
+//                        taskDetails.setReasonForFailure("NAME_MISMATCH");
+//                        taskDetails.setResponseMessage("Please check the name");
+//                    } else {
+//                        workflow.setAction(Actions.VERIFY.toString());
+//                    }
+//                } catch (CustomException e) {
+//                    log.error("Exception while verifying MSISDN : {} ",individualDetails.getPhoneNumber(),e);
+//                    if (Objects.equals(e.getCode(), "MTN_SERVICE_" + EXCEPTION)) {
+//                        updateBillDetailWorkflow = false;
+//                    } else {
+//                        workflow.setAction(Actions.REFUTE.toString());
+//                    }
+//                    taskDetails.setResponseMessage(e.getMessage());
+//                    taskDetails.setReasonForFailure(e.getCode());
+//                }
                 taskDetails.setStatus(Status.DONE);
                 expenseProducer.push(config.getBillTaskDetailsTopic(), taskDetails);
 
