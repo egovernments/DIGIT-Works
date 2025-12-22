@@ -20,6 +20,7 @@ import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.HRMSUtil;
 import org.egov.util.IndividualServiceUtil;
+import org.egov.util.MusterRollWorkflowUtil;
 import org.egov.util.ProjectServiceUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
@@ -62,8 +63,11 @@ public class AttendanceRegisterService {
     // V2 Intermediate Billing - Period-based enrichment
     private final RegisterPeriodEnrichmentService registerPeriodEnrichmentService;
 
+    // V2 - Workflow utility for dynamic state lookup
+    private final MusterRollWorkflowUtil musterRollWorkflowUtil;
+
     @Autowired
-    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, ProjectServiceUtil projectServiceUtil, RegisterPeriodEnrichmentService registerPeriodEnrichmentService) {
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, ProjectServiceUtil projectServiceUtil, RegisterPeriodEnrichmentService registerPeriodEnrichmentService, MusterRollWorkflowUtil musterRollWorkflowUtil) {
         this.attendanceServiceValidator = attendanceServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.producer = producer;
@@ -76,6 +80,7 @@ public class AttendanceRegisterService {
         this.individualServiceUtil = individualServiceUtil;
         this.projectServiceUtil = projectServiceUtil;
         this.registerPeriodEnrichmentService = registerPeriodEnrichmentService;
+        this.musterRollWorkflowUtil = musterRollWorkflowUtil;
     }
 
     /**
@@ -202,21 +207,21 @@ public class AttendanceRegisterService {
             // Map registerPeriodStatus to reviewStatus for V1 search
             if (hasRegisterPeriodStatus) {
                 String periodStatus = searchCriteria.getRegisterPeriodStatus();
+                RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
+                String tenantId = searchCriteria.getTenantId();
 
-                // Map the period status to review status
-                if (ATTENDANCE_REGISTER_APPROVED.equalsIgnoreCase(periodStatus)) {
+                // Use workflow utility to check if status is terminal (billing-ready)
+                // Terminal states (e.g., APPROVED) → map to APPROVED
+                // Non-terminal states → map to PENDINGFORAPPROVAL
+                if (musterRollWorkflowUtil.isTerminalState(periodStatus, tenantId, requestInfo)) {
                     searchCriteria.setReviewStatus(ATTENDANCE_REGISTER_APPROVED);
-                    log.info("Converted {} request with registerPeriodStatus={} to V1 search with reviewStatus={}",
-                            BILLING_PERIOD_AGGREGATE, ATTENDANCE_REGISTER_APPROVED, ATTENDANCE_REGISTER_APPROVED);
-                } else if (ATTENDANCE_REGISTER_PENDINGFORAPPROVAL.equalsIgnoreCase(periodStatus) ||
-                           REGISTER_PERIOD_STATUS_PENDING.equalsIgnoreCase(periodStatus)) {
-                    searchCriteria.setReviewStatus(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL);
-                    log.info("Converted {} request with registerPeriodStatus={} to V1 search with reviewStatus={}",
-                            BILLING_PERIOD_AGGREGATE, periodStatus, ATTENDANCE_REGISTER_PENDINGFORAPPROVAL);
+                    log.info("Converted {} request with registerPeriodStatus={} (terminal) to V1 search with reviewStatus={}",
+                            BILLING_PERIOD_AGGREGATE, periodStatus, ATTENDANCE_REGISTER_APPROVED);
                 } else {
-                    log.warn("Invalid registerPeriodStatus value: {}. Must be {} or {}. Defaulting to {}.",
-                            periodStatus, ATTENDANCE_REGISTER_APPROVED, ATTENDANCE_REGISTER_PENDINGFORAPPROVAL, ATTENDANCE_REGISTER_APPROVED);
-                    searchCriteria.setReviewStatus(ATTENDANCE_REGISTER_APPROVED);
+                    // Non-terminal status (PENDING, PENDINGFORAPPROVAL, etc.) → map to PENDINGFORAPPROVAL
+                    searchCriteria.setReviewStatus(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL);
+                    log.info("Converted {} request with registerPeriodStatus={} (non-terminal) to V1 search with reviewStatus={}",
+                            BILLING_PERIOD_AGGREGATE, periodStatus, ATTENDANCE_REGISTER_PENDINGFORAPPROVAL);
                 }
             } else {
                 // If no registerPeriodStatus provided, default to APPROVED (original behavior)
@@ -545,8 +550,11 @@ public class AttendanceRegisterService {
 
         // V2: Map registerPeriodStatus to V1 status format (APPROVED/PENDING)
         // This ensures consistent status format across V1 and V2 responses
+        // Workflow states are fetched dynamically from workflow service
+        RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
+        String tenantId = searchCriteria.getTenantId();
         for (AttendanceRegister register : resultAttendanceRegisters) {
-            String mappedStatus = mapRegisterPeriodStatusToV1Status(register.getRegisterPeriodStatus());
+            String mappedStatus = mapRegisterPeriodStatusToV1Status(register.getRegisterPeriodStatus(), tenantId, requestInfo);
             // Store mapped status in additionalDetails for filtering and counting
             register.setReviewStatus(mappedStatus);
         }
@@ -560,30 +568,29 @@ public class AttendanceRegisterService {
         log.info("V2 status counts (BEFORE filtering): {}", v1StatusCounts);
 
         // V2 Filter by registerPeriodStatus if provided
-        // User sends either "APPROVED" or "PENDING"
-        // - APPROVED → show only registers with APPROVED muster roll status
-        // - PENDING → show registers with NOT_CREATED, PENDING, SENT_BACK, REJECTED muster roll status
+        // User sends either "APPROVED" or "PENDING" (or "PENDINGFORAPPROVAL")
+        // - Terminal workflow state (e.g., APPROVED) → show only registers with billing-ready status
+        // - Non-terminal → show registers with all non-terminal workflow statuses
         if (StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus())) {
             log.info("Filtering by registerPeriodStatus: {}", searchCriteria.getRegisterPeriodStatus());
 
             String requestedStatus = searchCriteria.getRegisterPeriodStatus().toUpperCase();
 
-            if (ATTENDANCE_REGISTER_APPROVED.equalsIgnoreCase(requestedStatus)) {
-                // Filter only APPROVED
+            // Check if requested status is a terminal workflow state (dynamically from workflow service)
+            if (musterRollWorkflowUtil.isTerminalState(requestedStatus, tenantId, requestInfo)) {
+                // Filter only terminal (billing-ready) states
                 resultAttendanceRegisters = resultAttendanceRegisters.stream()
                         .filter(register -> ATTENDANCE_REGISTER_APPROVED.equals(register.getReviewStatus()))
                         .collect(Collectors.toList());
-                log.info("Filtered by APPROVED status: {} registers remain", resultAttendanceRegisters.size());
+                log.info("Filtered by terminal (APPROVED) status: {} registers remain", resultAttendanceRegisters.size());
 
-            } else if (ATTENDANCE_REGISTER_PENDINGFORAPPROVAL.equalsIgnoreCase(requestedStatus) || MUSTER_ROLL_STATUS_PENDING.equalsIgnoreCase(requestedStatus)) {
-                // Filter all non-APPROVED (PENDING includes NOT_CREATED, PENDING, SENT_BACK, REJECTED)
+            } else {
+                // Any other value (PENDING, PENDINGFORAPPROVAL, etc.) → filter all non-terminal
+                // This includes NOT_CREATED and all workflow states that are not terminal
                 resultAttendanceRegisters = resultAttendanceRegisters.stream()
                         .filter(register -> ATTENDANCE_REGISTER_PENDINGFORAPPROVAL.equals(register.getReviewStatus()))
                         .collect(Collectors.toList());
-                log.info("Filtered by PENDING status (all non-APPROVED): {} registers remain", resultAttendanceRegisters.size());
-
-            } else {
-                log.warn("Invalid registerPeriodStatus value: {}. Must be APPROVED or PENDING. Skipping filter.", requestedStatus);
+                log.info("Filtered by non-terminal (PENDING) status: {} registers remain", resultAttendanceRegisters.size());
             }
         }
 
@@ -661,28 +668,25 @@ public class AttendanceRegisterService {
      * ================================================================================
      *
      * @param registerPeriodStatus The muster roll status from period_statuses
+     * @param tenantId The tenant ID for workflow lookup
+     * @param requestInfo Request info for workflow API call
      * @return V1 status (APPROVED or PENDINGFORAPPROVAL)
      */
-    private String mapRegisterPeriodStatusToV1Status(String registerPeriodStatus) {
+    private String mapRegisterPeriodStatusToV1Status(String registerPeriodStatus, String tenantId, RequestInfo requestInfo) {
         if (StringUtils.isBlank(registerPeriodStatus)) {
             log.warn("registerPeriodStatus is null or blank, defaulting to PENDING");
             return ATTENDANCE_REGISTER_PENDINGFORAPPROVAL;
         }
 
-        switch (registerPeriodStatus.toUpperCase()) {
-            case MUSTER_ROLL_STATUS_APPROVED:
-                return ATTENDANCE_REGISTER_APPROVED;
-
-            case MUSTER_ROLL_STATUS_NOT_CREATED:
-            case MUSTER_ROLL_STATUS_PENDING:
-            case MUSTER_ROLL_STATUS_SENT_BACK:
-            case MUSTER_ROLL_STATUS_REJECTED:
-                return ATTENDANCE_REGISTER_PENDINGFORAPPROVAL;
-
-            default:
-                log.warn("Unknown registerPeriodStatus value: {}, defaulting to PENDING", registerPeriodStatus);
-                return ATTENDANCE_REGISTER_PENDINGFORAPPROVAL;
+        // Check if status is a terminal (billing-ready) workflow state
+        // Terminal states are fetched dynamically from workflow service
+        // Only NOT_CREATED is hardcoded (it's not a workflow status)
+        if (musterRollWorkflowUtil.isTerminalState(registerPeriodStatus, tenantId, requestInfo)) {
+            return ATTENDANCE_REGISTER_APPROVED;
         }
+
+        // Any non-terminal status (including NOT_CREATED and all non-terminal workflow states) is pending
+        return ATTENDANCE_REGISTER_PENDINGFORAPPROVAL;
     }
 
     /**
