@@ -14,10 +14,10 @@ public class AttendanceServiceConstants {
     // V2 Billing Constants
     public static final String BILLING_PERIOD_AGGREGATE = "AGGREGATE";
 
-    // V2 Muster Roll Status Constants
-    // Only NOT_CREATED is hardcoded - it's a custom status when no muster roll exists
-    // All workflow statuses (APPROVED, PENDING, SENT_BACK, etc.) are fetched dynamically
-    // from the workflow service via MusterRollWorkflowUtil
+    // V2 Muster Roll Status - matches muster-roll service pattern
+    // Only APPROVED is checked (terminal/billing-ready state)
+    // All other statuses are treated as pending
+    public static final String MUSTER_ROLL_STATUS_APPROVED = "APPROVED";
     public static final String MUSTER_ROLL_STATUS_NOT_CREATED = "NOT_CREATED";
 
     // Error Keys

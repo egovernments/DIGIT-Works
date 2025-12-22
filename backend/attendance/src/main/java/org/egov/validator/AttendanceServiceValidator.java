@@ -309,12 +309,16 @@ public class AttendanceServiceValidator {
                 "registerPeriodStatus can only be used when billingPeriodId is provided");
         }
 
-        // V2 Validation: registerPeriodStatus - any value is accepted
-        // APPROVED → filters for approved muster rolls (billing-ready)
-        // Any other value → filters for non-approved (all workflow states except APPROVED)
-        // No strict validation needed as the service handles unknown values gracefully
+        // V2 Validation: registerPeriodStatus must be either APPROVED or PENDING
         if (StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus())) {
-            log.debug("registerPeriodStatus filter provided: {}", searchCriteria.getRegisterPeriodStatus());
+            String status = searchCriteria.getRegisterPeriodStatus().toUpperCase();
+            if (!status.equals(ATTENDANCE_REGISTER_APPROVED) &&
+                !status.equals(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL) &&
+                !status.equals("PENDING")) {
+                log.error("registerPeriodStatus must be either APPROVED or PENDING, got: {}", searchCriteria.getRegisterPeriodStatus());
+                errorMap.put("INVALID_REGISTER_PERIOD_STATUS",
+                    "registerPeriodStatus must be either APPROVED or PENDING");
+            }
         }
 
         // V1/V2 Priority: Warn if both reviewStatus and V2 parameters are provided

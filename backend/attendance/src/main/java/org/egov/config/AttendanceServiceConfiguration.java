@@ -185,16 +185,6 @@ public class AttendanceServiceConfiguration {
 
     @Value("${egov.muster.roll.search.endpoint}")
     private String musterRollV2SearchEndpoint;
-
-    // Workflow Service Config (for fetching muster roll workflow states dynamically)
-    @Value("${egov.workflow.host}")
-    private String workflowHost;
-
-    @Value("${egov.workflow.businessservice.search.path}")
-    private String workflowBusinessServiceSearchPath;
-
-    @Value("${musterroll.workflow.business.service}")
-    private String musterRollWorkflowBusinessService;
 }
 
 
