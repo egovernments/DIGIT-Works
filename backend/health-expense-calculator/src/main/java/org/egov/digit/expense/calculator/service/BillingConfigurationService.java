@@ -395,7 +395,8 @@ public class BillingConfigurationService {
 
         if (existingConfig == null) {
             throw new CustomException("CONFIG_NOT_FOUND",
-                "Billing configuration not found for campaign: " + config.getCampaignNumber());
+                "Billing configuration not found. campaignNumber: " + config.getCampaignNumber() +
+                ", tenantId: " + config.getTenantId());
         }
 
         // Updates cannot modify project timeline. Force incoming dates to existing values.
@@ -447,7 +448,9 @@ public class BillingConfigurationService {
 
         if (updated == null) {
             throw new CustomException("CONFIG_NOT_FOUND",
-                "Billing configuration not found after update: " + config.getId());
+                "Billing configuration not found after update. configId: " + config.getId() +
+                ", campaignNumber: " + config.getCampaignNumber() +
+                ", tenantId: " + config.getTenantId());
         }
 
         // If config structure changed, recalculate periods

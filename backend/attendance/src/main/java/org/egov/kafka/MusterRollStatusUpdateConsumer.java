@@ -27,21 +27,54 @@ import java.util.stream.Collectors;
 /**
  * MusterRollStatusUpdateConsumer
  *
- * V2 Intermediate Billing - Kafka consumer for muster-roll status update events.
+ * ================================================================================
+ * PURPOSE & BUSINESS CONTEXT
+ * ================================================================================
  *
- * This consumer listens for muster-roll status changes and updates the attendance
- * register's period_statuses field by publishing to the existing update-attendance topic.
+ * In V2 Intermediate Billing, we need to track muster roll status for EACH billing
+ * period separately (unlike V1 where one register had one overall status).
  *
- * Benefits:
- * - Eliminates synchronous API calls during attendance search
- * - Scales to millions of registers
- * - Event-driven, non-blocking architecture
- * - Uses persister pattern (no direct DB writes)
- * - Reuses existing update-attendance topic (simpler architecture)
+ * PROBLEM SOLVED:
+ * ---------------
+ * In V1 flow, when UI needed to show register status, it would make synchronous
+ * API calls to muster-roll service for EACH register. With thousands of registers,
+ * this caused:
+ *   - Slow search responses (N API calls for N registers)
+ *   - Timeout issues under load
+ *   - Poor user experience
+ *
+ * SOLUTION - Event-Driven Denormalization:
+ * ----------------------------------------
+ * Instead of making API calls during search, we STORE the muster roll status
+ * directly in the attendance register's `period_statuses` JSONB field.
+ *
+ * When muster roll workflow changes status (e.g., PENDING → APPROVED):
+ *   1. Muster-roll service publishes event to Kafka topic
+ *   2. This consumer receives the event
+ *   3. Updates the attendance register's period_statuses field via persister
+ *   4. Search API reads status from DB directly - NO API calls needed
+ *
+ * DATA FLOW:
+ * ----------
+ *   Muster Roll Workflow (APPROVED)
+ *           ↓
+ *   Kafka: muster-roll-status-update
+ *           ↓
+ *   This Consumer
+ *           ↓
+ *   Kafka: update-attendance (persister topic)
+ *           ↓
+ *   Database: eg_attendance_register.period_statuses
+ *
+ * IMPORTANT: This is NOT a workflow implementation. The actual workflow
+ * (PENDING → APPROVED → etc.) is managed by muster-roll service. This consumer
+ * simply MIRRORS that status into the attendance register for efficient searching.
+ *
+ * ================================================================================
  *
  * Topic consumed: muster-roll-status-update
- * Publisher: Muster-roll Service - MusterRollService
- * Publishes to: update-attendance (existing topic, period_statuses field added to persister config)
+ * Publisher: Muster-roll Service (on workflow status change)
+ * Publishes to: update-attendance (persister updates period_statuses field)
  */
 @Component
 @Slf4j
@@ -67,17 +100,49 @@ public class MusterRollStatusUpdateConsumer {
     /**
      * Consumes muster-roll status update events and updates period_statuses via persister.
      *
-     * Processing flow:
-     * 1. Deserialize event from Kafka
-     * 2. Validate event (must have billingPeriodId for V2)
-     * 3. Fetch register from DB to get existing period_statuses
-     * 4. Update or add the period status
-     * 5. Publish to update-attendance topic for persister (reuses existing topic)
+     * ================================================================================
+     * WHY THIS METHOD EXISTS
+     * ================================================================================
      *
-     * Error handling:
-     * - Invalid events are logged and skipped
-     * - Register not found errors are logged but don't fail consumer
-     * - V1 events (no billingPeriodId) are skipped gracefully
+     * When a muster roll's workflow status changes (e.g., supervisor approves attendance),
+     * the muster-roll service publishes an event. This method:
+     *
+     *   1. Receives that event
+     *   2. Finds the corresponding attendance register
+     *   3. Updates the register's period_statuses JSONB field with the new status
+     *   4. Publishes to persister topic to save to database
+     *
+     * This enables the attendance search API to return muster roll status WITHOUT
+     * making synchronous API calls to muster-roll service (major performance improvement).
+     *
+     * ================================================================================
+     * V1 vs V2 EVENT HANDLING
+     * ================================================================================
+     *
+     * V1 (Legacy): Events without billingPeriodId are from V1 flow where:
+     *   - One register = one muster roll = one status
+     *   - Status stored in register's reviewStatus field
+     *   - No period_statuses needed
+     *   → We SKIP V1 events because they don't need period-based tracking
+     *
+     * V2 (New): Events WITH billingPeriodId are from V2 intermediate billing where:
+     *   - One register can have MULTIPLE muster rolls (one per billing period)
+     *   - Each period has its own status in period_statuses array
+     *   → We PROCESS V2 events to maintain period_statuses
+     *
+     * ================================================================================
+     * ERROR HANDLING STRATEGY
+     * ================================================================================
+     *
+     * - Deserialization errors: Log and skip (message format issue)
+     * - Missing fields: Log and skip (incomplete event)
+     * - Register not found: Log and skip (register may have been deleted)
+     * - General errors: Log full context, don't crash consumer
+     *
+     * SELF-HEALING: If an event fails, the next valid event for the same
+     * register+period will update the status correctly. Additionally, the
+     * RegisterPeriodEnrichmentService has a fallback that calls muster-roll
+     * API if period_statuses is missing (handles Kafka sync failures).
      *
      * @param consumerRecord The Kafka message as Map
      * @param topic The Kafka topic name (for logging)
@@ -100,7 +165,13 @@ public class MusterRollStatusUpdateConsumer {
                     event.getStatus(),
                     topic);
 
-            // 2. Validate event - Skip V1 events (no billingPeriodId)
+            // ============================================================
+            // STEP 2: Skip V1 events - they don't need period tracking
+            // ============================================================
+            // WHY: V1 flow uses the register's single reviewStatus field.
+            //      V2 flow uses period_statuses array (one status per period).
+            //      Events without billingPeriodId are V1 events.
+            //      Processing them here would corrupt period_statuses with null periodId.
             if (StringUtils.isBlank(event.getBillingPeriodId())) {
                 log.debug("processMusterRollStatusUpdate::Skipping V1 event (no billingPeriodId) for muster: {}",
                         event.getMusterRollId());
@@ -147,7 +218,19 @@ public class MusterRollStatusUpdateConsumer {
                     event.getStatus());
 
         } catch (IllegalArgumentException e) {
-            // Deserialization error - log and skip
+            // ============================================================
+            // Deserialization Error - Log and Skip
+            // ============================================================
+            // WHY THIS CAN HAPPEN:
+            //   - Kafka message JSON doesn't match MusterRollStatusUpdateEvent structure
+            //   - Schema mismatch between producer (muster-roll) and consumer (attendance)
+            //   - Corrupted message in Kafka
+            //
+            // RECOVERY PLAN:
+            //   - Log full context for debugging
+            //   - Skip this message (don't block consumer)
+            //   - SELF-HEALING: Next valid event for same register+period will update status
+            //   - FALLBACK: RegisterPeriodEnrichmentService calls muster-roll API if status missing
             log.error("processMusterRollStatusUpdate::Failed to deserialize event from topic: {} - Error: {} - Record: {}",
                     topic, e.getMessage(), consumerRecord);
 
@@ -187,9 +270,28 @@ public class MusterRollStatusUpdateConsumer {
     }
 
     /**
-     * Merges new period status into existing list.
-     * If status for the period already exists, it's updated.
-     * If not, it's appended to the list.
+     * Merges new period status into existing period_statuses list.
+     *
+     * ================================================================================
+     * WHY MERGE IS NEEDED (UPSERT LOGIC)
+     * ================================================================================
+     *
+     * A single attendance register can have multiple billing periods, each with
+     * its own muster roll status. The period_statuses array looks like:
+     *
+     *   [
+     *     { "periodId": "period-1", "status": "APPROVED", ... },
+     *     { "periodId": "period-2", "status": "PENDING", ... },
+     *     { "periodId": "period-3", "status": "NOT_CREATED", ... }
+     *   ]
+     *
+     * When we receive a status update event for period-2:
+     *   - If period-2 exists in array → UPDATE its status (replace)
+     *   - If period-2 doesn't exist → APPEND new entry
+     *
+     * This is standard UPSERT (Update or Insert) logic to maintain the list.
+     *
+     * ================================================================================
      */
     private List<RegisterPeriodStatus> mergePeriodStatus(
             List<RegisterPeriodStatus> existing,

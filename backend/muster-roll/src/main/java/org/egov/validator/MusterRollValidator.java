@@ -373,7 +373,10 @@ public class MusterRollValidator {
 
         if (attendanceRegisterResponse == null || CollectionUtils.isEmpty(attendanceRegisterResponse.getAttendanceRegister())) {
             log.error("MusterRollValidator::isValidUser::User with id::" + id + " is not enrolled in the attendance register::"+musterRoll.getRegisterId());
-            throw new CustomException("INVALID_USER","User is not enrolled in the attendance register");
+            throw new CustomException("INVALID_USER",
+                    "User is not enrolled in the attendance register. userId: " + id +
+                    ", registerId: " + musterRoll.getRegisterId() +
+                    ", tenantId: " + musterRoll.getTenantId());
         }
 
     }
@@ -385,7 +388,9 @@ public class MusterRollValidator {
         List<AttendanceRegister> attendanceRegisters = attendanceRegisterResponse.getAttendanceRegister();
         if(attendanceRegisters == null || attendanceRegisters.isEmpty()) {
             log.error("No attendance registers found for the muster roll");
-            throw new CustomException("MusterRollValidator::validateAndEnrichAttendance", "No attendance registers found for the muster roll");
+            throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND",
+                    "No attendance registers found for the muster roll. registerId: " + musterRoll.getRegisterId() +
+                    ", tenantId: " + musterRoll.getTenantId());
         }
         AttendanceRegister attendanceRegister = attendanceRegisters.get(0);
         LocalDate startDate = Instant.ofEpochMilli(attendanceRegister.getStartDate().longValue()).atZone(ZoneId.of(serviceConfiguration.getTimeZone())).toLocalDate();
