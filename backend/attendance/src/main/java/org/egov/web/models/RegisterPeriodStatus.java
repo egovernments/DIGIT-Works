@@ -103,40 +103,4 @@ public class RegisterPeriodStatus {
     @JsonProperty("lastModifiedTime")
     @NotNull
     private Long lastModifiedTime;
-
-    // ================================================================================
-    // STATUS CONSTANTS - FOR CODE CONSISTENCY, NOT WORKFLOW CONFIGURATION
-    // ================================================================================
-    //
-    // WHY THESE CONSTANTS EXIST:
-    // --------------------------
-    // These are Java string constants to avoid "magic strings" in code.
-    // Instead of writing: if (status.equals("APPROVED"))
-    // We write: if (status.equals(STATUS_APPROVED))
-    //
-    // This provides:
-    //   - Compile-time checking (typos caught by compiler)
-    //   - IDE auto-completion
-    //   - Single source of truth for status values
-    //
-    // WHY NOT MDMS/WORKFLOW CONFIG:
-    // -----------------------------
-    // These constants are NOT workflow configuration. They are:
-    //   1. String values that match muster-roll workflow states
-    //   2. Used for equality checks in code
-    //   3. Read-only (never modified at runtime)
-    //
-    // The ACTUAL workflow (who can approve, what transitions are allowed)
-    // is configured in muster-roll service's workflow config in MDMS.
-    //
-    // ANALOGY:
-    //   - HTTP_STATUS_OK = 200 is a constant, not config
-    //   - STATUS_APPROVED = "APPROVED" is a constant, not config
-    //
-    // ================================================================================
-    public static final String STATUS_NOT_CREATED = "NOT_CREATED";
-    public static final String STATUS_PENDING = "PENDING";
-    public static final String STATUS_APPROVED = "APPROVED";
-    public static final String STATUS_REJECTED = "REJECTED";
-    public static final String STATUS_SENT_BACK = "SENT_BACK";
 }

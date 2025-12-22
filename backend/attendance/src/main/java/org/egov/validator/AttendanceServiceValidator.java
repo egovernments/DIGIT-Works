@@ -314,7 +314,7 @@ public class AttendanceServiceValidator {
             String status = searchCriteria.getRegisterPeriodStatus().toUpperCase();
             if (!status.equals(ATTENDANCE_REGISTER_APPROVED) &&
                 !status.equals(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL) &&
-                !status.equals("PENDING")) {
+                !status.equals(MUSTER_ROLL_STATUS_PENDING)) {
                 log.error("registerPeriodStatus must be either APPROVED or PENDING, got: {}", searchCriteria.getRegisterPeriodStatus());
                 errorMap.put("INVALID_REGISTER_PERIOD_STATUS",
                     "registerPeriodStatus must be either APPROVED or PENDING");

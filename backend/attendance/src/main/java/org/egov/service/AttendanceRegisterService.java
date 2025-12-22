@@ -575,7 +575,7 @@ public class AttendanceRegisterService {
                         .collect(Collectors.toList());
                 log.info("Filtered by APPROVED status: {} registers remain", resultAttendanceRegisters.size());
 
-            } else if (ATTENDANCE_REGISTER_PENDINGFORAPPROVAL.equalsIgnoreCase(requestedStatus) || "PENDING".equalsIgnoreCase(requestedStatus)) {
+            } else if (ATTENDANCE_REGISTER_PENDINGFORAPPROVAL.equalsIgnoreCase(requestedStatus) || MUSTER_ROLL_STATUS_PENDING.equalsIgnoreCase(requestedStatus)) {
                 // Filter all non-APPROVED (PENDING includes NOT_CREATED, PENDING, SENT_BACK, REJECTED)
                 resultAttendanceRegisters = resultAttendanceRegisters.stream()
                         .filter(register -> ATTENDANCE_REGISTER_PENDINGFORAPPROVAL.equals(register.getReviewStatus()))
@@ -670,13 +670,13 @@ public class AttendanceRegisterService {
         }
 
         switch (registerPeriodStatus.toUpperCase()) {
-            case "APPROVED":
+            case MUSTER_ROLL_STATUS_APPROVED:
                 return ATTENDANCE_REGISTER_APPROVED;
 
-            case "NOT_CREATED":
-            case "PENDING":
-            case "SENT_BACK":
-            case "REJECTED":
+            case MUSTER_ROLL_STATUS_NOT_CREATED:
+            case MUSTER_ROLL_STATUS_PENDING:
+            case MUSTER_ROLL_STATUS_SENT_BACK:
+            case MUSTER_ROLL_STATUS_REJECTED:
                 return ATTENDANCE_REGISTER_PENDINGFORAPPROVAL;
 
             default:

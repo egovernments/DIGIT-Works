@@ -21,6 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.egov.util.AttendanceServiceConstants.*;
+
 /**
  * RegisterPeriodEnrichmentService
  *
@@ -388,7 +390,7 @@ public class RegisterPeriodEnrichmentService {
             // than fail the entire request for all users.
             if (StringUtils.isBlank(register.getId())) {
                 log.warn("enrichRegistersWithMusterRollStatus::Register has null/empty ID, setting status to NOT_CREATED");
-                register.setRegisterPeriodStatus("NOT_CREATED");
+                register.setRegisterPeriodStatus(MUSTER_ROLL_STATUS_NOT_CREATED);
                 notCreatedCount++;
                 continue;
             }
@@ -414,7 +416,7 @@ public class RegisterPeriodEnrichmentService {
                             register.getId(), billingPeriodId, fallbackStatus.getStatus());
                 } else {
                     // No muster roll found - genuinely NOT_CREATED
-                    register.setRegisterPeriodStatus("NOT_CREATED");
+                    register.setRegisterPeriodStatus(MUSTER_ROLL_STATUS_NOT_CREATED);
                     notCreatedCount++;
                     nullPeriodStatusesCount++;
                     log.debug("enrichRegistersWithMusterRollStatus::FALLBACK CONFIRMED (empty period_statuses) - Register {} period {} has no muster roll, status: NOT_CREATED",
@@ -451,7 +453,7 @@ public class RegisterPeriodEnrichmentService {
                             register.getId(), billingPeriodId, fallbackStatus.getStatus());
                 } else {
                     // No muster roll found - genuinely NOT_CREATED
-                    register.setRegisterPeriodStatus("NOT_CREATED");
+                    register.setRegisterPeriodStatus(MUSTER_ROLL_STATUS_NOT_CREATED);
                     notCreatedCount++;
                     log.debug("enrichRegistersWithMusterRollStatus::FALLBACK CONFIRMED - Register {} period {} has no muster roll, status: NOT_CREATED",
                             register.getId(), billingPeriodId);

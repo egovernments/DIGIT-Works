@@ -13,7 +13,14 @@ public class AttendanceServiceConstants {
 
     // V2 Billing Constants
     public static final String BILLING_PERIOD_AGGREGATE = "AGGREGATE";
-    public static final String REGISTER_PERIOD_STATUS_PENDING = "PENDING";
+
+    // V2 Muster Roll Status Constants
+    // These match the muster-roll workflow states used in period_statuses JSONB
+    public static final String MUSTER_ROLL_STATUS_NOT_CREATED = "NOT_CREATED";
+    public static final String MUSTER_ROLL_STATUS_PENDING = "PENDING";
+    public static final String MUSTER_ROLL_STATUS_APPROVED = "APPROVED";
+    public static final String MUSTER_ROLL_STATUS_REJECTED = "REJECTED";
+    public static final String MUSTER_ROLL_STATUS_SENT_BACK = "SENT_BACK";
 
     // Error Keys
     public static final String ERROR_KEY_ID = "ID_MISSING";
