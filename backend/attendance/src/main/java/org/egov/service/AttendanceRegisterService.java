@@ -1,6 +1,5 @@
 package org.egov.service;
 
-import ch.qos.logback.core.BasicStatusManager;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
