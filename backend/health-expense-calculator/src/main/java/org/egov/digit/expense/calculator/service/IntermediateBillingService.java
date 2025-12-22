@@ -369,11 +369,13 @@ public class IntermediateBillingService {
      */
     private boolean checkIfDistrictLevel(RequestInfo requestInfo, Criteria criteria) {
         try {
+            // Pass hierarchyType from criteria for fallback if the primary search returns empty
             List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(
                 RequestInfoWrapper.builder().requestInfo(requestInfo).build(),
                 criteria.getLocalityCode(),
                 criteria.getTenantId(),
-                false
+                false,
+                criteria.getHierarchyType()
             );
             return !boundaries.isEmpty() &&
                    boundaries.get(0).getBoundary() != null &&

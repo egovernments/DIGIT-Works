@@ -571,9 +571,10 @@ public class ExpenseCalculatorService {
 
         try {
             // Fetch all boundaries for that particular locality and projectId with children
+            // Pass hierarchyType from criteria for fallback if the primary search returns empty
             List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(RequestInfoWrapper.builder()
                             .requestInfo(calculationRequest.getRequestInfo()).build(), calculationRequest.getCriteria().getLocalityCode(),
-                    calculationRequest.getCriteria().getTenantId(), false);
+                    calculationRequest.getCriteria().getTenantId(), false, calculationRequest.getCriteria().getHierarchyType());
 
             if (boundaries.isEmpty()) {
                 log.error("Boundary not found");

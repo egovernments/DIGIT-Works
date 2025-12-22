@@ -54,6 +54,9 @@ public class Criteria {
 	@NotNull
 	private String localityCode = null;
 
+	@JsonProperty("hierarchyType")
+	private String hierarchyType = null;
+
 	@JsonProperty("billingPeriodId")
 	private String billingPeriodId = null;
 
