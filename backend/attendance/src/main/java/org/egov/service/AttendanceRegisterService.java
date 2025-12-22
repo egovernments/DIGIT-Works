@@ -273,7 +273,10 @@ public class AttendanceRegisterService {
 
         if(attendanceServiceConfiguration.getAttendanceRegisterProjectSearchEnabled()){
             if((StringUtils.isBlank(searchCriteria.getReferenceId()) && !StringUtils.isBlank(searchCriteria.getLocalityCode())) || (!StringUtils.isBlank(searchCriteria.getReferenceId()) && StringUtils.isBlank(searchCriteria.getLocalityCode())) ){
-                throw new CustomException("ATTENDANCE_REGISTER_SEARCH_INVALID", "Attendance Register with only reference Id or locality code is invalid");
+                throw new CustomException("ATTENDANCE_REGISTER_SEARCH_INVALID",
+                    "Both referenceId AND localityCode are required together for project-based search. " +
+                    "Received: referenceId=" + searchCriteria.getReferenceId() +
+                    ", localityCode=" + searchCriteria.getLocalityCode());
             }
 
             if(!StringUtils.isBlank(searchCriteria.getReferenceId())){
@@ -288,7 +291,10 @@ public class AttendanceRegisterService {
                 );
 
                 if(projects.isEmpty()){
-                    throw new CustomException("ATTENDANCE_REGISTER_PROJECT_NOT_FOUND", "Project not found");
+                    throw new CustomException("ATTENDANCE_REGISTER_PROJECT_NOT_FOUND",
+                        "Project not found for referenceId: " + searchCriteria.getReferenceId() +
+                        ", tenantId: " + searchCriteria.getTenantId() +
+                        ", localityCode: " + searchCriteria.getLocalityCode());
                 }
 
                 List<String> referenceId = new ArrayList<>();
@@ -414,7 +420,10 @@ public class AttendanceRegisterService {
 
         if(attendanceServiceConfiguration.getAttendanceRegisterProjectSearchEnabled()){
             if((StringUtils.isBlank(searchCriteria.getReferenceId()) && !StringUtils.isBlank(searchCriteria.getLocalityCode())) || (!StringUtils.isBlank(searchCriteria.getReferenceId()) && StringUtils.isBlank(searchCriteria.getLocalityCode())) ){
-                throw new CustomException("ATTENDANCE_REGISTER_SEARCH_INVALID", "Attendance Register with only reference Id or locality code is invalid");
+                throw new CustomException("ATTENDANCE_REGISTER_SEARCH_INVALID",
+                    "Both referenceId AND localityCode are required together for project-based search. " +
+                    "Received: referenceId=" + searchCriteria.getReferenceId() +
+                    ", localityCode=" + searchCriteria.getLocalityCode());
             }
 
             if(!StringUtils.isBlank(searchCriteria.getReferenceId())){
@@ -429,7 +438,10 @@ public class AttendanceRegisterService {
                 );
 
                 if(projects.isEmpty()){
-                    throw new CustomException("ATTENDANCE_REGISTER_PROJECT_NOT_FOUND", "Project not found");
+                    throw new CustomException("ATTENDANCE_REGISTER_PROJECT_NOT_FOUND",
+                        "Project not found for referenceId: " + searchCriteria.getReferenceId() +
+                        ", tenantId: " + searchCriteria.getTenantId() +
+                        ", localityCode: " + searchCriteria.getLocalityCode());
                 }
 
                 List<String> referenceId = new ArrayList<>();
@@ -972,7 +984,9 @@ public class AttendanceRegisterService {
             log.info("Attendance register search successful");
         } catch (Exception e) {
             log.info("Error in searching attendance register", e);
-            throw new CustomException("SEARCH_ATTENDANCE_REGISTER", "Error in searching attendance register");
+            throw new CustomException("SEARCH_ATTENDANCE_REGISTER",
+                    "Error in searching attendance register. registerIds: " + registerIds +
+                    ", tenantId: " + tenantId + ". Error: " + e.getMessage());
         }
 
         return attendanceRegisterList;
@@ -1010,7 +1024,11 @@ public class AttendanceRegisterService {
             for (AttendanceRegister attendanceRegister : attendanceRegisters) {
                 int comparisonResult = endDate.compareTo(attendanceRegister.getEndDate());
                 if (comparisonResult < 0) {
-                    throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
+                    throw new CustomException("END_DATE_NOT_EXTENDED",
+                            "End date should not be earlier than previous end date. " +
+                            "registerId: " + attendanceRegister.getId() +
+                            ", previousEndDate: " + attendanceRegister.getEndDate() +
+                            ", newEndDate: " + endDate);
                 }
 
                 attendanceRegister.setEndDate(endDate);
@@ -1023,7 +1041,9 @@ public class AttendanceRegisterService {
                 producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
             }
         }else {
-            throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND", "Attendance registers not found for the referenceId");
+            throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND",
+                    "Attendance registers not found. referenceId: " + referenceId +
+                    ", tenantId: " + tenantId);
         }
 
     }

@@ -117,14 +117,19 @@ public class RegisterPeriodEnrichmentService {
             log.error("Failed to parse billing period dates - startDate: {}, endDate: {}",
                     periodStartDate, periodEndDate);
             throw new CustomException("INVALID_PERIOD_DATES",
-                    "Unable to parse billing period dates for period " + billingPeriodId);
+                    "Unable to parse billing period dates. billingPeriodId: " + billingPeriodId +
+                    ", tenantId: " + tenantId +
+                    ", periodStartDate: " + periodStartDate +
+                    ", periodEndDate: " + periodEndDate);
         }
 
         if (periodEndDate < periodStartDate) {
             log.error("Invalid billing period {} - end date {} is before start date {}",
                     billingPeriodId, periodEndDate, periodStartDate);
             throw new CustomException("INVALID_PERIOD_RANGE",
-                    "Billing period end date cannot be before start date");
+                    "Billing period end date cannot be before start date. billingPeriodId: " + billingPeriodId +
+                    ", periodStartDate: " + periodStartDate +
+                    ", periodEndDate: " + periodEndDate);
         }
 
         log.info("Billing period {} dates: {} to {}", billingPeriodId, periodStartDate, periodEndDate);
@@ -208,7 +213,10 @@ public class RegisterPeriodEnrichmentService {
                 log.error("Billing period {} is missing required date fields - startDate: {}, endDate: {}",
                         billingPeriodId, period.get("periodStartDate"), period.get("periodEndDate"));
                 throw new CustomException("INVALID_BILLING_PERIOD",
-                        "Billing period " + billingPeriodId + " is missing required date fields");
+                        "Billing period is missing required date fields. billingPeriodId: " + billingPeriodId +
+                        ", tenantId: " + tenantId +
+                        ", periodStartDate: " + period.get("periodStartDate") +
+                        ", periodEndDate: " + period.get("periodEndDate"));
             }
 
             log.info("Successfully fetched billing period {} with dates: {} to {}",
@@ -337,8 +345,8 @@ public class RegisterPeriodEnrichmentService {
      *
      * @param registers List of registers to enrich (already loaded with period_statuses from DB)
      * @param billingPeriodId Billing period ID to search for
-     * @param requestInfo Request info (UNUSED - kept for API compatibility)
-     * @param tenantId Tenant ID (UNUSED - kept for API compatibility)
+     * @param requestInfo Request info (used in fallback API call when period_statuses is missing)
+     * @param tenantId Tenant ID (used in fallback API call and for persister update)
      */
     private void enrichRegistersWithMusterRollStatus(
             List<AttendanceRegister> registers,

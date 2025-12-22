@@ -149,7 +149,9 @@ public class PeriodGenerationService {
     private List<BillingPeriod> generateCustomPeriods(BillingConfig config, int startingPeriodNumber) {
         if (config.getCustomFrequencyDays() == null) {
             throw new CustomException("CUSTOM_FREQUENCY_DAYS_REQUIRED",
-                "Custom frequency days is required for CUSTOM billing frequency");
+                "Custom frequency days is required for CUSTOM billing frequency. " +
+                "campaignNumber: " + config.getCampaignNumber() +
+                ", tenantId: " + config.getTenantId());
         }
 
         log.info("Generating custom periods with {} days frequency", config.getCustomFrequencyDays());
@@ -325,21 +327,29 @@ public class PeriodGenerationService {
             throw new CustomException("CONFIG_NULL", "Billing configuration is null");
         }
 
+        String campaignInfo = "campaignNumber: " + config.getCampaignNumber() +
+            ", tenantId: " + config.getTenantId();
+
         if (config.getProjectStartDate() == null) {
-            throw new CustomException("START_DATE_NULL", "Project start date is null");
+            throw new CustomException("START_DATE_NULL",
+                "Project start date is null. " + campaignInfo);
         }
 
         if (config.getProjectEndDate() == null) {
-            throw new CustomException("END_DATE_NULL", "Project end date is null");
+            throw new CustomException("END_DATE_NULL",
+                "Project end date is null. " + campaignInfo);
         }
 
         if (config.getProjectStartDate() >= config.getProjectEndDate()) {
             throw new CustomException("INVALID_DATE_RANGE",
-                "Project start date must be before end date");
+                "Project start date must be before end date. " + campaignInfo +
+                ", projectStartDate: " + config.getProjectStartDate() +
+                ", projectEndDate: " + config.getProjectEndDate());
         }
 
         if (config.getBillingFrequency() == null) {
-            throw new CustomException("FREQUENCY_NULL", "Billing frequency is null");
+            throw new CustomException("FREQUENCY_NULL",
+                "Billing frequency is null. " + campaignInfo);
         }
     }
 

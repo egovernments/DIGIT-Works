@@ -759,9 +759,18 @@ public class MusterRollServiceUtil {
 			);
 
 			if (response != null && response.containsKey("isBilled")) {
-				Boolean isBilled = (Boolean) response.get("isBilled");
+				Object isBilledObj = response.get("isBilled");
+				boolean isBilled = false;
+
+				// Type-safe parsing: handle Boolean, String, or other types
+				if (isBilledObj instanceof Boolean) {
+					isBilled = (Boolean) isBilledObj;
+				} else if (isBilledObj instanceof String) {
+					isBilled = "true".equalsIgnoreCase((String) isBilledObj);
+				}
+
 				log.info("isPeriodBilled::Period billed status: {}", isBilled);
-				return Boolean.TRUE.equals(isBilled);
+				return isBilled;
 			}
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			// If endpoint doesn't exist or returns error, assume not billed (fail-open)
