@@ -1,5 +1,6 @@
 package org.egov.digit.expense.config;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.egov.tracer.config.TracerConfiguration;
@@ -252,6 +253,9 @@ public class Configuration {
 
 	@Value("${expense.calculator.calculate.endpoint}")
 	private String calculatePath;
+
+	@Value("${expense.payment.additional.percent}")
+	private BigDecimal additionalAmountPercent;
 
 
 }

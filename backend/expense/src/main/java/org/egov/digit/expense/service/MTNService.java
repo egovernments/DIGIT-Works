@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -378,8 +379,19 @@ public class MTNService {
     }
 
     private PaymentTransferRequest createPaymentTransferRequest(BillDetail billDetail, String partyId) {
+
+        BigDecimal totalAmount = billDetail.getTotalAmount();
+
+        //additionalAmount
+        BigDecimal additionalAmount = totalAmount
+                .multiply(config.getAdditionalAmountPercent())
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+        //finalAmount
+        BigDecimal finalAmount = totalAmount.add(additionalAmount);
+
         return PaymentTransferRequest.builder()
-                .amount(String.valueOf(billDetail.getTotalAmount().longValue()))
+                .amount(finalAmount.setScale(0, RoundingMode.HALF_UP).toPlainString())
                 .currency(config.getPaymentCurrency())
                 .externalId(billDetail.getId())
                 .payee(PaymentTransferRequest.Payee.builder()
