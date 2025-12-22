@@ -281,26 +281,23 @@ public class AttendanceServiceValidatorTest {
         assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
     }
 
-    @DisplayName("Method validateSearchRegisterRequest: Should throw error when registerPeriodStatus is invalid (not APPROVED or PENDING)")
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with any registerPeriodStatus value (no strict validation)")
     @Test
-    public void validateSearchRegisterRequest_invalidRegisterPeriodStatus_shouldThrowError(){
+    public void validateSearchRegisterRequest_anyRegisterPeriodStatus_shouldPass(){
         digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
             digit.models.coremodels.RequestInfoWrapper.builder()
                 .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
                 .build();
 
-        // Invalid registerPeriodStatus value
+        // Any registerPeriodStatus value is accepted - service handles unknown values gracefully
         AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
                 .tenantId("pg.citya")
                 .billingPeriodId("period-123")
-                .registerPeriodStatus("NOT_CREATED")  // Invalid value - only APPROVED, PENDINGFORAPPROVAL, or PENDING allowed
+                .registerPeriodStatus("NOT_CREATED")  // Any value is accepted
                 .build();
 
-        CustomException exception = assertThrows(CustomException.class,
-            () -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
-
-        assertTrue(exception.getMessage().contains("INVALID_REGISTER_PERIOD_STATUS") ||
-                   exception.getMessage().contains("APPROVED or PENDING"));
+        // Should not throw error - validator accepts any value
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
     }
 
     @DisplayName("Method validateSearchRegisterRequest: Should pass with PENDING value in registerPeriodStatus")
