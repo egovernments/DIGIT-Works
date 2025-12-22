@@ -24,14 +24,38 @@ import java.util.stream.Collectors;
 /**
  * RegisterPeriodEnrichmentService
  *
- * V2 Intermediate Billing - Period-based register enrichment
+ * ================================================================================
+ * PURPOSE & BUSINESS CONTEXT
+ * ================================================================================
  *
- * Responsibilities:
- * 1. Filter registers that overlap with billing period dates
- * 2. Call muster-roll V2 search API to get muster roll status for each register
- * 3. Enrich each register with registerPeriodStatus field
+ * In V2 Intermediate Billing, a single attendance register can span MULTIPLE
+ * billing periods, each with its own muster roll status. This service:
  *
- * This service is only invoked when billingPeriodId is present in search criteria.
+ *   1. FILTERS registers that overlap with the requested billing period dates
+ *   2. ENRICHES each register with its muster roll status for that specific period
+ *
+ * DATA SOURCES:
+ * -------------
+ * - Billing Period: Fetched from health-expense-calculator service via REST API
+ *                   (NOT from MDMS - billing periods are dynamically created)
+ * - Period Status: Read from register's period_statuses JSONB field (pre-computed)
+ *                  (NOT real-time API call - event-driven denormalization)
+ *
+ * FALLBACK MECHANISM:
+ * -------------------
+ * If period_statuses is empty/missing (Kafka sync failure scenario):
+ *   1. Call muster-roll API directly to get current status
+ *   2. Update period_statuses field via persister (self-healing)
+ *   3. Continue with enriched status
+ *
+ * This ensures data consistency even if Kafka events are lost or delayed.
+ *
+ * WHEN INVOKED:
+ * -------------
+ * Only when billingPeriodId is present in search criteria (V2 flow).
+ * V1 flow (reviewStatus-based) does not use this service.
+ *
+ * ================================================================================
  */
 @Service
 @Slf4j
@@ -193,9 +217,22 @@ public class RegisterPeriodEnrichmentService {
             return period;
 
         } catch (CustomException e) {
-            // Re-throw custom exceptions
+            // ============================================================
+            // Re-throw CustomException to preserve specific error codes
+            // ============================================================
+            // WHY RE-THROW:
+            //   - CustomException has a specific error code (e.g., "INVALID_BILLING_PERIOD")
+            //   - This error code is used by UI to show appropriate error messages
+            //   - If we wrap it in another CustomException, we lose the original code
+            //
+            // EXAMPLE:
+            //   - Without re-throw: Client always sees "BILLING_PERIOD_FETCH_ERROR"
+            //   - With re-throw: Client sees specific code like "INVALID_PERIOD_DATES"
+            //
+            // This is standard Java exception handling pattern used throughout DIGIT.
             throw e;
         } catch (Exception e) {
+            // Wrap generic exceptions with context
             log.error("Error fetching billing period {}: {}", billingPeriodId, e.getMessage(), e);
             throw new CustomException("BILLING_PERIOD_FETCH_ERROR",
                     "Failed to fetch billing period " + billingPeriodId + ": " + e.getMessage());
@@ -321,8 +358,26 @@ public class RegisterPeriodEnrichmentService {
         int notCreatedCount = 0;
         int nullPeriodStatusesCount = 0;
 
-        // Enrich each register by reading from its period_statuses field
+        // ============================================================
+        // Enrich each register with muster roll status from period_statuses
+        // ============================================================
         for (AttendanceRegister register : registers) {
+            // ------------------------------------------------------------
+            // DEFENSIVE CHECK: Null/empty register ID
+            // ------------------------------------------------------------
+            // WHY THIS CHECK:
+            //   - Registers come from DB via RegisterRowMapper
+            //   - In normal operation, ID is always present (DB NOT NULL constraint)
+            //   - However, edge cases can occur:
+            //     a) Data migration issues (corrupt records)
+            //     b) Race condition (register deleted between query and processing)
+            //     c) JSONB parsing edge cases
+            //
+            // COST OF CHECK: O(1) - negligible
+            // COST OF NO CHECK: Potential NPE crashes entire search for all users
+            //
+            // DEFENSIVE PROGRAMMING: Better to log warning and skip one bad record
+            // than fail the entire request for all users.
             if (StringUtils.isBlank(register.getId())) {
                 log.warn("enrichRegistersWithMusterRollStatus::Register has null/empty ID, setting status to NOT_CREATED");
                 register.setRegisterPeriodStatus("NOT_CREATED");

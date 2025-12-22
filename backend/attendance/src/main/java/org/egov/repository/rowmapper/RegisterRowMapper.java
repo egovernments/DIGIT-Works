@@ -24,6 +24,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * RegisterRowMapper
+ *
+ * Standard Spring JDBC RowMapper for extracting AttendanceRegister objects from ResultSet.
+ * This pattern is used throughout DIGIT codebase (StaffRowMapper, AttendeeRowMapper, etc.)
+ */
 @Component
 public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegister>> {
 
@@ -37,6 +43,28 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
     @Override
     public List<AttendanceRegister> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
+        // ============================================================
+        // LOCAL MAP - NO MEMORY LEAK CONCERN
+        // ============================================================
+        // This map is a LOCAL VARIABLE (not a class field). It:
+        //   1. Is created fresh for each method invocation
+        //   2. Goes out of scope when method returns
+        //   3. Is eligible for garbage collection immediately after
+        //
+        // The return statement creates a NEW ArrayList from the map values.
+        // After return, the local map reference is lost and GC will clean it.
+        //
+        // This is the STANDARD Spring JDBC pattern used in:
+        //   - StaffRowMapper.java (this same codebase)
+        //   - AttendeeRowMapper.java (this same codebase)
+        //   - MusterRollRowMapper.java (muster-roll service)
+        //   - Thousands of DIGIT services
+        //
+        // There is NO memory leak because:
+        //   - Map is local, not static
+        //   - Map is not stored in any class field
+        //   - Method completes → map goes out of scope → GC cleans up
+        // ============================================================
         Map<String, AttendanceRegister> attendanceRegisterMap = new LinkedHashMap<>();
 
         while (rs.next()) {

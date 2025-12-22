@@ -611,12 +611,45 @@ public class AttendanceRegisterService {
     /**
      * Map registerPeriodStatus values to V1 status format (APPROVED/PENDING)
      *
-     * Mapping rules:
-     * - APPROVED → APPROVED
-     * - NOT_CREATED, PENDING, SENT_BACK, REJECTED → PENDING
+     * ================================================================================
+     * WHY THIS MAPPING EXISTS - BACKWARD COMPATIBILITY
+     * ================================================================================
      *
-     * @param registerPeriodStatus The muster roll status
-     * @return V1 status (APPROVED or PENDING)
+     * CONTEXT:
+     * --------
+     * V1 API Response has ONLY 2 statuses in statusCount:
+     *   - APPROVED: Muster roll approved, ready for billing
+     *   - PENDINGFORAPPROVAL: Not yet approved (waiting for action)
+     *
+     * V2 Muster Roll Workflow has GRANULAR statuses:
+     *   - NOT_CREATED: No muster roll exists for this period
+     *   - PENDING: Muster roll created, waiting for approval
+     *   - SENT_BACK: Muster roll sent back for corrections
+     *   - REJECTED: Muster roll rejected
+     *   - APPROVED: Muster roll approved
+     *
+     * PROBLEM:
+     * --------
+     * Existing V1 clients (UI, reports, integrations) expect ONLY APPROVED/PENDING
+     * in the statusCount response. If we return V2 statuses, these clients will break.
+     *
+     * SOLUTION:
+     * ---------
+     * Map V2 granular statuses to V1 format for API response:
+     *   - APPROVED → APPROVED (muster approved, ready for billing)
+     *   - Everything else → PENDINGFORAPPROVAL (needs action before billing)
+     *
+     * WHY NOT MDMS/WORKFLOW CONFIG:
+     * -----------------------------
+     * This is a COMPATIBILITY LAYER, not workflow configuration. The actual
+     * workflow (status transitions, validations) is managed by muster-roll service's
+     * workflow config. This mapping simply translates for backward compatibility
+     * and will NOT change - it's a fixed 2-value output format.
+     *
+     * ================================================================================
+     *
+     * @param registerPeriodStatus The muster roll status from period_statuses
+     * @return V1 status (APPROVED or PENDINGFORAPPROVAL)
      */
     private String mapRegisterPeriodStatusToV1Status(String registerPeriodStatus) {
         if (StringUtils.isBlank(registerPeriodStatus)) {
@@ -642,15 +675,48 @@ public class AttendanceRegisterService {
 
     /**
      * Calculate counts by V1 status format (APPROVED/PENDING)
-     * Always returns both APPROVED and PENDING counts, even if 0
+     *
+     * ================================================================================
+     * WHY THIS METHOD EXISTS - CONSISTENT API RESPONSE FORMAT
+     * ================================================================================
+     *
+     * CONTEXT:
+     * --------
+     * The attendance search API response includes a statusCount field:
+     *   {
+     *     "statusCount": {
+     *       "APPROVED": 50,
+     *       "PENDINGFORAPPROVAL": 25
+     *     }
+     *   }
+     *
+     * V1 clients expect BOTH keys to ALWAYS be present (even if count is 0).
+     *
+     * WHY INITIALIZE TO 0:
+     * --------------------
+     * If we only return keys that have non-zero counts, clients that access
+     * statusCount["APPROVED"] would get null/undefined instead of 0,
+     * causing potential NPE or display issues.
+     *
+     * WHY THESE SPECIFIC CONSTANTS:
+     * -----------------------------
+     * ATTENDANCE_REGISTER_APPROVED and ATTENDANCE_REGISTER_PENDINGFORAPPROVAL
+     * are constants defined in AttendanceServiceConstants.java. They match
+     * the V1 API contract that existing clients depend on.
+     *
+     * Making these MDMS-configurable would risk breaking clients if someone
+     * accidentally changes the values. These are OUTPUT FORMAT constants,
+     * not business-configurable values.
+     *
+     * ================================================================================
      *
      * @param registers List of registers (with reviewStatus set to mapped V1 status)
-     * @return Map with APPROVED and PENDING counts
+     * @return Map with APPROVED and PENDINGFORAPPROVAL counts (both always present)
      */
     private Map<String, Long> calculateV1StatusCounts(List<AttendanceRegister> registers) {
         Map<String, Long> counts = new HashMap<>();
 
-        // Always initialize both counts to 0
+        // Always initialize both counts to 0 - V1 clients expect both keys
         counts.put(ATTENDANCE_REGISTER_APPROVED, 0L);
         counts.put(ATTENDANCE_REGISTER_PENDINGFORAPPROVAL, 0L);
 

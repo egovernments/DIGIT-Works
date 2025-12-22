@@ -45,6 +45,57 @@ import java.util.stream.Collectors;
 import static org.egov.util.MusterRollServiceConstants.ACTION_APPROVE;
 import static org.egov.util.MusterRollServiceConstants.STATUS_APPROVED;
 
+/**
+ * MusterRollService
+ *
+ * ================================================================================
+ * PURPOSE & BUSINESS CONTEXT
+ * ================================================================================
+ *
+ * Core service for muster roll CRUD operations. Handles both V1 (legacy) and
+ * V2 (intermediate billing) flows with backward compatibility.
+ *
+ * WHAT IS A MUSTER ROLL?
+ * ----------------------
+ * A muster roll is a time-and-attendance record for workers enrolled in an
+ * attendance register. It aggregates daily attendance logs into a summary
+ * that can be used for payment calculation.
+ *
+ * V1 FLOW (Legacy):
+ * -----------------
+ * 1. Muster roll created for ENTIRE register date range
+ * 2. One register → One muster roll → One bill (at campaign end)
+ * 3. Register.reviewStatus updated when muster approved
+ * 4. No billingPeriodId field
+ *
+ * V2 FLOW (Intermediate Billing):
+ * --------------------------------
+ * 1. Muster roll created for SPECIFIC billing period
+ * 2. One register → MULTIPLE muster rolls → MULTIPLE bills (periodic)
+ * 3. Muster status published via Kafka to attendance service
+ * 4. billingPeriodId field REQUIRED
+ *
+ * KEY V2 ADDITIONS:
+ * -----------------
+ * - applyPeriodAwareDates(): Calculate register ∩ period date intersection
+ * - publishMusterRollStatusUpdateEvent(): Kafka event for status sync
+ * - validatePeriodNotLocked(): Check if period is locked after billing
+ * - V2-aware duplicate detection (by billingPeriodId, not dates)
+ *
+ * KAFKA TOPICS:
+ * -------------
+ * - save-muster-roll: Persister topic for create
+ * - update-muster-roll: Persister topic for update
+ * - calculate-muster-roll: Expense calculator consumption
+ * - muster-roll-status-update: V2 status sync to attendance (NEW)
+ *
+ * BACKWARD COMPATIBILITY:
+ * -----------------------
+ * All V1 flows continue to work unchanged. V2 detection is based solely on
+ * presence of billingPeriodId. If null/blank, V1 flow is used.
+ *
+ * ================================================================================
+ */
 @Service
 @Slf4j
 public class MusterRollService {
@@ -587,11 +638,46 @@ public class MusterRollService {
     /**
      * V2 Intermediate Billing - Publish Muster Roll Status Update Event
      *
-     * Publishes a Kafka event when muster roll status changes.
-     * Consumed by attendance service to update period_statuses asynchronously.
+     * ================================================================================
+     * WHY THIS METHOD EXISTS - EVENT-DRIVEN DENORMALIZATION
+     * ================================================================================
      *
-     * This eliminates the need for synchronous API calls during attendance search,
-     * improving scalability and performance.
+     * PROBLEM SOLVED:
+     * ---------------
+     * In V2, attendance search needs to show muster roll status for each period.
+     * Option A: API call to muster-roll service during search (SLOW - N API calls)
+     * Option B: Store status in attendance register (FAST - 0 API calls)
+     *
+     * We chose Option B: Event-driven denormalization.
+     *
+     * HOW IT WORKS:
+     * -------------
+     * 1. Muster roll status changes (CREATE or UPDATE workflow action)
+     * 2. This method publishes MusterRollStatusUpdateEvent to Kafka
+     * 3. Attendance service MusterRollStatusUpdateConsumer receives event
+     * 4. Consumer updates period_statuses JSONB in eg_wms_attendance_register
+     * 5. Next attendance search returns status from local data (no API call)
+     *
+     * WHY KAFKA (vs synchronous API):
+     * --------------------------------
+     * 1. DECOUPLED: Muster-roll doesn't need to know attendance service internals
+     * 2. RESILIENT: If attendance is down, events are queued (not lost)
+     * 3. SCALABLE: Can add more consumers without changing producer
+     * 4. PERFORMANCE: Non-blocking - muster update completes immediately
+     *
+     * WHY V2 ONLY:
+     * ------------
+     * V1 uses register.reviewStatus (1:1 mapping, updated synchronously).
+     * V2 uses period_statuses array (1:many mapping, updated via events).
+     * V1 events would confuse the consumer (no billingPeriodId to match).
+     *
+     * ERROR HANDLING:
+     * ---------------
+     * Catches exceptions but DOES NOT fail the main workflow.
+     * Reason: Event publishing is "best effort" - if it fails, the next
+     * muster update will send the correct status anyway.
+     *
+     * ================================================================================
      *
      * @param musterRoll The muster roll with updated status
      * @param previousStatus The previous status (for audit/logging)

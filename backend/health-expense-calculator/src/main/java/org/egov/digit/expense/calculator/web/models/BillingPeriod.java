@@ -17,8 +17,47 @@ import java.math.BigDecimal;
 /**
  * BillingPeriod
  *
+ * ================================================================================
+ * PURPOSE & BUSINESS CONTEXT
+ * ================================================================================
+ *
  * Represents an individual billing period generated from billing configuration.
  * Each project can have multiple billing periods based on the configured frequency.
+ *
+ * WHY BILLING PERIODS EXIST:
+ * --------------------------
+ * V1: One project → One bill (at campaign end)
+ * V2: One project → MULTIPLE bills (per period) + One aggregate bill (at end)
+ *
+ * Billing periods enable:
+ *   1. Periodic payments to workers during campaign (not just at end)
+ *   2. Better cash flow management for implementing agencies
+ *   3. Audit trail per period (each period has own status, bill, amounts)
+ *
+ * LIFECYCLE STATES:
+ * -----------------
+ * PENDING → PROCESSING → COMPLETED/BILLED
+ *
+ *   - PENDING: Period created but no billing action taken yet
+ *   - PROCESSING: Bill generation in progress (async)
+ *   - COMPLETED: Muster rolls approved but bill not yet generated
+ *   - BILLED: Intermediate bill successfully generated
+ *
+ * RELATIONSHIP TO OTHER ENTITIES:
+ * --------------------------------
+ *   BillingConfig 1 ──→ N BillingPeriod
+ *   BillingPeriod 1 ──→ N MusterRoll (via billingPeriodId)
+ *   BillingPeriod 1 ──→ 1 Bill (via billId after generation)
+ *
+ * DATA FLOW:
+ * ----------
+ * 1. BillingConfig created → PeriodGenerationService creates BillingPeriods
+ * 2. Proximity supervisor creates MusterRoll with billingPeriodId
+ * 3. District supervisor triggers bill generation for a period
+ * 4. IntermediateBillingService searches muster rolls by billingPeriodId
+ * 5. Bill generated → BillingPeriod updated with billId and status=BILLED
+ *
+ * ================================================================================
  *
  * @author DIGIT-Works
  */
