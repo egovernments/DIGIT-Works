@@ -45,6 +45,9 @@ import lombok.NoArgsConstructor;
  * - tenantId: ULB/State identifier (required)
  * - referenceId: Campaign/Project number (required)
  * - localityCode: Boundary locality code (required)
+ * - hierarchyType: Boundary hierarchy type for boundary service search (e.g., "MICROPLAN")
+ *                  Optional - Used to filter boundary search by hierarchy type
+ *                  If not provided, extracted from localityCode (prefix before underscore)
  * - musterRollId: List of muster roll IDs (V1 - explicit list)
  * - billingPeriodId: Period to bill (V2 - system finds muster rolls)
  * - fromPeriod/toPeriod: Date range filters (epoch milliseconds)

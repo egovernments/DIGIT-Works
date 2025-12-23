@@ -255,7 +255,7 @@ public class ExpenseCalculatorService {
 
         try {
             // Extract period information from first muster roll
-            Map<String, Object> periodMetadata = new java.util.HashMap<>();
+            Map<String, Object> periodMetadata = new HashMap<>();
             periodMetadata.put("isV2Mode", true);
             periodMetadata.put("billingPeriodId", periodId);
             periodMetadata.put("musterRollCount", musterRolls.size());
@@ -275,7 +275,7 @@ public class ExpenseCalculatorService {
             if (existingDetails != null) {
                 additionalDetails = mapper.convertValue(existingDetails, Map.class);
             } else {
-                additionalDetails = new java.util.HashMap<>();
+                additionalDetails = new HashMap<>();
             }
 
             additionalDetails.put("billingPeriod", periodMetadata);
@@ -693,7 +693,11 @@ public class ExpenseCalculatorService {
             throw customException;
 
         } catch (Exception e) {
+            // Fix: Add null check for projectHierarchy (fallback to project ID)
             String referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
+            if (referenceId == null) {
+                referenceId = projectResponse.getProject().get(0).getId();
+            }
 
             // V2: Check if billingPeriodId is present
             String billingPeriodId = calculationRequest.getCriteria().getBillingPeriodId();
@@ -1189,12 +1193,22 @@ public class ExpenseCalculatorService {
      * @return Response map with isBilled status and metadata
      */
     public HashMap<String, Object> checkBillStatusAndBuildResponse(HashMap<String, Object> request) {
-        // Extract parameters from request
+        // Extract and validate parameters from request
         Object requestInfoObj = request.get("requestInfo");
-        String tenantId = (String) request.get("tenantId");
-        String projectId = (String) request.get("projectId");
-        String billingPeriodId = (String) request.get("billingPeriodId");
-        String registerId = (String) request.get("registerId");
+
+        // Safe extraction with type validation
+        String tenantId = extractStringParam(request, "tenantId");
+        String projectId = extractStringParam(request, "projectId");
+        String billingPeriodId = extractStringParam(request, "billingPeriodId");
+        String registerId = extractStringParam(request, "registerId");
+
+        // Validate required parameters
+        if (tenantId == null || tenantId.isEmpty()) {
+            throw new CustomException("INVALID_REQUEST", "tenantId is required");
+        }
+        if (projectId == null || projectId.isEmpty()) {
+            throw new CustomException("INVALID_REQUEST", "projectId is required");
+        }
 
         log.info("checkBillStatusAndBuildResponse::Processing request - tenantId: {}, projectId: {}, periodId: {}, registerId: {}",
             tenantId, projectId, billingPeriodId, registerId);
@@ -1301,5 +1315,25 @@ public class ExpenseCalculatorService {
             // Fail-open: if we can't check, allow the update
             return false;
         }
+    }
+
+    /**
+     * Helper method to safely extract String parameter from request map
+     * Validates type and returns null if not found or not a String
+     *
+     * @param request Request map
+     * @param key Parameter key
+     * @return String value or null
+     */
+    private String extractStringParam(HashMap<String, Object> request, String key) {
+        Object value = request.get(key);
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof String) {
+            return (String) value;
+        }
+        throw new CustomException("INVALID_PARAMETER_TYPE",
+                "Parameter '" + key + "' must be a String, but got: " + value.getClass().getSimpleName());
     }
 }
