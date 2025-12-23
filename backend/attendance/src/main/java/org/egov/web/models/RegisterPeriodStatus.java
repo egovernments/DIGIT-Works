@@ -77,12 +77,6 @@ public class RegisterPeriodStatus {
     /**
      * Muster roll status for this period
      *
-     * Possible values:
-     * - "NOT_CREATED": No muster roll exists for this register+period
-     * - "PENDING": Muster roll exists but not yet approved
-     * - "APPROVED": Muster roll approved and ready for billing
-     * - "REJECTED": Muster roll rejected
-     * - "SENT_BACK": Muster roll sent back for corrections
      */
     @JsonProperty("status")
     @NotNull
