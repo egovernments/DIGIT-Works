@@ -9,13 +9,38 @@ import jakarta.validation.constraints.NotNull;
 /**
  * RegisterPeriodStatus
  *
- * Represents the muster roll status for a specific billing period.
- * This is stored as part of the period_statuses JSONB array in eg_wms_attendance_register.
+ * ================================================================================
+ * PURPOSE
+ * ================================================================================
  *
- * Updated asynchronously via Kafka events when muster-roll service changes status.
- * This eliminates the need for synchronous API calls during attendance search operations.
+ * Represents the muster roll status for a SPECIFIC billing period within an
+ * attendance register. Stored as part of the period_statuses JSONB array in
+ * eg_wms_attendance_register table.
  *
- * Example JSON structure in DB:
+ * WHY THIS EXISTS:
+ * ----------------
+ * In V1: One register → One muster roll → One status (reviewStatus field)
+ * In V2: One register → MULTIPLE muster rolls → MULTIPLE statuses (period_statuses array)
+ *
+ * Each entry in period_statuses tracks:
+ *   - Which billing period
+ *   - What is the muster roll status for that period
+ *   - Which muster roll ID (for reference)
+ *   - When was it last updated
+ *
+ * HOW IT'S UPDATED:
+ * -----------------
+ * When muster roll workflow status changes in muster-roll service:
+ *   1. Muster-roll service publishes Kafka event
+ *   2. MusterRollStatusUpdateConsumer receives event
+ *   3. Consumer updates this field via persister
+ *
+ * This is EVENT-DRIVEN denormalization for performance (no API calls during search).
+ *
+ * ================================================================================
+ * EXAMPLE JSON IN DATABASE
+ * ================================================================================
+ *
  * [
  *   {
  *     "periodId": "period-uuid-1",
@@ -30,6 +55,8 @@ import jakarta.validation.constraints.NotNull;
  *     "lastModifiedTime": 1709971200000
  *   }
  * ]
+ *
+ * ================================================================================
  */
 @Validated
 @Getter
@@ -77,9 +104,36 @@ public class RegisterPeriodStatus {
     @NotNull
     private Long lastModifiedTime;
 
-    /**
-     * Status constants for validation and consistency
-     */
+    // ================================================================================
+    // STATUS CONSTANTS - FOR CODE CONSISTENCY, NOT WORKFLOW CONFIGURATION
+    // ================================================================================
+    //
+    // WHY THESE CONSTANTS EXIST:
+    // --------------------------
+    // These are Java string constants to avoid "magic strings" in code.
+    // Instead of writing: if (status.equals("APPROVED"))
+    // We write: if (status.equals(STATUS_APPROVED))
+    //
+    // This provides:
+    //   - Compile-time checking (typos caught by compiler)
+    //   - IDE auto-completion
+    //   - Single source of truth for status values
+    //
+    // WHY NOT MDMS/WORKFLOW CONFIG:
+    // -----------------------------
+    // These constants are NOT workflow configuration. They are:
+    //   1. String values that match muster-roll workflow states
+    //   2. Used for equality checks in code
+    //   3. Read-only (never modified at runtime)
+    //
+    // The ACTUAL workflow (who can approve, what transitions are allowed)
+    // is configured in muster-roll service's workflow config in MDMS.
+    //
+    // ANALOGY:
+    //   - HTTP_STATUS_OK = 200 is a constant, not config
+    //   - STATUS_APPROVED = "APPROVED" is a constant, not config
+    //
+    // ================================================================================
     public static final String STATUS_NOT_CREATED = "NOT_CREATED";
     public static final String STATUS_PENDING = "PENDING";
     public static final String STATUS_APPROVED = "APPROVED";

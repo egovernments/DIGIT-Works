@@ -16,6 +16,42 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+/**
+ * BoundaryUtil
+ *
+ * ================================================================================
+ * PURPOSE & BUSINESS CONTEXT
+ * ================================================================================
+ *
+ * Utility class for fetching boundary/locality information from the Boundary Service.
+ * Used during bill generation to determine project hierarchy and locality structure.
+ *
+ * WHY THIS CLASS EXISTS:
+ * ----------------------
+ * Bill generation requires understanding the boundary hierarchy:
+ *   - Is this a district-level or village-level project?
+ *   - What are the child boundaries (for aggregation)?
+ *   - What is the locality code for register lookup?
+ *
+ * USAGE IN V2 INTERMEDIATE BILLING:
+ * ----------------------------------
+ * IntermediateBillingService calls this to:
+ *   1. Check if localityCode is district level (checkIfDistrictLevel)
+ *   2. Fetch child boundaries for register search
+ *   3. Validate locality codes in billing request
+ *
+ * BOUNDARY SERVICE DEPENDENCY:
+ * ----------------------------
+ * Calls: {boundaryServiceHost}/boundary-service/boundary/_search
+ * Parameters: tenantId, codes (locality), includeChildren
+ *
+ * ERROR HANDLING:
+ * ---------------
+ * Throws CustomException with BOUNDARY_SERVICE_SEARCH_ERROR if lookup fails.
+ * This is intentional - bill generation should fail if boundary is invalid.
+ *
+ * ================================================================================
+ */
 @Component
 @Slf4j
 public class BoundaryUtil {

@@ -189,7 +189,9 @@ public class PeriodAwareMusterRollService {
         AttendanceRegisterResponse registerResponse = fetchAttendanceRegister(requestInfo, tenantId, registerId);
         if (registerResponse == null || CollectionUtils.isEmpty(registerResponse.getAttendanceRegister())) {
             throw new CustomException("REGISTER_NOT_FOUND",
-                    "Attendance register not found for ID: " + registerId);
+                    "Attendance register not found. registerId: " + registerId +
+                    ", tenantId: " + tenantId +
+                    ", billingPeriodId: " + billingPeriod.getId());
         }
 
         AttendanceRegister register = registerResponse.getAttendanceRegister().get(0);

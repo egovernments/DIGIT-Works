@@ -11,8 +11,51 @@ import java.util.stream.Collectors;
 /**
  * MusterRollVersionHelper
  *
- * Utility class to help with V1/V2 backward compatibility.
- * Provides methods to detect and differentiate V1 vs V2 muster rolls.
+ * ================================================================================
+ * PURPOSE & BUSINESS CONTEXT
+ * ================================================================================
+ *
+ * Utility class to detect and differentiate V1 vs V2 muster rolls for backward
+ * compatibility during V2 Intermediate Billing migration.
+ *
+ * WHY V1/V2 DIFFERENTIATION EXISTS:
+ * ---------------------------------
+ * V1 (Legacy):
+ *   - One attendance register → One muster roll → One bill
+ *   - Muster roll dates = Register dates (full register period)
+ *   - No billingPeriodId field (NULL or blank)
+ *
+ * V2 (Intermediate Billing):
+ *   - One attendance register → MULTIPLE muster rolls → MULTIPLE intermediate bills
+ *   - Muster roll dates = Intersection of register dates AND billing period dates
+ *   - billingPeriodId field is REQUIRED (non-blank UUID)
+ *
+ * WHY THIS CLASS EXISTS (vs inline checks):
+ * ------------------------------------------
+ * 1. SINGLE SOURCE OF TRUTH: V1/V2 detection logic in one place
+ * 2. CONSISTENCY: All services use same detection logic
+ * 3. TESTABILITY: Can unit test version detection independently
+ * 4. MAINTENANCE: Change detection logic in one place, not 20+ files
+ *
+ * DETECTION LOGIC:
+ * ----------------
+ * The ONLY reliable way to detect V2 is: billingPeriodId IS NOT BLANK
+ *
+ * Why not use other fields?
+ *   - startDate/endDate: Both V1 and V2 have these
+ *   - referenceId: Both V1 and V2 have this (campaign number)
+ *   - status: Both V1 and V2 have status
+ *
+ * billingPeriodId is the UNIQUE field added for V2 - if present, it's V2.
+ *
+ * USAGE IN CODEBASE:
+ * ------------------
+ * - MusterRollService: Choose V1 vs V2 duplicate check
+ * - MusterRollValidator: Apply V1 vs V2 validation rules
+ * - AttendanceService: Update reviewStatus (V1) or period_statuses (V2)
+ * - ExpenseCalculator: Generate standard bill (V1) or intermediate bill (V2)
+ *
+ * ================================================================================
  */
 @Component
 @Slf4j

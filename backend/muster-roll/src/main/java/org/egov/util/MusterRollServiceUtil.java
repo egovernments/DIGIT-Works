@@ -39,6 +39,49 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * MusterRollServiceUtil
+ *
+ * ================================================================================
+ * PURPOSE & BUSINESS CONTEXT
+ * ================================================================================
+ *
+ * Utility class providing common methods used across muster roll service operations.
+ * Contains both V1 (legacy) and V2 (intermediate billing) helper methods.
+ *
+ * V1 METHODS (Legacy - existing from master):
+ * -------------------------------------------
+ * - getAuditDetails(): Standard DIGIT audit trail
+ * - populateAdditionalDetails(): Individual skill/bank details population
+ * - isTenantBasedSearch(): Search mode detection
+ * - fetchAttendanceRegister(): Fetch register from attendance service
+ * - updateAttendanceRegister(): Update register status
+ *
+ * V2 METHODS (Intermediate Billing - NEW):
+ * ----------------------------------------
+ * - fetchBillingPeriod(): Fetch billing period from expense-calculator
+ * - fetchBillingConfig(): Fetch campaign billing config
+ * - checkIfCampaignHasBillingConfig(): V2 detection check
+ * - findBillingPeriodForDates(): Auto-detect period from dates
+ * - validateDatesAgainstPeriod(): Validate muster dates vs period
+ * - getCampaignNumberFromRegister(): Extract campaign for billing
+ * - isPeriodBilled(): Check if period is locked (bill generated)
+ *
+ * WHY V2 METHODS ARE IN THIS UTIL:
+ * ---------------------------------
+ * 1. SEPARATION OF CONCERNS: API call logic separated from business logic
+ * 2. REUSABILITY: Multiple services need billing period lookups
+ * 3. TESTABILITY: Can mock util in service tests
+ * 4. CONSISTENCY: All API calls to expense-calculator go through here
+ *
+ * SERVICE DEPENDENCIES:
+ * ---------------------
+ * - Attendance Service: fetchAttendanceRegister, updateAttendanceRegister
+ * - Expense Calculator: fetchBillingPeriod, fetchBillingConfig, isPeriodBilled
+ * - MDMS: Skill level lookups
+ *
+ * ================================================================================
+ */
 @Component
 @Slf4j
 public class MusterRollServiceUtil {
@@ -317,7 +360,36 @@ public class MusterRollServiceUtil {
 
 	/**
 	 * Fetches billing period details from expense-calculator service.
-	 * Used for V2 period-aware muster roll creation.
+	 *
+	 * ================================================================================
+	 * V2 INTERMEDIATE BILLING - BILLING PERIOD LOOKUP
+	 * ================================================================================
+	 *
+	 * WHY THIS METHOD EXISTS:
+	 * -----------------------
+	 * In V2, muster roll dates must be calculated as:
+	 *   musterDates = intersection(registerDates, periodDates)
+	 *
+	 * To calculate this intersection, we need the billing period's start/end dates.
+	 * This method fetches that information from expense-calculator service.
+	 *
+	 * EXAMPLE:
+	 * --------
+	 * Register: Jan 1 - Dec 31, 2024
+	 * Period 1: Jan 1 - Jan 31, 2024
+	 * Muster 1: Jan 1 - Jan 31, 2024 (intersection)
+	 *
+	 * CALLER CONTEXT:
+	 * ---------------
+	 * Called by MusterRollService.applyPeriodAwareDates() during muster creation
+	 * when billingPeriodId is provided (V2 flow).
+	 *
+	 * ERROR HANDLING:
+	 * ---------------
+	 * Throws CustomException if period not found - this is intentional because
+	 * V2 flow REQUIRES valid billing period (unlike V1 which doesn't use periods).
+	 *
+	 * ================================================================================
 	 *
 	 * @param billingPeriodId Billing period ID
 	 * @param tenantId Tenant ID
@@ -607,7 +679,40 @@ public class MusterRollServiceUtil {
 
 	/**
 	 * Checks if a billing period has been billed (i.e., intermediate bill generated successfully).
-	 * This is used to lock muster rolls and attendance after billing.
+	 *
+	 * ================================================================================
+	 * V2 INTERMEDIATE BILLING - PERIOD LOCKING MECHANISM
+	 * ================================================================================
+	 *
+	 * WHY THIS METHOD EXISTS:
+	 * -----------------------
+	 * Once an intermediate bill is generated for a period, the underlying data
+	 * (muster rolls and attendance) must be LOCKED to maintain data consistency.
+	 *
+	 * If we allowed edits after billing:
+	 *   1. Bill says: 100 workers × 10 days = 1000 attendance units
+	 *   2. User edits attendance to: 100 workers × 5 days = 500 units
+	 *   3. NOW: Bill shows 1000, but actual data shows 500 = INCONSISTENCY
+	 *
+	 * This method is called BEFORE any muster roll update to check if locked.
+	 *
+	 * FAIL-OPEN PATTERN:
+	 * ------------------
+	 * If the check fails (API error, endpoint doesn't exist), we ALLOW the update.
+	 * This ensures system doesn't break during migration or if expense-calculator
+	 * is temporarily unavailable.
+	 *
+	 * WHY FAIL-OPEN NOT FAIL-CLOSED:
+	 * - V1 flows don't have this endpoint (would always fail)
+	 * - During migration, endpoint may not be deployed yet
+	 * - Better to allow occasional edit than block all updates
+	 *
+	 * CALLER CONTEXT:
+	 * ---------------
+	 * Called by MusterRollService.validatePeriodNotLocked() before update.
+	 * Controlled by config: period.locking.enabled=true
+	 *
+	 * ================================================================================
 	 *
 	 * V2 Flow: Checks by billingPeriodId if provided
 	 * V1 Flow: Checks by registerId + dates
@@ -654,9 +759,18 @@ public class MusterRollServiceUtil {
 			);
 
 			if (response != null && response.containsKey("isBilled")) {
-				Boolean isBilled = (Boolean) response.get("isBilled");
+				Object isBilledObj = response.get("isBilled");
+				boolean isBilled = false;
+
+				// Type-safe parsing: handle Boolean, String, or other types
+				if (isBilledObj instanceof Boolean) {
+					isBilled = (Boolean) isBilledObj;
+				} else if (isBilledObj instanceof String) {
+					isBilled = "true".equalsIgnoreCase((String) isBilledObj);
+				}
+
 				log.info("isPeriodBilled::Period billed status: {}", isBilled);
-				return Boolean.TRUE.equals(isBilled);
+				return isBilled;
 			}
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			// If endpoint doesn't exist or returns error, assume not billed (fail-open)
