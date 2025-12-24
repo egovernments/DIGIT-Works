@@ -1,6 +1,6 @@
 # Works Management System - Data Models Documentation
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** December 2025  
 **Project:** JAGAN NEW Project (Sujog)
 
@@ -8,30 +8,51 @@
 
 ## 1. Overview
 
-The Works Management System consists of three core data models that form the backbone of public works project management. These models track projects from initial proposal through contract execution and payment processing.
+The Works Management System consists of seven core data models that form the backbone of public works project management. These models track projects from initial proposal through contract execution, work measurement, attendance tracking, and payment processing.
 
 ### 1.1 Model Relationships
 
 ```
 ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
 │   PROJECT   │──────│   ESTIMATE  │──────│   CONTRACT  │
-│             │      │             │      │             │
 │ PJ/2025-26/ │      │ ES/2025-26/ │      │ WO/2025-26/ │
 │ 006635      │      │ 004597      │      │ 002981      │
-└─────────────┘      └─────────────┘      └─────────────┘
-      │                    │                    │
-      │                    │                    │
-   projectId ◄─────────────┘                    │
-                     estimateId ◄───────────────┘
+└──────┬──────┘      └──────┬──────┘      └──────┬──────┘
+       │                    │                    │
+       │              projectId                  │
+       │                    │                    │
+       │                    ▼                    │
+       │         ┌─────────────────┐             │
+       │         │  ORGANISATION   │◄────────────┤ orgId
+       │         │  ORG-002128     │             │
+       │         │  (JAG Org)      │             │
+       │         └─────────────────┘             │
+       │                                         │
+       │    ┌────────────────────────────────────┘
+       │    │
+       │    │  referenceId (contractNumber)
+       │    ▼
+       │  ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+       │  │ MUSTER ROLL │      │ MEASUREMENT │      │    BILL     │
+       │  │ MR/2025-26/ │      │ MB/2025-26/ │      │ PB/2025-26/ │
+       │  │ 12/23/001329│      │ 001597      │      │ 000567      │
+       │  └──────┬──────┘      └──────┬──────┘      └──────┬──────┘
+       │         │                    │                    │
+       └─────────┴────────────────────┴────────────────────┘
+                         All link to Contract
 ```
 
 ### 1.2 Summary Table
 
-| Model | Identifier | Status | Amount |
-|-------|------------|--------|--------|
+| Model | Identifier | Status | Amount/Value |
+|-------|------------|--------|--------------|
 | Project | `PJ/2025-26/006635` | Active | ₹10,00,000 (Estimated) |
 | Estimate | `ES/2025-26/004597` | Approved | ₹50,366.91 |
 | Contract | `WO/2025-26/002981` | Accepted | ₹50,367 |
+| Organisation | `ORG-002128` | Active | JAG Org |
+| Muster Roll | `MR/2025-26/12/23/001329` | Approved | ₹14,500 |
+| Measurement | `MB/2025-26/001597` | Approved | ₹561 |
+| Bill | `PB/2025-26/000567` | Approved | ₹1,222 |
 
 ---
 
@@ -283,75 +304,476 @@ Contract Line Item
 
 ---
 
-## 5. Data Model Relationships
+## 5. Organisation Model
 
-### 5.1 Entity Relationship Diagram
+The Organisation model represents contractor entities (CBOs - Community Based Organizations) that execute works contracts.
+
+### 5.1 Core Fields
+
+| Field | Type | Sample Value | Description |
+|-------|------|--------------|-------------|
+| id | UUID | `c3a3d64b-621c-4609-b2ad-a99f3d361577` | Unique identifier |
+| tenantId | String | `od.testing` | Multi-tenant identifier |
+| name | String | `JAG Org` | Organization name |
+| applicationNumber | String | `SR/ORG/22-12-2025/002128` | Application reference |
+| orgNumber | String | `ORG-002128` | Human-readable org number |
+| applicationStatus | String | `ACTIVE` | Application status |
+| dateOfIncorporation | Long | `1764613799000` | Incorporation date (epoch) |
+| isActive | Boolean | `true` | Active flag |
+
+### 5.2 Address Object
+
+| Field | Type | Sample Value |
+|-------|------|--------------|
+| id | UUID | `3d33e33a-8944-46cf-8633-91662eed5eee` |
+| doorNo | String | `1` |
+| street | String | `New cross street` |
+| city | String | `od.testing` |
+| boundaryType | String | `Ward` |
+| boundaryCode | String | `W001` |
+
+### 5.3 Contact Details
+
+| Field | Value |
+|-------|-------|
+| contactName | `Jagankumar` |
+| contactMobileNumber | `9996566433` |
+| contactEmail | `jagan.kumar@egov.org.in` |
+| individualId | `7ce51353-54ba-4282-badd-30ab3393e19c` |
+
+### 5.4 Identifiers
+
+| Type | Value | Status |
+|------|-------|--------|
+| PAN | `AAAAA1111D` | Active |
+
+### 5.5 Functions
+
+| Field | Value |
+|-------|-------|
+| applicationNumber | `SR/FUNC/22-12-2025/002128` |
+| type | `CBO.MSG` |
+| category | `CBO.NA` |
+| class | `A` |
+| validFrom | `1764613799000` |
+| validTo | `4078664999000` |
+| isActive | `true` |
+
+### 5.6 Additional Details
+
+| Field | Value |
+|-------|-------|
+| locality | `L002` |
+| registeredByDept | `SUJOG` |
+| deptRegistrationNum | `SUJOG-10101` |
+
+---
+
+## 6. Measurement Model
+
+The Measurement model (MB - Measurement Book) records actual work progress against contracted items, tracking quantities completed for each line item.
+
+### 6.1 Core Fields
+
+| Field | Type | Sample Value | Description |
+|-------|------|--------------|-------------|
+| id | UUID | `b1eebb30-d6ab-437a-9967-fb5ed1875164` | Unique identifier |
+| tenantId | String | `od.testing` | Multi-tenant identifier |
+| measurementNumber | String | `MB/2025-26/001597` | MB reference number |
+| referenceId | String | `WO/2025-26/002981` | **Link to Contract** |
+| entryDate | Long | `1766486931027` | Entry timestamp |
+| isActive | Boolean | `true` | Active flag |
+| wfStatus | String | `APPROVED` | Workflow status |
+
+### 6.2 Measures Array
+
+Each measure links to a contract line item via `targetId`:
+
+| Target ID | Type | L x B x H | Qty | Current Value | Cumulative | MB Amount |
+|-----------|------|-----------|-----|---------------|------------|-----------|
+| `5e1651de-...` | SOR | 1 x 1 x 1 | 1 | 1 | 1 | ₹550 |
+| `93e72408-...` | SOR | 0 x 0 x 0 | 0 | 0 | 0 | ₹0 |
+| `564f8da5-...` | NONSOR | 1 x 1 x 1 | 1 | 1 | 1 | ₹11 |
+
+### 6.3 Measure Structure
+
+```
+Measure
+├── id (UUID)
+├── referenceId ──────────────► Measurement.id
+├── targetId ─────────────────► Contract.lineItems.contractLineItemRef
+├── length, breadth, height
+├── numItems
+├── currentValue
+├── cumulativeValue
+├── isActive
+├── comments
+├── documents
+└── additionalDetails
+    ├── type (SOR/NONSOR)
+    ├── mbAmount
+    └── measureLineItems[]
+        ├── measureSummary
+        ├── length, width, height
+        ├── number, quantity
+        └── measurelineitemNo
+```
+
+### 6.4 Measure Line Items (SOR Example)
+
+| Field | Value |
+|-------|-------|
+| measureSummary | `one week` |
+| length | `1` |
+| width | `1` |
+| height | `1` |
+| number | `1` |
+| quantity | `1.0000` |
+| measurelineitemNo | `0` |
+
+### 6.5 Documents
+
+| Document Type | File Name | Status |
+|---------------|-----------|--------|
+| image/png | `db-diagram.png` | Active |
+
+### 6.6 Amount Summary
+
+| Category | Amount |
+|----------|--------|
+| SOR Amount | ₹550 |
+| Non-SOR Amount | ₹11 |
+| **Total Amount** | **₹561** |
+
+### 6.7 Additional Details
+
+| Field | Value |
+|-------|-------|
+| source | `Web` |
+| startDate | `1766341800000` |
+| endDate | `1766946599999` |
+| musterRollNumber | `MR/2025-26/12/23/001329` |
+
+---
+
+## 7. Muster Roll Model
+
+The Muster Roll model tracks daily attendance of workers assigned to a contract, enabling wage calculation and payment processing.
+
+### 7.1 Core Fields
+
+| Field | Type | Sample Value | Description |
+|-------|------|--------------|-------------|
+| id | UUID | `50481744-c8c9-47f9-96a2-7581b8a4cae4` | Unique identifier |
+| tenantId | String | `od.testing` | Multi-tenant identifier |
+| musterRollNumber | String | `MR/2025-26/12/23/001329` | MR reference |
+| registerId | UUID | `d71d6d8e-26f6-483f-b65b-390cedefc0bb` | Attendance register |
+| status | String | `ACTIVE` | Record status |
+| musterRollStatus | String | `APPROVED` | Workflow status |
+| referenceId | String | `WO/2025-26/002981` | **Link to Contract** |
+| serviceCode | String | `WORKS-CONTRACT` | Service identifier |
+
+### 7.2 Timeline
+
+| Field | Value |
+|-------|-------|
+| startDate | `1766341800000` (epoch) |
+| endDate | `1766860200000` (epoch) |
+
+### 7.3 Individual Entries
+
+| Individual ID | User ID | User Name | Skill Code | Total Attendance |
+|---------------|---------|-----------|------------|------------------|
+| `517d11b4-...` | `IND-2024-08-29-003481` | jay | `SOR_000371` | 1 |
+| `ebb60896-...` | `IND-2025-12-22-005545` | jagan | `SOR_000367` | 1 |
+
+### 7.4 Attendance Entry Structure
+
+```
+Individual Entry
+├── id (UUID)
+├── individualId ──────────────► Individual.id
+├── actualTotalAttendance
+├── modifiedTotalAttendance
+├── attendanceEntries[]
+│   ├── id
+│   ├── time (epoch)
+│   ├── attendance (0 or 1)
+│   └── auditDetails
+└── additionalDetails
+    ├── userId
+    ├── userName
+    └── skillCode
+```
+
+### 7.5 Attendance Entries (Sample - Jay)
+
+| Date (Epoch) | Attendance |
+|--------------|------------|
+| 1766860200000 | 0 (Absent) |
+| 1766773800000 | 0 (Absent) |
+| 1766687400000 | 0 (Absent) |
+| 1766601000000 | 0 (Absent) |
+| 1766514600000 | 0 (Absent) |
+| 1766428200000 | **1 (Present)** |
+| 1766341800000 | 0 (Absent) |
+
+### 7.6 Additional Details
+
+| Field | Value |
+|-------|-------|
+| ward | `W001` |
+| locality | `L002` |
+| orgId | `c3a3d64b-621c-4609-b2ad-a99f3d361577` |
+| orgName | `JAG Org` |
+| projectId | `PJ/2025-26/006635` |
+| projectName | `JAGAN NEW Project` |
+| projectType | `CC` |
+| contractId | `WO/2025-26/002981` |
+| executingAuthority | `IA` |
+| attendanceRegisterNo | `WR/2025-26/12/23/002411` |
+| attendanceRegisterName | `JAGAN NEW Project` |
+| amount | `14500` |
+
+---
+
+## 8. Bill Model
+
+The Bill model represents purchase bills or payment requests generated against contracts, supporting both payable amounts and deductions.
+
+### 8.1 Core Fields
+
+| Field | Type | Sample Value | Description |
+|-------|------|--------------|-------------|
+| id | UUID | `1084cd70-74d8-4875-949a-02c2e5d64649` | Unique identifier |
+| tenantId | String | `od.testing` | Multi-tenant identifier |
+| billNumber | String | `PB/2025-26/000567` | Bill reference |
+| billDate | Long | `1766514599000` | Bill date (epoch) |
+| businessService | String | `EXPENSE.PURCHASE` | Service type |
+| referenceId | String | `WO/2025-26/002981_PR_000588` | Contract + PR reference |
+| totalAmount | Number | `1222` | Total bill amount |
+| totalPaidAmount | Number | `0` | Amount paid |
+| status | String | `INWORKFLOW` | Record status |
+| wfStatus | String | `APPROVED` | Workflow status |
+| paymentStatus | String | `null` | Payment status |
+
+### 8.2 Timeline
+
+| Field | Value |
+|-------|-------|
+| fromPeriod | `1766428200000` |
+| toPeriod | `1776104999999` |
+| dueDate | `0` |
+
+### 8.3 Payer Details
+
+| Field | Value |
+|-------|-------|
+| id | `83280dc5-6582-4b05-9d92-3ae30e0e47ed` |
+| tenantId | `od.testing` |
+| type | `od.testing` |
+| identifier | `003` |
+| status | `ACTIVE` |
+
+### 8.4 Payee Details (Bill Detail)
+
+| Field | Value |
+|-------|-------|
+| id | `9ab35999-25c8-4464-a3b1-2ca5a2f9a78b` |
+| type | `ORG` |
+| identifier | `c3a3d64b-621c-4609-b2ad-a99f3d361577` |
+| status | `ACTIVE` |
+
+### 8.5 Line Items
+
+| Head Code | Type | Amount | Status |
+|-----------|------|--------|--------|
+| MC | PAYABLE | ₹1,111 | ACTIVE |
+| GST | PAYABLE | ₹111 | ACTIVE |
+| ITTDSOTI | DEDUCTION | ₹22 | ACTIVE |
+
+### 8.6 Payable Line Items
+
+| Head Code | Type | Amount | Status |
+|-----------|------|--------|--------|
+| ITTDSOTI | PAYABLE | ₹22 | ACTIVE |
+| PURCHASE | PAYABLE | ₹1,200 | ACTIVE |
+
+### 8.7 Bill Structure
+
+```
+Bill
+├── id (UUID)
+├── billNumber
+├── billDate
+├── businessService
+├── referenceId ──────────────► Contract Reference
+├── totalAmount
+├── payer
+│   ├── id, type, identifier
+│   └── status
+├── billDetails[]
+│   ├── id
+│   ├── billId ───────────────► Bill.id
+│   ├── referenceId ──────────► Contract.contractNumber
+│   ├── totalAmount
+│   ├── payee
+│   │   ├── type (ORG)
+│   │   └── identifier ───────► Organisation.id
+│   ├── lineItems[]
+│   │   ├── headCode (MC, GST, ITTDSOTI)
+│   │   ├── type (PAYABLE/DEDUCTION)
+│   │   └── amount
+│   └── payableLineItems[]
+│       ├── headCode
+│       ├── type (PAYABLE)
+│       └── amount
+└── additionalDetails
+    ├── invoiceNumber
+    ├── invoiceDate
+    ├── documents[]
+    └── mbValidationData
+```
+
+### 8.8 Amount Calculation
+
+| Description | Amount |
+|-------------|--------|
+| Material Cost (MC) | ₹1,111 |
+| GST | ₹111 |
+| **Gross Amount** | **₹1,222** |
+| Less: TDS (ITTDSOTI) | (₹22) |
+| **Net Payable** | **₹1,200** |
+
+### 8.9 Documents
+
+| Document Type | File Name |
+|---------------|-----------|
+| VENDOR_INVOICE | `Project-PJ_2025-26_006635.pdf` |
+
+### 8.10 Additional Details
+
+| Field | Value |
+|-------|-------|
+| ward | `W001` |
+| locality | `L002` |
+| orgName | `JAG Org` |
+| projectId | `PJ/2025-26/006635` |
+| projectName | `JAGAN NEW Project` |
+| invoiceNumber | `INV111` |
+| invoiceDate | `1766514599000` |
+| totalBillAmount | `1222` |
+| organisationType.code | `CBO` |
+| organisationType.name | `Community based organization` |
+
+### 8.11 MB Validation Data
+
+| Field | Value |
+|-------|-------|
+| allMeasurementsIds | `["MB/2025-26/001597"]` |
+| totalMaterialAmount | `0` |
+| totalPaidAmountForSuccessfulBills | `0` |
+
+---
+
+## 9. Data Model Relationships
+
+## 9. Data Model Relationships
+
+### 9.1 Entity Relationship Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                            WORKS MANAGEMENT SYSTEM                          │
+│                              (7 Core Models)                                │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────┐
 │      PROJECT        │
 ├─────────────────────┤
 │ PK: id              │
-│ projectNumber       │
-│ name                │
-│ projectType         │
-│ description         │
-│ address             │
-│ documents[]         │
-│ additionalDetails   │
-│ auditDetails        │
-└─────────┬───────────┘
-          │
-          │ 1:N
-          ▼
-┌─────────────────────┐
-│      ESTIMATE       │
-├─────────────────────┤
-│ PK: id              │
-│ FK: projectId ──────┼──────► PROJECT.id
-│ estimateNumber      │
-│ wfStatus            │
-│ estimateDetails[]   │
-│ additionalDetails   │
-│ auditDetails        │
-└─────────┬───────────┘
-          │
-          │ 1:N
-          ▼
-┌─────────────────────┐
-│      CONTRACT       │
-├─────────────────────┤
-│ PK: id              │
-│ contractNumber      │
-│ orgId ──────────────┼──────► ORGANIZATION.id
-│ wfStatus            │
-│ lineItems[]         │
-│   └─ estimateId ────┼──────► ESTIMATE.id
-│   └─ estimateLineId ┼──────► ESTIMATE_DETAIL.id
-│ documents[]         │
-│ additionalDetails   │
-│ auditDetails        │
-└─────────────────────┘
+│ projectNumber       │◄─────────────────────────────────────────────────────┐
+│ name                │                                                      │
+│ projectType         │                                                      │
+│ description         │                                                      │
+│ address             │                                                      │
+│ documents[]         │                                                      │
+└─────────┬───────────┘                                                      │
+          │ 1:N                                                              │
+          ▼                                                                  │
+┌─────────────────────┐                                                      │
+│      ESTIMATE       │                                                      │
+├─────────────────────┤                                                      │
+│ PK: id              │                                                      │
+│ FK: projectId ──────┼──────► PROJECT.id                                    │
+│ estimateNumber      │                                                      │
+│ wfStatus            │                                                      │
+│ estimateDetails[]   │                                                      │
+└─────────┬───────────┘                                                      │
+          │ 1:N                                                              │
+          ▼                                                                  │
+┌─────────────────────┐       ┌─────────────────────┐                        │
+│      CONTRACT       │       │    ORGANISATION     │                        │
+├─────────────────────┤       ├─────────────────────┤                        │
+│ PK: id              │       │ PK: id              │                        │
+│ contractNumber      │◄──────│ orgNumber           │                        │
+│ FK: orgId ──────────┼──────►│ name                │                        │
+│ wfStatus            │       │ applicationStatus   │                        │
+│ lineItems[]         │       │ contactDetails[]    │                        │
+│   └─ estimateId ────┼──────►│ identifiers[]       │                        │
+└─────────┬───────────┘       │ functions[]         │                        │
+          │                   │ orgAddress[]        │                        │
+          │                   └─────────────────────┘                        │
+          │                                                                  │
+          │ 1:N (referenceId = contractNumber)                               │
+          │                                                                  │
+          ├──────────────────────┬──────────────────────┐                    │
+          ▼                      ▼                      ▼                    │
+┌─────────────────────┐ ┌─────────────────────┐ ┌─────────────────────┐      │
+│    MUSTER ROLL      │ │    MEASUREMENT      │ │        BILL         │      │
+├─────────────────────┤ ├─────────────────────┤ ├─────────────────────┤      │
+│ PK: id              │ │ PK: id              │ │ PK: id              │      │
+│ musterRollNumber    │ │ measurementNumber   │ │ billNumber          │      │
+│ FK: referenceId ────┼─┼─► CONTRACT.number   │ │ FK: referenceId ────┼──────┘
+│ registerId          │ │ measures[]          │ │ FK: payee.id ───────┼──► ORG.id
+│ individualEntries[] │ │   └─ targetId ──────┼─┼─► CONTRACT.lineItem │
+│   └─ attendanceEntries                      │ │ billDetails[]       │
+│ musterRollStatus    │ │ wfStatus            │ │   └─ lineItems[]    │
+└─────────────────────┘ │ documents[]         │ │   └─ payableItems[] │
+                        └─────────────────────┘ │ wfStatus            │
+                                                └─────────────────────┘
 ```
 
-### 5.2 Key Linkages
+### 9.2 Key Linkages
 
 | Source | Field | Target | Field |
 |--------|-------|--------|-------|
 | Estimate | projectId | Project | id |
+| Contract | orgId | Organisation | id |
 | Contract.lineItems | estimateId | Estimate | id |
 | Contract.lineItems | estimateLineItemId | Estimate.estimateDetails | id |
-| Contract.lineItems.amountBreakups | estimateAmountBreakupId | Estimate.estimateDetails.amountDetail | id |
+| Muster Roll | referenceId | Contract | contractNumber |
+| Muster Roll | additionalDetails.orgId | Organisation | id |
+| Measurement | referenceId | Contract | contractNumber |
+| Measurement.measures | targetId | Contract.lineItems | contractLineItemRef |
+| Bill | referenceId | Contract | contractNumber (partial) |
+| Bill.billDetails.payee | identifier | Organisation | id |
+| Bill.additionalDetails | mbValidationData.allMeasurementsIds | Measurement | measurementNumber |
+
+### 9.3 Workflow Status Flow
+
+```
+PROJECT ──► ESTIMATE ──► CONTRACT ──► MUSTER ROLL ──► MEASUREMENT ──► BILL
+(Active)   (Approved)   (Accepted)    (Approved)      (Approved)     (Approved)
+```
 
 ---
 
-## 6. JSON Samples
+## 10. JSON Samples
 
-### 6.1 Project Model (Complete)
+## 10. JSON Samples
+
+### 10.1 Project Model (Complete)
 
 ```json
 {
@@ -399,7 +821,7 @@ Contract Line Item
 }
 ```
 
-### 6.2 Estimate Detail Item (SOR)
+### 10.2 Estimate Detail Item (SOR)
 
 ```json
 {
@@ -428,7 +850,7 @@ Contract Line Item
 }
 ```
 
-### 6.3 Contract Line Item
+### 10.3 Contract Line Item
 
 ```json
 {
@@ -451,36 +873,178 @@ Contract Line Item
 }
 ```
 
+### 10.4 Organisation (Summary)
+
+```json
+{
+  "id": "c3a3d64b-621c-4609-b2ad-a99f3d361577",
+  "tenantId": "od.testing",
+  "name": "JAG Org",
+  "orgNumber": "ORG-002128",
+  "applicationNumber": "SR/ORG/22-12-2025/002128",
+  "applicationStatus": "ACTIVE",
+  "contactDetails": [
+    {
+      "contactName": "Jagankumar",
+      "contactMobileNumber": "9996566433",
+      "contactEmail": "jagan.kumar@egov.org.in"
+    }
+  ],
+  "identifiers": [
+    { "type": "PAN", "value": "AAAAA1111D", "isActive": true }
+  ],
+  "functions": [
+    { "type": "CBO.MSG", "category": "CBO.NA", "class": "A" }
+  ]
+}
+```
+
+### 10.5 Measurement (Measure Item)
+
+```json
+{
+  "id": "287d28d4-97ae-4b48-a982-011639804866",
+  "referenceId": "b1eebb30-d6ab-437a-9967-fb5ed1875164",
+  "targetId": "5e1651de-1f3c-46ba-b966-e932323b4d93",
+  "length": 1,
+  "breadth": 1,
+  "height": 1,
+  "numItems": 1,
+  "currentValue": 1,
+  "cumulativeValue": 1,
+  "isActive": true,
+  "additionalDetails": {
+    "type": "SOR",
+    "mbAmount": 550,
+    "measureLineItems": [
+      {
+        "width": "1",
+        "height": "1",
+        "length": "1",
+        "number": "1",
+        "quantity": "1.0000",
+        "measureSummary": "one week"
+      }
+    ]
+  }
+}
+```
+
+### 10.6 Muster Roll (Individual Entry)
+
+```json
+{
+  "id": "50df17eb-ad94-4a23-aed3-5d6b373b3b9b",
+  "individualId": "517d11b4-210d-43bd-bc42-1806452ebb5d",
+  "actualTotalAttendance": 1,
+  "attendanceEntries": [
+    { "time": 1766428200000, "attendance": 1 },
+    { "time": 1766341800000, "attendance": 0 }
+  ],
+  "additionalDetails": {
+    "userId": "IND-2024-08-29-003481",
+    "userName": "jay",
+    "skillCode": "SOR_000371"
+  }
+}
+```
+
+### 10.7 Bill (Line Item)
+
+```json
+{
+  "id": "5a09d1de-01e1-4ebe-b959-c1d69e2cfb26",
+  "tenantId": "od.testing",
+  "headCode": "MC",
+  "amount": 1111,
+  "type": "PAYABLE",
+  "paidAmount": 0,
+  "status": "ACTIVE"
+}
+```
+
 ---
 
-## 7. Appendix
+## 11. Appendix
 
-### 7.1 Status Codes
+### 11.1 Status Codes
 
 | Status | Description |
 |--------|-------------|
 | ACTIVE | Record is active and valid |
 | APPROVED | Workflow approved |
 | ACCEPTED | Contract accepted by contractor |
+| INWORKFLOW | Currently in approval workflow |
 
-### 7.2 Document Types
+### 11.2 Workflow Status Codes
 
-| Code | Description |
-|------|-------------|
-| PROJECT_PROPOSAL | Initial project proposal document |
-| FINALIZED_WORKLIST | Finalized work list |
-| FEASIBILITY_ANALYSIS | Feasibility study document |
-| ESTIMATE_DOC_DESIGN_DOCUMENT | Design document for estimate |
-| WORKORDER_WORK_AGREEMENT | Work order agreement |
+| wfStatus | Used In | Description |
+|----------|---------|-------------|
+| APPROVED | Estimate, Muster Roll, Measurement, Bill | Approved by authority |
+| ACCEPTED | Contract | Accepted by contractor |
 
-### 7.3 Category Types
+### 11.3 Document Types
+
+| Code | Description | Used In |
+|------|-------------|---------|
+| PROJECT_PROPOSAL | Initial project proposal document | Project |
+| FINALIZED_WORKLIST | Finalized work list | Project |
+| FEASIBILITY_ANALYSIS | Feasibility study document | Project |
+| ESTIMATE_DOC_DESIGN_DOCUMENT | Design document for estimate | Estimate |
+| WORKORDER_WORK_AGREEMENT | Work order agreement | Contract |
+| VENDOR_INVOICE | Vendor invoice | Bill |
+| img_measurement_book | Measurement book image | Measurement |
+
+### 11.4 Category Types
 
 | Code | Description |
 |------|-------------|
 | SOR | Schedule of Rates item |
-| NON-SOR | Non-scheduled item |
+| NON-SOR / NONSOR | Non-scheduled item |
 | OVERHEAD | Overhead charges (SC, GST) |
+
+### 11.5 Head Codes (Bill)
+
+| Code | Type | Description |
+|------|------|-------------|
+| MC | PAYABLE | Material Cost |
+| GST | PAYABLE | Goods and Service Tax |
+| ITTDSOTI | DEDUCTION | Income Tax TDS |
+| ITTDSOTI | PAYABLE | TDS Payable to Government |
+| PURCHASE | PAYABLE | Net Purchase Amount |
+
+### 11.6 Organisation Types
+
+| Code | Description |
+|------|-------------|
+| CBO | Community Based Organization |
+| CBO.MSG | CBO - MSG Type |
+| CBO.NA | CBO - NA Category |
+
+### 11.7 Business Services
+
+| Code | Description |
+|------|-------------|
+| ESTIMATE | Estimate service |
+| CONTRACT | Contract/Work Order service |
+| EXPENSE.PURCHASE | Purchase bill service |
+| WORKS-CONTRACT | Works contract service |
+
+### 11.8 Number Formats
+
+| Entity | Format | Example |
+|--------|--------|---------|
+| Project | `PJ/YYYY-YY/NNNNNN` | `PJ/2025-26/006635` |
+| Estimate | `ES/YYYY-YY/NNNNNN` | `ES/2025-26/004597` |
+| Contract | `WO/YYYY-YY/NNNNNN` | `WO/2025-26/002981` |
+| Measurement | `MB/YYYY-YY/NNNNNN` | `MB/2025-26/001597` |
+| Muster Roll | `MR/YYYY-YY/MM/DD/NNNNNN` | `MR/2025-26/12/23/001329` |
+| Bill | `PB/YYYY-YY/NNNNNN` | `PB/2025-26/000567` |
+| Organisation | `ORG-NNNNNN` | `ORG-002128` |
+| Attendance Register | `WR/YYYY-YY/MM/DD/NNNNNN` | `WR/2025-26/12/23/002411` |
+| Individual | `IND-YYYY-MM-DD-NNNNNN` | `IND-2025-12-22-005545` |
 
 ---
 
 *Document generated for Works Management System reference architecture.*
+*Version 1.1 - Updated with Organisation, Measurement, Muster Roll, and Bill models.*
