@@ -1,0 +1,251 @@
+[
+  {
+    "id": "f4f19d2e-4e99-44dd-b5bb-cd8b7629a4e4",
+    "tenantid": "od",
+    "uniqueidentifier": "InboxBillConfig",
+    "schemacode": "commonMuktaUiConfig.InboxBillConfig",
+    "data": {
+      "type": "inbox",
+      "label": "ES_COMMON_INBOX",
+      "sections": {
+        "links": {
+          "show": true,
+          "children": {},
+          "uiConfig": {
+            "label": "ACTION_TEST_BILL_HEADER",
+            "links": [
+              {
+                "url": "/employee/contracts/search-contract?status=ACCEPTED",
+                "text": "EXP_CREATE_BILL",
+                "roles": [
+                  "BILL_CREATOR"
+                ]
+              },
+              {
+                "url": "/employee/expenditure/search-bill",
+                "text": "EXP_SEARCH_BILL",
+                "roles": []
+              }
+            ],
+            "logoIcon": {
+              "component": "BillsNewIcon",
+              "customClass": "inbox-links-icon"
+            }
+          }
+        },
+        "filter": {
+          "show": true,
+          "label": "ES_COMMON_FILTERS",
+          "uiConfig": {
+            "type": "filter",
+            "fields": [
+              {
+                "type": "radio",
+                "label": "",
+                "disable": false,
+                "populators": {
+                  "name": "assignee",
+                  "styles": {
+                    "gap": "1rem",
+                    "flexDirection": "column"
+                  },
+                  "options": [
+                    {
+                      "code": "ASSIGNED_TO_ME",
+                      "name": "COMMON_INBOX_ASSIGNED_TO_ME"
+                    },
+                    {
+                      "code": "ASSIGNED_TO_ALL",
+                      "name": "COMMON_INBOX_ASSIGNED_TO_ALL"
+                    }
+                  ],
+                  "optionsKey": "name",
+                  "innerStyles": {
+                    "display": "flex"
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "locationdropdown",
+                "label": "COMMON_WARD",
+                "disable": false,
+                "populators": {
+                  "name": "ward",
+                  "type": "ward",
+                  "optionsKey": "name",
+                  "defaultText": "COMMON_SELECT_WARD",
+                  "selectedText": "COMMON_SELECTED",
+                  "allowMultiSelect": true
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "workflowstatesfilter",
+                "disable": false,
+                "populators": {
+                  "name": "state",
+                  "labelPrefix": "WF_",
+                  "componentLabel": "COMMON_WORKFLOW_STATES"
+                },
+                "isMandatory": false
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 0,
+            "primaryLabel": "ES_COMMON_APPLY",
+            "defaultValues": {
+              "state": "",
+              "assignee": {
+                "code": "ASSIGNED_TO_ALL",
+                "name": "COMMON_INBOX_ASSIGNED_TO_ALL"
+              }
+            },
+            "secondaryLabel": ""
+          }
+        },
+        "search": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "fields": [
+              {
+                "type": "text",
+                "label": "WORKS_BILL_NUMBER",
+                "disable": false,
+                "populators": {
+                  "name": "billNumber",
+                  "error": "Enter valid bill number",
+                  "validation": {
+                    "pattern": "^[A-Za-z0-9\\\\/-]*$",
+                    "minlength": 2
+                  }
+                },
+                "preProcess": {
+                  "convertStringToRegEx": [
+                    "populators.validation.pattern"
+                  ]
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "text",
+                "label": "WORKS_PROJECT_ID",
+                "disable": false,
+                "populators": {
+                  "name": "projectId",
+                  "error": "Enter valid project number",
+                  "validation": {
+                    "pattern": "^[A-Za-z0-9\\\\/-]*$",
+                    "minlength": 2
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "text",
+                "label": "WORKS_CONTRACT_INBOX_ID",
+                "disable": false,
+                "populators": {
+                  "name": "referenceId",
+                  "error": "Enter valid contract number",
+                  "validation": {
+                    "pattern": "^[A-Za-z0-9\\\\/-]*$",
+                    "minlength": 2
+                  }
+                },
+                "isMandatory": false
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 1,
+            "primaryLabel": "ES_COMMON_SEARCH",
+            "defaultValues": {
+              "projectId": "",
+              "billNumber": "",
+              "referenceId": ""
+            },
+            "secondaryLabel": "ES_COMMON_CLEAR_SEARCH"
+          }
+        },
+        "searchResult": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "columns": [
+              {
+                "label": "WORKS_BILL_NUMBER",
+                "jsonPath": "businessObject.billNumber",
+                "additionalCustomization": true
+              },
+              {
+                "label": "ES_COMMON_PROJECT_NAME",
+                "jsonPath": "businessObject.additionalDetails.projectName"
+              },
+              {
+                "label": "ES_COMMON_CBO_NAME",
+                "jsonPath": "businessObject.additionalDetails.orgName"
+              },
+              {
+                "label": "COMMON_ASSIGNEE",
+                "jsonPath": "ProcessInstance.assignes[0].name"
+              },
+              {
+                "label": "COMMON_WORKFLOW_STATES",
+                "jsonPath": "ProcessInstance.state.state",
+                "additionalCustomization": true
+              },
+              {
+                "label": "ES_COMMON_AMOUNT",
+                "jsonPath": "businessObject.totalAmount",
+                "additionalCustomization": true
+              },
+              {
+                "label": "COMMON_SLA_DAYS",
+                "jsonPath": "businessObject.serviceSla",
+                "additionalCustomization": true
+              }
+            ],
+            "resultsJsonPath": "items",
+            "enableColumnSort": true,
+            "enableGlobalSearch": false
+          }
+        }
+      },
+      "apiDetails": {
+        "masterName": "commonUiConfig",
+        "moduleName": "BillInboxConfig",
+        "requestBody": {
+          "inbox": {
+            "moduleSearchCriteria": {},
+            "processSearchCriteria": {
+              "moduleName": "expense",
+              "businessService": [
+                "EXPENSE.SUPERVISION",
+                "EXPENSE.WAGES",
+                "EXPENSE.PURCHASE"
+              ]
+            }
+          }
+        },
+        "serviceName": "/inbox/v2/_search",
+        "requestParam": {},
+        "tableFormJsonPath": "requestBody.inbox",
+        "filterFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+        "searchFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+        "minParametersForFilterForm": 0,
+        "minParametersForSearchForm": 0
+      },
+      "screenName": "InboxBillConfig",
+      "postProcessResult": false,
+      "additionalSections": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728991880613,
+    "lastmodifiedtime": 1728991880613
+  }
+]

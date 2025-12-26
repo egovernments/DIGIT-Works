@@ -1,0 +1,50 @@
+[
+  {
+    "id": "938485cf-001e-49fa-b54a-1802fc09e920",
+    "tenantid": "od",
+    "uniqueidentifier": "NON-SOR",
+    "schemacode": "works.Category",
+    "data": {
+      "code": "NON-SOR",
+      "name": "non-SOR",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971765604,
+    "lastmodifiedtime": 1728971765604
+  },
+  {
+    "id": "cb179a8f-a4d9-417c-aa97-dc4169baa887",
+    "tenantid": "od",
+    "uniqueidentifier": "SOR",
+    "schemacode": "works.Category",
+    "data": {
+      "code": "SOR",
+      "name": "SOR",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971775902,
+    "lastmodifiedtime": 1728971775902
+  },
+  {
+    "id": "85cdb88d-5b31-4355-90ae-124073a0ca9d",
+    "tenantid": "od",
+    "uniqueidentifier": "OVERHEAD",
+    "schemacode": "works.Category",
+    "data": {
+      "code": "OVERHEAD",
+      "name": "Overhead",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971786829,
+    "lastmodifiedtime": 1728971786829
+  }
+]

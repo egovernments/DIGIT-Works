@@ -1,0 +1,116 @@
+[
+  {
+    "id": "22e5defa-dd56-40cb-8707-5502b6184e71",
+    "tenantid": "od",
+    "uniqueidentifier": "CBO.CLF",
+    "schemacode": "common-masters.OrgType",
+    "data": {
+      "code": "CBO.CLF",
+      "active": true,
+      "parent": "CBO",
+      "description": "Community Based Organization - Community Level Federation",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728972724395,
+    "lastmodifiedtime": 1728972724395
+  },
+  {
+    "id": "ed1545a1-3f94-446c-8429-403dca1f6d40",
+    "tenantid": "od",
+    "uniqueidentifier": "CBO.ALF",
+    "schemacode": "common-masters.OrgType",
+    "data": {
+      "code": "CBO.ALF",
+      "active": true,
+      "parent": "CBO",
+      "description": "Community Based Organization - Area Level Federation",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728972743220,
+    "lastmodifiedtime": 1728972743220
+  },
+  {
+    "id": "453997ba-b795-4d32-9bf2-f0042cc80446",
+    "tenantid": "od",
+    "uniqueidentifier": "CBO.SDA",
+    "schemacode": "common-masters.OrgType",
+    "data": {
+      "code": "CBO.SDA",
+      "active": true,
+      "parent": "CBO",
+      "description": "Community Based Organization - Slum Dwellers Association",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728972755774,
+    "lastmodifiedtime": 1728972755774
+  },
+  {
+    "id": "8bf0a258-db73-4690-bf20-8ef861f6c838",
+    "tenantid": "od",
+    "uniqueidentifier": "CBO.MSG",
+    "schemacode": "common-masters.OrgType",
+    "data": {
+      "code": "CBO.MSG",
+      "active": true,
+      "parent": "CBO",
+      "description": "Community Based Organization - Mission Shakti Group",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728972773670,
+    "lastmodifiedtime": 1728972773670
+  },
+  {
+    "id": "0266ddb4-7409-4c34-bf83-5da54f63bf1c",
+    "tenantid": "od",
+    "uniqueidentifier": "VEN.NA",
+    "schemacode": "common-masters.OrgType",
+    "data": {
+      "code": "VEN.NA",
+      "active": true,
+      "parent": "VEN",
+      "description": "Vendor/Supplier - Not Applicable",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728972785606,
+    "lastmodifiedtime": 1728972785606
+  },
+  {
+    "id": "8ffcdeef-8fc4-4d78-8d20-18c5f06444f7",
+    "tenantid": "od",
+    "uniqueidentifier": "VEN.CMS",
+    "schemacode": "common-masters.OrgType",
+    "data": {
+      "code": "VEN.CMS",
+      "active": true,
+      "parent": "VEN",
+      "description": "Vendor/Supplier - Construction Material Supplier",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728972798066,
+    "lastmodifiedtime": 1728972798066
+  }
+]

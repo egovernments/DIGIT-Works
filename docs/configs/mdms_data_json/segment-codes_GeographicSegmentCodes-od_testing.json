@@ -1,0 +1,18 @@
+[
+  {
+    "id": "7ae41a07-9e5e-4c79-9b13-7c5f2e54b088",
+    "tenantid": "od.testing",
+    "uniqueidentifier": "26.OD-TEST",
+    "schemacode": "segment-codes.GeographicSegmentCodes",
+    "data": {
+      "id": "26",
+      "code": "OD-TEST",
+      "name": "Testing"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729779344375,
+    "lastmodifiedtime": 1729779344375
+  }
+]

@@ -1,0 +1,322 @@
+[
+  {
+    "id": "b7f3d141-ca74-403a-adc3-5628866eae77",
+    "tenantid": "od",
+    "uniqueidentifier": "CreatePurchaseBillConfig",
+    "schemacode": "commonMuktaUiConfig.CreatePurchaseBillConfig",
+    "data": {
+      "form": [
+        {
+          "body": [
+            {
+              "key": "basicDetails_purchaseBillNumber",
+              "type": "text",
+              "label": "WORKS_BILL_NUMBER",
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_purchaseBillNumber",
+                "customClass": "field-value-no-border",
+                "customStyle": {
+                  "display": "none"
+                }
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.customStyle.display"
+                ]
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_workOrderNumber",
+              "type": "text",
+              "label": "WORKS_ORDER_NO",
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_workOrderNumber",
+                "customClass": "fc-header-texts"
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_projectID",
+              "type": "text",
+              "label": "WORKS_PROJECT_ID",
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_projectID",
+                "customClass": "fc-header-texts"
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_projectDesc",
+              "type": "text",
+              "label": "PROJECTS_DESCRIPTION",
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_projectDesc",
+                "customClass": "fc-header-texts"
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_location",
+              "type": "text",
+              "label": "ES_COMMON_LOCATION",
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_location",
+                "customClass": "fc-header-texts"
+              },
+              "isMandatory": false
+            }
+          ],
+          "head": "",
+          "navLink": "PB_Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "MBDetailes",
+              "type": "component",
+              "component": "MBDetailes",
+              "withoutLabel": true
+            }
+          ],
+          "head": "EXP_MB_DETAILES",
+          "navLink": "PB_Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "invoiceDetails_organisationType",
+              "type": "dropdown",
+              "label": "EXP_ORGANISATION_TYPE",
+              "disable": false,
+              "populators": {
+                "name": "invoiceDetails_organisationType",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "name"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "invoiceDetails_vendor",
+              "type": "dropdown",
+              "label": "EXP_VENDOR",
+              "disable": false,
+              "populators": {
+                "name": "invoiceDetails_vendor",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "name"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "invoiceDetails_vendorId",
+              "type": "text",
+              "label": "EXP_VENDOR_ID",
+              "disable": true,
+              "populators": {
+                "name": "invoiceDetails_vendorId",
+                "customClass": "disabled-text-field"
+              },
+              "isMandatory": true
+            }
+          ],
+          "head": "EXP_ORGANIZATION_DETAILS",
+          "navLink": "PB_Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "invoiceDetails_invoiceNumber",
+              "type": "text",
+              "label": "EXP_INVOICE_NUMBER",
+              "disable": false,
+              "populators": {
+                "name": "invoiceDetails_invoiceNumber",
+                "error": "WORKS_REQUIRED_ERR",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .\\\\-_@\\\\']*$",
+                  "maxlength": 64,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "invoiceDetails_invoiceDate",
+              "type": "date",
+              "label": "EXP_INVOICE_DATE",
+              "disable": false,
+              "populators": {
+                "name": "invoiceDetails_invoiceDate",
+                "error": "WORKS_REQUIRED_ERR",
+                "validation": {
+                  "max": "currentDate"
+                }
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.validation.max"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "invoiceDetails_gst",
+              "type": "amount",
+              "label": "EXP_GST_RS",
+              "inline": true,
+              "disable": false,
+              "populators": {
+                "name": "invoiceDetails_gst",
+                "error": "ERR_INVALID_AMOUNT",
+                "validation": {
+                  "max": 5000000,
+                  "min": 0,
+                  "step": "0.01",
+                  "pattern": "^[1-9]\\\\d*(\\\\.\\\\d+)?$",
+                  "maxlength": 16
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": false
+            }
+          ],
+          "head": "EXP_INVOICE_DETAILS",
+          "navLink": "PB_Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "invoiceDetails_materialCost",
+              "type": "amount",
+              "label": "EXP_MATERIALCOST_RS",
+              "inline": true,
+              "disable": false,
+              "populators": {
+                "name": "invoiceDetails_materialCost",
+                "error": "ERR_INVALID_MAT_COST",
+                "validation": {
+                  "max": 5000000,
+                  "min": 0,
+                  "step": "0.01",
+                  "pattern": "^[1-9]\\\\d*(\\\\.\\\\d+)?$",
+                  "maxlength": 16
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "billDetails_billDate",
+              "type": "date",
+              "label": "WORKS_BILL_DATE",
+              "disable": true,
+              "populators": {
+                "max": "currentDate",
+                "name": "billDetails_billDate",
+                "error": "WORKS_REQUIRED_ERR"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.max"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "billDetails_billAmt",
+              "type": "text",
+              "label": "EXP_BILL_AMOUNT",
+              "inline": true,
+              "disable": true,
+              "populators": {
+                "name": "billDetails_billAmt",
+                "error": "EXP_BILL_AMOUNT_ERR",
+                "customClass": "fc-header-texts"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.customStyle.error"
+                ]
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "deductionsDetails",
+              "type": "component",
+              "component": "DeductionsTable",
+              "withoutLabel": true
+            },
+            {
+              "key": "totalBillAmount",
+              "type": "component",
+              "component": "TotalBillAmount",
+              "withoutLabel": true
+            }
+          ],
+          "head": "EXP_BILL_DETAILS",
+          "navLink": "PB_Details"
+        },
+        {
+          "body": [
+            {
+              "name": "uploadedDocs",
+              "type": "documentUpload",
+              "error": "WORKS_REQUIRED_ERR",
+              "module": "Expenditure",
+              "customClass": "",
+              "localePrefix": "EXPENDITURE",
+              "withoutLabel": true
+            }
+          ],
+          "head": "",
+          "navLink": "PB_Details"
+        }
+      ],
+      "metaData": {
+        "showNavs": false
+      },
+      "screenName": "CreatePurchaseBillConfig",
+      "defaultValues": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728991609027,
+    "lastmodifiedtime": 1728991609027
+  }
+]

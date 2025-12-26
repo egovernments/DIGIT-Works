@@ -1,0 +1,21 @@
+[
+  {
+    "id": "74dbe6fc-6bb6-4790-9506-5e3c17fc75d1",
+    "tenantid": "od",
+    "uniqueidentifier": "CBOMyWorks",
+    "schemacode": "commonUiConfig.CBOMyWorks",
+    "data": {
+      "acceptCode": "PENDING_FOR_ACCEPTANCE",
+      "screenName": "CBOMyWorks",
+      "searchCriteria": [
+        "ACCEPTED",
+        "PENDING_FOR_ACCEPTANCE"
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728978257706,
+    "lastmodifiedtime": 1728978257706
+  }
+]

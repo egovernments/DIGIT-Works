@@ -1,0 +1,17 @@
+[
+  {
+    "id": "4e06f3d5-edf7-41b0-8429-6e2b4032e19f",
+    "tenantid": "od",
+    "uniqueidentifier": "CBOMusterInboxConfig",
+    "schemacode": "commonUiConfig.CBOMusterInboxConfig",
+    "data": {
+      "screenName": "CBOMusterInboxConfig",
+      "reSubmitCode": "PENDINGFORCORRECTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728978087292,
+    "lastmodifiedtime": 1728978087292
+  }
+]

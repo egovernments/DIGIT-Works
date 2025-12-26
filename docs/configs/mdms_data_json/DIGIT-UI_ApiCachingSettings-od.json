@@ -1,0 +1,39 @@
+[
+  {
+    "id": "6095e5c2-adf2-4f17-b348-af32e8127443",
+    "tenantid": "od",
+    "uniqueidentifier": "egov-mdms-service",
+    "schemacode": "DIGIT-UI.ApiCachingSettings",
+    "data": {
+      "serviceName": "egov-mdms-service",
+      "moduleSettings": [
+        {
+          "moduleName": "FSM",
+          "cacheTimeInSecs": 7200
+        }
+      ],
+      "cacheTimeInSecs": 3600,
+      "debounceTimeInMS": 100
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728976253774,
+    "lastmodifiedtime": 1728976253774
+  },
+  {
+    "id": "359d4b74-7a98-4637-aa9c-ebdf7684aa80",
+    "tenantid": "od",
+    "uniqueidentifier": "localization",
+    "schemacode": "DIGIT-UI.ApiCachingSettings",
+    "data": {
+      "serviceName": "localization",
+      "cacheTimeInSecs": 86400
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728976267863,
+    "lastmodifiedtime": 1728976267863
+  }
+]

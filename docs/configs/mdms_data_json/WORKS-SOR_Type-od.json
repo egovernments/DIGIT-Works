@@ -1,0 +1,81 @@
+[
+  {
+    "id": "542ab6dc-5499-4337-a7df-8d92678c1492",
+    "tenantid": "od",
+    "uniqueidentifier": "M",
+    "schemacode": "WORKS-SOR.Type",
+    "data": {
+      "code": "M",
+      "active": true,
+      "description": "Material"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1703822162417,
+    "lastmodifiedtime": 1703822162417
+  },
+  {
+    "id": "e1666a71-6b6b-4659-9cb7-7bec4ddba1bd",
+    "tenantid": "od",
+    "uniqueidentifier": "W",
+    "schemacode": "WORKS-SOR.Type",
+    "data": {
+      "code": "W",
+      "active": true,
+      "description": "Works"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704211052739,
+    "lastmodifiedtime": 1733819369216
+  },
+  {
+    "id": "93c94ca0-ac06-4a20-b8cf-60b89bc6e6f9",
+    "tenantid": "od",
+    "uniqueidentifier": "L",
+    "schemacode": "WORKS-SOR.Type",
+    "data": {
+      "code": "L",
+      "active": true,
+      "description": "Labour"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704211155265,
+    "lastmodifiedtime": 1704211155265
+  },
+  {
+    "id": "35e7211f-83d1-4dd4-9cea-eccc6e727cab",
+    "tenantid": "od",
+    "uniqueidentifier": "E",
+    "schemacode": "WORKS-SOR.Type",
+    "data": {
+      "code": "E",
+      "active": true,
+      "description": "Machinery"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261069032,
+    "lastmodifiedtime": 1712207819345
+  },
+  {
+    "id": "39c355ec-822a-464e-9791-28e3a3fe06ec",
+    "tenantid": "od",
+    "uniqueidentifier": "test",
+    "schemacode": "WORKS-SOR.Type",
+    "data": {
+      "code": "test",
+      "active": true
+    },
+    "isactive": false,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1726142193792,
+    "lastmodifiedtime": 1737028020189
+  }
+]

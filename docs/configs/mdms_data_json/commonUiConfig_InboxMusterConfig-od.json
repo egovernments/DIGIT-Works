@@ -1,0 +1,188 @@
+[
+  {
+    "id": "7d9ace36-eb9c-43e0-bbfc-f9d93d1b7e2a",
+    "tenantid": "od",
+    "uniqueidentifier": "CommonUiConfigInboxMusterConfig",
+    "schemacode": "commonUiConfig.InboxMusterConfig",
+    "data": {
+      "type": "inbox",
+      "label": "ES_COMMON_INBOX",
+      "sections": {
+        "links": {
+          "show": true,
+          "children": {},
+          "uiConfig": {
+            "label": "ES_COMMON_ATTENDENCEMGMT",
+            "links": [
+              {
+                "url": "/employee/attendencemgmt/search-attendance",
+                "text": "ATM_SEARCH_ATTENDANCE",
+                "roles": []
+              }
+            ],
+            "logoIcon": {
+              "component": "BioMetricIcon",
+              "customClass": "search-icon--projects"
+            }
+          }
+        },
+        "filter": {
+          "show": true,
+          "label": "ES_COMMON_FILTERS",
+          "uiConfig": {
+            "type": "filter",
+            "fields": [
+              {
+                "type": "dateRange",
+                "label": "ATM_MUSTER_ROLL_DATE_RANGE",
+                "disable": false,
+                "populators": {
+                  "name": "musterRolldateRange"
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "dropdown",
+                "label": "ES_COMMON_STATUS",
+                "disable": false,
+                "populators": {
+                  "name": "musterRollStatus",
+                  "options": [],
+                  "optionsKey": "i18nKey",
+                  "optionsCustomStyle": {
+                    "top": "2.3rem"
+                  }
+                },
+                "isMandatory": false
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 0,
+            "primaryLabel": "ES_COMMON_APPLY",
+            "defaultValues": {
+              "musterRollStatus": "",
+              "musterRolldateRange": ""
+            },
+            "secondaryLabel": ""
+          }
+        },
+        "search": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "fields": [
+              {
+                "type": "text",
+                "label": "ATM_NAME_OF_WORK",
+                "disable": false,
+                "populators": {
+                  "name": "attendanceRegisterName",
+                  "validation": {
+                    "minlength": 2
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "dropdown",
+                "label": "ATM_IMPLEMENTING_AGENCY",
+                "disable": false,
+                "populators": {
+                  "name": "iaip",
+                  "mdmsConfig": {
+                    "masterName": "Department",
+                    "moduleName": "common-masters",
+                    "localePrefix": "COMMON_MASTERS_DEPARTMENT"
+                  },
+                  "optionsKey": "name",
+                  "optionsCustomStyle": {
+                    "top": "2.3rem"
+                  }
+                },
+                "isMandatory": false
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 1,
+            "primaryLabel": "ES_COMMON_SEARCH",
+            "defaultValues": {
+              "iaip": "",
+              "attendanceRegisterName": ""
+            },
+            "secondaryLabel": "ES_COMMON_CLEAR_SEARCH"
+          }
+        },
+        "searchResult": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "columns": [
+              {
+                "label": "ATM_MUSTER_ROLL_ID",
+                "jsonPath": "businessObject.musterRollNumber",
+                "additionalCustomization": true
+              },
+              {
+                "label": "ATM_NAME_OF_WORK",
+                "jsonPath": "businessObject.additionalDetails.attendanceRegisterName"
+              },
+              {
+                "label": "ATM_ATTENDANCE_WEEK",
+                "jsonPath": "businessObject",
+                "additionalCustomization": true
+              },
+              {
+                "label": "ATM_IMPLEMENTING_AGENCY",
+                "jsonPath": "businessObject.additionalDetails.orgName"
+              },
+              {
+                "label": "ATM_NO_OF_INDIVIDUALS",
+                "jsonPath": "businessObject.individualEntries",
+                "additionalCustomization": true
+              },
+              {
+                "label": "ATM_SLA",
+                "jsonPath": "businessObject.serviceSla",
+                "additionalCustomization": true
+              }
+            ],
+            "resultsJsonPath": "items",
+            "enableColumnSort": true,
+            "enableGlobalSearch": false
+          }
+        }
+      },
+      "apiDetails": {
+        "masterName": "commonUiConfig",
+        "moduleName": "AttendanceInboxConfig",
+        "requestBody": {
+          "inbox": {
+            "moduleSearchCriteria": {},
+            "processSearchCriteria": {
+              "moduleName": "muster-roll-service",
+              "businessService": [
+                "muster-roll-approval"
+              ]
+            }
+          }
+        },
+        "serviceName": "/inbox/v2/_search",
+        "requestParam": {},
+        "tableFormJsonPath": "requestBody.inbox",
+        "filterFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+        "searchFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+        "minParametersForSearchForm": 1
+      },
+      "screenName": "CommonUiConfigInboxMusterConfig",
+      "postProcessResult": true,
+      "additionalSections": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980870950,
+    "lastmodifiedtime": 1728980870950
+  }
+]

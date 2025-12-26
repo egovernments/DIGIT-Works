@@ -1,0 +1,198 @@
+[
+  {
+    "id": "5b1ee995-2a4c-4576-aad3-187772a21dfa",
+    "tenantid": "od",
+    "uniqueidentifier": "SearchOrganisationConfig",
+    "schemacode": "commonMuktaUiConfig.SearchOrganisationConfig",
+    "data": {
+      "type": "search",
+      "label": "WORKS_SEARCH_ORGANISATION",
+      "sections": {
+        "search": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "fields": [
+              {
+                "type": "locationdropdown",
+                "label": "COMMON_WARD",
+                "disable": false,
+                "populators": {
+                  "name": "boundaryCode",
+                  "type": "ward",
+                  "optionsKey": "i18nKey",
+                  "defaultText": "COMMON_SELECT_WARD",
+                  "selectedText": "COMMON_SELECTED",
+                  "allowMultiSelect": false
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "dropdown",
+                "label": "MASTERS_ORGANISATION_TYPE",
+                "disable": false,
+                "populators": {
+                  "name": "type",
+                  "mdmsConfig": {
+                    "filter": "[?(@.active==true)].parent",
+                    "select": "(data)=>{ return Array.isArray(data['common-masters'].OrgType) && Digit.Utils.getUnique(data['common-masters'].OrgType).map(ele=>({code:ele,name:'COMMON_MASTERS_ORG_'+ele}))}",
+                    "masterName": "OrgType",
+                    "moduleName": "common-masters",
+                    "localePrefix": "COMMON_MASTERS_ORG"
+                  },
+                  "optionsKey": "name"
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "text",
+                "label": "MASTERS_NAME_OF_ORGN",
+                "disable": false,
+                "populators": {
+                  "name": "name",
+                  "validation": {
+                    "pattern": {},
+                    "maxlength": 140
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "text",
+                "label": "MASTERS_ORGANISATION_ID",
+                "disable": false,
+                "populators": {
+                  "name": "orgNumber",
+                  "error": "PROJECT_PATTERN_ERR_MSG",
+                  "validation": {
+                    "minlength": 2
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "key": "createdFrom",
+                "type": "date",
+                "label": "CREATED_FROM_DATE",
+                "disable": false,
+                "populators": {
+                  "max": "currentDate",
+                  "name": "createdFrom"
+                },
+                "preProcess": {
+                  "updateDependent": [
+                    "populators.max"
+                  ]
+                },
+                "isMandatory": false
+              },
+              {
+                "key": "createdTo",
+                "type": "date",
+                "label": "CREATED_TO_DATE",
+                "disable": false,
+                "populators": {
+                  "max": "currentDate",
+                  "name": "createdTo",
+                  "error": "DATE_VALIDATION_MSG"
+                },
+                "preProcess": {
+                  "updateDependent": [
+                    "populators.max"
+                  ]
+                },
+                "isMandatory": false,
+                "additionalValidation": {
+                  "keys": {
+                    "end": "createdTo",
+                    "start": "createdFrom"
+                  },
+                  "type": "date"
+                }
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 1,
+            "primaryLabel": "ES_COMMON_SEARCH",
+            "defaultValues": {
+              "name": "",
+              "type": "",
+              "createdTo": "",
+              "orgNumber": "",
+              "createdFrom": "",
+              "boundaryCode": "",
+              "applicationStatus": ""
+            },
+            "secondaryLabel": "ES_COMMON_CLEAR_SEARCH"
+          }
+        },
+        "searchResult": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "columns": [
+              {
+                "label": "MASTERS_ORGANISATION_ID",
+                "jsonPath": "orgNumber",
+                "additionalCustomization": true
+              },
+              {
+                "label": "MASTERS_NAME_OF_ORGN",
+                "jsonPath": "name"
+              },
+              {
+                "label": "MASTERS_ORGANISATION_TYPE",
+                "jsonPath": "functions[0].type",
+                "additionalCustomization": true
+              },
+              {
+                "label": "MASTERS_ORGANISATION_SUB_TYPE",
+                "jsonPath": "functions[0].category",
+                "additionalCustomization": true
+              },
+              {
+                "label": "MASTERS_ADDRESS",
+                "jsonPath": "orgAddress[0].boundaryCode",
+                "additionalCustomization": true
+              },
+              {
+                "label": "CORE_COMMON_STATUS",
+                "jsonPath": "applicationStatus",
+                "additionalCustomization": true
+              }
+            ],
+            "resultsJsonPath": "organisations",
+            "enableColumnSort": true,
+            "enableGlobalSearch": false
+          }
+        }
+      },
+      "actionLink": "masters/create-organization",
+      "actionRole": "MUKTA_ADMIN",
+      "apiDetails": {
+        "masterName": "commonUiConfig",
+        "moduleName": "SearchOrganisationConfig",
+        "requestBody": {
+          "apiOperation": "SEARCH",
+          "SearchCriteria": {}
+        },
+        "serviceName": "/org-services/organisation/v1/_search",
+        "requestParam": {},
+        "tableFormJsonPath": "requestBody.Pagination",
+        "filterFormJsonPath": "requestBody.SearchCriteria",
+        "searchFormJsonPath": "requestBody.SearchCriteria",
+        "minParametersForSearchForm": 1
+      },
+      "screenName": "SearchOrganisationConfig",
+      "actionLabel": "MASTERS_ADD_NEW_ORGANISATION",
+      "additionalSections": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728992370753,
+    "lastmodifiedtime": 1728992370753
+  }
+]

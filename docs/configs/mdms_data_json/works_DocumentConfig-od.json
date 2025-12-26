@@ -1,0 +1,386 @@
+[
+  {
+    "id": "759b57fa-0ad8-487c-abee-2dc74cfb0aae",
+    "tenantid": "od",
+    "uniqueidentifier": "Measurement",
+    "schemacode": "works.DocumentConfig",
+    "data": {
+      "module": "Measurement",
+      "documents": [
+        {
+          "code": "MB_MEASUREMENT_BOOK",
+          "name": "img_measurement_book",
+          "active": true,
+          "isMandatory": true,
+          "maxSizeInMB": null,
+          "showTextInput": false,
+          "maxFilesAllowed": 5,
+          "allowedFileTypes": [
+            "jpeg",
+            "jpg",
+            "png"
+          ]
+        }
+      ],
+      "bannerLabel": "MEASUREMENT_UPLOAD_BANNER_LABEL",
+      "maxSizeInMB": 2,
+      "allowedFileTypes": [
+        "jpeg",
+        "jpg",
+        "png"
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980391133,
+    "lastmodifiedtime": 1728980391133
+  },
+  {
+    "id": "29333b63-5a74-45fd-bc65-f4f9870b27b3",
+    "tenantid": "od",
+    "uniqueidentifier": "Bill",
+    "schemacode": "works.DocumentConfig",
+    "data": {
+      "module": "Bill",
+      "documents": [
+        {
+          "code": "MEASUREMENT_BOOK",
+          "name": "doc_measurement_book",
+          "active": true,
+          "isMandatory": true,
+          "maxSizeInMB": null,
+          "showTextInput": true,
+          "maxFilesAllowed": 2,
+          "allowedFileTypes": []
+        },
+        {
+          "code": "MATERIAL_UTILIZATION_LOG",
+          "name": "doc_material_utilization_log",
+          "active": true,
+          "isMandatory": false,
+          "maxSizeInMB": null,
+          "showTextInput": false,
+          "maxFilesAllowed": 0,
+          "allowedFileTypes": []
+        },
+        {
+          "code": "LABOUR_UTILIZATION_LOG",
+          "name": "doc_labour_utilization_log",
+          "active": true,
+          "isMandatory": false,
+          "maxSizeInMB": null,
+          "showTextInput": false,
+          "maxFilesAllowed": 0,
+          "allowedFileTypes": []
+        }
+      ],
+      "bannerLabel": "",
+      "maxSizeInMB": 2,
+      "allowedFileTypes": [
+        "pdf",
+        "docx"
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980407652,
+    "lastmodifiedtime": 1728980407652
+  },
+  {
+    "id": "26fa887a-0263-4dc8-a9e8-62e32fddbfd9",
+    "tenantid": "od",
+    "uniqueidentifier": "Expenditure",
+    "schemacode": "works.DocumentConfig",
+    "data": {
+      "module": "Expenditure",
+      "documents": [
+        {
+          "code": "VENDOR_INVOICE",
+          "name": "doc_vendor_invoice",
+          "active": true,
+          "isMandatory": true,
+          "maxSizeInMB": null,
+          "showTextInput": false,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": [
+            "pdf"
+          ]
+        },
+        {
+          "code": "OTHERS",
+          "name": "doc_others",
+          "active": true,
+          "isMandatory": false,
+          "maxSizeInMB": null,
+          "showTextInput": true,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": []
+        }
+      ],
+      "bannerLabel": "PURCHASE_BILL_FILE_COMPONENT_BANNER",
+      "maxSizeInMB": 5,
+      "allowedFileTypes": [
+        "pdf"
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980419540,
+    "lastmodifiedtime": 1728980419540
+  },
+  {
+    "id": "43d8ed13-39ae-4c4d-89c7-4a8a0591bf5b",
+    "tenantid": "od",
+    "uniqueidentifier": "Work Order",
+    "schemacode": "works.DocumentConfig",
+    "data": {
+      "module": "Work Order",
+      "documents": [
+        {
+          "code": "WORKORDER_WORK_AGREEMENT",
+          "name": "doc_WORKORDER_WORK_AGREEMENT",
+          "active": true,
+          "isMandatory": false,
+          "maxSizeInMB": 5,
+          "showTextInput": false,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": [
+            "pdf",
+            "doc",
+            "docx",
+            "xlsx",
+            "xls",
+            "jpeg",
+            "jpg",
+            "png"
+          ]
+        },
+        {
+          "code": "WORKORDER_TERMS_CONDITIONS",
+          "name": "doc_WORKORDER_TERMS_CONDITIONS",
+          "active": true,
+          "isMandatory": false,
+          "maxSizeInMB": 5,
+          "showTextInput": false,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": [
+            "pdf",
+            "doc",
+            "docx",
+            "xlsx",
+            "xls",
+            "jpeg",
+            "jpg",
+            "png"
+          ]
+        },
+        {
+          "code": "OTHERS",
+          "name": "doc_others",
+          "active": true,
+          "isMandatory": false,
+          "maxSizeInMB": 5,
+          "showTextInput": true,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": [
+            "pdf",
+            "doc",
+            "docx",
+            "xlsx",
+            "xls",
+            "jpeg",
+            "jpg",
+            "png"
+          ]
+        }
+      ],
+      "bannerLabel": "COMMON_FILE_COMPONENT_BANNER",
+      "maxSizeInMB": 5,
+      "allowedFileTypes": [
+        "pdf",
+        "doc",
+        "docx",
+        "xlsx",
+        "xls",
+        "jpeg",
+        "jpg",
+        "png"
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980435196,
+    "lastmodifiedtime": 1728980435196
+  },
+  {
+    "id": "64804e5f-ca5f-4a64-98b4-2da9283dc6ab",
+    "tenantid": "od",
+    "uniqueidentifier": "Estimate",
+    "schemacode": "works.DocumentConfig",
+    "data": {
+      "module": "Estimate",
+      "documents": [
+        {
+          "code": "DESIGN_DOCUMENT",
+          "name": "ESTIMATE_DOC_DESIGN_DOCUMENT",
+          "active": true,
+          "isMandatory": false,
+          "maxSizeInMB": null,
+          "showTextInput": false,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": [
+            "pdf",
+            "docx",
+            "xlsx",
+            "xls",
+            "jpeg",
+            "jpg",
+            "doc"
+          ]
+        },
+        {
+          "code": "OTHERS",
+          "name": "ESTIMATE_DOC_OTHERS",
+          "active": true,
+          "isMandatory": false,
+          "maxSizeInMB": null,
+          "showTextInput": true,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": [
+            "pdf",
+            "docx",
+            "xlsx",
+            "xls",
+            "jpeg",
+            "jpg",
+            "doc"
+          ]
+        }
+      ],
+      "bannerLabel": "ESTIMATE_UPLOAD_BANNER_TEXT",
+      "maxSizeInMB": 5,
+      "allowedFileTypes": [
+        "pdf",
+        "docx",
+        "xlsx",
+        "xls",
+        "jpeg",
+        "jpg",
+        "doc"
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980449384,
+    "lastmodifiedtime": 1728980449384
+  },
+  {
+    "id": "802b11d7-fe3c-485d-89dd-e4fed978db64",
+    "tenantid": "od",
+    "uniqueidentifier": "Project",
+    "schemacode": "works.DocumentConfig",
+    "data": {
+      "module": "Project",
+      "documents": [
+        {
+          "code": "PROJECT_PROPOSAL",
+          "name": "noSubProject_doc_project_proposal",
+          "active": true,
+          "isMandatory": true,
+          "maxSizeInMB": 5,
+          "showTextInput": false,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": [
+            "pdf",
+            "doc",
+            "docx",
+            "xlsx",
+            "xls",
+            "jpeg",
+            "jpg",
+            "png"
+          ]
+        },
+        {
+          "code": "FINALIZED_WORKLIST",
+          "name": "noSubProject_doc_finalized_worklist",
+          "active": true,
+          "isMandatory": true,
+          "maxSizeInMB": 5,
+          "showTextInput": false,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": [
+            "pdf",
+            "doc",
+            "docx",
+            "xlsx",
+            "xls",
+            "jpeg",
+            "jpg",
+            "png"
+          ]
+        },
+        {
+          "code": "FEASIBILITY_ANALYSIS",
+          "name": "noSubProject_doc_feasibility_analysis",
+          "active": true,
+          "isMandatory": true,
+          "maxSizeInMB": 5,
+          "showTextInput": false,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": [
+            "pdf",
+            "doc",
+            "docx",
+            "xlsx",
+            "xls",
+            "jpeg",
+            "jpg",
+            "png"
+          ]
+        },
+        {
+          "code": "OTHERS",
+          "name": "noSubProject_doc_others",
+          "active": true,
+          "isMandatory": false,
+          "maxSizeInMB": 5,
+          "showTextInput": true,
+          "maxFilesAllowed": 1,
+          "allowedFileTypes": [
+            "pdf",
+            "doc",
+            "docx",
+            "xlsx",
+            "xls",
+            "jpeg",
+            "jpg",
+            "png"
+          ]
+        }
+      ],
+      "bannerLabel": "PROJECT_BANNER",
+      "maxSizeInMB": 5,
+      "allowedFileTypes": [
+        "pdf",
+        "doc",
+        "docx",
+        "xlsx",
+        "xls",
+        "jpeg",
+        "jpg",
+        "png"
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980462509,
+    "lastmodifiedtime": 1728980462509
+  }
+]

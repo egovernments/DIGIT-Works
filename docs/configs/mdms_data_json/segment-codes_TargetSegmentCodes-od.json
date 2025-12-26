@@ -1,0 +1,66 @@
+[
+  {
+    "id": "fec5c1ea-66e4-452b-b80c-b2d27d509091",
+    "tenantid": "od",
+    "uniqueidentifier": "0401.WC",
+    "schemacode": "segment-codes.TargetSegmentCodes",
+    "data": {
+      "id": "0401",
+      "code": "WC",
+      "name": "Women Centric expenditures"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729779119593,
+    "lastmodifiedtime": 1729779119593
+  },
+  {
+    "id": "b7e34824-9d75-48bc-95e3-cb7c49cc6dc0",
+    "tenantid": "od",
+    "uniqueidentifier": "0402.SC",
+    "schemacode": "segment-codes.TargetSegmentCodes",
+    "data": {
+      "id": "0402",
+      "code": "SC",
+      "name": "Schedule Castes"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729779160694,
+    "lastmodifiedtime": 1729779160694
+  },
+  {
+    "id": "b983763e-88a8-4835-8115-3e94ce031bea",
+    "tenantid": "od",
+    "uniqueidentifier": "0403.ST",
+    "schemacode": "segment-codes.TargetSegmentCodes",
+    "data": {
+      "id": "0403",
+      "code": "ST",
+      "name": "Schedule Tribes"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729779194961,
+    "lastmodifiedtime": 1729779194961
+  },
+  {
+    "id": "2ed92513-c7ed-44b5-aa1d-12b1cdb24ddd",
+    "tenantid": "od",
+    "uniqueidentifier": "0404.BPL",
+    "schemacode": "segment-codes.TargetSegmentCodes",
+    "data": {
+      "id": "0404",
+      "code": "BPL",
+      "name": "Below Poverty Line"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729779232646,
+    "lastmodifiedtime": 1729779232646
+  }
+]

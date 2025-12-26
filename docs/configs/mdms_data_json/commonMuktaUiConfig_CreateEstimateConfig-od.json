@@ -1,0 +1,111 @@
+[
+  {
+    "id": "8e0e8a89-e5a2-4b55-b853-383649dc625e",
+    "tenantid": "od",
+    "uniqueidentifier": "CreateEstimateConfig",
+    "schemacode": "commonMuktaUiConfig.CreateEstimateConfig",
+    "data": {
+      "form": [
+        {
+          "body": [
+            {
+              "key": "projectDetails",
+              "type": "component",
+              "component": "ViewProject",
+              "customProps": {
+                "module": "estimate"
+              },
+              "withoutLabel": true
+            }
+          ],
+          "head": "",
+          "navLink": "Project Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "nonSORDetails",
+              "type": "component",
+              "component": "NonSORTable",
+              "populators": {
+                "rate": {
+                  "max": 5000000,
+                  "error": "ESTIMATE_LINE_ITEM_RATE_LIMIT"
+                },
+                "quantity": {
+                  "max": 999999,
+                  "error": "ESTIMATE_LINE_ITEM_QTY_LIMIT"
+                }
+              },
+              "withoutLabel": true
+            }
+          ],
+          "head": "WORKS_NON_SOR",
+          "navLink": "Work Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "overheadsDetails",
+              "type": "component",
+              "component": "OverheadsTable",
+              "withoutLabel": true
+            }
+          ],
+          "head": "WORKS_OVERHEADS",
+          "navLink": "Work Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "totalEstimatedAmount",
+              "type": "component",
+              "component": "TotalEstAmount",
+              "withoutLabel": true
+            }
+          ],
+          "head": "",
+          "navLink": "Work Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "labourMaterialAnalysis",
+              "type": "component",
+              "component": "LabourAnalysis",
+              "withoutLabel": true
+            }
+          ],
+          "head": "",
+          "navLink": "Work Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "name": "uploadedDocs",
+              "type": "documentUpload",
+              "error": "WORKS_REQUIRED_ERR",
+              "module": "Estimate",
+              "customClass": "",
+              "localePrefix": "ESTIMATE_DOC",
+              "withoutLabel": true
+            }
+          ],
+          "head": "",
+          "navLink": "Work Details"
+        }
+      ],
+      "screenName": "CreateEstimateConfig"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728991449978,
+    "lastmodifiedtime": 1728991449978
+  }
+]

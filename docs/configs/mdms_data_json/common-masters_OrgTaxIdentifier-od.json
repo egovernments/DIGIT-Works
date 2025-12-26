@@ -1,0 +1,38 @@
+[
+  {
+    "id": "e03c60a9-77d8-47ae-8f50-c750adba84f8",
+    "tenantid": "od",
+    "uniqueidentifier": "GSTIN",
+    "schemacode": "common-masters.OrgTaxIdentifier",
+    "data": {
+      "code": "GSTIN",
+      "active": true,
+      "description": "GSTIN",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975364217,
+    "lastmodifiedtime": 1728975364217
+  },
+  {
+    "id": "cd653725-a85e-462d-8fb1-0b77d66a8cb2",
+    "tenantid": "od",
+    "uniqueidentifier": "PAN",
+    "schemacode": "common-masters.OrgTaxIdentifier",
+    "data": {
+      "code": "PAN",
+      "active": true,
+      "description": "PAN",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975373860,
+    "lastmodifiedtime": 1728975373860
+  }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "3c1dc3d3-a9e7-4ad9-89ef-baaa68913a94",
+    "tenantid": "od",
+    "uniqueidentifier": "1.132217058003586410459082112",
+    "schemacode": "ifms.HeadOfAccounts",
+    "data": {
+      "id": "1",
+      "code": "132217058003586410459082112",
+      "name": "General Head",
+      "active": true,
+      "sequence": 3,
+      "schemeCode": 13145,
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729777706480,
+    "lastmodifiedtime": 1729777706480
+  },
+  {
+    "id": "b569e17d-e367-4050-972d-70e28b5abd41",
+    "tenantid": "od",
+    "uniqueidentifier": "2.132217057893586410459082112",
+    "schemacode": "ifms.HeadOfAccounts",
+    "data": {
+      "id": "2",
+      "code": "132217057893586410459082112",
+      "name": "Scheduled Caste Head",
+      "active": true,
+      "sequence": 1,
+      "schemeCode": 13145,
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729777756649,
+    "lastmodifiedtime": 1729777756649
+  },
+  {
+    "id": "45116e44-5ac0-409e-b1bf-7e30bb0c210b",
+    "tenantid": "od",
+    "uniqueidentifier": "3.132217057963586410459082112",
+    "schemacode": "ifms.HeadOfAccounts",
+    "data": {
+      "id": "3",
+      "code": "132217057963586410459082112",
+      "name": "Scheduled Tribes Head",
+      "active": true,
+      "sequence": 2,
+      "schemeCode": 13145,
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729777800238,
+    "lastmodifiedtime": 1729777800238
+  },
+  {
+    "id": "67d2198d-b823-421e-8973-207fa38ca5ce",
+    "tenantid": "od",
+    "uniqueidentifier": "4.132217058003586410459082112",
+    "schemacode": "ifms.HeadOfAccounts",
+    "data": {
+      "id": "4",
+      "code": "132217058003586410459082112",
+      "name": "Other HOA for testing",
+      "active": true,
+      "sequence": 4,
+      "schemeCode": 13145,
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729777897896,
+    "lastmodifiedtime": 1729777897896
+  }
+]

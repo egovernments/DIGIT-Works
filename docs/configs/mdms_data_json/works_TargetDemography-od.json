@@ -1,0 +1,97 @@
+[
+  {
+    "id": "6f107e1c-d318-4f9b-8ca2-5071d5401e52",
+    "tenantid": "od",
+    "uniqueidentifier": "NSM",
+    "schemacode": "works.TargetDemography",
+    "data": {
+      "code": "NSM",
+      "name": "Non Slum Area",
+      "active": true,
+      "description": "Non Slum Area",
+      "effectiveTo": null,
+      "effectiveFrom": 1676875575195
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980261510,
+    "lastmodifiedtime": 1728980261510
+  },
+  {
+    "id": "fb9397e3-1841-41c1-b2ed-f61e2065f6e9",
+    "tenantid": "od",
+    "uniqueidentifier": "MN",
+    "schemacode": "works.TargetDemography",
+    "data": {
+      "code": "MN",
+      "name": "Area inhabited by Minorities",
+      "active": true,
+      "description": "Area inhabited by Minorities",
+      "effectiveTo": null,
+      "effectiveFrom": 1676875575195
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980306552,
+    "lastmodifiedtime": 1728980306552
+  },
+  {
+    "id": "ddf78279-88b2-41fe-b70c-3995d105bba7",
+    "tenantid": "od",
+    "uniqueidentifier": "ST",
+    "schemacode": "works.TargetDemography",
+    "data": {
+      "code": "ST",
+      "name": "Area inhabited by ST",
+      "active": true,
+      "description": "Area inhabited by ST",
+      "effectiveTo": null,
+      "effectiveFrom": 1676875575195
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980317500,
+    "lastmodifiedtime": 1728980317500
+  },
+  {
+    "id": "dbc81b4d-a433-4d6e-b35e-24b62d087a9a",
+    "tenantid": "od",
+    "uniqueidentifier": "SC",
+    "schemacode": "works.TargetDemography",
+    "data": {
+      "code": "SC",
+      "name": "Area inhabited by SC",
+      "active": true,
+      "description": "Area inhabited by SC",
+      "effectiveTo": null,
+      "effectiveFrom": 1676875575195
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980332861,
+    "lastmodifiedtime": 1728980332861
+  },
+  {
+    "id": "b31986ee-772e-464c-b200-a2bb674c6313",
+    "tenantid": "od",
+    "uniqueidentifier": "SM",
+    "schemacode": "works.TargetDemography",
+    "data": {
+      "code": "SM",
+      "name": "Slum Area",
+      "active": true,
+      "description": "Slum Area",
+      "effectiveTo": null,
+      "effectiveFrom": 1676875575195
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980342817,
+    "lastmodifiedtime": 1728980342817
+  }
+]

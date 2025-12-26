@@ -1,0 +1,66 @@
+[
+  {
+    "id": "870a8225-158c-4054-957e-457fc03e7f14",
+    "tenantid": "od",
+    "uniqueidentifier": "CNT",
+    "schemacode": "egov-hrms.EmployeeType",
+    "data": {
+      "code": "CNT",
+      "active": true,
+      "description": "Contractual"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729242581907,
+    "lastmodifiedtime": 1729242581907
+  },
+  {
+    "id": "359d3e6b-5aad-447e-935b-25a4d7f6bb3c",
+    "tenantid": "od",
+    "uniqueidentifier": "DEP",
+    "schemacode": "egov-hrms.EmployeeType",
+    "data": {
+      "code": "DEP",
+      "active": true,
+      "description": "Deputation"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729242633291,
+    "lastmodifiedtime": 1729242633291
+  },
+  {
+    "id": "39a95ea9-eedb-41ad-8a4c-4cc63cff7e91",
+    "tenantid": "od",
+    "uniqueidentifier": "TMP",
+    "schemacode": "egov-hrms.EmployeeType",
+    "data": {
+      "code": "TMP",
+      "active": true,
+      "description": "Temporary"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729242645219,
+    "lastmodifiedtime": 1729242645219
+  },
+  {
+    "id": "526bd4ab-1662-47fa-b553-ccc772ec8ac8",
+    "tenantid": "od",
+    "uniqueidentifier": "PNT",
+    "schemacode": "egov-hrms.EmployeeType",
+    "data": {
+      "code": "PNT",
+      "active": true,
+      "description": "Permanent"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729242656119,
+    "lastmodifiedtime": 1729242656119
+  }
+]

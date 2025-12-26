@@ -1,0 +1,18 @@
+[
+  {
+    "id": "6be9d543-dc97-449d-a1c1-e708b7247d53",
+    "tenantid": "od",
+    "uniqueidentifier": "ADMIN",
+    "schemacode": "common-masters.hierarchyType",
+    "data": {
+      "code": "ADMIN",
+      "name": "ADMIN",
+      "boundaryType": "City"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729229502334,
+    "lastmodifiedtime": 1729229502334
+  }
+]

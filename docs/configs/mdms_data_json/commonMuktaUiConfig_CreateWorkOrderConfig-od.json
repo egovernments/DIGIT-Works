@@ -1,0 +1,281 @@
+[
+  {
+    "id": "2e0f8c64-ed2b-4117-8ff5-8aa508c46cdf",
+    "tenantid": "od",
+    "uniqueidentifier": "CreateWorkOrderConfig",
+    "schemacode": "commonMuktaUiConfig.CreateWorkOrderConfig",
+    "data": {
+      "form": [
+        {
+          "body": [
+            {
+              "key": "basicDetails_workOrdernumber",
+              "type": "text",
+              "label": "WORKS_ORDER_NO",
+              "inline": true,
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_workOrdernumber",
+                "customClass": "fc-header-texts",
+                "customStyle": {
+                  "display": "none",
+                  "alignItems": "center !important"
+                }
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.customStyle.display"
+                ]
+              },
+              "appendColon": false,
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_projectID",
+              "type": "text",
+              "label": "WORKS_PROJECT_ID",
+              "inline": true,
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_projectID",
+                "customClass": "fc-header-texts",
+                "customStyle": {
+                  "alignItems": "center !important"
+                }
+              },
+              "appendColon": false,
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_dateOfProposal",
+              "type": "text",
+              "label": "WORKS_DATE_PROPOSAL",
+              "inline": true,
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_dateOfProposal",
+                "customClass": "fc-header-texts",
+                "customStyle": {
+                  "alignItems": "center !important"
+                }
+              },
+              "appendColon": false,
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_projectName",
+              "type": "paragraph",
+              "label": "WORKS_PROJECT_NAME",
+              "inline": true,
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_projectName",
+                "customStyle": {
+                  "alignItems": "center !important"
+                }
+              },
+              "appendColon": false,
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_projectDesc",
+              "type": "paragraph",
+              "label": "PROJECTS_DESCRIPTION",
+              "inline": true,
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_projectDesc",
+                "customStyle": {
+                  "alignItems": "center !important"
+                }
+              },
+              "appendColon": false,
+              "isMandatory": false
+            }
+          ],
+          "head": "",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "nameOfCBO",
+              "type": "radioordropdown",
+              "label": "COMMON_NAME_OF_CBO",
+              "disable": false,
+              "populators": {
+                "name": "nameOfCBO",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "required": false,
+                "optionsKey": "name"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "cboID",
+              "type": "text",
+              "label": "COMMON_CBO_ID",
+              "inline": true,
+              "disable": true,
+              "populators": {
+                "name": "cboID",
+                "customClass": "disabled-text-field"
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "roleOfCBO",
+              "type": "radioordropdown",
+              "label": "COMMON_ROLE_OF_CBO",
+              "disable": false,
+              "populators": {
+                "name": "roleOfCBO",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "required": false,
+                "optionsKey": "name"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "disable",
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "nameOfOfficerInCharge",
+              "type": "radioordropdown",
+              "label": "COMMON_NAME_OF_OFFICER_IN_CHARGE",
+              "disable": false,
+              "populators": {
+                "name": "nameOfOfficerInCharge",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "required": false,
+                "optionsKey": "name"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "designationOfOfficerInCharge",
+              "type": "text",
+              "label": "COMMON_DESGN_OF_OFFICER_IN_CHARGE",
+              "inline": true,
+              "disable": true,
+              "populators": {
+                "name": "designationOfOfficerInCharge",
+                "customClass": "disabled-text-field"
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "projectCompletionPeriodInDays",
+              "type": "text",
+              "label": "COMMON_PROJECT_COMP_PERIOD_DAYS",
+              "inline": true,
+              "disable": false,
+              "populators": {
+                "name": "projectCompletionPeriodInDays",
+                "error": "COMMON_PATTERN_ERR_MSG_PROJECT_COMP_PERIOD",
+                "validation": {
+                  "max": 999,
+                  "pattern": "^(?!(0))[0-9]+$",
+                  "maxlength": 3
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "workOrderAmountRs",
+              "type": "amount",
+              "label": "COMMON_WORK_ORDER_AMT_RS",
+              "inline": true,
+              "disable": true,
+              "populators": {
+                "name": "workOrderAmountRs"
+              },
+              "isMandatory": true
+            }
+          ],
+          "head": "",
+          "navLink": "WO_Details"
+        },
+        {
+          "body": [
+            {
+              "key": "labourAndMaterialAnalysis",
+              "type": "component",
+              "component": "ViewEstimateDocs",
+              "preProcess": {
+                "updateDependent": [
+                  "customProps.documents"
+                ]
+              },
+              "customProps": {
+                "documents": []
+              },
+              "withoutLabel": true
+            }
+          ],
+          "head": "COMMON_LABOUR_AND_MATERIAL_ANALYSIS",
+          "navLink": "WO_Details"
+        },
+        {
+          "body": [
+            {
+              "name": "documents",
+              "type": "documentUpload",
+              "error": "WORKS_REQUIRED_ERR",
+              "module": "Work Order",
+              "customClass": "",
+              "localePrefix": "WO",
+              "withoutLabel": true
+            }
+          ],
+          "head": "",
+          "navLink": "WO_Details"
+        },
+        {
+          "body": [
+            {
+              "key": "termsAndConditions",
+              "type": "component",
+              "component": "WOTermsAndConditions",
+              "withoutLabel": true
+            }
+          ],
+          "head": "COMMON_TERMS_AND_CONDITIONS",
+          "navLink": "Terms_And_Conditions",
+          "sectionFormCategory": "termsAndConditions"
+        }
+      ],
+      "metaData": {
+        "showNavs": true
+      },
+      "screenName": "CreateWorkOrderConfig",
+      "defaultValues": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728991666686,
+    "lastmodifiedtime": 1728991666686
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "ca49b5e8-76a8-4627-96a0-f02e803bff83",
+    "tenantid": "od",
+    "uniqueidentifier": "ROUND_OFF_HOURS",
+    "schemacode": "common-masters.MusterRoll",
+    "data": {
+      "code": "ROUND_OFF_HOURS",
+      "value": "true"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970942755,
+    "lastmodifiedtime": 1728970942755
+  },
+  {
+    "id": "fafde0c8-eb20-4c5a-a1d2-8151ef86e040",
+    "tenantid": "od",
+    "uniqueidentifier": "FULL_DAY_NUM_HOURS",
+    "schemacode": "common-masters.MusterRoll",
+    "data": {
+      "code": "FULL_DAY_NUM_HOURS",
+      "value": "8"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970954077,
+    "lastmodifiedtime": 1728970954077
+  },
+  {
+    "id": "5e17fdde-a6e3-470c-a6fa-74a1ecb71e04",
+    "tenantid": "od",
+    "uniqueidentifier": "HALF_DAY_NUM_HOURS",
+    "schemacode": "common-masters.MusterRoll",
+    "data": {
+      "code": "HALF_DAY_NUM_HOURS",
+      "value": "4"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970964477,
+    "lastmodifiedtime": 1728970964477
+  },
+  {
+    "id": "82c569b7-db4b-470e-9144-1597a7246f64",
+    "tenantid": "od",
+    "uniqueidentifier": "EXIT_HOUR_FULL_DAY",
+    "schemacode": "common-masters.MusterRoll",
+    "data": {
+      "code": "EXIT_HOUR_FULL_DAY",
+      "value": "18"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970973994,
+    "lastmodifiedtime": 1728970973994
+  },
+  {
+    "id": "dd2fbc44-56b1-41d2-a709-7c1637b20b7f",
+    "tenantid": "od",
+    "uniqueidentifier": "EXIT_HOUR_HALF_DAY",
+    "schemacode": "common-masters.MusterRoll",
+    "data": {
+      "code": "EXIT_HOUR_HALF_DAY",
+      "value": "14"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970983957,
+    "lastmodifiedtime": 1728970983957
+  },
+  {
+    "id": "e5e557c2-fd90-4fc9-bcfa-5d9dbf816419",
+    "tenantid": "od",
+    "uniqueidentifier": "ENTRY_HOUR",
+    "schemacode": "common-masters.MusterRoll",
+    "data": {
+      "code": "ENTRY_HOUR",
+      "value": "9"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970993905,
+    "lastmodifiedtime": 1728970993905
+  }
+]

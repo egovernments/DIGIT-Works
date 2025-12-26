@@ -1,0 +1,410 @@
+[
+  {
+    "id": "65796217-538d-44f5-958b-f4597f7d430b",
+    "tenantid": "od",
+    "uniqueidentifier": "EW",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "EW",
+      "type": "M",
+      "active": true,
+      "description": "Earth Work"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1703822210796,
+    "lastmodifiedtime": 1704450876641
+  },
+  {
+    "id": "125221a4-04ad-461d-87ef-82779c9a0c31",
+    "tenantid": "od",
+    "uniqueidentifier": "CC",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "CC",
+      "type": "W",
+      "active": true,
+      "description": "Cement Concrete"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261202582,
+    "lastmodifiedtime": 1704261202582
+  },
+  {
+    "id": "5a920a50-0755-4524-9aa3-42b8fba38816",
+    "tenantid": "od",
+    "uniqueidentifier": "RC",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "RC",
+      "type": "W",
+      "active": true,
+      "description": "RCC Work"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261219801,
+    "lastmodifiedtime": 1704261219801
+  },
+  {
+    "id": "3d6752d9-8490-4eaf-8a8c-3b36e611021f",
+    "tenantid": "od",
+    "uniqueidentifier": "MB",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "MB",
+      "type": "W",
+      "active": true,
+      "description": "Masonry Brick Work"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261242599,
+    "lastmodifiedtime": 1704261242599
+  },
+  {
+    "id": "4cba1612-7eae-4fa5-8cd6-4ee91f411ca6",
+    "tenantid": "od",
+    "uniqueidentifier": "MS",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "MS",
+      "type": "W",
+      "active": true,
+      "description": "Masonry Stone Work"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261262533,
+    "lastmodifiedtime": 1704261262533
+  },
+  {
+    "id": "30638e31-74a2-4fca-b646-866cf0c65276",
+    "tenantid": "od",
+    "uniqueidentifier": "PL",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "PL",
+      "type": "W",
+      "active": true,
+      "description": "Plastering"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261283143,
+    "lastmodifiedtime": 1704261283143
+  },
+  {
+    "id": "79eb6e93-6572-40b4-929f-0605377e16af",
+    "tenantid": "od",
+    "uniqueidentifier": "WC",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "WC",
+      "type": "W",
+      "active": true,
+      "description": "White & Colour Washing"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261300968,
+    "lastmodifiedtime": 1704261300968
+  },
+  {
+    "id": "d74e5a18-2390-46c3-b2e6-c5f25f6c2436",
+    "tenantid": "od",
+    "uniqueidentifier": "FL",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "FL",
+      "type": "W",
+      "active": true,
+      "description": "Flooring"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261322033,
+    "lastmodifiedtime": 1704261322033
+  },
+  {
+    "id": "ea27c27e-3d1f-4f20-a017-51da327ed550",
+    "tenantid": "od",
+    "uniqueidentifier": "PA",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "PA",
+      "type": "W",
+      "active": true,
+      "description": "Painting"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261341505,
+    "lastmodifiedtime": 1704261341505
+  },
+  {
+    "id": "59b5da7e-d9ce-418e-a4d9-ace81cfb14fb",
+    "tenantid": "od",
+    "uniqueidentifier": "RD",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "RD",
+      "type": "W",
+      "active": true,
+      "description": "Road Work"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261362309,
+    "lastmodifiedtime": 1704261362309
+  },
+  {
+    "id": "0e6ff484-5e4e-4553-ab17-b9f2dc72c05a",
+    "tenantid": "od",
+    "uniqueidentifier": "WD",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "WD",
+      "type": "W",
+      "active": true,
+      "description": "Wood Work"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261394422,
+    "lastmodifiedtime": 1704261394422
+  },
+  {
+    "id": "9a465b61-ff94-4121-acbc-5eb3153f7404",
+    "tenantid": "od",
+    "uniqueidentifier": "RF",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "RF",
+      "type": "W",
+      "active": true,
+      "description": "Roofing"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261417809,
+    "lastmodifiedtime": 1704261417809
+  },
+  {
+    "id": "edfae059-f9aa-45fc-bb2c-db9731e1ee6e",
+    "tenantid": "od",
+    "uniqueidentifier": "DI",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "DI",
+      "type": "W",
+      "active": true,
+      "description": "Dismantling"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261437244,
+    "lastmodifiedtime": 1704261437244
+  },
+  {
+    "id": "a1a308d2-3642-4296-bf64-560eb8d88fc5",
+    "tenantid": "od",
+    "uniqueidentifier": "PB",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "PB",
+      "type": "W",
+      "active": true,
+      "description": "Paver Block"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261455099,
+    "lastmodifiedtime": 1704261455099
+  },
+  {
+    "id": "d0f1af31-7c0b-40af-a021-8b17952bb421",
+    "tenantid": "od",
+    "uniqueidentifier": "SC",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "SC",
+      "type": "W",
+      "active": true,
+      "description": "Site Clearance"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261477850,
+    "lastmodifiedtime": 1704261477850
+  },
+  {
+    "id": "06d7aa97-6925-4421-b79a-40d44e70bcb3",
+    "tenantid": "od",
+    "uniqueidentifier": "PF",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "PF",
+      "type": "W",
+      "active": true,
+      "description": "Pile Foundation"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261540769,
+    "lastmodifiedtime": 1704261540769
+  },
+  {
+    "id": "1ab2a818-98d8-4864-beb7-09058d5de6d3",
+    "tenantid": "od",
+    "uniqueidentifier": "IW",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "IW",
+      "type": "W",
+      "active": true,
+      "description": "Iron Work"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261560754,
+    "lastmodifiedtime": 1704261560754
+  },
+  {
+    "id": "5f1e8d1f-33cf-4214-9bc9-fdd3d7f743cf",
+    "tenantid": "od",
+    "uniqueidentifier": "SD",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "SD",
+      "type": "L",
+      "active": true,
+      "description": "Skilled"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261649251,
+    "lastmodifiedtime": 1704261649251
+  },
+  {
+    "id": "5e099a1e-7e03-483d-8458-fdefb0e85fbd",
+    "tenantid": "od",
+    "uniqueidentifier": "NA1",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "NA1",
+      "type": "M",
+      "active": true,
+      "description": "Not Applicable"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261696934,
+    "lastmodifiedtime": 1704261696934
+  },
+  {
+    "id": "44fb0f79-4ede-4c96-9286-773edeccf44b",
+    "tenantid": "od",
+    "uniqueidentifier": "BI",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "BI",
+      "type": "W",
+      "active": true,
+      "description": "Other Building Item"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261580836,
+    "lastmodifiedtime": 1726208862614
+  },
+  {
+    "id": "98c17790-8b62-4c4f-b8ca-2629e23be2d3",
+    "tenantid": "od",
+    "uniqueidentifier": "NA2",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "NA2",
+      "type": "E",
+      "active": true,
+      "description": "Not Applicable"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261718486,
+    "lastmodifiedtime": 1721201544380
+  },
+  {
+    "id": "50711f3a-ff13-465c-a568-d7d80b798e9e",
+    "tenantid": "od",
+    "uniqueidentifier": "HS",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "HS",
+      "type": "L",
+      "active": true,
+      "description": "Highly Skilled"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261668949,
+    "lastmodifiedtime": 1726809375219
+  },
+  {
+    "id": "bf0f3e73-4099-4c56-8c23-40e9fbcb1783",
+    "tenantid": "od",
+    "uniqueidentifier": "SS",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "SS",
+      "type": "L",
+      "active": false,
+      "description": "Semi Skilled"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261630088,
+    "lastmodifiedtime": 1721215293322
+  },
+  {
+    "id": "6ae6d6a1-dee3-4258-8cc1-bccab76002e3",
+    "tenantid": "od",
+    "uniqueidentifier": "US",
+    "schemacode": "WORKS-SOR.SubType",
+    "data": {
+      "code": "US",
+      "type": "L",
+      "active": true,
+      "description": "Unskilled"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704261598553,
+    "lastmodifiedtime": 1737028058910
+  }
+]

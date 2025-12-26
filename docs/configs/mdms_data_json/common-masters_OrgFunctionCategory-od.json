@@ -1,0 +1,56 @@
+[
+  {
+    "id": "e8b9b61f-0295-4037-b8fa-d3b3dc256834",
+    "tenantid": "od",
+    "uniqueidentifier": "CBO.NA",
+    "schemacode": "common-masters.OrgFunctionCategory",
+    "data": {
+      "code": "CBO.NA",
+      "active": true,
+      "description": "Community Based Organization - not applicable",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728974908045,
+    "lastmodifiedtime": 1728974908045
+  },
+  {
+    "id": "fabad647-5ec8-405f-b59e-804b339bb198",
+    "tenantid": "od",
+    "uniqueidentifier": "VEN.EW",
+    "schemacode": "common-masters.OrgFunctionCategory",
+    "data": {
+      "code": "VEN.EW",
+      "active": true,
+      "description": "Vendor/Supplier Electical Works",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728974920875,
+    "lastmodifiedtime": 1728974920875
+  },
+  {
+    "id": "6aa1466e-c1d7-47fb-b7dc-e9e558184d12",
+    "tenantid": "od",
+    "uniqueidentifier": "VEN.CW",
+    "schemacode": "common-masters.OrgFunctionCategory",
+    "data": {
+      "code": "VEN.CW",
+      "active": true,
+      "description": "Vendor/Supplier Civil Works",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728974930375,
+    "lastmodifiedtime": 1728974930375
+  }
+]

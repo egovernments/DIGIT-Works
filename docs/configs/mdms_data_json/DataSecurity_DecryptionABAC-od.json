@@ -1,0 +1,931 @@
+[
+  {
+    "id": "1ffda50a-87d7-4672-9212-4d7b291f8836",
+    "tenantid": "od",
+    "uniqueidentifier": "ALL_ACCESS",
+    "schemacode": "DataSecurity.DecryptionABAC",
+    "data": {
+      "key": "ALL_ACCESS",
+      "roleAttributeAccessList": [
+        {
+          "roleCode": "CITIZEN",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/emailId"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/username"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/altContactNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/pan"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/aadhaarNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/guardian"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/permanentAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/correspondenceAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/addresses/*/address"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        },
+        {
+          "roleCode": "ANONYMOUS",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/emailId"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/username"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/altContactNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/pan"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/aadhaarNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/guardian"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/permanentAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/correspondenceAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/addresses/*/address"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        },
+        {
+          "roleCode": "EMPLOYEE",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/emailId"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/username"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/altContactNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/pan"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/aadhaarNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/guardian"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/permanentAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/correspondenceAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/addresses/*/address"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729837526616,
+    "lastmodifiedtime": 1729837526616
+  },
+  {
+    "id": "ba9b1f49-91fc-4e6a-b098-dac1fe0ff160",
+    "tenantid": "od",
+    "uniqueidentifier": "DescriptionReport",
+    "schemacode": "DataSecurity.DecryptionABAC",
+    "data": {
+      "key": "DescriptionReport",
+      "roleAttributeAccessList": [
+        {
+          "roleCode": "EMPLOYEE",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729837557900,
+    "lastmodifiedtime": 1729837557900
+  },
+  {
+    "id": "5daef95e-2125-429e-a766-752567568904",
+    "tenantid": "od",
+    "uniqueidentifier": "EmployeeReport",
+    "schemacode": "DataSecurity.DecryptionABAC",
+    "data": {
+      "key": "EmployeeReport",
+      "roleAttributeAccessList": [
+        {
+          "roleCode": "EMPLOYEE",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729837572732,
+    "lastmodifiedtime": 1729837572732
+  },
+  {
+    "id": "5c46f41e-c6a2-4c2a-982c-63525b80c5b3",
+    "tenantid": "od",
+    "uniqueidentifier": "ULBEmployeeWiseReport",
+    "schemacode": "DataSecurity.DecryptionABAC",
+    "data": {
+      "key": "ULBEmployeeWiseReport",
+      "roleAttributeAccessList": [
+        {
+          "roleCode": "EMPLOYEE",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/employee"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729837587897,
+    "lastmodifiedtime": 1729837587897
+  },
+  {
+    "id": "f4db561e-38df-4ca2-a49a-fff69f3af307",
+    "tenantid": "od",
+    "uniqueidentifier": "TradeLicenseRegistryReport",
+    "schemacode": "DataSecurity.DecryptionABAC",
+    "data": {
+      "key": "TradeLicenseRegistryReport",
+      "roleAttributeAccessList": [
+        {
+          "roleCode": "EMPLOYEE",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobilenumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729837604701,
+    "lastmodifiedtime": 1729837604701
+  },
+  {
+    "id": "f689e5fc-feea-4d46-89d7-d8d5f7638db4",
+    "tenantid": "od",
+    "uniqueidentifier": "StateLevelTradeLicenseRegistryReport",
+    "schemacode": "DataSecurity.DecryptionABAC",
+    "data": {
+      "key": "StateLevelTradeLicenseRegistryReport",
+      "roleAttributeAccessList": [
+        {
+          "roleCode": "EMPLOYEE",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobilenumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729837619073,
+    "lastmodifiedtime": 1729837619073
+  },
+  {
+    "id": "3b0d8d74-7c82-4902-ab05-ce225bd88088",
+    "tenantid": "od",
+    "uniqueidentifier": "UserListSelf",
+    "schemacode": "DataSecurity.DecryptionABAC",
+    "data": {
+      "key": "UserListSelf",
+      "roleAttributeAccessList": [
+        {
+          "roleCode": "CITIZEN",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/emailId"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/username"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/altContactNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/pan"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/aadhaarNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/guardian"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/permanentAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/correspondenceAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/addresses/*/address"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        },
+        {
+          "roleCode": "EMPLOYEE",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/emailId"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/username"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/altContactNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/pan"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/aadhaarNumber"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/guardian"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/permanentAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/correspondenceAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/addresses/*/address"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729837651308,
+    "lastmodifiedtime": 1729837651308
+  },
+  {
+    "id": "a313ea5f-a960-4627-8b73-9378c447b126",
+    "tenantid": "od",
+    "uniqueidentifier": "UserListOtherBulk",
+    "schemacode": "DataSecurity.DecryptionABAC",
+    "data": {
+      "key": "UserListOtherBulk",
+      "roleAttributeAccessList": [
+        {
+          "roleCode": "EMPLOYEE",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/emailId"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/username"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/altContactNumber"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/pan"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/aadhaarNumber"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/guardian"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/permanentAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/correspondenceAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/addresses/*/address"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        },
+        {
+          "roleCode": "SUPERUSER",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        },
+        {
+          "roleCode": "GRO",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "MASK"
+            }
+          ]
+        },
+        {
+          "roleCode": "DGRO",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "MASK"
+            }
+          ]
+        },
+        {
+          "roleCode": "CSR",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "MASK"
+            }
+          ]
+        },
+        {
+          "roleCode": "PGR-ADMIN",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "MASK"
+            }
+          ]
+        },
+        {
+          "roleCode": "TL_CEMP",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "MASK"
+            }
+          ]
+        },
+        {
+          "roleCode": "TL_APPROVER",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "MASK"
+            }
+          ]
+        },
+        {
+          "roleCode": "TL_DOC_VERIFIER",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "MASK"
+            }
+          ]
+        },
+        {
+          "roleCode": "TL_FIELD_INSPECTOR",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        },
+        {
+          "roleCode": "CEMP",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "MASK"
+            }
+          ]
+        },
+        {
+          "roleCode": "FEMP",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        },
+        {
+          "roleCode": "STADMIN",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/name"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/mobileNumber",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "MASK"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729837692018,
+    "lastmodifiedtime": 1729837692018
+  },
+  {
+    "id": "37fe7459-3406-4091-9e4a-a88448141d38",
+    "tenantid": "od",
+    "uniqueidentifier": "UserListOtherIndividual",
+    "schemacode": "DataSecurity.DecryptionABAC",
+    "data": {
+      "key": "UserListOtherIndividual",
+      "roleAttributeAccessList": [
+        {
+          "roleCode": "EMPLOYEE",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/emailId"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/username"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/altContactNumber"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/pan"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/aadhaarNumber"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/guardian"
+              },
+              "accessType": "NONE"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/permanentAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/correspondenceAddress/address"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/addresses/*/address"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        },
+        {
+          "roleCode": "EMPLOYEE",
+          "attributeAccessList": [
+            {
+              "attribute": {
+                "jsonPath": "*/mobileno",
+                "maskingTechnique": "mobile"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/emailid"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/aadharno"
+              },
+              "accessType": "PLAIN"
+            },
+            {
+              "attribute": {
+                "jsonPath": "*/icdcode"
+              },
+              "accessType": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729837760233,
+    "lastmodifiedtime": 1729837760233
+  }
+]

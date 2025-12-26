@@ -1,0 +1,754 @@
+[
+  {
+    "id": "d157ecab-d91e-4de6-9613-7f65134748d5",
+    "tenantid": "od",
+    "uniqueidentifier": "LOC_ADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "LOC_ADMIN",
+      "name": "Localisation admin",
+      "description": "LOC_ADMIN"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322326320,
+    "lastmodifiedtime": 1729322326320
+  },
+  {
+    "id": "fe66cb55-14de-4239-84d8-94e27cffd518",
+    "tenantid": "od",
+    "uniqueidentifier": "REVISION_OF_RATES",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "REVISION_OF_RATES",
+      "name": "Revision of rates",
+      "description": "Revise the rates"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322358405,
+    "lastmodifiedtime": 1729322358405
+  },
+  {
+    "id": "fb6bc5ba-7b66-4576-95a0-d052fb86b14d",
+    "tenantid": "od",
+    "uniqueidentifier": "DASHBOARD_VIEWER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "DASHBOARD_VIEWER",
+      "name": "Dashboard Viewer",
+      "description": "Default role for Dashboard viewer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322396965,
+    "lastmodifiedtime": 1729322396965
+  },
+  {
+    "id": "9d08fdec-5458-4797-9c6f-a86ae092508b",
+    "tenantid": "od",
+    "uniqueidentifier": "ANONYMOUS",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "ANONYMOUS",
+      "name": "Anonymous User",
+      "description": "Anonymous User to be used in case of no auth"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322408675,
+    "lastmodifiedtime": 1729322408675
+  },
+  {
+    "id": "2718a30a-a39f-4f1d-822f-26c905dafba9",
+    "tenantid": "od",
+    "uniqueidentifier": "EMP_ORG_ADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "EMP_ORG_ADMIN",
+      "name": "Employee Organization Admin",
+      "description": "Role for employee organization admin"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322419671,
+    "lastmodifiedtime": 1729322419671
+  },
+  {
+    "id": "45ae9709-2a89-49f8-9215-900d5c71a26c",
+    "tenantid": "od",
+    "uniqueidentifier": "MDMS_CITY_VIEW_ADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MDMS_CITY_VIEW_ADMIN",
+      "name": "MDMS CITY VIEW ADMIN",
+      "description": "Mdms City View Admin"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322432199,
+    "lastmodifiedtime": 1729322432199
+  },
+  {
+    "id": "b4e8f87e-289b-4ada-81c9-166681918438",
+    "tenantid": "od",
+    "uniqueidentifier": "MDMS_STATE_VIEW_ADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MDMS_STATE_VIEW_ADMIN",
+      "name": "MDMS STATE VIEW ADMIN",
+      "description": "Mdms State View Admin"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322488560,
+    "lastmodifiedtime": 1729322488560
+  },
+  {
+    "id": "d61d21ab-08bf-466e-b3fe-fc77a01aa81f",
+    "tenantid": "od",
+    "uniqueidentifier": "MDMS_ADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MDMS_ADMIN",
+      "name": "MDMS Admin",
+      "description": "Default role for workbench user"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322501683,
+    "lastmodifiedtime": 1729322501683
+  },
+  {
+    "id": "8c46bd10-48bb-4dd4-87c0-301ab6470d7e",
+    "tenantid": "od",
+    "uniqueidentifier": "MDMS_CITY_ADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MDMS_CITY_ADMIN",
+      "name": "MDMS CITY ADMIN",
+      "description": "Mdms City Admin"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322511357,
+    "lastmodifiedtime": 1729322511357
+  },
+  {
+    "id": "4c7accfd-4a2e-4117-a5b9-7129d3693943",
+    "tenantid": "od",
+    "uniqueidentifier": "MDMS_STATE_ADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MDMS_STATE_ADMIN",
+      "name": "MDMS STATE ADMIN",
+      "description": "Mdms State Admin"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322540359,
+    "lastmodifiedtime": 1729322540359
+  },
+  {
+    "id": "bfbac9b7-921f-479d-81fc-e05c743d2102",
+    "tenantid": "od",
+    "uniqueidentifier": "MB_VIEWER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MB_VIEWER",
+      "name": "MB_VIEWER",
+      "description": "Default role for MB service viewer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322553353,
+    "lastmodifiedtime": 1729322553353
+  },
+  {
+    "id": "4d8fadc5-c4db-4aea-9f60-51acb793c61e",
+    "tenantid": "od",
+    "uniqueidentifier": "MB_APPROVER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MB_APPROVER",
+      "name": "MB_APPROVER",
+      "description": "Default role for MB service approver"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322566390,
+    "lastmodifiedtime": 1729322566390
+  },
+  {
+    "id": "ac746811-8762-48ed-8152-413a552374ee",
+    "tenantid": "od",
+    "uniqueidentifier": "MB_VERIFIER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MB_VERIFIER",
+      "name": "MB_VERIFIER",
+      "description": "Default role for MB service verifier"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322573736,
+    "lastmodifiedtime": 1729322573736
+  },
+  {
+    "id": "2e3bc017-1c75-4e93-85e9-ba456df815cd",
+    "tenantid": "od",
+    "uniqueidentifier": "MB_CREATOR",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MB_CREATOR",
+      "name": "MB_CREATOR",
+      "description": "Default role for MB service creator"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322581175,
+    "lastmodifiedtime": 1729322581175
+  },
+  {
+    "id": "22d486aa-548e-4013-9271-8b43e521924d",
+    "tenantid": "od",
+    "uniqueidentifier": "MUSTER_ROLL_VIEWER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MUSTER_ROLL_VIEWER",
+      "name": "MUSTER ROLL VIEWER",
+      "description": "Muster Roll Viewer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322603546,
+    "lastmodifiedtime": 1729322603546
+  },
+  {
+    "id": "48876350-400b-49eb-bd9c-06c1a0667063",
+    "tenantid": "od",
+    "uniqueidentifier": "CITIZEN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "CITIZEN",
+      "name": "Citizen",
+      "description": "Default role for citizen"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322611000,
+    "lastmodifiedtime": 1729322611000
+  },
+  {
+    "id": "3da71f3d-d210-489a-9d23-9bebb7ef71c9",
+    "tenantid": "od",
+    "uniqueidentifier": "INTERNAL_MICROSERVICE_ROLE",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "INTERNAL_MICROSERVICE_ROLE",
+      "name": "Internal Microservice Role",
+      "description": "Internal role for plain access"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322621041,
+    "lastmodifiedtime": 1729322621041
+  },
+  {
+    "id": "80b3bcab-701a-4a41-817a-1607187e6165",
+    "tenantid": "od",
+    "uniqueidentifier": "BILL_ACCOUNTANT",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "BILL_ACCOUNTANT",
+      "name": "BILL_ACCOUNTANT",
+      "description": "Bill Accountant"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322627525,
+    "lastmodifiedtime": 1729322627525
+  },
+  {
+    "id": "eca792e6-f95e-42bc-9c2a-b9b677fd82df",
+    "tenantid": "od",
+    "uniqueidentifier": "SYSTEM",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "SYSTEM",
+      "name": "System",
+      "description": "Default role for system user"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322633337,
+    "lastmodifiedtime": 1729322633337
+  },
+  {
+    "id": "2c7f87ba-7c9f-448c-abda-a0b5bdbbdea2",
+    "tenantid": "od",
+    "uniqueidentifier": "EMPLOYEE_COMMON",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "EMPLOYEE_COMMON",
+      "name": "Employee Common",
+      "description": "Default role for all employees that need hrms search, edit profile, logout action"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322658888,
+    "lastmodifiedtime": 1729322658888
+  },
+  {
+    "id": "5f9eabd1-1d16-42c2-8d36-8879cf1cbad6",
+    "tenantid": "od",
+    "uniqueidentifier": "WORK_ORDER_VIEWER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "WORK_ORDER_VIEWER",
+      "name": "WORK_ORDER_VIEWER",
+      "description": "Workorder Viewer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322678087,
+    "lastmodifiedtime": 1729322678087
+  },
+  {
+    "id": "31ae5b9f-0045-4257-b176-1dea9af3b282",
+    "tenantid": "od",
+    "uniqueidentifier": "BILL_VERIFIER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "BILL_VERIFIER",
+      "name": "BILL_VERIFIER",
+      "description": "Bill Verifier"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322687276,
+    "lastmodifiedtime": 1729322687276
+  },
+  {
+    "id": "56f40009-3d97-4f55-bbc6-2b9c5a2cb784",
+    "tenantid": "od",
+    "uniqueidentifier": "BILL_APPROVER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "BILL_APPROVER",
+      "name": "BILL_APPROVER",
+      "description": "Bill Approver"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322692785,
+    "lastmodifiedtime": 1729322692785
+  },
+  {
+    "id": "568ececb-1f7a-4753-8041-f80f3f782fe8",
+    "tenantid": "od",
+    "uniqueidentifier": "BILL_VIEWER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "BILL_VIEWER",
+      "name": "BILL_VIEWER",
+      "description": "Bill Viewer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322698414,
+    "lastmodifiedtime": 1729322698414
+  },
+  {
+    "id": "4538423d-ce5e-45ea-8f33-335db371f2ec",
+    "tenantid": "od",
+    "uniqueidentifier": "BILL_CREATOR",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "BILL_CREATOR",
+      "name": "BILL_CREATOR",
+      "description": "Bill Creator"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322718937,
+    "lastmodifiedtime": 1729322718937
+  },
+  {
+    "id": "4a2c406d-dd74-4846-a1ee-b018089d11eb",
+    "tenantid": "od",
+    "uniqueidentifier": "MUSTER_ROLL_APPROVER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MUSTER_ROLL_APPROVER",
+      "name": "MUSTER ROLL APPROVER",
+      "description": "Muster Roll Approver"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322730361,
+    "lastmodifiedtime": 1729322730361
+  },
+  {
+    "id": "f35b6e0b-1c3c-4c5a-8105-43e53dfd50ac",
+    "tenantid": "od",
+    "uniqueidentifier": "MUSTER_ROLL_VERIFIER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MUSTER_ROLL_VERIFIER",
+      "name": "MUSTER ROLL VERIFIER",
+      "description": "Muster Roll Viewer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322736288,
+    "lastmodifiedtime": 1729322736288
+  },
+  {
+    "id": "cf002850-6b3d-492b-a8d3-b3213367cce6",
+    "tenantid": "od",
+    "uniqueidentifier": "PROJECT_VIEWER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "PROJECT_VIEWER",
+      "name": "PROJECT VIEWER",
+      "description": "Project Viewer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322741976,
+    "lastmodifiedtime": 1729322741976
+  },
+  {
+    "id": "1b43933f-d6df-4e0d-9521-695adc5a9958",
+    "tenantid": "od",
+    "uniqueidentifier": "PROJECT_CREATOR",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "PROJECT_CREATOR",
+      "name": "PROJECT CREATOR",
+      "description": "Project Creator"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322746308,
+    "lastmodifiedtime": 1729322746308
+  },
+  {
+    "id": "b0932afe-51b1-457a-8080-de197e5ebfc5",
+    "tenantid": "od",
+    "uniqueidentifier": "ESTIMATE_APPROVER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "ESTIMATE_APPROVER",
+      "name": "ESTIMATE APPROVER",
+      "description": "Estimate Approver"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322802374,
+    "lastmodifiedtime": 1729322802374
+  },
+  {
+    "id": "62bdee45-e22b-4114-8006-9502d8ac30df",
+    "tenantid": "od",
+    "uniqueidentifier": "TECHNICAL_SANCTIONER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "TECHNICAL_SANCTIONER",
+      "name": "TECHNICAL SANCTIONER",
+      "description": "Technical sanctioner"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322808994,
+    "lastmodifiedtime": 1729322808994
+  },
+  {
+    "id": "363d72f2-2410-4aa0-9d03-eb3d95166c81",
+    "tenantid": "od",
+    "uniqueidentifier": "ESTIMATE_VERIFIER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "ESTIMATE_VERIFIER",
+      "name": "ESTIMATE VERIFIER",
+      "description": "Estimate Verifier"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322814490,
+    "lastmodifiedtime": 1729322814490
+  },
+  {
+    "id": "e6226d3f-d27f-4798-9028-1c7bd46003c0",
+    "tenantid": "od",
+    "uniqueidentifier": "ESTIMATE_VIEWER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "ESTIMATE_VIEWER",
+      "name": "ESTIMATE VIEWER",
+      "description": "Estimate VIEWER having search api access"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322819786,
+    "lastmodifiedtime": 1729322819786
+  },
+  {
+    "id": "ed742c0e-7b62-450b-9870-b8fe0c709713",
+    "tenantid": "od",
+    "uniqueidentifier": "ESTIMATE_CREATOR",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "ESTIMATE_CREATOR",
+      "name": "ESTIMATE CREATOR",
+      "description": "Estimate Creator"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322828355,
+    "lastmodifiedtime": 1729322828355
+  },
+  {
+    "id": "b3497f17-476e-4cab-b733-63c20e6875e2",
+    "tenantid": "od",
+    "uniqueidentifier": "STADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "STADMIN",
+      "name": "State Dashboard Admin",
+      "description": "State Dashboard Admin"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322856812,
+    "lastmodifiedtime": 1729322856812
+  },
+  {
+    "id": "76e122fa-04c2-456b-9534-8c07e4dd012a",
+    "tenantid": "od",
+    "uniqueidentifier": "MUKTA_ADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "MUKTA_ADMIN",
+      "name": "MUKTA Admin",
+      "description": "Officer in charge of the Masters"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322864871,
+    "lastmodifiedtime": 1729322864871
+  },
+  {
+    "id": "5df6121c-944c-48cd-a38f-c78d2f76b3b1",
+    "tenantid": "od",
+    "uniqueidentifier": "OFFICER_IN_CHARGE",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "OFFICER_IN_CHARGE",
+      "name": "OFFICER IN CHARGE",
+      "description": "Officer in charge of the contract"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322870520,
+    "lastmodifiedtime": 1729322870520
+  },
+  {
+    "id": "bc1c2405-65ed-4b8e-8926-2f166fe5a599",
+    "tenantid": "od",
+    "uniqueidentifier": "WORK_ORDER_APPROVER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "WORK_ORDER_APPROVER",
+      "name": "WORK ORDER APPROVER",
+      "description": "Approver of a contract"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322875449,
+    "lastmodifiedtime": 1729322875449
+  },
+  {
+    "id": "a3a3cb3d-80e2-418a-b0b4-140a42779ab3",
+    "tenantid": "od",
+    "uniqueidentifier": "WORK_ORDER_VERIFIER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "WORK_ORDER_VERIFIER",
+      "name": "WORK ORDER VERIFIER",
+      "description": "Verifier of a contract"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322879837,
+    "lastmodifiedtime": 1729322879837
+  },
+  {
+    "id": "719e1ef7-7bc4-48ca-9d4d-040ff7f93e19",
+    "tenantid": "od",
+    "uniqueidentifier": "WORK_ORDER_CREATOR",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "WORK_ORDER_CREATOR",
+      "name": "WORK ORDER CREATOR",
+      "description": "Creator of a contract"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322884650,
+    "lastmodifiedtime": 1729322884650
+  },
+  {
+    "id": "ed84216a-de6b-4e97-8b05-d92d8abd633b",
+    "tenantid": "od",
+    "uniqueidentifier": "ORG_VIEWER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "ORG_VIEWER",
+      "name": "Organization viewer",
+      "description": "Organization viewer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322898949,
+    "lastmodifiedtime": 1729322898949
+  },
+  {
+    "id": "668d45e0-291c-4d8d-9bc6-49560f0218e7",
+    "tenantid": "od",
+    "uniqueidentifier": "ORG_ADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "ORG_ADMIN",
+      "name": "Organization admin",
+      "description": "Role for the admin of any organization"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322905239,
+    "lastmodifiedtime": 1729322905239
+  },
+  {
+    "id": "a5e26b13-c698-49c4-878d-49e06d040f88",
+    "tenantid": "od",
+    "uniqueidentifier": "SUPERUSER",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "SUPERUSER",
+      "name": "SUPER USER",
+      "description": "SUPER USER"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322910233,
+    "lastmodifiedtime": 1729322910233
+  },
+  {
+    "id": "92430519-1779-46b1-a570-a96c099c3ec8",
+    "tenantid": "od",
+    "uniqueidentifier": "HRMS_ADMIN",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "HRMS_ADMIN",
+      "name": "HRMS Admin",
+      "description": "HRMS Admin"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729322915505,
+    "lastmodifiedtime": 1729322915505
+  },
+  {
+    "id": "aa9410aa-9e33-47ff-9e0f-691fdcb5f2f5",
+    "tenantid": "od",
+    "uniqueidentifier": "VIEW_WS_UNMASKED",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "VIEW_WS_UNMASKED",
+      "name": "View Ws Unmasked",
+      "description": "View Wageseeker Unmasked"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1731394354926,
+    "lastmodifiedtime": 1731394354926
+  },
+  {
+    "id": "279067d4-d4f3-4b54-b62c-0695658ceb02",
+    "tenantid": "od",
+    "uniqueidentifier": "VIEW_ORG_UNMASKED",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "VIEW_ORG_UNMASKED",
+      "name": "View ORG Unmasked",
+      "description": "View organization Unmasked"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1731394497044,
+    "lastmodifiedtime": 1731394497044
+  },
+  {
+    "id": "0eb129fe-e397-475b-9a93-f04267e68476",
+    "tenantid": "od",
+    "uniqueidentifier": "VIEW_DED_UNMASKED",
+    "schemacode": "ACCESSCONTROL-ROLES.roles",
+    "data": {
+      "code": "VIEW_DED_UNMASKED",
+      "name": "View DED Unmasked",
+      "description": "View deduction Unmasked"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1731394529881,
+    "lastmodifiedtime": 1731394529881
+  }
+]

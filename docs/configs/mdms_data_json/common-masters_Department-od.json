@@ -1,0 +1,130 @@
+[
+  {
+    "id": "420b59b0-ba3e-4f9f-963e-d13f37033f21",
+    "tenantid": "od",
+    "uniqueidentifier": "PR",
+    "schemacode": "common-masters.Department",
+    "data": {
+      "code": "PR",
+      "name": "Public Relations",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971445800,
+    "lastmodifiedtime": 1728971445800
+  },
+  {
+    "id": "9648bb43-2d9e-4f42-b7be-3ad89b2142cd",
+    "tenantid": "od",
+    "uniqueidentifier": "NULM",
+    "schemacode": "common-masters.Department",
+    "data": {
+      "code": "NULM",
+      "name": "National Urban Livelihood Mission",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971461096,
+    "lastmodifiedtime": 1728971461096
+  },
+  {
+    "id": "5c7ff47a-f752-4aff-b063-807c6bacb3a0",
+    "tenantid": "od",
+    "uniqueidentifier": "TWP",
+    "schemacode": "common-masters.Department",
+    "data": {
+      "code": "TWP",
+      "name": "Town Planning",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971472193,
+    "lastmodifiedtime": 1728971472193
+  },
+  {
+    "id": "fc2314a5-1f06-4b5a-b1f6-cea5a304cc15",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK",
+    "schemacode": "common-masters.Department",
+    "data": {
+      "code": "WRK",
+      "name": "Works",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971485980,
+    "lastmodifiedtime": 1728971485980
+  },
+  {
+    "id": "d677ec7c-9743-473d-9a61-4ecd16fc4bc0",
+    "tenantid": "od",
+    "uniqueidentifier": "PHS",
+    "schemacode": "common-masters.Department",
+    "data": {
+      "code": "PHS",
+      "name": "Public Health and Sanitation",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971496096,
+    "lastmodifiedtime": 1728971496096
+  },
+  {
+    "id": "ea07653c-3703-480f-b91c-b3b9ed4c8194",
+    "tenantid": "od",
+    "uniqueidentifier": "ACC",
+    "schemacode": "common-masters.Department",
+    "data": {
+      "code": "ACC",
+      "name": "Accounts",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971507425,
+    "lastmodifiedtime": 1728971507425
+  },
+  {
+    "id": "18b34a57-6bc2-4d41-8d94-6c09ef3474c9",
+    "tenantid": "od",
+    "uniqueidentifier": "REV",
+    "schemacode": "common-masters.Department",
+    "data": {
+      "code": "REV",
+      "name": "Tax",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971516773,
+    "lastmodifiedtime": 1728971516773
+  },
+  {
+    "id": "ce7229e2-1d34-4456-90b1-cec9c85b1c9f",
+    "tenantid": "od",
+    "uniqueidentifier": "ADM",
+    "schemacode": "common-masters.Department",
+    "data": {
+      "code": "ADM",
+      "name": "Administration",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728971526685,
+    "lastmodifiedtime": 1728971526685
+  }
+]

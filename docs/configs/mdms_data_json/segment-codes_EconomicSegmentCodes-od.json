@@ -1,0 +1,18 @@
+[
+  {
+    "id": "45559a21-e449-4808-bb3f-0eb86f6a7eb0",
+    "tenantid": "od",
+    "uniqueidentifier": "552.CAPEX-IFAS-OTCON",
+    "schemacode": "segment-codes.EconomicSegmentCodes",
+    "data": {
+      "id": "552",
+      "code": "CAPEX-IFAS-OTCON",
+      "name": "Capital Expenditure, Infrastructure Assets, Other Constructions"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729778656115,
+    "lastmodifiedtime": 1729778656115
+  }
+]

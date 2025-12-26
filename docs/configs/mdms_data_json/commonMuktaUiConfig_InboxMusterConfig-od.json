@@ -1,0 +1,241 @@
+[
+  {
+    "id": "1030c1c8-0317-40e0-86cb-4f9fbf2663bb",
+    "tenantid": "od",
+    "uniqueidentifier": "InboxMusterConfig",
+    "schemacode": "commonMuktaUiConfig.InboxMusterConfig",
+    "data": {
+      "type": "inbox",
+      "label": "ES_COMMON_INBOX",
+      "sections": {
+        "links": {
+          "show": true,
+          "children": {},
+          "uiConfig": {
+            "label": "ACTION_TEST_MUSTER_HEADER",
+            "links": [
+              {
+                "url": "/employee/attendencemgmt/search-attendance",
+                "text": "ATM_SEARCH_ATTENDANCE",
+                "roles": [
+                  "MUSTER_ROLL_VERIFIER",
+                  "MUSTER_ROLL_APPROVER"
+                ]
+              }
+            ],
+            "logoIcon": {
+              "component": "AttendanceIcon",
+              "customClass": "inbox-links-icon"
+            }
+          }
+        },
+        "filter": {
+          "show": true,
+          "label": "ES_COMMON_FILTERS",
+          "uiConfig": {
+            "type": "filter",
+            "fields": [
+              {
+                "type": "radio",
+                "label": "",
+                "disable": false,
+                "populators": {
+                  "name": "assignee",
+                  "styles": {
+                    "gap": "1rem",
+                    "flexDirection": "column"
+                  },
+                  "options": [
+                    {
+                      "code": "ASSIGNED_TO_ME",
+                      "name": "EST_INBOX_ASSIGNED_TO_ME"
+                    },
+                    {
+                      "code": "ASSIGNED_TO_ALL",
+                      "name": "EST_INBOX_ASSIGNED_TO_ALL"
+                    }
+                  ],
+                  "optionsKey": "name",
+                  "innerStyles": {
+                    "display": "flex"
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "locationdropdown",
+                "label": "COMMON_WARD",
+                "disable": false,
+                "populators": {
+                  "name": "ward",
+                  "type": "ward",
+                  "optionsKey": "i18nKey",
+                  "defaultText": "COMMON_SELECT_WARD",
+                  "selectedText": "COMMON_SELECTED",
+                  "allowMultiSelect": true
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "workflowstatesfilter",
+                "disable": false,
+                "populators": {
+                  "name": "state",
+                  "labelPrefix": "WF_",
+                  "componentLabel": "COMMON_WORKFLOW_STATES",
+                  "businessService": "muster-roll-approval"
+                },
+                "isMandatory": false
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 0,
+            "primaryLabel": "Filter",
+            "defaultValues": {
+              "ward": [],
+              "state": "",
+              "assignee": {
+                "code": "ASSIGNED_TO_ALL",
+                "name": "EST_INBOX_ASSIGNED_TO_ALL"
+              },
+              "locality": []
+            },
+            "secondaryLabel": ""
+          }
+        },
+        "search": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "fields": [
+              {
+                "type": "text",
+                "label": "ATM_MUSTER_ROLL_ID",
+                "disable": false,
+                "populators": {
+                  "name": "musterRollNumber",
+                  "error": "COMMON_PATTERN_ERR_MSG_MUSTER_ID",
+                  "validation": {
+                    "pattern": "MR\\\\/[0-9]+-[0-9]+\\\\/[0-9]+\\\\/[0-9]+",
+                    "minlength": 2
+                  }
+                },
+                "preProcess": {
+                  "convertStringToRegEx": [
+                    "populators.validation.pattern"
+                  ]
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "text",
+                "label": "ES_COMMON_PROJECT_NAME",
+                "disable": false,
+                "populators": {
+                  "name": "attendanceRegisterName",
+                  "error": "PROJECT_PATTERN_ERR_MSG"
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "apidropdown",
+                "label": "COMMON_ORG_NAME",
+                "disable": false,
+                "populators": {
+                  "name": "orgId",
+                  "customfn": "populateReqCriteria",
+                  "masterName": "commonUiConfig",
+                  "moduleName": "AttendanceInboxConfig",
+                  "optionsKey": "name",
+                  "allowMultiSelect": false
+                },
+                "isMandatory": false
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 1,
+            "primaryLabel": "ES_COMMON_SEARCH",
+            "defaultValues": {
+              "orgId": "",
+              "musterRollNumber": "",
+              "attendanceRegisterName": ""
+            },
+            "secondaryLabel": "ES_COMMON_CLEAR_SEARCH"
+          }
+        },
+        "searchResult": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "columns": [
+              {
+                "label": "ATM_MUSTER_ROLL_ID",
+                "jsonPath": "businessObject.musterRollNumber",
+                "additionalCustomization": true
+              },
+              {
+                "label": "ES_COMMON_PROJECT_NAME",
+                "jsonPath": "businessObject.additionalDetails.attendanceRegisterName"
+              },
+              {
+                "label": "ES_COMMON_CBO_NAME",
+                "jsonPath": "businessObject.additionalDetails.orgName"
+              },
+              {
+                "key": "assignee",
+                "label": "COMMON_ASSIGNEE",
+                "jsonPath": "ProcessInstance.assignes[0].name"
+              },
+              {
+                "key": "state",
+                "label": "COMMON_WORKFLOW_STATES",
+                "jsonPath": "ProcessInstance.state.state",
+                "additionalCustomization": true
+              },
+              {
+                "label": "ATM_SLA",
+                "jsonPath": "businessObject.serviceSla",
+                "additionalCustomization": true
+              }
+            ],
+            "resultsJsonPath": "items",
+            "enableColumnSort": true,
+            "enableGlobalSearch": false
+          }
+        }
+      },
+      "apiDetails": {
+        "masterName": "commonUiConfig",
+        "moduleName": "AttendanceInboxConfig",
+        "requestBody": {
+          "inbox": {
+            "moduleSearchCriteria": {},
+            "processSearchCriteria": {
+              "moduleName": "muster-roll-service",
+              "businessService": [
+                "MR"
+              ]
+            }
+          }
+        },
+        "serviceName": "/inbox/v2/_search",
+        "requestParam": {},
+        "tableFormJsonPath": "requestBody.inbox",
+        "filterFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+        "searchFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+        "minParametersForFilterForm": 0,
+        "minParametersForSearchForm": 0
+      },
+      "screenName": "InboxMusterConfig",
+      "postProcessResult": true,
+      "additionalSections": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728991958481,
+    "lastmodifiedtime": 1728991958481
+  }
+]

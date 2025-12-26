@@ -1,0 +1,254 @@
+[
+  {
+    "id": "4b5da874-7318-408e-a139-f25518000a91",
+    "tenantid": "od",
+    "uniqueidentifier": "WorkflowPopupConfig",
+    "schemacode": "commonMuktaUiConfig.WorkflowPopupConfig",
+    "data": {
+      "CONTRACT": {
+        "REJECT": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": true
+          }
+        },
+        "APPROVE": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          }
+        },
+        "default": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": true,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          }
+        },
+        "SEND_BACK": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          }
+        },
+        "VERIFY_AND_FORWARD": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": true,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          }
+        },
+        "SEND_BACK_TO_ORIGINATOR": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          }
+        }
+      },
+      "ESTIMATE": {
+        "REJECT": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": true
+          }
+        },
+        "APPROVE": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          }
+        },
+        "default": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": true,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          }
+        },
+        "SENDBACK": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          }
+        },
+        "SENDBACKTOORIGINATOR": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          }
+        }
+      },
+      "screenName": "WorkflowPopupConfig",
+      "MUSTER_ROLL": {
+        "REJECT": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": true
+          }
+        },
+        "APPROVE": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          },
+          "acceptTerms": {
+            "show": true,
+            "isMandatory": true
+          }
+        },
+        "default": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": true,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          }
+        },
+        "SENDBACK": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          },
+          "acceptTerms": {
+            "show": false,
+            "isMandatory": false
+          }
+        },
+        "SENDBACKTOCBO": {
+          "upload": {
+            "show": true,
+            "isMandatory": false
+          },
+          "assignee": {
+            "show": false,
+            "isMandatory": false
+          },
+          "comments": {
+            "show": true,
+            "isMandatory": false
+          },
+          "acceptTerms": {
+            "show": false,
+            "isMandatory": false
+          }
+        }
+      }
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728992623110,
+    "lastmodifiedtime": 1728992623110
+  }
+]

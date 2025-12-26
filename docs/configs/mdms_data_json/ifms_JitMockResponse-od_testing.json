@@ -1,0 +1,231 @@
+[
+  {
+    "id": "c3c67175-3391-4443-914b-c0a48a9108a8",
+    "tenantid": "od.testing",
+    "uniqueidentifier": "VA.132217058003586410459082112.OLSHUD001",
+    "schemacode": "ifms.JitMockResponse",
+    "data": {
+      "data": [
+        {
+          "ssuId": "1621",
+          "ddoCode": "OLSHUD001",
+          "ssuOffice": "angul_op",
+          "schemeCode": "13145",
+          "schemeName": "Mukhyamantri Karma Tatpara Abhiyan (MUKTA)",
+          "granteeName": "ANGUL MUNICIPALITY",
+          "allotmentDate": "2024-05-11",
+          "granteeAgCode": "GOHUDULBMPL0036",
+          "ssuAllotmentId": "860",
+          "allotmentAmount": "200000",
+          "allotmentTxnSlNo": "0",
+          "allotmentTxnType": "Initial Allotment",
+          "availableBalance": "600000",
+          "mstAllotmentDistId": "928"
+        },
+        {
+          "ssuId": "1621",
+          "ddoCode": "OLSHUD001",
+          "ssuOffice": "angul_op",
+          "schemeCode": "13145",
+          "schemeName": "Mukhyamantri Karma Tatpara Abhiyan (MUKTA)",
+          "granteeName": "ANGUL MUNICIPALITY",
+          "allotmentDate": "2024-05-11",
+          "granteeAgCode": "GOHUDULBMPL0036",
+          "ssuAllotmentId": "860",
+          "allotmentAmount": "300000",
+          "allotmentTxnSlNo": "0",
+          "allotmentTxnType": "Initial Allotment",
+          "availableBalance": "500000",
+          "mstAllotmentDistId": "929"
+        }
+      ],
+      "serviceId": "VA",
+      "referenceId": "132217058003586410459082112.OLSHUD001"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729852658189,
+    "lastmodifiedtime": 1729852658189
+  },
+  {
+    "id": "20f74518-669d-4de7-a15d-c06825bd74fc",
+    "tenantid": "od.testing",
+    "uniqueidentifier": "PI.PI",
+    "schemacode": "ifms.JitMockResponse",
+    "data": {
+      "data": [
+        {
+          "ssuIaId": "1621",
+          "jitBillNo": "PI-TE/2024-25/002760",
+          "jitBillDate": "2024-10-25",
+          "successCode": "0",
+          "sucessDescrp": "Jit Bill is received successfully ,Payment Instruction will be generated after Bill is submitted by SSU in JIT-FS"
+        }
+      ],
+      "serviceId": "PI",
+      "referenceId": "PI"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1730100942796,
+    "lastmodifiedtime": 1730100942796
+  },
+  {
+    "id": "9db06625-6c41-4c16-b670-7d1676f0aa8b",
+    "tenantid": "od.testing",
+    "uniqueidentifier": "PIS.PI-TE/2024-25/002954",
+    "schemacode": "ifms.JitMockResponse",
+    "data": {
+      "data": [
+        {
+          "ssuIaId": "1621",
+          "pmtInstId": "858",
+          "schemeCode": "13145",
+          "jitBillDate": "2024-10-28",
+          "payInstDate": "2023-10-28 11:03:04",
+          "billNetAmount": "30000",
+          "jitBillNumber": "PI-TE/2024-25/002954",
+          "billGrossAmount": "30000",
+          "totalNumberOfBeneficiary": "2"
+        }
+      ],
+      "serviceId": "PIS",
+      "referenceId": "PI-TE/2024-25/002954"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1730121826643,
+    "lastmodifiedtime": 1730121826643
+  },
+  {
+    "id": "c1093a35-c87b-491c-a177-137371733e8a",
+    "tenantid": "od.testing",
+    "uniqueidentifier": "PAG.PI-TE/2024-25/002954",
+    "schemacode": "ifms.JitMockResponse",
+    "data": {
+      "data": [
+        {
+          "billNo": "PI-TE/2024-25/002954",
+          "finYear": "2024",
+          "ssuIaId": "1621",
+          "adviceId": "38",
+          "benfList": [
+            {
+              "amount": "2.0",
+              "benfId": "BN-TE/003535",
+              "benfName": "ITTDS",
+              "benfAccountNo": "8796835261186",
+              "benfBankIfscCode": "ICIC0000047"
+            },
+            {
+              "amount": "198",
+              "benfId": "BN-TE/003536",
+              "benfName": "Mission Shakti Group",
+              "benfAccountNo": "4323456789876",
+              "benfBankIfscCode": "HDFC0000408"
+            }
+          ],
+          "tokenDate": "2024-10-28",
+          "adviceDate": "2024-10-28",
+          "tokenNumber": "5",
+          "onlineBillRefNo": "1730112305000"
+        }
+      ],
+      "serviceId": "PAG",
+      "referenceId": "PI-TE/2024-25/002954"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1730122909309,
+    "lastmodifiedtime": 1730122909309
+  },
+  {
+    "id": "057c9bb8-fdf8-4e0b-88e0-5dedbde29e08",
+    "tenantid": "od.testing",
+    "uniqueidentifier": "PD.1730112305000",
+    "schemacode": "ifms.JitMockResponse",
+    "data": {
+      "data": [
+        {
+          "benfDtls": [
+            {
+              "utrNo": "RBI504",
+              "benfId": "BN-TE/003535",
+              "utrDate": "2024-10-28",
+              "benfAcctNo": "8796835261186",
+              "endToEndId": "EP112202320000003231520002",
+              "benfBankIfscCode": "ICIC0000047"
+            },
+            {
+              "utrNo": "RBI504",
+              "benfId": "BN-TE/003536",
+              "utrDate": "2024-10-28",
+              "benfAcctNo": "4323456789876",
+              "endToEndId": "EP112202320000003231520002",
+              "benfBankIfscCode": "HDFC0000408"
+            }
+          ],
+          "billDate": "2024-10-28",
+          "billRefNo": "1730112305000",
+          "tokenDate": "2024-10-28",
+          "voucherNo": "22171",
+          "billNumber": "PI-TE/2024-25/002954",
+          "tokenNumber": "4",
+          "voucherDate": "2024-10-28",
+          "paymentStatus": "Paid by RBI eKuber,please check with your bank"
+        }
+      ],
+      "serviceId": "PD",
+      "referenceId": "1730112305000"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1730124278874,
+    "lastmodifiedtime": 1730124278874
+  },
+  {
+    "id": "10041514-0b89-472a-a091-227cea2abdaf",
+    "tenantid": "od.testing",
+    "uniqueidentifier": "FD.PI-TE/2024-25/002954",
+    "schemacode": "ifms.JitMockResponse",
+    "data": {
+      "data": [
+        {
+          "benfDtls": [
+            {
+              "utrNo": "RBI505",
+              "benfId": "BN-TE/003535",
+              "utrDate": "2024-10-28",
+              "benfAcctNo": "8796835261186",
+              "endToEndId": "EP112202320000003231520002",
+              "challanDate": "2024-10-28",
+              "failedReason": " Account does not exist",
+              "challanNumber": "86581",
+              "benfBankIfscCode": "ICIC0000047",
+              "orgBillRefNumber": "1730112305000"
+            }
+          ],
+          "billDate": "2024-10-28",
+          "billRefNo": "1730112305000",
+          "tokenDate": "2024-10-28",
+          "voucherNo": "22171",
+          "billNumber": "PI-TE/2024-25/002954",
+          "tokenNumber": "4",
+          "voucherDate": "2024-10-28"
+        }
+      ],
+      "serviceId": "FD",
+      "referenceId": "PI-TE/2024-25/002954"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1730125325917,
+    "lastmodifiedtime": 1730125325917
+  }
+]

@@ -1,0 +1,102 @@
+[
+  {
+    "id": "0db58b6f-41b2-4e1a-b606-7b0f13cbe0df",
+    "tenantid": "od",
+    "uniqueidentifier": "User",
+    "schemacode": "DataSecurity.EncryptionPolicy",
+    "data": {
+      "key": "User",
+      "attributeList": [
+        {
+          "type": "Normal",
+          "jsonPath": "name"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "mobileNumber"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "emailId"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "username"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "altContactNumber"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "pan"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "aadhaarNumber"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "guardian"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "permanentAddress/address"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "correspondenceAddress/address"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "addresses/*/address"
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729836551828,
+    "lastmodifiedtime": 1729836551828
+  },
+  {
+    "id": "27ff70c1-7249-4c4a-aaf0-d7b8252ff4b4",
+    "tenantid": "od",
+    "uniqueidentifier": "UserSearchCriteria",
+    "schemacode": "DataSecurity.EncryptionPolicy",
+    "data": {
+      "key": "UserSearchCriteria",
+      "attributeList": [
+        {
+          "type": "Normal",
+          "jsonPath": "userName"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "name"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "mobileNumber"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "aadhaarNumber"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "pan"
+        },
+        {
+          "type": "Normal",
+          "jsonPath": "emailId"
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729836600465,
+    "lastmodifiedtime": 1729836600465
+  }
+]

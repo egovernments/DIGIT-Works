@@ -1,0 +1,26 @@
+[
+  {
+    "id": "3cb297f8-09a3-403e-9d86-c1f2be5bd674",
+    "tenantid": "od.testing",
+    "uniqueidentifier": "OLSHUD001",
+    "schemacode": "ifms.SSUDetails",
+    "data": {
+      "id": "1",
+      "ssuId": "1621",
+      "active": true,
+      "ddoCode": "OLSHUD001",
+      "ssuCode": "OLSHUD001",
+      "ssuOffice": "angul_op",
+      "effectiveTo": null,
+      "granteeName": "ANGUL MUNICIPALITY",
+      "programCode": "PG/2024-25/000013",
+      "effectiveFrom": 1682164954037,
+      "granteeAgCode": "GOHUDULBMPL0036"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729777437735,
+    "lastmodifiedtime": 1729777437735
+  }
+]

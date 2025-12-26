@@ -1,0 +1,66 @@
+[
+  {
+    "id": "933f93aa-d40b-4fc8-bbda-464557b1fcc9",
+    "tenantid": "od",
+    "uniqueidentifier": "OTHER",
+    "schemacode": "common-masters.SocialCategory",
+    "data": {
+      "code": "OTHER",
+      "name": "Other",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728993676098,
+    "lastmodifiedtime": 1728993676098
+  },
+  {
+    "id": "8ffa4392-a5fd-4b06-9a2c-1af8375a771e",
+    "tenantid": "od",
+    "uniqueidentifier": "OBC",
+    "schemacode": "common-masters.SocialCategory",
+    "data": {
+      "code": "OBC",
+      "name": "OBC",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728993687905,
+    "lastmodifiedtime": 1728993687905
+  },
+  {
+    "id": "14871052-1cd7-4ae9-b48e-72a5f44868ee",
+    "tenantid": "od",
+    "uniqueidentifier": "ST",
+    "schemacode": "common-masters.SocialCategory",
+    "data": {
+      "code": "ST",
+      "name": "ST",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728993699485,
+    "lastmodifiedtime": 1728993699485
+  },
+  {
+    "id": "c93ba7cf-771d-4a91-b5e1-1953fd441dc7",
+    "tenantid": "od",
+    "uniqueidentifier": "SC",
+    "schemacode": "common-masters.SocialCategory",
+    "data": {
+      "code": "SC",
+      "name": "SC",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728993709034,
+    "lastmodifiedtime": 1728993709034
+  }
+]

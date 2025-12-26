@@ -1,0 +1,34 @@
+[
+  {
+    "id": "b3bc0162-211f-4fda-9b3a-b626173957e4",
+    "tenantid": "od",
+    "uniqueidentifier": "HUSBAND",
+    "schemacode": "common-masters.Relationship",
+    "data": {
+      "code": "HUSBAND",
+      "name": "Husband",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981903235,
+    "lastmodifiedtime": 1728981903235
+  },
+  {
+    "id": "401c552e-bea0-4edc-a844-d6516b5fc9a8",
+    "tenantid": "od",
+    "uniqueidentifier": "FATHER",
+    "schemacode": "common-masters.Relationship",
+    "data": {
+      "code": "FATHER",
+      "name": "Father",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981912685,
+    "lastmodifiedtime": 1728981912685
+  }
+]

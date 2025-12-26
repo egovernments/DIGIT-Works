@@ -1,0 +1,110 @@
+[
+  {
+    "id": "d66f95ba-8d9b-4ce9-84ed-bdc46889e400",
+    "tenantid": "od",
+    "uniqueidentifier": "6.HOME_REGISTER_WAGE_SEEKER",
+    "schemacode": "commonUiConfig.CBOHomeScreenConfig",
+    "data": {
+      "key": "HOME_REGISTER_WAGE_SEEKER",
+      "label": "REGISTER_WAGE_SEEKER",
+      "order": 6,
+      "active": true,
+      "displayName": "REGISTER_WAGE_SEEKER"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728977953754,
+    "lastmodifiedtime": 1728977953754
+  },
+  {
+    "id": "22960101-dd85-4640-b8f4-0080db6ae1c5",
+    "tenantid": "od",
+    "uniqueidentifier": "5.HOME_SERVICE_REQUESTS",
+    "schemacode": "commonUiConfig.CBOHomeScreenConfig",
+    "data": {
+      "key": "HOME_SERVICE_REQUESTS",
+      "label": "HOME_SERVICE_REQUESTS",
+      "order": 5,
+      "active": true,
+      "displayName": "My Service Requests"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728977967476,
+    "lastmodifiedtime": 1728977967476
+  },
+  {
+    "id": "51dd1dfc-0571-4634-b46c-c6b525b71798",
+    "tenantid": "od",
+    "uniqueidentifier": "4.HOME_MY_BILLS",
+    "schemacode": "commonUiConfig.CBOHomeScreenConfig",
+    "data": {
+      "key": "HOME_MY_BILLS",
+      "label": "WORKS_MY_BILLS",
+      "order": 4,
+      "active": true,
+      "displayName": "My Bills"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728977986540,
+    "lastmodifiedtime": 1728977986540
+  },
+  {
+    "id": "fb321b4c-c020-4461-9836-202979ce8623",
+    "tenantid": "od",
+    "uniqueidentifier": "3.HOME_MUSTER_ROLLS",
+    "schemacode": "commonUiConfig.CBOHomeScreenConfig",
+    "data": {
+      "key": "HOME_MUSTER_ROLLS",
+      "label": "WORKS_MUSTERROLLS",
+      "order": 3,
+      "active": true,
+      "displayName": "Muster Rolls"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728977991666,
+    "lastmodifiedtime": 1728977991666
+  },
+  {
+    "id": "c73132d4-c979-486a-b5d4-c5d7d7cf4b94",
+    "tenantid": "od",
+    "uniqueidentifier": "2.HOME_TRACK_ATTENDENCE",
+    "schemacode": "commonUiConfig.CBOHomeScreenConfig",
+    "data": {
+      "key": "HOME_TRACK_ATTENDENCE",
+      "label": "TRACK_ATTENDENCE",
+      "order": 2,
+      "active": true,
+      "displayName": "Track Attendance"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728978004711,
+    "lastmodifiedtime": 1728978004711
+  },
+  {
+    "id": "1e778fd2-c31d-4060-9e26-06f4a9d57d57",
+    "tenantid": "od",
+    "uniqueidentifier": "1.HOME_MY_WORKS",
+    "schemacode": "commonUiConfig.CBOHomeScreenConfig",
+    "data": {
+      "key": "HOME_MY_WORKS",
+      "label": "MY_WORKS",
+      "order": 1,
+      "active": true,
+      "displayName": "My Works"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728978015319,
+    "lastmodifiedtime": 1728978015319
+  }
+]

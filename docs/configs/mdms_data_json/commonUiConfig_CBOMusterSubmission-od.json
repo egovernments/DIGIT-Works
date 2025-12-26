@@ -1,0 +1,34 @@
+[
+  {
+    "id": "b0934481-7eab-4c07-a907-011910e8347f",
+    "tenantid": "od",
+    "uniqueidentifier": "END_OF_WEEK",
+    "schemacode": "commonUiConfig.CBOMusterSubmission",
+    "data": {
+      "code": "END_OF_WEEK",
+      "value": "end of week",
+      "active": false
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728978136753,
+    "lastmodifiedtime": 1728978136753
+  },
+  {
+    "id": "5f7713c4-223d-4366-8673-375e53e871f1",
+    "tenantid": "od",
+    "uniqueidentifier": "ANY_DAY",
+    "schemacode": "commonUiConfig.CBOMusterSubmission",
+    "data": {
+      "code": "ANY_DAY",
+      "value": "any day",
+      "active": false
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728978146934,
+    "lastmodifiedtime": 1728978146934
+  }
+]

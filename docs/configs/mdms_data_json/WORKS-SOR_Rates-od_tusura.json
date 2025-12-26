@@ -1,0 +1,7117 @@
+[
+  {
+    "id": "2ced99a7-1dfd-4fa7-8fab-d3c6c545d971",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000205.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 204.53,
+      "type": "lumpsum",
+      "sorId": "SOR_000205",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 204.53
+        }
+      ],
+      "compositionId": "CMP_000224"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597134,
+    "lastmodifiedtime": 1716359597134
+  },
+  {
+    "id": "e91749c3-e8ed-4815-adf0-2b1952490302",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000582.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1439.3,
+      "type": "lumpsum",
+      "sorId": "SOR_000582",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 14.25
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 1425.0
+        }
+      ],
+      "compositionId": "CMP_000230"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599431,
+    "lastmodifiedtime": 1716359599431
+  },
+  {
+    "id": "fb43a577-141b-4013-804b-4f5a88e926a8",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000288.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1161.2,
+      "type": "lumpsum",
+      "sorId": "SOR_000288",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 17.65
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.15
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 159.74
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 981.63
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597667,
+    "lastmodifiedtime": 1716359597667
+  },
+  {
+    "id": "b5938b15-0d7e-4986-82ac-58d0804a0ab8",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000289.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 495.25,
+      "type": "lumpsum",
+      "sorId": "SOR_000289",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 4.9
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 1.75
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 320.34
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 168.26
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597679,
+    "lastmodifiedtime": 1716359597679
+  },
+  {
+    "id": "0768afc6-3632-4557-b69b-a663f52a0804",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000292.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 640.04,
+      "type": "lumpsum",
+      "sorId": "SOR_000292",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 8.47
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 1.75
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 320.34
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 309.48
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597742,
+    "lastmodifiedtime": 1716359597742
+  },
+  {
+    "id": "41d96733-dbe6-4f8e-8260-6c41fb0eaf27",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000358.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 4462.6,
+      "type": "lumpsum",
+      "sorId": "SOR_000358",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 45.13
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 16.66
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1986.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 2056.5
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 357.94
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597903,
+    "lastmodifiedtime": 1716359597903
+  },
+  {
+    "id": "5173ee53-98fd-4da6-bb7d-20a77873748a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000365.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 450.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000365",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 450.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597942,
+    "lastmodifiedtime": 1716359597942
+  },
+  {
+    "id": "45288de4-de0e-442b-81f6-e6ff642f94b8",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000367.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 450.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000367",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 450.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597957,
+    "lastmodifiedtime": 1716359597957
+  },
+  {
+    "id": "7c06d0a0-1076-43e1-afb5-4a3af5cb5db4",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000368.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 450.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000368",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 450.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597968,
+    "lastmodifiedtime": 1716359597968
+  },
+  {
+    "id": "371990bb-e85d-4ed5-a3b6-dec761f6b97f",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000369.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 450.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000369",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 450.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597978,
+    "lastmodifiedtime": 1716359597978
+  },
+  {
+    "id": "f563f274-7992-4e86-9b3a-64ad575f5049",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000370.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000370",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597994,
+    "lastmodifiedtime": 1716359597994
+  },
+  {
+    "id": "083cb73a-e75e-4988-9dc6-5bff388c8116",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000371.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000371",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598028,
+    "lastmodifiedtime": 1716359598028
+  },
+  {
+    "id": "9cc6b31c-c001-4327-956d-a26e203f5a7e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000372.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000372",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598054,
+    "lastmodifiedtime": 1716359598054
+  },
+  {
+    "id": "e04dae8b-5b61-4957-8d31-0a5f5a043bbc",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000373.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000373",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598073,
+    "lastmodifiedtime": 1716359598073
+  },
+  {
+    "id": "7532b806-d9f9-45c7-976c-fece93fb3e02",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000374.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000374",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598087,
+    "lastmodifiedtime": 1716359598087
+  },
+  {
+    "id": "d5005f7b-2db2-47d0-90af-409a45f3330b",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000375.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000375",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598134,
+    "lastmodifiedtime": 1716359598134
+  },
+  {
+    "id": "270887e5-e045-4f1a-8caf-226e0aadf3e2",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000376.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000376",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598150,
+    "lastmodifiedtime": 1716359598150
+  },
+  {
+    "id": "ed02f33c-be33-46b4-bc30-4752b26f669a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000377.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000377",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598158,
+    "lastmodifiedtime": 1716359598158
+  },
+  {
+    "id": "e3cd39c4-cbe4-49d8-ac0c-0d25be00a7b4",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000378.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000378",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598176,
+    "lastmodifiedtime": 1716359598176
+  },
+  {
+    "id": "2f39f64b-eb92-4cf7-8f98-0c760e0382d9",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000379.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000379",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598192,
+    "lastmodifiedtime": 1716359598192
+  },
+  {
+    "id": "f22602d7-452f-4981-8b4f-47c61c0c8046",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000380.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000380",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598208,
+    "lastmodifiedtime": 1716359598208
+  },
+  {
+    "id": "0121dbe3-7fcb-4171-88af-960af7615296",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000381.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000381",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598215,
+    "lastmodifiedtime": 1716359598215
+  },
+  {
+    "id": "b38a6bd7-2a18-4703-9771-70f7906fcbe5",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000382.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000382",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598242,
+    "lastmodifiedtime": 1716359598242
+  },
+  {
+    "id": "d08c4a58-87c4-4bef-98ca-9cd0811589b3",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000383.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000383",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598250,
+    "lastmodifiedtime": 1716359598250
+  },
+  {
+    "id": "91da6010-b4db-4e43-978d-8a959e901f92",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000384.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000384",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598275,
+    "lastmodifiedtime": 1716359598275
+  },
+  {
+    "id": "763f9c92-63fa-41c5-b850-4c6c28780fac",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000385.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000385",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598285,
+    "lastmodifiedtime": 1716359598285
+  },
+  {
+    "id": "7ebd6c55-216f-4c04-8454-a251db72fa10",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000386.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000386",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598293,
+    "lastmodifiedtime": 1716359598293
+  },
+  {
+    "id": "37528f1b-209b-4924-af5f-7f226284834a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000387.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000387",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598301,
+    "lastmodifiedtime": 1716359598301
+  },
+  {
+    "id": "4a5bed4f-2529-4dad-9137-d3cce706a5de",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000388.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000388",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598311,
+    "lastmodifiedtime": 1716359598311
+  },
+  {
+    "id": "638f851d-b906-4ff7-8127-eb6763c44b7d",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000389.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000389",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598318,
+    "lastmodifiedtime": 1716359598318
+  },
+  {
+    "id": "35a4be56-6c40-4841-85ad-74580077e1b2",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000390.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000390",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598326,
+    "lastmodifiedtime": 1716359598326
+  },
+  {
+    "id": "6a4e1815-ff45-4f91-9a6d-3b09f99628fb",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000391.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000391",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598340,
+    "lastmodifiedtime": 1716359598340
+  },
+  {
+    "id": "41b2bc7a-fa04-4887-86af-d7b867c3149e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000392.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000392",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598353,
+    "lastmodifiedtime": 1716359598353
+  },
+  {
+    "id": "f5987218-bd20-4df0-a4ed-a42cb2645eff",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000394.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000394",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598370,
+    "lastmodifiedtime": 1716359598370
+  },
+  {
+    "id": "dae66c5b-f610-43b9-8c9a-7cecfbb9ad46",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000393.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000393",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598361,
+    "lastmodifiedtime": 1716359598361
+  },
+  {
+    "id": "67a1ebee-8829-4c03-b056-1026625aba08",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000395.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000395",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598390,
+    "lastmodifiedtime": 1716359598390
+  },
+  {
+    "id": "48bbb5a2-800b-4556-85ba-95e15456f623",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000396.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000396",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598398,
+    "lastmodifiedtime": 1716359598398
+  },
+  {
+    "id": "3f1155b0-4c63-4529-9be1-904a902505cd",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000397.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000397",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598406,
+    "lastmodifiedtime": 1716359598406
+  },
+  {
+    "id": "1f0e95b3-be73-4a2a-8339-13be9536cd2a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000398.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000398",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598413,
+    "lastmodifiedtime": 1716359598413
+  },
+  {
+    "id": "2841b4fc-47b4-4c38-8d14-ce963a70c264",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000400.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000400",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598432,
+    "lastmodifiedtime": 1716359598432
+  },
+  {
+    "id": "c570f417-1cea-48bb-8141-940a1e58cd21",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000401.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000401",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598438,
+    "lastmodifiedtime": 1716359598438
+  },
+  {
+    "id": "fb07c822-8444-4b4d-b009-0a681d0ac5a0",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000399.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000399",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598423,
+    "lastmodifiedtime": 1716359598423
+  },
+  {
+    "id": "9af24154-fcef-42b7-8421-c2f97266a5b8",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000403.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000403",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598511,
+    "lastmodifiedtime": 1716359598511
+  },
+  {
+    "id": "a2d79813-3159-45da-9b45-92684f1d0734",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000402.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000402",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598445,
+    "lastmodifiedtime": 1716359598445
+  },
+  {
+    "id": "f26acd44-0332-4d9e-abc7-e4d9275752c1",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000404.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000404",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598519,
+    "lastmodifiedtime": 1716359598519
+  },
+  {
+    "id": "70ed9949-4b6b-483a-a7b1-9f8b128014bd",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000405.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000405",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598527,
+    "lastmodifiedtime": 1716359598527
+  },
+  {
+    "id": "b90285af-8f6c-4a23-bf8d-2182a9854c1d",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000406.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000406",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598586,
+    "lastmodifiedtime": 1716359598586
+  },
+  {
+    "id": "bbf35ad1-3b42-4a01-9ef2-31ef103734fd",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000407.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000407",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598596,
+    "lastmodifiedtime": 1716359598596
+  },
+  {
+    "id": "a14c5fe8-ceb3-4521-b744-1ac53854721a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000408.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000408",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598605,
+    "lastmodifiedtime": 1716359598605
+  },
+  {
+    "id": "679ecc3f-6ff6-4dc8-ac04-85b7749f8a3c",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000409.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000409",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598615,
+    "lastmodifiedtime": 1716359598615
+  },
+  {
+    "id": "8652e7c0-8f3d-4121-8281-12cc317ef4d3",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000410.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000410",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598628,
+    "lastmodifiedtime": 1716359598628
+  },
+  {
+    "id": "15a3e742-2d2b-40cc-bf92-5da6f4413136",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000411.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000411",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598636,
+    "lastmodifiedtime": 1716359598636
+  },
+  {
+    "id": "2269fb24-387c-4fa6-a3ca-d7f463e29c46",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000412.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000412",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598646,
+    "lastmodifiedtime": 1716359598646
+  },
+  {
+    "id": "b31d908d-fa15-4165-a166-6b8d9dc2e8da",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000413.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000413",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598670,
+    "lastmodifiedtime": 1716359598670
+  },
+  {
+    "id": "eb0ab909-11e9-4d4f-a4b6-806f396a3e33",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000414.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000414",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598679,
+    "lastmodifiedtime": 1716359598679
+  },
+  {
+    "id": "ca6ced8f-d2ea-4d90-8e56-eb9a56baab5f",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000415.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000415",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598690,
+    "lastmodifiedtime": 1716359598690
+  },
+  {
+    "id": "21d07232-6a74-4cab-a8e6-2cdd6f8778ae",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000416.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000416",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598700,
+    "lastmodifiedtime": 1716359598700
+  },
+  {
+    "id": "6d497404-93ce-4ffa-ba74-c390d9d5b97b",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000417.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000417",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598711,
+    "lastmodifiedtime": 1716359598711
+  },
+  {
+    "id": "132de0a0-969a-4cdd-b09e-20f357dbcfa2",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000418.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000418",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598725,
+    "lastmodifiedtime": 1716359598725
+  },
+  {
+    "id": "11933856-912d-4cb1-9aa8-96f2a9254a8e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000419.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000419",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598745,
+    "lastmodifiedtime": 1716359598745
+  },
+  {
+    "id": "4ee0ebf4-3a79-4c6c-95bf-cff819e9acfb",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000420.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000420",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598754,
+    "lastmodifiedtime": 1716359598754
+  },
+  {
+    "id": "f8fd35fb-49b8-4e9e-b662-b4394fd25023",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000421.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000421",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598764,
+    "lastmodifiedtime": 1716359598764
+  },
+  {
+    "id": "fb9b2945-8caa-4bd3-be58-313fa8d6bc66",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000422.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000422",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598777,
+    "lastmodifiedtime": 1716359598777
+  },
+  {
+    "id": "98e3c59b-13e3-4496-9042-39d55291cfac",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000423.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000423",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598792,
+    "lastmodifiedtime": 1716359598792
+  },
+  {
+    "id": "54447113-c346-4c1b-894e-a67fa6c15a08",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000424.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000424",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598801,
+    "lastmodifiedtime": 1716359598801
+  },
+  {
+    "id": "f1e8abf0-5d7f-4292-bf8f-9d01c70a9e80",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000425.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000425",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598819,
+    "lastmodifiedtime": 1716359598819
+  },
+  {
+    "id": "7c8e79e7-ba34-4002-bfaf-6e72c74497c5",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000426.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000426",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598828,
+    "lastmodifiedtime": 1716359598828
+  },
+  {
+    "id": "a3c04054-6ecd-4589-b81c-a989e70dcabc",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000427.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000427",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598844,
+    "lastmodifiedtime": 1716359598844
+  },
+  {
+    "id": "9e9fe3f0-83f9-42a3-903b-bf65d8e047ba",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000428.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000428",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598858,
+    "lastmodifiedtime": 1716359598858
+  },
+  {
+    "id": "d2016d73-5e37-4866-b9f5-265c0964b63e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000429.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000429",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598867,
+    "lastmodifiedtime": 1716359598867
+  },
+  {
+    "id": "48389194-2db4-4c10-8e15-05f7aa3fb679",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000430.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000430",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598910,
+    "lastmodifiedtime": 1716359598910
+  },
+  {
+    "id": "d13ff01d-9d06-4137-aae8-f3d4b3be7423",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000431.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000431",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598921,
+    "lastmodifiedtime": 1716359598921
+  },
+  {
+    "id": "0a8a370a-8950-498f-b6bb-96e1dd65c557",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000432.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000432",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598931,
+    "lastmodifiedtime": 1716359598931
+  },
+  {
+    "id": "d86e550f-8259-4fc1-828e-e7e492b32509",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000433.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000433",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598961,
+    "lastmodifiedtime": 1716359598961
+  },
+  {
+    "id": "ac1b5821-75ff-42ce-847b-ec95b77fc3fc",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000434.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000434",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598980,
+    "lastmodifiedtime": 1716359598980
+  },
+  {
+    "id": "79c03131-feac-43ca-aa8e-bdeb5a9d4b7a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000435.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000435",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598988,
+    "lastmodifiedtime": 1716359598988
+  },
+  {
+    "id": "1c93c960-041e-4a33-bf01-ba35595012a3",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000436.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000436",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359598999,
+    "lastmodifiedtime": 1716359598999
+  },
+  {
+    "id": "b6ab988a-eaf3-477e-a54e-4db16fa3eb92",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000437.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000437",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599009,
+    "lastmodifiedtime": 1716359599009
+  },
+  {
+    "id": "12437bf5-bcb6-4f48-8a54-3a316bbb29da",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000438.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 160.59,
+      "type": "lumpsum",
+      "sorId": "SOR_000438",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 1.59
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.89
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 20.9
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 131.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 6.21
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599024,
+    "lastmodifiedtime": 1716359599024
+  },
+  {
+    "id": "c3d693f7-1741-4f7d-89d2-c381b75d0ef8",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000442.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 172.85,
+      "type": "lumpsum",
+      "sorId": "SOR_000442",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 1.71
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.89
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 20.9
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 143.14
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 6.21
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599054,
+    "lastmodifiedtime": 1716359599054
+  },
+  {
+    "id": "e6dc0db0-3c5c-48d4-a87a-7d0af560a982",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000455.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 231.93,
+      "type": "lumpsum",
+      "sorId": "SOR_000455",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 2.3
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 1.07
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 25.1
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 196.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 7.46
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599078,
+    "lastmodifiedtime": 1716359599078
+  },
+  {
+    "id": "39b431cb-6a91-4a20-a0d0-fbdf74c4ae1f",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000467.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 35.34,
+      "type": "lumpsum",
+      "sorId": "SOR_000467",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 0.35
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.35
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 6.29
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 28.35
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599109,
+    "lastmodifiedtime": 1716359599109
+  },
+  {
+    "id": "3938fb2f-5bba-417d-b16f-6c69d49598cd",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000471.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 151.81,
+      "type": "lumpsum",
+      "sorId": "SOR_000471",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 1.5
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.67
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 15.53
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 131.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 3.11
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599118,
+    "lastmodifiedtime": 1716359599118
+  },
+  {
+    "id": "6a3f1938-5a3a-419e-9ae0-08e554d4f581",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000475.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 157.92,
+      "type": "lumpsum",
+      "sorId": "SOR_000475",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 1.79
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.92
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 21.1
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 131.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 3.11
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599142,
+    "lastmodifiedtime": 1716359599142
+  },
+  {
+    "id": "95ffbf0a-64ea-4ac4-9ab1-527e15d687f3",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000503.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 12.742,
+      "type": "lumpsum",
+      "sorId": "SOR_000503",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 0.13
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3.0692
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 9.543
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599164,
+    "lastmodifiedtime": 1716359599164
+  },
+  {
+    "id": "bb1ba99a-00d0-498d-a3b6-1bae8e025fef",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000507.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 12.936,
+      "type": "lumpsum",
+      "sorId": "SOR_000507",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 0.13
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3.2628
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 9.543
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599179,
+    "lastmodifiedtime": 1716359599179
+  },
+  {
+    "id": "acead7ee-538a-4cd2-83b4-2860f077f486",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000511.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 342.32,
+      "type": "lumpsum",
+      "sorId": "SOR_000511",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 3.39
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.13
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 73.2
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 240.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 23.6
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599193,
+    "lastmodifiedtime": 1716359599193
+  },
+  {
+    "id": "85344fd9-f05f-45a2-acbb-95ca15804e80",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000515.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 283.35,
+      "type": "lumpsum",
+      "sorId": "SOR_000515",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 2.81
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 38.64
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 43.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 198.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599203,
+    "lastmodifiedtime": 1716359599203
+  },
+  {
+    "id": "4792ce29-3c69-4311-96fc-a8b8960aaedb",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000516.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 319.91,
+      "type": "lumpsum",
+      "sorId": "SOR_000516",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 3.17
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 1.87
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 67.47
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 223.8
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 23.6
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599219,
+    "lastmodifiedtime": 1716359599219
+  },
+  {
+    "id": "87dfdcfe-ccc0-4906-bebc-3ba6ad61f62f",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000521.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 452.06,
+      "type": "lumpsum",
+      "sorId": "SOR_000521",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 4.48
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 6.785
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 151.96
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 283.45
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 5.385
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599234,
+    "lastmodifiedtime": 1716359599234
+  },
+  {
+    "id": "bde2c117-f822-4552-baa3-cc9cbbaef7aa",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000522.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 466.37,
+      "type": "lumpsum",
+      "sorId": "SOR_000522",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 4.62
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 6.785
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 151.96
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 297.62
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 5.385
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599245,
+    "lastmodifiedtime": 1716359599245
+  },
+  {
+    "id": "4d57691e-fd1f-4f23-951f-30845319dd47",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000523.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 480.75,
+      "type": "lumpsum",
+      "sorId": "SOR_000523",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 4.76
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 6.785
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 151.96
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 311.86
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 5.385
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599269,
+    "lastmodifiedtime": 1716359599269
+  },
+  {
+    "id": "f5bc8731-0f07-4e95-9078-a1d6217494b8",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000524.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 495.2,
+      "type": "lumpsum",
+      "sorId": "SOR_000524",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 4.9
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 6.785
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 151.96
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 326.17
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 5.385
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599294,
+    "lastmodifiedtime": 1716359599294
+  },
+  {
+    "id": "c882eb28-0717-459b-a1ed-c632e8b778e9",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000525.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 806.32,
+      "type": "lumpsum",
+      "sorId": "SOR_000525",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 8.08
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 3.48
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 76.99
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 721.25
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 6.21
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599302,
+    "lastmodifiedtime": 1716359599302
+  },
+  {
+    "id": "703e4d91-1d46-4a7d-8f53-88c99fc0ff3c",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000526.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 842.74,
+      "type": "lumpsum",
+      "sorId": "SOR_000526",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 8.44
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 3.49
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 76.99
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 757.31
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 6.22
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599312,
+    "lastmodifiedtime": 1716359599312
+  },
+  {
+    "id": "4da6f5b3-a05a-43b1-8963-2ce5dbab396a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000527.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 879.34,
+      "type": "lumpsum",
+      "sorId": "SOR_000527",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 8.8
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 3.5
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 76.99
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 793.55
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 6.23
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599325,
+    "lastmodifiedtime": 1716359599325
+  },
+  {
+    "id": "d6fc5e5c-7c83-4a2c-92ce-57079b94b3f0",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000528.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 916.13,
+      "type": "lumpsum",
+      "sorId": "SOR_000528",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 9.17
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 3.51
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 76.99
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 829.97
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 6.24
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599395,
+    "lastmodifiedtime": 1716359599395
+  },
+  {
+    "id": "a9a764b4-c546-4bbf-896f-8e05889026bc",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000564.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 9.7774,
+      "type": "lumpsum",
+      "sorId": "SOR_000564",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 0.1
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 9.6774
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599404,
+    "lastmodifiedtime": 1716359599404
+  },
+  {
+    "id": "5c365362-2401-4106-af08-1e7609cf02e5",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000580.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 727.2,
+      "type": "lumpsum",
+      "sorId": "SOR_000580",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 7.2
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 720.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599415,
+    "lastmodifiedtime": 1716359599415
+  },
+  {
+    "id": "d739cd27-b915-44a9-8e55-6cf4446c9fdf",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000652.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 162.17,
+      "type": "lumpsum",
+      "sorId": "SOR_000652",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 1.61
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 133.87
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 26.69
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599467,
+    "lastmodifiedtime": 1716359599467
+  },
+  {
+    "id": "142ec81b-c111-483d-811a-ef2544f6ee0f",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000679.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 39.96,
+      "type": "lumpsum",
+      "sorId": "SOR_000679",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 0.4
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 11.96
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 27.6
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599482,
+    "lastmodifiedtime": 1716359599482
+  },
+  {
+    "id": "358ddab9-a8e9-4a93-864b-53d60db7a887",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000687.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 93.29,
+      "type": "lumpsum",
+      "sorId": "SOR_000687",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 0.92
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 31.17
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 61.2
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599501,
+    "lastmodifiedtime": 1716359599501
+  },
+  {
+    "id": "cc1efe8b-c9b0-4263-8e44-2606d4c349cc",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000695.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 77.4,
+      "type": "lumpsum",
+      "sorId": "SOR_000695",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 0.77
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 17.53
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 59.1
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599509,
+    "lastmodifiedtime": 1716359599509
+  },
+  {
+    "id": "ad8e918c-6a81-4cf5-b152-8a238b61c810",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000076.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 474.26,
+      "type": "lumpsum",
+      "sorId": "SOR_000076",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 276.01
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 60.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 138.25
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596016,
+    "lastmodifiedtime": 1716359596016
+  },
+  {
+    "id": "69ab41ca-1e6e-4c42-b146-5c043d060f53",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000077.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1399.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000077",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 276.01
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 850.2
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 273.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596030,
+    "lastmodifiedtime": 1716359596030
+  },
+  {
+    "id": "db04d35d-9c1a-4332-8428-4e133cdf60de",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000078.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1507.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000078",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 276.01
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 957.46
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 273.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596042,
+    "lastmodifiedtime": 1716359596042
+  },
+  {
+    "id": "fdc8e502-0530-4b5a-91a0-916f87edbb53",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000079.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1949.5,
+      "type": "lumpsum",
+      "sorId": "SOR_000079",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 276.01
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1400.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 273.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596053,
+    "lastmodifiedtime": 1716359596053
+  },
+  {
+    "id": "04a124bf-52e7-45a4-bbda-998131c3b7d7",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000081.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1946.1,
+      "type": "lumpsum",
+      "sorId": "SOR_000081",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 276.01
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1396.6
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 273.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596082,
+    "lastmodifiedtime": 1716359596082
+  },
+  {
+    "id": "b87f50a9-1e6d-4a44-8677-7ec0d5818e08",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000083.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1931.8,
+      "type": "lumpsum",
+      "sorId": "SOR_000083",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 276.01
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1382.3
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 273.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596092,
+    "lastmodifiedtime": 1716359596092
+  },
+  {
+    "id": "56309678-3708-4943-858b-f6787c5c9288",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000087.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1544.8,
+      "type": "lumpsum",
+      "sorId": "SOR_000087",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 276.01
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 995.25
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 273.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596106,
+    "lastmodifiedtime": 1716359596106
+  },
+  {
+    "id": "e4229467-83b6-4d10-8852-82a56e6a3a9f",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000088.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1336.9,
+      "type": "lumpsum",
+      "sorId": "SOR_000088",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 276.01
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 787.36
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 273.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596126,
+    "lastmodifiedtime": 1716359596126
+  },
+  {
+    "id": "f2ad6c66-9293-4c9d-82d0-03a840338ba6",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000097.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 7054.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000097",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 7054.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596145,
+    "lastmodifiedtime": 1716359596145
+  },
+  {
+    "id": "75e1e49b-7f7e-427c-8185-5e283d4e16fc",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000101.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 6000.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000101",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 6000.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596158,
+    "lastmodifiedtime": 1716359596158
+  },
+  {
+    "id": "fc690906-b575-4ca4-badc-7e514531c01d",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000103.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 155.08,
+      "type": "lumpsum",
+      "sorId": "SOR_000103",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 155.08
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596167,
+    "lastmodifiedtime": 1716359596167
+  },
+  {
+    "id": "32ff9f64-5ad1-4287-aacc-85f997df0526",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000104.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 205.34,
+      "type": "lumpsum",
+      "sorId": "SOR_000104",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 205.34
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596188,
+    "lastmodifiedtime": 1716359596188
+  },
+  {
+    "id": "6a80a78a-09d5-42b8-9d6e-c312e35846f8",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000105.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 49.21,
+      "type": "lumpsum",
+      "sorId": "SOR_000105",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 49.21
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596199,
+    "lastmodifiedtime": 1716359596199
+  },
+  {
+    "id": "dab2575b-acc1-4372-a3ab-9ef87fbd9d48",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000106.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 123.94,
+      "type": "lumpsum",
+      "sorId": "SOR_000106",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 123.94
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596211,
+    "lastmodifiedtime": 1716359596211
+  },
+  {
+    "id": "7b78e4ab-3bd7-4d74-8de0-d18d96ca1d6a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000107.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 209.34,
+      "type": "lumpsum",
+      "sorId": "SOR_000107",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 209.34
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596223,
+    "lastmodifiedtime": 1716359596223
+  },
+  {
+    "id": "3042081a-2466-4ca4-ad01-ca62a22a9e89",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000108.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 47.83,
+      "type": "lumpsum",
+      "sorId": "SOR_000108",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 47.83
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596238,
+    "lastmodifiedtime": 1716359596238
+  },
+  {
+    "id": "bcf5453e-02c6-47a9-b1c8-28ff069cae44",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000109.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 249.34,
+      "type": "lumpsum",
+      "sorId": "SOR_000109",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 249.34
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596309,
+    "lastmodifiedtime": 1716359596309
+  },
+  {
+    "id": "dc77385e-d935-477d-8922-4a115d9e96df",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000110.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 70.1,
+      "type": "lumpsum",
+      "sorId": "SOR_000110",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 70.1
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596324,
+    "lastmodifiedtime": 1716359596324
+  },
+  {
+    "id": "436544d6-bae3-4106-912f-90648b9c82ab",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000111.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 17.23,
+      "type": "lumpsum",
+      "sorId": "SOR_000111",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 17.23
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596331,
+    "lastmodifiedtime": 1716359596331
+  },
+  {
+    "id": "9a4359d1-a76d-4fa6-b714-fabd4503b1f9",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000112.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 550.99,
+      "type": "lumpsum",
+      "sorId": "SOR_000112",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 550.99
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596353,
+    "lastmodifiedtime": 1716359596353
+  },
+  {
+    "id": "910859c9-c5ac-4294-a11b-3c7f6f17f2bb",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000113.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 670.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000113",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 670.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596362,
+    "lastmodifiedtime": 1716359596362
+  },
+  {
+    "id": "77369cd5-26d0-4476-930b-851234294a89",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000114.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 766.45,
+      "type": "lumpsum",
+      "sorId": "SOR_000114",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 766.45
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596372,
+    "lastmodifiedtime": 1716359596372
+  },
+  {
+    "id": "9b6edc82-07fe-4518-959f-78f7394cab0b",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000115.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 412.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000115",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 412.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596384,
+    "lastmodifiedtime": 1716359596384
+  },
+  {
+    "id": "9c760918-0463-458b-8bca-0266520fcbd6",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000116.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 500.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000116",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 500.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596398,
+    "lastmodifiedtime": 1716359596398
+  },
+  {
+    "id": "012b208d-e2dc-4226-9997-154255f7faf7",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000117.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 320.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000117",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 320.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596405,
+    "lastmodifiedtime": 1716359596405
+  },
+  {
+    "id": "c4287a72-0eff-4d82-9afa-b4c7bfb2c37e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000118.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1181.9,
+      "type": "lumpsum",
+      "sorId": "SOR_000118",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1181.9
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596413,
+    "lastmodifiedtime": 1716359596413
+  },
+  {
+    "id": "04e91e50-55c6-478b-95a0-1a66263591a8",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000119.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1328.1,
+      "type": "lumpsum",
+      "sorId": "SOR_000119",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1328.1
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596430,
+    "lastmodifiedtime": 1716359596430
+  },
+  {
+    "id": "eddfa193-d864-4ed8-950c-50faf4b9a1e3",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000120.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 2098.8,
+      "type": "lumpsum",
+      "sorId": "SOR_000120",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 2098.8
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596490,
+    "lastmodifiedtime": 1716359596490
+  },
+  {
+    "id": "72567582-a016-4287-beda-64c0d69ec748",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000121.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 309.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000121",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 309.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596503,
+    "lastmodifiedtime": 1716359596503
+  },
+  {
+    "id": "3ca080b4-bff9-4302-a163-0b8546945c9d",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000122.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 370.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000122",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 370.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596512,
+    "lastmodifiedtime": 1716359596512
+  },
+  {
+    "id": "8fb958bb-f4f0-4d82-92da-17d969c6c9d0",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000123.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 408.94,
+      "type": "lumpsum",
+      "sorId": "SOR_000123",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 408.94
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596530,
+    "lastmodifiedtime": 1716359596530
+  },
+  {
+    "id": "0295cba0-eeb9-4a5e-a628-5eb51a4462dc",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000124.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 405.2,
+      "type": "lumpsum",
+      "sorId": "SOR_000124",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 405.2
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596543,
+    "lastmodifiedtime": 1716359596543
+  },
+  {
+    "id": "34efad3a-8bdb-4b11-a690-1b5273a03033",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000126.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 885.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000126",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 885.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596556,
+    "lastmodifiedtime": 1716359596556
+  },
+  {
+    "id": "d94417a8-8f3e-45e4-abeb-64c1de76fb03",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000129.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 254.75,
+      "type": "lumpsum",
+      "sorId": "SOR_000129",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 254.75
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596563,
+    "lastmodifiedtime": 1716359596563
+  },
+  {
+    "id": "6f8ea343-effc-491f-931e-f6cb4f2e6411",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000130.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 713.98,
+      "type": "lumpsum",
+      "sorId": "SOR_000130",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 713.98
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596572,
+    "lastmodifiedtime": 1716359596572
+  },
+  {
+    "id": "16cc209f-6f55-4b85-8f96-351ef33f37b4",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000131.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 90.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000131",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 90.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596582,
+    "lastmodifiedtime": 1716359596582
+  },
+  {
+    "id": "676c64c5-9545-46d7-89f3-b7af8f16e074",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000137.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 30.81,
+      "type": "lumpsum",
+      "sorId": "SOR_000137",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 30.81
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596592,
+    "lastmodifiedtime": 1716359596592
+  },
+  {
+    "id": "86487b6e-f308-4dc7-902d-46afddddf2d9",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000138.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 30.81,
+      "type": "lumpsum",
+      "sorId": "SOR_000138",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 30.81
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596599,
+    "lastmodifiedtime": 1716359596599
+  },
+  {
+    "id": "e0da7341-9bdd-440b-aac5-e89dfceafa2d",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000139.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 41.81,
+      "type": "lumpsum",
+      "sorId": "SOR_000139",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 41.81
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596611,
+    "lastmodifiedtime": 1716359596611
+  },
+  {
+    "id": "cce63327-1541-478f-b480-d60591e54d54",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000140.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 41.81,
+      "type": "lumpsum",
+      "sorId": "SOR_000140",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 41.81
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596621,
+    "lastmodifiedtime": 1716359596621
+  },
+  {
+    "id": "7cd97f65-1e09-4e69-bf36-7760fa430bf6",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000141.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 67.82,
+      "type": "lumpsum",
+      "sorId": "SOR_000141",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 67.82
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596629,
+    "lastmodifiedtime": 1716359596629
+  },
+  {
+    "id": "2d124f1f-6ebc-413e-91c6-799a7b59e9e3",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000142.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 198.3,
+      "type": "lumpsum",
+      "sorId": "SOR_000142",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 198.3
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596638,
+    "lastmodifiedtime": 1716359596638
+  },
+  {
+    "id": "ca54d171-9bcd-4f75-ac18-47883bd2da5a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000143.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 21.88,
+      "type": "lumpsum",
+      "sorId": "SOR_000143",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 21.88
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596676,
+    "lastmodifiedtime": 1716359596676
+  },
+  {
+    "id": "8f81d6b6-441b-4957-8085-6710a567991a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000144.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 76.88,
+      "type": "lumpsum",
+      "sorId": "SOR_000144",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 76.88
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596697,
+    "lastmodifiedtime": 1716359596697
+  },
+  {
+    "id": "22a42c52-d64f-4794-b57b-ca9a3d7602c3",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000145.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1382.3,
+      "type": "lumpsum",
+      "sorId": "SOR_000145",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1382.29
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596706,
+    "lastmodifiedtime": 1716359596706
+  },
+  {
+    "id": "320e43a3-ef39-45a2-a164-b9c5ed660c50",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000146.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5142.6,
+      "type": "lumpsum",
+      "sorId": "SOR_000146",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 5142.6
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596715,
+    "lastmodifiedtime": 1716359596715
+  },
+  {
+    "id": "29d26fd7-8333-479e-b560-96dce51f659b",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000149.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1328.1,
+      "type": "lumpsum",
+      "sorId": "SOR_000149",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1328.1
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596724,
+    "lastmodifiedtime": 1716359596724
+  },
+  {
+    "id": "d6d11126-ff88-4121-b2ab-69a68431f106",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000150.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 53036.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000150",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 53036.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596734,
+    "lastmodifiedtime": 1716359596734
+  },
+  {
+    "id": "5016db41-7c14-418e-9367-110ae2c63840",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000151.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 71151.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000151",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 71151.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596743,
+    "lastmodifiedtime": 1716359596743
+  },
+  {
+    "id": "6219c34b-4e49-4eff-bdb7-777c57641968",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000153.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 34.67,
+      "type": "lumpsum",
+      "sorId": "SOR_000153",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 34.67
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596752,
+    "lastmodifiedtime": 1716359596752
+  },
+  {
+    "id": "294f4b8e-671b-4160-8e4b-ec2e5af34012",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000154.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 42.5,
+      "type": "lumpsum",
+      "sorId": "SOR_000154",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 42.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596761,
+    "lastmodifiedtime": 1716359596761
+  },
+  {
+    "id": "3eddebae-cf5b-4202-bd31-b49058823dfe",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000155.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 80.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000155",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 80.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596771,
+    "lastmodifiedtime": 1716359596771
+  },
+  {
+    "id": "99126bc6-bf00-4998-b5d5-f1fa3445b96c",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000156.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 209.1,
+      "type": "lumpsum",
+      "sorId": "SOR_000156",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 209.1
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596782,
+    "lastmodifiedtime": 1716359596782
+  },
+  {
+    "id": "c8a1977e-0433-4add-b5e1-175867500ed5",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000157.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 400.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000157",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 400.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596790,
+    "lastmodifiedtime": 1716359596790
+  },
+  {
+    "id": "033ff1ff-9fdf-4b7e-b4c5-ab7e1e39003b",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000158.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 394.5,
+      "type": "lumpsum",
+      "sorId": "SOR_000158",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 394.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596803,
+    "lastmodifiedtime": 1716359596803
+  },
+  {
+    "id": "548ba89f-0b8f-4ee4-86af-85dad703002e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000159.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 140.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000159",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 140.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596830,
+    "lastmodifiedtime": 1716359596830
+  },
+  {
+    "id": "67629386-ef5e-406e-8fee-b5cffec9da6d",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000160.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 255.33,
+      "type": "lumpsum",
+      "sorId": "SOR_000160",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 255.33
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596846,
+    "lastmodifiedtime": 1716359596846
+  },
+  {
+    "id": "ead747dc-d4da-4356-9b56-8cf28d8a6e18",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000161.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 317.5,
+      "type": "lumpsum",
+      "sorId": "SOR_000161",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 317.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596859,
+    "lastmodifiedtime": 1716359596859
+  },
+  {
+    "id": "c205603a-fded-464e-bc32-2ff0ccf63615",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000162.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 333.12,
+      "type": "lumpsum",
+      "sorId": "SOR_000162",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 333.12
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596867,
+    "lastmodifiedtime": 1716359596867
+  },
+  {
+    "id": "2e412443-fc75-4fe5-94e6-e69e38da6746",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000163.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 246.55,
+      "type": "lumpsum",
+      "sorId": "SOR_000163",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 246.55
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596908,
+    "lastmodifiedtime": 1716359596908
+  },
+  {
+    "id": "494f8739-cc0f-4b95-b79f-956d5bf3734e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000172.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 524.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000172",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 524.7
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596918,
+    "lastmodifiedtime": 1716359596918
+  },
+  {
+    "id": "92ec41bd-f3a0-4c89-b7f1-73081b1a74a0",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000174.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 700.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000174",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 700.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596925,
+    "lastmodifiedtime": 1716359596925
+  },
+  {
+    "id": "26c2778d-97de-4576-9855-157e7bf15eba",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000175.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1052.4,
+      "type": "lumpsum",
+      "sorId": "SOR_000175",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 1052.4
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596936,
+    "lastmodifiedtime": 1716359596936
+  },
+  {
+    "id": "1b26bd0a-b0a7-4f7d-882c-02d7c29fb6d4",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000176.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1600.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000176",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 1600.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596945,
+    "lastmodifiedtime": 1716359596945
+  },
+  {
+    "id": "f175d7c1-e4dc-4c0f-b60b-8049bf56fa64",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000179.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 900.84,
+      "type": "lumpsum",
+      "sorId": "SOR_000179",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 900.84
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596953,
+    "lastmodifiedtime": 1716359596953
+  },
+  {
+    "id": "52b13460-8784-405e-8e4c-f87f13ab8156",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000180.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1586.5,
+      "type": "lumpsum",
+      "sorId": "SOR_000180",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 1586.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596962,
+    "lastmodifiedtime": 1716359596962
+  },
+  {
+    "id": "85a2e46c-b1db-446a-aeb7-d613cf1ffaac",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000181.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 198.11,
+      "type": "lumpsum",
+      "sorId": "SOR_000181",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 198.11
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596977,
+    "lastmodifiedtime": 1716359596977
+  },
+  {
+    "id": "fe2f657e-5307-4dbc-b821-c000b69d2138",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000183.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 25056.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000183",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 25056.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596985,
+    "lastmodifiedtime": 1716359596985
+  },
+  {
+    "id": "041c3e12-4fff-4fa2-a002-2a4cf1c56719",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000184.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1538.5,
+      "type": "lumpsum",
+      "sorId": "SOR_000184",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 1538.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596994,
+    "lastmodifiedtime": 1716359596994
+  },
+  {
+    "id": "5284d511-3b26-465b-b670-79c8c9f7dd84",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000187.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 447.31,
+      "type": "lumpsum",
+      "sorId": "SOR_000187",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 447.31
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597005,
+    "lastmodifiedtime": 1716359597005
+  },
+  {
+    "id": "9f85a60b-b1c0-475c-9571-19d356864972",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000188.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1836.3,
+      "type": "lumpsum",
+      "sorId": "SOR_000188",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 1836.3
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597013,
+    "lastmodifiedtime": 1716359597013
+  },
+  {
+    "id": "a511bd51-f26f-4525-b819-e82fc3796748",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000189.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 356.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000189",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 356.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597023,
+    "lastmodifiedtime": 1716359597023
+  },
+  {
+    "id": "53c08a2f-d094-41ec-9b49-929b08270bbf",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000190.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 585.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000190",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 585.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597033,
+    "lastmodifiedtime": 1716359597033
+  },
+  {
+    "id": "285db087-521a-4e72-9f8b-e97767f23340",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000191.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 798.68,
+      "type": "lumpsum",
+      "sorId": "SOR_000191",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 798.68
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597043,
+    "lastmodifiedtime": 1716359597043
+  },
+  {
+    "id": "a4174921-bcc2-4d45-a11d-4babfd5d611e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000192.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 114.54,
+      "type": "lumpsum",
+      "sorId": "SOR_000192",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 114.54
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597060,
+    "lastmodifiedtime": 1716359597060
+  },
+  {
+    "id": "716d919a-2ce2-4803-81a9-1e163f6a61f6",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000194.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 357.55,
+      "type": "lumpsum",
+      "sorId": "SOR_000194",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 357.55
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597073,
+    "lastmodifiedtime": 1716359597073
+  },
+  {
+    "id": "12e13f0b-db6f-4723-88fc-8fd07d4608a7",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000195.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1700.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000195",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 1700.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597082,
+    "lastmodifiedtime": 1716359597082
+  },
+  {
+    "id": "1dcdeab8-0df1-4436-ac0f-ba04ec39b5fe",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000196.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1341.2,
+      "type": "lumpsum",
+      "sorId": "SOR_000196",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 1341.2
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597094,
+    "lastmodifiedtime": 1716359597094
+  },
+  {
+    "id": "22b30836-884a-4814-a9b8-a6b239289e9c",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000209.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 547.24,
+      "type": "lumpsum",
+      "sorId": "SOR_000209",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 5.42
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 276.01
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 71.94
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 55.62
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 138.25
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597143,
+    "lastmodifiedtime": 1716359597143
+  },
+  {
+    "id": "0d8f1f3d-4881-4fcd-9e21-c8147ea947dc",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000223.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 4859.8,
+      "type": "lumpsum",
+      "sorId": "SOR_000223",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 47.55
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 56.76
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 2055.84
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 1854.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 845.63
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597209,
+    "lastmodifiedtime": 1716359597209
+  },
+  {
+    "id": "e49d5658-3223-4327-aed3-37deff0645c8",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000225.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 4535.3,
+      "type": "lumpsum",
+      "sorId": "SOR_000225",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 37.46
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 56.76
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1741.45
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 1854.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 845.63
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597229,
+    "lastmodifiedtime": 1716359597229
+  },
+  {
+    "id": "c815fbd5-2db1-47cb-85ad-b44e790dc263",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000227.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 6102.2,
+      "type": "lumpsum",
+      "sorId": "SOR_000227",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 65.13
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 80.06
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 2792.6
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 2169.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 995.4
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597252,
+    "lastmodifiedtime": 1716359597252
+  },
+  {
+    "id": "3a99598c-3578-48dc-8e76-8a1e256f4e75",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000231.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 6387.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000231",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 70.18
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 80.06
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3073.1
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 2169.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 995.4
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597262,
+    "lastmodifiedtime": 1716359597262
+  },
+  {
+    "id": "d75c7563-9af7-4615-b192-ce31597bf9b4",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000243.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 334.25,
+      "type": "lumpsum",
+      "sorId": "SOR_000243",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 3.28
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.99
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 82.3
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 222.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 23.68
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597271,
+    "lastmodifiedtime": 1716359597271
+  },
+  {
+    "id": "851e11ac-472a-46ac-92e0-5edbe9d0768c",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000247.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 713.59,
+      "type": "lumpsum",
+      "sorId": "SOR_000247",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 8.37
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 3.19
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 112.81
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 552.6
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 36.62
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597281,
+    "lastmodifiedtime": 1716359597281
+  },
+  {
+    "id": "acd4ae14-2c7f-4d6d-9854-f01c5b8de63f",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000260.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 4714.1,
+      "type": "lumpsum",
+      "sorId": "SOR_000260",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 46.64
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 166.8
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 69.4
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 2829.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 686.5
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597291,
+    "lastmodifiedtime": 1716359597291
+  },
+  {
+    "id": "4aae97d4-72bc-4168-88c6-cd0965859230",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000263.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 4714.8,
+      "type": "lumpsum",
+      "sorId": "SOR_000263",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 50.2
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 166.8
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 69.4
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 2829.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 683.67
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597321,
+    "lastmodifiedtime": 1716359597321
+  },
+  {
+    "id": "e329ac26-fe38-4467-a044-50f65b523f4e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000264.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5217.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000264",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 50.64
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 178.0
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 86.09
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3200.8
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 786.88
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597329,
+    "lastmodifiedtime": 1716359597329
+  },
+  {
+    "id": "78932f90-efb0-4ec2-b130-cb2f33e0dd5a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000267.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5474.2,
+      "type": "lumpsum",
+      "sorId": "SOR_000267",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 54.2
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 178.0
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 86.09
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3200.8
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 1039.8
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597363,
+    "lastmodifiedtime": 1716359597363
+  },
+  {
+    "id": "a881673b-1fd0-4f69-a9cf-a22215cab312",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000268.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5422.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000268",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 53.69
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 160.4
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 99.974
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3509.7
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 683.67
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597372,
+    "lastmodifiedtime": 1716359597372
+  },
+  {
+    "id": "58415fef-0f23-48c4-a719-f2e1b76ee2fe",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000271.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5769.1,
+      "type": "lumpsum",
+      "sorId": "SOR_000271",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 57.07
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 160.4
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 99.974
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3509.7
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 1026.7
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597401,
+    "lastmodifiedtime": 1716359597401
+  },
+  {
+    "id": "123ddf78-6cad-4d5f-9af1-e35febe8dc13",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000272.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 8261.2,
+      "type": "lumpsum",
+      "sorId": "SOR_000272",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 81.1
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 69.72
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 7548.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 562.0
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597410,
+    "lastmodifiedtime": 1716359597410
+  },
+  {
+    "id": "8d79695c-5b16-484c-928d-39716b02c032",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000275.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 8350.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000275",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 81.99
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 69.72
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 7548.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 650.6
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597472,
+    "lastmodifiedtime": 1716359597472
+  },
+  {
+    "id": "3e4d89da-923f-4604-95a8-845dafd8c11c",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000276.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 655.57,
+      "type": "lumpsum",
+      "sorId": "SOR_000276",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 6.49
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.8
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 325.45
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 320.83
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597483,
+    "lastmodifiedtime": 1716359597483
+  },
+  {
+    "id": "86290c30-a7b8-4aa2-8cd8-bea23e219d55",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000279.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 847.14,
+      "type": "lumpsum",
+      "sorId": "SOR_000279",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 11.21
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.8
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 325.45
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 507.68
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597546,
+    "lastmodifiedtime": 1716359597546
+  },
+  {
+    "id": "4e205364-f48a-4a11-bc46-0829d475fc3e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000280.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 904.39,
+      "type": "lumpsum",
+      "sorId": "SOR_000280",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 8.96
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.77
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 317.16
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 577.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597561,
+    "lastmodifiedtime": 1716359597561
+  },
+  {
+    "id": "342d6a89-f2f7-499c-9a9b-4337e26eac5a",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000283.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1169.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000283",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 15.48
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.77
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 317.16
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 835.56
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597616,
+    "lastmodifiedtime": 1716359597616
+  },
+  {
+    "id": "419fced3-e698-4ea0-b0a4-2a8b59596539",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000284.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 684.52,
+      "type": "lumpsum",
+      "sorId": "SOR_000284",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 2.13
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.15
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 159.74
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 520.5
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597627,
+    "lastmodifiedtime": 1716359597627
+  },
+  {
+    "id": "4ca328a1-d245-41dc-95fa-3b698a225885",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000075.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 491.14,
+      "type": "lumpsum",
+      "sorId": "SOR_000075",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 276.01
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 76.88
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 138.25
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359596005,
+    "lastmodifiedtime": 1716359596005
+  },
+  {
+    "id": "87fff570-cd21-421b-9431-1ba70b998904",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000631.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 69.55,
+      "type": "lumpsum",
+      "sorId": "SOR_000631",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 0.69
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 12.41
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 56.45
+        }
+      ],
+      "compositionId": "CMP_000192"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599444,
+    "lastmodifiedtime": 1716359599444
+  },
+  {
+    "id": "64fafe3d-564d-4c1b-b490-60d8a42d9b55",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000359.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 4783.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000359",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 48.31
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 16.66
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1986.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 2374.43
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 357.94
+        }
+      ],
+      "compositionId": "CMP_000196"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597911,
+    "lastmodifiedtime": 1716359597911
+  },
+  {
+    "id": "99ee7198-2155-40f7-8239-d26d2567d5a0",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000360.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5153.0,
+      "type": "lumpsum",
+      "sorId": "SOR_000360",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 51.98
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 16.66
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1986.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 2740.05
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 357.94
+        }
+      ],
+      "compositionId": "CMP_000197"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597920,
+    "lastmodifiedtime": 1716359597920
+  },
+  {
+    "id": "999e8cca-c200-444e-b536-284656973111",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000361.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5577.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000361",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 56.19
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 16.66
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1986.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 3160.51
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 357.94
+        }
+      ],
+      "compositionId": "CMP_000198"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597929,
+    "lastmodifiedtime": 1716359597929
+  },
+  {
+    "id": "61491922-486a-4fe1-a811-a5eea54e4ebe",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000197.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 174.53,
+      "type": "lumpsum",
+      "sorId": "SOR_000197",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 174.53
+        }
+      ],
+      "compositionId": "CMP_000217"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597105,
+    "lastmodifiedtime": 1716359597105
+  },
+  {
+    "id": "f9882a9b-1207-4fab-b167-188cf8c9b7b7",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000199.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 234.52,
+      "type": "lumpsum",
+      "sorId": "SOR_000199",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 234.52
+        }
+      ],
+      "compositionId": "CMP_000219"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597115,
+    "lastmodifiedtime": 1716359597115
+  },
+  {
+    "id": "faedd4f8-7b69-48a5-bdd6-55a8e7f63f32",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000440.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 164.56,
+      "type": "lumpsum",
+      "sorId": "SOR_000440",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 1.63
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.89
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 20.9
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 134.93
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 6.21
+        }
+      ],
+      "compositionId": "CMP_000249"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599034,
+    "lastmodifiedtime": 1716359599034
+  },
+  {
+    "id": "872ec7e9-7f83-4587-93c6-6e3450c6b3ea",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000441.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 168.65,
+      "type": "lumpsum",
+      "sorId": "SOR_000441",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 1.67
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.89
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 20.9
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 138.98
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 6.21
+        }
+      ],
+      "compositionId": "CMP_000250"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599044,
+    "lastmodifiedtime": 1716359599044
+  },
+  {
+    "id": "6632ab24-e943-479b-8193-58dc54092854",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000452.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 241.55,
+      "type": "lumpsum",
+      "sorId": "SOR_000452",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 2.39
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 196.0
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 1.41
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 33.05
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 8.7
+        }
+      ],
+      "compositionId": "CMP_000255"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599068,
+    "lastmodifiedtime": 1716359599068
+  },
+  {
+    "id": "44bfabcc-d6c8-44a9-af71-360d0cee9c6e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000266.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5337.2,
+      "type": "lumpsum",
+      "sorId": "SOR_000266",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 52.84
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 178.0
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 86.09
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3200.8
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 904.15
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ],
+      "compositionId": "CMP_000297"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597351,
+    "lastmodifiedtime": 1716359597351
+  },
+  {
+    "id": "50775d40-3b49-4ea9-b5db-3c3bf90519b0",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000456.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 237.87,
+      "type": "lumpsum",
+      "sorId": "SOR_000456",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 2.36
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 1.07
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 25.1
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 201.88
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 7.46
+        }
+      ],
+      "compositionId": "CMP_000257"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599088,
+    "lastmodifiedtime": 1716359599088
+  },
+  {
+    "id": "4f6f0a58-9362-4905-a464-10dcacdbf611",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000457.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 244.01,
+      "type": "lumpsum",
+      "sorId": "SOR_000457",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 2.42
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 1.07
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 25.1
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 207.96
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 7.46
+        }
+      ],
+      "compositionId": "CMP_000258"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599097,
+    "lastmodifiedtime": 1716359599097
+  },
+  {
+    "id": "5fe5828f-f043-4284-9cae-bfb4a26472b1",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000480.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 3374.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000480",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 33.41
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 2916.3
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 425.0
+        }
+      ],
+      "compositionId": "CMP_000267"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359599152,
+    "lastmodifiedtime": 1716359599152
+  },
+  {
+    "id": "1a82ed57-c725-4660-9432-1db5877b2f27",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000277.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 786.63,
+      "type": "lumpsum",
+      "sorId": "SOR_000277",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 7.79
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.8
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 325.45
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 450.59
+        }
+      ],
+      "compositionId": "CMP_000272"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597504,
+    "lastmodifiedtime": 1716359597504
+  },
+  {
+    "id": "4aa10169-15fc-4de5-a618-27167c6dae2c",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000278.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 814.13,
+      "type": "lumpsum",
+      "sorId": "SOR_000278",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 9.34
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.8
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 325.45
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 476.54
+        }
+      ],
+      "compositionId": "CMP_000273"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597521,
+    "lastmodifiedtime": 1716359597521
+  },
+  {
+    "id": "c1983120-21e1-4666-bf23-aa40ed45b823",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000281.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1087.5,
+      "type": "lumpsum",
+      "sorId": "SOR_000281",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 12.9
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.77
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 317.16
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 756.71
+        }
+      ],
+      "compositionId": "CMP_000274"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597570,
+    "lastmodifiedtime": 1716359597570
+  },
+  {
+    "id": "9253693e-a58d-4157-99fd-ccc5732a471b",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000282.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1123.4,
+      "type": "lumpsum",
+      "sorId": "SOR_000282",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 12.9
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 0.77
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 317.16
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 792.55
+        }
+      ],
+      "compositionId": "CMP_000275"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597607,
+    "lastmodifiedtime": 1716359597607
+  },
+  {
+    "id": "b11f3020-f0c7-4069-813c-2146e9539c08",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000285.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 859.6,
+      "type": "lumpsum",
+      "sorId": "SOR_000285",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 10.21
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.15
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 159.74
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 687.5
+        }
+      ],
+      "compositionId": "CMP_000276"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597636,
+    "lastmodifiedtime": 1716359597636
+  },
+  {
+    "id": "46bab2b5-0007-456e-9f45-73636f88c0f0",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000286.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1065.9,
+      "type": "lumpsum",
+      "sorId": "SOR_000286",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 12.26
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.15
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 159.74
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 891.76
+        }
+      ],
+      "compositionId": "CMP_000277"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597650,
+    "lastmodifiedtime": 1716359597650
+  },
+  {
+    "id": "f109498a-1ea1-4c5d-bd00-8917d05513ef",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000287.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 1109.2,
+      "type": "lumpsum",
+      "sorId": "SOR_000287",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 14.71
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 2.15
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 159.74
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 932.61
+        }
+      ],
+      "compositionId": "CMP_000278"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597657,
+    "lastmodifiedtime": 1716359597657
+  },
+  {
+    "id": "06441008-35d3-4758-8e15-d804fccb29f6",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000290.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 354.3,
+      "type": "lumpsum",
+      "sorId": "SOR_000290",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 5.88
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 1.75
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 320.34
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 26.33
+        }
+      ],
+      "compositionId": "CMP_000279"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597688,
+    "lastmodifiedtime": 1716359597688
+  },
+  {
+    "id": "bf053641-e6f1-489d-afe8-12bbd6e95aca",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000291.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 615.1,
+      "type": "lumpsum",
+      "sorId": "SOR_000291",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 7.06
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 1.75
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 320.34
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 285.95
+        }
+      ],
+      "compositionId": "CMP_000280"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597712,
+    "lastmodifiedtime": 1716359597712
+  },
+  {
+    "id": "73663bc9-265b-40f5-9a45-518a015e0c77",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000224.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5061.4,
+      "type": "lumpsum",
+      "sorId": "SOR_000224",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 49.55
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 56.76
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 2255.42
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 1854.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 845.63
+        }
+      ],
+      "compositionId": "CMP_000284"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597219,
+    "lastmodifiedtime": 1716359597219
+  },
+  {
+    "id": "7f29f20d-e317-42dd-a94f-6dc57737e9ee",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000226.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 4757.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000226",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 51.96
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 56.76
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 1949.3
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 1854.0
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 845.63
+        }
+      ],
+      "compositionId": "CMP_000285"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597243,
+    "lastmodifiedtime": 1716359597243
+  },
+  {
+    "id": "cb029a29-49cf-4124-ab93-5360ea7223e5",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000262.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 4933.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000262",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 48.85
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 166.8
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 69.4
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 2829.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 903.93
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ],
+      "compositionId": "CMP_000295"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597310,
+    "lastmodifiedtime": 1716359597310
+  },
+  {
+    "id": "4e07f6df-decd-4abb-8513-0d0626dc725e",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000265.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5218.1,
+      "type": "lumpsum",
+      "sorId": "SOR_000265",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 51.66
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 178.0
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 86.09
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3200.8
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 786.22
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ],
+      "compositionId": "CMP_000296"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597338,
+    "lastmodifiedtime": 1716359597338
+  },
+  {
+    "id": "fb165923-6413-4051-a1d5-643192d09299",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000269.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5526.5,
+      "type": "lumpsum",
+      "sorId": "SOR_000269",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 54.87
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 160.4
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 99.974
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3509.7
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 786.22
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ],
+      "compositionId": "CMP_000298"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597382,
+    "lastmodifiedtime": 1716359597382
+  },
+  {
+    "id": "febbc5bf-40df-4248-9ea4-bf644bb81963",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000270.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 5647.9,
+      "type": "lumpsum",
+      "sorId": "SOR_000270",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 56.07
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 160.4
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 99.974
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 3509.7
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 906.46
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ],
+      "compositionId": "CMP_000299"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597392,
+    "lastmodifiedtime": 1716359597392
+  },
+  {
+    "id": "afbed0be-3a9c-4a63-b251-af2c456f9565",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000273.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 8289.6,
+      "type": "lumpsum",
+      "sorId": "SOR_000273",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 81.39
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 69.72
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 7548.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 590.1
+        }
+      ],
+      "compositionId": "CMP_000300"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597420,
+    "lastmodifiedtime": 1716359597420
+  },
+  {
+    "id": "006c4ba1-fa3e-4947-9187-70f20c4a0637",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000274.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 8319.4,
+      "type": "lumpsum",
+      "sorId": "SOR_000274",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 81.68
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 69.72
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 7548.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 619.6
+        }
+      ],
+      "compositionId": "CMP_000301"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597457,
+    "lastmodifiedtime": 1716359597457
+  },
+  {
+    "id": "84d182eb-c2ee-4af9-8ca1-79fc2957fb5f",
+    "tenantid": "od.tusura",
+    "uniqueidentifier": "SOR_000261.1696098600000",
+    "schemacode": "WORKS-SOR.Rates",
+    "data": {
+      "rate": 4814.7,
+      "type": "lumpsum",
+      "sorId": "SOR_000261",
+      "validFrom": "1696098600000",
+      "amountDetails": [
+        {
+          "type": "fixed",
+          "heads": "LC.7",
+          "amount": 47.67
+        },
+        {
+          "type": "fixed",
+          "heads": "MHA.3",
+          "amount": 166.8
+        },
+        {
+          "type": "fixed",
+          "heads": "CA.9",
+          "amount": 69.4
+        },
+        {
+          "type": "fixed",
+          "heads": "MA.2",
+          "amount": 2829.4
+        },
+        {
+          "type": "fixed",
+          "heads": "LA.1",
+          "amount": 786.03
+        },
+        {
+          "type": "fixed",
+          "heads": "RA.8",
+          "amount": 915.34
+        }
+      ],
+      "compositionId": "CMP_000294"
+    },
+    "isactive": true,
+    "createdby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "lastmodifiedby": "7dab63d9-b046-409c-918a-f43fda148e46",
+    "createdtime": 1716359597300,
+    "lastmodifiedtime": 1716359597300
+  }
+]

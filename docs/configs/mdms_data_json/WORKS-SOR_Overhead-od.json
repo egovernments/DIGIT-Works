@@ -1,0 +1,155 @@
+[
+  {
+    "id": "e33960da-e03d-408c-b4dc-bb295d17c2a2",
+    "tenantid": "od",
+    "uniqueidentifier": "LA.1",
+    "schemacode": "WORKS-SOR.Overhead",
+    "data": {
+      "id": "1",
+      "code": "LA",
+      "type": "lumpsum",
+      "description": "Labour Basic Rate"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1703822372958,
+    "lastmodifiedtime": 1703822372958
+  },
+  {
+    "id": "6755d2c0-0e97-4b83-a637-da7eae893af0",
+    "tenantid": "od",
+    "uniqueidentifier": "MA.2",
+    "schemacode": "WORKS-SOR.Overhead",
+    "data": {
+      "id": "2",
+      "code": "MA",
+      "type": "lumpsum",
+      "description": "Material Basic Rate"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1703822393540,
+    "lastmodifiedtime": 1703822393540
+  },
+  {
+    "id": "6df5b162-1b3a-43dc-8ed0-43383e95c269",
+    "tenantid": "od",
+    "uniqueidentifier": "MHA.3",
+    "schemacode": "WORKS-SOR.Overhead",
+    "data": {
+      "id": "3",
+      "code": "MHA",
+      "type": "lumpsum",
+      "description": "Machinery Basic Rate"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1703822419831,
+    "lastmodifiedtime": 1703822419831
+  },
+  {
+    "id": "7332bb9d-06be-4851-9831-4f11a99e863b",
+    "tenantid": "od",
+    "uniqueidentifier": "ADC.4",
+    "schemacode": "WORKS-SOR.Overhead",
+    "data": {
+      "id": "4",
+      "code": "ADC",
+      "type": "lumpsum",
+      "description": "Additional Charges"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704280927416,
+    "lastmodifiedtime": 1704280927416
+  },
+  {
+    "id": "9cc5e59a-bddb-401f-8476-1977afb582aa",
+    "tenantid": "od",
+    "uniqueidentifier": "LC.7",
+    "schemacode": "WORKS-SOR.Overhead",
+    "data": {
+      "id": "7",
+      "code": "LC",
+      "type": "lumpsum",
+      "description": "Labour Cess"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704281086637,
+    "lastmodifiedtime": 1704281086637
+  },
+  {
+    "id": "e8d67337-8333-45b6-be81-47778e2d31c3",
+    "tenantid": "od",
+    "uniqueidentifier": "RA.8",
+    "schemacode": "WORKS-SOR.Overhead",
+    "data": {
+      "id": "8",
+      "code": "RA",
+      "type": "lumpsum",
+      "description": "Royalty"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704281163945,
+    "lastmodifiedtime": 1704281163945
+  },
+  {
+    "id": "466d2be7-ade9-48ac-8934-92ca70277fa3",
+    "tenantid": "od",
+    "uniqueidentifier": "CA.9",
+    "schemacode": "WORKS-SOR.Overhead",
+    "data": {
+      "id": "9",
+      "code": "CA",
+      "type": "lumpsum",
+      "description": "Conveyance"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704281188298,
+    "lastmodifiedtime": 1726479569118
+  },
+  {
+    "id": "ff7a3ccd-f32c-4bc5-96f5-6710b33cca07",
+    "tenantid": "od",
+    "uniqueidentifier": "EMF.6",
+    "schemacode": "WORKS-SOR.Overhead",
+    "data": {
+      "id": "6",
+      "code": "EMF",
+      "type": "lumpsum",
+      "description": "Environment Management Fund"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704281060573,
+    "lastmodifiedtime": 1720849617736
+  },
+  {
+    "id": "2e3abe2c-683d-47bc-ac09-3c70027ca031",
+    "tenantid": "od",
+    "uniqueidentifier": "DMF.5",
+    "schemacode": "WORKS-SOR.Overhead",
+    "data": {
+      "id": "5",
+      "code": "DMF",
+      "type": "lumpsum",
+      "description": "District Mineral Fund"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704281042890,
+    "lastmodifiedtime": 1720849647470
+  }
+]

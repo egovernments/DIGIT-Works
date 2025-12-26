@@ -1,0 +1,1006 @@
+[
+  {
+    "id": "ad830603-c55c-4274-bd2b-02f9d707bf47",
+    "tenantid": "od",
+    "uniqueidentifier": "measurement-service.measurement-service-index",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "measurement-service-index",
+      "module": "measurement-service",
+      "sortBy": {
+        "path": "Data.auditDetails.createdTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [
+        "Data.id",
+        "Data.referenceId",
+        "Data.measurementNumber",
+        "Data.measures",
+        "Data.history",
+        "Data.currentProcessInstance",
+        "Data.additionalDetails",
+        "Data.workflow",
+        "Data.wfStatus",
+        "Data.contract.additionalDetails",
+        "Data.contract.id",
+        "Data.contract.status",
+        "Data.contract.contractNumber",
+        "Data.contract.additionalDetails"
+      ],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "measurementNumber",
+          "path": "Data.measurementNumber.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "referenceId",
+          "path": "Data.referenceId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "status",
+          "path": "Data.currentProcessInstance.state.state.keyword",
+          "operator": "IN",
+          "isMandatory": false
+        },
+        {
+          "name": "ward",
+          "path": "Data.contract.additionalDetails.ward.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "projectId",
+          "path": "Data.contract.additionalDetails.projectId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "projectName",
+          "path": "Data.contract.additionalDetails.projectName",
+          "operator": "FUZZY",
+          "isMandatory": false
+        },
+        {
+          "name": "createdFrom",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "createdTo",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "LTE",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975722096,
+    "lastmodifiedtime": 1728975722096
+  },
+  {
+    "id": "8b1a29fd-24e7-4dc1-8bb1-735b495860e5",
+    "tenantid": "od",
+    "uniqueidentifier": "ifms-pi.ifms-pi-index",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "ifms-pi-index",
+      "module": "ifms-pi",
+      "sortBy": {
+        "path": "Data.auditDetails.createdTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [
+        "Data.id",
+        "Data.tenantId",
+        "Data.jitBillNo",
+        "Data.parentPiNumber",
+        "Data.muktaReferenceId",
+        "Data.numBeneficiaries",
+        "Data.grossAmount",
+        "Data.netAmount",
+        "Data.piStatus",
+        "Data.piErrorResp",
+        "Data.beneficiaryDetails",
+        "Data.auditDetails",
+        "Data.additionalDetails"
+      ],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "jitBillNo",
+          "path": "Data.jitBillNo.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "piType",
+          "path": "Data.piType.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "status",
+          "path": "Data.piStatus.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "billNumber",
+          "path": "Data.additionalDetails.billNumber.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "referenceId",
+          "path": "Data.additionalDetails.referenceId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "createdFrom",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "createdTo",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "LTE",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975758030,
+    "lastmodifiedtime": 1728975758030
+  },
+  {
+    "id": "bdf7fb05-2913-492a-be6e-e9bdeced2d84",
+    "tenantid": "od",
+    "uniqueidentifier": "expense.expense-bill-index",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "expense-bill-index",
+      "module": "expense",
+      "sortBy": {
+        "path": "Data.auditDetails.createdTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [
+        "Data.tenantId",
+        "Data.id",
+        "Data.billNumber",
+        "Data.musterRollStatus",
+        "Data.startDate",
+        "Data.endDate",
+        "Data.additionalDetails",
+        "Data.businessService",
+        "Data.currentProcessInstance",
+        "Data.auditDetails",
+        "Data.totalAmount",
+        "Data.paymentStatus",
+        "Data.referenceId"
+      ],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "status",
+          "path": "Data.currentProcessInstance.state.state.keyword",
+          "isMandatory": false
+        },
+        {
+          "name": "billType",
+          "path": "Data.businessService.keyword",
+          "operator": "IN",
+          "isMandatory": false
+        },
+        {
+          "name": "projectName",
+          "path": "Data.additionalDetails.projectName",
+          "operator": "FUZZY",
+          "isMandatory": false
+        },
+        {
+          "name": "billNumber",
+          "path": "Data.billNumber.keyword",
+          "isMandatory": false
+        },
+        {
+          "name": "createdFrom",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "createdTo",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "LTE",
+          "isMandatory": false
+        },
+        {
+          "name": "ward",
+          "path": "Data.additionalDetails.ward.keyword",
+          "isMandatory": false
+        },
+        {
+          "name": "paymentStatus",
+          "path": "Data.paymentStatus.keyword",
+          "isMandatory": false
+        },
+        {
+          "name": "referenceId",
+          "path": "Data.billDetails.referenceId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975776999,
+    "lastmodifiedtime": 1728975776999
+  },
+  {
+    "id": "d7460d14-4e2c-488d-97b7-b593bd2233d2",
+    "tenantid": "od",
+    "uniqueidentifier": "organisation.organisation-index",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "organisation-index",
+      "module": "organisation",
+      "sortBy": {
+        "path": "Data.auditDetails.createdTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [
+        "Data.tenantId",
+        "Data.id",
+        "Data.name",
+        "Data.applicationNumber",
+        "Data.orgNumber",
+        "Data.applicationStatus",
+        "Data.externalRefNumber",
+        "Data.isActive",
+        "Data.isActive",
+        "Data.orgAddress",
+        "Data.contactDetails",
+        "Data.identifiers",
+        "Data.functions",
+        "Data.jurisdiction",
+        "Data.documents",
+        "Data.additionalDetails",
+        "Data.auditDetails"
+      ],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "name",
+          "path": "Data.name",
+          "operator": "FUZZY",
+          "isMandatory": false
+        },
+        {
+          "name": "applicationNumber",
+          "path": "Data.applicationNumber.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "orgNumber",
+          "path": "Data.orgNumber.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "applicationStatus",
+          "path": "Data.applicationStatus.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "isActive",
+          "path": "Data.isActive.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "createdFrom",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "createdTo",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "LTE",
+          "isMandatory": false
+        },
+        {
+          "name": "type",
+          "path": "Data.functions.*.type.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "functionIsActive",
+          "path": "Data.functions.*.isActive",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "boundaryCode",
+          "path": "Data.orgAddress.*.boundaryCode.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "identifierType",
+          "path": "Data.identifiers.*.type.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "identifierValue",
+          "path": "Data.identifiers.*.value.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975799453,
+    "lastmodifiedtime": 1728975799453
+  },
+  {
+    "id": "bf4752ef-92c4-4b0a-b972-5f76371441f8",
+    "tenantid": "od",
+    "uniqueidentifier": "individual.individual-index-v1",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "individual-index-v1",
+      "module": "individual",
+      "sortBy": {
+        "path": "Data.auditDetails.createdTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [
+        "Data.tenantId",
+        "Data.id",
+        "Data.individualId",
+        "Data.clientReferenceId",
+        "Data.userId",
+        "Data.name",
+        "Data.dateOfBirth",
+        "Data.gender",
+        "Data.bloodGroup",
+        "Data.mobileNumber",
+        "Data.altContactNumber",
+        "Data.email",
+        "Data.address",
+        "Data.fatherName",
+        "Data.husbandName",
+        "Data.relationship",
+        "Data.identifiers",
+        "Data.skills",
+        "Data.photo",
+        "Data.additionalFields",
+        "Data.isDeleted",
+        "Data.rowVersion",
+        "Data.auditDetails"
+      ],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "name",
+          "path": "Data.name.givenName",
+          "operator": "FUZZY",
+          "isMandatory": false
+        },
+        {
+          "name": "ward",
+          "path": "Data.address.ward.code.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "individualId",
+          "path": "Data.individualId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "id",
+          "path": "Data.id.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "socialCategoryKey",
+          "path": "Data.socialCategoryKey.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "socialCategoryValue",
+          "path": "Data.socialCategoryValue.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "createdFrom",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "createdTo",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "LTE",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975818849,
+    "lastmodifiedtime": 1728975818849
+  },
+  {
+    "id": "c311ac8b-f011-4fe3-a54c-58a02fc02613",
+    "tenantid": "od",
+    "uniqueidentifier": "contract.contract-inbox",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "contract-inbox",
+      "module": "contract",
+      "sortBy": {
+        "path": "Data.auditDetails.createdTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [
+        "Data.tenantId",
+        "Data.contractNumber",
+        "Data.totalContractedAmount",
+        "Data.contractType",
+        "Data.executingAuthority",
+        "Data.contractStatus",
+        "Data.startDate",
+        "Data.endDate",
+        "Data.additionalDetails",
+        "Data.lineItems",
+        "Data.currentProcessInstance",
+        "Data.auditDetails"
+      ],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "ward",
+          "path": "Data.additionalDetails.ward.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "projectType",
+          "path": "Data.additionalDetails.projectType.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "projectName",
+          "path": "Data.additionalDetails.projectName",
+          "operator": "FUZZY",
+          "isMandatory": false
+        },
+        {
+          "name": "workOrderNumber",
+          "path": "Data.contractNumber.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "businessService",
+          "path": "Data.currentProcessInstance.businessService.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "revisedWorkOrderNumber",
+          "path": "Data.currentProcessInstance.businessId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "status",
+          "path": "Data.currentProcessInstance.state.state.keyword",
+          "operator": "IN",
+          "isMandatory": false
+        },
+        {
+          "name": "startDate",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "endDate",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "LTE",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975836564,
+    "lastmodifiedtime": 1728975836564
+  },
+  {
+    "id": "aaf861e4-5f7b-42b8-886e-b65f11895a14",
+    "tenantid": "od",
+    "uniqueidentifier": "muster.muster-inbox",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "muster-inbox",
+      "module": "muster",
+      "sortBy": {
+        "path": "Data.auditDetails.createdTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [
+        "Data.tenantId",
+        "Data.id",
+        "Data.musterRollNumber",
+        "Data.musterRollStatus",
+        "Data.startDate",
+        "Data.endDate",
+        "Data.additionalDetails",
+        "Data.individualEntries",
+        "Data.currentProcessInstance",
+        "Data.auditDetails"
+      ],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "status",
+          "path": "Data.currentProcessInstance.state.state.keyword",
+          "isMandatory": false
+        },
+        {
+          "name": "musterRollStatus",
+          "path": "Data.musterRollStatus.keyword",
+          "operator": "IN",
+          "isMandatory": false
+        },
+        {
+          "name": "startDate",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "endDate",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "LTE",
+          "isMandatory": false
+        },
+        {
+          "name": "attendanceRegisterName",
+          "path": "Data.additionalDetails.attendanceRegisterName",
+          "operator": "FUZZY",
+          "isMandatory": false
+        },
+        {
+          "name": "musterRollNumber",
+          "path": "Data.musterRollNumber.keyword",
+          "isMandatory": false
+        },
+        {
+          "name": "ward",
+          "path": "Data.additionalDetails.ward.keyword",
+          "isMandatory": false
+        },
+        {
+          "name": "projectType",
+          "path": "Data.additionalDetails.projectType.keyword",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975869288,
+    "lastmodifiedtime": 1728975869288
+  },
+  {
+    "id": "4f411fd1-53a4-4134-8d12-98e0d31fb419",
+    "tenantid": "od",
+    "uniqueidentifier": "estimate.estimate-inbox-v3",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "estimate-inbox-v3",
+      "module": "estimate",
+      "sortBy": {
+        "path": "Data.auditDetails.createdTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [
+        "Data.tenantId",
+        "Data.estimateNumber",
+        "Data.revisionNumber",
+        "Data.versionNumber",
+        "Data.businessService",
+        "Data.executingDepartment",
+        "Data.proposalDate",
+        "Data.project",
+        "Data.currentProcessInstance",
+        "Data.auditDetails",
+        "Data.additionalDetails"
+      ],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "ward",
+          "path": "Data.additionalDetails.location.ward.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "projectName",
+          "path": "Data.project.name",
+          "operator": "FUZZY",
+          "isMandatory": false
+        },
+        {
+          "name": "status",
+          "path": "Data.currentProcessInstance.state.state.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "estimateId",
+          "path": "Data.estimateNumber.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "revisionNumber",
+          "path": "Data.revisionNumber.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "department",
+          "path": "Data.executingDepartment.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "typeOfWork",
+          "path": "Data.project.projectType.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "projectId",
+          "path": "Data.project.projectNumber.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "fromProposalDate",
+          "path": "Data.proposalDate",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "toProposalDate",
+          "path": "Data.proposalDate",
+          "operator": "LTE",
+          "isMandatory": false
+        },
+        {
+          "name": "createdBy",
+          "path": "Data.auditDetails.createdBy.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "businessService",
+          "path": "Data.businessService.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975885509,
+    "lastmodifiedtime": 1728975885509
+  },
+  {
+    "id": "29e381de-86c9-457e-b5c1-94d66dcc6301",
+    "tenantid": "od",
+    "uniqueidentifier": "mukta-pi.mukta-pi-index",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "mukta-pi-index",
+      "module": "mukta-pi",
+      "sortBy": {
+        "path": "Data.auditDetails.createdTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [
+        "Data.id",
+        "Data.tenantId",
+        "Data.jitBillNo",
+        "Data.parentPiNumber",
+        "Data.muktaReferenceId",
+        "Data.numBeneficiaries",
+        "Data.grossAmount",
+        "Data.netAmount",
+        "Data.piStatus",
+        "Data.piErrorResp",
+        "Data.beneficiaryDetails",
+        "Data.auditDetails",
+        "Data.additionalDetails"
+      ],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "jitBillNo",
+          "path": "Data.jitBillNo.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "piType",
+          "path": "Data.piType.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "status",
+          "path": "Data.piStatus.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "billNumber",
+          "path": "Data.additionalDetails.billNumber.keyword",
+          "operator": "IN",
+          "isMandatory": false
+        },
+        {
+          "name": "referenceId",
+          "path": "Data.additionalDetails.referenceId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "projectId",
+          "path": "Data.additionalDetails.projectId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "createdFrom",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "createdTo",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "LTE",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729253930190,
+    "lastmodifiedtime": 1729253930190
+  },
+  {
+    "id": "ffa5985d-1056-462a-9844-09f2321d0b59",
+    "tenantid": "od",
+    "uniqueidentifier": "project.project-index",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "project-index",
+      "module": "project",
+      "sortBy": {
+        "path": "Data.auditDetails.createdTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [
+        "Data.tenantId",
+        "Data.id",
+        "Data.projectNumber",
+        "Data.name",
+        "Data.address",
+        "Data.additionalDetails",
+        "Data.projectType",
+        "Data.description",
+        "Data.isDeleted",
+        "Data.auditDetails"
+      ],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "projectName",
+          "path": "Data.name",
+          "operator": "FUZZY",
+          "isMandatory": false
+        },
+        {
+          "name": "projectNumber",
+          "path": "Data.projectNumber.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "projectType",
+          "path": "Data.projectType.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "boundary",
+          "path": "Data.address.boundary.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "createdFrom",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "createdTo",
+          "path": "Data.auditDetails.createdTime",
+          "operator": "LTE",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729254159122,
+    "lastmodifiedtime": 1729254159122
+  },
+  {
+    "id": "a77cf268-c77b-4d2d-b36d-1de053eeabbc",
+    "tenantid": "od",
+    "uniqueidentifier": "payment-tracker.expense-bill-index",
+    "schemacode": "SEARCH.SearchQueryConfiguration",
+    "data": {
+      "index": "expense-bill-index",
+      "module": "payment-tracker",
+      "sortBy": {
+        "path": "Data.auditDetails.lastModifiedTime",
+        "defaultOrder": "DESC"
+      },
+      "sourceFilterPathList": [],
+      "allowedSearchCriteria": [
+        {
+          "name": "tenantId",
+          "path": "Data.tenantId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": true
+        },
+        {
+          "name": "projectName",
+          "path": "Data.additionalDetails.projectName.keyword",
+          "operator": "FUZZY",
+          "isMandatory": false
+        },
+        {
+          "name": "projectType",
+          "path": "Data.additionalDetails.projectType.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "projectId",
+          "path": "Data.additionalDetails.projectId.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        },
+        {
+          "name": "createdFrom",
+          "path": "Data.additionalDetails.projectCreatedDate",
+          "operator": "GTE",
+          "isMandatory": false
+        },
+        {
+          "name": "createdTo",
+          "path": "Data.additionalDetails.projectCreatedDate",
+          "operator": "LTE",
+          "isMandatory": false
+        },
+        {
+          "name": "ward",
+          "path": "Data.additionalDetails.ward.keyword",
+          "operator": "EQUAL",
+          "isMandatory": false
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729835914173,
+    "lastmodifiedtime": 1729835914173
+  }
+]

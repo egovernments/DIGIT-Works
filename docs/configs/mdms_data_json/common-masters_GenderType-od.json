@@ -1,0 +1,62 @@
+[
+  {
+    "id": "01b8c62b-34ea-4241-922c-a083c93bf8bf",
+    "tenantid": "od",
+    "uniqueidentifier": "OTHERS",
+    "schemacode": "common-masters.GenderType",
+    "data": {
+      "code": "OTHERS",
+      "active": false
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981737620,
+    "lastmodifiedtime": 1728981737620
+  },
+  {
+    "id": "b290497e-8a37-4cdb-b78f-9d2b37258b3b",
+    "tenantid": "od",
+    "uniqueidentifier": "TRANSGENDER",
+    "schemacode": "common-masters.GenderType",
+    "data": {
+      "code": "TRANSGENDER",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981753718,
+    "lastmodifiedtime": 1728981753718
+  },
+  {
+    "id": "a7f85876-da44-41fe-a300-f14041e90bca",
+    "tenantid": "od",
+    "uniqueidentifier": "FEMALE",
+    "schemacode": "common-masters.GenderType",
+    "data": {
+      "code": "FEMALE",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981762008,
+    "lastmodifiedtime": 1728981762008
+  },
+  {
+    "id": "eb4a663f-8e4c-4d8e-b3d8-4256136442ca",
+    "tenantid": "od",
+    "uniqueidentifier": "MALE",
+    "schemacode": "common-masters.GenderType",
+    "data": {
+      "code": "MALE",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981772719,
+    "lastmodifiedtime": 1728981772719
+  }
+]

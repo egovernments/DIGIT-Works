@@ -1,0 +1,316 @@
+[
+  {
+    "id": "98797c11-c220-4967-bb09-106290c909c8",
+    "tenantid": "od",
+    "uniqueidentifier": "15.ITTDSOTI",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "15",
+      "code": "ITTDSOTI",
+      "active": true,
+      "service": "works.purchase",
+      "category": "deduction",
+      "description": "IT TDS OTI",
+      "effectiveTo": null,
+      "effectiveFrom": 1724956200000
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967956990,
+    "lastmodifiedtime": 1728967956990
+  },
+  {
+    "id": "de4c905c-d6f6-4d42-9c8b-6fa672d5138d",
+    "tenantid": "od",
+    "uniqueidentifier": "14.DMF",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "14",
+      "code": "DMF",
+      "active": true,
+      "service": "works.purchase",
+      "category": "deduction",
+      "description": "District Mineral Fund",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967969412,
+    "lastmodifiedtime": 1728967969412
+  },
+  {
+    "id": "67f893c2-41fc-49ba-b63c-fbf26cddda48",
+    "tenantid": "od",
+    "uniqueidentifier": "13.EMF",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "13",
+      "code": "EMF",
+      "active": true,
+      "service": "works.purchase",
+      "category": "deduction",
+      "description": "Environament Management Fund",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967979648,
+    "lastmodifiedtime": 1728967979648
+  },
+  {
+    "id": "ae9cb6c7-4376-4e88-aaea-f255b1bb9c4a",
+    "tenantid": "od",
+    "uniqueidentifier": "12.LC",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "12",
+      "code": "LC",
+      "active": true,
+      "service": "works.wages",
+      "category": "deduction",
+      "description": "Labour Cess",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967991185,
+    "lastmodifiedtime": 1728967991185
+  },
+  {
+    "id": "106147a3-b3c0-47fa-b8e4-4d08bacf4d74",
+    "tenantid": "od",
+    "uniqueidentifier": "11.PURCHASE",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "11",
+      "code": "PURCHASE",
+      "active": true,
+      "service": "works.purchase",
+      "category": "payable",
+      "description": "Head code to make payment to vendor",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968003237,
+    "lastmodifiedtime": 1728968003237
+  },
+  {
+    "id": "d2fe7bf3-2a5d-4861-8cbe-c9a3da3e6f97",
+    "tenantid": "od",
+    "uniqueidentifier": "10.SC",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "10",
+      "code": "SC",
+      "active": true,
+      "service": "works.supervision",
+      "category": "expense",
+      "effectiveTo": null,
+      "effectiveFrom": 177044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968016342,
+    "lastmodifiedtime": 1728968016342
+  },
+  {
+    "id": "a8da1c66-d804-494f-926f-bab8fa00025e",
+    "tenantid": "od",
+    "uniqueidentifier": "9.GSTTDS",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "9",
+      "code": "GSTTDS",
+      "active": true,
+      "service": "works.purchase",
+      "category": "deduction",
+      "description": "GST TDS",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968029564,
+    "lastmodifiedtime": 1728968029564
+  },
+  {
+    "id": "d5bfabde-1bba-4126-b039-4bcd815c0b7d",
+    "tenantid": "od",
+    "uniqueidentifier": "8.ECB",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "8",
+      "code": "ECB",
+      "active": true,
+      "service": "works.purchase",
+      "category": "deduction",
+      "description": "Empty Cement Bag",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968040943,
+    "lastmodifiedtime": 1728968040943
+  },
+  {
+    "id": "fbba185a-4bce-4b2f-ad60-421e6352ce26",
+    "tenantid": "od",
+    "uniqueidentifier": "7.ROM",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "7",
+      "code": "ROM",
+      "active": true,
+      "service": "works.purchase",
+      "category": "deduction",
+      "description": "Royalty and Additional Charge",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968051603,
+    "lastmodifiedtime": 1728968051603
+  },
+  {
+    "id": "2b1be5ba-7d94-4c9d-bf77-9f806de20e6d",
+    "tenantid": "od",
+    "uniqueidentifier": "6.ITTDS",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "6",
+      "code": "ITTDS",
+      "active": true,
+      "service": "works.purchase",
+      "category": "deduction",
+      "description": "IT TDS",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968063652,
+    "lastmodifiedtime": 1728968063652
+  },
+  {
+    "id": "d3f9b547-6770-40dc-a848-a5ce901056bc",
+    "tenantid": "od",
+    "uniqueidentifier": "5.LC",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "5",
+      "code": "LC",
+      "active": true,
+      "service": "works.purchase",
+      "category": "deduction",
+      "description": "Labour Cess",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968075568,
+    "lastmodifiedtime": 1728968075568
+  },
+  {
+    "id": "659ffd1d-f336-418e-aaa1-fa4701d36cb3",
+    "tenantid": "od",
+    "uniqueidentifier": "4.PA",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "4",
+      "code": "PA",
+      "active": false,
+      "service": "works.purchase",
+      "category": "expense",
+      "description": "Purchase Amount",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968087468,
+    "lastmodifiedtime": 1728968087468
+  },
+  {
+    "id": "8789c2ba-a2fa-482b-a78c-b1efcb87bc72",
+    "tenantid": "od",
+    "uniqueidentifier": "3.MC",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "3",
+      "code": "MC",
+      "active": true,
+      "service": "works.purchase",
+      "category": "expense",
+      "description": "Material cost",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968098091,
+    "lastmodifiedtime": 1728968098091
+  },
+  {
+    "id": "35bf31c3-e59d-4c29-a0fe-53a20eaf3ec0",
+    "tenantid": "od",
+    "uniqueidentifier": "2.GST",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "2",
+      "code": "GST",
+      "active": true,
+      "service": "works.purchase",
+      "category": "expense",
+      "description": "Goods and services tax",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968111782,
+    "lastmodifiedtime": 1728968111782
+  },
+  {
+    "id": "5168efde-27d5-4539-99b2-95620de2f74d",
+    "tenantid": "od",
+    "uniqueidentifier": "1.WEG",
+    "schemacode": "expense.HeadCodes",
+    "data": {
+      "id": "1",
+      "code": "WEG",
+      "active": true,
+      "service": "works.wages",
+      "category": "expense",
+      "description": "Wages",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728968123402,
+    "lastmodifiedtime": 1728968123402
+  }
+]

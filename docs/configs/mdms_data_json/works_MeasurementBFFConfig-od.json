@@ -1,0 +1,107 @@
+[
+  {
+    "id": "a6f3222c-058c-4e51-bf1c-07e2d2e78e67",
+    "tenantid": "od",
+    "uniqueidentifier": "musterRolls",
+    "schemacode": "works.MeasurementBFFConfig",
+    "data": {
+      "path": "musterRolls",
+      "jsonPath": "$.musterRollsArray"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729249985562,
+    "lastmodifiedtime": 1729249985562
+  },
+  {
+    "id": "cd788c36-31ed-4325-bf8d-813aa438d708",
+    "tenantid": "od",
+    "uniqueidentifier": "allMeasurements",
+    "schemacode": "works.MeasurementBFFConfig",
+    "data": {
+      "path": "allMeasurements",
+      "jsonPath": "$.allMeasurements"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729249997650,
+    "lastmodifiedtime": 1729249997650
+  },
+  {
+    "id": "b2eecd3b-9c41-4e2f-8deb-00027df1f068",
+    "tenantid": "od",
+    "uniqueidentifier": "musterRollNumber",
+    "schemacode": "works.MeasurementBFFConfig",
+    "data": {
+      "path": "musterRollNumber",
+      "jsonPath": "$.musterRoll.musterRollNumber"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729250009467,
+    "lastmodifiedtime": 1729250009467
+  },
+  {
+    "id": "319afd36-5dd3-4469-a2e0-31c67b5e296e",
+    "tenantid": "od",
+    "uniqueidentifier": "period",
+    "schemacode": "works.MeasurementBFFConfig",
+    "data": {
+      "path": "period",
+      "jsonPath": "$.period"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729250018721,
+    "lastmodifiedtime": 1729250018721
+  },
+  {
+    "id": "25264f20-acfd-4da4-acd6-65df6416ab53",
+    "tenantid": "od",
+    "uniqueidentifier": "measurement",
+    "schemacode": "works.MeasurementBFFConfig",
+    "data": {
+      "path": "measurement",
+      "jsonPath": "$.measurement"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729250026671,
+    "lastmodifiedtime": 1729250026671
+  },
+  {
+    "id": "3ccda6f6-7bbb-4dbb-9179-ce5f4071695d",
+    "tenantid": "od",
+    "uniqueidentifier": "estimate",
+    "schemacode": "works.MeasurementBFFConfig",
+    "data": {
+      "path": "estimate",
+      "jsonPath": "$.estimate"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729250035942,
+    "lastmodifiedtime": 1729250035942
+  },
+  {
+    "id": "5291f251-2064-4bca-a950-c7c18f5084ae",
+    "tenantid": "od",
+    "uniqueidentifier": "contract",
+    "schemacode": "works.MeasurementBFFConfig",
+    "data": {
+      "path": "contract",
+      "jsonPath": "$.contract"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729250047883,
+    "lastmodifiedtime": 1729250047883
+  }
+]

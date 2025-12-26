@@ -1,0 +1,442 @@
+[
+  {
+    "id": "f744edb8-c6dd-4d3d-bcc3-106855cadb2d",
+    "tenantid": "od",
+    "uniqueidentifier": "CreateWageSeekerConfig",
+    "schemacode": "commonMuktaUiConfig.CreateWageSeekerConfig",
+    "data": {
+      "form": [
+        {
+          "body": [
+            {
+              "key": "basicDetails_wageSeekerId",
+              "type": "text",
+              "label": "MASTERS_WAGESEEKER_ID",
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_wageSeekerId",
+                "customClass": "field-value-no-border",
+                "customStyle": {
+                  "display": "none"
+                }
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.customStyle.display"
+                ]
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_aadhar",
+              "type": "text",
+              "label": "ES_COMMON_AADHAR",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_aadhar",
+                "error": "WORKS_REQUIRED_ERR",
+                "customClass": "field-value-no-border",
+                "customStyle": {
+                  "pointerEvents": "auto"
+                }
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.customStyle.pointerEvents",
+                  "populators.customClass"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "basicDetails_wageSeekerName",
+              "type": "text",
+              "label": "MASTERS_NAME_OF_WAGE_SEEKER",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_wageSeekerName",
+                "error": "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .\\\\-_@\\\\']*$",
+                  "maxlength": 128,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "basicDetails_fatherHusbandName",
+              "type": "text",
+              "label": "MASTERS_FATHER_HUSBAND_NAME",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_fatherHusbandName",
+                "error": "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .\\\\-_@\\\\']*$",
+                  "maxlength": 128,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "basicDetails_relationShip",
+              "type": "radioordropdown",
+              "label": "ES_COMMON_RELATIONSHIP",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_relationShip",
+                "error": "WORKS_REQUIRED_ERR",
+                "mdmsConfig": {
+                  "masterName": "Relationship",
+                  "moduleName": "common-masters",
+                  "localePrefix": "COMMON_MASTERS_RELATIONSHIP"
+                },
+                "optionsKey": "name"
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "basicDetails_dateOfBirth",
+              "type": "date",
+              "label": "ES_COMMON_BIRTHDATE",
+              "disable": false,
+              "populators": {
+                "max": "currentDate",
+                "name": "basicDetails_dateOfBirth",
+                "error": "ES_COMMON_AGE_GREATER_THAN_18_ERROR",
+                "validation": {
+                  "customValidation": true
+                }
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.max",
+                  "populators.validation.customValidation"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "basicDetails_gender",
+              "type": "radioordropdown",
+              "label": "CORE_COMMON_GENDER",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_gender",
+                "error": "WORKS_REQUIRED_ERR",
+                "mdmsConfig": {
+                  "masterName": "GenderType",
+                  "moduleName": "common-masters",
+                  "localePrefix": "COMMON_MASTERS_GENDER"
+                },
+                "optionsKey": "name"
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "basicDetails_mobileNumber",
+              "type": "mobileNumber",
+              "label": "CORE_COMMON_MOBILE_NUMBER",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_mobileNumber",
+                "error": "PHONE_VALIDATION",
+                "validation": {
+                  "max": 9999999999,
+                  "min": 5999999999
+                }
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "basicDetails_socialCategory",
+              "type": "radioordropdown",
+              "label": "COMMON_SOCIAL_CATEGORY",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_socialCategory",
+                "mdmsConfig": {
+                  "masterName": "SocialCategory",
+                  "moduleName": "common-masters",
+                  "localePrefix": "COMMON_MASTERS_SOCIAL"
+                },
+                "optionsKey": "name"
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_photograph",
+              "type": "multiupload",
+              "label": "ES_COMMON_PHOTOGRAPH",
+              "populators": {
+                "name": "basicDetails_photograph",
+                "containerStyles": {
+                  "marginBottom": "1rem"
+                },
+                "maxFilesAllowed": 1,
+                "allowedFileTypes": "(.*?)(jpg|jpeg|png)$",
+                "allowedMaxSizeInMB": 2
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.allowedFileTypes"
+                ]
+              },
+              "isMandatory": false
+            }
+          ],
+          "head": "",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "skillDetails_skill",
+              "type": "multiselectdropdown",
+              "label": "ES_COMMON_SKILL",
+              "disable": false,
+              "populators": {
+                "name": "skillDetails_skill",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "name",
+                "defaultText": "COMMON_SELECT_SKILL",
+                "selectedText": "COMMON_SELECTED",
+                "allowMultiSelect": true,
+                "isDropdownWithChip": true
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            }
+          ],
+          "head": "ATM_SKILLS_DETAILS",
+          "navLink": "Wage_Seeker_Details"
+        },
+        {
+          "body": [
+            {
+              "key": "locDetails_city",
+              "type": "radioordropdown",
+              "label": "CORE_COMMON_CITY",
+              "disable": true,
+              "populators": {
+                "name": "locDetails_city",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "i18nKey"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "locDetails_ward",
+              "type": "radioordropdown",
+              "label": "CORE_COMMON_WARD",
+              "disable": false,
+              "populators": {
+                "name": "locDetails_ward",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "i18nKey"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "locDetails_locality",
+              "type": "radioordropdown",
+              "label": "COMMON_LOCALITY",
+              "disable": false,
+              "populators": {
+                "name": "locDetails_locality",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "i18nKey"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "locDetails_streetName",
+              "type": "text",
+              "label": "ES_COMMON_STREET_NAME",
+              "disable": false,
+              "populators": {
+                "name": "locDetails_streetName",
+                "error": "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .,\\\\/\\\\-_@#\\\\']*$",
+                  "maxlength": 128,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "locDetails_houseName",
+              "type": "text",
+              "label": "ES_COMMON_DOOR_NO",
+              "disable": false,
+              "populators": {
+                "name": "locDetails_houseName",
+                "error": "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .,\\\\/\\\\-_@#\\\\']*$",
+                  "maxlength": 8,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": false
+            }
+          ],
+          "head": "ES_COMMON_LOCATION_DETAILS",
+          "navLink": "Wage_Seeker_Details"
+        },
+        {
+          "body": [
+            {
+              "key": "financeDetails_accountHolderName",
+              "type": "text",
+              "label": "ES_COMMON_ACCOUNT_HOLDER_NAME",
+              "disable": false,
+              "populators": {
+                "name": "financeDetails_accountHolderName",
+                "error": "WORKS_REQUIRED_ERR",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .\\\\-_@\\\\']*$",
+                  "maxlength": 64,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "financeDetails_accountNumber",
+              "type": "number",
+              "label": "CORE_COMMON_ACCOUNT_NO",
+              "disable": false,
+              "populators": {
+                "name": "financeDetails_accountNumber",
+                "error": "BANK_ACCOUNT_VALIDATION",
+                "validation": {
+                  "pattern": "^[0-9]{9,18}$",
+                  "maxlength": 18,
+                  "minlength": 9
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "financeDetails_accountType",
+              "type": "radioordropdown",
+              "label": "CORE_COMMON_ACCOUNT_TYPE",
+              "populators": {
+                "name": "financeDetails_accountType",
+                "error": "WORKS_REQUIRED_ERR",
+                "mdmsConfig": {
+                  "masterName": "BankAccType",
+                  "moduleName": "works",
+                  "localePrefix": "MASTERS"
+                },
+                "optionsKey": "name"
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "financeDetails_ifsc",
+              "type": "text",
+              "label": "COMMON_IFSC_CODE",
+              "disable": false,
+              "populators": {
+                "name": "financeDetails_ifsc",
+                "error": "ES_COMMON_IFSC_CODE_ERROR",
+                "validation": {
+                  "pattern": "^[a-zA-Z]{4}0[a-zA-Z0-9]{6}$"
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "financeDetails_branchName",
+              "type": "text",
+              "label": "MASTERS_BRANCH_NAME",
+              "disable": false,
+              "populators": {
+                "name": "financeDetails_branchName",
+                "validation": {
+                  "minlength": 2
+                }
+              },
+              "isMandatory": false
+            }
+          ],
+          "head": "WORKS_FINANCIAL_DETAILS",
+          "navLink": "Wage_Seeker_Details"
+        }
+      ],
+      "metaData": {
+        "showNavs": false
+      },
+      "screenName": "CreateWageSeekerConfig",
+      "defaultValues": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728991640026,
+    "lastmodifiedtime": 1728991640026
+  }
+]

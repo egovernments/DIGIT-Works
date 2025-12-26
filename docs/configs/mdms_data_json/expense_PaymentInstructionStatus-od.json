@@ -1,0 +1,121 @@
+[
+  {
+    "id": "42447b5f-52c9-450c-b2b1-2f27e7f53d1e",
+    "tenantid": "od",
+    "uniqueidentifier": "7",
+    "schemacode": "expense.PaymentInstructionStatus",
+    "data": {
+      "id": 7,
+      "code": "COMPLETED",
+      "active": true,
+      "i18nKey": "EXP_PI_STATUS_COMPLETED"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981356471,
+    "lastmodifiedtime": 1728981356471
+  },
+  {
+    "id": "613bdcf9-8613-4e49-9e8f-1d1fa6df64a1",
+    "tenantid": "od",
+    "uniqueidentifier": "6",
+    "schemacode": "expense.PaymentInstructionStatus",
+    "data": {
+      "id": 6,
+      "code": "PARTIAL",
+      "active": true,
+      "i18nKey": "EXP_PI_STATUS_PARTIAL"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981373122,
+    "lastmodifiedtime": 1728981373122
+  },
+  {
+    "id": "a63195ad-f4fe-4be3-aad5-58a0495727e6",
+    "tenantid": "od",
+    "uniqueidentifier": "5",
+    "schemacode": "expense.PaymentInstructionStatus",
+    "data": {
+      "id": 5,
+      "code": "SUCCESSFUL",
+      "active": true,
+      "i18nKey": "EXP_PI_STATUS_SUCCESSFUL"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981381993,
+    "lastmodifiedtime": 1728981381993
+  },
+  {
+    "id": "c690a610-35ec-419e-bbac-0401d1de2e39",
+    "tenantid": "od",
+    "uniqueidentifier": "4",
+    "schemacode": "expense.PaymentInstructionStatus",
+    "data": {
+      "id": 4,
+      "code": "FAILED",
+      "active": true,
+      "i18nKey": "EXP_PI_STATUS_FAILED"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981390709,
+    "lastmodifiedtime": 1728981390709
+  },
+  {
+    "id": "93c7085b-b48c-4da5-831c-7d9406d0f527",
+    "tenantid": "od",
+    "uniqueidentifier": "3",
+    "schemacode": "expense.PaymentInstructionStatus",
+    "data": {
+      "id": 3,
+      "code": "IN PROCESS",
+      "active": true,
+      "i18nKey": "EXP_PI_STATUS_IN_PROCESS"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981399706,
+    "lastmodifiedtime": 1728981399706
+  },
+  {
+    "id": "3f4a4c06-e378-4d05-ba4d-a2ebe30dc664",
+    "tenantid": "od",
+    "uniqueidentifier": "2",
+    "schemacode": "expense.PaymentInstructionStatus",
+    "data": {
+      "id": 2,
+      "code": "APPROVED",
+      "active": true,
+      "i18nKey": "EXP_PI_STATUS_APPROVED"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981409876,
+    "lastmodifiedtime": 1728981409876
+  },
+  {
+    "id": "95316490-0fa3-453d-89b0-e8dd091fbffe",
+    "tenantid": "od",
+    "uniqueidentifier": "1",
+    "schemacode": "expense.PaymentInstructionStatus",
+    "data": {
+      "id": 1,
+      "code": "INITIATED",
+      "active": true,
+      "i18nKey": "EXP_PI_STATUS_INITIATED"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981418944,
+    "lastmodifiedtime": 1728981418944
+  }
+]

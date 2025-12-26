@@ -1,0 +1,393 @@
+[
+  {
+    "id": "eccaed70-5efa-4fb9-a829-70de0d8ec0c9",
+    "tenantid": "od",
+    "uniqueidentifier": "ADM_DEO",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "ADM_DEO",
+      "name": "Data Entry Operator",
+      "active": true,
+      "description": "Data Entry Operator"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234463178,
+    "lastmodifiedtime": 1729234463178
+  },
+  {
+    "id": "524086fe-0315-4ac9-bae8-fc831240b877",
+    "tenantid": "od",
+    "uniqueidentifier": "Tax_WO",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "Tax_WO",
+      "name": "Ward Officer",
+      "active": true,
+      "description": "Ward Officer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234527207,
+    "lastmodifiedtime": 1729234527207
+  },
+  {
+    "id": "d2691401-2fe0-40ea-ae6c-ff745e4a4edb",
+    "tenantid": "od",
+    "uniqueidentifier": "ADM_AEO",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "ADM_AEO",
+      "name": "Assistant Executive Officer",
+      "active": true,
+      "description": "Assistant Executive Officer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234539616,
+    "lastmodifiedtime": 1729234539616
+  },
+  {
+    "id": "a461ea6c-fb5d-497f-8b21-6536ed08244e",
+    "tenantid": "od",
+    "uniqueidentifier": "ADM_EO",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "ADM_EO",
+      "name": "Executive Officer",
+      "active": true,
+      "description": "Executive Officer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234693119,
+    "lastmodifiedtime": 1729234693119
+  },
+  {
+    "id": "c025b9b7-ac11-4060-806a-959c19c33ee8",
+    "tenantid": "od",
+    "uniqueidentifier": "ADM_AMC",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "ADM_AMC",
+      "name": "Assistant Commissioner",
+      "active": true,
+      "description": "Assistant Commissioner"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234703470,
+    "lastmodifiedtime": 1729234703470
+  },
+  {
+    "id": "401c39cc-81b3-4e8a-85f2-b4d1e833cf50",
+    "tenantid": "od",
+    "uniqueidentifier": "ADM_DMC",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "ADM_DMC",
+      "name": "Deputy Commissioner",
+      "active": true,
+      "description": "Deputy Commissioner"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234722639,
+    "lastmodifiedtime": 1729234722639
+  },
+  {
+    "id": "8f8e3de6-d8ff-49a7-8d03-7cd4e6fe5b2f",
+    "tenantid": "od",
+    "uniqueidentifier": "ADM_ADMC",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "ADM_ADMC",
+      "name": "Additional Commissioner",
+      "active": true,
+      "description": "Additional Commissioner"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234757181,
+    "lastmodifiedtime": 1729234757181
+  },
+  {
+    "id": "621f48bd-66fe-4acd-b32c-70de6ccc4946",
+    "tenantid": "od",
+    "uniqueidentifier": "ADM_MC",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "ADM_MC",
+      "name": "Commissioner",
+      "active": true,
+      "description": "Commissioner"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234769173,
+    "lastmodifiedtime": 1729234769173
+  },
+  {
+    "id": "6b7176ef-9382-4a36-9d81-ee2a0abc1139",
+    "tenantid": "od",
+    "uniqueidentifier": "ACC_JAO",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "ACC_JAO",
+      "name": "Junior Accounts Officer",
+      "active": true,
+      "description": "Junior Accounts Officer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234778919,
+    "lastmodifiedtime": 1729234778919
+  },
+  {
+    "id": "a472a3d3-8917-49b2-a41c-84b102e50bdf",
+    "tenantid": "od",
+    "uniqueidentifier": "ACC_AO",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "ACC_AO",
+      "name": "Accounts Officer",
+      "active": true,
+      "description": "Accounts Officer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234792354,
+    "lastmodifiedtime": 1729234792354
+  },
+  {
+    "id": "02e312e8-6117-48b0-9ce8-0001e687be15",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_ACCE",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_ACCE",
+      "name": "Account Expert (MUKTA)",
+      "active": true,
+      "description": "Account Expert (MUKTA)"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234803315,
+    "lastmodifiedtime": 1729234803315
+  },
+  {
+    "id": "5833710a-d7f4-4fed-85b7-27dd6bc8de4f",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_IE",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_IE",
+      "name": "Implementation Expert (MUKTA)",
+      "active": true,
+      "description": "Implementation Expert (MUKTA)"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234821184,
+    "lastmodifiedtime": 1729234821184
+  },
+  {
+    "id": "4733a79a-4e8a-4809-a2c3-083d1b3be8a2",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_PC",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_PC",
+      "name": "Program Coordinator (MUKTA)",
+      "active": true,
+      "description": "Program Coordinator (MUKTA)"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234830837,
+    "lastmodifiedtime": 1729234830837
+  },
+  {
+    "id": "4f5c25d4-10ba-4055-8f7a-7ec1e93e74e5",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_DA",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_DA",
+      "name": "Dealing Assistant",
+      "active": true,
+      "description": "Dealing Assistant"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234841933,
+    "lastmodifiedtime": 1729234841933
+  },
+  {
+    "id": "0ca418b4-89c8-4764-a560-91cb93a56dd8",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_AM",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_AM",
+      "name": "Ameen",
+      "active": true,
+      "description": "Ameen"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234855928,
+    "lastmodifiedtime": 1729234855928
+  },
+  {
+    "id": "8b6dad1c-f97e-4c0e-be2e-aaed36e24458",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_RI",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_RI",
+      "name": "Revenue Inspector",
+      "active": true,
+      "description": "Revenue Inspector"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234870191,
+    "lastmodifiedtime": 1729234870191
+  },
+  {
+    "id": "fef44216-ecb8-4e0d-9e37-ac4e74f6d473",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_JE",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_JE",
+      "name": "Junior Engineer",
+      "active": true,
+      "description": "Junior Engineer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234880436,
+    "lastmodifiedtime": 1729234880436
+  },
+  {
+    "id": "66fdb578-4e0e-4581-b9fc-3374e7bd6c50",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_AE",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_AE",
+      "name": "Assistant Engineer",
+      "active": true,
+      "description": "Assistant Engineer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234906280,
+    "lastmodifiedtime": 1729234906280
+  },
+  {
+    "id": "55af13dc-f9cc-494b-9b23-ca15dc0adb20",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_CE",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_CE",
+      "name": "City Engineer",
+      "active": true,
+      "description": "City Engineer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234918776,
+    "lastmodifiedtime": 1729234918776
+  },
+  {
+    "id": "3d0295ba-93d2-40e6-bc1e-c8e06982755f",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_ME",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_ME",
+      "name": "Municipal Engineer",
+      "active": true,
+      "description": "Municipal Engineer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234943925,
+    "lastmodifiedtime": 1729234943925
+  },
+  {
+    "id": "1fabb067-e5ae-4f46-98e1-e49066eabed9",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_AEE",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_AEE",
+      "name": "Assistant Executive Engineer",
+      "active": true,
+      "description": "Assistant Executive Engineer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234954056,
+    "lastmodifiedtime": 1729234954056
+  },
+  {
+    "id": "530045d0-73e1-40f8-8b41-4a1e6f56aa67",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_DEE",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_DEE",
+      "name": "Deputy Executive Engineer",
+      "active": true,
+      "description": "Deputy Executive Engineer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234965225,
+    "lastmodifiedtime": 1729234965225
+  },
+  {
+    "id": "d777cd74-4b64-4ce7-96a2-c3e3fe7f9376",
+    "tenantid": "od",
+    "uniqueidentifier": "WRK_EE",
+    "schemacode": "common-masters.Designation",
+    "data": {
+      "code": "WRK_EE",
+      "name": "Executive Engineer",
+      "active": true,
+      "description": "Executive Engineer"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729234977328,
+    "lastmodifiedtime": 1729234977328
+  }
+]

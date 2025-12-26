@@ -1,0 +1,354 @@
+[
+  {
+    "id": "31d6e25e-8b78-441b-87cf-9900b770f9fe",
+    "tenantid": "od",
+    "uniqueidentifier": "IndividualSearch",
+    "schemacode": "commonMuktaUiConfig.MaskingUIConfig",
+    "data": {
+      "model": "IndividualSearch",
+      "attributes": [
+        {
+          "name": "identifierId",
+          "jsonPath": "identifiers/*/identifierId",
+          "patternId": "013",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "fatherName",
+          "jsonPath": "fatherName",
+          "patternId": "002",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "husbandName",
+          "jsonPath": "husbandName",
+          "patternId": "002",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "relationship",
+          "jsonPath": "relationship",
+          "patternId": "013",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "doorNo",
+          "jsonPath": "address/*/doorNo",
+          "patternId": "011",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "street",
+          "jsonPath": "address/*/street",
+          "patternId": "011",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "locality",
+          "jsonPath": "address/*/locality",
+          "patternId": "011",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "ward",
+          "jsonPath": "address/*/ward",
+          "patternId": "011",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "city",
+          "jsonPath": "address/*/city",
+          "patternId": "011",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "dateOfBirth",
+          "jsonPath": "dateOfBirth",
+          "patternId": "012",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "gender",
+          "jsonPath": "gender",
+          "patternId": "013",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "mobileNumber",
+          "jsonPath": "mobileNumber",
+          "patternId": "003",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "altContactNumber",
+          "jsonPath": "altContactNumber",
+          "patternId": "003",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "socialCategory",
+          "jsonPath": "additionalFields/fields/key=SOCIAL_CATEGORY/value",
+          "patternId": "013",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "email",
+          "jsonPath": "email",
+          "patternId": "010",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "photo",
+          "jsonPath": "photo",
+          "patternId": "013",
+          "defaultVisibility": "MASKED"
+        }
+      ],
+      "roleBasedDecryptionPolicy": [
+        {
+          "roles": [
+            "VIEW_WS_UNMASKED"
+          ],
+          "attributeAccessList": [
+            {
+              "attribute": "identifierId",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "fatherName",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "husbandName",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "doorNo",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "street",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "locality",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "ward",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "city",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "dateOfBirth",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "mobileNumber",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "altContactNumber",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "email",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1732605144029,
+    "lastmodifiedtime": 1732605144029
+  },
+  {
+    "id": "83de93b5-46c0-4b6a-869c-4c37a78bbcd7",
+    "tenantid": "od",
+    "uniqueidentifier": "OrganisationSearch",
+    "schemacode": "commonMuktaUiConfig.MaskingUIConfig",
+    "data": {
+      "model": "OrganisationSearch",
+      "attributes": [
+        {
+          "name": "doorNo",
+          "jsonPath": "orgAddress/*/doorNo",
+          "patternId": "011",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "street",
+          "jsonPath": "orgAddress/*/street",
+          "patternId": "015",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "locality",
+          "jsonPath": "additionalDetails/locality",
+          "patternId": "015",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "ward",
+          "jsonPath": "orgAddress/*/boundaryCode",
+          "patternId": "015",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "mobileNumber",
+          "jsonPath": "contactDetails/*/contactMobileNumber",
+          "patternId": "003",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "email",
+          "jsonPath": "contactDetails/*/contactEmail",
+          "patternId": "010",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "pan",
+          "jsonPath": "identifiers/type=PAN/value",
+          "patternId": "014",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "gstin",
+          "jsonPath": "identifiers/type=GSTIN/value",
+          "patternId": "014",
+          "defaultVisibility": "MASKED"
+        }
+      ],
+      "roleBasedDecryptionPolicy": [
+        {
+          "roles": [
+            "VIEW_ORG_UNMASKED"
+          ],
+          "attributeAccessList": [
+            {
+              "attribute": "doorNo",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "street",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "locality",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "ward",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "mobileNumber",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "email",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "pan",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "gstin",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1733389178133,
+    "lastmodifiedtime": 1733389178133
+  },
+  {
+    "id": "274b805f-4824-42a9-885f-809598157d62",
+    "tenantid": "od",
+    "uniqueidentifier": "BankAccountSearch",
+    "schemacode": "commonMuktaUiConfig.MaskingUIConfig",
+    "data": {
+      "model": "BankAccountSearch",
+      "attributes": [
+        {
+          "name": "accountNumber",
+          "jsonPath": "accountNumber",
+          "patternId": "001",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "ifscCode",
+          "jsonPath": "bankBranchIdentifier/code",
+          "patternId": "009",
+          "defaultVisibility": "MASKED"
+        },
+        {
+          "name": "branchName",
+          "jsonPath": "bankBranchIdentifier/additionalDetails/ifsccode",
+          "patternId": "011",
+          "defaultVisibility": "MASKED"
+        }
+      ],
+      "roleBasedDecryptionPolicy": [
+        {
+          "roles": [
+            "VIEW_DED_UNMASKED"
+          ],
+          "attributeAccessList": [
+            {
+              "attribute": "accountNumber",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "ifscCode",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            },
+            {
+              "attribute": "branchName",
+              "firstLevelVisibility": "PLAIN",
+              "secondLevelVisibility": "PLAIN"
+            }
+          ]
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1733389285935,
+    "lastmodifiedtime": 1733389285935
+  }
+]

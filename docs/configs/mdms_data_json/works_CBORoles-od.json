@@ -1,0 +1,44 @@
+[
+  {
+    "id": "0d6f370f-6ae1-4d1a-a625-334b896ae503",
+    "tenantid": "od",
+    "uniqueidentifier": "IP",
+    "schemacode": "works.CBORoles",
+    "data": {
+      "code": "IP",
+      "name": "Implementation Partner",
+      "active": true,
+      "amount": 1500000,
+      "disable": true,
+      "description": "",
+      "effectiveTo": "",
+      "effectiveFrom": 1672531200
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728898160163,
+    "lastmodifiedtime": 1728898160163
+  },
+  {
+    "id": "bdfd6fa8-9a8d-45f8-9932-8963ccd7f7e9",
+    "tenantid": "od",
+    "uniqueidentifier": "IA",
+    "schemacode": "works.CBORoles",
+    "data": {
+      "code": "IA",
+      "name": "Implementation Agency",
+      "active": true,
+      "amount": 1500000,
+      "disable": false,
+      "description": "",
+      "effectiveTo": "",
+      "effectiveFrom": 1672531200
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728898174000,
+    "lastmodifiedtime": 1728898174000
+  }
+]

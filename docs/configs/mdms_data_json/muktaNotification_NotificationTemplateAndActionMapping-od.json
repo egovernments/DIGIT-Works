@@ -1,0 +1,886 @@
+[
+  {
+    "id": "499ddb53-0cc7-422b-9624-d97d556c1b83",
+    "tenantid": "od",
+    "uniqueidentifier": "1007369252451952756",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007369252451952756",
+      "templateCode": "TIME_EXTENSION_APPROVE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182562909,
+    "lastmodifiedtime": 1730182562909
+  },
+  {
+    "id": "2a987a0b-9a54-413b-9d82-fa8d39102774",
+    "tenantid": "od",
+    "uniqueidentifier": "1007028601064792419",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007028601064792419",
+      "templateCode": "TIME_EXTENSION_APPROVE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182569953,
+    "lastmodifiedtime": 1730182569953
+  },
+  {
+    "id": "3d7dfa06-ad73-4bca-a8eb-45f2be3c0b03",
+    "tenantid": "od",
+    "uniqueidentifier": "1007236444303677730",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007236444303677730",
+      "templateCode": "TIME_EXTENSION_REJECT"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182574998,
+    "lastmodifiedtime": 1730182574998
+  },
+  {
+    "id": "bc6be46c-4182-4215-a17a-b90e8f742088",
+    "tenantid": "od",
+    "uniqueidentifier": "1007000522814211144",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007000522814211144",
+      "templateCode": "TIME_EXTENSION_REJECT"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182580298,
+    "lastmodifiedtime": 1730182580298
+  },
+  {
+    "id": "acc12392-43f9-41ce-a0ef-13a5d4a94506",
+    "tenantid": "od",
+    "uniqueidentifier": "1007254555564064556",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007254555564064556",
+      "templateCode": "TIME_EXTENSION_SEND_BACK_TO_CBO"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182585234,
+    "lastmodifiedtime": 1730182585234
+  },
+  {
+    "id": "e9751c38-8b04-4dfa-8ae9-35640c094365",
+    "tenantid": "od",
+    "uniqueidentifier": "1007942951701049051",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007942951701049051",
+      "templateCode": "TIME_EXTENSION_SEND_BACK_TO_CBO"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182590196,
+    "lastmodifiedtime": 1730182590196
+  },
+  {
+    "id": "8f12aa31-04af-48fd-9975-e429ca54ee8f",
+    "tenantid": "od",
+    "uniqueidentifier": "1007547883491871341",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007547883491871341",
+      "templateCode": "sms.pwd.reset.otp.msg"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182595979,
+    "lastmodifiedtime": 1730182595979
+  },
+  {
+    "id": "1a84c84d-a725-4438-bcfa-d4c736c0fcda",
+    "tenantid": "od",
+    "uniqueidentifier": "1007620030534813049",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "sendOTPSMS",
+      "locale": "en_IN",
+      "templateId": "1007620030534813049",
+      "templateCode": "sms.pwd.reset.otp.msg"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182601041,
+    "lastmodifiedtime": 1730182601041
+  },
+  {
+    "id": "2d88d34a-9bad-4406-b978-3e3e43e25a77",
+    "tenantid": "od",
+    "uniqueidentifier": "1007329030717590092",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007329030717590092",
+      "templateCode": "sms.login.otp.msg"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182606740,
+    "lastmodifiedtime": 1730182606740
+  },
+  {
+    "id": "b003e2c5-698b-436f-a421-ab9c43a91438",
+    "tenantid": "od",
+    "uniqueidentifier": "1007729459862470872",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "sendOTPSMS",
+      "locale": "en_IN",
+      "templateId": "1007729459862470872",
+      "templateCode": "sms.login.otp.msg"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182611640,
+    "lastmodifiedtime": 1730182611640
+  },
+  {
+    "id": "26c539ad-f957-4d26-be6a-cc1831fc9bb1",
+    "tenantid": "od",
+    "uniqueidentifier": "1007493470980035270",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007493470980035270",
+      "templateCode": "ESTIMATE_NOTIFICATION_TO_CREATOR_WF_APPROVE_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182616713,
+    "lastmodifiedtime": 1730182616713
+  },
+  {
+    "id": "e2ec9653-3e56-4dba-b928-c323f2654716",
+    "tenantid": "od",
+    "uniqueidentifier": "1007101735801759964",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007101735801759964",
+      "templateCode": "ESTIMATE_NOTIFICATION_TO_CREATOR_WF_APPROVE_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182622162,
+    "lastmodifiedtime": 1730182622162
+  },
+  {
+    "id": "a6fa1500-9ed7-4013-9347-3ae66ca288f9",
+    "tenantid": "od",
+    "uniqueidentifier": "1007371827961479358",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007371827961479358",
+      "templateCode": "ESTIMATE_NOTIFICATION_TO_CREATOR_WF_REJECT_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182626903,
+    "lastmodifiedtime": 1730182626903
+  },
+  {
+    "id": "df785e10-ac76-4ca7-8b9f-03c7d7afdd28",
+    "tenantid": "od",
+    "uniqueidentifier": "1007197687044765669",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007197687044765669",
+      "templateCode": "ESTIMATE_NOTIFICATION_TO_CREATOR_WF_REJECT_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182632785,
+    "lastmodifiedtime": 1730182632785
+  },
+  {
+    "id": "d2a3cd16-db57-4b1c-ac36-abff3df512fa",
+    "tenantid": "od",
+    "uniqueidentifier": "1007455275390753183",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007455275390753183",
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CREATOR_WORKFLOW_ACCEPT_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182637295,
+    "lastmodifiedtime": 1730182637295
+  },
+  {
+    "id": "8e489ff3-0662-4808-a3d6-0f8102dbc956",
+    "tenantid": "od",
+    "uniqueidentifier": "1007697091380541113",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007697091380541113",
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CREATOR_WORKFLOW_ACCEPT_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182646328,
+    "lastmodifiedtime": 1730182646328
+  },
+  {
+    "id": "a45231ff-1116-4993-ae38-88d2b1e71b0f",
+    "tenantid": "od",
+    "uniqueidentifier": "1007194454278897474",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007194454278897474",
+      "templateCode": "hrms.employee.create.notification"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182651054,
+    "lastmodifiedtime": 1730182651054
+  },
+  {
+    "id": "c811e766-c199-4d46-b33f-37f434d9136a",
+    "tenantid": "od",
+    "uniqueidentifier": "1007925866336668287",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007925866336668287",
+      "templateCode": "hrms.employee.create.notification"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182657769,
+    "lastmodifiedtime": 1730182657769
+  },
+  {
+    "id": "787d9748-ec7f-4d2b-a6da-6ac6e1ace0f3",
+    "tenantid": "od",
+    "uniqueidentifier": "1007921356421390117",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007921356421390117",
+      "templateCode": "ORGANISATION_NOTIFICATION_ON_UPDATE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182662129,
+    "lastmodifiedtime": 1730182662129
+  },
+  {
+    "id": "cb62e88e-d6e0-40f2-8c1e-7cce8474e6d3",
+    "tenantid": "od",
+    "uniqueidentifier": "1007453521231889028",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007453521231889028",
+      "templateCode": "ORGANISATION_NOTIFICATION_ON_UPDATE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182667577,
+    "lastmodifiedtime": 1730182667577
+  },
+  {
+    "id": "6fd1456f-3001-439a-8f38-1d9b0b608ffd",
+    "tenantid": "od",
+    "uniqueidentifier": "1007721179472881625",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007721179472881625",
+      "templateCode": "ORGANISATION_NOTIFICATION_ON_CREATE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182671846,
+    "lastmodifiedtime": 1730182671846
+  },
+  {
+    "id": "c3c1b29b-236d-4ab9-82e2-23d4d963f8d5",
+    "tenantid": "od",
+    "uniqueidentifier": "1007588123534796919",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007588123534796919",
+      "templateCode": "ORGANISATION_NOTIFICATION_ON_CREATE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182677318,
+    "lastmodifiedtime": 1730182677318
+  },
+  {
+    "id": "ce7e40a4-0481-45c3-a391-7668a28a0dd6",
+    "tenantid": "od",
+    "uniqueidentifier": "1007247849380291321",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007247849380291321",
+      "templateCode": "INDIVIDUAL_NOTIFICATION_ON_UPDATE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182681947,
+    "lastmodifiedtime": 1730182681947
+  },
+  {
+    "id": "e4680823-eb66-41b7-999d-07825944bd00",
+    "tenantid": "od",
+    "uniqueidentifier": "1007866442877419640",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007866442877419640",
+      "templateCode": "INDIVIDUAL_NOTIFICATION_ON_UPDATE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182686839,
+    "lastmodifiedtime": 1730182686839
+  },
+  {
+    "id": "781bfabc-17d8-4148-8241-3fee3985ea75",
+    "tenantid": "od",
+    "uniqueidentifier": "1007547298050256885",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007547298050256885",
+      "templateCode": "INDIVIDUAL_NOTIFICATION_ON_CREATE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182691331,
+    "lastmodifiedtime": 1730182691331
+  },
+  {
+    "id": "97a567d2-5445-40b4-80c7-6c28afe22f05",
+    "tenantid": "od",
+    "uniqueidentifier": "1007024654573629044",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007024654573629044",
+      "templateCode": "INDIVIDUAL_NOTIFICATION_ON_CREATE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182698310,
+    "lastmodifiedtime": 1730182698310
+  },
+  {
+    "id": "19ae2b48-5de6-4a5a-abe0-cf4149033d81",
+    "tenantid": "od",
+    "uniqueidentifier": "1007853786443118512",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007853786443118512",
+      "templateCode": "sms.expenditure.ws.payment.success"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182702915,
+    "lastmodifiedtime": 1730182702915
+  },
+  {
+    "id": "bdd245a2-3a60-47d0-94cb-17e605a179c4",
+    "tenantid": "od",
+    "uniqueidentifier": "1007855940411409064",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007855940411409064",
+      "templateCode": "sms.expenditure.ws.payment.success"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182708383,
+    "lastmodifiedtime": 1730182708383
+  },
+  {
+    "id": "b38dd90a-b6c6-4f7e-aa6a-81e6030a7530",
+    "tenantid": "od",
+    "uniqueidentifier": "1007430590402664184",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007430590402664184",
+      "templateCode": "PURCHASE_BILL_REJECT_TO_CREATOR"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182712685,
+    "lastmodifiedtime": 1730182712685
+  },
+  {
+    "id": "46fde4fa-df8d-4a3c-bf7d-544fdd7793fb",
+    "tenantid": "od",
+    "uniqueidentifier": "1007512219272073019",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007512219272073019",
+      "templateCode": "PURCHASE_BILL_REJECT_TO_CREATOR"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182718045,
+    "lastmodifiedtime": 1730182718045
+  },
+  {
+    "id": "cb025c2a-62ba-44ba-a698-157a2a2cdb0b",
+    "tenantid": "od",
+    "uniqueidentifier": "1007637531088056549",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007637531088056549",
+      "templateCode": "PURCHASE_BILL_APPROVE_TO_VENDOR"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182722226,
+    "lastmodifiedtime": 1730182722226
+  },
+  {
+    "id": "16240f3d-5093-4113-b227-7ff94945b01c",
+    "tenantid": "od",
+    "uniqueidentifier": "1007773556449936479",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007773556449936479",
+      "templateCode": "PURCHASE_BILL_APPROVE_TO_VENDOR"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182727490,
+    "lastmodifiedtime": 1730182727490
+  },
+  {
+    "id": "f277b504-fbd8-405b-a453-feea2cbca287",
+    "tenantid": "od",
+    "uniqueidentifier": "1007896420204503387",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007896420204503387",
+      "templateCode": "SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182732332,
+    "lastmodifiedtime": 1730182732332
+  },
+  {
+    "id": "70f655d3-e691-4008-bc45-c23e9b98820d",
+    "tenantid": "od",
+    "uniqueidentifier": "1007676563787119031",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007676563787119031",
+      "templateCode": "SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182737516,
+    "lastmodifiedtime": 1730182737516
+  },
+  {
+    "id": "64a4e7e0-194a-4451-a67e-2a8d9fa98f02",
+    "tenantid": "od",
+    "uniqueidentifier": "1007396531976414011",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007396531976414011",
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_FOR_RE-SUBMIT"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182742627,
+    "lastmodifiedtime": 1730182742627
+  },
+  {
+    "id": "0f5f6efb-8250-43ed-a82a-46b9f12a6057",
+    "tenantid": "od",
+    "uniqueidentifier": "1007450394198920689",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007450394198920689",
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_FOR_RE-SUBMIT"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182748135,
+    "lastmodifiedtime": 1730182748135
+  },
+  {
+    "id": "7ce2789d-eb2d-46a1-b683-a51fc3367dc1",
+    "tenantid": "od",
+    "uniqueidentifier": "1007859052044728515",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007859052044728515",
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182752491,
+    "lastmodifiedtime": 1730182752491
+  },
+  {
+    "id": "f9c442e3-9566-4c49-a028-755fc8d0f8f2",
+    "tenantid": "od",
+    "uniqueidentifier": "1007838371096094186",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007838371096094186",
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182757648,
+    "lastmodifiedtime": 1730182757648
+  },
+  {
+    "id": "b2f5f351-c9f8-4f83-a2aa-3356de003098",
+    "tenantid": "od",
+    "uniqueidentifier": "1007359504491459055",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007359504491459055",
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182761825,
+    "lastmodifiedtime": 1730182761825
+  },
+  {
+    "id": "22440a23-cca9-401d-893c-701c5355b9c8",
+    "tenantid": "od",
+    "uniqueidentifier": "1007872770235530151",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007872770235530151",
+      "templateCode": "MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182766300,
+    "lastmodifiedtime": 1730182766300
+  },
+  {
+    "id": "ab2a2fec-fbd6-46cc-aced-ab456fd6dfda",
+    "tenantid": "od",
+    "uniqueidentifier": "1007968812089738982",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007968812089738982",
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CREATOR_WORKFLOW_APPROVE_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182772085,
+    "lastmodifiedtime": 1730182772085
+  },
+  {
+    "id": "9f8262bd-18d5-4982-a79e-6d38a8c1ed2b",
+    "tenantid": "od",
+    "uniqueidentifier": "1007202086274341590",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007202086274341590",
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CREATOR_WORKFLOW_APPROVE_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182778732,
+    "lastmodifiedtime": 1730182778732
+  },
+  {
+    "id": "4a1bb3cd-2d8c-4a0a-b4ef-ef7fc7b51240",
+    "tenantid": "od",
+    "uniqueidentifier": "1007082068242568132",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007082068242568132",
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CREATOR_WORKFLOW_DECLINE_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182783998,
+    "lastmodifiedtime": 1730182783998
+  },
+  {
+    "id": "f0fbe592-3d60-4ad4-b881-f83bc5faac77",
+    "tenantid": "od",
+    "uniqueidentifier": "1007793324495692315",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007793324495692315",
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CREATOR_WORKFLOW_DECLINE_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182788093,
+    "lastmodifiedtime": 1730182788093
+  },
+  {
+    "id": "177effb2-6a76-45fd-8b11-cc538dc95acc",
+    "tenantid": "od",
+    "uniqueidentifier": "1007553237067533780",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007553237067533780",
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CBOADMIN_WORKFLOW_APPROVE_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182793546,
+    "lastmodifiedtime": 1730182793546
+  },
+  {
+    "id": "5fe87eaa-4885-404d-b0f7-217591126b85",
+    "tenantid": "od",
+    "uniqueidentifier": "1007496256023845888",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007496256023845888",
+      "templateCode": "CONTRACTS_NOTIFICATION_TO_CBOADMIN_WORKFLOW_APPROVE_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182797632,
+    "lastmodifiedtime": 1730182797632
+  },
+  {
+    "id": "fff93a56-4a98-4911-bda2-69e191aee892",
+    "tenantid": "od",
+    "uniqueidentifier": "1007258360999050519",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007258360999050519",
+      "templateCode": "CONTRACTS_NOTIFICATION_WORKFLOW_REJECT_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182802309,
+    "lastmodifiedtime": 1730182802309
+  },
+  {
+    "id": "d4fd472c-9323-4a48-b485-d4365c6e7da4",
+    "tenantid": "od",
+    "uniqueidentifier": "1007949146289052224",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007949146289052224",
+      "templateCode": "CONTRACTS_NOTIFICATION_WORKFLOW_REJECT_ACTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182807938,
+    "lastmodifiedtime": 1730182807938
+  },
+  {
+    "id": "978c8f15-e61d-492c-99d7-c95bbef3ec0a",
+    "tenantid": "od",
+    "uniqueidentifier": "1007376387404733517",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007376387404733517",
+      "templateCode": "MB_REJECT"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182812210,
+    "lastmodifiedtime": 1730182812210
+  },
+  {
+    "id": "0895d127-a77c-41ab-8b60-7f59bdef7f1f",
+    "tenantid": "od",
+    "uniqueidentifier": "1007052070890901544",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007052070890901544",
+      "templateCode": "MB_REJECT"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182816963,
+    "lastmodifiedtime": 1730182816963
+  },
+  {
+    "id": "b7fe7a8b-e209-4d53-9cf8-33d2dc56a847",
+    "tenantid": "od",
+    "uniqueidentifier": "1007767289773508589",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singlewithbulkunicodeSMS",
+      "locale": "or_IN",
+      "templateId": "1007767289773508589",
+      "templateCode": "MB_APPROVE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182821032,
+    "lastmodifiedtime": 1730182821032
+  },
+  {
+    "id": "3970179f-1c2c-4023-b076-46df7af0b14f",
+    "tenantid": "od",
+    "uniqueidentifier": "1007665544200114485",
+    "schemacode": "muktaNotification.NotificationTemplateAndActionMapping",
+    "data": {
+      "action": "singleSMS",
+      "locale": "en_IN",
+      "templateId": "1007665544200114485",
+      "templateCode": "MB_APPROVE"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730182825974,
+    "lastmodifiedtime": 1730182825974
+  }
+]

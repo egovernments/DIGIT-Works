@@ -1,0 +1,59 @@
+[
+  {
+    "id": "39ef2e9b-0394-4520-8146-9f48ee0ea622",
+    "tenantid": "od",
+    "uniqueidentifier": "LoginConfig",
+    "schemacode": "commonUiConfig.LoginConfig",
+    "data": {
+      "texts": {
+        "header": "CORE_COMMON_LOGIN",
+        "submitButtonLabel": "CORE_COMMON_CONTINUE",
+        "secondaryButtonLabel": "CORE_COMMON_FORGOT_PASSWORD"
+      },
+      "inputs": [
+        {
+          "key": "username",
+          "type": "text",
+          "label": "CORE_LOGIN_USERNAME",
+          "populators": {
+            "name": "username"
+          },
+          "isMandatory": true
+        },
+        {
+          "key": "password",
+          "type": "password",
+          "label": "CORE_LOGIN_PASSWORD",
+          "populators": {
+            "name": "password"
+          },
+          "isMandatory": true
+        },
+        {
+          "key": "city",
+          "type": "dropdown",
+          "label": "CORE_COMMON_CITY",
+          "disable": false,
+          "populators": {
+            "name": "city",
+            "error": "ERR_HRMS_INVALID_CITY",
+            "mdmsConfig": {
+              "select": "(data)=>{ return Array.isArray(data['tenant'].tenants) && Digit.Utils.getUnique(data['tenant'].tenants).map(ele=>({code:ele.code,name:Digit.Utils.locale.getTransformedLocale('TENANT_TENANTS_'+ele.code)}))}",
+              "masterName": "tenants",
+              "moduleName": "tenant",
+              "localePrefix": "TENANT_TENANTS"
+            },
+            "optionsKey": "name"
+          },
+          "isMandatory": true
+        }
+      ],
+      "screenName": "LoginConfig"
+    },
+    "isactive": true,
+    "createdby": "f072ba55-1fa3-4e76-8d40-ab2900b95cd0",
+    "lastmodifiedby": "f072ba55-1fa3-4e76-8d40-ab2900b95cd0",
+    "createdtime": 1761930702938,
+    "lastmodifiedtime": 1761930702938
+  }
+]

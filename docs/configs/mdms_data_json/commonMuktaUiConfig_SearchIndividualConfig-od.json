@@ -1,0 +1,214 @@
+[
+  {
+    "id": "9c5c30e7-3c7f-4cd1-a610-d48b0a4bafe4",
+    "tenantid": "od",
+    "uniqueidentifier": "SearchIndividualConfig",
+    "schemacode": "commonMuktaUiConfig.SearchIndividualConfig",
+    "data": {
+      "type": "search",
+      "label": "WORKS_SEARCH_WAGESEEKERS",
+      "sections": {
+        "search": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "fields": [
+              {
+                "type": "locationdropdown",
+                "label": "COMMON_WARD",
+                "disable": false,
+                "populators": {
+                  "name": "wardCode",
+                  "type": "ward",
+                  "optionsKey": "i18nKey",
+                  "defaultText": "COMMON_SELECT_WARD",
+                  "selectedText": "COMMON_SELECTED",
+                  "allowMultiSelect": false
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "text",
+                "label": "MASTERS_WAGESEEKER_NAME",
+                "disable": false,
+                "populators": {
+                  "name": "name",
+                  "validation": {
+                    "pattern": {},
+                    "maxlength": 140
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "text",
+                "label": "MASTERS_WAGESEEKER_ID",
+                "disable": false,
+                "populators": {
+                  "name": "individualId",
+                  "error": "PROJECT_PATTERN_ERR_MSG",
+                  "validation": {
+                    "minlength": 2
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "mobileNumber",
+                "label": "CORE_COMMON_PROFILE_MOBILE_NUMBER",
+                "disable": false,
+                "populators": {
+                  "name": "mobileNumber",
+                  "error": "PROJECT_PATTERN_ERR_MSG",
+                  "validation": {
+                    "pattern": {},
+                    "minlength": 2
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "dropdown",
+                "label": "MASTERS_SOCIAL_CATEGORY",
+                "disable": false,
+                "populators": {
+                  "name": "socialCategory",
+                  "mdmsConfig": {
+                    "masterName": "SocialCategory",
+                    "moduleName": "common-masters",
+                    "localePrefix": "MASTERS"
+                  },
+                  "optionsKey": "code"
+                },
+                "isMandatory": false
+              },
+              {
+                "key": "createdFrom",
+                "type": "date",
+                "label": "CREATED_FROM_DATE",
+                "disable": false,
+                "populators": {
+                  "max": "currentDate",
+                  "name": "createdFrom"
+                },
+                "preProcess": {
+                  "updateDependent": [
+                    "populators.max"
+                  ]
+                },
+                "isMandatory": false
+              },
+              {
+                "key": "createdTo",
+                "type": "date",
+                "label": "CREATED_TO_DATE",
+                "disable": false,
+                "populators": {
+                  "max": "currentDate",
+                  "name": "createdTo",
+                  "error": "DATE_VALIDATION_MSG"
+                },
+                "preProcess": {
+                  "updateDependent": [
+                    "populators.max"
+                  ]
+                },
+                "isMandatory": false,
+                "additionalValidation": {
+                  "keys": {
+                    "end": "createdTo",
+                    "start": "createdFrom"
+                  },
+                  "type": "date"
+                }
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 1,
+            "primaryLabel": "ES_COMMON_SEARCH",
+            "defaultValues": {
+              "name": "",
+              "wardCode": "",
+              "createdTo": "",
+              "createdFrom": "",
+              "individualId": "",
+              "mobileNumber": "",
+              "socialCategory": ""
+            },
+            "formClassName": "custom-both-clear-search",
+            "secondaryLabel": "ES_COMMON_CLEAR_SEARCH"
+          }
+        },
+        "searchResult": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "columns": [
+              {
+                "label": "MASTERS_WAGESEEKER_ID",
+                "jsonPath": "individualId",
+                "additionalCustomization": true
+              },
+              {
+                "label": "MASTERS_WAGESEEKER_NAME",
+                "jsonPath": "name.givenName"
+              },
+              {
+                "label": "MASTERS_FATHER_NAME",
+                "jsonPath": "fatherName"
+              },
+              {
+                "label": "MASTERS_SOCIAL_CATEGORY",
+                "jsonPath": "additionalFields.fields[0].value"
+              },
+              {
+                "label": "CORE_COMMON_PROFILE_CITY",
+                "jsonPath": "address[0].tenantId",
+                "additionalCustomization": true
+              },
+              {
+                "label": "MASTERS_WARD",
+                "jsonPath": "address[0].ward.code",
+                "additionalCustomization": true
+              },
+              {
+                "label": "MASTERS_LOCALITY",
+                "jsonPath": "address[0].locality.code",
+                "additionalCustomization": true
+              }
+            ],
+            "resultsJsonPath": "Individual",
+            "enableColumnSort": true,
+            "enableGlobalSearch": false
+          }
+        }
+      },
+      "actionLink": "masters/create-wageseeker",
+      "actionRole": "INDIVIDUAL_CREATOR",
+      "apiDetails": {
+        "masterName": "commonUiConfig",
+        "moduleName": "SearchWageSeekerConfig",
+        "requestBody": {
+          "Individual": {},
+          "apiOperation": "SEARCH"
+        },
+        "serviceName": "/individual/v1/_search",
+        "requestParam": {},
+        "tableFormJsonPath": "requestParam",
+        "filterFormJsonPath": "requestBody.Individual",
+        "searchFormJsonPath": "requestBody.Individual",
+        "minParametersForSearchForm": 1
+      },
+      "screenName": "SearchIndividualConfig",
+      "actionLabel": "WORKS_ADD_WAGESEEKER",
+      "additionalSections": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728992336696,
+    "lastmodifiedtime": 1728992336696
+  }
+]

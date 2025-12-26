@@ -1,0 +1,173 @@
+[
+  {
+    "id": "c5afc9a2-d5bb-420c-8aae-f32280dd1b2b",
+    "tenantid": "od",
+    "uniqueidentifier": "SearchWMSIndividualConfig",
+    "schemacode": "commonMuktaUiConfig.SearchWMSIndividualConfig",
+    "data": {
+      "type": "search",
+      "label": "WORKS_SEARCH_WAGESEEKERS",
+      "sections": {
+        "search": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "type": "customIndSearchButton",
+            "fields": [
+              {
+                "type": "locationdropdown",
+                "label": "COMMON_WARD",
+                "disable": false,
+                "populators": {
+                  "name": "ward",
+                  "type": "ward",
+                  "optionsKey": "i18nKey",
+                  "defaultText": "COMMON_SELECT_WARD",
+                  "selectedText": "COMMON_SELECTED",
+                  "allowMultiSelect": false
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "text",
+                "label": "MASTERS_WAGESEEKER_NAME",
+                "disable": false,
+                "populators": {
+                  "name": "name",
+                  "validation": {
+                    "pattern": {},
+                    "maxlength": 140
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "text",
+                "label": "MASTERS_WAGESEEKER_ID",
+                "disable": false,
+                "populators": {
+                  "name": "individualId",
+                  "error": "PROJECT_PATTERN_ERR_MSG",
+                  "validation": {
+                    "minlength": 2
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "key": "createdFrom",
+                "type": "date",
+                "label": "CREATED_FROM_DATE",
+                "disable": false,
+                "populators": {
+                  "max": "currentDate",
+                  "name": "createdFrom"
+                },
+                "preProcess": {
+                  "updateDependent": [
+                    "populators.max"
+                  ]
+                },
+                "isMandatory": false
+              },
+              {
+                "key": "createdTo",
+                "type": "date",
+                "label": "CREATED_TO_DATE",
+                "disable": false,
+                "populators": {
+                  "max": "currentDate",
+                  "name": "createdTo",
+                  "error": "DATE_VALIDATION_MSG"
+                },
+                "preProcess": {
+                  "updateDependent": [
+                    "populators.max"
+                  ]
+                },
+                "isMandatory": false,
+                "additionalValidation": {
+                  "keys": {
+                    "end": "createdTo",
+                    "start": "createdFrom"
+                  },
+                  "type": "date"
+                }
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 1,
+            "primaryLabel": "ES_COMMON_SEARCH",
+            "defaultValues": {
+              "name": "",
+              "ward": "",
+              "createdTo": "",
+              "createdFrom": "",
+              "individualId": "",
+              "mobileNumber": ""
+            },
+            "formClassName": "custom-both-clear-search",
+            "secondaryLabel": "ES_COMMON_CLEAR_SEARCH"
+          }
+        },
+        "searchResult": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "columns": [
+              {
+                "label": "MASTERS_WAGESEEKER_ID",
+                "jsonPath": "businessObject.individualId",
+                "additionalCustomization": true
+              },
+              {
+                "label": "MASTERS_WAGESEEKER_NAME",
+                "jsonPath": "businessObject.name.givenName"
+              },
+              {
+                "label": "CORE_COMMON_PROFILE_CITY",
+                "jsonPath": "businessObject.address[0].tenantId",
+                "additionalCustomization": true
+              },
+              {
+                "label": "MASTERS_WARD",
+                "jsonPath": "businessObject.address[0].ward.code",
+                "additionalCustomization": true
+              }
+            ],
+            "resultsJsonPath": "items",
+            "enableColumnSort": true,
+            "enableGlobalSearch": false
+          }
+        }
+      },
+      "actionLink": "masters/create-wageseeker",
+      "actionRole": "INDIVIDUAL_CREATOR",
+      "apiDetails": {
+        "masterName": "commonUiConfig",
+        "moduleName": "SearchWMSWageSeekerConfig",
+        "requestBody": {
+          "inbox": {
+            "moduleSearchCriteria": {}
+          }
+        },
+        "serviceName": "/wms/individual/_search",
+        "requestParam": {},
+        "tableFormJsonPath": "requestBody.inbox",
+        "filterFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+        "searchFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+        "minParametersForSearchForm": 1
+      },
+      "screenName": "SearchWMSIndividualConfig",
+      "actionLabel": "WORKS_ADD_WAGESEEKER",
+      "additionalSections": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1733295131311,
+    "lastmodifiedtime": 1733295131311
+  }
+]

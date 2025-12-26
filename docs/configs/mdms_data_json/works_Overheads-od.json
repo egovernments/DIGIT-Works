@@ -1,0 +1,93 @@
+[
+  {
+    "id": "fedf38f5-4744-43b4-b386-9d76a2516227",
+    "tenantid": "od",
+    "uniqueidentifier": "2.GST",
+    "schemacode": "works.Overheads",
+    "data": {
+      "id": "2",
+      "code": "GST",
+      "type": "percentage",
+      "value": "18",
+      "active": true,
+      "description": "Goods and Service Tax",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "isAutoCalculated": true,
+      "isWorkOrderValue": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728898744692,
+    "lastmodifiedtime": 1728898744692
+  },
+  {
+    "id": "e0535f29-1413-460f-b9d0-2bb63248106a",
+    "tenantid": "od",
+    "uniqueidentifier": "4.TST",
+    "schemacode": "works.Overheads",
+    "data": {
+      "id": "4",
+      "code": "TST",
+      "type": "lumpsum",
+      "value": "5000",
+      "active": false,
+      "description": "Testing Overhead",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "isAutoCalculated": true,
+      "isWorkOrderValue": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728898719204,
+    "lastmodifiedtime": 1728898719204
+  },
+  {
+    "id": "b98e2ffd-d98b-4860-9141-dcf1c33d1042",
+    "tenantid": "od",
+    "uniqueidentifier": "3.REW",
+    "schemacode": "works.Overheads",
+    "data": {
+      "id": "3",
+      "code": "REW",
+      "type": "lumpsum",
+      "active": false,
+      "description": "Royalty on Earth Work",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "isAutoCalculated": false,
+      "isWorkOrderValue": false
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728898731183,
+    "lastmodifiedtime": 1728898731183
+  },
+  {
+    "id": "e022f511-7ee9-4c16-9fb1-34cffc483f7a",
+    "tenantid": "od",
+    "uniqueidentifier": "1.SC",
+    "schemacode": "works.Overheads",
+    "data": {
+      "id": "1",
+      "code": "SC",
+      "type": "percentage",
+      "value": "7.5",
+      "active": true,
+      "description": "Supervision Charge",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "isAutoCalculated": true,
+      "isWorkOrderValue": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728898755984,
+    "lastmodifiedtime": 1728898755984
+  }
+]

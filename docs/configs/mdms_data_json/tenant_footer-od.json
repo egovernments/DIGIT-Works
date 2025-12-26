@@ -1,0 +1,182 @@
+[
+  {
+    "id": "cb25bc9f-3ff7-48d5-8a41-94c47a52901f",
+    "tenantid": "od",
+    "uniqueidentifier": "GN",
+    "schemacode": "tenant.footer",
+    "data": {
+      "code": "GN",
+      "service": "contract",
+      "termsAndConditions": [
+        {
+          "order": "1.",
+          "disclaimer": "GENERAL_CONDITION_1"
+        },
+        {
+          "order": "2.",
+          "disclaimer": "GENERAL_CONDITION_2"
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730115965148,
+    "lastmodifiedtime": 1730115965148
+  },
+  {
+    "id": "386565e4-afbd-4979-970e-f52c596c1619",
+    "tenantid": "od",
+    "uniqueidentifier": "NC",
+    "schemacode": "tenant.footer",
+    "data": {
+      "code": "NC",
+      "service": "contract",
+      "termsAndConditions": [
+        {
+          "order": "1.",
+          "disclaimer": "NON_COMPLETION_CONDITION_1"
+        },
+        {
+          "order": "2.",
+          "disclaimer": "NON_COMPLETION_CONDITION_2"
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730115974380,
+    "lastmodifiedtime": 1730115974380
+  },
+  {
+    "id": "a190d43b-0eb2-4e6e-ba92-1394b01d1d42",
+    "tenantid": "od",
+    "uniqueidentifier": "IP",
+    "schemacode": "tenant.footer",
+    "data": {
+      "code": "IP",
+      "service": "contract",
+      "termsAndConditions": [
+        {
+          "order": "1.",
+          "disclaimer": "IP_CONDITION_1"
+        },
+        {
+          "order": "2.",
+          "disclaimer": "IP_CONDITION_2"
+        },
+        {
+          "order": "3.",
+          "disclaimer": "IP_CONDITION_3"
+        },
+        {
+          "order": "4.",
+          "disclaimer": "IP_CONDITION_4"
+        },
+        {
+          "order": "5.",
+          "disclaimer": "IP_CONDITION_5"
+        },
+        {
+          "order": "6.",
+          "disclaimer": "IP_CONDITION_6"
+        },
+        {
+          "order": "7.",
+          "disclaimer": "IP_CONDITION_7"
+        },
+        {
+          "order": "8.",
+          "disclaimer": "IP_CONDITION_8"
+        },
+        {
+          "order": "9.",
+          "disclaimer": "IP_CONDITION_9"
+        },
+        {
+          "order": "10.",
+          "disclaimer": "IP_CONDITION_10"
+        },
+        {
+          "order": "11.",
+          "disclaimer": "IP_CONDITION_11"
+        },
+        {
+          "order": "12.",
+          "disclaimer": "IP_CONDITION_12"
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730115987451,
+    "lastmodifiedtime": 1730115987451
+  },
+  {
+    "id": "01b40794-638b-46e1-8b42-144d8b309960",
+    "tenantid": "od",
+    "uniqueidentifier": "IA",
+    "schemacode": "tenant.footer",
+    "data": {
+      "code": "IA",
+      "service": "contract",
+      "termsAndConditions": [
+        {
+          "order": "1.",
+          "disclaimer": "IA_CONDITION_1"
+        },
+        {
+          "order": "2.",
+          "disclaimer": "IA_CONDITION_2"
+        },
+        {
+          "order": "3.",
+          "disclaimer": "IA_CONDITION_3"
+        },
+        {
+          "order": "4.",
+          "disclaimer": "IA_CONDITION_4"
+        },
+        {
+          "order": "5.",
+          "disclaimer": "IA_CONDITION_5"
+        },
+        {
+          "order": "6.",
+          "disclaimer": "IA_CONDITION_6"
+        },
+        {
+          "order": "7.",
+          "disclaimer": "IA_CONDITION_7"
+        },
+        {
+          "order": "8.",
+          "disclaimer": "IA_CONDITION_8"
+        },
+        {
+          "order": "9.",
+          "disclaimer": "IA_CONDITION_9"
+        },
+        {
+          "order": "10.",
+          "disclaimer": "IA_CONDITION_10"
+        },
+        {
+          "order": "11.",
+          "disclaimer": "IA_CONDITION_11"
+        },
+        {
+          "order": "12.",
+          "disclaimer": "IA_CONDITION_12"
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730116000117,
+    "lastmodifiedtime": 1730116000117
+  }
+]

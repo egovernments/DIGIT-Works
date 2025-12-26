@@ -1,0 +1,50 @@
+[
+  {
+    "id": "e5dddb1d-691e-4521-a7da-07a8461844d2",
+    "tenantid": "od",
+    "uniqueidentifier": "EVENING",
+    "schemacode": "common-masters.AttendanceHours",
+    "data": {
+      "code": "EVENING",
+      "value": "18",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981673151,
+    "lastmodifiedtime": 1728981673151
+  },
+  {
+    "id": "3a18f74f-7efc-4ed0-a2fa-343339dae9d9",
+    "tenantid": "od",
+    "uniqueidentifier": "AFTERNOON",
+    "schemacode": "common-masters.AttendanceHours",
+    "data": {
+      "code": "AFTERNOON",
+      "value": "14",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981684226,
+    "lastmodifiedtime": 1728981684226
+  },
+  {
+    "id": "84db25ef-ddf3-45da-b319-59bbaf8fe77b",
+    "tenantid": "od",
+    "uniqueidentifier": "MORNING",
+    "schemacode": "common-masters.AttendanceHours",
+    "data": {
+      "code": "MORNING",
+      "value": "9",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981693486,
+    "lastmodifiedtime": 1728981693486
+  }
+]

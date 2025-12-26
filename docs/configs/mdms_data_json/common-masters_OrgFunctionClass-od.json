@@ -1,0 +1,92 @@
+[
+  {
+    "id": "f7e63903-bab9-4bd3-b91e-9c983449c522",
+    "tenantid": "od",
+    "uniqueidentifier": "NA",
+    "schemacode": "common-masters.OrgFunctionClass",
+    "data": {
+      "code": "NA",
+      "active": true,
+      "description": "Not Applicable",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975167879,
+    "lastmodifiedtime": 1728975167879
+  },
+  {
+    "id": "7a0a40ff-b430-4bcc-86ff-640c282fe6fb",
+    "tenantid": "od",
+    "uniqueidentifier": "D",
+    "schemacode": "common-masters.OrgFunctionClass",
+    "data": {
+      "code": "D",
+      "active": true,
+      "description": "Class D",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975178376,
+    "lastmodifiedtime": 1728975178376
+  },
+  {
+    "id": "8c43824d-d9bb-4d23-93c6-feb3d021f6ec",
+    "tenantid": "od",
+    "uniqueidentifier": "C",
+    "schemacode": "common-masters.OrgFunctionClass",
+    "data": {
+      "code": "C",
+      "active": true,
+      "description": "Class C",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975188417,
+    "lastmodifiedtime": 1728975188417
+  },
+  {
+    "id": "cfa5ade4-0c31-42a3-835b-25ae686f338a",
+    "tenantid": "od",
+    "uniqueidentifier": "B",
+    "schemacode": "common-masters.OrgFunctionClass",
+    "data": {
+      "code": "B",
+      "active": true,
+      "description": "Class B",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975198795,
+    "lastmodifiedtime": 1728975198795
+  },
+  {
+    "id": "b17bc393-259b-4dc2-a354-fd63c60f96ba",
+    "tenantid": "od",
+    "uniqueidentifier": "A",
+    "schemacode": "common-masters.OrgFunctionClass",
+    "data": {
+      "code": "A",
+      "active": true,
+      "description": "Class A",
+      "effectiveTo": null,
+      "effectiveFrom": 1677044852
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728975208209,
+    "lastmodifiedtime": 1728975208209
+  }
+]

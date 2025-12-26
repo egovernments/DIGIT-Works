@@ -1,0 +1,17 @@
+[
+  {
+    "id": "662ac2b6-cbfb-40e3-97f0-3c1607b5e64e",
+    "tenantid": "od",
+    "uniqueidentifier": "MdmsRes.tenant.tenants",
+    "schemacode": "works.MdmsV1GetConfig",
+    "data": {
+      "path": "MdmsRes.tenant.tenants",
+      "jsonPath": "$.MdmsRes"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729706309725,
+    "lastmodifiedtime": 1729706309725
+  }
+]

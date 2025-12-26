@@ -1,0 +1,38 @@
+[
+  {
+    "id": "55071e02-4c93-48a0-a1b8-101774c11fcc",
+    "tenantid": "od",
+    "uniqueidentifier": "MUKTA",
+    "schemacode": "exchange.ExchangeServers",
+    "data": {
+      "id": "2",
+      "code": "MUKTA",
+      "active": true,
+      "hostUrl": "https://mukta-uat.digit.org/mukta/digit-exchange",
+      "contextPath": "/mukta/digit-exchange"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728976047568,
+    "lastmodifiedtime": 1728976047568
+  },
+  {
+    "id": "a206e411-45fc-42c3-9afa-577bcbf2e1aa",
+    "tenantid": "od",
+    "uniqueidentifier": "IFMS",
+    "schemacode": "exchange.ExchangeServers",
+    "data": {
+      "id": "1",
+      "code": "IFMS",
+      "active": true,
+      "hostUrl": "https://mukta-uat.digit.org/ifms/digit-exchange",
+      "contextPath": "/ifms/digit-exchange"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728976059555,
+    "lastmodifiedtime": 1728976059555
+  }
+]

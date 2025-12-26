@@ -1,0 +1,83 @@
+[
+  {
+    "id": "7bb9617f-dfbb-4976-bfb6-314ff715e13d",
+    "tenantid": "od",
+    "uniqueidentifier": "DownloadBillConfig",
+    "schemacode": "commonMuktaUiConfig.DownloadBillConfig",
+    "data": {
+      "type": "download",
+      "label": "ES_COMMON_DOWNLOADS",
+      "sections": {
+        "searchResult": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "columns": [
+              {
+                "label": "WORKS_SNO",
+                "jsonPath": "createdBy",
+                "additionalCustomization": true
+              },
+              {
+                "label": "ES_COMMON_PAYMENT_NO",
+                "jsonPath": "paymentNumber"
+              },
+              {
+                "label": "ES_COMMON_DATE",
+                "jsonPath": "createdtime",
+                "additionalCustomization": true
+              },
+              {
+                "label": "ES_COMMON_NO_OF_BILLS",
+                "jsonPath": "numberofbills"
+              },
+              {
+                "label": "ES_COMMON_NO_OF_BENEFICIARIES",
+                "jsonPath": "numberofbeneficialy"
+              },
+              {
+                "label": "ES_COMMON_TOTAL_AMOUNT",
+                "jsonPath": "totalamount",
+                "headerAlign": "right",
+                "additionalCustomization": true
+              },
+              {
+                "label": "CORE_COMMON_STATUS",
+                "jsonPath": "status",
+                "additionalCustomization": true
+              },
+              {
+                "label": "CS_COMMON_ACTION",
+                "jsonPath": "filestoreid",
+                "additionalCustomization": true
+              }
+            ],
+            "tableClassName": "download-table",
+            "resultsJsonPath": "searchresult",
+            "enableColumnSort": true,
+            "enableGlobalSearch": false
+          }
+        }
+      },
+      "apiDetails": {
+        "masterName": "commonUiConfig",
+        "moduleName": "DownloadBillConfig",
+        "requestBody": {},
+        "serviceName": "/egov-pdf/bill/_search",
+        "requestParam": {},
+        "tableFormJsonPath": "requestParam",
+        "filterFormJsonPath": "requestBody",
+        "searchFormJsonPath": "requestBody",
+        "minParametersForSearchForm": 1
+      },
+      "screenName": "DownloadBillConfig",
+      "additionalSections": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728991719045,
+    "lastmodifiedtime": 1728991719045
+  }
+]

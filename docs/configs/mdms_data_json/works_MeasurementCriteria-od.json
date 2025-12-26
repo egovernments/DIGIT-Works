@@ -1,0 +1,23 @@
+[
+  {
+    "id": "2b49de2d-fd2c-4a9e-98e0-c7ea1fbf162b",
+    "tenantid": "od",
+    "uniqueidentifier": "BFFService",
+    "schemacode": "works.MeasurementCriteria",
+    "data": {
+      "active": true,
+      "period": 7,
+      "reference": "CONTRACT",
+      "screenName": "BFFService",
+      "contractStatus": "ACTIVE",
+      "measurementBookStartDate": 1709058600000,
+      "measurementWorkflowStatus": "APPROVED",
+      "enableMeasurementAfterContractEndDate": false
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729249713075,
+    "lastmodifiedtime": 1729249713075
+  }
+]

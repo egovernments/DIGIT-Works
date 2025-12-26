@@ -1,0 +1,36 @@
+[
+  {
+    "id": "0cc970fe-d7dd-428d-9357-06960e3d4500",
+    "tenantid": "od",
+    "uniqueidentifier": "2",
+    "schemacode": "expense.PaymentInstructionType",
+    "data": {
+      "id": 2,
+      "code": "REVISED",
+      "active": true,
+      "i18nKey": "EXP_PI_TYPE_REVISED"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981285738,
+    "lastmodifiedtime": 1728981285738
+  },
+  {
+    "id": "fa46ad40-b751-4cf5-8189-012fa15c4553",
+    "tenantid": "od",
+    "uniqueidentifier": "1",
+    "schemacode": "expense.PaymentInstructionType",
+    "data": {
+      "id": 1,
+      "code": "ORIGINAL",
+      "active": true,
+      "i18nKey": "EXP_PI_TYPE_ORIGINAL"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981294531,
+    "lastmodifiedtime": 1728981294531
+  }
+]

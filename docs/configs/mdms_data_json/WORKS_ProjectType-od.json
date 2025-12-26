@@ -1,0 +1,202 @@
+[
+  {
+    "id": "b87ff864-9a74-4900-9d60-b6c182f44573",
+    "tenantid": "od",
+    "uniqueidentifier": "10.CC",
+    "schemacode": "works.ProjectType",
+    "data": {
+      "id": 10,
+      "code": "CC",
+      "name": "Construction and maintenance of micro community centers and open space development, Mission Shakti Gruhas , Parichaya centers & any other activities/ infrastructures as decided by the H & UD Department from time to time.",
+      "group": "",
+      "active": true,
+      "beneficiary": "",
+      "projectSubType": []
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728979028920,
+    "lastmodifiedtime": 1728979028920
+  },
+  {
+    "id": "9da1ad7a-9d44-45cf-9ff7-620a6293b344",
+    "tenantid": "od",
+    "uniqueidentifier": "9.LI",
+    "schemacode": "works.ProjectType",
+    "data": {
+      "id": 9,
+      "code": "LI",
+      "name": "Various labour-intensive urban infrastructure development projects taken up by ULBs",
+      "group": "",
+      "active": true,
+      "beneficiary": "",
+      "projectSubType": []
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728979039169,
+    "lastmodifiedtime": 1728979039169
+  },
+  {
+    "id": "cf949fa6-8147-40d2-a346-3da8f4bbf0ee",
+    "tenantid": "od",
+    "uniqueidentifier": "8.BA",
+    "schemacode": "works.ProjectType",
+    "data": {
+      "id": 8,
+      "code": "BA",
+      "name": "Basic amenities for citizen such as mini parks, open air gym, child play station, playground, walking track, loo and vending zone, etc.",
+      "group": "",
+      "active": true,
+      "beneficiary": "",
+      "projectSubType": []
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728979050147,
+    "lastmodifiedtime": 1728979050147
+  },
+  {
+    "id": "be640757-08ba-4af6-a52d-30861c9845df",
+    "tenantid": "od",
+    "uniqueidentifier": "7.BT",
+    "schemacode": "works.ProjectType",
+    "data": {
+      "id": 7,
+      "code": "BT",
+      "name": "Beautification of parks, canals, rivers, gardens, roads and plantation of trees",
+      "group": "",
+      "active": true,
+      "beneficiary": "",
+      "projectSubType": []
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728979066372,
+    "lastmodifiedtime": 1728979066372
+  },
+  {
+    "id": "ac74496b-1c47-4fe8-898c-c922cb83340a",
+    "tenantid": "od",
+    "uniqueidentifier": "6.WP",
+    "schemacode": "works.ProjectType",
+    "data": {
+      "id": 6,
+      "code": "WP",
+      "name": "Wall paintings",
+      "group": "",
+      "active": true,
+      "beneficiary": "",
+      "projectSubType": []
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728979074585,
+    "lastmodifiedtime": 1728979074585
+  },
+  {
+    "id": "62161ac9-daa6-4525-b268-55ab6270419a",
+    "tenantid": "od",
+    "uniqueidentifier": "5.PP",
+    "schemacode": "works.ProjectType",
+    "data": {
+      "id": 5,
+      "code": "PP",
+      "name": "Development and maintenance of public parks and playgrounds",
+      "group": "",
+      "active": true,
+      "beneficiary": "",
+      "projectSubType": []
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728979084804,
+    "lastmodifiedtime": 1728979084804
+  },
+  {
+    "id": "2e4fc1bd-942f-43ee-b70e-914e317904d4",
+    "tenantid": "od",
+    "uniqueidentifier": "4.WB",
+    "schemacode": "works.ProjectType",
+    "data": {
+      "id": 4,
+      "code": "WB",
+      "name": "Development and renovation of water bodies",
+      "group": "",
+      "active": true,
+      "beneficiary": "Slum",
+      "projectSubType": []
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728979095182,
+    "lastmodifiedtime": 1728979095182
+  },
+  {
+    "id": "2349f934-22d6-4e58-ac4a-3b1f7199dbba",
+    "tenantid": "od",
+    "uniqueidentifier": "3.WT",
+    "schemacode": "works.ProjectType",
+    "data": {
+      "id": 3,
+      "code": "WT",
+      "name": "Water conservation and rain water harvesting structures",
+      "group": "",
+      "active": true,
+      "beneficiary": "",
+      "projectSubType": []
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728979105053,
+    "lastmodifiedtime": 1728979105053
+  },
+  {
+    "id": "4e5612b2-b9d2-441f-8f4f-2959e25160a6",
+    "tenantid": "od",
+    "uniqueidentifier": "2.SN",
+    "schemacode": "works.ProjectType",
+    "data": {
+      "id": 2,
+      "code": "SN",
+      "name": "Sanitation work [Except road sweeping and drain cleaning]",
+      "group": "",
+      "active": true,
+      "beneficiary": "",
+      "projectSubType": []
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728979114860,
+    "lastmodifiedtime": 1728979114860
+  },
+  {
+    "id": "541b08d6-29c9-4188-8ea4-32af39c43be8",
+    "tenantid": "od",
+    "uniqueidentifier": "1.DR",
+    "schemacode": "works.ProjectType",
+    "data": {
+      "id": 1,
+      "code": "DR",
+      "name": "Drainage and sewerage work [Except de-siltation]",
+      "group": "",
+      "active": true,
+      "beneficiary": "",
+      "projectSubType": []
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728979124976,
+    "lastmodifiedtime": 1728979124976
+  }
+]

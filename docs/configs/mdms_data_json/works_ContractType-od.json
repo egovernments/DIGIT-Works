@@ -1,0 +1,20 @@
+[
+  {
+    "id": "d11301eb-fb4a-4749-9f27-368622235c00",
+    "tenantid": "od",
+    "uniqueidentifier": "CON-01",
+    "schemacode": "works.ContractType",
+    "data": {
+      "code": "CON-01",
+      "name": "Work Order",
+      "active": true,
+      "description": "Defines a contract of type Work Order",
+      "createRegister": true
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728898516910,
+    "lastmodifiedtime": 1728898516910
+  }
+]

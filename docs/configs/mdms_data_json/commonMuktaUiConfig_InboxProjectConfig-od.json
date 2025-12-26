@@ -1,0 +1,252 @@
+[
+  {
+    "id": "4a2af8e6-fe49-4bae-ba28-9ce149bd9f4c",
+    "tenantid": "od",
+    "uniqueidentifier": "InboxProjectConfig",
+    "schemacode": "commonMuktaUiConfig.InboxProjectConfig",
+    "data": {
+      "type": "inbox",
+      "label": "ES_COMMON_INBOX",
+      "sections": {
+        "links": {
+          "show": true,
+          "children": {},
+          "uiConfig": {
+            "label": "PROJECT_INBOX",
+            "links": [
+              {
+                "url": "/employee/project/create-project",
+                "text": "WORKS_CREATE_PROJECT",
+                "roles": []
+              },
+              {
+                "url": "/employee/project/search-project",
+                "text": "WORKS_SEARCH_PROJECTS",
+                "roles": []
+              }
+            ],
+            "logoIcon": {
+              "component": "PropertyHouse",
+              "customClass": "inbox-search-icon--projects"
+            }
+          }
+        },
+        "filter": {
+          "show": true,
+          "label": "ES_COMMON_FILTERS",
+          "uiConfig": {
+            "type": "filter",
+            "fields": [
+              {
+                "type": "date",
+                "label": "WORKS_PROJECT_CREATED_FROM_DATE",
+                "disable": false,
+                "populators": {
+                  "name": "createdFrom"
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "date",
+                "label": "WORKS_PROJECT_CREATED_TO_DATE",
+                "disable": false,
+                "populators": {
+                  "name": "createdTo",
+                  "error": "DATE_VALIDATION_MSG"
+                },
+                "isMandatory": false,
+                "additionalValidation": {
+                  "keys": {
+                    "end": "createdTo",
+                    "start": "createdFrom"
+                  },
+                  "type": "date"
+                }
+              },
+              {
+                "type": "dropdown",
+                "label": "ES_COMMON_CREATED_BY",
+                "disable": false,
+                "populators": {
+                  "name": "createdBy",
+                  "mdmsConfig": {
+                    "masterName": "NatureOfWork",
+                    "moduleName": "works",
+                    "localePrefix": "COMMON_MASTERS"
+                  },
+                  "optionsKey": "name"
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "dropdown",
+                "label": "ES_COMMON_STATUS",
+                "disable": false,
+                "populators": {
+                  "name": "status",
+                  "mdmsConfig": {
+                    "masterName": "NatureOfWork",
+                    "moduleName": "works",
+                    "localePrefix": "COMMON_MASTERS"
+                  },
+                  "optionsKey": "name"
+                },
+                "isMandatory": false
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 0,
+            "primaryLabel": "ES_COMMON_APPLY",
+            "defaultValues": {
+              "status": "",
+              "createdBy": "",
+              "projectToDate": "",
+              "projectFromDate": ""
+            },
+            "secondaryLabel": ""
+          }
+        },
+        "search": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "fields": [
+              {
+                "type": "text",
+                "label": "WORKS_PROJECT_ID",
+                "disable": false,
+                "populators": {
+                  "name": "projectNumber",
+                  "error": "PROJECT_PATTERN_ERR_MSG",
+                  "validation": {
+                    "pattern": {},
+                    "minlength": 2
+                  }
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "dropdown",
+                "label": "ACTION_TEST_DEPARTMENT",
+                "disable": false,
+                "populators": {
+                  "name": "department",
+                  "mdmsConfig": {
+                    "masterName": "Department",
+                    "moduleName": "common-masters",
+                    "localePrefix": "COMMON_MASTERS_DEPARTMENT"
+                  },
+                  "optionsKey": "name"
+                },
+                "isMandatory": false
+              },
+              {
+                "type": "dropdown",
+                "label": "WORKS_PROJECT_TYPE",
+                "disable": false,
+                "populators": {
+                  "name": "projectType",
+                  "mdmsConfig": {
+                    "masterName": "ProjectType",
+                    "moduleName": "works",
+                    "localePrefix": "COMMON_MASTERS"
+                  },
+                  "optionsKey": "name"
+                },
+                "isMandatory": false
+              }
+            ],
+            "headerStyle": null,
+            "minReqFields": 1,
+            "primaryLabel": "ES_COMMON_SEARCH",
+            "defaultValues": {
+              "department": "",
+              "projectType": "",
+              "projectNumber": ""
+            },
+            "secondaryLabel": "ES_COMMON_CLEAR_SEARCH"
+          }
+        },
+        "searchResult": {
+          "show": true,
+          "label": "",
+          "children": {},
+          "uiConfig": {
+            "columns": [
+              {
+                "label": "WORKS_PRJ_SUB_ID",
+                "jsonPath": "projectNumber",
+                "additionalCustomization": true
+              },
+              {
+                "label": "WORKS_PROJECT_NAME",
+                "jsonPath": "name"
+              },
+              {
+                "label": "PROJECT_OWNING_DEPT",
+                "prefix": "COMMON_MASTERS_DEPARTMENT_",
+                "jsonPath": "department",
+                "translate": true
+              },
+              {
+                "label": "WORKS_PROJECT_TYPE",
+                "jsonPath": "projectType"
+              },
+              {
+                "label": "WORKS_SUB_PROJECT_TYPE",
+                "jsonPath": "projectSubType"
+              },
+              {
+                "label": "ES_COMMON_WORK_NATURE",
+                "jsonPath": "endDate"
+              },
+              {
+                "label": "WORKS_PARENT_PROJECT_ID",
+                "jsonPath": "parentId"
+              },
+              {
+                "label": "ES_COMMON_CREATED_BY",
+                "jsonPath": "auditDetails.createdBy"
+              },
+              {
+                "label": "ES_COMMON_STATUS",
+                "jsonPath": "status"
+              },
+              {
+                "label": "ES_COMMON_TOTAL_AMOUNT",
+                "jsonPath": "totalAmount"
+              }
+            ],
+            "resultsJsonPath": "Projects",
+            "enableColumnSort": true,
+            "enableGlobalSearch": false
+          }
+        }
+      },
+      "apiDetails": {
+        "masterName": "commonMuktaUiConfig",
+        "moduleName": "ProjectInboxConfig",
+        "requestBody": {
+          "Projects": [
+            {}
+          ],
+          "apiOperation": "SEARCH"
+        },
+        "serviceName": "/project/v1/_search",
+        "requestParam": {},
+        "tableFormJsonPath": "requestParam",
+        "filterFormJsonPath": "requestBody.Projects[0]",
+        "searchFormJsonPath": "requestBody.Projects[0]",
+        "minParametersForSearchForm": 1
+      },
+      "screenName": "InboxProjectConfig",
+      "additionalSections": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728991996890,
+    "lastmodifiedtime": 1728991996890
+  }
+]

@@ -1,0 +1,99 @@
+[
+  {
+    "id": "f10b14ce-f238-4b7f-bb76-cdf64ce03cf5",
+    "tenantid": "od",
+    "uniqueidentifier": "Odisha.od",
+    "schemacode": "common-masters.StateInfo",
+    "data": {
+      "code": "od",
+      "name": "Odisha",
+      "logoUrl": "https://mukta-uat-bucket-s3.s3.ap-south-1.amazonaws.com/assets/mseva-white-logo.png",
+      "bannerUrl": "https://mukta-uat-bucket-s3.s3.ap-south-1.amazonaws.com/assets/banner-bg.jpg",
+      "languages": [
+        {
+          "label": "ENGLISH",
+          "value": "en_IN"
+        },
+        {
+          "label": "ଓଡିଆ",
+          "value": "or_IN"
+        }
+      ],
+      "qrCodeURL": "",
+      "statelogo": "https://mukta-uat-bucket-s3.s3.ap-south-1.amazonaws.com/assets/logo.jpeg",
+      "defaultUrl": {
+        "employee": "/works-ui/employee/user/login"
+      },
+      "logoUrlWhite": "https://mukta-uat-bucket-s3.s3.ap-south-1.amazonaws.com/assets/mukta-white-logo.png",
+      "enableWhatsApp": true,
+      "hasLocalisation": true,
+      "localizationModules": [
+        {
+          "label": "rainmaker-contracts",
+          "value": "rainmaker-contracts"
+        },
+        {
+          "label": "rainmaker-common",
+          "value": "rainmaker-common"
+        },
+        {
+          "label": "rainmaker-common-masters",
+          "value": "rainmaker-common-masters"
+        },
+        {
+          "label": "rainmaker-estimate",
+          "value": "rainmaker-estimate"
+        },
+        {
+          "label": "rainmaker-project",
+          "value": "rainmaker-project"
+        },
+        {
+          "label": "rainmaker-expenditure",
+          "value": "rainmaker-expenditure"
+        },
+        {
+          "label": "rainmaker-attendencemgmt",
+          "value": "rainmaker-attendencemgmt"
+        },
+        {
+          "label": "rainmaker-masters",
+          "value": "rainmaker-masters"
+        },
+        {
+          "label": "rainmaker-od",
+          "value": "rainmaker-od"
+        },
+        {
+          "label": "rainmaker-ward-locality",
+          "value": "rainmaker-ward-locality"
+        },
+        {
+          "label": "rainmaker-measurement",
+          "value": "rainmaker-measurement"
+        },
+        {
+          "label": "rainmaker-workbench",
+          "value": "rainmaker-workbench"
+        },
+        {
+          "label": "rainmaker-schema",
+          "value": "rainmaker-schema"
+        },
+        {
+          "label": "rainmaker-mdms",
+          "value": "rainmaker-mdms"
+        },
+        {
+          "label": "rainmaker-workflow",
+          "value": "rainmaker-workflow"
+        }
+      ]
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981626669,
+    "lastmodifiedtime": 1728981626669
+  }
+]

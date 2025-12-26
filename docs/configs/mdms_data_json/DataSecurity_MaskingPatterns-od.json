@@ -1,0 +1,227 @@
+[
+  {
+    "id": "c3228b72-9ed8-4d83-b543-b51771f949d9",
+    "tenantid": "od",
+    "uniqueidentifier": "001",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": ".(?=.{4})",
+      "patternId": "001"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729836325608,
+    "lastmodifiedtime": 1729836325608
+  },
+  {
+    "id": "b1cde5b1-1df6-403c-bcbe-5e01e1a0a990",
+    "tenantid": "od",
+    "uniqueidentifier": "002",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "\\\\B[a-zA-Z0-9]",
+      "patternId": "002"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729836348033,
+    "lastmodifiedtime": 1729836348033
+  },
+  {
+    "id": "80c191b0-e49b-4742-a2bd-f8f25a73ed24",
+    "tenantid": "od",
+    "uniqueidentifier": "003",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": ".(?=.{2})",
+      "patternId": "003"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729836365531,
+    "lastmodifiedtime": 1729836365531
+  },
+  {
+    "id": "43974c5a-3f0b-4a0b-ae04-cfb5df075174",
+    "tenantid": "od",
+    "uniqueidentifier": "004",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "(?<=.)[^@\\\\n](?=[^@\\\\n]*?@)|(?:(?<=@.)|(?!^)\\\\G(?=[^@\\\\n]*$)).(?!$)",
+      "patternId": "004"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729836375923,
+    "lastmodifiedtime": 1729836375923
+  },
+  {
+    "id": "79f13fc1-b8c9-45c2-af9d-eb2225f7d9af",
+    "tenantid": "od",
+    "uniqueidentifier": "005",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "[A-Za-zÀ-ȕ0-9(),-_., ]",
+      "patternId": "005"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729836386344,
+    "lastmodifiedtime": 1729836386344
+  },
+  {
+    "id": "50c8c8c0-a3f6-4ade-9dba-0232520fde22",
+    "tenantid": "od",
+    "uniqueidentifier": "006",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "\\\\w(?=(?:[ \\\\w]*\\\\w){2}$)",
+      "patternId": "006"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729836395439,
+    "lastmodifiedtime": 1729836395439
+  },
+  {
+    "id": "2c7c8f84-2046-4fb9-970c-5b7b0dd78698",
+    "tenantid": "od",
+    "uniqueidentifier": "007",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "(?<=.).(?=.{3})",
+      "patternId": "007"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729836403031,
+    "lastmodifiedtime": 1729836403031
+  },
+  {
+    "id": "f9eb58e9-6e88-413d-a485-42c804efdae9",
+    "tenantid": "od",
+    "uniqueidentifier": "008",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "(?<=.).(?=.{2})",
+      "patternId": "008"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729836410141,
+    "lastmodifiedtime": 1729836410141
+  },
+  {
+    "id": "4a6fc1e4-5876-4d20-9ac6-307afd9efa51",
+    "tenantid": "od",
+    "uniqueidentifier": "009",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "(?<=.{4}).(?=.{2})",
+      "patternId": "009"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1731396337721,
+    "lastmodifiedtime": 1731396337721
+  },
+  {
+    "id": "4ed7c29d-ebf6-49e3-a7fc-3e56810c7efb",
+    "tenantid": "od",
+    "uniqueidentifier": "010",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "(?<=.)(.*?)(?=.*.$)(?=.@)",
+      "patternId": "010"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1732179339779,
+    "lastmodifiedtime": 1732179339779
+  },
+  {
+    "id": "7e42d86d-dc29-4c4d-9fd1-a1812c2e8e2c",
+    "tenantid": "od",
+    "uniqueidentifier": "011",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "(?<=.{1}).",
+      "patternId": "011"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1732179388904,
+    "lastmodifiedtime": 1732179388904
+  },
+  {
+    "id": "6564f8eb-f295-4832-a700-24224d28ca03",
+    "tenantid": "od",
+    "uniqueidentifier": "012",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "(?<=^.{0}|^.{1}|^.{3}|^.{4}).",
+      "patternId": "012"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1732179404900,
+    "lastmodifiedtime": 1732179404900
+  },
+  {
+    "id": "78a8cf8e-b35a-4855-9a3b-407f471abe08",
+    "tenantid": "od",
+    "uniqueidentifier": "013",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": ".",
+      "patternId": "013"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1732179430016,
+    "lastmodifiedtime": 1732179430016
+  },
+  {
+    "id": "78106abc-e46c-46a8-81bd-775a9dc81bf6",
+    "tenantid": "od",
+    "uniqueidentifier": "014",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "(?<=.{3}).(?=.{2})",
+      "patternId": "014"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1732185257563,
+    "lastmodifiedtime": 1732185257563
+  },
+  {
+    "id": "0644b1d2-5de8-4bde-95cc-32274345a296",
+    "tenantid": "od",
+    "uniqueidentifier": "015",
+    "schemacode": "DataSecurity.MaskingPatterns",
+    "data": {
+      "pattern": "(?<=.{1}).(?=.{1})",
+      "patternId": "015"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1732185272579,
+    "lastmodifiedtime": 1732185272579
+  }
+]

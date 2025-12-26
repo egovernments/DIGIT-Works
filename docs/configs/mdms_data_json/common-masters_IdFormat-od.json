@@ -1,0 +1,467 @@
+[
+  {
+    "id": "e6d32120-2229-4e28-a8ed-56db640bfb9a",
+    "tenantid": "od",
+    "uniqueidentifier": "REPORT-[SEQ_REPORT_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "REPORT-[SEQ_REPORT_NUM]",
+      "idname": "works.report.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248476925,
+    "lastmodifiedtime": 1729248476925
+  },
+  {
+    "id": "14b3e51a-0611-4def-96e3-49ffc7ccafdb",
+    "tenantid": "od",
+    "uniqueidentifier": "P[SEQ_PROJ_TYPE_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "P[SEQ_PROJ_TYPE_NUM]",
+      "idname": "works.project.type.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248488517,
+    "lastmodifiedtime": 1729248488517
+  },
+  {
+    "id": "62b5da3e-02a6-4ad9-b124-fb4a9108bfcd",
+    "tenantid": "od",
+    "uniqueidentifier": "JOB-[cy:yyyy]-[SEQ_JOB_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "JOB-[cy:yyyy]-[SEQ_JOB_NUM]",
+      "idname": "rate.analysis.job.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248499100,
+    "lastmodifiedtime": 1729248499100
+  },
+  {
+    "id": "49ecc080-f8f6-4303-8258-ed6506097460",
+    "tenantid": "od",
+    "uniqueidentifier": "TMP_[SEQ_TEMP_REF_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "TMP_[SEQ_TEMP_REF_NUM]",
+      "idname": "works.template.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248510108,
+    "lastmodifiedtime": 1729248510108
+  },
+  {
+    "id": "39fab1d1-df01-49fd-bcee-9bdd5b6f9042",
+    "tenantid": "od",
+    "uniqueidentifier": "CMP_[SEQ_CMP_REF_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "CMP_[SEQ_CMP_REF_NUM]",
+      "idname": "works.composition.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248521344,
+    "lastmodifiedtime": 1729248521344
+  },
+  {
+    "id": "77450045-3b84-49ae-a071-0fc323c64fd4",
+    "tenantid": "od",
+    "uniqueidentifier": "PG/[fy:yyyy-yy]/[SEQ_PROG_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "PG/[fy:yyyy-yy]/[SEQ_PROG_NUM]",
+      "idname": "ifix.program.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248531708,
+    "lastmodifiedtime": 1729248531708
+  },
+  {
+    "id": "419b5db3-6ded-4aa5-994c-5d5ea5205a5f",
+    "tenantid": "od",
+    "uniqueidentifier": "COR-[CITY.CODE]/[fy:yyyy-yy]/[SEQ_IFMS_PAYMENT_INSTRUCTION_NUMBER]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "COR-[CITY.CODE]/[fy:yyyy-yy]/[SEQ_IFMS_PAYMENT_INSTRUCTION_NUMBER]",
+      "idname": "ifms.repi.reference.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248543406,
+    "lastmodifiedtime": 1729248543406
+  },
+  {
+    "id": "f54f332c-4654-44ac-91cd-6b648557502b",
+    "tenantid": "od",
+    "uniqueidentifier": "RW/[fy:yyyy-yy]/[SEQ_CONT_REVISION_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "RW/[fy:yyyy-yy]/[SEQ_CONT_REVISION_NUM]",
+      "idname": "contract.revision.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248554120,
+    "lastmodifiedtime": 1729248554120
+  },
+  {
+    "id": "477b9010-7351-40e5-aa58-5b9410b726e9",
+    "tenantid": "od",
+    "uniqueidentifier": "SOR_[SEQ_SOR_REF_NUMBER]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "SOR_[SEQ_SOR_REF_NUMBER]",
+      "idname": "works.sor.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248565774,
+    "lastmodifiedtime": 1729248565774
+  },
+  {
+    "id": "89aae27d-559f-41be-a80e-188edb401617",
+    "tenantid": "od",
+    "uniqueidentifier": "MB/[fy:yyyy-yy]/[SEQ_MEASUREMENT_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "MB/[fy:yyyy-yy]/[SEQ_MEASUREMENT_NUM]",
+      "idname": "mb.reference.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248576700,
+    "lastmodifiedtime": 1729248576700
+  },
+  {
+    "id": "60c0d32e-264c-4c5e-9ac3-c09659630d41",
+    "tenantid": "od",
+    "uniqueidentifier": "RE/[fy:yyyy-yy]/[SEQ_ESTIMATE_REVISION_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "RE/[fy:yyyy-yy]/[SEQ_ESTIMATE_REVISION_NUM]",
+      "idname": "estimate.revision.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248587590,
+    "lastmodifiedtime": 1729248587590
+  },
+  {
+    "id": "410e4282-ea06-42fb-b99a-6431c4f3b7db",
+    "tenantid": "od",
+    "uniqueidentifier": "TE/[fy:yyyy-yy]/[SEQ_CONT_SUPPLEMENT_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "TE/[fy:yyyy-yy]/[SEQ_CONT_SUPPLEMENT_NUM]",
+      "idname": "contract.supplement.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248600714,
+    "lastmodifiedtime": 1729248600714
+  },
+  {
+    "id": "7c927df4-b5a8-4efc-8aad-e2f82138e4dd",
+    "tenantid": "od",
+    "uniqueidentifier": "BN-[CITY.CODE]/[SEQ_IFMS_BENEFICIARY_NUMBER]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "BN-[CITY.CODE]/[SEQ_IFMS_BENEFICIARY_NUMBER]",
+      "idname": "ifms.benef.reference.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248614543,
+    "lastmodifiedtime": 1729248614543
+  },
+  {
+    "id": "e8b827cc-bf43-4062-aed5-e1f76032cf91",
+    "tenantid": "od",
+    "uniqueidentifier": "WR_[SEQ_WAGE_REF_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "WR_[SEQ_WAGE_REF_NUM]",
+      "idname": "wage.reference.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248637554,
+    "lastmodifiedtime": 1729248637554
+  },
+  {
+    "id": "f7a67162-5f1c-4025-9e77-2127faaf015a",
+    "tenantid": "od",
+    "uniqueidentifier": "PR_[SEQ_PURCHASE_REF_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "PR_[SEQ_PURCHASE_REF_NUM]",
+      "idname": "purchase.reference.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248655058,
+    "lastmodifiedtime": 1729248655058
+  },
+  {
+    "id": "5ede655d-c436-4616-829a-5146fbeb6b14",
+    "tenantid": "od",
+    "uniqueidentifier": "SR_[SEQ_SUPERVISION_REF_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "SR_[SEQ_SUPERVISION_REF_NUM]",
+      "idname": "supervision.reference.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248666933,
+    "lastmodifiedtime": 1729248666933
+  },
+  {
+    "id": "24d4a378-d393-42b2-a530-9c426eb6fc8f",
+    "tenantid": "od",
+    "uniqueidentifier": "EP/[CITY.CODE]/[fy:yyyy-yy]/[cy:MM]/[cy:dd]/[SEQ_EXPENSE_PAYMENT_NUMBER]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "EP/[CITY.CODE]/[fy:yyyy-yy]/[cy:MM]/[cy:dd]/[SEQ_EXPENSE_PAYMENT_NUMBER]",
+      "idname": "expense.payment.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248676099,
+    "lastmodifiedtime": 1729248676099
+  },
+  {
+    "id": "028db04b-f414-4dd3-b9fd-f85c3e1b1449",
+    "tenantid": "od",
+    "uniqueidentifier": "SB/[fy:yyyy-yy]/[SEQ_SUPERVISION_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "SB/[fy:yyyy-yy]/[SEQ_SUPERVISION_NUM]",
+      "idname": "expense.supervision.bill.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248686425,
+    "lastmodifiedtime": 1729248686425
+  },
+  {
+    "id": "d2a3cb7f-1314-4906-ac59-226311da2a98",
+    "tenantid": "od",
+    "uniqueidentifier": "PB/[fy:yyyy-yy]/[SEQ_PURCHASE_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "PB/[fy:yyyy-yy]/[SEQ_PURCHASE_NUM]",
+      "idname": "expense.purchase.bill.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248697079,
+    "lastmodifiedtime": 1729248697079
+  },
+  {
+    "id": "c9d3642a-3732-42f0-b658-84ba673c26d9",
+    "tenantid": "od",
+    "uniqueidentifier": "WB/[fy:yyyy-yy]/[SEQ_WAGE_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "WB/[fy:yyyy-yy]/[SEQ_WAGE_NUM]",
+      "idname": "expense.wages.bill.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248708436,
+    "lastmodifiedtime": 1729248708436
+  },
+  {
+    "id": "d5e173ff-3ba2-451e-9ec7-a001537eb006",
+    "tenantid": "od",
+    "uniqueidentifier": "SR/FUNC/[cy:dd-MM-yyyy]/[SEQ_FUNC_APP_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "SR/FUNC/[cy:dd-MM-yyyy]/[SEQ_FUNC_APP_NUM]",
+      "idname": "function.application.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248719039,
+    "lastmodifiedtime": 1729248719039
+  },
+  {
+    "id": "93695e4b-c396-486d-9ae5-993f5119d36f",
+    "tenantid": "od",
+    "uniqueidentifier": "SR/ORG/[cy:dd-MM-yyyy]/[SEQ_ORG_APP_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "SR/ORG/[cy:dd-MM-yyyy]/[SEQ_ORG_APP_NUM]",
+      "idname": "org.application.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248728855,
+    "lastmodifiedtime": 1729248728855
+  },
+  {
+    "id": "e90fbf9f-43a8-4799-97c8-152fe716cb05",
+    "tenantid": "od",
+    "uniqueidentifier": "ORG-[SEQ_ORG_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "ORG-[SEQ_ORG_NUM]",
+      "idname": "org.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248740960,
+    "lastmodifiedtime": 1729248740960
+  },
+  {
+    "id": "096380eb-0a22-4ab6-93f6-344a4e6683fd",
+    "tenantid": "od",
+    "uniqueidentifier": "IND-[cy:yyyy-MM-dd]-[SEQ_ADDRESS_IND]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "IND-[cy:yyyy-MM-dd]-[SEQ_ADDRESS_IND]",
+      "idname": "individual.id"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248752318,
+    "lastmodifiedtime": 1729248752318
+  },
+  {
+    "id": "59ad95f4-510e-4b9f-bd8b-4fb8b5d9e245",
+    "tenantid": "od",
+    "uniqueidentifier": "WO/[fy:yyyy-yy]/[SEQ_CONTRACT_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "WO/[fy:yyyy-yy]/[SEQ_CONTRACT_NUM]",
+      "idname": "contract.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248762734,
+    "lastmodifiedtime": 1729248762734
+  },
+  {
+    "id": "0bd8430e-b655-42a1-a08d-4efdedacca2c",
+    "tenantid": "od",
+    "uniqueidentifier": "PJ/[fy:yyyy-yy]/[SEQ_PROJECT_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "PJ/[fy:yyyy-yy]/[SEQ_PROJECT_NUM]",
+      "idname": "project.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248771919,
+    "lastmodifiedtime": 1729248771919
+  },
+  {
+    "id": "1a33831d-96d6-4e89-b5d6-8b54bce2b20c",
+    "tenantid": "od",
+    "uniqueidentifier": "WR/[fy:yyyy-yy]/[cy:MM]/[cy:dd]/[SEQ_ATTENDANCE_REGISTER_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "WR/[fy:yyyy-yy]/[cy:MM]/[cy:dd]/[SEQ_ATTENDANCE_REGISTER_NUM]",
+      "idname": "attendance.register.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248781555,
+    "lastmodifiedtime": 1729248781555
+  },
+  {
+    "id": "c8ac713c-af02-4f34-8468-a01599a8c100",
+    "tenantid": "od",
+    "uniqueidentifier": "MR/[fy:yyyy-yy]/[cy:MM]/[cy:dd]/[SEQ_MUSTER_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "MR/[fy:yyyy-yy]/[cy:MM]/[cy:dd]/[SEQ_MUSTER_NUM]",
+      "idname": "muster.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248791818,
+    "lastmodifiedtime": 1729248791818
+  },
+  {
+    "id": "6ef6e991-ce15-4692-b076-8532525ca87a",
+    "tenantid": "od",
+    "uniqueidentifier": "LI/[fy:yyyy-yy]/[cy:MM]/[SEQ_LI_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "LI/[fy:yyyy-yy]/[cy:MM]/[SEQ_LI_NUM]",
+      "idname": "loi.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248801738,
+    "lastmodifiedtime": 1729248801738
+  },
+  {
+    "id": "98e10111-02e4-4fbc-8a28-1bc6de132938",
+    "tenantid": "od",
+    "uniqueidentifier": "ES/[fy:yyyy-yy]/[SEQ_ESTIMATE_NUM]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "ES/[fy:yyyy-yy]/[SEQ_ESTIMATE_NUM]",
+      "idname": "estimate.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729248812145,
+    "lastmodifiedtime": 1729248812145
+  },
+  {
+    "id": "74bca90d-e629-4aef-b838-51c7bf1d95f2",
+    "tenantid": "od",
+    "uniqueidentifier": "PI-[CITY.CODE]/[fy:yyyy-yy]/[SEQ_IFMS_PAYMENT_INSTRUCTION_NUMBER]",
+    "schemacode": "common-masters.IdFormat",
+    "data": {
+      "format": "PI-[CITY.CODE]/[fy:yyyy-yy]/[SEQ_IFMS_PAYMENT_INSTRUCTION_NUMBER]",
+      "idname": "ifms.pi.reference.number"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1730105032733,
+    "lastmodifiedtime": 1730105032733
+  }
+]

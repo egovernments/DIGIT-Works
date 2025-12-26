@@ -1,0 +1,177 @@
+[
+  {
+    "id": "11189eaa-397f-4dad-b484-6f24e3a5f6f4",
+    "tenantid": "od",
+    "uniqueidentifier": "EF",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "EF",
+      "active": true,
+      "description": "Excavation in Foundation"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1703822237171,
+    "lastmodifiedtime": 1703822237171
+  },
+  {
+    "id": "643f1f53-251f-4e6b-9619-d0a99b027b75",
+    "tenantid": "od",
+    "uniqueidentifier": "GF",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "GF",
+      "active": true,
+      "description": "Ground Floor"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704262173662,
+    "lastmodifiedtime": 1704262173662
+  },
+  {
+    "id": "1dbe90df-8851-4161-b1fc-90f55facc1bf",
+    "tenantid": "od",
+    "uniqueidentifier": "FF",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "FF",
+      "active": true,
+      "description": "First Floor"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704262191568,
+    "lastmodifiedtime": 1704262191568
+  },
+  {
+    "id": "ea02e2b8-bbc6-4c08-9371-f090fe9feab5",
+    "tenantid": "od",
+    "uniqueidentifier": "SF",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "SF",
+      "active": true,
+      "description": "Second Floor"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704262207097,
+    "lastmodifiedtime": 1704262207097
+  },
+  {
+    "id": "6fe94549-408e-4fb2-9fd2-a3fe09c87270",
+    "tenantid": "od",
+    "uniqueidentifier": "TF",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "TF",
+      "active": true,
+      "description": "Third Floor"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704262224350,
+    "lastmodifiedtime": 1704262224350
+  },
+  {
+    "id": "60d80147-cd23-4ea6-a475-76662b812f80",
+    "tenantid": "od",
+    "uniqueidentifier": "FP",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "FP",
+      "active": true,
+      "description": "Foundation & Plinth"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704262239871,
+    "lastmodifiedtime": 1704262239871
+  },
+  {
+    "id": "d5662acb-f6d8-4d24-aa20-6a203e700958",
+    "tenantid": "od",
+    "uniqueidentifier": "SG",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "SG",
+      "active": true,
+      "description": "Super Structure (GF)"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704262255010,
+    "lastmodifiedtime": 1704262255010
+  },
+  {
+    "id": "058bfbfa-f311-448a-ba20-e8a8cbaf93c4",
+    "tenantid": "od",
+    "uniqueidentifier": "NA",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "NA",
+      "active": true,
+      "description": "Not Applicable"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1704262672699,
+    "lastmodifiedtime": 1721214823072
+  },
+  {
+    "id": "9cf5ebcb-8a8d-407e-bbe8-903362a6332a",
+    "tenantid": "od",
+    "uniqueidentifier": "6",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "6",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1721214644037,
+    "lastmodifiedtime": 1721214644037
+  },
+  {
+    "id": "de135590-de21-43de-a9f6-dc1d3960ddac",
+    "tenantid": "od",
+    "uniqueidentifier": "555",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "555",
+      "active": true,
+      "description": "sdfgnm,"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1721214695133,
+    "lastmodifiedtime": 1721214695133
+  },
+  {
+    "id": "1d846b58-a125-4466-b653-6cf15d615ade",
+    "tenantid": "od",
+    "uniqueidentifier": "777",
+    "schemacode": "WORKS-SOR.Variant",
+    "data": {
+      "code": "777",
+      "active": true,
+      "description": "7"
+    },
+    "isactive": true,
+    "createdby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "lastmodifiedby": "a83370cc-8296-46af-9dcb-9e991366761c",
+    "createdtime": 1721214773585,
+    "lastmodifiedtime": 1721214773585
+  }
+]

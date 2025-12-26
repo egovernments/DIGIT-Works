@@ -1,0 +1,19 @@
+[
+  {
+    "id": "23001553-9be5-4ee1-a435-5639a0b1b4c3",
+    "tenantid": "od",
+    "uniqueidentifier": "CBOMyServiceRequests",
+    "schemacode": "commonUiConfig.CBOMyServiceRequests",
+    "data": {
+      "screenName": "CBOMyServiceRequests",
+      "editActionCode": "EDIT",
+      "searchCriteria": "CONTRACT-REVISION",
+      "editTimeExtReqCode": "PENDING_FOR_CORRECTION"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728978209074,
+    "lastmodifiedtime": 1728978209074
+  }
+]

@@ -1,0 +1,219 @@
+[
+  {
+    "id": "459bed6f-9c74-4f49-888a-4dfdf11b5bcc",
+    "tenantid": "od",
+    "uniqueidentifier": "28.ITTDSOTI",
+    "schemacode": "expense.ApplicableCharges",
+    "data": {
+      "id": "28",
+      "code": "ITTDSOTI",
+      "value": "2",
+      "active": true,
+      "service": "works.purchase",
+      "description": "IT TDS OTI",
+      "effectiveTo": null,
+      "effectiveFrom": 1724956200000,
+      "calculationType": "percentage"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967257034,
+    "lastmodifiedtime": 1728967257034
+  },
+  {
+    "id": "f7d8b729-8998-4152-b452-ce244f4b1ced",
+    "tenantid": "od",
+    "uniqueidentifier": "27.EMF",
+    "schemacode": "expense.ApplicableCharges",
+    "data": {
+      "id": "27",
+      "code": "EMF",
+      "value": null,
+      "active": true,
+      "service": "works.purchase",
+      "description": "Environment Management Fund",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "calculationType": "lumpsum"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967276437,
+    "lastmodifiedtime": 1728967276437
+  },
+  {
+    "id": "78683bba-e15f-40c7-b5cb-1343656eeefd",
+    "tenantid": "od",
+    "uniqueidentifier": "26.DMF",
+    "schemacode": "expense.ApplicableCharges",
+    "data": {
+      "id": "26",
+      "code": "DMF",
+      "value": null,
+      "active": true,
+      "service": "works.purchase",
+      "description": "District Minerals Foundation",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "calculationType": "lumpsum"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967289318,
+    "lastmodifiedtime": 1728967289318
+  },
+  {
+    "id": "03988493-9db3-4aa2-82c2-c3d574232a5d",
+    "tenantid": "od",
+    "uniqueidentifier": "25.LC",
+    "schemacode": "expense.ApplicableCharges",
+    "data": {
+      "id": "25",
+      "code": "LC",
+      "value": "1",
+      "active": true,
+      "service": "works.wages",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "calculationType": "percentage"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967302646,
+    "lastmodifiedtime": 1728967302646
+  },
+  {
+    "id": "5f96596b-9fc5-42ca-87da-c1faf388c19a",
+    "tenantid": "od",
+    "uniqueidentifier": "24.GST",
+    "schemacode": "expense.ApplicableCharges",
+    "data": {
+      "id": "24",
+      "code": "GST",
+      "value": null,
+      "active": true,
+      "service": "works.purchase",
+      "description": "GST",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "calculationType": "lumpsum"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967316176,
+    "lastmodifiedtime": 1728967316176
+  },
+  {
+    "id": "78846efc-4c3d-4049-a470-d10ab544e0a7",
+    "tenantid": "od",
+    "uniqueidentifier": "23.GSTTDS",
+    "schemacode": "expense.ApplicableCharges",
+    "data": {
+      "id": "23",
+      "code": "GSTTDS",
+      "value": "2",
+      "active": true,
+      "service": "works.purchase",
+      "description": "GST TDS",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "calculationType": "percentage"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967337639,
+    "lastmodifiedtime": 1728967337639
+  },
+  {
+    "id": "dc0c5a6c-dfd6-491c-9fd6-d5caf2c72bb4",
+    "tenantid": "od",
+    "uniqueidentifier": "21.ROM",
+    "schemacode": "expense.ApplicableCharges",
+    "data": {
+      "id": "21",
+      "code": "ROM",
+      "value": null,
+      "active": true,
+      "service": "works.purchase",
+      "description": "Royalty and Additional Charge",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "calculationType": "lumpsum"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967350737,
+    "lastmodifiedtime": 1728967350737
+  },
+  {
+    "id": "4e44f651-12f0-4276-9f1c-b073773d1448",
+    "tenantid": "od",
+    "uniqueidentifier": "20.ITTDS",
+    "schemacode": "expense.ApplicableCharges",
+    "data": {
+      "id": "20",
+      "code": "ITTDS",
+      "value": "1",
+      "active": true,
+      "service": "works.purchase",
+      "description": "IT TDS",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "calculationType": "percentage"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967362599,
+    "lastmodifiedtime": 1728967362599
+  },
+  {
+    "id": "b92f8504-cae0-4dd4-8a68-86748b5ebeac",
+    "tenantid": "od",
+    "uniqueidentifier": "2.LC",
+    "schemacode": "expense.ApplicableCharges",
+    "data": {
+      "id": "2",
+      "code": "LC",
+      "value": "1",
+      "active": true,
+      "service": "works.purchase",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "calculationType": "percentage"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967378823,
+    "lastmodifiedtime": 1728967378823
+  },
+  {
+    "id": "4701bdb5-a26c-464e-8b35-5c0e88631d92",
+    "tenantid": "od",
+    "uniqueidentifier": "1.SC",
+    "schemacode": "expense.ApplicableCharges",
+    "data": {
+      "id": "1",
+      "code": "SC",
+      "value": "7.5",
+      "active": true,
+      "service": "works.supervision",
+      "effectiveTo": null,
+      "effectiveFrom": 1682164954037,
+      "calculationType": "percentage"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967389493,
+    "lastmodifiedtime": 1728967389493
+  }
+]

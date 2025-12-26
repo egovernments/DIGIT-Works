@@ -1,0 +1,18 @@
+[
+  {
+    "id": "312fb69a-2490-4ba0-8a60-87ea0bad3dc3",
+    "tenantid": "od",
+    "uniqueidentifier": "26.IND",
+    "schemacode": "segment-codes.RecipientSegmentCodes",
+    "data": {
+      "id": "26",
+      "code": "IND",
+      "name": " Individual"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1729835276681,
+    "lastmodifiedtime": 1729835276681
+  }
+]

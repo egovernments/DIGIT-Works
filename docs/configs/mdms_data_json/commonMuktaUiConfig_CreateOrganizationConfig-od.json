@@ -1,0 +1,514 @@
+[
+  {
+    "id": "ed81e47d-e703-4c15-b073-643f8cba84d2",
+    "tenantid": "od",
+    "uniqueidentifier": "CreateOrganizationConfig",
+    "schemacode": "commonMuktaUiConfig.CreateOrganizationConfig",
+    "data": {
+      "form": [
+        {
+          "body": [
+            {
+              "key": "basicDetails_orgId",
+              "type": "text",
+              "label": "MASTERS_ORGANISATION_ID",
+              "disable": true,
+              "populators": {
+                "name": "basicDetails_orgId",
+                "customClass": "field-value-no-border",
+                "customStyle": {
+                  "display": "none"
+                }
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.customStyle.display"
+                ]
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_orgName",
+              "type": "text",
+              "label": "MASTERS_NAME_OF_ORGN",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_orgName",
+                "error": "MASTERS_PATTERN_ERR_MSG_ORG_DETAILS",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .\\\\-_@\\\\/']*$",
+                  "maxlength": 128,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "basicDetails_regDept",
+              "type": "text",
+              "label": "MASTERS_REGISTERED_BY_DEPT",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_regDept",
+                "error": "ORG_VALIDATION_ERROR_DEPT",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .\\\\-_@\\\\']*$",
+                  "maxlength": 64,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_regDeptNo",
+              "type": "text",
+              "label": "MASTERS_REGISTRATION_NUMBER",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_regDeptNo",
+                "error": "MASTERS_PATTERN_ERR_MSG_ORG_DETAILS",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .\\\\-_@\\\\']*$",
+                  "maxlength": 64,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "basicDetails_dateOfIncorporation",
+              "type": "date",
+              "label": "MASTERS_DATE_OF_INCORPORATION",
+              "disable": false,
+              "populators": {
+                "name": "basicDetails_dateOfIncorporation",
+                "error": "ORG_VALIDATION_ERROR_DEPT",
+                "validation": {
+                  "max": "currentDate"
+                }
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.validation.max"
+                ]
+              },
+              "isMandatory": true
+            }
+          ],
+          "head": "",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "funDetails_orgType",
+              "type": "dropdown",
+              "label": "MASTERS_ORGANISATION_TYPE",
+              "disable": false,
+              "populators": {
+                "name": "funDetails_orgType",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "name"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "funDetails_orgSubType",
+              "type": "dropdown",
+              "label": "MASTERS_ORGANISATION_SUB_TYPE",
+              "disable": false,
+              "populators": {
+                "name": "funDetails_orgSubType",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "name"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "funDetails_category",
+              "type": "dropdown",
+              "label": "ES_COMMON_CATEGORY",
+              "disable": false,
+              "populators": {
+                "name": "funDetails_category",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "name"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "funDetails_classRank",
+              "type": "dropdown",
+              "label": "MASTERS_CLASS_RANK",
+              "disable": false,
+              "populators": {
+                "name": "funDetails_classRank",
+                "error": "WORKS_REQUIRED_ERR",
+                "mdmsConfig": {
+                  "masterName": "OrgFunctionClass",
+                  "moduleName": "common-masters",
+                  "localePrefix": "COMMON_MASTERS_CLASS"
+                },
+                "optionsKey": "name"
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "funDetails_validFrom",
+              "type": "date",
+              "label": "ES_COMMON_VALID_FROM",
+              "disable": false,
+              "populators": {
+                "max": "currentDate",
+                "name": "funDetails_validFrom",
+                "error": "WORKS_REQUIRED_ERR"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.validation.max"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "funDetails_validTo",
+              "type": "date",
+              "label": "ES_COMMON_VALID_TO",
+              "disable": false,
+              "populators": {
+                "min": "currentDate",
+                "name": "funDetails_validTo"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.min"
+                ]
+              },
+              "isMandatory": false
+            }
+          ],
+          "head": "MASTERS_FUNCTIONAL_DETAILS",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "locDetails_city",
+              "type": "radioordropdown",
+              "label": "CORE_COMMON_CITY",
+              "disable": true,
+              "populators": {
+                "name": "locDetails_city",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "i18nKey"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "locDetails_ward",
+              "type": "radioordropdown",
+              "label": "COMMON_WARD",
+              "disable": false,
+              "populators": {
+                "name": "locDetails_ward",
+                "error": "WORKS_REQUIRED_ERR",
+                "options": [],
+                "optionsKey": "i18nKey"
+              },
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "type": "apidropdown",
+              "label": "COMMON_LOCALITY",
+              "disable": false,
+              "populators": {
+                "url": "/boundary-service/boundary-relationships/_search",
+                "name": "locDetails_locality",
+                "params": {
+                  "boundaryType": "Locality",
+                  "includeChildren": true,
+                  "hierarchyTypeCode": "ADMIN"
+                },
+                "selectFun": "return data?.TenantBoundary[0]?.boundary?.sort((a, b) => a.code.localeCompare(b.code)).map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }))",
+                "optionsKey": "i18nKey",
+                "allowMultiSelect": false
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "locDetails_streetName",
+              "type": "text",
+              "label": "ES_COMMON_STREET_NAME",
+              "disable": false,
+              "populators": {
+                "name": "locDetails_streetName",
+                "error": "WORKS_PATTERN_ERR",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .,\\\\/\\\\-_@#\\\\']*$",
+                  "maxlength": 64,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "locDetails_houseName",
+              "type": "text",
+              "label": "ES_COMMON_DOOR_NO",
+              "disable": false,
+              "populators": {
+                "name": "locDetails_houseName",
+                "error": "WORKS_PATTERN_ERR",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .,\\\\/\\\\-_@#\\\\']*$",
+                  "maxlength": 8,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": false
+            }
+          ],
+          "head": "",
+          "navLink": "location_details"
+        },
+        {
+          "body": [
+            {
+              "key": "contactDetails_name",
+              "type": "text",
+              "label": "CORE_COMMON_NAME",
+              "disable": false,
+              "populators": {
+                "name": "contactDetails_name",
+                "error": "MASTERS_PATTERN_ERR_MSG_ORG_DETAILS",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .\\\\-_@\\\\']*$",
+                  "maxlength": 50,
+                  "minlength": 1
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "contactDetails_mobile",
+              "type": "mobileNumber",
+              "label": "CORE_COMMON_PROFILE_MOBILE_NUMBER",
+              "disable": false,
+              "populators": {
+                "name": "contactDetails_mobile",
+                "error": "PHONE_VALIDATION",
+                "validation": {
+                  "max": 9999999999,
+                  "min": 5999999999
+                }
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "contactDetails_email",
+              "type": "text",
+              "label": "CORE_COMMON_PROFILE_EMAIL",
+              "disable": false,
+              "populators": {
+                "name": "contactDetails_email",
+                "error": "EMAIL_VALIDATION",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.(?:[a-zA-Z]{2,6})$",
+                  "maxlength": 64,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": false
+            }
+          ],
+          "head": "",
+          "navLink": "contact_Details",
+          "sectionFormCategory": "contactDetails"
+        },
+        {
+          "body": [
+            {
+              "key": "financeDetails_accountHolderName",
+              "type": "text",
+              "label": "ES_COMMON_ACCOUNT_HOLDER_NAME",
+              "disable": false,
+              "populators": {
+                "name": "financeDetails_accountHolderName",
+                "error": "WORKS_REQUIRED_ERR",
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9 .\\\\-_@\\\\']*$",
+                  "maxlength": 64,
+                  "minlength": 2
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "financeDetails_accountType",
+              "type": "radioordropdown",
+              "label": "MASTERS_BANK_ACCOUNT_TYPE",
+              "populators": {
+                "name": "financeDetails_accountType",
+                "error": "WORKS_REQUIRED_ERR",
+                "mdmsConfig": {
+                  "masterName": "BankAccType",
+                  "moduleName": "works",
+                  "localePrefix": "MASTERS"
+                },
+                "optionsKey": "name"
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "financeDetails_accountNumber",
+              "type": "text",
+              "label": "MASTERS_ACC_NO",
+              "disable": false,
+              "populators": {
+                "name": "financeDetails_accountNumber",
+                "error": "BANK_ACCOUNT_VALIDATION",
+                "validation": {
+                  "pattern": "^[0-9]{9,18}$",
+                  "maxlength": 18,
+                  "minlength": 9
+                }
+              },
+              "preProcess": {
+                "convertStringToRegEx": [
+                  "populators.validation.pattern"
+                ]
+              },
+              "isMandatory": true
+            },
+            {
+              "key": "transferCodes",
+              "type": "component",
+              "component": "TransferCodeTable",
+              "customProps": {
+                "isMandatory": true
+              },
+              "withoutLabel": true
+            },
+            {
+              "key": "financeDetails_bankName",
+              "type": "text",
+              "label": "MASTERS_BANK_NAME",
+              "disable": true,
+              "populators": {
+                "name": "financeDetails_bankName",
+                "validation": {
+                  "minlength": 2
+                }
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "financeDetails_branchName",
+              "type": "text",
+              "label": "MASTERS_BRANCH_NAME",
+              "disable": true,
+              "populators": {
+                "name": "financeDetails_branchName",
+                "validation": {
+                  "minlength": 2
+                }
+              },
+              "isMandatory": false
+            },
+            {
+              "key": "taxIdentifier",
+              "type": "component",
+              "component": "TransferCodeTable",
+              "customProps": {
+                "isMandatory": false
+              },
+              "withoutLabel": true
+            }
+          ],
+          "head": "",
+          "navLink": "financial_Details",
+          "sectionFormCategory": "termsAndConditions"
+        }
+      ],
+      "metaData": {
+        "showNavs": true
+      },
+      "screenName": "CreateOrganizationConfig",
+      "defaultValues": {}
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729258578278,
+    "lastmodifiedtime": 1729258578278
+  }
+]

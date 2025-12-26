@@ -1,0 +1,19 @@
+[
+  {
+    "id": "3e34c3a2-f7d2-41e5-a19a-16b8eec34098",
+    "tenantid": "od",
+    "uniqueidentifier": "OFFICER_IN_CHARGE",
+    "schemacode": "works.OICRoles",
+    "data": {
+      "code": "OFFICER_IN_CHARGE",
+      "name": "Officer In Charge",
+      "active": true,
+      "description": "Officer In Charge role"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728898376123,
+    "lastmodifiedtime": 1728898376123
+  }
+]

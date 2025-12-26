@@ -1,0 +1,470 @@
+[
+  {
+    "id": "00564c3b-504d-4215-a155-c0f4cb2ab0dd",
+    "tenantid": "od",
+    "uniqueidentifier": "025.od.bhubaneswar",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "025",
+      "code": "od.bhubaneswar",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.bhubaneswar"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970261863,
+    "lastmodifiedtime": 1728970261863
+  },
+  {
+    "id": "8ec68afb-4573-4c83-bee9-2c0b8398787e",
+    "tenantid": "od",
+    "uniqueidentifier": "024.od.rourkela",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "024",
+      "code": "od.rourkela",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.rourkela"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970282111,
+    "lastmodifiedtime": 1728970282111
+  },
+  {
+    "id": "05422fbb-9941-446e-97e7-e2ec5e7b186a",
+    "tenantid": "od",
+    "uniqueidentifier": "023.od.sambalpur",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "023",
+      "code": "od.sambalpur",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.sambalpur"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970295583,
+    "lastmodifiedtime": 1728970295583
+  },
+  {
+    "id": "ebedf891-5bd2-4e7f-80c5-9a145f977b68",
+    "tenantid": "od",
+    "uniqueidentifier": "022.od.puri",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "022",
+      "code": "od.puri",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.puri"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970337470,
+    "lastmodifiedtime": 1728970337470
+  },
+  {
+    "id": "dff7ba1d-31e6-404b-81fb-ac66823da371",
+    "tenantid": "od",
+    "uniqueidentifier": "021.od.baripada",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "021",
+      "code": "od.baripada",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.baripada"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970348119,
+    "lastmodifiedtime": 1728970348119
+  },
+  {
+    "id": "da9620c0-2f0a-46f2-9d1a-650e1f3f2ba4",
+    "tenantid": "od",
+    "uniqueidentifier": "020.od.kotpad",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "020",
+      "code": "od.kotpad",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.kotpad"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970358861,
+    "lastmodifiedtime": 1728970358861
+  },
+  {
+    "id": "805169f6-abaa-4442-a117-0a5f0bc5ec76",
+    "tenantid": "od",
+    "uniqueidentifier": "019.od.jeypore",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "019",
+      "code": "od.jeypore",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.jeypore"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970369854,
+    "lastmodifiedtime": 1728970369854
+  },
+  {
+    "id": "41f7d088-9672-4c8e-9c8f-e302566cb6c7",
+    "tenantid": "od",
+    "uniqueidentifier": "018.od.keonjhargarh",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "018",
+      "code": "od.keonjhargarh",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.keonjhargarh"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970381492,
+    "lastmodifiedtime": 1728970381492
+  },
+  {
+    "id": "c202f651-ea5b-41ea-86d1-15869a53e575",
+    "tenantid": "od",
+    "uniqueidentifier": "017.od.phulbani",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "017",
+      "code": "od.phulbani",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.phulbani"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970390748,
+    "lastmodifiedtime": 1728970390748
+  },
+  {
+    "id": "a89ec8c8-c33e-4d02-9dea-7b390932ebff",
+    "tenantid": "od",
+    "uniqueidentifier": "016.od.kesinga",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "016",
+      "code": "od.kesinga",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.kesinga"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970401178,
+    "lastmodifiedtime": 1728970401178
+  },
+  {
+    "id": "5cbb2b19-ae32-4381-84f9-cf0c6c87f55e",
+    "tenantid": "od",
+    "uniqueidentifier": "015.od.jharsuguda",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "015",
+      "code": "od.jharsuguda",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.jharsuguda"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970412542,
+    "lastmodifiedtime": 1728970412542
+  },
+  {
+    "id": "b39079df-d2df-4f89-953c-2414ca27d87c",
+    "tenantid": "od",
+    "uniqueidentifier": "014.od.jajpur",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "014",
+      "code": "od.jajpur",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.jajpur"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970424183,
+    "lastmodifiedtime": 1728970424183
+  },
+  {
+    "id": "af75c0b6-82fb-468b-ac2d-ca2a1113875d",
+    "tenantid": "od",
+    "uniqueidentifier": "014.od.paradeep",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "014",
+      "code": "od.paradeep",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.paradeep"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970436068,
+    "lastmodifiedtime": 1728970436068
+  },
+  {
+    "id": "92339cf7-7723-4724-a9c3-b3e42f866b0e",
+    "tenantid": "od",
+    "uniqueidentifier": "013.od.chatrapur",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "013",
+      "code": "od.chatrapur",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.chatrapur"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970449971,
+    "lastmodifiedtime": 1728970449971
+  },
+  {
+    "id": "ddc4064b-8ab2-470e-beed-8ee6e0c547d2",
+    "tenantid": "od",
+    "uniqueidentifier": "012.od.hinjilicut",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "012",
+      "code": "od.hinjilicut",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.hinjilicut"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970462271,
+    "lastmodifiedtime": 1728970462271
+  },
+  {
+    "id": "6b392b08-0b7c-4152-b29c-fb9888e2bf97",
+    "tenantid": "od",
+    "uniqueidentifier": "011.od.berhampur",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "011",
+      "code": "od.berhampur",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.berhampur"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970472262,
+    "lastmodifiedtime": 1728970472262
+  },
+  {
+    "id": "05dcf955-e1e4-4023-ab7c-af4ee4c4daaa",
+    "tenantid": "od",
+    "uniqueidentifier": "010.od.athagarh",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "010",
+      "code": "od.athagarh",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.athagarh"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970483766,
+    "lastmodifiedtime": 1728970483766
+  },
+  {
+    "id": "172045a8-1e99-49e0-b35f-f82a37c22c9d",
+    "tenantid": "od",
+    "uniqueidentifier": "009.od.cuttack",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "009",
+      "code": "od.cuttack",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.cuttack"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970493999,
+    "lastmodifiedtime": 1728970493999
+  },
+  {
+    "id": "9488bb07-eaf2-4385-ba34-a3dc5018860e",
+    "tenantid": "od",
+    "uniqueidentifier": "008.od.boudhgarh",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "008",
+      "code": "od.boudhgarh",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.boudhgarh"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970506015,
+    "lastmodifiedtime": 1728970506015
+  },
+  {
+    "id": "e708a8c2-39b3-461a-be75-f9b73876cd31",
+    "tenantid": "od",
+    "uniqueidentifier": "007.od.bhadrak",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "007",
+      "code": "od.bhadrak",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.bhadrak"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970515984,
+    "lastmodifiedtime": 1728970515984
+  },
+  {
+    "id": "4e34fb08-9b23-41a7-af3c-19aaaaa87da9",
+    "tenantid": "od",
+    "uniqueidentifier": "006.od.padampur",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "006",
+      "code": "od.padampur",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.padampur"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970525376,
+    "lastmodifiedtime": 1728970525376
+  },
+  {
+    "id": "f7899c3b-e8ed-47d6-b597-65499cfebc6a",
+    "tenantid": "od",
+    "uniqueidentifier": "005.od.balasore",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "005",
+      "code": "od.balasore",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.balasore"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970535581,
+    "lastmodifiedtime": 1728970535581
+  },
+  {
+    "id": "659a2101-5ae9-4174-9229-853a03cec502",
+    "tenantid": "od",
+    "uniqueidentifier": "004.od.balangir",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "004",
+      "code": "od.balangir",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.balangir"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970548194,
+    "lastmodifiedtime": 1728970548194
+  },
+  {
+    "id": "bd07b1b4-bcd6-41d7-97d8-eb767369caf1",
+    "tenantid": "od",
+    "uniqueidentifier": "003.od.testing",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "003",
+      "code": "od.testing",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.testing"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970562688,
+    "lastmodifiedtime": 1728970562688
+  },
+  {
+    "id": "df1c5d6b-c0f3-49e5-a2a3-68fdb85bdbb0",
+    "tenantid": "od",
+    "uniqueidentifier": "002.od.dhenkanal",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "002",
+      "code": "od.dhenkanal",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.dhenkanal"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970574069,
+    "lastmodifiedtime": 1728970574069
+  },
+  {
+    "id": "dfead9be-ea6c-45be-a8e8-dfb4c695d1f6",
+    "tenantid": "od",
+    "uniqueidentifier": "001.od.jatni",
+    "schemacode": "expense.PayerList",
+    "data": {
+      "id": "001",
+      "code": "od.jatni",
+      "type": "ULB",
+      "active": true,
+      "tenantId": "od.jatni"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728970593075,
+    "lastmodifiedtime": 1728970593075
+  }
+]

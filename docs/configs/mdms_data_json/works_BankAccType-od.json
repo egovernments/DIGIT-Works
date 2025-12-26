@@ -1,0 +1,50 @@
+[
+  {
+    "id": "34665e26-4428-4790-ba10-72fa39761818",
+    "tenantid": "od",
+    "uniqueidentifier": "LOAN",
+    "schemacode": "works.BankAccType",
+    "data": {
+      "code": "LOAN",
+      "name": "Loan",
+      "active": false
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981477260,
+    "lastmodifiedtime": 1728981477260
+  },
+  {
+    "id": "59bd31a6-f1e7-40aa-9305-3f396b466f86",
+    "tenantid": "od",
+    "uniqueidentifier": "CURRENT",
+    "schemacode": "works.BankAccType",
+    "data": {
+      "code": "CURRENT",
+      "name": "Current",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981489121,
+    "lastmodifiedtime": 1728981489121
+  },
+  {
+    "id": "580ecde5-e584-4701-9f02-8657e4c45706",
+    "tenantid": "od",
+    "uniqueidentifier": "SAVINGS",
+    "schemacode": "works.BankAccType",
+    "data": {
+      "code": "SAVINGS",
+      "name": "Savings",
+      "active": true
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728981497784,
+    "lastmodifiedtime": 1728981497784
+  }
+]

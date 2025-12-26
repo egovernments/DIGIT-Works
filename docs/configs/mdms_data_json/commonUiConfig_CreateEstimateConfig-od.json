@@ -1,0 +1,83 @@
+[
+  {
+    "id": "ab24f64a-184d-4bfc-993f-6ea898428a1f",
+    "tenantid": "od",
+    "uniqueidentifier": "CommonUiConfigCreateEstimateConfig",
+    "schemacode": "commonUiConfig.CreateEstimateConfig",
+    "data": {
+      "form": [
+        {
+          "body": [
+            {
+              "key": "projectDetails",
+              "type": "component",
+              "component": "ViewProject",
+              "withoutLabel": true
+            }
+          ],
+          "head": "",
+          "navLink": "Project Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "nonSORDetails",
+              "type": "component",
+              "component": "NonSORTable",
+              "withoutLabel": true
+            }
+          ],
+          "head": "WORKS_NON_SOR",
+          "navLink": "Work Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "overheadsDetails",
+              "type": "component",
+              "component": "OverheadsTable",
+              "withoutLabel": true
+            }
+          ],
+          "head": "WORKS_OVERHEADS",
+          "navLink": "Work Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "totalEstimatedAmount",
+              "type": "component",
+              "component": "TotalEstAmount",
+              "withoutLabel": true
+            }
+          ],
+          "head": "",
+          "navLink": "Work Details",
+          "subHead": ""
+        },
+        {
+          "body": [
+            {
+              "key": "labourMaterialAnalysis",
+              "type": "component",
+              "component": "LabourAnalysis",
+              "withoutLabel": true
+            }
+          ],
+          "head": "",
+          "navLink": "Work Details",
+          "subHead": ""
+        }
+      ],
+      "screenName": "CommonUiConfigCreateEstimateConfig"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1728980672885,
+    "lastmodifiedtime": 1728980672885
+  }
+]

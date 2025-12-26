@@ -1,0 +1,18 @@
+[
+  {
+    "id": "e3ac1e9f-3155-4c52-937f-b847ed824ea5",
+    "tenantid": "od",
+    "uniqueidentifier": "15301.MU-UD-CUTTACK",
+    "schemacode": "segment-codes.AdministrativeCodes",
+    "data": {
+      "id": "15301",
+      "code": "MU-UD-CUTTACK",
+      "name": "Ministry of urban, Urban development, Cuttack"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729778485199,
+    "lastmodifiedtime": 1729778485199
+  }
+]

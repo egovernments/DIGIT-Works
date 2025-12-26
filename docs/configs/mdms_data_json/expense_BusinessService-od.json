@@ -1,0 +1,92 @@
+[
+  {
+    "id": "48ac6c90-e454-4139-b443-a594aa946b7d",
+    "tenantid": "od",
+    "uniqueidentifier": "estimate.ESTIMATE",
+    "schemacode": "expense.BusinessService",
+    "data": {
+      "code": "ESTIMATE",
+      "businessService": "estimate"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967692804,
+    "lastmodifiedtime": 1728967692804
+  },
+  {
+    "id": "f5366743-1d37-4feb-9f67-ad4c475a3c3d",
+    "tenantid": "od",
+    "uniqueidentifier": "muster roll.MR",
+    "schemacode": "expense.BusinessService",
+    "data": {
+      "code": "MR",
+      "businessService": "muster roll"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967705729,
+    "lastmodifiedtime": 1728967705729
+  },
+  {
+    "id": "584d5bd4-41a1-4c73-8a67-b5683b00b868",
+    "tenantid": "od",
+    "uniqueidentifier": "contract.CONTRACT",
+    "schemacode": "expense.BusinessService",
+    "data": {
+      "code": "CONTRACT",
+      "businessService": "contract"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967717738,
+    "lastmodifiedtime": 1728967717738
+  },
+  {
+    "id": "4a83e061-3569-4d83-b753-84e8ad7ad048",
+    "tenantid": "od",
+    "uniqueidentifier": "works.supervision.EXPENSE.SUPERVISION",
+    "schemacode": "expense.BusinessService",
+    "data": {
+      "code": "EXPENSE.SUPERVISION",
+      "businessService": "works.supervision"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967727454,
+    "lastmodifiedtime": 1728967727454
+  },
+  {
+    "id": "0489a997-6a64-4587-b108-2d8edba4122c",
+    "tenantid": "od",
+    "uniqueidentifier": "works.purchase.EXPENSE.PURCHASE",
+    "schemacode": "expense.BusinessService",
+    "data": {
+      "code": "EXPENSE.PURCHASE",
+      "businessService": "works.purchase"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967826338,
+    "lastmodifiedtime": 1728967826338
+  },
+  {
+    "id": "fcb7bf40-d7fb-4369-9d68-3faa12468fc2",
+    "tenantid": "od",
+    "uniqueidentifier": "works.wages.EXPENSE.WAGES",
+    "schemacode": "expense.BusinessService",
+    "data": {
+      "code": "EXPENSE.WAGES",
+      "businessService": "works.wages"
+    },
+    "isactive": true,
+    "createdby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "lastmodifiedby": "d7867ef2-d046-4361-9a82-94c35c98416e",
+    "createdtime": 1728967834673,
+    "lastmodifiedtime": 1728967834673
+  }
+]

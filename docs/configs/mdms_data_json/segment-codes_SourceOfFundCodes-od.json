@@ -1,0 +1,34 @@
+[
+  {
+    "id": "a888a2e6-b859-4a54-8e59-a3a8114394c1",
+    "tenantid": "od",
+    "uniqueidentifier": "0402.CSS",
+    "schemacode": "segment-codes.SourceOfFundCodes",
+    "data": {
+      "id": "0402",
+      "code": "CSS",
+      "name": "Centrally Sponsored Schemes"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729778951134,
+    "lastmodifiedtime": 1729778951134
+  },
+  {
+    "id": "31384351-f36d-49bf-a62c-0a517c079f18",
+    "tenantid": "od",
+    "uniqueidentifier": "0403.GSS",
+    "schemacode": "segment-codes.SourceOfFundCodes",
+    "data": {
+      "id": "0403",
+      "code": "GSS",
+      "name": "Government Sponsored Schemes"
+    },
+    "isactive": true,
+    "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+    "createdtime": 1729779033754,
+    "lastmodifiedtime": 1729779033754
+  }
+]
