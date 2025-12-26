@@ -1,0 +1,58 @@
+{
+  "id": "e7649f02-2327-4c6f-9fc7-0667844d8046",
+  "tenantid": "od",
+  "code": "DIGIT-UI.ApiCachingSettings",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for ApiCachingSettings",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "serviceName",
+      "cacheTimeInSecs"
+    ],
+    "x-unique": [
+      "serviceName"
+    ],
+    "properties": {
+      "serviceName": {
+        "type": "string"
+      },
+      "moduleSettings": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "object",
+          "required": [
+            "moduleName",
+            "cacheTimeInSecs"
+          ],
+          "properties": {
+            "moduleName": {
+              "type": "string"
+            },
+            "cacheTimeInSecs": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "cacheTimeInSecs": {
+        "type": "integer"
+      },
+      "debounceTimeInMS": {
+        "type": [
+          "integer",
+          "null"
+        ]
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1728976179214,
+  "lastmodifiedtime": 1728976179214
+}

@@ -1,0 +1,92 @@
+{
+  "id": "8aea5ae9-2021-46bd-8b60-d8ef308cb97b",
+  "tenantid": "od",
+  "code": "DataSecurity.SecurityPolicy",
+  "description": " Data Security Security Policy ",
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for Root",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "model"
+    ],
+    "x-unique": [
+      "model"
+    ],
+    "properties": {
+      "model": {
+        "type": "string"
+      },
+      "attributes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "jsonPath": {
+              "type": "string"
+            },
+            "patternId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "defaultVisibility": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "uniqueIdentifier": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "jsonPath": {
+            "type": "string"
+          }
+        }
+      },
+      "roleBasedDecryptionPolicy": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "roles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "attributeAccessList": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "attribute": {
+                    "type": "string"
+                  },
+                  "firstLevelVisibility": {
+                    "type": "string"
+                  },
+                  "secondLevelVisibility": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729836750666,
+  "lastmodifiedtime": 1729836750666
+}

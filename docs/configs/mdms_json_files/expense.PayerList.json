@@ -1,0 +1,48 @@
+{
+  "id": "760f5448-7944-4315-9e66-882633d93314",
+  "tenantid": "od",
+  "code": "expense.PayerList",
+  "description": "expense.PayerList",
+  "definition": {
+    "type": "object",
+    "title": "expense.PayerList",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "isActive": true,
+    "required": [
+      "id",
+      "code"
+    ],
+    "x-unique": [
+      "id",
+      "code"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "tenantId": {
+        "type": "string"
+      }
+    },
+    "auditDetails": {
+      "createdBy": null,
+      "createdTime": 1697098069220,
+      "lastModifiedBy": null,
+      "lastModifiedTime": 1697098069220
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728968220925,
+  "lastmodifiedtime": 1728968220925
+}

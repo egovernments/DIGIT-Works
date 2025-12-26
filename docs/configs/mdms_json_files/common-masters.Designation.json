@@ -1,0 +1,38 @@
+{
+  "id": "385bf0f4-a3f6-42be-af1a-4a8b9aad440a",
+  "tenantid": "od",
+  "code": "common-masters.Designation",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string",
+        "title": "Code"
+      },
+      "name": {
+        "type": "string",
+        "title": "Name"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string",
+        "title": "Description"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729234359786,
+  "lastmodifiedtime": 1729234359786
+}

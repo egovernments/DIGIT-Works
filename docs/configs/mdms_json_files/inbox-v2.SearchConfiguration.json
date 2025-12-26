@@ -1,0 +1,50 @@
+{
+  "id": "93155662-e39f-40e6-b8e9-4e511a2dac79",
+  "tenantid": "od",
+  "code": "inbox-v2.SearchConfiguration",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "module"
+    ],
+    "x-unique": [
+      "module"
+    ],
+    "properties": {
+      "index": {
+        "type": "string"
+      },
+      "module": {
+        "type": "string"
+      },
+      "sortBy": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "sourceFilterPathList": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "allowedSearchCriteria": {
+        "type": "array",
+        "items": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729162733643,
+  "lastmodifiedtime": 1729162733643
+}

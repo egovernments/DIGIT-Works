@@ -1,0 +1,34 @@
+{
+  "id": "6e653de3-649d-4c85-8519-e475e426f927",
+  "tenantid": "od",
+  "code": "egov-hrms.EmployeeType",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string",
+        "title": "Code"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string",
+        "title": "Description"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729242550722,
+  "lastmodifiedtime": 1729242550722
+}

@@ -1,0 +1,32 @@
+{
+  "id": "b7b5f2b1-9d36-429d-b0bd-c22b42f77364",
+  "tenantid": "od",
+  "code": "commonUiConfig.CBOBillInboxConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "screenName": {
+        "type": "string"
+      },
+      "approvedCode": {
+        "type": "string"
+      },
+      "rejectedCode": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1728977848806,
+  "lastmodifiedtime": 1728977848806
+}

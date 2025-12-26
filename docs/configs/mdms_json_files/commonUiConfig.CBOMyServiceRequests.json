@@ -1,0 +1,36 @@
+{
+  "id": "dafed352-1d39-4f5c-9d07-a147f0a1ca65",
+  "tenantid": "od",
+  "code": "commonUiConfig.CBOMyServiceRequests",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for EditContractRevision",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "screenName": {
+        "type": "string"
+      },
+      "editActionCode": {
+        "type": "string"
+      },
+      "searchCriteria": {
+        "type": "string"
+      },
+      "editTimeExtReqCode": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1728978170202,
+  "lastmodifiedtime": 1728978170202
+}

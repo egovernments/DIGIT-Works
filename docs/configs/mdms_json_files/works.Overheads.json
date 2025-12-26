@@ -1,0 +1,63 @@
+{
+  "id": "ddf9d6c1-4683-4067-8e92-a7471094c5ca",
+  "tenantid": "od",
+  "code": "works.Overheads",
+  "description": "works.Overheads",
+  "definition": {
+    "type": "object",
+    "title": "works.Overheads",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "id",
+      "code"
+    ],
+    "x-unique": [
+      "id",
+      "code"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string"
+      },
+      "value": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string"
+      },
+      "effectiveTo": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "effectiveFrom": {
+        "type": "integer"
+      },
+      "isAutoCalculated": {
+        "type": "boolean"
+      },
+      "isWorkOrderValue": {
+        "type": "boolean"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728900171970,
+  "lastmodifiedtime": 1728900171970
+}

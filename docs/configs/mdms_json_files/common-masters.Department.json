@@ -1,0 +1,37 @@
+{
+  "id": "8bac4f89-89d6-48c6-b965-63a2c62eb8c6",
+  "tenantid": "od",
+  "code": "common-masters.Department",
+  "description": "common-masters.Department",
+  "definition": {
+    "type": "object",
+    "title": "common-masters.Department",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code",
+      "name"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string",
+        "pattern": "^[A-Za-z]+$"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 3
+      },
+      "active": {
+        "type": "boolean"
+      }
+    },
+    "x-ref-schema": []
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728971434553,
+  "lastmodifiedtime": 1728971434553
+}

@@ -1,0 +1,36 @@
+{
+  "id": "d38590ff-3e13-4665-880d-37eb07502435",
+  "tenantid": "od",
+  "code": "works.OICRoles",
+  "description": "works.OICRoles",
+  "definition": {
+    "type": "object",
+    "title": "works.OICRoles",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728898267881,
+  "lastmodifiedtime": 1728898267881
+}

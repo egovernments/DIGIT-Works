@@ -1,0 +1,40 @@
+{
+  "id": "b5835de6-cdcb-40f1-b664-1ac238176f3b",
+  "tenantid": "od",
+  "code": "DataSecurity.EncryptionPolicy",
+  "description": " Data Security Encryption ",
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "key"
+    ],
+    "x-unique": [
+      "key"
+    ],
+    "properties": {
+      "key": {
+        "type": "string"
+      },
+      "attributeList": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "jsonPath": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729776849916,
+  "lastmodifiedtime": 1729776849916
+}

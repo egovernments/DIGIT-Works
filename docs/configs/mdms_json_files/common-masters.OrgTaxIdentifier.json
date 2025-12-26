@@ -1,0 +1,76 @@
+{
+  "id": "12e5f780-cd07-4016-9237-f32d1248626b",
+  "tenantid": "od",
+  "code": "common-masters.OrgTaxIdentifier",
+  "description": "common-masters.OrgTaxIdentifier",
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for Root",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code",
+      "description",
+      "active",
+      "effectiveFrom"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string"
+      },
+      "effectiveTo": {
+        "oneOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "effectiveFrom": {
+        "type": "number"
+      }
+    },
+    "x-ui-schema": {
+      "ui:order": [
+        "code",
+        "description",
+        "active",
+        "effectiveFrom",
+        "effectiveTo",
+        "*"
+      ],
+      "effectiveTo": {
+        "format": [
+          "preprocess",
+          "postprocess"
+        ],
+        "ui:widget": "date",
+        "formatType": "EPOC"
+      },
+      "effectiveFrom": {
+        "format": [
+          "preprocess",
+          "postprocess"
+        ],
+        "ui:widget": "date",
+        "formatType": "EPOC"
+      }
+    },
+    "x-ref-schema": []
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728975302525,
+  "lastmodifiedtime": 1728975302525
+}

@@ -1,0 +1,38 @@
+{
+  "id": "dade5cc1-9e7b-4fdb-8600-872588437abe",
+  "tenantid": "od",
+  "code": "commonMuktaUiConfig.MaskingUIConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "model"
+    ],
+    "x-unique": [
+      "model"
+    ],
+    "properties": {
+      "model": {
+        "type": "string"
+      },
+      "attributes": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "roleBasedDecryptionPolicy": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1732011391257,
+  "lastmodifiedtime": 1732011391257
+}

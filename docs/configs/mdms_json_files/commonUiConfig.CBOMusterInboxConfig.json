@@ -1,0 +1,30 @@
+{
+  "id": "77201b76-5386-4e12-a76d-7c8a5848e0e1",
+  "tenantid": "od",
+  "code": "commonUiConfig.CBOMusterInboxConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for ReSubmitCode",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "screenName": {
+        "type": "string"
+      },
+      "reSubmitCode": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1728978060866,
+  "lastmodifiedtime": 1728978060866
+}

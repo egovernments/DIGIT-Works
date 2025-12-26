@@ -1,0 +1,30 @@
+{
+  "id": "4878a5c3-4c6c-426e-b60a-5e8c050d7f49",
+  "tenantid": "od",
+  "code": "common-masters.IdFormat",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "format",
+      "idname"
+    ],
+    "x-unique": [
+      "format"
+    ],
+    "properties": {
+      "format": {
+        "type": "string"
+      },
+      "idname": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729248361475,
+  "lastmodifiedtime": 1729248361475
+}

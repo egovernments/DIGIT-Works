@@ -1,0 +1,59 @@
+{
+  "id": "46a523d9-ea0a-4d7c-887e-3f70235cd226",
+  "tenantid": "od",
+  "code": "DataSecurity.DecryptionABAC",
+  "description": " Data Security Decryption ",
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "key"
+    ],
+    "x-unique": [
+      "key"
+    ],
+    "properties": {
+      "key": {
+        "type": "string"
+      },
+      "roleAttributeAccessList": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "roleCode"
+          ],
+          "properties": {
+            "roleCode": {
+              "type": "string"
+            },
+            "attributeAccessList": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "attribute": {
+                    "type": "object",
+                    "properties": {
+                      "jsonPath": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "accessType": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729776726740,
+  "lastmodifiedtime": 1729776726740
+}

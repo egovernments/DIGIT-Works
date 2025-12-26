@@ -1,0 +1,92 @@
+{
+  "id": "9de7c445-4cc8-4d9c-a2bd-3fc417fade23",
+  "tenantid": "od",
+  "code": "WORKS-SOR.SOR",
+  "description": "WORKS-SOR.SOR",
+  "definition": {
+    "type": "object",
+    "title": "WORKS_SOR.SOR",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "id",
+      "sorType",
+      "uom",
+      "quantity",
+      "description"
+    ],
+    "x-unique": [
+      "id"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "default": "SOR"
+      },
+      "uom": {
+        "type": "string"
+      },
+      "sorType": {
+        "type": "string"
+      },
+      "quantity": {
+        "type": "number"
+      },
+      "sorSubType": {
+        "type": "string",
+        "default": "NA1"
+      },
+      "sorVariant": {
+        "type": "string",
+        "default": "NA"
+      },
+      "description": {
+        "type": "string"
+      }
+    },
+    "x-ui-schema": {
+      "id": {
+        "format": [
+          "preprocess"
+        ],
+        "formatType": "autogenerate",
+        "ui:readonly": true,
+        "autogenerate": "works.sor.number"
+      },
+      "ui:order": [
+        "sorType",
+        "sorSubType",
+        "sorVariant",
+        "uom",
+        "quantity",
+        "description",
+        "*"
+      ],
+      "description": {
+        "ui:widget": "textarea"
+      }
+    },
+    "x-ref-schema": [
+      {
+        "fieldPath": "sorType",
+        "schemaCode": "WORKS-SOR.Type"
+      },
+      {
+        "fieldPath": "sorSubType",
+        "schemaCode": "WORKS-SOR.SubType"
+      },
+      {
+        "fieldPath": "sorVariant",
+        "schemaCode": "WORKS-SOR.Variant"
+      },
+      {
+        "fieldPath": "uom",
+        "schemaCode": "common-masters.UOM"
+      }
+    ]
+  },
+  "isactive": true,
+  "createdby": "4e504bd1-0d86-4dd4-8770-26323b30c594",
+  "lastmodifiedby": "4e504bd1-0d86-4dd4-8770-26323b30c594",
+  "createdtime": 1703766745353,
+  "lastmodifiedtime": 1703766745353
+}

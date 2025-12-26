@@ -1,0 +1,157 @@
+{
+  "id": "d5b05a3a-c9dd-4210-992c-bb097c77c7d7",
+  "tenantid": "od",
+  "code": "tenant.tenants",
+  "description": "tenant.tenants",
+  "definition": {
+    "type": "object",
+    "title": "tenant.tenants",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code",
+      "name",
+      "description",
+      "type",
+      "city",
+      "contactNumber"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "city": {
+        "type": "object",
+        "required": [
+          "name",
+          "districtCode",
+          "districtTenantCode",
+          "ulbGrade",
+          "longitude",
+          "latitude",
+          "code",
+          "ddrName"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "captcha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ddrName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ulbType": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "ulbGrade": {
+            "type": "string"
+          },
+          "localName": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "regionName": {
+            "type": "string"
+          },
+          "districtCode": {
+            "type": "string"
+          },
+          "districtName": {
+            "type": "string"
+          },
+          "shapeFileLocation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "districtTenantCode": {
+            "type": "string"
+          }
+        }
+      },
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string",
+        "default": "CITY"
+      },
+      "logoId": {
+        "type": "string"
+      },
+      "address": {
+        "type": "string"
+      },
+      "emailId": {
+        "type": "string"
+      },
+      "imageId": {
+        "type": "string"
+      },
+      "pincode": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      },
+      "domainUrl": {
+        "type": "string"
+      },
+      "pdfHeader": {
+        "type": "string"
+      },
+      "twitterUrl": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "facebookUrl": {
+        "type": "string"
+      },
+      "OfficeTimings": {
+        "type": "object",
+        "required": [
+          "Mon - Fri"
+        ],
+        "properties": {
+          "Mon - Fri": {
+            "type": "string",
+            "default": "9.00 AM - 6.00 PM"
+          }
+        }
+      },
+      "contactNumber": {
+        "type": "string"
+      },
+      "pdfContactDetails": {
+        "type": "string"
+      }
+    },
+    "x-ref-schema": []
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728900349771,
+  "lastmodifiedtime": 1728900349771
+}

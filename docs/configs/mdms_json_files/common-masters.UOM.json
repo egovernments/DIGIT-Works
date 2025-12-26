@@ -1,0 +1,43 @@
+{
+  "id": "11469f5a-3ab5-4473-9fa8-b91e15f58029",
+  "tenantid": "od",
+  "code": "common-masters.UOM",
+  "description": "common-masters.UOM",
+  "definition": {
+    "type": "object",
+    "title": "common-masters.UOM",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string",
+        "pattern": "^[A-Za-z]+$"
+      },
+      "baseUom": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string",
+        "pattern": "^[A-Za-z]+$"
+      },
+      "uomCategory": {
+        "type": "string"
+      },
+      "conversionFactor": {
+        "type": "number",
+        "minLength": 2
+      }
+    },
+    "x-ref-schema": []
+  },
+  "isactive": true,
+  "createdby": "4e504bd1-0d86-4dd4-8770-26323b30c594",
+  "lastmodifiedby": "4e504bd1-0d86-4dd4-8770-26323b30c594",
+  "createdtime": 1703766945966,
+  "lastmodifiedtime": 1703766945966
+}

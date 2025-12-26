@@ -1,0 +1,32 @@
+{
+  "id": "1b2e8e6f-c314-4a07-ac1f-2a0108de2031",
+  "tenantid": "od",
+  "code": "expense.BusinessService",
+  "description": "expense.BusinessService",
+  "definition": {
+    "type": "object",
+    "title": "expense.BusinessService",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "businessService",
+      "code"
+    ],
+    "x-unique": [
+      "businessService",
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "businessService": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728967533061,
+  "lastmodifiedtime": 1728967533061
+}

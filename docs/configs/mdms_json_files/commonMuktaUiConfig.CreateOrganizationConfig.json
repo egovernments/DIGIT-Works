@@ -1,0 +1,99 @@
+{
+  "id": "7cdfe3b1-2e80-40c9-86ab-b2f13beffaa2",
+  "tenantid": "od",
+  "code": "commonMuktaUiConfig.CreateOrganizationConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "form": {
+        "type": "array",
+        "items": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "body": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "disable": {
+                    "type": "boolean"
+                  },
+                  "populators": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "preProcess": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "isMandatory": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "head": {
+              "type": "string"
+            },
+            "navLink": {
+              "type": "string"
+            },
+            "subHead": {
+              "type": "string"
+            },
+            "sectionFormCategory": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "metaData": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "screenName": {
+        "type": "string"
+      },
+      "defaultValues": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729160126953,
+  "lastmodifiedtime": 1729160126953
+}

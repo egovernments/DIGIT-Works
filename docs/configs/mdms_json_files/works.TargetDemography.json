@@ -1,0 +1,46 @@
+{
+  "id": "7db0cf61-a27f-4454-826e-fb749a1eb80f",
+  "tenantid": "od",
+  "code": "works.TargetDemography",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string"
+      },
+      "effectiveTo": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "description": "Timestamp in milliseconds or null if not applicable"
+      },
+      "effectiveFrom": {
+        "type": "integer",
+        "description": "Timestamp in milliseconds"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1728980126560,
+  "lastmodifiedtime": 1728980126560
+}

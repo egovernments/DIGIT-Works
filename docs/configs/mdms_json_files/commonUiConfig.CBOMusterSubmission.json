@@ -1,0 +1,33 @@
+{
+  "id": "9c52446d-5abb-4e80-b446-f83a8743e9dc",
+  "tenantid": "od",
+  "code": "commonUiConfig.CBOMusterSubmission",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for CodeValueActive",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "value": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1728978112620,
+  "lastmodifiedtime": 1728978112620
+}

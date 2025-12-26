@@ -1,0 +1,58 @@
+{
+  "id": "6e29b728-8a1e-40ea-845b-ff2a3d87f7ea",
+  "tenantid": "od",
+  "code": "works.CBORoles",
+  "description": "works.CBORoles",
+  "definition": {
+    "type": "object",
+    "title": "works.CBORoles",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "amount": {
+        "type": "number"
+      },
+      "disable": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string"
+      },
+      "effectiveTo": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "format": "epoch"
+          },
+          {
+            "type": "string",
+            "pattern": "^$"
+          }
+        ]
+      },
+      "effectiveFrom": {
+        "type": "integer",
+        "format": "epoch"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728897889083,
+  "lastmodifiedtime": 1728897889083
+}

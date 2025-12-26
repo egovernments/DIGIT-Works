@@ -1,0 +1,43 @@
+{
+  "id": "073877f3-f413-461f-a53f-2c06e684d102",
+  "tenantid": "od",
+  "code": "common-masters.MusterRoll",
+  "description": "common-masters.MusterRoll",
+  "definition": {
+    "type": "object",
+    "title": "common-masters.MusterRoll",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code",
+      "value"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "value": {
+        "type": "string"
+      }
+    },
+    "x-ui-schema": {
+      "ui:order": [
+        "code",
+        "value"
+      ]
+    },
+    "auditDetails": {
+      "createdBy": null,
+      "createdTime": 1697098069220,
+      "lastModifiedBy": null,
+      "lastModifiedTime": 1697098069220
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728970695475,
+  "lastmodifiedtime": 1728970695475
+}

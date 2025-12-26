@@ -1,0 +1,35 @@
+{
+  "id": "438d1a1c-d3c8-464c-acc7-d91a36846034",
+  "tenantid": "od",
+  "code": "muktaNotification.NotificationTemplateAndActionMapping",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "templateId"
+    ],
+    "x-unique": [
+      "templateId"
+    ],
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "locale": {
+        "type": "string"
+      },
+      "templateId": {
+        "type": "string"
+      },
+      "templateCode": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729660227098,
+  "lastmodifiedtime": 1729660227098
+}

@@ -1,0 +1,59 @@
+{
+  "id": "b2d040fa-60da-4b32-a10f-bb77bfc6741e",
+  "tenantid": "od",
+  "code": "exchange.ExchangeServers",
+  "description": "exchange.ExchangeServers",
+  "definition": {
+    "type": "object",
+    "title": "exchange.ExchangeServers",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "isActive": true,
+    "required": [
+      "id",
+      "code",
+      "hostUrl",
+      "contextPath",
+      "active"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "hostUrl": {
+        "type": "string"
+      },
+      "contextPath": {
+        "type": "string"
+      }
+    },
+    "x-ui-schema": {
+      "ui:order": [
+        "id",
+        "code",
+        "hostUrl",
+        "contextPath",
+        "active"
+      ]
+    },
+    "auditDetails": {
+      "createdBy": null,
+      "createdTime": 1697098069220,
+      "lastModifiedBy": null,
+      "lastModifiedTime": 1697098069220
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728975962786,
+  "lastmodifiedtime": 1728975962786
+}

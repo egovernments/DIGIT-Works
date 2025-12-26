@@ -1,0 +1,37 @@
+{
+  "id": "51c5f679-ecca-4e52-9b43-656f5fc02b9b",
+  "tenantid": "od",
+  "code": "segment-codes.EconomicSegmentCodes",
+  "description": "segment-codes.EconomicSegmentCodes",
+  "definition": {
+    "type": "object",
+    "title": "segment-codes.EconomicSegmentCodes",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "isActive": true,
+    "required": [
+      "id",
+      "code",
+      "name"
+    ],
+    "x-unique": [
+      "id",
+      "code"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729776230959,
+  "lastmodifiedtime": 1729776230959
+}

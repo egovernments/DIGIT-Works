@@ -1,0 +1,81 @@
+{
+  "id": "64f06ed8-9615-45b7-8e12-7d1140b28c78",
+  "tenantid": "od",
+  "code": "common-masters.OrgType",
+  "description": "common-masters.OrgType",
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for Root",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code",
+      "description",
+      "parent",
+      "active",
+      "effectiveFrom"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "parent": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "effectiveTo": {
+        "oneOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "effectiveFrom": {
+        "type": "number"
+      }
+    },
+    "x-ui-schema": {
+      "ui:order": [
+        "code",
+        "description",
+        "parent",
+        "active",
+        "effectiveFrom",
+        "effectiveTo",
+        "*"
+      ],
+      "effectiveTo": {
+        "format": [
+          "preprocess",
+          "postprocess"
+        ],
+        "ui:widget": "date",
+        "formatType": "EPOC"
+      },
+      "effectiveFrom": {
+        "format": [
+          "preprocess",
+          "postprocess"
+        ],
+        "ui:widget": "date",
+        "formatType": "EPOC"
+      }
+    },
+    "x-ref-schema": []
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728972178738,
+  "lastmodifiedtime": 1728972178738
+}

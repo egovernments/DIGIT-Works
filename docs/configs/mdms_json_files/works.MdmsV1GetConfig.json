@@ -1,0 +1,31 @@
+{
+  "id": "1aeda792-2132-40a0-8481-27d969bd7567",
+  "tenantid": "od",
+  "code": "works.MdmsV1GetConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "path"
+    ],
+    "x-unique": [
+      "path"
+    ],
+    "properties": {
+      "path": {
+        "type": "string",
+        "title": "Path"
+      },
+      "jsonPath": {
+        "type": "string",
+        "title": "JSON Path"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729685094631,
+  "lastmodifiedtime": 1729685094631
+}

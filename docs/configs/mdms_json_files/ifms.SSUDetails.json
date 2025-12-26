@@ -1,0 +1,70 @@
+{
+  "id": "ad3ece89-fc1d-40d8-bd4f-d05bce1b55bd",
+  "tenantid": "od",
+  "code": "ifms.SSUDetails",
+  "description": "ifms.SSUDetails",
+  "definition": {
+    "type": "object",
+    "title": "ifms.SSUDetails",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "isActive": true,
+    "required": [
+      "id",
+      "ssuCode",
+      "ddoCode",
+      "granteeAgCode",
+      "granteeName",
+      "ssuId",
+      "ssuOffice",
+      "effectiveFrom",
+      "effectiveTo",
+      "active"
+    ],
+    "x-unique": [
+      "ssuCode"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "ssuId": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "ddoCode": {
+        "type": "string"
+      },
+      "ssuCode": {
+        "type": "string"
+      },
+      "ssuOffice": {
+        "type": "string"
+      },
+      "effectiveTo": {
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "granteeName": {
+        "type": "string"
+      },
+      "programCode": {
+        "type": "string"
+      },
+      "effectiveFrom": {
+        "type": "integer"
+      },
+      "granteeAgCode": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729775649058,
+  "lastmodifiedtime": 1729775649058
+}

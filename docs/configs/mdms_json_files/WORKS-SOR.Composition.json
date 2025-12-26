@@ -1,0 +1,150 @@
+{
+  "id": "e8f27a31-eb6f-4d31-b8d6-cec3497f4054",
+  "tenantid": "od",
+  "code": "WORKS-SOR.Composition",
+  "description": "WORKS-SOR.Composition",
+  "definition": {
+    "type": "object",
+    "title": "WORKS-SOR.Composition",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "compositionId",
+      "sorId",
+      "sorType",
+      "type",
+      "quantity",
+      "active",
+      "effectiveFrom",
+      "basicSorDetails"
+    ],
+    "x-unique": [
+      "compositionId"
+    ],
+    "properties": {
+      "sorId": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "quantity": {
+        "type": "number"
+      },
+      "effectiveTo": {
+        "type": "string"
+      },
+      "compositionId": {
+        "type": "string"
+      },
+      "effectiveFrom": {
+        "type": "string"
+      },
+      "basicSorDetails": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "sorId",
+            "quantity",
+            "perUnitQty"
+          ],
+          "properties": {
+            "sorId": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "number"
+            },
+            "perUnitQty": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "additionalCharges": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "description",
+            "applicableOn",
+            "calculationType",
+            "figure"
+          ],
+          "properties": {
+            "figure": {
+              "type": "number"
+            },
+            "description": {
+              "type": "string"
+            },
+            "applicableOn": {
+              "type": "string"
+            },
+            "calculationType": {
+              "enum": [
+                "percentage",
+                "fixed"
+              ],
+              "type": "string",
+              "default": "fixed"
+            }
+          }
+        }
+      }
+    },
+    "x-ui-schema": {
+      "ui:order": [
+        "compositionId",
+        "sorId",
+        "sorType",
+        "type",
+        "quantity",
+        "active",
+        "effectiveFrom",
+        "effectiveTo",
+        "basicSorDetails",
+        "additionalCharges",
+        "*"
+      ],
+      "effectiveTo": {
+        "format": [
+          "preprocess",
+          "postprocess"
+        ],
+        "ui:widget": "date",
+        "formatType": "EPOC"
+      },
+      "effectiveFrom": {
+        "format": [
+          "preprocess",
+          "postprocess"
+        ],
+        "ui:widget": "date",
+        "formatType": "EPOC"
+      },
+      "ui-autogenerate": {
+        "id": "works.composition.number"
+      }
+    },
+    "x-ref-schema": [
+      {
+        "fieldPath": "sorType",
+        "schemaCode": "WORKS-SOR.Type"
+      },
+      {
+        "fieldPath": "sorId",
+        "schemaCode": "WORKS-SOR.SOR"
+      },
+      {
+        "fieldPath": "basicSorDetails.*.sorId",
+        "schemaCode": "WORKS-SOR.SOR"
+      }
+    ]
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1721384413703,
+  "lastmodifiedtime": 1721384413703
+}

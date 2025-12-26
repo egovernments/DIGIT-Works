@@ -1,0 +1,41 @@
+{
+  "id": "c9b4c239-ec96-4ea8-a7c1-a07ef716f3ca",
+  "tenantid": "od",
+  "code": "commonUiConfig.CBOHomeScreenConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for CBOHomeScreenConfig",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "order",
+      "key"
+    ],
+    "x-unique": [
+      "order",
+      "key"
+    ],
+    "properties": {
+      "key": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "order": {
+        "type": "integer"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "displayName": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1728977927848,
+  "lastmodifiedtime": 1728977927848
+}

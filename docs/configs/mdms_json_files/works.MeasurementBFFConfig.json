@@ -1,0 +1,31 @@
+{
+  "id": "178be987-b6cc-481e-bc8a-a986906f93c0",
+  "tenantid": "od",
+  "code": "works.MeasurementBFFConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "path"
+    ],
+    "x-unique": [
+      "path"
+    ],
+    "properties": {
+      "path": {
+        "type": "string",
+        "title": "Path"
+      },
+      "jsonPath": {
+        "type": "string",
+        "title": "JSON Path"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729249913737,
+  "lastmodifiedtime": 1729249913737
+}

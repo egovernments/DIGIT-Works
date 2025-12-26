@@ -1,0 +1,36 @@
+{
+  "id": "e017116b-1d93-4ece-bff3-ed6ad9fe7755",
+  "tenantid": "od",
+  "code": "tenant.footer",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "service": {
+        "type": "string"
+      },
+      "termsAndConditions": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        },
+        "title": "Terms and Conditions"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1730115883515,
+  "lastmodifiedtime": 1730115883515
+}

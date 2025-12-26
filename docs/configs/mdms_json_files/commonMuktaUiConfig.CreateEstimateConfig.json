@@ -1,0 +1,99 @@
+{
+  "id": "c5920ec0-56d9-4aa6-b932-bb073b83f5fa",
+  "tenantid": "od",
+  "code": "commonMuktaUiConfig.CreateEstimateConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "form": {
+        "type": "array",
+        "items": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "body": {
+              "type": "array",
+              "items": {
+                "name": {
+                  "type": "string"
+                },
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "error": {
+                  "type": "string"
+                },
+                "module": {
+                  "type": "string"
+                },
+                "populators": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "component": {
+                    "type": "string"
+                  },
+                  "customProps": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "withoutLabel": {
+                    "type": "boolean"
+                  }
+                },
+                "customClass": {
+                  "type": "string"
+                },
+                "localePrefix": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "head": {
+              "type": "string"
+            },
+            "navLink": {
+              "type": "string"
+            },
+            "subHead": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "screenName": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729159896401,
+  "lastmodifiedtime": 1729159896401
+}

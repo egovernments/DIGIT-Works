@@ -1,0 +1,76 @@
+{
+  "id": "c4242b81-c0d5-4177-b1c7-c5fec1db1860",
+  "tenantid": "od",
+  "code": "common-masters.StateInfo",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "name",
+      "code"
+    ],
+    "x-unique": [
+      "name",
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "logoUrl": {
+        "type": "string"
+      },
+      "bannerUrl": {
+        "type": "string"
+      },
+      "languages": {
+        "type": "array",
+        "items": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "qrCodeURL": {
+        "type": "string"
+      },
+      "statelogo": {
+        "type": "string"
+      },
+      "defaultUrl": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "logoUrlWhite": {
+        "type": "string"
+      },
+      "enableWhatsApp": {
+        "type": "boolean"
+      },
+      "hasLocalisation": {
+        "type": "boolean"
+      },
+      "localizationModules": {
+        "type": "array",
+        "items": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729158581528,
+  "lastmodifiedtime": 1729158581528
+}

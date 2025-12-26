@@ -1,0 +1,43 @@
+{
+  "id": "627c51a6-2ad8-4ca7-a602-735310d3d33d",
+  "tenantid": "od",
+  "code": "segment-codes.SourceOfFundCodes",
+  "description": "segment-codes.SourceOfFundCodes",
+  "definition": {
+    "type": "object",
+    "title": "segment-codes.SourceOfFundCodes",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "isActive": true,
+    "required": [
+      "id",
+      "code",
+      "name"
+    ],
+    "x-unique": [
+      "id",
+      "code"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "auditDetails": {
+      "createdBy": null,
+      "createdTime": 1697098069220,
+      "lastModifiedBy": null,
+      "lastModifiedTime": 1697098069220
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729776404365,
+  "lastmodifiedtime": 1729776404365
+}

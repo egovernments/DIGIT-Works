@@ -1,0 +1,146 @@
+{
+  "id": "38c1bb05-1ca5-43d4-b804-b5aae01a963c",
+  "tenantid": "od",
+  "code": "commonMuktaUiConfig.WorkflowPopupConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "CONTRACT": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "REJECT": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "APPROVE": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "default": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "SEND_BACK": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "VERIFY_AND_FORWARD": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "SEND_BACK_TO_ORIGINATOR": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
+      },
+      "ESTIMATE": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "REJECT": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "APPROVE": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "default": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "SENDBACK": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "SENDBACKTOORIGINATOR": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
+      },
+      "screenName": {
+        "type": "string"
+      },
+      "MUSTER_ROLL": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "REJECT": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "APPROVE": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "default": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "SENDBACK": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "SENDBACKTOCBO": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729162241880,
+  "lastmodifiedtime": 1729162241880
+}

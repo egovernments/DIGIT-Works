@@ -1,0 +1,47 @@
+{
+  "id": "005c9830-5da2-49f3-9908-4397a626c7a5",
+  "tenantid": "od",
+  "code": "works.MeasurementCriteria",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "active": {
+        "type": "boolean"
+      },
+      "period": {
+        "type": "integer"
+      },
+      "reference": {
+        "type": "string"
+      },
+      "screenName": {
+        "type": "string"
+      },
+      "contractStatus": {
+        "type": "string"
+      },
+      "measurementBookStartDate": {
+        "type": "integer"
+      },
+      "measurementWorkflowStatus": {
+        "type": "string"
+      },
+      "enableMeasurementAfterContractEndDate": {
+        "type": "boolean"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729249595818,
+  "lastmodifiedtime": 1729249595818
+}

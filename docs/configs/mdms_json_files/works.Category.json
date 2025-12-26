@@ -1,0 +1,43 @@
+{
+  "id": "682c83d8-72c8-42ba-a221-bdffed55fa40",
+  "tenantid": "od",
+  "code": "works.Category",
+  "description": "works.Category",
+  "definition": {
+    "type": "object",
+    "title": "works.Category",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "name",
+      "code",
+      "active"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      }
+    },
+    "x-ui-schema": {
+      "ui:order": [
+        "code",
+        "name",
+        "active",
+        "*"
+      ]
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728971753487,
+  "lastmodifiedtime": 1728971753487
+}

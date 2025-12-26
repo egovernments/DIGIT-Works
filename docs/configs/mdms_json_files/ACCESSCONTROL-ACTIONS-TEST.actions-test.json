@@ -1,0 +1,60 @@
+{
+  "id": "6108de91-0b36-49f4-8f85-23cc43a482dd",
+  "tenantid": "od",
+  "code": "ACCESSCONTROL-ACTIONS-TEST.actions-test",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "id"
+    ],
+    "x-unique": [
+      "id"
+    ],
+    "properties": {
+      "id": {
+        "type": "number"
+      },
+      "url": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "path": {
+        "type": "string"
+      },
+      "enabled": {
+        "type": "boolean"
+      },
+      "leftIcon": {
+        "type": "string",
+        "default": "dynamic:ContractIcon"
+      },
+      "displayName": {
+        "type": "string"
+      },
+      "orderNumber": {
+        "type": "number"
+      },
+      "serviceCode": {
+        "type": "string"
+      },
+      "parentModule": {
+        "type": "string"
+      },
+      "navigationURL": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1728979160196,
+  "lastmodifiedtime": 1728979160196
+}

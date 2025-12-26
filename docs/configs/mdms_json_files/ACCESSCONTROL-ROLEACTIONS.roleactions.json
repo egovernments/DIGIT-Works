@@ -1,0 +1,47 @@
+{
+  "id": "444a1671-801b-4887-bdf6-ff16e6a17f92",
+  "tenantid": "od",
+  "code": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "actionid",
+      "rolecode"
+    ],
+    "x-unique": [
+      "actionid",
+      "rolecode"
+    ],
+    "properties": {
+      "actionid": {
+        "type": "number"
+      },
+      "rolecode": {
+        "type": "string"
+      },
+      "tenantid": {
+        "type": "string"
+      },
+      "actioncode": {
+        "type": "string"
+      }
+    },
+    "x-ref-schema": [
+      {
+        "fieldPath": "actionid",
+        "schemaCode": "ACCESSCONTROL-ACTIONS-TEST.actions-test"
+      },
+      {
+        "fieldPath": "rolecode",
+        "schemaCode": "ACCESSCONTROL-ROLES.roles"
+      }
+    ]
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1728980094541,
+  "lastmodifiedtime": 1728980094541
+}

@@ -1,0 +1,36 @@
+{
+  "id": "dc69fe72-d545-4d3c-8a9e-bdbdbb2eca83",
+  "tenantid": "od",
+  "code": "common-masters.WageSeekerSkills",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for WageSeekerSkills",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "id",
+      "code",
+      "active"
+    ],
+    "x-unique": [
+      "id",
+      "code"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1728976107409,
+  "lastmodifiedtime": 1728976107409
+}

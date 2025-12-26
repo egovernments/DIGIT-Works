@@ -1,0 +1,311 @@
+{
+  "id": "489c6fc7-12ce-49d0-aa2f-ae8510d97853",
+  "tenantid": "od",
+  "code": "commonMuktaUiConfig.EstimateInboxConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "type": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "sections": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "links": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "show": {
+                "type": "boolean"
+              },
+              "children": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "uiConfig": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          },
+          "filter": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "show": {
+                "type": "boolean"
+              },
+              "label": {
+                "type": "string"
+              },
+              "uiConfig": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        },
+                        "disable": {
+                          "type": "boolean"
+                        },
+                        "populators": {
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        },
+                        "isMandatory": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  },
+                  "headerStyle": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "minReqFields": {
+                    "type": "integer"
+                  },
+                  "primaryLabel": {
+                    "type": "string"
+                  },
+                  "defaultValues": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "secondaryLabel": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "search": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "show": {
+                "type": "boolean"
+              },
+              "label": {
+                "type": "string"
+              },
+              "children": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "uiConfig": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        },
+                        "disable": {
+                          "type": "boolean"
+                        },
+                        "populators": {
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        },
+                        "preProcess": {
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        },
+                        "isMandatory": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  },
+                  "headerStyle": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "minReqFields": {
+                    "type": "integer"
+                  },
+                  "primaryLabel": {
+                    "type": "string"
+                  },
+                  "defaultValues": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "secondaryLabel": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "searchResult": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
+      },
+      "apiDetails": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "masterName": {
+            "type": "string"
+          },
+          "moduleName": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "inbox": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "moduleSearchCriteria": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "processSearchCriteria": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {
+                      "moduleName": {
+                        "type": "string"
+                      },
+                      "businessService": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "requestParam": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "tableFormJsonPath": {
+            "type": "string"
+          },
+          "filterFormJsonPath": {
+            "type": "string"
+          },
+          "searchFormJsonPath": {
+            "type": "string"
+          },
+          "minParametersForFilterForm": {
+            "type": "integer"
+          },
+          "minParametersForSearchForm": {
+            "type": "integer"
+          }
+        }
+      },
+      "screenName": {
+        "type": "string"
+      },
+      "additionalSections": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729160728440,
+  "lastmodifiedtime": 1729160728440
+}

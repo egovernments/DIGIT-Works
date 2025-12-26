@@ -1,0 +1,51 @@
+{
+  "id": "abe71553-a17f-4fe9-a33e-9783b6834fff",
+  "tenantid": "od",
+  "code": "ifms.SchemeDetails",
+  "description": "ifms.SchemeDetails",
+  "definition": {
+    "type": "object",
+    "title": "ifms.SchemeDetails",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "isActive": true,
+    "required": [
+      "id",
+      "schemeCode",
+      "schemeName",
+      "effectiveFrom",
+      "effectiveTo",
+      "active"
+    ],
+    "x-unique": [
+      "schemeCode"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "schemeCode": {
+        "type": "string"
+      },
+      "schemeName": {
+        "type": "string"
+      },
+      "effectiveTo": {
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "effectiveFrom": {
+        "type": "integer"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729776037798,
+  "lastmodifiedtime": 1729776037798
+}

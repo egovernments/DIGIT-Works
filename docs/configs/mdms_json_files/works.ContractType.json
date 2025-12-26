@@ -1,0 +1,43 @@
+{
+  "id": "d940f89c-ec4f-4bff-a268-440ef1d50967",
+  "tenantid": "od",
+  "code": "works.ContractType",
+  "description": "works.ContractType",
+  "definition": {
+    "type": "object",
+    "title": "works.ContractType",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code",
+      "name",
+      "description",
+      "createRegister",
+      "active"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string"
+      },
+      "createRegister": {
+        "type": "boolean"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728898449761,
+  "lastmodifiedtime": 1728898449761
+}

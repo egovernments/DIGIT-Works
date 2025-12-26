@@ -1,0 +1,60 @@
+{
+  "id": "7e708266-6976-46ae-9316-20777653b04c",
+  "tenantid": "od",
+  "code": "ifms.HeadOfAccounts",
+  "description": "ifms.HeadOfAccounts",
+  "definition": {
+    "type": "object",
+    "title": "ifms.HeadOfAccounts",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "isActive": true,
+    "required": [
+      "id",
+      "code",
+      "name",
+      "sequence",
+      "schemeCode",
+      "active",
+      "effectiveFrom",
+      "effectiveTo"
+    ],
+    "x-unique": [
+      "id",
+      "code"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "sequence": {
+        "type": "integer"
+      },
+      "schemeCode": {
+        "type": "integer"
+      },
+      "effectiveTo": {
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "effectiveFrom": {
+        "type": "integer"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729775924278,
+  "lastmodifiedtime": 1729775924278
+}

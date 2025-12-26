@@ -1,0 +1,67 @@
+{
+  "id": "d1c9264f-37e7-4ef1-b214-663769c2d2aa",
+  "tenantid": "od",
+  "code": "expense.ApplicableCharges",
+  "description": "expense.ApplicableCharges",
+  "definition": {
+    "type": "object",
+    "title": "expense.ApplicableCharges",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "id",
+      "code"
+    ],
+    "x-unique": [
+      "id",
+      "code"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "value": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "service": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "effectiveTo": {
+        "oneOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "effectiveFrom": {
+        "type": "integer"
+      },
+      "calculationType": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728901035957,
+  "lastmodifiedtime": 1728901035957
+}

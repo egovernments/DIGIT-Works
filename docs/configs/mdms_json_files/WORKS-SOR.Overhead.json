@@ -1,0 +1,47 @@
+{
+  "id": "6d35b635-341f-479a-86b4-33971b7d1383",
+  "tenantid": "od",
+  "code": "WORKS-SOR.Overhead",
+  "description": "WORKS-SOR.Overhead",
+  "definition": {
+    "type": "object",
+    "title": "WORKS-SOR.Overhead",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code",
+      "id",
+      "description"
+    ],
+    "x-unique": [
+      "code",
+      "id"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "type": {
+        "enum": [
+          "percentage",
+          "lumpsum"
+        ],
+        "type": "string",
+        "default": "lumpsum"
+      },
+      "value": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "4e504bd1-0d86-4dd4-8770-26323b30c594",
+  "lastmodifiedby": "4e504bd1-0d86-4dd4-8770-26323b30c594",
+  "createdtime": 1703766810480,
+  "lastmodifiedtime": 1703766810480
+}

@@ -1,0 +1,46 @@
+{
+  "id": "27209b84-4c36-4aa1-9c84-0776a03a8461",
+  "tenantid": "od",
+  "code": "ifms.JitMockResponse",
+  "description": "Master config to manage Mock API's",
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "serviceId",
+      "referenceId"
+    ],
+    "x-unique": [
+      "serviceId",
+      "referenceId"
+    ],
+    "properties": {
+      "data": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "errorMsg": {
+        "type": "string"
+      },
+      "errorMsgs": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "serviceId": {
+        "type": "string"
+      },
+      "referenceId": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729848748153,
+  "lastmodifiedtime": 1729848748153
+}

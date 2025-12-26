@@ -1,0 +1,90 @@
+{
+  "id": "0eca8c57-062b-46a2-8ce2-640a120d23d4",
+  "tenantid": "od",
+  "code": "SEARCH.SearchQueryConfiguration",
+  "description": "SEARCH.SearchQueryConfiguration",
+  "definition": {
+    "type": "object",
+    "title": "SEARCH.SearchQueryConfiguration",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "module",
+      "index",
+      "allowedSearchCriteria",
+      "sortBy",
+      "sourceFilterPathList"
+    ],
+    "x-unique": [
+      "module",
+      "index"
+    ],
+    "properties": {
+      "index": {
+        "type": "string"
+      },
+      "module": {
+        "type": "string"
+      },
+      "sortBy": {
+        "type": "object",
+        "required": [
+          "path",
+          "defaultOrder"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "defaultOrder": {
+            "type": "string"
+          }
+        }
+      },
+      "sourceFilterPathList": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "allowedSearchCriteria": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "name",
+            "path",
+            "isMandatory"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            },
+            "operator": {
+              "type": "string"
+            },
+            "isMandatory": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "x-ui-schema": {
+      "ui:order": [
+        "module",
+        "index",
+        "allowedSearchCriteria",
+        "sortBy",
+        "sourceFilterPathList"
+      ]
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1728975561770,
+  "lastmodifiedtime": 1728975561770
+}

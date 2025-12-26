@@ -1,0 +1,56 @@
+{
+  "id": "5eb910bb-55a5-412c-8dfe-5d0983570782",
+  "tenantid": "od",
+  "code": "tenant.citymodule",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "module"
+    ],
+    "x-unique": [
+      "module"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "order": {
+        "type": "integer"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "module": {
+        "type": "string"
+      },
+      "tenants": {
+        "type": "array",
+        "items": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "bannerImage": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "additionalComponent": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729157424491,
+  "lastmodifiedtime": 1729157424491
+}

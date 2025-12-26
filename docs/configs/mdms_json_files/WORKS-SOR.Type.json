@@ -1,0 +1,34 @@
+{
+  "id": "d55f64ac-1bfb-44dc-968d-3369660e76d1",
+  "tenantid": "od",
+  "code": "WORKS-SOR.Type",
+  "description": "WORKS-SOR.Type",
+  "definition": {
+    "type": "object",
+    "title": "WORKS-SOR.Type",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code",
+      "active"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "4e504bd1-0d86-4dd4-8770-26323b30c594",
+  "lastmodifiedby": "4e504bd1-0d86-4dd4-8770-26323b30c594",
+  "createdtime": 1703744921398,
+  "lastmodifiedtime": 1703744921398
+}

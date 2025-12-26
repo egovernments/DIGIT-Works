@@ -1,0 +1,271 @@
+{
+  "id": "f0cd7df1-d098-46ef-8684-fd00ccbe5a31",
+  "tenantid": "od",
+  "code": "commonMuktaUiConfig.SearchWMSIndividualConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "type": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "sections": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "search": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "show": {
+                "type": "boolean"
+              },
+              "label": {
+                "type": "string"
+              },
+              "children": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "uiConfig": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        },
+                        "disable": {
+                          "type": "boolean"
+                        },
+                        "populators": {
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        },
+                        "preProcess": {
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        },
+                        "isMandatory": {
+                          "type": "boolean"
+                        },
+                        "additionalValidation": {
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "headerStyle": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "minReqFields": {
+                    "type": "integer"
+                  },
+                  "primaryLabel": {
+                    "type": "string"
+                  },
+                  "defaultValues": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "formClassName": {
+                    "type": "string"
+                  },
+                  "secondaryLabel": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "searchResult": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "show": {
+                "type": "boolean"
+              },
+              "label": {
+                "type": "string"
+              },
+              "children": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "uiConfig": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "jsonPath": {
+                          "type": "string"
+                        },
+                        "headerAlign": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "additionalCustomization": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  },
+                  "resultsJsonPath": {
+                    "type": "string"
+                  },
+                  "enableColumnSort": {
+                    "type": "boolean"
+                  },
+                  "enableGlobalSearch": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "actionLink": {
+        "type": "string"
+      },
+      "actionRole": {
+        "type": "string"
+      },
+      "apiDetails": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "masterName": {
+            "type": "string"
+          },
+          "moduleName": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "inbox": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "moduleSearchCriteria": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "requestParam": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "tableFormJsonPath": {
+            "type": "string"
+          },
+          "filterFormJsonPath": {
+            "type": "string"
+          },
+          "searchFormJsonPath": {
+            "type": "string"
+          },
+          "minParametersForSearchForm": {
+            "type": "integer"
+          }
+        }
+      },
+      "screenName": {
+        "type": "string"
+      },
+      "actionLabel": {
+        "type": "string"
+      },
+      "additionalSections": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729162134251,
+  "lastmodifiedtime": 1729162134251
+}

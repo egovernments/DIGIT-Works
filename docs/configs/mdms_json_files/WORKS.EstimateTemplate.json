@@ -1,0 +1,106 @@
+{
+  "id": "bd3c054c-8a9f-4e44-b84a-94b13ea80adc",
+  "tenantid": "od",
+  "code": "WORKS.EstimateTemplate",
+  "description": "WORKS.EstimateTemplate",
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for Estimate Template",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "templateId",
+      "templateName",
+      "projectType",
+      "sorLineItems"
+    ],
+    "x-unique": [
+      "templateId"
+    ],
+    "properties": {
+      "templateId": {
+        "type": "string",
+        "default": "TMP"
+      },
+      "projectType": {
+        "type": "string"
+      },
+      "sorLineItems": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "sorCode"
+          ],
+          "properties": {
+            "sorCode": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "templateName": {
+        "type": "string"
+      },
+      "nonSorLineItems": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "description"
+          ],
+          "properties": {
+            "description": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "templateDescription": {
+        "type": "string"
+      }
+    },
+    "x-ui-schema": {
+      "ui:order": [
+        "templateId",
+        "templateName",
+        "templateDescription",
+        "projectType",
+        "sorLineItems",
+        "nonSorLineItems",
+        "*"
+      ],
+      "templateId": {
+        "format": [
+          "preprocess"
+        ],
+        "formatType": "autogenerate",
+        "ui:readonly": true,
+        "autogenerate": "works.template.number"
+      },
+      "nonSorLineItems": {
+        "items": {
+          "description": {
+            "ui:widget": "textarea"
+          }
+        }
+      }
+    },
+    "x-ref-schema": [
+      {
+        "fieldPath": "sorLineItems.*.sorCode",
+        "schemaCode": "WORKS-SOR.SOR"
+      },
+      {
+        "fieldPath": "projectType",
+        "schemaCode": "WORKS.ProjectType"
+      }
+    ]
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1721198975967,
+  "lastmodifiedtime": 1721198975967
+}

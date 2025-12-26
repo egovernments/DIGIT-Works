@@ -1,0 +1,67 @@
+{
+  "id": "71cdf55e-761f-43fb-9cb9-e9257e777040",
+  "tenantid": "od",
+  "code": "WORKS.ProjectType",
+  "description": "WORKS.ProjectType",
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for Project Type",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "code",
+      "name",
+      "active"
+    ],
+    "x-unique": [
+      "code"
+    ],
+    "properties": {
+      "code": {
+        "type": "string",
+        "default": "ProjectNumber"
+      },
+      "name": {
+        "type": "string"
+      },
+      "group": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "beneficiary": {
+        "type": "string"
+      },
+      "projectSubType": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "x-ui-schema": {
+      "code": {
+        "format": [
+          "preprocess"
+        ],
+        "formatType": "autogenerate",
+        "ui:readonly": true,
+        "autogenerate": "works.project.type.number"
+      },
+      "ui:order": [
+        "code",
+        "name",
+        "group",
+        "beneficiary",
+        "active",
+        "projectSubType",
+        "*"
+      ]
+    }
+  },
+  "isactive": true,
+  "createdby": null,
+  "lastmodifiedby": null,
+  "createdtime": 1721384573172,
+  "lastmodifiedtime": 1721384573172
+}

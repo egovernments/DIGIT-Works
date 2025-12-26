@@ -1,0 +1,37 @@
+{
+  "id": "b9abf509-d307-47c1-b99a-125e43cb4189",
+  "tenantid": "od",
+  "code": "segment-codes.FunctionCodes",
+  "description": "segment-codes.FunctionCodes",
+  "definition": {
+    "type": "object",
+    "title": "segment-codes.FunctionCodes",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "isActive": true,
+    "required": [
+      "id",
+      "code",
+      "name"
+    ],
+    "x-unique": [
+      "id",
+      "code"
+    ],
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729776310762,
+  "lastmodifiedtime": 1729776310762
+}

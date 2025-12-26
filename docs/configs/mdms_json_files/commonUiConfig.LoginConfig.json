@@ -1,0 +1,41 @@
+{
+  "id": "0f8afe55-2448-4dfa-b335-f566ddef7d64",
+  "tenantid": "od",
+  "code": "commonUiConfig.LoginConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "texts": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "inputs": {
+        "type": "array",
+        "items": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "screenName": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729162554165,
+  "lastmodifiedtime": 1729162554165
+}

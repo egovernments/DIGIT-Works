@@ -1,0 +1,70 @@
+{
+  "id": "602f88f4-e19b-427d-b7a4-b90b7225e35e",
+  "tenantid": "od",
+  "code": "commonUiConfig.CreateEstimateConfig",
+  "description": null,
+  "definition": {
+    "type": "object",
+    "title": "Generated schema for Form Configuration",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "required": [
+      "screenName"
+    ],
+    "x-unique": [
+      "screenName"
+    ],
+    "properties": {
+      "form": {
+        "type": "array",
+        "items": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "body": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "component": {
+                    "type": "string"
+                  },
+                  "withoutLabel": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "head": {
+              "type": "string"
+            },
+            "navLink": {
+              "type": "string"
+            },
+            "subHead": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "screenName": {
+        "type": "string"
+      }
+    }
+  },
+  "isactive": true,
+  "createdby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "lastmodifiedby": "71d23f7e-30c9-4ba4-b81b-e1862cd3fd9d",
+  "createdtime": 1729159784615,
+  "lastmodifiedtime": 1729159784615
+}
