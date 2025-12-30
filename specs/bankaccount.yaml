@@ -1,0 +1,281 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Bank Account Details
+  description: Details of financial accounts of entities (individual or org)
+paths:
+  /bankaccount/v1/_create:
+    post:
+      tags:
+        - Bank Account Service
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountRequest'
+      responses:
+        '202':
+          description: Accepted account registration request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BankAccountResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /bankaccount/v1/_update:
+    post:
+      tags:
+        - Bank Account Service
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountRequest'
+      responses:
+        '202':
+          description: Accepted account updation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BankAccountResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /bankaccount/v1/_search:
+    post:
+      tags:
+        - Bank Account Service
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountSearchRequest'
+      responses:
+        '200':
+          description: Return search results
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BankAccountResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+components:
+  schemas:
+    BankAccount:
+      description: Information about the account holding entity
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the record
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        serviceCode:
+          description: Refers to the module that holds this account
+          example: ORG, IND , ULB
+          type: string
+          minLength: 2
+          maxLength: 64
+        referenceId:
+          description: UUID of the holder whether it is individual or organisation belonging to a specific module
+          example: 32e33343-7b4c-4353-9abf-4de8f5bcd764
+          type: string
+          minLength: 2
+          maxLength: 64
+        bankAccountDetails:
+          type: array
+          description: List of accounts to be registered
+          items:
+            $ref: '#/components/schemas/BankAccountDetails'
+        additionalFields:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+      required:
+        - tenantId
+        - serviceCode
+        - referenceId
+    BankAccountDetails:
+      description: Bank account details
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the account
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        accountHolderName:
+          description: Account holder name
+          example: XYZ Holdings
+          type: string
+          minLength: 2
+          maxLength: 64
+        accountNumber:
+          description: Unique bank account identifier of a individual/Org
+          type: string
+          minLength: 2
+          maxLength: 64
+        accountType:
+          example: Savings or Current or UPI or Wallet
+          type: string
+          minLength: 2
+          maxLength: 64
+        isPrimary:
+          type: boolean
+          description: Send as true if this is the primary account to be used for money transfers
+          default: true
+        bankBranchIdentifier:
+          $ref: '#/components/schemas/BankBranchIdentifier'
+        isActive:
+          type: boolean
+          description: Field to soft delete a record
+        documents:
+          description: >-
+            Reference to documents related to the organisation that have been
+            attached via file upload
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+        additionalFields:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+      required:
+        - tenantId
+        - accountNumber
+        - bankBranchIdentifier
+
+    BankBranchIdentifier:
+      description: Object to capture bank branch identifier for a banking org to be used for wire transfers.
+      type: object
+      properties:
+        type:
+          description: >-
+            The type of bank branch identifier
+          example: IFSC, SWIFT
+          type: string
+          minLength: 2
+          maxLength: 64
+        code:
+          description: Unique identifier for bank branch.
+          type: string
+          minLength: 2
+          maxLength: 64
+        isActive:
+          type: boolean
+          description: Field to soft delete a record
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+    
+    BankAccountRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        bankAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccount'
+    BankAccountResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        bankAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccount'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
+    BankAccountSearchCriteria:
+      type: object
+      properties:
+        tenantId:
+          description: Tenant Identifier
+          example: pg.cityA
+          type: string
+          minLength: 2
+          maxLength: 64
+        ids:
+          type: array
+          description: Search by bankAccount ids 
+          format: uuid
+          items:
+            type: string
+        serviceCode:
+          description: Refers to the module code that holds this account
+          example: ORG, IND or something else
+          type: string
+          minLength: 2
+          maxLength: 64
+        referenceId:
+          description: UUID of the holder whether it is individual or organisation belonging to a specific module          
+          type: array
+          format: uuid
+          items:
+            type: string
+        accountHolderName:
+          description: Account holder name
+          example: XYZ Holdings
+          type: string
+          minLength: 2
+          maxLength: 64
+        accountNumber:
+          description: Account number
+          type: array
+          format: uuid
+          items:
+            type: string
+        
+        isActive:
+          type: boolean
+        isPrimary:
+          type: boolean
+        bankBranchIdentifierCode:
+          $ref: '#/components/schemas/BankBranchIdentifier'
+      
+      required: 
+        - tenantId
+    
+    
+    BankAccountSearchRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        bankAccountDetails:
+          $ref: '#/components/schemas/BankAccountSearchCriteria'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'

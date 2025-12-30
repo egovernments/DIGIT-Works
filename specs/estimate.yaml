@@ -1,0 +1,391 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Estimate-Service
+  description: This service models a Works estimate
+
+paths:
+  /estimate/v1/_create:
+    post:
+      summary: Create an estimate
+      description: Creates a works estimate with the estimate details
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateRequest'
+        description: Request object to create estimate in the system
+        required: true
+      responses:
+        '202':
+          description: Successful created Estimate
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EstimateResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /estimate/v1/_update:
+    post:
+      summary: Update an estimate
+      description: Submit updated Estimate with the estimate details to update an existing estimate in the system
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateRequest'
+        description: Request object to update estimate in the system
+        required: true
+      responses:
+        '202':
+          description: Successful updated Estimate
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EstimateResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /estimate/v1/_search:
+    post:
+      summary: Fetch the Estimate(s) based on the search criteria used
+      description: |
+        Gets the list of estimates for a particular tenant based on search criteria.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfoWrapper'
+      parameters:
+        - $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/parameters/tenantId'
+        - name: projectId
+          description: Link the estimate to the project
+          in: query
+          schema:
+            type: string
+        - name: referenceNumber
+          description: The offline file/docket number related to the project estimate.
+          in: query
+          schema:
+            type: string
+        - name: ids
+          description: Search by list of UUIDs
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              maxItems: 10
+        - name: estimateNumber
+          description: Search by estimate number
+          in: query
+          schema:
+            type: string
+        - name: executingDepartment
+          description: Search by executing department
+          in: query
+          schema:
+            type: string
+        - name: wfStatus
+          description: Search by status of the estimate
+          in: query
+          schema:
+            type: string
+        - name: fromProposalDate
+          description: Search by proposal date between the from date and todate
+          in: query
+          schema:
+            type: number
+        - name: toProposalDate
+          description: Search by proposal date between the from date and todate
+          in: query
+          schema:
+            type: number
+        - name: sortBy
+          in: query
+          description: Sort the search results by fields
+          schema:
+            type: string
+            enum:
+              - totalAmount
+              - proposalDate
+              - createdTime
+        - name: sortOrder
+          in: query
+          description: Sorting order of the search results
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: limit
+          in: query
+          description: Limit on the results
+          schema:
+            type: number
+        - name: offset
+          in: query
+          description: Offset index of the overall search resulsts
+          schema:
+            type: number
+      responses:
+        '202':
+          description: Successful response sorted by reverse chronological order of creation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EstimateResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+components:
+  schemas:
+    Estimate:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Unique identifier of the estimate.'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        tenantId:
+          type: string
+          description: 'Unique identifier of the tenant that could be a department/ulb/state'
+          minLength: 2
+          maxLength: 64
+          example: pb.jalandhar,dwss
+        estimateNumber:
+          type: string
+          description: 'The unique identifier of the estimate the custom formatting.'
+          example: 'EST/2022-23/010'
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        projectId:
+          type: string
+          description: 'Link the estimate to the project. Project ID is not updatable.'
+          minLength: 2
+          maxLength: 64
+        proposalDate:
+          type: number
+          description: 'Date when the estimate is proposed. It will get filled by the service when the estimate is proposed(finalised).'
+          example: 1658222690000
+        status:
+          type: string
+          description: 'It stores the status of the estimate. '
+          enum:
+            - ACTIVE
+            - INACTIVE
+          minLength: 2
+          maxLength: 64
+        wfStatus:
+          type: string
+          description: 'Status of the estimate according to the workflow state.'
+          minLength: 2
+          maxLength: 64
+          example: 'CREATED'
+        name:
+          type: string
+          description: 'User Input Field. Max Characters can be 140'
+          minLength: 2
+          maxLength: 64
+          pattern: '^[A-Za-z0-9\/ . _$@#]*$'
+          example: 'Construct new schools'
+        referenceNumber:
+          type: string
+          description: 'User Input Field. Max Characters can be 140. Usually the Offline File/letter Number related to the project estimate'
+          minLength: 2
+          maxLength: 64
+          pattern: '^[A-Za-z0-9\/ . _$@#]*$'
+          example: 'File-18430283'
+        description:
+          type: string
+          description: 'User Input Field. Max Characters can be 240. The information from subject & description will be used to format the administrative sanction PDF.'
+          minLength: 2
+          maxLength: 240
+          pattern: '^[A-Za-z0-9\/ . _$@#]*$'
+          example: 'Construct new schools'
+        executingDepartment:
+          type: string
+          description: 'Department master data fro mdms'
+          minLength: 2
+          maxLength: 64
+        address:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/definitions/Address'
+        totalEstimateAmount:
+          type: number
+          description: 'Sum of the amount of all the estimate detail items'
+          readOnly: true
+        estimateDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstimateDetail'
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the estimate. For attachments, fileStoreIds will also be stored here. '
+      required: [tenantId, name, address, estimateDetails, projectId]
+
+    EstimateDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Unique identifier of the detailed estimate item.'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          readOnly: true
+        sorId:
+          type: string
+          description: 'Schedule of rate id from master data'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          minLength: 1
+          maxLength: 64
+        name:
+          type: string
+          description: 'Name of non-sor line item'
+          maxLength:  128
+          minLength: 2
+        category:
+          type: string
+          description: 'Category under which this amount falls'
+          example: 'Overhead, SOR, non-SOR'
+        description:
+          type: string
+          description: 'Description of non-sor item'
+          minLength: 2
+          maxLength: 256
+        unitRate:
+          type: number
+          description: 'Unit rate of non-sor item'
+        noOfunit:
+          type: number
+          description: 'total no of units for sor and non-sor item'
+        uom:
+          type: string
+          description: 'Unit of measurement master data for non-sor'
+          example: Kilogram, meter, number
+        uomValue:
+          type: number
+          description: 'Unit of measurement value. Linked with uom'
+          example: 5
+        amountDetail:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountDetail'
+        status:
+          type: string
+          description: Flag to soft delete 
+          enum:
+            - ACTIVE
+            - INACTIVE
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the estimate. For attachments, fileStoreIds will also be stored here. '
+      required: [ amountDetail ]
+      oneOf:
+       - required: [name, sorId]
+    
+    AmountDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Unique identifier of the AmountDetail'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          readOnly: true
+        type:
+          type: string
+          description: 'Amount type master'
+          example: 'Gst, cess, charge '
+        amount:
+          type: number
+          description: 'Estimated amount for the detail item'
+        status:
+          type: string
+          description: Flag to soft delete 
+          enum:
+            - ACTIVE
+            - INACTIVE
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the estimate. For attachments, fileStoreIds will also be stored here. '
+      required: [ amount ]
+
+    EstimateRequest:
+      type: object
+      description: Request for Estimate _create and _update api's
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/RequestHeader'
+        estimate:
+          $ref: '#/components/schemas/Estimate'
+        workflow:
+          type: object
+          properties:
+            action:
+              type: string
+              description: 'Action of the workflow to be performned on the request'
+            comment:
+              type: string
+              description: 'comment for the workflow action to be performed'
+            assignees:
+              type: array
+              items:
+                type: string
+                description: 'UUID of the users in the system to assign workflow to the specific user intead of a all the users with the gien role.'
+          required:
+            - action
+      required:
+        - requestInfo
+        - estimate
+        - workflow
+
+    EstimateResponse:
+      type: object
+      description: Response for the Estimate _create, _update and _search api's
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/RequestHeader'
+        estimates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Estimate'
+      required:
+        - ResponseInfo
+        - estimates
+    
+    RequestInfoWrapper:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/RequestHeader'
+
+    save-estimate:
+      allOf:
+        - $ref: '#/components/schemas/EstimateRequest'
+        - description: 'All create events will be added to this topic. Persister and Indexer will read the events from it.'
+
+    update-estimate:
+      allOf:
+        - $ref: '#/components/schemas/EstimateRequest'
+        - description: 'All create events will be added to this topic. Persister and Indexer will read the events from it.'

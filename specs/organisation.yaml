@@ -1,0 +1,480 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Organisation Service
+  description: Organisation service and registry. The spec has two components. The org services APIs are meant to house business logic such as Workflows and/or other validations. The organisation APIs provide access to the pure registry without any of the add-on services. Those who want to use the pure registry can do so without needing workflow and other services. 
+paths:
+  /org-services/v1/_create:
+    post:
+      tags:
+        - OrgServices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgServiceRequest'
+      responses:
+        '202':
+          description: Accepted create organisation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/v1/_update:
+    post:
+      tags:
+        - OrgServices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgServiceRequest'
+      responses:
+        '202':
+          description: Accepted update org request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/v1/_search:
+    post:
+      tags:
+        - OrgServices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgSearchCriteria'
+      responses:
+        '200':
+          description: Search organisation response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid search parameters
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/organisation/v1/_create:
+    post:
+      tags:
+        - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgRequest'
+      responses:
+        '202':
+          description: Accepted create organisation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /org-services/organisation/v1/_update:
+    post:
+      tags:
+        - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgRequest'
+      responses:
+        '202':
+          description: Accepted update org request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /org-services/organisation/v1/_search:
+    post:
+      tags:
+        - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgSearchCriteria'
+      responses:
+        '200':
+          description: Search organisation response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
+components:
+  schemas:
+    Organisation:
+      title: Organisation
+      description: Organisation registry
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the org
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        name:
+          description: Name of the org
+          type: string
+          minLength: 2
+          maxLength: 128
+        applicationNumber:
+          description: Application number for the org registration
+          readOnly: true
+          type: string
+        orgNumber:
+          description: Formatted organisation number issued after application is approved
+          readOnly: true
+          type: string
+          minLength: 1
+          maxLength: 64
+        applicationStatus:
+          description: The status of the org
+          type: string
+          minLength: 2
+          maxLength: 64
+        externalRefNumber:
+          description: ID or code assigned to vendor by the registering department
+          type: string
+          minLength: 2
+          maxLength: 64
+        dateOfIncorporation:
+          description: Epoch time representing date of incorporation of organisation
+          type: number
+          format: integer
+        orgAddress:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Address'
+        contactDetails:
+          description: Contact person information
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactDetails'
+        identifiers:
+          description: The type of tax identifiers and their values
+          type: array
+          items:
+            $ref: '#/components/schemas/Identifier'
+          minItems: 1
+        functions:
+          description: Functional areas the org works in. Defined in MDMS
+          type: array
+          items:
+            $ref: '#/components/schemas/Function'
+          minItems: 1
+        jurisdiction:
+          description: Unique boundary code list where the org is approved to operate
+          type: array
+          items:
+            $ref: '#/components/schemas/Jurisdiction'
+        isActive:
+          type: boolean
+        documents:
+          description: Reference to documents related to the organisation that have been attached via file upload
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+        additionalDetails:
+          description: Json object to capture any extra information which is not accommodated by model
+          type: object
+        auditDetails:
+          type: object
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+            - description: Collection of audit related fields used by most models
+              readOnly: true
+      required:
+        - tenantId
+        - name
+    Identifier:
+      title: Identifier
+      description: Object to capture identifiers (including tax) for a organisation
+      type: object
+      properties:
+        type:
+          description: The type of tax identifier from MDMS data. 
+          example: PAN, GSTIN, TIN etc..
+          type: string
+          minLength: 2
+          maxLength: 64
+        value:
+          description: Actual value of the identifier.
+          type: string
+          minLength: 2
+          maxLength: 64
+        isActive:
+          type: boolean
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+    Jurisdiction:
+      title: Jurisdiction
+      description: Object to capture boundary codes where an organisation is authorized to work
+      type: object
+      properties:
+        code:
+          description: Jurisdiction code. One of codes defined in MDMS boundary hierarchies.
+          type: string
+          example: WARD, LOCALITY, ULB, CITY
+          minLength: 2
+          maxLength: 64
+        id:
+          description: Jurisdiction id
+          type: string
+          example: WARD01, JATNI
+          minLength: 2
+          maxLength: 64
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+    ContactDetails:
+      title: ContactDetails
+      description: Captures details of a contact person
+      type: object
+      properties:
+        contactName:
+          type: string
+          minLength: 2
+          maxLength: 64
+        contactMobileNumber:
+          description: Mobile number of the user
+          type: string
+          maxLength: 20
+        contactEmail:
+          type: string
+          minLength: 5
+          maxLength: 200
+    Function:
+      title: Function
+      description: Represents the functions of an organisation
+      type: object
+      properties:
+        orgId:
+          description: Organisation UUID
+          readOnly: true
+          type: string
+        applicationNumber:
+          description: Application number for the function registration. Will be used in workflow.
+          readOnly: true
+          type: string
+        type:
+          description: Type of organisation.Namespaced masters to be defined.
+          type: string
+          minLength: 2
+          maxLength: 64
+        category:
+          description: Functional area that the org works with.Eg. Electrical, Civil, Mechanical, Stationery etc..
+          type: string
+          minLength: 2
+          maxLength: 64
+        class:
+          description: Organisation class
+          example: Class 1, Class 2, Class 3 etc..
+          type: string
+          minLength: 2
+          maxLength: 64
+        validFrom:
+          description: Validity from date of registration in epoch time
+          type: number
+          format: integer
+        validTo:
+          description: Validity to date of registration in epoch time.
+          type: number
+          format: integer
+        wfStatus:
+          type: string
+          minLength: 2
+          maxLength: 64
+        isActive:
+          type: boolean
+        applicationStatus: 
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - INWORKFLOW
+        documents:
+          description: Reference to documents specifically related to the type and category of work being registered for
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+        additionalDetails:
+          description: Json object to capture any extra information which is not accommodated by model
+          type: object
+        auditDetails:
+          type: object
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+            - description: Collection of audit related fields used by most models
+              readOnly: true
+    OrgServiceRequest:
+      title: OrgServiceRequest
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+            - description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+        organisations:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Organisation'
+            - description: Organisation registry
+        workflow:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
+    OrgServiceResponse:
+      title: OrgServiceResponse
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+            - description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
+              readOnly: true
+        organisations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organisation'
+        pagination:
+          type: object
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
+            - description: Pagination details
+        workflow:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
+    OrgSearchCriteria:
+      title: OrgSearchCriteria
+      description: Organisation search attributes
+      type: object
+      properties:
+        id:
+          type: array
+          items:
+            type: string
+            minLength: 2
+            maxLength: 64
+          minLength: 2
+          maxLength: 64
+        tenantId:
+          description: Unique tenant of the system
+          example: tenantA
+          type: string
+          minLength: 2
+          maxLength: 1000
+        name:
+          type: string
+        applicationNumber:
+          type: string
+        orgNumber:
+          type: string
+        applicationStatus:
+          type: string
+        contactMobileNumber:
+          description: Represents Contact Mobile Number
+          type: string
+        functions:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Function'
+            - description: Represents the functions of an organisation
+        createdFrom:
+          type: number
+          format: integer
+        createdTo:
+          type: number
+          format: integer
+        boundaryCode:
+          type: string
+        identifierType:
+          type: string
+        identifierValue:
+          type: string
+        includeDeleted:
+          description: Used in search APIs to specify if (soft) deleted records should be included in search results.
+          type: boolean
+          default: false
+    OrgRequest:
+      title: OrgRequest
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+            - description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+        organisations:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Organisation'
+            - description: Organisation registry
+    OrgResponse:
+      title: OrgResponse
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+            - description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
+              readOnly: true
+        organisations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organisation'
+        pagination:
+          type: object
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
+            - description: Pagination details
+      
