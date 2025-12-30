@@ -1,0 +1,498 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: SOR-Service
+  description: 'This service/registry will validate and store Schedule of Rate.'
+
+tags:
+  - name: SOR
+  - name: Rate
+
+paths:
+  /sor/v1/_create:
+    post:
+      tags:
+        - SOR
+      summary: 'Create an SOR'
+      description: 'Create a SOR in the system with relevant details'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SORRequest'
+        description: Request object to create sor in the system
+        required: true
+      responses:
+        '202':
+          description: Successful created SOR
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SORResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+  /sor/v1/_update:
+    post:
+      tags:
+        - SOR
+      summary: 'Update an SOR'
+      description: 'Submit SOR with the head details to update SORs in the system'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SORRequest'
+        description: Request object to create sor in the system
+        required: true
+      responses:
+        '202':
+          description: Successful created SOR
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SORResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /sor/v1/_search:
+    post:
+      tags:
+        - SOR
+      summary: 'Search an SOR'
+      description: 'Submit SOR search request to get SOR list from the system'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SORSearchRequest'
+        description: Request object to search sor in the system
+        required: true
+      responses:
+        '202':
+          description: Successful search SOR
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SORResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+
+  
+  /sor/rate/v1/_create:
+    post:
+      tags:
+        - Rate
+      summary: 'Create an rates of SOR'
+      description: 'Submit SOR with the rate details to create an SOR in the system'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateRequest'
+        description: Request object to create rates in the system
+        required: true
+      responses:
+        '202':
+          description: Successful created rate details
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /sor/rate/v1/_update:
+    post:
+      tags:
+        - Rate
+      summary: 'Create an rates of SOR'
+      description: 'Submit SOR with the rate details to create an SOR in the system'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateRequest'
+        description: Request object to update rates for sor in the system
+        required: true
+      responses:
+        '202':
+          description: Successful updated Rates
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /sor/rate/v1/_search:
+    post:
+      tags:
+        - Rate
+      summary: 'Search Rates for SOR and SOR heads'
+      description: 'Submit Rate search request to get Rate list list from the system'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateSearchRequest'
+        description: Request object to search sor in the system
+        required: true
+      responses:
+        '202':
+          description: Successful search Rates
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  
+
+
+components:
+  schemas:
+    SOR:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Unique identifier of the SOR'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        tenantId:
+          type: string
+          description: 'Unique identifier of the tenant'
+          minLength: 2
+          maxLength: 64
+          example: 'pb'
+        sorNumber:
+          type: string
+          description: 'The unique formatted identifier or code of the SOR'
+          example: 'LD-00001'
+          minLength: 4
+          maxLength: 64
+          readOnly: true
+        sorType:
+          type: string
+          description: 'The SOR type code from master data with subtype saperated with special symbol'
+          example: Material, Works:Earth Work, Labour
+          minLength: 1
+          maxLength: 64
+          readOnly: true
+        sorVariant:
+          type: string
+          description: 'Code of SOR variant from MDMS'
+          example: 'FN'
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        uom:
+          type: string
+          description: Unit of measurement
+          example: kg, sqm, cm
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        uomValue:
+          type: number
+          description: Base quantity for UOM against which rates are defined
+          example: 10kg, 100sqm
+          readOnly: true
+        description:
+          type: string
+          description: 'User Input Field. Max Characters can be 240.'
+          minLength: 2
+          maxLength: 240
+          pattern: '^[A-Za-z0-9\/ . _$@#]*$'
+          example: 'K.B. bricks (25 Cm x 12Cm x 8Cm) having crushing strength not less than 75 Kg./Cm2 with dimensional tolerance ± 8 percent.'
+        isActive:
+          type: boolean
+          description: 'Indicates whether this SOR is active or not'
+        details:
+          type: array
+          description: Composition of the SOR in the case of complex SORs that are a combination of multiple other SORs. Not applicable to simple SORs.
+          items:
+            $ref: '#/components/schemas/Detail'
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the sor. For attachments, fileStoreIds will also be stored here. '
+      required: [tenantId, sorNumber, sorType, uom, projectId]
+
+    Detail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Unique identifier of the head.'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          readOnly: true
+        sorId:
+          type: string
+          description: 'SOR ID to which this detail belongs to'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          minLength: 1
+          maxLength: 64
+        code:
+          type: string
+          description: 'SOR code or head code'
+          example: "MR"
+          maxLength:  128
+          minLength: 2
+        description:
+          type: string
+          description: 'Description of head details'
+          example: "Material Basic Rate"
+          minLength: 2
+          maxLength: 256
+        isActive:
+          type: boolean
+          description: 'It stores the status of the sor.'
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the sor. For attachments, fileStoreIds will also be stored here. '
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+      required:
+        - sorId
+      oneOf:
+        - required: 
+            - code
+            - description
+    
+    SORRequest:
+      type: object
+      description: Request for SOR _create and _update api's
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        sors:
+          type: array
+          items:
+            $ref: '#/components/schemas/SOR'
+      required:
+        - requestInfo
+        - sors
+    
+    SORSearchRequest:
+      type: object
+      description: Request for SOR _create and _update api's
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        criteria:
+          $ref: '#/components/schemas/SORSearchCriteria'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
+      required:
+        - requestInfo
+        - criteria
+        - pagination
+
+    SORSearchCriteria:
+      type: object
+      description: Request for SOR _searcrh
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        tenantId:
+          type: string
+        sorNumbers:
+          type: array
+          items:
+            type: string
+        sorType:
+          type: string
+        sorVariant:
+          type: string
+        
+
+    SORResponse:
+      type: object
+      description: Response for the SOR _create, _update and _search api's
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        sors:
+          type: array
+          items:
+            $ref: '#/components/schemas/SOR'
+      required:
+        - ResponseInfo
+        - sors
+    
+    
+    RateRequest:
+      type: object
+      description: Request for Rate _create and _update api's
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        rateDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/RateDetails'
+      required:
+        - requestInfo
+        - rateDetails
+
+    RateResponse:
+      type: object
+      description: Response for the SOR _create, _update and _search api's
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        rateDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/RateDetails'
+      required:
+        - ResponseInfo
+        - rateDetails
+        
+    RateDetails:
+      type: object
+      description: "Rate details"
+      properties:
+        id:
+          type: string
+          description: 'System generated unique identifier for the rate'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          readOnly: true
+        tenantId:
+          type: string
+          description: 'Unique identifier of the tenant that could be a department/ulb/state'
+          minLength: 2
+          maxLength: 64
+          example: 'pb.jalandhar OR dwss'
+        sorId:
+          type: string
+          description: 'ID of SOR'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          minLength: 1
+          maxLength: 64
+        detailId:
+          type: string
+          description: 'ID of the detail item in the SOR. Applicable in the case of complex SORs'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          minLength: 1
+          maxLength: 64
+        validFrom:
+          type: number
+          description: 'Timestamp valid from'
+        validTo:
+          type: number
+          description: 'Timestamp valid to'
+        amountDetail:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountDetail'
+        isActive:
+          type: boolean
+          description: 'It stores the status of the rate.'
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the rate. For attachments, fileStoreIds will also be stored here. '
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        
+    AmountDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Unique identifier of the AmountDetail'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          readOnly: true
+        type:
+          type: string
+          description: 'Amount type master'
+          example: 'Gst, cess, charge '
+        amount:
+          type: number
+          description: 'SOR amount for the current sor detail'
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the sor. For attachments, fileStoreIds will also be stored here. '
+      required: [ amount ]
+      
+  
+    RateSearchRequest:
+      type: object
+      description: Request for rate _sarch api
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        criteria:
+          $ref: '#/components/schemas/RateSearchCriteria'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
+      required:
+        - requestInfo
+        - criteria
+        - pagination
+        
+    RateSearchCriteria:
+      type: object
+      description: Request for rate _search api
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        tenantId:
+          type: string
+        sorIds:
+          type: array
+          items:
+            type: string
+        headCodeIds:
+          type: array
+          items:
+            type: string
+      required:
+        - tenantId
+    
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/works/SOR-Service/1.0.0
