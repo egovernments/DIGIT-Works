@@ -1,0 +1,1113 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Annual Action Plan Management System
+  description: Service to manage annual action plans with workflow and project linkages
+  contact:
+    name: Jagankumar E
+    email: jagan.kumar@egovernments.org
+servers:
+  - url: https://api.example.com
+    description: Production server
+  - url: https://staging-api.example.com
+    description: Staging server
+paths:
+  /annual-action-plan/v1/_create:
+    post:
+      summary: Create a new Annual Action Plan
+      description: Create a new Annual Action Plan with workflow initialization
+      tags:
+        - Annual Action Plan
+      requestBody:
+        description: Details for the new Annual Action Plan
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnualActionPlanRequest'
+      responses:
+        '202':
+          description: Annual Action Plan request accepted for creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnualActionPlanResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+  
+  /annual-action-plan/v1/_update:
+    post:
+      summary: Update an existing Annual Action Plan
+      description: Update the details of an existing Annual Action Plan
+      tags:
+        - Annual Action Plan
+      requestBody:
+        description: Details for updating Annual Action Plan
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnualActionPlanRequest'
+      responses:
+        '202':
+          description: Annual Action Plan request accepted for update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnualActionPlanResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /annual-action-plan/v1/_search:
+    post:
+      summary: Search for Annual Action Plans
+      description: Search for existing Annual Action Plans based on criteria
+      tags:
+        - Annual Action Plan
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/tenantId'
+        - $ref: '#/components/parameters/lastChangedSince'
+        - $ref: '#/components/parameters/includeDeleted'
+      requestBody:
+        description: Search criteria for Annual Action Plans
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnualActionPlanSearchRequest'
+      responses:
+        '200':
+          description: Annual Action Plans
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnualActionPlanResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /annual-action-plan/v1/_workflow:
+    post:
+      summary: Process workflow action for Annual Action Plan
+      description: Process workflow transitions for Annual Action Plan
+      tags:
+        - Annual Action Plan Workflow
+      requestBody:
+        description: Workflow action details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowActionRequest'
+      responses:
+        '202':
+          description: Workflow action processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnualActionPlanResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /annual-action-plan/project/v1/_create:
+    post:
+      summary: Link projects to Annual Action Plan
+      description: Create linkage between Annual Action Plan and Projects
+      tags:
+        - Annual Action Plan Project
+      requestBody:
+        description: Project linkage details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnualActionPlanProjectRequest'
+      responses:
+        '202':
+          description: Project linkage created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnualActionPlanProjectResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /annual-action-plan/project/v1/_update:
+    post:
+      summary: Update project linkage to Annual Action Plan
+      description: Update existing linkage between Annual Action Plan and Projects
+      tags:
+        - Annual Action Plan Project
+      requestBody:
+        description: Project linkage update details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnualActionPlanProjectRequest'
+      responses:
+        '202':
+          description: Project linkage updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnualActionPlanProjectResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /annual-action-plan/project/v1/_delete:
+    post:
+      summary: Delete project linkage from Annual Action Plan
+      description: Remove linkage between Annual Action Plan and Projects
+      tags:
+        - Annual Action Plan Project
+      requestBody:
+        description: Project linkage deletion details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnualActionPlanProjectRequest'
+      responses:
+        '202':
+          description: Project linkage deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnualActionPlanProjectResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /annual-action-plan/project/v1/_search:
+    post:
+      summary: Search project linkages for Annual Action Plan
+      description: Search for projects linked to Annual Action Plans
+      tags:
+        - Annual Action Plan Project
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/tenantId'
+        - $ref: '#/components/parameters/includeDeleted'
+      requestBody:
+        description: Search criteria for project linkages
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnualActionPlanProjectSearchRequest'
+      responses:
+        '200':
+          description: Annual Action Plan Projects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnualActionPlanProjectBulkResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /annual-action-plan/milestone/v1/_create:
+    post:
+      summary: Create milestones for Annual Action Plan
+      description: Create milestones and deliverables for Annual Action Plan
+      tags:
+        - Annual Action Plan Milestone
+      requestBody:
+        description: Milestone details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MilestoneRequest'
+      responses:
+        '202':
+          description: Milestone created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MilestoneResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /annual-action-plan/milestone/v1/_update:
+    post:
+      summary: Update milestones for Annual Action Plan
+      description: Update existing milestones and their progress
+      tags:
+        - Annual Action Plan Milestone
+      requestBody:
+        description: Milestone update details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MilestoneRequest'
+      responses:
+        '202':
+          description: Milestone updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MilestoneResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /annual-action-plan/milestone/v1/_search:
+    post:
+      summary: Search milestones for Annual Action Plan
+      description: Search for milestones associated with Annual Action Plans
+      tags:
+        - Annual Action Plan Milestone
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/tenantId'
+        - $ref: '#/components/parameters/includeDeleted'
+      requestBody:
+        description: Search criteria for milestones
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MilestoneSearchRequest'
+      responses:
+        '200':
+          description: Milestones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MilestoneBulkResponse'
+        '400':
+          description: Invalid Input body
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+
+components:
+  parameters:
+    tenantId:
+      name: tenantId
+      in: query
+      description: Unique id for a tenant
+      required: true
+      schema:
+        type: string
+        format: varchar
+
+    lastChangedSince:
+      name: lastChangedSince
+      description: Epoch time since when changes should be picked up
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int64
+
+    limit:
+      name: limit
+      description: Pagination - limit records in response
+      in: query
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+
+    offset:
+      name: offset
+      description: Pagination - offset from which records should be returned
+      in: query
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+
+    includeDeleted:
+      name: includeDeleted
+      description: Include deleted records in search results
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+
+  schemas:
+    AnnualActionPlan:
+      description: Annual Action Plan with workflow integration
+      type: object
+      required:
+        - tenantId
+        - name
+        - financialYear
+        - department
+      properties:
+        id:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Unique system generated GUID
+          readOnly: true
+        tenantId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Unique tenant identifier
+        planNumber:
+          type: string
+          description: Unique plan number with custom formatting
+          example: 'AAP/2024-25/001'
+          readOnly: true
+        name:
+          type: string
+          minLength: 2
+          maxLength: 256
+          description: Name of the Annual Action Plan
+        description:
+          type: string
+          maxLength: 1024
+          description: Detailed description of the plan
+        financialYear:
+          type: string
+          description: Financial year for the plan
+          example: '2024-25'
+        department:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Department responsible for the plan
+        status:
+          type: string
+          description: Current status in the workflow
+          enum:
+            - DRAFT
+            - IN_REVIEW
+            - PENDING_APPROVAL
+            - APPROVED
+            - IN_PROGRESS
+            - ON_HOLD
+            - COMPLETED
+            - CANCELLED
+            - REJECTED
+        workflowState:
+          type: string
+          description: Current workflow state
+        startDate:
+          type: integer
+          format: int64
+          description: Plan start date (epoch)
+        endDate:
+          type: integer
+          format: int64
+          description: Plan end date (epoch)
+        budget:
+          $ref: '#/components/schemas/Budget'
+        objectives:
+          type: array
+          items:
+            $ref: '#/components/schemas/Objective'
+        kpis:
+          type: array
+          items:
+            $ref: '#/components/schemas/KPI'
+        approvalDetails:
+          $ref: '#/components/schemas/ApprovalDetails'
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/Document'
+        additionalDetails:
+          type: object
+          description: Any additional details
+        isDeleted:
+          type: boolean
+          default: false
+        rowVersion:
+          type: integer
+          format: int64
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+
+    AnnualActionPlanProject:
+      description: Linkage between Annual Action Plan and Projects
+      type: object
+      required:
+        - tenantId
+        - annualActionPlanId
+        - projectId
+      properties:
+        id:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Unique system generated GUID
+          readOnly: true
+        tenantId:
+          type: string
+          minLength: 2
+          maxLength: 64
+        annualActionPlanId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Reference to Annual Action Plan
+        projectId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Reference to Project
+        projectName:
+          type: string
+          description: Name of the linked project
+        projectStatus:
+          type: string
+          description: Current status of the project
+          enum:
+            - NOT_STARTED
+            - IN_PROGRESS
+            - ON_HOLD
+            - COMPLETED
+            - CANCELLED
+        allocatedBudget:
+          type: number
+          format: double
+          description: Budget allocated for this project
+        utilizedBudget:
+          type: number
+          format: double
+          description: Budget utilized so far
+        percentageCompletion:
+          type: number
+          format: double
+          description: Percentage of project completion
+        plannedStartDate:
+          type: integer
+          format: int64
+        plannedEndDate:
+          type: integer
+          format: int64
+        actualStartDate:
+          type: integer
+          format: int64
+        actualEndDate:
+          type: integer
+          format: int64
+        priority:
+          type: string
+          enum:
+            - HIGH
+            - MEDIUM
+            - LOW
+        dependencies:
+          type: array
+          items:
+            type: string
+          description: List of project IDs this project depends on
+        isDeleted:
+          type: boolean
+          default: false
+        rowVersion:
+          type: integer
+          format: int64
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+
+    Milestone:
+      description: Milestones and deliverables for Annual Action Plan
+      type: object
+      required:
+        - tenantId
+        - annualActionPlanId
+        - title
+        - targetDate
+      properties:
+        id:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Unique system generated GUID
+          readOnly: true
+        tenantId:
+          type: string
+          minLength: 2
+          maxLength: 64
+        annualActionPlanId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Reference to Annual Action Plan
+        projectId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Optional reference to specific project
+        title:
+          type: string
+          minLength: 2
+          maxLength: 256
+          description: Milestone title
+        description:
+          type: string
+          maxLength: 1024
+          description: Detailed description
+        targetDate:
+          type: integer
+          format: int64
+          description: Target completion date
+        actualCompletionDate:
+          type: integer
+          format: int64
+          description: Actual completion date
+        status:
+          type: string
+          enum:
+            - PENDING
+            - IN_PROGRESS
+            - COMPLETED
+            - DELAYED
+            - CANCELLED
+        percentageCompletion:
+          type: number
+          format: double
+          description: Percentage completion (0-100)
+        deliverables:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deliverable'
+        responsiblePerson:
+          type: string
+          description: User ID of responsible person
+        comments:
+          type: string
+          maxLength: 1024
+        isDeleted:
+          type: boolean
+          default: false
+        rowVersion:
+          type: integer
+          format: int64
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+
+    Budget:
+      description: Budget details for Annual Action Plan
+      type: object
+      properties:
+        totalBudget:
+          type: number
+          format: double
+          description: Total budget allocated
+        allocatedBudget:
+          type: number
+          format: double
+          description: Budget allocated to projects
+        utilizedBudget:
+          type: number
+          format: double
+          description: Budget utilized so far
+        availableBudget:
+          type: number
+          format: double
+          description: Remaining available budget
+        currency:
+          type: string
+          default: 'INR'
+        budgetBreakdown:
+          type: array
+          items:
+            $ref: '#/components/schemas/BudgetBreakdown'
+
+    BudgetBreakdown:
+      type: object
+      properties:
+        category:
+          type: string
+          description: Budget category
+        allocatedAmount:
+          type: number
+          format: double
+        utilizedAmount:
+          type: number
+          format: double
+
+    Objective:
+      description: Strategic objectives of the Annual Action Plan
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+          minLength: 2
+          maxLength: 256
+        description:
+          type: string
+          maxLength: 1024
+        priority:
+          type: string
+          enum:
+            - HIGH
+            - MEDIUM
+            - LOW
+        targetMetrics:
+          type: string
+        achievedMetrics:
+          type: string
+
+    KPI:
+      description: Key Performance Indicators
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          minLength: 2
+          maxLength: 256
+        description:
+          type: string
+        targetValue:
+          type: number
+          format: double
+        actualValue:
+          type: number
+          format: double
+        unit:
+          type: string
+        frequency:
+          type: string
+          enum:
+            - DAILY
+            - WEEKLY
+            - MONTHLY
+            - QUARTERLY
+            - YEARLY
+        category:
+          type: string
+
+    Deliverable:
+      description: Deliverable items for milestones
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+            - PENDING
+            - IN_PROGRESS
+            - COMPLETED
+        dueDate:
+          type: integer
+          format: int64
+        completionDate:
+          type: integer
+          format: int64
+
+    ApprovalDetails:
+      description: Approval details for the plan
+      type: object
+      properties:
+        approvedBy:
+          type: string
+          description: User ID of approver
+        approvalDate:
+          type: integer
+          format: int64
+        approvalComments:
+          type: string
+        approvalDocuments:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/Document'
+
+    WorkflowAction:
+      description: Workflow action to be performed
+      type: object
+      required:
+        - action
+        - annualActionPlanId
+      properties:
+        annualActionPlanId:
+          type: string
+        action:
+          type: string
+          enum:
+            - SUBMIT_FOR_REVIEW
+            - SEND_BACK
+            - APPROVE
+            - REJECT
+            - CANCEL
+            - REOPEN
+            - COMPLETE
+        comments:
+          type: string
+          maxLength: 1024
+        assignee:
+          type: string
+          description: User ID to assign the plan to
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/Document'
+
+    DashboardData:
+      description: Dashboard aggregated data
+      type: object
+      properties:
+        totalPlans:
+          type: integer
+        plansInProgress:
+          type: integer
+        completedPlans:
+          type: integer
+        totalProjects:
+          type: integer
+        projectsInProgress:
+          type: integer
+        completedProjects:
+          type: integer
+        totalBudget:
+          type: number
+          format: double
+        utilizedBudget:
+          type: number
+          format: double
+        budgetUtilizationPercentage:
+          type: number
+          format: double
+        overallProgress:
+          type: number
+          format: double
+        statusDistribution:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+              count:
+                type: integer
+        departmentWiseDistribution:
+          type: array
+          items:
+            type: object
+            properties:
+              department:
+                type: string
+              planCount:
+                type: integer
+              projectCount:
+                type: integer
+              budget:
+                type: number
+                format: double
+        monthlyProgress:
+          type: array
+          items:
+            type: object
+            properties:
+              month:
+                type: string
+              completedMilestones:
+                type: integer
+              completedProjects:
+                type: integer
+        topPerformingProjects:
+          type: array
+          items:
+            type: object
+            properties:
+              projectId:
+                type: string
+              projectName:
+                type: string
+              progress:
+                type: number
+                format: double
+        delayedProjects:
+          type: array
+          items:
+            type: object
+            properties:
+              projectId:
+                type: string
+              projectName:
+                type: string
+              delayDays:
+                type: integer
+
+    AnnualActionPlanSearch:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        planNumber:
+          type: string
+        name:
+          type: string
+        financialYear:
+          type: string
+        department:
+          type: string
+        status:
+          type: array
+          items:
+            type: string
+        startDateFrom:
+          type: integer
+          format: int64
+        startDateTo:
+          type: integer
+          format: int64
+        endDateFrom:
+          type: integer
+          format: int64
+        endDateTo:
+          type: integer
+          format: int64
+
+    AnnualActionPlanProjectSearch:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        annualActionPlanId:
+          type: string
+        projectId:
+          type: string
+        projectStatus:
+          type: array
+          items:
+            type: string
+        priority:
+          type: string
+
+    MilestoneSearch:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        annualActionPlanId:
+          type: string
+        projectId:
+          type: string
+        status:
+          type: array
+          items:
+            type: string
+        targetDateFrom:
+          type: integer
+          format: int64
+        targetDateTo:
+          type: integer
+          format: int64
+
+    DashboardFilter:
+      type: object
+      properties:
+        financialYear:
+          type: string
+        department:
+          type: array
+          items:
+            type: string
+        dateFrom:
+          type: integer
+          format: int64
+        dateTo:
+          type: integer
+          format: int64
+
+    AnnualActionPlanRequest:
+      type: object
+      required:
+        - RequestInfo
+        - AnnualActionPlans
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        AnnualActionPlans:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/AnnualActionPlan'
+
+    AnnualActionPlanSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        AnnualActionPlan:
+          $ref: '#/components/schemas/AnnualActionPlanSearch'
+
+    AnnualActionPlanResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        AnnualActionPlans:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnualActionPlan'
+
+    AnnualActionPlanProjectRequest:
+      type: object
+      required:
+        - RequestInfo
+        - AnnualActionPlanProjects
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        AnnualActionPlanProjects:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/AnnualActionPlanProject'
+
+    AnnualActionPlanProjectSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        AnnualActionPlanProject:
+          $ref: '#/components/schemas/AnnualActionPlanProjectSearch'
+
+    AnnualActionPlanProjectResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        AnnualActionPlanProject:
+          $ref: '#/components/schemas/AnnualActionPlanProject'
+
+    AnnualActionPlanProjectBulkResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        AnnualActionPlanProjects:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnualActionPlanProject'
+
+    MilestoneRequest:
+      type: object
+      required:
+        - RequestInfo
+        - Milestones
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        Milestones:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Milestone'
+
+    MilestoneSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        Milestone:
+          $ref: '#/components/schemas/MilestoneSearch'
+
+    MilestoneResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        Milestone:
+          $ref: '#/components/schemas/Milestone'
+
+    MilestoneBulkResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        Milestones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+
+    WorkflowActionRequest:
+      type: object
+      required:
+        - RequestInfo
+        - WorkflowAction
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        WorkflowAction:
+          $ref: '#/components/schemas/WorkflowAction'
+
+  

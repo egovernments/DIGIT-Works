@@ -1,0 +1,1383 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Work Execution Management System
+  description: Service to manage work plans, site handover, and execution activities with contract linkage
+  contact:
+    name: Jagankumar E
+    email: jagan.kumar@egovernments.org
+servers:
+  - url: https://api.example.com
+    description: Production server
+  - url: https://staging-api.example.com
+    description: Staging server
+
+paths:
+  # Work Plan APIs
+  /work-plan/v1/_create:
+    post:
+      summary: Create Work Plan
+      description: Create a new work plan with milestone-wise details linked to approved contract
+      tags:
+        - Work Plan
+      requestBody:
+        description: Work plan details with milestones
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkPlanRequest'
+      responses:
+        '202':
+          description: Work plan created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkPlanResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /work-plan/v1/_update:
+    post:
+      summary: Update Work Plan
+      description: Modify existing work plan and milestone details
+      tags:
+        - Work Plan
+      requestBody:
+        description: Updated work plan details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkPlanRequest'
+      responses:
+        '202':
+          description: Work plan updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkPlanResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /work-plan/v1/_search:
+    post:
+      summary: Search Work Plans
+      description: Search for work plans based on various criteria
+      tags:
+        - Work Plan
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/tenantId'
+        - $ref: '#/components/parameters/includeDeleted'
+      requestBody:
+        description: Search criteria
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkPlanSearchRequest'
+      responses:
+        '200':
+          description: Work plans found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkPlanResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /work-plan/milestone/v1/_create:
+    post:
+      summary: Create Work Plan Milestone
+      description: Add new milestones to work plan
+      tags:
+        - Work Plan Milestone
+      requestBody:
+        description: Milestone details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkPlanMilestoneRequest'
+      responses:
+        '202':
+          description: Milestone created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkPlanMilestoneResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /work-plan/milestone/v1/_update:
+    post:
+      summary: Update Work Plan Milestone
+      description: Update existing milestone details
+      tags:
+        - Work Plan Milestone
+      requestBody:
+        description: Updated milestone details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkPlanMilestoneRequest'
+      responses:
+        '202':
+          description: Milestone updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkPlanMilestoneResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /work-plan/milestone/v1/_search:
+    post:
+      summary: Search Work Plan Milestones
+      description: Search milestones for work plans
+      tags:
+        - Work Plan Milestone
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/tenantId'
+      requestBody:
+        description: Search criteria
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkPlanMilestoneSearchRequest'
+      responses:
+        '200':
+          description: Milestones found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkPlanMilestoneBulkResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  # Site Handover APIs
+  /site-handover/v1/_create:
+    post:
+      summary: Create Site Handover
+      description: Capture project initiation details including site handover date and geo-location
+      tags:
+        - Site Handover
+      requestBody:
+        description: Site handover details with geo-location
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteHandoverRequest'
+      responses:
+        '202':
+          description: Site handover created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteHandoverResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /site-handover/v1/_update:
+    post:
+      summary: Update Site Handover
+      description: Modify existing site handover details
+      tags:
+        - Site Handover
+      requestBody:
+        description: Updated site handover details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteHandoverRequest'
+      responses:
+        '202':
+          description: Site handover updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteHandoverResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /site-handover/v1/_search:
+    post:
+      summary: Search Site Handovers
+      description: Search for site handover records
+      tags:
+        - Site Handover
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/tenantId'
+        - $ref: '#/components/parameters/includeDeleted'
+      requestBody:
+        description: Search criteria
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteHandoverSearchRequest'
+      responses:
+        '200':
+          description: Site handovers found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteHandoverBulkResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  # Activity Completion APIs
+  /activity-completion/v1/_create:
+    post:
+      summary: Create Activity Completion Update
+      description: Capture activity completion updates with milestone-wise geo-tagged photographs
+      tags:
+        - Activity Completion
+      requestBody:
+        description: Activity completion details with photos
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivityCompletionRequest'
+      responses:
+        '202':
+          description: Activity completion created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityCompletionResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /activity-completion/v1/_update:
+    post:
+      summary: Update Activity Completion
+      description: Modify existing activity completion records
+      tags:
+        - Activity Completion
+      requestBody:
+        description: Updated activity completion details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivityCompletionRequest'
+      responses:
+        '202':
+          description: Activity completion updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityCompletionResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /activity-completion/v1/_search:
+    post:
+      summary: Search Activity Completions
+      description: Search for activity completion records
+      tags:
+        - Activity Completion
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/tenantId'
+        - $ref: '#/components/parameters/includeDeleted'
+      requestBody:
+        description: Search criteria
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivityCompletionSearchRequest'
+      responses:
+        '200':
+          description: Activity completions found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityCompletionBulkResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /activity-completion/photo/v1/_upload:
+    post:
+      summary: Upload Activity Photos
+      description: Upload geo-tagged photographs for activity completion
+      tags:
+        - Activity Photos
+      requestBody:
+        description: Photo upload details
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                activityCompletionId:
+                  type: string
+                  description: Activity completion reference
+                milestoneId:
+                  type: string
+                  description: Associated milestone
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Photo files
+                geoLocation:
+                  $ref: '#/components/schemas/GeoLocation'
+      responses:
+        '202':
+          description: Photos uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhotoUploadResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  
+components:
+  parameters:
+    tenantId:
+      name: tenantId
+      in: query
+      description: Unique id for a tenant
+      required: true
+      schema:
+        type: string
+
+    limit:
+      name: limit
+      description: Pagination - limit records in response
+      in: query
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+
+    offset:
+      name: offset
+      description: Pagination - offset from which records should be returned
+      in: query
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+
+    includeDeleted:
+      name: includeDeleted
+      description: Include deleted records in search results
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+
+  schemas:
+    # Work Plan Schemas
+    WorkPlan:
+      description: Work plan with milestone-wise details linked to contract
+      type: object
+      required:
+        - tenantId
+        - contractId
+        - name
+        - startDate
+        - endDate
+      properties:
+        id:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Unique system generated ID
+          readOnly: true
+        tenantId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Tenant identifier
+        workPlanNumber:
+          type: string
+          description: Unique work plan number
+          example: 'WP/2024-25/001'
+          readOnly: true
+        contractId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Reference to approved contract
+        contractNumber:
+          type: string
+          description: Contract number for reference
+        projectId:
+          type: string
+          description: Associated project ID
+        estimateId:
+          type: string
+          description: Associated estimate ID
+        name:
+          type: string
+          minLength: 2
+          maxLength: 256
+          description: Work plan name
+        description:
+          type: string
+          maxLength: 1024
+          description: Detailed description
+        startDate:
+          type: integer
+          format: int64
+          description: Plan start date (epoch)
+        endDate:
+          type: integer
+          format: int64
+          description: Plan end date (epoch)
+        status:
+          type: string
+          enum:
+            - DRAFT
+            - SUBMITTED
+            - APPROVED
+            - IN_PROGRESS
+            - ON_HOLD
+            - COMPLETED
+            - CANCELLED
+        workType:
+          type: string
+          description: Type of work
+        totalEstimatedCost:
+          type: number
+          format: double
+          description: Total estimated cost
+        totalActualCost:
+          type: number
+          format: double
+          description: Total actual cost incurred
+        overallProgress:
+          type: number
+          format: double
+          description: Overall progress percentage (0-100)
+        approvalDetails:
+          $ref: '#/components/schemas/ApprovalInfo'
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/Document'
+        additionalDetails:
+          type: object
+        isDeleted:
+          type: boolean
+          default: false
+        rowVersion:
+          type: integer
+          format: int64
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+
+    WorkPlanMilestone:
+      description: Milestone details for work plan
+      type: object
+      required:
+        - tenantId
+        - workPlanId
+        - name
+        - targetDate
+      properties:
+        id:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Unique milestone ID
+          readOnly: true
+        tenantId:
+          type: string
+          minLength: 2
+          maxLength: 64
+        workPlanId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Reference to work plan
+        sequenceNumber:
+          type: integer
+          description: Milestone sequence number
+        name:
+          type: string
+          minLength: 2
+          maxLength: 256
+          description: Milestone name
+        description:
+          type: string
+          maxLength: 1024
+        targetDate:
+          type: integer
+          format: int64
+          description: Target completion date
+        actualDate:
+          type: integer
+          format: int64
+          description: Actual completion date
+        status:
+          type: string
+          enum:
+            - NOT_STARTED
+            - IN_PROGRESS
+            - COMPLETED
+            - DELAYED
+            - ON_HOLD
+        percentageCompletion:
+          type: number
+          format: double
+          description: Completion percentage (0-100)
+        estimatedCost:
+          type: number
+          format: double
+        actualCost:
+          type: number
+          format: double
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Activity'
+        dependencies:
+          type: array
+          items:
+            type: string
+          description: List of dependent milestone IDs
+        isDeleted:
+          type: boolean
+          default: false
+        rowVersion:
+          type: integer
+          format: int64
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+
+    Activity:
+      description: Activity under a milestone
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          minLength: 2
+          maxLength: 256
+        description:
+          type: string
+        quantity:
+          type: number
+          format: double
+        unit:
+          type: string
+        rate:
+          type: number
+          format: double
+        amount:
+          type: number
+          format: double
+        status:
+          type: string
+          enum:
+            - PENDING
+            - IN_PROGRESS
+            - COMPLETED
+
+    # Site Handover Schemas
+    SiteHandover:
+      description: Site handover details with geo-location
+      type: object
+      required:
+        - tenantId
+        - contractId
+        - handoverDate
+        - geoLocation
+      properties:
+        id:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Unique ID
+          readOnly: true
+        tenantId:
+          type: string
+          minLength: 2
+          maxLength: 64
+        handoverNumber:
+          type: string
+          description: Unique handover reference number
+          readOnly: true
+        contractId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Reference to contract
+        workPlanId:
+          type: string
+          description: Associated work plan
+        projectId:
+          type: string
+          description: Associated project
+        handoverDate:
+          type: integer
+          format: int64
+          description: Site handover date
+        handoverBy:
+          type: string
+          description: Person/authority handing over
+        handoverTo:
+          type: string
+          description: Person/contractor receiving
+        siteDetails:
+          $ref: '#/components/schemas/SiteDetails'
+        geoLocation:
+          $ref: '#/components/schemas/GeoLocation'
+        status:
+          type: string
+          enum:
+            - INITIATED
+            - IN_PROGRESS
+            - COMPLETED
+            - DISPUTED
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SiteCondition'
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/Document'
+        photographs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Photograph'
+        remarks:
+          type: string
+          maxLength: 1024
+        additionalDetails:
+          type: object
+        isDeleted:
+          type: boolean
+          default: false
+        rowVersion:
+          type: integer
+          format: int64
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+
+    SiteDetails:
+      type: object
+      properties:
+        siteName:
+          type: string
+        siteAddress:
+          $ref: 'https://raw.githubusercontent.com/digit-egov/health-api-specs/main/contracts/common.yaml#/definitions/Address'
+        siteArea:
+          type: number
+          format: double
+        siteAreaUnit:
+          type: string
+        boundaryDetails:
+          type: string
+        accessDetails:
+          type: string
+        utilities:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              available:
+                type: boolean
+              details:
+                type: string
+
+    SiteCondition:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - CLEAR_SITE
+            - UTILITIES_AVAILABLE
+            - ACCESS_ROAD
+            - MATERIAL_STORAGE
+            - OTHER
+        status:
+          type: string
+          enum:
+            - COMPLIED
+            - NOT_COMPLIED
+            - PARTIAL
+        remarks:
+          type: string
+
+    # Activity Completion Schemas
+    ActivityCompletion:
+      description: Activity completion update with geo-tagged photos
+      type: object
+      required:
+        - tenantId
+        - workPlanId
+        - milestoneId
+        - completionDate
+      properties:
+        id:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Unique ID
+          readOnly: true
+        tenantId:
+          type: string
+          minLength: 2
+          maxLength: 64
+        completionNumber:
+          type: string
+          description: Unique completion reference
+          readOnly: true
+        workPlanId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Reference to work plan
+        milestoneId:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: Reference to milestone
+        activityId:
+          type: string
+          description: Specific activity reference
+        contractId:
+          type: string
+          description: Reference to contract
+        completionDate:
+          type: integer
+          format: int64
+          description: Activity completion date
+        completionType:
+          type: string
+          enum:
+            - FULL
+            - PARTIAL
+            - MILESTONE
+        percentageCompleted:
+          type: number
+          format: double
+          description: Percentage of work completed (0-100)
+        quantityCompleted:
+          type: number
+          format: double
+          description: Quantity of work completed
+        unit:
+          type: string
+          description: Unit of measurement
+        geoLocation:
+          $ref: '#/components/schemas/GeoLocation'
+        photographs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Photograph'
+        qualityChecks:
+          type: array
+          items:
+            $ref: '#/components/schemas/QualityCheck'
+        verificationDetails:
+          $ref: '#/components/schemas/VerificationDetails'
+        remarks:
+          type: string
+          maxLength: 1024
+        weather:
+          type: string
+          description: Weather conditions during execution
+        impediments:
+          type: string
+          description: Any impediments faced
+        additionalDetails:
+          type: object
+        isDeleted:
+          type: boolean
+          default: false
+        rowVersion:
+          type: integer
+          format: int64
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+
+    GeoLocation:
+      type: object
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+        altitude:
+          type: number
+          format: double
+        accuracy:
+          type: number
+          format: double
+          description: Accuracy in meters
+        capturedAt:
+          type: integer
+          format: int64
+          description: Timestamp when location was captured
+
+    Photograph:
+      type: object
+      properties:
+        id:
+          type: string
+        fileStoreId:
+          type: string
+          description: File store reference
+        fileName:
+          type: string
+        fileType:
+          type: string
+        fileSize:
+          type: integer
+          description: Size in bytes
+        caption:
+          type: string
+        category:
+          type: string
+          enum:
+            - BEFORE
+            - DURING
+            - AFTER
+            - MILESTONE
+            - QUALITY_CHECK
+            - ISSUE
+        geoLocation:
+          $ref: '#/components/schemas/GeoLocation'
+        timestamp:
+          type: integer
+          format: int64
+        uploadedBy:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+
+    QualityCheck:
+      type: object
+      properties:
+        parameter:
+          type: string
+        specification:
+          type: string
+        actualValue:
+          type: string
+        status:
+          type: string
+          enum:
+            - PASS
+            - FAIL
+            - CONDITIONAL
+        remarks:
+          type: string
+
+    VerificationDetails:
+      type: object
+      properties:
+        verifiedBy:
+          type: string
+          description: User ID of verifier
+        verificationDate:
+          type: integer
+          format: int64
+        verificationStatus:
+          type: string
+          enum:
+            - PENDING
+            - VERIFIED
+            - REJECTED
+            - REQUIRES_REWORK
+        verificationRemarks:
+          type: string
+        signature:
+          type: string
+          description: Digital signature reference
+
+    ApprovalInfo:
+      type: object
+      properties:
+        approvedBy:
+          type: string
+        approvalDate:
+          type: integer
+          format: int64
+        approvalStatus:
+          type: string
+        comments:
+          type: string
+
+    # Dashboard Schemas
+    ExecutionDashboardData:
+      type: object
+      properties:
+        totalWorkPlans:
+          type: integer
+        activeWorkPlans:
+          type: integer
+        completedWorkPlans:
+          type: integer
+        totalMilestones:
+          type: integer
+        completedMilestones:
+          type: integer
+        delayedMilestones:
+          type: integer
+        overallProgress:
+          type: number
+          format: double
+        totalEstimatedCost:
+          type: number
+          format: double
+        totalActualCost:
+          type: number
+          format: double
+        costVariance:
+          type: number
+          format: double
+        siteHandovers:
+          type: object
+          properties:
+            total:
+              type: integer
+            completed:
+              type: integer
+            pending:
+              type: integer
+        activityCompletions:
+          type: object
+          properties:
+            total:
+              type: integer
+            thisWeek:
+              type: integer
+            thisMonth:
+              type: integer
+        milestoneProgress:
+          type: array
+          items:
+            type: object
+            properties:
+              milestoneId:
+                type: string
+              milestoneName:
+                type: string
+              progress:
+                type: number
+                format: double
+              status:
+                type: string
+        weeklyProgress:
+          type: array
+          items:
+            type: object
+            properties:
+              week:
+                type: string
+              completedActivities:
+                type: integer
+              photographsUploaded:
+                type: integer
+        qualityMetrics:
+          type: object
+          properties:
+            totalChecks:
+              type: integer
+            passedChecks:
+              type: integer
+            failedChecks:
+              type: integer
+            passRate:
+              type: number
+              format: double
+
+    # Search Schemas
+    WorkPlanSearch:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        contractId:
+          type: string
+        projectId:
+          type: string
+        workPlanNumber:
+          type: string
+        status:
+          type: array
+          items:
+            type: string
+        startDateFrom:
+          type: integer
+          format: int64
+        startDateTo:
+          type: integer
+          format: int64
+
+    WorkPlanMilestoneSearch:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        workPlanId:
+          type: string
+        status:
+          type: array
+          items:
+            type: string
+        targetDateFrom:
+          type: integer
+          format: int64
+        targetDateTo:
+          type: integer
+          format: int64
+
+    SiteHandoverSearch:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        contractId:
+          type: string
+        workPlanId:
+          type: string
+        projectId:
+          type: string
+        handoverNumber:
+          type: string
+        status:
+          type: array
+          items:
+            type: string
+        handoverDateFrom:
+          type: integer
+          format: int64
+        handoverDateTo:
+          type: integer
+          format: int64
+
+    ActivityCompletionSearch:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        workPlanId:
+          type: string
+        milestoneId:
+          type: string
+        contractId:
+          type: string
+        completionNumber:
+          type: string
+        completionType:
+          type: string
+        completionDateFrom:
+          type: integer
+          format: int64
+        completionDateTo:
+          type: integer
+          format: int64
+
+    ExecutionDashboardFilter:
+      type: object
+      properties:
+        contractIds:
+          type: array
+          items:
+            type: string
+        projectIds:
+          type: array
+          items:
+            type: string
+        workPlanIds:
+          type: array
+          items:
+            type: string
+        dateFrom:
+          type: integer
+          format: int64
+        dateTo:
+          type: integer
+          format: int64
+
+    # Request/Response Schemas
+    WorkPlanRequest:
+      type: object
+      required:
+        - RequestInfo
+        - WorkPlans
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        WorkPlans:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/WorkPlan'
+
+    WorkPlanSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        WorkPlan:
+          $ref: '#/components/schemas/WorkPlanSearch'
+
+    WorkPlanResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        WorkPlans:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkPlan'
+
+    WorkPlanMilestoneRequest:
+      type: object
+      required:
+        - RequestInfo
+        - Milestones
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        Milestones:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/WorkPlanMilestone'
+
+    WorkPlanMilestoneSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        Milestone:
+          $ref: '#/components/schemas/WorkPlanMilestoneSearch'
+
+    WorkPlanMilestoneResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        Milestone:
+          $ref: '#/components/schemas/WorkPlanMilestone'
+
+    WorkPlanMilestoneBulkResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        Milestones:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkPlanMilestone'
+
+    SiteHandoverRequest:
+      type: object
+      required:
+        - RequestInfo
+        - SiteHandovers
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        SiteHandovers:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/SiteHandover'
+
+    SiteHandoverSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        SiteHandover:
+          $ref: '#/components/schemas/SiteHandoverSearch'
+
+    SiteHandoverResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        SiteHandover:
+          $ref: '#/components/schemas/SiteHandover'
+
+    SiteHandoverBulkResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        SiteHandovers:
+          type: array
+          items:
+            $ref: '#/components/schemas/SiteHandover'
+
+    ActivityCompletionRequest:
+      type: object
+      required:
+        - RequestInfo
+        - ActivityCompletions
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        ActivityCompletions:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/ActivityCompletion'
+
+    ActivityCompletionSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        ActivityCompletion:
+          $ref: '#/components/schemas/ActivityCompletionSearch'
+
+    ActivityCompletionResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        ActivityCompletion:
+          $ref: '#/components/schemas/ActivityCompletion'
+
+    ActivityCompletionBulkResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        ActivityCompletions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityCompletion'
+
+    PhotoUploadResponse:
+      type: object
+      required:
+        - ResponseInfo
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        uploadedPhotos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Photograph'
+
+   
