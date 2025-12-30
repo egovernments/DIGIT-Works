@@ -497,6 +497,10 @@ components:
           description: Net paid amount for a bill
           type: number
           format: BigDecimal
+        transactionid:
+          type: string
+          description: The unique transaction ID for this payment used to track it with an external system. To be filled in from the integrating service
+          example: PI/2023-24/001
         bills:
           description: search payment by the bill ids         
           type: array
@@ -504,7 +508,10 @@ components:
           items:
             $ref: '#/components/schemas/PaymentBill'
         status:
-          $ref: '#/components/schemas/Status'
+          $ref: '#/components/schemas/PaymentStatus'
+        statusMessage:
+          description: Status message accompanying the status. Examples could be failure reasons etc..
+          type: string
         additionalDetails:
           description: Any additional details that need to be captured
           type: object
@@ -613,6 +620,9 @@ components:
           format: BigDecimal
         status:
           $ref: '#/components/schemas/PaymentStatus'
+        statusMessage:
+          description: Status message accompanying the status. Examples could be failure reasons etc..
+          type: string
         auditDetails:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
       required:
