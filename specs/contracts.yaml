@@ -100,6 +100,16 @@ components:
           description: Formatted revision number. Empty in the case of an original contract. 
           minLength: 1
           maxLength: 64
+        businessService:
+          type: string
+          description: Business service name
+          minLength: 2
+          maxLength: 64
+          example: CONTRACT, REVISION-CONTRACT
+        versionNumber:
+          type: number
+          description: Current revision number of contract
+          example: 1
         tenantId:
           type: string
           description: Tenant Identifier
@@ -180,6 +190,13 @@ components:
           type: string
           format: uuid
           description: Unique identifier line item details for contract
+          readOnly: true
+          minLength: 1
+          maxLength: 64
+        contractLineItemRef:
+          type: string
+          description: Lineitem id which will be same when creating and revising the contract, this will used for external services
+          format: uuid
           readOnly: true
           minLength: 1
           maxLength: 64

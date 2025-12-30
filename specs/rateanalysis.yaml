@@ -1,0 +1,537 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Create Rate Analysis
+  description: >-
+    This service the rates for the  composite Sors.
+paths:
+  /rate-analysis/v1/_calculate:
+    post:
+      tags:
+        -  Rate Analysis
+      summary: Create Rate For Sor Composition
+      description: Create Rate For Sor Composition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalysisRequest'
+      responses:
+        '202':
+          description: Successful created Rate Analysis
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateAnalysisResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes
+
+  /rate-analysis/v1/_create:
+    post:
+      tags:
+        - Rate Analysis
+      summary: Save Per Unit Rates
+      description: Save Per Unit Rates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalysisRequest'
+      responses:
+        '202':
+          description: Successful created Rate Analysis
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RatesResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes
+
+  /rate-analysis/v1/scheduler/_create:
+    post:
+      tags:
+        - JOB Scheduler
+      summary: Create JOB Scheduler for Sor
+      description: Create JOB Scheduler for Sor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobSchedulerRequest'
+      responses:
+        '202':
+          description: Successfull Job Scheduled
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JobSchedulerResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes
+  /rate-analysis/v1/scheduler/_search:
+    post:
+      tags:
+        - JOB Scheduler
+      summary: Search Job Scheduler
+      description: Search Job Scheduler
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobSchedulerSearchCriteria'
+      responses:
+        '202':
+          description: Successfull Job Scheduled
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JobSchedulerResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes
+
+
+
+
+components:
+  schemas:
+    AnalysisRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo
+        sorDetails:
+          $ref: '#/components/schemas/SorDetails'
+
+    SorDetails:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          description: Unique identifier of the tenant that could be a department/ulb/state
+          minLength: 2
+          maxLength: 64
+          example: pb.jalandhar OR dwss
+        sorCodes:
+          type: array
+          items:
+            type: string
+        sorId:
+          type: array
+          items:
+            type: string
+        effectiveFrom:
+          type: string
+          description: Revise Rate Date Selected from Calendar
+
+      required:
+        - sorId
+        - tenantId
+    RateAnalysisResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ResponseInfo
+        rateAnalysis:
+          type: array
+          items:
+            $ref: '#/components/schemas/RateAnalysis'
+    RateAnalysis:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the Rate Analysis.
+          format: uuid
+          example: 251c51eb-e970-4e01-a99a-70136c47a934
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        tenantId:
+          type: string
+          description: Unique identifier of the tenant that could be a department/ulb/state
+          minLength: 2
+          maxLength: 64
+          example: pb.jalandhar OR dwss
+        sorCode:
+          type: string
+          description: Sor Code for which rate is needed
+          minLength: 2
+          maxLength: 64
+          example: SOR00101
+        sorId:
+          type: string
+          description: UUID  of SOR For which the rate  is needed
+          minLength: 2
+          maxLength: 64
+          example: 123432-234jsd-23823d-12bdqq
+        sorType:
+          type: string
+          description: Type Of Sor for which rate analuysis is needed
+          minLength: 2
+          maxLength: 64
+          example: Works
+        sorSubType:
+          type: string
+          description: Sub Type Of Sor for which rate analuysis is needed
+          minLength: 2
+          maxLength: 64
+          example: Earth Works
+        sorVariant:
+          type: string
+          description: Variant of SOR for which rate analuysis is needed
+          minLength: 2
+          maxLength: 64
+          example: NA
+        isBasicVariant:
+          type: boolean
+          example: true
+        uom:
+          type: string
+          example: Cubic Meter
+        quantity:
+          type: number
+          description: Quantity for on which SOR is defined
+          example: 1
+        description:
+          type: string
+          description: Sor Description
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+        effectiveFrom:
+          type: string
+          format: timestamp
+          description: Date from which the rate analysis is effective.
+        analysisQuantity:
+          type: number
+          description: Quantity for which Analysis is created
+          example: 100
+        lineItems:
+          type: array
+          description: List of Sor Items
+          items:
+            $ref: '#/components/schemas/LineItem'
+    LineItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of Sor Line Item.
+          format: uuid
+          example: 8d7d883e-c840-4d6a-9938-44760759f1ac
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        type:
+          type: string
+          description:  Sors or ExtraCharges
+          enum:
+            - SOR
+            - NONSOR
+            - EXTRACHARGES
+          example: SOR
+        targetId:
+          type: string
+          description: Code of SOR or Extra Charges
+          example: SOR00102
+        amountDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountDetail'
+        additionalDetials:
+          type: object
+          description: Any additional details related to the line item
+
+    RatesResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ResponseInfo
+        rates:
+          $ref: '#/components/schemas/Rates'
+    Rates:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the Rate Analysis.
+          format: uuid
+          example: 251c51eb-e970-4e01-a99a-70136c47a934
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        tenantId:
+          type: string
+          description: Unique identifier of the tenant that could be a department/ulb/state
+          minLength: 2
+          maxLength: 64
+          example: pb.jalandhar OR dwss
+        sorCode:
+          type: string
+          description: Sor Code for which rate is needed
+          minLength: 2
+          maxLength: 64
+          example: SOR00101
+        sorId:
+          type: string
+          description: UUID  of SOR For which the rate  is needed
+          minLength: 2
+          maxLength: 64
+          example: 123432-234jsd-23823d-12bdqq
+        sorType:
+          type: string
+          description: Type Of Sor for which rate analuysis is needed
+          minLength: 2
+          maxLength: 64
+          example: Works
+        sorSubType:
+          type: string
+          description: Sub Type Of Sor for which rate analuysis is needed
+          minLength: 2
+          maxLength: 64
+          example: Earth Works
+        sorVariant:
+          type: string
+          description: Variant of SOR for which rate analuysis is needed
+          minLength: 2
+          maxLength: 64
+          example: NA
+        isBasicVariant:
+          type: boolean
+          example: true
+        uom:
+          type: string
+          example: Cubic Meter
+        quantity:
+          type: number
+          description: Quantity for on which SOR is defined
+          example: 1
+        description:
+          type: string
+          description: Sor Description
+        rate:
+          type: number
+          description: Rate Calulated After doing the total computation in Generate API
+          example: 650
+        effectiveFrom:
+          type: string
+          format: timestamp
+          description: Date from which the rate  is effective.
+        amountDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountDetail'
+    AmountDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of Amount Detail
+          format: uuid
+          example: 251c51eb-e970-4e01-a99a-70136c47a934
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        type:
+          type: string
+          description: Amount Detail Type
+          enum:
+            - PERCENTAGE
+            - FIXED
+          example: FIXED
+        heads:
+          type: string
+          description: Amount Detail Head Type
+          example: CA.9
+        amount:
+          type: number
+          description: Amount Calculated for head
+          example: 98765
+
+    JobSchedulerRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo
+        schedule:
+          $ref: '#/components/schemas/JobScheduler'
+    JobScheduler:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the SorComposition.
+          format: uuid
+          example: 251c51eb-e970-4e01-a99a-70136c47a934
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        tenantId:
+          type: string
+          description: Unique identifier of the tenant that could be a department/ulb/state
+          minLength: 2
+          maxLength: 64
+          example: pb.jalandhar OR dwss
+        effectiveFrom:
+          type: number
+          format: timestamp
+          description: Date from which the rate analysis is effective.
+          example: 1712095237139
+        sorIds:
+          type: array
+          items:
+            type: string
+            example: 251c51eb-e970-4e01-a99a-70136c47a934
+
+      required:
+        - effectiveFrom
+        - scehduledSors
+
+
+
+
+
+
+
+
+    JobSchedulerResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ResponseInfo
+        scheduledJobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduledJob'
+
+
+
+    ScheduledJob:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the SorComposition.
+          format: uuid
+          example: 18222916-e29d-4e83-a15c-a5575059811b
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        tenantId:
+          type: string
+        jobId:
+          type: string
+          description: Unique ID of scheduled JOB
+          example: JOB-2223-000051
+        scheduledOn:
+          type: string
+          format: timestamp
+          description: Date on which JOB is sceduled
+          example: 1712686291000
+        rateEffectiveFrom:
+          type: string
+          format: timestamp
+          description: Date From Which Revised Rates are effective
+          example: 1715278291000
+        noOfSorScheduled:
+          type: number
+          description: Total Number OF SOR scheduled
+          example: 2
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails'
+        status:
+          type: string
+          description: Overall Status of the JOB
+          enum:
+            - IN PROGRESS
+            - PARTIAL
+            - FAILED
+            - COMPLETED
+
+
+        sorDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/SorDetail'
+
+    SorDetail:
+      type: object
+      properties:
+        sorId:
+          type: string
+          description: UUID of SOR
+          example: f8b0f90b-0f09-4512-a0a7-21aaa47600f6
+        sorCode:
+          type: string
+          description: SOR CODE
+          example: SOR-00123
+        status:
+          type: string
+          description: SOR level status
+        failureReason:
+          type: string
+          description: Reason of Failure for the SOR
+        additionalDetails:
+          type: object
+          description: Additional Details Related to SOR
+
+    JobSchedulerSearchCriteria:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo
+
+        searchCriteria:
+          $ref: '#/components/schemas/SearchCriteria'
+
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
+
+    SearchCriteria:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          example: pb.cityA
+        jobIds:
+          type: array
+          items:
+            type: string
+            description: Unique ID of scheduled JOB
+            example: JOB-2223-000051
+        ids:
+          type: array
+          items:
+            type: string
+            description: UUID of the JOB.
+            format: uuid
+            example: 18222916-e29d-4e83-a15c-a5575059811b
+            minLength: 2
+            maxLength: 64

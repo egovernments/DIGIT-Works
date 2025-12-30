@@ -2,7 +2,15 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: Organisation Service
-  description: Organisation service and registry. The spec has two components. The org services APIs are meant to house business logic such as Workflows and/or other validations. The organisation APIs provide access to the pure registry without any of the add-on services. Those who want to use the pure registry can do so without needing workflow and other services. 
+  description: Organisation service and registry
+
+tags:
+  - name: OrgServices
+    description: Perform operations in organisation with workflow and some customizations (This was planned but not implemented)
+  - name: Organisation
+    description: Manage organisation details
+    
+
 paths:
   /org-services/v1/_create:
     post:
@@ -26,7 +34,7 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /org-services/v1/_update:
     post:
       tags:
@@ -49,7 +57,7 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /org-services/v1/_search:
     post:
       tags:
@@ -67,12 +75,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrgServiceResponse'
         '400':
-          description: Invalid search parameters
+          description: Invalid input.
           content:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /org-services/organisation/v1/_create:
     post:
       tags:
@@ -189,11 +197,11 @@ components:
         dateOfIncorporation:
           description: Epoch time representing date of incorporation of organisation
           type: number
-          format: integer
+          format: double
         orgAddress:
           type: array
           items:
-            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Address'
+            $ref: '#/components/schemas/Address'
         contactDetails:
           description: Contact person information
           type: array
@@ -222,32 +230,28 @@ components:
           description: Reference to documents related to the organisation that have been attached via file upload
           type: array
           items:
-            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+            $ref: '#/components/schemas/Document'
         additionalDetails:
           description: Json object to capture any extra information which is not accommodated by model
           type: object
         auditDetails:
-          type: object
-          allOf:
-            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
-            - description: Collection of audit related fields used by most models
-              readOnly: true
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
       required:
         - tenantId
         - name
     Identifier:
       title: Identifier
-      description: Object to capture identifiers (including tax) for a organisation
+      description: Object to capture tax identifiers for a organisation
       type: object
       properties:
         type:
-          description: The type of tax identifier from MDMS data. 
-          example: PAN, GSTIN, TIN etc..
+          description: The type of tax identifier from MDMS data. Eg. PAN, GSTIN, TIN etc..Can be different for other countries
           type: string
           minLength: 2
           maxLength: 64
         value:
-          description: Actual value of the identifier.
+          description: Actual value for the identifier.
           type: string
           minLength: 2
           maxLength: 64
@@ -258,21 +262,15 @@ components:
           type: object
     Jurisdiction:
       title: Jurisdiction
-      description: Object to capture boundary codes where an organisation is authorized to work
+      description: Object to capture Jurisdictions for an organisation
       type: object
       properties:
         code:
-          description: Jurisdiction code. One of codes defined in MDMS boundary hierarchies.
+          description: Jurisdiction code
           type: string
-          example: WARD, LOCALITY, ULB, CITY
-          minLength: 2
-          maxLength: 64
         id:
           description: Jurisdiction id
           type: string
-          example: WARD01, JATNI
-          minLength: 2
-          maxLength: 64
         additionalDetails:
           description: Any additional details that need to be captured
           type: object
@@ -325,11 +323,11 @@ components:
         validFrom:
           description: Validity from date of registration in epoch time
           type: number
-          format: integer
+          format: double
         validTo:
           description: Validity to date of registration in epoch time.
           type: number
-          format: integer
+          format: double
         wfStatus:
           type: string
           minLength: 2
@@ -346,25 +344,20 @@ components:
           description: Reference to documents specifically related to the type and category of work being registered for
           type: array
           items:
-            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+            $ref: '#/components/schemas/Document'
         additionalDetails:
           description: Json object to capture any extra information which is not accommodated by model
           type: object
         auditDetails:
-          type: object
-          allOf:
-            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
-            - description: Collection of audit related fields used by most models
-              readOnly: true
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
     OrgServiceRequest:
       title: OrgServiceRequest
       type: object
       properties:
         RequestInfo:
-          type: object
-          allOf:
-            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
-            - description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         organisations:
           type: object
           allOf:
@@ -377,20 +370,14 @@ components:
       type: object
       properties:
         ResponseInfo:
-          type: object
-          allOf:
-            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-            - description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
-              readOnly: true
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         organisations:
           type: array
           items:
             $ref: '#/components/schemas/Organisation'
         pagination:
-          type: object
-          allOf:
-            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
-            - description: Pagination details
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
         workflow:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
     OrgSearchCriteria:
@@ -404,8 +391,6 @@ components:
             type: string
             minLength: 2
             maxLength: 64
-          minLength: 2
-          maxLength: 64
         tenantId:
           description: Unique tenant of the system
           example: tenantA
@@ -430,10 +415,10 @@ components:
             - description: Represents the functions of an organisation
         createdFrom:
           type: number
-          format: integer
+          format: long
         createdTo:
           type: number
-          format: integer
+          format: long
         boundaryCode:
           type: string
         identifierType:
@@ -449,10 +434,8 @@ components:
       type: object
       properties:
         RequestInfo:
-          type: object
-          allOf:
-            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
-            - description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         organisations:
           type: object
           allOf:
@@ -463,18 +446,143 @@ components:
       type: object
       properties:
         ResponseInfo:
-          type: object
-          allOf:
-            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-            - description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
-              readOnly: true
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         organisations:
           type: array
           items:
             $ref: '#/components/schemas/Organisation'
         pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
+    Address:
+      title: Address
+      description: Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case.
+      type: object
+      properties:
+        tenantId:
+          description: Unique Identifier of the tenant to which user primarily belongs
+          type: string
+        doorNo:
+          description: House number or door number.
+          type: string
+        plotNo:
+          description: Plot number of the house.
+          type: string
+        id:
+          description: System generated id for the address
+          readOnly: true
+          type: string
+        landmark:
+          description: additional landmark to help locate the address
+          type: string
+        city:
+          description: City of the address. Can be represented by the tenantid itself
+          type: string
+        district:
+          description: The district in which the property is located
+          type: string
+        region:
+          description: The Region in which the property is located
+          type: string
+        state:
+          description: The State in which the property is located
+          type: string
+        country:
+          description: The country in which the property is located
+          type: string
+        pincode:
+          description: PIN code of the address. Indian pincodes will usually be all numbers.
+          type: string
+        additionDetails:
+          description: more address detail as may be needed
+          type: string
+        buildingName:
+          description: Name of the building
+          type: string
+          minLength: 2
+          maxLength: 64
+        street:
+          description: Street Name
+          type: string
+          minLength: 2
+          maxLength: 64
+        boundaryType:
+          description: The boundary type in which the property is located. This refers to the "label" field in boundary-data MDMS eg. Ward, Locality etc.
+          type: string
+        boundaryCode:
+          description: This refers to the boundary code. It can be found in boundary-data MDMS.
+          type: string
+        geoLocation:
+          $ref: '#/components/schemas/GeoLocation'
+      required:
+        - tenantId
+        - locality
+    Boundary:
+      title: Boundary
+      type: object
+      properties:
+        code:
+          description: code of the boundary.
+          type: string
+        name:
+          description: name of the boundary.
+          type: string
+        label:
+          description: localized label for the boundry.
+          type: string
+        latitude:
+          description: latitude of the boundary.
+          type: string
+        longitude:
+          description: longitude of the boundary.
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Boundary'
+        materializedPath:
+          description: materialized path of the boundary - this would be of the format tenantid.[code] from parentt till teh current boundary
+          readOnly: true
+          type: string
+      required:
+        - code
+        - name
+    Document:
+      title: Document
+      description: This object holds list of documents attached during the transaciton for a property
+      type: object
+      properties:
+        id:
+          description: system id of the Document.
+          type: string
+          maxLength: 64
+        documentType:
+          description: unique document type code, should be validated with document type master
+          type: string
+        fileStore:
+          description: File store reference key.
+          type: string
+        documentUid:
+          description: The unique id(Pancard Number,Adhar etc.) of the given Document.
+          type: string
+          maxLength: 64
+        isActive:
+          type: boolean
+        additionalDetails:
+          description: Json object to capture any extra information which is not accommodated by model
           type: object
-          allOf:
-            - $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
-            - description: Pagination details
-      
+    GeoLocation:
+      title: GeoLocation
+      type: object
+      properties:
+        latitude:
+          description: latitude of the address
+          type: number
+          format: double
+        longitude:
+          description: longitude of the address
+          type: number
+          format: double
+        additionalDetails:
+          description: Json object to capture any extra information which is not accommodated by model
+          type: object

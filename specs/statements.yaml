@@ -1,0 +1,282 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Create  Analysis And Utilization Statement
+  description: This service will create Analysis statement and Utilization Statement
+paths:
+  /statement/v1/analysis/_create:
+    post:
+      tags:
+        - Statement
+      summary: Create Analysis Statement
+      description: Create Statement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatementCreateRequest'
+      responses:
+        '202':
+          description: 'Successful Created Statement '
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StatemenResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes
+  /statement/v1/analysis/_search:
+    post:
+      tags:
+        - Statement
+      summary: Search Analysis Statement
+      description: Search Statement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatementSearchCriteria'
+      responses:
+        '202':
+          description: Successful Fetched the statement
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StatemenResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes
+  /statement/v1/utilization/_create:
+    post:
+      tags:
+        - Statement
+      summary:  Create Utilization  Statement
+      description: Create Statement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatementCreateRequest'
+      responses:
+        '202':
+          description: 'Successful Created Statement '
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StatemenResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes
+  /statement/v1/utilization/_search:
+    post:
+      tags:
+        - Statement
+      summary: Search Utilization Statement
+      description: Search Statement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatementSearchCriteria'
+      responses:
+        '202':
+          description: Successful Fetched the statement
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StatemenResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes
+components:
+  schemas:
+    StatementCreateRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo
+        statementRequest:
+          $ref: '#/components/schemas/StatementRequest'
+    StatementRequest:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          description: Unique identifier of the tenant that could be a department/ulb/state
+          minLength: 2
+          maxLength: 64
+          example: pb.jalandhar OR dwss
+        id:
+          type: string
+          description: This can contain estimate id or measurementBook Id
+          example: 461c51eb-e970-4e01-a99a-70136c47a934
+      required:
+        - id
+        - tenantId
+    StatemenResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ResponseInfo
+        statement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Statement'
+    Statement:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the Line Item.
+          format: uuid
+          example: 251c51eb-e970-4e01-a99a-70136c47a934
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        tenantId:
+          type: string
+          description: Unique identifier of the tenant that could be a department/ulb/state
+          minLength: 2
+          maxLength: 64
+          example: pb.jalandhar OR dwss
+        targetId:
+          type: string
+          description: UUID of the application for which statement is created
+          format: uuid
+          example: 461c51eb-e970-4e01-a99a-70136c47a934
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        basicSorDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicSorDetail'
+        sorDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/SorDetail'
+
+
+    SorDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        statementId:
+          type: string
+          description: Unique identifier of Statement
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        sorId:
+          type: string
+          description: UUID of SOR WORKS or any else which is present in estimate
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        basicSorDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicSorDetail'
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/BasisSor'
+
+    BasisSor:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        sorId:
+          type: string
+          description: UUID of Basic Sor mapped to Work SOR
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        sorType:
+          type: string
+          description: Type of basic SOR
+          enum:
+            - Labour
+            - Machinery
+            - Material
+        basicSorDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicSorDetail'
+
+
+
+    StatementSearchCriteria:
+      type: object
+      properties:
+        requestInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo
+        searchCriteria:
+          $ref: '#/components/schemas/SearchCriteria'
+    SearchCriteria:
+      type: object
+      properties:
+        statementId:
+          type: array
+          items:
+            type: string
+        tenantId:
+          type: string
+          description: Unique identifier of the tenant that could be a department/ulb/state
+          minLength: 2
+          maxLength: 64
+          example: pb.jalandhar OR dwss
+        referenceId:
+          type: string
+          description: UUID of the application for which statement is created
+          format: uuid
+          example: 461c51eb-e970-4e01-a99a-70136c47a934
+          minLength: 2
+          maxLength: 64
+      required:
+        - referenceId
+    BasicSorDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the Line Item.
+          format: uuid
+          minLength: 2
+          maxLength: 64
+          readOnly: true
+        amount:
+          type: number
+          example: 1534
+        type:
+          type: string
+          description: Type of SOR cost
+          example: Labour
+        quantity:
+          type: number
+          description: Quantity defined in estimate for each WORKS sor
+        rate:
+          type: number
+          description: Rates defined in MDMS

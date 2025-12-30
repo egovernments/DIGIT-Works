@@ -189,6 +189,12 @@ components:
           minLength: 2
           maxLength: 64
           readOnly: true
+        tenantId:
+          type: string
+          description: Unique identifier of the tenant that could be a department/ulb/state
+          minLength: 2
+          maxLength: 64
+          example: pb.jalandhar,dwss
         measurementNumber:
           type: string
           description: Formatted number for this entry
@@ -210,9 +216,6 @@ components:
           type: number
           description: Date (in epoch time) when measurement was taken if different from the system created time
           format: timestamp
-        cumulativeValue:
-          type: number
-          description: Sum of all measurements so far for a given targetId
         measures:
           type: array
           items:
@@ -221,6 +224,14 @@ components:
           type: boolean
           description: Flag used to soft delete entries
           default: true
+        documents:
+          description: >-
+            Reference to documents related to the organisation that have been
+            attached via file upload
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+          minItems: 1
         auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
@@ -280,6 +291,9 @@ components:
         currentValue:
           type: number
           description: Derived from LBHQ as L*B*H*Q or can be entered directly without LBHQ measurements. 
+        cumulativeValue:
+          type: number
+          description: Sum of all measurements so far for a given targetId
         isActive:
           type: boolean
           description: Flag for soft deletion
@@ -313,6 +327,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/Measurement'
       properties:
+        wfStatus:
+          type: string
+          description: Captures workflow latest status
+          readOnly: true
         workflow:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
   

@@ -182,6 +182,18 @@ components:
           minLength: 2
           maxLength: 64
           readOnly: true
+        revisionNumber:
+          type: string
+          description: Formatted revision number. Empty in the case of an original estimate. 
+          example: EST/2022-23/010-001
+          minLength: 1
+          maxLength: 64
+        businessService:
+          type: string
+          description: Business service name
+          minLength: 2
+          maxLength: 64
+          example: ESTIMATE, REVISION-ESTIMATE
         projectId:
           type: string
           description: Link the estimate to the project. Project ID is not updatable.
@@ -305,23 +317,39 @@ components:
           example: Kilogram, meter, number
         uomValue:
           type: number
-          description: Unit of measurement value. Linked with uom
+          description: Unit of measurement value for the noOfUnit attribute. Linked with uom
           example: 5
+        length:
+          type: number
+          description: Length of the item being estimated. 
+        width:
+          type: number
+          description: Width of the item being estimated
+        height: 
+          type: number
+          description: Height of the item being estimated
+        quantity:
+          type: number
+          description: Total number of items with the same measurements. This will factor into the calculation.
+        isDeduction:
+          type: boolean
+          description: Whether this is a deduction or an addition
         amountDetail:
           type: array
           items:
             $ref: '#/components/schemas/AmountDetail'
-        measurement:
-          type: array
-          items:
-            $ref: '#/components/schemas/MeasurementSheet'
-          minItems: 1
         status:
           type: string
           description: Flag to soft delete
           enum:
             - ACTIVE
             - INACTIVE
+        prevLineitemId:
+          type: string
+          description: Previous Estimate detail id, This will required for revision 
+          format: uuid
+          example: 251c51eb-e970-4e01-a99a-70136c47a934
+          readOnly: true
         additionalDetails:
           type: object
           description: >-
@@ -334,64 +362,6 @@ components:
             - name
             - sorId
     
-    MeasurementSheet:
-      type: object
-      properties:
-        id: 
-          type: string
-          description: Unique identifier of the Measurement
-          format: uuid
-          example: 251c51eb-e970-4e01-a99a-70136c47a934
-          readOnly: true
-          minLength: 2
-          maxLength: 64
-        referenceId: 
-          type: string
-          description: Estimate details ID against which these measurement sheet are captured
-          format: uuid
-          example: 251c51eb-e970-4e01-a99a-70136c47a934
-          readOnly: true
-          minLength: 2
-          maxLength: 200
-        description:
-          type: string
-          description: Description of the detailed measurement
-          minLength: 2
-          maxLength: 512
-        uom:
-          type: string
-          description: Unit of measurement code master data for non-sor
-          example: Kilogram, meter, number
-          minLength: 2
-          maxLength: 64
-        uomValue:
-          type: number
-          description: Unit of measurement value. Linked with uom
-          example: 5
-        length:
-          type: number
-        width:
-          type: number
-        height: 
-          type: number
-        numItems:
-          type: number
-        totalValue: 
-          type: number
-        isDeduction:
-          type: boolean
-        additionalDetails:
-          type: object
-          description: >-
-            Any additional information that needs to be attached to the
-            estimate. For attachments, fileStoreIds will also be stored here. 
-        auditDetails:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-   
-      required:
-        - currentValue
-        
     AmountDetail:
       type: object
       properties:
@@ -425,7 +395,7 @@ components:
       type: object
       description: Request for Estimate _create and _update api's
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         estimate:
@@ -449,16 +419,16 @@ components:
           required:
             - action
       required:
-        - requestInfo
+        - RequestInfo
         - estimate
         - workflow
     EstimateResponse:
       type: object
       description: Response for the Estimate _create, _update and _search api's
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+            $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         estimates:
           type: array
           items:
@@ -469,7 +439,7 @@ components:
     RequestInfoWrapper:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
     save-estimate:
