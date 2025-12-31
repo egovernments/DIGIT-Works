@@ -678,6 +678,852 @@ GET  /ifms-adapter/balance/_check
 
 ---
 
+## Complete Entity Models & Schemas
+
+### Entity Model Overview
+
+The DIGIT Works platform consists of multiple interconnected entity models. This section provides comprehensive details about each entity, its properties, dependencies, and relationships.
+
+### Entity Classification
+
+| Entity Name | Type | UUID Field | Schema Code (if Master) | Primary References | Service Owner |
+|-------------|------|------------|------------------------|-------------------|---------------|
+| **Project** | Core Entity | id | - | parent, organisationId | Project Service |
+| **Estimate** | Core Entity | id | - | projectId | Estimate Service |
+| **Contract** | Core Entity | id | - | estimateId, orgId | Contract Service |
+| **Measurement** | Core Entity | id | - | contractId | Measurement Service |
+| **Bill** | Core Entity | id | - | contractId, musterRollId | Expense Service |
+| **Payment** | Core Entity | id | - | billId, bankAccountId | Expense Service |
+| **Organisation** | Core Entity | id | - | - | Organisation Service |
+| **BankAccount** | Core Entity | id | - | orgId | Bank Account Service |
+| **Individual** | Core Entity | id | - | - | Individual Service |
+| **AttendanceRegister** | Core Entity | id | - | referenceId (contractId) | Attendance Service |
+| **MusterRoll** | Core Entity | id | - | registerId, contractId | Muster Roll Service |
+| **SOR** | Core Entity | id | - | projectId | SOR Service |
+| **RateAnalysis** | Core Entity | id | - | projectId | Rate Analysis Service |
+| **Statement** | Core Entity | id | - | billId, paymentId | Statement Service |
+| **ProjectBeneficiary** | Link Entity | id | - | projectId, beneficiaryId | Project Service |
+| **ProjectStaff** | Link Entity | id | - | projectId, userId | Project Service |
+| **ProjectTask** | Link Entity | id | - | projectId | Project Service |
+| **ProjectFacility** | Link Entity | id | - | projectId, facilityId | Project Service |
+| **ProjectResource** | Link Entity | id | - | projectId | Project Service |
+| **Attendee** | Link Entity | id | - | registerId, individualId | Attendance Service |
+| **AttendanceLog** | Activity Entity | id | - | registerId, individualId | Attendance Service |
+| **EstimateDetail** | Sub Entity | id | - | estimateId | Estimate Service |
+| **LineItem** | Sub Entity | id | - | estimateId, contractId | Multiple Services |
+| **AmountBreakup** | Sub Entity | id | - | contractId | Contract Service |
+| **BillDetail** | Sub Entity | id | - | billId | Expense Service |
+| **MusterRollEntry** | Sub Entity | id | - | musterRollId, individualId | Muster Roll Service |
+| **Document** | Support Entity | id | - | referenceId (any entity) | Multiple Services |
+| **AuditDetails** | Support Entity | - | - | - | All Services |
+| **Address** | Support Entity | - | - | - | Multiple Services |
+| **GeoLocation** | Support Entity | - | - | - | Multiple Services |
+| **Workflow** | Support Entity | - | - | businessId (any entity) | Workflow Service |
+| **ProjectType** | Master Data | - | works.ProjectType | - | MDMS |
+| **TargetDemography** | Master Data | - | works.TargetDemography | - | MDMS |
+| **ContractType** | Master Data | - | works.ContractType | - | MDMS |
+| **Department** | Master Data | - | common-masters.Department | - | MDMS |
+| **Designation** | Master Data | - | common-masters.Designation | - | MDMS |
+| **EmploymentType** | Master Data | - | egov-hrms.EmployeeType | - | MDMS |
+| **UOM** | Master Data | - | common-masters.UOM | - | MDMS |
+| **HeadCode** | Master Data | - | expense.HeadCodes | - | MDMS |
+| **ApplicableCharge** | Master Data | - | expense.ApplicableCharges | - | MDMS |
+| **CBORoles** | Master Data | - | works.CBORoles | - | MDMS |
+| **OICRoles** | Master Data | - | works.OICRoles | - | MDMS |
+| **SORMaster** | Master Data | - | WORKS-SOR.SOR | - | MDMS |
+| **SORType** | Master Data | - | WORKS-SOR.Type | - | MDMS |
+| **SORSubType** | Master Data | - | WORKS-SOR.SubType | - | MDMS |
+| **SORVariant** | Master Data | - | WORKS-SOR.Variant | - | MDMS |
+| **OrganisationType** | Master Data | - | common-masters.OrgType | - | MDMS |
+| **OrganisationClass** | Master Data | - | common-masters.OrgFunctionClass | - | MDMS |
+| **OrganisationCategory** | Master Data | - | common-masters.OrgFunctionCategory | - | MDMS |
+| **AttendanceHours** | Master Data | - | common-masters.AttendanceHours | - | MDMS |
+| **MusterRollConfig** | Master Data | - | common-masters.MusterRoll | - | MDMS |
+| **GenderType** | Master Data | - | common-masters.GenderType | - | MDMS |
+| **SocialCategory** | Master Data | - | common-masters.SocialCategory | - | MDMS |
+| **WageSeekerSkills** | Master Data | - | common-masters.WageSeekerSkills | - | MDMS |
+| **Relationship** | Master Data | - | common-masters.Relationship | - | MDMS |
+| **StateInfo** | Master Data | - | common-masters.StateInfo | - | MDMS |
+| **Roles** | Master Data | - | ACCESSCONTROL-ROLES.roles | - | MDMS |
+| **Actions** | Master Data | - | ACCESSCONTROL-ACTIONS-TEST.actions-test | - | MDMS |
+
+### Entity Dependency Matrix
+
+| Entity | Direct Dependencies | Indirect Dependencies |
+|--------|-------------------|----------------------|
+| **Project** | Organisation (owner) | Department, ProjectType |
+| **Estimate** | Project, SOR, RateAnalysis | Organisation, Department |
+| **Contract** | Estimate, Organisation | Project, SOR |
+| **AttendanceRegister** | Contract (reference), Individual | Project, Organisation |
+| **MusterRoll** | AttendanceRegister, Individual | Contract, Project |
+| **Measurement** | Contract | Project, Organisation |
+| **Bill** | Contract, MusterRoll, Measurement | Project, Individual |
+| **Payment** | Bill, BankAccount | Organisation, Individual |
+| **Individual** | None (standalone) | - |
+| **Organisation** | BankAccount | - |
+
+### Detailed Entity Models
+
+#### 1. Project Entity
+
+**Purpose**: Core entity for managing works projects and their hierarchy
+
+```json
+{
+  "id": "UUID - System generated unique identifier",
+  "tenantId": "STRING - Tenant identifier for multi-tenancy",
+  "projectNumber": "STRING - Auto-generated project number (PR/2024-25/001)",
+  "name": "STRING - Project name/title",
+  "projectType": "STRING - Reference to works.ProjectType master",
+  "projectSubType": "STRING - Project sub-classification",
+  "department": "STRING - Reference to common-masters.Department",
+  "description": "STRING - Detailed project description",
+  "referenceID": "STRING - External reference number",
+  "projectHierarchy": "STRING - Hierarchical classification",
+  "parent": "UUID - Reference to parent Project.id for hierarchy",
+  "isTaskEnabled": "BOOLEAN - Whether task management is enabled",
+  "startDate": "LONG - Project start date (epoch)",
+  "endDate": "LONG - Project end date (epoch)",
+  "address": {
+    "tenantId": "STRING",
+    "doorNo": "STRING",
+    "plotNo": "STRING", 
+    "landmark": "STRING",
+    "city": "STRING",
+    "district": "STRING",
+    "region": "STRING",
+    "state": "STRING",
+    "country": "STRING",
+    "pincode": "STRING",
+    "geoLocation": {
+      "latitude": "DOUBLE",
+      "longitude": "DOUBLE"
+    }
+  },
+  "targets": [
+    {
+      "id": "UUID",
+      "targetNo": "STRING",
+      "beneficiaryType": "STRING - Reference to works.TargetDemography",
+      "totalNo": "LONG - Target quantity",
+      "targetUnit": "STRING - Unit of measurement"
+    }
+  ],
+  "documents": ["Array of Document objects"],
+  "additionalDetails": "JSON - Additional properties",
+  "isDeleted": "BOOLEAN - Soft delete flag",
+  "rowVersion": "LONG - Optimistic locking",
+  "auditDetails": "AuditDetails object"
+}
+```
+
+**Relationships**:
+- Has many: ProjectBeneficiary, ProjectStaff, ProjectTask, ProjectFacility, ProjectResource, Estimate
+- References: Department (master), ProjectType (master), Organisation (owner)
+- Hierarchy: Parent-Child with other Projects
+
+#### 2. Organisation Entity
+
+**Purpose**: Manage contractors, vendors, and other organizational entities
+
+```json
+{
+  "id": "UUID - System generated unique identifier", 
+  "tenantId": "STRING - Tenant identifier",
+  "applicationNumber": "STRING - Application reference number",
+  "orgNumber": "STRING - Organization registration number",
+  "applicationStatus": "STRING - Application status",
+  "externalRefNumber": "STRING - External reference",
+  "registrationStatus": "STRING - Registration status (ACTIVE/INACTIVE)",
+  "name": "STRING - Organization name",
+  "orgType": "STRING - Reference to common-masters.OrgType",
+  "subType": "STRING - Organization sub-type",
+  "contactDetails": [
+    {
+      "id": "UUID",
+      "contactName": "STRING - Contact person name", 
+      "contactMobileNumber": "STRING - Mobile number",
+      "contactEmail": "STRING - Email address",
+      "contactLandlineNumber": "STRING - Landline number",
+      "contactAddress": "Address object"
+    }
+  ],
+  "identifiers": [
+    {
+      "id": "UUID",
+      "type": "STRING - Identifier type",
+      "value": "STRING - Identifier value"
+    }
+  ],
+  "taxIdentifiers": [
+    {
+      "id": "UUID", 
+      "taxType": "STRING - Reference to common-masters.OrgTaxIdentifier",
+      "taxValue": "STRING - Tax identifier value"
+    }
+  ],
+  "orgFunctions": [
+    {
+      "id": "UUID",
+      "orgFunction": "STRING - Reference to common-masters.OrgFunctionClass",
+      "validFrom": "LONG - Valid from date (epoch)",
+      "validTo": "LONG - Valid to date (epoch)"
+    }
+  ],
+  "documents": ["Array of Document objects"],
+  "additionalDetails": "JSON - Additional properties",
+  "isDeleted": "BOOLEAN - Soft delete flag", 
+  "rowVersion": "LONG - Optimistic locking",
+  "auditDetails": "AuditDetails object"
+}
+```
+
+**Relationships**:
+- Has many: BankAccount, Contract
+- References: OrgType (master), OrgTaxIdentifier (master), OrgFunctionClass (master)
+
+#### 3. Individual Entity (Wage Seeker)
+
+**Purpose**: Manage wage seekers/workers registration and details
+
+```json
+{
+  "id": "UUID - System generated unique identifier",
+  "individualId": "STRING - Individual registration number",
+  "clientReferenceId": "STRING - Client reference",
+  "name": {
+    "givenName": "STRING - First name",
+    "familyName": "STRING - Last name", 
+    "otherNames": "STRING - Middle name"
+  },
+  "dateOfBirth": "LONG - Date of birth (epoch)",
+  "gender": "STRING - Reference to common-masters.GenderType", 
+  "bloodGroup": "STRING - Blood group",
+  "mobileNumber": "STRING - Mobile number",
+  "altContactNumber": "STRING - Alternate contact",
+  "email": "STRING - Email address",
+  "address": ["Array of Address objects"],
+  "fatherName": "STRING - Father's name",
+  "husbandName": "STRING - Husband's name", 
+  "relationship": "STRING - Reference to common-masters.Relationship",
+  "identifiers": [
+    {
+      "identifierType": "STRING - ID type (AADHAAR, VOTER_ID, etc)",
+      "identifierId": "STRING - ID number"
+    }
+  ],
+  "skills": [
+    {
+      "type": "STRING - Reference to common-masters.WageSeekerSkills",
+      "level": "STRING - Skill level (UNSKILLED, SEMI_SKILLED, SKILLED)"
+    }
+  ],
+  "photo": "STRING - Photo file store ID",
+  "isDeleted": "BOOLEAN - Soft delete flag",
+  "rowVersion": "LONG - Optimistic locking", 
+  "auditDetails": "AuditDetails object"
+}
+```
+
+**Relationships**:
+- Has many: Attendee, MusterRollEntry
+- References: GenderType (master), Relationship (master), WageSeekerSkills (master)
+
+#### 4. Contract Entity
+
+**Purpose**: Manage work contracts with contractors/organizations
+
+```json
+{
+  "id": "UUID - System generated unique identifier",
+  "tenantId": "STRING - Tenant identifier",
+  "contractNumber": "STRING - Auto-generated contract number",
+  "supplementaryNumber": "STRING - Supplementary contract number", 
+  "versionNumber": "LONG - Contract version",
+  "oldUuid": "UUID - Previous version UUID",
+  "businessService": "STRING - Workflow business service",
+  "wfStatus": "STRING - Current workflow status",
+  "executingAuthority": "STRING - Executing authority name",
+  "contractType": "STRING - Reference to works.ContractType",
+  "totalContractedAmount": "DOUBLE - Total contract value",
+  "securityDeposit": "DOUBLE - Security deposit amount",
+  "agreementDate": "LONG - Agreement date (epoch)",
+  "defectLiabilityPeriod": "LONG - Defect liability period",
+  "orgId": "UUID - Reference to Organisation.id",
+  "startDate": "LONG - Contract start date (epoch)", 
+  "endDate": "LONG - Contract end date (epoch)",
+  "issueDate": "LONG - Contract issue date (epoch)",
+  "status": "STRING - Contract status",
+  "estimateId": "UUID - Reference to Estimate.id",
+  "additionalDetails": "JSON - Additional contract details",
+  "lineItems": [
+    {
+      "id": "UUID",
+      "estimateLineItemId": "UUID - Reference to estimate line item",
+      "type": "STRING - Line item type",
+      "name": "STRING - Item description",
+      "description": "STRING - Detailed description", 
+      "unitRate": "DOUBLE - Rate per unit",
+      "noOfunit": "DOUBLE - Quantity",
+      "uom": "STRING - Reference to common-masters.UOM",
+      "category": "STRING - Item category",
+      "amountBreakups": [
+        {
+          "id": "UUID",
+          "estimateAmountBreakupId": "UUID",
+          "amount": "DOUBLE - Breakup amount"
+        }
+      ]
+    }
+  ],
+  "documents": ["Array of Document objects"],
+  "isDeleted": "BOOLEAN - Soft delete flag",
+  "rowVersion": "LONG - Optimistic locking",
+  "auditDetails": "AuditDetails object"
+}
+```
+
+**Relationships**:
+- Belongs to: Estimate, Organisation
+- Has many: Measurement, AttendanceRegister, Bill
+- References: ContractType (master), UOM (master)
+
+#### 5. AttendanceRegister Entity
+
+**Purpose**: Manage attendance registers for tracking worker attendance
+
+```json
+{
+  "id": "UUID - System generated unique identifier",
+  "tenantId": "STRING - Tenant identifier", 
+  "attendanceRegisterNumber": "STRING - Auto-generated register number",
+  "name": "STRING - Register name",
+  "referenceId": "UUID - Reference to Contract.id",
+  "serviceCode": "STRING - Service code (WORKS.ATTENDANCE)",
+  "startDate": "LONG - Register start date (epoch)",
+  "endDate": "LONG - Register end date (epoch)",
+  "status": "STRING - Register status",
+  "attendees": [
+    {
+      "id": "UUID",
+      "individualId": "UUID - Reference to Individual.id",
+      "enrollmentDate": "LONG - Enrollment date (epoch)",
+      "denrollmentDate": "LONG - De-enrollment date (epoch)"
+    }
+  ],
+  "staff": [
+    {
+      "id": "UUID", 
+      "userId": "UUID - User ID of staff member",
+      "enrollmentDate": "LONG - Staff enrollment date (epoch)",
+      "denrollmentDate": "LONG - Staff de-enrollment date (epoch)"
+    }
+  ],
+  "additionalDetails": "JSON - Additional register details",
+  "isDeleted": "BOOLEAN - Soft delete flag",
+  "rowVersion": "LONG - Optimistic locking", 
+  "auditDetails": "AuditDetails object"
+}
+```
+
+**Relationships**:
+- Belongs to: Contract (via referenceId)
+- Has many: Attendee, AttendanceLog, MusterRoll
+- Links to: Individual (via attendees)
+
+#### 6. AttendanceLog Entity
+
+**Purpose**: Record individual attendance entries and exits
+
+```json
+{
+  "id": "UUID - System generated unique identifier",
+  "tenantId": "STRING - Tenant identifier",
+  "registerId": "UUID - Reference to AttendanceRegister.id", 
+  "individualId": "UUID - Reference to Individual.id",
+  "clientReferenceId": "STRING - Client reference",
+  "time": "LONG - Entry/Exit timestamp (epoch)",
+  "type": "STRING - Log type (ENTRY/EXIT)",
+  "status": "STRING - Log status", 
+  "documentIds": ["Array of document file store IDs"],
+  "additionalDetails": "JSON - Additional log details",
+  "auditDetails": "AuditDetails object"
+}
+```
+
+**Relationships**:
+- Belongs to: AttendanceRegister, Individual
+- Used by: MusterRoll (for calculations)
+
+#### 7. MusterRoll Entity
+
+**Purpose**: Calculate wages based on attendance and generate payroll
+
+```json
+{
+  "id": "UUID - System generated unique identifier",
+  "tenantId": "STRING - Tenant identifier",
+  "musterRollNumber": "STRING - Auto-generated muster roll number",
+  "registerId": "UUID - Reference to AttendanceRegister.id",
+  "status": "STRING - Muster roll status",
+  "musterRollStatus": "STRING - Processing status", 
+  "startDate": "LONG - Muster period start date (epoch)",
+  "endDate": "LONG - Muster period end date (epoch)",
+  "individualEntries": [
+    {
+      "id": "UUID",
+      "individualId": "UUID - Reference to Individual.id",
+      "totalAttendance": "DOUBLE - Total attendance hours/days",
+      "attendanceEntries": [
+        {
+          "time": "LONG - Attendance date (epoch)",
+          "attendance": "DOUBLE - Attendance for the day"
+        }
+      ],
+      "payableAmount": "DOUBLE - Amount payable to individual",
+      "actualWorkingDays": "LONG - Actual working days",
+      "additionalDetails": "JSON - Additional entry details"
+    }
+  ],
+  "additionalDetails": "JSON - Additional muster roll details",
+  "isDeleted": "BOOLEAN - Soft delete flag",
+  "rowVersion": "LONG - Optimistic locking",
+  "auditDetails": "AuditDetails object"  
+}
+```
+
+**Relationships**:
+- Belongs to: AttendanceRegister
+- Has many: MusterRollEntry (via individualEntries)
+- Links to: Individual (via entries)
+- Feeds into: Bill (for wage payment)
+
+#### 8. Measurement Entity
+
+**Purpose**: Record work measurements for billing
+
+```json
+{
+  "id": "UUID - System generated unique identifier", 
+  "tenantId": "STRING - Tenant identifier",
+  "measurementNumber": "STRING - Auto-generated measurement number",
+  "physicalRefNumber": "STRING - Physical reference number",
+  "referenceId": "UUID - Reference to Contract.id",
+  "entryDate": "LONG - Measurement entry date (epoch)",
+  "isActive": "BOOLEAN - Active status",
+  "workflow": "Workflow object - Current workflow state",
+  "measures": [
+    {
+      "id": "UUID",
+      "targetId": "UUID - Reference to contract line item",
+      "isActive": "BOOLEAN - Active status",
+      "currentValue": "DOUBLE - Current measurement value",
+      "cumulativeValue": "DOUBLE - Cumulative measurement value", 
+      "comments": "STRING - Measurement comments",
+      "measures": [
+        {
+          "id": "UUID",
+          "value": "DOUBLE - Measured value",
+          "breadth": "DOUBLE - Breadth measurement", 
+          "height": "DOUBLE - Height measurement",
+          "length": "DOUBLE - Length measurement",
+          "number": "LONG - Number/count measurement"
+        }
+      ]
+    }
+  ],
+  "documents": ["Array of Document objects"],
+  "additionalDetails": "JSON - Additional measurement details",
+  "isDeleted": "BOOLEAN - Soft delete flag",
+  "rowVersion": "LONG - Optimistic locking",
+  "auditDetails": "AuditDetails object"
+}
+```
+
+**Relationships**:
+- Belongs to: Contract
+- References: Contract LineItems (via targetId)
+- Feeds into: Bill (for measurement-based billing)
+
+#### 9. Bill Entity (Expense)
+
+**Purpose**: Generate bills for payments (wage bills, measurement bills)
+
+```json
+{
+  "id": "UUID - System generated unique identifier",
+  "tenantId": "STRING - Tenant identifier", 
+  "billNumber": "STRING - Auto-generated bill number",
+  "billDate": "LONG - Bill date (epoch)",
+  "dueDate": "LONG - Payment due date (epoch)",
+  "payerName": "STRING - Payer name",
+  "payerAddress": "STRING - Payer address", 
+  "payerId": "STRING - Payer ID",
+  "billType": "STRING - Bill type (EXPENSE, PURCHASE)",
+  "businessService": "STRING - Business service code",
+  "fromPeriod": "LONG - Bill period start (epoch)",
+  "toPeriod": "LONG - Bill period end (epoch)",
+  "billDetails": [
+    {
+      "id": "UUID",
+      "billId": "UUID - Reference to parent Bill.id",
+      "demandId": "STRING - Demand reference",
+      "billDescription": "STRING - Bill description",
+      "expiryDate": "LONG - Expiry date (epoch)",
+      "displayMessage": "STRING - Display message",
+      "callBackForApportioning": "BOOLEAN - Callback flag",
+      "cancellationRemarks": "STRING - Cancellation remarks",
+      "additionalDetails": "JSON - Additional details",
+      "payableLineItems": [
+        {
+          "id": "UUID", 
+          "type": "STRING - Line item type",
+          "lineItemId": "STRING - Line item reference",
+          "isActive": "BOOLEAN - Active status",
+          "isPayable": "BOOLEAN - Payable flag",
+          "amount": "DOUBLE - Line item amount",
+          "paidAmount": "DOUBLE - Amount already paid",
+          "headCode": "STRING - Reference to expense.HeadCodes"
+        }
+      ],
+      "billAccountDetails": [
+        {
+          "id": "UUID",
+          "tenantId": "STRING",
+          "billDetailId": "STRING", 
+          "demandDetailId": "STRING",
+          "order": "LONG - Accounting order",
+          "amount": "DOUBLE - Account amount",
+          "adjustedAmount": "DOUBLE - Adjusted amount"
+        }
+      ]
+    }
+  ],
+  "totalAmount": "DOUBLE - Total bill amount",
+  "businessService": "STRING - Business service code",
+  "auditDetails": "AuditDetails object"
+}
+```
+
+**Relationships**:
+- Belongs to: Contract
+- Can link to: MusterRoll, Measurement (via references)  
+- Has many: Payment
+- References: HeadCodes (master)
+
+#### 10. Payment Entity
+
+**Purpose**: Manage payment processing and tracking
+
+```json
+{
+  "id": "UUID - System generated unique identifier",
+  "tenantId": "STRING - Tenant identifier",
+  "paymentNumber": "STRING - Auto-generated payment number", 
+  "mobileNumber": "STRING - Payee mobile number",
+  "paidBy": "STRING - Paid by user ID",
+  "payerName": "STRING - Payer name",
+  "payerAddress": "STRING - Payer address",
+  "payerEmail": "STRING - Payer email",
+  "payerId": "STRING - Payer identifier",
+  "paymentMode": "STRING - Payment mode",
+  "instrumentNumber": "STRING - Instrument number",
+  "instrumentDate": "LONG - Instrument date (epoch)",
+  "instrumentStatus": "STRING - Instrument status",
+  "ifscCode": "STRING - Bank IFSC code",
+  "auditDetails": "AuditDetails object",
+  "additionalDetails": "JSON - Additional payment details",
+  "paymentDetails": [
+    {
+      "id": "UUID", 
+      "tenantId": "STRING",
+      "totalDue": "DOUBLE - Total due amount",
+      "totalAmountPaid": "DOUBLE - Total amount paid",
+      "receiptNumber": "STRING - Receipt number",
+      "receiptDate": "LONG - Receipt date (epoch)",
+      "receiptType": "STRING - Receipt type",
+      "businessService": "STRING - Business service",
+      "billId": "UUID - Reference to Bill.id",
+      "bill": "Bill object - Referenced bill"
+    }
+  ],
+  "fileStoreId": "STRING - File store reference",
+  "transactionDate": "LONG - Transaction date (epoch)"
+}
+```
+
+**Relationships**:
+- Belongs to: Bill
+- Links to: BankAccount (via IFSC and account details)
+
+### Master Data Entities
+
+#### ProjectType Master
+```json
+{
+  "code": "STRING - Unique project type code", 
+  "name": "STRING - Project type name",
+  "group": "STRING - Project group",
+  "active": "BOOLEAN - Active status",
+  "beneficiary": "STRING - Target beneficiary type",
+  "projectSubType": ["Array of sub-type codes"]
+}
+```
+
+#### ContractType Master  
+```json
+{
+  "code": "STRING - Unique contract type code",
+  "name": "STRING - Contract type name", 
+  "description": "STRING - Type description",
+  "createRegister": "BOOLEAN - Whether to create attendance register",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Department Master
+```json
+{
+  "code": "STRING - Department code",
+  "name": "STRING - Department name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### HeadCode Master (Financial)
+```json
+{
+  "code": "STRING - Head code",
+  "name": "STRING - Head name",
+  "category": "STRING - Head category", 
+  "service": "STRING - Associated service",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### MusterRoll Configuration Master
+```json
+{
+  "code": "STRING - Configuration key",
+  "value": "STRING - Configuration value"
+}
+```
+
+**Common Configuration Keys**:
+- `FULL_DAY_NUM_HOURS`: "8" 
+- `HALF_DAY_NUM_HOURS`: "4"
+- `ROUND_OFF_HOURS`: "true"
+- `EXIT_HOUR_FULL_DAY`: "18:00"
+
+#### TargetDemography Master
+```json
+{
+  "code": "STRING - Demography code",
+  "name": "STRING - Target group name", 
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### CBO Roles Master
+```json
+{
+  "code": "STRING - Role code",
+  "name": "STRING - Role name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### SOR Type Master
+```json
+{
+  "code": "STRING - SOR type code",
+  "name": "STRING - SOR type name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### SOR SubType Master
+```json
+{
+  "code": "STRING - SOR subtype code", 
+  "name": "STRING - SOR subtype name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### SOR Variant Master
+```json
+{
+  "code": "STRING - SOR variant code",
+  "name": "STRING - SOR variant name", 
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Organisation Type Master
+```json
+{
+  "code": "STRING - Organisation type code",
+  "name": "STRING - Organisation type name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Organisation Class Master
+```json
+{
+  "code": "STRING - Function class code",
+  "name": "STRING - Function class name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Organisation Category Master
+```json
+{
+  "code": "STRING - Function category code",
+  "name": "STRING - Function category name", 
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Designation Master
+```json
+{
+  "code": "STRING - Designation code",
+  "name": "STRING - Designation name",
+  "description": "STRING - Designation description",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Employment Type Master  
+```json
+{
+  "code": "STRING - Employment type code",
+  "name": "STRING - Employment type name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Gender Type Master
+```json
+{
+  "code": "STRING - Gender code", 
+  "name": "STRING - Gender name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Social Category Master
+```json
+{
+  "code": "STRING - Category code",
+  "name": "STRING - Category name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Wage Seeker Skills Master
+```json
+{
+  "code": "STRING - Skill code",
+  "name": "STRING - Skill name",
+  "type": "STRING - Skill type (UNSKILLED, SEMI_SKILLED, SKILLED)",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Relationship Master
+```json
+{
+  "code": "STRING - Relationship code",
+  "name": "STRING - Relationship name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Unit of Measurement Master
+```json
+{
+  "code": "STRING - UOM code",
+  "name": "STRING - UOM name", 
+  "value": "STRING - UOM symbol",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Applicable Charges Master (Standard Deductions)
+```json
+{
+  "code": "STRING - Charge code",
+  "name": "STRING - Charge name",
+  "type": "STRING - Charge type (TAX, DEDUCTION, FEE)",
+  "taxHead": "STRING - Associated tax head",
+  "taxPeriod": "STRING - Tax period",
+  "fromAmount": "DOUBLE - Minimum amount",
+  "toAmount": "DOUBLE - Maximum amount", 
+  "percentage": "DOUBLE - Percentage rate",
+  "flatAmount": "DOUBLE - Flat amount",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+### Support Entities
+
+#### AuditDetails (Common to all entities)
+```json
+{
+  "createdBy": "STRING - Created by user ID",
+  "lastModifiedBy": "STRING - Last modified by user ID", 
+  "createdTime": "LONG - Creation timestamp (epoch)",
+  "lastModifiedTime": "LONG - Last modification timestamp (epoch)"
+}
+```
+
+#### Document (Common to all entities)
+```json
+{
+  "id": "UUID - Document ID",
+  "documentType": "STRING - Document type",
+  "fileStoreId": "STRING - File store reference", 
+  "fileStore": "STRING - File store URL",
+  "documentUid": "STRING - Document unique ID",
+  "fileName": "STRING - Original file name",
+  "active": "BOOLEAN - Active status"
+}
+```
+
+#### Address (Common address structure)
+```json
+{
+  "tenantId": "STRING - Tenant ID",
+  "doorNo": "STRING - Door/house number",
+  "plotNo": "STRING - Plot number",
+  "landmark": "STRING - Landmark", 
+  "city": "STRING - City",
+  "district": "STRING - District",
+  "region": "STRING - Region/zone",
+  "state": "STRING - State",
+  "country": "STRING - Country", 
+  "pincode": "STRING - PIN code",
+  "additionDetails": "JSON - Additional address details",
+  "buildingName": "STRING - Building name",
+  "street": "STRING - Street name",
+  "locality": {
+    "code": "STRING - Locality code",
+    "name": "STRING - Locality name"
+  },
+  "geoLocation": {
+    "latitude": "DOUBLE - Latitude coordinate", 
+    "longitude": "DOUBLE - Longitude coordinate",
+    "additionalDetails": "JSON - Additional geo details"
+  }
+}
+```
+
+---
+
 ## Data Models & Relationships
 
 ### Entity Relationship Diagram
