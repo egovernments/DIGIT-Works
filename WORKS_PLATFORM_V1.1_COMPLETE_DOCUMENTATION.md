@@ -26,6 +26,17 @@ The DIGIT Works Platform v1.1 is a comprehensive system for managing public work
 9. **Rate Analysis Service** - Analysis for non-SOR items
 10. **Statement Service** - Financial statements and reports
 
+### Works Management Services (WMS)
+11. **Attendance Service** - Attendance logging and tracking
+12. **Muster Roll Service** - Wage calculation and muster roll management
+13. **Individual Service** - Wage seeker registration and management
+14. **Expense Calculator Service** - Business logic for expense calculations
+
+### Integration Services
+15. **IFMS Adapter Service** - Integration with state financial systems
+16. **SMS/Notification Service** - Communication and notifications
+17. **Human Resource Management Service** - Employee and staff management
+
 ---
 
 ## Service Architecture
@@ -68,9 +79,26 @@ The DIGIT Works Platform v1.1 is a comprehensive system for managing public work
    └─→ 2. Organisation Registration (Contractor/Vendor)
        └─→ 3. Estimate Preparation
            └─→ 4. Contract Creation
-               └─→ 5. Measurement Recording
-                   └─→ 6. Bill Generation
-                       └─→ 7. Payment Processing
+               └─→ 5. Work Execution Phase
+                   ├─→ 5a. Attendance Registration
+                   ├─→ 5b. Daily Attendance Logging
+                   ├─→ 5c. Muster Roll Generation
+                   └─→ 5d. Measurement Recording
+                       └─→ 6. Expense Calculation
+                           └─→ 7. Bill Generation
+                               └─→ 8. Payment Processing (JIT Integration)
+```
+
+### Additional Workflows for Works Management
+
+#### Wage Seeker Management
+```
+Individual Registration → Skill Verification → Work Assignment → Attendance Tracking → Wage Calculation
+```
+
+#### Payment Integration
+```
+Bill Approval → Expense Calculator → IFMS Integration → Payment Instruction → Payment Status Update
 ```
 
 ### Detailed Flow Description
@@ -361,6 +389,8 @@ POST /expense/payment/v1/_search
 **Dependencies**:
 - Contract Service
 - Measurement Service
+- Muster Roll Service
+- Expense Calculator Service
 - Bank Account Service
 
 **MDMS Masters Used**:
@@ -447,6 +477,205 @@ POST /sor/v1/_search
 }
 ```
 
+### 9. Attendance Service
+
+**API Endpoints**:
+```
+POST /attendance/v1/_create
+POST /attendance/v1/_update
+POST /attendance/v1/_search
+POST /attendance/log/v1/_create
+POST /attendance/log/v1/_update
+POST /attendance/attendee/v1/_create
+POST /attendance/staff/v1/_create
+```
+
+**Dependencies**:
+- Individual Service
+- Project Service
+
+**MDMS Masters Used**:
+- `common-masters.MusterRoll` - Muster roll configurations
+- `common-masters.AttendanceHours` - Working hours configuration
+
+**Key Fields**:
+```json
+{
+  "id": "UUID",
+  "attendanceRegisterNumber": "ATT/2024-25/001",
+  "name": "Site Attendance Register",
+  "referenceId": "contract-uuid",
+  "serviceCode": "WORKS.ATTENDANCE",
+  "attendees": [
+    {
+      "individualId": "individual-uuid",
+      "enrollmentDate": "epoch",
+      "denrollmentDate": "epoch"
+    }
+  ],
+  "logs": [
+    {
+      "individualId": "individual-uuid", 
+      "time": "epoch",
+      "type": "ENTRY/EXIT"
+    }
+  ]
+}
+```
+
+### 10. Muster Roll Service
+
+**API Endpoints**:
+```
+POST /muster-roll/v1/_create
+POST /muster-roll/v1/_update
+POST /muster-roll/v1/_search
+POST /muster-roll/v1/_estimate
+```
+
+**Dependencies**:
+- Attendance Service
+- Individual Service
+- Contract Service
+
+**MDMS Masters Used**:
+- `common-masters.MusterRoll` - Muster roll business rules
+- `common-masters.UOM` - Units for wage calculation
+- `works.Category` - Work categories for wage rates
+
+**Key Fields**:
+```json
+{
+  "id": "UUID",
+  "musterRollNumber": "MR/2024-25/001",
+  "registerId": "attendance-register-uuid",
+  "status": "APPROVED",
+  "startDate": "epoch",
+  "endDate": "epoch",
+  "individualEntries": [
+    {
+      "individualId": "individual-uuid",
+      "totalAttendance": 8.5,
+      "actualWorkingDays": 21,
+      "payableAmount": 10500
+    }
+  ]
+}
+```
+
+### 11. Individual Service (Wage Seeker Registration)
+
+**API Endpoints**:
+```
+POST /individual/v1/_create
+POST /individual/v1/_update
+POST /individual/v1/_search
+```
+
+**Dependencies**:
+- None (Core service)
+
+**MDMS Masters Used**:
+- `common-masters.GenderType` - Gender options
+- `common-masters.SocialCategory` - Social categories
+- `common-masters.WageSeekerSkills` - Available skills
+- `common-masters.Relationship` - Family relationships
+
+**Key Fields**:
+```json
+{
+  "id": "UUID",
+  "individualId": "IND/2024-25/001",
+  "name": {
+    "givenName": "John",
+    "familyName": "Doe"
+  },
+  "gender": "MALE",
+  "dateOfBirth": "epoch",
+  "skills": [
+    {
+      "type": "MASON",
+      "level": "SKILLED"
+    }
+  ],
+  "identifiers": [
+    {
+      "type": "AADHAAR",
+      "value": "xxxx-xxxx-1234"
+    }
+  ]
+}
+```
+
+### 12. Expense Calculator Service
+
+**API Endpoints**:
+```
+POST /expense-calculator/v1/_calculate
+POST /expense-calculator/v1/_estimate
+```
+
+**Dependencies**:
+- Measurement Service
+- Muster Roll Service
+- Contract Service
+- Expense Service
+
+**MDMS Masters Used**:
+- `expense.ApplicableCharges` - Tax and deduction rules
+- `expense.HeadCodes` - Financial accounting heads
+- `expense.BusinessService` - Calculation workflows
+
+**Key Fields**:
+```json
+{
+  "calculationCriteria": [
+    {
+      "contractId": "contract-uuid", 
+      "musterRollId": "muster-uuid",
+      "billCriteria": {
+        "type": "WAGE",
+        "fromPeriod": "epoch",
+        "toPeriod": "epoch"
+      }
+    }
+  ],
+  "calculation": {
+    "totalAmount": 100000,
+    "deductions": 15000,
+    "netAmount": 85000
+  }
+}
+```
+
+### 13. IFMS Integration Service
+
+**Purpose**: Integration with State Financial Management Systems for payment processing
+
+**API Endpoints**:
+```
+POST /ifms-adapter/payment/_create
+POST /ifms-adapter/payment/_status
+POST /ifms-adapter/voucher/_create
+GET  /ifms-adapter/balance/_check
+```
+
+**Dependencies**:
+- Expense Service
+- External IFMS/JIT system
+
+**MDMS Masters Used**:
+- `ifms.HeadOfAccounts` - Chart of accounts mapping
+- `ifms.SchemeDetails` - Government scheme codes
+- `ifms.SSUDetails` - Spending unit details
+- `ifms.JitMockResponse` - JIT integration test data
+
+**Key Features**:
+- Real-time fund availability check
+- Payment order generation
+- Status tracking and reconciliation
+- Voucher management
+
 ---
 
 ## Data Models & Relationships
@@ -459,18 +688,33 @@ erDiagram
     Project ||--o{ ProjectBeneficiary : serves
     Project ||--o{ ProjectStaff : assigns
     Project ||--o{ Task : contains
+    Project ||--o{ AttendanceRegister : tracks
     
     Organisation ||--o{ BankAccount : owns
     Organisation ||--o{ Contract : executes
     
+    Individual ||--o{ Attendee : registers
+    Individual ||--o{ MusterRollEntry : earns
+    
     Estimate ||--|| Contract : generates
     
     Contract ||--o{ Measurement : records
+    Contract ||--o{ AttendanceRegister : manages
     Contract ||--o{ Bill : generates
     
-    Measurement ||--|| Bill : creates
+    AttendanceRegister ||--o{ Attendee : enrolls
+    AttendanceRegister ||--o{ AttendanceLog : logs
+    AttendanceRegister ||--|| MusterRoll : calculates
     
+    MusterRoll ||--o{ MusterRollEntry : contains
+    MusterRoll ||--|| ExpenseCalculation : feeds
+    
+    Measurement ||--|| Bill : creates
+    MusterRoll ||--|| Bill : creates
+    
+    ExpenseCalculation ||--|| Bill : generates
     Bill ||--o{ Payment : processes
+    Payment ||--|| IFMSVoucher : integrates
     
     SOR ||--o{ EstimateLineItem : uses
     RateAnalysis ||--o{ EstimateLineItem : defines
@@ -485,12 +729,103 @@ Estimate Service → SOR Service
     ↓ (estimateId)    ↓
 Contract Service ← Rate Analysis Service
     ↓ (contractId)
-Measurement Service
-    ↓ (measurements)
-Expense/Bill Service → Bank Account Service
-    ↓ (billId)
-Statement Service
+    ├─→ Measurement Service
+    └─→ Attendance Service → Individual Service
+            ↓ (attendance logs)
+        Muster Roll Service
+            ↓ (muster roll data)
+        Expense Calculator Service
+            ↓ (calculations)
+        Expense/Bill Service → Bank Account Service
+            ↓ (payment instructions)
+        IFMS Integration Service
+            ↓ (vouchers)
+        Statement Service
 ```
+
+### Complete Works Execution Flow
+
+```
+Individual Registration
+    ↓
+Project Creation → Contract Award
+    ↓
+Attendance Registration
+    ↓
+Daily Attendance Logging
+    ↓
+Muster Roll Generation (Weekly/Fortnightly)
+    ↓
+Wage Bill Creation (Expense Calculator)
+    ↓
+Bill Approval Workflow
+    ↓
+Payment Processing (IFMS/JIT Integration)
+    ↓
+Payment Status Update & Reconciliation
+```
+
+---
+
+## Advanced Features
+
+### JIT (Just In Time) Integration
+
+**Purpose**: Real-time integration with state financial management systems for fund availability and payment processing.
+
+**Key Features**:
+1. **Fund Availability Check**: Real-time balance verification before bill creation
+2. **Payment Order Generation**: Automatic creation of payment vouchers
+3. **Status Tracking**: Real-time payment status updates
+4. **Reconciliation**: Automatic matching of payments with bills
+
+**Integration Flow**:
+```
+Bill Approval → Fund Check (JIT) → Payment Order → Voucher Creation → Payment Execution → Status Update
+```
+
+**MDMS Configuration**:
+- `ifms.SchemeDetails` - Government scheme mapping
+- `ifms.SSUDetails` - Spending unit configuration  
+- `ifms.HeadOfAccounts` - Financial head mapping
+- `ifms.JitMockResponse` - Test/Mock responses
+
+### Expense Calculator Workflow
+
+**Purpose**: Business logic engine for calculating wages, deductions, and final payable amounts.
+
+**Calculation Types**:
+1. **Wage Bills**: Based on muster roll attendance
+2. **Material Bills**: Based on measurement quantities
+3. **Supervision Bills**: Based on contract milestones
+
+**Calculation Process**:
+1. **Input Validation**: Verify contract, muster roll, or measurement data
+2. **Base Calculation**: Calculate gross amounts based on rates
+3. **Deduction Processing**: Apply taxes, advances, and other deductions
+4. **Final Computation**: Generate net payable amount
+5. **Bill Generation**: Create bill through Expense Service
+
+**Business Rules (Configurable via MDMS)**:
+- Tax rates and thresholds
+- Deduction types and percentages
+- Overtime calculation rules
+- Bonus and incentive calculations
+
+### Attendance and Muster Roll Business Logic
+
+**Attendance Rules** (from `common-masters.MusterRoll`):
+- `FULL_DAY_NUM_HOURS`: 8 hours = Full day
+- `HALF_DAY_NUM_HOURS`: 4 hours = Half day  
+- `ROUND_OFF_HOURS`: Whether to round attendance
+- `EXIT_HOUR_FULL_DAY`: Latest exit time for full day
+
+**Muster Roll Calculation**:
+1. **Attendance Aggregation**: Sum daily attendance logs
+2. **Skill-based Rates**: Apply rates based on worker skills
+3. **Overtime Calculation**: Calculate overtime if applicable
+4. **Deduction Processing**: Apply standard deductions
+5. **Final Amount**: Calculate net wage amount
 
 ---
 
